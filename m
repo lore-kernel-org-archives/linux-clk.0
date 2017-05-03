@@ -1,24 +1,51 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: xf@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] clk: rockchip: add clock-ids for rk3228 clocks
-Date: Wed, 17 May 2017 20:01:54 +0200
-Message-ID: <5036368.VFT7UKpczZ@phil>
-In-Reply-To: <1493362967-4040-3-git-send-email-zhangqing@rock-chips.com>
-References: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com> <1493362967-4040-3-git-send-email-zhangqing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 14/20] drm/sun4i: tcon: multiply the vtotal when not in interlace
+Date: Wed,  3 May 2017 13:59:51 +0200
+Message-Id: <59bdbadc4d3adc6d75c2cef38df0af332bd313db.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 28. April 2017, 15:02:46 CEST schrieb Elaine Zhang:
-> This patch exports related BUS/VPU/RGA/HDCP/IEP/TSP/WIFI/
-> VIO/USB/EFUSE/GPU/CRYPTO clocks for dts reference.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+It appears that the total vertical resolution needs to be doubled when
+we're not in interlaced. Make sure that is the case.
 
-applied for 4.13
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Thanks
-Heiko
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 0f91ec8a4b26..efa079c1a3f5 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -272,9 +272,9 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 	/* Set vertical display timings */
+ 	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+ 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+-			 mode->vtotal, bp);
++			 mode->crtc_vtotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
+-		     SUN4I_TCON1_BASIC4_V_TOTAL(mode->vtotal) |
++		     SUN4I_TCON1_BASIC4_V_TOTAL(mode->crtc_vtotal * 2) |
+ 		     SUN4I_TCON1_BASIC4_V_BACKPORCH(bp));
+ 
+ 	/* Set Hsync and Vsync length */
+-- 
+git-series 0.8.11
