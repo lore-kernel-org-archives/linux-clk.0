@@ -1,106 +1,72 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v2 7/7] arm64: dts: marvell: use new binding for the system controller on ap806
-Date: Wed, 31 May 2017 16:07:28 +0200
-Message-Id: <e12e9b027462646e16cb51783d6e14660a019ba6.1496239589.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170503203402.5mwhx5wjniav24nd@lukather>
+References: <20170503031658.29299-1-wens@csie.org> <20170503031658.29299-4-wens@csie.org>
+ <20170503203402.5mwhx5wjniav24nd@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 4 May 2017 11:08:43 +0800
+Message-ID: <CAGb2v67VhJCZuu4EGHgTATe=z6ab9meRSWpGYU-cCjWmDh6aUA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] clk: sunxi-ng: Add class of phase clocks
+ supporting MMC new timing modes
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The new binding for the system controller on ap806 moved the clock into a
-subnode. This preliminary step will allow to add gpio and pinctrl
-subnodes
+Hi,
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+On Thu, May 4, 2017 at 4:34 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Wed, May 03, 2017 at 11:16:53AM +0800, Chen-Yu Tsai wrote:
+>> The MMC clocks on newer SoCs, such as the A83T and H3, support the
+>> "new timing mode". Under this mode, the output of the clock is divided
+>> by 2, and the clock delays no longer apply.
+>>
+>> Due to how the clock tree is modeled and setup, we need to model
+>> this function in two places, the master mmc clock and the two
+>> child phase clocks. In the mmc clock, we can easily model the
+>> mode bit as an extra variable post-divider. In the phase clocks,
+>> we check the bit and return -ENOTSUPP if the bit is set, signaling
+>> that the phase clocks are not to be used.
+>>
+>> This patch introduces a class of phase clocks that checks the
+>> timing mode bit.
+>
+> We've been over this quite some times already...
+>
+> How do you retrieve the mode used in the clock so that you can also
+> switch the MMC driver in the new mode?
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 0c25ec62a2a3..205037e3e7dc 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -193,7 +193,7 @@
- 				#size-cells = <0>;
- 				cell-index = <0>;
- 				interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 			};
- 
-@@ -204,7 +204,7 @@
- 				#size-cells = <0>;
- 				interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 				timeout-ms = <1000>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 			};
- 
-@@ -214,7 +214,7 @@
- 				reg-shift = <2>;
- 				interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 				reg-io-width = <1>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 			};
- 
-@@ -224,7 +224,7 @@
- 				reg-shift = <2>;
- 				interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 				reg-io-width = <1>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 
- 			};
-@@ -234,17 +234,20 @@
- 				reg = <0x6e0000 0x300>;
- 				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "core";
--				clocks = <&ap_syscon 4>;
-+				clocks = <&ap_clk 4>;
- 				dma-coherent;
- 				marvell,xenon-phy-slow-mode;
- 				status = "disabled";
- 			};
- 
- 			ap_syscon: system-controller@6f4000 {
--				compatible = "marvell,ap806-system-controller",
--					     "syscon";
--				#clock-cells = <1>;
-+				compatible = "syscon", "simple-mfd";
- 				reg = <0x6f4000 0x1000>;
-+
-+				ap_clk: clock {
-+					compatible = "marvell,ap806-clock";
-+					#clock-cells = <1>;
-+				};
- 			};
- 		};
- 	};
--- 
-git-series 0.9.1
+This part is covered. As mentioned above, the phase clks will return
+-ENOTSUPP if the mmc clk is set in the new timing mode. The MMC driver
+would try getting the current phase, check if it fails, and if it does,
+realizes the clk is in new timing mode, and will switch the mmc controller
+to it as well. I think this semantic fits the hardware well enough,
+though it might be confusing without the accompanying comments.
+
+See this commit for an example on how it should work.
+https://github.com/wens/linux/commit/41e386f1f945a0a135a20a00601b977a001353da
+
+> And do you prevent that from happening on the DT we already have that
+> use the old clock drivers that do not support this new timing at all?
+
+I admit this is not taken care of in this patch. Mostly because there
+is no existing DT for the A83T to cater to. For the H3 and other SoCs
+that do, we need some way of asking the CCU to switch the mode.
+
+IIRC the output and sample clocks do not support a phase delay of 0.
+So what if we design the semantic for this class of clocks as, if
+phase == 0, switch to new timing mode, otherwise use old timing mode?
+That would allow us to support this without adding extra functions,
+and kind of matches what the hardware does. If you're using the new
+timing mode, the delays in the mmc clk are bypassed.
+
+Regards
+ChenYu
