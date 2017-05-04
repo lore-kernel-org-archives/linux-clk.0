@@ -1,45 +1,60 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:35352 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750896AbdE2QdP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2017 12:33:15 -0400
-Received: by mail-io0-f171.google.com with SMTP id f102so43436322ioi.2
-        for <linux-clk@vger.kernel.org>; Mon, 29 May 2017 09:33:14 -0700 (PDT)
+Received: from hermes.aosc.io ([199.195.250.187]:45999 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751653AbdEDOpV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 May 2017 10:45:21 -0400
+Date: Thu, 04 May 2017 22:45:11 +0800
+In-Reply-To: <20170504144152.34yzk424aqrizmbu@lukather>
+References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-4-icenowy@aosc.io> <20170504140220.26kguf3trz7ocylv@lukather> <83062089-19CD-4805-A6DC-2C25D75621FF@aosc.io> <20170504144152.34yzk424aqrizmbu@lukather>
 MIME-Version: 1.0
-In-Reply-To: <20170527102308.1988-3-icenowy@aosc.io>
-References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-3-icenowy@aosc.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 29 May 2017 18:33:13 +0200
-Message-ID: <CACRpkdbPcAELAySk77xofYNVqach+0-2oJ1qMcGK5X1zA8gdeA@mail.gmail.com>
-Subject: Re: [PATCH v3 02/10] pinctrl: sunxi: Add SoC ID definitions for A10,
- A20 and R40 SoCs
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v2 03/10] pinctrl: sunxi: add A20 support to A10 driver
+To: linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <52C75207-6F41-4B3F-8953-F4F040358792@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 27, 2017 at 12:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-> Allwinner A10, A20 and R40 SoCs have similar GPIO layout.
+
+于 2017年5月4日 GMT+08:00 下午10:41:52, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>On Thu, May 04, 2017 at 10:03:26PM +0800, Icenowy Zheng wrote:
+>> 
+>> 
+>> 于 2017年5月4日 GMT+08:00 下午10:02:20, Maxime Ripard
+><maxime.ripard@free-electrons.com> 写到:
+>> >On Thu, May 04, 2017 at 09:49:59PM +0800, Icenowy Zheng wrote:
+>> >>  static const struct of_device_id sun4i_a10_pinctrl_match[] = {
+>> >> -	{ .compatible = "allwinner,sun4i-a10-pinctrl", },
+>> >> +	{
+>> >> +		.compatible = "allwinner,sun4i-a10-pinctrl",
+>> >> +		.data = (void *)PINCTRL_SUN4I_A10
+>> >> +	},
+>> >> +	{
+>> >> +		.compatible = "allwinner,sun7i-a20-pinctrl",
+>> >> +		.data = (void *)PINCTRL_SUN7I_A20
+>> >> +	},
+>> >>  	{}
+>> >>  };
+>> >
+>> >This means you're going to have two drivers probing for the same
+>> >device: this driver, and the old one. This is not ok, and probably
+>> >introduces some corner cases.
+>> 
+>> The A20 driver is dropped in the next commit.
 >
-> Add SoC definitions in pinctrl-sunxi.h, in order to merge A20 support
-> into A10 driver, and add R40 support into it.
+>Yes, and that is an issue for bisectability. Anyone that will checkout
+>between those two commits will have a broken kernel, and that is not
+>ok. Any commit should be in a working state.
+
+Squash them together?
+
 >
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - Commit message change.
-
-Patch applied with Chen-Yu's review tag.
-
-Yours,
-Linus Walleij
+>Maxime
