@@ -1,377 +1,256 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55827 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759389AbdENQbr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 May 2017 12:31:47 -0400
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v7 02/13] clk: sunxi-ng: add support for DE2 CCU
-Date: Mon, 15 May 2017 00:30:34 +0800
-Message-Id: <20170514163045.40366-3-icenowy@aosc.io>
-In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
-References: <20170514163045.40366-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 10/10] ARM: dts: sun8i: Add board dts file for Banana Pi M2
+ Ultra
+Date: Thu,  4 May 2017 21:50:06 +0800
+Message-Id: <20170504135006.16483-11-icenowy@aosc.io>
+In-Reply-To: <20170504135006.16483-1-icenowy@aosc.io>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The "Display Engine 2.0" in Allwinner newer SoCs contains a clock
-management unit for its subunits, like the DE CCU in A80.
+From: Chen-Yu Tsai <wens@csie.org>
 
-Add a sunxi-ng style driver for it.
+The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
+form factor and position of various connectors, leds and buttons is
+similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
+as the latest Banana Pi M64.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+It features:
+
+  - X-Powers AXP221s PMIC connected to i2c0
+  - 2 GB DDR3 DRAM
+  - 8 GB eMMC
+  - micro SD card slot
+  - DC power jack
+  - HDMI output
+  - MIPI DSI connector
+  - 2x USB 2.0 hosts
+  - 1x USB 2.0 OTG
+  - gigabit ethernet with Realtek RTL8211E transceiver
+  - WiFi/Bluetooth with AP6212 chip, with external antenna connector
+  - SATA and power connectors for native SATA support
+  - camera sensor connector
+  - consumer IR receiver
+  - audio out headphone jack
+  - onboard microphone
+  - red, green, and blue LEDs
+  - debug UART pins
+  - Li-Po battery connector
+  - Raspberry Pi B+ compatible GPIO header
+  - power, reset, and boot control buttons
+
+This patch adds a dts file that enables debug UART and MMC support.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
-Changes in v7:
-- Fixed some parent clocks that are left open if the probe failed.
-- Added V3s compatible (only one mixer).
-Changes in v5:
-- Removed dt-bindings headers (they're now in patch 1).
-Changes in v4:
-- Fixed the inconsistence between mixer_div clocks' number and real clock.
-Changes in v2:
-- Rename sunxi-de2-ccu to sun8i-de2-ccu.
+ arch/arm/boot/dts/Makefile                        |   1 +
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 161 ++++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
 
- drivers/clk/sunxi-ng/Kconfig         |   5 +
- drivers/clk/sunxi-ng/Makefile        |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 260 +++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  28 ++++
- 4 files changed, 294 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index b0d551a8efe4..747662565545 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -140,6 +140,11 @@ config SUN8I_V3S_CCU
- 	default MACH_SUN8I
- 	depends on MACH_SUN8I || COMPILE_TEST
- 
-+config SUN8I_DE2_CCU
-+	bool "Support for the Allwinner SoCs DE2 CCU"
-+	select SUNXI_CCU_DIV
-+	select SUNXI_CCU_GATE
-+
- config SUN9I_A80_CCU
- 	bool "Support for the Allwinner A80 CCU"
- 	select SUNXI_CCU_DIV
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 0ec02fe14c50..be616279450e 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_SUN8I_A23_CCU)	+= ccu-sun8i-a23.o
- obj-$(CONFIG_SUN8I_A33_CCU)	+= ccu-sun8i-a33.o
- obj-$(CONFIG_SUN8I_H3_CCU)	+= ccu-sun8i-h3.o
- obj-$(CONFIG_SUN8I_V3S_CCU)	+= ccu-sun8i-v3s.o
-+obj-$(CONFIG_SUN8I_DE2_CCU)	+= ccu-sun8i-de2.o
- obj-$(CONFIG_SUN8I_R_CCU)	+= ccu-sun8i-r.o
- obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80.o
- obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-de.o
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 9c5e1d944d1c..07a662494eed 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -905,6 +905,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-h3-orangepi-plus.dtb \
+ 	sun8i-h3-orangepi-plus2e.dtb \
+ 	sun8i-r16-parrot.dtb \
++	sun8i-r40-bananapi-m2-ultra.dtb \
+ 	sun8i-v3s-licheepi-zero.dtb
+ dtb-$(CONFIG_MACH_SUN9I) += \
+ 	sun9i-a80-optimus.dtb \
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
 new file mode 100644
-index 000000000000..15aaa9c4a3af
+index 000000000000..1d824830a1ad
 --- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -0,0 +1,260 @@
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -0,0 +1,161 @@
 +/*
-+ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
++ * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
++ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
 + *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
 + *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
++/dts-v1/;
++#include "sun8i-r40.dtsi"
++#include "sunxi-common-regulators.dtsi"
 +
-+#include "ccu_common.h"
-+#include "ccu_div.h"
-+#include "ccu_gate.h"
-+#include "ccu_reset.h"
++/ {
++	model = "Banana Pi BPI-M2-Ultra";
++	compatible = "sinovoip,bpi-m2-ultra", "allwinner,sun8i-r40";
 +
-+#include "ccu-sun8i-de2.h"
++	aliases {
++		serial0 = &uart0;
++	};
 +
-+static SUNXI_CCU_GATE(bus_mixer0_clk,	"bus-mixer0",	"bus-de",
-+		      0x04, BIT(0), 0);
-+static SUNXI_CCU_GATE(bus_mixer1_clk,	"bus-mixer1",	"bus-de",
-+		      0x04, BIT(1), 0);
-+static SUNXI_CCU_GATE(bus_wb_clk,	"bus-wb",	"bus-de",
-+		      0x04, BIT(2), 0);
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
-+static SUNXI_CCU_GATE(mixer0_clk,	"mixer0",	"mixer0-div",
-+		      0x00, BIT(0), CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_GATE(mixer1_clk,	"mixer1",	"mixer1-div",
-+		      0x00, BIT(1), CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
-+		      0x00, BIT(2), CLK_SET_RATE_PARENT);
-+
-+static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
-+		   CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
-+		   CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
-+		   CLK_SET_RATE_PARENT);
-+
-+static struct ccu_common *sun8i_a83t_de2_clks[] = {
-+	&mixer0_clk.common,
-+	&mixer1_clk.common,
-+	&wb_clk.common,
-+
-+	&bus_mixer0_clk.common,
-+	&bus_mixer1_clk.common,
-+	&bus_wb_clk.common,
-+
-+	&mixer0_div_clk.common,
-+	&mixer1_div_clk.common,
-+	&wb_div_clk.common,
++	wifi_pwrseq: wifi_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&pio 6 10 GPIO_ACTIVE_LOW>; /* PG10 WIFI_EN */
++	};
 +};
 +
-+static struct ccu_common *sun8i_v3s_de2_clks[] = {
-+	&mixer0_clk.common,
-+	&wb_clk.common,
++&i2c0 {
++	status = "okay";
 +
-+	&bus_mixer0_clk.common,
-+	&bus_wb_clk.common,
-+
-+	&mixer0_div_clk.common,
-+	&wb_div_clk.common,
++	axp22x: pmic@68 {
++		compatible = "x-powers,axp221";
++		reg = <0x34>;
++		interrupt-parent = <&nmi_intc>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++	};
 +};
 +
-+static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
-+	.hws	= {
-+		[CLK_MIXER0]		= &mixer0_clk.common.hw,
-+		[CLK_MIXER1]		= &mixer1_clk.common.hw,
-+		[CLK_WB]		= &wb_clk.common.hw,
++#include "axp22x.dtsi"
 +
-+		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
-+		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
-+		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
-+
-+		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
-+		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
-+		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
-+	},
-+	.num	= CLK_NUMBER,
++&reg_aldo3 {
++	regulator-always-on;
++	regulator-min-microvolt = <2700000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "avcc";
 +};
 +
-+static struct clk_hw_onecell_data sun8i_v3s_de2_hw_clks = {
-+	.hws	= {
-+		[CLK_MIXER0]		= &mixer0_clk.common.hw,
-+		[CLK_WB]		= &wb_clk.common.hw,
-+
-+		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
-+		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
-+
-+		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
-+		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
-+	},
-+	.num	= CLK_NUMBER,
++&reg_dcdc1 {
++	regulator-always-on;
++	regulator-min-microvolt = <3000000>;
++	regulator-max-microvolt = <3000000>;
++	regulator-name = "vcc-3v0";
 +};
 +
-+static struct ccu_reset_map sun8i_a83t_de2_resets[] = {
-+	[RST_MIXER0]	= { 0x08, BIT(0) },
-+	/*
-+	 * For A83T, H3 and R40, mixer1 reset line is shared with wb, so
-+	 * only RST_WB is exported here.
-+	 * For V3s there's just no mixer1, so it also shares this struct.
-+	 */
-+	[RST_WB]	= { 0x08, BIT(2) },
++&reg_dcdc2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1000000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "vdd-cpu";
 +};
 +
-+static struct ccu_reset_map sun50i_a64_de2_resets[] = {
-+	[RST_MIXER0]	= { 0x08, BIT(0) },
-+	[RST_MIXER1]	= { 0x08, BIT(1) },
-+	[RST_WB]	= { 0x08, BIT(2) },
++&reg_dcdc3 {
++	regulator-always-on;
++	regulator-min-microvolt = <1000000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "vdd-sys";
 +};
 +
-+static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
-+	.ccu_clks	= sun8i_a83t_de2_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
-+
-+	.hw_clks	= &sun8i_a83t_de2_hw_clks,
-+
-+	.resets		= sun8i_a83t_de2_resets,
-+	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
++&reg_dcdc5 {
++	regulator-always-on;
++	regulator-min-microvolt = <1500000>;
++	regulator-max-microvolt = <1500000>;
++	regulator-name = "vcc-dram";
 +};
 +
-+static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
-+	.ccu_clks	= sun8i_a83t_de2_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
-+
-+	.hw_clks	= &sun8i_a83t_de2_hw_clks,
-+
-+	.resets		= sun50i_a64_de2_resets,
-+	.num_resets	= ARRAY_SIZE(sun50i_a64_de2_resets),
++&reg_dldo1 {
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-wifi-io";
 +};
 +
-+static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
-+	.ccu_clks	= sun8i_v3s_de2_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sun8i_v3s_de2_clks),
-+
-+	.hw_clks	= &sun8i_v3s_de2_hw_clks,
-+
-+	.resets		= sun8i_a83t_de2_resets,
-+	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
++&reg_dldo2 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-wifi";
 +};
 +
-+static int sunxi_de2_clk_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct clk *bus_clk, *mod_clk;
-+	struct reset_control *rstc;
-+	void __iomem *reg;
-+	const struct sunxi_ccu_desc *ccu_desc;
-+	int ret;
-+
-+	ccu_desc = of_device_get_match_data(&pdev->dev);
-+	if (!ccu_desc)
-+		return -EINVAL;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	reg = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
-+
-+	bus_clk = devm_clk_get(&pdev->dev, "bus");
-+	if (IS_ERR(bus_clk)) {
-+		ret = PTR_ERR(bus_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Couldn't get bus clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	mod_clk = devm_clk_get(&pdev->dev, "mod");
-+	if (IS_ERR(mod_clk)) {
-+		ret = PTR_ERR(mod_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Couldn't get mod clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(rstc)) {
-+		ret = PTR_ERR(bus_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"Couldn't get reset control: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* The clocks need to be enabled for us to access the registers */
-+	ret = clk_prepare_enable(bus_clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Couldn't enable bus clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(mod_clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Couldn't enable mod clk: %d\n", ret);
-+		goto err_disable_bus_clk;
-+	}
-+
-+	/* The reset control needs to be asserted for the controls to work */
-+	ret = reset_control_deassert(rstc);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"Couldn't deassert reset control: %d\n", ret);
-+		goto err_disable_mod_clk;
-+	}
-+
-+	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, ccu_desc);
-+	if (ret)
-+		goto err_assert_reset;
-+
-+	return 0;
-+
-+err_assert_reset:
-+	reset_control_assert(rstc);
-+err_disable_mod_clk:
-+	clk_disable_unprepare(mod_clk);
-+err_disable_bus_clk:
-+	clk_disable_unprepare(bus_clk);
-+	return ret;
-+}
-+
-+static const struct of_device_id sunxi_de2_clk_ids[] = {
-+	{
-+		.compatible = "allwinner,sun8i-a83t-de2-clk",
-+		.data = &sun8i_a83t_de2_clk_desc,
-+	},
-+	{
-+		.compatible = "allwinner,sun8i-v3s-de2-clk",
-+		.data = &sun8i_v3s_de2_clk_desc,
-+	},
-+	{
-+		.compatible = "allwinner,sun50i-h5-de2-clk",
-+		.data = &sun50i_a64_de2_clk_desc,
-+	},
-+	/*
-+	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
-+	 * DE2 really working.
-+	 * So there's currently no A64 compatible here.
-+	 * H5 shares the same reset line with A64, so here H5 is using the
-+	 * clock description of A64.
-+	 */
-+	{ }
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <4>;
++	cd-gpios = <&pio 7 13 GPIO_ACTIVE_HIGH>; /* PH13 */
++	cd-inverted;
++	status = "okay";
 +};
 +
-+static struct platform_driver sunxi_de2_clk_driver = {
-+	.probe	= sunxi_de2_clk_probe,
-+	.driver	= {
-+		.name	= "sunxi-de2-clks",
-+		.of_match_table	= sunxi_de2_clk_ids,
-+	},
++&mmc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc1_pins>;
++	vmmc-supply = <&reg_dldo2>;
++	vqmmc-supply = <&reg_dldo1>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
 +};
-+builtin_platform_driver(sunxi_de2_clk_driver);
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-new file mode 100644
-index 000000000000..530c006e0ae9
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-@@ -0,0 +1,28 @@
-+/*
-+ * Copyright 2016 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
 +
-+#ifndef _CCU_SUN8I_DE2_H_
-+#define _CCU_SUN8I_DE2_H_
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	vqmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
 +
-+#include <dt-bindings/clock/sun8i-de2.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
-+
-+/* Intermediary clock dividers are not exported */
-+#define CLK_MIXER0_DIV	3
-+#define CLK_MIXER1_DIV	4
-+#define CLK_WB_DIV	5
-+
-+#define CLK_NUMBER	(CLK_WB + 1)
-+
-+#endif /* _CCU_SUN8I_DE2_H_ */
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_0>;
++	status = "okay";
++};
 -- 
 2.12.2
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
