@@ -1,60 +1,59 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	narmstrong@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
 	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v4 01/11] dt-bindings: bcm: Add Broadcom Stingray bindings document
-Date: Mon, 22 May 2017 17:28:17 +0530
-Message-Id: <1495454307-23464-2-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
-References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 1/2] clk: meson-gxbb: un-export the CPU clock
+Date: Thu,  4 May 2017 20:19:19 +0200
+Message-Id: <20170504181920.21880-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170504181920.21880-1-martin.blumenstingl@googlemail.com>
+References: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
+ <20170504181920.21880-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds DT bindings info for Broadcom Stingray SOC
-and related reference boards.
+The CPU clock defined in the Meson GX clock driver is actually a
+left-over from the Meson8b clock controller. Un-export the clock so we
+can remove it from the driver.
 
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+ drivers/clk/meson/gxbb.h              | 2 +-
+ include/dt-bindings/clock/gxbb-clkc.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
-new file mode 100644
-index 0000000..23a0217
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
-@@ -0,0 +1,12 @@
-+Broadcom Stingray device tree bindings
-+------------------------------------------------
-+
-+Boards with Stingray shall have the following properties:
-+
-+Required root node property:
-+
-+Stingray Combo SVK board
-+compatible = "brcm,bcm958742k", "brcm,stingray";
-+
-+Stingray SST100 board
-+compatible = "brcm,bcm958742t", "brcm,stingray";
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 3e5f375af7b6..c15bbce8c585 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -171,7 +171,7 @@
+  * to be exposed to client nodes in DT: include/dt-bindings/clock/gxbb-clkc.h
+  */
+ #define CLKID_SYS_PLL		  0
+-/* CLKID_CPUCLK */
++#define CLKID_CPUCLK		  1
+ /* CLKID_HDMI_PLL */
+ #define CLKID_FIXED_PLL		  3
+ /* CLKID_FCLK_DIV2 */
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 3190e30b9398..46ff81fbc02e 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -5,7 +5,6 @@
+ #ifndef __GXBB_CLKC_H
+ #define __GXBB_CLKC_H
+ 
+-#define CLKID_CPUCLK		1
+ #define CLKID_HDMI_PLL		2
+ #define CLKID_FCLK_DIV2		4
+ #define CLKID_FCLK_DIV3		5
 -- 
-2.7.4
+2.12.2
