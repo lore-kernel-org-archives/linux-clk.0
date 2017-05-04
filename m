@@ -1,191 +1,304 @@
-Return-Path: <ukl@pengutronix.de>
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not operated too fast
-Date: Wed,  3 May 2017 20:56:25 +0200
-Message-Id: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 4 May 2017 14:50:55 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v6 02/13] clk: sunxi-ng: add support for DE2 CCU
+Message-ID: <20170504125055.uvcl4ov4bxzis4um@lukather>
+References: <20170504114858.9008-1-icenowy@aosc.io>
+ <20170504114858.9008-3-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="njmu7voz264w32d4"
+In-Reply-To: <20170504114858.9008-3-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
-64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
-SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
-to 288 MHz because the initial frequency "seems too high to be ssp clock
-source directly". However this isn't enough to ensure that the frequency
-isn't increased later again. In fact this happens on my machine as the
-mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
-ssp2 which is resolved to
 
-	ref_io1.rate = 320 MHz
-	ssp2_sel.parent = ref_io1
-	ssp2_div.divider = 2
+--njmu7voz264w32d4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-. The observed effect is that reading MISO reliably fails: Instead of
-the least significant bit the second least significant bit is reported
-twice. This is probably related to the reports
+On Thu, May 04, 2017 at 07:48:47PM +0800, Icenowy Zheng wrote:
+> The "Display Engine 2.0" in Allwinner newer SoCs contains a clock
+> management unit for its subunits, like the DE CCU in A80.
+>=20
+> Add a sunxi-ng style driver for it.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v5:
+> - Removed dt-bindings headers (they're now in patch 1).
+> Changes in v4:
+> - Fixed the inconsistence between mixer_div clocks' number and real clock.
+> Changes in v2:
+> - Rename sunxi-de2-ccu to sun8i-de2-ccu.
+>=20
+>  drivers/clk/sunxi-ng/Kconfig         |   5 +
+>  drivers/clk/sunxi-ng/Makefile        |   1 +
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 218 +++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  28 +++++
+>  4 files changed, 252 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+>=20
+> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> index 64088e599404..2e4d804fbf61 100644
+> --- a/drivers/clk/sunxi-ng/Kconfig
+> +++ b/drivers/clk/sunxi-ng/Kconfig
+> @@ -140,6 +140,11 @@ config SUN8I_V3S_CCU
+>  	default MACH_SUN8I
+>  	depends on MACH_SUN8I || COMPILE_TEST
+> =20
+> +config SUN8I_DE2_CCU
+> +	bool "Support for the Allwinner SoCs DE2 CCU"
+> +	select SUNXI_CCU_DIV
+> +	select SUNXI_CCU_GATE
+> +
+>  config SUN9I_A80_CCU
+>  	bool "Support for the Allwinner A80 CCU"
+>  	select SUNXI_CCU_DIV
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index 0ec02fe14c50..be616279450e 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -25,6 +25,7 @@ obj-$(CONFIG_SUN8I_A23_CCU)	+=3D ccu-sun8i-a23.o
+>  obj-$(CONFIG_SUN8I_A33_CCU)	+=3D ccu-sun8i-a33.o
+>  obj-$(CONFIG_SUN8I_H3_CCU)	+=3D ccu-sun8i-h3.o
+>  obj-$(CONFIG_SUN8I_V3S_CCU)	+=3D ccu-sun8i-v3s.o
+> +obj-$(CONFIG_SUN8I_DE2_CCU)	+=3D ccu-sun8i-de2.o
+>  obj-$(CONFIG_SUN8I_R_CCU)	+=3D ccu-sun8i-r.o
+>  obj-$(CONFIG_SUN9I_A80_CCU)	+=3D ccu-sun9i-a80.o
+>  obj-$(CONFIG_SUN9I_A80_CCU)	+=3D ccu-sun9i-a80-de.o
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/=
+ccu-sun8i-de2.c
+> new file mode 100644
+> index 000000000000..adb2c344692a
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> @@ -0,0 +1,218 @@
+> +/*
+> + * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +
+> +#include "ccu_common.h"
+> +#include "ccu_div.h"
+> +#include "ccu_gate.h"
+> +#include "ccu_reset.h"
+> +
+> +#include "ccu-sun8i-de2.h"
+> +
+> +static SUNXI_CCU_GATE(bus_mixer0_clk,	"bus-mixer0",	"bus-de",
+> +		      0x04, BIT(0), 0);
+> +static SUNXI_CCU_GATE(bus_mixer1_clk,	"bus-mixer1",	"bus-de",
+> +		      0x04, BIT(1), 0);
+> +static SUNXI_CCU_GATE(bus_wb_clk,	"bus-wb",	"bus-de",
+> +		      0x04, BIT(2), 0);
+> +
+> +static SUNXI_CCU_GATE(mixer0_clk,	"mixer0",	"mixer0-div",
+> +		      0x00, BIT(0), CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_GATE(mixer1_clk,	"mixer1",	"mixer1-div",
+> +		      0x00, BIT(1), CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
+> +		      0x00, BIT(2), CLK_SET_RATE_PARENT);
+> +
+> +static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+> +		   CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
+> +		   CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+> +		   CLK_SET_RATE_PARENT);
+> +
+> +static struct ccu_common *sunxi_de2_clks[] =3D {
+> +	&mixer0_clk.common,
+> +	&mixer1_clk.common,
+> +	&wb_clk.common,
+> +
+> +	&bus_mixer0_clk.common,
+> +	&bus_mixer1_clk.common,
+> +	&bus_wb_clk.common,
+> +
+> +	&mixer0_div_clk.common,
+> +	&mixer1_div_clk.common,
+> +	&wb_div_clk.common,
+> +};
+> +
+> +static struct clk_hw_onecell_data sunxi_de2_hw_clks =3D {
+> +	.hws	=3D {
+> +		[CLK_MIXER0]		=3D &mixer0_clk.common.hw,
+> +		[CLK_MIXER1]		=3D &mixer1_clk.common.hw,
+> +		[CLK_WB]		=3D &wb_clk.common.hw,
+> +
+> +		[CLK_BUS_MIXER0]	=3D &bus_mixer0_clk.common.hw,
+> +		[CLK_BUS_MIXER1]	=3D &bus_mixer1_clk.common.hw,
+> +		[CLK_BUS_WB]		=3D &bus_wb_clk.common.hw,
+> +
+> +		[CLK_MIXER0_DIV]	=3D &mixer0_div_clk.common.hw,
+> +		[CLK_MIXER1_DIV]	=3D &mixer1_div_clk.common.hw,
+> +		[CLK_WB_DIV]		=3D &wb_div_clk.common.hw,
+> +	},
+> +	.num	=3D CLK_NUMBER,
+> +};
+> +
+> +static struct ccu_reset_map sun8i_a83t_de2_resets[] =3D {
+> +	[RST_MIXER0]	=3D { 0x08, BIT(0) },
+> +	/*
+> +	 * For A83T, H3 and R40, mixer1 reset line is shared with wb, so
+> +	 * only RST_WB is exported here.
+> +	 */
+> +	[RST_WB]	=3D { 0x08, BIT(2) },
+> +};
+> +
+> +static struct ccu_reset_map sun50i_a64_de2_resets[] =3D {
+> +	[RST_MIXER0]	=3D { 0x08, BIT(0) },
+> +	[RST_MIXER1]	=3D { 0x08, BIT(1) },
+> +	[RST_WB]	=3D { 0x08, BIT(2) },
+> +};
+> +
+> +static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc =3D {
+> +	.ccu_clks	=3D sunxi_de2_clks,
+> +	.num_ccu_clks	=3D ARRAY_SIZE(sunxi_de2_clks),
+> +
+> +	.hw_clks	=3D &sunxi_de2_hw_clks,
+> +
+> +	.resets		=3D sun8i_a83t_de2_resets,
+> +	.num_resets	=3D ARRAY_SIZE(sun8i_a83t_de2_resets),
+> +};
+> +
+> +static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc =3D {
+> +	.ccu_clks	=3D sunxi_de2_clks,
+> +	.num_ccu_clks	=3D ARRAY_SIZE(sunxi_de2_clks),
+> +
+> +	.hw_clks	=3D &sunxi_de2_hw_clks,
+> +
+> +	.resets		=3D sun50i_a64_de2_resets,
+> +	.num_resets	=3D ARRAY_SIZE(sun50i_a64_de2_resets),
+> +};
+> +
+> +static int sunxi_de2_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res;
+> +	struct clk *bus_clk, *mod_clk;
+> +	struct reset_control *rstc;
+> +	void __iomem *reg;
+> +	const struct sunxi_ccu_desc *ccu_desc;
+> +	int ret;
+> +
+> +	ccu_desc =3D of_device_get_match_data(&pdev->dev);
+> +	if (!ccu_desc)
+> +		return -EINVAL;
+> +
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	reg =3D devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(reg))
+> +		return PTR_ERR(reg);
+> +
+> +	bus_clk =3D devm_clk_get(&pdev->dev, "bus");
+> +	if (IS_ERR(bus_clk)) {
+> +		ret =3D PTR_ERR(bus_clk);
+> +		if (ret !=3D -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Couldn't get bus clk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	mod_clk =3D devm_clk_get(&pdev->dev, "mod");
+> +	if (IS_ERR(mod_clk)) {
+> +		ret =3D PTR_ERR(mod_clk);
+> +		if (ret !=3D -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Couldn't get mod clk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	rstc =3D devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> +	if (IS_ERR(rstc)) {
+> +		ret =3D PTR_ERR(bus_clk);
+> +		if (ret !=3D -EPROBE_DEFER)
+> +			dev_err(&pdev->dev,
+> +				"Couldn't get reset control: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* The clocks need to be enabled for us to access the registers */
+> +	ret =3D clk_prepare_enable(bus_clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Couldn't enable bus clk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret =3D clk_prepare_enable(mod_clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Couldn't enable mod clk: %d\n", ret);
+> +		return ret;
 
-	https://community.nxp.com/thread/290209
-	https://community.nxp.com/thread/310434
-	https://community.nxp.com/thread/385546
+You're leaving the bus clock enabled here if it fails.
 
-So additionally to initializing ref_io0 and ref_io1 to 288 MHz ensure
-that their frequency is never set to something bigger later on. This is
-done by adding a parameter min_frac to clk-ref and use that instead of
-the hard coded 18 to limit the valid values for FRAC. For all ref clocks
-but ref_io0 and ref_io1 18 is used and so there is no functional change
-for those.
+> +	}
+> +
+> +	/* The reset control needs to be asserted for the controls to work */
+> +	ret =3D reset_control_deassert(rstc);
+> +	if (ret) {
+> +		dev_err(&pdev->dev,
+> +			"Couldn't deassert reset control: %d\n", ret);
+> +		goto err_disable_clk;
+> +	}
+> +
+> +	ret =3D sunxi_ccu_probe(pdev->dev.of_node, reg, ccu_desc);
+> +	if (ret)
+> +		goto err_assert_reset;
+> +
+> +	return 0;
+> +
+> +err_assert_reset:
+> +	reset_control_assert(rstc);
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Hello,
+And here you're leaving the mod_clk enabled
 
-I'd expect this to go in as a fix as it repairs reading from an EEPROM which
-should be a fairly common task.
+Maxime
 
-It would be nice to get confirmation from NXP that this is a right fix and
-that spi transfers are supposed to be reliable with ref_ioX <= 288 MHz.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Best regards
-Uwe
+--njmu7voz264w32d4
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/clk/mxs/clk-imx23.c |  8 ++++----
- drivers/clk/mxs/clk-imx28.c | 14 +++++++-------
- drivers/clk/mxs/clk-ref.c   | 18 ++++++++++++------
- drivers/clk/mxs/clk.h       |  2 +-
- 4 files changed, 24 insertions(+), 18 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/clk/mxs/clk-imx23.c b/drivers/clk/mxs/clk-imx23.c
-index f01876af6bb8..b7d3c44bbcbb 100644
---- a/drivers/clk/mxs/clk-imx23.c
-+++ b/drivers/clk/mxs/clk-imx23.c
-@@ -117,10 +117,10 @@ static void __init mx23_clocks_init(struct device_node *np)
- 
- 	clks[ref_xtal] = mxs_clk_fixed("ref_xtal", 24000000);
- 	clks[pll] = mxs_clk_pll("pll", "ref_xtal", PLLCTRL0, 16, 480000000);
--	clks[ref_cpu] = mxs_clk_ref("ref_cpu", "pll", FRAC, 0);
--	clks[ref_emi] = mxs_clk_ref("ref_emi", "pll", FRAC, 1);
--	clks[ref_pix] = mxs_clk_ref("ref_pix", "pll", FRAC, 2);
--	clks[ref_io] = mxs_clk_ref("ref_io", "pll", FRAC, 3);
-+	clks[ref_cpu] = mxs_clk_ref("ref_cpu", "pll", FRAC, 0, 18);
-+	clks[ref_emi] = mxs_clk_ref("ref_emi", "pll", FRAC, 1, 18);
-+	clks[ref_pix] = mxs_clk_ref("ref_pix", "pll", FRAC, 2, 18);
-+	clks[ref_io] = mxs_clk_ref("ref_io", "pll", FRAC, 3, 18);
- 	clks[saif_sel] = mxs_clk_mux("saif_sel", CLKSEQ, 0, 1, sel_pll, ARRAY_SIZE(sel_pll));
- 	clks[lcdif_sel] = mxs_clk_mux("lcdif_sel", CLKSEQ, 1, 1, sel_pix, ARRAY_SIZE(sel_pix));
- 	clks[gpmi_sel] = mxs_clk_mux("gpmi_sel", CLKSEQ, 4, 1, sel_io, ARRAY_SIZE(sel_io));
-diff --git a/drivers/clk/mxs/clk-imx28.c b/drivers/clk/mxs/clk-imx28.c
-index 6b572b759f9a..09e324cbd32f 100644
---- a/drivers/clk/mxs/clk-imx28.c
-+++ b/drivers/clk/mxs/clk-imx28.c
-@@ -174,13 +174,13 @@ static void __init mx28_clocks_init(struct device_node *np)
- 	clks[pll0] = mxs_clk_pll("pll0", "ref_xtal", PLL0CTRL0, 17, 480000000);
- 	clks[pll1] = mxs_clk_pll("pll1", "ref_xtal", PLL1CTRL0, 17, 480000000);
- 	clks[pll2] = mxs_clk_pll("pll2", "ref_xtal", PLL2CTRL0, 23, 50000000);
--	clks[ref_cpu] = mxs_clk_ref("ref_cpu", "pll0", FRAC0, 0);
--	clks[ref_emi] = mxs_clk_ref("ref_emi", "pll0", FRAC0, 1);
--	clks[ref_io1] = mxs_clk_ref("ref_io1", "pll0", FRAC0, 2);
--	clks[ref_io0] = mxs_clk_ref("ref_io0", "pll0", FRAC0, 3);
--	clks[ref_pix] = mxs_clk_ref("ref_pix", "pll0", FRAC1, 0);
--	clks[ref_hsadc] = mxs_clk_ref("ref_hsadc", "pll0", FRAC1, 1);
--	clks[ref_gpmi] = mxs_clk_ref("ref_gpmi", "pll0", FRAC1, 2);
-+	clks[ref_cpu] = mxs_clk_ref("ref_cpu", "pll0", FRAC0, 0, 18);
-+	clks[ref_emi] = mxs_clk_ref("ref_emi", "pll0", FRAC0, 1, 18);
-+	clks[ref_io1] = mxs_clk_ref("ref_io1", "pll0", FRAC0, 2, 30);
-+	clks[ref_io0] = mxs_clk_ref("ref_io0", "pll0", FRAC0, 3, 30);
-+	clks[ref_pix] = mxs_clk_ref("ref_pix", "pll0", FRAC1, 0, 18);
-+	clks[ref_hsadc] = mxs_clk_ref("ref_hsadc", "pll0", FRAC1, 1, 18);
-+	clks[ref_gpmi] = mxs_clk_ref("ref_gpmi", "pll0", FRAC1, 2, 18);
- 	clks[saif0_sel] = mxs_clk_mux("saif0_sel", CLKSEQ, 0, 1, sel_pll0, ARRAY_SIZE(sel_pll0));
- 	clks[saif1_sel] = mxs_clk_mux("saif1_sel", CLKSEQ, 1, 1, sel_pll0, ARRAY_SIZE(sel_pll0));
- 	clks[gpmi_sel] = mxs_clk_mux("gpmi_sel", CLKSEQ, 2, 1, sel_gpmi, ARRAY_SIZE(sel_gpmi));
-diff --git a/drivers/clk/mxs/clk-ref.c b/drivers/clk/mxs/clk-ref.c
-index 495f99b7965e..9385563b3ea8 100644
---- a/drivers/clk/mxs/clk-ref.c
-+++ b/drivers/clk/mxs/clk-ref.c
-@@ -23,13 +23,17 @@
-  *
-  * The mxs reference clock sources from pll.  Every 4 reference clocks share
-  * one register space, and @idx is used to identify them.  Each reference
-- * clock has a gate control and a fractional * divider.  The rate is calculated
-+ * clock has a gate control and a fractional divider.  The rate is calculated
-  * as pll rate  * (18 / FRAC), where FRAC = 18 ~ 35.
-+ *
-+ * As some clocks are not reliable at high speed (imx28 io0 and io1), the clock
-+ * can be limited to not use FRAC < min_frac.
-  */
- struct clk_ref {
- 	struct clk_hw hw;
- 	void __iomem *reg;
- 	u8 idx;
-+	u8 min_frac;
- };
- 
- #define to_clk_ref(_hw) container_of(_hw, struct clk_ref, hw)
-@@ -66,6 +70,7 @@ static unsigned long clk_ref_recalc_rate(struct clk_hw *hw,
- static long clk_ref_round_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long *prate)
- {
-+	struct clk_ref *ref = to_clk_ref(hw);
- 	unsigned long parent_rate = *prate;
- 	u64 tmp = parent_rate;
- 	u8 frac;
-@@ -74,8 +79,8 @@ static long clk_ref_round_rate(struct clk_hw *hw, unsigned long rate,
- 	do_div(tmp, rate);
- 	frac = tmp;
- 
--	if (frac < 18)
--		frac = 18;
-+	if (frac < ref->min_frac)
-+		frac = ref->min_frac;
- 	else if (frac > 35)
- 		frac = 35;
- 
-@@ -99,8 +104,8 @@ static int clk_ref_set_rate(struct clk_hw *hw, unsigned long rate,
- 	do_div(tmp, rate);
- 	frac = tmp;
- 
--	if (frac < 18)
--		frac = 18;
-+	if (frac < ref->min_frac)
-+		frac = ref->min_frac;
- 	else if (frac > 35)
- 		frac = 35;
- 
-@@ -125,7 +130,7 @@ static const struct clk_ops clk_ref_ops = {
- };
- 
- struct clk *mxs_clk_ref(const char *name, const char *parent_name,
--			void __iomem *reg, u8 idx)
-+			void __iomem *reg, u8 idx, u8 min_frac)
- {
- 	struct clk_ref *ref;
- 	struct clk *clk;
-@@ -143,6 +148,7 @@ struct clk *mxs_clk_ref(const char *name, const char *parent_name,
- 
- 	ref->reg = reg;
- 	ref->idx = idx;
-+	ref->min_frac = min_frac;
- 	ref->hw.init = &init;
- 
- 	clk = clk_register(NULL, &ref->hw);
-diff --git a/drivers/clk/mxs/clk.h b/drivers/clk/mxs/clk.h
-index 5a264a486ad9..fb63462a78cd 100644
---- a/drivers/clk/mxs/clk.h
-+++ b/drivers/clk/mxs/clk.h
-@@ -28,7 +28,7 @@ struct clk *mxs_clk_pll(const char *name, const char *parent_name,
- 			void __iomem *base, u8 power, unsigned long rate);
- 
- struct clk *mxs_clk_ref(const char *name, const char *parent_name,
--			void __iomem *reg, u8 idx);
-+			void __iomem *reg, u8 idx, u8 min_frac);
- 
- struct clk *mxs_clk_div(const char *name, const char *parent_name,
- 			void __iomem *reg, u8 shift, u8 width, u8 busy);
--- 
-2.11.0
+iQIcBAABCAAGBQJZCyOqAAoJEBx+YmzsjxAgrcAP/RB0kQvj5t2uxKRoj5WbfWmJ
+EjfUEk8xsJ36nX/XQaWiVAJKq4QLL//h/LVtw/7qbZUc3JozW6riWr1YGD7K18Wu
+AY+4ArKBnHj2frDR1+Y+m8DZWItKYF6z/lUzDDa/k6LQHiS/LfdXAHOVGiGCyTWr
+lCfgeoqlRf2TJc9DB91d956K8M4R3qT5BcHoRXtgNHuVgzw9vYQ4zMWApple9bCh
+xiVJAbTTwyipMmqw44gU9sjriz9MoySNKwREzr7AXjUBk0FqgD5CCgUsk9XVWM1s
+KrWl2mXblDgLXXN7EBFfVbXNZAV/dpRzzXoboAUu6UjEAzv0dzp/dKxQzWt8/YcS
+rSl6OsMCzW99Vgh1w+WUQGEb3TGFvBsjOqaxcKQyRpzHQaWz/GzdKrx666stn8qi
+JftCEDa6HnBASYY2N/rHiDEM+nsE0Y9GKuSXjJuEYYXrnTCRwtm3nenpeNvmOiCE
+xdsECNSJ3f7xUN884X5Ha3yPNf48EhhNDS+oDu3/U840ZdfBqFNM9AE0dCjg0Eqg
+C1opAXsKoMMqtcdVvYdvdTTgu/99phZF5+GJ9xwr96ICWmFaPa8Ydy8FiuEKn1DY
+1/mAsNyfRUyIKNPrlf/mz0WnTCAjoerfqVYBqNvSuvZBH88YpSEysnCq7KM+9MV9
+lCZ943g2HfB1HeLdasWC
+=LjIg
+-----END PGP SIGNATURE-----
+
+--njmu7voz264w32d4--
