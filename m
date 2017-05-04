@@ -1,92 +1,72 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <a8d8a93ddbac69e5dddd9c89a147f8cf2ad043a4.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
- <a8d8a93ddbac69e5dddd9c89a147f8cf2ad043a4.1495006350.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 17 May 2017 17:50:45 +0800
-Message-ID: <CAGb2v65ZWHi_Dhsy__yVrz7330pfyMbBDTqoEE37NcSXOU_W7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 14/21] drm/sun4i: tcon: multiply the vtotal when not in interlace
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH v2 0/5] Add minimal boot support for IPQ8074
+Date: Thu,  4 May 2017 17:23:56 +0530
+Message-Id: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 17, 2017 at 3:40 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> It appears that the total vertical resolution needs to be doubled when
-> we're not in interlaced. Make sure that is the case.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 62e254aedb57..a0f9a8a516c7 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -153,7 +153,7 @@ static int sun4i_tcon_get_clk_delay(struct drm_display_mode *mode,
->  void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
->                           struct drm_display_mode *mode)
->  {
-> -       unsigned int bp, hsync, vsync;
-> +       unsigned int bp, hsync, vsync, vtotal;
->         u8 clk_delay;
->         u32 val = 0;
->
-> @@ -192,9 +192,26 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
->         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
->                          mode->crtc_vtotal, bp);
->
-> +       /*
-> +        * The vertical resolution needs to be doubled in all
-> +        * cases. We could use crtc_vtotal and always multiply by two,
-> +        * but that leads to a rounding error in interlace when vtotal
-> +        * is odd.
-> +        *
-> +        * This happens with TV's PAL for example, where vtotal will
-> +        * be 625, crtc_vtotal 312, and thus crtc_vtotal * 2 will be
-> +        * 624, which apparently confuses the hardware.
-> +        *
-> +        * To work around this, we will always use vtotal, and
-> +        * multiply by two only if we're not in interlace.
-> +        */
-> +       vtotal = mode->vtotal;
-> +       if (!(mode->flags & DRM_MODE_FLAG_INTERLACE))
-> +               vtotal = vtotal * 2;
-> +
->         /* Set vertical display timings */
->         regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
-> -                    SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
-> +                    SUN4I_TCON0_BASIC2_V_TOTAL(vtotal) |
->                      SUN4I_TCON0_BASIC2_V_BACKPORCH(bp));
->
->         /* Set Hsync and Vsync length */
-> @@ -279,9 +296,9 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
->         /* Set vertical display timings */
->         bp = mode->crtc_vtotal - mode->crtc_vsync_start;
->         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
-> -                        mode->vtotal, bp);
-> +                        mode->crtc_vtotal, bp);
+v2:
+  * Addressed review feedback from Stephen
+    - Removed cpu-map entries
+    - Added mmio-timer nodes
+  * Fix sparse warnings in the gcc-ipq8074.c
+  * Updated pinctrl documentation
 
-You should duplicate the logic from channel 0 to channel 1.
-In fact, interlaced modes happen predominantly on channel 1,
-for composite and HDMI modes.
+v1:
+  https://www.spinics.net/lists/kernel/msg2498734.html
+  This series adds minimal board boot support for ipq8074-hk01
+  board.
 
-ChenYu
+Abhishek Sahu (2):
+  clk: qcom: ipq8074: Add Global Clock Controller support
+  arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
 
->         regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
-> -                    SUN4I_TCON1_BASIC4_V_TOTAL(mode->vtotal) |
-> +                    SUN4I_TCON1_BASIC4_V_TOTAL(mode->crtc_vtotal * 2) |
->                      SUN4I_TCON1_BASIC4_V_BACKPORCH(bp));
->
->         /* Set Hsync and Vsync length */
-> --
-> git-series 0.9.1
+Varadarajan Narayanan (3):
+  pinctrl: qcom: Add ipq8074 pinctrl driver
+  dt-bindings: qcom: Add IPQ8074 bindings
+  arm64: dts: Add ipq8074 SoC and HK01 board support
+
+ Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  187 +++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   53 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq8074.c                     | 1032 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                       |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1217 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
+ 14 files changed, 2862 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
