@@ -1,62 +1,180 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <CAOMZO5BZ8pqBW2VfuaUGyzgn8kv3AdvhwQ5nFEWuUSpmvrW9rA@mail.gmail.com>
- <20170530065457.e2m4nyo2dztumyi6@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
- Sascha Hauer <kernel@pengutronix.de>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <2f36b783-72a5-6271-42c0-7d5fdad212a1@i2se.com>
-Date: Tue, 30 May 2017 10:04:33 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170530065457.e2m4nyo2dztumyi6@pengutronix.de>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:38694 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752785AbdEDLnc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 May 2017 07:43:32 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 04/13] drm/sun4i: return only planes for layers created
+Date: Thu,  4 May 2017 19:41:59 +0800
+Message-Id: <20170504114208.8524-4-icenowy@aosc.io>
+In-Reply-To: <20170504114208.8524-1-icenowy@aosc.io>
+References: <20170504114208.8524-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 30.05.2017 um 08:54 schrieb Uwe Kleine-König:
-> On Mon, May 29, 2017 at 06:21:49PM -0300, Fabio Estevam wrote:
->> Hi Uwe,
->>
->> On Wed, May 3, 2017 at 3:56 PM, Uwe Kleine-König
->> <u.kleine-koenig@pengutronix.de> wrote:
->>> Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
->>> 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
->>> SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
->>> to 288 MHz because the initial frequency "seems too high to be ssp clock
->>> source directly". However this isn't enough to ensure that the frequency
->>> isn't increased later again. In fact this happens on my machine as the
->>> mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
->>> ssp2 which is resolved to
->>>
->>>         ref_io1.rate = 320 MHz
->>>         ssp2_sel.parent = ref_io1
->>>         ssp2_div.divider = 2
->>>
->>> . The observed effect is that reading MISO reliably fails: Instead of
->>> the least significant bit the second least significant bit is reported
->>> twice. This is probably related to the reports
->>>
->>>         https://community.nxp.com/thread/290209
->>>         https://community.nxp.com/thread/310434
->> As Stefan mentioned that your patch does not solve his issue, please
->> remove this link when you submit a v2.
-> I still think it is related to these reports, don't you?
+As we are going to add support for the Allwinner DE2 Mixer in sun4i-drm
+driver, we will finally have two types of layers.
 
-I think this is related somehow, but this version doesn't mention that
-it doesn't fix the linked issue. So removing the link would be the best
-in order to avoid confusion.
+Each layer is bound to a drm_plane that is CRTC-specific, so we create
+them when initializing CRTC (calling sun4i_layers_init, which will be
+generalized in next patch). The drm_plane's will be used when creating
+CRTC, but the CRTC initialization code do not care other properties of
+the layer, so we let the sun4i_layers_init function return drm_plane's
+only.
 
-Btw did you tried to disable DMA transfer during your tests?
+As we have no need to trace the layers after the CRTC is properly
+created, we drop the layers pointer in sun4i_crtc struct.
 
-Regards
-Stefan
+Doing these things makes the CRTC code independent to the type of layer
+(the sun4i_layers_init function name is still hardcoded and will be
+changed in the next patch), so that we can finally gain support for the
+mixer in DE2, which will has different layers.
 
->
-> Best regards
-> Uwe
->
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/gpu/drm/sun4i/sun4i_crtc.c  | 23 ++++++++++++-----------
+ drivers/gpu/drm/sun4i/sun4i_crtc.h  |  1 -
+ drivers/gpu/drm/sun4i/sun4i_layer.c | 18 ++++++++++--------
+ drivers/gpu/drm/sun4i/sun4i_layer.h |  4 ++--
+ 4 files changed, 24 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+index 3c876c3a356a..708b3543d4e9 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+@@ -139,6 +139,7 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
+ 				   struct sun4i_tcon *tcon)
+ {
+ 	struct sun4i_crtc *scrtc;
++	struct drm_plane **planes;
+ 	struct drm_plane *primary = NULL, *cursor = NULL;
+ 	int ret, i;
+ 
+@@ -149,22 +150,22 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
+ 	scrtc->tcon = tcon;
+ 
+ 	/* Create our layers */
+-	scrtc->layers = sun4i_layers_init(drm, scrtc->backend);
+-	if (IS_ERR(scrtc->layers)) {
++	planes = sun4i_layers_init(drm, scrtc);
++	if (IS_ERR(planes)) {
+ 		dev_err(drm->dev, "Couldn't create the planes\n");
+ 		return NULL;
+ 	}
+ 
+ 	/* find primary and cursor planes for drm_crtc_init_with_planes */
+-	for (i = 0; scrtc->layers[i]; i++) {
+-		struct sun4i_layer *layer = scrtc->layers[i];
++	for (i = 0; planes[i]; i++) {
++		struct drm_plane *plane = planes[i];
+ 
+-		switch (layer->plane.type) {
++		switch (plane->type) {
+ 		case DRM_PLANE_TYPE_PRIMARY:
+-			primary = &layer->plane;
++			primary = plane;
+ 			break;
+ 		case DRM_PLANE_TYPE_CURSOR:
+-			cursor = &layer->plane;
++			cursor = plane;
+ 			break;
+ 		default:
+ 			break;
+@@ -188,12 +189,12 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
+ 						   1);
+ 
+ 	/* Set possible_crtcs to this crtc for overlay planes */
+-	for (i = 0; scrtc->layers[i]; i++) {
++	for (i = 0; planes[i]; i++) {
+ 		uint32_t possible_crtcs = BIT(drm_crtc_index(&scrtc->crtc));
+-		struct sun4i_layer *layer = scrtc->layers[i];
++		struct drm_plane *plane = planes[i];
+ 
+-		if (layer->plane.type == DRM_PLANE_TYPE_OVERLAY)
+-			layer->plane.possible_crtcs = possible_crtcs;
++		if (plane->type == DRM_PLANE_TYPE_OVERLAY)
++			plane->possible_crtcs = possible_crtcs;
+ 	}
+ 
+ 	return scrtc;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h b/drivers/gpu/drm/sun4i/sun4i_crtc.h
+index 230cb8f0d601..4dae3508424a 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
++++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
+@@ -19,7 +19,6 @@ struct sun4i_crtc {
+ 
+ 	struct sun4i_backend		*backend;
+ 	struct sun4i_tcon		*tcon;
+-	struct sun4i_layer		**layers;
+ };
+ 
+ static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
+index f26bde5b9117..e1f03e1cc0ac 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_layer.c
++++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
+@@ -16,6 +16,7 @@
+ #include <drm/drmP.h>
+ 
+ #include "sun4i_backend.h"
++#include "sun4i_crtc.h"
+ #include "sun4i_layer.h"
+ 
+ struct sun4i_plane_desc {
+@@ -128,15 +129,16 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
+ 	return layer;
+ }
+ 
+-struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
+-				       struct sun4i_backend *backend)
++struct drm_plane **sun4i_layers_init(struct drm_device *drm,
++				     struct sun4i_crtc *crtc)
+ {
+-	struct sun4i_layer **layers;
++	struct drm_plane **planes;
++	struct sun4i_backend *backend = crtc->backend;
+ 	int i;
+ 
+-	layers = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
+-			      sizeof(*layers), GFP_KERNEL);
+-	if (!layers)
++	planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
++			      sizeof(*planes), GFP_KERNEL);
++	if (!planes)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	/*
+@@ -178,8 +180,8 @@ struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
+ 				   SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL(plane->pipe));
+ 
+ 		layer->id = i;
+-		layers[i] = layer;
++		planes[i] = &layer->plane;
+ 	};
+ 
+-	return layers;
++	return planes;
+ }
+diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h b/drivers/gpu/drm/sun4i/sun4i_layer.h
+index 4be1f0919df2..5ea5c994d6ea 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_layer.h
++++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
+@@ -26,7 +26,7 @@ plane_to_sun4i_layer(struct drm_plane *plane)
+ 	return container_of(plane, struct sun4i_layer, plane);
+ }
+ 
+-struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
+-				       struct sun4i_backend *backend);
++struct drm_plane **sun4i_layers_init(struct drm_device *drm,
++				     struct sun4i_crtc *crtc);
+ 
+ #endif /* _SUN4I_LAYER_H_ */
+-- 
+2.12.2
+
