@@ -1,129 +1,92 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	guodong.xu@linaro.org,
-	chenjun14@huawei.com,
-	zhongkaihua@huawei.com,
-	zhangfei.gao@linaro.org,
-	leo.yan@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/3] clk: hi3660: add clocks for video encoder and decoder
-Date: Mon, 15 May 2017 13:54:22 +0800
-Message-Id: <20170515055423.1803-2-guodong.xu@linaro.org>
-In-Reply-To: <20170515055423.1803-1-guodong.xu@linaro.org>
-References: <20170515055423.1803-1-guodong.xu@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 4 May 2017 16:04:31 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v2 02/10] pinctrl: sunxi: add definitions for add A20 and
+ R40 support to A10 driver
+Message-ID: <20170504140431.zhpcxvphxnxj7ipq@lukather>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+ <20170504135006.16483-3-icenowy@aosc.io>
+MIME-Version: 1.0
+In-Reply-To: <20170504135006.16483-3-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============3602956582948042302=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Chen Jun <chenjun14@huawei.com>
 
-This patch adds clocks for video encoder and decoder.
+--===============3602956582948042302==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kgqcsg4xoxy3tnku"
+Content-Disposition: inline
 
-Signed-off-by: Chen Jun <chenjun14@huawei.com>
-Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
----
- drivers/clk/hisilicon/clk-hi3660.c       | 23 +++++++++++++++++++++++
- include/dt-bindings/clock/hi3660-clock.h | 10 ++++++++++
- 2 files changed, 33 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index 143ce0c..ffc765a 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -47,9 +47,12 @@ static const struct hisi_fixed_factor_clock hi3660_crg_fixed_factor_clks[] = {
- 	{ HI3660_CLK_GATE_SPI2, "clk_gate_spi2", "clk_ppll0", 1, 8, 0, },
- 	{ HI3660_PCIEPHY_REF, "clk_pciephy_ref", "clk_div_pciephy", 1, 1, 0, },
- 	{ HI3660_CLK_ABB_USB, "clk_abb_usb", "clk_gate_usb_tcxo_en", 1, 1, 0 },
-+	{ HI3660_VENC_VOLT_HOLD, "venc_volt_hold", "peri_volt_hold", 1, 1, 0, },
- };
- 
- static const struct hisi_gate_clock hi3660_crgctrl_gate_sep_clks[] = {
-+	{ HI3660_PERI_VOLT_HOLD, "peri_volt_hold", "clkin_sys",
-+	  CLK_SET_RATE_PARENT, 0x0, 0, 0, },
- 	{ HI3660_HCLK_GATE_SDIO0, "hclk_gate_sdio0", "clk_div_sysbus",
- 	  CLK_SET_RATE_PARENT, 0x0, 21, 0, },
- 	{ HI3660_HCLK_GATE_SD, "hclk_gate_sd", "clk_div_sysbus",
-@@ -120,6 +123,10 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_sep_clks[] = {
- 	  CLK_SET_RATE_PARENT, 0x20, 27, 0, },
- 	{ HI3660_CLK_GATE_DMAC, "clk_gate_dmac", "clk_div_sysbus",
- 	  CLK_SET_RATE_PARENT, 0x30, 1, 0, },
-+	{ HI3660_CLK_GATE_VENC, "clk_gate_venc", "clk_div_venc",
-+	  CLK_SET_RATE_PARENT, 0x30, 10, 0, },
-+	{ HI3660_CLK_GATE_VDEC, "clk_gate_vdec", "clk_div_vdec",
-+	  CLK_SET_RATE_PARENT, 0x30, 11, 0, },
- 	{ HI3660_PCLK_GATE_DSS, "pclk_gate_dss", "clk_div_cfgbus",
- 	  CLK_SET_RATE_PARENT, 0x30, 12, 0, },
- 	{ HI3660_ACLK_GATE_DSS, "aclk_gate_dss", "clk_gate_vivobus",
-@@ -171,6 +178,10 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_clks[] = {
- 	  CLK_SET_RATE_PARENT, 0xf0, 7, CLK_GATE_HIWORD_MASK, },
- 	{ HI3660_CLK_ANDGT_EDC0, "clk_andgt_edc0", "clk_mux_edc0",
- 	  CLK_SET_RATE_PARENT, 0xf0, 8, CLK_GATE_HIWORD_MASK, },
-+	{ HI3660_CLK_ANDGT_VDEC, "clk_andgt_vdec", "clk_mux_vdec",
-+	  CLK_SET_RATE_PARENT, 0xf0, 15, CLK_GATE_HIWORD_MASK, },
-+	{ HI3660_CLK_ANDGT_VENC, "clk_andgt_venc", "clk_mux_venc",
-+	  CLK_SET_RATE_PARENT, 0xf4, 0, CLK_GATE_HIWORD_MASK, },
- 	{ HI3660_CLK_GATE_UFSPHY_GT, "clk_gate_ufsphy_gt", "clk_div_ufsperi",
- 	  CLK_SET_RATE_PARENT, 0xf4, 1, CLK_GATE_HIWORD_MASK, },
- 	{ HI3660_CLK_ANDGT_MMC, "clk_andgt_mmc", "clk_mux_mmc_pll",
-@@ -239,6 +250,8 @@ static const char *const
- clk_mux_spi_p[] = {"clkin_sys", "clk_div_spi",};
- static const char *const
- clk_mux_i2c_p[] = {"clkin_sys", "clk_div_i2c",};
-+static const char *const
-+clk_mux_venc_p[] = {"clk_ppll0", "clk_ppll1", "clk_ppll3", "clk_ppll3",};
- 
- static const struct hisi_mux_clock hi3660_crgctrl_mux_clks[] = {
- 	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sysbus_p,
-@@ -283,6 +296,12 @@ static const struct hisi_mux_clock hi3660_crgctrl_mux_clks[] = {
- 	{ HI3660_CLK_MUX_SDIO_PLL, "clk_mux_sdio_pll", clk_mux_pll_p,
- 	  ARRAY_SIZE(clk_mux_pll_p), CLK_SET_RATE_PARENT, 0xc0, 4, 2,
- 	  CLK_MUX_HIWORD_MASK, },
-+	{ HI3660_CLK_MUX_VENC, "clk_mux_venc", clk_mux_venc_p,
-+	  ARRAY_SIZE(clk_mux_venc_p), CLK_SET_RATE_PARENT, 0xc8, 11, 2,
-+	  CLK_MUX_HIWORD_MASK, },
-+	{ HI3660_CLK_MUX_VDEC, "clk_mux_vdec", clk_mux_pll0123_p,
-+	  ARRAY_SIZE(clk_mux_pll0123_p), CLK_SET_RATE_PARENT, 0xcc, 5, 2,
-+	  CLK_MUX_HIWORD_MASK, },
- 	{ HI3660_CLK_MUX_VIVOBUS, "clk_mux_vivobus", clk_mux_pll0123_p,
- 	  ARRAY_SIZE(clk_mux_pll0123_p), CLK_SET_RATE_PARENT, 0xd0, 12, 2,
- 	  CLK_MUX_HIWORD_MASK, },
-@@ -318,6 +337,10 @@ static const struct hisi_divider_clock hi3660_crgctrl_divider_clks[] = {
- 	  CLK_SET_RATE_PARENT, 0xc0, 8, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
- 	{ HI3660_CLK_DIV_SPI, "clk_div_spi", "clk_andgt_spi",
- 	  CLK_SET_RATE_PARENT, 0xc4, 12, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
-+	{ HI3660_CLK_DIV_VENC, "clk_div_venc", "clk_andgt_venc",
-+	  CLK_SET_RATE_PARENT, 0xc8, 6, 5, CLK_DIVIDER_HIWORD_MASK, 0, },
-+	{ HI3660_CLK_DIV_VDEC, "clk_div_vdec", "clk_andgt_vdec",
-+	  CLK_SET_RATE_PARENT, 0xcc, 0, 5, CLK_DIVIDER_HIWORD_MASK, 0, },
- 	{ HI3660_CLK_DIV_VIVOBUS, "clk_div_vivobus", "clk_vivobus_andgt",
- 	  CLK_SET_RATE_PARENT, 0xd0, 7, 5, CLK_DIVIDER_HIWORD_MASK, 0, },
- 	{ HI3660_CLK_DIV_I2C, "clk_div_i2c", "clk_div_320m",
-diff --git a/include/dt-bindings/clock/hi3660-clock.h b/include/dt-bindings/clock/hi3660-clock.h
-index 1c00b7f..2cf01b4 100644
---- a/include/dt-bindings/clock/hi3660-clock.h
-+++ b/include/dt-bindings/clock/hi3660-clock.h
-@@ -154,6 +154,16 @@
- #define HI3660_CLK_DIV_UFSPERI		137
- #define HI3660_CLK_DIV_AOMM		138
- #define HI3660_CLK_DIV_IOPERI		139
-+#define HI3660_VENC_VOLT_HOLD		140
-+#define HI3660_PERI_VOLT_HOLD		141
-+#define HI3660_CLK_GATE_VENC		142
-+#define HI3660_CLK_GATE_VDEC		143
-+#define HI3660_CLK_ANDGT_VENC		144
-+#define HI3660_CLK_ANDGT_VDEC		145
-+#define HI3660_CLK_MUX_VENC		146
-+#define HI3660_CLK_MUX_VDEC		147
-+#define HI3660_CLK_DIV_VENC		148
-+#define HI3660_CLK_DIV_VDEC		149
- 
- /* clk in pmuctrl */
- #define HI3660_GATE_ABB_192		0
--- 
-2.10.2
+--kgqcsg4xoxy3tnku
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, May 04, 2017 at 09:49:58PM +0800, Icenowy Zheng wrote:
+> Allwinner A10, A20 and R40 SoCs have similar GPIO layout.
+>=20
+> Add SoC definitions in pinctrl-sunxi.h, in order to merge A20 support
+> into A10 driver, and add R40 support into it.
+
+While your commit log is good, the commit title is misleading since
+you're not adding it to the A10 driver. You just adding SoC IDs
+definitions
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--kgqcsg4xoxy3tnku
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJZCzTvAAoJEBx+YmzsjxAgd/cP/3OOUGdwACceEtrAhpsacN3x
+zWHrvAdFSTCNwp8DeLePhib92C4lwwTWwGUmjc/GgEU6DqShm9LGd1Fv2yvssAFN
+9OnbLbrWPPvlTJqcSZ6ni9Y5hh4m2FOvF3mSvJWfDpTjnu90wT8HIg7xKz5Ks/MZ
+s0PGx+2BbGlwp0dTG5xPa5C8W8TkueblOU9b8uXS2g8I5LuI0hYbjCDq8hhXD7u7
+C7SRMOkPXmtXfhWdNqbh/yfWW5NYtlqHaqMj5BlNKVlZaWwB4MJJts9alTpmAb90
+diQuNLBuLtSwiC0s2/MeS3EKK/QlTt4KJkYsvegel+ddaLg0HMD7oICZ4OJvJuQx
+9VXvS8j/MPKGM8bM3qVfqLOu7pMVIFacp+p7r9+RJuwfhUQ78uVPkGEERlj2bjKm
+aLqGybWKE5dysQK8gpJ8VDbUCmaV2lntYEq5i+gS/U0WWnj9nx1Q+AO6U45i16sE
+aJddZAcabqjZ0aKr+ANRJ9ac2h1mHFinVe1Cg8YgHHkl6sYohtq53I8GNdL2n3lb
+itgSSkej412TkKLAE0WRSKUH2FesF2AFKDCQSlPAl1mYSxgkUZKVbgUHqglbOYDa
+YnQaoUP1AMCff505JTdEKuBFiYQqXGPECmufP7iLEKP36Dbu6UNBXhLkcm12txgW
+sZ9rerSJHsme9E/ykJi9
+=hJRg
+-----END PGP SIGNATURE-----
+
+--kgqcsg4xoxy3tnku--
+
+
+--===============3602956582948042302==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============3602956582948042302==--
