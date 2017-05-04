@@ -1,171 +1,72 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>
-Subject: [PATCH 6/9] clk: imx: add composite clk support
-Date: Mon, 15 May 2017 21:59:20 +0800
-Message-ID: <1494856763-6543-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:43733 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753132AbdEDNu0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 May 2017 09:50:26 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 00/10] Initial Allwinner R40 support
+Date: Thu,  4 May 2017 21:49:56 +0800
+Message-Id: <20170504135006.16483-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The imx composite clk is designed for Peripheral Clock Control (PCC)
-module observed in IMX ULP SoC series. e.g. i.MX7ULP.
+This is the first non-RFC version of this patchset, which added basical
+support including I2C, UART and MMC to the mainline Linux.
 
-NOTE pcc can only be operated when clk is gated.
+The pinctrl driver of A20 is also merged into the one of A10 before
+R40 support is added into the A10 driver.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/Makefile        |  1 +
- drivers/clk/imx/clk-composite.c | 93 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h           |  7 +++-
- 3 files changed, 100 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-composite.c
+Chen-Yu Tsai (2):
+  ARM: dts: sun8i: Add basic dtsi file for Allwinner R40
+  ARM: dts: sun8i: Add board dts file for Banana Pi M2 Ultra
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index ea4ef27..bf001ce 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -3,6 +3,7 @@ obj-y += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
-+	clk-composite.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
- 	clk-gate-exclusive.o \
-diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
-new file mode 100644
-index 0000000..c440827
---- /dev/null
-+++ b/drivers/clk/imx/clk-composite.c
-@@ -0,0 +1,93 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ *
-+ * The code contained herein is licensed under the GNU General Public
-+ * License. You may obtain a copy of the GNU General Public License
-+ * Version 2 or later at the following locations:
-+ *
-+ * http://www.opensource.org/licenses/gpl-license.html
-+ * http://www.gnu.org/copyleft/gpl.html
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+
-+#include "clk.h"
-+
-+#define PCG_PCS_SHIFT	24
-+#define PCG_PCS_MASK	0x7
-+#define PCG_CGC_SHIFT	30
-+#define PCG_FRAC_SHIFT	3
-+#define PCG_FRAC_WIDTH	1
-+#define PCG_FRAC_MASK	BIT(3)
-+#define PCG_PCD_SHIFT	0
-+#define PCG_PCD_WIDTH	3
-+#define PCG_PCD_MASK	0x7
-+
-+struct clk *imx_clk_composite(const char *name,
-+			      const char * const *parent_names,
-+			      int num_parents, bool mux_present,
-+			      bool rate_present, bool gate_present,
-+			      void __iomem *reg)
-+{
-+	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
-+	struct clk_fractional_divider *fd = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_mux *mux = NULL;
-+	struct clk *clk;
-+
-+	if (mux_present) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+		mux_hw = &mux->hw;
-+		mux->reg = reg;
-+		mux->shift = PCG_PCS_SHIFT;
-+		mux->mask = PCG_PCS_MASK;
-+	}
-+
-+	if (rate_present) {
-+		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+		if (!fd) {
-+			kfree(mux);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		fd_hw = &fd->hw;
-+		fd->reg = reg;
-+		fd->mshift = PCG_FRAC_SHIFT;
-+		fd->mwidth = PCG_FRAC_WIDTH;
-+		fd->mmask  = PCG_FRAC_MASK;
-+		fd->nshift = PCG_PCD_SHIFT;
-+		fd->nwidth = PCG_PCD_WIDTH;
-+		fd->nmask = PCG_PCD_MASK;
-+		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
-+	}
-+
-+	if (gate_present) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate) {
-+			kfree(mux);
-+			kfree(fd);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		gate_hw = &gate->hw;
-+		gate->reg = reg;
-+		gate->bit_idx = PCG_CGC_SHIFT;
-+	}
-+
-+	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-+				     mux_hw, &clk_mux_ops, fd_hw,
-+				     &clk_fractional_divider_ops, gate_hw,
-+				     &clk_gate_ops, CLK_SET_RATE_GATE |
-+				     CLK_SET_PARENT_GATE);
-+	if (IS_ERR(clk)) {
-+		kfree(mux);
-+		kfree(fd);
-+		kfree(gate);
-+	}
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 51b84e4..665777e 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -69,6 +69,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
- 			     const char **parent_names, int num_parents);
- 
-+struct clk *imx_clk_composite(const char *name,
-+			      const char * const *parent_names,
-+			      int num_parents, bool mux_present,
-+			      bool rate_present, bool gate_present,
-+			      void __iomem *reg);
-+
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
-@@ -209,5 +215,4 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
- struct clk *imx_clk_cpu(const char *name, const char *parent_name,
- 		struct clk *div, struct clk *mux, struct clk *pll,
- 		struct clk *step);
--
- #endif
+Icenowy Zheng (8):
+  arm: sunxi: add support for R40 SoC
+  pinctrl: sunxi: add definitions for add A20 and R40 support to A10
+    driver
+  pinctrl: sunxi: add A20 support to A10 driver
+  pinctrl: sunxi: switch A20's pinctrl driver to use the A10 version
+  dt-bindings: add compatible string for Allwinner R40 pinctrl
+  pinctrl: sunxi: add support of R40 to A10 pinctrl driver
+  dt-bindings: add compatible string for Allwinner R40 CCU
+  clk: sunxi-ng: support R40 SoC
+
+ Documentation/arm/sunxi/README                     |    4 +
+ Documentation/devicetree/bindings/arm/sunxi.txt    |    1 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  161 +++
+ arch/arm/boot/dts/sun8i-r40.dtsi                   |  404 +++++++
+ arch/arm/mach-sunxi/sunxi.c                        |    1 +
+ drivers/clk/sunxi-ng/Kconfig                       |   10 +
+ drivers/clk/sunxi-ng/Makefile                      |    1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c               | 1153 ++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h               |   68 ++
+ drivers/pinctrl/sunxi/Kconfig                      |    6 +-
+ drivers/pinctrl/sunxi/Makefile                     |    1 -
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |  449 ++++++--
+ drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c          | 1056 ------------------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              |    3 +
+ include/dt-bindings/clock/sun8i-r40-ccu.h          |  191 ++++
+ include/dt-bindings/reset/sun8i-r40-ccu.h          |  129 +++
+ 19 files changed, 2495 insertions(+), 1146 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-r40.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+ delete mode 100644 drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
+ create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+
 -- 
-2.7.4
+2.12.2
+
