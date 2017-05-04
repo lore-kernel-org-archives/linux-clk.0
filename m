@@ -1,1035 +1,1658 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:33730 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755278AbdESJDf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:03:35 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/5] ARM: dts: r8a7794: Convert to new CPG/MSSR bindings
-Date: Fri, 19 May 2017 11:03:20 +0200
-Message-Id: <1495184600-22745-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
-References: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 08/10] clk: sunxi-ng: support R40 SoC
+Date: Thu,  4 May 2017 21:50:04 +0800
+Message-Id: <20170504135006.16483-9-icenowy@aosc.io>
+In-Reply-To: <20170504135006.16483-1-icenowy@aosc.io>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Convert the R-Car E2 SoC from the old "Renesas R-Car Gen2 Clock Pulse
-Generator (CPG)", "Renesas CPG DIV6 Clock", and "Renesas CPG Module Stop
-(MSTP) Clocks" DT bindings to the new unified "Renesas Clock Pulse
-Generator / Module Standby and Software Reset" DT bindings.
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-This simplifies the DTS files, and allows to add support for reset
-control later.
+Allwinner R40 SoC have a clock controller module in the style of the
+SoCs beyond sun6i, however, it's more rich and complex.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts  |   3 +-
- arch/arm/boot/dts/r8a7794-silk.dts |   3 +-
- arch/arm/boot/dts/r8a7794.dtsi     | 528 ++++++-------------------------------
- 3 files changed, 82 insertions(+), 452 deletions(-)
+Changes in v2:
+- Fixes according to the SoC's user manual.
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index f1eea13cdf44371d..e45f92b5eb110790 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -167,8 +167,7 @@
- 	pinctrl-names = "default";
- 	status = "okay";
+ drivers/clk/sunxi-ng/Kconfig              |   10 +
+ drivers/clk/sunxi-ng/Makefile             |    1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1153 +++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   68 ++
+ include/dt-bindings/clock/sun8i-r40-ccu.h |  191 +++++
+ include/dt-bindings/reset/sun8i-r40-ccu.h |  129 ++++
+ 6 files changed, 1552 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+ create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 64088e599404..e6884eafde44 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -140,6 +140,16 @@ config SUN8I_V3S_CCU
+ 	default MACH_SUN8I
+ 	depends on MACH_SUN8I || COMPILE_TEST
  
--	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
--		 <&mstp7_clks R8A7794_CLK_DU1>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x13_clk>, <&x2_clk>;
- 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 4cb5278d104dfcb3..edfad0e5ac53a0c1 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -423,8 +423,7 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
--		 <&mstp7_clks R8A7794_CLK_DU1>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x2_clk>, <&x3_clk>;
- 	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index a19b884fb25897fc..9d137cdeaed96638 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -9,7 +9,7 @@
-  * kind, whether express or implied.
-  */
- 
--#include <dt-bindings/clock/r8a7794-clock.h>
-+#include <dt-bindings/clock/r8a7794-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/power/r8a7794-sysc.h>
-@@ -43,7 +43,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
--			clocks = <&z2_clk>;
-+			clocks = <&cpg CPG_CORE R8A7794_CLK_Z2>;
- 			power-domains = <&sysc R8A7794_PD_CA7_CPU0>;
- 			next-level-cache = <&L2_CA7>;
- 		};
-@@ -75,7 +75,7 @@
- 			<0 0xf1004000 0 0x2000>,
- 			<0 0xf1006000 0 0x2000>;
- 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
--		clocks = <&mstp4_clks R8A7794_CLK_INTC_SYS>;
-+		clocks = <&cpg CPG_MOD 408>;
- 		clock-names = "clk";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
-@@ -89,7 +89,7 @@
- 		gpio-ranges = <&pfc 0 0 32>;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
--		clocks = <&mstp9_clks R8A7794_CLK_GPIO0>;
-+		clocks = <&cpg CPG_MOD 912>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -102,7 +102,7 @@
- 		gpio-ranges = <&pfc 0 32 26>;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
--		clocks = <&mstp9_clks R8A7794_CLK_GPIO1>;
-+		clocks = <&cpg CPG_MOD 911>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -115,7 +115,7 @@
- 		gpio-ranges = <&pfc 0 64 32>;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
--		clocks = <&mstp9_clks R8A7794_CLK_GPIO2>;
-+		clocks = <&cpg CPG_MOD 910>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -128,7 +128,7 @@
- 		gpio-ranges = <&pfc 0 96 32>;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
--		clocks = <&mstp9_clks R8A7794_CLK_GPIO3>;
-+		clocks = <&cpg CPG_MOD 909>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -141,7 +141,7 @@
- 		gpio-ranges = <&pfc 0 128 32>;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
--		clocks = <&mstp9_clks R8A7794_CLK_GPIO4>;
-+		clocks = <&cpg CPG_MOD 908>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -154,7 +154,7 @@
- 		gpio-ranges = <&pfc 0 160 28>;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
--		clocks = <&mstp9_clks R8A7794_CLK_GPIO5>;
-+		clocks = <&cpg CPG_MOD 907>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -167,7 +167,7 @@
- 		gpio-ranges = <&pfc 0 192 26>;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
--		clocks = <&mstp9_clks R8A7794_CLK_GPIO6>;
-+		clocks = <&cpg CPG_MOD 905>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -176,7 +176,7 @@
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp1_clks R8A7794_CLK_CMT0>;
-+		clocks = <&cpg CPG_MOD 124>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 
-@@ -196,7 +196,7 @@
- 			     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7794_CLK_CMT1>;
-+		clocks = <&cpg CPG_MOD 329>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 
-@@ -228,7 +228,7 @@
- 			     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R8A7794_CLK_IRQC>;
-+		clocks = <&cpg CPG_MOD 407>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -261,7 +261,7 @@
- 				"ch4", "ch5", "ch6", "ch7",
- 				"ch8", "ch9", "ch10", "ch11",
- 				"ch12", "ch13", "ch14";
--		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC0>;
-+		clocks = <&cpg CPG_MOD 219>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
-@@ -292,7 +292,7 @@
- 				"ch4", "ch5", "ch6", "ch7",
- 				"ch8", "ch9", "ch10", "ch11",
- 				"ch12", "ch13", "ch14";
--		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC1>;
-+		clocks = <&cpg CPG_MOD 218>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
-@@ -320,7 +320,7 @@
- 				  "ch0", "ch1", "ch2", "ch3", "ch4", "ch5",
- 				  "ch6", "ch7", "ch8", "ch9", "ch10", "ch11",
- 				  "ch12";
--		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
-+		clocks = <&cpg CPG_MOD 502>;
- 		clock-names = "fck";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
-@@ -332,7 +332,7 @@
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c40000 0 64>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp2_clks R8A7794_CLK_SCIFA0>;
-+		clocks = <&cpg CPG_MOD 204>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
- 		       <&dmac1 0x21>, <&dmac1 0x22>;
-@@ -346,7 +346,7 @@
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c50000 0 64>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp2_clks R8A7794_CLK_SCIFA1>;
-+		clocks = <&cpg CPG_MOD 203>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
- 		       <&dmac1 0x25>, <&dmac1 0x26>;
-@@ -360,7 +360,7 @@
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c60000 0 64>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp2_clks R8A7794_CLK_SCIFA2>;
-+		clocks = <&cpg CPG_MOD 202>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
- 		       <&dmac1 0x27>, <&dmac1 0x28>;
-@@ -374,7 +374,7 @@
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c70000 0 64>;
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp11_clks R8A7794_CLK_SCIFA3>;
-+		clocks = <&cpg CPG_MOD 1106>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
- 		       <&dmac1 0x1b>, <&dmac1 0x1c>;
-@@ -388,7 +388,7 @@
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c78000 0 64>;
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp11_clks R8A7794_CLK_SCIFA4>;
-+		clocks = <&cpg CPG_MOD 1107>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
- 		       <&dmac1 0x1f>, <&dmac1 0x20>;
-@@ -402,7 +402,7 @@
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c80000 0 64>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp11_clks R8A7794_CLK_SCIFA5>;
-+		clocks = <&cpg CPG_MOD 1108>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
- 		       <&dmac1 0x23>, <&dmac1 0x24>;
-@@ -416,7 +416,7 @@
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c20000 0 0x100>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp2_clks R8A7794_CLK_SCIFB0>;
-+		clocks = <&cpg CPG_MOD 206>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
- 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
-@@ -430,7 +430,7 @@
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c30000 0 0x100>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp2_clks R8A7794_CLK_SCIFB1>;
-+		clocks = <&cpg CPG_MOD 207>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
- 		       <&dmac1 0x19>, <&dmac1 0x1a>;
-@@ -444,7 +444,7 @@
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6ce0000 0 0x100>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp2_clks R8A7794_CLK_SCIFB2>;
-+		clocks = <&cpg CPG_MOD 216>;
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
- 		       <&dmac1 0x1d>, <&dmac1 0x1e>;
-@@ -458,7 +458,7 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF0>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 721>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-@@ -473,7 +473,7 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF1>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 720>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-@@ -488,7 +488,7 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e58000 0 64>;
- 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF2>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 719>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-@@ -503,7 +503,7 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ea8000 0 64>;
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF3>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 718>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-@@ -518,7 +518,7 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ee0000 0 64>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF4>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 715>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
-@@ -533,7 +533,7 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ee8000 0 64>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF5>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 714>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
-@@ -548,7 +548,7 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSCIF0>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 717>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-@@ -563,7 +563,7 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSCIF1>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 716>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-@@ -578,7 +578,7 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62d0000 0 96>;
- 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSCIF2>, <&zs_clk>,
-+		clocks = <&cpg CPG_MOD 713>, <&cpg CPG_CORE R8A7794_CLK_ZS>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
-@@ -592,7 +592,7 @@
- 		compatible = "renesas,ether-r8a7794";
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp8_clks R8A7794_CLK_ETHER>;
-+		clocks = <&cpg CPG_MOD 813>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
-@@ -605,7 +605,7 @@
- 			     "renesas,etheravb-rcar-gen2";
- 		reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp8_clks R8A7794_CLK_ETHERAVB>;
-+		clocks = <&cpg CPG_MOD 812>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -617,7 +617,7 @@
- 		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6508000 0 0x40>;
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_I2C0>;
-+		clocks = <&cpg CPG_MOD 931>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -629,7 +629,7 @@
- 		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6518000 0 0x40>;
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_I2C1>;
-+		clocks = <&cpg CPG_MOD 930>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -641,7 +641,7 @@
- 		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6530000 0 0x40>;
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_I2C2>;
-+		clocks = <&cpg CPG_MOD 929>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -653,7 +653,7 @@
- 		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6540000 0 0x40>;
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_I2C3>;
-+		clocks = <&cpg CPG_MOD 928>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -665,7 +665,7 @@
- 		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6520000 0 0x40>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_I2C4>;
-+		clocks = <&cpg CPG_MOD 927>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -677,7 +677,7 @@
- 		compatible = "renesas,i2c-r8a7794", "renesas,rcar-gen2-i2c";
- 		reg = <0 0xe6528000 0 0x40>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_I2C5>;
-+		clocks = <&cpg CPG_MOD 925>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -690,7 +690,7 @@
- 			     "renesas,rmobile-iic";
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7794_CLK_IIC0>;
-+		clocks = <&cpg CPG_MOD 318>;
- 		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
- 		       <&dmac1 0x61>, <&dmac1 0x62>;
- 		dma-names = "tx", "rx", "tx", "rx";
-@@ -705,7 +705,7 @@
- 			     "renesas,rmobile-iic";
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7794_CLK_IIC1>;
-+		clocks = <&cpg CPG_MOD 323>;
- 		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
- 		       <&dmac1 0x65>, <&dmac1 0x66>;
- 		dma-names = "tx", "rx", "tx", "rx";
-@@ -719,7 +719,7 @@
- 		compatible = "renesas,mmcif-r8a7794", "renesas,sh-mmcif";
- 		reg = <0 0xee200000 0 0x80>;
- 		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7794_CLK_MMCIF0>;
-+		clocks = <&cpg CPG_MOD 315>;
- 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
- 		       <&dmac1 0xd1>, <&dmac1 0xd2>;
- 		dma-names = "tx", "rx", "tx", "rx";
-@@ -732,7 +732,7 @@
- 		compatible = "renesas,sdhi-r8a7794";
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
-+		clocks = <&cpg CPG_MOD 314>;
- 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
- 		       <&dmac1 0xcd>, <&dmac1 0xce>;
- 		dma-names = "tx", "rx", "tx", "rx";
-@@ -745,7 +745,7 @@
- 		compatible = "renesas,sdhi-r8a7794";
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
-+		clocks = <&cpg CPG_MOD 312>;
- 		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
- 		       <&dmac1 0xc1>, <&dmac1 0xc2>;
- 		dma-names = "tx", "rx", "tx", "rx";
-@@ -758,7 +758,7 @@
- 		compatible = "renesas,sdhi-r8a7794";
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
-+		clocks = <&cpg CPG_MOD 311>;
- 		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
- 		       <&dmac1 0xd3>, <&dmac1 0xd4>;
- 		dma-names = "tx", "rx", "tx", "rx";
-@@ -771,7 +771,7 @@
- 		compatible = "renesas,qspi-r8a7794", "renesas,qspi";
- 		reg = <0 0xe6b10000 0 0x2c>;
- 		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_QSPI_MOD>;
-+		clocks = <&cpg CPG_MOD 917>;
- 		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
- 		       <&dmac1 0x17>, <&dmac1 0x18>;
- 		dma-names = "tx", "rx", "tx", "rx";
-@@ -786,7 +786,7 @@
- 		compatible = "renesas,vin-r8a7794";
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp8_clks R8A7794_CLK_VIN0>;
-+		clocks = <&cpg CPG_MOD 811>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -795,7 +795,7 @@
- 		compatible = "renesas,vin-r8a7794";
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp8_clks R8A7794_CLK_VIN1>;
-+		clocks = <&cpg CPG_MOD 810>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -806,7 +806,7 @@
- 		reg = <0 0xee090000 0 0xc00>,
- 		      <0 0xee080000 0 0x1100>;
- 		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_EHCI>;
-+		clocks = <&cpg CPG_MOD 703>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
-@@ -841,7 +841,7 @@
- 		reg = <0 0xee0d0000 0 0xc00>,
- 		      <0 0xee0c0000 0 0x1100>;
- 		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_EHCI>;
-+		clocks = <&cpg CPG_MOD 703>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
-@@ -874,7 +874,7 @@
- 		compatible = "renesas,usbhs-r8a7794", "renesas,rcar-gen2-usbhs";
- 		reg = <0 0xe6590000 0 0x100>;
- 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSUSB>;
-+		clocks = <&cpg CPG_MOD 704>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		renesas,buswait = <4>;
- 		phys = <&usb0 1>;
-@@ -888,7 +888,7 @@
- 		reg = <0 0xe6590100 0 0x100>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSUSB>;
-+		clocks = <&cpg CPG_MOD 704>;
- 		clock-names = "usbhs";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
-@@ -907,7 +907,7 @@
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe928000 0 0x8000>;
- 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp1_clks R8A7794_CLK_VSP1_S>;
-+		clocks = <&cpg CPG_MOD 131>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -915,7 +915,7 @@
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe930000 0 0x8000>;
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp1_clks R8A7794_CLK_VSP1_DU0>;
-+		clocks = <&cpg CPG_MOD 128>;
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
-@@ -925,8 +925,7 @@
- 		reg-names = "du";
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_DU0>,
--			 <&mstp7_clks R8A7794_CLK_DU1>;
-+		clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
- 		clock-names = "du.0", "du.1";
- 		status = "disabled";
- 
-@@ -951,8 +950,8 @@
- 		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
- 		reg = <0 0xe6e80000 0 0x1000>;
- 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_RCAN0>,
--			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
-+		clocks = <&cpg CPG_MOD 916>, <&cpg CPG_CORE R8A7794_CLK_RCAN>,
-+			 <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
-@@ -962,8 +961,8 @@
- 		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
- 		reg = <0 0xe6e88000 0 0x1000>;
- 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R8A7794_CLK_RCAN1>,
--			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
-+		clocks = <&cpg CPG_MOD 915>, <&cpg CPG_CORE R8A7794_CLK_RCAN>,
-+			 <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
-@@ -1026,370 +1025,14 @@
- 			clock-frequency = <0>;
- 		};
- 
--		/* Special CPG clocks */
--		cpg_clocks: cpg_clocks@e6150000 {
--			compatible = "renesas,r8a7794-cpg-clocks",
--				     "renesas,rcar-gen2-cpg-clocks";
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a7794-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk &usb_extal_clk>;
--			#clock-cells = <1>;
--			clock-output-names = "main", "pll0", "pll1", "pll3",
--					     "lb", "qspi", "sdh", "sd0", "rcan";
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
- 		};
--		/* Variable factor clocks */
--		sd2_clk: sd2@e6150078 {
--			compatible = "renesas,r8a7794-div6-clock", "renesas,cpg-div6-clock";
--			reg = <0 0xe6150078 0 4>;
--			clocks = <&pll1_div2_clk>;
--			#clock-cells = <0>;
--		};
--		sd3_clk: sd3@e615026c {
--			compatible = "renesas,r8a7794-div6-clock", "renesas,cpg-div6-clock";
--			reg = <0 0xe615026c 0 4>;
--			clocks = <&pll1_div2_clk>;
--			#clock-cells = <0>;
--		};
--		mmc0_clk: mmc0@e6150240 {
--			compatible = "renesas,r8a7794-div6-clock", "renesas,cpg-div6-clock";
--			reg = <0 0xe6150240 0 4>;
--			clocks = <&pll1_div2_clk>;
--			#clock-cells = <0>;
--		};
--
--		/* Fixed factor clocks */
--		pll1_div2_clk: pll1_div2 {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <2>;
--			clock-mult = <1>;
--		};
--		z2_clk: z2 {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL0>;
--			#clock-cells = <0>;
--			clock-div = <1>;
--			clock-mult = <1>;
--		};
--		zg_clk: zg {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <6>;
--			clock-mult = <1>;
--		};
--		zx_clk: zx {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <3>;
--			clock-mult = <1>;
--		};
--		zs_clk: zs {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <6>;
--			clock-mult = <1>;
--		};
--		hp_clk: hp {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <12>;
--			clock-mult = <1>;
--		};
--		i_clk: i {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <2>;
--			clock-mult = <1>;
--		};
--		b_clk: b {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <12>;
--			clock-mult = <1>;
--		};
--		p_clk: p {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <24>;
--			clock-mult = <1>;
--		};
--		cl_clk: cl {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <48>;
--			clock-mult = <1>;
--		};
--		m2_clk: m2 {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <8>;
--			clock-mult = <1>;
--		};
--		rclk_clk: rclk {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <(48 * 1024)>;
--			clock-mult = <1>;
--		};
--		oscclk_clk: oscclk {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <(12 * 1024)>;
--			clock-mult = <1>;
--		};
--		zb3_clk: zb3 {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL3>;
--			#clock-cells = <0>;
--			clock-div = <4>;
--			clock-mult = <1>;
--		};
--		zb3d2_clk: zb3d2 {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL3>;
--			#clock-cells = <0>;
--			clock-div = <8>;
--			clock-mult = <1>;
--		};
--		ddr_clk: ddr {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL3>;
--			#clock-cells = <0>;
--			clock-div = <8>;
--			clock-mult = <1>;
--		};
--		mp_clk: mp {
--			compatible = "fixed-factor-clock";
--			clocks = <&pll1_div2_clk>;
--			#clock-cells = <0>;
--			clock-div = <15>;
--			clock-mult = <1>;
--		};
--		cp_clk: cp {
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R8A7794_CLK_PLL1>;
--			#clock-cells = <0>;
--			clock-div = <48>;
--			clock-mult = <1>;
--		};
--
--		acp_clk: acp {
--			compatible = "fixed-factor-clock";
--			clocks = <&extal_clk>;
--			#clock-cells = <0>;
--			clock-div = <2>;
--			clock-mult = <1>;
--		};
--
--		/* Gate clocks */
--		mstp0_clks: mstp0_clks@e6150130 {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150130 0 4>, <0 0xe6150030 0 4>;
--			clocks = <&mp_clk>;
--			#clock-cells = <1>;
--			clock-indices = <R8A7794_CLK_MSIOF0>;
--			clock-output-names = "msiof0";
--		};
--		mstp1_clks: mstp1_clks@e6150134 {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
--			clocks = <&zs_clk>, <&zs_clk>, <&p_clk>, <&zg_clk>, <&zs_clk>,
--				 <&zs_clk>, <&p_clk>, <&p_clk>, <&rclk_clk>, <&cp_clk>,
--				 <&zs_clk>, <&zs_clk>;
--			#clock-cells = <1>;
--			clock-indices = <
--				R8A7794_CLK_VCP0 R8A7794_CLK_VPC0 R8A7794_CLK_TMU1
--				R8A7794_CLK_3DG R8A7794_CLK_2DDMAC R8A7794_CLK_FDP1_0
--				R8A7794_CLK_TMU3 R8A7794_CLK_TMU2 R8A7794_CLK_CMT0
--				R8A7794_CLK_TMU0 R8A7794_CLK_VSP1_DU0 R8A7794_CLK_VSP1_S
--			>;
--			clock-output-names =
--				"vcp0", "vpc0", "tmu1", "3dg", "2ddmac", "fdp1-0",
--				"tmu3", "tmu2", "cmt0", "tmu0", "vsp1-du0", "vsps";
--		};
--		mstp2_clks: mstp2_clks@e6150138 {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
--			clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>,
--				 <&mp_clk>, <&mp_clk>, <&mp_clk>,
--				 <&zs_clk>, <&zs_clk>;
--			#clock-cells = <1>;
--			clock-indices = <
--				R8A7794_CLK_SCIFA2 R8A7794_CLK_SCIFA1 R8A7794_CLK_SCIFA0
--				R8A7794_CLK_MSIOF2 R8A7794_CLK_SCIFB0 R8A7794_CLK_SCIFB1
--				R8A7794_CLK_MSIOF1 R8A7794_CLK_SCIFB2
--				R8A7794_CLK_SYS_DMAC1 R8A7794_CLK_SYS_DMAC0
--			>;
--			clock-output-names =
--				"scifa2", "scifa1", "scifa0", "msiof2", "scifb0",
--				"scifb1", "msiof1", "scifb2",
--				"sys-dmac1", "sys-dmac0";
--		};
--		mstp3_clks: mstp3_clks@e615013c {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
--			clocks = <&sd3_clk>, <&sd2_clk>, <&cpg_clocks R8A7794_CLK_SD0>,
--				 <&mmc0_clk>, <&hp_clk>, <&hp_clk>, <&rclk_clk>,
--				 <&hp_clk>, <&hp_clk>;
--			#clock-cells = <1>;
--			clock-indices = <
--			        R8A7794_CLK_SDHI2 R8A7794_CLK_SDHI1 R8A7794_CLK_SDHI0
--				R8A7794_CLK_MMCIF0 R8A7794_CLK_IIC0
--				R8A7794_CLK_IIC1 R8A7794_CLK_CMT1
--				R8A7794_CLK_USBDMAC0 R8A7794_CLK_USBDMAC1
--			>;
--			clock-output-names =
--			        "sdhi2", "sdhi1", "sdhi0",
--				"mmcif0", "i2c6", "i2c7",
--				"cmt1", "usbdmac0", "usbdmac1";
--		};
--		mstp4_clks: mstp4_clks@e6150140 {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
--			clocks = <&cp_clk>, <&zs_clk>;
--			#clock-cells = <1>;
--			clock-indices = <R8A7794_CLK_IRQC R8A7794_CLK_INTC_SYS>;
--			clock-output-names = "irqc", "intc-sys";
--		};
--		mstp5_clks: mstp5_clks@e6150144 {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
--			clocks = <&hp_clk>, <&p_clk>;
--			#clock-cells = <1>;
--			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
--					 R8A7794_CLK_PWM>;
--			clock-output-names = "audmac0", "pwm";
--		};
--		mstp7_clks: mstp7_clks@e615014c {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
--			clocks = <&mp_clk>, <&hp_clk>,
--				 <&zs_clk>, <&p_clk>, <&p_clk>, <&zs_clk>,
--				 <&zs_clk>, <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
--				 <&zx_clk>, <&zx_clk>;
--			#clock-cells = <1>;
--			clock-indices = <
--				R8A7794_CLK_EHCI R8A7794_CLK_HSUSB
--				R8A7794_CLK_HSCIF2 R8A7794_CLK_SCIF5
--				R8A7794_CLK_SCIF4 R8A7794_CLK_HSCIF1 R8A7794_CLK_HSCIF0
--				R8A7794_CLK_SCIF3 R8A7794_CLK_SCIF2 R8A7794_CLK_SCIF1
--				R8A7794_CLK_SCIF0
--				R8A7794_CLK_DU1 R8A7794_CLK_DU0
--			>;
--			clock-output-names =
--				"ehci", "hsusb",
--				"hscif2", "scif5", "scif4", "hscif1", "hscif0",
--				"scif3", "scif2", "scif1", "scif0",
--				"du1", "du0";
--		};
--		mstp8_clks: mstp8_clks@e6150990 {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
--			clocks = <&zg_clk>, <&zg_clk>, <&hp_clk>, <&p_clk>;
--			#clock-cells = <1>;
--			clock-indices = <
--				R8A7794_CLK_VIN1 R8A7794_CLK_VIN0
--				R8A7794_CLK_ETHERAVB R8A7794_CLK_ETHER
--			>;
--			clock-output-names =
--				"vin1", "vin0", "etheravb", "ether";
--		};
--		mstp9_clks: mstp9_clks@e6150994 {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
--			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
--				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&p_clk>,
--				 <&p_clk>, <&cpg_clocks R8A7794_CLK_QSPI>,
--				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>,
--				 <&hp_clk>, <&hp_clk>;
--			#clock-cells = <1>;
--			clock-indices = <R8A7794_CLK_GPIO6 R8A7794_CLK_GPIO5
--					 R8A7794_CLK_GPIO4 R8A7794_CLK_GPIO3
--					 R8A7794_CLK_GPIO2 R8A7794_CLK_GPIO1
--					 R8A7794_CLK_GPIO0 R8A7794_CLK_RCAN1
--					 R8A7794_CLK_RCAN0 R8A7794_CLK_QSPI_MOD
--					 R8A7794_CLK_I2C5 R8A7794_CLK_I2C4
--					 R8A7794_CLK_I2C3 R8A7794_CLK_I2C2
--					 R8A7794_CLK_I2C1 R8A7794_CLK_I2C0>;
--			clock-output-names =
--				"gpio6", "gpio5", "gpio4", "gpio3", "gpio2",
--				"gpio1", "gpio0", "rcan1", "rcan0", "qspi_mod",
--				"i2c5", "i2c4", "i2c3", "i2c2", "i2c1", "i2c0";
--		};
--		mstp10_clks: mstp10_clks@e6150998 {
--			compatible = "renesas,r8a7794-mstp-clocks",
--				     "renesas,cpg-mstp-clocks";
--			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
--			clocks = <&p_clk>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--				 <&p_clk>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
--				 <&mstp10_clks R8A7794_CLK_SCU_ALL>;
--			#clock-cells = <1>;
--			clock-indices = <R8A7794_CLK_SSI_ALL
--					 R8A7794_CLK_SSI9 R8A7794_CLK_SSI8
--					 R8A7794_CLK_SSI7 R8A7794_CLK_SSI6
--					 R8A7794_CLK_SSI5 R8A7794_CLK_SSI4
--					 R8A7794_CLK_SSI3 R8A7794_CLK_SSI2
--					 R8A7794_CLK_SSI1 R8A7794_CLK_SSI0
--					 R8A7794_CLK_SCU_ALL
--					 R8A7794_CLK_SCU_DVC1
--					 R8A7794_CLK_SCU_DVC0
--					 R8A7794_CLK_SCU_CTU1_MIX1
--					 R8A7794_CLK_SCU_CTU0_MIX0
--					 R8A7794_CLK_SCU_SRC6
--					 R8A7794_CLK_SCU_SRC5
--					 R8A7794_CLK_SCU_SRC4
--					 R8A7794_CLK_SCU_SRC3
--					 R8A7794_CLK_SCU_SRC2
--					 R8A7794_CLK_SCU_SRC1>;
--			clock-output-names = "ssi-all", "ssi9", "ssi8", "ssi7",
--					     "ssi6", "ssi5", "ssi4", "ssi3",
--					     "ssi2", "ssi1", "ssi0",
--					     "scu-all", "scu-dvc1", "scu-dvc0",
--					     "scu-ctu1-mix1", "scu-ctu0-mix0",
--					     "scu-src6", "scu-src5", "scu-src4",
--					     "scu-src3", "scu-src2", "scu-src1";
--		};
--		mstp11_clks: mstp11_clks@e615099c {
--			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
--			reg = <0 0xe615099c 0 4>, <0 0xe61509ac 0 4>;
--			clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>;
--			#clock-cells = <1>;
--			clock-indices = <
--				R8A7794_CLK_SCIFA3 R8A7794_CLK_SCIFA4 R8A7794_CLK_SCIFA5
--			>;
--			clock-output-names = "scifa3", "scifa4", "scifa5";
--		};
- 	};
- 
- 	rst: reset-controller@e6160000 {
-@@ -1476,31 +1119,20 @@
- 			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri */
- 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
- 
--		clocks = <&mstp10_clks R8A7794_CLK_SSI_ALL>,
--			 <&mstp10_clks R8A7794_CLK_SSI9>,
--			 <&mstp10_clks R8A7794_CLK_SSI8>,
--			 <&mstp10_clks R8A7794_CLK_SSI7>,
--			 <&mstp10_clks R8A7794_CLK_SSI6>,
--			 <&mstp10_clks R8A7794_CLK_SSI5>,
--			 <&mstp10_clks R8A7794_CLK_SSI4>,
--			 <&mstp10_clks R8A7794_CLK_SSI3>,
--			 <&mstp10_clks R8A7794_CLK_SSI2>,
--			 <&mstp10_clks R8A7794_CLK_SSI1>,
--			 <&mstp10_clks R8A7794_CLK_SSI0>,
--			 <&mstp10_clks R8A7794_CLK_SCU_SRC6>,
--			 <&mstp10_clks R8A7794_CLK_SCU_SRC5>,
--			 <&mstp10_clks R8A7794_CLK_SCU_SRC4>,
--			 <&mstp10_clks R8A7794_CLK_SCU_SRC3>,
--			 <&mstp10_clks R8A7794_CLK_SCU_SRC2>,
--			 <&mstp10_clks R8A7794_CLK_SCU_SRC1>,
--			 <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
--			 <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
--			 <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
--			 <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
--			 <&mstp10_clks R8A7794_CLK_SCU_DVC0>,
--			 <&mstp10_clks R8A7794_CLK_SCU_DVC1>,
-+		clocks = <&cpg CPG_MOD 1005>,
-+			 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
-+			 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
-+			 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
-+			 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
-+			 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
-+			 <&cpg CPG_MOD 1025>, <&cpg CPG_MOD 1026>,
-+			 <&cpg CPG_MOD 1027>, <&cpg CPG_MOD 1028>,
-+			 <&cpg CPG_MOD 1029>, <&cpg CPG_MOD 1030>,
-+			 <&cpg CPG_MOD 1021>, <&cpg CPG_MOD 1020>,
-+			 <&cpg CPG_MOD 1021>, <&cpg CPG_MOD 1020>,
-+			 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
- 			 <&audio_clka>, <&audio_clkb>, <&audio_clkc>,
--			 <&m2_clk>;
-+			 <&cpg CPG_CORE R8A7794_CLK_M2>;
- 		clock-names = "ssi-all",
- 			      "ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
- 			      "ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0",
++config SUN8I_R40_CCU
++	bool "Support for the Allwinner R40 CCU"
++	select SUNXI_CCU_DIV
++	select SUNXI_CCU_NK
++	select SUNXI_CCU_NKM
++	select SUNXI_CCU_NKMP
++	select SUNXI_CCU_NM
++	select SUNXI_CCU_MP
++	default MACH_SUN8I
++
+ config SUN9I_A80_CCU
+ 	bool "Support for the Allwinner A80 CCU"
+ 	select SUNXI_CCU_DIV
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 0ec02fe14c50..aa00b641484e 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_SUN8I_A33_CCU)	+= ccu-sun8i-a33.o
+ obj-$(CONFIG_SUN8I_H3_CCU)	+= ccu-sun8i-h3.o
+ obj-$(CONFIG_SUN8I_V3S_CCU)	+= ccu-sun8i-v3s.o
+ obj-$(CONFIG_SUN8I_R_CCU)	+= ccu-sun8i-r.o
++obj-$(CONFIG_SUN8I_R40_CCU)	+= ccu-sun8i-r40.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-de.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-usb.o
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+new file mode 100644
+index 000000000000..0cc1b1ab7c3f
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -0,0 +1,1153 @@
++/*
++ * Copyright (c) 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++
++#include "ccu_common.h"
++#include "ccu_reset.h"
++
++#include "ccu_div.h"
++#include "ccu_gate.h"
++#include "ccu_mp.h"
++#include "ccu_mult.h"
++#include "ccu_nk.h"
++#include "ccu_nkm.h"
++#include "ccu_nkmp.h"
++#include "ccu_nm.h"
++#include "ccu_phase.h"
++
++#include "ccu-sun8i-r40.h"
++
++static SUNXI_CCU_NKMP_WITH_GATE_LOCK(pll_cpu_clk, "pll-cpu",
++				     "osc24M", 0x000,
++				     8, 5,	/* N */
++				     4, 2,	/* K */
++				     0, 2,	/* M */
++				     16, 2,	/* P */
++				     BIT(31),	/* gate */
++				     BIT(28),	/* lock */
++				     0);
++
++/*
++ * The Audio PLL is supposed to have 4 outputs: 3 fixed factors from
++ * the base (2x, 4x and 8x), and one variable divider (the one true
++ * pll audio).
++ *
++ * We don't have any need for the variable divider for now, so we just
++ * hardcode it to match with the clock names
++ */
++#define SUN8I_R40_PLL_AUDIO_REG	0x008
++
++static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
++				   "osc24M", 0x008,
++				   8, 7,	/* N */
++				   0, 5,	/* M */
++				   BIT(31),	/* gate */
++				   BIT(28),	/* lock */
++				   0);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
++					"osc24M", 0x0010,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					0);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
++					"osc24M", 0x0018,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					0);
++
++static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr0_clk, "pll-ddr0",
++				    "osc24M", 0x020,
++				    8, 5,	/* N */
++				    4, 2,	/* K */
++				    0, 2,	/* M */
++				    BIT(31),	/* gate */
++				    BIT(28),	/* lock */
++				    0);
++
++/* According to the BSP driver, pll-periph{0,1} have M at 0:1 */
++static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_periph0_clk, "pll-periph0",
++				    "osc24M", 0x028,
++				    8, 5,	/* N */
++				    4, 2,	/* K */
++				    0, 2,	/* M */
++				    BIT(31),	/* gate */
++				    BIT(28),	/* lock */
++				    0);
++
++static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_periph1_clk, "pll-periph1",
++				    "osc24M", 0x02c,
++				    8, 5,	/* N */
++				    4, 2,	/* K */
++				    0, 2,	/* M */
++				    BIT(31),	/* gate */
++				    BIT(28),	/* lock */
++				    0);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
++					"osc24M", 0x030,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++/*
++ * For the special bit in gate part, please see the BSP source code at
++ * https://github.com/BPI-SINOVOIP/BPI-M2U-bsp/blob/master/linux-sunxi/drivers/clk/sunxi/clk-sun8iw11.c#L665
++ */
++static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_sata_clk, "pll-sata",
++				    "osc24M", 0x034,
++				    8, 5,	/* N */
++				    4, 2,	/* K */
++				    0, 2,	/* M */
++				    BIT(31) | BIT(14),	/* gate */
++				    BIT(28),	/* lock */
++				    0);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
++					"osc24M", 0x038,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					0);
++
++static const char * const pll_mipi_parents[] = { "pll-video0", "pll-video1" };
++static SUNXI_CCU_NKM_WITH_MUX_GATE_LOCK(pll_mipi_clk, "pll-mipi",
++					pll_mipi_parents, 0x040,
++					8, 4,	/* N */
++					4, 2,	/* K */
++					0, 4,	/* M */
++					21, 0,	/* mux */
++					BIT(31) | BIT(23) | BIT(22), /* gate */
++					BIT(28),	/* lock */
++					CLK_SET_RATE_UNGATE);
++
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
++					"osc24M", 0x0048,
++					8, 7,		/* N */
++					0, 4,		/* M */
++					BIT(24),	/* frac enable */
++					BIT(25),	/* frac select */
++					270000000,	/* frac rate 0 */
++					297000000,	/* frac rate 1 */
++					BIT(31),	/* gate */
++					BIT(28),	/* lock */
++					0);
++
++static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
++				   "osc24M", 0x04c,
++				   8, 7,	/* N */
++				   0, 2,	/* M */
++				   BIT(31),	/* gate */
++				   BIT(28),	/* lock */
++				   CLK_SET_RATE_UNGATE);
++
++static const char * const cpu_parents[] = { "osc32k", "osc24M",
++					     "pll-cpu", "pll-cpu" };
++static SUNXI_CCU_MUX(cpu_clk, "cpu", cpu_parents,
++		     0x050, 16, 2, CLK_IS_CRITICAL);
++
++static SUNXI_CCU_M(axi_clk, "axi", "cpu", 0x050, 0, 2, 0);
++
++static const char * const ahb1_parents[] = { "osc32k", "osc24M",
++					     "axi", "pll-periph0" };
++static struct ccu_div ahb1_clk = {
++	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
++
++	.mux		= {
++		.shift	= 12,
++		.width	= 2,
++
++		.variable_prediv	= {
++			.index	= 3,
++			.shift	= 6,
++			.width	= 2,
++		},
++	},
++
++	.common		= {
++		.reg		= 0x054,
++		.features	= CCU_FEATURE_VARIABLE_PREDIV,
++		.hw.init	= CLK_HW_INIT_PARENTS("ahb1",
++						      ahb1_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
++
++static struct clk_div_table apb1_div_table[] = {
++	{ .val = 0, .div = 2 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 4 },
++	{ .val = 3, .div = 8 },
++	{ /* Sentinel */ },
++};
++static SUNXI_CCU_DIV_TABLE(apb1_clk, "apb1", "ahb1",
++			   0x054, 8, 2, apb1_div_table, 0);
++
++static const char * const apb2_parents[] = { "osc32k", "osc24M",
++					     "pll-periph0-2x",
++					     "pll-periph0-2x" };
++static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2_parents, 0x058,
++			     0, 5,	/* M */
++			     16, 2,	/* P */
++			     24, 2,	/* mux */
++			     0);
++
++static SUNXI_CCU_GATE(bus_mipi_dsi_clk,	"bus-mipi-dsi",	"ahb1",
++		      0x060, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_ce_clk,	"bus-ce",	"ahb1",
++		      0x060, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_dma_clk,	"bus-dma",	"ahb1",
++		      0x060, BIT(6), 0);
++static SUNXI_CCU_GATE(bus_mmc0_clk,	"bus-mmc0",	"ahb1",
++		      0x060, BIT(8), 0);
++static SUNXI_CCU_GATE(bus_mmc1_clk,	"bus-mmc1",	"ahb1",
++		      0x060, BIT(9), 0);
++static SUNXI_CCU_GATE(bus_mmc2_clk,	"bus-mmc2",	"ahb1",
++		      0x060, BIT(10), 0);
++static SUNXI_CCU_GATE(bus_mmc3_clk,	"bus-mmc3",	"ahb1",
++		      0x060, BIT(11), 0);
++static SUNXI_CCU_GATE(bus_nand_clk,	"bus-nand",	"ahb1",
++		      0x060, BIT(13), 0);
++static SUNXI_CCU_GATE(bus_dram_clk,	"bus-dram",	"ahb1",
++		      0x060, BIT(14), 0);
++static SUNXI_CCU_GATE(bus_emac_clk,	"bus-emac",	"ahb1",
++		      0x060, BIT(17), 0);
++static SUNXI_CCU_GATE(bus_ts_clk,	"bus-ts",	"ahb1",
++		      0x060, BIT(18), 0);
++static SUNXI_CCU_GATE(bus_hstimer_clk,	"bus-hstimer",	"ahb1",
++		      0x060, BIT(19), 0);
++static SUNXI_CCU_GATE(bus_spi0_clk,	"bus-spi0",	"ahb1",
++		      0x060, BIT(20), 0);
++static SUNXI_CCU_GATE(bus_spi1_clk,	"bus-spi1",	"ahb1",
++		      0x060, BIT(21), 0);
++static SUNXI_CCU_GATE(bus_spi2_clk,	"bus-spi2",	"ahb1",
++		      0x060, BIT(22), 0);
++static SUNXI_CCU_GATE(bus_spi3_clk,	"bus-spi3",	"ahb1",
++		      0x060, BIT(23), 0);
++static SUNXI_CCU_GATE(bus_sata_clk,	"bus-sata",	"ahb1",
++		      0x060, BIT(24), 0);
++static SUNXI_CCU_GATE(bus_otg_clk,	"bus-otg",	"ahb1",
++		      0x060, BIT(25), 0);
++static SUNXI_CCU_GATE(bus_ehci0_clk,	"bus-ehci0",	"ahb1",
++		      0x060, BIT(26), 0);
++static SUNXI_CCU_GATE(bus_ehci1_clk,	"bus-ehci1",	"ahb1",
++		      0x060, BIT(27), 0);
++static SUNXI_CCU_GATE(bus_ehci2_clk,	"bus-ehci2",	"ahb1",
++		      0x060, BIT(28), 0);
++static SUNXI_CCU_GATE(bus_ohci0_clk,	"bus-ohci0",	"ahb1",
++		      0x060, BIT(29), 0);
++static SUNXI_CCU_GATE(bus_ohci1_clk,	"bus-ohci1",	"ahb1",
++		      0x060, BIT(30), 0);
++static SUNXI_CCU_GATE(bus_ohci2_clk,	"bus-ohci2",	"ahb1",
++		      0x060, BIT(31), 0);
++
++static SUNXI_CCU_GATE(bus_ve_clk,	"bus-ve",	"ahb1",
++		      0x064, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_de_mp_clk,	"bus-de-mp",	"ahb1",
++		      0x064, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_deinterlace_clk,	"bus-deinterlace",	"ahb1",
++		      0x064, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_csi0_clk,	"bus-csi0",	"ahb1",
++		      0x064, BIT(8), 0);
++static SUNXI_CCU_GATE(bus_csi1_clk,	"bus-csi1",	"ahb1",
++		      0x064, BIT(9), 0);
++static SUNXI_CCU_GATE(bus_hdmi_slow_clk,	"bus-hdmi-slow",	"ahb1",
++		      0x064, BIT(10), 0);
++static SUNXI_CCU_GATE(bus_hdmi_clk,	"bus-hdmi",	"ahb1",
++		      0x064, BIT(11), 0);
++static SUNXI_CCU_GATE(bus_de_clk,	"bus-de",	"ahb1",
++		      0x064, BIT(12), 0);
++static SUNXI_CCU_GATE(bus_tve0_clk,	"bus-tve0",	"ahb1",
++		      0x064, BIT(13), 0);
++static SUNXI_CCU_GATE(bus_tve1_clk,	"bus-tve1",	"ahb1",
++		      0x064, BIT(14), 0);
++static SUNXI_CCU_GATE(bus_tve_top_clk,	"bus-tve-top",	"ahb1",
++		      0x064, BIT(15), 0);
++static SUNXI_CCU_GATE(bus_gmac_clk,	"bus-gmac",	"ahb1",
++		      0x064, BIT(17), 0);
++static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
++		      0x064, BIT(20), 0);
++static SUNXI_CCU_GATE(bus_tvd0_clk,	"bus-tvd0",	"ahb1",
++		      0x064, BIT(21), 0);
++static SUNXI_CCU_GATE(bus_tvd1_clk,	"bus-tvd1",	"ahb1",
++		      0x064, BIT(22), 0);
++static SUNXI_CCU_GATE(bus_tvd2_clk,	"bus-tvd2",	"ahb1",
++		      0x064, BIT(23), 0);
++static SUNXI_CCU_GATE(bus_tvd3_clk,	"bus-tvd3",	"ahb1",
++		      0x064, BIT(24), 0);
++static SUNXI_CCU_GATE(bus_tvd_top_clk,	"bus-tvd-top",	"ahb1",
++		      0x064, BIT(25), 0);
++static SUNXI_CCU_GATE(bus_tcon0_clk,	"bus-tcon0",	"ahb1",
++		      0x064, BIT(26), 0);
++static SUNXI_CCU_GATE(bus_tcon1_clk,	"bus-tcon1",	"ahb1",
++		      0x064, BIT(27), 0);
++static SUNXI_CCU_GATE(bus_tve0_tcon_clk,	"bus-tve0-tcon",	"ahb1",
++		      0x064, BIT(28), 0);
++static SUNXI_CCU_GATE(bus_tve1_tcon_clk,	"bus-tve1-tcon",	"ahb1",
++		      0x064, BIT(29), 0);
++static SUNXI_CCU_GATE(bus_tcon_top_clk,	"bus-tcon-top",	"ahb1",
++		      0x064, BIT(30), 0);
++
++static SUNXI_CCU_GATE(bus_codec_clk,	"bus-codec",	"apb1",
++		      0x068, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_spdif_clk,	"bus-spdif",	"apb1",
++		      0x068, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_ac97_clk,	"bus-ac97",	"apb1",
++		      0x068, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_pio_clk,	"bus-pio",	"apb1",
++		      0x068, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_ir0_clk,	"bus-ir0",	"apb1",
++		      0x068, BIT(6), 0);
++static SUNXI_CCU_GATE(bus_ir1_clk,	"bus-ir1",	"apb1",
++		      0x068, BIT(7), 0);
++static SUNXI_CCU_GATE(bus_ths_clk,	"bus-ths",	"apb1",
++		      0x068, BIT(8), 0);
++static SUNXI_CCU_GATE(bus_keypad_clk,	"bus-keypad",	"apb1",
++		      0x068, BIT(10), 0);
++static SUNXI_CCU_GATE(bus_i2s0_clk,	"bus-i2s0",	"apb1",
++		      0x068, BIT(12), 0);
++static SUNXI_CCU_GATE(bus_i2s1_clk,	"bus-i2s1",	"apb1",
++		      0x068, BIT(13), 0);
++static SUNXI_CCU_GATE(bus_i2s2_clk,	"bus-i2s2",	"apb1",
++		      0x068, BIT(14), 0);
++
++static SUNXI_CCU_GATE(bus_i2c0_clk,	"bus-i2c0",	"apb2",
++		      0x06c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_i2c1_clk,	"bus-i2c1",	"apb2",
++		      0x06c, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_i2c2_clk,	"bus-i2c2",	"apb2",
++		      0x06c, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_i2c3_clk,	"bus-i2c3",	"apb2",
++		      0x06c, BIT(3), 0);
++/*
++ * In datasheet here's "Reserved", however the gate exists in BSP soucre
++ * code.
++ */
++static SUNXI_CCU_GATE(bus_can_clk,	"bus-can",	"apb2",
++		      0x06c, BIT(4), 0);
++static SUNXI_CCU_GATE(bus_scr_clk,	"bus-scr",	"apb2",
++		      0x06c, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_ps20_clk,	"bus-ps20",	"apb2",
++		      0x06c, BIT(6), 0);
++static SUNXI_CCU_GATE(bus_ps21_clk,	"bus-ps21",	"apb2",
++		      0x06c, BIT(7), 0);
++static SUNXI_CCU_GATE(bus_i2c4_clk,	"bus-i2c4",	"apb2",
++		      0x06c, BIT(15), 0);
++static SUNXI_CCU_GATE(bus_uart0_clk,	"bus-uart0",	"apb2",
++		      0x06c, BIT(16), 0);
++static SUNXI_CCU_GATE(bus_uart1_clk,	"bus-uart1",	"apb2",
++		      0x06c, BIT(17), 0);
++static SUNXI_CCU_GATE(bus_uart2_clk,	"bus-uart2",	"apb2",
++		      0x06c, BIT(18), 0);
++static SUNXI_CCU_GATE(bus_uart3_clk,	"bus-uart3",	"apb2",
++		      0x06c, BIT(19), 0);
++static SUNXI_CCU_GATE(bus_uart4_clk,	"bus-uart4",	"apb2",
++		      0x06c, BIT(20), 0);
++static SUNXI_CCU_GATE(bus_uart5_clk,	"bus-uart5",	"apb2",
++		      0x06c, BIT(21), 0);
++static SUNXI_CCU_GATE(bus_uart6_clk,	"bus-uart6",	"apb2",
++		      0x06c, BIT(22), 0);
++static SUNXI_CCU_GATE(bus_uart7_clk,	"bus-uart7",	"apb2",
++		      0x06c, BIT(23), 0);
++
++/* Educated guess: the BSP clock driver do not have this clock */
++static SUNXI_CCU_GATE(bus_dbg_clk,	"bus-dbg",	"ahb1",
++		      0x070, BIT(7), 0);
++
++static SUNXI_CCU_M_WITH_GATE(ths_clk, "ths", "osc24M",
++			     0x074, 0, 2, BIT(31), 0);
++
++static const char * const mod0_default_parents[] = { "osc24M", "pll-periph0",
++						     "pll-periph1" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", mod0_default_parents, 0x080,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mod0_default_parents, 0x088,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mod0_default_parents, 0x08c,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents, 0x090,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(mmc3_clk, "mmc3", mod0_default_parents, 0x094,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const ts_parents[] = { "osc24M", "pll-periph0", };
++static SUNXI_CCU_MP_WITH_MUX_GATE(ts_clk, "ts", ts_parents, 0x098,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const ce_parents[] = { "osc24M", "pll-periph0-2x",
++					   "pll-periph1-2x" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(ce_clk, "ce", ce_parents, 0x09c,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi0_clk, "spi0", mod0_default_parents, 0x0a0,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi2_clk, "spi2", mod0_default_parents, 0x0a8,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi3_clk, "spi3", mod0_default_parents, 0x0ac,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
++					    "pll-audio-2x", "pll-audio" };
++static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
++			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
++			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_MUX_WITH_GATE(i2s2_clk, "i2s2", i2s_parents,
++			       0x0b8, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_MUX_WITH_GATE(ac97_clk, "ac97", i2s_parents,
++			       0x0bc, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_MUX_WITH_GATE(spdif_clk, "spdif", i2s_parents,
++			       0x0c0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
++
++static const char * const keypad_parents[] = { "osc24M", "osc32k", };
++static SUNXI_CCU_MP_WITH_MUX_GATE(keypad_clk, "keypad", keypad_parents, 0x0c4,
++				  0, 5,		/* M */
++				  16, 2,	/* P */
++				  25, 1,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const sata_parents[] = { "pll-sata", "sata-ext", };
++static SUNXI_CCU_MUX_WITH_GATE(sata_clk, "sata", sata_parents,
++			       0x0c8, 24, 1, BIT(31), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
++		      0x0cc, BIT(8), 0);
++static SUNXI_CCU_GATE(usb_phy1_clk,	"usb-phy1",	"osc24M",
++		      0x0cc, BIT(9), 0);
++static SUNXI_CCU_GATE(usb_phy2_clk,	"usb-phy2",	"osc24M",
++		      0x0cc, BIT(10), 0);
++static SUNXI_CCU_GATE(usb_ohci0_clk,	"usb-ohci0",	"osc24M",
++		      0x0cc, BIT(16), 0);
++static SUNXI_CCU_GATE(usb_ohci1_clk,	"usb-ohci1",	"osc24M",
++		      0x0cc, BIT(17), 0);
++static SUNXI_CCU_GATE(usb_ohci2_clk,	"usb-ohci2",	"osc24M",
++		      0x0cc, BIT(18), 0);
++
++static const char * const usb_ohci12m_parents[] = { "osc24M-2x", "osc24M",
++						    "osc32k" };
++static SUNXI_CCU_MUX(usb_ohci0_12m_clk, "usb-ohci0-12m", usb_ohci12m_parents,
++		     0x0cc, 20, 2, 0);
++static SUNXI_CCU_MUX(usb_ohci1_12m_clk, "usb-ohci1-12m", usb_ohci12m_parents,
++		     0x0cc, 22, 2, 0);
++static SUNXI_CCU_MUX(usb_ohci2_12m_clk, "usb-ohci2-12m", usb_ohci12m_parents,
++		     0x0cc, 24, 2, 0);
++
++static const char * const ir_parents[] = { "osc24M", "pll-periph0",
++					   "pll-periph1", "osc32k" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(ir0_clk, "ir0", ir_parents, 0x0d0,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(ir1_clk, "ir1", ir_parents, 0x0d4,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const char * const dram_parents[] = { "pll-ddr0", "pll-ddr1" };
++static SUNXI_CCU_M_WITH_MUX(dram_clk, "dram", dram_parents,
++			    0x0f4, 0, 2, 20, 2, CLK_IS_CRITICAL);
++
++static SUNXI_CCU_GATE(dram_ve_clk,	"dram-ve",	"dram",
++		      0x100, BIT(0), 0);
++static SUNXI_CCU_GATE(dram_csi0_clk,	"dram-csi0",	"dram",
++		      0x100, BIT(1), 0);
++static SUNXI_CCU_GATE(dram_csi1_clk,	"dram-csi1",	"dram",
++		      0x100, BIT(2), 0);
++static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
++		      0x100, BIT(3), 0);
++static SUNXI_CCU_GATE(dram_tvd_clk,	"dram-tvd",	"dram",
++		      0x100, BIT(4), 0);
++static SUNXI_CCU_GATE(dram_de_mp_clk,	"dram-de-mp",	"dram",
++		      0x100, BIT(5), 0);
++static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
++		      0x100, BIT(6), 0);
++
++static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
++static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
++				 0x104, 0, 4, 24, 3, BIT(31), 0);
++static SUNXI_CCU_M_WITH_MUX_GATE(de_mp_clk, "de-mp", de_parents,
++				 0x108, 0, 4, 24, 3, BIT(31), 0);
++
++static const char * const tcon_parents[] = { "pll-video0", "pll-video1",
++					     "pll-video0-2x", "pll-video1-2x",
++					     "pll-mipi" };
++static SUNXI_CCU_MUX_WITH_GATE(tcon0_clk, "tcon0", tcon_parents,
++			       0x110, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_MUX_WITH_GATE(tcon1_clk, "tcon1", tcon_parents,
++			       0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tve0_clk, "tcon-tve0", tcon_parents,
++				 0x118, 0, 4, 24, 3, BIT(31), 0);
++static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tve1_clk, "tcon-tve1", tcon_parents,
++				 0x11c, 0, 4, 24, 3, BIT(31), 0);
++
++static const char * const deinterlace_parents[] = { "pll-periph0",
++						    "pll-periph1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, "deinterlace",
++				 deinterlace_parents, 0x124, 0, 4, 24, 3,
++				 BIT(31), 0);
++
++static const char * const csi_mclk_parents[] = { "osc24M", "pll-video",
++						 "pll-periph1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(csi1_mclk_clk, "csi1-mclk", csi_mclk_parents,
++				 0x130, 0, 5, 8, 3, BIT(15), 0);
++
++static const char * const csi_sclk_parents[] = { "pll-periph0", "pll-periph1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", csi_sclk_parents,
++				 0x134, 16, 4, 24, 3, BIT(31), 0);
++
++static SUNXI_CCU_M_WITH_MUX_GATE(csi0_mclk_clk, "csi0-mclk", csi_mclk_parents,
++				 0x134, 0, 5, 8, 3, BIT(15), 0);
++
++static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
++			     0x13c, 16, 3, BIT(31), 0);
++
++static SUNXI_CCU_GATE(adda_clk,		"adda",		"pll-audio",
++		      0x140, BIT(31), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_GATE(adda_4x_clk,	"adda-4x",	"pll-audio-4x",
++		      0x140, BIT(30), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
++		      0x144, BIT(31), 0);
++
++static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
++				 0x150, 0, 4, 24, 2, BIT(31), 0);
++
++static SUNXI_CCU_GATE(hdmi_slow_clk,	"hdmi-slow",	"osc24M",
++		      0x154, BIT(31), 0);
++
++static const char * const mbus_parents[] = { "osc24M", "pll-periph0-2x",
++					     "pll-ddr0" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents, 0x15c,
++				  0, 4,		/* M */
++				  16, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  CLK_IS_CRITICAL);
++
++static const char * const mipi_dsi_parents[] = { "pll-video0", "pll-video1",
++						 "pll-periph0" };
++static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi_clk, "mipi-dsi", mipi_dsi_parents,
++				 0x168, 0, 4, 8, 2, BIT(15), 0);
++
++static SUNXI_CCU_M_WITH_MUX_GATE(tve0_clk, "tve0", tcon_parents,
++				 0x180, 0, 4, 24, 3, BIT(31), 0);
++static SUNXI_CCU_M_WITH_MUX_GATE(tve1_clk, "tve1", tcon_parents,
++				 0x184, 0, 4, 24, 3, BIT(31), 0);
++
++static const char * const tvd_parents[] = { "pll-video0", "pll-video1",
++					    "pll-video0-2x", "pll-video1-2x" };
++static SUNXI_CCU_M_WITH_MUX_GATE(tvd0_clk, "tvd0", tvd_parents,
++				 0x188, 0, 4, 24, 2, BIT(31), 0);
++static SUNXI_CCU_M_WITH_MUX_GATE(tvd1_clk, "tvd1", tvd_parents,
++				 0x18c, 0, 4, 24, 2, BIT(31), 0);
++static SUNXI_CCU_M_WITH_MUX_GATE(tvd2_clk, "tvd2", tvd_parents,
++				 0x190, 0, 4, 24, 2, BIT(31), 0);
++static SUNXI_CCU_M_WITH_MUX_GATE(tvd3_clk, "tvd3", tvd_parents,
++				 0x194, 0, 4, 24, 2, BIT(31), 0);
++
++static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
++			     0x1a0, 0, 3, BIT(31), 0);
++
++static const char * const out_parents[] = { "osc24M-32k", "osc32k", "osc24M" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(outa_clk, "outa", out_parents, 0x1f0,
++				  8, 5,		/* M */
++				  20, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++static SUNXI_CCU_MP_WITH_MUX_GATE(outb_clk, "outb", out_parents, 0x1f4,
++				  8, 5,		/* M */
++				  20, 2,	/* P */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static struct ccu_common *sun8i_r40_ccu_clks[] = {
++	&pll_cpu_clk.common,
++	&pll_audio_base_clk.common,
++	&pll_video0_clk.common,
++	&pll_ve_clk.common,
++	&pll_ddr0_clk.common,
++	&pll_periph0_clk.common,
++	&pll_periph1_clk.common,
++	&pll_video1_clk.common,
++	&pll_sata_clk.common,
++	&pll_gpu_clk.common,
++	&pll_mipi_clk.common,
++	&pll_de_clk.common,
++	&pll_ddr1_clk.common,
++	&cpu_clk.common,
++	&axi_clk.common,
++	&ahb1_clk.common,
++	&apb1_clk.common,
++	&apb2_clk.common,
++	&bus_mipi_dsi_clk.common,
++	&bus_ce_clk.common,
++	&bus_dma_clk.common,
++	&bus_mmc0_clk.common,
++	&bus_mmc1_clk.common,
++	&bus_mmc2_clk.common,
++	&bus_mmc3_clk.common,
++	&bus_nand_clk.common,
++	&bus_dram_clk.common,
++	&bus_emac_clk.common,
++	&bus_ts_clk.common,
++	&bus_hstimer_clk.common,
++	&bus_spi0_clk.common,
++	&bus_spi1_clk.common,
++	&bus_spi2_clk.common,
++	&bus_spi3_clk.common,
++	&bus_sata_clk.common,
++	&bus_otg_clk.common,
++	&bus_ehci0_clk.common,
++	&bus_ehci1_clk.common,
++	&bus_ehci2_clk.common,
++	&bus_ohci0_clk.common,
++	&bus_ohci1_clk.common,
++	&bus_ohci2_clk.common,
++	&bus_ve_clk.common,
++	&bus_de_mp_clk.common,
++	&bus_deinterlace_clk.common,
++	&bus_csi0_clk.common,
++	&bus_csi1_clk.common,
++	&bus_hdmi_slow_clk.common,
++	&bus_hdmi_clk.common,
++	&bus_de_clk.common,
++	&bus_tve0_clk.common,
++	&bus_tve1_clk.common,
++	&bus_tve_top_clk.common,
++	&bus_gmac_clk.common,
++	&bus_gpu_clk.common,
++	&bus_tvd0_clk.common,
++	&bus_tvd1_clk.common,
++	&bus_tvd2_clk.common,
++	&bus_tvd3_clk.common,
++	&bus_tvd_top_clk.common,
++	&bus_tcon0_clk.common,
++	&bus_tcon1_clk.common,
++	&bus_tve0_tcon_clk.common,
++	&bus_tve1_tcon_clk.common,
++	&bus_tcon_top_clk.common,
++	&bus_codec_clk.common,
++	&bus_spdif_clk.common,
++	&bus_ac97_clk.common,
++	&bus_pio_clk.common,
++	&bus_ir0_clk.common,
++	&bus_ir1_clk.common,
++	&bus_ths_clk.common,
++	&bus_keypad_clk.common,
++	&bus_i2s0_clk.common,
++	&bus_i2s1_clk.common,
++	&bus_i2s2_clk.common,
++	&bus_i2c0_clk.common,
++	&bus_i2c1_clk.common,
++	&bus_i2c2_clk.common,
++	&bus_i2c3_clk.common,
++	&bus_can_clk.common,
++	&bus_scr_clk.common,
++	&bus_ps20_clk.common,
++	&bus_ps21_clk.common,
++	&bus_i2c4_clk.common,
++	&bus_uart0_clk.common,
++	&bus_uart1_clk.common,
++	&bus_uart2_clk.common,
++	&bus_uart3_clk.common,
++	&bus_uart4_clk.common,
++	&bus_uart5_clk.common,
++	&bus_uart6_clk.common,
++	&bus_uart7_clk.common,
++	&bus_dbg_clk.common,
++	&ths_clk.common,
++	&nand_clk.common,
++	&mmc0_clk.common,
++	&mmc1_clk.common,
++	&mmc2_clk.common,
++	&mmc3_clk.common,
++	&ts_clk.common,
++	&ce_clk.common,
++	&spi0_clk.common,
++	&spi1_clk.common,
++	&spi2_clk.common,
++	&spi3_clk.common,
++	&i2s0_clk.common,
++	&i2s1_clk.common,
++	&i2s2_clk.common,
++	&ac97_clk.common,
++	&spdif_clk.common,
++	&keypad_clk.common,
++	&sata_clk.common,
++	&usb_phy0_clk.common,
++	&usb_phy1_clk.common,
++	&usb_phy2_clk.common,
++	&usb_ohci0_clk.common,
++	&usb_ohci1_clk.common,
++	&usb_ohci2_clk.common,
++	&usb_ohci0_12m_clk.common,
++	&usb_ohci1_12m_clk.common,
++	&usb_ohci2_12m_clk.common,
++	&ir0_clk.common,
++	&ir1_clk.common,
++	&dram_clk.common,
++	&dram_ve_clk.common,
++	&dram_csi0_clk.common,
++	&dram_csi1_clk.common,
++	&dram_ts_clk.common,
++	&dram_tvd_clk.common,
++	&dram_de_mp_clk.common,
++	&dram_deinterlace_clk.common,
++	&de_clk.common,
++	&de_mp_clk.common,
++	&tcon0_clk.common,
++	&tcon1_clk.common,
++	&tcon_tve0_clk.common,
++	&tcon_tve1_clk.common,
++	&deinterlace_clk.common,
++	&csi1_mclk_clk.common,
++	&csi_sclk_clk.common,
++	&csi0_mclk_clk.common,
++	&ve_clk.common,
++	&adda_clk.common,
++	&adda_4x_clk.common,
++	&avs_clk.common,
++	&hdmi_clk.common,
++	&hdmi_slow_clk.common,
++	&mbus_clk.common,
++	&mipi_dsi_clk.common,
++	&tve0_clk.common,
++	&tve1_clk.common,
++	&tvd0_clk.common,
++	&tvd1_clk.common,
++	&tvd2_clk.common,
++	&tvd3_clk.common,
++	&gpu_clk.common,
++	&outa_clk.common,
++	&outb_clk.common,
++};
++
++/* We hardcode the divider to 4 for now */
++static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
++			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
++			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
++			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
++			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
++			"pll-periph0", 1, 2, 0);
++static CLK_FIXED_FACTOR(pll_periph1_2x_clk, "pll-periph1-2x",
++			"pll-periph1", 1, 2, 0);
++static CLK_FIXED_FACTOR(pll_video0_2x_clk, "pll-video0-2x",
++			"pll-video0", 1, 2, 0);
++static CLK_FIXED_FACTOR(pll_video1_2x_clk, "pll-video1-2x",
++			"pll-video1", 1, 2, 0);
++static CLK_FIXED_FACTOR(osc24m_2x_clk, "osc24M-2x",
++			"osc24M", 1, 2, 0);
++static CLK_FIXED_FACTOR(osc24m_32k_clk, "osc24M-32k",
++			"osc24M", 750, 1, 0);
++
++static struct clk_hw_onecell_data sun8i_r40_hw_clks = {
++	.hws	= {
++		[CLK_OSC24M_2X]		= &osc24m_2x_clk.hw,
++		[CLK_OSC24M_32K]	= &osc24m_32k_clk.hw,
++		[CLK_PLL_CPU]		= &pll_cpu_clk.common.hw,
++		[CLK_PLL_AUDIO_BASE]	= &pll_audio_base_clk.common.hw,
++		[CLK_PLL_AUDIO]		= &pll_audio_clk.hw,
++		[CLK_PLL_AUDIO_2X]	= &pll_audio_2x_clk.hw,
++		[CLK_PLL_AUDIO_4X]	= &pll_audio_4x_clk.hw,
++		[CLK_PLL_AUDIO_8X]	= &pll_audio_8x_clk.hw,
++		[CLK_PLL_VIDEO0]	= &pll_video0_clk.common.hw,
++		[CLK_PLL_VIDEO0_2X]	= &pll_video0_2x_clk.hw,
++		[CLK_PLL_VE]		= &pll_ve_clk.common.hw,
++		[CLK_PLL_DDR0]		= &pll_ddr0_clk.common.hw,
++		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
++		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
++		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
++		[CLK_PLL_PERIPH1_2X]	= &pll_periph1_2x_clk.hw,
++		[CLK_PLL_VIDEO1]	= &pll_video1_clk.common.hw,
++		[CLK_PLL_VIDEO1_2X]	= &pll_video1_2x_clk.hw,
++		[CLK_PLL_SATA]		= &pll_sata_clk.common.hw,
++		[CLK_PLL_GPU]		= &pll_gpu_clk.common.hw,
++		[CLK_PLL_MIPI]		= &pll_mipi_clk.common.hw,
++		[CLK_PLL_DE]		= &pll_de_clk.common.hw,
++		[CLK_PLL_DDR1]		= &pll_ddr1_clk.common.hw,
++		[CLK_CPU]		= &cpu_clk.common.hw,
++		[CLK_AXI]		= &axi_clk.common.hw,
++		[CLK_AHB1]		= &ahb1_clk.common.hw,
++		[CLK_APB1]		= &apb1_clk.common.hw,
++		[CLK_APB2]		= &apb2_clk.common.hw,
++		[CLK_BUS_MIPI_DSI]	= &bus_mipi_dsi_clk.common.hw,
++		[CLK_BUS_CE]		= &bus_ce_clk.common.hw,
++		[CLK_BUS_DMA]		= &bus_dma_clk.common.hw,
++		[CLK_BUS_MMC0]		= &bus_mmc0_clk.common.hw,
++		[CLK_BUS_MMC1]		= &bus_mmc1_clk.common.hw,
++		[CLK_BUS_MMC2]		= &bus_mmc2_clk.common.hw,
++		[CLK_BUS_MMC3]		= &bus_mmc3_clk.common.hw,
++		[CLK_BUS_NAND]		= &bus_nand_clk.common.hw,
++		[CLK_BUS_DRAM]		= &bus_dram_clk.common.hw,
++		[CLK_BUS_EMAC]		= &bus_emac_clk.common.hw,
++		[CLK_BUS_TS]		= &bus_ts_clk.common.hw,
++		[CLK_BUS_HSTIMER]	= &bus_hstimer_clk.common.hw,
++		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
++		[CLK_BUS_SPI1]		= &bus_spi1_clk.common.hw,
++		[CLK_BUS_SPI2]		= &bus_spi2_clk.common.hw,
++		[CLK_BUS_SPI3]		= &bus_spi3_clk.common.hw,
++		[CLK_BUS_SATA]		= &bus_sata_clk.common.hw,
++		[CLK_BUS_OTG]		= &bus_otg_clk.common.hw,
++		[CLK_BUS_EHCI0]		= &bus_ehci0_clk.common.hw,
++		[CLK_BUS_EHCI1]		= &bus_ehci1_clk.common.hw,
++		[CLK_BUS_EHCI2]		= &bus_ehci2_clk.common.hw,
++		[CLK_BUS_OHCI0]		= &bus_ohci0_clk.common.hw,
++		[CLK_BUS_OHCI1]		= &bus_ohci1_clk.common.hw,
++		[CLK_BUS_OHCI2]		= &bus_ohci2_clk.common.hw,
++		[CLK_BUS_VE]		= &bus_ve_clk.common.hw,
++		[CLK_BUS_DE_MP]		= &bus_de_mp_clk.common.hw,
++		[CLK_BUS_DEINTERLACE]	= &bus_deinterlace_clk.common.hw,
++		[CLK_BUS_CSI0]		= &bus_csi0_clk.common.hw,
++		[CLK_BUS_CSI1]		= &bus_csi1_clk.common.hw,
++		[CLK_BUS_HDMI_SLOW]	= &bus_hdmi_slow_clk.common.hw,
++		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
++		[CLK_BUS_DE]		= &bus_de_clk.common.hw,
++		[CLK_BUS_TVE0]		= &bus_tve0_clk.common.hw,
++		[CLK_BUS_TVE1]		= &bus_tve1_clk.common.hw,
++		[CLK_BUS_TVE_TOP]	= &bus_tve_top_clk.common.hw,
++		[CLK_BUS_GMAC]		= &bus_gmac_clk.common.hw,
++		[CLK_BUS_GPU]		= &bus_gpu_clk.common.hw,
++		[CLK_BUS_TVD0]		= &bus_tvd0_clk.common.hw,
++		[CLK_BUS_TVD1]		= &bus_tvd1_clk.common.hw,
++		[CLK_BUS_TVD2]		= &bus_tvd2_clk.common.hw,
++		[CLK_BUS_TVD3]		= &bus_tvd3_clk.common.hw,
++		[CLK_BUS_TVD_TOP]	= &bus_tvd_top_clk.common.hw,
++		[CLK_BUS_TCON0]		= &bus_tcon0_clk.common.hw,
++		[CLK_BUS_TCON1]		= &bus_tcon1_clk.common.hw,
++		[CLK_BUS_TVE0_TCON]	= &bus_tve0_tcon_clk.common.hw,
++		[CLK_BUS_TVE1_TCON]	= &bus_tve1_tcon_clk.common.hw,
++		[CLK_BUS_TCON_TOP]	= &bus_tcon_top_clk.common.hw,
++		[CLK_BUS_CODEC]		= &bus_codec_clk.common.hw,
++		[CLK_BUS_SPDIF]		= &bus_spdif_clk.common.hw,
++		[CLK_BUS_AC97]		= &bus_ac97_clk.common.hw,
++		[CLK_BUS_PIO]		= &bus_pio_clk.common.hw,
++		[CLK_BUS_IR0]		= &bus_ir0_clk.common.hw,
++		[CLK_BUS_IR1]		= &bus_ir1_clk.common.hw,
++		[CLK_BUS_THS]		= &bus_ths_clk.common.hw,
++		[CLK_BUS_KEYPAD]	= &bus_keypad_clk.common.hw,
++		[CLK_BUS_I2S0]		= &bus_i2s0_clk.common.hw,
++		[CLK_BUS_I2S1]		= &bus_i2s1_clk.common.hw,
++		[CLK_BUS_I2S2]		= &bus_i2s2_clk.common.hw,
++		[CLK_BUS_I2C0]		= &bus_i2c0_clk.common.hw,
++		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
++		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
++		[CLK_BUS_I2C3]		= &bus_i2c3_clk.common.hw,
++		[CLK_BUS_CAN]		= &bus_can_clk.common.hw,
++		[CLK_BUS_SCR]		= &bus_scr_clk.common.hw,
++		[CLK_BUS_PS20]		= &bus_ps20_clk.common.hw,
++		[CLK_BUS_PS21]		= &bus_ps21_clk.common.hw,
++		[CLK_BUS_I2C4]		= &bus_i2c4_clk.common.hw,
++		[CLK_BUS_UART0]		= &bus_uart0_clk.common.hw,
++		[CLK_BUS_UART1]		= &bus_uart1_clk.common.hw,
++		[CLK_BUS_UART2]		= &bus_uart2_clk.common.hw,
++		[CLK_BUS_UART3]		= &bus_uart3_clk.common.hw,
++		[CLK_BUS_UART4]		= &bus_uart4_clk.common.hw,
++		[CLK_BUS_UART5]		= &bus_uart5_clk.common.hw,
++		[CLK_BUS_UART6]		= &bus_uart6_clk.common.hw,
++		[CLK_BUS_UART7]		= &bus_uart7_clk.common.hw,
++		[CLK_BUS_DBG]		= &bus_dbg_clk.common.hw,
++		[CLK_THS]		= &ths_clk.common.hw,
++		[CLK_NAND]		= &nand_clk.common.hw,
++		[CLK_MMC0]		= &mmc0_clk.common.hw,
++		[CLK_MMC1]		= &mmc1_clk.common.hw,
++		[CLK_MMC2]		= &mmc2_clk.common.hw,
++		[CLK_MMC3]		= &mmc3_clk.common.hw,
++		[CLK_TS]		= &ts_clk.common.hw,
++		[CLK_CE]		= &ce_clk.common.hw,
++		[CLK_SPI0]		= &spi0_clk.common.hw,
++		[CLK_SPI1]		= &spi1_clk.common.hw,
++		[CLK_SPI2]		= &spi2_clk.common.hw,
++		[CLK_SPI3]		= &spi3_clk.common.hw,
++		[CLK_I2S0]		= &i2s0_clk.common.hw,
++		[CLK_I2S1]		= &i2s1_clk.common.hw,
++		[CLK_I2S2]		= &i2s2_clk.common.hw,
++		[CLK_AC97]		= &ac97_clk.common.hw,
++		[CLK_SPDIF]		= &spdif_clk.common.hw,
++		[CLK_KEYPAD]		= &keypad_clk.common.hw,
++		[CLK_SATA]		= &sata_clk.common.hw,
++		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
++		[CLK_USB_PHY1]		= &usb_phy1_clk.common.hw,
++		[CLK_USB_PHY2]		= &usb_phy2_clk.common.hw,
++		[CLK_USB_OHCI0]		= &usb_ohci0_clk.common.hw,
++		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
++		[CLK_USB_OHCI2]		= &usb_ohci2_clk.common.hw,
++		[CLK_USB_OHCI0_12M]	= &usb_ohci0_12m_clk.common.hw,
++		[CLK_USB_OHCI1_12M]	= &usb_ohci1_12m_clk.common.hw,
++		[CLK_USB_OHCI2_12M]	= &usb_ohci2_12m_clk.common.hw,
++		[CLK_IR0]		= &ir0_clk.common.hw,
++		[CLK_IR1]		= &ir1_clk.common.hw,
++		[CLK_DRAM]		= &dram_clk.common.hw,
++		[CLK_DRAM_VE]		= &dram_ve_clk.common.hw,
++		[CLK_DRAM_CSI0]		= &dram_csi0_clk.common.hw,
++		[CLK_DRAM_CSI1]		= &dram_csi1_clk.common.hw,
++		[CLK_DRAM_TS]		= &dram_ts_clk.common.hw,
++		[CLK_DRAM_TVD]		= &dram_tvd_clk.common.hw,
++		[CLK_DRAM_DE_MP]	= &dram_de_mp_clk.common.hw,
++		[CLK_DRAM_DEINTERLACE]	= &dram_deinterlace_clk.common.hw,
++		[CLK_DE]		= &de_clk.common.hw,
++		[CLK_DE_MP]		= &de_mp_clk.common.hw,
++		[CLK_TCON0]		= &tcon0_clk.common.hw,
++		[CLK_TCON1]		= &tcon1_clk.common.hw,
++		[CLK_TCON_TVE0]		= &tcon_tve0_clk.common.hw,
++		[CLK_TCON_TVE1]		= &tcon_tve1_clk.common.hw,
++		[CLK_DEINTERLACE]	= &deinterlace_clk.common.hw,
++		[CLK_CSI1_MCLK]		= &csi1_mclk_clk.common.hw,
++		[CLK_CSI_SCLK]		= &csi_sclk_clk.common.hw,
++		[CLK_CSI0_MCLK]		= &csi0_mclk_clk.common.hw,
++		[CLK_VE]		= &ve_clk.common.hw,
++		[CLK_ADDA]		= &adda_clk.common.hw,
++		[CLK_ADDA_4X]		= &adda_4x_clk.common.hw,
++		[CLK_AVS]		= &avs_clk.common.hw,
++		[CLK_HDMI]		= &hdmi_clk.common.hw,
++		[CLK_HDMI_SLOW]		= &hdmi_slow_clk.common.hw,
++		[CLK_MBUS]		= &mbus_clk.common.hw,
++		[CLK_MIPI_DSI]		= &mipi_dsi_clk.common.hw,
++		[CLK_TVE0]		= &tve0_clk.common.hw,
++		[CLK_TVE1]		= &tve1_clk.common.hw,
++		[CLK_TVD0]		= &tvd0_clk.common.hw,
++		[CLK_TVD1]		= &tvd1_clk.common.hw,
++		[CLK_TVD2]		= &tvd2_clk.common.hw,
++		[CLK_TVD3]		= &tvd3_clk.common.hw,
++		[CLK_GPU]		= &gpu_clk.common.hw,
++		[CLK_OUTA]		= &outa_clk.common.hw,
++		[CLK_OUTB]		= &outb_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
++
++static struct ccu_reset_map sun8i_r40_ccu_resets[] = {
++	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
++	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
++	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
++
++	[RST_MBUS]		=  { 0x0fc, BIT(31) },
++
++	[RST_BUS_MIPI_DSI]	=  { 0x2c0, BIT(1) },
++	[RST_BUS_CE]		=  { 0x2c0, BIT(5) },
++	[RST_BUS_DMA]		=  { 0x2c0, BIT(6) },
++	[RST_BUS_MMC0]		=  { 0x2c0, BIT(8) },
++	[RST_BUS_MMC1]		=  { 0x2c0, BIT(9) },
++	[RST_BUS_MMC2]		=  { 0x2c0, BIT(10) },
++	[RST_BUS_MMC3]		=  { 0x2c0, BIT(11) },
++	[RST_BUS_NAND]		=  { 0x2c0, BIT(13) },
++	[RST_BUS_DRAM]		=  { 0x2c0, BIT(14) },
++	[RST_BUS_EMAC]		=  { 0x2c0, BIT(17) },
++	[RST_BUS_TS]		=  { 0x2c0, BIT(18) },
++	[RST_BUS_HSTIMER]	=  { 0x2c0, BIT(19) },
++	[RST_BUS_SPI0]		=  { 0x2c0, BIT(20) },
++	[RST_BUS_SPI1]		=  { 0x2c0, BIT(21) },
++	[RST_BUS_SPI2]		=  { 0x2c0, BIT(22) },
++	[RST_BUS_SPI3]		=  { 0x2c0, BIT(23) },
++	[RST_BUS_SATA]		=  { 0x2c0, BIT(24) },
++	[RST_BUS_OTG]		=  { 0x2c0, BIT(25) },
++	[RST_BUS_EHCI0]		=  { 0x2c0, BIT(26) },
++	[RST_BUS_EHCI1]		=  { 0x2c0, BIT(27) },
++	[RST_BUS_EHCI2]		=  { 0x2c0, BIT(28) },
++	[RST_BUS_OHCI0]		=  { 0x2c0, BIT(29) },
++	[RST_BUS_OHCI1]		=  { 0x2c0, BIT(30) },
++	[RST_BUS_OHCI2]		=  { 0x2c0, BIT(31) },
++
++	[RST_BUS_VE]		=  { 0x2c4, BIT(0) },
++	[RST_BUS_DE_MP]		=  { 0x2c4, BIT(2) },
++	[RST_BUS_DEINTERLACE]	=  { 0x2c4, BIT(5) },
++	[RST_BUS_CSI0]		=  { 0x2c4, BIT(8) },
++	[RST_BUS_CSI1]		=  { 0x2c4, BIT(9) },
++	[RST_BUS_HDMI_SLOW]	=  { 0x2c4, BIT(10) },
++	[RST_BUS_HDMI]		=  { 0x2c4, BIT(11) },
++	[RST_BUS_DE]		=  { 0x2c4, BIT(12) },
++	[RST_BUS_TVE0]		=  { 0x2c4, BIT(13) },
++	[RST_BUS_TVE1]		=  { 0x2c4, BIT(14) },
++	[RST_BUS_TVE_TOP]	=  { 0x2c4, BIT(15) },
++	[RST_BUS_GMAC]		=  { 0x2c4, BIT(17) },
++	[RST_BUS_GPU]		=  { 0x2c4, BIT(20) },
++	[RST_BUS_TVD0]		=  { 0x2c4, BIT(21) },
++	[RST_BUS_TVD1]		=  { 0x2c4, BIT(22) },
++	[RST_BUS_TVD2]		=  { 0x2c4, BIT(23) },
++	[RST_BUS_TVD3]		=  { 0x2c4, BIT(24) },
++	[RST_BUS_TVD_TOP]	=  { 0x2c4, BIT(25) },
++	[RST_BUS_TCON0]		=  { 0x2c4, BIT(26) },
++	[RST_BUS_TCON1]		=  { 0x2c4, BIT(27) },
++	[RST_BUS_TCON_TVE0]	=  { 0x2c4, BIT(28) },
++	[RST_BUS_TCON_TVE1]	=  { 0x2c4, BIT(29) },
++	[RST_BUS_TCON_TOP]	=  { 0x2c4, BIT(30) },
++	[RST_BUS_DBG]		=  { 0x2c4, BIT(31) },
++
++	[RST_BUS_LVDS]		=  { 0x2c8, BIT(0) },
++
++	[RST_BUS_CODEC]		=  { 0x2d0, BIT(0) },
++	[RST_BUS_SPDIF]		=  { 0x2d0, BIT(1) },
++	[RST_BUS_AC97]		=  { 0x2d0, BIT(2) },
++	[RST_BUS_IR0]		=  { 0x2d0, BIT(6) },
++	[RST_BUS_IR1]		=  { 0x2d0, BIT(7) },
++	[RST_BUS_THS]		=  { 0x2d0, BIT(8) },
++	[RST_BUS_KEYPAD]	=  { 0x2d0, BIT(10) },
++	[RST_BUS_I2S0]		=  { 0x2d0, BIT(12) },
++	[RST_BUS_I2S1]		=  { 0x2d0, BIT(13) },
++	[RST_BUS_I2S2]		=  { 0x2d0, BIT(14) },
++
++	[RST_BUS_I2C0]		=  { 0x2d8, BIT(0) },
++	[RST_BUS_I2C1]		=  { 0x2d8, BIT(1) },
++	[RST_BUS_I2C2]		=  { 0x2d8, BIT(2) },
++	[RST_BUS_I2C3]		=  { 0x2d8, BIT(3) },
++	[RST_BUS_CAN]		=  { 0x2d8, BIT(4) },
++	[RST_BUS_SCR]		=  { 0x2d8, BIT(5) },
++	[RST_BUS_PS20]		=  { 0x2d8, BIT(6) },
++	[RST_BUS_PS21]		=  { 0x2d8, BIT(7) },
++	[RST_BUS_I2C4]		=  { 0x2d8, BIT(15) },
++	[RST_BUS_UART0]		=  { 0x2d8, BIT(16) },
++	[RST_BUS_UART1]		=  { 0x2d8, BIT(17) },
++	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
++	[RST_BUS_UART3]		=  { 0x2d8, BIT(19) },
++	[RST_BUS_UART4]		=  { 0x2d8, BIT(20) },
++	[RST_BUS_UART5]		=  { 0x2d8, BIT(21) },
++	[RST_BUS_UART6]		=  { 0x2d8, BIT(22) },
++	[RST_BUS_UART7]		=  { 0x2d8, BIT(23) },
++};
++
++static const struct sunxi_ccu_desc sun8i_r40_ccu_desc = {
++	.ccu_clks	= sun8i_r40_ccu_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun8i_r40_ccu_clks),
++
++	.hw_clks	= &sun8i_r40_hw_clks,
++
++	.resets		= sun8i_r40_ccu_resets,
++	.num_resets	= ARRAY_SIZE(sun8i_r40_ccu_resets),
++};
++
++static struct ccu_mux_nb sun8i_r40_cpu_nb = {
++	.common		= &cpu_clk.common,
++	.cm		= &cpu_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
++static void __init sun8i_r40_ccu_setup(struct device_node *node)
++{
++	void __iomem *reg;
++	u32 val;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg)) {
++		pr_err("%s: Could not map the clock registers\n",
++		       of_node_full_name(node));
++		return;
++	}
++
++	/* Force the PLL-Audio-1x divider to 4 */
++	val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
++	val &= ~GENMASK(19, 16);
++	writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
++
++	sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
++
++	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
++				  &sun8i_r40_cpu_nb);
++}
++CLK_OF_DECLARE(sun8i_r40_ccu, "allwinner,sun8i-r40-ccu",
++	       sun8i_r40_ccu_setup);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+new file mode 100644
+index 000000000000..392040cf47a1
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+@@ -0,0 +1,68 @@
++/*
++ * Copyright 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_SUN8I_R40_H_
++#define _CCU_SUN8I_R40_H_
++
++#include <dt-bindings/clock/sun8i-r40-ccu.h>
++#include <dt-bindings/reset/sun8i-r40-ccu.h>
++
++#define CLK_OSC24M_2X		0
++#define CLK_OSC24M_32K		1
++#define CLK_PLL_CPU		2
++#define CLK_PLL_AUDIO_BASE	3
++#define CLK_PLL_AUDIO		4
++#define CLK_PLL_AUDIO_2X	5
++#define CLK_PLL_AUDIO_4X	6
++#define CLK_PLL_AUDIO_8X	7
++#define CLK_PLL_VIDEO0		8
++#define CLK_PLL_VIDEO0_2X	9
++#define CLK_PLL_VE		10
++#define CLK_PLL_DDR0		11
++#define CLK_PLL_PERIPH0		12
++#define CLK_PLL_PERIPH0_2X	13
++#define CLK_PLL_PERIPH1		14
++#define CLK_PLL_PERIPH1_2X	15
++#define CLK_PLL_VIDEO1		16
++#define CLK_PLL_VIDEO1_2X	17
++#define CLK_PLL_SATA		18
++#define CLK_PLL_GPU		19
++#define CLK_PLL_MIPI		20
++#define CLK_PLL_DE		21
++#define CLK_PLL_DDR1		22
++
++/* The CPU clock is exported */
++
++#define CLK_AXI			24
++#define CLK_AHB1		25
++#define CLK_APB1		26
++#define CLK_APB2		27
++
++/* All the bus gates are exported */
++
++/* The first bunch of module clocks are exported */
++
++#define CLK_DRAM		134
++
++/* All the DRAM gates are exported */
++
++/* Some more module clocks are exported */
++
++#define CLK_MBUS		158
++
++/* Another bunch of module clocks are exported */
++
++#define CLK_NUMBER		(CLK_OUTB + 1)
++
++#endif /* _CCU_SUN8I_R40_H_ */
+diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
+new file mode 100644
+index 000000000000..0cab59f6bfe7
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
+@@ -0,0 +1,191 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SUN8I_R40_H_
++#define _DT_BINDINGS_CLK_SUN8I_R40_H_
++
++#define CLK_CPU			23
++
++#define CLK_BUS_MIPI_DSI	28
++#define CLK_BUS_CE		29
++#define CLK_BUS_DMA		30
++#define CLK_BUS_MMC0		31
++#define CLK_BUS_MMC1		32
++#define CLK_BUS_MMC2		33
++#define CLK_BUS_MMC3		34
++#define CLK_BUS_NAND		35
++#define CLK_BUS_DRAM		36
++#define CLK_BUS_EMAC		37
++#define CLK_BUS_TS		38
++#define CLK_BUS_HSTIMER		39
++#define CLK_BUS_SPI0		40
++#define CLK_BUS_SPI1		41
++#define CLK_BUS_SPI2		42
++#define CLK_BUS_SPI3		43
++#define CLK_BUS_SATA		44
++#define CLK_BUS_OTG		45
++#define CLK_BUS_EHCI0		46
++#define CLK_BUS_EHCI1		47
++#define CLK_BUS_EHCI2		48
++#define CLK_BUS_OHCI0		49
++#define CLK_BUS_OHCI1		50
++#define CLK_BUS_OHCI2		51
++#define CLK_BUS_VE		52
++#define CLK_BUS_DE_MP		53
++#define CLK_BUS_DEINTERLACE	54
++#define CLK_BUS_CSI0		55
++#define CLK_BUS_CSI1		56
++#define CLK_BUS_HDMI_SLOW	57
++#define CLK_BUS_HDMI		58
++#define CLK_BUS_DE		59
++#define CLK_BUS_TVE0		60
++#define CLK_BUS_TVE1		61
++#define CLK_BUS_TVE_TOP		62
++#define CLK_BUS_GMAC		63
++#define CLK_BUS_GPU		64
++#define CLK_BUS_TVD0		65
++#define CLK_BUS_TVD1		66
++#define CLK_BUS_TVD2		67
++#define CLK_BUS_TVD3		68
++#define CLK_BUS_TVD_TOP		69
++#define CLK_BUS_TCON0		70
++#define CLK_BUS_TCON1		71
++#define CLK_BUS_TVE0_TCON	72
++#define CLK_BUS_TVE1_TCON	73
++#define CLK_BUS_TCON_TOP	74
++#define CLK_BUS_CODEC		75
++#define CLK_BUS_SPDIF		76
++#define CLK_BUS_AC97		77
++#define CLK_BUS_PIO		78
++#define CLK_BUS_IR0		79
++#define CLK_BUS_IR1		80
++#define CLK_BUS_THS		81
++#define CLK_BUS_KEYPAD		82
++#define CLK_BUS_I2S0		83
++#define CLK_BUS_I2S1		84
++#define CLK_BUS_I2S2		85
++#define CLK_BUS_I2C0		86
++#define CLK_BUS_I2C1		87
++#define CLK_BUS_I2C2		88
++#define CLK_BUS_I2C3		89
++#define CLK_BUS_CAN		90
++#define CLK_BUS_SCR		91
++#define CLK_BUS_PS20		92
++#define CLK_BUS_PS21		93
++#define CLK_BUS_I2C4		94
++#define CLK_BUS_UART0		95
++#define CLK_BUS_UART1		96
++#define CLK_BUS_UART2		97
++#define CLK_BUS_UART3		98
++#define CLK_BUS_UART4		99
++#define CLK_BUS_UART5		100
++#define CLK_BUS_UART6		101
++#define CLK_BUS_UART7		102
++#define CLK_BUS_DBG		103
++
++#define CLK_THS			104
++#define CLK_NAND		105
++#define CLK_MMC0		106
++#define CLK_MMC1		107
++#define CLK_MMC2		108
++#define CLK_MMC3		109
++#define CLK_TS			110
++#define CLK_CE			111
++#define CLK_SPI0		112
++#define CLK_SPI1		113
++#define CLK_SPI2		114
++#define CLK_SPI3		115
++#define CLK_I2S0		116
++#define CLK_I2S1		117
++#define CLK_I2S2		118
++#define CLK_AC97		119
++#define CLK_SPDIF		120
++#define CLK_KEYPAD		121
++#define CLK_SATA		122
++#define CLK_USB_PHY0		123
++#define CLK_USB_PHY1		124
++#define CLK_USB_PHY2		125
++#define CLK_USB_OHCI0		126
++#define CLK_USB_OHCI1		127
++#define CLK_USB_OHCI2		128
++#define CLK_USB_OHCI0_12M	129
++#define CLK_USB_OHCI1_12M	130
++#define CLK_USB_OHCI2_12M	131
++#define CLK_IR0			132
++#define CLK_IR1			133
++
++#define CLK_DRAM_VE		135
++#define CLK_DRAM_CSI0		136
++#define CLK_DRAM_CSI1		137
++#define CLK_DRAM_TS		138
++#define CLK_DRAM_TVD		139
++#define CLK_DRAM_DE_MP		140
++#define CLK_DRAM_DEINTERLACE	141
++#define CLK_DE			142
++#define CLK_DE_MP		143
++#define CLK_TCON0		144
++#define CLK_TCON1		145
++#define CLK_TCON_TVE0		146
++#define CLK_TCON_TVE1		147
++#define CLK_DEINTERLACE		148
++#define CLK_CSI1_MCLK		149
++#define CLK_CSI_SCLK		150
++#define CLK_CSI0_MCLK		151
++#define CLK_VE			152
++#define CLK_ADDA		153
++#define CLK_ADDA_4X		154
++#define CLK_AVS			155
++#define CLK_HDMI		156
++#define CLK_HDMI_SLOW		157
++
++#define CLK_MIPI_DSI		159
++#define CLK_TVE0		160
++#define CLK_TVE1		161
++#define CLK_TVD0		162
++#define CLK_TVD1		163
++#define CLK_TVD2		164
++#define CLK_TVD3		165
++#define CLK_GPU			166
++#define CLK_OUTA		167
++#define CLK_OUTB		168
++
++#endif /* _DT_BINDINGS_CLK_SUN8I_R40_H_ */
+diff --git a/include/dt-bindings/reset/sun8i-r40-ccu.h b/include/dt-bindings/reset/sun8i-r40-ccu.h
+new file mode 100644
+index 000000000000..a6ba5e565c5d
+--- /dev/null
++++ b/include/dt-bindings/reset/sun8i-r40-ccu.h
+@@ -0,0 +1,129 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef _DT_BINDINGS_RST_SUN8I_R40_H_
++#define _DT_BINDINGS_RST_SUN8I_R40_H_
++
++#define RST_USB_PHY0		0
++#define RST_USB_PHY1		1
++#define RST_USB_PHY2		2
++
++#define RST_MBUS		3
++
++#define RST_BUS_MIPI_DSI	4
++#define RST_BUS_CE		5
++#define RST_BUS_DMA		6
++#define RST_BUS_MMC0		7
++#define RST_BUS_MMC1		8
++#define RST_BUS_MMC2		9
++#define RST_BUS_MMC3		10
++#define RST_BUS_NAND		11
++#define RST_BUS_DRAM		12
++#define RST_BUS_EMAC		13
++#define RST_BUS_TS		14
++#define RST_BUS_HSTIMER		15
++#define RST_BUS_SPI0		16
++#define RST_BUS_SPI1		17
++#define RST_BUS_SPI2		18
++#define RST_BUS_SPI3		19
++#define RST_BUS_SATA		20
++#define RST_BUS_OTG		21
++#define RST_BUS_EHCI0		22
++#define RST_BUS_EHCI1		23
++#define RST_BUS_EHCI2		24
++#define RST_BUS_OHCI0		25
++#define RST_BUS_OHCI1		26
++#define RST_BUS_OHCI2		27
++#define RST_BUS_VE		28
++#define RST_BUS_DE_MP		29
++#define RST_BUS_DEINTERLACE	30
++#define RST_BUS_CSI0		31
++#define RST_BUS_CSI1		32
++#define RST_BUS_HDMI_SLOW	33
++#define RST_BUS_HDMI		34
++#define RST_BUS_DE		35
++#define RST_BUS_TVE0		36
++#define RST_BUS_TVE1		37
++#define RST_BUS_TVE_TOP		38
++#define RST_BUS_GMAC		39
++#define RST_BUS_GPU		40
++#define RST_BUS_TVD0		41
++#define RST_BUS_TVD1		42
++#define RST_BUS_TVD2		43
++#define RST_BUS_TVD3		44
++#define RST_BUS_TVD_TOP		45
++#define RST_BUS_TCON0		46
++#define RST_BUS_TCON1		47
++#define RST_BUS_TCON_TVE0	48
++#define RST_BUS_TCON_TVE1	49
++#define RST_BUS_TCON_TOP	50
++#define RST_BUS_DBG		51
++#define RST_BUS_LVDS		52
++#define RST_BUS_CODEC		53
++#define RST_BUS_SPDIF		54
++#define RST_BUS_AC97		55
++#define RST_BUS_IR0		56
++#define RST_BUS_IR1		57
++#define RST_BUS_THS		58
++#define RST_BUS_KEYPAD		59
++#define RST_BUS_I2S0		60
++#define RST_BUS_I2S1		61
++#define RST_BUS_I2S2		62
++#define RST_BUS_I2C0		63
++#define RST_BUS_I2C1		64
++#define RST_BUS_I2C2		65
++#define RST_BUS_I2C3		66
++#define RST_BUS_CAN		67
++#define RST_BUS_SCR		68
++#define RST_BUS_PS20		69
++#define RST_BUS_PS21		70
++#define RST_BUS_I2C4		71
++#define RST_BUS_UART0		72
++#define RST_BUS_UART1		73
++#define RST_BUS_UART2		74
++#define RST_BUS_UART3		75
++#define RST_BUS_UART4		76
++#define RST_BUS_UART5		77
++#define RST_BUS_UART6		78
++#define RST_BUS_UART7		79
++
++#endif /* _DT_BINDINGS_RST_SUN8I_R40_H_ */
 -- 
-2.7.4
+2.12.2
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
