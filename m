@@ -1,58 +1,104 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: chenjun14@huawei.com,
-	zhongkaihua@huawei.com,
-	zhangfei.gao@linaro.org,
-	leo.yan@linaro.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Zheng Shaobo <zhengshaobo1@huawei.com>
-Subject: [PATCH v2 3/3] clk: hi3660: Set PPLL2 to 2880M
-Date: Fri, 26 May 2017 15:38:21 +0800
-Message-Id: <20170526073821.25971-4-guodong.xu@linaro.org>
-In-Reply-To: <20170526073821.25971-1-guodong.xu@linaro.org>
-References: <20170526073821.25971-1-guodong.xu@linaro.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <c7ac6faa0568e6418291255af537c4b070bdea63.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+ <c7ac6faa0568e6418291255af537c4b070bdea63.1493812478.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 4 May 2017 16:05:18 +0800
+Message-ID: <CAGb2v65S2pw3z8NZ+tkPkF=A=5z2toRkC+26pAs6La6CNyeXoQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 20/20] ARM: sun5i: a10s-olinuxino: Enable HDMI
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zhong Kaihua <zhongkaihua@huawei.com>
+On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The A10s Olinuxino has an HDMI connector. Make sure we can use it.
+>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts | 29 +++++++++++++++++-
+>  1 file changed, 29 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+> index 894f874a5beb..1d13b6407222 100644
+> --- a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+> +++ b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+> @@ -63,6 +63,17 @@
+>                 stdout-path = "serial0:115200n8";
+>         };
+>
+> +       connector {
+> +               compatible = "hdmi-connector";
+> +               type = "a";
 
-Set PPLL2 to 2880M. With this patch, we saw better compatibility
-on various 1080p HDMI monitors.
+Just curious, should we take this into consideration when creating
+drm_connector?
 
-Signed-off-by: Zhong Kaihua <zhongkaihua@huawei.com>
-Signed-off-by: Zheng Shaobo <zhengshaobo1@huawei.com>
----
- drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ChenYu
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index 67c4d44..eb9ba41 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -20,7 +20,7 @@ static const struct hisi_fixed_rate_clock hi3660_fixed_rate_clks[] = {
- 	{ HI3660_CLK_FLL_SRC, "clk_fll_src", NULL, 0, 128000000, },
- 	{ HI3660_CLK_PPLL0, "clk_ppll0", NULL, 0, 1600000000, },
- 	{ HI3660_CLK_PPLL1, "clk_ppll1", NULL, 0, 1866000000, },
--	{ HI3660_CLK_PPLL2, "clk_ppll2", NULL, 0, 960000000, },
-+	{ HI3660_CLK_PPLL2, "clk_ppll2", NULL, 0, 2880000000, },
- 	{ HI3660_CLK_PPLL3, "clk_ppll3", NULL, 0, 1290000000, },
- 	{ HI3660_CLK_SCPLL, "clk_scpll", NULL, 0, 245760000, },
- 	{ HI3660_PCLK, "pclk", NULL, 0, 20000000, },
-@@ -42,7 +42,7 @@ static const struct hisi_fixed_factor_clock hi3660_crg_fixed_factor_clks[] = {
- 	{ HI3660_CLK_GATE_I2C6, "clk_gate_i2c6", "clk_i2c6_iomcu", 1, 4, 0, },
- 	{ HI3660_CLK_DIV_SYSBUS, "clk_div_sysbus", "clk_mux_sysbus", 1, 7, 0, },
- 	{ HI3660_CLK_DIV_320M, "clk_div_320m", "clk_320m_pll_gt", 1, 5, 0, },
--	{ HI3660_CLK_DIV_A53, "clk_div_a53hpm", "clk_a53hpm_andgt", 1, 2, 0, },
-+	{ HI3660_CLK_DIV_A53, "clk_div_a53hpm", "clk_a53hpm_andgt", 1, 6, 0, },
- 	{ HI3660_CLK_GATE_SPI0, "clk_gate_spi0", "clk_ppll0", 1, 8, 0, },
- 	{ HI3660_CLK_GATE_SPI2, "clk_gate_spi2", "clk_ppll0", 1, 8, 0, },
- 	{ HI3660_PCIEPHY_REF, "clk_pciephy_ref", "clk_div_pciephy", 1, 1, 0, },
--- 
-2.10.2
+> +
+> +               port {
+> +                       hdmi_con_in: endpoint {
+> +                               remote-endpoint = <&hdmi_out_con>;
+> +                       };
+> +               };
+> +       };
+> +
+>         leds {
+>                 compatible = "gpio-leds";
+>                 pinctrl-names = "default";
+> @@ -76,6 +87,10 @@
+>         };
+>  };
+>
+> +&be0 {
+> +       status = "okay";
+> +};
+> +
+>  &ehci0 {
+>         status = "okay";
+>  };
+> @@ -91,6 +106,16 @@
+>         status = "okay";
+>  };
+>
+> +&hdmi {
+> +       status = "okay";
+> +};
+> +
+> +&hdmi_out {
+> +       hdmi_out_con: endpoint {
+> +               remote-endpoint = <&hdmi_con_in>;
+> +       };
+> +};
+> +
+>  &i2c0 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&i2c0_pins_a>;
+> @@ -248,6 +273,10 @@
+>         status = "okay";
+>  };
+>
+> +&tcon0 {
+> +       status = "okay";
+> +};
+> +
+>  &uart0 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&uart0_pins_a>;
+> --
+> git-series 0.8.11
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
