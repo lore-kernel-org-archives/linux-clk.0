@@ -1,125 +1,49 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 1/7] clk: mvebu: cp110 fix name of the GOP gate clock
-Date: Fri, 19 May 2017 17:55:19 +0200
-Message-Id: <062f869fb140c2626efadef80f325d9f03c330f6.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:44350 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755141AbdEDODg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 May 2017 10:03:36 -0400
+Date: Thu, 04 May 2017 22:03:26 +0800
+In-Reply-To: <20170504140220.26kguf3trz7ocylv@lukather>
+References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-4-icenowy@aosc.io> <20170504140220.26kguf3trz7ocylv@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v2 03/10] pinctrl: sunxi: add A20 support to A10 driver
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <83062089-19CD-4805-A6DC-2C25D75621FF@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Actually the GOP clock (bit 18) is not at all used for emmc but only
-for GOP: let's fix the name.
 
-Changing the name in the device tree is not an issue because the name
-itself is not used to reference the clock. Thanks to this the ABI remains
-backward compatible.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 6 +++---
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       | 2 +-
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        | 2 +-
- drivers/clk/mvebu/cp110-system-controller.c                                | 5 +++--
- 4 files changed, 8 insertions(+), 7 deletions(-)
+于 2017年5月4日 GMT+08:00 下午10:02:20, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>On Thu, May 04, 2017 at 09:49:59PM +0800, Icenowy Zheng wrote:
+>>  static const struct of_device_id sun4i_a10_pinctrl_match[] = {
+>> -	{ .compatible = "allwinner,sun4i-a10-pinctrl", },
+>> +	{
+>> +		.compatible = "allwinner,sun4i-a10-pinctrl",
+>> +		.data = (void *)PINCTRL_SUN4I_A10
+>> +	},
+>> +	{
+>> +		.compatible = "allwinner,sun7i-a20-pinctrl",
+>> +		.data = (void *)PINCTRL_SUN7I_A20
+>> +	},
+>>  	{}
+>>  };
+>
+>This means you're going to have two drivers probing for the same
+>device: this driver, and the old one. This is not ok, and probably
+>introduces some corner cases.
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-index 07dbb358182c..eb6cf44caa0f 100644
---- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-@@ -45,7 +45,7 @@ The following clocks are available:
-    - 1 15	SATA
-    - 1 16	SATA USB
-    - 1 17	Main
--   - 1 18	SD/MMC/GOP
-+   - 1 18	GOP
-    - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
-    - 1 22	USB3H0
-    - 1 23	USB3H1
-@@ -65,7 +65,7 @@ Required properties:
- 	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
- 	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
- 	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
--	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
-+	"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
- 	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 
- Example:
-@@ -78,6 +78,6 @@ Example:
- 		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
- 			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
- 			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
--			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
-+			"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
- 			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 	};
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-index ac8df5201cd6..59259270964c 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-@@ -111,7 +111,7 @@
- 					"cpm-gop-dp", "none", "cpm-pcie_x10",
- 					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
- 					"cpm-sata", "cpm-sata-usb", "cpm-main",
--					"cpm-sd-mmc-gop", "none", "none",
-+					"cpm-gop", "none", "none",
- 					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
- 					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 			};
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-index 7740a75a8230..046d3fe53cda 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-@@ -118,7 +118,7 @@
- 					"cps-gop-dp", "none", "cps-pcie_x10",
- 					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
- 					"cps-sata", "cps-sata-usb", "cps-main",
--					"cps-sd-mmc-gop", "none", "none",
-+					"cps-gop", "none", "none",
- 					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
- 					"cps-usb3dev", "cps-eip150", "cps-eip197";
- 			};
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 6b11d7b3e0e0..8f315c74997e 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -76,7 +76,7 @@ enum {
- #define CP110_GATE_SATA			15
- #define CP110_GATE_SATA_USB		16
- #define CP110_GATE_MAIN			17
--#define CP110_GATE_SDMMC_GOP		18
-+#define CP110_GATE_GOP			18
- #define CP110_GATE_SLOW_IO		21
- #define CP110_GATE_USB3H0		22
- #define CP110_GATE_USB3H1		23
-@@ -314,7 +314,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 		case CP110_GATE_GOP_DP:
- 			of_property_read_string_index(np,
- 						      "gate-clock-output-names",
--						      CP110_GATE_SDMMC_GOP, &parent);
-+						      CP110_GATE_GOP, &parent);
-+
- 			break;
- 		case CP110_GATE_XOR1:
- 		case CP110_GATE_XOR0:
--- 
-git-series 0.9.1
+The A20 driver is dropped in the next commit.
+
+>
+>Maxime
