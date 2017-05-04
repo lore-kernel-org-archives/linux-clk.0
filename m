@@ -1,82 +1,61 @@
-Return-Path: <adi.reus@gmail.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: Add functions to save and restore clock/dpll context
+ en-masse
+To: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Keerthy
+	<j-keerthy@ti.com>
+References: <1492492369-19662-1-git-send-email-j-keerthy@ti.com>
+ <20170503185251.GR23750@n2100.armlinux.org.uk>
+CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Russ Dill <Russ.Dill@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <aeff99c8-48d5-48f0-ec90-ffa8d3630ae5@ti.com>
+Date: Thu, 4 May 2017 11:58:24 +0300
 MIME-Version: 1.0
-In-Reply-To: <20170521215958.19743-11-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com> <20170521215958.19743-11-jbrunet@baylibre.com>
-From: Adriana Reus <adi.reus@gmail.com>
-Date: Tue, 23 May 2017 16:42:22 +0300
-Message-ID: <CABjU8GuZQ_2ynUTJpwNoG19zPq-P8Ld=4mwk0EvpHrPROF=bXg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] clk: fix CLK_SET_RATE_GATE with clock rate protection
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20170503185251.GR23750@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 22, 2017 at 12:59 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
-> clock tree
+On 03/05/17 21:52, Russell King - ARM Linux wrote:
+> On Tue, Apr 18, 2017 at 10:42:49AM +0530, Keerthy wrote:
+>> From: Russ Dill <Russ.Dill@ti.com>
+>>
+>> The clock/dpll registers are in the WKUP power domain. Under both RTC-only
+>> suspend and hibernation, these registers are lost. Hence save/restore
+>> them accordingly.
 >
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/clk.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 01306191133c..6ee5fc59cf1f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -491,6 +491,9 @@ static void clk_core_unprepare(struct clk_core *core)
->         if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
->                 return;
->
-> +       if (core->flags & CLK_SET_RATE_GATE)
-> +               clk_core_rate_unprotect(core);
-^ function call before declaration (unless i missed something when applying),
-  gets fixed in following patch, but makes this one not compile standalone.
+> This looks like a huge hammer, and I think this will cause problems for
+> some systems, especially where some clocks are on remote devices which
+> need to be controlled via I2C buses.
 
-drivers/clk/clk.c: In function 'clk_core_unprepare':
-drivers/clk/clk.c:495:3: error: implicit declaration of function
-'clk_core_rate_unprotect' [-Werror=implicit-function-declaration]
-   clk_core_rate_unprotect(core);
+Actually, if you look at the generic part of the code, it is not called 
+from anywhere right now, but it just implements the support for 
+save/restore. Also, for external clocks, no save/restore is implemented, 
+and you would need to handle those separately anyway. Consider an 
+external clock that is fed from SoC internal source; basically you need 
+to disable this clock before going to the deep idle state, and enable it 
+only after everything has been restored. If you keep it enabled over a 
+deep idle, its source clock will potentially die causing issues.
 
-> +
->         if (--core->prepare_count > 0)
->                 return;
 >
-> @@ -561,6 +564,14 @@ static int clk_core_prepare(struct clk_core *core)
->
->         core->prepare_count++;
->
-> +       /*
-> +        * CLK_SET_RATE_GATE is a special case of clock protection
-> +        * Instead of a consumer protection, the provider is protecting
-> +        * itself when prepared
-> +        */
-> +       if (core->flags & CLK_SET_RATE_GATE)
-> +               clk_core_rate_protect(core);
-^ same here;
-Note: maybe have a quick check that each patch compiles individually
-(if you haven't already), I did not check them all.
-> +
->         return 0;
->  }
->
-> @@ -1738,9 +1749,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->         if (clk_core_rate_is_protected(core))
->                 return -EBUSY;
->
-> -       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
-> -               return -EBUSY;
-> -
->         /* calculate new rates and get the topmost changed clock */
->         top = clk_calc_new_rates(core, req_rate);
->         if (!top)
-> --
-> 2.9.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> The generic part walks all root clocks in the system, and all children
+> of those clocks.  If we have clocks on an I2C device, then we could
+> very well end up with a circular dependency - the I2C controller needs
+> its clocks restored in order for control of the clocks on the I2C device
+> to be accessible.
+
+For generic external clocks, I would not expect any save/restore is 
+required at all, except for the potentially required enable/disable 
+calls which would need to be handled either by some driver or SoC 
+specific PM core.
+
+> So, I think this needs more thought - clocks are not just about core SoC
+> clocks - and cracking this nut with such a big hammer is likely to cause
+> regressions all over the place.
+
+This won't cause any regressions as it is not called by default from 
+anywhere. A SoC needs to introduce the functionality for entering a deep 
+idle state, and call the clk save/restore functionality from there.
+
+-Tero
