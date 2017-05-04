@@ -1,46 +1,68 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:39249 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932436AbdEDLu4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 May 2017 07:50:56 -0400
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 05/10] dt-bindings: add compatible string for Allwinner R40 pinctrl
-Date: Sat, 27 May 2017 18:23:03 +0800
-Message-Id: <20170527102308.1988-6-icenowy@aosc.io>
-In-Reply-To: <20170527102308.1988-1-icenowy@aosc.io>
-References: <20170527102308.1988-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v6 10/13] drm/sun4i: tcon: add support for V3s TCON
+Date: Thu,  4 May 2017 19:48:55 +0800
+Message-Id: <20170504114858.9008-11-icenowy@aosc.io>
+In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner R40 has a pin controller like the ones in older Allwinner SoCs
-(especially A20), and can use modified version of the A10/A20 pinctrl
-driver.
+Allwinner V3s SoC features a TCON without channel 1.
 
-Add a compatible string for it.
+Add support for it.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
-Changes in v3:
-- Added Rob's ACK.
+ drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-index b53224473672..3ab9f7849a19 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-@@ -22,6 +22,7 @@ Required properties:
-   "allwinner,sun8i-a83t-pinctrl"
-   "allwinner,sun8i-h3-pinctrl"
-   "allwinner,sun8i-h3-r-pinctrl"
-+  "allwinner,sun8i-r40-pinctrl"
-   "allwinner,sun50i-a64-pinctrl"
-   "allwinner,sun50i-a64-r-pinctrl"
-   "allwinner,sun50i-h5-pinctrl"
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index dcfb241f817d..367e4e8e9656 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -188,7 +188,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
+-		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
++		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
++		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
+ }
+ 
+ static int compare_of(struct device *dev, void *data)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index c48135a10fda..e76acf06e91b 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -681,11 +681,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+ 	/* nothing is supported */
+ };
+ 
++static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
++	/* nothing is supported */
++};
++
+ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
++	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
 -- 
 2.12.2
+
