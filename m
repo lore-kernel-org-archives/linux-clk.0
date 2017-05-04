@@ -1,56 +1,30 @@
-Return-Path: <wens@wens.csie.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <83d508e254c6656aee02bbe5c410922ea66cf3d7.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+ <83d508e254c6656aee02bbe5c410922ea66cf3d7.1493812478.git-series.maxime.ripard@free-electrons.com>
 From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 1/6] dt-bindings: clock: sunxi-ccu: Add pll-periph to PRCM's needed clocks
-Date: Wed, 31 May 2017 15:58:19 +0800
-Message-Id: <20170531075824.657-2-wens@csie.org>
-In-Reply-To: <20170531075824.657-1-wens@csie.org>
-References: <20170531075824.657-1-wens@csie.org>
+Date: Thu, 4 May 2017 11:19:22 +0800
+Message-ID: <CAGb2v67zHc7DPGGLrRnVC_G9bE8jx3DephcveaZFGbassBbYjg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/20] clk: sunxi-ng: Pass the parent and a pointer to
+ the clocks round rate
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The AR100 clock in the PRCM has parents, one of which is pll-periph from
-the main CCU.
+On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The clocks might need to modify their parent clocks. In order to make that
+> possible, give them access to the parent clock being evaluated, and to a
+> pointer to the parent rate so that they can modify it if needed.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Add it to the list of required clocks for the PRCM CCU.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index 095a5807d874..966345972d83 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -25,7 +25,8 @@ Required properties :
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
- 
--For the PRCM CCUs on A83T/H3/A64, one more clock is needed:
-+For the PRCM CCUs on A83T/H3/A64, two more clock is needed:
-+- "pll-periph": the SoC's peripheral PLL from the main CCU
- - "iosc": the SoC's internal frequency oscillator
- 
- Example for generic CCU:
-@@ -42,8 +43,8 @@ Example for PRCM CCU:
- r_ccu: clock@01f01400 {
- 	compatible = "allwinner,sun50i-a64-r-ccu";
- 	reg = <0x01f01400 0x100>;
--	clocks = <&osc24M>, <&osc32k>, <&iosc>;
--	clock-names = "hosc", "losc", "iosc";
-+	clocks = <&osc24M>, <&osc32k>, <&iosc>, <&ccu CLK_PLL_PERIPH0>;
-+	clock-names = "hosc", "losc", "iosc", "pll-periph";
- 	#clock-cells = <1>;
- 	#reset-cells = <1>;
- };
--- 
-2.11.0
+Acked-by: Chen-Yu Tsai <wens@csie.org>
