@@ -1,124 +1,92 @@
-Return-Path: <anup.patel@broadcom.com>
-MIME-Version: 1.0
-In-Reply-To: <CAOesGMiwspTuVWp8nPcWK2MhuWh8x9XSkZWJE2x=FxTCtU47Sw@mail.gmail.com>
-References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com> <CAOesGMiwspTuVWp8nPcWK2MhuWh8x9XSkZWJE2x=FxTCtU47Sw@mail.gmail.com>
-From: Anup Patel <anup.patel@broadcom.com>
-Date: Wed, 17 May 2017 09:54:34 +0530
-Message-ID: <CAALAos8sRb+cLeHLP4yuD5oXRP1RWn=PGCkPGEBq+6X+DdkuQg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] Broadcom Stingray SOC Initial Support
-To: Olof Johansson <olof@lixom.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>, Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 03/13] dt-bindings: add bindings for DE2 on V3s SoC
+Date: Thu,  4 May 2017 19:41:58 +0800
+Message-Id: <20170504114208.8524-3-icenowy@aosc.io>
+In-Reply-To: <20170504114208.8524-1-icenowy@aosc.io>
+References: <20170504114208.8524-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 17, 2017 at 12:23 AM, Olof Johansson <olof@lixom.net> wrote:
-> Hi,
->
->
->
-> On Tue, May 16, 2017 at 4:30 AM, Anup Patel <anup.patel@broadcom.com> wrote:
->> This patchset adds initial support of Broadcom Stingray SOC
->> by reusing existing Broadcom iProc device drivers.
->>
->> Most of the patches in this patchset are DT patches except
->> the Stingray clock tree support which just one patch.
->>
->> This patchset is based on Linux-4.12-rc1 and it is also available
->> at stingray-v3 branch of https://github.com/Broadcom/arm64-linux.git
->>
->> Changes since v2:
->>  - Remove default bootargs from chosen DT node
->>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
->>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
->>
->> Changes since v1:
->>  - Rebased patches for Linux-4.12-rc1
->>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
->>  - Use ranges DT property to clear view of memory-layout
->>  - Make bcm-sr.h part of clock DT bindings patch
->>
->> Anup Patel (3):
->>   dt-bindings: bcm: Add Broadcom Stingray bindings document
->>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
->>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
->>
->> Oza Pawandeep (1):
->>   arm64: dts: Add I2C DT nodes for Stingray SoC
->>
->> Pramod Kumar (3):
->>   arm64: dts: Add NAND DT nodes for Stingray SOC
->>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
->>   arm64: dts: Add GPIO DT nodes for Stingray SOC
->>
->> Sandeep Tripathy (3):
->>   dt-bindings: clk: Extend binding doc for Stingray SOC
->>   clk: bcm: Add clocks for Stingray SOC
->>   arm64: dts: Add clock DT nodes for Stingray SOC
->>
->> Srinath Mannam (1):
->>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
->>
->>  .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
->>  .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
->>  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
->>  arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
->>  .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
->>  .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
->>  .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
->>  .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
->>  .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
->>  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
->>  drivers/clk/bcm/Kconfig                            |   8 +
->>  drivers/clk/bcm/Makefile                           |   1 +
->>  drivers/clk/bcm/clk-sr.c                           | 300 ++++++++++++++
->>  include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
->>  .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
->>  15 files changed, 1797 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
->>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
->>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
->>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
->>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
->>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
->>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
->>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
->>  create mode 100644 drivers/clk/bcm/clk-sr.c
->>  create mode 100644 include/dt-bindings/clock/bcm-sr.h
->>  create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
->
-> Grouping as one patchset for review is fine, but when you submit this
-> for merge you need to split it up:
->
-> - Documentation/devicetree can go with the driver pieces or with the
-> DT changes, your choice
-> - DTS/DTSI changes should go through the Broadcom maintainers to arm-soc
-> - clk changes should go to clk maintainers.
+Allwinner V3s SoC have a display engine which have a different pipeline
+with older SoCs.
 
-Only PATCH3 needs to go through clk maintainers rest all patches
-are DT bindings document and DTS changes which can go through
-Broadcom tree. Right ??
+Add document for it (new compatibles and the new "mixer" part).
 
->
-> Also, there's usually no need to split up a DT introduction and having
-> separate pieces for NAND/pinctrl/GPIO/etc: They can all go in the main
-> DT submission patch.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/display/sunxi/sun4i-drm.txt           | 29 ++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-Yes, we have already squashed DTS patches from same author into
-one DTS patch except NAND, PINCTRL and GPIO patches.
-
-The NAND, PINCTRL, and GPIO patches were not squashed into
-one patch for easy review but since you suggest I will squash these
-three DTS patches into one DTS patch.
-
-Regards,
-Anup
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 7acdbf14ae1c..33452884b96e 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -41,6 +41,7 @@ Required properties:
+    * allwinner,sun6i-a31-tcon
+    * allwinner,sun6i-a31s-tcon
+    * allwinner,sun8i-a33-tcon
++   * allwinner,sun8i-v3s-tcon
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON. Three are needed:
+@@ -62,7 +63,7 @@ Required properties:
+   second the block connected to the TCON channel 1 (usually the TV
+   encoder)
+ 
+-On SoCs other than the A33, there is one more clock required:
++On SoCs other than the A33 and V3s, there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
+ 
+ DRC
+@@ -148,6 +149,26 @@ Required properties:
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoints, the second one the outputs
+ 
++Display Engine 2.0 Mixer
++------------------------
++
++The DE2 mixer have many functionalities, currently only layer blending is
++supported.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-v3s-de2-mixer
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandles to the clocks feeding the frontend and backend
++    * bus: the backend interface clock
++    * ram: the backend DRAM clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset controllers driving the backend
++
++- ports: A ports node with endpoint definitions as defined in
++  Documentation/devicetree/bindings/media/video-interfaces.txt. The
++  first port should be the input endpoints, the second one the output
++
+ 
+ Display Engine Pipeline
+ -----------------------
+@@ -162,9 +183,13 @@ Required properties:
+     * allwinner,sun6i-a31-display-engine
+     * allwinner,sun6i-a31s-display-engine
+     * allwinner,sun8i-a33-display-engine
++    * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-    frontends available.
++    pipeline entry point. For SoCs with original DE (currently
++    all SoCs supported by display engine except V3s), this
++    phandle should be a display frontend; for SoCs with DE2,
++    this phandle should be a mixer.
+ 
+ Example:
+ 
+-- 
+2.12.2
