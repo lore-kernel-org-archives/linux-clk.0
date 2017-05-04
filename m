@@ -1,68 +1,88 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 17/21] dt-bindings: display: sun4i: Add allwinner,tcon-channel property
-Date: Wed, 17 May 2017 09:40:46 +0200
-Message-Id: <8767a7a1372530c192a1047bfc3271571ab0affc.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 01/10] arm: sunxi: add support for R40 SoC
+Date: Thu,  4 May 2017 21:49:57 +0800
+Message-Id: <20170504135006.16483-2-icenowy@aosc.io>
+In-Reply-To: <20170504135006.16483-1-icenowy@aosc.io>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner Timings Controller has two, mutually exclusive, channels.
-When the binding has been introduced, it was assumed that there would be
-only a single user per channel in the system.
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-While this is likely for the channel 0 which only connects to LCD displays,
-it turns out that the channel 1 can be connected to multiple controllers in
-the SoC (HDMI and TV encoders for example). And while the simultaneous use
-of HDMI and TV outputs cannot be achieved, switching from one to the other
-at runtime definitely sounds plausible.
+Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
+like A20.
 
-Add an extra property, allwinner,tcon-channel, to specify for a given
-endpoint which TCON channel it is connected to, while falling back to the
-previous mechanism if that property is missing.
+Add support for it.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 ++++---
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ Documentation/arm/sunxi/README                  | 4 ++++
+ Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+ arch/arm/mach-sunxi/sunxi.c                     | 1 +
+ 3 files changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index e74794f20ec5..0832c8491895 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -85,10 +85,13 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint, the second one the output
+diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
+index d7b1f016bd62..25c814adcd47 100644
+--- a/Documentation/arm/sunxi/README
++++ b/Documentation/arm/sunxi/README
+@@ -75,6 +75,10 @@ SunXi family
+         + Datasheet
+           http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
  
--  The output should have two endpoints. The first is the block
--  connected to the TCON channel 0 (usually a panel or a bridge), the
--  second the block connected to the TCON channel 1 (usually the TV
--  encoder)
-+  The output may have multiple endpoints. The TCON has two channels,
-+  usually with the first channel being used for the panels interfaces
-+  (RGB, LVDS, etc.), and the second being used for the outputs that
-+  require another controller (TV Encoder, HDMI, etc.). The endpoints
-+  will take an extra property, allwinner,tcon-channel, to specify the
-+  channel the endpoint is associated to. If that property is not
-+  present, the endpoint number will be used as the channel number.
++      - Allwinner R40 (sun8i)
++        + Datasheet Draft
++          http://linux-sunxi.org/File:Allwinner_R40_Datasheet_V0.1.pdf
++
+     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
+       - Allwinner A80
+         + Datasheet
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+index d2c46449b4eb..b3ffe6cf821a 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.txt
++++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+@@ -14,6 +14,7 @@ using one of the following compatible strings:
+   allwinner,sun8i-a83t
+   allwinner,sun8i-h2-plus
+   allwinner,sun8i-h3
++  allwinner-sun8i-r40
+   allwinner,sun9i-a80
+   allwinner,sun50i-a64
+   nextthing,gr8
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index f44e3acb5c90..aea616759451 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
+ 	"allwinner,sun8i-h2-plus",
+ 	"allwinner,sun8i-h3",
+ 	"allwinner,sun8i-v3s",
++	"allwinner,sun8i-r40",
+ 	NULL,
+ };
  
- On SoCs other than the A33, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
 -- 
-git-series 0.9.1
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
