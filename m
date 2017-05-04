@@ -1,95 +1,140 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:54700 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751645AbdEEMjn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 May 2017 08:39:43 -0400
-Date: Fri, 05 May 2017 20:39:31 +0800
-In-Reply-To: <20170505123618.5vztqx2vdwsgnrxt@lukather>
-References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-9-icenowy@aosc.io> <20170504130535.6nokhni5a3uxwy66@lukather> <522ab8cb2939f0017917c5e9b4065089@aosc.io> <20170505123618.5vztqx2vdwsgnrxt@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v6 08/13] drm/sun4i: add support for Allwinner DE2 mixers
-To: linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-clk@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <185C1948-541D-4198-9A56-E3F0DFF08734@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v6 11/13] ARM: dts: sun8i: add DE2 nodes for V3s SoC
+Date: Thu,  4 May 2017 19:48:56 +0800
+Message-Id: <20170504114858.9008-12-icenowy@aosc.io>
+In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
+which have RGB LCD output.
 
+Add device nodes for it as well as the TCON.
 
-于 2017年5月5日 GMT+08:00 下午8:36:18, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->On Fri, May 05, 2017 at 12:50:51AM +0800, icenowy@aosc.io wrote:
->> > > +void sun8i_mixer_layer_enable(struct sun8i_mixer *mixer,
->> > > +				int layer, bool enable)
->> > > +{
->> > > +	u32 val;
->> > > +	/* Currently the first UI channel is used */
->> > > +	int chan = mixer->cfg->vi_num;
->> > > +
->> > > +	DRM_DEBUG_DRIVER("Enabling layer %d in channel %d\n", layer,
->chan);
->> > > +
->> > > +	if (enable)
->> > > +		val = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN;
->> > > +	else
->> > > +		val = 0;
->> > > +
->> > > +	regmap_update_bits(mixer->engine.regs,
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN, val);
->> > > +
->> > > +	/* Set the alpha configuration */
->> > > +	regmap_update_bits(mixer->engine.regs,
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK,
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_DEF);
->> > > +	regmap_update_bits(mixer->engine.regs,
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK,
->> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF);
->> > > +}
->> > 
->> > This one too.
->> 
->> It's called from sun8i_layer.c, so it cannot be static.
->
->Fair enough.
->
->> > > +	/* Set base coordinates */
->> > > +	DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
->> > > +			 state->crtc_x, state->crtc_y);
->> > > +	regmap_write(mixer->engine.regs,
->> > > +		     SUN8I_MIXER_CHAN_UI_LAYER_COORD(chan, layer),
->> > > +		     SUN8I_MIXER_COORD(state->crtc_x, state->crtc_y));
->> > 
->> > X and Y are fixed point numbers. You want to keep only the higher
->16
->> > bits there.
->> 
->> Do you mean "lower 16 bits"? Thus should I (x & 0xffff) or ((u16)x) ?
->
->Nevermind, I got confused with src_x and src_y.
->
->> P.S. The negative coordinates are broken, how should I deal with it?
->or
->> is the coordinates promised to be not negative?
->
->Adjust the buffer base address, and use a shorter line. You have such
->an example in the sun4i code.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-Are they these two lines:
-```
-paddr += (state->src_x >> 16) * bpp;
-paddr += (state->src_y >> 16) * fb->pitches[0];
-```
-
-I think I copied them here, so I don't need to mind this problem any more, right?
-
->
->Maxime
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index 71075969e5e6..0a895179d8ae 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -41,6 +41,10 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sun8i-v3s-ccu.h>
++#include <dt-bindings/clock/sun8i-de2.h>
++#include <dt-bindings/reset/sun8i-v3s-ccu.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ 
+ / {
+ 	#address-cells = <1>;
+@@ -59,6 +63,12 @@
+ 		};
+ 	};
+ 
++	de: display-engine {
++		compatible = "allwinner,sun8i-v3s-display-engine";
++		allwinner,pipelines = <&de2_mixer0>;
++		status = "disabled";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+@@ -93,6 +103,83 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		de2_clocks: clock@1000000 {
++			compatible = "allwinner,sun50i-h5-de2-clk";
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		de2_mixer0: mixer@1100000 {
++			compatible = "allwinner,sun8i-v3s-de2-mixer";
++			reg = <0x01100000 0x100000>;
++			clocks = <&de2_clocks CLK_MIXER0>,
++				 <&de2_clocks CLK_BUS_MIXER0>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&de2_clocks RST_MIXER0>;
++			assigned-clocks = <&de2_clocks CLK_MIXER0>;
++			assigned-clock-rates = <150000000>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer0_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_mixer0>;
++					};
++				};
++			};
++		};
++
++		tcon0: lcd-controller@1c0c000 {
++			compatible = "allwinner,sun8i-v3s-tcon";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>,
++				 <&ccu CLK_TCON0>;
++			clock-names = "ahb",
++				      "tcon-ch0";
++			clock-output-names = "tcon-pixel-clock";
++			resets = <&ccu RST_BUS_TCON0>;
++			reset-names = "lcd";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++
+ 		mmc0: mmc@01c0f000 {
+ 			compatible = "allwinner,sun7i-a20-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+-- 
+2.12.2
