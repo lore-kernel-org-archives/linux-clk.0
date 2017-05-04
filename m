@@ -1,79 +1,119 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:38635 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751765AbdEDLnC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 May 2017 07:43:02 -0400
 From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v7 07/13] drm/sun4i: add a Kconfig option for sun4i-backend
-Date: Mon, 15 May 2017 00:30:39 +0800
-Message-Id: <20170514163045.40366-8-icenowy@aosc.io>
-In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
-References: <20170514163045.40366-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 01/13] dt-bindings: add binding for the Allwinner DE2 CCU
+Date: Thu,  4 May 2017 19:41:56 +0800
+Message-Id: <20170504114208.8524-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As sun4i-backend is now a dedicated module, add an Kconfig option for
-it to make it optional, since some build may only use other engines.
+Allwinner "Display Engine 2.0" contains some clock controls in it.
+
+In order to add them as clock drivers, we need a device tree binding.
+Add the binding here.
+
+Also add the device tree binding headers.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-Changes in v7:
-- Adjusted the position of BACKEND makefile item. (It's now after
-  common codes shared between sun4i-backend and sun8i-mixer.)
+ .../devicetree/bindings/clock/sun8i-de2.txt        | 30 ++++++++++++++++++++++
+ include/dt-bindings/clock/sun8i-de2.h              | 18 +++++++++++++
+ include/dt-bindings/reset/sun8i-de2.h              | 14 ++++++++++
+ 3 files changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
+ create mode 100644 include/dt-bindings/clock/sun8i-de2.h
+ create mode 100644 include/dt-bindings/reset/sun8i-de2.h
 
- drivers/gpu/drm/sun4i/Kconfig  | 10 ++++++++++
- drivers/gpu/drm/sun4i/Makefile |  3 ++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index a4b357db8856..5a8227f37cc4 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -12,3 +12,13 @@ config DRM_SUN4I
- 	  Choose this option if you have an Allwinner SoC with a
- 	  Display Engine. If M is selected the module will be called
- 	  sun4i-drm.
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+new file mode 100644
+index 000000000000..d710c0111cd3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -0,0 +1,30 @@
++Allwinner Display Engine 2.0 Clock Control Binding
++--------------------------------------------------
 +
-+config DRM_SUN4I_BACKEND
-+	tristate "Support for Allwinner A10 Display Engine Backend"
-+	depends on DRM_SUN4I
-+	default DRM_SUN4I
-+	help
-+	  Choose this option if you have an Allwinner SoC with the
-+	  original Allwinner Display Engine, which has a backend to
-+	  do some alpha blending and feed graphics to TCON. If M is
-+	  selected the module will be called sun4i-backend.
-diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-index a251fb36c951..da561d064ab8 100644
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -9,6 +9,7 @@ sun4i-tcon-y += sun4i_crtc.o
- sun4i-backend-y += sun4i_backend.o sun4i_layer.o
- 
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
--obj-$(CONFIG_DRM_SUN4I)		+= sun4i-backend.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
++Required properties :
++- compatible: must contain one of the following compatibles:
++		- "allwinner,sun8i-a83t-de2-clk"
++		- "allwinner,sun50i-h5-de2-clk"
 +
-+obj-$(CONFIG_DRM_SUN4I_BACKEND)		+= sun4i-backend.o
++- reg: Must contain the registers base address and length
++- clocks: phandle to the clocks feeding the display engine subsystem.
++	  Three are needed:
++  - "mod": the display engine module clock
++  - "bus": the bus clock for the whole display engine subsystem
++- clock-names: Must contain the clock names described just above
++- resets: phandle to the reset control for the display engine subsystem.
++- #clock-cells : must contain 1
++- #reset-cells : must contain 1
++
++Example:
++de2_clocks: clock@1000000 {
++	compatible = "allwinner,sun8i-a83t-de2-clk";
++	reg = <0x01000000 0x100000>;
++	clocks = <&ccu CLK_DE>,
++		 <&ccu CLK_BUS_DE>;
++	clock-names = "mod",
++		      "bus";
++	resets = <&ccu RST_BUS_DE>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
+new file mode 100644
+index 000000000000..3bed63b524aa
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-de2.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
++#define _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
++
++#define CLK_BUS_MIXER0		0
++#define CLK_BUS_MIXER1		1
++#define CLK_BUS_WB		2
++
++#define CLK_MIXER0		6
++#define CLK_MIXER1		7
++#define CLK_WB			8
++
++#endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
+diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
+new file mode 100644
+index 000000000000..9526017432f0
+--- /dev/null
++++ b/include/dt-bindings/reset/sun8i-de2.h
+@@ -0,0 +1,14 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++#ifndef _DT_BINDINGS_RESET_SUN8I_DE2_H_
++#define _DT_BINDINGS_RESET_SUN8I_DE2_H_
++
++#define RST_MIXER0	0
++#define RST_MIXER1	1
++#define RST_WB		2
++
++#endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
 -- 
 2.12.2
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
