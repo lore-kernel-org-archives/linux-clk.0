@@ -1,214 +1,99 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
-	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH 5/6] dt-bindings: cpufreq: move Mediatek cpufreq dt-bindings document to proper place
-Date: Fri, 5 May 2017 23:26:13 +0800
-Message-ID: <1493997974-17699-6-git-send-email-sean.wang@mediatek.com>
-In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 4 May 2017 16:02:20 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v2 03/10] pinctrl: sunxi: add A20 support to A10 driver
+Message-ID: <20170504140220.26kguf3trz7ocylv@lukather>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+ <20170504135006.16483-4-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: sean.wang@mediatek.com
+In-Reply-To: <20170504135006.16483-4-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============8793449495943588641=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-The old place is Documentation/devicetree/bindings/clock/ that would
-let people hard to find how to use Mediatek cpufreq driver, so moving
-it to the new place as other cpufreq dirvers are done would be better.
+--===============8793449495943588641==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ze3rfne35fxc5myi"
+Content-Disposition: inline
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- .../devicetree/bindings/clock/mt8173-cpu-dvfs.txt  | 83 ----------------------
- .../bindings/cpufreq/cpufreq-mediatek.txt          | 83 ++++++++++++++++++++++
- 2 files changed, 83 insertions(+), 83 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
- create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt b/Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
-deleted file mode 100644
-index 52b457c..0000000
---- a/Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
-+++ /dev/null
-@@ -1,83 +0,0 @@
--Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
--
--Required properties:
--- clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
--- clock-names: Should contain the following:
--	"cpu"		- The multiplexer for clock input of CPU cluster.
--	"intermediate"	- A parent of "cpu" clock which is used as "intermediate" clock
--			  source (usually MAINPLL) when the original CPU PLL is under
--			  transition and not stable yet.
--	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
--	generic clock consumer properties.
--- proc-supply: Regulator for Vproc of CPU cluster.
--
--Optional properties:
--- sram-supply: Regulator for Vsram of CPU cluster. When present, the cpufreq driver
--	       needs to do "voltage tracking" to step by step scale up/down Vproc and
--	       Vsram to fit SoC specific needs. When absent, the voltage scaling
--	       flow is handled by hardware, hence no software "voltage tracking" is
--	       needed.
--
--Example:
----------
--	cpu0: cpu@0 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a53";
--		reg = <0x000>;
--		enable-method = "psci";
--		cpu-idle-states = <&CPU_SLEEP_0>;
--		clocks = <&infracfg CLK_INFRA_CA53SEL>,
--			 <&apmixedsys CLK_APMIXED_MAINPLL>;
--		clock-names = "cpu", "intermediate";
--	};
--
--	cpu1: cpu@1 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a53";
--		reg = <0x001>;
--		enable-method = "psci";
--		cpu-idle-states = <&CPU_SLEEP_0>;
--		clocks = <&infracfg CLK_INFRA_CA53SEL>,
--			 <&apmixedsys CLK_APMIXED_MAINPLL>;
--		clock-names = "cpu", "intermediate";
--	};
--
--	cpu2: cpu@100 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x100>;
--		enable-method = "psci";
--		cpu-idle-states = <&CPU_SLEEP_0>;
--		clocks = <&infracfg CLK_INFRA_CA57SEL>,
--			 <&apmixedsys CLK_APMIXED_MAINPLL>;
--		clock-names = "cpu", "intermediate";
--	};
--
--	cpu3: cpu@101 {
--		device_type = "cpu";
--		compatible = "arm,cortex-a57";
--		reg = <0x101>;
--		enable-method = "psci";
--		cpu-idle-states = <&CPU_SLEEP_0>;
--		clocks = <&infracfg CLK_INFRA_CA57SEL>,
--			 <&apmixedsys CLK_APMIXED_MAINPLL>;
--		clock-names = "cpu", "intermediate";
--	};
--
--	&cpu0 {
--		proc-supply = <&mt6397_vpca15_reg>;
--	};
--
--	&cpu1 {
--		proc-supply = <&mt6397_vpca15_reg>;
--	};
--
--	&cpu2 {
--		proc-supply = <&da9211_vcpu_reg>;
--		sram-supply = <&mt6397_vsramca7_reg>;
--	};
--
--	&cpu3 {
--		proc-supply = <&da9211_vcpu_reg>;
--		sram-supply = <&mt6397_vsramca7_reg>;
--	};
-diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
-new file mode 100644
-index 0000000..52b457c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
-@@ -0,0 +1,83 @@
-+Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
-+
-+Required properties:
-+- clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
-+- clock-names: Should contain the following:
-+	"cpu"		- The multiplexer for clock input of CPU cluster.
-+	"intermediate"	- A parent of "cpu" clock which is used as "intermediate" clock
-+			  source (usually MAINPLL) when the original CPU PLL is under
-+			  transition and not stable yet.
-+	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
-+	generic clock consumer properties.
-+- proc-supply: Regulator for Vproc of CPU cluster.
-+
-+Optional properties:
-+- sram-supply: Regulator for Vsram of CPU cluster. When present, the cpufreq driver
-+	       needs to do "voltage tracking" to step by step scale up/down Vproc and
-+	       Vsram to fit SoC specific needs. When absent, the voltage scaling
-+	       flow is handled by hardware, hence no software "voltage tracking" is
-+	       needed.
-+
-+Example:
-+--------
-+	cpu0: cpu@0 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a53";
-+		reg = <0x000>;
-+		enable-method = "psci";
-+		cpu-idle-states = <&CPU_SLEEP_0>;
-+		clocks = <&infracfg CLK_INFRA_CA53SEL>,
-+			 <&apmixedsys CLK_APMIXED_MAINPLL>;
-+		clock-names = "cpu", "intermediate";
-+	};
-+
-+	cpu1: cpu@1 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a53";
-+		reg = <0x001>;
-+		enable-method = "psci";
-+		cpu-idle-states = <&CPU_SLEEP_0>;
-+		clocks = <&infracfg CLK_INFRA_CA53SEL>,
-+			 <&apmixedsys CLK_APMIXED_MAINPLL>;
-+		clock-names = "cpu", "intermediate";
-+	};
-+
-+	cpu2: cpu@100 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a57";
-+		reg = <0x100>;
-+		enable-method = "psci";
-+		cpu-idle-states = <&CPU_SLEEP_0>;
-+		clocks = <&infracfg CLK_INFRA_CA57SEL>,
-+			 <&apmixedsys CLK_APMIXED_MAINPLL>;
-+		clock-names = "cpu", "intermediate";
-+	};
-+
-+	cpu3: cpu@101 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a57";
-+		reg = <0x101>;
-+		enable-method = "psci";
-+		cpu-idle-states = <&CPU_SLEEP_0>;
-+		clocks = <&infracfg CLK_INFRA_CA57SEL>,
-+			 <&apmixedsys CLK_APMIXED_MAINPLL>;
-+		clock-names = "cpu", "intermediate";
-+	};
-+
-+	&cpu0 {
-+		proc-supply = <&mt6397_vpca15_reg>;
-+	};
-+
-+	&cpu1 {
-+		proc-supply = <&mt6397_vpca15_reg>;
-+	};
-+
-+	&cpu2 {
-+		proc-supply = <&da9211_vcpu_reg>;
-+		sram-supply = <&mt6397_vsramca7_reg>;
-+	};
-+
-+	&cpu3 {
-+		proc-supply = <&da9211_vcpu_reg>;
-+		sram-supply = <&mt6397_vsramca7_reg>;
-+	};
--- 
-2.7.4
+--ze3rfne35fxc5myi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, May 04, 2017 at 09:49:59PM +0800, Icenowy Zheng wrote:
+>  static const struct of_device_id sun4i_a10_pinctrl_match[] =3D {
+> -	{ .compatible =3D "allwinner,sun4i-a10-pinctrl", },
+> +	{
+> +		.compatible =3D "allwinner,sun4i-a10-pinctrl",
+> +		.data =3D (void *)PINCTRL_SUN4I_A10
+> +	},
+> +	{
+> +		.compatible =3D "allwinner,sun7i-a20-pinctrl",
+> +		.data =3D (void *)PINCTRL_SUN7I_A20
+> +	},
+>  	{}
+>  };
+
+This means you're going to have two drivers probing for the same
+device: this driver, and the old one. This is not ok, and probably
+introduces some corner cases.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ze3rfne35fxc5myi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJZCzRoAAoJEBx+YmzsjxAgcocQAIJErF/Fef9K4YKH1ZJX6B7d
+ZJ5MGMHpih7aPgiJyZZomw5ac6Z3/mFAKYq4CBLnSRELtOLI9/O4Sa4LKrGh3nTB
+o/oC6ERcDcea3q+FRC2wb2j3eT4PlWqUFMVd7Rl8v5kApKxiTB684aCLg9yYGutw
+zS/bSoK1HT3m5p7Ip8iiiVn3Xi/+85sIZVUJNSljDlzHEJ5jrM/952TrEWrL4x/G
+2JtTtLeGZ3o+/svg93Qr/9B4s6lWFqgvRwY1QZtwAPJkefGOM+IUZN3hdhBjweg8
+2ydAAgC1HOzfNHgH7n3AvhHPakW5U8m34Bl7FJGo1854somArW6pkfFnAZU9RT4g
+qQBmSjpm/mi1riXtt/XxL2lw0vE9wE37dttTkUpVg2U/+wD4AUOil61+EqXt0Fmh
+S1WAgKrmI2R0VMji7GvpRpovr1hOoLn0eAF55ChM5C/5eWZBkc4cKwN25JaJ+613
+A0b9r2Fov7Q8pIzFgTIqQCrOFNZDFtA2o5nU36uF9YUADudvdHGrdOwrnSWOkbwz
+Nm3rYevLeP8csnS80gHD1+wyrbosJv8by016gUx5fpm2YlzuVyMa02XDp15kITyf
+xloxqbUxUqHUrVKRpplc+d5V9Nxg0GqLkLjo/XNU05FVIzaU+LhIrUv591o5d9sg
+SZBiR4G3oSf3GXu92H2O
+=qeiz
+-----END PGP SIGNATURE-----
+
+--ze3rfne35fxc5myi--
+
+
+--===============8793449495943588641==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8793449495943588641==--
