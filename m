@@ -1,145 +1,467 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3 1/2] clk: Hi3660: register fixed_rate_clks with CLK_OF_DECLARE_DRIVER
-Date: Mon, 22 May 2017 12:52:27 +0800
-Message-Id: <1495428748-11153-2-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
-References: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <stefan.wahren@i2se.com>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+To: Fabio Estevam <festevam@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+ Sascha Hauer <kernel@pengutronix.de>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
+Date: Thu, 4 May 2017 14:25:07 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The timer will register into system at very early phase at kernel boot;
-if timer needs to use clock, the clock should be get ready in function
-of_clk_init() so later the timer driver probe can retrieve clock
-successfully. This is finished in below flow on arm64:
+Hi,
 
-  start_kernel()
-    `-> time_init()
-          `-> of_clk_init(NULL)    => register timer's clock
-          `-> clocksource_probe()  => register timer
+Am 03.05.2017 um 21:53 schrieb Fabio Estevam:
+> On Wed, May 3, 2017 at 3:56 PM, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+>> Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
+>> 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
+>> SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
+>> to 288 MHz because the initial frequency "seems too high to be ssp clock
+>> source directly". However this isn't enough to ensure that the frequency
+>> isn't increased later again. In fact this happens on my machine as the
+>> mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
+>> ssp2 which is resolved to
+>>
+>>         ref_io1.rate = 320 MHz
+>>         ssp2_sel.parent = ref_io1
+>>         ssp2_div.divider = 2
+>>
+>> . The observed effect is that reading MISO reliably fails: Instead of
+>> the least significant bit the second least significant bit is reported
+>> twice. This is probably related to the reports
+>>
+>>         https://community.nxp.com/thread/290209
+>>         https://community.nxp.com/thread/310434
+> Adding Stefan on Cc in he could help testing this patch, as he was the
+> one that created this thread.
 
-On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
-as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
-sp804 timer probe returns failure due if cannot bind clock properly.
+thanks for forwarding. I tested the patch with Linux 4.11 it on our
+Duckbill (i.MX28), but it didn't fix the SPI bit errors with the
+QCA7000. Currently the only way to get the QCA7000 working is to switch
+the clock parent of ssp2 to ref_xtal (24 MHz).
 
-To fix the failure, this patch is to split crgctrl clocks into two
-subsets. One part is for fixed_rate_clks which includes pre-defined
-fixed rate clocks, and "osc32k" clock is in this category; So we change
-their registration to CLK_OF_DECLARE_DRIVER method, as result the clocks
-can be registered ahead with function of_clk_init() and timer driver can
-bind timer clock successfully; the rest of the crgctrl clocks are still
-registered by the probe of the platform driver.
+Is there someone at NXP/Freescale who could explain this behavior?
+Are there any relevant register values which could be helpful?
 
-This patch also adds checking for all crgctrl clocks registration and
-print out log if any clock has failure.
+I guess it's a special ratio between ref_io and ssp_div which causes the
+issue.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/clk/hisilicon/clk-hi3660.c | 48 ++++++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 10 deletions(-)
+Here are the clk_summary for Linux 4.11 on Duckbill with QCA7000 on ssp
+2 for all 3 cases:
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index fd5ce7f..271008b 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -452,6 +452,8 @@
- 	  CLK_SET_RATE_PARENT, 0x90, 0, 0, },
- };
- 
-+static struct hisi_clock_data *clk_crgctrl_data;
-+
- static void hi3660_clk_iomcu_init(struct device_node *np)
- {
- 	struct hisi_clock_data *clk_data;
-@@ -514,38 +516,64 @@ static void hi3660_clk_sctrl_init(struct device_node *np)
- 				  clk_data);
- }
- 
--static void hi3660_clk_crgctrl_init(struct device_node *np)
-+static void hi3660_clk_crgctrl_early_init(struct device_node *np)
- {
--	struct hisi_clock_data *clk_data;
- 	int nr = ARRAY_SIZE(hi3660_fixed_rate_clks) +
- 		 ARRAY_SIZE(hi3660_crgctrl_gate_sep_clks) +
- 		 ARRAY_SIZE(hi3660_crgctrl_gate_clks) +
- 		 ARRAY_SIZE(hi3660_crgctrl_mux_clks) +
- 		 ARRAY_SIZE(hi3660_crg_fixed_factor_clks) +
- 		 ARRAY_SIZE(hi3660_crgctrl_divider_clks);
-+	int i;
- 
--	clk_data = hisi_clk_init(np, nr);
--	if (!clk_data)
-+	clk_crgctrl_data = hisi_clk_init(np, nr);
-+	if (!clk_crgctrl_data)
- 		return;
- 
-+	for (i = 0; i < nr; i++)
-+		clk_crgctrl_data->clk_data.clks[i] = ERR_PTR(-EPROBE_DEFER);
-+
- 	hisi_clk_register_fixed_rate(hi3660_fixed_rate_clks,
- 				     ARRAY_SIZE(hi3660_fixed_rate_clks),
--				     clk_data);
-+				     clk_crgctrl_data);
-+}
-+CLK_OF_DECLARE_DRIVER(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl",
-+		      hi3660_clk_crgctrl_early_init);
-+
-+static void hi3660_clk_crgctrl_init(struct device_node *np)
-+{
-+	struct clk **clks;
-+	int i;
-+
-+	if (!clk_crgctrl_data)
-+		hi3660_clk_crgctrl_early_init(np);
-+
-+	/* clk_crgctrl_data initialization failed */
-+	if (!clk_crgctrl_data)
-+		return;
-+
- 	hisi_clk_register_gate_sep(hi3660_crgctrl_gate_sep_clks,
- 				   ARRAY_SIZE(hi3660_crgctrl_gate_sep_clks),
--				   clk_data);
-+				   clk_crgctrl_data);
- 	hisi_clk_register_gate(hi3660_crgctrl_gate_clks,
- 			       ARRAY_SIZE(hi3660_crgctrl_gate_clks),
--			       clk_data);
-+			       clk_crgctrl_data);
- 	hisi_clk_register_mux(hi3660_crgctrl_mux_clks,
- 			      ARRAY_SIZE(hi3660_crgctrl_mux_clks),
--			      clk_data);
-+			      clk_crgctrl_data);
- 	hisi_clk_register_fixed_factor(hi3660_crg_fixed_factor_clks,
- 				       ARRAY_SIZE(hi3660_crg_fixed_factor_clks),
--				       clk_data);
-+				       clk_crgctrl_data);
- 	hisi_clk_register_divider(hi3660_crgctrl_divider_clks,
- 				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
--				  clk_data);
-+				  clk_crgctrl_data);
-+
-+	clks = clk_crgctrl_data->clk_data.clks;
-+	for (i = 0; i < clk_crgctrl_data->clk_data.clk_num; i++) {
-+		if (IS_ERR(clks[i]) && PTR_ERR(clks[i]) != -EPROBE_DEFER)
-+			pr_err("Failed to register crgctrl clock[%d] err=%ld\n",
-+			       i, PTR_ERR(clks[i]));
-+	}
- }
- 
- static const struct of_device_id hi3660_clk_match_table[] = {
--- 
-1.9.1
+1) unpatched (= always bit errors on ssp2)
+
+   clock                         enable_cnt  prepare_cnt        rate  
+accuracy   phase
+----------------------------------------------------------------------------------------
+ ref_xtal                                 5            5   
+24000000          0 0
+    can1                                  0            0   
+24000000          0 0
+    can0                                  0            0   
+24000000          0 0
+    uart                                  2            3   
+24000000          0 0
+    pwm                                   0            0   
+24000000          0 0
+    rtc                                   0            0      
+31250          0 0
+    clk32k_div                            1            1      
+32000          0 0
+       clk32k                             1            1      
+32000          0 0
+          lradc                           1            1       
+2000          0 0
+    emi_xtal                              0            0   
+24000000          0 0
+    xbus                                  3            3   
+24000000          0 0
+    cpu_xtal                              0            0   
+24000000          0 0
+    ptp_sel                               0            0   
+24000000          0 0
+       ptp                                0            0   
+24000000          0 0
+    lcdif_sel                             0            0   
+24000000          0 0
+       lcdif_div                          0            0   
+24000000          0 0
+          lcdif                           0            0   
+24000000          0 0
+    etm_sel                               0            0   
+24000000          0 0
+       etm_div                            0            0   
+24000000          0 0
+          etm                             0            0   
+24000000          0 0
+    gpmi_sel                              0            0   
+24000000          0 0
+       gpmi_div                           0            0   
+24000000          0 0
+          gpmi                            0            0   
+24000000          0 0
+    pll2                                  1            1   
+50000000          0 0
+       enet_out                           1            1   
+50000000          0 0
+    pll1                                  0            0  
+480000000          0 0
+       usb1_phy                           0            0  
+480000000          0 0
+          usb1                            0            0  
+480000000          0 0
+    pll0                                  5            5  
+480000000          0 0
+       usb0_phy                           2            2  
+480000000          0 0
+          usb0                            1            1  
+480000000          0 0
+       spdif_div                          0            0  
+120000000          0 0
+          spdif                           0            0  
+120000000          0 0
+       saif1_sel                          0            0  
+480000000          0 0
+          saif1_div                       0            0       
+7324          0 0
+             saif1                        0            0       
+7324          0 0
+       saif0_sel                          0            0  
+480000000          0 0
+          saif0_div                       0            0       
+7324          0 0
+             saif0                        0            0       
+7324          0 0
+       ref_gpmi                           0            0  
+480000000          0 0
+       ref_hsadc                          0            0  
+480000000          0 0
+       ref_pix                            0            0  
+480000000          0 0
+       ref_io0                            1            1  
+288000000          0 0
+          ssp1_sel                        0            0  
+288000000          0 0
+             ssp1_div                     0            0  
+288000000          0 0
+                ssp1                      0            0  
+288000000          0 0
+          ssp0_sel                        1            1  
+288000000          0 0
+             ssp0_div                     1            1   
+57600000          0 0
+                ssp0                      1            1   
+57600000          0 0
+       ref_io1                            1            1  
+320000000          0 0
+          ssp3_sel                        0            0  
+320000000          0 0
+             ssp3_div                     0            0  
+320000000          0 0
+                ssp3                      0            0  
+320000000          0 0
+          ssp2_sel                        1            1  
+320000000          0 0
+             ssp2_div                     1            1  
+160000000          0 0
+                ssp2                      1            1  
+160000000          0 0
+       ref_emi                            1            1  
+411428571          0 0
+          emi_pll                         1            1  
+205714286          0 0
+             emi_sel                      1            1  
+205714286          0 0
+                emi                       1            1  
+205714286          0 0
+       ref_cpu                            1            1  
+454736842          0 0
+          cpu_pll                         1            1  
+454736842          0 0
+             cpu                          2            2  
+454736842          0 0
+                hbus                      4            4  
+151578948          0 0
+                   fec                    2            2  
+151578948          0 0
+
+2) ref_xtal as clock parent of ssp2 (= no bit errors on ssp2)
+
+   clock                         enable_cnt  prepare_cnt        rate  
+accuracy   phase
+----------------------------------------------------------------------------------------
+ ref_xtal                                 6            6   
+24000000          0 0
+    can1                                  0            0   
+24000000          0 0
+    can0                                  0            0   
+24000000          0 0
+    uart                                  2            3   
+24000000          0 0
+    pwm                                   0            0   
+24000000          0 0
+    rtc                                   0            0      
+31250          0 0
+    clk32k_div                            1            1      
+32000          0 0
+       clk32k                             1            1      
+32000          0 0
+          lradc                           1            1       
+2000          0 0
+    emi_xtal                              0            0   
+24000000          0 0
+    xbus                                  3            3   
+24000000          0 0
+    cpu_xtal                              0            0   
+24000000          0 0
+    ptp_sel                               0            0   
+24000000          0 0
+       ptp                                0            0   
+24000000          0 0
+    lcdif_sel                             0            0   
+24000000          0 0
+       lcdif_div                          0            0   
+24000000          0 0
+          lcdif                           0            0   
+24000000          0 0
+    etm_sel                               0            0   
+24000000          0 0
+       etm_div                            0            0   
+24000000          0 0
+          etm                             0            0   
+24000000          0 0
+    ssp2_sel                              1            1   
+24000000          0 0
+       ssp2_div                           1            1   
+24000000          0 0
+          ssp2                            1            1   
+24000000          0 0
+    gpmi_sel                              0            0   
+24000000          0 0
+       gpmi_div                           0            0   
+24000000          0 0
+          gpmi                            0            0   
+24000000          0 0
+    pll2                                  1            1   
+50000000          0 0
+       enet_out                           1            1   
+50000000          0 0
+    pll1                                  0            0  
+480000000          0 0
+       usb1_phy                           0            0  
+480000000          0 0
+          usb1                            0            0  
+480000000          0 0
+    pll0                                  4            4  
+480000000          0 0
+       usb0_phy                           2            2  
+480000000          0 0
+          usb0                            1            1  
+480000000          0 0
+       spdif_div                          0            0  
+120000000          0 0
+          spdif                           0            0  
+120000000          0 0
+       saif1_sel                          0            0  
+480000000          0 0
+          saif1_div                       0            0       
+7324          0 0
+             saif1                        0            0       
+7324          0 0
+       saif0_sel                          0            0  
+480000000          0 0
+          saif0_div                       0            0       
+7324          0 0
+             saif0                        0            0       
+7324          0 0
+       ref_gpmi                           0            0  
+480000000          0 0
+       ref_hsadc                          0            0  
+480000000          0 0
+       ref_pix                            0            0  
+480000000          0 0
+       ref_io0                            1            1  
+288000000          0 0
+          ssp1_sel                        0            0  
+288000000          0 0
+             ssp1_div                     0            0  
+288000000          0 0
+                ssp1                      0            0  
+288000000          0 0
+          ssp0_sel                        1            1  
+288000000          0 0
+             ssp0_div                     1            1   
+57600000          0 0
+                ssp0                      1            1   
+57600000          0 0
+       ref_io1                            0            0  
+288000000          0 0
+          ssp3_sel                        0            0  
+288000000          0 0
+             ssp3_div                     0            0  
+288000000          0 0
+                ssp3                      0            0  
+288000000          0 0
+       ref_emi                            1            1  
+411428571          0 0
+          emi_pll                         1            1  
+205714286          0 0
+             emi_sel                      1            1  
+205714286          0 0
+                emi                       1            1  
+205714286          0 0
+       ref_cpu                            1            1  
+454736842          0 0
+          cpu_pll                         1            1  
+454736842          0 0
+             cpu                          2            2  
+454736842          0 0
+                hbus                      4            4  
+151578948          0 0
+                   fec                    2            2  
+151578948          0 0
+
+3) limit ref_io to 288 MHz (= always bit errors on ssp2)
+
+   clock                         enable_cnt  prepare_cnt        rate  
+accuracy   phase
+----------------------------------------------------------------------------------------
+ ref_xtal                                 5            5   
+24000000          0 0
+    can1                                  0            0   
+24000000          0 0
+    can0                                  0            0   
+24000000          0 0
+    uart                                  2            3   
+24000000          0 0
+    pwm                                   0            0   
+24000000          0 0
+    rtc                                   0            0      
+31250          0 0
+    clk32k_div                            1            1      
+32000          0 0
+       clk32k                             1            1      
+32000          0 0
+          lradc                           1            1       
+2000          0 0
+    emi_xtal                              0            0   
+24000000          0 0
+    xbus                                  3            3   
+24000000          0 0
+    cpu_xtal                              0            0   
+24000000          0 0
+    ptp_sel                               0            0   
+24000000          0 0
+       ptp                                0            0   
+24000000          0 0
+    lcdif_sel                             0            0   
+24000000          0 0
+       lcdif_div                          0            0   
+24000000          0 0
+          lcdif                           0            0   
+24000000          0 0
+    etm_sel                               0            0   
+24000000          0 0
+       etm_div                            0            0   
+24000000          0 0
+          etm                             0            0   
+24000000          0 0
+    gpmi_sel                              0            0   
+24000000          0 0
+       gpmi_div                           0            0   
+24000000          0 0
+          gpmi                            0            0   
+24000000          0 0
+    pll2                                  1            1   
+50000000          0 0
+       enet_out                           1            1   
+50000000          0 0
+    pll1                                  0            0  
+480000000          0 0
+       usb1_phy                           0            0  
+480000000          0 0
+          usb1                            0            0  
+480000000          0 0
+    pll0                                  5            5  
+480000000          0 0
+       usb0_phy                           2            2  
+480000000          0 0
+          usb0                            1            1  
+480000000          0 0
+       spdif_div                          0            0  
+120000000          0 0
+          spdif                           0            0  
+120000000          0 0
+       saif1_sel                          0            0  
+480000000          0 0
+          saif1_div                       0            0       
+7324          0 0
+             saif1                        0            0       
+7324          0 0
+       saif0_sel                          0            0  
+480000000          0 0
+          saif0_div                       0            0       
+7324          0 0
+             saif0                        0            0       
+7324          0 0
+       ref_gpmi                           0            0  
+480000000          0 0
+       ref_hsadc                          0            0  
+480000000          0 0
+       ref_pix                            0            0  
+480000000          0 0
+       ref_io0                            1            1  
+288000000          0 0
+          ssp1_sel                        0            0  
+288000000          0 0
+             ssp1_div                     0            0  
+288000000          0 0
+                ssp1                      0            0  
+288000000          0 0
+          ssp0_sel                        1            1  
+288000000          0 0
+             ssp0_div                     1            1   
+57600000          0 0
+                ssp0                      1            1   
+57600000          0 0
+       ref_io1                            1            1  
+288000000          0 0
+          ssp3_sel                        0            0  
+288000000          0 0
+             ssp3_div                     0            0  
+288000000          0 0
+                ssp3                      0            0  
+288000000          0 0
+          ssp2_sel                        1            1  
+288000000          0 0
+             ssp2_div                     1            1  
+144000000          0 0
+                ssp2                      1            1  
+144000000          0 0
+       ref_emi                            1            1  
+411428571          0 0
+          emi_pll                         1            1  
+205714286          0 0
+             emi_sel                      1            1  
+205714286          0 0
+                emi                       1            1  
+205714286          0 0
+       ref_cpu                            1            1  
+454736842          0 0
+          cpu_pll                         1            1  
+454736842          0 0
+             cpu                          2            2  
+454736842          0 0
+                hbus                      4            4  
+151578948          0 0
+                   fec                    2            2  
+151578948          0 0
