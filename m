@@ -1,62 +1,102 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:38911 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758752AbdEVNXv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2017 09:23:51 -0400
-Received: by mail-wm0-f43.google.com with SMTP id e127so38204205wmg.1
-        for <linux-clk@vger.kernel.org>; Mon, 22 May 2017 06:23:51 -0700 (PDT)
-Message-ID: <1495459426.2344.1.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: Expose SPICC gate
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+Received: from hermes.aosc.io ([199.195.250.187]:39098 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753177AbdEDLt7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 May 2017 07:49:59 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Mon, 22 May 2017 15:23:46 +0200
-In-Reply-To: <1495457326-32659-1-git-send-email-narmstrong@baylibre.com>
-References: <1495457326-32659-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v6 03/13] dt-bindings: add bindings for DE2 on V3s SoC
+Date: Thu,  4 May 2017 19:48:48 +0800
+Message-Id: <20170504114858.9008-4-icenowy@aosc.io>
+In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-05-22 at 14:48 +0200, Neil Armstrong wrote:
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Allwinner V3s SoC have a display engine which have a different pipeline
+with older SoCs.
 
-I would prefer to have a short commit message here. With it included:
+Add document for it (new compatibles and the new "mixer" part).
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes in v4:
+- Removed the refactor at TCON chapter.
+Changes in v3:
+- Remove the description of having a BE directly as allwinner,pipeline.
 
+ .../bindings/display/sunxi/sun4i-drm.txt           | 29 ++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/clk/meson/gxbb.h              | 2 +-
->  include/dt-bindings/clock/gxbb-clkc.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index 93b8f07..cc7b35c 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -191,7 +191,7 @@
->  #define CLKID_ISA		  18
->  #define CLKID_PL301		  19
->  #define CLKID_PERIPHS		  20
-> -#define CLKID_SPICC		  21
-> +/* CLKID_SPICC */
->  /* CLKID_I2C */
->  /* #define CLKID_SAR_ADC */
->  #define CLKID_SMART_CARD	  24
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-
-> bindings/clock/gxbb-clkc.h
-> index 3190e30..88da194 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -13,6 +13,7 @@
->  #define CLKID_GP0_PLL		9
->  #define CLKID_CLK81		12
->  #define CLKID_MPLL2		15
-> +#define CLKID_SPICC		21
->  #define CLKID_I2C		22
->  #define CLKID_SAR_ADC		23
->  #define CLKID_RNG0		25
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 7acdbf14ae1c..33452884b96e 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -41,6 +41,7 @@ Required properties:
+    * allwinner,sun6i-a31-tcon
+    * allwinner,sun6i-a31s-tcon
+    * allwinner,sun8i-a33-tcon
++   * allwinner,sun8i-v3s-tcon
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON. Three are needed:
+@@ -62,7 +63,7 @@ Required properties:
+   second the block connected to the TCON channel 1 (usually the TV
+   encoder)
+ 
+-On SoCs other than the A33, there is one more clock required:
++On SoCs other than the A33 and V3s, there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
+ 
+ DRC
+@@ -148,6 +149,26 @@ Required properties:
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoints, the second one the outputs
+ 
++Display Engine 2.0 Mixer
++------------------------
++
++The DE2 mixer have many functionalities, currently only layer blending is
++supported.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-v3s-de2-mixer
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandles to the clocks feeding the frontend and backend
++    * bus: the backend interface clock
++    * ram: the backend DRAM clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset controllers driving the backend
++
++- ports: A ports node with endpoint definitions as defined in
++  Documentation/devicetree/bindings/media/video-interfaces.txt. The
++  first port should be the input endpoints, the second one the output
++
+ 
+ Display Engine Pipeline
+ -----------------------
+@@ -162,9 +183,13 @@ Required properties:
+     * allwinner,sun6i-a31-display-engine
+     * allwinner,sun6i-a31s-display-engine
+     * allwinner,sun8i-a33-display-engine
++    * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-    frontends available.
++    pipeline entry point. For SoCs with original DE (currently
++    all SoCs supported by display engine except V3s), this
++    phandle should be a display frontend; for SoCs with DE2,
++    this phandle should be a mixer.
+ 
+ Example:
+ 
+-- 
+2.12.2
 
