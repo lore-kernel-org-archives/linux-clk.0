@@ -1,55 +1,60 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 23 May 2017 10:23:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 5/7] clk: mvebu: cp110: add sdio clock to cp-110 system
- controller
-Message-ID: <20170523152339.ngjr6djukrrqcvxm@rob-hp-laptop>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
- <1833f47fdfa5fd05e9135d98e03501d9634a865b.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 02/10] pinctrl: sunxi: add definitions for add A20 and R40
+ support to A10 driver
+Date: Thu,  4 May 2017 21:49:58 +0800
+Message-Id: <20170504135006.16483-3-icenowy@aosc.io>
+In-Reply-To: <20170504135006.16483-1-icenowy@aosc.io>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1833f47fdfa5fd05e9135d98e03501d9634a865b.1495208533.git-series.gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 19, 2017 at 05:55:23PM +0200, Gregory CLEMENT wrote:
-> From: Konstantin Porotchkin <kostap@marvell.com>
-> 
-> This commit updates the CP110 system controller driver to add the
-> definition for a missing clock.
-> 
-> The SDIO clock is dedicated driving the SDHCI interface and its frequency
-> is 400MHz (2/5 of PLL source clock).
-> 
-> The SDIO interface should be bound to this clock and not the core clock
-> as in the older code.
-> Using the wrong clock lead to a maximum SDHCI frequency of 250 Mhz, while
-> the HW really supports up to 400 Mhz.
-> 
-> This patch also fixes the NAND clock relationship documentation.
-> 
-> Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
-> [gregory.clement@free-electrons.com:
-> - use sdio instead of emmc to name the clock
-> - update binding documentation]
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  1 +
->  drivers/clk/mvebu/cp110-system-controller.c                                | 28 +++++++++++++++++++++++-----
->  2 files changed, 24 insertions(+), 5 deletions(-)
+Allwinner A10, A20 and R40 SoCs have similar GPIO layout.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Add SoC definitions in pinctrl-sunxi.h, in order to merge A20 support
+into A10 driver, and add R40 support into it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index a9d315a1256c..1bfc0d8a55df 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -87,6 +87,9 @@
+ #define PINCTRL_SUN5I_GR8	BIT(3)
+ #define PINCTRL_SUN6I_A31	BIT(4)
+ #define PINCTRL_SUN6I_A31S	BIT(5)
++#define PINCTRL_SUN4I_A10	BIT(6)
++#define PINCTRL_SUN7I_A20	BIT(7)
++#define PINCTRL_SUN8I_R40	BIT(8)
+ 
+ struct sunxi_desc_function {
+ 	unsigned long	variant;
+-- 
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
