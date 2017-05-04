@@ -1,82 +1,62 @@
-Return-Path: <robh+dt@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdY+EzbbTy6PzN5-YhCnSxPoKej2z=t-7eC3CPqDa6Q4_w@mail.gmail.com>
-References: <20170508201159.31634-1-linus.walleij@linaro.org>
- <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com> <CACRpkdY+EzbbTy6PzN5-YhCnSxPoKej2z=t-7eC3CPqDa6Q4_w@mail.gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Tue, 9 May 2017 09:23:28 -0500
-Message-ID: <CAL_Jsq+WQijqm43U_SzSVzCn6_eeFLjggcWnbwbCpW99ct4XOQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] clk: Add bindings for the Gemini Clock Controller
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, openwrt-devel@openwrt.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH v2 5/5] arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
+Date: Thu,  4 May 2017 17:24:01 +0530
+Message-Id: <1493898841-20583-6-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 8, 2017 at 4:41 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, May 8, 2017 at 11:24 PM, Rob Herring <robh+dt@kernel.org> wrote:
->
->>> +Example:
->>> +
->>> +syscon: syscon@40000000 {
->>> +       compatible = "cortina,gemini-syscon", "cortina,gemini-clock-controller",
->>> +                    "syscon", "simple-mfd";
->>
->> There are no child nodes, so you don't need simple-mfd.
->
-> The example is taken from an actual device tree (look below),
-> where there are child nodes, I can trim it down.
->
->>> +       reg = <0x40000000 0x1000>;
->>
->> Looks like you have 2 nodes pointing to the same address with your
->> reset binding? You shouldn't have overlapping resources. It's allowed
->> for historical reasons but breaks resource creation in Linux.
->
-> No... they are all in the same node, just sharing the same
-> resource by way of regmap (syscon).
+From: Abhishek Sahu <absahu@codeaurora.org>
 
-Okay, then please document at least the parent syscon node in a single
-doc. Splitting it is very confusing.
+These configs are required for booting kernel in QCOM
+IPQ8074 boards.
 
->
-> In the end, as I think you requested, when you said:
->
->>> +     clock-controller {
->>> +             compatible = "cortina,gemini-clock-controller";
->>> +             #clock-cells = <1>;
-> (...)
->> There's not really much reason to have a child node here. The parent can
->> be the clock provider.
-> (...)
->> Same comment as clocks. The parent can be the provider.
->
-> So as you say, no specific child is needed and syscon provides
-> clocks and resets:
->
->                 syscon: syscon@40000000 {
->                         compatible = "cortina,gemini-syscon",
->                                      "cortina,gemini-clock-controller",
->                                      "cortina,gemini-reset",
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This mostly looks fine, but you shouldn't need 3 compatible strings
-for the block.
-
->                                      "syscon", "simple-mfd";
->                         reg = <0x40000000 0x1000>;
->                         #clock-cells = <1>;
->                         #reset-cells = <1>;
->
->                         syscon-reboot {
->                                 compatible = "syscon-reboot";
->                                 regmap = <&syscon>;
->                                 /* GLOBAL_RESET register */
->                                 offset = <0x0c>;
->                                 /* RESET_GLOBAL | RESET_CPU1 */
->                                 mask = <0xC0000000>;
->                         };
->                 };
->
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7c48028..e6aeb69 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -266,6 +266,7 @@ CONFIG_SPI_SPIDEV=m
+ CONFIG_SPI_S3C64XX=y
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_SINGLE=y
++CONFIG_PINCTRL_IPQ8074=y
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_MSM8916=y
+ CONFIG_PINCTRL_MSM8994=y
+@@ -439,6 +440,7 @@ CONFIG_COMMON_CLK_PWM=y
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_CLK_QORIQ=y
+ CONFIG_COMMON_CLK_QCOM=y
++CONFIG_IPQ_GCC_8074=y
+ CONFIG_MSM_GCC_8916=y
+ CONFIG_MSM_GCC_8994=y
+ CONFIG_MSM_MMCC_8996=y
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
