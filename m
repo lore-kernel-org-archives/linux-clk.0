@@ -1,92 +1,171 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Abhishek Shah <abhishek.shah@broadcom.com>
-Subject: [PATCH 06/11] arm64: dts: Add NAND DT nodes for Stingray SOC
-Date: Sat,  6 May 2017 17:24:41 +0530
-Message-Id: <1494071686-19098-7-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
-References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38190 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbdEEDcP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 23:32:15 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170504114858.9008-12-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-12-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 5 May 2017 11:31:49 +0800
+Message-ID: <CAGb2v67uE2iuP+wrL2t0fSMY8C1qnX=pYru7pZGX+0WhC_z2EA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v6 11/13] ARM: dts: sun8i: add DE2 nodes for
+ V3s SoC
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
+> which have RGB LCD output.
 
-This patch adds NAND controller DT Node and NAND chip DT
-node for Stingray SOC and Stingray reference boards.
+Please also mention that it only has one mixer.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
-Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 15 +++++++++++++++
- arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 13 +++++++++++++
- 2 files changed, 28 insertions(+)
+For the subject, you could just say "Add device nodes for the display pipeline".
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index e3a2a36..6014525 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -62,3 +62,18 @@
- &uart1 {
- 	status = "okay";
- };
-+
-+&nand {
-+	status = "ok";
-+	nandcs@0 {
-+		compatible = "brcm,nandcs";
-+		reg = <0>;
-+		nand-ecc-mode = "hw";
-+		nand-ecc-strength = <8>;
-+		nand-ecc-step-size = <512>;
-+		nand-bus-width = <16>;
-+		brcm,nand-oob-sector-size = <16>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index c60de96..dbdafcb 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -305,5 +305,18 @@
- 			compatible = "brcm,iproc-rng200";
- 			reg = <0x68b20000 0x28>;
- 		};
-+
-+		nand: nand@68c60000 {
-+			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
-+			reg = <0x68c60000 0x600>,
-+			      <0x68e0a408 0x600>,
-+			      <0x68c60f00 0x20>;
-+			reg-names = "nand", "iproc-idm", "iproc-ext";
-+			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			brcm,nand-has-wp;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.7.4
+>
+> Add device nodes for it as well as the TCON.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+> index 71075969e5e6..0a895179d8ae 100644
+> --- a/arch/arm/boot/dts/sun8i-v3s.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+> @@ -41,6 +41,10 @@
+>   */
+>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/sun8i-v3s-ccu.h>
+> +#include <dt-bindings/clock/sun8i-de2.h>
+> +#include <dt-bindings/reset/sun8i-v3s-ccu.h>
+> +#include <dt-bindings/reset/sun8i-de2.h>
+>
+>  / {
+>         #address-cells = <1>;
+> @@ -59,6 +63,12 @@
+>                 };
+>         };
+>
+> +       de: display-engine {
+> +               compatible = "allwinner,sun8i-v3s-display-engine";
+> +               allwinner,pipelines = <&de2_mixer0>;
+> +               status = "disabled";
+> +       };
+> +
+>         timer {
+>                 compatible = "arm,armv7-timer";
+>                 interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> @@ -93,6 +103,83 @@
+>                 #size-cells = <1>;
+>                 ranges;
+>
+> +               de2_clocks: clock@1000000 {
+> +                       compatible = "allwinner,sun50i-h5-de2-clk";
+
+I am a bit skeptical about this. Since the V3S only has one mixer, do the clocks
+for the second one even exist?
+
+> +                       reg = <0x01000000 0x100000>;
+> +                       clocks = <&ccu CLK_DE>,
+> +                                <&ccu CLK_BUS_DE>;
+> +                       clock-names = "mod",
+> +                                     "bus";
+> +                       resets = <&ccu RST_BUS_DE>;
+> +                       #clock-cells = <1>;
+> +                       #reset-cells = <1>;
+> +               };
+> +
+> +               de2_mixer0: mixer@1100000 {
+> +                       compatible = "allwinner,sun8i-v3s-de2-mixer";
+> +                       reg = <0x01100000 0x100000>;
+> +                       clocks = <&de2_clocks CLK_MIXER0>,
+> +                                <&de2_clocks CLK_BUS_MIXER0>;
+> +                       clock-names = "mod",
+> +                                     "bus";
+
+Nit: could you list the bus clock first?
+
+Regards
+ChenYu
+
+> +                       resets = <&de2_clocks RST_MIXER0>;
+> +                       assigned-clocks = <&de2_clocks CLK_MIXER0>;
+> +                       assigned-clock-rates = <150000000>;
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               mixer0_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +
+> +                                       mixer0_out_tcon0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&tcon0_in_mixer0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               tcon0: lcd-controller@1c0c000 {
+> +                       compatible = "allwinner,sun8i-v3s-tcon";
+> +                       reg = <0x01c0c000 0x1000>;
+> +                       interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_TCON0>,
+> +                                <&ccu CLK_TCON0>;
+> +                       clock-names = "ahb",
+> +                                     "tcon-ch0";
+> +                       clock-output-names = "tcon-pixel-clock";
+> +                       resets = <&ccu RST_BUS_TCON0>;
+> +                       reset-names = "lcd";
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               tcon0_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       tcon0_in_mixer0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&mixer0_out_tcon0>;
+> +                                       };
+> +                               };
+> +
+> +                               tcon0_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +                               };
+> +                       };
+> +               };
+> +
+> +
+>                 mmc0: mmc@01c0f000 {
+>                         compatible = "allwinner,sun7i-a20-mmc";
+>                         reg = <0x01c0f000 0x1000>;
+> --
+> 2.12.2
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
