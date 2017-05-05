@@ -1,96 +1,214 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 20/20] ARM: sun5i: a10s-olinuxino: Enable HDMI
-Date: Wed,  3 May 2017 13:59:57 +0200
-Message-Id: <c7ac6faa0568e6418291255af537c4b070bdea63.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
+	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
+	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH 5/6] dt-bindings: cpufreq: move Mediatek cpufreq dt-bindings document to proper place
+Date: Fri, 5 May 2017 23:26:13 +0800
+Message-ID: <1493997974-17699-6-git-send-email-sean.wang@mediatek.com>
+In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10s Olinuxino has an HDMI connector. Make sure we can use it.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+The old place is Documentation/devicetree/bindings/clock/ that would
+let people hard to find how to use Mediatek cpufreq driver, so moving
+it to the new place as other cpufreq dirvers are done would be better.
+
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts | 29 +++++++++++++++++-
- 1 file changed, 29 insertions(+), 0 deletions(-)
+ .../devicetree/bindings/clock/mt8173-cpu-dvfs.txt  | 83 ----------------------
+ .../bindings/cpufreq/cpufreq-mediatek.txt          | 83 ++++++++++++++++++++++
+ 2 files changed, 83 insertions(+), 83 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
 
-diff --git a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
-index 894f874a5beb..1d13b6407222 100644
---- a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
-+++ b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
-@@ -63,6 +63,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
+diff --git a/Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt b/Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
+deleted file mode 100644
+index 52b457c..0000000
+--- a/Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
++++ /dev/null
+@@ -1,83 +0,0 @@
+-Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
+-
+-Required properties:
+-- clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
+-- clock-names: Should contain the following:
+-	"cpu"		- The multiplexer for clock input of CPU cluster.
+-	"intermediate"	- A parent of "cpu" clock which is used as "intermediate" clock
+-			  source (usually MAINPLL) when the original CPU PLL is under
+-			  transition and not stable yet.
+-	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
+-	generic clock consumer properties.
+-- proc-supply: Regulator for Vproc of CPU cluster.
+-
+-Optional properties:
+-- sram-supply: Regulator for Vsram of CPU cluster. When present, the cpufreq driver
+-	       needs to do "voltage tracking" to step by step scale up/down Vproc and
+-	       Vsram to fit SoC specific needs. When absent, the voltage scaling
+-	       flow is handled by hardware, hence no software "voltage tracking" is
+-	       needed.
+-
+-Example:
+---------
+-	cpu0: cpu@0 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a53";
+-		reg = <0x000>;
+-		enable-method = "psci";
+-		cpu-idle-states = <&CPU_SLEEP_0>;
+-		clocks = <&infracfg CLK_INFRA_CA53SEL>,
+-			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+-		clock-names = "cpu", "intermediate";
+-	};
+-
+-	cpu1: cpu@1 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a53";
+-		reg = <0x001>;
+-		enable-method = "psci";
+-		cpu-idle-states = <&CPU_SLEEP_0>;
+-		clocks = <&infracfg CLK_INFRA_CA53SEL>,
+-			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+-		clock-names = "cpu", "intermediate";
+-	};
+-
+-	cpu2: cpu@100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x100>;
+-		enable-method = "psci";
+-		cpu-idle-states = <&CPU_SLEEP_0>;
+-		clocks = <&infracfg CLK_INFRA_CA57SEL>,
+-			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+-		clock-names = "cpu", "intermediate";
+-	};
+-
+-	cpu3: cpu@101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x101>;
+-		enable-method = "psci";
+-		cpu-idle-states = <&CPU_SLEEP_0>;
+-		clocks = <&infracfg CLK_INFRA_CA57SEL>,
+-			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+-		clock-names = "cpu", "intermediate";
+-	};
+-
+-	&cpu0 {
+-		proc-supply = <&mt6397_vpca15_reg>;
+-	};
+-
+-	&cpu1 {
+-		proc-supply = <&mt6397_vpca15_reg>;
+-	};
+-
+-	&cpu2 {
+-		proc-supply = <&da9211_vcpu_reg>;
+-		sram-supply = <&mt6397_vsramca7_reg>;
+-	};
+-
+-	&cpu3 {
+-		proc-supply = <&da9211_vcpu_reg>;
+-		sram-supply = <&mt6397_vsramca7_reg>;
+-	};
+diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+new file mode 100644
+index 0000000..52b457c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+@@ -0,0 +1,83 @@
++Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
 +
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
++Required properties:
++- clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
++- clock-names: Should contain the following:
++	"cpu"		- The multiplexer for clock input of CPU cluster.
++	"intermediate"	- A parent of "cpu" clock which is used as "intermediate" clock
++			  source (usually MAINPLL) when the original CPU PLL is under
++			  transition and not stable yet.
++	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
++	generic clock consumer properties.
++- proc-supply: Regulator for Vproc of CPU cluster.
++
++Optional properties:
++- sram-supply: Regulator for Vsram of CPU cluster. When present, the cpufreq driver
++	       needs to do "voltage tracking" to step by step scale up/down Vproc and
++	       Vsram to fit SoC specific needs. When absent, the voltage scaling
++	       flow is handled by hardware, hence no software "voltage tracking" is
++	       needed.
++
++Example:
++--------
++	cpu0: cpu@0 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a53";
++		reg = <0x000>;
++		enable-method = "psci";
++		cpu-idle-states = <&CPU_SLEEP_0>;
++		clocks = <&infracfg CLK_INFRA_CA53SEL>,
++			 <&apmixedsys CLK_APMIXED_MAINPLL>;
++		clock-names = "cpu", "intermediate";
 +	};
 +
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -76,6 +87,10 @@
- 	};
- };
- 
-+&be0 {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -91,6 +106,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
++	cpu1: cpu@1 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a53";
++		reg = <0x001>;
++		enable-method = "psci";
++		cpu-idle-states = <&CPU_SLEEP_0>;
++		clocks = <&infracfg CLK_INFRA_CA53SEL>,
++			 <&apmixedsys CLK_APMIXED_MAINPLL>;
++		clock-names = "cpu", "intermediate";
 +	};
-+};
 +
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0_pins_a>;
-@@ -248,6 +273,10 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	status = "okay";
-+};
++	cpu2: cpu@100 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a57";
++		reg = <0x100>;
++		enable-method = "psci";
++		cpu-idle-states = <&CPU_SLEEP_0>;
++		clocks = <&infracfg CLK_INFRA_CA57SEL>,
++			 <&apmixedsys CLK_APMIXED_MAINPLL>;
++		clock-names = "cpu", "intermediate";
++	};
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
++	cpu3: cpu@101 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a57";
++		reg = <0x101>;
++		enable-method = "psci";
++		cpu-idle-states = <&CPU_SLEEP_0>;
++		clocks = <&infracfg CLK_INFRA_CA57SEL>,
++			 <&apmixedsys CLK_APMIXED_MAINPLL>;
++		clock-names = "cpu", "intermediate";
++	};
++
++	&cpu0 {
++		proc-supply = <&mt6397_vpca15_reg>;
++	};
++
++	&cpu1 {
++		proc-supply = <&mt6397_vpca15_reg>;
++	};
++
++	&cpu2 {
++		proc-supply = <&da9211_vcpu_reg>;
++		sram-supply = <&mt6397_vsramca7_reg>;
++	};
++
++	&cpu3 {
++		proc-supply = <&da9211_vcpu_reg>;
++		sram-supply = <&mt6397_vsramca7_reg>;
++	};
 -- 
-git-series 0.8.11
+2.7.4
