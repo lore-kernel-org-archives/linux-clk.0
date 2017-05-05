@@ -1,55 +1,66 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list\:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/pl111: Register the clock divider and use it.
-In-Reply-To: <CACRpkdZUQX2MBiyd=m9P6HsxnNsf446RNR=R3-O_zm5GQXXOOg@mail.gmail.com>
-References: <20170508193348.30236-1-eric@anholt.net> <CACRpkdZUQX2MBiyd=m9P6HsxnNsf446RNR=R3-O_zm5GQXXOOg@mail.gmail.com>
-Date: Tue, 09 May 2017 11:18:56 -0700
-Message-ID: <87a86lgagf.fsf@eliezer.anholt.net>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
+	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
+	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH 4/6] cpufreq: mediatek: Add support of cpufreq to MT2701/MT7623 SoC
+Date: Fri, 5 May 2017 23:26:12 +0800
+Message-ID: <1493997974-17699-5-git-send-email-sean.wang@mediatek.com>
+In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+From: Sean Wang <sean.wang@mediatek.com>
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+MT2701/MT7623 is an 32-bit ARMv7 based quad-core (4 * Cortex-A7) with
+single cluster and this hardware is also compatible with the existing
+driver through enabling CPU frequency feature with operating-points-v2
+bindings.
 
-> On Mon, May 8, 2017 at 9:33 PM, Eric Anholt <eric@anholt.net> wrote:
->
->> This is required for the panel to work on bcm911360, where CLCDCLK is
->> the fixed 200Mhz AXI41 clock.  The rate set is still passed up to the
->> CLCDCLK, for platforms that have a settable rate on that one.
->>
->> v2: Set SET_RATE_PARENT (caught by Linus Walleij), depend on
->>     COMMON_CLK.
->>
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/cpufreq/Kconfig.arm      | 4 ++--
+ drivers/cpufreq/mt8173-cpufreq.c | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Thanks.  Waiting on an ack from clock folks, then we'll be ready to go,
-I think.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkSCBAACgkQtdYpNtH8
-nugiTQ/6Asj1IOQ8QIngEUVxkzEnFKmNtYacX29NiyEkTsLdwXtCGH956p1v7MMg
-zlWoEtHLI0Us+ffyMje8cN5/HApUNSfa51ju4bf+yhtyuqmpdOLVdx8etsWxWRAa
-mb1R/6WIHog5y5xohHc/8TtLVUNayrE1Kw3qZ5o7eNMPtltn9cV28AQQejojKsdm
-dOgf8kXO2/HQLS21WIeOa98viz8hMww+AG2L5sLiWlLhasphu0flMbAHIgK2RBNS
-2EXOXSEQGC+6m5iK12X30qwAWE/fq90K6omCR/Nv+ChhPgPl2OL7+Pnlc+WyS2we
-GQvuj4/UDWfLC3T79VnGYo5y8MPUXiXVAmGjbIW2N93D9dEAsjqQ21q/LcTHOHOR
-Bf051dO6LHD+r8Vr1cDa8NK6vZptDki6i4/B24kGXTSa0QmfL/XIvncHo2PUqOVy
-uA7Q6gdgW9kHajfHZ5dX2VD+PiRKgKUydaXnVpQPzKufhdrU7pFz9QSewIV0pFGU
-+aQErGeUICaZT46RUG3tJQfuJ2Lna55/Kq0egaByvIp6gzFetcslLnNNbeQmGr0i
-4+oVBYZQkTeYK/BRFM3ctGU1NI11Kjn9c4PSumlTB6D/2o/Wkayf/8S+xyrqv7L8
-fGoC0tJsrz1xZ/I/oEGEgXAUmYhwib9y7JklHk3OEMmYC7alaJM=
-=ikaA
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 74ed7e9..68b387a 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -90,11 +90,11 @@ config ARM_KIRKWOOD_CPUFREQ
+ config ARM_MT8173_CPUFREQ
+ 	tristate "Mediatek MT8173 CPUFreq support"
+ 	depends on ARCH_MEDIATEK && REGULATOR
+-	depends on ARM64 || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
++	depends on (ARM || ARM64) || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
+ 	depends on !CPU_THERMAL || THERMAL
+ 	select PM_OPP
+ 	help
+-	  This adds the CPUFreq driver support for Mediatek MT8173 SoC.
++	  This adds the CPUFreq driver support for Mediatek SoCs.
+ 
+ config ARM_OMAP2PLUS_CPUFREQ
+ 	bool "TI OMAP2+"
+diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
+index fd1886f..481ec77 100644
+--- a/drivers/cpufreq/mt8173-cpufreq.c
++++ b/drivers/cpufreq/mt8173-cpufreq.c
+@@ -575,6 +575,8 @@ static struct platform_driver mt8173_cpufreq_platdrv = {
+ 
+ /* List of machines supported by this driver */
+ static const struct of_device_id mt8173_cpufreq_machines[] __initconst = {
++	{ .compatible = "mediatek,mt2701", },
++	{ .compatible = "mediatek,mt7623", },
+ 	{ .compatible = "mediatek,mt817x", },
+ 	{ .compatible = "mediatek,mt8173", },
+ 	{ .compatible = "mediatek,mt8176", },
+-- 
+2.7.4
