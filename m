@@ -1,55 +1,126 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 4/5] arm64: dts: marvell: remove clock-output-names on ap806
-Date: Fri, 19 May 2017 17:58:04 +0200
-Message-Id: <f82d7cab7f94b7884334abc7485fc7f2d775c9dd.1495209464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38142 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751493AbdEEDYv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 23:24:51 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170504114858.9008-4-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-4-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 5 May 2017 11:24:26 +0800
+Message-ID: <CAGb2v660QfMGrP=HuJQ4oVbCaU_gtNzogo-pbK7WQ2UNiQ7BYA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v6 03/13] dt-bindings: add bindings for DE2
+ on V3s SoC
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock-output-names of the ap806-system-controller node are not used
-anymore, so remove them.
+On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner V3s SoC have a display engine which have a different pipeline
+> with older SoCs.
+>
+> Add document for it (new compatibles and the new "mixer" part).
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> Changes in v4:
+> - Removed the refactor at TCON chapter.
+> Changes in v3:
+> - Remove the description of having a BE directly as allwinner,pipeline.
+>
+>  .../bindings/display/sunxi/sun4i-drm.txt           | 29 ++++++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index 7acdbf14ae1c..33452884b96e 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -41,6 +41,7 @@ Required properties:
+>     * allwinner,sun6i-a31-tcon
+>     * allwinner,sun6i-a31s-tcon
+>     * allwinner,sun8i-a33-tcon
+> +   * allwinner,sun8i-v3s-tcon
+>   - reg: base address and size of memory-mapped region
+>   - interrupts: interrupt associated to this IP
+>   - clocks: phandles to the clocks feeding the TCON. Three are needed:
+> @@ -62,7 +63,7 @@ Required properties:
+>    second the block connected to the TCON channel 1 (usually the TV
+>    encoder)
+>
+> -On SoCs other than the A33, there is one more clock required:
+> +On SoCs other than the A33 and V3s, there is one more clock required:
+>     - 'tcon-ch1': The clock driving the TCON channel 1
+>
+>  DRC
+> @@ -148,6 +149,26 @@ Required properties:
+>    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+>    first port should be the input endpoints, the second one the outputs
+>
+> +Display Engine 2.0 Mixer
+> +------------------------
+> +
+> +The DE2 mixer have many functionalities, currently only layer blending is
+> +supported.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun8i-v3s-de2-mixer
+> +  - reg: base address and size of the memory-mapped region.
+> +  - clocks: phandles to the clocks feeding the frontend and backend
+> +    * bus: the backend interface clock
+> +    * ram: the backend DRAM clock
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
+You probably mean "mixer" here.
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index fe41bf9c301e..0c25ec62a2a3 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -244,10 +244,6 @@
- 				compatible = "marvell,ap806-system-controller",
- 					     "syscon";
- 				#clock-cells = <1>;
--				clock-output-names = "ap-cpu-cluster-0",
--						     "ap-cpu-cluster-1",
--						     "ap-fixed", "ap-mss",
--						     "ap-emmc";
- 				reg = <0x6f4000 0x1000>;
- 			};
- 		};
--- 
-git-series 0.9.1
+> +  - clock-names: the clock names mentioned above
+> +  - resets: phandles to the reset controllers driving the backend
+
+And here.
+
+> +
+> +- ports: A ports node with endpoint definitions as defined in
+> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +  first port should be the input endpoints, the second one the output
+> +
+>
+>  Display Engine Pipeline
+>  -----------------------
+> @@ -162,9 +183,13 @@ Required properties:
+>      * allwinner,sun6i-a31-display-engine
+>      * allwinner,sun6i-a31s-display-engine
+>      * allwinner,sun8i-a33-display-engine
+> +    * allwinner,sun8i-v3s-display-engine
+>
+>    - allwinner,pipelines: list of phandle to the display engine
+> -    frontends available.
+> +    pipeline entry point. For SoCs with original DE (currently
+> +    all SoCs supported by display engine except V3s), this
+> +    phandle should be a display frontend; for SoCs with DE2,
+> +    this phandle should be a mixer.
+
+You could simplify this to "list of phandles to the display
+engine frontends (DE 1.0) or mixers (DE 2.0) available".
+
+Regards
+ChenYu
+
+>
+>  Example:
+>
+> --
+> 2.12.2
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
