@@ -1,748 +1,212 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55893 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759443AbdENQcP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 May 2017 12:32:15 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v7 05/13] drm/sun4i: abstract a engine type
-Date: Mon, 15 May 2017 00:30:37 +0800
-Message-Id: <20170514163045.40366-6-icenowy@aosc.io>
-In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
-References: <20170514163045.40366-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
+	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
+	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
+	Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Subject: [PATCH 1/6] clk: mediatek: add missing cpu mux causing Mediatek cpufreq can't work
+Date: Fri, 5 May 2017 23:26:09 +0800
+Message-ID: <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
+In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-As we are going to add support for the Allwinner DE2 engine in sun4i-drm
-driver, we will finally have two types of display engines -- the DE1
-backend and the DE2 mixer. They both do some display blending and feed
-graphics data to TCON, and is part of the "Display Engine" called by
-Allwinner, so I choose to call them both "engine" here.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Abstract the engine type to a new struct with an ops struct, which contains
-functions that should be called outside the engine-specified code (in
-TCON, CRTC or TV Encoder code).
+This patch adds CPU multiplexer clocks which are essential for Mediatek
+cpufreq driver. It would use the CPU clock multiplexer to switch to the
+intermediate clock source temporarily and then wait for the primary clock
+changing getting stable.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
-Changes in v7:
-- Mention "Display Engine" for the name "engine".
-- Fixed some small issues found by Chen-Yu and added his ACK.
-Changes in v6:
-- Rebased on wens's multi-pipeline patchset.
-- Split out Makefile changes.
-Changes in v5:
-- Really made a sunxi_engine struct type, and moved ops pointer
-  into it.
-- Added checked ops wrappers.
-- Changed the second parameter of layers_init from crtc to engine.
-Changes in v4:
-- Comments to tag the color correction functions as optional.
-- Check before calling the optional functions.
-- Change layers_init to satisfy new PATCH v4 04/11.
+ drivers/clk/mediatek/Makefile     |   2 +-
+ drivers/clk/mediatek/clk-cpumux.c | 120 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-cpumux.h |  30 ++++++++++
+ 3 files changed, 151 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mediatek/clk-cpumux.c
+ create mode 100644 drivers/clk/mediatek/clk-cpumux.h
 
- drivers/gpu/drm/sun4i/sun4i_backend.c |  68 ++++++++++++---------
- drivers/gpu/drm/sun4i/sun4i_backend.h |  17 +++---
- drivers/gpu/drm/sun4i/sun4i_crtc.c    |  11 ++--
- drivers/gpu/drm/sun4i/sun4i_crtc.h    |   4 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c     |   2 +-
- drivers/gpu/drm/sun4i/sun4i_drv.h     |   2 +-
- drivers/gpu/drm/sun4i/sun4i_layer.c   |   9 ++-
- drivers/gpu/drm/sun4i/sun4i_layer.h   |   4 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c    |  38 ++++++------
- drivers/gpu/drm/sun4i/sun4i_tv.c      |   9 ++-
- drivers/gpu/drm/sun4i/sunxi_engine.h  | 111 ++++++++++++++++++++++++++++++++++
- 11 files changed, 199 insertions(+), 76 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sunxi_engine.h
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index e53107418add..611cdcb9c182 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -25,6 +25,8 @@
- 
- #include "sun4i_backend.h"
- #include "sun4i_drv.h"
-+#include "sun4i_layer.h"
-+#include "sunxi_engine.h"
- 
- static const u32 sunxi_rgb2yuv_coef[12] = {
- 	0x00000107, 0x00000204, 0x00000064, 0x00000108,
-@@ -32,41 +34,38 @@ static const u32 sunxi_rgb2yuv_coef[12] = {
- 	0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
- };
- 
--void sun4i_backend_apply_color_correction(struct sun4i_backend *backend)
-+static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
- {
- 	int i;
- 
- 	DRM_DEBUG_DRIVER("Applying RGB to YUV color correction\n");
- 
- 	/* Set color correction */
--	regmap_write(backend->regs, SUN4I_BACKEND_OCCTL_REG,
-+	regmap_write(engine->regs, SUN4I_BACKEND_OCCTL_REG,
- 		     SUN4I_BACKEND_OCCTL_ENABLE);
- 
- 	for (i = 0; i < 12; i++)
--		regmap_write(backend->regs, SUN4I_BACKEND_OCRCOEF_REG(i),
-+		regmap_write(engine->regs, SUN4I_BACKEND_OCRCOEF_REG(i),
- 			     sunxi_rgb2yuv_coef[i]);
- }
--EXPORT_SYMBOL(sun4i_backend_apply_color_correction);
- 
--void sun4i_backend_disable_color_correction(struct sun4i_backend *backend)
-+static void sun4i_backend_disable_color_correction(struct sunxi_engine *engine)
- {
- 	DRM_DEBUG_DRIVER("Disabling color correction\n");
- 
- 	/* Disable color correction */
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_OCCTL_REG,
-+	regmap_update_bits(engine->regs, SUN4I_BACKEND_OCCTL_REG,
- 			   SUN4I_BACKEND_OCCTL_ENABLE, 0);
- }
--EXPORT_SYMBOL(sun4i_backend_disable_color_correction);
- 
--void sun4i_backend_commit(struct sun4i_backend *backend)
-+static void sun4i_backend_commit(struct sunxi_engine *engine)
- {
- 	DRM_DEBUG_DRIVER("Committing changes\n");
- 
--	regmap_write(backend->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
-+	regmap_write(engine->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
- 		     SUN4I_BACKEND_REGBUFFCTL_AUTOLOAD_DIS |
- 		     SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
- }
--EXPORT_SYMBOL(sun4i_backend_commit);
- 
- void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 				int layer, bool enable)
-@@ -81,7 +80,7 @@ void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 	else
- 		val = 0;
- 
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_MODCTL_REG,
-+	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
- 			   SUN4I_BACKEND_MODCTL_LAY_EN(layer), val);
- }
- EXPORT_SYMBOL(sun4i_backend_layer_enable);
-@@ -144,27 +143,28 @@ int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
- 	if (plane->type == DRM_PLANE_TYPE_PRIMARY) {
- 		DRM_DEBUG_DRIVER("Primary layer, updating global size W: %u H: %u\n",
- 				 state->crtc_w, state->crtc_h);
--		regmap_write(backend->regs, SUN4I_BACKEND_DISSIZE_REG,
-+		regmap_write(backend->engine.regs, SUN4I_BACKEND_DISSIZE_REG,
- 			     SUN4I_BACKEND_DISSIZE(state->crtc_w,
- 						   state->crtc_h));
- 	}
- 
- 	/* Set the line width */
- 	DRM_DEBUG_DRIVER("Layer line width: %d bits\n", fb->pitches[0] * 8);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYLINEWIDTH_REG(layer),
-+	regmap_write(backend->engine.regs,
-+		     SUN4I_BACKEND_LAYLINEWIDTH_REG(layer),
- 		     fb->pitches[0] * 8);
- 
- 	/* Set height and width */
- 	DRM_DEBUG_DRIVER("Layer size W: %u H: %u\n",
- 			 state->crtc_w, state->crtc_h);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYSIZE_REG(layer),
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_LAYSIZE_REG(layer),
- 		     SUN4I_BACKEND_LAYSIZE(state->crtc_w,
- 					   state->crtc_h));
- 
- 	/* Set base coordinates */
- 	DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
- 			 state->crtc_x, state->crtc_y);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYCOOR_REG(layer),
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_LAYCOOR_REG(layer),
- 		     SUN4I_BACKEND_LAYCOOR(state->crtc_x,
- 					   state->crtc_y));
- 
-@@ -185,7 +185,7 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
- 		interlaced = plane->state->crtc->state->adjusted_mode.flags
- 			& DRM_MODE_FLAG_INTERLACE;
- 
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_MODCTL_REG,
-+	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
- 			   SUN4I_BACKEND_MODCTL_ITLMOD_EN,
- 			   interlaced ? SUN4I_BACKEND_MODCTL_ITLMOD_EN : 0);
- 
-@@ -199,7 +199,8 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
- 		return ret;
- 	}
- 
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_ATTCTL_REG1(layer),
-+	regmap_update_bits(backend->engine.regs,
-+			   SUN4I_BACKEND_ATTCTL_REG1(layer),
- 			   SUN4I_BACKEND_ATTCTL_REG1_LAY_FBFMT, val);
- 
- 	return 0;
-@@ -232,13 +233,14 @@ int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
- 	/* Write the 32 lower bits of the address (in bits) */
- 	lo_paddr = paddr << 3;
- 	DRM_DEBUG_DRIVER("Setting address lower bits to 0x%x\n", lo_paddr);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYFB_L32ADD_REG(layer),
-+	regmap_write(backend->engine.regs,
-+		     SUN4I_BACKEND_LAYFB_L32ADD_REG(layer),
- 		     lo_paddr);
- 
- 	/* And the upper bits */
- 	hi_paddr = paddr >> 29;
- 	DRM_DEBUG_DRIVER("Setting address high bits to 0x%x\n", hi_paddr);
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_LAYFB_H4ADD_REG,
-+	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_LAYFB_H4ADD_REG,
- 			   SUN4I_BACKEND_LAYFB_H4ADD_MSK(layer),
- 			   SUN4I_BACKEND_LAYFB_H4ADD(layer, hi_paddr));
- 
-@@ -330,6 +332,13 @@ static int sun4i_backend_of_get_id(struct device_node *node)
- 	return ret;
- }
- 
-+static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
-+	.commit				= sun4i_backend_commit,
-+	.layers_init			= sun4i_layers_init,
-+	.apply_color_correction		= sun4i_backend_apply_color_correction,
-+	.disable_color_correction	= sun4i_backend_disable_color_correction,
-+};
-+
- static struct regmap_config sun4i_backend_regmap_config = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -353,7 +362,8 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
- 		return -ENOMEM;
- 	dev_set_drvdata(dev, backend);
- 
--	backend->node = dev->of_node;
-+	backend->engine.node = dev->of_node;
-+	backend->engine.ops = &sun4i_backend_engine_ops;
- 	backend->id = sun4i_backend_of_get_id(dev->of_node);
- 	if (backend->id < 0)
- 		return backend->id;
-@@ -363,11 +373,11 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
- 
--	backend->regs = devm_regmap_init_mmio(dev, regs,
--					      &sun4i_backend_regmap_config);
--	if (IS_ERR(backend->regs)) {
-+	backend->engine.regs = devm_regmap_init_mmio(dev, regs,
-+						     &sun4i_backend_regmap_config);
-+	if (IS_ERR(backend->engine.regs)) {
- 		dev_err(dev, "Couldn't create the backend regmap\n");
--		return PTR_ERR(backend->regs);
-+		return PTR_ERR(backend->engine.regs);
- 	}
- 
- 	backend->reset = devm_reset_control_get(dev, NULL);
-@@ -415,18 +425,18 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
- 		}
- 	}
- 
--	list_add_tail(&backend->list, &drv->backend_list);
-+	list_add_tail(&backend->engine.list, &drv->engine_list);
- 
- 	/* Reset the registers */
- 	for (i = 0x800; i < 0x1000; i += 4)
--		regmap_write(backend->regs, i, 0);
-+		regmap_write(backend->engine.regs, i, 0);
- 
- 	/* Disable registers autoloading */
--	regmap_write(backend->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_REGBUFFCTL_REG,
- 		     SUN4I_BACKEND_REGBUFFCTL_AUTOLOAD_DIS);
- 
- 	/* Enable the backend */
--	regmap_write(backend->regs, SUN4I_BACKEND_MODCTL_REG,
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
- 		     SUN4I_BACKEND_MODCTL_DEBE_EN |
- 		     SUN4I_BACKEND_MODCTL_START_CTL);
- 
-@@ -448,7 +458,7 @@ static void sun4i_backend_unbind(struct device *dev, struct device *master,
- {
- 	struct sun4i_backend *backend = dev_get_drvdata(dev);
- 
--	list_del(&backend->list);
-+	list_del(&backend->engine.list);
- 
- 	if (of_device_is_compatible(dev->of_node,
- 				    "allwinner,sun8i-a33-display-backend"))
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.h b/drivers/gpu/drm/sun4i/sun4i_backend.h
-index 6327a2985fe6..b022a37e8e5b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.h
-@@ -19,6 +19,8 @@
- #include <linux/regmap.h>
- #include <linux/reset.h>
- 
-+#include "sunxi_engine.h"
-+
- #define SUN4I_BACKEND_MODCTL_REG		0x800
- #define SUN4I_BACKEND_MODCTL_LINE_SEL			BIT(29)
- #define SUN4I_BACKEND_MODCTL_ITLMOD_EN			BIT(28)
-@@ -141,8 +143,7 @@
- #define SUN4I_BACKEND_PIPE_OFF(p)		(0x5000 + (0x400 * (p)))
- 
- struct sun4i_backend {
--	struct device_node	*node;
--	struct regmap		*regs;
-+	struct sunxi_engine	engine;
- 
- 	struct reset_control	*reset;
- 
-@@ -154,15 +155,13 @@ struct sun4i_backend {
- 	struct reset_control	*sat_reset;
- 
- 	int			id;
--
--	/* Backend list management */
--	struct list_head	list;
- };
- 
--void sun4i_backend_apply_color_correction(struct sun4i_backend *backend);
--void sun4i_backend_disable_color_correction(struct sun4i_backend *backend);
--
--void sun4i_backend_commit(struct sun4i_backend *backend);
-+static inline struct sun4i_backend *
-+engine_to_sun4i_backend(struct sunxi_engine *engine)
-+{
-+	return container_of(engine, struct sun4i_backend, engine);
-+}
- 
- void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 				int layer, bool enable);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-index 708b3543d4e9..f8c70439d1e2 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-@@ -25,10 +25,9 @@
- 
- #include <video/videomode.h>
- 
--#include "sun4i_backend.h"
- #include "sun4i_crtc.h"
- #include "sun4i_drv.h"
--#include "sun4i_layer.h"
-+#include "sunxi_engine.h"
- #include "sun4i_tcon.h"
- 
- static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
-@@ -56,7 +55,7 @@ static void sun4i_crtc_atomic_flush(struct drm_crtc *crtc,
- 
- 	DRM_DEBUG_DRIVER("Committing plane changes\n");
- 
--	sun4i_backend_commit(scrtc->backend);
-+	sunxi_engine_commit(scrtc->engine);
- 
- 	if (event) {
- 		crtc->state->event = NULL;
-@@ -135,7 +134,7 @@ static const struct drm_crtc_funcs sun4i_crtc_funcs = {
- };
- 
- struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
--				   struct sun4i_backend *backend,
-+				   struct sunxi_engine *engine,
- 				   struct sun4i_tcon *tcon)
- {
- 	struct sun4i_crtc *scrtc;
-@@ -146,11 +145,11 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 	scrtc = devm_kzalloc(drm->dev, sizeof(*scrtc), GFP_KERNEL);
- 	if (!scrtc)
- 		return ERR_PTR(-ENOMEM);
--	scrtc->backend = backend;
-+	scrtc->engine = engine;
- 	scrtc->tcon = tcon;
- 
- 	/* Create our layers */
--	planes = sun4i_layers_init(drm, scrtc);
-+	planes = sunxi_engine_layers_init(drm, engine);
- 	if (IS_ERR(planes)) {
- 		dev_err(drm->dev, "Couldn't create the planes\n");
- 		return NULL;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-index 4dae3508424a..bf0ce36eb518 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-@@ -17,7 +17,7 @@ struct sun4i_crtc {
- 	struct drm_crtc			crtc;
- 	struct drm_pending_vblank_event	*event;
- 
--	struct sun4i_backend		*backend;
-+	struct sunxi_engine		*engine;
- 	struct sun4i_tcon		*tcon;
- };
- 
-@@ -27,7 +27,7 @@ static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc *crtc)
- }
- 
- struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
--				   struct sun4i_backend *backend,
-+				   struct sunxi_engine *engine,
- 				   struct sun4i_tcon *tcon);
- 
- #endif /* _SUN4I_CRTC_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index c52f7a9eb045..35cad9cb44c5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -91,7 +91,7 @@ static int sun4i_drv_bind(struct device *dev)
- 		goto free_drm;
- 	}
- 	drm->dev_private = drv;
--	INIT_LIST_HEAD(&drv->backend_list);
-+	INIT_LIST_HEAD(&drv->engine_list);
- 	INIT_LIST_HEAD(&drv->tcon_list);
- 
- 	ret = of_reserved_mem_device_init(dev);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.h b/drivers/gpu/drm/sun4i/sun4i_drv.h
-index 250c29017ef5..a960c89270cc 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.h
-@@ -18,7 +18,7 @@
- #include <linux/regmap.h>
- 
- struct sun4i_drv {
--	struct list_head	backend_list;
-+	struct list_head	engine_list;
- 	struct list_head	tcon_list;
- 
- 	struct drm_fbdev_cma	*fbdev;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index e1f03e1cc0ac..ead4f9d4c1ee 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -11,13 +11,12 @@
-  */
- 
- #include <drm/drm_atomic_helper.h>
--#include <drm/drm_crtc.h>
- #include <drm/drm_plane_helper.h>
- #include <drm/drmP.h>
- 
- #include "sun4i_backend.h"
--#include "sun4i_crtc.h"
- #include "sun4i_layer.h"
-+#include "sunxi_engine.h"
- 
- struct sun4i_plane_desc {
- 	       enum drm_plane_type     type;
-@@ -130,10 +129,10 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- }
- 
- struct drm_plane **sun4i_layers_init(struct drm_device *drm,
--				     struct sun4i_crtc *crtc)
-+				     struct sunxi_engine *engine)
- {
- 	struct drm_plane **planes;
--	struct sun4i_backend *backend = crtc->backend;
-+	struct sun4i_backend *backend = engine_to_sun4i_backend(engine);
- 	int i;
- 
- 	planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
-@@ -175,7 +174,7 @@ struct drm_plane **sun4i_layers_init(struct drm_device *drm,
- 
- 		DRM_DEBUG_DRIVER("Assigning %s plane to pipe %d\n",
- 				 i ? "overlay" : "primary", plane->pipe);
--		regmap_update_bits(backend->regs, SUN4I_BACKEND_ATTCTL_REG0(i),
-+		regmap_update_bits(engine->regs, SUN4I_BACKEND_ATTCTL_REG0(i),
- 				   SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL_MASK,
- 				   SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL(plane->pipe));
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h b/drivers/gpu/drm/sun4i/sun4i_layer.h
-index 5ea5c994d6ea..4e84f438b346 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
-@@ -13,6 +13,8 @@
- #ifndef _SUN4I_LAYER_H_
- #define _SUN4I_LAYER_H_
- 
-+struct sunxi_engine;
-+
- struct sun4i_layer {
- 	struct drm_plane	plane;
- 	struct sun4i_drv	*drv;
-@@ -27,6 +29,6 @@ plane_to_sun4i_layer(struct drm_plane *plane)
- }
- 
- struct drm_plane **sun4i_layers_init(struct drm_device *drm,
--				     struct sun4i_crtc *crtc);
-+				     struct sunxi_engine *engine);
- 
- #endif /* _SUN4I_LAYER_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 8b6aaa60037d..288275802f92 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -25,12 +25,12 @@
- #include <linux/regmap.h>
- #include <linux/reset.h>
- 
--#include "sun4i_backend.h"
- #include "sun4i_crtc.h"
- #include "sun4i_dotclock.h"
- #include "sun4i_drv.h"
- #include "sun4i_rgb.h"
- #include "sun4i_tcon.h"
-+#include "sunxi_engine.h"
- 
- void sun4i_tcon_disable(struct sun4i_tcon *tcon)
- {
-@@ -419,12 +419,16 @@ static int sun4i_tcon_init_regmap(struct device *dev,
-  * means maintaining a large list of them. Or, since the backend is
-  * registered and binded before the TCON, we can just go through the
-  * list of registered backends and compare the device node.
-+ *
-+ * As the structures now store engines instead of backends, here this
-+ * function in fact searches the corresponding engine, and the ID is
-+ * requested via the get_id function of the engine.
-  */
--static struct sun4i_backend *sun4i_tcon_find_backend(struct sun4i_drv *drv,
--						     struct device_node *node)
-+static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
-+						   struct device_node *node)
- {
- 	struct device_node *port, *ep, *remote;
--	struct sun4i_backend *backend;
-+	struct sunxi_engine *engine;
- 
- 	port = of_graph_get_port_by_id(node, 0);
- 	if (!port)
-@@ -435,21 +439,21 @@ static struct sun4i_backend *sun4i_tcon_find_backend(struct sun4i_drv *drv,
- 		if (!remote)
- 			continue;
- 
--		/* does this node match any registered backends? */
--		list_for_each_entry(backend, &drv->backend_list, list) {
--			if (remote == backend->node) {
-+		/* does this node match any registered engines? */
-+		list_for_each_entry(engine, &drv->engine_list, list) {
-+			if (remote == engine->node) {
- 				of_node_put(remote);
- 				of_node_put(port);
--				return backend;
-+				return engine;
- 			}
- 		}
- 
- 		/* keep looking through upstream ports */
--		backend = sun4i_tcon_find_backend(drv, remote);
--		if (!IS_ERR(backend)) {
-+		engine = sun4i_tcon_find_engine(drv, remote);
-+		if (!IS_ERR(engine)) {
- 			of_node_put(remote);
- 			of_node_put(port);
--			return backend;
-+			return engine;
- 		}
- 	}
- 
-@@ -461,13 +465,13 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- {
- 	struct drm_device *drm = data;
- 	struct sun4i_drv *drv = drm->dev_private;
--	struct sun4i_backend *backend;
-+	struct sunxi_engine *engine;
- 	struct sun4i_tcon *tcon;
- 	int ret;
- 
--	backend = sun4i_tcon_find_backend(drv, dev->of_node);
--	if (IS_ERR(backend)) {
--		dev_err(dev, "Couldn't find matching backend\n");
-+	engine = sun4i_tcon_find_engine(drv, dev->of_node);
-+	if (IS_ERR(engine)) {
-+		dev_err(dev, "Couldn't find matching engine\n");
- 		return -EPROBE_DEFER;
- 	}
- 
-@@ -477,7 +481,7 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	dev_set_drvdata(dev, tcon);
- 	tcon->drm = drm;
- 	tcon->dev = dev;
--	tcon->id = backend->id;
-+	tcon->id = sunxi_engine_get_id(engine);
- 	tcon->quirks = of_device_get_match_data(dev);
- 
- 	tcon->lcd_rst = devm_reset_control_get(dev, "lcd");
-@@ -520,7 +524,7 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_dotclock;
- 	}
- 
--	tcon->crtc = sun4i_crtc_init(drm, backend, tcon);
-+	tcon->crtc = sun4i_crtc_init(drm, engine, tcon);
- 	if (IS_ERR(tcon->crtc)) {
- 		dev_err(dev, "Couldn't create our CRTC\n");
- 		ret = PTR_ERR(tcon->crtc);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 542da220818b..a9cad00d4ee8 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -22,10 +22,10 @@
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
- 
--#include "sun4i_backend.h"
- #include "sun4i_crtc.h"
- #include "sun4i_drv.h"
- #include "sun4i_tcon.h"
-+#include "sunxi_engine.h"
- 
- #define SUN4I_TVE_EN_REG		0x000
- #define SUN4I_TVE_EN_DAC_MAP_MASK		GENMASK(19, 4)
-@@ -353,7 +353,6 @@ static void sun4i_tv_disable(struct drm_encoder *encoder)
- 	struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
- 	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
- 	struct sun4i_tcon *tcon = crtc->tcon;
--	struct sun4i_backend *backend = crtc->backend;
- 
- 	DRM_DEBUG_DRIVER("Disabling the TV Output\n");
- 
-@@ -362,7 +361,8 @@ static void sun4i_tv_disable(struct drm_encoder *encoder)
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
- 			   SUN4I_TVE_EN_ENABLE,
- 			   0);
--	sun4i_backend_disable_color_correction(backend);
-+
-+	sunxi_engine_disable_color_correction(crtc->engine);
- }
- 
- static void sun4i_tv_enable(struct drm_encoder *encoder)
-@@ -370,11 +370,10 @@ static void sun4i_tv_enable(struct drm_encoder *encoder)
- 	struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
- 	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
- 	struct sun4i_tcon *tcon = crtc->tcon;
--	struct sun4i_backend *backend = crtc->backend;
- 
- 	DRM_DEBUG_DRIVER("Enabling the TV Output\n");
- 
--	sun4i_backend_apply_color_correction(backend);
-+	sunxi_engine_apply_color_correction(crtc->engine);
- 
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
- 			   SUN4I_TVE_EN_ENABLE,
-diff --git a/drivers/gpu/drm/sun4i/sunxi_engine.h b/drivers/gpu/drm/sun4i/sunxi_engine.h
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 5c3afb8..2a755b5 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+ obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
+ obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
+diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
 new file mode 100644
-index 000000000000..9d3eabd8020d
+index 0000000..edd8e69
 --- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sunxi_engine.h
-@@ -0,0 +1,111 @@
++++ b/drivers/clk/mediatek/clk-cpumux.c
+@@ -0,0 +1,120 @@
 +/*
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
++ * Copyright (c) 2015 Linaro Ltd.
++ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#ifndef _SUNXI_ENGINE_H_
-+#define _SUNXI_ENGINE_H_
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/slab.h>
 +
-+struct drm_plane;
-+struct drm_device;
++#include "clk-mtk.h"
++#include "clk-cpumux.h"
 +
-+struct sunxi_engine;
++static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
++{
++	return container_of(_hw, struct mtk_clk_cpumux, hw);
++}
 +
-+struct sunxi_engine_ops {
-+	void (*commit)(struct sunxi_engine *engine);
-+	struct drm_plane **(*layers_init)(struct drm_device *drm,
-+					  struct sunxi_engine *engine);
++static u8 clk_cpumux_get_parent(struct clk_hw *hw)
++{
++	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
++	int num_parents = clk_hw_get_num_parents(hw);
++	unsigned int val;
 +
-+	void (*apply_color_correction)(struct sunxi_engine *engine);
-+	void (*disable_color_correction)(struct sunxi_engine *engine);
-+	int (*get_id)(struct sunxi_engine *engine);
++	regmap_read(mux->regmap, mux->reg, &val);
++
++	val >>= mux->shift;
++	val &= mux->mask;
++
++	if (val >= num_parents)
++		return -EINVAL;
++
++	return val;
++}
++
++static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
++	u32 mask, val;
++
++	val = index << mux->shift;
++	mask = mux->mask << mux->shift;
++
++	return regmap_update_bits(mux->regmap, mux->reg, mask, val);
++}
++
++static const struct clk_ops clk_cpumux_ops = {
++	.get_parent = clk_cpumux_get_parent,
++	.set_parent = clk_cpumux_set_parent,
 +};
 +
-+/**
-+ * struct sunxi_engine - the common parts of an engine for sun4i-drm driver
-+ * @ops:	the operations of the engine
-+ * @regs:	the regmap of the engine
++static struct clk __init *
++mtk_clk_register_cpumux(const struct mtk_composite *mux,
++			struct regmap *regmap)
++{
++	struct mtk_clk_cpumux *cpumux;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
++	if (!cpumux)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = mux->name;
++	init.ops = &clk_cpumux_ops;
++	init.parent_names = mux->parent_names;
++	init.num_parents = mux->num_parents;
++	init.flags = mux->flags;
++
++	cpumux->reg = mux->mux_reg;
++	cpumux->shift = mux->mux_shift;
++	cpumux->mask = BIT(mux->mux_width) - 1;
++	cpumux->regmap = regmap;
++	cpumux->hw.init = &init;
++
++	clk = clk_register(NULL, &cpumux->hw);
++	if (IS_ERR(clk))
++		kfree(cpumux);
++
++	return clk;
++}
++
++int __init mtk_clk_register_cpumuxes(struct device_node *node,
++				     const struct mtk_composite *clks, int num,
++				     struct clk_onecell_data *clk_data)
++{
++	int i;
++	struct clk *clk;
++	struct regmap *regmap;
++
++	regmap = syscon_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
++		       PTR_ERR(regmap));
++		return PTR_ERR(regmap);
++	}
++
++	for (i = 0; i < num; i++) {
++		const struct mtk_composite *mux = &clks[i];
++
++		clk = mtk_clk_register_cpumux(mux, regmap);
++		if (IS_ERR(clk)) {
++			pr_err("Failed to register clk %s: %ld\n",
++			       mux->name, PTR_ERR(clk));
++			continue;
++		}
++
++		clk_data->clks[mux->id] = clk;
++	}
++
++	return 0;
++}
+diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
+new file mode 100644
+index 0000000..dddaad5
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-cpumux.h
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (c) 2015 Linaro Ltd.
++ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
-+struct sunxi_engine {
-+	const struct sunxi_engine_ops	*ops;
 +
-+	struct device_node		*node;
-+	struct regmap			*regs;
++#ifndef __DRV_CLK_CPUMUX_H
++#define __DRV_CLK_CPUMUX_H
 +
-+	/* Engine list management */
-+	struct list_head		list;
++struct mtk_clk_cpumux {
++	struct clk_hw	hw;
++	struct regmap	*regmap;
++	u32		reg;
++	u32		mask;
++	u8		shift;
 +};
 +
-+/**
-+ * sunxi_engine_commit() - commit all changes of the engine
-+ * @engine:	pointer to the engine
-+ */
-+static inline void
-+sunxi_engine_commit(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->commit)
-+		engine->ops->commit(engine);
-+}
++int mtk_clk_register_cpumuxes(struct device_node *node,
++			      const struct mtk_composite *clks, int num,
++			      struct clk_onecell_data *clk_data);
 +
-+/**
-+ * sunxi_engine_layers_init() - Create planes (layers) for the engine
-+ * @drm:	pointer to the drm_device for which planes will be created
-+ * @engine:	pointer to the engine
-+ */
-+static inline struct drm_plane **
-+sunxi_engine_layers_init(struct drm_device *drm, struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->layers_init)
-+		return engine->ops->layers_init(drm, engine);
-+	return ERR_PTR(-ENOSYS);
-+}
-+
-+/**
-+ * sunxi_engine_apply_color_correction - Apply the RGB2YUV color correction
-+ * @engine:	pointer to the engine
-+ *
-+ * This functionality is optional for an engine, however, if the engine is
-+ * intended to be used with TV Encoder, the output will be incorrect
-+ * without the color correction, due to TV Encoder expects the engine to
-+ * output directly YUV signal.
-+ */
-+static inline void
-+sunxi_engine_apply_color_correction(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->apply_color_correction)
-+		engine->ops->apply_color_correction(engine);
-+}
-+
-+/**
-+ * sunxi_engine_disable_color_correction - Disable the color space correction
-+ * @engine:	pointer to the engine
-+ *
-+ * This function is paired with apply_color_correction().
-+ */
-+static inline void
-+sunxi_engine_disable_color_correction(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->disable_color_correction)
-+		engine->ops->disable_color_correction(engine);
-+}
-+
-+/**
-+ * sunxi_engine_get_id - Get the ID of the engine.
-+ * @engine:	pointer to the engine
-+ *
-+ * If the ID is not necessary, just do not implement it in sunxi_engine_ops,
-+ * and a default -1 will be returned.
-+ */
-+static inline int
-+sunxi_engine_get_id(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->get_id)
-+		return engine->ops->get_id(engine);
-+
-+	return -1;
-+}
-+#endif /* _SUNXI_ENGINE_H_ */
++#endif /* __DRV_CLK_CPUMUX_H */
 -- 
-2.12.2
-
+2.7.4
