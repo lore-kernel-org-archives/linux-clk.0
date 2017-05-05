@@ -1,60 +1,52 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 4/4] clk: rockchip: rk3368: make some special clk as critical_clocks
-Date: Tue,  2 May 2017 15:34:06 +0800
-Message-Id: <1493710446-7203-5-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1493710446-7203-1-git-send-email-zhangqing@rock-chips.com>
-References: <1493710446-7203-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:54482 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751435AbdEEMec (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 May 2017 08:34:32 -0400
+Date: Fri, 05 May 2017 20:34:16 +0800
+In-Reply-To: <20170505123035.pwh3idz73ujrd3hx@lukather>
+References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-12-icenowy@aosc.io> <CAGb2v67uE2iuP+wrL2t0fSMY8C1qnX=pYru7pZGX+0WhC_z2EA@mail.gmail.com> <8ad5de02ffc13348dfc71e9ec203205c@aosc.io> <20170505123035.pwh3idz73ujrd3hx@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [PATCH v6 11/13] ARM: dts: sun8i: add DE2 nodes for V3s SoC
+To: linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: devicetree <devicetree@vger.kernel.org>,
+        linux-kernel-owner@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <47D16B11-E976-464C-92AD-213D837C8F68@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The jtag clk no driver to handle them.
-But this clk need enable,so make it as critical.
 
-The ddrphy\ddrupctl clks no driver to handle them,
-Chip design requirements for these clock to always on,
-The new document will update the description of these clock.
 
-The pmu_hclk_otg0 is Chip design defect, must be always on,
-The new document will update the description of this clock.
+于 2017年5月5日 GMT+08:00 下午8:30:35, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>On Fri, May 05, 2017 at 04:53:43PM +0800, icenowy@aosc.io wrote:
+>> > > +               de2_clocks: clock@1000000 {
+>> > > +                       compatible =
+>"allwinner,sun50i-h5-de2-clk";
+>> > 
+>> > I am a bit skeptical about this. Since the V3S only has one mixer,
+>do
+>> > the clocks
+>> > for the second one even exist?
+>> 
+>> It's described in the de_clock.c in the BSP source code, and in
+>hardware
+>> these bits can be really set (although without clock output).
+>> 
+>> So I use this compatible which has still the extra clocks.
+>
+>If it's not usable, then it shouldn't be in the code, it's basically
+>dead code.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3368.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thus should we have one more DE2 CCU compatible without mixer1
+clocks for V3s?
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 6cb474c593e7..b38343f9177c 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -638,7 +638,7 @@ enum rk3368_plls {
- 	GATE(SCLK_MAC_TX, "sclk_mac_tx", "mac_clk", 0,
- 			RK3368_CLKGATE_CON(7), 5, GFLAGS),
- 
--	GATE(0, "jtag", "ext_jtag", 0,
-+	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
- 			RK3368_CLKGATE_CON(7), 0, GFLAGS),
- 
- 	COMPOSITE_NODIV(0, "hsic_usbphy_480m", mux_hsic_usbphy480m_p, 0,
-@@ -858,6 +858,9 @@ enum rk3368_plls {
- 	 */
- 	"pclk_pwm1",
- 	"pclk_pd_pmu",
-+	"pclk_ddrphy",
-+	"pclk_ddrupctl",
-+	"pmu_hclk_otg0",
- };
- 
- static void __init rk3368_clk_init(struct device_node *np)
--- 
-1.9.1
