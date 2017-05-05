@@ -1,1688 +1,778 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50762 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750838AbdE2Hed (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 May 2017 03:34:33 -0400
-Date: Mon, 29 May 2017 15:34:28 +0800
-From: Chen-Yu Tsai <wens@csie.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 08/10] clk: sunxi-ng: support R40 SoC
-Message-ID: <20170529073428.f5os7g5e666v4xnp@wens.csie.org>
-References: <20170527102308.1988-1-icenowy@aosc.io>
- <20170527102308.1988-9-icenowy@aosc.io>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38018 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbdEEC4k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 22:56:40 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170527102308.1988-9-icenowy@aosc.io>
+In-Reply-To: <20170504114858.9008-6-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-6-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 5 May 2017 10:56:14 +0800
+Message-ID: <CAGb2v65a8+CdO5K_8G2m6uFf22yvXvOdX=3sDcHkYebbOiff-Q@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v6 05/13] drm/sun4i: abstract a engine type
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> As we are going to add support for the Allwinner DE2 engine in sun4i-drm
+> driver, we will finally have two types of display engines -- the DE1
+> backend and the DE2 mixer. They both do some display blending and feed
+> graphics data to TCON, so I choose to call them both "engine" here.
 
-On Sat, May 27, 2017 at 06:23:06PM +0800, Icenowy Zheng wrote:
-> Allwinner R40 SoC have a clock controller module in the style of the
-> SoCs beyond sun6i, however, it's more rich and complex.
-> 
-> Add support for it.
-> 
+These engines composite different layers into a final image which is
+then sent out to the TCONs. As such, "compositor" would be an accurate
+name.
+
+However, "engine" is OK, since Allwinner calls this stuff Display Engine
+1.0 and 2.0. Hope there won't be a 3.0 ...
+
+Maybe you should note that in your commit message. That is justifies the name.
+
+>
+> Abstract the engine type to a new struct with an ops struct, which contains
+> functions that should be called outside the engine-specified code (in
+> TCON, CRTC or TV Encoder code).
+>
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
-> Changes in v3:
-> - Rebased on current linux-next.
-> Changes in v2:
-> - Fixes according to the SoC's user manual.
-> 
->  drivers/clk/sunxi-ng/Kconfig              |   10 +
->  drivers/clk/sunxi-ng/Makefile             |    1 +
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1153 +++++++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   68 ++
->  include/dt-bindings/clock/sun8i-r40-ccu.h |  191 +++++
->  include/dt-bindings/reset/sun8i-r40-ccu.h |  129 ++++
->  6 files changed, 1552 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
->  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
-> 
-> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-> index 67acef3d2494..c11ad3375907 100644
-> --- a/drivers/clk/sunxi-ng/Kconfig
-> +++ b/drivers/clk/sunxi-ng/Kconfig
-> @@ -157,6 +157,16 @@ config SUN8I_DE2_CCU
->  	select SUNXI_CCU_DIV
->  	select SUNXI_CCU_GATE
->  
-> +config SUN8I_R40_CCU
-> +	bool "Support for the Allwinner R40 CCU"
-> +	select SUNXI_CCU_DIV
-> +	select SUNXI_CCU_NK
-> +	select SUNXI_CCU_NKM
-> +	select SUNXI_CCU_NKMP
-> +	select SUNXI_CCU_NM
-> +	select SUNXI_CCU_MP
-
-You seem to be missing a few, such as CCU_GATE, CCU_MUX, CCU_PHASE.
-The list should at least be the same as the included headers.
-
-> +	default MACH_SUN8I
-> +
->  config SUN9I_A80_CCU
->  	bool "Support for the Allwinner A80 CCU"
->  	select SUNXI_CCU_DIV
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index 0185c6ffadcb..217db667a994 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -28,6 +28,7 @@ obj-$(CONFIG_SUN8I_H3_CCU)	+= ccu-sun8i-h3.o
->  obj-$(CONFIG_SUN8I_V3S_CCU)	+= ccu-sun8i-v3s.o
->  obj-$(CONFIG_SUN8I_DE2_CCU)	+= ccu-sun8i-de2.o
->  obj-$(CONFIG_SUN8I_R_CCU)	+= ccu-sun8i-r.o
-> +obj-$(CONFIG_SUN8I_R40_CCU)	+= ccu-sun8i-r40.o
->  obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80.o
->  obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-de.o
->  obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-usb.o
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> new file mode 100644
-> index 000000000000..484a8956f59c
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> @@ -0,0 +1,1153 @@
-> +/*
-> + * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +
-> +#include "ccu_common.h"
-> +#include "ccu_reset.h"
-> +
-> +#include "ccu_div.h"
-> +#include "ccu_gate.h"
-> +#include "ccu_mp.h"
-> +#include "ccu_mult.h"
-> +#include "ccu_nk.h"
-> +#include "ccu_nkm.h"
-> +#include "ccu_nkmp.h"
-> +#include "ccu_nm.h"
-> +#include "ccu_phase.h"
-> +
-> +#include "ccu-sun8i-r40.h"
-> +
-> +static SUNXI_CCU_NKMP_WITH_GATE_LOCK(pll_cpu_clk, "pll-cpu",
-> +				     "osc24M", 0x000,
-> +				     8, 5,	/* N */
-> +				     4, 2,	/* K */
-> +				     0, 2,	/* M */
-> +				     16, 2,	/* P */
-
-P does not do /8. Please add a limit.
-
-> +				     BIT(31),	/* gate */
-> +				     BIT(28),	/* lock */
-> +				     0);
-> +
-> +/*
-> + * The Audio PLL is supposed to have 4 outputs: 3 fixed factors from
-> + * the base (2x, 4x and 8x), and one variable divider (the one true
-> + * pll audio).
-> + *
-> + * We don't have any need for the variable divider for now, so we just
-> + * hardcode it to match with the clock names
-> + */
-> +#define SUN8I_R40_PLL_AUDIO_REG	0x008
-> +
-> +static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
-> +				   "osc24M", 0x008,
-> +				   8, 7,	/* N */
-> +				   0, 5,	/* M */
-> +				   BIT(31),	/* gate */
-> +				   BIT(28),	/* lock */
-> +				   0);
-> +
-> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
-> +					"osc24M", 0x0010,
-> +					8, 7,		/* N */
-> +					0, 4,		/* M */
-> +					BIT(24),	/* frac enable */
-> +					BIT(25),	/* frac select */
-> +					270000000,	/* frac rate 0 */
-> +					297000000,	/* frac rate 1 */
-> +					BIT(31),	/* gate */
-> +					BIT(28),	/* lock */
-> +					0);
-> +
-> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
-> +					"osc24M", 0x0018,
-> +					8, 7,		/* N */
-> +					0, 4,		/* M */
-> +					BIT(24),	/* frac enable */
-> +					BIT(25),	/* frac select */
-> +					270000000,	/* frac rate 0 */
-> +					297000000,	/* frac rate 1 */
-> +					BIT(31),	/* gate */
-> +					BIT(28),	/* lock */
-> +					0);
-> +
-> +static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr0_clk, "pll-ddr0",
-> +				    "osc24M", 0x020,
-> +				    8, 5,	/* N */
-> +				    4, 2,	/* K */
-> +				    0, 2,	/* M */
-> +				    BIT(31),	/* gate */
-> +				    BIT(28),	/* lock */
-> +				    0);
-> +
-> +/* According to the BSP driver, pll-periph{0,1} have M at 0:1 */
-
-This is also mentioned in the user manual. You can leave it out.
-
-Also, please leave a note mentioning that support for the SATA clock
-output of the peripheral PLL is not implemented here.
-
-> +static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_periph0_clk, "pll-periph0",
-> +				    "osc24M", 0x028,
-> +				    8, 5,	/* N */
-> +				    4, 2,	/* K */
-> +				    0, 2,	/* M */
-> +				    BIT(31),	/* gate */
-> +				    BIT(28),	/* lock */
-> +				    0);
-> +
-> +static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_periph1_clk, "pll-periph1",
-> +				    "osc24M", 0x02c,
-> +				    8, 5,	/* N */
-> +				    4, 2,	/* K */
-> +				    0, 2,	/* M */
-> +				    BIT(31),	/* gate */
-> +				    BIT(28),	/* lock */
-> +				    0);
-> +
-> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
-> +					"osc24M", 0x030,
-> +					8, 7,		/* N */
-> +					0, 4,		/* M */
-> +					BIT(24),	/* frac enable */
-> +					BIT(25),	/* frac select */
-> +					270000000,	/* frac rate 0 */
-> +					297000000,	/* frac rate 1 */
-> +					BIT(31),	/* gate */
-> +					BIT(28),	/* lock */
-> +					CLK_SET_RATE_UNGATE);
-
-Why do you have this set for only some of the PLLs? Either you need it
-for all of them, or you don't need it for any of them.
-
-> +
-> +/*
-> + * For the special bit in gate part, please see the BSP source code at
-> + * https://github.com/BPI-SINOVOIP/BPI-M2U-bsp/blob/master/linux-sunxi/drivers/clk/sunxi/clk-sun8iw11.c#L665
-> + */
-> +static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_sata_clk, "pll-sata",
-> +				    "osc24M", 0x034,
-> +				    8, 5,	/* N */
-> +				    4, 2,	/* K */
-> +				    0, 2,	/* M */
-> +				    BIT(31) | BIT(14),	/* gate */
-> +				    BIT(28),	/* lock */
-> +				    0);
-
-I think this is a somewhat simplified approach. From what I understand
-of the user manual, the SATA clock path look like:
-
-
-[ PLL-PERIPH0-SATA ] -\
-                      mux @ 0x34 bit 30 --- gate @ 0x34 bit 14 --- ...
-[ PLL-SATA ] ---------/
-
-... from above ... ------\
-                         mux @ 0xc8 bit 24 --- gate @ 0xc8 bit 31
-[ external oscillator ] -/
-
-If you choose to simplify the implementation, please include a detailed
-note as to why you chose to do so, and the validity of the simplification.
-
-> +
-> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
-> +					"osc24M", 0x038,
-> +					8, 7,		/* N */
-> +					0, 4,		/* M */
-> +					BIT(24),	/* frac enable */
-> +					BIT(25),	/* frac select */
-> +					270000000,	/* frac rate 0 */
-> +					297000000,	/* frac rate 1 */
-> +					BIT(31),	/* gate */
-> +					BIT(28),	/* lock */
-> +					0);
-> +
-> +static const char * const pll_mipi_parents[] = { "pll-video0", "pll-video1" };
-
-pll-video1 is not listed in the manual.
-
-> +static SUNXI_CCU_NKM_WITH_MUX_GATE_LOCK(pll_mipi_clk, "pll-mipi",
-> +					pll_mipi_parents, 0x040,
-> +					8, 4,	/* N */
-> +					4, 2,	/* K */
-> +					0, 4,	/* M */
-> +					21, 0,	/* mux */
-> +					BIT(31) | BIT(23) | BIT(22), /* gate */
-> +					BIT(28),	/* lock */
-> +					CLK_SET_RATE_UNGATE);
-
-Please leave a note mentioning that you only implement support for the "MIPI" mode.
-You should also force it at probe time. See the driver for the A31.
-
-> +
-> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
-> +					"osc24M", 0x0048,
-> +					8, 7,		/* N */
-> +					0, 4,		/* M */
-> +					BIT(24),	/* frac enable */
-> +					BIT(25),	/* frac select */
-> +					270000000,	/* frac rate 0 */
-> +					297000000,	/* frac rate 1 */
-> +					BIT(31),	/* gate */
-> +					BIT(28),	/* lock */
-> +					0);
-> +
-> +static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
-> +				   "osc24M", 0x04c,
-> +				   8, 7,	/* N */
-
-N has minimum and maximum limits.
-
-> +				   0, 2,	/* M */
-> +				   BIT(31),	/* gate */
-> +				   BIT(28),	/* lock */
-> +				   CLK_SET_RATE_UNGATE);
-> +
-> +static const char * const cpu_parents[] = { "osc32k", "osc24M",
-> +					     "pll-cpu", "pll-cpu" };
-> +static SUNXI_CCU_MUX(cpu_clk, "cpu", cpu_parents,
-> +		     0x050, 16, 2, CLK_IS_CRITICAL);
-> +
-> +static SUNXI_CCU_M(axi_clk, "axi", "cpu", 0x050, 0, 2, 0);
-> +
-> +static const char * const ahb1_parents[] = { "osc32k", "osc24M",
-> +					     "axi", "pll-periph0" };
-> +static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-> +	{ .index = 3, .shift = 6, .width = 2 },
-> +};
-> +static struct ccu_div ahb1_clk = {
-> +	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
-> +
-> +	.mux		= {
-> +		.shift	= 12,
-> +		.width	= 2,
-> +
-> +		.var_predivs	= ahb1_predivs,
-> +		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
-> +	},
-> +
-> +	.common		= {
-> +		.reg		= 0x054,
-> +		.features	= CCU_FEATURE_VARIABLE_PREDIV,
-> +		.hw.init	= CLK_HW_INIT_PARENTS("ahb1",
-> +						      ahb1_parents,
-> +						      &ccu_div_ops,
-> +						      0),
-> +	},
+> Changes in v6:
+> - Rebased on wens's multi-pipeline patchset.
+> - Split out Makefile changes.
+> Changes in v5:
+> - Really made a sunxi_engine struct type, and moved ops pointer
+>   into it.
+> - Added checked ops wrappers.
+> - Changed the second parameter of layers_init from crtc to engine.
+> Changes in v4:
+> - Comments to tag the color correction functions as optional.
+> - Check before calling the optional functions.
+> - Change layers_init to satisfy new PATCH v4 04/11.
+>
+>  drivers/gpu/drm/sun4i/sun4i_backend.c |  68 ++++++++++++---------
+>  drivers/gpu/drm/sun4i/sun4i_backend.h |  17 +++---
+>  drivers/gpu/drm/sun4i/sun4i_crtc.c    |  11 ++--
+>  drivers/gpu/drm/sun4i/sun4i_crtc.h    |   4 +-
+>  drivers/gpu/drm/sun4i/sun4i_drv.c     |   2 +-
+>  drivers/gpu/drm/sun4i/sun4i_drv.h     |   2 +-
+>  drivers/gpu/drm/sun4i/sun4i_layer.c   |   8 +--
+>  drivers/gpu/drm/sun4i/sun4i_layer.h   |   5 +-
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c    |  36 ++++++-----
+>  drivers/gpu/drm/sun4i/sun4i_tv.c      |   9 ++-
+>  drivers/gpu/drm/sun4i/sunxi_engine.h  | 112 ++++++++++++++++++++++++++++++++++
+>  11 files changed, 198 insertions(+), 76 deletions(-)
+>  create mode 100644 drivers/gpu/drm/sun4i/sunxi_engine.h
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> index e53107418add..611cdcb9c182 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> @@ -25,6 +25,8 @@
+>
+>  #include "sun4i_backend.h"
+>  #include "sun4i_drv.h"
+> +#include "sun4i_layer.h"
+> +#include "sunxi_engine.h"
+>
+>  static const u32 sunxi_rgb2yuv_coef[12] = {
+>         0x00000107, 0x00000204, 0x00000064, 0x00000108,
+> @@ -32,41 +34,38 @@ static const u32 sunxi_rgb2yuv_coef[12] = {
+>         0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
+>  };
+>
+> -void sun4i_backend_apply_color_correction(struct sun4i_backend *backend)
+> +static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
+>  {
+>         int i;
+>
+>         DRM_DEBUG_DRIVER("Applying RGB to YUV color correction\n");
+>
+>         /* Set color correction */
+> -       regmap_write(backend->regs, SUN4I_BACKEND_OCCTL_REG,
+> +       regmap_write(engine->regs, SUN4I_BACKEND_OCCTL_REG,
+>                      SUN4I_BACKEND_OCCTL_ENABLE);
+>
+>         for (i = 0; i < 12; i++)
+> -               regmap_write(backend->regs, SUN4I_BACKEND_OCRCOEF_REG(i),
+> +               regmap_write(engine->regs, SUN4I_BACKEND_OCRCOEF_REG(i),
+>                              sunxi_rgb2yuv_coef[i]);
+>  }
+> -EXPORT_SYMBOL(sun4i_backend_apply_color_correction);
+>
+> -void sun4i_backend_disable_color_correction(struct sun4i_backend *backend)
+> +static void sun4i_backend_disable_color_correction(struct sunxi_engine *engine)
+>  {
+>         DRM_DEBUG_DRIVER("Disabling color correction\n");
+>
+>         /* Disable color correction */
+> -       regmap_update_bits(backend->regs, SUN4I_BACKEND_OCCTL_REG,
+> +       regmap_update_bits(engine->regs, SUN4I_BACKEND_OCCTL_REG,
+>                            SUN4I_BACKEND_OCCTL_ENABLE, 0);
+>  }
+> -EXPORT_SYMBOL(sun4i_backend_disable_color_correction);
+>
+> -void sun4i_backend_commit(struct sun4i_backend *backend)
+> +static void sun4i_backend_commit(struct sunxi_engine *engine)
+>  {
+>         DRM_DEBUG_DRIVER("Committing changes\n");
+>
+> -       regmap_write(backend->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
+> +       regmap_write(engine->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
+>                      SUN4I_BACKEND_REGBUFFCTL_AUTOLOAD_DIS |
+>                      SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
+>  }
+> -EXPORT_SYMBOL(sun4i_backend_commit);
+>
+>  void sun4i_backend_layer_enable(struct sun4i_backend *backend,
+>                                 int layer, bool enable)
+> @@ -81,7 +80,7 @@ void sun4i_backend_layer_enable(struct sun4i_backend *backend,
+>         else
+>                 val = 0;
+>
+> -       regmap_update_bits(backend->regs, SUN4I_BACKEND_MODCTL_REG,
+> +       regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
+>                            SUN4I_BACKEND_MODCTL_LAY_EN(layer), val);
+>  }
+>  EXPORT_SYMBOL(sun4i_backend_layer_enable);
+> @@ -144,27 +143,28 @@ int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
+>         if (plane->type == DRM_PLANE_TYPE_PRIMARY) {
+>                 DRM_DEBUG_DRIVER("Primary layer, updating global size W: %u H: %u\n",
+>                                  state->crtc_w, state->crtc_h);
+> -               regmap_write(backend->regs, SUN4I_BACKEND_DISSIZE_REG,
+> +               regmap_write(backend->engine.regs, SUN4I_BACKEND_DISSIZE_REG,
+>                              SUN4I_BACKEND_DISSIZE(state->crtc_w,
+>                                                    state->crtc_h));
+>         }
+>
+>         /* Set the line width */
+>         DRM_DEBUG_DRIVER("Layer line width: %d bits\n", fb->pitches[0] * 8);
+> -       regmap_write(backend->regs, SUN4I_BACKEND_LAYLINEWIDTH_REG(layer),
+> +       regmap_write(backend->engine.regs,
+> +                    SUN4I_BACKEND_LAYLINEWIDTH_REG(layer),
+>                      fb->pitches[0] * 8);
+>
+>         /* Set height and width */
+>         DRM_DEBUG_DRIVER("Layer size W: %u H: %u\n",
+>                          state->crtc_w, state->crtc_h);
+> -       regmap_write(backend->regs, SUN4I_BACKEND_LAYSIZE_REG(layer),
+> +       regmap_write(backend->engine.regs, SUN4I_BACKEND_LAYSIZE_REG(layer),
+>                      SUN4I_BACKEND_LAYSIZE(state->crtc_w,
+>                                            state->crtc_h));
+>
+>         /* Set base coordinates */
+>         DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
+>                          state->crtc_x, state->crtc_y);
+> -       regmap_write(backend->regs, SUN4I_BACKEND_LAYCOOR_REG(layer),
+> +       regmap_write(backend->engine.regs, SUN4I_BACKEND_LAYCOOR_REG(layer),
+>                      SUN4I_BACKEND_LAYCOOR(state->crtc_x,
+>                                            state->crtc_y));
+>
+> @@ -185,7 +185,7 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
+>                 interlaced = plane->state->crtc->state->adjusted_mode.flags
+>                         & DRM_MODE_FLAG_INTERLACE;
+>
+> -       regmap_update_bits(backend->regs, SUN4I_BACKEND_MODCTL_REG,
+> +       regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
+>                            SUN4I_BACKEND_MODCTL_ITLMOD_EN,
+>                            interlaced ? SUN4I_BACKEND_MODCTL_ITLMOD_EN : 0);
+>
+> @@ -199,7 +199,8 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
+>                 return ret;
+>         }
+>
+> -       regmap_update_bits(backend->regs, SUN4I_BACKEND_ATTCTL_REG1(layer),
+> +       regmap_update_bits(backend->engine.regs,
+> +                          SUN4I_BACKEND_ATTCTL_REG1(layer),
+>                            SUN4I_BACKEND_ATTCTL_REG1_LAY_FBFMT, val);
+>
+>         return 0;
+> @@ -232,13 +233,14 @@ int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
+>         /* Write the 32 lower bits of the address (in bits) */
+>         lo_paddr = paddr << 3;
+>         DRM_DEBUG_DRIVER("Setting address lower bits to 0x%x\n", lo_paddr);
+> -       regmap_write(backend->regs, SUN4I_BACKEND_LAYFB_L32ADD_REG(layer),
+> +       regmap_write(backend->engine.regs,
+> +                    SUN4I_BACKEND_LAYFB_L32ADD_REG(layer),
+>                      lo_paddr);
+>
+>         /* And the upper bits */
+>         hi_paddr = paddr >> 29;
+>         DRM_DEBUG_DRIVER("Setting address high bits to 0x%x\n", hi_paddr);
+> -       regmap_update_bits(backend->regs, SUN4I_BACKEND_LAYFB_H4ADD_REG,
+> +       regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_LAYFB_H4ADD_REG,
+>                            SUN4I_BACKEND_LAYFB_H4ADD_MSK(layer),
+>                            SUN4I_BACKEND_LAYFB_H4ADD(layer, hi_paddr));
+>
+> @@ -330,6 +332,13 @@ static int sun4i_backend_of_get_id(struct device_node *node)
+>         return ret;
+>  }
+>
+> +static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
+> +       .commit                         = sun4i_backend_commit,
+> +       .layers_init                    = sun4i_layers_init,
+> +       .apply_color_correction         = sun4i_backend_apply_color_correction,
+> +       .disable_color_correction       = sun4i_backend_disable_color_correction,
 > +};
 > +
-> +static struct clk_div_table apb1_div_table[] = {
-> +	{ .val = 0, .div = 2 },
-> +	{ .val = 1, .div = 2 },
-> +	{ .val = 2, .div = 4 },
-> +	{ .val = 3, .div = 8 },
-> +	{ /* Sentinel */ },
-> +};
-> +static SUNXI_CCU_DIV_TABLE(apb1_clk, "apb1", "ahb1",
-> +			   0x054, 8, 2, apb1_div_table, 0);
+>  static struct regmap_config sun4i_backend_regmap_config = {
+>         .reg_bits       = 32,
+>         .val_bits       = 32,
+> @@ -353,7 +362,8 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
+>                 return -ENOMEM;
+>         dev_set_drvdata(dev, backend);
+>
+> -       backend->node = dev->of_node;
+> +       backend->engine.node = dev->of_node;
+> +       backend->engine.ops = &sun4i_backend_engine_ops;
+>         backend->id = sun4i_backend_of_get_id(dev->of_node);
+>         if (backend->id < 0)
+>                 return backend->id;
+> @@ -363,11 +373,11 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
+>         if (IS_ERR(regs))
+>                 return PTR_ERR(regs);
+>
+> -       backend->regs = devm_regmap_init_mmio(dev, regs,
+> -                                             &sun4i_backend_regmap_config);
+> -       if (IS_ERR(backend->regs)) {
+> +       backend->engine.regs = devm_regmap_init_mmio(dev, regs,
+> +                                                    &sun4i_backend_regmap_config);
+> +       if (IS_ERR(backend->engine.regs)) {
+>                 dev_err(dev, "Couldn't create the backend regmap\n");
+> -               return PTR_ERR(backend->regs);
+> +               return PTR_ERR(backend->engine.regs);
+>         }
+>
+>         backend->reset = devm_reset_control_get(dev, NULL);
+> @@ -415,18 +425,18 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
+>                 }
+>         }
+>
+> -       list_add_tail(&backend->list, &drv->backend_list);
+> +       list_add_tail(&backend->engine.list, &drv->engine_list);
+>
+>         /* Reset the registers */
+>         for (i = 0x800; i < 0x1000; i += 4)
+> -               regmap_write(backend->regs, i, 0);
+> +               regmap_write(backend->engine.regs, i, 0);
+>
+>         /* Disable registers autoloading */
+> -       regmap_write(backend->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
+> +       regmap_write(backend->engine.regs, SUN4I_BACKEND_REGBUFFCTL_REG,
+>                      SUN4I_BACKEND_REGBUFFCTL_AUTOLOAD_DIS);
+>
+>         /* Enable the backend */
+> -       regmap_write(backend->regs, SUN4I_BACKEND_MODCTL_REG,
+> +       regmap_write(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
+>                      SUN4I_BACKEND_MODCTL_DEBE_EN |
+>                      SUN4I_BACKEND_MODCTL_START_CTL);
+>
+> @@ -448,7 +458,7 @@ static void sun4i_backend_unbind(struct device *dev, struct device *master,
+>  {
+>         struct sun4i_backend *backend = dev_get_drvdata(dev);
+>
+> -       list_del(&backend->list);
+> +       list_del(&backend->engine.list);
+>
+>         if (of_device_is_compatible(dev->of_node,
+>                                     "allwinner,sun8i-a33-display-backend"))
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.h b/drivers/gpu/drm/sun4i/sun4i_backend.h
+> index 6327a2985fe6..b022a37e8e5b 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_backend.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.h
+> @@ -19,6 +19,8 @@
+>  #include <linux/regmap.h>
+>  #include <linux/reset.h>
+>
+> +#include "sunxi_engine.h"
 > +
-> +static const char * const apb2_parents[] = { "osc32k", "osc24M",
-> +					     "pll-periph0-2x",
-> +					     "pll-periph0-2x" };
-> +static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", apb2_parents, 0x058,
-> +			     0, 5,	/* M */
-> +			     16, 2,	/* P */
-> +			     24, 2,	/* mux */
-> +			     0);
-> +
-> +static SUNXI_CCU_GATE(bus_mipi_dsi_clk,	"bus-mipi-dsi",	"ahb1",
-> +		      0x060, BIT(1), 0);
-> +static SUNXI_CCU_GATE(bus_ce_clk,	"bus-ce",	"ahb1",
-> +		      0x060, BIT(5), 0);
-> +static SUNXI_CCU_GATE(bus_dma_clk,	"bus-dma",	"ahb1",
-> +		      0x060, BIT(6), 0);
-> +static SUNXI_CCU_GATE(bus_mmc0_clk,	"bus-mmc0",	"ahb1",
-> +		      0x060, BIT(8), 0);
-> +static SUNXI_CCU_GATE(bus_mmc1_clk,	"bus-mmc1",	"ahb1",
-> +		      0x060, BIT(9), 0);
-> +static SUNXI_CCU_GATE(bus_mmc2_clk,	"bus-mmc2",	"ahb1",
-> +		      0x060, BIT(10), 0);
-> +static SUNXI_CCU_GATE(bus_mmc3_clk,	"bus-mmc3",	"ahb1",
-> +		      0x060, BIT(11), 0);
-> +static SUNXI_CCU_GATE(bus_nand_clk,	"bus-nand",	"ahb1",
-> +		      0x060, BIT(13), 0);
-> +static SUNXI_CCU_GATE(bus_dram_clk,	"bus-dram",	"ahb1",
-> +		      0x060, BIT(14), 0);
-> +static SUNXI_CCU_GATE(bus_emac_clk,	"bus-emac",	"ahb1",
-> +		      0x060, BIT(17), 0);
-> +static SUNXI_CCU_GATE(bus_ts_clk,	"bus-ts",	"ahb1",
-> +		      0x060, BIT(18), 0);
-> +static SUNXI_CCU_GATE(bus_hstimer_clk,	"bus-hstimer",	"ahb1",
-> +		      0x060, BIT(19), 0);
-> +static SUNXI_CCU_GATE(bus_spi0_clk,	"bus-spi0",	"ahb1",
-> +		      0x060, BIT(20), 0);
-> +static SUNXI_CCU_GATE(bus_spi1_clk,	"bus-spi1",	"ahb1",
-> +		      0x060, BIT(21), 0);
-> +static SUNXI_CCU_GATE(bus_spi2_clk,	"bus-spi2",	"ahb1",
-> +		      0x060, BIT(22), 0);
-> +static SUNXI_CCU_GATE(bus_spi3_clk,	"bus-spi3",	"ahb1",
-> +		      0x060, BIT(23), 0);
-> +static SUNXI_CCU_GATE(bus_sata_clk,	"bus-sata",	"ahb1",
-> +		      0x060, BIT(24), 0);
-> +static SUNXI_CCU_GATE(bus_otg_clk,	"bus-otg",	"ahb1",
-> +		      0x060, BIT(25), 0);
-> +static SUNXI_CCU_GATE(bus_ehci0_clk,	"bus-ehci0",	"ahb1",
-> +		      0x060, BIT(26), 0);
-> +static SUNXI_CCU_GATE(bus_ehci1_clk,	"bus-ehci1",	"ahb1",
-> +		      0x060, BIT(27), 0);
-> +static SUNXI_CCU_GATE(bus_ehci2_clk,	"bus-ehci2",	"ahb1",
-> +		      0x060, BIT(28), 0);
-> +static SUNXI_CCU_GATE(bus_ohci0_clk,	"bus-ohci0",	"ahb1",
-> +		      0x060, BIT(29), 0);
-> +static SUNXI_CCU_GATE(bus_ohci1_clk,	"bus-ohci1",	"ahb1",
-> +		      0x060, BIT(30), 0);
-> +static SUNXI_CCU_GATE(bus_ohci2_clk,	"bus-ohci2",	"ahb1",
-> +		      0x060, BIT(31), 0);
-> +
-> +static SUNXI_CCU_GATE(bus_ve_clk,	"bus-ve",	"ahb1",
-> +		      0x064, BIT(0), 0);
-> +static SUNXI_CCU_GATE(bus_de_mp_clk,	"bus-de-mp",	"ahb1",
-> +		      0x064, BIT(2), 0);
-
-The mixer processor is unrelated to the display engine.
-Please drop the "de" part of the name.
-
-> +static SUNXI_CCU_GATE(bus_deinterlace_clk,	"bus-deinterlace",	"ahb1",
-> +		      0x064, BIT(5), 0);
-> +static SUNXI_CCU_GATE(bus_csi0_clk,	"bus-csi0",	"ahb1",
-> +		      0x064, BIT(8), 0);
-> +static SUNXI_CCU_GATE(bus_csi1_clk,	"bus-csi1",	"ahb1",
-> +		      0x064, BIT(9), 0);
-> +static SUNXI_CCU_GATE(bus_hdmi_slow_clk,	"bus-hdmi-slow",	"ahb1",
-> +		      0x064, BIT(10), 0);
-> +static SUNXI_CCU_GATE(bus_hdmi_clk,	"bus-hdmi",	"ahb1",
-> +		      0x064, BIT(11), 0);
-
-Please stick to the names in the user manual.
-They are hdmi0 and hdmi1.
-
-> +static SUNXI_CCU_GATE(bus_de_clk,	"bus-de",	"ahb1",
-> +		      0x064, BIT(12), 0);
-> +static SUNXI_CCU_GATE(bus_tve0_clk,	"bus-tve0",	"ahb1",
-> +		      0x064, BIT(13), 0);
-> +static SUNXI_CCU_GATE(bus_tve1_clk,	"bus-tve1",	"ahb1",
-> +		      0x064, BIT(14), 0);
-> +static SUNXI_CCU_GATE(bus_tve_top_clk,	"bus-tve-top",	"ahb1",
-> +		      0x064, BIT(15), 0);
-> +static SUNXI_CCU_GATE(bus_gmac_clk,	"bus-gmac",	"ahb1",
-> +		      0x064, BIT(17), 0);
-> +static SUNXI_CCU_GATE(bus_gpu_clk,	"bus-gpu",	"ahb1",
-> +		      0x064, BIT(20), 0);
-> +static SUNXI_CCU_GATE(bus_tvd0_clk,	"bus-tvd0",	"ahb1",
-> +		      0x064, BIT(21), 0);
-> +static SUNXI_CCU_GATE(bus_tvd1_clk,	"bus-tvd1",	"ahb1",
-> +		      0x064, BIT(22), 0);
-> +static SUNXI_CCU_GATE(bus_tvd2_clk,	"bus-tvd2",	"ahb1",
-> +		      0x064, BIT(23), 0);
-> +static SUNXI_CCU_GATE(bus_tvd3_clk,	"bus-tvd3",	"ahb1",
-> +		      0x064, BIT(24), 0);
-> +static SUNXI_CCU_GATE(bus_tvd_top_clk,	"bus-tvd-top",	"ahb1",
-> +		      0x064, BIT(25), 0);
-> +static SUNXI_CCU_GATE(bus_tcon0_clk,	"bus-tcon0",	"ahb1",
-> +		      0x064, BIT(26), 0);
-> +static SUNXI_CCU_GATE(bus_tcon1_clk,	"bus-tcon1",	"ahb1",
-> +		      0x064, BIT(27), 0);
-> +static SUNXI_CCU_GATE(bus_tve0_tcon_clk,	"bus-tve0-tcon",	"ahb1",
-> +		      0x064, BIT(28), 0);
-> +static SUNXI_CCU_GATE(bus_tve1_tcon_clk,	"bus-tve1-tcon",	"ahb1",
-> +		      0x064, BIT(29), 0);
-
-Please stick to the names used in the user manual.
-They are "tcon-lcdN" and "tcon-tvN".
-
-> +static SUNXI_CCU_GATE(bus_tcon_top_clk,	"bus-tcon-top",	"ahb1",
-> +		      0x064, BIT(30), 0);
-> +
-> +static SUNXI_CCU_GATE(bus_codec_clk,	"bus-codec",	"apb1",
-> +		      0x068, BIT(0), 0);
-> +static SUNXI_CCU_GATE(bus_spdif_clk,	"bus-spdif",	"apb1",
-> +		      0x068, BIT(1), 0);
-> +static SUNXI_CCU_GATE(bus_ac97_clk,	"bus-ac97",	"apb1",
-> +		      0x068, BIT(2), 0);
-> +static SUNXI_CCU_GATE(bus_pio_clk,	"bus-pio",	"apb1",
-> +		      0x068, BIT(5), 0);
-> +static SUNXI_CCU_GATE(bus_ir0_clk,	"bus-ir0",	"apb1",
-> +		      0x068, BIT(6), 0);
-> +static SUNXI_CCU_GATE(bus_ir1_clk,	"bus-ir1",	"apb1",
-> +		      0x068, BIT(7), 0);
-> +static SUNXI_CCU_GATE(bus_ths_clk,	"bus-ths",	"apb1",
-> +		      0x068, BIT(8), 0);
-> +static SUNXI_CCU_GATE(bus_keypad_clk,	"bus-keypad",	"apb1",
-> +		      0x068, BIT(10), 0);
-> +static SUNXI_CCU_GATE(bus_i2s0_clk,	"bus-i2s0",	"apb1",
-> +		      0x068, BIT(12), 0);
-> +static SUNXI_CCU_GATE(bus_i2s1_clk,	"bus-i2s1",	"apb1",
-> +		      0x068, BIT(13), 0);
-> +static SUNXI_CCU_GATE(bus_i2s2_clk,	"bus-i2s2",	"apb1",
-> +		      0x068, BIT(14), 0);
-> +
-> +static SUNXI_CCU_GATE(bus_i2c0_clk,	"bus-i2c0",	"apb2",
-> +		      0x06c, BIT(0), 0);
-> +static SUNXI_CCU_GATE(bus_i2c1_clk,	"bus-i2c1",	"apb2",
-> +		      0x06c, BIT(1), 0);
-> +static SUNXI_CCU_GATE(bus_i2c2_clk,	"bus-i2c2",	"apb2",
-> +		      0x06c, BIT(2), 0);
-> +static SUNXI_CCU_GATE(bus_i2c3_clk,	"bus-i2c3",	"apb2",
-> +		      0x06c, BIT(3), 0);
-> +/*
-> + * In datasheet here's "Reserved", however the gate exists in BSP soucre
-> + * code.
-> + */
-> +static SUNXI_CCU_GATE(bus_can_clk,	"bus-can",	"apb2",
-> +		      0x06c, BIT(4), 0);
-> +static SUNXI_CCU_GATE(bus_scr_clk,	"bus-scr",	"apb2",
-> +		      0x06c, BIT(5), 0);
-> +static SUNXI_CCU_GATE(bus_ps20_clk,	"bus-ps20",	"apb2",
-> +		      0x06c, BIT(6), 0);
-> +static SUNXI_CCU_GATE(bus_ps21_clk,	"bus-ps21",	"apb2",
-> +		      0x06c, BIT(7), 0);
-> +static SUNXI_CCU_GATE(bus_i2c4_clk,	"bus-i2c4",	"apb2",
-> +		      0x06c, BIT(15), 0);
-> +static SUNXI_CCU_GATE(bus_uart0_clk,	"bus-uart0",	"apb2",
-> +		      0x06c, BIT(16), 0);
-> +static SUNXI_CCU_GATE(bus_uart1_clk,	"bus-uart1",	"apb2",
-> +		      0x06c, BIT(17), 0);
-> +static SUNXI_CCU_GATE(bus_uart2_clk,	"bus-uart2",	"apb2",
-> +		      0x06c, BIT(18), 0);
-> +static SUNXI_CCU_GATE(bus_uart3_clk,	"bus-uart3",	"apb2",
-> +		      0x06c, BIT(19), 0);
-> +static SUNXI_CCU_GATE(bus_uart4_clk,	"bus-uart4",	"apb2",
-> +		      0x06c, BIT(20), 0);
-> +static SUNXI_CCU_GATE(bus_uart5_clk,	"bus-uart5",	"apb2",
-> +		      0x06c, BIT(21), 0);
-> +static SUNXI_CCU_GATE(bus_uart6_clk,	"bus-uart6",	"apb2",
-> +		      0x06c, BIT(22), 0);
-> +static SUNXI_CCU_GATE(bus_uart7_clk,	"bus-uart7",	"apb2",
-> +		      0x06c, BIT(23), 0);
-> +
-> +/* Educated guess: the BSP clock driver do not have this clock */
-
-The gate is documented in the user manual. What part is a guess?
-
-> +static SUNXI_CCU_GATE(bus_dbg_clk,	"bus-dbg",	"ahb1",
-> +		      0x070, BIT(7), 0);
-> +
-> +static SUNXI_CCU_M_WITH_GATE(ths_clk, "ths", "osc24M",
-> +			     0x074, 0, 2, BIT(31), 0);
-
-This clock has a mux. Even with only one parent, you should still
-implement the mux, so the kernel can recover from cases where some
-other piece of software left it in a bad state.
-
-Also the divider is of the power of two type.
-
-> +
-> +static const char * const mod0_default_parents[] = { "osc24M", "pll-periph0",
-> +						     "pll-periph1" };
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(nand_clk, "nand", mod0_default_parents, 0x080,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mod0_default_parents, 0x088,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mod0_default_parents, 0x08c,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents, 0x090,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(mmc3_clk, "mmc3", mod0_default_parents, 0x094,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static const char * const ts_parents[] = { "osc24M", "pll-periph0", };
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(ts_clk, "ts", ts_parents, 0x098,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-
-The mux is 4 bits wide.
-
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static const char * const ce_parents[] = { "osc24M", "pll-periph0-2x",
-> +					   "pll-periph1-2x" };
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(ce_clk, "ce", ce_parents, 0x09c,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(spi0_clk, "spi0", mod0_default_parents, 0x0a0,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(spi2_clk, "spi2", mod0_default_parents, 0x0a8,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(spi3_clk, "spi3", mod0_default_parents, 0x0ac,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
-> +					    "pll-audio-2x", "pll-audio" };
-> +static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
-> +			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
-> +			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_MUX_WITH_GATE(i2s2_clk, "i2s2", i2s_parents,
-> +			       0x0b8, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_MUX_WITH_GATE(ac97_clk, "ac97", i2s_parents,
-> +			       0x0bc, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_MUX_WITH_GATE(spdif_clk, "spdif", i2s_parents,
-> +			       0x0c0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
-> +
-> +static const char * const keypad_parents[] = { "osc24M", "osc32k", };
-
-The parents are not sequential. You need a mux table here.
-
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(keypad_clk, "keypad", keypad_parents, 0x0c4,
-> +				  0, 5,		/* M */
-> +				  16, 2,	/* P */
-> +				  25, 1,	/* mux */
-
-Mux is 2 bits wide.
-
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static const char * const sata_parents[] = { "pll-sata", "sata-ext", };
-> +static SUNXI_CCU_MUX_WITH_GATE(sata_clk, "sata", sata_parents,
-> +			       0x0c8, 24, 1, BIT(31), CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
-> +		      0x0cc, BIT(8), 0);
-> +static SUNXI_CCU_GATE(usb_phy1_clk,	"usb-phy1",	"osc24M",
-> +		      0x0cc, BIT(9), 0);
-> +static SUNXI_CCU_GATE(usb_phy2_clk,	"usb-phy2",	"osc24M",
-> +		      0x0cc, BIT(10), 0);
-> +static SUNXI_CCU_GATE(usb_ohci0_clk,	"usb-ohci0",	"osc24M",
-> +		      0x0cc, BIT(16), 0);
-> +static SUNXI_CCU_GATE(usb_ohci1_clk,	"usb-ohci1",	"osc24M",
-> +		      0x0cc, BIT(17), 0);
-> +static SUNXI_CCU_GATE(usb_ohci2_clk,	"usb-ohci2",	"osc24M",
-> +		      0x0cc, BIT(18), 0);
-
-Why bother with the 3 clocks below, if you aren't going to use them as parents
-for the 3 usb-ohci gates above? The user manual states the gates are for both
-48M and 12M clocks.
-
-> +
-> +static const char * const usb_ohci12m_parents[] = { "osc24M-2x", "osc24M",
-> +						    "osc32k" };
-
-You should have pre-dividers here so the clk subsystem can report correct
-clk rates.
-
-> +static SUNXI_CCU_MUX(usb_ohci0_12m_clk, "usb-ohci0-12m", usb_ohci12m_parents,
-> +		     0x0cc, 20, 2, 0);
-> +static SUNXI_CCU_MUX(usb_ohci1_12m_clk, "usb-ohci1-12m", usb_ohci12m_parents,
-> +		     0x0cc, 22, 2, 0);
-> +static SUNXI_CCU_MUX(usb_ohci2_12m_clk, "usb-ohci2-12m", usb_ohci12m_parents,
-> +		     0x0cc, 24, 2, 0);
-> +
-> +static const char * const ir_parents[] = { "osc24M", "pll-periph0",
-> +					   "pll-periph1", "osc32k" };
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(ir0_clk, "ir0", ir_parents, 0x0d0,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(ir1_clk, "ir1", ir_parents, 0x0d4,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static const char * const dram_parents[] = { "pll-ddr0", "pll-ddr1" };
-> +static SUNXI_CCU_M_WITH_MUX(dram_clk, "dram", dram_parents,
-> +			    0x0f4, 0, 2, 20, 2, CLK_IS_CRITICAL);
-> +
-> +static SUNXI_CCU_GATE(dram_ve_clk,	"dram-ve",	"dram",
-> +		      0x100, BIT(0), 0);
-> +static SUNXI_CCU_GATE(dram_csi0_clk,	"dram-csi0",	"dram",
-> +		      0x100, BIT(1), 0);
-> +static SUNXI_CCU_GATE(dram_csi1_clk,	"dram-csi1",	"dram",
-> +		      0x100, BIT(2), 0);
-> +static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
-> +		      0x100, BIT(3), 0);
-> +static SUNXI_CCU_GATE(dram_tvd_clk,	"dram-tvd",	"dram",
-> +		      0x100, BIT(4), 0);
-> +static SUNXI_CCU_GATE(dram_de_mp_clk,	"dram-de-mp",	"dram",
-> +		      0x100, BIT(5), 0);
-
-Same thing about the mixer processor as before.
-
-> +static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
-> +		      0x100, BIT(6), 0);
-> +
-> +static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
-> +static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
-> +				 0x104, 0, 4, 24, 3, BIT(31), 0);
-> +static SUNXI_CCU_M_WITH_MUX_GATE(de_mp_clk, "de-mp", de_parents,
-> +				 0x108, 0, 4, 24, 3, BIT(31), 0);
-> +
-> +static const char * const tcon_parents[] = { "pll-video0", "pll-video1",
-> +					     "pll-video0-2x", "pll-video1-2x",
-> +					     "pll-mipi" };
-> +static SUNXI_CCU_MUX_WITH_GATE(tcon0_clk, "tcon0", tcon_parents,
-> +			       0x110, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
-> +static SUNXI_CCU_MUX_WITH_GATE(tcon1_clk, "tcon1", tcon_parents,
-> +			       0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tve0_clk, "tcon-tve0", tcon_parents,
-> +				 0x118, 0, 4, 24, 3, BIT(31), 0);
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tve1_clk, "tcon-tve1", tcon_parents,
-> +				 0x11c, 0, 4, 24, 3, BIT(31), 0);
-
-Again, please stick to the names used by the user manual.
-
-> +
-> +static const char * const deinterlace_parents[] = { "pll-periph0",
-> +						    "pll-periph1" };
-> +static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, "deinterlace",
-> +				 deinterlace_parents, 0x124, 0, 4, 24, 3,
-> +				 BIT(31), 0);
-> +
-> +static const char * const csi_mclk_parents[] = { "osc24M", "pll-video",
-> +						 "pll-periph1" };
-> +static SUNXI_CCU_M_WITH_MUX_GATE(csi1_mclk_clk, "csi1-mclk", csi_mclk_parents,
-> +				 0x130, 0, 5, 8, 3, BIT(15), 0);
-> +
-> +static const char * const csi_sclk_parents[] = { "pll-periph0", "pll-periph1" };
-> +static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", csi_sclk_parents,
-> +				 0x134, 16, 4, 24, 3, BIT(31), 0);
-> +
-> +static SUNXI_CCU_M_WITH_MUX_GATE(csi0_mclk_clk, "csi0-mclk", csi_mclk_parents,
-> +				 0x134, 0, 5, 8, 3, BIT(15), 0);
-> +
-> +static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
-> +			     0x13c, 16, 3, BIT(31), 0);
-> +
-> +static SUNXI_CCU_GATE(adda_clk,		"adda",		"pll-audio",
-> +		      0x140, BIT(31), CLK_SET_RATE_PARENT);
-> +static SUNXI_CCU_GATE(adda_4x_clk,	"adda-4x",	"pll-audio-4x",
-> +		      0x140, BIT(30), CLK_SET_RATE_PARENT);
-
-adda-4x is not listed in the user manual. Does it really exist?
-Is it used anywhere?
-
-> +static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
-> +		      0x144, BIT(31), 0);
-> +
-> +static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
-> +static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
-> +				 0x150, 0, 4, 24, 2, BIT(31), 0);
-> +
-> +static SUNXI_CCU_GATE(hdmi_slow_clk,	"hdmi-slow",	"osc24M",
-> +		      0x154, BIT(31), 0);
-> +
-> +static const char * const mbus_parents[] = { "osc24M", "pll-periph0-2x",
-> +					     "pll-ddr0" };
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents, 0x15c,
-> +				  0, 4,		/* M */
-> +				  16, 2,	/* P */
-
-Curiously, the formula for clk rate calculation does not include this
-factor.
-
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  CLK_IS_CRITICAL);
-> +
-> +static const char * const mipi_dsi_parents[] = { "pll-video0", "pll-video1",
-> +						 "pll-periph0" };
-> +static SUNXI_CCU_M_WITH_MUX_GATE(mipi_dsi_clk, "mipi-dsi", mipi_dsi_parents,
-> +				 0x168, 0, 4, 8, 2, BIT(15), 0);
-
-This is called "dsi-dphy" in the user manual. Looking at the A31,
-it had "dsi-sclk" in the upper 16 bits. So please use "dsi-dphy"
-or "mipi-dsi-dphy" here.
-
-> +
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tve0_clk, "tve0", tcon_parents,
-> +				 0x180, 0, 4, 24, 3, BIT(31), 0);
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tve1_clk, "tve1", tcon_parents,
-> +				 0x184, 0, 4, 24, 3, BIT(31), 0);
-> +
-> +static const char * const tvd_parents[] = { "pll-video0", "pll-video1",
-> +					    "pll-video0-2x", "pll-video1-2x" };
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd0_clk, "tvd0", tvd_parents,
-> +				 0x188, 0, 4, 24, 2, BIT(31), 0);
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd1_clk, "tvd1", tvd_parents,
-> +				 0x18c, 0, 4, 24, 2, BIT(31), 0);
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd2_clk, "tvd2", tvd_parents,
-> +				 0x190, 0, 4, 24, 2, BIT(31), 0);
-> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd3_clk, "tvd3", tvd_parents,
-> +				 0x194, 0, 4, 24, 2, BIT(31), 0);
-
-The mux is 3 bits wide for the tvd clocks.
-
-> +
-> +static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
-> +			     0x1a0, 0, 3, BIT(31), 0);
-
-You should probably have CLK_SET_RATE_PARENT here.
-
-> +
-> +static const char * const out_parents[] = { "osc24M-32k", "osc32k", "osc24M" };
-
-Please use pre-dividers instead of "osc24M-32k".
-
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(outa_clk, "outa", out_parents, 0x1f0,
-> +				  8, 5,		/* M */
-> +				  20, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +static SUNXI_CCU_MP_WITH_MUX_GATE(outb_clk, "outb", out_parents, 0x1f4,
-> +				  8, 5,		/* M */
-> +				  20, 2,	/* P */
-> +				  24, 2,	/* mux */
-> +				  BIT(31),	/* gate */
-> +				  0);
-> +
-> +static struct ccu_common *sun8i_r40_ccu_clks[] = {
-> +	&pll_cpu_clk.common,
-> +	&pll_audio_base_clk.common,
-> +	&pll_video0_clk.common,
-> +	&pll_ve_clk.common,
-> +	&pll_ddr0_clk.common,
-> +	&pll_periph0_clk.common,
-> +	&pll_periph1_clk.common,
-> +	&pll_video1_clk.common,
-> +	&pll_sata_clk.common,
-> +	&pll_gpu_clk.common,
-> +	&pll_mipi_clk.common,
-> +	&pll_de_clk.common,
-> +	&pll_ddr1_clk.common,
-> +	&cpu_clk.common,
-> +	&axi_clk.common,
-> +	&ahb1_clk.common,
-> +	&apb1_clk.common,
-> +	&apb2_clk.common,
-> +	&bus_mipi_dsi_clk.common,
-> +	&bus_ce_clk.common,
-> +	&bus_dma_clk.common,
-> +	&bus_mmc0_clk.common,
-> +	&bus_mmc1_clk.common,
-> +	&bus_mmc2_clk.common,
-> +	&bus_mmc3_clk.common,
-> +	&bus_nand_clk.common,
-> +	&bus_dram_clk.common,
-> +	&bus_emac_clk.common,
-> +	&bus_ts_clk.common,
-> +	&bus_hstimer_clk.common,
-> +	&bus_spi0_clk.common,
-> +	&bus_spi1_clk.common,
-> +	&bus_spi2_clk.common,
-> +	&bus_spi3_clk.common,
-> +	&bus_sata_clk.common,
-> +	&bus_otg_clk.common,
-> +	&bus_ehci0_clk.common,
-> +	&bus_ehci1_clk.common,
-> +	&bus_ehci2_clk.common,
-> +	&bus_ohci0_clk.common,
-> +	&bus_ohci1_clk.common,
-> +	&bus_ohci2_clk.common,
-> +	&bus_ve_clk.common,
-> +	&bus_de_mp_clk.common,
-> +	&bus_deinterlace_clk.common,
-> +	&bus_csi0_clk.common,
-> +	&bus_csi1_clk.common,
-> +	&bus_hdmi_slow_clk.common,
-> +	&bus_hdmi_clk.common,
-> +	&bus_de_clk.common,
-> +	&bus_tve0_clk.common,
-> +	&bus_tve1_clk.common,
-> +	&bus_tve_top_clk.common,
-> +	&bus_gmac_clk.common,
-> +	&bus_gpu_clk.common,
-> +	&bus_tvd0_clk.common,
-> +	&bus_tvd1_clk.common,
-> +	&bus_tvd2_clk.common,
-> +	&bus_tvd3_clk.common,
-> +	&bus_tvd_top_clk.common,
-> +	&bus_tcon0_clk.common,
-> +	&bus_tcon1_clk.common,
-> +	&bus_tve0_tcon_clk.common,
-> +	&bus_tve1_tcon_clk.common,
-> +	&bus_tcon_top_clk.common,
-> +	&bus_codec_clk.common,
-> +	&bus_spdif_clk.common,
-> +	&bus_ac97_clk.common,
-> +	&bus_pio_clk.common,
-> +	&bus_ir0_clk.common,
-> +	&bus_ir1_clk.common,
-> +	&bus_ths_clk.common,
-> +	&bus_keypad_clk.common,
-> +	&bus_i2s0_clk.common,
-> +	&bus_i2s1_clk.common,
-> +	&bus_i2s2_clk.common,
-> +	&bus_i2c0_clk.common,
-> +	&bus_i2c1_clk.common,
-> +	&bus_i2c2_clk.common,
-> +	&bus_i2c3_clk.common,
-> +	&bus_can_clk.common,
-> +	&bus_scr_clk.common,
-> +	&bus_ps20_clk.common,
-> +	&bus_ps21_clk.common,
-> +	&bus_i2c4_clk.common,
-> +	&bus_uart0_clk.common,
-> +	&bus_uart1_clk.common,
-> +	&bus_uart2_clk.common,
-> +	&bus_uart3_clk.common,
-> +	&bus_uart4_clk.common,
-> +	&bus_uart5_clk.common,
-> +	&bus_uart6_clk.common,
-> +	&bus_uart7_clk.common,
-> +	&bus_dbg_clk.common,
-> +	&ths_clk.common,
-> +	&nand_clk.common,
-> +	&mmc0_clk.common,
-> +	&mmc1_clk.common,
-> +	&mmc2_clk.common,
-> +	&mmc3_clk.common,
-> +	&ts_clk.common,
-> +	&ce_clk.common,
-> +	&spi0_clk.common,
-> +	&spi1_clk.common,
-> +	&spi2_clk.common,
-> +	&spi3_clk.common,
-> +	&i2s0_clk.common,
-> +	&i2s1_clk.common,
-> +	&i2s2_clk.common,
-> +	&ac97_clk.common,
-> +	&spdif_clk.common,
-> +	&keypad_clk.common,
-> +	&sata_clk.common,
-> +	&usb_phy0_clk.common,
-> +	&usb_phy1_clk.common,
-> +	&usb_phy2_clk.common,
-> +	&usb_ohci0_clk.common,
-> +	&usb_ohci1_clk.common,
-> +	&usb_ohci2_clk.common,
-> +	&usb_ohci0_12m_clk.common,
-> +	&usb_ohci1_12m_clk.common,
-> +	&usb_ohci2_12m_clk.common,
-> +	&ir0_clk.common,
-> +	&ir1_clk.common,
-> +	&dram_clk.common,
-> +	&dram_ve_clk.common,
-> +	&dram_csi0_clk.common,
-> +	&dram_csi1_clk.common,
-> +	&dram_ts_clk.common,
-> +	&dram_tvd_clk.common,
-> +	&dram_de_mp_clk.common,
-> +	&dram_deinterlace_clk.common,
-> +	&de_clk.common,
-> +	&de_mp_clk.common,
-> +	&tcon0_clk.common,
-> +	&tcon1_clk.common,
-> +	&tcon_tve0_clk.common,
-> +	&tcon_tve1_clk.common,
-> +	&deinterlace_clk.common,
-> +	&csi1_mclk_clk.common,
-> +	&csi_sclk_clk.common,
-> +	&csi0_mclk_clk.common,
-> +	&ve_clk.common,
-> +	&adda_clk.common,
-> +	&adda_4x_clk.common,
-> +	&avs_clk.common,
-> +	&hdmi_clk.common,
-> +	&hdmi_slow_clk.common,
-> +	&mbus_clk.common,
-> +	&mipi_dsi_clk.common,
-> +	&tve0_clk.common,
-> +	&tve1_clk.common,
-> +	&tvd0_clk.common,
-> +	&tvd1_clk.common,
-> +	&tvd2_clk.common,
-> +	&tvd3_clk.common,
-> +	&gpu_clk.common,
-> +	&outa_clk.common,
-> +	&outb_clk.common,
-> +};
-> +
-> +/* We hardcode the divider to 4 for now */
-> +static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
-> +			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
-> +static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
-> +			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
-> +static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
-> +			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
-> +static CLK_FIXED_FACTOR(pll_audio_8x_clk, "pll-audio-8x",
-> +			"pll-audio-base", 1, 2, CLK_SET_RATE_PARENT);
-> +static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
-> +			"pll-periph0", 1, 2, 0);
-> +static CLK_FIXED_FACTOR(pll_periph1_2x_clk, "pll-periph1-2x",
-> +			"pll-periph1", 1, 2, 0);
-> +static CLK_FIXED_FACTOR(pll_video0_2x_clk, "pll-video0-2x",
-> +			"pll-video0", 1, 2, 0);
-> +static CLK_FIXED_FACTOR(pll_video1_2x_clk, "pll-video1-2x",
-> +			"pll-video1", 1, 2, 0);
-> +static CLK_FIXED_FACTOR(osc24m_2x_clk, "osc24M-2x",
-> +			"osc24M", 1, 2, 0);
-> +static CLK_FIXED_FACTOR(osc24m_32k_clk, "osc24M-32k",
-> +			"osc24M", 750, 1, 0);
-
-As mentioned above, please drop the last one.
-
-> +
-> +static struct clk_hw_onecell_data sun8i_r40_hw_clks = {
-> +	.hws	= {
-> +		[CLK_OSC24M_2X]		= &osc24m_2x_clk.hw,
-> +		[CLK_OSC24M_32K]	= &osc24m_32k_clk.hw,
-> +		[CLK_PLL_CPU]		= &pll_cpu_clk.common.hw,
-> +		[CLK_PLL_AUDIO_BASE]	= &pll_audio_base_clk.common.hw,
-> +		[CLK_PLL_AUDIO]		= &pll_audio_clk.hw,
-> +		[CLK_PLL_AUDIO_2X]	= &pll_audio_2x_clk.hw,
-> +		[CLK_PLL_AUDIO_4X]	= &pll_audio_4x_clk.hw,
-> +		[CLK_PLL_AUDIO_8X]	= &pll_audio_8x_clk.hw,
-> +		[CLK_PLL_VIDEO0]	= &pll_video0_clk.common.hw,
-> +		[CLK_PLL_VIDEO0_2X]	= &pll_video0_2x_clk.hw,
-> +		[CLK_PLL_VE]		= &pll_ve_clk.common.hw,
-> +		[CLK_PLL_DDR0]		= &pll_ddr0_clk.common.hw,
-> +		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
-> +		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
-> +		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
-> +		[CLK_PLL_PERIPH1_2X]	= &pll_periph1_2x_clk.hw,
-> +		[CLK_PLL_VIDEO1]	= &pll_video1_clk.common.hw,
-> +		[CLK_PLL_VIDEO1_2X]	= &pll_video1_2x_clk.hw,
-> +		[CLK_PLL_SATA]		= &pll_sata_clk.common.hw,
-> +		[CLK_PLL_GPU]		= &pll_gpu_clk.common.hw,
-> +		[CLK_PLL_MIPI]		= &pll_mipi_clk.common.hw,
-> +		[CLK_PLL_DE]		= &pll_de_clk.common.hw,
-> +		[CLK_PLL_DDR1]		= &pll_ddr1_clk.common.hw,
-> +		[CLK_CPU]		= &cpu_clk.common.hw,
-> +		[CLK_AXI]		= &axi_clk.common.hw,
-> +		[CLK_AHB1]		= &ahb1_clk.common.hw,
-> +		[CLK_APB1]		= &apb1_clk.common.hw,
-> +		[CLK_APB2]		= &apb2_clk.common.hw,
-> +		[CLK_BUS_MIPI_DSI]	= &bus_mipi_dsi_clk.common.hw,
-> +		[CLK_BUS_CE]		= &bus_ce_clk.common.hw,
-> +		[CLK_BUS_DMA]		= &bus_dma_clk.common.hw,
-> +		[CLK_BUS_MMC0]		= &bus_mmc0_clk.common.hw,
-> +		[CLK_BUS_MMC1]		= &bus_mmc1_clk.common.hw,
-> +		[CLK_BUS_MMC2]		= &bus_mmc2_clk.common.hw,
-> +		[CLK_BUS_MMC3]		= &bus_mmc3_clk.common.hw,
-> +		[CLK_BUS_NAND]		= &bus_nand_clk.common.hw,
-> +		[CLK_BUS_DRAM]		= &bus_dram_clk.common.hw,
-> +		[CLK_BUS_EMAC]		= &bus_emac_clk.common.hw,
-> +		[CLK_BUS_TS]		= &bus_ts_clk.common.hw,
-> +		[CLK_BUS_HSTIMER]	= &bus_hstimer_clk.common.hw,
-> +		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
-> +		[CLK_BUS_SPI1]		= &bus_spi1_clk.common.hw,
-> +		[CLK_BUS_SPI2]		= &bus_spi2_clk.common.hw,
-> +		[CLK_BUS_SPI3]		= &bus_spi3_clk.common.hw,
-> +		[CLK_BUS_SATA]		= &bus_sata_clk.common.hw,
-> +		[CLK_BUS_OTG]		= &bus_otg_clk.common.hw,
-> +		[CLK_BUS_EHCI0]		= &bus_ehci0_clk.common.hw,
-> +		[CLK_BUS_EHCI1]		= &bus_ehci1_clk.common.hw,
-> +		[CLK_BUS_EHCI2]		= &bus_ehci2_clk.common.hw,
-> +		[CLK_BUS_OHCI0]		= &bus_ohci0_clk.common.hw,
-> +		[CLK_BUS_OHCI1]		= &bus_ohci1_clk.common.hw,
-> +		[CLK_BUS_OHCI2]		= &bus_ohci2_clk.common.hw,
-> +		[CLK_BUS_VE]		= &bus_ve_clk.common.hw,
-> +		[CLK_BUS_DE_MP]		= &bus_de_mp_clk.common.hw,
-> +		[CLK_BUS_DEINTERLACE]	= &bus_deinterlace_clk.common.hw,
-> +		[CLK_BUS_CSI0]		= &bus_csi0_clk.common.hw,
-> +		[CLK_BUS_CSI1]		= &bus_csi1_clk.common.hw,
-> +		[CLK_BUS_HDMI_SLOW]	= &bus_hdmi_slow_clk.common.hw,
-> +		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
-> +		[CLK_BUS_DE]		= &bus_de_clk.common.hw,
-> +		[CLK_BUS_TVE0]		= &bus_tve0_clk.common.hw,
-> +		[CLK_BUS_TVE1]		= &bus_tve1_clk.common.hw,
-> +		[CLK_BUS_TVE_TOP]	= &bus_tve_top_clk.common.hw,
-> +		[CLK_BUS_GMAC]		= &bus_gmac_clk.common.hw,
-> +		[CLK_BUS_GPU]		= &bus_gpu_clk.common.hw,
-> +		[CLK_BUS_TVD0]		= &bus_tvd0_clk.common.hw,
-> +		[CLK_BUS_TVD1]		= &bus_tvd1_clk.common.hw,
-> +		[CLK_BUS_TVD2]		= &bus_tvd2_clk.common.hw,
-> +		[CLK_BUS_TVD3]		= &bus_tvd3_clk.common.hw,
-> +		[CLK_BUS_TVD_TOP]	= &bus_tvd_top_clk.common.hw,
-> +		[CLK_BUS_TCON0]		= &bus_tcon0_clk.common.hw,
-> +		[CLK_BUS_TCON1]		= &bus_tcon1_clk.common.hw,
-> +		[CLK_BUS_TVE0_TCON]	= &bus_tve0_tcon_clk.common.hw,
-> +		[CLK_BUS_TVE1_TCON]	= &bus_tve1_tcon_clk.common.hw,
-> +		[CLK_BUS_TCON_TOP]	= &bus_tcon_top_clk.common.hw,
-> +		[CLK_BUS_CODEC]		= &bus_codec_clk.common.hw,
-> +		[CLK_BUS_SPDIF]		= &bus_spdif_clk.common.hw,
-> +		[CLK_BUS_AC97]		= &bus_ac97_clk.common.hw,
-> +		[CLK_BUS_PIO]		= &bus_pio_clk.common.hw,
-> +		[CLK_BUS_IR0]		= &bus_ir0_clk.common.hw,
-> +		[CLK_BUS_IR1]		= &bus_ir1_clk.common.hw,
-> +		[CLK_BUS_THS]		= &bus_ths_clk.common.hw,
-> +		[CLK_BUS_KEYPAD]	= &bus_keypad_clk.common.hw,
-> +		[CLK_BUS_I2S0]		= &bus_i2s0_clk.common.hw,
-> +		[CLK_BUS_I2S1]		= &bus_i2s1_clk.common.hw,
-> +		[CLK_BUS_I2S2]		= &bus_i2s2_clk.common.hw,
-> +		[CLK_BUS_I2C0]		= &bus_i2c0_clk.common.hw,
-> +		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
-> +		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
-> +		[CLK_BUS_I2C3]		= &bus_i2c3_clk.common.hw,
-> +		[CLK_BUS_CAN]		= &bus_can_clk.common.hw,
-> +		[CLK_BUS_SCR]		= &bus_scr_clk.common.hw,
-> +		[CLK_BUS_PS20]		= &bus_ps20_clk.common.hw,
-> +		[CLK_BUS_PS21]		= &bus_ps21_clk.common.hw,
-> +		[CLK_BUS_I2C4]		= &bus_i2c4_clk.common.hw,
-> +		[CLK_BUS_UART0]		= &bus_uart0_clk.common.hw,
-> +		[CLK_BUS_UART1]		= &bus_uart1_clk.common.hw,
-> +		[CLK_BUS_UART2]		= &bus_uart2_clk.common.hw,
-> +		[CLK_BUS_UART3]		= &bus_uart3_clk.common.hw,
-> +		[CLK_BUS_UART4]		= &bus_uart4_clk.common.hw,
-> +		[CLK_BUS_UART5]		= &bus_uart5_clk.common.hw,
-> +		[CLK_BUS_UART6]		= &bus_uart6_clk.common.hw,
-> +		[CLK_BUS_UART7]		= &bus_uart7_clk.common.hw,
-> +		[CLK_BUS_DBG]		= &bus_dbg_clk.common.hw,
-> +		[CLK_THS]		= &ths_clk.common.hw,
-> +		[CLK_NAND]		= &nand_clk.common.hw,
-> +		[CLK_MMC0]		= &mmc0_clk.common.hw,
-> +		[CLK_MMC1]		= &mmc1_clk.common.hw,
-> +		[CLK_MMC2]		= &mmc2_clk.common.hw,
-> +		[CLK_MMC3]		= &mmc3_clk.common.hw,
-> +		[CLK_TS]		= &ts_clk.common.hw,
-> +		[CLK_CE]		= &ce_clk.common.hw,
-> +		[CLK_SPI0]		= &spi0_clk.common.hw,
-> +		[CLK_SPI1]		= &spi1_clk.common.hw,
-> +		[CLK_SPI2]		= &spi2_clk.common.hw,
-> +		[CLK_SPI3]		= &spi3_clk.common.hw,
-> +		[CLK_I2S0]		= &i2s0_clk.common.hw,
-> +		[CLK_I2S1]		= &i2s1_clk.common.hw,
-> +		[CLK_I2S2]		= &i2s2_clk.common.hw,
-> +		[CLK_AC97]		= &ac97_clk.common.hw,
-> +		[CLK_SPDIF]		= &spdif_clk.common.hw,
-> +		[CLK_KEYPAD]		= &keypad_clk.common.hw,
-> +		[CLK_SATA]		= &sata_clk.common.hw,
-> +		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
-> +		[CLK_USB_PHY1]		= &usb_phy1_clk.common.hw,
-> +		[CLK_USB_PHY2]		= &usb_phy2_clk.common.hw,
-> +		[CLK_USB_OHCI0]		= &usb_ohci0_clk.common.hw,
-> +		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
-> +		[CLK_USB_OHCI2]		= &usb_ohci2_clk.common.hw,
-> +		[CLK_USB_OHCI0_12M]	= &usb_ohci0_12m_clk.common.hw,
-> +		[CLK_USB_OHCI1_12M]	= &usb_ohci1_12m_clk.common.hw,
-> +		[CLK_USB_OHCI2_12M]	= &usb_ohci2_12m_clk.common.hw,
-> +		[CLK_IR0]		= &ir0_clk.common.hw,
-> +		[CLK_IR1]		= &ir1_clk.common.hw,
-> +		[CLK_DRAM]		= &dram_clk.common.hw,
-> +		[CLK_DRAM_VE]		= &dram_ve_clk.common.hw,
-> +		[CLK_DRAM_CSI0]		= &dram_csi0_clk.common.hw,
-> +		[CLK_DRAM_CSI1]		= &dram_csi1_clk.common.hw,
-> +		[CLK_DRAM_TS]		= &dram_ts_clk.common.hw,
-> +		[CLK_DRAM_TVD]		= &dram_tvd_clk.common.hw,
-> +		[CLK_DRAM_DE_MP]	= &dram_de_mp_clk.common.hw,
-> +		[CLK_DRAM_DEINTERLACE]	= &dram_deinterlace_clk.common.hw,
-> +		[CLK_DE]		= &de_clk.common.hw,
-> +		[CLK_DE_MP]		= &de_mp_clk.common.hw,
-> +		[CLK_TCON0]		= &tcon0_clk.common.hw,
-> +		[CLK_TCON1]		= &tcon1_clk.common.hw,
-> +		[CLK_TCON_TVE0]		= &tcon_tve0_clk.common.hw,
-> +		[CLK_TCON_TVE1]		= &tcon_tve1_clk.common.hw,
-> +		[CLK_DEINTERLACE]	= &deinterlace_clk.common.hw,
-> +		[CLK_CSI1_MCLK]		= &csi1_mclk_clk.common.hw,
-> +		[CLK_CSI_SCLK]		= &csi_sclk_clk.common.hw,
-> +		[CLK_CSI0_MCLK]		= &csi0_mclk_clk.common.hw,
-> +		[CLK_VE]		= &ve_clk.common.hw,
-> +		[CLK_ADDA]		= &adda_clk.common.hw,
-> +		[CLK_ADDA_4X]		= &adda_4x_clk.common.hw,
-> +		[CLK_AVS]		= &avs_clk.common.hw,
-> +		[CLK_HDMI]		= &hdmi_clk.common.hw,
-> +		[CLK_HDMI_SLOW]		= &hdmi_slow_clk.common.hw,
-> +		[CLK_MBUS]		= &mbus_clk.common.hw,
-> +		[CLK_MIPI_DSI]		= &mipi_dsi_clk.common.hw,
-> +		[CLK_TVE0]		= &tve0_clk.common.hw,
-> +		[CLK_TVE1]		= &tve1_clk.common.hw,
-> +		[CLK_TVD0]		= &tvd0_clk.common.hw,
-> +		[CLK_TVD1]		= &tvd1_clk.common.hw,
-> +		[CLK_TVD2]		= &tvd2_clk.common.hw,
-> +		[CLK_TVD3]		= &tvd3_clk.common.hw,
-> +		[CLK_GPU]		= &gpu_clk.common.hw,
-> +		[CLK_OUTA]		= &outa_clk.common.hw,
-> +		[CLK_OUTB]		= &outb_clk.common.hw,
-> +	},
-> +	.num	= CLK_NUMBER,
-> +};
-> +
-> +static struct ccu_reset_map sun8i_r40_ccu_resets[] = {
-> +	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
-> +	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
-> +	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
-> +
-
-There is also a reset control for the DRAM controller at bit 31
-of register 0xf4.
-
-> +	[RST_MBUS]		=  { 0x0fc, BIT(31) },
-> +
-> +	[RST_BUS_MIPI_DSI]	=  { 0x2c0, BIT(1) },
-> +	[RST_BUS_CE]		=  { 0x2c0, BIT(5) },
-> +	[RST_BUS_DMA]		=  { 0x2c0, BIT(6) },
-> +	[RST_BUS_MMC0]		=  { 0x2c0, BIT(8) },
-> +	[RST_BUS_MMC1]		=  { 0x2c0, BIT(9) },
-> +	[RST_BUS_MMC2]		=  { 0x2c0, BIT(10) },
-> +	[RST_BUS_MMC3]		=  { 0x2c0, BIT(11) },
-> +	[RST_BUS_NAND]		=  { 0x2c0, BIT(13) },
-> +	[RST_BUS_DRAM]		=  { 0x2c0, BIT(14) },
-> +	[RST_BUS_EMAC]		=  { 0x2c0, BIT(17) },
-> +	[RST_BUS_TS]		=  { 0x2c0, BIT(18) },
-> +	[RST_BUS_HSTIMER]	=  { 0x2c0, BIT(19) },
-> +	[RST_BUS_SPI0]		=  { 0x2c0, BIT(20) },
-> +	[RST_BUS_SPI1]		=  { 0x2c0, BIT(21) },
-> +	[RST_BUS_SPI2]		=  { 0x2c0, BIT(22) },
-> +	[RST_BUS_SPI3]		=  { 0x2c0, BIT(23) },
-> +	[RST_BUS_SATA]		=  { 0x2c0, BIT(24) },
-> +	[RST_BUS_OTG]		=  { 0x2c0, BIT(25) },
-> +	[RST_BUS_EHCI0]		=  { 0x2c0, BIT(26) },
-> +	[RST_BUS_EHCI1]		=  { 0x2c0, BIT(27) },
-> +	[RST_BUS_EHCI2]		=  { 0x2c0, BIT(28) },
-> +	[RST_BUS_OHCI0]		=  { 0x2c0, BIT(29) },
-> +	[RST_BUS_OHCI1]		=  { 0x2c0, BIT(30) },
-> +	[RST_BUS_OHCI2]		=  { 0x2c0, BIT(31) },
-> +
-> +	[RST_BUS_VE]		=  { 0x2c4, BIT(0) },
-> +	[RST_BUS_DE_MP]		=  { 0x2c4, BIT(2) },
-
-Same thing about the MP's name.
-
-> +	[RST_BUS_DEINTERLACE]	=  { 0x2c4, BIT(5) },
-> +	[RST_BUS_CSI0]		=  { 0x2c4, BIT(8) },
-> +	[RST_BUS_CSI1]		=  { 0x2c4, BIT(9) },
-> +	[RST_BUS_HDMI_SLOW]	=  { 0x2c4, BIT(10) },
-> +	[RST_BUS_HDMI]		=  { 0x2c4, BIT(11) },
-
-Same thing about the HDMI's names.
-
-> +	[RST_BUS_DE]		=  { 0x2c4, BIT(12) },
-> +	[RST_BUS_TVE0]		=  { 0x2c4, BIT(13) },
-> +	[RST_BUS_TVE1]		=  { 0x2c4, BIT(14) },
-> +	[RST_BUS_TVE_TOP]	=  { 0x2c4, BIT(15) },
-> +	[RST_BUS_GMAC]		=  { 0x2c4, BIT(17) },
-> +	[RST_BUS_GPU]		=  { 0x2c4, BIT(20) },
-> +	[RST_BUS_TVD0]		=  { 0x2c4, BIT(21) },
-> +	[RST_BUS_TVD1]		=  { 0x2c4, BIT(22) },
-> +	[RST_BUS_TVD2]		=  { 0x2c4, BIT(23) },
-> +	[RST_BUS_TVD3]		=  { 0x2c4, BIT(24) },
-> +	[RST_BUS_TVD_TOP]	=  { 0x2c4, BIT(25) },
-> +	[RST_BUS_TCON0]		=  { 0x2c4, BIT(26) },
-> +	[RST_BUS_TCON1]		=  { 0x2c4, BIT(27) },
-> +	[RST_BUS_TCON_TVE0]	=  { 0x2c4, BIT(28) },
-> +	[RST_BUS_TCON_TVE1]	=  { 0x2c4, BIT(29) },
-
-Same thing about the TCON names.
-
-> +	[RST_BUS_TCON_TOP]	=  { 0x2c4, BIT(30) },
-> +	[RST_BUS_DBG]		=  { 0x2c4, BIT(31) },
-> +
-> +	[RST_BUS_LVDS]		=  { 0x2c8, BIT(0) },
-> +
-> +	[RST_BUS_CODEC]		=  { 0x2d0, BIT(0) },
-> +	[RST_BUS_SPDIF]		=  { 0x2d0, BIT(1) },
-> +	[RST_BUS_AC97]		=  { 0x2d0, BIT(2) },
-> +	[RST_BUS_IR0]		=  { 0x2d0, BIT(6) },
-> +	[RST_BUS_IR1]		=  { 0x2d0, BIT(7) },
-> +	[RST_BUS_THS]		=  { 0x2d0, BIT(8) },
-> +	[RST_BUS_KEYPAD]	=  { 0x2d0, BIT(10) },
-> +	[RST_BUS_I2S0]		=  { 0x2d0, BIT(12) },
-> +	[RST_BUS_I2S1]		=  { 0x2d0, BIT(13) },
-> +	[RST_BUS_I2S2]		=  { 0x2d0, BIT(14) },
-> +
-> +	[RST_BUS_I2C0]		=  { 0x2d8, BIT(0) },
-> +	[RST_BUS_I2C1]		=  { 0x2d8, BIT(1) },
-> +	[RST_BUS_I2C2]		=  { 0x2d8, BIT(2) },
-> +	[RST_BUS_I2C3]		=  { 0x2d8, BIT(3) },
-> +	[RST_BUS_CAN]		=  { 0x2d8, BIT(4) },
-
-Please add a note for CAN like you did with the bus gate.
-
-> +	[RST_BUS_SCR]		=  { 0x2d8, BIT(5) },
-> +	[RST_BUS_PS20]		=  { 0x2d8, BIT(6) },
-> +	[RST_BUS_PS21]		=  { 0x2d8, BIT(7) },
-> +	[RST_BUS_I2C4]		=  { 0x2d8, BIT(15) },
-> +	[RST_BUS_UART0]		=  { 0x2d8, BIT(16) },
-> +	[RST_BUS_UART1]		=  { 0x2d8, BIT(17) },
-> +	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
-> +	[RST_BUS_UART3]		=  { 0x2d8, BIT(19) },
-> +	[RST_BUS_UART4]		=  { 0x2d8, BIT(20) },
-> +	[RST_BUS_UART5]		=  { 0x2d8, BIT(21) },
-> +	[RST_BUS_UART6]		=  { 0x2d8, BIT(22) },
-> +	[RST_BUS_UART7]		=  { 0x2d8, BIT(23) },
-> +};
-> +
-> +static const struct sunxi_ccu_desc sun8i_r40_ccu_desc = {
-> +	.ccu_clks	= sun8i_r40_ccu_clks,
-> +	.num_ccu_clks	= ARRAY_SIZE(sun8i_r40_ccu_clks),
-> +
-> +	.hw_clks	= &sun8i_r40_hw_clks,
-> +
-> +	.resets		= sun8i_r40_ccu_resets,
-> +	.num_resets	= ARRAY_SIZE(sun8i_r40_ccu_resets),
-> +};
-> +
-> +static struct ccu_mux_nb sun8i_r40_cpu_nb = {
-> +	.common		= &cpu_clk.common,
-> +	.cm		= &cpu_clk.mux,
-> +	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-> +	.bypass_index	= 1, /* index of 24 MHz oscillator */
-> +};
-> +
-> +static void __init sun8i_r40_ccu_setup(struct device_node *node)
+>  #define SUN4I_BACKEND_MODCTL_REG               0x800
+>  #define SUN4I_BACKEND_MODCTL_LINE_SEL                  BIT(29)
+>  #define SUN4I_BACKEND_MODCTL_ITLMOD_EN                 BIT(28)
+> @@ -141,8 +143,7 @@
+>  #define SUN4I_BACKEND_PIPE_OFF(p)              (0x5000 + (0x400 * (p)))
+>
+>  struct sun4i_backend {
+> -       struct device_node      *node;
+> -       struct regmap           *regs;
+> +       struct sunxi_engine     engine;
+>
+>         struct reset_control    *reset;
+>
+> @@ -154,15 +155,13 @@ struct sun4i_backend {
+>         struct reset_control    *sat_reset;
+>
+>         int                     id;
+> -
+> -       /* Backend list management */
+> -       struct list_head        list;
+>  };
+>
+> -void sun4i_backend_apply_color_correction(struct sun4i_backend *backend);
+> -void sun4i_backend_disable_color_correction(struct sun4i_backend *backend);
+> -
+> -void sun4i_backend_commit(struct sun4i_backend *backend);
+> +static inline struct sun4i_backend *
+> +engine_to_sun4i_backend(struct sunxi_engine *engine)
 > +{
-> +	void __iomem *reg;
-> +	u32 val;
-> +
-> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg)) {
-> +		pr_err("%s: Could not map the clock registers\n",
-> +		       of_node_full_name(node));
-> +		return;
-> +	}
-> +
-> +	/* Force the PLL-Audio-1x divider to 4 */
-> +	val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
-> +	val &= ~GENMASK(19, 16);
-> +	writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
-> +
-> +	sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
-> +
-> +	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
-> +				  &sun8i_r40_cpu_nb);
+> +       return container_of(engine, struct sun4i_backend, engine);
 > +}
-> +CLK_OF_DECLARE(sun8i_r40_ccu, "allwinner,sun8i-r40-ccu",
-> +	       sun8i_r40_ccu_setup);
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-> new file mode 100644
-> index 000000000000..be30eb662d78
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-> @@ -0,0 +1,68 @@
-> +/*
-> + * Copyright 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _CCU_SUN8I_R40_H_
-> +#define _CCU_SUN8I_R40_H_
-> +
-> +#include <dt-bindings/clock/sun8i-r40-ccu.h>
-> +#include <dt-bindings/reset/sun8i-r40-ccu.h>
-> +
-> +#define CLK_OSC24M_2X		0
+>
+>  void sun4i_backend_layer_enable(struct sun4i_backend *backend,
+>                                 int layer, bool enable);
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> index 708b3543d4e9..f8c70439d1e2 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+> @@ -25,10 +25,9 @@
+>
+>  #include <video/videomode.h>
+>
+> -#include "sun4i_backend.h"
+>  #include "sun4i_crtc.h"
+>  #include "sun4i_drv.h"
+> -#include "sun4i_layer.h"
+> +#include "sunxi_engine.h"
+>  #include "sun4i_tcon.h"
+>
+>  static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
+> @@ -56,7 +55,7 @@ static void sun4i_crtc_atomic_flush(struct drm_crtc *crtc,
+>
+>         DRM_DEBUG_DRIVER("Committing plane changes\n");
+>
+> -       sun4i_backend_commit(scrtc->backend);
+> +       sunxi_engine_commit(scrtc->engine);
+>
+>         if (event) {
+>                 crtc->state->event = NULL;
+> @@ -135,7 +134,7 @@ static const struct drm_crtc_funcs sun4i_crtc_funcs = {
+>  };
+>
+>  struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
+> -                                  struct sun4i_backend *backend,
+> +                                  struct sunxi_engine *engine,
+>                                    struct sun4i_tcon *tcon)
+>  {
+>         struct sun4i_crtc *scrtc;
+> @@ -146,11 +145,11 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
+>         scrtc = devm_kzalloc(drm->dev, sizeof(*scrtc), GFP_KERNEL);
+>         if (!scrtc)
+>                 return ERR_PTR(-ENOMEM);
+> -       scrtc->backend = backend;
+> +       scrtc->engine = engine;
+>         scrtc->tcon = tcon;
+>
+>         /* Create our layers */
+> -       planes = sun4i_layers_init(drm, scrtc);
+> +       planes = sunxi_engine_layers_init(drm, engine);
+>         if (IS_ERR(planes)) {
+>                 dev_err(drm->dev, "Couldn't create the planes\n");
+>                 return NULL;
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h b/drivers/gpu/drm/sun4i/sun4i_crtc.h
+> index 4dae3508424a..bf0ce36eb518 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
+> @@ -17,7 +17,7 @@ struct sun4i_crtc {
+>         struct drm_crtc                 crtc;
+>         struct drm_pending_vblank_event *event;
+>
+> -       struct sun4i_backend            *backend;
+> +       struct sunxi_engine             *engine;
+>         struct sun4i_tcon               *tcon;
+>  };
+>
+> @@ -27,7 +27,7 @@ static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc *crtc)
+>  }
+>
+>  struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
+> -                                  struct sun4i_backend *backend,
+> +                                  struct sunxi_engine *engine,
+>                                    struct sun4i_tcon *tcon);
+>
+>  #endif /* _SUN4I_CRTC_H_ */
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> index 89c51fd6e9af..12ede8682b5c 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> @@ -101,7 +101,7 @@ static int sun4i_drv_bind(struct device *dev)
+>                 goto free_drm;
+>         }
+>         drm->dev_private = drv;
+> -       INIT_LIST_HEAD(&drv->backend_list);
+> +       INIT_LIST_HEAD(&drv->engine_list);
+>         INIT_LIST_HEAD(&drv->tcon_list);
+>
+>         ret = of_reserved_mem_device_init(dev);
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.h b/drivers/gpu/drm/sun4i/sun4i_drv.h
+> index 250c29017ef5..a960c89270cc 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.h
+> @@ -18,7 +18,7 @@
+>  #include <linux/regmap.h>
+>
+>  struct sun4i_drv {
+> -       struct list_head        backend_list;
+> +       struct list_head        engine_list;
+>         struct list_head        tcon_list;
+>
+>         struct drm_fbdev_cma    *fbdev;
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
+> index e1f03e1cc0ac..ab33e4d06782 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
+> @@ -11,12 +11,10 @@
+>   */
+>
+>  #include <drm/drm_atomic_helper.h>
+> -#include <drm/drm_crtc.h>
+>  #include <drm/drm_plane_helper.h>
+>  #include <drm/drmP.h>
+>
+>  #include "sun4i_backend.h"
+> -#include "sun4i_crtc.h"
+>  #include "sun4i_layer.h"
 
-As mentioned, please drop this one.
+You should also include sun4i_engine.h directly.
 
-> +#define CLK_OSC24M_32K		1
-> +#define CLK_PLL_CPU		2
-> +#define CLK_PLL_AUDIO_BASE	3
-> +#define CLK_PLL_AUDIO		4
-> +#define CLK_PLL_AUDIO_2X	5
-> +#define CLK_PLL_AUDIO_4X	6
-> +#define CLK_PLL_AUDIO_8X	7
-> +#define CLK_PLL_VIDEO0		8
-> +#define CLK_PLL_VIDEO0_2X	9
-> +#define CLK_PLL_VE		10
-> +#define CLK_PLL_DDR0		11
-> +#define CLK_PLL_PERIPH0		12
-> +#define CLK_PLL_PERIPH0_2X	13
-> +#define CLK_PLL_PERIPH1		14
-> +#define CLK_PLL_PERIPH1_2X	15
-> +#define CLK_PLL_VIDEO1		16
-> +#define CLK_PLL_VIDEO1_2X	17
-> +#define CLK_PLL_SATA		18
-> +#define CLK_PLL_GPU		19
-> +#define CLK_PLL_MIPI		20
-> +#define CLK_PLL_DE		21
-> +#define CLK_PLL_DDR1		22
+>
+>  struct sun4i_plane_desc {
+> @@ -130,10 +128,10 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
+>  }
+>
+>  struct drm_plane **sun4i_layers_init(struct drm_device *drm,
+> -                                    struct sun4i_crtc *crtc)
+> +                                    struct sunxi_engine *engine)
+>  {
+>         struct drm_plane **planes;
+> -       struct sun4i_backend *backend = crtc->backend;
+> +       struct sun4i_backend *backend = engine_to_sun4i_backend(engine);
+>         int i;
+>
+>         planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
+> @@ -175,7 +173,7 @@ struct drm_plane **sun4i_layers_init(struct drm_device *drm,
+>
+>                 DRM_DEBUG_DRIVER("Assigning %s plane to pipe %d\n",
+>                                  i ? "overlay" : "primary", plane->pipe);
+> -               regmap_update_bits(backend->regs, SUN4I_BACKEND_ATTCTL_REG0(i),
+> +               regmap_update_bits(engine->regs, SUN4I_BACKEND_ATTCTL_REG0(i),
+>                                    SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL_MASK,
+>                                    SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL(plane->pipe));
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h b/drivers/gpu/drm/sun4i/sun4i_layer.h
+> index 5ea5c994d6ea..004b7cfe8ffb 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_layer.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
+> @@ -13,6 +13,8 @@
+>  #ifndef _SUN4I_LAYER_H_
+>  #define _SUN4I_LAYER_H_
+>
+> +struct sunxi_engine;
 > +
-> +/* The CPU clock is exported */
+>  struct sun4i_layer {
+>         struct drm_plane        plane;
+>         struct sun4i_drv        *drv;
+> @@ -27,6 +29,5 @@ plane_to_sun4i_layer(struct drm_plane *plane)
+>  }
+>
+>  struct drm_plane **sun4i_layers_init(struct drm_device *drm,
+> -                                    struct sun4i_crtc *crtc);
+> -
+> +                                    struct sunxi_engine *engine);
+
+Please keep the newline.
+
+>  #endif /* _SUN4I_LAYER_H_ */
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index 29fd829aa54c..c48135a10fda 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -26,12 +26,12 @@
+>  #include <linux/regmap.h>
+>  #include <linux/reset.h>
+>
+> -#include "sun4i_backend.h"
+>  #include "sun4i_crtc.h"
+>  #include "sun4i_dotclock.h"
+>  #include "sun4i_drv.h"
+>  #include "sun4i_rgb.h"
+>  #include "sun4i_tcon.h"
+> +#include "sunxi_engine.h"
+
+Please keep the headers in alphabetical order.
+
+>
+>  void sun4i_tcon_disable(struct sun4i_tcon *tcon)
+>  {
+> @@ -488,12 +488,16 @@ struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node)
+>   * means maintaining a large list of them. Or, since the backend is
+>   * registered and binded before the TCON, we can just go through the
+>   * list of registered backends and compare the device node.
+> + *
+> + * As the structures now store engines instead of backends, here this
+> + * function in fact searches the corresponding engine, and the ID is
+> + * requested via the get_id function of the engine.
+>   */
+> -static struct sun4i_backend *sun4i_tcon_find_backend(struct sun4i_drv *drv,
+> +static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+>                                                      struct device_node *node)
+>  {
+>         struct device_node *port, *ep, *remote;
+> -       struct sun4i_backend *backend;
+> +       struct sunxi_engine *engine;
+>
+>         port = of_graph_get_port_by_id(node, 0);
+>         if (!port)
+> @@ -504,21 +508,21 @@ static struct sun4i_backend *sun4i_tcon_find_backend(struct sun4i_drv *drv,
+>                 if (!remote)
+>                         continue;
+>
+> -               /* does this node match any registered backends? */
+> -               list_for_each_entry(backend, &drv->backend_list, list) {
+> -                       if (remote == backend->node) {
+> +               /* does this node match any registered engines? */
+> +               list_for_each_entry(engine, &drv->engine_list, list) {
+> +                       if (remote == engine->node) {
+>                                 of_node_put(remote);
+>                                 of_node_put(port);
+> -                               return backend;
+> +                               return engine;
+>                         }
+>                 }
+>
+>                 /* keep looking through upstream ports */
+> -               backend = sun4i_tcon_find_backend(drv, remote);
+> -               if (!IS_ERR(backend)) {
+> +               engine = sun4i_tcon_find_engine(drv, remote);
+> +               if (!IS_ERR(engine)) {
+>                         of_node_put(remote);
+>                         of_node_put(port);
+> -                       return backend;
+> +                       return engine;
+>                 }
+>         }
+>
+> @@ -530,13 +534,13 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+>  {
+>         struct drm_device *drm = data;
+>         struct sun4i_drv *drv = drm->dev_private;
+> -       struct sun4i_backend *backend;
+> +       struct sunxi_engine *engine;
+>         struct sun4i_tcon *tcon;
+>         int ret;
+>
+> -       backend = sun4i_tcon_find_backend(drv, dev->of_node);
+> -       if (IS_ERR(backend)) {
+> -               dev_err(dev, "Couldn't find matching backend\n");
+> +       engine = sun4i_tcon_find_engine(drv, dev->of_node);
+> +       if (IS_ERR(engine)) {
+> +               dev_err(dev, "Couldn't find matching engine\n");
+>                 return -EPROBE_DEFER;
+>         }
+>
+> @@ -546,7 +550,7 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+>         dev_set_drvdata(dev, tcon);
+>         tcon->drm = drm;
+>         tcon->dev = dev;
+> -       tcon->id = backend->id;
+> +       tcon->id = sunxi_engine_get_id(engine);
+>         tcon->quirks = of_device_get_match_data(dev);
+>
+>         tcon->lcd_rst = devm_reset_control_get(dev, "lcd");
+> @@ -589,7 +593,7 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+>                 goto err_free_dotclock;
+>         }
+>
+> -       tcon->crtc = sun4i_crtc_init(drm, backend, tcon);
+> +       tcon->crtc = sun4i_crtc_init(drm, engine, tcon);
+>         if (IS_ERR(tcon->crtc)) {
+>                 dev_err(dev, "Couldn't create our CRTC\n");
+>                 ret = PTR_ERR(tcon->crtc);
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+> index 542da220818b..a9cad00d4ee8 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+> @@ -22,10 +22,10 @@
+>  #include <drm/drm_of.h>
+>  #include <drm/drm_panel.h>
+>
+> -#include "sun4i_backend.h"
+>  #include "sun4i_crtc.h"
+>  #include "sun4i_drv.h"
+>  #include "sun4i_tcon.h"
+> +#include "sunxi_engine.h"
+>
+>  #define SUN4I_TVE_EN_REG               0x000
+>  #define SUN4I_TVE_EN_DAC_MAP_MASK              GENMASK(19, 4)
+> @@ -353,7 +353,6 @@ static void sun4i_tv_disable(struct drm_encoder *encoder)
+>         struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
+>         struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
+>         struct sun4i_tcon *tcon = crtc->tcon;
+> -       struct sun4i_backend *backend = crtc->backend;
+>
+>         DRM_DEBUG_DRIVER("Disabling the TV Output\n");
+>
+> @@ -362,7 +361,8 @@ static void sun4i_tv_disable(struct drm_encoder *encoder)
+>         regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
+>                            SUN4I_TVE_EN_ENABLE,
+>                            0);
+> -       sun4i_backend_disable_color_correction(backend);
 > +
-> +#define CLK_AXI			24
-> +#define CLK_AHB1		25
-> +#define CLK_APB1		26
-> +#define CLK_APB2		27
-> +
-> +/* All the bus gates are exported */
-> +
-> +/* The first bunch of module clocks are exported */
-> +
-> +#define CLK_DRAM		134
-> +
-> +/* All the DRAM gates are exported */
-> +
-> +/* Some more module clocks are exported */
-> +
-> +#define CLK_MBUS		158
-> +
-> +/* Another bunch of module clocks are exported */
-> +
-> +#define CLK_NUMBER		(CLK_OUTB + 1)
-> +
-> +#endif /* _CCU_SUN8I_R40_H_ */
-> diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
+> +       sunxi_engine_disable_color_correction(crtc->engine);
+>  }
+>
+>  static void sun4i_tv_enable(struct drm_encoder *encoder)
+> @@ -370,11 +370,10 @@ static void sun4i_tv_enable(struct drm_encoder *encoder)
+>         struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
+>         struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
+>         struct sun4i_tcon *tcon = crtc->tcon;
+> -       struct sun4i_backend *backend = crtc->backend;
+>
+>         DRM_DEBUG_DRIVER("Enabling the TV Output\n");
+>
+> -       sun4i_backend_apply_color_correction(backend);
+> +       sunxi_engine_apply_color_correction(crtc->engine);
+>
+>         regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
+>                            SUN4I_TVE_EN_ENABLE,
+> diff --git a/drivers/gpu/drm/sun4i/sunxi_engine.h b/drivers/gpu/drm/sun4i/sunxi_engine.h
 > new file mode 100644
-> index 000000000000..a907d841496d
+> index 000000000000..b3c6e6148568
 > --- /dev/null
-> +++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
-> @@ -0,0 +1,191 @@
+> +++ b/drivers/gpu/drm/sun4i/sunxi_engine.h
+> @@ -0,0 +1,112 @@
 > +/*
 > + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
 > + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation; either version 2 of
+> + * the License, or (at your option) any later version.
 > + */
 > +
-> +#ifndef _DT_BINDINGS_CLK_SUN8I_R40_H_
-> +#define _DT_BINDINGS_CLK_SUN8I_R40_H_
+> +#ifndef _SUNXI_ENGINE_H_
+> +#define _SUNXI_ENGINE_H_
 > +
-> +#define CLK_CPU			23
+> +struct sun4i_crtc;
+
+This is not used. Please remove it.
+
+
+The rest looks good. Thanks for working this out. Once the minor comments
+are fixed, please add my
+
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+
+> +struct drm_plane;
+> +struct drm_device;
 > +
-> +#define CLK_BUS_MIPI_DSI	28
-> +#define CLK_BUS_CE		29
-> +#define CLK_BUS_DMA		30
-> +#define CLK_BUS_MMC0		31
-> +#define CLK_BUS_MMC1		32
-> +#define CLK_BUS_MMC2		33
-> +#define CLK_BUS_MMC3		34
-> +#define CLK_BUS_NAND		35
-> +#define CLK_BUS_DRAM		36
-> +#define CLK_BUS_EMAC		37
-> +#define CLK_BUS_TS		38
-> +#define CLK_BUS_HSTIMER		39
-> +#define CLK_BUS_SPI0		40
-> +#define CLK_BUS_SPI1		41
-> +#define CLK_BUS_SPI2		42
-> +#define CLK_BUS_SPI3		43
-> +#define CLK_BUS_SATA		44
-> +#define CLK_BUS_OTG		45
-> +#define CLK_BUS_EHCI0		46
-> +#define CLK_BUS_EHCI1		47
-> +#define CLK_BUS_EHCI2		48
-> +#define CLK_BUS_OHCI0		49
-> +#define CLK_BUS_OHCI1		50
-> +#define CLK_BUS_OHCI2		51
-> +#define CLK_BUS_VE		52
-> +#define CLK_BUS_DE_MP		53
-
-MP name...
-
-> +#define CLK_BUS_DEINTERLACE	54
-> +#define CLK_BUS_CSI0		55
-> +#define CLK_BUS_CSI1		56
-> +#define CLK_BUS_HDMI_SLOW	57
-> +#define CLK_BUS_HDMI		58
-
-Names...
-
-> +#define CLK_BUS_DE		59
-> +#define CLK_BUS_TVE0		60
-> +#define CLK_BUS_TVE1		61
-> +#define CLK_BUS_TVE_TOP		62
-> +#define CLK_BUS_GMAC		63
-> +#define CLK_BUS_GPU		64
-> +#define CLK_BUS_TVD0		65
-> +#define CLK_BUS_TVD1		66
-> +#define CLK_BUS_TVD2		67
-> +#define CLK_BUS_TVD3		68
-> +#define CLK_BUS_TVD_TOP		69
-
-> +#define CLK_BUS_TCON0		70
-> +#define CLK_BUS_TCON1		71
-> +#define CLK_BUS_TVE0_TCON	72
-> +#define CLK_BUS_TVE1_TCON	73
-
-Names...
-
-> +#define CLK_BUS_TCON_TOP	74
-> +#define CLK_BUS_CODEC		75
-> +#define CLK_BUS_SPDIF		76
-> +#define CLK_BUS_AC97		77
-> +#define CLK_BUS_PIO		78
-> +#define CLK_BUS_IR0		79
-> +#define CLK_BUS_IR1		80
-> +#define CLK_BUS_THS		81
-> +#define CLK_BUS_KEYPAD		82
-> +#define CLK_BUS_I2S0		83
-> +#define CLK_BUS_I2S1		84
-> +#define CLK_BUS_I2S2		85
-> +#define CLK_BUS_I2C0		86
-> +#define CLK_BUS_I2C1		87
-> +#define CLK_BUS_I2C2		88
-> +#define CLK_BUS_I2C3		89
-> +#define CLK_BUS_CAN		90
-> +#define CLK_BUS_SCR		91
-> +#define CLK_BUS_PS20		92
-> +#define CLK_BUS_PS21		93
-> +#define CLK_BUS_I2C4		94
-> +#define CLK_BUS_UART0		95
-> +#define CLK_BUS_UART1		96
-> +#define CLK_BUS_UART2		97
-> +#define CLK_BUS_UART3		98
-> +#define CLK_BUS_UART4		99
-> +#define CLK_BUS_UART5		100
-> +#define CLK_BUS_UART6		101
-> +#define CLK_BUS_UART7		102
-> +#define CLK_BUS_DBG		103
+> +struct sunxi_engine;
 > +
-> +#define CLK_THS			104
-> +#define CLK_NAND		105
-> +#define CLK_MMC0		106
-> +#define CLK_MMC1		107
-> +#define CLK_MMC2		108
-> +#define CLK_MMC3		109
-> +#define CLK_TS			110
-> +#define CLK_CE			111
-> +#define CLK_SPI0		112
-> +#define CLK_SPI1		113
-> +#define CLK_SPI2		114
-> +#define CLK_SPI3		115
-> +#define CLK_I2S0		116
-> +#define CLK_I2S1		117
-> +#define CLK_I2S2		118
-> +#define CLK_AC97		119
-> +#define CLK_SPDIF		120
-> +#define CLK_KEYPAD		121
-> +#define CLK_SATA		122
-> +#define CLK_USB_PHY0		123
-> +#define CLK_USB_PHY1		124
-> +#define CLK_USB_PHY2		125
-> +#define CLK_USB_OHCI0		126
-> +#define CLK_USB_OHCI1		127
-> +#define CLK_USB_OHCI2		128
-> +#define CLK_USB_OHCI0_12M	129
-> +#define CLK_USB_OHCI1_12M	130
-> +#define CLK_USB_OHCI2_12M	131
-
-These 3 should not be exported.
-
-> +#define CLK_IR0			132
-> +#define CLK_IR1			133
+> +struct sunxi_engine_ops {
+> +       void (*commit)(struct sunxi_engine *engine);
+> +       struct drm_plane **(*layers_init)(struct drm_device *drm,
+> +                                         struct sunxi_engine *engine);
 > +
-> +#define CLK_DRAM_VE		135
-> +#define CLK_DRAM_CSI0		136
-> +#define CLK_DRAM_CSI1		137
-> +#define CLK_DRAM_TS		138
-> +#define CLK_DRAM_TVD		139
-> +#define CLK_DRAM_DE_MP		140
-
-MP name...
-
-> +#define CLK_DRAM_DEINTERLACE	141
-> +#define CLK_DE			142
-> +#define CLK_DE_MP		143
-
-MP name...
-
-> +#define CLK_TCON0		144
-> +#define CLK_TCON1		145
-> +#define CLK_TCON_TVE0		146
-> +#define CLK_TCON_TVE1		147
-
-Names...
-
-> +#define CLK_DEINTERLACE		148
-> +#define CLK_CSI1_MCLK		149
-> +#define CLK_CSI_SCLK		150
-> +#define CLK_CSI0_MCLK		151
-> +#define CLK_VE			152
-> +#define CLK_ADDA		153
-
-> +#define CLK_ADDA_4X		154
-
-Nonexistent.
-
-> +#define CLK_AVS			155
-> +#define CLK_HDMI		156
-> +#define CLK_HDMI_SLOW		157
+> +       void (*apply_color_correction)(struct sunxi_engine *engine);
+> +       void (*disable_color_correction)(struct sunxi_engine *engine);
+> +       int (*get_id)(struct sunxi_engine *engine);
+> +};
 > +
-> +#define CLK_MIPI_DSI		159
-> +#define CLK_TVE0		160
-> +#define CLK_TVE1		161
-> +#define CLK_TVD0		162
-> +#define CLK_TVD1		163
-> +#define CLK_TVD2		164
-> +#define CLK_TVD3		165
-> +#define CLK_GPU			166
-> +#define CLK_OUTA		167
-> +#define CLK_OUTB		168
+> +/**
+> + * struct sunxi_engine - the common parts of an engine for sun4i-drm driver
+> + * @ops:       the operations of the engine
+> + * @regs:      the regmap of the engine
+> + */
+> +struct sunxi_engine {
+> +       const struct sunxi_engine_ops   *ops;
 > +
-> +#endif /* _DT_BINDINGS_CLK_SUN8I_R40_H_ */
-> diff --git a/include/dt-bindings/reset/sun8i-r40-ccu.h b/include/dt-bindings/reset/sun8i-r40-ccu.h
-> new file mode 100644
-> index 000000000000..a7001f34b0b9
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/sun8i-r40-ccu.h
-
-Name corrections apply to this file as well.
-
-Regards
-ChenYu
-
-> -- 
+> +       struct device_node              *node;
+> +       struct regmap                   *regs;
+> +
+> +       /* Engine list management */
+> +       struct list_head                list;
+> +};
+> +
+> +/**
+> + * sunxi_engine_commit() - commit all changes of the engine
+> + * @engine:    pointer to the engine
+> + */
+> +static inline void
+> +sunxi_engine_commit(struct sunxi_engine *engine)
+> +{
+> +       if (engine->ops && engine->ops->commit)
+> +               engine->ops->commit(engine);
+> +}
+> +
+> +/**
+> + * sunxi_engine_layers_init() - Create planes (layers) for the engine
+> + * @drm:       pointer to the drm_device for which planes will be created
+> + * @engine:    pointer to the engine
+> + */
+> +static inline struct drm_plane **
+> +sunxi_engine_layers_init(struct drm_device *drm, struct sunxi_engine *engine)
+> +{
+> +       if (engine->ops && engine->ops->layers_init)
+> +               return engine->ops->layers_init(drm, engine);
+> +       return ERR_PTR(-ENOSYS);
+> +}
+> +
+> +/**
+> + * sunxi_engine_apply_color_correction - Apply the RGB2YUV color correction
+> + * @engine:    pointer to the engine
+> + *
+> + * This functionality is optional for an engine, however, if the engine is
+> + * intended to be used with TV Encoder, the output will be incorrect
+> + * without the color correction, due to TV Encoder expects the engine to
+> + * output directly YUV signal.
+> + */
+> +static inline void
+> +sunxi_engine_apply_color_correction(struct sunxi_engine *engine)
+> +{
+> +       if (engine->ops && engine->ops->apply_color_correction)
+> +               engine->ops->apply_color_correction(engine);
+> +}
+> +
+> +/**
+> + * sunxi_engine_disable_color_correction - Disable the color space correction
+> + * @engine:    pointer to the engine
+> + *
+> + * This function is paired with apply_color_correction().
+> + */
+> +static inline void
+> +sunxi_engine_disable_color_correction(struct sunxi_engine *engine)
+> +{
+> +       if (engine->ops && engine->ops->disable_color_correction)
+> +               engine->ops->disable_color_correction(engine);
+> +}
+> +
+> +/**
+> + * sunxi_engine_get_id - Get the ID of the engine.
+> + * @engine:    pointer to the engine
+> + *
+> + * If the ID is not necessary, just do not implement it in sunxi_engine_ops,
+> + * and a default -1 will be returned.
+> + */
+> +static inline int
+> +sunxi_engine_get_id(struct sunxi_engine *engine)
+> +{
+> +       if (engine->ops && engine->ops->get_id)
+> +               return engine->ops->get_id(engine);
+> +
+> +       return -1;
+> +}
+> +#endif /* _SUNXI_ENGINE_H_ */
+> --
 > 2.12.2
-> 
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
