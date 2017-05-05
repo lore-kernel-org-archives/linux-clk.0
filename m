@@ -1,203 +1,56 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs4.siol.net ([213.250.19.137]:55131 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S940450AbdEXPXa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 May 2017 11:23:30 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38056 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751791AbdEEDFz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 23:05:55 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170504114208.8524-4-icenowy@aosc.io>
+References: <20170504114208.8524-1-icenowy@aosc.io> <20170504114208.8524-4-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 5 May 2017 11:05:30 +0800
+Message-ID: <CAGb2v64xwoNC1puWZXb010Sxh27tp9xNSCupuftzBoKCMi-Edw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 04/13] drm/sun4i: return only planes for
+ layers created
 To: Icenowy Zheng <icenowy@aosc.io>
 Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-sunxi@googlegroups.com, wens@csie.org,
-        Rob Herring <robh+dt@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [linux-sunxi] Re: [RFC PATCH 07/11] drm: sun4i: add support for the TV encoder in H3 SoC
-Date: Wed, 24 May 2017 17:23:14 +0200
-Message-ID: <1598648.KO6dt2IjgO@jernej-laptop>
-In-Reply-To: <98558BA2-BC99-4D0A-A045-571C643875C5@aosc.io>
-References: <20170517164354.16399-1-icenowy@aosc.io> <20170524073019.bl6rojc2srrigalp@flea.home> <98558BA2-BC99-4D0A-A045-571C643875C5@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Thu, May 4, 2017 at 7:41 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> As we are going to add support for the Allwinner DE2 Mixer in sun4i-drm
+> driver, we will finally have two types of layers.
+>
+> Each layer is bound to a drm_plane that is CRTC-specific, so we create
+> them when initializing CRTC (calling sun4i_layers_init, which will be
+> generalized in next patch). The drm_plane's will be used when creating
+> CRTC, but the CRTC initialization code do not care other properties of
+> the layer, so we let the sun4i_layers_init function return drm_plane's
+> only.
+>
+> As we have no need to trace the layers after the CRTC is properly
+> created, we drop the layers pointer in sun4i_crtc struct.
+>
+> Doing these things makes the CRTC code independent to the type of layer
 
-Dne sreda, 24. maj 2017 ob 10:25:46 CEST je Icenowy Zheng napisal(a):
-> 于 2017年5月24日 GMT+08:00 下午3:30:19, Maxime Ripard <maxime.ripard@free-
-electrons.com> 写到:
-> >On Tue, May 23, 2017 at 09:00:59PM +0800, icenowy@aosc.io wrote:
-> >> 在 2017-05-23 20:53，Maxime Ripard 写道：
-> >> 
-> >> > On Mon, May 22, 2017 at 07:55:56PM +0200, Jernej Škrabec wrote:
-> >> > > Hi,
-> >> > > 
-> >> > > Dne sobota, 20. maj 2017 ob 03:37:53 CEST je Chen-Yu Tsai
-> >
-> >napisal(a):
-> >> > > > On Sat, May 20, 2017 at 2:23 AM, Jernej Škrabec
-> >
-> ><jernej.skrabec@siol.net>
-> >
-> >> > > wrote:
-> >> > > > > Hi,
-> >> > > > > 
-> >> > > > > Dne petek, 19. maj 2017 ob 20:08:18 CEST je Icenowy Zheng
-> >
-> >napisal(a):
-> >> > > > >> 于 2017年5月20日 GMT+08:00 上午2:03:30, Maxime Ripard
-> >
-> ><maxime.ripard@free-
-> >
-> >> > > > > electrons.com> 写到:
-> >> > > > >> >On Thu, May 18, 2017 at 12:43:50AM +0800, Icenowy Zheng
-> >
-> >wrote:
-> >> > > > >> >> Allwinner H3 features a TV encoder similar to the one in
-> >
-> >earlier
-> >
-> >> > > > >> >SoCs,
-> >> > > > >> >
-> >> > > > >> >> but with some different points about clocks:
-> >> > > > >> >> - It has a mod clock and a bus clock.
-> >> > > > >> >> - The mod clock must be at a fixed rate to generate
-> >
-> >signal.
-> >
-> >> > > > >> >Why?
-> >> > > > >> 
-> >> > > > >> It's experiment result by Jernej.
-> >> > > > >> 
-> >> > > > >> The clock rates in BSP kernel is also specially designed
-> >> > > > >> (PLL_DE at 432MHz) in order to be able to feed the TVE.
-> >> > > > > 
-> >> > > > > My experiments and search through BSP code showed that TVE
-> >
-> >seems to have
-> >
-> >> > > > > additional fixed predivider 8. So if you want to generate 27
-> >
-> >MHz clock,
-> >
-> >> > > > > unit has to be feed with 216 MHz.
-> >> > > > > 
-> >> > > > > TVE has only one PLL source PLL_DE. And since 216 MHz is a
-> >
-> >bit low for
-> >
-> >> > > > > DE2,
-> >> > > > > BSP defaults to 432 MHz for PLL_DE and use divider 2 to
-> >
-> >generate 216 MHz.
-> >
-> >> > > > > This clock is then divided by 8 internaly to get final 27
-> >
-> >MHz.
-> >
-> >> > > > > Please note that I don't have any hard evidence to support
-> >
-> >that, only
-> >
-> >> > > > > experimental data. However, only that explanation make sense
-> >
-> >to me.
-> >
-> >> > > > > BTW, BSP H3/H5 TV driver supports only PAL and NTSC which
-> >
-> >both use 27 MHz
-> >
-> >> > > > > base clock. Further experiments are needed to check if there
-> >
-> >is any
-> >
-> >> > > > > possibility to have other resolutions by manipulating clocks
-> >
-> >and give
-> >
-> >> > > > > other proper settings. I plan to do that, but not in very
-> >
-> >near future.
-> >
-> >> > > > You only have composite video output, and those are the only 2
-> >
-> >standard
-> >
-> >> > > > resolutions that make any sense.
-> >> > > 
-> >> > > Right, other resolutions are for VGA.
-> >> > > 
-> >> > > Anyway, I did some more digging in A10 and R40 datasheets. I
-> >
-> >think
-> >
-> >> > > that H3 TVE
-> >> > > unit is something in between. R40 TVE has a setting to select "up
-> >> > > sample".
-> >> > 
-> >> > That might be just another translation of oversampling :)
-> >> > 
-> >> > I didn't know it could be applied to composite signals though, but
-> >
-> >I
-> >
-> >> > guess this is just another analog signal after all.
-> >> > 
-> >> > > Possible settings are 27 MHz, 54 MHz, 108 MHz and 216 MHz. BSP
-> >> > > driver on R40
-> >> > > has this setting enabled only for PAL and NTSC and it is always
-> >
-> >216
-> >
-> >> > > MHz. I
-> >> > > think that H3 may have this hardwired to 216 MHz and this would
-> >
-> >be
-> >
-> >> > > the reason
-> >> > > why 216 MHz is needed.
-> >> > > 
-> >> > > Has anyone else any better explanation?
-> >> > 
-> >> > That's already a pretty good one.
-> >> > 
-> >> > Either way, wether this is upsampling, oversampling or just a
-> >> > pre-divider, this can and should be dealt with in the mode_set
-> >> > callback, and not in the probe.
-> >> 
-> >> I got a better idea -- let TVE driver have the CLK_TVE as an
-> >> input and create a subclock output with divider 16, and feed this
-> >> subclock to TCON lcd-ch1.
-> >> 
-> >> This is a model of the real hardware -- the clock divider is in
-> >> TVE, not TCON.
+Doing this uncouples the CRTC code from the type of layer.
 
-If we are talking about HW divider, it is 8 (216 / 27 = 8).
+> (the sun4i_layers_init function name is still hardcoded and will be
+> changed in the next patch), so that we can finally gain support for the
+> mixer in DE2, which will has different layers.
 
-Slightly offtopic, reason why DE2 is hardcoded to 432 might be that for 4K 
-resolution you need at least 297 MHz. So next dividable frequency is taken 
-(432 MHz). That way you can have 4K HDMI display and composite TV connected at 
-the same time, although this sounds a bit weird.
+... which has ...
 
-Best regards,
-Jernej
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-> >
-> >That's definitely not a good representation of the hardware. There's
-> >one clock, it goes to the TCON, period.
-> 
-> No, I still think it goes to the TVE as:
-> 
-> 1. it's named TVE in datasheet.
-> 2. Generating signal with such a low resolution but such
-> a high dotclock is not a good situation.
-> 
-> >However, the TV encoder has a constraint on that clock rate. This can
-> >be easily implemented using a custom encoder state where you'd set the
-> >multiplier to set on that clock, and the TCON will use it.
-> >
-> >Maxime
+Otherwise,
 
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
