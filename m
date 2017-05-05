@@ -1,81 +1,34 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Mon, 8 May 2017 19:37:06 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
-	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 2/3] clk: add managed version of clk_bulk_get
-Message-ID: <20170508113706.GC18153@b29396-OptiPlex-7040>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
- <20170422025547.GT7065@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38198 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbdEEDdy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 23:33:54 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170422025547.GT7065@codeaurora.org>
+In-Reply-To: <20170504114858.9008-11-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-11-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 5 May 2017 11:33:30 +0800
+Message-ID: <CAGb2v64VrwFw0Hv_vF81TgTk9KJKPtfrxDMDLHL5ZNHOz+MF4g@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v6 10/13] drm/sun4i: tcon: add support for
+ V3s TCON
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 07:55:47PM -0700, Stephen Boyd wrote:
-> On 04/12, Dong Aisheng wrote:
-> > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > index 1d05b66..3fc6010 100644
-> > --- a/include/linux/clk.h
-> > +++ b/include/linux/clk.h
-> > @@ -278,11 +278,25 @@ struct clk *clk_get(struct device *dev, const char *id);
-> >   *
-> >   * clk_bulk_get should not be called from within interrupt context.
-> >   */
-> > -
-> 
-> Should be in previous patch?
-> 
+On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner V3s SoC features a TCON without channel 1.
+>
+> Add support for it.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Yes, will fix.
-
-> >  int __must_check clk_bulk_get(struct device *dev, int num_clks,
-> >  			      struct clk_bulk_data *clks);
-> >  
-> >  /**
-> > + * devm_clk_bulk_get - managed get multiple clk consumers
-> > + * @dev: device for clock "consumer"
-> > + * @num_clks: the number of clk_bulk_data
-> > + * @clks: the clk_bulk_data table of consumer
-> > + *
-> > + * Return 0 on success, an errno on failure.
-> > + *
-> > + * This helper function allows drivers to get several regulator
-> 
-> s/regulator/clk/
-> 
-
-ditto
-
-> > + * consumers in one operation with management, the clks will
-> > + * automatically be freed when the device is unbound.
-> > + */
-> > +int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
-> 
-> Thanks for the __must_check. We need to add more __must_check to
-> clk APIs.
-> 
-
-Yes, just easy to do it from the beginning. :-)
-
-Regards
-Dong Aisheng
-
-> > +				   struct clk_bulk_data *clks);
-> > +
-> > +/**
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
