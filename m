@@ -1,50 +1,253 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Mon, 8 May 2017 12:14:34 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-Message-ID: <20170508101434.zah6wfq25k6ymrls@pengutronix.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
- <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
- <20170505072529.a3z4gonsygg3wqfx@pengutronix.de>
- <a5bfc04e-15cf-2b24-17f9-c9b60c1052cc@i2se.com>
- <185bc71b-f986-9dd1-3a56-a525f2f09fc7@i2se.com>
- <20170505201039.uyk2ie6zyfrdafgo@pengutronix.de>
- <ae7631748701472c837c225a8c62c9fc@desrvmail02.tq-net.de>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
+	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
+	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH 6/6] dt-bindings: cpufreq: enhance Mediatek cpufreq dt-binding document
+Date: Fri, 5 May 2017 23:26:14 +0800
+Message-ID: <1493997974-17699-7-git-send-email-sean.wang@mediatek.com>
+In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <ae7631748701472c837c225a8c62c9fc@desrvmail02.tq-net.de>
+Content-Type: text/plain
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+From: Sean Wang <sean.wang@mediatek.com>
 
-On Mon, May 08, 2017 at 09:53:28AM +0000, Krummsdorf Michael wrote:
-> > (adding Michael Krummsdorf who authored a different patch for the same
-> > problem back in 2014 which Stefan found in TQ's patch stack.)
-> 
-> thanks for adding me.
-> Back then I narrowed the issue down to two conditions:
-> * ref_io had to be clock source and
-> * ssp clock div had to be 1
+Update binding document to reflect the lastest driver logic and
+add more examples guiding people how to use Mediatek cpufreq driver.
 
-This is not the complete problem description because my patch lowers the
-speed on ref_io and has no influence on HW_CLKCTRL_SSP2 (which has
-already DIV=2 for me before the patch where it's broken).
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ .../bindings/cpufreq/cpufreq-mediatek.txt          | 170 ++++++++++++++++++++-
+ 1 file changed, 167 insertions(+), 3 deletions(-)
 
-Also Stefan has values >1 and the problem is still there on a duckbill.
-
-Best regards
-Uwe
-
+diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+index 52b457c..0703927 100644
+--- a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
++++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+@@ -1,4 +1,5 @@
+-Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
++Binding for Mediatek's CPUFreq driver
++=====================================
+ 
+ Required properties:
+ - clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
+@@ -9,6 +10,8 @@ Required properties:
+ 			  transition and not stable yet.
+ 	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
+ 	generic clock consumer properties.
++- operating-points-v2: Pleaser refer to Documentation/devicetree/bindings/opp/opp.txt
++	for detail.
+ - proc-supply: Regulator for Vproc of CPU cluster.
+ 
+ Optional properties:
+@@ -17,9 +20,166 @@ Optional properties:
+ 	       Vsram to fit SoC specific needs. When absent, the voltage scaling
+ 	       flow is handled by hardware, hence no software "voltage tracking" is
+ 	       needed.
++- #cooling-cells:
++- cooling-min-level:
++- cooling-max-level:
++	Please refer to Documentation/devicetree/bindings/thermal/thermal.txt
++	for detail.
++
++Example 1 (MT7623 SoC):
++
++	cpu_opp_table: opp_table {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@598000000 {
++			opp-hz = /bits/ 64 <598000000>;
++			opp-microvolt = <1050000>;
++		};
++
++		opp@747500000 {
++			opp-hz = /bits/ 64 <747500000>;
++			opp-microvolt = <1050000>;
++		};
++
++		opp@1040000000 {
++			opp-hz = /bits/ 64 <1040000000>;
++			opp-microvolt = <1150000>;
++		};
++
++		opp@1196000000 {
++			opp-hz = /bits/ 64 <1196000000>;
++			opp-microvolt = <1200000>;
++		};
++
++		opp@1300000000 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1300000>;
++		};
++	};
++
++	cpu0: cpu@0 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a7";
++		reg = <0x0>;
++		clocks = <&infracfg CLK_INFRA_CPUSEL>,
++			 <&apmixedsys CLK_APMIXED_MAINPLL>;
++		clock-names = "cpu", "intermediate";
++		operating-points-v2 = <&cpu_opp_table>;
++		#cooling-cells = <2>;
++		cooling-min-level = <0>;
++		cooling-max-level = <7>;
++	};
++	cpu@1 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a7";
++		reg = <0x1>;
++		operating-points-v2 = <&cpu_opp_table>;
++	};
++	cpu@2 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a7";
++		reg = <0x2>;
++		operating-points-v2 = <&cpu_opp_table>;
++	};
++	cpu@3 {
++		device_type = "cpu";
++		compatible = "arm,cortex-a7";
++		reg = <0x3>;
++		operating-points-v2 = <&cpu_opp_table>;
++	};
++
++Example 2 (MT8173 SoC):
++	cpu_opp_table_a: opp_table_a {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@507000000 {
++			opp-hz = /bits/ 64 <507000000>;
++			opp-microvolt = <859000>;
++		};
++
++		opp@702000000 {
++			opp-hz = /bits/ 64 <702000000>;
++			opp-microvolt = <908000>;
++		};
++
++		opp@1001000000 {
++			opp-hz = /bits/ 64 <1001000000>;
++			opp-microvolt = <983000>;
++		};
++
++		opp@1105000000 {
++			opp-hz = /bits/ 64 <1105000000>;
++			opp-microvolt = <1009000>;
++		};
++
++		opp@1183000000 {
++			opp-hz = /bits/ 64 <1183000000>;
++			opp-microvolt = <1028000>;
++		};
++
++		opp@1404000000 {
++			opp-hz = /bits/ 64 <1404000000>;
++			opp-microvolt = <1083000>;
++		};
++
++		opp@1508000000 {
++			opp-hz = /bits/ 64 <1508000000>;
++			opp-microvolt = <1109000>;
++		};
++
++		opp@1573000000 {
++			opp-hz = /bits/ 64 <1573000000>;
++			opp-microvolt = <1125000>;
++		};
++	};
++
++	cpu_opp_table_b: opp_table_b {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@507000000 {
++			opp-hz = /bits/ 64 <507000000>;
++			opp-microvolt = <828000>;
++		};
++
++		opp@702000000 {
++			opp-hz = /bits/ 64 <702000000>;
++			opp-microvolt = <867000>;
++		};
++
++		opp@1001000000 {
++			opp-hz = /bits/ 64 <1001000000>;
++			opp-microvolt = <927000>;
++		};
++
++		opp@1209000000 {
++			opp-hz = /bits/ 64 <1209000000>;
++			opp-microvolt = <968000>;
++		};
++
++		opp@1404000000 {
++			opp-hz = /bits/ 64 <1007000000>;
++			opp-microvolt = <1028000>;
++		};
++
++		opp@1612000000 {
++			opp-hz = /bits/ 64 <1612000000>;
++			opp-microvolt = <1049000>;
++		};
++
++		opp@1807000000 {
++			opp-hz = /bits/ 64 <1807000000>;
++			opp-microvolt = <1089000>;
++		};
++
++		opp@1989000000 {
++			opp-hz = /bits/ 64 <1989000000>;
++			opp-microvolt = <1125000>;
++		};
++	};
+ 
+-Example:
+---------
+ 	cpu0: cpu@0 {
+ 		device_type = "cpu";
+ 		compatible = "arm,cortex-a53";
+@@ -29,6 +189,7 @@ Example:
+ 		clocks = <&infracfg CLK_INFRA_CA53SEL>,
+ 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 		clock-names = "cpu", "intermediate";
++		operating-points-v2 = <&cpu_opp_table_a>;
+ 	};
+ 
+ 	cpu1: cpu@1 {
+@@ -40,6 +201,7 @@ Example:
+ 		clocks = <&infracfg CLK_INFRA_CA53SEL>,
+ 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 		clock-names = "cpu", "intermediate";
++		operating-points-v2 = <&cpu_opp_table_a>;
+ 	};
+ 
+ 	cpu2: cpu@100 {
+@@ -51,6 +213,7 @@ Example:
+ 		clocks = <&infracfg CLK_INFRA_CA57SEL>,
+ 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 		clock-names = "cpu", "intermediate";
++		operating-points-v2 = <&cpu_opp_table_b>;
+ 	};
+ 
+ 	cpu3: cpu@101 {
+@@ -62,6 +225,7 @@ Example:
+ 		clocks = <&infracfg CLK_INFRA_CA57SEL>,
+ 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
+ 		clock-names = "cpu", "intermediate";
++		operating-points-v2 = <&cpu_opp_table_b>;
+ 	};
+ 
+ 	&cpu0 {
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.7.4
