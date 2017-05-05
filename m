@@ -1,224 +1,78 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>
-Subject: [PATCH 7/9] dt-bindings: clock: add imx7ulp clock binding doc
-Date: Mon, 15 May 2017 21:59:21 +0800
-Message-ID: <1494856763-6543-8-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <c0b049b4ddc2af2f34059e9c9d659de9@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io>
+ <20170504114858.9008-9-icenowy@aosc.io>
+ <20170504130535.6nokhni5a3uxwy66@lukather>
+ <c0b049b4ddc2af2f34059e9c9d659de9@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 5 May 2017 11:40:17 +0800
+Message-ID: <CAGb2v64tYm=L9ZY1uKguA8aWJinLvruBQ5+vLMQDJGgwWk_ySA@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v6 08/13] drm/sun4i: add support for
+ Allwinner DE2 mixers
+To: Icenowy Zheng <icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree <devicetree@vger.kernel.org>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
-
-Note IMX7ULP has two clock domains: M4 and A7. This binding doc
-is only for A7 clock domain.
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++++++++
- include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++++++++++++++
- 2 files changed, 170 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
-
-diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-new file mode 100644
-index 0000000..76ea3c7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-@@ -0,0 +1,62 @@
-+* Clock bindings for Freescale i.MX7ULP
-+
-+i.MX7ULP Clock functions are under joint control of the System
-+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-+modules, and Core Mode Controller (CMC)1 blocks
-+
-+The clocking scheme provides clear separation between M4 domain
-+and A7 domain. Except for a few clock sources shared between two
-+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-+and and the Fast IRC clock (FIRCLK), clock sources and clock
-+management are separated and contained within each domain.
-+
-+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-+
-+Note: this binding doc is only for A7 clock domain.
-+
-+Required properties:
-+
-+- compatible:	Should be "fsl,imx7ulp-clock".
-+- reg : 	Should contain registers location and length for scg1,
-+		pcc2 and pcc3.
-+- reg-names:	Should contain the according reg names "scg1", "pcc2"
-+		and "pcc3".
-+- #clock-cells:	Should be <1>.
-+- clocks:	Should contain the fixed input clocks.
-+- clock-name:   Should contain the following clock names:"rsoc", "sosc",
-+		"sirc", "firc", "upll", "mpll".
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.
-+See include/dt-bindings/clock/imx7ulp-clock.h
-+for the full list of i.MX7ULP clock IDs.
-+
-+Examples:
-+
-+#include <dt-bindings/clock/imx7ulp-clock.h>
-+
-+clks: scg1@403e0000 {
-+	compatible = "fsl,imx7ulp-clock";
-+	reg = <0x403e0000 0x10000>
-+	      <0x403f0000 0x10000>
-+	      <0x40b30000 0x10000>;
-+	reg-names = "scg1", "pcc2", "pcc3";
-+	clocks = <&rsoc>, <&sosc>, <&sirc>,
-+		 <&firc>, <&upll>, <&mpll>;
-+	clock-names = "rsoc", "sosc", "sirc",
-+		      "firc", "upll", "mpll";
-+	#clock-cells = <1>;
-+};
-+
-+usdhc1: usdhc@40380000 {
-+	compatible = "fsl,imx7ulp-usdhc";
-+	reg = <0x40380000 0x10000>;
-+	interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&clks IMX7ULP_CLK_NIC1_BUS_DIV>,
-+		 <&clks IMX7ULP_CLK_NIC1_DIV>,
-+		 <&clks IMX7ULP_CLK_USDHC1>;
-+	clock-names ="ipg", "ahb", "per";
-+	bus-width = <4>;
-+	status = "disabled";
-+};
-diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
-new file mode 100644
-index 0000000..2556106
---- /dev/null
-+++ b/include/dt-bindings/clock/imx7ulp-clock.h
-@@ -0,0 +1,108 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_IMX7ULP_H
-+#define __DT_BINDINGS_CLOCK_IMX7ULP_H
-+
-+#define IMX7ULP_CLK_DUMMY		0
-+#define IMX7ULP_CLK_ROSC		1
-+#define IMX7ULP_CLK_SOSC		2
-+#define IMX7ULP_CLK_FIRC		3
-+
-+/* SCG1 */
-+#define IMX7ULP_CLK_SPLL_PRE_SEL	4
-+#define IMX7ULP_CLK_SPLL_PRE_DIV	5
-+#define IMX7ULP_CLK_SPLL		6
-+#define IMX7ULP_CLK_SPLL_POST_DIV1	7
-+#define IMX7ULP_CLK_SPLL_POST_DIV2	8
-+#define IMX7ULP_CLK_SPLL_PFD0		9
-+#define IMX7ULP_CLK_SPLL_PFD1		10
-+#define IMX7ULP_CLK_SPLL_PFD2		11
-+#define IMX7ULP_CLK_SPLL_PFD3		12
-+#define IMX7ULP_CLK_SPLL_PFD_SEL	13
-+#define IMX7ULP_CLK_SPLL_SEL		14
-+#define IMX7ULP_CLK_APLL_PRE_SEL	15
-+#define IMX7ULP_CLK_APLL_PRE_DIV	16
-+#define IMX7ULP_CLK_APLL		17
-+#define IMX7ULP_CLK_APLL_POST_DIV1	18
-+#define IMX7ULP_CLK_APLL_POST_DIV2	19
-+#define IMX7ULP_CLK_APLL_PFD0		20
-+#define IMX7ULP_CLK_APLL_PFD1		21
-+#define IMX7ULP_CLK_APLL_PFD2		22
-+#define IMX7ULP_CLK_APLL_PFD3		23
-+#define IMX7ULP_CLK_APLL_PFD_SEL	24
-+#define IMX7ULP_CLK_APLL_SEL		25
-+#define IMX7ULP_CLK_UPLL		26
-+#define IMX7ULP_CLK_SYS_SEL		27
-+#define IMX7ULP_CLK_CORE_DIV		28
-+#define IMX7ULP_CLK_BUS_DIV		29
-+#define IMX7ULP_CLK_PLAT_DIV		30
-+#define IMX7ULP_CLK_DDR_SEL		31
-+#define IMX7ULP_CLK_DDR_DIV		32
-+#define IMX7ULP_CLK_NIC_SEL		33
-+#define IMX7ULP_CLK_NIC0_DIV		34
-+#define IMX7ULP_CLK_GPU_DIV		35
-+#define IMX7ULP_CLK_NIC1_DIV		36
-+#define IMX7ULP_CLK_NIC1_BUS_DIV	37
-+#define IMX7ULP_CLK_NIC1_EXT_DIV	38
-+
-+/* PCG2 */
-+#define IMX7ULP_CLK_DMA1		39
-+#define IMX7ULP_CLK_RGPIO2P1		40
-+#define IMX7ULP_CLK_FLEXBUS		41
-+#define IMX7ULP_CLK_SEMA42_1		42
-+#define IMX7ULP_CLK_DMA_MUX1		43
-+#define IMX7ULP_CLK_SNVS		44
-+#define IMX7ULP_CLK_CAAM		45
-+#define IMX7ULP_CLK_LPTPM4		46
-+#define IMX7ULP_CLK_LPTPM5		47
-+#define IMX7ULP_CLK_LPIT1		48
-+#define IMX7ULP_CLK_LPSPI2		49
-+#define IMX7ULP_CLK_LPSPI3		50
-+#define IMX7ULP_CLK_LPI2C4		51
-+#define IMX7ULP_CLK_LPI2C5		52
-+#define IMX7ULP_CLK_LPUART4		53
-+#define IMX7ULP_CLK_LPUART5		54
-+#define IMX7ULP_CLK_FLEXIO1		55
-+#define IMX7ULP_CLK_USB0		56
-+#define IMX7ULP_CLK_USB1		57
-+#define IMX7ULP_CLK_USB_PHY		58
-+#define IMX7ULP_CLK_USB_PL301		59
-+#define IMX7ULP_CLK_USDHC0		60
-+#define IMX7ULP_CLK_USDHC1		61
-+#define IMX7ULP_CLK_WDG1		62
-+#define IMX7ULP_CLK_WDG2		63
-+
-+/* PCG3 */
-+#define IMX7ULP_CLK_LPTPM6		64
-+#define IMX7ULP_CLK_LPTPM7		65
-+#define IMX7ULP_CLK_LPI2C6		66
-+#define IMX7ULP_CLK_LPI2C7		67
-+#define IMX7ULP_CLK_LPUART6		68
-+#define IMX7ULP_CLK_LPUART7		69
-+#define IMX7ULP_CLK_VIU			70
-+#define IMX7ULP_CLK_DSI			71
-+#define IMX7ULP_CLK_LCDIF		72
-+#define IMX7ULP_CLK_MMDC		73
-+#define IMX7ULP_CLK_PCTLC		74
-+#define IMX7ULP_CLK_PCTLD		75
-+#define IMX7ULP_CLK_PCTLE		76
-+#define IMX7ULP_CLK_PCTLF		77
-+#define IMX7ULP_CLK_GPU3D		78
-+#define IMX7ULP_CLK_GPU2D		79
-+#define IMX7ULP_CLK_MIPI_PLL		80
-+#define IMX7ULP_CLK_SIRC		81
-+#define IMX7ULP_CLK_SOSC_BUS_CLK	82
-+#define IMX7ULP_CLK_FIRC_BUS_CLK	83
-+#define IMX7ULP_CLK_SPLL_BUS_CLK	84
-+
-+#define IMX7ULP_CLK_END			85
-+
-+#endif /* __DT_BINDINGS_CLOCK_IMX7ULP_H */
--- 
-2.7.4
+T24gRnJpLCBNYXkgNSwgMjAxNyBhdCAxMjo1MiBBTSwgIDxpY2Vub3d5QGFvc2MuaW8+IHdyb3Rl
+Ogo+IOWcqCAyMDE3LTA1LTA0IDIxOjA177yMTWF4aW1lIFJpcGFyZCDlhpnpgZPvvJoKPj4KPj4g
+T24gVGh1LCBNYXkgMDQsIDIwMTcgYXQgMDc6NDg6NTNQTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3
+cm90ZToKPj4+Cj4+PiBBbGx3aW5uZXIgaGF2ZSBhIG5ldyAiRGlzcGxheSBFbmdpbmUgMi4wIiBp
+biB0aGVpciBuZXcgU29Dcywgd2hpY2ggY29tZXMKPj4+IHdpdGggbWl4ZXJzIHRvIGRvIGdyYXBo
+aWMgcHJvY2Vzc2luZyBhbmQgZmVlZCBkYXRhIHRvIFRDT04sIGxpa2UgdGhlIG9sZAo+Pj4gYmFj
+a2VuZHMgYW5kIGZyb250ZW5kcy4KPj4+Cj4+PiBBZGQgc3VwcG9ydCBmb3IgdGhlIG1peGVyIG9u
+IEFsbHdpbm5lciBWM3MgU29DOyBpdCdzIHRoZSBzaW1wbGVzdCBvbmUuCj4+Pgo+Pj4gQ3VycmVu
+dGx5IGEgbG90IG9mIGZ1bmN0aW9ucyBhcmUgc3RpbGwgbWlzc2luZyAtLSBtb3JlIGludmVzdGln
+YXRpb25zCj4+PiBhcmUgbmVlZGVkIHRvIGdhaW4gZW5vdWdoIGluZm9ybWF0aW9uIGZvciB0aGVt
+Lgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy5pbz4K
+Pj4+IC0tLQo+Pj4gQ2hhbmdlcyBpbiB2NjoKPj4+IC0gUmViYXNlZCBvbiB3ZW5zJ3MgbXVsdGkt
+cGlwZWxpbmUgcGF0Y2hzZXQuCj4+PiBDaGFuZ2VzIGluIHY1Ogo+Pj4gLSBDaGFuZ2VkIHNvbWUg
+Y29kZSBhbGlnbm1lbnQuCj4+PiAtIFJlcXVlc3QgcmVhbCAzMi1iaXQgRE1BIChwcmVwYXJlIGZv
+ciA2NC1iaXQgU29DcykuCj4+PiBDaGFuZ2VzIGluIHY0Ogo+Pj4gLSBLaWxsZWQgc29tZSBkZWFk
+IGNvZGUgYWNjb3JkaW5nIHRvIEplcm5lai4KPj4+Cj4+PiAgZHJpdmVycy9ncHUvZHJtL3N1bjRp
+L0tjb25maWcgICAgICAgfCAgMTAgKwo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9NYWtlZmls
+ZSAgICAgIHwgICAzICsKPj4+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuOGlfbGF5ZXIuYyB8
+IDE0MCArKysrKysrKysrKysrCj4+PiAgZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjhpX2xheWVy
+LmggfCAgMzYgKysrKwo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW44aV9taXhlci5jIHwg
+Mzk0Cj4+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPj4+ICBkcml2ZXJz
+L2dwdS9kcm0vc3VuNGkvc3VuOGlfbWl4ZXIuaCB8IDEzNyArKysrKysrKysrKysrCj4+PiAgNiBm
+aWxlcyBjaGFuZ2VkLCA3MjAgaW5zZXJ0aW9ucygrKQo+Pj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuOGlfbGF5ZXIuYwo+Pj4gIGNyZWF0ZSBtb2RlIDEwMDY0
+NCBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuOGlfbGF5ZXIuaAo+Pj4gIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuOGlfbWl4ZXIuYwo+Pj4gIGNyZWF0ZSBtb2Rl
+IDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuOGlfbWl4ZXIuaAo+Pj4KClsuLi5dCgo+
+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW44aV9taXhlci5jCj4+PiBi
+L2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW44aV9taXhlci5jCj4+PiBuZXcgZmlsZSBtb2RlIDEw
+MDY0NAo+Pj4gaW5kZXggMDAwMDAwMDAwMDAwLi5lMjE2Yjg0ZDViYjIKPj4+IC0tLSAvZGV2L251
+bGwKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW44aV9taXhlci5jCj4+PiBAQCAt
+MCwwICsxLDM5NCBAQAoKWy4uLl0KCj4+PiArICAgICAgIGxpc3RfYWRkX3RhaWwoJm1peGVyLT5l
+bmdpbmUubGlzdCwgJmRydi0+ZW5naW5lX2xpc3QpOwo+Pgo+Pgo+PiBZb3UgZGlkbid0IGNhbGwg
+SU5JVF9MSVNUX0hFQUQgb24gdGhhdCBsaXN0Lgo+Cj4KPiBTbyBkaWRuJ3QgdGhlIHN1bjRpX2Jh
+Y2tlbmQgZHJpdmVyLi4uCj4KPiBJIHRoaW5rIHRoZSBtaXhlci0+ZW5naW5lLmxpc3Qgb25seSBt
+ZWFucyBhbiBpdGVtIGluIHRoZQo+IGVuZ2luZV9saXN0LCBhbmQgdGhlIGRydi0+ZW5naW5lX2xp
+c3QgaXMgaW5pdGlhbGl6ZWQgaW4gdGhlCj4gc3VuNGlfZHJ2IHNvdXJjZSBjb2RlLgoKSSByZWFk
+IFsxXSB0aGF0IGlmIHRoZSBpdGVtIGlzIHN1YnNlcXVlbnRseSBhZGRlZCB0byBhIGxpc3QsCnlv
+dSBjb3VsZCBvbWl0IHRoZSBJTklUX0xJU1RfSEVBRCBjYWxsLgoKTWFrZXMgc2Vuc2UsIHRob3Vn
+aCB5b3UgaGF2ZSB0byBiZSBzdXJlIHlvdSBhcmVuJ3QgZG9pbmcgYW55dGhpbmcKZWxzZSB3aXRo
+IHRoZSBsaXN0IGVsZW1lbnQuCgpDaGVuWXUKClsxXSBodHRwczovL2lzaXMucG9seS5lZHUva3Vs
+ZXNoL3N0dWZmL3NyYy9rbGlzdC8KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
