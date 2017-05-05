@@ -1,297 +1,78 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 2/6] clk: sunxi-ng: Support multiple variable pre-dividers
-Date: Thu, 18 May 2017 11:58:05 +0800
-Message-Id: <20170518035809.15487-3-wens@csie.org>
-In-Reply-To: <20170518035809.15487-1-wens@csie.org>
-References: <20170518035809.15487-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:58525 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbdEEMai (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2017 08:30:38 -0400
+Date: Fri, 5 May 2017 14:30:35 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: icenowy@aosc.io
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH v6 11/13] ARM: dts: sun8i: add DE2 nodes
+ for V3s SoC
+Message-ID: <20170505123035.pwh3idz73ujrd3hx@lukather>
+References: <20170504114858.9008-1-icenowy@aosc.io>
+ <20170504114858.9008-12-icenowy@aosc.io>
+ <CAGb2v67uE2iuP+wrL2t0fSMY8C1qnX=pYru7pZGX+0WhC_z2EA@mail.gmail.com>
+ <8ad5de02ffc13348dfc71e9ec203205c@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="st47prdbm2t3ondk"
+In-Reply-To: <8ad5de02ffc13348dfc71e9ec203205c@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On the A83T, the AHB1 clock has a shared pre-divider on the two
-PLL-PERIPH clock parents. To support such instances of shared
-pre-dividers, this patch extends the mux clock type to support
-multiple variable pre-dividers.
 
-As the pre-dividers are only used to calculate the rate, but
-do not participate in the factorization process, this is fairly
-straightforward.
+--st47prdbm2t3ondk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c   | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-r.c    | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu_mux.c        | 15 ++++++++-------
- drivers/clk/sunxi-ng/ccu_mux.h        | 13 ++++++++-----
- 9 files changed, 51 insertions(+), 47 deletions(-)
+On Fri, May 05, 2017 at 04:53:43PM +0800, icenowy@aosc.io wrote:
+> > > +               de2_clocks: clock@1000000 {
+> > > +                       compatible =3D "allwinner,sun50i-h5-de2-clk";
+> >=20
+> > I am a bit skeptical about this. Since the V3S only has one mixer, do
+> > the clocks
+> > for the second one even exist?
+>=20
+> It's described in the de_clock.c in the BSP source code, and in hardware
+> these bits can be really set (although without clock output).
+>=20
+> So I use this compatible which has still the extra clocks.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index f54114c607df..2bb4cabf802f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -211,6 +211,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi", "pll-periph0" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -218,11 +221,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index df97e25aec76..4d6078fca9ac 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -195,6 +195,9 @@ static SUNXI_CCU_DIV_TABLE(axi_clk, "axi", "cpu",
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi", "pll-periph" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- 
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
-@@ -203,11 +206,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index 5c6d37bdf247..8a753ed0426d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -169,6 +169,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi" , "pll-periph" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -176,11 +179,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 8d38e6510e29..10b38dc46f75 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -180,6 +180,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi" , "pll-periph" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -187,11 +190,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 4cbc1b701b7c..62e4f0d2b2fc 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -141,6 +141,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi" , "pll-periph0" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -148,11 +151,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-index 119f47b568ea..de02be75785c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-@@ -27,6 +27,9 @@
- 
- static const char * const ar100_parents[] = { "osc32k", "osc24M",
- 					     "pll-periph0", "iosc" };
-+static const struct ccu_mux_var_prediv ar100_predivs[] = {
-+	{ .index = 2, .shift = 8, .width = 5 },
-+};
- 
- static struct ccu_div ar100_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
-@@ -35,11 +38,8 @@ static struct ccu_div ar100_clk = {
- 		.shift	= 16,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 2,
--			.shift	= 8,
--			.width	= 5,
--		},
-+		.var_predivs	= ar100_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ar100_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index 6297add857b5..a34a78d7fb28 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -132,6 +132,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpu", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi", "pll-periph0" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -139,11 +142,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index c6bb1f523232..b1eaafac9f23 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -46,13 +46,14 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 				prediv = cm->fixed_predivs[i].div;
- 
- 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
--		if (parent_index == cm->variable_prediv.index) {
--			u8 div;
--
--			div = reg >> cm->variable_prediv.shift;
--			div &= (1 << cm->variable_prediv.width) - 1;
--			prediv = div + 1;
--		}
-+		for (i = 0; i < cm->n_var_predivs; i++)
-+			if (parent_index == cm->var_predivs[i].index) {
-+				u8 div;
-+
-+				div = reg >> cm->var_predivs[i].shift;
-+				div &= (1 << cm->var_predivs[i].width) - 1;
-+				prediv = div + 1;
-+			}
- 
- 	*parent_rate = *parent_rate / prediv;
- }
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 47aba3a48245..044262245c07 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -10,6 +10,12 @@ struct ccu_mux_fixed_prediv {
- 	u16	div;
- };
- 
-+struct ccu_mux_var_prediv {
-+	u8	index;
-+	u8	shift;
-+	u8	width;
-+};
-+
- struct ccu_mux_internal {
- 	u8		shift;
- 	u8		width;
-@@ -18,11 +24,8 @@ struct ccu_mux_internal {
- 	const struct ccu_mux_fixed_prediv	*fixed_predivs;
- 	u8		n_predivs;
- 
--	struct {
--		u8	index;
--		u8	shift;
--		u8	width;
--	} variable_prediv;
-+	const struct ccu_mux_var_prediv		*var_predivs;
-+	u8		n_var_predivs;
- };
- 
- #define _SUNXI_CCU_MUX_TABLE(_shift, _width, _table)	\
--- 
-2.11.0
+If it's not usable, then it shouldn't be in the code, it's basically
+dead code.
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--st47prdbm2t3ondk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJZDHBnAAoJEBx+YmzsjxAgcXIQAMA633vVYPislWdk3mRPf9vc
+KWuBNS3Yg/XFtOi9qgzF9iGu8G0NeeG7FSBVoD+PSg6IsCenv936Iz2sOQc2x6X2
+PHPANnL32IchPRVZYBJLZNTee2om+2Yil0soKGaix6IUb+RdWedIcwcI6bfyM5jM
+zustjt83PZcd7ZhUV4NjZcLSUiITjaapNZ+fraDJNNgFepw0HepGxqubx27bfCii
+Abr5CZDhBQ5JaRjLbzmd2kJRFtU6u+eEmXRJyQlUsgdxra7RYbaXS80TBd14faFr
+55W0+ZJKVbgAHiy/eRIz0WO5H1X8YFHEZv6OxgH2KtS/oWasHI7jjNsN7BFxf5Ou
+bAO2GZHcgLI+FbSVqC7riSbGGlxZy/M/x2WFcWJzZ3sW7jUhAjBh05pqfKe/ixdT
+IhteMAcLnxClrE+GDX3r3XMIwf4OTGP3dbShkBzFQu2lv36Wq1pfWWn9qNkUA/Sr
+vrQmz+ZtqxrFx5wgHAL3r1HtbN3XSAXGivhZpXKsKIPkqxGhsrRTnIbu4FZPFGI/
+jSP1Zs6iNdrllwU2iBbRIvskl1kLJSqTOMMekfaSAvDoq1ne552lgsJU2YzjVKzg
+IWsShJxplWLGdLOMwRmhKcyxApoPrwYgSfREtsu0XvsvdBQTJ0lkjL5MVIcOga3B
+Y30eWJuKrcwxzh6A+kP3
+=ZXop
+-----END PGP SIGNATURE-----
+
+--st47prdbm2t3ondk--
