@@ -1,57 +1,115 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Zhong Kaihua <zhongkaihua@huawei.com>,
-	Chen Jun <chenjun14@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 0/2] Hi3660: enable sp804 timer
-Date: Thu, 18 May 2017 09:50:45 +0800
-Message-Id: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:58786 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751500AbdEEMgU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2017 08:36:20 -0400
+Date: Fri, 5 May 2017 14:36:18 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: icenowy@aosc.io
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v6 08/13] drm/sun4i: add support for Allwinner DE2 mixers
+Message-ID: <20170505123618.5vztqx2vdwsgnrxt@lukather>
+References: <20170504114858.9008-1-icenowy@aosc.io>
+ <20170504114858.9008-9-icenowy@aosc.io>
+ <20170504130535.6nokhni5a3uxwy66@lukather>
+ <522ab8cb2939f0017917c5e9b4065089@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rdd474nc5zdn4qvo"
+In-Reply-To: <522ab8cb2939f0017917c5e9b4065089@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set is to enable sp804 timer on Hi3660 for Hikey960 platform.
 
-On Hi3660, the sp804 timer co-exists with CPUs' architecture timer; but
-sp804 timer is located in SoC level but CPU's architecture timer is in
-CPU power domain. sp804 timer is used as broadcast timer when CPU enters
-idle states and the CPU (includes architecture timer) power domain is
-powered off. So sp804 timer enabling is prerequisite before we enable
-CPUIdle on Hi3660.
+--rdd474nc5zdn4qvo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch set is to enable sp804 timer, the first patch is to adjust
-crgctrl clock regiseration so ensure clock is avaiable for timer. The
-second patch is to add description for timer in dts. Have rebased this
-patch set on Guodong's dts patch set [1] and verified this patch set on
-Hikey960.
+On Fri, May 05, 2017 at 12:50:51AM +0800, icenowy@aosc.io wrote:
+> > > +void sun8i_mixer_layer_enable(struct sun8i_mixer *mixer,
+> > > +				int layer, bool enable)
+> > > +{
+> > > +	u32 val;
+> > > +	/* Currently the first UI channel is used */
+> > > +	int chan =3D mixer->cfg->vi_num;
+> > > +
+> > > +	DRM_DEBUG_DRIVER("Enabling layer %d in channel %d\n", layer, chan);
+> > > +
+> > > +	if (enable)
+> > > +		val =3D SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN;
+> > > +	else
+> > > +		val =3D 0;
+> > > +
+> > > +	regmap_update_bits(mixer->engine.regs,
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN, val);
+> > > +
+> > > +	/* Set the alpha configuration */
+> > > +	regmap_update_bits(mixer->engine.regs,
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK,
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_DEF);
+> > > +	regmap_update_bits(mixer->engine.regs,
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK,
+> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF);
+> > > +}
+> >=20
+> > This one too.
+>=20
+> It's called from sun8i_layer.c, so it cannot be static.
 
-[1] http://archive.armlinux.org.uk/lurker/message/20170517.083733.8207a50e.en.html
+Fair enough.
 
-Changes from v1:
-* Follow Steven's suggestion on IRC, Change to only use
-  CLK_OF_DECLARE_DRIVER for crgctrl clock.
+> > > +	/* Set base coordinates */
+> > > +	DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
+> > > +			 state->crtc_x, state->crtc_y);
+> > > +	regmap_write(mixer->engine.regs,
+> > > +		     SUN8I_MIXER_CHAN_UI_LAYER_COORD(chan, layer),
+> > > +		     SUN8I_MIXER_COORD(state->crtc_x, state->crtc_y));
+> >=20
+> > X and Y are fixed point numbers. You want to keep only the higher 16
+> > bits there.
+>=20
+> Do you mean "lower 16 bits"? Thus should I (x & 0xffff) or ((u16)x) ?
 
-Leo Yan (2):
-  clk: Hi3660: change to register crgctrl clock with
-    CLK_OF_DECLARE_DRIVER
-  arm64: dts: add sp804 timer node for Hi3660
+Nevermind, I got confused with src_x and src_y.
 
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
- drivers/clk/hisilicon/clk-hi3660.c        |  4 ++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
+> P.S. The negative coordinates are broken, how should I deal with it? or
+> is the coordinates promised to be not negative?
 
--- 
-1.9.1
+Adjust the buffer base address, and use a shorter line. You have such
+an example in the sun4i code.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--rdd474nc5zdn4qvo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJZDHG+AAoJEBx+YmzsjxAgO9cQAK9kXxS/kNWO3WHz2hX95Z/m
+BgKVkA7y+zogtPpoSvpznOeg5QbadtTXRiu3cB1kDAyyChrCzKYkVTqlp/vyxNKE
+tuuAXbn/nkhqZoJQk+WyIUiQMlTNMHV39oVA/xoyayo/DaWPRgVuiosvdtJ12FtN
+Y5h5Kw88+76/eLgoQzfDKYWecPlzit6aw+N1bNGKbdB7N1dWW9fWo9GwEJp6gIqf
+BC8nrkvuJkP90b5nnwEO7OZFApHC+DyOnGfi0sSTrK7kmFrDy/rt5PKfxDzmYp3p
+nGpKNUa7iOyyGZIGsxoAQ+uLeeXA0e6UUfZir3zpEyN78C0yDEImUsvALKG1vLMH
+SotRtrNtx+NdXmdbQPhSDROKCF/bU9Gdz4z+yJHSBOSbRYdHfwYxcPztS+J/MBEL
+KeWJmmrjk6XInNkTuAbUFf2szn0SvMLRWYm/Ga+DtoNnWa3UBlIb04cqNJu9uVJt
+6vS/VI3JQZYktSl4Lqn49kA7XC1eZwDQWvl6cCFhDPvYTyIWWpMreckV6g01S8c4
+tXYvVSZ6ZORd3dZzVNfSUt53zoPfbwaZueD6KIny1XMdwmBIw/icnG5FqhulMfEE
+GuwBIAX3mclJe2+mAnG6/GupUK2NhWUJPcPCRBGVFwh/Pqdyx7pzKcDYtOzIXg6v
+vp8YJdflTaurqmhAS4wr
+=9oMy
+-----END PGP SIGNATURE-----
+
+--rdd474nc5zdn4qvo--
