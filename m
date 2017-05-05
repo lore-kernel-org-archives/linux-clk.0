@@ -1,44 +1,48 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: CLK_OF_DECLARE advice required
-To: Phil Elwell <phil@raspberrypi.org>
-References: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Eric Anholt <eric@anholt.net>
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
-Date: Wed, 31 May 2017 09:27:07 -0600
+Return-Path: <ukl@pengutronix.de>
+Date: Fri, 5 May 2017 09:25:29 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	Sascha Hauer <kernel@pengutronix.de>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+Message-ID: <20170505072529.a3z4gonsygg3wqfx@pengutronix.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
+ <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
 MIME-Version: 1.0
-In-Reply-To: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/30/2017 06:23 AM, Phil Elwell wrote:
-> Hi,
-> 
-> I've run into a problem using the fixed-factor clock on Raspberry Pi and I'd
-> like some advice before I submit a patch.
-> 
-> Some context: the aim is to use a standard UART and some external circuitry
-> as a MIDI interface. This would be straightforward except that Linux doesn't
-> recognise the required 31.25KHz as a valid UART baud rate. Rhe workaround is
-> to declare the UART clock such that the reported rate differs from the actual
-> rate. If one sets the reported rate to be (actual*38400)/31250 then
-> requesting a 38400 baud rate will result in an actual 31250 baud signal.
+Hello Stefan,
 
-This sounds like the wrong approach. Forcing the port to use a different 
-clock rate than the user requests would prevent anyone from using that 
-port for its standard purpose; it'd turn what should be a runtime 
-decision into a compile-time decision.
+On Thu, May 04, 2017 at 02:25:07PM +0200, Stefan Wahren wrote:
+>        ref_io1                            1            1  
+> 320000000          0 0
 
-Are you sure there's no way to simply select the correct baud rate on 
-the port? I see plenty of references to configuring custom baud rates 
-under Linux when I search Google, e.g.:
+That means your ref_io1 is running at 320 MHz which my patch should
+prevent. Are you sure it is applied? What is the register FRAC0
+(0x800401b0) set to? Given that ref_io1 is reported as running at
+320000000 I'd expect that IO1FRAC is set to 27 which should be
+impossible with my patch given that clk_misc_init() in
+drivers/clk/mxs/clk-imx28.c initializes IO1FRAC0 to 30 and my patch
+should prevent it being set to something smaller than 30.
 
-> https://stackoverflow.com/questions/12646324/how-to-set-a-custom-baud-rate-on-linux
-"How to set a custom baud rate on Linux?"
+Something I just noticed now is that the description of FRAC0 includes:
 
-> https://sourceware.org/ml/libc-help/2009-06/msg00016.html
-"Re: Terminal interface and non-standard baudrates"
+	NOTE: This register can only be addressed by byte instructions.
+	Addressing word or half-word are not allowed.
+
+which is not respected by the clock driver.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
