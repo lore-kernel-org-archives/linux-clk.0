@@ -1,124 +1,74 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 06/11] clk: add clk_set_rate_protect
-Date: Sun, 21 May 2017 23:59:53 +0200
-Message-Id: <20170521215958.19743-7-jbrunet@baylibre.com>
-In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38100 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751592AbdEEDOt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 23:14:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170504114858.9008-8-icenowy@aosc.io>
+References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-8-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 5 May 2017 11:14:25 +0800
+Message-ID: <CAGb2v64GYR=S1eTBzvG3jzJBa8EDO9ZupChkfo05JCxP73d6Cw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v6 07/13] drm/sun4i: add a Kconfig option
+ for sun4i-backend
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_set_rate_protect is a combination of clk_set_rate and clk_rate_protect
-within a critical section. In case where several protecting consumers
-compete to set the rate of the same provider, it provides a way to make
-sure that at least one of them will be satisfied before the resource is
-locked.
+On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> As sun4i-backend is now a dedicated module, add an Kconfig option for
+> it to make it optional, since some build may only use other engines.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Splited out patch.
+>
+>  drivers/gpu/drm/sun4i/Kconfig  | 10 ++++++++++
+>  drivers/gpu/drm/sun4i/Makefile |  2 +-
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+> index a4b357db8856..5a8227f37cc4 100644
+> --- a/drivers/gpu/drm/sun4i/Kconfig
+> +++ b/drivers/gpu/drm/sun4i/Kconfig
+> @@ -12,3 +12,13 @@ config DRM_SUN4I
+>           Choose this option if you have an Allwinner SoC with a
+>           Display Engine. If M is selected the module will be called
+>           sun4i-drm.
+> +
+> +config DRM_SUN4I_BACKEND
+> +       tristate "Support for Allwinner A10 Display Engine Backend"
+> +       depends on DRM_SUN4I
+> +       default DRM_SUN4I
+> +       help
+> +         Choose this option if you have an Allwinner SoC with the
+> +         original Allwinner Display Engine, which has a backend to
+> +         do some alpha blending and feed graphics to TCON. If M is
+> +         selected the module will be called sun4i-backend.
+> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+> index a251fb36c951..a08df56759e3 100644
+> --- a/drivers/gpu/drm/sun4i/Makefile
+> +++ b/drivers/gpu/drm/sun4i/Makefile
+> @@ -9,6 +9,6 @@ sun4i-tcon-y += sun4i_crtc.o
+>  sun4i-backend-y += sun4i_backend.o sun4i_layer.o
+>
+>  obj-$(CONFIG_DRM_SUN4I)                += sun4i-drm.o sun4i-tcon.o
+> -obj-$(CONFIG_DRM_SUN4I)                += sun4i-backend.o
+> +obj-$(CONFIG_DRM_SUN4I_BACKEND)                += sun4i-backend.o
+>  obj-$(CONFIG_DRM_SUN4I)                += sun6i_drc.o
+>  obj-$(CONFIG_DRM_SUN4I)                += sun4i_tv.o
 
-This is to avoid the unlikely situation where several consumers protect a
-clock provider and none actually get a rate it can work with.
+Can you move sun4i-backend to the bottom in a separate section? The idea
+is to have a bunch of core or common stuff, then platform specific modules.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h | 14 ++++++++++++++
- 2 files changed, 59 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a0524e3bfaca..33ec990b2e97 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1809,6 +1809,51 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
- EXPORT_SYMBOL_GPL(clk_set_rate);
- 
- /**
-+ * clk_set_rate_protect - specify a new rate and protect it
-+ * @clk: the clk whose rate is being changed
-+ * @rate: the new rate for clk
-+ *
-+ * This is a combination of clk_set_rate and clk_rate_protect within
-+ * a critical section
-+ *
-+ * This can be used initially to ensure that at least 1 consumers is
-+ * statisfied when several protecting consummers are competing for the
-+ * same clock provider.
-+ *
-+ * The protection is not applied if setting the rate failed.
-+ *
-+ * Returns 0 on success, -EERROR otherwise.
-+ */
-+int clk_set_rate_protect(struct clk *clk, unsigned long rate)
-+{
-+	int ret;
-+
-+	if (!clk)
-+		return 0;
-+
-+	/* prevent racing with updates to the clock topology */
-+	clk_prepare_lock();
-+
-+	/*
-+	 * The temporary protection removal is not here, on purpose
-+	 * This function is meant to be used in instead of clk_rate_protect,
-+	 * so before the consumer code path protect the clock provider
-+	 */
-+
-+	ret = clk_core_set_rate_nolock(clk->core, rate);
-+
-+	if (!ret) {
-+		clk_core_rate_protect(clk->core);
-+		clk->protect_count++;
-+	}
-+
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(clk_set_rate_protect);
-+
-+/**
-  * clk_set_rate_range - set a rate range for a clock source
-  * @clk: clock source
-  * @min: desired minimum clock rate in Hz, inclusive
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 85d73e02df40..d3c299d23ae7 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -388,6 +388,15 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
- int clk_set_rate(struct clk *clk, unsigned long rate);
- 
- /**
-+ * clk_set_rate_protect - set and protect the clock rate for a clock source
-+ * @clk: clock source
-+ * @rate: desired clock rate in Hz
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+int clk_set_rate_protect(struct clk *clk, unsigned long rate);
-+
-+/**
-  * clk_has_parent - check if a clock is a possible parent for another
-  * @clk: clock source
-  * @parent: parent clock source
-@@ -506,6 +515,11 @@ static inline int clk_set_rate(struct clk *clk, unsigned long rate)
- 	return 0;
- }
- 
-+static inline int clk_set_rate_protect(struct clk *clk, unsigned long rate)
-+{
-+	return 0;
-+}
-+
- static inline long clk_round_rate(struct clk *clk, unsigned long rate)
- {
- 	return 0;
--- 
-2.9.4
+Thanks
+ChenYu
