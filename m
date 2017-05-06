@@ -1,46 +1,58 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Anup Patel <anup.patel@broadcom.com>, "Rob Herring" <robh+dt@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1495454307-23464-4-git-send-email-anup.patel@broadcom.com>
-Cc: "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will.deacon@arm.com>, "Ray Jui" <rjui@broadcom.com>,
- "Scott Branden" <sbranden@broadcom.com>, "Jon Mason" <jonmason@broadcom.com>,
- "Florian Fainelli" <f.fainelli@gmail.com>,
- "Oza Pawandeep" <oza.oza@broadcom.com>,
- "Srinath Mannam" <srinath.mannam@broadcom.com>,
- "Pramod Kumar" <pramod.kumar@broadcom.com>,
- "Sandeep Tripathy" <sandeep.tripathy@broadcom.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- bcm-kernel-feedback-list@broadcom.com
-References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
- <1495454307-23464-4-git-send-email-anup.patel@broadcom.com>
-Message-ID: <149574798866.52617.17864487502272102012@resonance>
-Subject: Re: [PATCH v4 03/11] clk: bcm: Add clocks for Stingray SOC
-Date: Thu, 25 May 2017 14:33:08 -0700
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH 01/11] dt-bindings: bcm: Add Broadcom Stingray bindings document
+Date: Sat,  6 May 2017 17:24:36 +0530
+Message-Id: <1494071686-19098-2-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Anup,
+This patch adds DT bindings info for Broadcom Stingray SOC
+and related reference boards.
 
-Quoting Anup Patel (2017-05-22 04:58:19)
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+---
+ Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
 
-Are all of those headers really needed?
-
-> +CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
-> +                       sr_genpll3_clk_init);
-
-Why use CLK_OF_DECLARE here? You've got a proper platform driver here.
-
-Regards,
-Mike
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+new file mode 100644
+index 0000000..23a0217
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+@@ -0,0 +1,12 @@
++Broadcom Stingray device tree bindings
++------------------------------------------------
++
++Boards with Stingray shall have the following properties:
++
++Required root node property:
++
++Stingray Combo SVK board
++compatible = "brcm,bcm958742k", "brcm,stingray";
++
++Stingray SST100 board
++compatible = "brcm,bcm958742t", "brcm,stingray";
+-- 
+2.7.4
