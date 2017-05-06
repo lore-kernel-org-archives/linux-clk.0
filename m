@@ -1,88 +1,114 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/10] clk: renesas: Add r8a7794 CPG Core Clock Definitions
-Date: Fri, 19 May 2017 10:46:01 +0200
-Message-Id: <1495183565-21679-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH 09/11] arm64: dts: Add I2C DT nodes for Stingray SoC
+Date: Sat,  6 May 2017 17:24:44 +0530
+Message-Id: <1494071686-19098-10-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all R-Car E2 Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2d ("List of Clocks [R-Car E2]") of the R-Car Gen2 Hardware
-User's Manual rev. 2.00.
+From: Oza Pawandeep <oza@broadcom.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2:
-  - Add Reviewed-by.
----
- include/dt-bindings/clock/r8a7794-cpg-mssr.h | 47 ++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
+This patch adds I2C DT nodes on Stingray SoC.
 
-diff --git a/include/dt-bindings/clock/r8a7794-cpg-mssr.h b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..9d720311ae3a229a
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
-@@ -0,0 +1,47 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
+Signed-off-by: Oza Pawandeep <oza@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 22 ++++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 20 ++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index 6014525..3250d09 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -63,6 +63,28 @@
+ 	status = "okay";
+ };
+ 
++&i2c0 {
++	status = "okay";
 +
-+#ifndef __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
++	pca9505: pca9505@20 {
++		compatible = "nxp,pca9505";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x20>;
++	};
++};
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++&i2c1 {
++	status = "okay";
 +
-+/* r8a7794 CPG Core Clocks */
-+#define R8A7794_CLK_Z2			0
-+#define R8A7794_CLK_ZG			1
-+#define R8A7794_CLK_ZTR			2
-+#define R8A7794_CLK_ZTRD2		3
-+#define R8A7794_CLK_ZT			4
-+#define R8A7794_CLK_ZX			5
-+#define R8A7794_CLK_ZS			6
-+#define R8A7794_CLK_HP			7
-+#define R8A7794_CLK_I			8
-+#define R8A7794_CLK_B			9
-+#define R8A7794_CLK_LB			10
-+#define R8A7794_CLK_P			11
-+#define R8A7794_CLK_CL			12
-+#define R8A7794_CLK_CP			13
-+#define R8A7794_CLK_M2			14
-+#define R8A7794_CLK_ADSP		15
-+#define R8A7794_CLK_ZB3			16
-+#define R8A7794_CLK_ZB3D2		17
-+#define R8A7794_CLK_DDR			18
-+#define R8A7794_CLK_SDH			19
-+#define R8A7794_CLK_SD0			20
-+#define R8A7794_CLK_SD2			21
-+#define R8A7794_CLK_SD3			22
-+#define R8A7794_CLK_MMC0		23
-+#define R8A7794_CLK_MP			24
-+#define R8A7794_CLK_QSPI		25
-+#define R8A7794_CLK_CPEX		26
-+#define R8A7794_CLK_RCAN		27
-+#define R8A7794_CLK_R			28
-+#define R8A7794_CLK_OSC			29
++	pcf8574: pcf8574@20 {
++		compatible = "nxp,pcf8574a";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x27>;
++	};
++};
 +
-+#endif /* __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__ */
+ &nand {
+ 	status = "ok";
+ 	nandcs@0 {
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index fb51473..d046b04 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -266,6 +266,16 @@
+ 			gpio-controller;
+ 		};
+ 
++		i2c0: i2c@689b0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x689b0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 177 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
++
+ 		gpio_hsls: gpio@689d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x689d0000 0x864>;
+@@ -292,6 +302,16 @@
+ 					<&pinmux 151 91 4>;
+ 		};
+ 
++		i2c1: i2c@689e0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x689e0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 178 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
++
+ 		uart0: uart@68a00000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
 -- 
 2.7.4
