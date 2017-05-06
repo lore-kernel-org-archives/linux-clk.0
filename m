@@ -1,138 +1,126 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:59512 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968460AbdEXITl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2017 04:19:41 -0400
-Date: Wed, 24 May 2017 10:19:28 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] Re: [RFC PATCH 10/11] ARM: sun8i: h3: add display
- engine pipeline for TVE
-Message-ID: <20170524081928.xcbepxdt7txnadki@flea.home>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <20170517164354.16399-11-icenowy@aosc.io>
- <20170519180616.vzrlu2avuucsjkiu@flea.home>
- <B72028D8-B055-4F53-A4EA-7E93A28DB8FF@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gn2k2r4rgqlpirho"
-In-Reply-To: <B72028D8-B055-4F53-A4EA-7E93A28DB8FF@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH 02/11] dt-bindings: clk: Extend binding doc for Stingray SOC
+Date: Sat,  6 May 2017 17:24:37 +0530
+Message-Id: <1494071686-19098-3-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
---gn2k2r4rgqlpirho
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Update iproc clock dt-binding documentation with
+Stingray pll and clock details.
 
-On Sat, May 20, 2017 at 02:10:35AM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2017=E5=B9=B45=E6=9C=8820=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
-2:06:16, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
-=B0:
-> >On Thu, May 18, 2017 at 12:43:53AM +0800, Icenowy Zheng wrote:
-> >> As we have already the support for the TV encoder on Allwinner H3,
-> >add
-> >> the display engine pipeline device tree nodes to its DTSI file.
-> >>=20
-> >> The H5 pipeline has some differences and will be enabled later.
-> >>=20
-> >> The currently-unused mixer0 and tcon0 are also needed, for the
-> >> completement of the pipeline.
-> >>=20
-> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >> ---
-> >>  arch/arm/boot/dts/sun8i-h3.dtsi | 189
-> >++++++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 189 insertions(+)
-> >>=20
-> >> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
-> >b/arch/arm/boot/dts/sun8i-h3.dtsi
-> >> index b36f9f423c39..20172ef92415 100644
-> >> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
-> >> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-> >> @@ -41,6 +41,8 @@
-> >>   */
-> >> =20
-> >>  #include "sunxi-h3-h5.dtsi"
-> >> +#include <dt-bindings/clock/sun8i-de2.h>
-> >> +#include <dt-bindings/reset/sun8i-de2.h>
-> >> =20
-> >>  / {
-> >>  	cpus {
-> >> @@ -72,6 +74,193 @@
-> >>  		};
-> >>  	};
-> >> =20
-> >> +	de: display-engine {
-> >> +		compatible =3D "allwinner,sun8i-h3-display-engine";
-> >> +		allwinner,pipelines =3D <&mixer0>,
-> >> +				      <&mixer1>;
-> >> +		status =3D "disabled";
-> >> +	};
-> >> +
-> >> +	soc {
-> >> +		display_clocks: clock@1000000 {
-> >> +			compatible =3D "allwinner,sun8i-a83t-de2-clk";
-> >> +			reg =3D <0x01000000 0x100000>;
-> >> +			clocks =3D <&ccu CLK_BUS_DE>,
-> >> +				 <&ccu CLK_DE>;
-> >> +			clock-names =3D "bus",
-> >> +				      "mod";
-> >> +			resets =3D <&ccu RST_BUS_DE>;
-> >> +			#clock-cells =3D <1>;
-> >> +			#reset-cells =3D <1>;
-> >> +			assigned-clocks =3D <&ccu CLK_DE>;
-> >> +			assigned-clock-parents =3D <&ccu CLK_PLL_DE>;
-> >> +			assigned-clock-rates =3D <432000000>;
-> >
-> >This shouldn't be set in the DT, but evaluated at runtime when calling
-> >clk_set_rate.
->=20
-> Nope, DE2 clock doesn't need evalution, as the clock is decoupled with
-> DE2 mixers' output signal. (Although it seems that SoCs with larger
-> plane size will use higher clock.)
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ .../bindings/clock/brcm,iproc-clocks.txt           | 76 ++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-So it's the display engine that needs that clock to operate properly?
-This is the wrong DT node to set that value then. It should be in the
-mixer node, or even better in the mixers' driver.
-
-> And setting it to 432MHz is also needed for properly 216MHz clock to
-> TVE.
-
-Just like the parenthood, this can and should be evaluated at runtime.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---gn2k2r4rgqlpirho
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZJUIQAAoJEBx+YmzsjxAgVxcP/iTUzfmy3TIryWWV0qe9yyY9
-gJGYSrF7nzJZ4GHEb5Rq7n+M8kVBjD8UTjLo/p7lXnol6xm/dgMPNzIQ8PWrpEqj
-dGmSX5qD0wqK+FeWsfBeU9pmsHgOmNkgi9LIaa1uh++M/LPdrHcWaiZBireQCX8L
-t3Imq+zMgxUWYM4fFnzcZVoMKfOVYI5u8/yisoGOcLnfvltuwT3AuhWvDa4NCRWO
-l1MHy2S4BuywiNf1C837c7i5KF4xqK5wr6zkPM/2ML9Eqq0KUcnY/2YezyuSREFR
-DfV+DVmMKPJewVg2AdWfS1DZCMspdF9MAu4lSrA+hCumSck2ltyJ40KuOIrLZRPW
-Jswz0APX45ZXryV35FliUsCOofkC4r2Lq+kRsfiGw2DF6p5ghvJMofVpgOcfWswK
-+Dycm6CQZknSsmHki48HNtsY7kk593IbHA4CKM4BPtNJY8qyaKq2lQgauE9jo9Dw
-7OVf3uYKvbrnwDWgxbI2A2sRNWxPq1NOTnexGUhwhU7nl4SiOx8i6dXJogaTESK7
-+McdnSdKVbTQebYrWArZfHTaMGdfhkxAjqFYUqgZv3Q+vSMN3C4O2IbquTF6KkgH
-r3uYho8wANY7eMmoBpm2zidUw7u130gf5YINLcxckvT2TXDcj5ekCb28tq8ZCEBd
-sRI8RqAxXTgE19O2nEya
-=aMy1
------END PGP SIGNATURE-----
-
---gn2k2r4rgqlpirho--
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index 6f66e9a..f2c5f0e4a 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -219,3 +219,79 @@ BCM63138
+ --------
+ PLL and leaf clock compatible strings for BCM63138 are:
+     "brcm,bcm63138-armpll"
++
++Stingray
++-----------
++PLL and leaf clock compatible strings for Stingray are:
++    "brcm,sr-genpll0"
++    "brcm,sr-genpll1"
++    "brcm,sr-genpll2"
++    "brcm,sr-genpll3"
++    "brcm,sr-genpll4"
++    "brcm,sr-genpll5"
++    "brcm,sr-genpll6"
++
++    "brcm,sr-lcpll0"
++    "brcm,sr-lcpll1"
++    "brcm,sr-lcpll-pcie"
++
++
++The following table defines the set of PLL/clock index and ID for Stingray.
++These clock IDs are defined in:
++    "include/dt-bindings/clock/bcm-sr.h"
++
++    Clock		Source		Index	ID
++    ---			-----		-----	---------
++    crystal		N/A		N/A	N/A
++    crmu_ref25m		crystal		N/A	N/A
++
++    genpll0		crystal		0	BCM_SR_GENPLL0
++    clk_125m		genpll0		1	BCM_SR_GENPLL0_125M_CLK
++    clk_scr		genpll0		2	BCM_SR_GENPLL0_SCR_CLK
++    clk_250		genpll0		3	BCM_SR_GENPLL0_250M_CLK
++    clk_pcie_axi	genpll0		4	BCM_SR_GENPLL0_PCIE_AXI_CLK
++    clk_paxc_axi_x2	genpll0		5	BCM_SR_GENPLL0_PAXC_AXI_X2_CLK
++    clk_paxc_axi	genpll0		6	BCM_SR_GENPLL0_PAXC_AXI_CLK
++
++    genpll1		crystal		0	BCM_SR_GENPLL1
++    clk_pcie_tl		genpll1		1	BCM_SR_GENPLL1_PCIE_TL_CLK
++    clk_mhb_apb		genpll1		2	BCM_SR_GENPLL1_MHB_APB_CLK
++
++    genpll2		crystal		0	BCM_SR_GENPLL2
++    clk_nic		genpll2		1	BCM_SR_GENPLL2_NIC_CLK
++    clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
++    clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
++    clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
++    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
++
++    genpll3		crystal		0	BCM_SR_GENPLL3
++    clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
++    clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
++
++    genpll4		crystal		0	BCM_SR_GENPLL4
++    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
++    clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
++    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
++    clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
++    clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
++
++
++    genpll5		crystal		0	BCM_SR_GENPLL5
++    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
++    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
++    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
++
++    genpll6		crystal		0	BCM_SR_GENPLL6
++    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
++
++    lcpll0		crystal		0	BCM_SR_LCPLL0
++    clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
++    clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
++    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
++    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
++
++    lcpll1		crystal		0	BCM_SR_LCPLL1
++    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
++
++    lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
++    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
+-- 
+2.7.4
