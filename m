@@ -1,117 +1,85 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 10/21] drm/sun4i: tcon: Move the muxing out of the mode set function
-Date: Wed, 17 May 2017 09:40:39 +0200
-Message-Id: <9633e1c870bba38b34323705134c1e7d00f8c747.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <jdelvare@suse.de>
+Date: Sat, 6 May 2017 10:00:59 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: <sean.wang@mediatek.com>
+Cc: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
+ <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+ <mturquette@baylibre.com>, <jamesjj.liao@mediatek.com>,
+ <p.zabel@pengutronix.de>, <shunli.wang@mediatek.com>,
+ <erin.lo@mediatek.com>, <devicetree@vger.kernel.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/6] cpufreq: mediatek: Add support of cpufreq to
+ MT2701/MT7623 SoC
+Message-ID: <20170506100059.6003d9ef@endymion>
+In-Reply-To: <1493997974-17699-5-git-send-email-sean.wang@mediatek.com>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+	<1493997974-17699-5-git-send-email-sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-The muxing can actually happen on both channels on some SoCs, so it makes
-more sense to just move it out of the sun4i_tcon1_mode_set function and
-create a separate function that needs to be called by the encoders.
+Hi Sean,
 
-Let's do that and convert the existing drivers.
+On Fri, 5 May 2017 23:26:12 +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> MT2701/MT7623 is an 32-bit ARMv7 based quad-core (4 * Cortex-A7) with
+> single cluster and this hardware is also compatible with the existing
+> driver through enabling CPU frequency feature with operating-points-v2
+> bindings.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm      | 4 ++--
+>  drivers/cpufreq/mt8173-cpufreq.c | 2 ++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 74ed7e9..68b387a 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -90,11 +90,11 @@ config ARM_KIRKWOOD_CPUFREQ
+>  config ARM_MT8173_CPUFREQ
+>  	tristate "Mediatek MT8173 CPUFreq support"
+>  	depends on ARCH_MEDIATEK && REGULATOR
+> -	depends on ARM64 || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
+> +	depends on (ARM || ARM64) || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_rgb.c  |  1 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
- drivers/gpu/drm/sun4i/sun4i_tv.c   |  1 +
- 4 files changed, 20 insertions(+), 6 deletions(-)
+Parentheses not needed. I am also curious if ARM_CPU_TOPOLOGY can
+actually be set when neither ARM nor ARM64 is. I suspect not, and then
+the above can be simplified to just:
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-index c9bbb3b560a5..422b191faa77 100644
---- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-@@ -175,6 +175,7 @@ static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
- 	struct sun4i_tcon *tcon = rgb->tcon;
- 
- 	sun4i_tcon0_mode_set(tcon, mode);
-+	sun4i_tcon_set_mux(tcon, 0, encoder);
- 
- 	/* FIXME: This seems to be board specific */
- 	clk_set_phase(tcon->dclk, 120);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 48fadd188d65..a3fc6ab3c14b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -109,6 +109,22 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
- }
- EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
- 
-+void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
-+			struct drm_encoder *encoder)
-+{
-+	if (!tcon->quirks->has_unknown_mux)
-+		return;
-+
-+	if (channel != 1)
-+		return;
-+
-+	/*
-+	 * FIXME: Undocumented bits
-+	 */
-+	regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, 1);
-+}
-+EXPORT_SYMBOL(sun4i_tcon_set_mux);
-+
- static int sun4i_tcon_get_clk_delay(struct drm_display_mode *mode,
- 				    int channel)
- {
-@@ -273,12 +289,6 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
- 	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
- 			   SUN4I_TCON_GCTL_IOMAP_MASK,
- 			   SUN4I_TCON_GCTL_IOMAP_TCON1);
--
--	/*
--	 * FIXME: Undocumented bits
--	 */
--	if (tcon->quirks->has_unknown_mux)
--		regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, 1);
- }
- EXPORT_SYMBOL(sun4i_tcon1_mode_set);
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index d37e1e2ed60e..f60e0b4c6db8 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -196,6 +196,8 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
- /* Mode Related Controls */
- void sun4i_tcon_switch_interlace(struct sun4i_tcon *tcon,
- 				 bool enable);
-+void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
-+			struct drm_encoder *encoder);
- void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
- 			  struct drm_display_mode *mode);
- void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 542da220818b..1177edaa8094 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -393,6 +393,7 @@ static void sun4i_tv_mode_set(struct drm_encoder *encoder,
- 	const struct tv_mode *tv_mode = sun4i_tv_find_tv_by_mode(mode);
- 
- 	sun4i_tcon1_mode_set(tcon, mode);
-+	sun4i_tcon_set_mux(tcon, 1, encoder);
- 
- 	/* Enable and map the DAC to the output */
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
+	depends on ARM || ARM64
+
+>  	depends on !CPU_THERMAL || THERMAL
+>  	select PM_OPP
+>  	help
+> -	  This adds the CPUFreq driver support for Mediatek MT8173 SoC.
+> +	  This adds the CPUFreq driver support for Mediatek SoCs.
+
+If this driver actually support all Mediatek SoCs, the menu entry
+itself should be updated to drop "MT8173".
+
+>  
+>  config ARM_OMAP2PLUS_CPUFREQ
+>  	bool "TI OMAP2+"
+> diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
+> index fd1886f..481ec77 100644
+> --- a/drivers/cpufreq/mt8173-cpufreq.c
+> +++ b/drivers/cpufreq/mt8173-cpufreq.c
+> @@ -575,6 +575,8 @@ static struct platform_driver mt8173_cpufreq_platdrv = {
+>  
+>  /* List of machines supported by this driver */
+>  static const struct of_device_id mt8173_cpufreq_machines[] __initconst = {
+> +	{ .compatible = "mediatek,mt2701", },
+> +	{ .compatible = "mediatek,mt7623", },
+>  	{ .compatible = "mediatek,mt817x", },
+>  	{ .compatible = "mediatek,mt8173", },
+>  	{ .compatible = "mediatek,mt8176", },
+
+
 -- 
-git-series 0.9.1
+Jean Delvare
+SUSE L3 Support
