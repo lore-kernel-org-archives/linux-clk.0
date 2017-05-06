@@ -1,34 +1,87 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 25 May 2017 15:48:46 +0800
-Message-ID: <CAGb2v663Tgcc1G2uue3SrD6vpOB5EnR+Um+2goiZWjUm+mt3Qg@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Angus Ainslie <angus@akkea.ca>,
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH 00/11] Broadcom Stingray SOC Initial Support
+Date: Sat,  6 May 2017 17:24:35 +0530
+Message-Id: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 25, 2017 at 12:34 AM, Boris Brezillon
-<boris.brezillon@free-electrons.com> wrote:
-> AHB BIST gate is actually controlled with bit 7.
->
-> This bug was detected while trying to use the NAND controller which is
-> using the DMA engine to transfer data to the NAND.
-> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate bit,
-> the core was disabling the DMA engine clock as part of its 'disable
-> unused clks' procedure, which was causing all DMA transfers to fail after
-> this point.
->
-> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-> Cc: stable@vger.kernel.org
-> Reported-by: Angus Ainslie <angus@akkea.ca>
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+This patchset adds initial support of Broadcom Stingray SOC
+by reusing existing Broadcom iProc device drivers.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Most of the patches in this patchset are DT patches except
+the Stingray clock tree support which just one patch.
+
+This patchset is based on Linux-4.11 and it is also available
+at stingray-v1 branch of https://github.com/Broadcom/arm64-linux.git
+
+Anup Patel (3):
+  dt-bindings: bcm: Add Broadcom Stingray bindings document
+  arm64: dts: Initial DTS files for Broadcom Stingray SOC
+  arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+
+Oza Pawandeep (1):
+  arm64: dts: Add I2C DT nodes for Stingray SoC
+
+Pramod Kumar (3):
+  arm64: dts: Add NAND DT nodes for Stingray SOC
+  arm64: dts: Add pinctrl DT nodes for Stingray SOC
+  arm64: dts: Add GPIO DT nodes for Stingray SOC
+
+Sandeep Tripathy (3):
+  dt-bindings: clk: Extend binding doc for Stingray SOC
+  clk: bcm: Add clocks for Stingray SOC
+  arm64: dts: Add clock DT nodes for Stingray SOC
+
+Srinath Mannam (1):
+  arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+
+ .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
+ .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
+ arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+ arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 140 +++++++
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
+ .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 162 ++++++++
+ .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 457 +++++++++++++++++++++
+ drivers/clk/bcm/Kconfig                            |   8 +
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-sr.c                           | 300 ++++++++++++++
+ include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
+ .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
+ 15 files changed, 1795 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+ create mode 100644 drivers/clk/bcm/clk-sr.c
+ create mode 100644 include/dt-bindings/clock/bcm-sr.h
+ create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+
+-- 
+2.7.4
