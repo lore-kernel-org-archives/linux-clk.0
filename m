@@ -1,66 +1,41 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Zhong Kaihua <zhongkaihua@huawei.com>,
-	Chen Jun <chenjun14@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 2/2] arm64: dts: add sp804 timer node for Hi3660
-Date: Thu, 18 May 2017 09:50:47 +0800
-Message-Id: <1495072247-25217-3-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
-References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1493373403-23462-2-git-send-email-varada@codeaurora.org>
+References: <1493373403-23462-1-git-send-email-varada@codeaurora.org> <1493373403-23462-2-git-send-email-varada@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 7 May 2017 09:45:53 +0200
+Message-ID: <CACRpkdbvUBMMnY90gmAUMrUiEx3+gSdvm_oLPTLYej3vJivf1A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+To: Varadarajan Narayanan <varada@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Sricharan R <sricharan@codeaurora.org>, absahu@codeaurora.org, sjaganat@codeaurora.org,
+	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Hi3660 SoC comes with the sp804 timer in addition to the
-architecture timers. These ones are shutdown when reaching a deep idle
-states and a backup timer is needed. The sp804 belongs to another power
-domain and can fulfill the purpose of replacing temporarily an
-architecture timer when the CPU is idle.
+On Fri, Apr 28, 2017 at 11:56 AM, Varadarajan Narayanan
+<varada@codeaurora.org> wrote:
 
-Describe it in the device tree, so it can be enabled at boot time.
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for ipq8074.
+>
+> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Bjorn Andersson is the maintainer of the qcom pinctrl drivers so you need
+to put him on the To: line so he can review and comment on the patches
+for new qcom pin control drivers.
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 138fcba..f75c792 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -173,6 +173,17 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		dual_timer0: timer@fff14000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			reg = <0x0 0xfff14000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg_ctrl HI3660_OSC32K>,
-+				 <&crg_ctrl HI3660_OSC32K>,
-+				 <&crg_ctrl HI3660_OSC32K>;
-+			clock-names = "timer1", "timer2", "apb_pclk";
-+		};
-+
- 		ufs: ufs@ff3b0000 {
- 			compatible = "jedec,ufs-1.1", "hisilicon,hi3660-ufs";
- 			reg = <0x0 0xff3b0000 0x0 0x1000>, /* 0: HCI standard */
--- 
-1.9.1
+Bjorn maybe you should patch MAINTAINERS so you do not get missed...
+
+Yours,
+Linus Walleij
