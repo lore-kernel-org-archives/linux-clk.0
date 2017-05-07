@@ -1,44 +1,47 @@
-Return-Path: <iemdey@gmail.com>
-Return-Path: <iemdey@gmail.com>
-From: Yong Deng <iemdey@gmail.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.io>,
-	linux-sunxi@googlegroups.com
-Cc: Yong Deng <iemdey@gmail.com>
-Subject: [PATCH v2] clk: sunxi-ng: v3s: Fix usb otg device reset bit
-Date: Fri,  5 May 2017 18:38:27 +0800
-Message-Id: <1493980707-40095-1-git-send-email-iemdey@gmail.com>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170428182401.rpn7ytxvu6shy5sn@rob-hp-laptop>
+References: <20170424185545.26608-1-linus.walleij@linaro.org> <20170428182401.rpn7ytxvu6shy5sn@rob-hp-laptop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sun, 7 May 2017 12:33:52 +0200
+Message-ID: <CACRpkdbMTete8j0PFUnZUQBSMtu+FR+7TSwMJ-gh-Tt=hY0v+w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: Add bindings for the Gemini Clock Controller
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-V3S's usb otg device reset bit should be 24, not 23.
+On Fri, Apr 28, 2017 at 8:24 PM, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Apr 24, 2017 at 08:55:45PM +0200, Linus Walleij wrote:
 
-Signed-off-by: Yong Deng <iemdey@gmail.com>
-Reviewed-By: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Fix commit format
+>> This adds device tree bindings and a header for the Gemini SoC
+>> Clock Controller.
+(...)
+>> +- compatible : shall contain the following:
+>> +  "cortina,gemini-clock-controller"
+>> +- #clock-cells should be <1>
+(...)
+>> +Example:
+>> +
+>> +syscon: syscon@40000000 {
+>> +     compatible = "cortina,gemini-syscon", "syscon", "simple-mfd";
+>> +     reg = <0x40000000 0x1000>;
+>> +
+>> +     clock-controller {
+>> +             compatible = "cortina,gemini-clock-controller";
+>> +             #clock-cells = <1>;
+>
+> There's not really much reason to have a child node here. The parent can
+> be the clock provider.
 
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But I should still keep the special clock controller compatible-string?
+I guess it is also possible to just bind all the drivers to
+"cortina,gemini-syscon".
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index e58706b..6297add 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -537,7 +537,7 @@ static CLK_FIXED_FACTOR(pll_periph0_2x_clk, "pll-periph0-2x",
- 	[RST_BUS_EMAC]		=  { 0x2c0, BIT(17) },
- 	[RST_BUS_HSTIMER]	=  { 0x2c0, BIT(19) },
- 	[RST_BUS_SPI0]		=  { 0x2c0, BIT(20) },
--	[RST_BUS_OTG]		=  { 0x2c0, BIT(23) },
-+	[RST_BUS_OTG]		=  { 0x2c0, BIT(24) },
- 	[RST_BUS_EHCI0]		=  { 0x2c0, BIT(26) },
- 	[RST_BUS_OHCI0]		=  { 0x2c0, BIT(29) },
- 
--- 
-1.8.3.1
+Yours,
+Linus Walleij
