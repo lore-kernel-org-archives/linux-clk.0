@@ -1,43 +1,59 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Tobias Regnery <tobias.regnery@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
-Date: Mon, 22 May 2017 22:29:40 +0200
-Message-Id: <20170522202951.2896280-1-arnd@arndb.de>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH 04/11] arm64: dts: Initial DTS files for Broadcom Stingray
+ SOC
+To: Anup Patel <anup.patel@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+ <1494071686-19098-5-git-send-email-anup.patel@broadcom.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+ Oza Pawandeep <oza@broadcom.com>,
+ Srinath Mannam <srinath.mannam@broadcom.com>,
+ Pramod Kumar <pramod.kumar@broadcom.com>,
+ Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com,
+ Scott Branden <scott.branden@broadcom.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <38356358-cfd1-9a29-2b53-80ed495573c6@gmail.com>
+Date: Sun, 7 May 2017 16:30:29 -0700
+MIME-Version: 1.0
+In-Reply-To: <1494071686-19098-5-git-send-email-anup.patel@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-We get a link error when CCU_MULT is not set with the
-newly added driver:
+Le 05/06/17 à 04:54, Anup Patel a écrit :
+> The Broadcom Stingray SoC is a new member in Broadcom iProc
+> SoC family.
+> 
+> This patch adds initial DTS files for Broadcom Stingray SoC
+> and two of its reference boards (bcm958742k and bcm958742t).
+> 
+> We have lot of reference boards and large number of devices
+> in Broadcom Stingray SoC so eventually we will have quite
+> a few DTS files for Stingray. To tackle, we have added a
+> separate directory for Stingray DTS files.
+> 
+> Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> Reviewed-by: Ray Jui <rjui@broadcom.com>
+> ---
 
-drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_mult_ops'
-drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.3+0x4): undefined reference to `ccu_mult_ops'
+> +
+> +	scr {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0 0xffffffff>;
 
-Fixes: 46b492116666 ("clk: sunxi-ng: Add driver for A83T CCU")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/sunxi-ng/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index a384c695b388..67acef3d2494 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -121,6 +121,7 @@ config SUN8I_A83T_CCU
- 	select SUNXI_CCU_DIV
- 	select SUNXI_CCU_GATE
- 	select SUNXI_CCU_MP
-+	select SUNXI_CCU_MULT
- 	select SUNXI_CCU_MUX
- 	select SUNXI_CCU_NKMP
- 	select SUNXI_CCU_NM
+Sorry for missing that during the internal review, the ranges property
+here should include the 6300_0000 offset such that everything else under
+the "scr" node is relative to that base address. This makes it a lot
+easier to understand the different physical addresses involved and the
+bus topology.
 -- 
-2.9.0
+Florian
