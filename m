@@ -1,54 +1,79 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 08/11] clk: cosmetic changes to clk_summary debugfs entry
-Date: Sun, 21 May 2017 23:59:55 +0200
-Message-Id: <20170521215958.19743-9-jbrunet@baylibre.com>
-In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 8 May 2017 09:50:10 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: sean.wang@mediatek.com
+Cc: rjw@rjwysocki.net, robh+dt@kernel.org, matthias.bgg@gmail.com,
+	mark.rutland@arm.com, mturquette@baylibre.com,
+	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
+	shunli.wang@mediatek.com, erin.lo@mediatek.com, jdelvare@suse.de,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] dt-bindings: cpufreq: enhance Mediatek cpufreq
+ dt-binding document
+Message-ID: <20170508042010.GD17010@vireshk-i7>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+ <1493997974-17699-7-git-send-email-sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1493997974-17699-7-git-send-email-sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_summary debugfs entry was already well over the traditional 80
-characters per line limit but it grew even larger with the addition of
-clock protection.
+On 05-05-17, 23:26, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Update binding document to reflect the lastest driver logic and
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+The bindings don't follow the drivers but its the other way around. Don't
+mention anything about the drivers in the bindings patches.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 71b0480a152b..955dae044f11 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2262,7 +2262,7 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 	if (!c)
- 		return;
- 
--	seq_printf(s, "%*s%-*s %11d %12d %12d %11lu %10lu %-3d\n",
-+	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %-3d\n",
- 		   level * 3 + 1, "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, c->protect_count,
-@@ -2289,8 +2289,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
- 	struct clk_core *c;
- 	struct hlist_head **lists = (struct hlist_head **)s->private;
- 
--	seq_puts(s, "   clock                         enable_cnt  prepare_cnt  protect_cnt        rate   accuracy   phase\n");
--	seq_puts(s, "----------------------------------------------------------------------------------------------------\n");
-+	seq_puts(s, "                                 enable  prepare  protect                               \n");
-+	seq_puts(s, "   clock                          count    count    count        rate   accuracy   phase\n");
-+	seq_puts(s, "----------------------------------------------------------------------------------------\n");
- 
- 	clk_prepare_lock();
- 
+> add more examples guiding people how to use Mediatek cpufreq driver.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  .../bindings/cpufreq/cpufreq-mediatek.txt          | 170 ++++++++++++++++++++-
+>  1 file changed, 167 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> index 52b457c..0703927 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> @@ -1,4 +1,5 @@
+> -Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
+> +Binding for Mediatek's CPUFreq driver
+> +=====================================
+>  
+>  Required properties:
+>  - clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
+> @@ -9,6 +10,8 @@ Required properties:
+>  			  transition and not stable yet.
+>  	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
+>  	generic clock consumer properties.
+> +- operating-points-v2: Pleaser refer to Documentation/devicetree/bindings/opp/opp.txt
+> +	for detail.
+>  - proc-supply: Regulator for Vproc of CPU cluster.
+>  
+>  Optional properties:
+> @@ -17,9 +20,166 @@ Optional properties:
+>  	       Vsram to fit SoC specific needs. When absent, the voltage scaling
+>  	       flow is handled by hardware, hence no software "voltage tracking" is
+>  	       needed.
+> +- #cooling-cells:
+> +- cooling-min-level:
+> +- cooling-max-level:
+> +	Please refer to Documentation/devicetree/bindings/thermal/thermal.txt
+> +	for detail.
+> +
+> +Example 1 (MT7623 SoC):
+> +
+> +	cpu_opp_table: opp_table {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp@598000000 {
+
+s/opp@/opp-/
+
 -- 
-2.9.4
+viresh
