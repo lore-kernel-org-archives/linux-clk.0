@@ -1,58 +1,31 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3 0/2] Hi3660: enable sp804 timer
-Date: Mon, 22 May 2017 12:52:26 +0800
-Message-Id: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170508193348.30236-1-eric@anholt.net>
+References: <20170508193348.30236-1-eric@anholt.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 May 2017 23:42:54 +0200
+Message-ID: <CACRpkdZUQX2MBiyd=m9P6HsxnNsf446RNR=R3-O_zm5GQXXOOg@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/pl111: Register the clock divider and use it.
+To: Eric Anholt <eric@anholt.net>
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set is to enable sp804 timer on Hi3660 for Hikey960 platform.
+On Mon, May 8, 2017 at 9:33 PM, Eric Anholt <eric@anholt.net> wrote:
 
-On Hi3660, the sp804 timer co-exists with CPUs' architecture timer; but
-sp804 timer is located in SoC level but CPU's architecture timer is in
-CPU power domain. sp804 timer is used as broadcast timer when CPU enters
-idle states and the CPU (includes architecture timer) power domain is
-powered off. So sp804 timer enabling is prerequisite before we enable
-CPUIdle on Hi3660.
+> This is required for the panel to work on bcm911360, where CLCDCLK is
+> the fixed 200Mhz AXI41 clock.  The rate set is still passed up to the
+> CLCDCLK, for platforms that have a settable rate on that one.
+>
+> v2: Set SET_RATE_PARENT (caught by Linus Walleij), depend on
+>     COMMON_CLK.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-This patch set is to enable sp804 timer, the first patch is to adjust
-subset of crgctrl clock regiseration to CLK_OF_DECLARE_DRIVER method
-so ensure timer clock is avaiable when timer probing. The second patch
-is to add description for timer in dts. Have rebased this patch set on
-Guodong's dts patch set [1] and verified this patch set on Hikey960.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-[1] http://archive.armlinux.org.uk/lurker/message/20170517.083733.8207a50e.en.html
-
-Changes from v2:
-* According to Stephen's suggestion, only changed necessary clocks
-  of fixed_rate_clks to CLK_OF_DECLARE_DRIVER method.
-
-Changes from v1:
-* Follow Steven's suggestion on IRC, Change to only use
-  CLK_OF_DECLARE_DRIVER for crgctrl clock.
-
-Leo Yan (2):
-  clk: Hi3660: register fixed_rate_clks with CLK_OF_DECLARE_DRIVER
-  arm64: dts: add sp804 timer node for Hi3660
-
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++
- drivers/clk/hisilicon/clk-hi3660.c        | 48 ++++++++++++++++++++++++-------
- 2 files changed, 49 insertions(+), 10 deletions(-)
-
--- 
-1.9.1
+Yours,
+Linus Walleij
