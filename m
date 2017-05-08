@@ -1,115 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:58786 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751500AbdEEMgU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2017 08:36:20 -0400
-Date: Fri, 5 May 2017 14:36:18 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: icenowy@aosc.io
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v6 08/13] drm/sun4i: add support for Allwinner DE2 mixers
-Message-ID: <20170505123618.5vztqx2vdwsgnrxt@lukather>
-References: <20170504114858.9008-1-icenowy@aosc.io>
- <20170504114858.9008-9-icenowy@aosc.io>
- <20170504130535.6nokhni5a3uxwy66@lukather>
- <522ab8cb2939f0017917c5e9b4065089@aosc.io>
+Return-Path: <Michael.Krummsdorf@tq-group.com>
+From: Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>
+To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Stefan Wahren <stefan.wahren@i2se.com>
+CC: Fabio Estevam <festevam@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam
+	<fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: AW: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+Date: Mon, 8 May 2017 09:53:28 +0000
+Message-ID: <ae7631748701472c837c225a8c62c9fc@desrvmail02.tq-net.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
+ <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
+ <20170505072529.a3z4gonsygg3wqfx@pengutronix.de>
+ <a5bfc04e-15cf-2b24-17f9-c9b60c1052cc@i2se.com>
+ <185bc71b-f986-9dd1-3a56-a525f2f09fc7@i2se.com>
+ <20170505201039.uyk2ie6zyfrdafgo@pengutronix.de>
+In-Reply-To: <20170505201039.uyk2ie6zyfrdafgo@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rdd474nc5zdn4qvo"
-In-Reply-To: <522ab8cb2939f0017917c5e9b4065089@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Uwe,=20
 
---rdd474nc5zdn4qvo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> (adding Michael Krummsdorf who authored a different patch for the same
+> problem back in 2014 which Stefan found in TQ's patch stack.)
 
-On Fri, May 05, 2017 at 12:50:51AM +0800, icenowy@aosc.io wrote:
-> > > +void sun8i_mixer_layer_enable(struct sun8i_mixer *mixer,
-> > > +				int layer, bool enable)
-> > > +{
-> > > +	u32 val;
-> > > +	/* Currently the first UI channel is used */
-> > > +	int chan =3D mixer->cfg->vi_num;
-> > > +
-> > > +	DRM_DEBUG_DRIVER("Enabling layer %d in channel %d\n", layer, chan);
-> > > +
-> > > +	if (enable)
-> > > +		val =3D SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN;
-> > > +	else
-> > > +		val =3D 0;
-> > > +
-> > > +	regmap_update_bits(mixer->engine.regs,
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN, val);
-> > > +
-> > > +	/* Set the alpha configuration */
-> > > +	regmap_update_bits(mixer->engine.regs,
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK,
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_DEF);
-> > > +	regmap_update_bits(mixer->engine.regs,
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK,
-> > > +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF);
-> > > +}
-> >=20
-> > This one too.
->=20
-> It's called from sun8i_layer.c, so it cannot be static.
+thanks for adding me.
+Back then I narrowed the issue down to two conditions:
+* ref_io had to be clock source and
+* ssp clock div had to be 1
 
-Fair enough.
+Limiting ssp clock div to be at least 2 eliminated the error.
+So in the driver I capped clk_freq to 480 MHz / 2.
+I did not consider changing ref_io frequency.
 
-> > > +	/* Set base coordinates */
-> > > +	DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
-> > > +			 state->crtc_x, state->crtc_y);
-> > > +	regmap_write(mixer->engine.regs,
-> > > +		     SUN8I_MIXER_CHAN_UI_LAYER_COORD(chan, layer),
-> > > +		     SUN8I_MIXER_COORD(state->crtc_x, state->crtc_y));
-> >=20
-> > X and Y are fixed point numbers. You want to keep only the higher 16
-> > bits there.
->=20
-> Do you mean "lower 16 bits"? Thus should I (x & 0xffff) or ((u16)x) ?
+Best regards,
+i.A. Michael Krummsdorf
+Entwicklung Standort Leipzig
+Tel. +49 341 308598-27, Fax +49 341 308598-11,
+Friedrich-List-Platz 2, 04103 Leipzig
+mailto:michael.krummsdorf@tq-group.com
+=20
+TQ-Systems GmbH
+M=FChlstra=DFe 2, Gut Delling, 82229 Seefeld
+Amtsgericht M=FCnchen, HRB 105018
+Sitz der Gesellschaft: Seefeld
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+www.tq-group.com
 
-Nevermind, I got confused with src_x and src_y.
-
-> P.S. The negative coordinates are broken, how should I deal with it? or
-> is the coordinates promised to be not negative?
-
-Adjust the buffer base address, and use a shorter line. You have such
-an example in the sun4i code.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---rdd474nc5zdn4qvo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJZDHG+AAoJEBx+YmzsjxAgO9cQAK9kXxS/kNWO3WHz2hX95Z/m
-BgKVkA7y+zogtPpoSvpznOeg5QbadtTXRiu3cB1kDAyyChrCzKYkVTqlp/vyxNKE
-tuuAXbn/nkhqZoJQk+WyIUiQMlTNMHV39oVA/xoyayo/DaWPRgVuiosvdtJ12FtN
-Y5h5Kw88+76/eLgoQzfDKYWecPlzit6aw+N1bNGKbdB7N1dWW9fWo9GwEJp6gIqf
-BC8nrkvuJkP90b5nnwEO7OZFApHC+DyOnGfi0sSTrK7kmFrDy/rt5PKfxDzmYp3p
-nGpKNUa7iOyyGZIGsxoAQ+uLeeXA0e6UUfZir3zpEyN78C0yDEImUsvALKG1vLMH
-SotRtrNtx+NdXmdbQPhSDROKCF/bU9Gdz4z+yJHSBOSbRYdHfwYxcPztS+J/MBEL
-KeWJmmrjk6XInNkTuAbUFf2szn0SvMLRWYm/Ga+DtoNnWa3UBlIb04cqNJu9uVJt
-6vS/VI3JQZYktSl4Lqn49kA7XC1eZwDQWvl6cCFhDPvYTyIWWpMreckV6g01S8c4
-tXYvVSZ6ZORd3dZzVNfSUt53zoPfbwaZueD6KIny1XMdwmBIw/icnG5FqhulMfEE
-GuwBIAX3mclJe2+mAnG6/GupUK2NhWUJPcPCRBGVFwh/Pqdyx7pzKcDYtOzIXg6v
-vp8YJdflTaurqmhAS4wr
-=9oMy
------END PGP SIGNATURE-----
-
---rdd474nc5zdn4qvo--
+Besuchen Sie uns:
+Intersolar Europe, M=FCnchen, 31. Mai - 2. Juni 2017, Halle B2, Stand B2.23=
+4
+MT-CONNECT, N=FCrnberg, 21. - 22. Juni 2017, Halle 10.1, Stand 10.1-116
