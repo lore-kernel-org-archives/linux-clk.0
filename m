@@ -1,132 +1,136 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 0/8] clk: sunxi-ng: Add support for A83T CCU
-Date: Wed,  3 May 2017 11:16:50 +0800
-Message-Id: <20170503031658.29299-1-wens@csie.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
+	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
+	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH V2 2/3] clk: add managed version of clk_bulk_get
+Date: Mon, 8 May 2017 22:03:52 +0800
+Message-ID: <1494252233-21074-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
+References: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+This patch introduces the managed version of clk_bulk_get.
 
-(Resent with devicetree mailing list CC-ed.)
-This is v2 of my A83T CCU series. This is for 4.13.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Anson Huang <anson.huang@nxp.com>
+Cc: Robin Gong <yibin.gong@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Octavian Purdila <octavian.purdila@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ChangeLog:
+v1->v2: only one minor comment change
+---
+ drivers/clk/clk-devres.c | 36 ++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h      | 21 +++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-Changes since v1:
-
-  - Dropped two patches that were merged
-
-  - Added clk core flag to disable caching of clock phases
-
-  - Added support for multiple variable pre-dividers
-
-  - Merged "pll-periph-ahb1" pre-divider clock into "ahb1" clock
-    with multiple variable pre-dividers
-
-  - Introduced new class of phase clocks that return -ENOTSUPP
-    when the clock is in new timing mode
-
-  - Force mmc2 clock to new timing mode
-
-  - Added back mmc2 output and sample clocks
-
-  - Fixed bit ops for forcing audio PLL configuration
-
-  - Added requirement for "losc" clock in device tree binding
-
-  - Stripped leading 0 in device node name
-
-  - Updated subject prefixes for various patches
-
-Patch 1 adds a compatible string for the A83T CCU to the sunxi-ccu
-bindings.
-
-Patch 2 adds a CLK_GET_PHASE_NOCACHE flag to the clk core, asking it
-not to cache clock phase values. This is similar to CLK_GET_RATE_NOCACHE.
-Patch 5 has a compile time dependency on this patch, for the flag value.
-
-Patch 3 adds a new class of phase clocks that check the new timing mode
-bit, and returns an error if it is set, which indicates the phase delays
-no longer apply. This is a clean way to signal which timing mode the mmc
-clock is in, without using any custom functions or callbacks. We don't
-support runtime switching of modes.
-
-Patch 4 adds support for multiple variable pre-dividers to the sunxi-ng
-mux class.
-
-Patch 5 adds the driver for the A83T CCU.
-
-Patch 6 adds the CCU device nodes, and fixes up any existing clock
-phandles in the dtsi, without using the macros.
-
-Patch 7 sets the clock accuracy for the main oscillator.
-
-Patch 8 is for the next -rc2, switch the clock indices from raw numbers
-to macros we introduced with the driver. This will be updated if more
-peripherals are introduced in the same cycle.
-
-Let me know what you think.
-
-Cover letter excerpt from v1:
-
-This is yet another series that adds support for the A83T CCU.
-The A83T CCU has a mix of new styled (like the A80) clocks at
-old (like A3x) offsets. Some differences include:
-
-  - D1/D2 style PLL clocks
-  - divisible audio module clocks
-  - new timing mode for mmc2 module clock
-
-
-Regards
-ChenYu
-
-Chen-Yu Tsai (8):
-  dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
-  clk: Provide option to query hardware for clk phase
-  clk: sunxi-ng: Add class of phase clocks supporting MMC new timing
-    modes
-  clk: sunxi-ng: Support multiple variable pre-dividers
-  clk: sunxi-ng: Add driver for A83T CCU
-  ARM: sun8i: a83t: Add CCU device nodes
-  ARM: sun8i: a83t: Set clock accuracy for 24MHz oscillator
-  ARM: sun8i: a83t: Switch to CCU device tree binding macros
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   2 +
- arch/arm/boot/dts/sun8i-a83t.dtsi                  |  19 +-
- drivers/clk/clk.c                                  |   6 +-
- drivers/clk/sunxi-ng/Kconfig                       |  10 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c              |  10 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              | 911 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.h              |  64 ++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r.c                 |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c               |  10 +-
- drivers/clk/sunxi-ng/ccu_mux.c                     |  15 +-
- drivers/clk/sunxi-ng/ccu_mux.h                     |  13 +-
- drivers/clk/sunxi-ng/ccu_phase.c                   |  47 ++
- drivers/clk/sunxi-ng/ccu_phase.h                   |  16 +
- include/dt-bindings/clock/sun8i-a83t-ccu.h         | 140 ++++
- include/dt-bindings/reset/sun8i-a83t-ccu.h         |  98 +++
- include/linux/clk-provider.h                       |   1 +
- 21 files changed, 1363 insertions(+), 50 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.h
- create mode 100644 include/dt-bindings/clock/sun8i-a83t-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-a83t-ccu.h
-
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 3a218c3..d854e26 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -34,6 +34,42 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk_bulk_devres {
++	struct clk_bulk_data *clks;
++	int num_clks;
++};
++
++static void devm_clk_bulk_release(struct device *dev, void *res)
++{
++	struct clk_bulk_devres *devres = res;
++
++	clk_bulk_put(devres->num_clks, devres->clks);
++}
++
++int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
++		      struct clk_bulk_data *clks)
++{
++	struct clk_bulk_devres *devres;
++	int ret;
++
++	devres = devres_alloc(devm_clk_bulk_release,
++			      sizeof(*devres), GFP_KERNEL);
++	if (!devres)
++		return -ENOMEM;
++
++	ret = clk_bulk_get(dev, num_clks, clks);
++	if (!ret) {
++		devres->clks = clks;
++		devres->num_clks = num_clks;
++		devres_add(dev, devres);
++	} else {
++		devres_free(devres);
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
++
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+ 	struct clk **c = res;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 1201944..1ebccf3 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -281,6 +281,21 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 			      struct clk_bulk_data *clks);
+ 
+ /**
++ * devm_clk_bulk_get - managed get multiple clk consumers
++ * @dev: device for clock "consumer"
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * Return 0 on success, an errno on failure.
++ *
++ * This helper function allows drivers to get several clk
++ * consumers in one operation with management, the clks will
++ * automatically be freed when the device is unbound.
++ */
++int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
++				   struct clk_bulk_data *clks);
++
++/**
+  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+  * @dev: device for clock "consumer"
+  * @id: clock consumer ID
+@@ -550,6 +565,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline int devm_clk_bulk_get(struct device *dev, int num_clks,
++				    struct clk_bulk_data *clks)
++{
++	return 0;
++}
++
+ static inline struct clk *devm_get_clk_from_child(struct device *dev,
+ 				struct device_node *np, const char *con_id)
+ {
 -- 
-2.11.0
+2.7.4
