@@ -1,89 +1,103 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 19 May 2017 11:00:41 +0200
-Message-ID: <CAMuHMdVcQXfyY_mG1-iZ4F62JsxLgZwpEt8Sm=MVphFJdZFx1w@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] clk: renesas: rcar-gen2: Add new CPG/MSSR drivers
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1494226711.9662.22.camel@mtkswgap22>
+Subject: Re: [PATCH 6/6] dt-bindings: cpufreq: enhance Mediatek cpufreq
+ dt-binding document
+From: Sean Wang <sean.wang@mediatek.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: <rjw@rjwysocki.net>, <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
+	<mark.rutland@arm.com>, <mturquette@baylibre.com>,
+	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
+	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Mon, 8 May 2017 14:58:31 +0800
+In-Reply-To: <20170508042010.GD17010@vireshk-i7>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+	 <1493997974-17699-7-git-send-email-sean.wang@mediatek.com>
+	 <20170508042010.GD17010@vireshk-i7>
 Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 19, 2017 at 10:45 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
-> clk-mstp, and clk-div6 drivers, which depend on most clocks being
-> described in DT.  Especially the module (MSTP) clocks are cumbersome and
-> error prone, due to 3 arrays (clocks, clock-indices, and
-> clock-output-names) to be kept in sync. In addition, the clk-mstp driver
-> cannot be extended easily to also support module resets, which are
-> provided by the same hardware module.
->
-> Hence when developing support for R-Car Gen3 SoCs, another approach was
-> chosen, which led to the CPG/MSSR driver core, and SoC-specific
-> subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
->
-> This series introduces new clock drivers for all supported R-Car Gen2
-> SoCs, using the CPG/MSSR driver core, and the support for RZ/G1.  They
-> provide all clocks supported by the old driver, plus a few more.
-> The old driver can still be used through a Kconfig option, to preserve
-> backward compatibility with old DTBs.
->
-> This series does not include the corresponding DTS updates.  These will
-> be posted as a separate series later.
+On Mon, 2017-05-08 at 09:50 +0530, Viresh Kumar wrote:
+> On 05-05-17, 23:26, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > Update binding document to reflect the lastest driver logic and
+> 
+> The bindings don't follow the drivers but its the other way around. Don't
+> mention anything about the drivers in the bindings patches.
 
->  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
->  drivers/clk/renesas/Kconfig                        |  22 +-
->  drivers/clk/renesas/Makefile                       |   4 +
->  drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 ++++++++++++++++++++
->  drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++++++++
->  drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
->  drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 ++++++++++++++++++
->  drivers/clk/renesas/renesas-cpg-mssr.c             |  29 +++
->  drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
->  include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
->  include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
->  include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
->  include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
->  include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
->  14 files changed, 1341 insertions(+), 6 deletions(-)
 
-BTW, the above diffstat should be combined with the diffstat for the DTS
-conversion:
+Okay. I made a mistake: DT bindings shouldn't reference drivers and they
+are OS-agnostic. I will correct them with the principle. 
 
- arch/arm/boot/dts/r8a7790-lager.dts   |   7 +-
- arch/arm/boot/dts/r8a7790.dtsi        | 557 ++++++----------------------------
- arch/arm/boot/dts/r8a7791-koelsch.dts |   4 +-
- arch/arm/boot/dts/r8a7791-porter.dts  |   4 +-
- arch/arm/boot/dts/r8a7791.dtsi        | 557 +++++++---------------------------
- arch/arm/boot/dts/r8a7792-blanche.dts |   3 +-
- arch/arm/boot/dts/r8a7792-wheat.dts   |   3 +-
- arch/arm/boot/dts/r8a7792.dtsi        | 333 ++++----------------
- arch/arm/boot/dts/r8a7793-gose.dts    |   4 +-
- arch/arm/boot/dts/r8a7793.dtsi        | 459 +++++-----------------------
- arch/arm/boot/dts/r8a7794-alt.dts     |   3 +-
- arch/arm/boot/dts/r8a7794-silk.dts    |   3 +-
- arch/arm/boot/dts/r8a7794.dtsi        | 528 +++++---------------------------
- 13 files changed, 430 insertions(+), 2035 deletions(-)
+Thanks for your patience and guidance 
 
-Giving a net removal of 270 lines.
-That is, before removal of the backward compatibility of the drivers with
-old DTBs, which would remove ca. 500 more lines.
 
-Gr{oetje,eeting}s,
+> > add more examples guiding people how to use Mediatek cpufreq driver.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  .../bindings/cpufreq/cpufreq-mediatek.txt          | 170 ++++++++++++++++++++-
+> >  1 file changed, 167 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> > index 52b457c..0703927 100644
+> > --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> > +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> > @@ -1,4 +1,5 @@
+> > -Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
+> > +Binding for Mediatek's CPUFreq driver
+> > +=====================================
+> >  
+> >  Required properties:
+> >  - clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
+> > @@ -9,6 +10,8 @@ Required properties:
+> >  			  transition and not stable yet.
+> >  	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
+> >  	generic clock consumer properties.
+> > +- operating-points-v2: Pleaser refer to Documentation/devicetree/bindings/opp/opp.txt
+> > +	for detail.
+> >  - proc-supply: Regulator for Vproc of CPU cluster.
+> >  
+> >  Optional properties:
+> > @@ -17,9 +20,166 @@ Optional properties:
+> >  	       Vsram to fit SoC specific needs. When absent, the voltage scaling
+> >  	       flow is handled by hardware, hence no software "voltage tracking" is
+> >  	       needed.
+> > +- #cooling-cells:
+> > +- cooling-min-level:
+> > +- cooling-max-level:
+> > +	Please refer to Documentation/devicetree/bindings/thermal/thermal.txt
+> > +	for detail.
+> > +
+> > +Example 1 (MT7623 SoC):
+> > +
+> > +	cpu_opp_table: opp_table {
+> > +		compatible = "operating-points-v2";
+> > +		opp-shared;
+> > +
+> > +		opp@598000000 {
+> 
+> s/opp@/opp-/
 
-                        Geert
+I have referred to other dt-binding as examples where they also use opp@
+as the prefix word.  e.g bindings/cpufreq/ti-cpufreq.txt did it.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Or I misunderstand something you pointed out here ?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+
+
+
+
+
+
+
+
+
+
+> 
