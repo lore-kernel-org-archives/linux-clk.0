@@ -1,94 +1,317 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1496049452.7514.5.camel@baylibre.com>
-Subject: Re: [PATCH v2 11/11] clk: move CLK_SET_RATE_GATE protection from
- prepare to enable
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus
- Walleij <linus.walleij@linaro.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>
-Date: Mon, 29 May 2017 11:17:32 +0200
-In-Reply-To: <20170521215958.19743-12-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
-	 <20170521215958.19743-12-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org,
+	Russell King <linux@armlinux.org.uk>,
+	linus.walleij@linaro.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2] drm/pl111: Register the clock divider and use it.
+Date: Mon,  8 May 2017 12:33:48 -0700
+Message-Id: <20170508193348.30236-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2017-05-21 at 23:59 +0200, Jerome Brunet wrote:
-> CLK_SET_RATE_GATE name suggest that the rate can be set when the provider
-> is gated (disabled). With the current implementation, the rate can only be
-> set when the provider is unprepared, while it should be allowed to set a
-> prepared and disable provider.
-> Fix this by moving the rate protection mechanism in the enable/disable
-> core functions
-> 
+This is required for the panel to work on bcm911360, where CLCDCLK is
+the fixed 200Mhz AXI41 clock.  The rate set is still passed up to the
+CLCDCLK, for platforms that have a settable rate on that one.
 
-I'll drop this patch in the v3.
-The protection count should only be touch while holding the prepare_lock.
-This was disaster waiting to happen ... :(
+v2: Set SET_RATE_PARENT (caught by Linus Walleij), depend on
+    COMMON_CLK.
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/clk.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 6ee5fc59cf1f..e6e5048ce186 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -491,9 +491,6 @@ static void clk_core_unprepare(struct clk_core *core)
->  	if (WARN_ON(core->prepare_count == 1 && core->flags &
-> CLK_IS_CRITICAL))
->  		return;
->  
-> -	if (core->flags & CLK_SET_RATE_GATE)
-> -		clk_core_rate_unprotect(core);
-> -
->  	if (--core->prepare_count > 0)
->  		return;
->  
-> @@ -564,14 +561,6 @@ static int clk_core_prepare(struct clk_core *core)
->  
->  	core->prepare_count++;
->  
-> -	/*
-> -	 * CLK_SET_RATE_GATE is a special case of clock protection
-> -	 * Instead of a consumer protection, the provider is protecting
-> -	 * itself when prepared
-> -	 */
-> -	if (core->flags & CLK_SET_RATE_GATE)
-> -		clk_core_rate_protect(core);
-> -
->  	return 0;
->  }
->  
-> @@ -716,6 +705,9 @@ static void clk_core_disable(struct clk_core *core)
->  	if (WARN_ON(core->enable_count == 1 && core->flags &
-> CLK_IS_CRITICAL))
->  		return;
->  
-> +	if (core->flags & CLK_SET_RATE_GATE)
-> +		clk_core_rate_unprotect(core);
-> +
->  	if (--core->enable_count > 0)
->  		return;
->  
-> @@ -791,6 +783,15 @@ static int clk_core_enable(struct clk_core *core)
->  	}
->  
->  	core->enable_count++;
-> +
-> +	/*
-> +	 * CLK_SET_RATE_GATE is a special case of clock protection
-> +	 * Instead of a consumer protection, the provider is protecting
-> +	 * itself when enabled
-> +	 */
-> +	if (core->flags & CLK_SET_RATE_GATE)
-> +		clk_core_rate_protect(core);
-> +
->  	return 0;
->  }
->  
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/gpu/drm/pl111/Kconfig         |   1 +
+ drivers/gpu/drm/pl111/pl111_display.c | 162 ++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/pl111/pl111_drm.h     |   8 ++
+ drivers/gpu/drm/pl111/pl111_drv.c     |  11 +--
+ include/linux/amba/clcd-regs.h        |   5 ++
+ 5 files changed, 163 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/gpu/drm/pl111/Kconfig b/drivers/gpu/drm/pl111/Kconfig
+index ede49efd531f..309f4fd52de7 100644
+--- a/drivers/gpu/drm/pl111/Kconfig
++++ b/drivers/gpu/drm/pl111/Kconfig
+@@ -2,6 +2,7 @@ config DRM_PL111
+ 	tristate "DRM Support for PL111 CLCD Controller"
+ 	depends on DRM
+ 	depends on ARM || ARM64 || COMPILE_TEST
++	depends on COMMON_CLK
+ 	select DRM_KMS_HELPER
+ 	select DRM_KMS_CMA_HELPER
+ 	select DRM_GEM_CMA_HELPER
+diff --git a/drivers/gpu/drm/pl111/pl111_display.c b/drivers/gpu/drm/pl111/pl111_display.c
+index 39a5c33bce7d..2d924a6bf43c 100644
+--- a/drivers/gpu/drm/pl111/pl111_display.c
++++ b/drivers/gpu/drm/pl111/pl111_display.c
+@@ -108,7 +108,7 @@ static void pl111_display_enable(struct drm_simple_display_pipe *pipe,
+ 	u32 cntl;
+ 	u32 ppl, hsw, hfp, hbp;
+ 	u32 lpp, vsw, vfp, vbp;
+-	u32 cpl;
++	u32 cpl, tim2;
+ 	int ret;
+ 
+ 	ret = clk_set_rate(priv->clk, mode->clock * 1000);
+@@ -142,20 +142,28 @@ static void pl111_display_enable(struct drm_simple_display_pipe *pipe,
+ 	       (vfp << 16) |
+ 	       (vbp << 24),
+ 	       priv->regs + CLCD_TIM1);
+-	/* XXX: We currently always use CLCDCLK with no divisor.  We
+-	 * could probably reduce power consumption by using HCLK
+-	 * (apb_pclk) with a divisor when it gets us near our target
+-	 * pixel clock.
+-	 */
+-	writel(((mode->flags & DRM_MODE_FLAG_NHSYNC) ? TIM2_IHS : 0) |
+-	       ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? TIM2_IVS : 0) |
+-	       ((connector->display_info.bus_flags &
+-		 DRM_BUS_FLAG_DE_LOW) ? TIM2_IOE : 0) |
+-	       ((connector->display_info.bus_flags &
+-		 DRM_BUS_FLAG_PIXDATA_NEGEDGE) ? TIM2_IPC : 0) |
+-	       TIM2_BCD |
+-	       (cpl << 16),
+-	       priv->regs + CLCD_TIM2);
++
++	spin_lock(&priv->tim2_lock);
++
++	tim2 = readl(priv->regs + CLCD_TIM2);
++	tim2 &= (TIM2_BCD | TIM2_PCD_LO_MASK | TIM2_PCD_HI_MASK);
++
++	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++		tim2 |= TIM2_IHS;
++
++	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++		tim2 |= TIM2_IVS;
++
++	if (connector->display_info.bus_flags & DRM_BUS_FLAG_DE_LOW)
++		tim2 |= TIM2_IOE;
++
++	if (connector->display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
++		tim2 |= TIM2_IPC;
++
++	tim2 |= cpl << 16;
++	writel(tim2, priv->regs + CLCD_TIM2);
++	spin_unlock(&priv->tim2_lock);
++
+ 	writel(0, priv->regs + CLCD_TIM3);
+ 
+ 	drm_panel_prepare(priv->connector.panel);
+@@ -288,6 +296,126 @@ const struct drm_simple_display_pipe_funcs pl111_display_funcs = {
+ 	.prepare_fb = pl111_display_prepare_fb,
+ };
+ 
++static int pl111_clk_div_choose_div(struct clk_hw *hw, unsigned long rate,
++				    unsigned long *prate, bool set_parent)
++{
++	int best_div = 1, div;
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long best_prate = 0;
++	unsigned long best_diff = ~0ul;
++	int max_div = (1 << (TIM2_PCD_LO_BITS + TIM2_PCD_HI_BITS)) - 1;
++
++	for (div = 1; div < max_div; div++) {
++		unsigned long this_prate, div_rate, diff;
++
++		if (set_parent)
++			this_prate = clk_hw_round_rate(parent, rate * div);
++		else
++			this_prate = *prate;
++		div_rate = DIV_ROUND_UP_ULL(this_prate, div);
++		diff = abs(rate - div_rate);
++
++		if (diff < best_diff) {
++			best_div = div;
++			best_diff = diff;
++			best_prate = this_prate;
++		}
++	}
++
++	*prate = best_prate;
++	return best_div;
++}
++
++static long pl111_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long *prate)
++{
++	int div = pl111_clk_div_choose_div(hw, rate, prate, true);
++
++	return DIV_ROUND_UP_ULL(*prate, div);
++}
++
++static unsigned long pl111_clk_div_recalc_rate(struct clk_hw *hw,
++					       unsigned long prate)
++{
++	struct pl111_drm_dev_private *priv =
++		container_of(hw, struct pl111_drm_dev_private, clk_div);
++	u32 tim2 = readl(priv->regs + CLCD_TIM2);
++	int div;
++
++	if (tim2 & TIM2_BCD)
++		return prate;
++
++	div = tim2 & TIM2_PCD_LO_MASK;
++	div |= (tim2 & TIM2_PCD_HI_MASK) >>
++		(TIM2_PCD_HI_SHIFT - TIM2_PCD_LO_BITS);
++	div += 2;
++
++	return DIV_ROUND_UP_ULL(prate, div);
++}
++
++static int pl111_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long prate)
++{
++	struct pl111_drm_dev_private *priv =
++		container_of(hw, struct pl111_drm_dev_private, clk_div);
++	int div = pl111_clk_div_choose_div(hw, rate, &prate, false);
++	u32 tim2;
++
++	spin_lock(&priv->tim2_lock);
++	tim2 = readl(priv->regs + CLCD_TIM2);
++	tim2 &= ~(TIM2_BCD | TIM2_PCD_LO_MASK | TIM2_PCD_HI_MASK);
++
++	if (div == 1) {
++		tim2 |= TIM2_BCD;
++	} else {
++		div -= 2;
++		tim2 |= div & TIM2_PCD_LO_MASK;
++		tim2 |= (div >> TIM2_PCD_LO_BITS) << TIM2_PCD_HI_SHIFT;
++	}
++
++	writel(tim2, priv->regs + CLCD_TIM2);
++	spin_unlock(&priv->tim2_lock);
++
++	return 0;
++}
++
++const struct clk_ops pl111_clk_div_ops = {
++	.recalc_rate = pl111_clk_div_recalc_rate,
++	.round_rate = pl111_clk_div_round_rate,
++	.set_rate = pl111_clk_div_set_rate,
++};
++
++static int
++pl111_init_clock_divider(struct drm_device *drm)
++{
++	struct pl111_drm_dev_private *priv = drm->dev_private;
++	struct clk *parent = devm_clk_get(drm->dev, "clcdclk");
++	struct clk_hw *div = &priv->clk_div;
++	const char *parent_name;
++	struct clk_init_data init = {
++		.name = "pl111_div",
++		.ops = &pl111_clk_div_ops,
++		.parent_names = &parent_name,
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	};
++	int ret;
++
++	if (IS_ERR(parent)) {
++		dev_err(drm->dev, "CLCD: unable to get clcdclk.\n");
++		return PTR_ERR(parent);
++	}
++	parent_name = __clk_get_name(parent);
++
++	spin_lock_init(&priv->tim2_lock);
++	div->init = &init;
++
++	ret = devm_clk_hw_register(drm->dev, div);
++
++	priv->clk = div->clk;
++	return ret;
++}
++
+ int pl111_display_init(struct drm_device *drm)
+ {
+ 	struct pl111_drm_dev_private *priv = drm->dev_private;
+@@ -333,6 +461,10 @@ int pl111_display_init(struct drm_device *drm)
+ 		return -EINVAL;
+ 	}
+ 
++	ret = pl111_init_clock_divider(drm);
++	if (ret)
++		return ret;
++
+ 	ret = drm_simple_display_pipe_init(drm, &priv->pipe,
+ 					   &pl111_display_funcs,
+ 					   formats, ARRAY_SIZE(formats),
+diff --git a/drivers/gpu/drm/pl111/pl111_drm.h b/drivers/gpu/drm/pl111/pl111_drm.h
+index f381593921b7..4162c6aa5dbb 100644
+--- a/drivers/gpu/drm/pl111/pl111_drm.h
++++ b/drivers/gpu/drm/pl111/pl111_drm.h
+@@ -21,6 +21,7 @@
+ 
+ #include <drm/drm_gem.h>
+ #include <drm/drm_simple_kms_helper.h>
++#include <linux/clk-provider.h>
+ 
+ #define CLCD_IRQ_NEXTBASE_UPDATE BIT(2)
+ 
+@@ -37,7 +38,14 @@ struct pl111_drm_dev_private {
+ 	struct drm_fbdev_cma *fbdev;
+ 
+ 	void *regs;
++	/* The pixel clock (a reference to our clock divider off of CLCDCLK). */
+ 	struct clk *clk;
++	/* pl111's internal clock divider. */
++	struct clk_hw clk_div;
++	/* Lock to sync access to CLCD_TIM2 between the common clock
++	 * subsystem and pl111_display_enable().
++	 */
++	spinlock_t tim2_lock;
+ };
+ 
+ #define to_pl111_connector(x) \
+diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
+index 936403f65508..9d1467492cb9 100644
+--- a/drivers/gpu/drm/pl111/pl111_drv.c
++++ b/drivers/gpu/drm/pl111/pl111_drv.c
+@@ -50,8 +50,8 @@
+  * - Read back hardware state at boot to skip reprogramming the
+  *   hardware when doing a no-op modeset.
+  *
+- * - Use the internal clock divisor to reduce power consumption by
+- *   using HCLK (apb_pclk) when appropriate.
++ * - Use the CLKSEL bit to support switching between the two external
++ *   clock parents.
+  */
+ 
+ #include <linux/amba/bus.h>
+@@ -195,13 +195,6 @@ static int pl111_amba_probe(struct amba_device *amba_dev,
+ 	priv->drm = drm;
+ 	drm->dev_private = priv;
+ 
+-	priv->clk = devm_clk_get(dev, "clcdclk");
+-	if (IS_ERR(priv->clk)) {
+-		dev_err(dev, "CLCD: unable to get clk.\n");
+-		ret = PTR_ERR(priv->clk);
+-		goto dev_unref;
+-	}
+-
+ 	priv->regs = devm_ioremap_resource(dev, &amba_dev->res);
+ 	if (!priv->regs) {
+ 		dev_err(dev, "%s failed mmio\n", __func__);
+diff --git a/include/linux/amba/clcd-regs.h b/include/linux/amba/clcd-regs.h
+index 69c0e2143003..516a6fda83c5 100644
+--- a/include/linux/amba/clcd-regs.h
++++ b/include/linux/amba/clcd-regs.h
+@@ -39,12 +39,17 @@
+ #define CLCD_PALL 		0x00000200
+ #define CLCD_PALETTE		0x00000200
+ 
++#define TIM2_PCD_LO_MASK	GENMASK(4, 0)
++#define TIM2_PCD_LO_BITS	5
+ #define TIM2_CLKSEL		(1 << 5)
+ #define TIM2_IVS		(1 << 11)
+ #define TIM2_IHS		(1 << 12)
+ #define TIM2_IPC		(1 << 13)
+ #define TIM2_IOE		(1 << 14)
+ #define TIM2_BCD		(1 << 26)
++#define TIM2_PCD_HI_MASK	GENMASK(31, 27)
++#define TIM2_PCD_HI_BITS	5
++#define TIM2_PCD_HI_SHIFT	27
+ 
+ #define CNTL_LCDEN		(1 << 0)
+ #define CNTL_LCDBPP1		(0 << 1)
+-- 
+2.11.0
