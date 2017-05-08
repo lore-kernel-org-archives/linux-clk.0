@@ -1,50 +1,81 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+df@kernel.org>,
-	devicetree@vger.kernel.org
-Cc: Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 0/5 v3] Clocks and resets for Gemini
-Date: Mon, 15 May 2017 19:18:13 +0200
-Message-Id: <20170515171813.815-1-linus.walleij@linaro.org>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Mon, 8 May 2017 19:37:06 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
+	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
+Subject: Re: [RFC PATCH 2/3] clk: add managed version of clk_bulk_get
+Message-ID: <20170508113706.GC18153@b29396-OptiPlex-7040>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
+ <20170422025547.GT7065@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170422025547.GT7065@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This attempts to collect the earlier attempts to separately
-create and merge clock and reset bindings for the Gemini into
-an all-or-nothing patch set with both clocks and resets,
-connected directly to the syscon node.
+On Fri, Apr 21, 2017 at 07:55:47PM -0700, Stephen Boyd wrote:
+> On 04/12, Dong Aisheng wrote:
+> > diff --git a/include/linux/clk.h b/include/linux/clk.h
+> > index 1d05b66..3fc6010 100644
+> > --- a/include/linux/clk.h
+> > +++ b/include/linux/clk.h
+> > @@ -278,11 +278,25 @@ struct clk *clk_get(struct device *dev, const char *id);
+> >   *
+> >   * clk_bulk_get should not be called from within interrupt context.
+> >   */
+> > -
+> 
+> Should be in previous patch?
+> 
 
-Linus Walleij (5):
-  dt-bindings: Augment Gemini for clocks, resets
-  reset: Add a Gemini reset controller
-  clk: Add Gemini SoC clock controller
-  ARM: dts: Add the Gemini reset controller
-  ARM: dts: Add clocks to the Gemini SoC
+Yes, will fix.
 
- Documentation/devicetree/bindings/arm/gemini.txt |  24 +-
- arch/arm/boot/dts/gemini.dtsi                    |  31 +-
- drivers/clk/Kconfig                              |   7 +
- drivers/clk/Makefile                             |   1 +
- drivers/clk/clk-gemini.c                         | 357 +++++++++++++++++++++++
- drivers/reset/Kconfig                            |   7 +
- drivers/reset/Makefile                           |   1 +
- drivers/reset/reset-gemini.c                     | 110 +++++++
- include/dt-bindings/clock/cortina,gemini-clock.h |  29 ++
- include/dt-bindings/reset/cortina,gemini-reset.h |  36 +++
- 10 files changed, 599 insertions(+), 4 deletions(-)
- create mode 100644 drivers/clk/clk-gemini.c
- create mode 100644 drivers/reset/reset-gemini.c
- create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
- create mode 100644 include/dt-bindings/reset/cortina,gemini-reset.h
+> >  int __must_check clk_bulk_get(struct device *dev, int num_clks,
+> >  			      struct clk_bulk_data *clks);
+> >  
+> >  /**
+> > + * devm_clk_bulk_get - managed get multiple clk consumers
+> > + * @dev: device for clock "consumer"
+> > + * @num_clks: the number of clk_bulk_data
+> > + * @clks: the clk_bulk_data table of consumer
+> > + *
+> > + * Return 0 on success, an errno on failure.
+> > + *
+> > + * This helper function allows drivers to get several regulator
+> 
+> s/regulator/clk/
+> 
 
--- 
-2.9.3
+ditto
+
+> > + * consumers in one operation with management, the clks will
+> > + * automatically be freed when the device is unbound.
+> > + */
+> > +int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+> 
+> Thanks for the __must_check. We need to add more __must_check to
+> clk APIs.
+> 
+
+Yes, just easy to do it from the beginning. :-)
+
+Regards
+Dong Aisheng
+
+> > +				   struct clk_bulk_data *clks);
+> > +
+> > +/**
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
