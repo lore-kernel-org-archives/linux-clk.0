@@ -1,96 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:33034 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751974AbdEIUTW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2017 16:19:22 -0400
-Date: Tue, 9 May 2017 22:19:19 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 08/13] drm/sun4i: add support for Allwinner DE2 mixers
-Message-ID: <20170509201919.ubzhiyntdwf6wlog@lukather>
-References: <20170504114858.9008-1-icenowy@aosc.io>
- <20170504114858.9008-9-icenowy@aosc.io>
- <20170504130535.6nokhni5a3uxwy66@lukather>
- <522ab8cb2939f0017917c5e9b4065089@aosc.io>
- <20170505123618.5vztqx2vdwsgnrxt@lukather>
- <185C1948-541D-4198-9A56-E3F0DFF08734@aosc.io>
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7lzqphmuxoahqya2"
-In-Reply-To: <185C1948-541D-4198-9A56-E3F0DFF08734@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170508201159.31634-1-linus.walleij@linaro.org>
+References: <20170508201159.31634-1-linus.walleij@linaro.org>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 8 May 2017 16:24:08 -0500
+Message-ID: <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] clk: Add bindings for the Gemini Clock Controller
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, May 8, 2017 at 3:11 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This adds device tree bindings and a header for the Gemini SoC
+> Clock Controller.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Move the clock controller to be directly in the parent syscon
+>   node.
+> ---
+>  .../clock/cortina,gemini-clock-controller.txt      | 22 ++++++++++++++++
+>  include/dt-bindings/clock/cortina,gemini-clock.h   | 29 ++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+>  create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+> new file mode 100644
+> index 000000000000..ae0046bccba0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+> @@ -0,0 +1,22 @@
+> +Clock bindings for the Cortina Systems Gemini SoC Clock Controller
+> +
+> +Required properties :
+> +- compatible : shall contain the following:
+> +  "cortina,gemini-clock-controller"
+> +- #clock-cells should be <1>
+> +
+> +The Gemini clock controller needs to be identical to the system controller
+> +node.
+> +
+> +All available clocks are defined as preprocessor macros in
+> +dt-bindings/clock/cortina,gemini-clock.h header and can be used in device
+> +tree sources.
+> +
+> +Example:
+> +
+> +syscon: syscon@40000000 {
+> +       compatible = "cortina,gemini-syscon", "cortina,gemini-clock-controller",
+> +                    "syscon", "simple-mfd";
 
---7lzqphmuxoahqya2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are no child nodes, so you don't need simple-mfd.
 
-On Fri, May 05, 2017 at 08:39:31PM +0800, Icenowy Zheng wrote:
-> >> > > +	/* Set base coordinates */
-> >> > > +	DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
-> >> > > +			 state->crtc_x, state->crtc_y);
-> >> > > +	regmap_write(mixer->engine.regs,
-> >> > > +		     SUN8I_MIXER_CHAN_UI_LAYER_COORD(chan, layer),
-> >> > > +		     SUN8I_MIXER_COORD(state->crtc_x, state->crtc_y));
-> >> >=20
-> >> > X and Y are fixed point numbers. You want to keep only the higher
-> >16
-> >> > bits there.
-> >>=20
-> >> Do you mean "lower 16 bits"? Thus should I (x & 0xffff) or ((u16)x) ?
-> >
-> >Nevermind, I got confused with src_x and src_y.
-> >
-> >> P.S. The negative coordinates are broken, how should I deal with it?
-> >or
-> >> is the coordinates promised to be not negative?
-> >
-> >Adjust the buffer base address, and use a shorter line. You have such
-> >an example in the sun4i code.
->=20
-> Are they these two lines:
-> ```
-> paddr +=3D (state->src_x >> 16) * bpp;
-> paddr +=3D (state->src_y >> 16) * fb->pitches[0];
-> ```
->=20
-> I think I copied them here, so I don't need to mind this problem any
-> more, right?
+> +       reg = <0x40000000 0x1000>;
 
-Hmmm, yes, probably. That's pretty easy to test anyway, you just need
-to set up a plane with a negative base coordinate.
+Looks like you have 2 nodes pointing to the same address with your
+reset binding? You shouldn't have overlapping resources. It's allowed
+for historical reasons but breaks resource creation in Linux.
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---7lzqphmuxoahqya2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJZEiQ/AAoJEBx+YmzsjxAgW9IP+wZgjL+Xuohyxz9qHyWbGvQ3
-8rvP3uy3kTSZUmK7R5ZToR46fVfyln3OYVDck0u413Qp62solWuZMaaCCvZcq/x5
-duU1DpLdjPiaK5XZ4i8HcwlnrEzpR5Av+qMuq/htn7vGEP3hmf5/Ie0ypLS/sygQ
-jFBafh3O4c7/ZITOSONVXyrGgFI6ovBkIb3ckchyo0vcLoREzFmnoARvRavu4bgi
-Zuvvbz06G1KsvUFvM0aeCgOFdkztb+dqMV7Qnhyk2M8blJLSJPSFkRQ6cz8LYlKS
-eDgh+XuZE/lDTQkME9onZa0r9vmO95Nn1DxKaBNEF5Ip4OUPfYGWFaSY033N+a2n
-v5ah1S0W5plAm3mTUQmaQ278Zb3VvVDPfJmMWeK5irUaw56RPm4Ejz3FGz0OZbbx
-KJ5MqFXhf1aAOFaF9j3Lgy53ETuW640BocJ3nRl/iFklE9d/3VmUzCFuMezkJgSM
-Jp6HCRE0qBAufU0bG1LLZ05IQzhoE5XQa9nc+Ev3E0PLDiYi69mqqDw7NcY411a1
-may9vqzyop9ICn3IXyzFb8b1ZDjdd7LQFTbpHtw3Wa5gTROwOh/ALXjppAhOM83I
-dx5Q8PLkve9TQ7PWatY8ygfM6zx3aZ08nxJbMA483tfpWwwS+3y9Z3KU/LZu5O6A
-1az+1RLoi4DoyqzYqHm9
-=fB72
------END PGP SIGNATURE-----
-
---7lzqphmuxoahqya2--
+Rob
