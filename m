@@ -1,125 +1,46 @@
-Return-Path: <wens@csie.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 8 May 2017 11:40:11 -0500
+From: Rob Herring <robh@kernel.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linus.walleij@linaro.org, andy.gross@linaro.org,
+	david.brown@linaro.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	absahu@codeaurora.org, sjaganat@codeaurora.org,
+	sricharan@codeaurora.org
+Subject: Re: [PATCH v2 3/5] clk: qcom: ipq8074: Add Global Clock Controller
+ support
+Message-ID: <20170508164010.aoajie2udehhzduz@rob-hp-laptop>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-4-git-send-email-varada@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1e3ddf81459adbab455b2211fe6b78bd6cf1bbec.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
- <1e3ddf81459adbab455b2211fe6b78bd6cf1bbec.1493812478.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 4 May 2017 16:04:00 +0800
-Message-ID: <CAGb2v640zxNzZ+CAitEUrwtcQUdsPJixjtuAFNp=xKhG6CCmcg@mail.gmail.com>
-Subject: Re: [PATCH v2 19/20] ARM: sun5i: a10s: Add the HDMI controller node
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1493898841-20583-4-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The A10s has an HDMI controller connected to the second TCON channel. Add
-> it to our DT.
->
-> Since the TV Encoder was the only channel 1 user so far, also add the
-> property now that we have several users.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Thu, May 04, 2017 at 05:23:59PM +0530, Varadarajan Narayanan wrote:
+> From: Abhishek Sahu <absahu@codeaurora.org>
+> 
+> This patch adds support for the global clock controller found on
+> the IPQ8074 based devices. This includes UART, I2C, SPI etc.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 > ---
->  arch/arm/boot/dts/sun5i-a10s.dtsi | 50 ++++++++++++++++++++++++++++++++-
->  arch/arm/boot/dts/sun5i.dtsi      |  1 +-
->  2 files changed, 51 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
-> index 1e38ff80366c..c9d4ee12599d 100644
-> --- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-> +++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-> @@ -71,7 +71,49 @@
->                 };
->         };
->
-> +       display-engine {
-> +               compatible = "allwinner,sun5i-a10s-display-engine",
-> +                            "allwinner,sun5i-a13-display-engine";
+>  .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+>  drivers/clk/qcom/Kconfig                           |    9 +
+>  drivers/clk/qcom/Makefile                          |    1 +
+>  drivers/clk/qcom/gcc-ipq8074.c                     | 1032 ++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
 
-I assume this indicates a difference between A10s and A13, namely the former
-has an HDMI controller. The compatible string should be documented.
+For the binding,
 
-> +               allwinner,pipelines = <&fe0>;
-> +       };
-> +
->         soc@01c00000 {
-> +               hdmi: hdmi@01c16000 {
-> +                       compatible = "allwinner,sun5i-a10s-hdmi";
-> +                       reg = <0x01c16000 0x1000>;
-> +                       interrupts = <58>;
-> +                       clocks = <&ccu CLK_AHB_HDMI>, <&ccu CLK_HDMI>,
-> +                                <&ccu CLK_PLL_VIDEO0_2X>,
-> +                                <&ccu CLK_PLL_VIDEO1_2X>;
-> +                       clock-names = "ahb", "mod", "pll-0", "pll-1";
-> +                       dmas = <&dma SUN4I_DMA_NORMAL 16>,
-> +                              <&dma SUN4I_DMA_NORMAL 16>,
-> +                              <&dma SUN4I_DMA_DEDICATED 24>;
-> +                       dma-names = "ddc-tx", "ddc-rx", "audio-tx";
-> +                       status = "disabled";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               hdmi_in: port@0 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <0>;
-> +
-> +                                       hdmi_in_tcon0: endpoint {
+Acked-by: Rob Herring <robh@kernel.org>
 
-Missing reg property here, since you have #address-cells = 1.
-
-Otherwise,
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-
-> +                                               remote-endpoint = <&tcon0_out_hdmi>;
-> +                                       };
-> +                               };
-> +
-> +                               hdmi_out: port@1 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <1>;
-> +                               };
-> +                       };
-> +               };
-> +
->                 pwm: pwm@01c20e00 {
->                         compatible = "allwinner,sun5i-a10s-pwm";
->                         reg = <0x01c20e00 0xc>;
-> @@ -128,3 +170,11 @@
->
->  &sram_a {
->  };
-> +
-> +&tcon0_out {
-> +       tcon0_out_hdmi: endpoint@2 {
-> +               reg = <2>;
-> +               remote-endpoint = <&hdmi_in_tcon0>;
-> +               allwinner,tcon-channel = <1>;
-> +       };
-> +};
-> diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-> index 5175f9cc9bed..0e29f1d98a9e 100644
-> --- a/arch/arm/boot/dts/sun5i.dtsi
-> +++ b/arch/arm/boot/dts/sun5i.dtsi
-> @@ -272,6 +272,7 @@
->                                         tcon0_out_tve0: endpoint@1 {
->                                                 reg = <1>;
->                                                 remote-endpoint = <&tve0_in_tcon0>;
-> +                                               allwinner,tcon-channel = <1>;
->                                         };
->                                 };
->                         };
-> --
-> git-series 0.8.11
+>  5 files changed, 1195 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
