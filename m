@@ -1,64 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:34154 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754521AbdERQTj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 May 2017 12:19:39 -0400
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: scpi: fix return type of __scpi_dvfs_round_rate
-Date: Thu, 18 May 2017 17:19:28 +0100
-Message-Id: <1495124368-26191-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Mon, 8 May 2017 19:41:04 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
+	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
+Subject: Re: [RFC PATCH 2/3] clk: add managed version of clk_bulk_get
+Message-ID: <20170508114104.GD18153@b29396-OptiPlex-7040>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
+ <20170413143727.GE24254@b29396-OptiPlex-7040>
+ <20170422025837.GU7065@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170422025837.GU7065@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The frequencies above the maximum value of signed integer(i.e. 2^31 -1)
-will overflow with the current code.
+On Fri, Apr 21, 2017 at 07:58:37PM -0700, Stephen Boyd wrote:
+> On 04/13, Dong Aisheng wrote:
+> > On Wed, Apr 12, 2017 at 12:03:28PM +0800, Dong Aisheng wrote:
+> > 
+> >    drivers/built-in.o: In function `devm_clk_bulk_get':
+> > >> (.text+0x1930e): undefined reference to `clk_bulk_get'
+> >    drivers/built-in.o: In function `devm_clk_bulk_release':
+> > >> clk-devres.c:(.text+0x19370): undefined reference to `clk_bulk_put'
+> > 
+> > clk_bulk_get is defined in clkdev.c which depends on CONFIG_CLKDEV_LOOKUP.
+> > However, some platforms like m68k may not select CLKDEV_LOOKUP but
+> > select HAVE_CLK. Thus compiling devm_clk_bulk_get may cause a undefined
+> > reference to 'clk_bulk_get'.
+> > 
+> > Since clk_bulk_get is built upon the platform specific clk_get api,
+> > clk_bulk_get can also be used by that platform accordingly.
+> > 
+> > Then we probably could move clk_bulk_get into clk-devres.c as well which
+> > is controlled by common CONFIG_HAVE_CLK to benifit all platforms.
+> 
+> clk-devres is for devm* things. I'd just make another file for
+> now, clk-bulk.c or something like that. When everyone moves to
+> common clk, we can fold it into clk.c, or not because clk.c is
+> rather large right now.
+> 
 
-This patch fixes the return type of __scpi_dvfs_round_rate from 'int'
-to 'unsigned long'.
+Thanks for the suggestion.
+Much agree with you that getting a new file to handle them is better.
+Will do them in clk-bulk.c first.
 
-Fixes: cd52c2a4b5c4 ("clk: add support for clocks provided by SCP(System Control Processor)")
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/clk/clk-scpi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Regards
+Dong Aisheng
 
-Hi,
-
-Sorry for the stupid bug, just noticed the issue running on software
-models with the frequency of 2.4 GHz. Not noticed so far as never ran
-this on a system above 1.2 GHz so far :(
-
-Regards,
-Sudeep
-
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-index 96d37175d0ad..8ad458b5ad6e 100644
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -71,15 +71,15 @@ static const struct clk_ops scpi_clk_ops = {
- };
-
- /* find closest match to given frequency in OPP table */
--static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
-+static long __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
- {
- 	int idx;
--	u32 fmin = 0, fmax = ~0, ftmp;
-+	unsigned long fmin = 0, fmax = ~0, ftmp;
- 	const struct scpi_opp *opp = clk->info->opps;
-
- 	for (idx = 0; idx < clk->info->count; idx++, opp++) {
- 		ftmp = opp->freq;
--		if (ftmp >= (u32)rate) {
-+		if (ftmp >= rate) {
- 			if (ftmp <= fmax)
- 				fmax = ftmp;
- 			break;
---
-2.7.4
-
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
