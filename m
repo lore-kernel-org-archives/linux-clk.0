@@ -1,55 +1,232 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 1/8] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
-Date: Wed,  3 May 2017 11:16:51 +0800
-Message-Id: <20170503031658.29299-2-wens@csie.org>
-In-Reply-To: <20170503031658.29299-1-wens@csie.org>
-References: <20170503031658.29299-1-wens@csie.org>
+Return-Path: <pozega.tomislav@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20170508201159.31634-1-linus.walleij@linaro.org>
+References: <20170508201159.31634-1-linus.walleij@linaro.org>
+From: Tom Psyborg <pozega.tomislav@gmail.com>
+Date: Mon, 8 May 2017 23:17:07 +0200
+Message-ID: <CAKR_QVKKocajdnuyivWCuaLQssxkcrfdiMqcFxeWeesmFfHhRw@mail.gmail.com>
+Subject: Re: [OpenWrt-Devel] [PATCH 1/2 v2] clk: Add bindings for the Gemini
+ Clock Controller
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>, openwrt-devel@openwrt.org,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>, Janos Laube <janos.dev@gmail.com>,
+	linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/alternative; boundary=f40304354a58f710a9054f09c2dc
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T clock control unit is a hybrid of some new style clock designs
-from the A80, and old style layout from the other Allwinner SoCs.
+--f40304354a58f710a9054f09c2dc
+Content-Type: text/plain; charset=UTF-8
 
-Like the A80, the SoC does not have a low speed 32.768 kHz oscillator.
-Unlike the A80, there is no clock input either. The only low speed clock
-available is the internal oscillator which runs at around 16 MHz,
-divided by 512, yielding a low speed clock around 31.250 kHz.
+Is it ever going to be added so this endless spam can end?
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index e9c5a1d9834a..34b2a9249a94 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun6i-a31-ccu"
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
-+		- "allwinner,sun8i-a83t-ccu"
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-h3-r-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
-@@ -18,6 +19,7 @@ Required properties :
- - clocks: phandle to the oscillators feeding the CCU. Two are needed:
-   - "hosc": the high frequency oscillator (usually at 24MHz)
-   - "losc": the low frequency oscillator (usually at 32kHz)
-+	    On the A83T, this is the internal 16MHz oscillator divided by 512
- - clock-names: Must contain the clock names described just above
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
--- 
-2.11.0
+On 8 May 2017 at 22:11, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> This adds device tree bindings and a header for the Gemini SoC
+> Clock Controller.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Move the clock controller to be directly in the parent syscon
+>   node.
+> ---
+>  .../clock/cortina,gemini-clock-controller.txt      | 22 ++++++++++++++++
+>  include/dt-bindings/clock/cortina,gemini-clock.h   | 29
+> ++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/
+> bindings/clock/cortina,gemini-clock-controller.txt
+>  create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+> b/Documentation/devicetree/bindings/clock/cortina,gemini-
+> clock-controller.txt
+> new file mode 100644
+> index 000000000000..ae0046bccba0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/cortina,gemini-
+> clock-controller.txt
+> @@ -0,0 +1,22 @@
+> +Clock bindings for the Cortina Systems Gemini SoC Clock Controller
+> +
+> +Required properties :
+> +- compatible : shall contain the following:
+> +  "cortina,gemini-clock-controller"
+> +- #clock-cells should be <1>
+> +
+> +The Gemini clock controller needs to be identical to the system controller
+> +node.
+> +
+> +All available clocks are defined as preprocessor macros in
+> +dt-bindings/clock/cortina,gemini-clock.h header and can be used in device
+> +tree sources.
+> +
+> +Example:
+> +
+> +syscon: syscon@40000000 {
+> +       compatible = "cortina,gemini-syscon", "cortina,gemini-clock-
+> controller",
+> +                    "syscon", "simple-mfd";
+> +       reg = <0x40000000 0x1000>;
+> +       #clock-cells = <1>;
+> +};
+> diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h
+> b/include/dt-bindings/clock/cortina,gemini-clock.h
+> new file mode 100644
+> index 000000000000..acf5cd550b0c
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/cortina,gemini-clock.h
+> @@ -0,0 +1,29 @@
+> +#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
+> +#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
+> +
+> +/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
+> +#define GEMINI_NUM_CLKS 20
+> +
+> +#define GEMINI_CLK_RTC 0
+> +#define GEMINI_CLK_AHB 1
+> +#define GEMINI_CLK_APB 2
+> +#define GEMINI_CLK_CPU 3
+> +#define GEMINI_CLK_PCI 4
+> +#define GEMINI_CLK_TVC 5
+> +#define GEMINI_CLK_UART 6
+> +#define GEMINI_CLK_GATES 7
+> +#define GEMINI_CLK_GATE_SECURITY 7
+> +#define GEMINI_CLK_GATE_GMAC0 8
+> +#define GEMINI_CLK_GATE_GMAC1 9
+> +#define GEMINI_CLK_GATE_SATA0 10
+> +#define GEMINI_CLK_GATE_SATA1 11
+> +#define GEMINI_CLK_GATE_USB0 12
+> +#define GEMINI_CLK_GATE_USB1 13
+> +#define GEMINI_CLK_GATE_IDE 14
+> +#define GEMINI_CLK_GATE_PCI 15
+> +#define GEMINI_CLK_GATE_DDR 16
+> +#define GEMINI_CLK_GATE_FLASH 17
+> +#define GEMINI_CLK_GATE_TVC 18
+> +#define GEMINI_CLK_GATE_BOOT 19
+> +
+> +#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
+> --
+> 2.9.3
+> _______________________________________________
+> openwrt-devel mailing list
+> openwrt-devel@lists.openwrt.org
+> https://lists.openwrt.org/cgi-bin/mailman/listinfo/openwrt-devel
+>
+
+--f40304354a58f710a9054f09c2dc
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Is it ever going to be added so this endless spam can end?=
+<br><div><br></div></div><div class=3D"gmail_extra"><br><div class=3D"gmail=
+_quote">On 8 May 2017 at 22:11, Linus Walleij <span dir=3D"ltr">&lt;<a href=
+=3D"mailto:linus.walleij@linaro.org" target=3D"_blank">linus.walleij@linaro=
+.org</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"ma=
+rgin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">This adds devi=
+ce tree bindings and a header for the Gemini SoC<br>
+Clock Controller.<br>
+<br>
+Signed-off-by: Linus Walleij &lt;<a href=3D"mailto:linus.walleij@linaro.org=
+">linus.walleij@linaro.org</a>&gt;<br>
+---<br>
+ChangeLog v1-&gt;v2:<br>
+- Move the clock controller to be directly in the parent syscon<br>
+=C2=A0 node.<br>
+---<br>
+=C2=A0.../clock/cortina,gemini-<wbr>clock-controller.txt=C2=A0 =C2=A0 =C2=
+=A0 | 22 ++++++++++++++++<br>
+=C2=A0include/dt-bindings/clock/<wbr>cortina,gemini-clock.h=C2=A0 =C2=A0| 2=
+9 ++++++++++++++++++++++<br>
+=C2=A02 files changed, 51 insertions(+)<br>
+=C2=A0create mode 100644 Documentation/devicetree/<wbr>bindings/clock/corti=
+na,gemini-<wbr>clock-controller.txt<br>
+=C2=A0create mode 100644 include/dt-bindings/clock/<wbr>cortina,gemini-cloc=
+k.h<br>
+<br>
+diff --git a/Documentation/devicetree/<wbr>bindings/clock/cortina,gemini-<w=
+br>clock-controller.txt b/Documentation/devicetree/<wbr>bindings/clock/cort=
+ina,gemini-<wbr>clock-controller.txt<br>
+new file mode 100644<br>
+index 000000000000..ae0046bccba0<br>
+--- /dev/null<br>
++++ b/Documentation/devicetree/<wbr>bindings/clock/cortina,gemini-<wbr>cloc=
+k-controller.txt<br>
+@@ -0,0 +1,22 @@<br>
++Clock bindings for the Cortina Systems Gemini SoC Clock Controller<br>
++<br>
++Required properties :<br>
++- compatible : shall contain the following:<br>
++=C2=A0 &quot;cortina,gemini-clock-<wbr>controller&quot;<br>
++- #clock-cells should be &lt;1&gt;<br>
++<br>
++The Gemini clock controller needs to be identical to the system controller=
+<br>
++node.<br>
++<br>
++All available clocks are defined as preprocessor macros in<br>
++dt-bindings/clock/cortina,<wbr>gemini-clock.h header and can be used in de=
+vice<br>
++tree sources.<br>
++<br>
++Example:<br>
++<br>
++syscon: syscon@40000000 {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0compatible =3D &quot;cortina,gemini-syscon&quot=
+;, &quot;cortina,gemini-clock-<wbr>controller&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quo=
+t;syscon&quot;, &quot;simple-mfd&quot;;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0reg =3D &lt;0x40000000 0x1000&gt;;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0#clock-cells =3D &lt;1&gt;;<br>
++};<br>
+diff --git a/include/dt-bindings/clock/<wbr>cortina,gemini-clock.h b/includ=
+e/dt-bindings/clock/<wbr>cortina,gemini-clock.h<br>
+new file mode 100644<br>
+index 000000000000..acf5cd550b0c<br>
+--- /dev/null<br>
++++ b/include/dt-bindings/clock/<wbr>cortina,gemini-clock.h<br>
+@@ -0,0 +1,29 @@<br>
++#ifndef DT_BINDINGS_CORTINA_GEMINI_<wbr>CLOCK_H<br>
++#define DT_BINDINGS_CORTINA_GEMINI_<wbr>CLOCK_H<br>
++<br>
++/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */<br>
++#define GEMINI_NUM_CLKS 20<br>
++<br>
++#define GEMINI_CLK_RTC 0<br>
++#define GEMINI_CLK_AHB 1<br>
++#define GEMINI_CLK_APB 2<br>
++#define GEMINI_CLK_CPU 3<br>
++#define GEMINI_CLK_PCI 4<br>
++#define GEMINI_CLK_TVC 5<br>
++#define GEMINI_CLK_UART 6<br>
++#define GEMINI_CLK_GATES 7<br>
++#define GEMINI_CLK_GATE_SECURITY 7<br>
++#define GEMINI_CLK_GATE_GMAC0 8<br>
++#define GEMINI_CLK_GATE_GMAC1 9<br>
++#define GEMINI_CLK_GATE_SATA0 10<br>
++#define GEMINI_CLK_GATE_SATA1 11<br>
++#define GEMINI_CLK_GATE_USB0 12<br>
++#define GEMINI_CLK_GATE_USB1 13<br>
++#define GEMINI_CLK_GATE_IDE 14<br>
++#define GEMINI_CLK_GATE_PCI 15<br>
++#define GEMINI_CLK_GATE_DDR 16<br>
++#define GEMINI_CLK_GATE_FLASH 17<br>
++#define GEMINI_CLK_GATE_TVC 18<br>
++#define GEMINI_CLK_GATE_BOOT 19<br>
++<br>
++#endif /* DT_BINDINGS_CORTINA_GEMINI_<wbr>CLOCK_H */<br>
+<span class=3D"HOEnZb"><font color=3D"#888888">--<br>
+2.9.3<br>
+______________________________<wbr>_________________<br>
+openwrt-devel mailing list<br>
+<a href=3D"mailto:openwrt-devel@lists.openwrt.org">openwrt-devel@lists.open=
+wrt.<wbr>org</a><br>
+<a href=3D"https://lists.openwrt.org/cgi-bin/mailman/listinfo/openwrt-devel=
+" rel=3D"noreferrer" target=3D"_blank">https://lists.openwrt.org/cgi-<wbr>b=
+in/mailman/listinfo/openwrt-<wbr>devel</a><br>
+</font></span></blockquote></div><br></div>
+
+--f40304354a58f710a9054f09c2dc--
