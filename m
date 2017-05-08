@@ -1,75 +1,100 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	openwrt-devel@openwrt.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 0/6] clk: sunxi-ng: Add support for A83T's PRCM
-Date: Wed, 31 May 2017 15:58:18 +0800
-Message-Id: <20170531075824.657-1-wens@csie.org>
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2 v2] clk: Add bindings for the Gemini Clock Controller
+Date: Mon,  8 May 2017 22:11:59 +0200
+Message-Id: <20170508201159.31634-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+This adds device tree bindings and a header for the Gemini SoC
+Clock Controller.
 
-This is the remaining parts of my A83T PRCM support series, along with
-changes requested by Maxime.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Move the clock controller to be directly in the parent syscon
+  node.
+---
+ .../clock/cortina,gemini-clock-controller.txt      | 22 ++++++++++++++++
+ include/dt-bindings/clock/cortina,gemini-clock.h   | 29 ++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+ create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
 
-Patch 1 updates the device tree bindings for the PRCM, adding pll-periph
-to the list of required clocks
-
-Patch 2 adds a device node for the PRCM on the A83T SoC, updated from v1
-to include the pll-periph clock.
-
-Patch 3 exports the PLL_PERIPH0 clock from the CCU on the H3/H5, for
-consumption by the PRCM.
-
-Patch 4 adds the pll-periph clock to the PRCM device node on the H3/H5.
-
-Patch 5 / 6 are the same as 3 / 4, but for the A64.
-
-
-Excerpt from v1 cover letter:
-
-This series adds support for the A83T's PRCM to the existing sun8i-r-ccu
-driver. When the sun8i-r-ccu driver was introduced, indices were reserved
-for all the possible clocks and resets of the sun8i family. In patch 2
-we simply pick existing clocks, and implement ones that are different or
-missing.
-
-Differences from other sun8i implementations include different clock parent
-names, due to the A83T not having a proper 32.768 kHz oscillator, and
-different predividers for the IR clock.
-
-
-Still to come are support for R_PIO and RSB on the A83T.
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (6):
-  dt-bindings: clock: sunxi-ccu: Add pll-periph to PRCM's needed clocks
-  ARM: sun8i: a83t: Add device node for PRCM
-  clk: sunxi-ng: h3: Export PLL_PERIPH0 clock for the PRCM
-  ARM: sunxi: h3-h5: Add PLL_PERIPH0 clock to the R_CCU
-  clk: sunxi-ng: a64: Export PLL_PERIPH0 clock for the PRCM
-  arm64: allwinner: a64: Add PLL_PERIPH0 clock to the R_CCU
-
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt |  7 ++++---
- arch/arm/boot/dts/sun8i-a83t.dtsi                     | 10 ++++++++++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                    |  5 +++--
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         |  5 +++--
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  4 +++-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h                   |  4 +++-
- include/dt-bindings/clock/sun50i-a64-ccu.h            |  2 ++
- include/dt-bindings/clock/sun8i-h3-ccu.h              |  2 ++
- 8 files changed, 30 insertions(+), 9 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+new file mode 100644
+index 000000000000..ae0046bccba0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+@@ -0,0 +1,22 @@
++Clock bindings for the Cortina Systems Gemini SoC Clock Controller
++
++Required properties :
++- compatible : shall contain the following:
++  "cortina,gemini-clock-controller"
++- #clock-cells should be <1>
++
++The Gemini clock controller needs to be identical to the system controller
++node.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/cortina,gemini-clock.h header and can be used in device
++tree sources.
++
++Example:
++
++syscon: syscon@40000000 {
++	compatible = "cortina,gemini-syscon", "cortina,gemini-clock-controller",
++		     "syscon", "simple-mfd";
++	reg = <0x40000000 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h b/include/dt-bindings/clock/cortina,gemini-clock.h
+new file mode 100644
+index 000000000000..acf5cd550b0c
+--- /dev/null
++++ b/include/dt-bindings/clock/cortina,gemini-clock.h
+@@ -0,0 +1,29 @@
++#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++
++/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
++#define GEMINI_NUM_CLKS 20
++
++#define GEMINI_CLK_RTC 0
++#define GEMINI_CLK_AHB 1
++#define GEMINI_CLK_APB 2
++#define GEMINI_CLK_CPU 3
++#define GEMINI_CLK_PCI 4
++#define GEMINI_CLK_TVC 5
++#define GEMINI_CLK_UART 6
++#define GEMINI_CLK_GATES 7
++#define GEMINI_CLK_GATE_SECURITY 7
++#define GEMINI_CLK_GATE_GMAC0 8
++#define GEMINI_CLK_GATE_GMAC1 9
++#define GEMINI_CLK_GATE_SATA0 10
++#define GEMINI_CLK_GATE_SATA1 11
++#define GEMINI_CLK_GATE_USB0 12
++#define GEMINI_CLK_GATE_USB1 13
++#define GEMINI_CLK_GATE_IDE 14
++#define GEMINI_CLK_GATE_PCI 15
++#define GEMINI_CLK_GATE_DDR 16
++#define GEMINI_CLK_GATE_FLASH 17
++#define GEMINI_CLK_GATE_TVC 18
++#define GEMINI_CLK_GATE_BOOT 19
++
++#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
 -- 
-2.11.0
+2.9.3
