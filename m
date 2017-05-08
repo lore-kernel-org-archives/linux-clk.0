@@ -1,44 +1,40 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 8 May 2017 12:36:46 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: rjw@rjwysocki.net, robh+dt@kernel.org, matthias.bgg@gmail.com,
+	mark.rutland@arm.com, mturquette@baylibre.com,
+	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
+	shunli.wang@mediatek.com, erin.lo@mediatek.com, jdelvare@suse.de,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] dt-bindings: cpufreq: enhance Mediatek cpufreq
+ dt-binding document
+Message-ID: <20170508070646.GE17010@vireshk-i7>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+ <1493997974-17699-7-git-send-email-sean.wang@mediatek.com>
+ <20170508042010.GD17010@vireshk-i7>
+ <1494226711.9662.22.camel@mtkswgap22>
 MIME-Version: 1.0
-In-Reply-To: <20170515171922.1069-1-linus.walleij@linaro.org>
-References: <20170515171922.1069-1-linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 19 May 2017 17:37:48 +0200
-Message-ID: <CACRpkda0V8dcxgaFg5M3jEK+wgsWR8ndK=LYwLdnpqFeKwzCbQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5 v3] clk: Add Gemini SoC clock controller
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Cc: Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494226711.9662.22.camel@mtkswgap22>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 15, 2017 at 7:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On 08-05-17, 14:58, Sean Wang wrote:
+> > > +		opp@598000000 {
+> > 
+> > s/opp@/opp-/
+> 
+> I have referred to other dt-binding as examples where they also use opp@
+> as the prefix word.  e.g bindings/cpufreq/ti-cpufreq.txt did it.
+> 
+> Or I misunderstand something you pointed out here ?
 
-> The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
-> controller that derive all clocks from a single crystal, using some
-> documented and some undocumented PLLs, half dividers, counters and
-> gates. This is a best attempt to construct a clock driver for the
-> clocks so at least we can gate off unused hardware and driver the
-> PCI bus clock.
->
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v2->v3:
-> - Augment driver to probe directly from the system controller.
-> - Mike/Stephen: when you're happy with this please ACK it so I
->   can merge it through ARM SoC. This is needed because of
->   the mess of #include <dt-bindings/*> from the DT bindings
->   that is then used all over the DTS files.
+Its on the way:
 
-Mike/Stephen:
+https://marc.info/?l=linux-kernel&m=149266711829469&w=2
 
-Can I have an ACK from either of you if this looks all right?
-
-I want to merge this through ARM SoC to get the dependencies
-for the DTS includes right.
-
-Yours,
-Linus Walleij
+-- 
+viresh
