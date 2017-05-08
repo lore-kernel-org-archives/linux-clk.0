@@ -1,50 +1,116 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
+	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
+	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>
+Subject: [PATCH V2 0/3] clk: introduce clk_bulk_get accessories
+Date: Mon, 8 May 2017 22:03:50 +0800
+Message-ID: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <CACRpkda0V8dcxgaFg5M3jEK+wgsWR8ndK=LYwLdnpqFeKwzCbQ@mail.gmail.com>
-References: <20170515171922.1069-1-linus.walleij@linaro.org> <CACRpkda0V8dcxgaFg5M3jEK+wgsWR8ndK=LYwLdnpqFeKwzCbQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 24 May 2017 11:10:03 +0200
-Message-ID: <CACRpkdZ4k+CDtjTjqNzaXfqufZyxPMUWKU97biuNQ1ZKXC2HTg@mail.gmail.com>
-Subject: Re: [PATCH 3/5 v3] clk: Add Gemini SoC clock controller
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Cc: Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 19, 2017 at 5:37 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, May 15, 2017 at 7:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->> The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
->> controller that derive all clocks from a single crystal, using some
->> documented and some undocumented PLLs, half dividers, counters and
->> gates. This is a best attempt to construct a clock driver for the
->> clocks so at least we can gate off unused hardware and driver the
->> PCI bus clock.
->>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> ChangeLog v2->v3:
->> - Augment driver to probe directly from the system controller.
->> - Mike/Stephen: when you're happy with this please ACK it so I
->>   can merge it through ARM SoC. This is needed because of
->>   the mess of #include <dt-bindings/*> from the DT bindings
->>   that is then used all over the DTS files.
->
-> Mike/Stephen:
->
-> Can I have an ACK from either of you if this looks all right?
->
-> I want to merge this through ARM SoC to get the dependencies
-> for the DTS includes right.
+These helper function allows drivers to get several clk consumers in
+one operation.  If any of the clk cannot be acquired then any clks
+that were got will be put before returning to the caller.
 
-I changed merge strategies after advise from Olof.
+The idea firstly came out when i wanted to clean up and optimize
+imx6q-cpufreq driver which needs to handle a lot of clocks as it
+becomes a bit mess.
 
-I sent a v4 of this adding the macros and the driver through the
-clocks tree, so please look into that and disregard this old patch.
+e.g. drivers/cpufreq/imx6q-cpufreq.c
 
-Yours,
-Linus Walleij
+You will see we need get 7 clocks during driver probe.
+(Add there will be more, e.g. pll1, pll1_bypass, pll1_bypass_src,
+in the future when adding busfreq support).
+
+static int imx6q_cpufreq_probe(struct platform_device *pdev)
+{
+....
+	arm_clk = clk_get(cpu_dev, "arm");
+	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
+	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
+	step_clk = clk_get(cpu_dev, "step");
+	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
+	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
+	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
+		dev_err(cpu_dev, "failed to get clocks\n");
+		ret = -ENOENT;
+		goto put_clk;
+	}
+
+	if (of_machine_is_compatible("fsl,imx6ul")) {
+		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
+		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
+		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
+			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
+			ret = -ENOENT;
+			goto put_clk;
+		}
+	}
+....
+put_clk: 
+        if (!IS_ERR(arm_clk))
+                clk_put(arm_clk);
+        if (!IS_ERR(pll1_sys_clk))
+                clk_put(pll1_sys_clk);
+	...........
+}
+
+Together with the err path handling for each clocks, it does make
+things a bit ugly.
+
+Since we already have regulator_bulk_get accessories, i thought we
+probably could introduce clk_bulk_get as well to handle such case to
+ease the driver owners' life. 
+
+Besides IMX cpufreq driver, there is also some similar cases
+in kernel which could befinit from this api as well.
+e.g.
+drivers/cpufreq/tegra124-cpufreq.c
+drivers/cpufreq/s3c2412-cpufreq.c
+sound/soc/samsung/smdk_spdif.c
+arch/arm/mach-omap1/serial.c
+...
+
+And actually, if we handle clocks more than 3, then it might be
+worthy to try, which there is quite many manay in kernel and
+that probably could save a lot codes.
+
+Comments are welcome and appreciated!
+
+Tested on MX6Q SabreSD board with CPUfreq stress.
+Also ran IA64 and m68k compiling test:
+make.cross ARCH=m68k 
+make.cross ARCH=ia64
+
+ChangeLog:
+v1->v2:
+Most significant change is introducing clk-bulk.c to centrally
+handle bulk_clks and fix !CONFIG_CLKDEV_LOOKUP platforms build break.
+Other are comments fix, adding const annotation and etc.
+Refer to individual patches for details.
+
+[v1] https://lkml.org/lkml/2017/4/11/335
+
+Dong Aisheng (3):
+  clk: add clk_bulk_get accessories
+  clk: add managed version of clk_bulk_get
+  cpufreq: imx6q: refine clk operations
+
+ drivers/clk/Makefile            |   2 +-
+ drivers/clk/clk-bulk.c          | 165 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-devres.c        |  36 +++++++++
+ drivers/cpufreq/imx6q-cpufreq.c | 119 +++++++++++++----------------
+ include/linux/clk.h             | 132 ++++++++++++++++++++++++++++++++
+ 5 files changed, 387 insertions(+), 67 deletions(-)
+ create mode 100644 drivers/clk/clk-bulk.c
+
+-- 
+2.7.4
