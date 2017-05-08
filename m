@@ -1,56 +1,131 @@
-Return-Path: <phil@raspberrypi.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
-Message-ID: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
-Date: Tue, 30 May 2017 17:28:06 +0100
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Mon, 8 May 2017 19:34:59 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
+	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
+Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
+Message-ID: <20170508113459.GB18153@b29396-OptiPlex-7040>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
+ <20170422031647.GW7065@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170422031647.GW7065@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Restrict clock sources for the PCM peripheral to the oscillator and
-PLLD_PER because other source may have varying rates or be switched off.
-Prevent other sources from being selected by replacing their names in
-the list of potential parents with dummy entries (entry index is
-significant).
+On Fri, Apr 21, 2017 at 08:16:47PM -0700, Stephen Boyd wrote:
+> On 04/12, Dong Aisheng wrote:
+> >  
+> >  #ifdef CONFIG_HAVE_CLK
+> > @@ -230,6 +257,32 @@ static inline void clk_unprepare(struct clk *clk)
+> >  struct clk *clk_get(struct device *dev, const char *id);
+> >  
+> >  /**
+> > + * clk_bulk_get - lookup and obtain a number of references to clock producer.
+> > + * @dev: device for clock "consumer"
+> > + * @num_clks: the number of clk_bulk_data
+> > + * @clks: the clk_bulk_data table of consumer
+> > + *
+> > + * This helper function allows drivers to get several clk consumers in one
+> > + * operation. If any of the clk cannot be acquired then any clks
+> > + * that were obtained will be freed before returning to the caller.
+> > + *
+> > + * Returns 0 if all clocks specified in clk_bulk_data table are obtained
+> > + * successfully, or valid IS_ERR() condition containing errno.
+> > + * The implementation uses @dev and @clk_bulk_data.id to determine the
+> > + * clock consumer, and thereby the clock producer.
+> > + * (IOW, @id may be identical strings, but clk_get may return different
+> > + * clock producers depending on @dev.) The clock returned is stored in
+> 
+> This comment is inaccurate. Only one dev is possible with this
+> API.
+> 
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
----
- drivers/clk/bcm/clk-bcm2835.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Good catch! Will fix it.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 0258538..facc346 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1511,6 +1511,16 @@ struct bcm2835_clk_desc {
- 	"pllh_aux",
- };
- 
-+static const char *const bcm2835_pcm_per_parents[] = {
-+	"-",
-+	"xosc",
-+	"-",
-+	"-",
-+	"-",
-+	"-",
-+	"plld_per",
-+};
-+
- #define REGISTER_PER_CLK(...)	REGISTER_CLK(				\
- 	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),	\
- 	.parents = bcm2835_clock_per_parents,				\
-@@ -2000,6 +2010,7 @@ struct bcm2835_clk_desc {
- 		.int_bits = 12,
- 		.frac_bits = 12,
- 		.is_mash_clock = true,
-+		.parents = bcm2835_pcm_per_parents,
- 		.tcnt_mux = 23),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
- 		.name = "pwm",
--- 
-1.9.1
+> > + * each @clk_bulk_data.clk field.
+> > + *
+> > + * Drivers must assume that the clock source is not enabled.
+> > + *
+> > + * clk_bulk_get should not be called from within interrupt context.
+> > + */
+> > +
+> 
+> Drop space.
+> 
+
+Got it
+
+> > +int __must_check clk_bulk_get(struct device *dev, int num_clks,
+> > +			      struct clk_bulk_data *clks);
+> > +
+> > +/**
+> >   * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+> >   * @dev: device for clock "consumer"
+> >   * @id: clock consumer ID
+> > @@ -279,6 +332,20 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+> >  int clk_enable(struct clk *clk);
+> >  
+> >  /**
+> > + * clk_bulk_enable - inform the system when the bulk of clock source should
+> > + *		     be running.
+> > + * @num_clks: the number of clk_bulk_data
+> > + * @clks: the clk_bulk_data table of consumer
+> > + *
+> > + * If the clock can not be enabled/disabled all, this should return success.
+> > + *
+> > + * May be called from atomic contexts.
+> > + *
+> > + * Returns success (0) or negative errno.
+> > + */
+> > +int __must_check clk_bulk_enable(int num_clks, struct clk_bulk_data *clks);
+> > +
+> > +/**
+> >   * clk_disable - inform the system when the clock source is no longer required.
+> >   * @clk: clock source
+> >   *
+> > @@ -295,6 +362,24 @@ int clk_enable(struct clk *clk);
+> >  void clk_disable(struct clk *clk);
+> >  
+> >  /**
+> > + * clk_bulk_disable - inform the system when the bulk of clock source is no
+> > + *		      longer required.
+> > + * @num_clks: the number of clk_bulk_data
+> > + * @clks: the clk_bulk_data table of consumer
+> > + *
+> > + * Inform the system that a bulk of clock source is no longer required by
+> > + * a driver and may be shut down.
+> > + *
+> > + * May be called from atomic contexts.
+> > + *
+> > + * Implementation detail: if the bulk of clock source is shared between
+> 
+> I'm not sure "bulk of clock source" is the correct terminology.
+> Perhaps "set of clks"?
+> 
+
+Good to me, will change.
+
+> > + * multiple drivers, clk_bulk_enable() calls must be balanced by the
+> > + * same number of clk_bulk_disable() calls for the clock source to be
+> > + * disabled.
+> > + */
+> > +void clk_bulk_disable(int num_clks, struct clk_bulk_data *clks);
+> 
+> We can mark clk_bulk_data structure as const here? Probably
+> applies in other places as well in this patch.
+> 
+
+Sounds good, will change the following API,
+clk_bulk_{enable|disable}
+clk_bulk_{prepare|unprepare}
+except clk_bulk_{get|put} which needs update clk_bulk_date.
+
+Regards
+Dong Aisheng
