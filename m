@@ -1,46 +1,59 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 8 May 2017 09:48:27 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: sean.wang@mediatek.com
-Cc: rjw@rjwysocki.net, robh+dt@kernel.org, matthias.bgg@gmail.com,
-	mark.rutland@arm.com, mturquette@baylibre.com,
-	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
-	shunli.wang@mediatek.com, erin.lo@mediatek.com, jdelvare@suse.de,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1494224387.9662.10.camel@mtkswgap22>
 Subject: Re: [PATCH 5/6] dt-bindings: cpufreq: move Mediatek cpufreq
  dt-bindings document to proper place
-Message-ID: <20170508041827.GC17010@vireshk-i7>
+From: Sean Wang <sean.wang@mediatek.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: <rjw@rjwysocki.net>, <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
+	<mark.rutland@arm.com>, <mturquette@baylibre.com>,
+	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
+	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Mon, 8 May 2017 14:19:47 +0800
+In-Reply-To: <20170508041827.GC17010@vireshk-i7>
 References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
- <1493997974-17699-6-git-send-email-sean.wang@mediatek.com>
+	 <1493997974-17699-6-git-send-email-sean.wang@mediatek.com>
+	 <20170508041827.GC17010@vireshk-i7>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493997974-17699-6-git-send-email-sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05-05-17, 23:26, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On Mon, 2017-05-08 at 09:48 +0530, Viresh Kumar wrote:
+> On 05-05-17, 23:26, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > The old place is Documentation/devicetree/bindings/clock/ that would
+> > let people hard to find how to use Mediatek cpufreq driver, so moving
+> > it to the new place as other cpufreq dirvers are done would be better.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/clock/mt8173-cpu-dvfs.txt  | 83 ----------------------
+> >  .../bindings/cpufreq/cpufreq-mediatek.txt          | 83 ++++++++++++++++++++++
+> >  2 files changed, 83 insertions(+), 83 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
+> >  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
 > 
-> The old place is Documentation/devicetree/bindings/clock/ that would
-> let people hard to find how to use Mediatek cpufreq driver, so moving
-> it to the new place as other cpufreq dirvers are done would be better.
+> Please generate patches with:
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  .../devicetree/bindings/clock/mt8173-cpu-dvfs.txt  | 83 ----------------------
->  .../bindings/cpufreq/cpufreq-mediatek.txt          | 83 ++++++++++++++++++++++
->  2 files changed, 83 insertions(+), 83 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
+> git format-patch -C -M --thread=shallow
+> 
+> You would be required to resend this patch at least to let us see what has
+> changed.
+> 
 
-Please generate patches with:
+Hi Viresh,
 
-git format-patch -C -M --thread=shallow
+Okay, I will do it with you provided command again. 
 
-You would be required to resend this patch at least to let us see what has
-changed.
+What I did for the patch is just "git mv
+Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
+Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt"
+and no any changing data in the content.
 
--- 
-viresh
+thanks for your feedback
+
+	Sean
