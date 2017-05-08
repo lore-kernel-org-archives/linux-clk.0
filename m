@@ -1,56 +1,35 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 1/6] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
-Date: Thu, 18 May 2017 11:58:04 +0800
-Message-Id: <20170518035809.15487-2-wens@csie.org>
-In-Reply-To: <20170518035809.15487-1-wens@csie.org>
-References: <20170518035809.15487-1-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 8 May 2017 11:44:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 05/10] dt-bindings: add compatible string for
+ Allwinner R40 pinctrl
+Message-ID: <20170508164414.qu3v2s7ti6czwwvw@rob-hp-laptop>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+ <20170504135006.16483-6-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170504135006.16483-6-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T clock control unit is a hybrid of some new style clock designs
-from the A80, and old style layout from the other Allwinner SoCs.
+On Thu, May 04, 2017 at 09:50:01PM +0800, Icenowy Zheng wrote:
+> Allwinner R40 has a pin controller like the ones in older Allwinner SoCs
+> (especially A20), and can use modified version of the A10/A20 pinctrl
+> driver.
+> 
+> Add a compatible string for it.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Like the A80, the SoC does not have a low speed 32.768 kHz oscillator.
-Unlike the A80, there is no clock input either. The only low speed clock
-available is the internal oscillator which runs at around 16 MHz,
-divided by 512, yielding a low speed clock around 31.250 kHz.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index e9c5a1d9834a..34b2a9249a94 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun6i-a31-ccu"
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
-+		- "allwinner,sun8i-a83t-ccu"
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-h3-r-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
-@@ -18,6 +19,7 @@ Required properties :
- - clocks: phandle to the oscillators feeding the CCU. Two are needed:
-   - "hosc": the high frequency oscillator (usually at 24MHz)
-   - "losc": the low frequency oscillator (usually at 32kHz)
-+	    On the A83T, this is the internal 16MHz oscillator divided by 512
- - clock-names: Must contain the clock names described just above
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
--- 
-2.11.0
