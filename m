@@ -1,134 +1,103 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 16/21] dt-bindings: display: sun4i: Add HDMI display bindings
-Date: Wed, 17 May 2017 09:40:45 +0200
-Message-Id: <67bd9d191ce9cc8a172abbc558901ac79da9daab.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com>
+References: <20170508201159.31634-1-linus.walleij@linaro.org> <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 May 2017 23:41:38 +0200
+Message-ID: <CACRpkdY+EzbbTy6PzN5-YhCnSxPoKej2z=t-7eC3CPqDa6Q4_w@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] clk: Add bindings for the Gemini Clock Controller
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, openwrt-devel@openwrt.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the possible output of the display pipeline, on the SoCs that have
-it, is the HDMI controller.
+On Mon, May 8, 2017 at 11:24 PM, Rob Herring <robh+dt@kernel.org> wrote:
 
-Add a binding for it.
+>> +Example:
+>> +
+>> +syscon: syscon@40000000 {
+>> +       compatible = "cortina,gemini-syscon", "cortina,gemini-clock-controller",
+>> +                    "syscon", "simple-mfd";
+>
+> There are no child nodes, so you don't need simple-mfd.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 79 +++++++-
- 1 file changed, 79 insertions(+)
+The example is taken from an actual device tree (look below),
+where there are child nodes, I can trim it down.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 7acdbf14ae1c..e74794f20ec5 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -14,6 +14,34 @@ Conversely, for the output ports of the same group, the remote endpoint
- ID must be the index of the local hardware block. If the local backend
- is backend 1, then the remote endpoint ID must be 1.
- 
-+HDMI Encoder
-+------------
-+
-+The HDMI Encoder supports the HDMI video and audio outputs, and does
-+CEC. It is one end of the pipeline.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun5i-a10s-hdmi
-+  - reg: base address and size of memory-mapped region
-+  - interrupts: interrupt associated to this IP
-+  - clocks: phandles to the clocks feeding the HDMI encoder
-+    * ahb: the HDMI interface clock
-+    * mod: the HDMI module clock
-+    * pll-0: the first video PLL
-+    * pll-1: the second video PLL
-+  - clock-names: the clock names mentioned above
-+  - dmas: phandles to the DMA channels used by the HDMI encoder
-+    * ddc-tx: The channel for DDC transmission
-+    * ddc-rx: The channel for DDC reception
-+    * audio-tx: The channel used for audio transmission
-+  - dma-names: the channel names mentioned above
-+
-+  - ports: A ports node with endpoint definitions as defined in
-+    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+    first port should be the input endpoint. The second should be the
-+    output, usually to an HDMI connector.
-+
- TV Encoder
- ----------
- 
-@@ -183,6 +211,57 @@ panel: panel {
- 	};
- };
- 
-+connector {
-+	compatible = "hdmi-connector";
-+	type = "a";
-+
-+	port {
-+		hdmi_con_in: endpoint {
-+			remote-endpoint = <&hdmi_out_con>;
-+		};
-+	};
-+};
-+
-+hdmi: hdmi@01c16000 {
-+	compatible = "allwinner,sun5i-a10s-hdmi";
-+	reg = <0x01c16000 0x1000>;
-+	interrupts = <58>;
-+	clocks = <&ccu CLK_AHB_HDMI>, <&ccu CLK_HDMI>,
-+		 <&ccu CLK_PLL_VIDEO0_2X>,
-+		 <&ccu CLK_PLL_VIDEO1_2X>;
-+	clock-names = "ahb", "mod", "pll-0", "pll-1";
-+	dmas = <&dma SUN4I_DMA_NORMAL 16>,
-+	       <&dma SUN4I_DMA_NORMAL 16>,
-+	       <&dma SUN4I_DMA_DEDICATED 24>;
-+	dma-names = "ddc-tx", "ddc-rx", "audio-tx";
-+	status = "disabled";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			hdmi_in_tcon0: endpoint {
-+				remote-endpoint = <&tcon0_out_hdmi>;
-+			};
-+		};
-+
-+		port@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			hdmi_out_con: endpoint {
-+				remote-endpoint = <&hdmi_con_in>;
-+			};
-+		};
-+	};
-+};
-+
- tve0: tv-encoder@01c0a000 {
- 	compatible = "allwinner,sun4i-a10-tv-encoder";
- 	reg = <0x01c0a000 0x1000>;
--- 
-git-series 0.9.1
+>> +       reg = <0x40000000 0x1000>;
+>
+> Looks like you have 2 nodes pointing to the same address with your
+> reset binding? You shouldn't have overlapping resources. It's allowed
+> for historical reasons but breaks resource creation in Linux.
+
+No... they are all in the same node, just sharing the same
+resource by way of regmap (syscon).
+
+In the end, as I think you requested, when you said:
+
+>> +     clock-controller {
+>> +             compatible = "cortina,gemini-clock-controller";
+>> +             #clock-cells = <1>;
+(...)
+> There's not really much reason to have a child node here. The parent can
+> be the clock provider.
+(...)
+> Same comment as clocks. The parent can be the provider.
+
+So as you say, no specific child is needed and syscon provides
+clocks and resets:
+
+                syscon: syscon@40000000 {
+                        compatible = "cortina,gemini-syscon",
+                                     "cortina,gemini-clock-controller",
+                                     "cortina,gemini-reset",
+                                     "syscon", "simple-mfd";
+                        reg = <0x40000000 0x1000>;
+                        #clock-cells = <1>;
+                        #reset-cells = <1>;
+
+                        syscon-reboot {
+                                compatible = "syscon-reboot";
+                                regmap = <&syscon>;
+                                /* GLOBAL_RESET register */
+                                offset = <0x0c>;
+                                /* RESET_GLOBAL | RESET_CPU1 */
+                                mask = <0xC0000000>;
+                        };
+                };
+
+Before your (as I percieved it) requested changes to avoid
+surplus children in the syscon it looked like this:
+
+                syscon: syscon@40000000 {
+                        compatible = "cortina,gemini-syscon",
+"syscon", "simple-mfd";
+                        reg = <0x40000000 0x1000>;
+
+                        syscon-reboot {
+                                compatible = "syscon-reboot";
+                                regmap = <&syscon>;
+                                /* GLOBAL_RESET register */
+                                offset = <0x0c>;
+                                /* RESET_GLOBAL | RESET_CPU1 */
+                                mask = <0xC0000000>;
+                        };
+
+                        rcon: reset-controller {
+                                compatible = "cortina,gemini-reset";
+                                #reset-cells = <1>;
+                        };
+
+                        gcc: clock-controller {
+                                compatible = "cortina,gemini-clock-controller";
+                                #clock-cells = <1>;
+                        };
+                };
+
+
+Yours,
+Linus Walleij
