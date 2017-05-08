@@ -1,88 +1,40 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: [PATCH 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
-To: Phil Elwell <phil@raspberrypi.org>, linux-clk@vger.kernel.org,
- Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Florian Fainelli
- <f.fainelli@gmail.com>, linux-rpi-kernel@lists.infradead.org
-References: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
- <684006892.45085.1496169665454@email.1und1.de>
- <56d5f9c5-ba15-4d3e-7956-fb697fe12114@raspberrypi.org>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <6741c61b-e557-5063-2bad-2464eccfc639@i2se.com>
-Date: Wed, 31 May 2017 10:59:46 +0200
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 8 May 2017 12:38:26 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: rjw@rjwysocki.net, robh+dt@kernel.org, matthias.bgg@gmail.com,
+	mark.rutland@arm.com, mturquette@baylibre.com,
+	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
+	shunli.wang@mediatek.com, erin.lo@mediatek.com, jdelvare@suse.de,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] dt-bindings: cpufreq: move Mediatek cpufreq
+ dt-bindings document to proper place
+Message-ID: <20170508070826.GF17010@vireshk-i7>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+ <1493997974-17699-6-git-send-email-sean.wang@mediatek.com>
+ <20170508041827.GC17010@vireshk-i7>
+ <1494224387.9662.10.camel@mtkswgap22>
 MIME-Version: 1.0
-In-Reply-To: <56d5f9c5-ba15-4d3e-7956-fb697fe12114@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494224387.9662.10.camel@mtkswgap22>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 31.05.2017 um 10:28 schrieb Phil Elwell:
-> Hi Stefan,
->
-> On 30/05/2017 19:41, Stefan Wahren wrote:
->> Hi Phil,
->>
->>> Phil Elwell <phil@raspberrypi.org> hat am 30. Mai 2017 um 18:28 geschrieben:
->>>
->>>
->>> Restrict clock sources for the PCM peripheral to the oscillator and
->>> PLLD_PER because other source may have varying rates or be switched off.
->>> Prevent other sources from being selected by replacing their names in
->>> the list of potential parents with dummy entries (entry index is
->>> significant).
->> i like to have this as a comment above the definition of bcm2835_pcm_per_parents.
-> Sure - good idea.
->
->>> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
->>> ---
->>>  drivers/clk/bcm/clk-bcm2835.c | 11 +++++++++++
->>>  1 file changed, 11 insertions(+)
->>>
->>> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
->>> index 0258538..facc346 100644
->>> --- a/drivers/clk/bcm/clk-bcm2835.c
->>> +++ b/drivers/clk/bcm/clk-bcm2835.c
->>> @@ -1511,6 +1511,16 @@ struct bcm2835_clk_desc {
->>>  	"pllh_aux",
->>>  };
->>>
->>> +static const char *const bcm2835_pcm_per_parents[] = {
->> As mentioned above, there should be a comment like all the others.
-> Yes, will do.
->
->>> +	"-",
->>> +	"xosc",
->>> +	"-",
->>> +	"-",
->>> +	"-",
->>> +	"-",
->>> +	"plld_per",
->>> +};
->> Is there a dummy entry for "pllh_aux" missing?
-> Yes and no - adding it will cause an extra iteration around the loop, but 
-> perhaps it's less confusing. I'll add one.
+On 08-05-17, 14:19, Sean Wang wrote:
+> Okay, I will do it with you provided command again. 
+> 
+> What I did for the patch is just "git mv
+> Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
+> Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt"
+> and no any changing data in the content.
 
-In case you want to save an iteration, you could add short comment
-instead of a dummy entry.
+I was quite sure that you have done exactly that, but then we are
+supposed to review and make sure you haven't done any mistakes.
 
->
->>> +
->>>  #define REGISTER_PER_CLK(...)	REGISTER_CLK(				\
->>>  	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),	\
->>>  	.parents = bcm2835_clock_per_parents,				\
->>> @@ -2000,6 +2010,7 @@ struct bcm2835_clk_desc {
->>>  		.int_bits = 12,
->>>  		.frac_bits = 12,
->>>  		.is_mash_clock = true,
->>> +		.parents = bcm2835_pcm_per_parents,
->> This looks a little bit hacky to me. Not sure, but can we do something like this?
->>
->> #define REGISTER_PCM_CLK(...)	REGISTER_CLK(				\
->> 	.num_mux_parents = ARRAY_SIZE(bcm2835_pcm_per_parents),	\
->> 	.parents = bcm2835_pcm_per_parents,				\
->> 	__VA_ARGS__)
-> Of course - no problem.
->
-> Thanks for the feedback - it will be incorporated into V2.
->
-> Phil
+That's where those options would make our life easier. Look at the
+patch created by that command and you wouldn't see any diff at all.
+
+-- 
+viresh
