@@ -1,46 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:39229 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753334AbdEDLuo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 07:50:44 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 09/13] drm/sun4i: Add compatible string for V3s display engine
-Date: Thu,  4 May 2017 19:48:54 +0800
-Message-Id: <20170504114858.9008-10-icenowy@aosc.io>
-In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Mon, 8 May 2017 19:07:26 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
+	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
+Subject: Re: [RFC PATCH 0/3] clk: introduce clk_bulk_get accessories
+Message-ID: <20170508110726.GA18153@b29396-OptiPlex-7040>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <20170422030419.GV7065@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170422030419.GV7065@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s features the new "Display Engine 2.0", which can now also
-be driven with our subdrivers in sun4i-drm.
+On Fri, Apr 21, 2017 at 08:04:19PM -0700, Stephen Boyd wrote:
+> On 04/12, Dong Aisheng wrote:
+> > 
+> > Together with the err path handling for each clocks, it does make
+> > things a bit ugly.
+> > 
+> > Since we already have regulator_bulk_get accessories, i thought we
+> > probably could introduce clk_bulk_get as well to handle such case to
+> > ease the driver owners' life. 
+> > 
+> > Besides IMX cpufreq driver, there is also some similar cases
+> > in kernel which could befinit from this api as well.
+> > e.g.
+> > drivers/cpufreq/tegra124-cpufreq.c
+> > drivers/cpufreq/s3c2412-cpufreq.c
+> > sound/soc/samsung/smdk_spdif.c
+> > arch/arm/mach-omap1/serial.c
+> > ...
+> > 
+> > And actually, if we handle clocks more than 3, then it might be
+> > worthy to try, which there is quite many manay in kernel and
+> > that probably could save a lot codes.
+> > 
+> > This is a RFC patch intending to bring up the idea to discuss.
+> > 
+> 
+> Idea seems fine to me. Please also add Russell King, as we need
+> an ack from him on the clk.h API changes.
+> 
 
-Add the compatible string for in sun4i_drv.c, in order to make the
-display engine and its components probed.
+Great! Thanks! And sorry to miss Russell King.
+Quite willing to add him to help review in the next series.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 12ede8682b5c..dcfb241f817d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -306,6 +306,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
- 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
-+	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
--- 
-2.12.2
-
+Regards
+Dong Aisheng
