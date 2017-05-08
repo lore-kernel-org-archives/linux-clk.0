@@ -1,101 +1,229 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 May 2017 19:12:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, xiaolong.zhang@spreadtrum.com,
-	Orson Zhai =?utf-8?B?KOe/n+S6rCk=?= <orson.zhai@spreadtrum.com>,
-	"geng.ren@spreadtrum.com" <geng.ren@spreadtrum.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/3] Documentation: add sprd clock bindings
-Message-ID: <20170519021202.GG20170@codeaurora.org>
-References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
- <20170515083502.4492-3-chunyan.zhang@spreadtrum.com>
- <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
- <CAAfSe-u-+snc=b6QYgA4ysknxYDXS5UqbvWBqrnZ92sSBQqJRQ@mail.gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
+	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
+	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH V2 3/3] cpufreq: imx6q: refine clk operations
+Date: Mon, 8 May 2017 22:03:53 +0800
+Message-ID: <1494252233-21074-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
+References: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAfSe-u-+snc=b6QYgA4ysknxYDXS5UqbvWBqrnZ92sSBQqJRQ@mail.gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/18, Chunyan Zhang wrote:
-> On 18 May 2017 at 03:43, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Mon, May 15, 2017 at 10:35 AM, Chunyan Zhang
-> > <chunyan.zhang@spreadtrum.com> wrote:
-> >> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
-> >> new file mode 100644
-> >> index 0000000..476e315
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
-> >> @@ -0,0 +1,17 @@
-> >> +Spreadtrum adjustable pll clock driver
-> >> +
-> >> +Required properties:
-> >> +
-> >> +- compatible : must be one of:
-> >> +       "sprd,sc9836-adjustable-pll-clock"
-> >> +       "sprd,sc9860-adjustable-pll-clock"
-> >> +
-> >> +Example:
-> >> +       clk_mpll0: clk@40400024 {
-> >> +               compatible = "sprd,sc9860-adjustable-pll-clock";
-> >> +               #clock-cells = <0>;
-> >> +               reg = <0 0x40400024 0 0x4>,
-> >> +                     <0 0x40400028 0 0x4>;
-> >> +               clocks = <&clk_mpll_gates 2>;
-> >> +               clock-output-names = "clk_mpll0";
-> >> +       };
-> >
-> > The properties listed in the example must all be either
-> > defined as "required" or "optional" properties and have a
-> > description.
-> 
-> Since these common properties are documented in the common clock binding [1]
-> 
-> [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> 
-> I will add explanation in this file like I do in other bindings
-> introduced in this patch, and will address 'reg' which probably is not
-> similar to the common usage.
-> 
-> >
-> > The reg property here is a bit odd, as it lists two consecutive
-> > 4-byte areas, and both are suspiciously close to a round
-> > address (0x40400000), so I would guess that they are
-> > in fact part of a clock controller with several registers.
-> 
-> They are PLL clock configuration registers.
-> 
-> Different PLL has different configurations which listed in pll_cfg.h,
-> and probably has different number of registers for storing
-> configurations, and on some Spreadtrum's SoCs PLL clock configuration
-> registers aren't consecutive, but all PLLs on all Spreadtrum's SoCs
-> (at least so far) are using the same driver.
-> 
-> >
-> > If so, please define a node for the entire clock controller,
-> > the DT description should reflect the design of the hardware
-> > rather than the design of your device driver.
-> 
-> I also realized our implementation might not be easy to be understood,
-> but I haven't thought out a better solution considering the hardware
-> limitation I explained above.
+Use clk_bulk_get to ease the driver clocks handling.
 
-This binding is going down the wrong path. Please look at how
-drivers such as sunxi-ng have done the binding in comparison to
-original sunxi design. We don't put this level of detail into DT,
-instead we put the details into the driver code and have clock
-controller nodes in DT. A quick glance shows that this binding is
-making a node per-clk, which is not going to be accepted.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Anson Huang <anson.huang@nxp.com>
+Cc: Robin Gong <yibin.gong@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Octavian Purdila <octavian.purdila@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ChangeLog:
+v1->v2: No changes
+---
+ drivers/cpufreq/imx6q-cpufreq.c | 119 ++++++++++++++++++----------------------
+ 1 file changed, 53 insertions(+), 66 deletions(-)
 
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index 7719b02..6158910 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -24,15 +24,29 @@ static struct regulator *arm_reg;
+ static struct regulator *pu_reg;
+ static struct regulator *soc_reg;
+ 
+-static struct clk *arm_clk;
+-static struct clk *pll1_sys_clk;
+-static struct clk *pll1_sw_clk;
+-static struct clk *step_clk;
+-static struct clk *pll2_pfd2_396m_clk;
+-
+-/* clk used by i.MX6UL */
+-static struct clk *pll2_bus_clk;
+-static struct clk *secondary_sel_clk;
++enum IMX6_CPUFREQ_CLKS {
++	ARM,
++	PLL1_SYS,
++	STEP,
++	PLL1_SW,
++	PLL2_PFD2_396M,
++	/* MX6UL requires two more clks */
++	PLL2_BUS,
++	SECONDARY_SEL,
++};
++#define IMX6Q_CPUFREQ_CLK_NUM		5
++#define IMX6UL_CPUFREQ_CLK_NUM		7
++
++static int num_clks;
++static struct clk_bulk_data clks[] = {
++	{ .id = "arm" },
++	{ .id = "pll1_sys" },
++	{ .id = "step" },
++	{ .id = "pll1_sw" },
++	{ .id = "pll2_pfd2_396m" },
++	{ .id = "pll2_bus" },
++	{ .id = "secondary_sel" },
++};
+ 
+ static struct device *cpu_dev;
+ static bool free_opp;
+@@ -51,7 +65,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 
+ 	new_freq = freq_table[index].frequency;
+ 	freq_hz = new_freq * 1000;
+-	old_freq = clk_get_rate(arm_clk) / 1000;
++	old_freq = clk_get_rate(clks[ARM].clk) / 1000;
+ 
+ 	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &freq_hz);
+ 	if (IS_ERR(opp)) {
+@@ -109,25 +123,27 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 		 * voltage of 528MHz, so lower the CPU frequency to one
+ 		 * half before changing CPU frequency.
+ 		 */
+-		clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
+-		clk_set_parent(pll1_sw_clk, pll1_sys_clk);
+-		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
+-			clk_set_parent(secondary_sel_clk, pll2_bus_clk);
++		clk_set_rate(clks[ARM].clk, (old_freq >> 1) * 1000);
++		clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
++		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk))
++			clk_set_parent(clks[SECONDARY_SEL].clk,
++				       clks[PLL2_BUS].clk);
+ 		else
+-			clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
+-		clk_set_parent(step_clk, secondary_sel_clk);
+-		clk_set_parent(pll1_sw_clk, step_clk);
++			clk_set_parent(clks[SECONDARY_SEL].clk,
++				       clks[PLL2_PFD2_396M].clk);
++		clk_set_parent(clks[STEP].clk, clks[SECONDARY_SEL].clk);
++		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
+ 	} else {
+-		clk_set_parent(step_clk, pll2_pfd2_396m_clk);
+-		clk_set_parent(pll1_sw_clk, step_clk);
+-		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk)) {
+-			clk_set_rate(pll1_sys_clk, new_freq * 1000);
+-			clk_set_parent(pll1_sw_clk, pll1_sys_clk);
++		clk_set_parent(clks[STEP].clk, clks[PLL2_PFD2_396M].clk);
++		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
++		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk)) {
++			clk_set_rate(clks[PLL1_SYS].clk, new_freq * 1000);
++			clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
+ 		}
+ 	}
+ 
+ 	/* Ensure the arm clock divider is what we expect */
+-	ret = clk_set_rate(arm_clk, new_freq * 1000);
++	ret = clk_set_rate(clks[ARM].clk, new_freq * 1000);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "failed to set clock rate: %d\n", ret);
+ 		regulator_set_voltage_tol(arm_reg, volt_old, 0);
+@@ -161,7 +177,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 
+ static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
+ {
+-	policy->clk = arm_clk;
++	policy->clk = clks[ARM].clk;
+ 	return cpufreq_generic_init(policy, freq_table, transition_latency);
+ }
+ 
+@@ -197,27 +213,14 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
+-	arm_clk = clk_get(cpu_dev, "arm");
+-	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
+-	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
+-	step_clk = clk_get(cpu_dev, "step");
+-	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
+-	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
+-	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
+-		dev_err(cpu_dev, "failed to get clocks\n");
+-		ret = -ENOENT;
+-		goto put_clk;
+-	}
++	if (of_machine_is_compatible("fsl,imx6ul"))
++		num_clks = IMX6UL_CPUFREQ_CLK_NUM;
++	else
++		num_clks = IMX6Q_CPUFREQ_CLK_NUM;
+ 
+-	if (of_machine_is_compatible("fsl,imx6ul")) {
+-		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
+-		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
+-		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
+-			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
+-			ret = -ENOENT;
+-			goto put_clk;
+-		}
+-	}
++	ret = clk_bulk_get(cpu_dev, num_clks, clks);
++	if (ret)
++		goto put_node;
+ 
+ 	arm_reg = regulator_get(cpu_dev, "arm");
+ 	pu_reg = regulator_get_optional(cpu_dev, "pu");
+@@ -354,22 +357,11 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 		regulator_put(pu_reg);
+ 	if (!IS_ERR(soc_reg))
+ 		regulator_put(soc_reg);
+-put_clk:
+-	if (!IS_ERR(arm_clk))
+-		clk_put(arm_clk);
+-	if (!IS_ERR(pll1_sys_clk))
+-		clk_put(pll1_sys_clk);
+-	if (!IS_ERR(pll1_sw_clk))
+-		clk_put(pll1_sw_clk);
+-	if (!IS_ERR(step_clk))
+-		clk_put(step_clk);
+-	if (!IS_ERR(pll2_pfd2_396m_clk))
+-		clk_put(pll2_pfd2_396m_clk);
+-	if (!IS_ERR(pll2_bus_clk))
+-		clk_put(pll2_bus_clk);
+-	if (!IS_ERR(secondary_sel_clk))
+-		clk_put(secondary_sel_clk);
++
++	clk_bulk_put(num_clks, clks);
++put_node:
+ 	of_node_put(np);
++
+ 	return ret;
+ }
+ 
+@@ -383,13 +375,8 @@ static int imx6q_cpufreq_remove(struct platform_device *pdev)
+ 	if (!IS_ERR(pu_reg))
+ 		regulator_put(pu_reg);
+ 	regulator_put(soc_reg);
+-	clk_put(arm_clk);
+-	clk_put(pll1_sys_clk);
+-	clk_put(pll1_sw_clk);
+-	clk_put(step_clk);
+-	clk_put(pll2_pfd2_396m_clk);
+-	clk_put(pll2_bus_clk);
+-	clk_put(secondary_sel_clk);
++
++	clk_bulk_put(num_clks, clks);
+ 
+ 	return 0;
+ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
