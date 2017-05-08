@@ -1,446 +1,75 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
-	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
-	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
-	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
-	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>,
-	<dongas86@gmail.com>, Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH V3 1/3] clk: add clk_bulk_get accessories
-Date: Fri, 19 May 2017 21:49:04 +0800
-Message-ID: <1495201746-31841-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
-References: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <varada@codeaurora.org>
+Subject: Re: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
+To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org,
+ david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, sricharan@codeaurora.org,
+ absahu@codeaurora.org, sjaganat@codeaurora.org,
+ Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+ <1493373403-23462-5-git-send-email-varada@codeaurora.org>
+ <20170428185825.75usyll55p3aclnm@latitude>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Message-ID: <a63b7ccf-51a6-5d10-47e1-aac9a27a1516@codeaurora.org>
+Date: Mon, 8 May 2017 13:02:20 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170428185825.75usyll55p3aclnm@latitude>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-These helper function allows drivers to get several clk consumers in
-one operation. If any of the clk cannot be acquired then any clks
-that were got will be put before returning to the caller.
 
-This can relieve the driver owners' life who needs to handle many clocks,
-as well as each clock error reporting.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Anson Huang <anson.huang@nxp.com>
-Cc: Robin Gong <yibin.gong@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Octavian Purdila <octavian.purdila@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-ChangeLog:
-v2->v3:
- * release resource in reversed order in case an error according to
-   Geert Uytterhoeven's suggestion
+On 4/29/2017 12:28 AM, Jonathan Neuschäfer wrote:
+> Hi,
+> 
+> On Fri, Apr 28, 2017 at 03:26:42PM +0530, Varadarajan Narayanan wrote:
+>> Subject: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
+> 
+> s/MTP/HK01/ ?
 
-v1->v2:
- * fix comments of clk_bulk_get that only one dev is possible with the API.
- * Comments 'bulk of clock source' replaced by 'set of clks'
- * Mark clk_bulk_data structure as const for the following API:
-   clk_bulk_{enable|disable}
-   clk_bulk_{prepare|unprepare}
-   Except clk_bulk_{get|put} which needs update clk_bulk_date
- * Introduce clk-bulk.c to centrally handle bulk_clks, especially moving
-   platform independant clk_bulk_{get|put} out of clkdev.c which depends on
-   CONFIG_CLKDEV_LOOKUP and is used in devm_clk_bulk_get(clk-devres.c) later
-   which is independant of CONFIG_CLKDEV_LOOKUP.
- * Should call clk_disable in error path of clk_bulk_enable
- * Fix a build warning of clk_bulk_get in !CONFIG_COMMON_CLK case
- * Add __must_check anatation in function definition as well to make it
-   more explicitly
----
- drivers/clk/Makefile   |   2 +-
- drivers/clk/clk-bulk.c | 157 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h    | 111 ++++++++++++++++++++++++++++++++++
- 3 files changed, 269 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/clk-bulk.c
+Have posted v2 with MTP changed as HK01. Please refer to
+https://www.spinics.net/lists/arm-kernel/msg579470.html.
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index c19983a..ed1e99f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -1,5 +1,5 @@
- # common clock types
--obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o
-+obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o clk-bulk.o
- obj-$(CONFIG_CLKDEV_LOOKUP)	+= clkdev.o
- obj-$(CONFIG_COMMON_CLK)	+= clk.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-new file mode 100644
-index 0000000..c834f5a
---- /dev/null
-+++ b/drivers/clk/clk-bulk.c
-@@ -0,0 +1,157 @@
-+/*
-+ * Copyright 2017 NXP
-+ *
-+ * Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/export.h>
-+
-+void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-+{
-+	while (--num_clks >= 0) {
-+		clk_put(clks[num_clks].clk);
-+		clks[num_clks].clk = NULL;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(clk_bulk_put);
-+
-+int __must_check clk_bulk_get(struct device *dev, int num_clks,
-+			      struct clk_bulk_data *clks)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_clks; i++)
-+		clks[i].clk = NULL;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		clks[i].clk = clk_get(dev, clks[i].id);
-+		if (IS_ERR(clks[i].clk)) {
-+			ret = PTR_ERR(clks[i].clk);
-+			dev_err(dev, "Failed to get clk '%s': %d\n",
-+				clks[i].id, ret);
-+			clks[i].clk = NULL;
-+			goto err;
-+		}
-+	}
-+
-+	return 0;
-+
-+err:
-+	clk_bulk_put(i, clks);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(clk_bulk_get);
-+
-+#ifdef CONFIG_HAVE_CLK_PREPARE
-+
-+/**
-+ * clk_bulk_unprepare - undo preparation of a set of clock sources
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table being unprepared
-+ *
-+ * clk_bulk_unprepare may sleep, which differentiates it from clk_bulk_disable.
-+ * Returns 0 on success, -EERROR otherwise.
-+ */
-+void clk_bulk_unprepare(int num_clks, const struct clk_bulk_data *clks)
-+{
-+	while (--num_clks >= 0)
-+		clk_unprepare(clks[num_clks].clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_bulk_unprepare);
-+
-+/**
-+ * clk_bulk_prepare - prepare a set of clocks
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table being prepared
-+ *
-+ * clk_bulk_prepare may sleep, which differentiates it from clk_bulk_enable.
-+ * Returns 0 on success, -EERROR otherwise.
-+ */
-+int __must_check clk_bulk_prepare(int num_clks,
-+				  const struct clk_bulk_data *clks)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		ret = clk_prepare(clks[i].clk);
-+		if (ret) {
-+			pr_err("Failed to prepare clk '%s': %d\n",
-+				clks[i].id, ret);
-+			goto err;
-+		}
-+	}
-+
-+	return 0;
-+
-+err:
-+	clk_bulk_unprepare(i, clks);
-+
-+	return  ret;
-+}
-+
-+#endif /* CONFIG_HAVE_CLK_PREPARE */
-+
-+/**
-+ * clk_bulk_disable - gate a set of clocks
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table being gated
-+ *
-+ * clk_bulk_disable must not sleep, which differentiates it from
-+ * clk_bulk_unprepare. clk_bulk_disable must be called before
-+ * clk_bulk_unprepare.
-+ */
-+void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks)
-+{
-+
-+	while (--num_clks >= 0)
-+		clk_disable(clks[num_clks].clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_bulk_disable);
-+
-+/**
-+ * clk_bulk_enable - ungate a set of clocks
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table being ungated
-+ *
-+ * clk_bulk_enable must not sleep
-+ * Returns 0 on success, -EERROR otherwise.
-+ */
-+int __must_check clk_bulk_enable(int num_clks, const struct clk_bulk_data *clks)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		ret = clk_enable(clks[i].clk);
-+		if (ret) {
-+			pr_err("Failed to enable clk '%s': %d\n",
-+				clks[i].id, ret);
-+			goto err;
-+		}
-+	}
-+
-+	return 0;
-+
-+err:
-+	clk_bulk_disable(i, clks);
-+
-+	return  ret;
-+}
-+EXPORT_SYMBOL_GPL(clk_bulk_enable);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index e9d36b3..1201944 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -77,6 +77,21 @@ struct clk_notifier_data {
- 	unsigned long		new_rate;
- };
- 
-+/**
-+ * struct clk_bulk_data - Data used for bulk clk operations.
-+ *
-+ * @id: clock consumer ID
-+ * @clk: struct clk * to store the associated clock
-+ *
-+ * The CLK APIs provide a series of clk_bulk_() API calls as
-+ * a convenience to consumers which require multiple clks.  This
-+ * structure is used to manage data for these calls.
-+ */
-+struct clk_bulk_data {
-+	const char		*id;
-+	struct clk		*clk;
-+};
-+
- #ifdef CONFIG_COMMON_CLK
- 
- /**
-@@ -185,12 +200,20 @@ static inline bool clk_is_match(const struct clk *p, const struct clk *q)
-  */
- #ifdef CONFIG_HAVE_CLK_PREPARE
- int clk_prepare(struct clk *clk);
-+int __must_check clk_bulk_prepare(int num_clks,
-+				  const struct clk_bulk_data *clks);
- #else
- static inline int clk_prepare(struct clk *clk)
- {
- 	might_sleep();
- 	return 0;
- }
-+
-+static inline int clk_bulk_prepare(int num_clks, struct clk_bulk_data *clks)
-+{
-+	might_sleep();
-+	return 0;
-+}
- #endif
- 
- /**
-@@ -204,11 +227,16 @@ static inline int clk_prepare(struct clk *clk)
-  */
- #ifdef CONFIG_HAVE_CLK_PREPARE
- void clk_unprepare(struct clk *clk);
-+void clk_bulk_unprepare(int num_clks, const struct clk_bulk_data *clks);
- #else
- static inline void clk_unprepare(struct clk *clk)
- {
- 	might_sleep();
- }
-+static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
-+{
-+	might_sleep();
-+}
- #endif
- 
- #ifdef CONFIG_HAVE_CLK
-@@ -230,6 +258,29 @@ static inline void clk_unprepare(struct clk *clk)
- struct clk *clk_get(struct device *dev, const char *id);
- 
- /**
-+ * clk_bulk_get - lookup and obtain a number of references to clock producer.
-+ * @dev: device for clock "consumer"
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * This helper function allows drivers to get several clk consumers in one
-+ * operation. If any of the clk cannot be acquired then any clks
-+ * that were obtained will be freed before returning to the caller.
-+ *
-+ * Returns 0 if all clocks specified in clk_bulk_data table are obtained
-+ * successfully, or valid IS_ERR() condition containing errno.
-+ * The implementation uses @dev and @clk_bulk_data.id to determine the
-+ * clock consumer, and thereby the clock producer.
-+ * The clock returned is stored in each @clk_bulk_data.clk field.
-+ *
-+ * Drivers must assume that the clock source is not enabled.
-+ *
-+ * clk_bulk_get should not be called from within interrupt context.
-+ */
-+int __must_check clk_bulk_get(struct device *dev, int num_clks,
-+			      struct clk_bulk_data *clks);
-+
-+/**
-  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
-  * @dev: device for clock "consumer"
-  * @id: clock consumer ID
-@@ -279,6 +330,18 @@ struct clk *devm_get_clk_from_child(struct device *dev,
- int clk_enable(struct clk *clk);
- 
- /**
-+ * clk_bulk_enable - inform the system when the set of clks should be running.
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * May be called from atomic contexts.
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+int __must_check clk_bulk_enable(int num_clks,
-+				 const struct clk_bulk_data *clks);
-+
-+/**
-  * clk_disable - inform the system when the clock source is no longer required.
-  * @clk: clock source
-  *
-@@ -295,6 +358,24 @@ int clk_enable(struct clk *clk);
- void clk_disable(struct clk *clk);
- 
- /**
-+ * clk_bulk_disable - inform the system when the set of clks is no
-+ *		      longer required.
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * Inform the system that a set of clks is no longer required by
-+ * a driver and may be shut down.
-+ *
-+ * May be called from atomic contexts.
-+ *
-+ * Implementation detail: if the set of clks is shared between
-+ * multiple drivers, clk_bulk_enable() calls must be balanced by the
-+ * same number of clk_bulk_disable() calls for the clock source to be
-+ * disabled.
-+ */
-+void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks);
-+
-+/**
-  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
-  *		  This is only valid once the clock source has been enabled.
-  * @clk: clock source
-@@ -314,6 +395,19 @@ unsigned long clk_get_rate(struct clk *clk);
- void clk_put(struct clk *clk);
- 
- /**
-+ * clk_bulk_put	- "free" the clock source
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * Note: drivers must ensure that all clk_bulk_enable calls made on this
-+ * clock source are balanced by clk_bulk_disable calls prior to calling
-+ * this function.
-+ *
-+ * clk_bulk_put should not be called from within interrupt context.
-+ */
-+void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
-+
-+/**
-  * devm_clk_put	- "free" a managed clock source
-  * @dev: device used to acquire the clock
-  * @clk: clock source acquired with devm_clk_get()
-@@ -445,6 +539,12 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline int clk_bulk_get(struct device *dev, int num_clks,
-+			       struct clk_bulk_data *clks)
-+{
-+	return 0;
-+}
-+
- static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- {
- 	return NULL;
-@@ -458,6 +558,8 @@ static inline struct clk *devm_get_clk_from_child(struct device *dev,
- 
- static inline void clk_put(struct clk *clk) {}
- 
-+static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
-+
- static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
- 
- static inline int clk_enable(struct clk *clk)
-@@ -465,8 +567,17 @@ static inline int clk_enable(struct clk *clk)
- 	return 0;
- }
- 
-+static inline int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
-+{
-+	return 0;
-+}
-+
- static inline void clk_disable(struct clk *clk) {}
- 
-+
-+static inline void clk_bulk_disable(int num_clks,
-+				    struct clk_bulk_data *clks) {}
-+
- static inline unsigned long clk_get_rate(struct clk *clk)
- {
- 	return 0;
+Thanks
+Varada
+
+> 
+>> Add initial device tree support for the Qualcomm IPQ8074 SoC and
+>> HK01 evaluation board.
+>>
+>> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile         |   1 +
+>>   arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  48 ++++++++++
+>>   arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 153 ++++++++++++++++++++++++++++++
+>>   3 files changed, 202 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index cc0f02d..7c6963e 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
+> 
+> Maybe this list should be alphabetically sorted ('i' before 'm').
+> (I have no strong preference)
+> 
+> 
+> Thanks,
+> Jonathan Neuschäfer
+> 
+
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum, a Linux Foundation Collaborative Project
