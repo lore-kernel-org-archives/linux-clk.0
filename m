@@ -1,59 +1,82 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170524093932.5262-1-jbrunet@baylibre.com>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- carlo@caione.org, "Kevin Hilman" <khilman@baylibre.com>
-References: <20170524093932.5262-1-jbrunet@baylibre.com>
-Message-ID: <149573664766.52617.13819592607084950756@resonance>
-Subject: Re: [PATCH v2 0/2] clk: meson: mark clk81 as critical
-Date: Thu, 25 May 2017 11:24:07 -0700
+In-Reply-To: <CACRpkdY+EzbbTy6PzN5-YhCnSxPoKej2z=t-7eC3CPqDa6Q4_w@mail.gmail.com>
+References: <20170508201159.31634-1-linus.walleij@linaro.org>
+ <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com> <CACRpkdY+EzbbTy6PzN5-YhCnSxPoKej2z=t-7eC3CPqDa6Q4_w@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 9 May 2017 09:23:28 -0500
+Message-ID: <CAL_Jsq+WQijqm43U_SzSVzCn6_eeFLjggcWnbwbCpW99ct4XOQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] clk: Add bindings for the Gemini Clock Controller
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, openwrt-devel@openwrt.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2017-05-24 02:39:30)
-> The GX (gxbb.c) clock controller driver already marks the clk81 clock
-> as criticial. However, the Meson8b clock controller driver does not do
-> this yet.
-> This can lead to a freeze of the whole system when clk81 is disabled
-> by the common clock framework (for example after the last child clock
-> is disabled by a driver which used that child clock).
-> =
+On Mon, May 8, 2017 at 4:41 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, May 8, 2017 at 11:24 PM, Rob Herring <robh+dt@kernel.org> wrote:
+>
+>>> +Example:
+>>> +
+>>> +syscon: syscon@40000000 {
+>>> +       compatible = "cortina,gemini-syscon", "cortina,gemini-clock-controller",
+>>> +                    "syscon", "simple-mfd";
+>>
+>> There are no child nodes, so you don't need simple-mfd.
+>
+> The example is taken from an actual device tree (look below),
+> where there are child nodes, I can trim it down.
+>
+>>> +       reg = <0x40000000 0x1000>;
+>>
+>> Looks like you have 2 nodes pointing to the same address with your
+>> reset binding? You shouldn't have overlapping resources. It's allowed
+>> for historical reasons but breaks resource creation in Linux.
+>
+> No... they are all in the same node, just sharing the same
+> resource by way of regmap (syscon).
 
-> Changes since v1: [0]
-> With the clock flagged as CRITICAL, CLK_IGNORE_UNUSED is no longer
-> useful. Remove this flag from meson8b and gxbb's clk81.
+Okay, then please document at least the parent syscon node in a single
+doc. Splitting it is very confusing.
 
-Both patches look good to me.
+>
+> In the end, as I think you requested, when you said:
+>
+>>> +     clock-controller {
+>>> +             compatible = "cortina,gemini-clock-controller";
+>>> +             #clock-cells = <1>;
+> (...)
+>> There's not really much reason to have a child node here. The parent can
+>> be the clock provider.
+> (...)
+>> Same comment as clocks. The parent can be the provider.
+>
+> So as you say, no specific child is needed and syscon provides
+> clocks and resets:
+>
+>                 syscon: syscon@40000000 {
+>                         compatible = "cortina,gemini-syscon",
+>                                      "cortina,gemini-clock-controller",
+>                                      "cortina,gemini-reset",
 
-Regards,
-Mike
+This mostly looks fine, but you shouldn't need 3 compatible strings
+for the block.
 
-> =
-
-> [0]: https://lkml.kernel.org/r/20170504183201.13175-1-martin.blumenstingl=
-@googlemail.com
-> =
-
-> Jerome Brunet (1):
->   clk: gxbb: remove CLK_IGNORE_UNUSED from clk81
-> =
-
-> Martin Blumenstingl (1):
->   clk: meson: meson8b: mark clk81 as critical
-> =
-
->  drivers/clk/meson/gxbb.c    | 2 +-
->  drivers/clk/meson/meson8b.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> =
-
-> -- =
-
-> 2.9.4
->=20
+>                                      "syscon", "simple-mfd";
+>                         reg = <0x40000000 0x1000>;
+>                         #clock-cells = <1>;
+>                         #reset-cells = <1>;
+>
+>                         syscon-reboot {
+>                                 compatible = "syscon-reboot";
+>                                 regmap = <&syscon>;
+>                                 /* GLOBAL_RESET register */
+>                                 offset = <0x0c>;
+>                                 /* RESET_GLOBAL | RESET_CPU1 */
+>                                 mask = <0xC0000000>;
+>                         };
+>                 };
+>
