@@ -1,88 +1,96 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 01/10] arm: sunxi: add support for R40 SoC
-Date: Thu,  4 May 2017 21:49:57 +0800
-Message-Id: <20170504135006.16483-2-icenowy@aosc.io>
-In-Reply-To: <20170504135006.16483-1-icenowy@aosc.io>
-References: <20170504135006.16483-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:60856 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbdEIT0O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2017 15:26:14 -0400
+Date: Tue, 9 May 2017 21:26:11 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel-owner@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [linux-sunxi] [PATCH v6 11/13] ARM: dts: sun8i: add DE2 nodes
+ for V3s SoC
+Message-ID: <20170509192611.vouyitju6x3yibzz@lukather>
+References: <20170504114858.9008-1-icenowy@aosc.io>
+ <20170504114858.9008-12-icenowy@aosc.io>
+ <CAGb2v67uE2iuP+wrL2t0fSMY8C1qnX=pYru7pZGX+0WhC_z2EA@mail.gmail.com>
+ <8ad5de02ffc13348dfc71e9ec203205c@aosc.io>
+ <20170505123035.pwh3idz73ujrd3hx@lukather>
+ <47D16B11-E976-464C-92AD-213D837C8F68@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="izwh5njcozroauyf"
+In-Reply-To: <47D16B11-E976-464C-92AD-213D837C8F68@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
 
-Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
-like A20.
+--izwh5njcozroauyf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add support for it.
+1;4601;0c
+On Fri, May 05, 2017 at 08:34:16PM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2017=E5=B9=B45=E6=9C=885=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=888=
+:30:35, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=B0:
+> >On Fri, May 05, 2017 at 04:53:43PM +0800, icenowy@aosc.io wrote:
+> >> > > +               de2_clocks: clock@1000000 {
+> >> > > +                       compatible =3D
+> >"allwinner,sun50i-h5-de2-clk";
+> >> >=20
+> >> > I am a bit skeptical about this. Since the V3S only has one mixer,
+> >do
+> >> > the clocks
+> >> > for the second one even exist?
+> >>=20
+> >> It's described in the de_clock.c in the BSP source code, and in
+> >hardware
+> >> these bits can be really set (although without clock output).
+> >>=20
+> >> So I use this compatible which has still the extra clocks.
+> >
+> >If it's not usable, then it shouldn't be in the code, it's basically
+> >dead code.
+>=20
+> Thus should we have one more DE2 CCU compatible without mixer1
+> clocks for V3s?
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- Documentation/arm/sunxi/README                  | 4 ++++
- Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
- arch/arm/mach-sunxi/sunxi.c                     | 1 +
- 3 files changed, 6 insertions(+)
+If those clocks don't exist on v3s, then yes.
 
-diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-index d7b1f016bd62..25c814adcd47 100644
---- a/Documentation/arm/sunxi/README
-+++ b/Documentation/arm/sunxi/README
-@@ -75,6 +75,10 @@ SunXi family
-         + Datasheet
-           http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
- 
-+      - Allwinner R40 (sun8i)
-+        + Datasheet Draft
-+          http://linux-sunxi.org/File:Allwinner_R40_Datasheet_V0.1.pdf
-+
-     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
-       - Allwinner A80
-         + Datasheet
-diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-index d2c46449b4eb..b3ffe6cf821a 100644
---- a/Documentation/devicetree/bindings/arm/sunxi.txt
-+++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-@@ -14,6 +14,7 @@ using one of the following compatible strings:
-   allwinner,sun8i-a83t
-   allwinner,sun8i-h2-plus
-   allwinner,sun8i-h3
-+  allwinner-sun8i-r40
-   allwinner,sun9i-a80
-   allwinner,sun50i-a64
-   nextthing,gr8
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index f44e3acb5c90..aea616759451 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-h2-plus",
- 	"allwinner,sun8i-h3",
- 	"allwinner,sun8i-v3s",
-+	"allwinner,sun8i-r40",
- 	NULL,
- };
- 
--- 
-2.12.2
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--izwh5njcozroauyf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJZEhfPAAoJEBx+YmzsjxAgJc4P/09NGdSg5d2ycinJHrsja/xT
+NOvSgvRl4G9hkgaLgbLB8N8lzV42FzDP7hu2VquGlGTC74nl6rxbbHLO+aY3F990
+H9jKj4TIFDL/WdoLfzP+WqmEEVGgiPaG90kthR7Ol+1Z2seCWDJN3M07NbvaeLSa
+VKz6idBiLl24k/2aPi9TKVZQjQ8Af2hHMpZR5MGwJGwodmk+3V6tppAeSZIT1wxw
+wxJS2I+A0DvSzurVeBrqb1IQZ9yeb67JQprd1X5v6TvVZUdPaFhIpsiIymvIv6R3
+bT3rGtBBDbuzvd6o5IHrM0SHe65l9Y7Lp+6HrXxTJAcOOSC5jtkO5KUZwfVkvTns
+th1BZsJLCEqyeDstDKOuZxw/uwmSZV+1e2ObOOtf/aiiF+eMV2jY0pTnv4NtuOLC
+/rC0tS5GIrhjFNDR2AZZMO5ym5YPHElMCR+X3U0UV7uizqTu19+iGmf/GWrqfJ0D
+9YOxyHEkTsY11p9T+Sesqr3u4frqvZ0P7uXusTr2AwbyfyTb+El5iuPt10glHlC7
+LmDYFHtyafBNN7H5YxTfDtSKPy+85LfhLSRQxaSOxNoWHXBtai+MzQSVq9QTCQ4A
+/2AG6vgdt1mwLL/X9QU3gRIPcyVVPRDVOzToonySH+du3n0p0Cr5Kn7w6pwT/KJe
+0DovP+LAh98vOK6VYzfg
+=IQHl
+-----END PGP SIGNATURE-----
+
+--izwh5njcozroauyf--
