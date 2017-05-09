@@ -1,64 +1,65 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Zhong Kaihua <zhongkaihua@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 2/2] arm64: dts: add sp804 timer node for Hi3660
-Date: Wed, 17 May 2017 22:46:32 +0800
-Message-Id: <1495032392-19102-3-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1495032392-19102-1-git-send-email-leo.yan@linaro.org>
-References: <1495032392-19102-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:36547 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752370AbdEIJ2Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2017 05:28:24 -0400
+Received: by mail-wm0-f51.google.com with SMTP id u65so4290143wmu.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 May 2017 02:28:23 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson: gxbb: fix build error without
+ RESET_CONTROLLER
+To: Tobias Regnery <tobias.regnery@gmail.com>, sboyd@codeaurora.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20170424100542.20226-1-tobias.regnery@gmail.com>
+ <8556c66c-585f-d171-e2a8-1f59d109e9de@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <d0aae880-655a-7306-263d-9b15f2ba2f3f@baylibre.com>
+Date: Tue, 9 May 2017 11:28:16 +0200
+MIME-Version: 1.0
+In-Reply-To: <8556c66c-585f-d171-e2a8-1f59d109e9de@baylibre.com>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Hi3660 SoC comes with the sp804 timer in addition to the
-architecture timers. These ones are shutdown when reaching a deep idle
-states and a backup timer is needed. The sp804 belongs to another power
-domain and can fulfill the purpose of replacing temporarily an
-architecture timer when the CPU is idle.
+On 04/24/2017 12:10 PM, Neil Armstrong wrote:
+> On 04/24/2017 12:05 PM, Tobias Regnery wrote:
+>> With CONFIG_RESET_CONTROLLER=n we see the following link error in the
+>> meson gxbb clk driver:
+>>
+>> drivers/built-in.o: In function 'gxbb_aoclkc_probe':
+>> drivers/clk/meson/gxbb-aoclk.c:161: undefined reference to 'devm_reset_controller_register'
+>>
+>> Fix this by selecting the reset controller subsystem.
+>>
+>> Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
+>> ---
+>>  drivers/clk/meson/Kconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>> index 19480bcc7046..2f29ee1a4d00 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -14,6 +14,7 @@ config COMMON_CLK_MESON8B
+>>  config COMMON_CLK_GXBB
+>>  	bool
+>>  	depends on COMMON_CLK_AMLOGIC
+>> +	select RESET_CONTROLLER
+>>  	help
+>>  	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+>>  	  Say Y if you want peripherals and CPU frequency scaling to work.
+>>
+> 
+> Hi Tobias,
+> 
+> I was going to push this, thanks for the patch !
+> 
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> Neil
+> 
 
-Describe it in the device tree, so it can be enabled at boot time.
+Applied on fixes/meson-clk-drivers
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 138fcba..f75c792 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -173,6 +173,17 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		dual_timer0: timer@fff14000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			reg = <0x0 0xfff14000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg_ctrl HI3660_OSC32K>,
-+				 <&crg_ctrl HI3660_OSC32K>,
-+				 <&crg_ctrl HI3660_OSC32K>;
-+			clock-names = "timer1", "timer2", "apb_pclk";
-+		};
-+
- 		ufs: ufs@ff3b0000 {
- 			compatible = "jedec,ufs-1.1", "hisilicon,hi3660-ufs";
- 			reg = <0x0 0xff3b0000 0x0 0x1000>, /* 0: HCI standard */
--- 
-1.9.1
+Thanks,
+Neil
