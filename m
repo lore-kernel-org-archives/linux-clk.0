@@ -1,117 +1,55 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 19/20] ARM: sun5i: a10s: Add the HDMI controller node
-Date: Wed,  3 May 2017 13:59:56 +0200
-Message-Id: <1e3ddf81459adbab455b2211fe6b78bd6cf1bbec.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list\:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] drm/pl111: Register the clock divider and use it.
+In-Reply-To: <CACRpkdZUQX2MBiyd=m9P6HsxnNsf446RNR=R3-O_zm5GQXXOOg@mail.gmail.com>
+References: <20170508193348.30236-1-eric@anholt.net> <CACRpkdZUQX2MBiyd=m9P6HsxnNsf446RNR=R3-O_zm5GQXXOOg@mail.gmail.com>
+Date: Tue, 09 May 2017 11:18:56 -0700
+Message-ID: <87a86lgagf.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10s has an HDMI controller connected to the second TCON channel. Add
-it to our DT.
+--=-=-=
+Content-Type: text/plain
 
-Since the TV Encoder was the only channel 1 user so far, also add the
-property now that we have several users.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-a10s.dtsi | 50 ++++++++++++++++++++++++++++++++-
- arch/arm/boot/dts/sun5i.dtsi      |  1 +-
- 2 files changed, 51 insertions(+), 0 deletions(-)
+> On Mon, May 8, 2017 at 9:33 PM, Eric Anholt <eric@anholt.net> wrote:
+>
+>> This is required for the panel to work on bcm911360, where CLCDCLK is
+>> the fixed 200Mhz AXI41 clock.  The rate set is still passed up to the
+>> CLCDCLK, for platforms that have a settable rate on that one.
+>>
+>> v2: Set SET_RATE_PARENT (caught by Linus Walleij), depend on
+>>     COMMON_CLK.
+>>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
-index 1e38ff80366c..c9d4ee12599d 100644
---- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-@@ -71,7 +71,49 @@
- 		};
- 	};
- 
-+	display-engine {
-+		compatible = "allwinner,sun5i-a10s-display-engine",
-+			     "allwinner,sun5i-a13-display-engine";
-+		allwinner,pipelines = <&fe0>;
-+	};
-+
- 	soc@01c00000 {
-+		hdmi: hdmi@01c16000 {
-+			compatible = "allwinner,sun5i-a10s-hdmi";
-+			reg = <0x01c16000 0x1000>;
-+			interrupts = <58>;
-+			clocks = <&ccu CLK_AHB_HDMI>, <&ccu CLK_HDMI>,
-+				 <&ccu CLK_PLL_VIDEO0_2X>,
-+				 <&ccu CLK_PLL_VIDEO1_2X>;
-+			clock-names = "ahb", "mod", "pll-0", "pll-1";
-+			dmas = <&dma SUN4I_DMA_NORMAL 16>,
-+			       <&dma SUN4I_DMA_NORMAL 16>,
-+			       <&dma SUN4I_DMA_DEDICATED 24>;
-+			dma-names = "ddc-tx", "ddc-rx", "audio-tx";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					hdmi_in_tcon0: endpoint {
-+						remote-endpoint = <&tcon0_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		pwm: pwm@01c20e00 {
- 			compatible = "allwinner,sun5i-a10s-pwm";
- 			reg = <0x01c20e00 0xc>;
-@@ -128,3 +170,11 @@
- 
- &sram_a {
- };
-+
-+&tcon0_out {
-+	tcon0_out_hdmi: endpoint@2 {
-+		reg = <2>;
-+		remote-endpoint = <&hdmi_in_tcon0>;
-+		allwinner,tcon-channel = <1>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 5175f9cc9bed..0e29f1d98a9e 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -272,6 +272,7 @@
- 					tcon0_out_tve0: endpoint@1 {
- 						reg = <1>;
- 						remote-endpoint = <&tve0_in_tcon0>;
-+						allwinner,tcon-channel = <1>;
- 					};
- 				};
- 			};
--- 
-git-series 0.8.11
+Thanks.  Waiting on an ack from clock folks, then we'll be ready to go,
+I think.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkSCBAACgkQtdYpNtH8
+nugiTQ/6Asj1IOQ8QIngEUVxkzEnFKmNtYacX29NiyEkTsLdwXtCGH956p1v7MMg
+zlWoEtHLI0Us+ffyMje8cN5/HApUNSfa51ju4bf+yhtyuqmpdOLVdx8etsWxWRAa
+mb1R/6WIHog5y5xohHc/8TtLVUNayrE1Kw3qZ5o7eNMPtltn9cV28AQQejojKsdm
+dOgf8kXO2/HQLS21WIeOa98viz8hMww+AG2L5sLiWlLhasphu0flMbAHIgK2RBNS
+2EXOXSEQGC+6m5iK12X30qwAWE/fq90K6omCR/Nv+ChhPgPl2OL7+Pnlc+WyS2we
+GQvuj4/UDWfLC3T79VnGYo5y8MPUXiXVAmGjbIW2N93D9dEAsjqQ21q/LcTHOHOR
+Bf051dO6LHD+r8Vr1cDa8NK6vZptDki6i4/B24kGXTSa0QmfL/XIvncHo2PUqOVy
+uA7Q6gdgW9kHajfHZ5dX2VD+PiRKgKUydaXnVpQPzKufhdrU7pFz9QSewIV0pFGU
++aQErGeUICaZT46RUG3tJQfuJ2Lna55/Kq0egaByvIp6gzFetcslLnNNbeQmGr0i
+4+oVBYZQkTeYK/BRFM3ctGU1NI11Kjn9c4PSumlTB6D/2o/Wkayf/8S+xyrqv7L8
+fGoC0tJsrz1xZ/I/oEGEgXAUmYhwib9y7JklHk3OEMmYC7alaJM=
+=ikaA
+-----END PGP SIGNATURE-----
+--=-=-=--
