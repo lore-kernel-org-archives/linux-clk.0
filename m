@@ -1,184 +1,153 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Cc: Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/5 v3] dt-bindings: Augment Gemini for clocks, resets
-Date: Mon, 15 May 2017 19:18:39 +0200
-Message-Id: <20170515171839.953-1-linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:47865 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752755AbdEJRJq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2017 13:09:46 -0400
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v3] clk: at91: Add sama5d2 suspend/resume
+Date: Wed, 10 May 2017 19:09:41 +0200
+Message-Id: <20170510170941.8027-1-alexandre.belloni@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This augments the platform bindings for the Gemini SoC to include
-the fact that the system controller also provides clock and reset
-lindes, and adds all the required include files.
+On sama5d2, VDD core maybe be cut while in suspend. This means registers
+will be lost. Ensure they are saved and restored properly.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
-ChangeLog v2->v3:
-- Essentially a new patch from the two old patches adding
-  bindings to the reset and clock controller separately.
-  Instead add it all into the system controller and use one
-  single compatible.
+Changes in v3:
+ - use regmap_read_poll_timeout to handle the USB PLL
+ - fix typo
 
-Rob: I need to merge this together in front of the device tree
-changes that sprinkle references to the headers all over the
-Gemini device trees, so if this sits good with you please ACK
-it.
----
- Documentation/devicetree/bindings/arm/gemini.txt | 24 +++++++++++++++-
- include/dt-bindings/clock/cortina,gemini-clock.h | 29 +++++++++++++++++++
- include/dt-bindings/reset/cortina,gemini-reset.h | 36 ++++++++++++++++++++++++
- 3 files changed, 88 insertions(+), 1 deletion(-)
- create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
- create mode 100644 include/dt-bindings/reset/cortina,gemini-reset.h
 
-diff --git a/Documentation/devicetree/bindings/arm/gemini.txt b/Documentation/devicetree/bindings/arm/gemini.txt
-index 0041eb031116..55bf7ce96c44 100644
---- a/Documentation/devicetree/bindings/arm/gemini.txt
-+++ b/Documentation/devicetree/bindings/arm/gemini.txt
-@@ -24,6 +24,19 @@ Required nodes:
-   global control registers, with the compatible string
-   "cortina,gemini-syscon", "syscon";
+ drivers/clk/at91/pmc.c | 104 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
+
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 526df5ba042d..7fe1dc8d1829 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -13,7 +13,9 @@
+ #include <linux/clk/at91_pmc.h>
+ #include <linux/of.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/syscore_ops.h>
  
-+  Required properties on the syscon:
-+  - reg: syscon register location and size.
-+  - #clock-cells: should be set to <1> - the system controller is also a
-+                  clock provider.
-+  - #reset-cells: should be set to <1> - the system controller is also a
-+                  reset line provider.
-+
-+  The clock sources have shorthand defines in the include file:
-+  <dt-bindings/clock/cortina,gemini-clock.h>
-+
-+  The reset lines have shorthand defines in the include file:
-+  <dt-bindings/reset/cortina,gemini-reset.h>
-+
- - timer: the soc bus node must have a timer node pointing to the SoC timer
-   block, with the compatible string "cortina,gemini-timer"
-   See: clocksource/cortina,gemini-timer.txt
-@@ -56,12 +69,15 @@ Example:
- 		syscon: syscon@40000000 {
- 			compatible = "cortina,gemini-syscon", "syscon";
- 			reg = <0x40000000 0x1000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
+ #include <asm/proc-fns.h>
  
- 		uart0: serial@42000000 {
- 			compatible = "ns16550a";
- 			reg = <0x42000000 0x100>;
--			clock-frequency = <48000000>;
-+			resets = <&syscon GEMINI_RESET_UART>;
-+			clocks = <&syscon GEMINI_CLK_UART>;
- 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 		};
-@@ -73,12 +89,18 @@ Example:
- 			interrupts = <14 IRQ_TYPE_EDGE_FALLING>, /* Timer 1 */
- 				     <15 IRQ_TYPE_EDGE_FALLING>, /* Timer 2 */
- 				     <16 IRQ_TYPE_EDGE_FALLING>; /* Timer 3 */
-+			resets = <&syscon GEMINI_RESET_TIMER>;
-+			/* APB clock or RTC clock */
-+			clocks = <&syscon GEMINI_CLK_APB>,
-+				 <&syscon GEMINI_CLK_RTC>;
-+			clock-names = "PCLK", "EXTCLK";
- 			syscon = <&syscon>;
- 		};
- 
- 		intcon: interrupt-controller@48000000 {
- 			compatible = "cortina,gemini-interrupt-controller";
- 			reg = <0x48000000 0x1000>;
-+			resets = <&syscon GEMINI_RESET_INTCON0>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h b/include/dt-bindings/clock/cortina,gemini-clock.h
-new file mode 100644
-index 000000000000..acf5cd550b0c
---- /dev/null
-+++ b/include/dt-bindings/clock/cortina,gemini-clock.h
-@@ -0,0 +1,29 @@
-+#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
-+#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
+@@ -41,3 +43,105 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
 +
-+/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
-+#define GEMINI_NUM_CLKS 20
++#ifdef CONFIG_PM
++static struct regmap *pmcreg;
 +
-+#define GEMINI_CLK_RTC 0
-+#define GEMINI_CLK_AHB 1
-+#define GEMINI_CLK_APB 2
-+#define GEMINI_CLK_CPU 3
-+#define GEMINI_CLK_PCI 4
-+#define GEMINI_CLK_TVC 5
-+#define GEMINI_CLK_UART 6
-+#define GEMINI_CLK_GATES 7
-+#define GEMINI_CLK_GATE_SECURITY 7
-+#define GEMINI_CLK_GATE_GMAC0 8
-+#define GEMINI_CLK_GATE_GMAC1 9
-+#define GEMINI_CLK_GATE_SATA0 10
-+#define GEMINI_CLK_GATE_SATA1 11
-+#define GEMINI_CLK_GATE_USB0 12
-+#define GEMINI_CLK_GATE_USB1 13
-+#define GEMINI_CLK_GATE_IDE 14
-+#define GEMINI_CLK_GATE_PCI 15
-+#define GEMINI_CLK_GATE_DDR 16
-+#define GEMINI_CLK_GATE_FLASH 17
-+#define GEMINI_CLK_GATE_TVC 18
-+#define GEMINI_CLK_GATE_BOOT 19
++static struct
++{
++	u32 scsr;
++	u32 pcsr0;
++	u32 uckr;
++	u32 mor;
++	u32 mcfr;
++	u32 pllar;
++	u32 mckr;
++	u32 usb;
++	u32 imr;
++	u32 pcsr1;
++	u32 pcr[64];
++} pmc_cache;
 +
-+#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
-diff --git a/include/dt-bindings/reset/cortina,gemini-reset.h b/include/dt-bindings/reset/cortina,gemini-reset.h
-new file mode 100644
-index 000000000000..aebecae43721
---- /dev/null
-+++ b/include/dt-bindings/reset/cortina,gemini-reset.h
-@@ -0,0 +1,36 @@
-+#ifndef _DT_BINDINGS_RESET_CORTINA_GEMINI_H
-+#define _DT_BINDINGS_RESET_CORTINA_GEMINI_H
++static int pmc_suspend(void)
++{
++	int i;
 +
-+#define GEMINI_RESET_DRAM	0
-+#define GEMINI_RESET_FLASH	1
-+#define GEMINI_RESET_IDE	2
-+#define GEMINI_RESET_RAID	3
-+#define GEMINI_RESET_SECURITY	4
-+#define GEMINI_RESET_GMAC0	5
-+#define GEMINI_RESET_GMAC1	6
-+#define GEMINI_RESET_PCI	7
-+#define GEMINI_RESET_USB0	8
-+#define GEMINI_RESET_USB1	9
-+#define GEMINI_RESET_DMAC	10
-+#define GEMINI_RESET_APB	11
-+#define GEMINI_RESET_LPC	12
-+#define GEMINI_RESET_LCD	13
-+#define GEMINI_RESET_INTCON0	14
-+#define GEMINI_RESET_INTCON1	15
-+#define GEMINI_RESET_RTC	16
-+#define GEMINI_RESET_TIMER	17
-+#define GEMINI_RESET_UART	18
-+#define GEMINI_RESET_SSP	19
-+#define GEMINI_RESET_GPIO0	20
-+#define GEMINI_RESET_GPIO1	21
-+#define GEMINI_RESET_GPIO2	22
-+#define GEMINI_RESET_WDOG	23
-+#define GEMINI_RESET_EXTERN	24
-+#define GEMINI_RESET_CIR	25
-+#define GEMINI_RESET_SATA0	26
-+#define GEMINI_RESET_SATA1	27
-+#define GEMINI_RESET_TVE	28
-+#define GEMINI_RESET_CPU1	30
-+#define GEMINI_RESET_GLOBAL	31
++	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
++	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
++	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
++	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
++	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
++	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
++	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
++	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
++	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
++	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
 +
++	for (i = 2; i < 64; i++) {
++		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
++		regmap_read(pmcreg, AT91_PMC_PCR, &pmc_cache.pcr[i]);
++	}
++
++	return 0;
++}
++
++static void pmc_resume(void)
++{
++	int i, ret = 0;
++	u32 tmp;
++
++	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
++	if (pmc_cache.mckr != tmp)
++		pr_warn("MCKR was not configured properly by the firmware\n");
++	regmap_read(pmcreg, AT91_CKGR_PLLAR, &tmp);
++	if (pmc_cache.pllar != tmp)
++		pr_warn("PLLAR was not configured properly by the firmware\n");
++
++	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
++	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
++	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
++	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
++	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
++	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
++	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
++	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
++
++	for (i = 2; i < 64; i++) {
++		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
++		regmap_write(pmcreg, AT91_PMC_PCR, pmc_cache.pcr[i]);
++	}
++
++	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
++		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp, !(tmp & AT91_PMC_LOCKU), 10, 5000);
++		if (ret)
++			pr_crit("USB PLL didn't lock when resuming\n");
++	}
++}
++
++static struct syscore_ops pmc_syscore_ops = {
++	.suspend = pmc_suspend,
++	.resume = pmc_resume,
++};
++
++static const struct of_device_id sama5d2_pmc_dt_ids[] = {
++	{ .compatible = "atmel,sama5d2-pmc" },
++	{ /* sentinel */ }
++};
++
++static int __init pmc_register_ops(void)
++{
++	struct device_node *np;
++
++	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
++
++	pmcreg = syscon_node_to_regmap(np);
++	if (IS_ERR(pmcreg))
++		return PTR_ERR(pmcreg);
++
++	register_syscore_ops(&pmc_syscore_ops);
++
++	return 0;
++}
++/* This has to happen before arch_initcall because of the tcb_clksrc driver */
++postcore_initcall(pmc_register_ops);
 +#endif
 -- 
-2.9.3
+2.11.0
+
