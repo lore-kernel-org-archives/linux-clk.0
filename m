@@ -1,96 +1,123 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Pramod Kumar <pramodku@broadcom.com>
-Subject: [PATCH v5 08/11] arm64: dts: Add GPIO DT nodes for Stingray SOC
-Date: Fri, 26 May 2017 14:55:01 +0530
-Message-Id: <1495790704-2438-9-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
-References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33242 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751628AbdEJJ2B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2017 05:28:01 -0400
+Subject: Re: [PATCH v4 00/10] Add Basic SoC support for MT6797
+To: Mars Cheng <mars.cheng@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        wsd_upstream@mediatek.com
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+ <1492314150.19878.2.camel@mtkswgap22>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <6d60bccf-1894-7dc8-5ff7-4536a9755e0b@gmail.com>
+Date: Wed, 10 May 2017 11:27:55 +0200
+MIME-Version: 1.0
+In-Reply-To: <1492314150.19878.2.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+Hi Mars,
 
-The GPIOs on Stingray SOC are based on iProc GPIOs hence
-using this we add GPIO DT nodes for Stingray SOC.
+On 16/04/17 05:42, Mars Cheng wrote:
+> Hi Stephen, Matthias
+> 
+> gentle ping. :-)
+> 
 
-Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+I queued your patches for v4.12-next now.
+Sorry for the delay in my respons.
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index a4afd44..059086f 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -251,6 +251,14 @@
- 		ranges = <0x0 0x0 0x66400000 0x100000>;
- 
- 		#include "stingray-clock.dtsi"
-+
-+		gpio_crmu: gpio@66424800 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x00024800 0x4c>;
-+			ngpios = <6>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+		};
- 	};
- 
- 	hsls {
-@@ -261,6 +269,32 @@
- 
- 		#include "stingray-pinctrl.dtsi"
- 
-+		gpio_hsls: gpio@689d0000 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x000d0000 0x864>;
-+			ngpios = <151>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-ranges = <&pinmux 0 0 16>,
-+					<&pinmux 16 71 2>,
-+					<&pinmux 18 131 8>,
-+					<&pinmux 26 83 6>,
-+					<&pinmux 32 123 4>,
-+					<&pinmux 36 43 24>,
-+					<&pinmux 60 89 2>,
-+					<&pinmux 62 73 4>,
-+					<&pinmux 66 95 28>,
-+					<&pinmux 94 127 4>,
-+					<&pinmux 98 139 10>,
-+					<&pinmux 108 16 27>,
-+					<&pinmux 135 77 6>,
-+					<&pinmux 141 67 4>,
-+					<&pinmux 145 149 6>,
-+					<&pinmux 151 91 4>;
-+		};
-+
- 		uart0: uart@68a00000 {
- 			device_type = "serial";
- 			compatible = "snps,dw-apb-uart";
--- 
-2.7.4
+Regards,
+Matthias
+
+> Thanks.
+> 
+> On Sat, 2017-04-08 at 09:20 +0800, Mars Cheng wrote:
+>> This patch set adds basic SoC support for mediatek's first 10-core
+>> chip, X20, also known as MT6797.
+>>
+>> - based on 4.11-rc1
+>> - support common clk framework
+>> - apply patches about intpol just accepted to get full feature support:
+>> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008371.html
+>> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008375.html
+>> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008373.html
+>>
+>> Changes since v3:
+>> - since intpol patches accepted in v3, remove them
+>> - clk ID header separated from original clk driver submit
+>> - clean up clk driver, including unnecessary header and fields in structure
+>>
+>> Changes since v2:
+>> - prevent uncessary #intpol-bases for mtk-sysirq
+>> - add fast path for mtk-sysirq set_type when introducing multiple bases
+>> - add acked-by and tested-by
+>> - remove wrong usage for timer node
+>>
+>> Changes since v1:
+>> - add multiple base addresses support, v1 only allow 2 bases
+>> - clean up clk driver
+>>
+>> Kevin-CW Chen (2):
+>>    dt-bindings: arm: mediatek: document clk bindings for MT6797
+>>    clk: mediatek: add clk support for MT6797
+>>
+>> Mars Cheng (8):
+>>    dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
+>>    arm64: dts: mediatek: add mt6797 support
+>>    clk: mediatek: add mt6797 clock IDs
+>>    soc: mediatek: avoid using fixed spm power status defines
+>>    soc: mediatek: add vdec item for scpsys
+>>    dt-bindings: mediatek: add MT6797 power dt-bindings
+>>    soc: mediatek: add MT6797 scpsys support
+>>    arm64: dts: mediatek: add clk and scp nodes for MT6797
+>>
+>>   Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
+>>   .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+>>   .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+>>   .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+>>   .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+>>   .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+>>   .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+>>   .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
+>>   .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+>>   .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+>>   .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
+>>   arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+>>   arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
+>>   arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  245 +++++++
+>>   drivers/clk/mediatek/Kconfig                       |   32 +
+>>   drivers/clk/mediatek/Makefile                      |    5 +
+>>   drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
+>>   drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
+>>   drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
+>>   drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
+>>   drivers/clk/mediatek/clk-mt6797.c                  |  714 ++++++++++++++++++++
+>>   drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
+>>   include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
+>>   include/dt-bindings/power/mt6797-power.h           |   30 +
+>>   24 files changed, 1889 insertions(+), 8 deletions(-)
+>>   create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
+>>   create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
+>>   create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
+>>   create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
+>>   create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
+>>   create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
+>>   create mode 100644 drivers/clk/mediatek/clk-mt6797.c
+>>   create mode 100644 include/dt-bindings/clock/mt6797-clk.h
+>>   create mode 100644 include/dt-bindings/power/mt6797-power.h
+>>
+>> --
+>> 1.7.9.5
+> 
+> 
