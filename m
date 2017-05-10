@@ -1,128 +1,133 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 18 May 2017 09:51:21 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v3 14/21] drm/sun4i: tcon: multiply the vtotal when not
- in interlace
-Message-ID: <20170518075121.tfhnbljutcseaxzq@flea.home>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
- <a8d8a93ddbac69e5dddd9c89a147f8cf2ad043a4.1495006350.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v65ZWHi_Dhsy__yVrz7330pfyMbBDTqoEE37NcSXOU_W7Q@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:38778 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752066AbdEJKhM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2017 06:37:12 -0400
+Message-ID: <1494412626.6162.1.camel@mtkswgap22>
+Subject: Re: [PATCH v4 00/10] Add Basic SoC support for MT6797
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Stephen Boyd <sboyd@codeaurora.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date: Wed, 10 May 2017 18:37:06 +0800
+In-Reply-To: <6d60bccf-1894-7dc8-5ff7-4536a9755e0b@gmail.com>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+         <1492314150.19878.2.camel@mtkswgap22>
+         <6d60bccf-1894-7dc8-5ff7-4536a9755e0b@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7n4nzmqpeqi4h6oi"
-In-Reply-To: <CAGb2v65ZWHi_Dhsy__yVrz7330pfyMbBDTqoEE37NcSXOU_W7Q@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Matthias
 
---7n4nzmqpeqi4h6oi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2017-05-10 at 11:27 +0200, Matthias Brugger wrote:
+> Hi Mars,
+> 
+> On 16/04/17 05:42, Mars Cheng wrote:
+> > Hi Stephen, Matthias
+> > 
+> > gentle ping. :-)
+> > 
+> 
+> I queued your patches for v4.12-next now.
+> Sorry for the delay in my respons.
+> 
+> Regards,
+> Matthias
+> 
 
-On Wed, May 17, 2017 at 05:50:45PM +0800, Chen-Yu Tsai wrote:
-> On Wed, May 17, 2017 at 3:40 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > It appears that the total vertical resolution needs to be doubled when
-> > we're not in interlaced. Make sure that is the case.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 25 +++++++++++++++++++++----
-> >  1 file changed, 21 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i=
-/sun4i_tcon.c
-> > index 62e254aedb57..a0f9a8a516c7 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -153,7 +153,7 @@ static int sun4i_tcon_get_clk_delay(struct drm_disp=
-lay_mode *mode,
-> >  void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
-> >                           struct drm_display_mode *mode)
-> >  {
-> > -       unsigned int bp, hsync, vsync;
-> > +       unsigned int bp, hsync, vsync, vtotal;
-> >         u8 clk_delay;
-> >         u32 val =3D 0;
-> >
-> > @@ -192,9 +192,26 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
-> >         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
-> >                          mode->crtc_vtotal, bp);
-> >
-> > +       /*
-> > +        * The vertical resolution needs to be doubled in all
-> > +        * cases. We could use crtc_vtotal and always multiply by two,
-> > +        * but that leads to a rounding error in interlace when vtotal
-> > +        * is odd.
-> > +        *
-> > +        * This happens with TV's PAL for example, where vtotal will
-> > +        * be 625, crtc_vtotal 312, and thus crtc_vtotal * 2 will be
-> > +        * 624, which apparently confuses the hardware.
-> > +        *
-> > +        * To work around this, we will always use vtotal, and
-> > +        * multiply by two only if we're not in interlace.
-> > +        */
-> > +       vtotal =3D mode->vtotal;
-> > +       if (!(mode->flags & DRM_MODE_FLAG_INTERLACE))
-> > +               vtotal =3D vtotal * 2;
-> > +
-> >         /* Set vertical display timings */
-> >         regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
-> > -                    SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
-> > +                    SUN4I_TCON0_BASIC2_V_TOTAL(vtotal) |
-> >                      SUN4I_TCON0_BASIC2_V_BACKPORCH(bp));
-> >
-> >         /* Set Hsync and Vsync length */
-> > @@ -279,9 +296,9 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
-> >         /* Set vertical display timings */
-> >         bp =3D mode->crtc_vtotal - mode->crtc_vsync_start;
-> >         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
-> > -                        mode->vtotal, bp);
-> > +                        mode->crtc_vtotal, bp);
->=20
-> You should duplicate the logic from channel 0 to channel 1.
-> In fact, interlaced modes happen predominantly on channel 1,
-> for composite and HDMI modes.
+It's great.
+Nice to have you back. Thanks for your help. :-)
 
-Gaah, you're right, this was obviously meant for the channel 1.. I'll
-resend.
+> > Thanks.
+> > 
+> > On Sat, 2017-04-08 at 09:20 +0800, Mars Cheng wrote:
+> >> This patch set adds basic SoC support for mediatek's first 10-core
+> >> chip, X20, also known as MT6797.
+> >>
+> >> - based on 4.11-rc1
+> >> - support common clk framework
+> >> - apply patches about intpol just accepted to get full feature support:
+> >> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008371.html
+> >> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008375.html
+> >> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008373.html
+> >>
+> >> Changes since v3:
+> >> - since intpol patches accepted in v3, remove them
+> >> - clk ID header separated from original clk driver submit
+> >> - clean up clk driver, including unnecessary header and fields in structure
+> >>
+> >> Changes since v2:
+> >> - prevent uncessary #intpol-bases for mtk-sysirq
+> >> - add fast path for mtk-sysirq set_type when introducing multiple bases
+> >> - add acked-by and tested-by
+> >> - remove wrong usage for timer node
+> >>
+> >> Changes since v1:
+> >> - add multiple base addresses support, v1 only allow 2 bases
+> >> - clean up clk driver
+> >>
+> >> Kevin-CW Chen (2):
+> >>    dt-bindings: arm: mediatek: document clk bindings for MT6797
+> >>    clk: mediatek: add clk support for MT6797
+> >>
+> >> Mars Cheng (8):
+> >>    dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
+> >>    arm64: dts: mediatek: add mt6797 support
+> >>    clk: mediatek: add mt6797 clock IDs
+> >>    soc: mediatek: avoid using fixed spm power status defines
+> >>    soc: mediatek: add vdec item for scpsys
+> >>    dt-bindings: mediatek: add MT6797 power dt-bindings
+> >>    soc: mediatek: add MT6797 scpsys support
+> >>    arm64: dts: mediatek: add clk and scp nodes for MT6797
+> >>
+> >>   Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
+> >>   .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+> >>   .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+> >>   .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+> >>   .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+> >>   .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+> >>   .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+> >>   .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
+> >>   .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+> >>   .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+> >>   .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
+> >>   arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+> >>   arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
+> >>   arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  245 +++++++
+> >>   drivers/clk/mediatek/Kconfig                       |   32 +
+> >>   drivers/clk/mediatek/Makefile                      |    5 +
+> >>   drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
+> >>   drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
+> >>   drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
+> >>   drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
+> >>   drivers/clk/mediatek/clk-mt6797.c                  |  714 ++++++++++++++++++++
+> >>   drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
+> >>   include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
+> >>   include/dt-bindings/power/mt6797-power.h           |   30 +
+> >>   24 files changed, 1889 insertions(+), 8 deletions(-)
+> >>   create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
+> >>   create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> >>   create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
+> >>   create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
+> >>   create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
+> >>   create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
+> >>   create mode 100644 drivers/clk/mediatek/clk-mt6797.c
+> >>   create mode 100644 include/dt-bindings/clock/mt6797-clk.h
+> >>   create mode 100644 include/dt-bindings/power/mt6797-power.h
+> >>
+> >> --
+> >> 1.7.9.5
+> > 
+> > 
 
-Maxime
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---7n4nzmqpeqi4h6oi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZHVJ5AAoJEBx+YmzsjxAgwmAP/AqM020fZxTOL21MC8RcgpRe
-B1hFZGA1sqIntH2S872AiJ/TNiMrTxdPgdS8DelhbXGp+aI9z/PqUJMX+JnqT1Cu
-6hw2vRb3nkHGBzpI7pm6UyKM8QTwRBaLlIFQ/b/CwIF0dpGJ7bUAHol+SOXJb0IU
-/oMx9whfrdrdgyj89reHjT3iW2ASU2zFF/iVam2MwhBlzCvhcCTjB/QiJM2MEXrl
-Zz0yYNwUIJNX20JoQVVUmdjpnv2R7dr50g7TLEkFUa9hNWYFNVn+QQ1owkQ7eCVP
-Iju403KDD1yasT9AgZ8QatqNtq7RvQ0oDppB6KqIvW8y2mB9aOBzluWwUJZoR0Pl
-TVCdTIsZrOATnEl/Bcvk0S25bTba/8P5YvlWKop77YG8hSNUtpgaT69+q7YJrO/9
-osjLkwrCYKrBXNcWotR4PxeDG1/WuBDaLAAlzx1exPTvzZeIiTUBWnuaY6lCFJvo
-+D9s4mbHWe+wyhnUssyeYJiCTW+DGY8VrUl+kwMEtJ9FiYOjl2CxU/sJwIOpudwg
-MY3tIRPMJ+A580NRaUeRHdTFM1kVGvpWcc7hukrVAQlm7vcan+1qs9XP/og4wOwj
-5xTQ9WWNqIn+UvX6yC1dVHTfMr1McB8GhJs/bXHYqlQmcb33Krsm3MTD15vNVXqM
-7OJj/Oav2igDgeZxgsz7
-=DOlg
------END PGP SIGNATURE-----
-
---7n4nzmqpeqi4h6oi--
