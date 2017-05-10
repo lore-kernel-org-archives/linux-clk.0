@@ -1,100 +1,95 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1495552190.2344.17.camel@baylibre.com>
-Subject: Re: [PATCH v2 10/11] clk: fix CLK_SET_RATE_GATE with clock rate
- protection
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Adriana Reus <adi.reus@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus Walleij
- <linus.walleij@linaro.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>
-Date: Tue, 23 May 2017 17:09:50 +0200
-In-Reply-To: <CABjU8GuZQ_2ynUTJpwNoG19zPq-P8Ld=4mwk0EvpHrPROF=bXg@mail.gmail.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
-	 <20170521215958.19743-11-jbrunet@baylibre.com>
-	 <CABjU8GuZQ_2ynUTJpwNoG19zPq-P8Ld=4mwk0EvpHrPROF=bXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 10 May 2017 21:23:58 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH v2 20/20] ARM: sun5i: a10s-olinuxino:
+ Enable HDMI
+Message-ID: <20170510192358.taufs5tsyifueued@flea.home>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+ <c7ac6faa0568e6418291255af537c4b070bdea63.1493812478.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v65S2pw3z8NZ+tkPkF=A=5z2toRkC+26pAs6La6CNyeXoQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nnojppk2eig6un6o"
+In-Reply-To: <CAGb2v65S2pw3z8NZ+tkPkF=A=5z2toRkC+26pAs6La6CNyeXoQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-05-23 at 16:42 +0300, Adriana Reus wrote:
-> On Mon, May 22, 2017 at 12:59 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
-> > clock tree
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+
+--nnojppk2eig6un6o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Thu, May 04, 2017 at 04:05:18PM +0800, Chen-Yu Tsai wrote:
+> On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The A10s Olinuxino has an HDMI connector. Make sure we can use it.
+> >
+> > Acked-by: Chen-Yu Tsai <wens@csie.org>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > > ---
-> >  drivers/clk/clk.c | 14 +++++++++++---
-> >  1 file changed, 11 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 01306191133c..6ee5fc59cf1f 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -491,6 +491,9 @@ static void clk_core_unprepare(struct clk_core *core)
-> >         if (WARN_ON(core->prepare_count == 1 && core->flags &
-> > CLK_IS_CRITICAL))
-> >                 return;
-> > 
-> > +       if (core->flags & CLK_SET_RATE_GATE)
-> > +               clk_core_rate_unprotect(core);
-> 
-> ^ function call before declaration (unless i missed something when applying),
->   gets fixed in following patch, but makes this one not compile standalone.
-> 
+> >  arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts | 29 ++++++++++++++++=
++-
+> >  1 file changed, 29 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts b/arch/ar=
+m/boot/dts/sun5i-a10s-olinuxino-micro.dts
+> > index 894f874a5beb..1d13b6407222 100644
+> > --- a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+> > +++ b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+> > @@ -63,6 +63,17 @@
+> >                 stdout-path =3D "serial0:115200n8";
+> >         };
+> >
+> > +       connector {
+> > +               compatible =3D "hdmi-connector";
+> > +               type =3D "a";
+>=20
+> Just curious, should we take this into consideration when creating
+> drm_connector?
 
-You didn't miss anything, I did. It is now fixed
+I'm not sure, no other driver does so. And I haven't seen any of our
+boards with a HDMI-B, C or mini-HDMI connector.
 
+Maxime
 
-> drivers/clk/clk.c: In function 'clk_core_unprepare':
-> drivers/clk/clk.c:495:3: error: implicit declaration of function
-> 'clk_core_rate_unprotect' [-Werror=implicit-function-declaration]
->    clk_core_rate_unprotect(core);
-> 
-> > +
-> >         if (--core->prepare_count > 0)
-> >                 return;
-> > 
-> > @@ -561,6 +564,14 @@ static int clk_core_prepare(struct clk_core *core)
-> > 
-> >         core->prepare_count++;
-> > 
-> > +       /*
-> > +        * CLK_SET_RATE_GATE is a special case of clock protection
-> > +        * Instead of a consumer protection, the provider is protecting
-> > +        * itself when prepared
-> > +        */
-> > +       if (core->flags & CLK_SET_RATE_GATE)
-> > +               clk_core_rate_protect(core);
-> 
-> ^ same here;
-> Note: maybe have a quick check that each patch compiles individually
-> (if you haven't already), I did not check them all.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-I should have. Now it is done and it is OK (with our remarks fixed, of course)
-Thanks a lot for pointing this out.
+--nnojppk2eig6un6o
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > +
-> >         return 0;
-> >  }
-> > 
-> > @@ -1738,9 +1749,6 @@ static int clk_core_set_rate_nolock(struct clk_core
-> > *core,
-> >         if (clk_core_rate_is_protected(core))
-> >                 return -EBUSY;
-> > 
-> > -       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
-> > -               return -EBUSY;
-> > -
-> >         /* calculate new rates and get the topmost changed clock */
-> >         top = clk_calc_new_rates(core, req_rate);
-> >         if (!top)
-> > --
-> > 2.9.4
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZE2jOAAoJEBx+YmzsjxAgCioP/2rIPNKWgGmGCDyprDbgnHIK
+09g/WDmj5wAkxrbo2Y7e8+Uz0vuT78uzDLPQUzgwZK6Jvs8nZUkYWcdTFKKF+D96
+5t50lP78C/x31+jvGM8F+kmj2SbH5Yc0OjIcQyro06TBUigmR1nP+Aa5FwJqY6FF
+ZwHYbLMt+rRnNwqQ0s+D1QUu2fPiQwPzdNcL1mbzagb4Q7ZlXQWAotGfJT16Mw5I
+iO+MThbP+PJLUygYiJA2CJWvzzH3ghjUr98dSJK+6Y2KFGCerYo+gsqR7hyvWMwv
+kkfVJXwpPjQw6J+xWNI6LlvHvClhLT2QDAgLaGfC7nmtpxWHWhiWGy35XbZghQIm
+QK0gNM6v7lcyhrTFcFbW2WEvbnN8WH1+c0JO570BBCcmgIOUEO8i+rjxoji2lER6
+dsv1MdDgSFi9CHUG1+lBACgNDdCP2uojBK+4NfBr3QPP9O4+g6MypGNxE70X3Tlh
+7qywL76RiQ2kXSMcFJTbpUdwNxRIyhOchFeIDvUTcPG22MvRxLn6i3MsdX/9M50x
+7CUFjSLW4q2Mk/HFB7o8LZtBIfzLFGprj+J1RvzL1Bkq6bugZUohfEts7pYXrie9
+IPjSnsB/rYRji1p8bDbxdghzRTYtUqy2dheSvf4HWgB6k67VVmiOAHte3M4ykjs7
+zTm2R87KYoYS3SrgpwEo
+=2Zca
+-----END PGP SIGNATURE-----
+
+--nnojppk2eig6un6o--
