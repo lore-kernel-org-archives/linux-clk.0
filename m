@@ -1,67 +1,31 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 15/21] drm/sun4i: Ignore the generic connectors for components
-Date: Wed, 17 May 2017 09:40:44 +0200
-Message-Id: <a766ed0410e4c78e49f1e462775fdba1a70a88bf.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <horms@verge.net.au>
+Date: Thu, 11 May 2017 16:45:35 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent
+ clocks on ES2.0
+Message-ID: <20170511144534.GB21895@verge.net.au>
+References: <1494496275-2433-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494496275-2433-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The generic connectors such as hdmi-connector doesn't have any driver in,
-so if they are added to the component list, we will be waiting forever for
-a non-existing driver to probe.
+On Thu, May 11, 2017 at 11:51:15AM +0200, Geert Uytterhoeven wrote:
+> Cfr. the errata of April 14, 2017, for the R-Car Gen3 Hardware Manual
+> Rev. 0.53E.
+> 
+> These have no user-visible effect, as the clock frequencies stay the
+> same.
+> 
+> Fixes: 5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v4.13.
 
-Add a list of the connectors we want to ignore when building our component
-list.
+This matches the documentation I have.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index c52f7a9eb045..9b3e8c8d7c75 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -166,6 +166,11 @@ static const struct component_master_ops sun4i_drv_master_ops = {
- 	.unbind	= sun4i_drv_unbind,
- };
- 
-+static bool sun4i_drv_node_is_connector(struct device_node *node)
-+{
-+	return of_device_is_compatible(node, "hdmi-connector");
-+}
-+
- static bool sun4i_drv_node_is_frontend(struct device_node *node)
- {
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-display-frontend") ||
-@@ -206,6 +211,13 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 	    !of_device_is_available(node))
- 		return 0;
- 
-+	/*
-+	 * The connectors will be the last nodes in our pipeline, we
-+	 * can just bail out.
-+	 */
-+	if (sun4i_drv_node_is_connector(node))
-+		return 0;
-+
- 	if (!sun4i_drv_node_is_frontend(node)) {
- 		/* Add current component */
- 		DRM_DEBUG_DRIVER("Adding component %s\n",
--- 
-git-series 0.9.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
