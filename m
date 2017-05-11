@@ -1,56 +1,90 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 1/6] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
-Date: Fri, 19 May 2017 15:06:07 +0800
-Message-Id: <20170519070612.32159-2-wens@csie.org>
-In-Reply-To: <20170519070612.32159-1-wens@csie.org>
-References: <20170519070612.32159-1-wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <20170504135006.16483-11-icenowy@aosc.io>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+ <20170504135006.16483-11-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 11 May 2017 15:44:54 +0200
+Message-ID: <CACRpkdYg7jLymwi14BMJ3p6oeOwjt+PLzQFC1S8e01v9dtw3=w@mail.gmail.com>
+Subject: Re: [PATCH v2 10/10] ARM: dts: sun8i: Add board dts file for Banana
+ Pi M2 Ultra
+To: Icenowy Zheng <icenowy@aosc.io>, Eric Anholt <eric@anholt.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Icenowy Zheng <icenowy@aosc.xyz>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T clock control unit is a hybrid of some new style clock designs
-from the A80, and old style layout from the other Allwinner SoCs.
+On Thu, May 4, 2017 at 3:50 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-Like the A80, the SoC does not have a low speed 32.768 kHz oscillator.
-Unlike the A80, there is no clock input either. The only low speed clock
-available is the internal oscillator which runs at around 16 MHz,
-divided by 512, yielding a low speed clock around 31.250 kHz.
+> From: Chen-Yu Tsai <wens@csie.org>
+>
+> The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
+> form factor and position of various connectors, leds and buttons is
+> similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
+> as the latest Banana Pi M64.
+>
+> It features:
+>
+>   - X-Powers AXP221s PMIC connected to i2c0
+>   - 2 GB DDR3 DRAM
+>   - 8 GB eMMC
+>   - micro SD card slot
+>   - DC power jack
+>   - HDMI output
+>   - MIPI DSI connector
+>   - 2x USB 2.0 hosts
+>   - 1x USB 2.0 OTG
+>   - gigabit ethernet with Realtek RTL8211E transceiver
+>   - WiFi/Bluetooth with AP6212 chip, with external antenna connector
+>   - SATA and power connectors for native SATA support
+>   - camera sensor connector
+>   - consumer IR receiver
+>   - audio out headphone jack
+>   - onboard microphone
+>   - red, green, and blue LEDs
+>   - debug UART pins
+>   - Li-Po battery connector
+>   - Raspberry Pi B+ compatible GPIO header
+>   - power, reset, and boot control buttons
+>
+> This patch adds a dts file that enables debug UART and MMC support.
+>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Eric put a lot of time and effort into naming the GPIO lines on the
+other Pi board.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index e9c5a1d9834a..34b2a9249a94 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun6i-a31-ccu"
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
-+		- "allwinner,sun8i-a83t-ccu"
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-h3-r-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
-@@ -18,6 +19,7 @@ Required properties :
- - clocks: phandle to the oscillators feeding the CCU. Two are needed:
-   - "hosc": the high frequency oscillator (usually at 24MHz)
-   - "losc": the low frequency oscillator (usually at 32kHz)
-+	    On the A83T, this is the internal 16MHz oscillator divided by 512
- - clock-names: Must contain the clock names described just above
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
--- 
-2.11.0
+So please follow the good example and name the GPIO lines on this board
+like in the other rpi boards, should be something like:
+
+&pio {
+    gpio-line-names = "...", "...";
+};
+
+This is very helpful for users.
+
+Yours,
+Linus Walleij
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
