@@ -1,83 +1,40 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
-	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
-	Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Subject: [PATCH 2/6] clk: mediatek: export cpu multiplexer clock for MT2701/MT7623 SoCs
-Date: Fri, 5 May 2017 23:26:10 +0800
-Message-ID: <1493997974-17699-3-git-send-email-sean.wang@mediatek.com>
-In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 12 May 2017 10:18:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: Anup Patel <anup.patel@broadcom.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 01/11] dt-bindings: bcm: Add Broadcom Stingray bindings
+ document
+Message-ID: <20170512151813.ole4c7c6piahonbu@rob-hp-laptop>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+ <1494071686-19098-2-git-send-email-anup.patel@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: sean.wang@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494071686-19098-2-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Sat, May 06, 2017 at 05:24:36PM +0530, Anup Patel wrote:
+> This patch adds DT bindings info for Broadcom Stingray SOC
+> and related reference boards.
+> 
+> Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+> ---
+>  Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
 
-The patch enables CPU multiplexer clock on MT2701/MT7623 SoC which fixes
-up cpufreq driver fails at acquiring intermediate clock source when driver
-probe is called.
-
-Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/clk/mediatek/clk-mt2701.c      | 8 ++++++++
- include/dt-bindings/clock/mt2701-clk.h | 3 ++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 6f26e6a..9598889 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -20,6 +20,7 @@
- 
- #include "clk-mtk.h"
- #include "clk-gate.h"
-+#include "clk-cpumux.h"
- 
- #include <dt-bindings/clock/mt2701-clk.h>
- 
-@@ -493,6 +494,10 @@ static const char * const cpu_parents[] = {
- 	"mmpll"
- };
- 
-+static const struct mtk_composite cpu_muxes[] __initconst = {
-+	MUX(CLK_INFRA_CPUSEL, "infra_cpu_sel", cpu_parents, 0x0000, 2, 2),
-+};
-+
- static const struct mtk_composite top_muxes[] = {
- 	MUX_GATE_FLAGS(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
- 		0x0040, 0, 3, 7, CLK_IS_CRITICAL),
-@@ -759,6 +764,9 @@ static void mtk_infrasys_init_early(struct device_node *node)
- 	mtk_clk_register_factors(infra_fixed_divs, ARRAY_SIZE(infra_fixed_divs),
- 						infra_clk_data);
- 
-+	mtk_clk_register_cpumuxes(node, cpu_muxes, ARRAY_SIZE(cpu_muxes),
-+				  infra_clk_data);
-+
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, infra_clk_data);
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
-diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
-index 2062c67..551f760 100644
---- a/include/dt-bindings/clock/mt2701-clk.h
-+++ b/include/dt-bindings/clock/mt2701-clk.h
-@@ -221,7 +221,8 @@
- #define CLK_INFRA_PMICWRAP			17
- #define CLK_INFRA_DDCCI				18
- #define CLK_INFRA_CLK_13M			19
--#define CLK_INFRA_NR				20
-+#define CLK_INFRA_CPUSEL                        20
-+#define CLK_INFRA_NR				21
- 
- /* PERICFG */
- 
--- 
-2.7.4
+Acked-by: Rob Herring <robh@kernel.org>
