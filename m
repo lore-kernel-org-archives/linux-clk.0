@@ -1,61 +1,74 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 12 May 2017 10:21:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Anup Patel <anup.patel@broadcom.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 3/6] clk: sunxi-ng: h3: Export PLL_PERIPH0 clock for the PRCM
-Date: Wed, 31 May 2017 15:58:21 +0800
-Message-Id: <20170531075824.657-4-wens@csie.org>
-In-Reply-To: <20170531075824.657-1-wens@csie.org>
-References: <20170531075824.657-1-wens@csie.org>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 02/11] dt-bindings: clk: Extend binding doc for Stingray
+ SOC
+Message-ID: <20170512152134.tjuc5exo4plalujs@rob-hp-laptop>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+ <1494071686-19098-3-git-send-email-anup.patel@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494071686-19098-3-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PRCM takes PLL_PERIPH0 as one of its parents for the AR100 clock.
-As such we need to be able to describe this relationship in the device
-tree.
+On Sat, May 06, 2017 at 05:24:37PM +0530, Anup Patel wrote:
+> From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+> 
+> Update iproc clock dt-binding documentation with
+> Stingray pll and clock details.
+> 
+> Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> ---
+>  .../bindings/clock/brcm,iproc-clocks.txt           | 76 ++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> index 6f66e9a..f2c5f0e4a 100644
+> --- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> +++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> @@ -219,3 +219,79 @@ BCM63138
+>  --------
+>  PLL and leaf clock compatible strings for BCM63138 are:
+>      "brcm,bcm63138-armpll"
+> +
+> +Stingray
+> +-----------
+> +PLL and leaf clock compatible strings for Stingray are:
+> +    "brcm,sr-genpll0"
+> +    "brcm,sr-genpll1"
+> +    "brcm,sr-genpll2"
+> +    "brcm,sr-genpll3"
+> +    "brcm,sr-genpll4"
+> +    "brcm,sr-genpll5"
+> +    "brcm,sr-genpll6"
+> +
+> +    "brcm,sr-lcpll0"
+> +    "brcm,sr-lcpll1"
+> +    "brcm,sr-lcpll-pcie"
+> +
+> +
+> +The following table defines the set of PLL/clock index and ID for Stingray.
+> +These clock IDs are defined in:
+> +    "include/dt-bindings/clock/bcm-sr.h"
 
-Export the PLL_PERIPH0 clock so we can reference it in the PRCM node.
+This header should be part of this commit. With that,
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 4 +++-
- include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-index 85973d1e8165..1b4baea37d81 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-@@ -29,7 +29,9 @@
- #define CLK_PLL_VIDEO		6
- #define CLK_PLL_VE		7
- #define CLK_PLL_DDR		8
--#define CLK_PLL_PERIPH0		9
-+
-+/* PLL_PERIPH0 exported for PRCM */
-+
- #define CLK_PLL_PERIPH0_2X	10
- #define CLK_PLL_GPU		11
- #define CLK_PLL_PERIPH1		12
-diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
-index c2afc41d6964..e139fe5c62ec 100644
---- a/include/dt-bindings/clock/sun8i-h3-ccu.h
-+++ b/include/dt-bindings/clock/sun8i-h3-ccu.h
-@@ -43,6 +43,8 @@
- #ifndef _DT_BINDINGS_CLK_SUN8I_H3_H_
- #define _DT_BINDINGS_CLK_SUN8I_H3_H_
- 
-+#define CLK_PLL_PERIPH0		9
-+
- #define CLK_CPUX		14
- 
- #define CLK_BUS_CE		20
--- 
-2.11.0
+Acked-by: Rob Herring <robh@kernel.org>
