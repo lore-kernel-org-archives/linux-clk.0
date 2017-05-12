@@ -1,123 +1,222 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 19 May 2017 15:34:28 +0800
-Message-ID: <CAGb2v660H0kje3YWJgLnzLs7gii8VD-jMjdTiUjBsLn3+65S0g@mail.gmail.com>
-Subject: Re: [PATCH v3 00/21] drm: sun4i: Add support for the HDMI controller
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 2/2] clk: at91: Add sama5d2 suspend/resume
+Date: Fri, 12 May 2017 16:25:31 +0200
+Message-Id: <20170512142531.11274-2-alexandre.belloni@free-electrons.com>
+In-Reply-To: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
+References: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 17, 2017 at 3:40 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> Here is an attempt at getting the HDMI controller running.
->
-> This HDMI controller is found on a number of old Allwinner SoCs (A10, A10s,
-> A20, A31).
->
-> This driver only supports for now the A10s because it was an easy target,
-> being very close to the A13 that is already supported by our DRM driver.
->
-> There's nothing out of the extraordinary there, except maybe the clock
-> setup. All the internal clocks (TMDS, DDC) have been modeled using the
-> common clock framework, the TMDS clock being the parent of the DDC one.
->
-> While this might sound overkill, other SoC have a different, external
-> source for the DDC clock, which will be easier to support through the clock
-> framework.
->
-> The IP also supports audio (through an already supported i2s controller,
-> and some missing configuration in the HDMI controller) and CEC. Both will
-> come eventually.
->
-> Let me know what you think!
-> Maxime
->
-> Changes from v2:
->   - Fixed the PLL control macros definitions
->   - Called clk_enable / disable on the DDC clock
->   - Added the flags to enable the connection polling
->   - Fixed the vtotal computation in TCON's code, and added a comment
->   - Added and documented the A10s display engine compatible
->   - Reworked the component parsing code to bail out when a standard
->     connector is found
->   - Fixed a inconsistent comment in the predivider unapplication
->   - Fixed a commit log
->   - Added Chen-Yu's and Rob's Acked-By
->   - Changed divider_round_rate to a static, inline function in the header
->   - Added and document the A10s display pipeline compatible
->   - Rebased on top of 4.12
->
-> Changes from v1:
->   - Fixed typos in the CCU header and the HDMI code
->   - Reintroduced the comment for the backporch timings
->   - Renamed the hdmi node to hdmi, instead of hdmi0
->   - Added support for hdmi-connector
->   - Added a separate Kconfig option for the HDMI support
->   - Changed the TCON muxing configuration for an explicit call in the
->     TCON's "clients"
->   - Fixed the initialisation sequence that was clearing the clocks bits
->   - Constified the HDMI's structures and removed whitespaces errors
->   - Fixed an issue in the sunxi-ng code that was not reporting the proper
->     parent clock rate if it was modified
->   - Removed unused headers
->   - Removed CLK_SET_RATE_PARENT for the DDC clock
->   - Used the DDC address defines
->   - Removed the interlace flag that wasn't supported at the moment
->   - Moved most of the HDMI encoder init to the bind function like we do for
->     the other encoders
->   - Switched to drm_of_find_possible_crtcs
->   - Removed the extra printk that were still in my code
->   - Rebased on top of linux-next
->   - Removed the patch changing the divider_round_rate prototype to
->     introduce a new function instead that takes the parent clock to
->     evaluate
->   - Added a clk_set_rate for the hdmi module clock
->   - Fixed the V_TOTAL TCON ch0 calculation to be consistent with ch1's
->   - Defined all registers, and remove the TODOs
->   - Fixed the EDID issues by increasing the timeout.
->   - Added an atomic_check to prevent the DBLCLK modes to be used, as it is
->     not supported yet
->   - Updated the binding to add the interrupts and DMA channels
->
-> Maxime Ripard (21):
->   clk: divider: Make divider_round_rate take the parent clock
->   clk: sunxi-ng: Pass the parent and a pointer to the clocks round rate
->   clk: sunxi-ng: div: Switch to divider_round_rate
->   clk: sunxi-ng: mux: Don't just rely on the parent for CLK_SET_RATE_PARENT
->   clk: sunxi-ng: mux: split out the pre-divider computation code
->   clk: sunxi-ng: mux: Change pre-divider application function prototype
->   clk: sunxi-ng: mux: Re-adjust parent rate
->   clk: sunxi-ng: sun5i: Export video PLLs
+On sama5d2, VDD core maybe be cut while in suspend. This means registers
+will be lost. Ensure they are saved and restored properly.
 
-Merged patches 1 ~ 8 and ...
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+Changes in v4:
+ - only save and restore PCR for used ids
 
->   drm/sun4i: tcon: Add channel debug
->   drm/sun4i: tcon: Move the muxing out of the mode set function
->   drm/sun4i: tcon: Switch mux on only for composite
->   drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
->   drm/sun4i: tcon: Change vertical total size computation inconsistency
->   drm/sun4i: tcon: multiply the vtotal when not in interlace
->   drm/sun4i: Ignore the generic connectors for components
->   dt-bindings: display: sun4i: Add HDMI display bindings
->   dt-bindings: display: sun4i: Add allwinner,tcon-channel property
->   drm/sun4i: Add HDMI support
->   drm/sun4i: Add compatible for the A10s pipeline
+ drivers/clk/at91/clk-generated.c  |   3 +
+ drivers/clk/at91/clk-peripheral.c |   4 +-
+ drivers/clk/at91/pmc.c            | 129 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/at91/pmc.h            |   2 +
+ 4 files changed, 137 insertions(+), 1 deletion(-)
 
->   ARM: sun5i: a10s: Add the HDMI controller node
->   ARM: sun5i: a10s-olinuxino: Enable HDMI
-
-... 20 ~ 21 for 4.13.
-
-ChenYu
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 70474bd97a10..f0b7ae904ce2 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -266,6 +266,9 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 	if (ret) {
+ 		kfree(gck);
+ 		hw = ERR_PTR(ret);
++	} else {
++		pmc_register_id(id);
++	}
+ 
+ 	return hw;
+ }
+diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
+index dc29fd979d3f..770118369230 100644
+--- a/drivers/clk/at91/clk-peripheral.c
++++ b/drivers/clk/at91/clk-peripheral.c
+@@ -367,8 +367,10 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
+ 	if (ret) {
+ 		kfree(periph);
+ 		hw = ERR_PTR(ret);
+-	} else
++	} else {
+ 		clk_sam9x5_peripheral_autodiv(periph);
++		pmc_register_id(id);
++	}
+ 
+ 	return hw;
+ }
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 526df5ba042d..a4cd9f35160e 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -13,12 +13,16 @@
+ #include <linux/clk/at91_pmc.h>
+ #include <linux/of.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/syscore_ops.h>
+ 
+ #include <asm/proc-fns.h>
+ 
+ #include "pmc.h"
+ 
++#define PMC_MAX_IDS 128
++
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range)
+ {
+@@ -41,3 +45,128 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
++
++static u8 registered_ids[PMC_MAX_IDS];
++
++void pmc_register_id(u8 id)
++{
++	int i;
++
++	for (i = 0; i < PMC_MAX_IDS; i++) {
++		if (registered_ids[i] == 0) {
++			registered_ids[i] = id;
++			break;
++		}
++		if (registered_ids[i] == id)
++			break;
++	}
++}
++
++#ifdef CONFIG_PM
++static struct regmap *pmcreg;
++
++static struct
++{
++	u32 scsr;
++	u32 pcsr0;
++	u32 uckr;
++	u32 mor;
++	u32 mcfr;
++	u32 pllar;
++	u32 mckr;
++	u32 usb;
++	u32 imr;
++	u32 pcsr1;
++	u32 pcr[PMC_MAX_IDS];
++	u32 audio_pll0;
++	u32 audio_pll1;
++} pmc_cache;
++
++static int pmc_suspend(void)
++{
++	int i;
++
++	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
++	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
++	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
++	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
++	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
++	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
++	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
++	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
++	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
++	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
++
++	for (i = 0; registered_ids[i]; i++) {
++		regmap_write(pmcreg, AT91_PMC_PCR,
++			     (registered_ids[i] & AT91_PMC_PCR_PID_MASK));
++		regmap_read(pmcreg, AT91_PMC_PCR,
++			    &pmc_cache.pcr[registered_ids[i]]);
++	}
++
++	return 0;
++}
++
++static void pmc_resume(void)
++{
++	int i, ret = 0;
++	u32 tmp;
++
++	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
++	if (pmc_cache.mckr != tmp)
++		pr_warn("MCKR was not configured properly by the firmware\n");
++	regmap_read(pmcreg, AT91_CKGR_PLLAR, &tmp);
++	if (pmc_cache.pllar != tmp)
++		pr_warn("PLLAR was not configured properly by the firmware\n");
++
++	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
++	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
++	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
++	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
++	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
++	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
++	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
++	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
++
++	for (i = 0; registered_ids[i]; i++) {
++		regmap_write(pmcreg, AT91_PMC_PCR,
++			     pmc_cache.pcr[registered_ids[i]] |
++			     AT91_PMC_PCR_CMD);
++	}
++
++	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
++		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
++					       !(tmp & AT91_PMC_LOCKU),
++					       10, 5000);
++		if (ret)
++			pr_crit("USB PLL didn't lock when resuming\n");
++	}
++}
++
++static struct syscore_ops pmc_syscore_ops = {
++	.suspend = pmc_suspend,
++	.resume = pmc_resume,
++};
++
++static const struct of_device_id sama5d2_pmc_dt_ids[] = {
++	{ .compatible = "atmel,sama5d2-pmc" },
++	{ /* sentinel */ }
++};
++
++static int __init pmc_register_ops(void)
++{
++	struct device_node *np;
++
++	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
++
++	pmcreg = syscon_node_to_regmap(np);
++	if (IS_ERR(pmcreg))
++		return PTR_ERR(pmcreg);
++
++	register_syscore_ops(&pmc_syscore_ops);
++
++	return 0;
++}
++/* This has to happen before arch_initcall because of the tcb_clksrc driver */
++postcore_initcall(pmc_register_ops);
++#endif
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 5771fff0ee3f..aa7e1f1e3265 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -29,4 +29,6 @@ struct clk_range {
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range);
+ 
++void pmc_register_id(u8 id);
++
+ #endif /* __PMC_H_ */
+-- 
+2.11.0
