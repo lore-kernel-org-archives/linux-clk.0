@@ -1,220 +1,148 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50820 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751106AbdE2NLE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 May 2017 09:11:04 -0400
-Date: Mon, 29 May 2017 21:11:00 +0800
-From: Chen-Yu Tsai <wens@csie.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 06/10] pinctrl: sunxi: add support of R40 to A10
- pinctrl driver
-Message-ID: <20170529131100.a56rv3e5z3kpcxuo@wens.csie.org>
-References: <20170527102308.1988-1-icenowy@aosc.io>
- <20170527102308.1988-7-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170527102308.1988-7-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] clk: versatile: delete old RealView clock implementation
+Date: Fri, 12 May 2017 09:40:49 +0200
+Message-Id: <20170512074049.15139-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 27, 2017 at 06:23:04PM +0800, Icenowy Zheng wrote:
-> R40 is said to be an upgrade of A20, and its pin configuration is also
-> similar to A20 (and thus similar to A10).
-> 
-> Add support for R40 to the A10 pinctrl driver.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  drivers/pinctrl/sunxi/Kconfig             |   2 +-
->  drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 272 +++++++++++++++++++++---------
->  2 files changed, 197 insertions(+), 77 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-> index 624d84e6c936..9d01da3b90bd 100644
-> --- a/drivers/pinctrl/sunxi/Kconfig
-> +++ b/drivers/pinctrl/sunxi/Kconfig
-> @@ -7,7 +7,7 @@ config PINCTRL_SUNXI
->  	select GPIOLIB
->  
->  config PINCTRL_SUN4I_A10
-> -	def_bool MACH_SUN4I || MACH_SUN7I
-> +	def_bool MACH_SUN4I || MACH_SUN7I || MACH_SUN8I
->  	select PINCTRL_SUNXI
->  
->  config PINCTRL_SUN5I
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-> index 159580c04b14..0f6ca8391ea7 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+The old RealView clock implementation is not used anymore
+(nothing in the kernel calls realview_clk_init()) as we have
+moved all clocks over to device tree. Delete it.
 
-[...]
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/clk/versatile/Makefile             |  1 -
+ drivers/clk/versatile/clk-realview.c       | 97 ------------------------------
+ include/linux/platform_data/clk-realview.h |  1 -
+ 3 files changed, 99 deletions(-)
+ delete mode 100644 drivers/clk/versatile/clk-realview.c
+ delete mode 100644 include/linux/platform_data/clk-realview.h
 
-> @@ -162,14 +183,19 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
->  		  SUNXI_FUNCTION(0x3, "can"),		/* RX */
->  		  SUNXI_FUNCTION(0x4, "uart1"),		/* RING */
->  		  SUNXI_FUNCTION_VARIANT(0x5, "gmac",	/* GNULL / ETXERR */
-> -					 PINCTRL_SUN7I_A20),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40),
->  		  SUNXI_FUNCTION_VARIANT(0x6, "i2s1",	/* DI */
-> -					 PINCTRL_SUN7I_A20)),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40)),
->  	/* Hole */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 0),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> -		  SUNXI_FUNCTION(0x2, "i2c0")),		/* SCK */
-> +		  SUNXI_FUNCTION(0x2, "i2c0"),		/* SCK */
-> +		  SUNXI_FUNCTION_VARIANT(0x3,
-> +					 "pll-lock-dbg",
-
-Can you stick to underscores to be consistent?
-
-> +					 PINCTRL_SUN8I_R40)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 1),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> @@ -177,11 +203,19 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 2),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> -		  SUNXI_FUNCTION(0x2, "pwm")),		/* PWM0 */
-> +		  SUNXI_FUNCTION_VARIANT(0x2, "pwm",	/* PWM0 */
-> +					 PINCTRL_SUN4I_A10 |
-> +					 PINCTRL_SUN7I_A20),
-> +		  SUNXI_FUNCTION_VARIANT(0x3, "pwm",	/* PWM0 */
-> +					 PINCTRL_SUN8I_R40)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 3),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> -		  SUNXI_FUNCTION(0x2, "ir0"),		/* TX */
-> +		  SUNXI_FUNCTION_VARIANT(0x2, "ir0",	/* TX */
-> +					 PINCTRL_SUN4I_A10 |
-> +					 PINCTRL_SUN7I_A20),
-> +		  SUNXI_FUNCTION_VARIANT(0x3, "pwm0",	/* PWM1 */
-
-The numbering is wrong. Just drop the number altogether, like all the
-other instances.
-
-> +					 PINCTRL_SUN8I_R40),
->  		/*
->  		 * The SPDIF block is not referenced at all in the A10 user
->  		 * manual. However it is described in the code leaked and the
-> @@ -205,7 +239,8 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* MCLK */
->  					 PINCTRL_SUN4I_A10),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* MCLK */
-> -					 PINCTRL_SUN7I_A20),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40),
-
-Maybe we could use "i2s" instead, like on the A10. I don't know where
-i2s1 is used, but it certainly isn't routed outside the SoC, and i2s2
-looks like it's for dw-hdmi's audio path.
-
->  		  SUNXI_FUNCTION(0x3, "ac97")),		/* MCLK */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 6),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
-
-[...]
-
-> @@ -237,31 +275,41 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DO1 */
->  					 PINCTRL_SUN4I_A10),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DO1 */
-> -					 PINCTRL_SUN7I_A20)),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40),
-> +		  SUNXI_FUNCTION_VARIANT(0x4, "pwm",	/* PWM6 */
-> +					 PINCTRL_SUN8I_R40)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 10),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DO2 */
->  					 PINCTRL_SUN4I_A10),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DO2 */
-> -					 PINCTRL_SUN7I_A20)),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40),
-> +		  SUNXI_FUNCTION_VARIANT(0x4, "pwm",	/* PWM7 */
-> +					 PINCTRL_SUN8I_R40)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 11),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DO3 */
->  					 PINCTRL_SUN4I_A10),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DO3 */
-> -					 PINCTRL_SUN7I_A20)),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 12),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DI */
->  					 PINCTRL_SUN4I_A10),
->  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DI */
-> -					 PINCTRL_SUN7I_A20),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40),
->  		  SUNXI_FUNCTION(0x3, "ac97"),		/* DI */
->  		/* Undocumented mux function on A10 - See SPDIF MCLK above */
-> -		  SUNXI_FUNCTION(0x4, "spdif")),        /* SPDIF IN */
-> +		  SUNXI_FUNCTION_VARIANT(0x4, "spdif",	/* SPDIF IN */
-> +					 PINCTRL_SUN4I_A10 |
-> +					 PINCTRL_SUN7I_A20)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 13),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> @@ -308,7 +356,9 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
-
-You missed PWM4 and PWM5 on pins PB20 and PB21.
-
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "uart0"),		/* TX */
-> -		  SUNXI_FUNCTION(0x3, "ir1")),		/* TX */
-> +		  SUNXI_FUNCTION_VARIANT(0x3, "ir1",	/* TX */
-> +					 PINCTRL_SUN4I_A10 |
-> +					 PINCTRL_SUN7I_A20)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 23),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-
-[...]
-
-> @@ -916,7 +1000,10 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
->  		  SUNXI_FUNCTION_VARIANT(0x3, "pata",	/* ATAD12 */
->  					 PINCTRL_SUN4I_A10),
->  		  SUNXI_FUNCTION_VARIANT(0x3, "emac",	/* ETXD1 */
-> -					 PINCTRL_SUN7I_A20),
-> +					 PINCTRL_SUN7I_A20 |
-> +					 PINCTRL_SUN8I_R40),
-> +		  SUNXI_FUNCTION_VARIANT(0x5, "sim",	/* DET */
-> +					 PINCTRL_SUN8I_R40),
-
-This is available on all 3 variants.
-
-Should we consider sending a fix for this first? The hardware backing
-this pin is not supported, but it would be less confusing to fix it
-first instead of introducing a function for all variants in a patch
-supposedly for just the R40.
-
->  		  SUNXI_FUNCTION(0x4, "keypad"),	/* IN6 */
->  		  SUNXI_FUNCTION_IRQ(0x6, 16),		/* EINT16 */
->  		  SUNXI_FUNCTION(0x7, "csi1")),		/* D16 */
-
-[...]
-
-Looks good otherwise.
-
-
-Regards
-ChenYu
+diff --git a/drivers/clk/versatile/Makefile b/drivers/clk/versatile/Makefile
+index 794130402c8d..58b54b814a6d 100644
+--- a/drivers/clk/versatile/Makefile
++++ b/drivers/clk/versatile/Makefile
+@@ -1,6 +1,5 @@
+ # Makefile for Versatile-specific clocks
+ obj-$(CONFIG_ICST)		+= icst.o clk-icst.o clk-versatile.o
+ obj-$(CONFIG_INTEGRATOR_IMPD1)	+= clk-impd1.o
+-obj-$(CONFIG_ARCH_REALVIEW)	+= clk-realview.o
+ obj-$(CONFIG_CLK_SP810)		+= clk-sp810.o
+ obj-$(CONFIG_CLK_VEXPRESS_OSC)	+= clk-vexpress-osc.o
+diff --git a/drivers/clk/versatile/clk-realview.c b/drivers/clk/versatile/clk-realview.c
+deleted file mode 100644
+index 6fdfee3232f4..000000000000
+--- a/drivers/clk/versatile/clk-realview.c
++++ /dev/null
+@@ -1,97 +0,0 @@
+-/*
+- * Clock driver for the ARM RealView boards
+- * Copyright (C) 2012 Linus Walleij
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#include <linux/clkdev.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-#include <linux/clk-provider.h>
+-
+-#include "icst.h"
+-#include "clk-icst.h"
+-
+-#define REALVIEW_SYS_OSC0_OFFSET             0x0C
+-#define REALVIEW_SYS_OSC1_OFFSET             0x10
+-#define REALVIEW_SYS_OSC2_OFFSET             0x14
+-#define REALVIEW_SYS_OSC3_OFFSET             0x18
+-#define REALVIEW_SYS_OSC4_OFFSET             0x1C	/* OSC1 for RealView/AB */
+-#define REALVIEW_SYS_LOCK_OFFSET             0x20
+-
+-/*
+- * Implementation of the ARM RealView clock trees.
+- */
+-
+-static const struct icst_params realview_oscvco_params = {
+-	.ref		= 24000000,
+-	.vco_max	= ICST307_VCO_MAX,
+-	.vco_min	= ICST307_VCO_MIN,
+-	.vd_min		= 4 + 8,
+-	.vd_max		= 511 + 8,
+-	.rd_min		= 1 + 2,
+-	.rd_max		= 127 + 2,
+-	.s2div		= icst307_s2div,
+-	.idx2s		= icst307_idx2s,
+-};
+-
+-static const struct clk_icst_desc realview_osc0_desc __initconst = {
+-	.params = &realview_oscvco_params,
+-	.vco_offset = REALVIEW_SYS_OSC0_OFFSET,
+-	.lock_offset = REALVIEW_SYS_LOCK_OFFSET,
+-};
+-
+-static const struct clk_icst_desc realview_osc4_desc __initconst = {
+-	.params = &realview_oscvco_params,
+-	.vco_offset = REALVIEW_SYS_OSC4_OFFSET,
+-	.lock_offset = REALVIEW_SYS_LOCK_OFFSET,
+-};
+-
+-/*
+- * realview_clk_init() - set up the RealView clock tree
+- */
+-void __init realview_clk_init(void __iomem *sysbase, bool is_pb1176)
+-{
+-	struct clk *clk;
+-
+-	/* APB clock dummy */
+-	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 0);
+-	clk_register_clkdev(clk, "apb_pclk", NULL);
+-
+-	/* 24 MHz clock */
+-	clk = clk_register_fixed_rate(NULL, "clk24mhz", NULL, 0, 24000000);
+-	clk_register_clkdev(clk, NULL, "dev:uart0");
+-	clk_register_clkdev(clk, NULL, "dev:uart1");
+-	clk_register_clkdev(clk, NULL, "dev:uart2");
+-	clk_register_clkdev(clk, NULL, "fpga:kmi0");
+-	clk_register_clkdev(clk, NULL, "fpga:kmi1");
+-	clk_register_clkdev(clk, NULL, "fpga:mmc0");
+-	clk_register_clkdev(clk, NULL, "dev:ssp0");
+-	if (is_pb1176) {
+-		/*
+-		 * UART3 is on the dev chip in PB1176
+-		 * UART4 only exists in PB1176
+-		 */
+-		clk_register_clkdev(clk, NULL, "dev:uart3");
+-		clk_register_clkdev(clk, NULL, "dev:uart4");
+-	} else
+-		clk_register_clkdev(clk, NULL, "fpga:uart3");
+-
+-
+-	/* 1 MHz clock */
+-	clk = clk_register_fixed_rate(NULL, "clk1mhz", NULL, 0, 1000000);
+-	clk_register_clkdev(clk, NULL, "sp804");
+-
+-	/* ICST VCO clock */
+-	if (is_pb1176)
+-		clk = icst_clk_register(NULL, &realview_osc0_desc,
+-					"osc0", NULL, sysbase);
+-	else
+-		clk = icst_clk_register(NULL, &realview_osc4_desc,
+-					"osc4", NULL, sysbase);
+-
+-	clk_register_clkdev(clk, NULL, "dev:clcd");
+-	clk_register_clkdev(clk, NULL, "issp:clcd");
+-}
+diff --git a/include/linux/platform_data/clk-realview.h b/include/linux/platform_data/clk-realview.h
+deleted file mode 100644
+index 2e426a7dbc51..000000000000
+--- a/include/linux/platform_data/clk-realview.h
++++ /dev/null
+@@ -1 +0,0 @@
+-void realview_clk_init(void __iomem *sysbase, bool is_pb1176);
+-- 
+2.9.3
