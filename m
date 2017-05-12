@@ -1,35 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33415 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752602AbdEWPeR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2017 11:34:17 -0400
-Received: by mail-oi0-f54.google.com with SMTP id w10so206563767oif.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 May 2017 08:34:17 -0700 (PDT)
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1494849305-1405-1-git-send-email-festevam@gmail.com>
-References: <1494849305-1405-1-git-send-email-festevam@gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 23 May 2017 12:34:16 -0300
-Message-ID: <CAOMZO5CAPZ1f9Mh2E1T9Hx++-c6aaOnR=KEfZApHCNQJOpR9NA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx7d: Fix the powerdown bit location of PLL DDR
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <fabio.estevam@nxp.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170511144534.GB21895@verge.net.au>
+References: <1494496275-2433-1-git-send-email-geert+renesas@glider.be> <20170511144534.GB21895@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 May 2017 14:13:35 +0200
+Message-ID: <CAMuHMdV4HFCG37U7ZYnM9Dq4Sfj-EfHPMTR=GAUxH8mhZ4zutQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent
+ clocks on ES2.0
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On Mon, May 15, 2017 at 8:55 AM, Fabio Estevam <festevam@gmail.com> wrote:
-> From: Fabio Estevam <fabio.estevam@nxp.com>
+On Thu, May 11, 2017 at 4:45 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, May 11, 2017 at 11:51:15AM +0200, Geert Uytterhoeven wrote:
+>> Cfr. the errata of April 14, 2017, for the R-Car Gen3 Hardware Manual
+>> Rev. 0.53E.
+>>
+>> These have no user-visible effect, as the clock frequencies stay the
+>> same.
+>>
+>> Fixes: 5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> To be queued in clk-renesas-for-v4.13.
 >
-> According to the MX7D Reference Manual the powerdown bit of
-> CCM_ANALOG_PLL_DDRn register is bit 20, so fix it accordingly.
+> This matches the documentation I have.
 >
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> Reviewed-by: Stefan Agner <stefan@agner.ch>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-A gentle ping.
+Thanks, queued in clk-renesas-for-v4.13.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
