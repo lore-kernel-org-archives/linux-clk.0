@@ -1,35 +1,81 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <8ea7c8c0ac01fe06f7ded94e03532a1838f2bf8f.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
- <8ea7c8c0ac01fe06f7ded94e03532a1838f2bf8f.1493812478.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 4 May 2017 11:20:27 +0800
-Message-ID: <CAGb2v64d2VXTuqHLv6o8M35+RNa8R8BH+9m8N+ATe81gtu4ZJA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/20] clk: sunxi-ng: div: Switch to divider_round_rate
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34880 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759853AbdENT7P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2017 15:59:15 -0400
+Received: by mail-qt0-f195.google.com with SMTP id r58so13049371qtb.2
+        for <linux-clk@vger.kernel.org>; Sun, 14 May 2017 12:59:15 -0700 (PDT)
+From: Fabio Estevam <festevam@gmail.com>
+To: sboyd@codeaurora.org
+Cc: shawnguo@kernel.org, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org, stefan@agner.ch,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH] clk: imx7d: Fix the powerdown bit location of PLL DDR
+Date: Sun, 14 May 2017 16:59:00 -0300
+Message-Id: <1494791940-12499-1-git-send-email-festevam@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> divider_round_rate already evaluates changing the parent rate if
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-  ^^^ Might want to update this, as you are now using the new function
-      you added in patch 1.
+According to the MX7D Reference Manual the powerdown bit of
+CCM_ANALOG_PLL_DDRn register is bit 20, so fix it accordingly.
 
-> CLK_SET_RATE_PARENT is set. Now that we can do that on muxes too, let's
-> just use it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ drivers/clk/imx/clk-pllv3.c | 5 +++++
+ drivers/clk/imx/clk.h       | 1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-Otherwise,
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 93b0364..8fa1841 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -424,7 +424,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_PLL_VIDEO_MAIN_SRC] = imx_clk_mux("pll_video_main_src", base + 0x130, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
+ 
+ 	clks[IMX7D_PLL_ARM_MAIN]  = imx_clk_pllv3(IMX_PLLV3_SYS, "pll_arm_main", "osc", base + 0x60, 0x7f);
+-	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_dram_main", "osc", base + 0x70, 0x7f);
++	clks[IMX7D_PLL_DRAM_MAIN] = imx_clk_pllv3(IMX_PLLV3_DDR_IMX7, "pll_dram_main", "osc", base + 0x70, 0x7f);
+ 	clks[IMX7D_PLL_SYS_MAIN]  = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll_sys_main", "osc", base + 0xb0, 0x1);
+ 	clks[IMX7D_PLL_ENET_MAIN] = imx_clk_pllv3(IMX_PLLV3_ENET_IMX7, "pll_enet_main", "osc", base + 0xe0, 0x0);
+ 	clks[IMX7D_PLL_AUDIO_MAIN] = imx_clk_pllv3(IMX_PLLV3_AV, "pll_audio_main", "osc", base + 0xf0, 0x7f);
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index f109916..fec64b6 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -25,6 +25,7 @@
+ #define PLL_VF610_DENOM_OFFSET	0x30
+ 
+ #define BM_PLL_POWER		(0x1 << 12)
++#define BM_PLL_POWER_IMX7	(0x1 << 20)
+ #define BM_PLL_LOCK		(0x1 << 31)
+ #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+ 
+@@ -451,6 +452,10 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 		pll->ref_clock = 500000000;
+ 		ops = &clk_pllv3_enet_ops;
+ 		break;
++	case IMX_PLLV3_DDR_IMX7:
++		ops = &clk_pllv3_av_ops;
++		pll->power_bit = BM_PLL_POWER_IMX7;
++		break;
+ 	default:
+ 		ops = &clk_pllv3_ops;
+ 	}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index e1f5e42..d54f072 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -35,6 +35,7 @@ enum imx_pllv3_type {
+ 	IMX_PLLV3_ENET,
+ 	IMX_PLLV3_ENET_IMX7,
+ 	IMX_PLLV3_SYS_VF610,
++	IMX_PLLV3_DDR_IMX7,
+ };
+ 
+ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+-- 
+2.7.4
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
