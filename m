@@ -1,49 +1,29 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:44350 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755141AbdEDODg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 10:03:36 -0400
-Date: Thu, 04 May 2017 22:03:26 +0800
-In-Reply-To: <20170504140220.26kguf3trz7ocylv@lukather>
-References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-4-icenowy@aosc.io> <20170504140220.26kguf3trz7ocylv@lukather>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:47996 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750968AbdENVnX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2017 17:43:23 -0400
+Date: Sun, 14 May 2017 22:43:14 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: linux-clk@vger.kernel.org, trivial@kernel.org
+Subject: Re: [PATCH] clk: Fix comment to clk_get_parent
+Message-ID: <20170514214314.GR22219@n2100.armlinux.org.uk>
+References: <20170514202825.20389-1-alexander.sverdlin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v2 03/10] pinctrl: sunxi: add A20 support to A10 driver
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <83062089-19CD-4805-A6DC-2C25D75621FF@aosc.io>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170514202825.20389-1-alexander.sverdlin@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sun, May 14, 2017 at 10:28:25PM +0200, Alexander Sverdlin wrote:
+> There is no single implementation of clk_get_parent, which returns ERR_PTR().
+> Therefore, fix the comment in common header linux/clk.h, which claims otherwise.
 
+clk.h is the API definition, not the documentation of the implementation(s).
+Please leave it as-is.
 
-于 2017年5月4日 GMT+08:00 下午10:02:20, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->On Thu, May 04, 2017 at 09:49:59PM +0800, Icenowy Zheng wrote:
->>  static const struct of_device_id sun4i_a10_pinctrl_match[] = {
->> -	{ .compatible = "allwinner,sun4i-a10-pinctrl", },
->> +	{
->> +		.compatible = "allwinner,sun4i-a10-pinctrl",
->> +		.data = (void *)PINCTRL_SUN4I_A10
->> +	},
->> +	{
->> +		.compatible = "allwinner,sun7i-a20-pinctrl",
->> +		.data = (void *)PINCTRL_SUN7I_A20
->> +	},
->>  	{}
->>  };
->
->This means you're going to have two drivers probing for the same
->device: this driver, and the old one. This is not ok, and probably
->introduces some corner cases.
-
-The A20 driver is dropped in the next commit.
-
->
->Maxime
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
