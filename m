@@ -1,150 +1,36 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:44420 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754219AbdEQQob (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 May 2017 12:44:31 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 01/11] dt-bindings: update the binding for Allwinner H3 TVE support
-Date: Thu, 18 May 2017 00:43:44 +0800
-Message-Id: <20170517164354.16399-2-icenowy@aosc.io>
-In-Reply-To: <20170517164354.16399-1-icenowy@aosc.io>
-References: <20170517164354.16399-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Randy Li <ayaka@soulik.info>
+Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: rockchip: rk3288: prefer vdpu for vcodec clock source
+Date: Sun, 14 May 2017 17:06:19 +0200
+Message-ID: <2067155.b6jtcnMS5V@phil>
+In-Reply-To: <20170514065009.3047-1-ayaka@soulik.info>
+References: <20170514065009.3047-1-ayaka@soulik.info>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H3 features a "DE2.0" and a TV Encoder.
+Hi Randy,
 
-Add device tree bindings for the following parts:
-- H3 TCONs
-- H3 Mixers
-- The connection between H3 TCONs and H3 Mixers
-- H3 TV Encoder
-- H3 Display engine
+Am Sonntag, 14. Mai 2017, 14:50:09 CEST schrieb Randy Li:
+> The RK3288 CRU system clock solution would suggest use
+> the vdpu clock source for the VPU(aclk_vpu and hclk_vpu).
+> 
+> Reading the registers of VPU(both VEPU and VDPU) would become all high
+> when the vepu is used as the clock source. It may be a bug in the SoC,
+> not sure whether it is fixed at RK3288W.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- .../bindings/display/sunxi/sun4i-drm.txt           | 47 ++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 4 deletions(-)
+I don't think that is a case of "preference". GRF_SOC_CON0[7] indicates
+that value 0 means vepu gets selected as vcodec clock and value 1 means
+vdpu gets selected as vcodec.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 66b85a195ef2..52781943713b 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -21,7 +21,9 @@ The TV Encoder supports the composite and VGA output. It is one end of
- the pipeline.
- 
- Required properties:
-- - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
-+ - compatible: value must be either:
-+    * allwinner,sun4i-a10-tv-encoder
-+    * allwinner,sun8i-h3-tv-encoder
-  - reg: base address and size of memory-mapped region
-  - clocks: the clocks driving the TV encoder
-  - resets: phandle to the reset controller driving the encoder
-@@ -30,6 +32,13 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint.
- 
-+For "allwinner,sun4i-a10-tv-encoder", there is only one clock required,
-+and it's not named.
-+
-+For "allwinner,sun8i-h3-tv-encoder", these clocks are needed:
-+    - 'bus': the AHB bus clock of TVE
-+    - 'mod': the mod clock of TVE
-+
- TCON
- ----
- 
-@@ -41,29 +50,51 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-h3-tcon0
-+   * allwinner,sun8i-h3-tcon1
-    * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON. Three are needed:
-    - 'ahb': the interface clocks
--   - 'tcon-ch0': The clock driving the TCON channel 0
-  - resets: phandles to the reset controllers driving the encoder
-    - "lcd": the reset line for the TCON channel 0
- 
-  - clock-names: the clock names mentioned above
-  - reset-names: the reset names mentioned above
-- - clock-output-names: Name of the pixel clock created
- 
- - ports: A ports node with endpoint definitions as defined in
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint, the second one the output
- 
-+  In the situation of Display Engine 2.0 that the connection between
-+  the mixer and the TCON can be swapped, the input should have two
-+  endpoints. The first is the default mixer connected to the TCON,
-+  the second the mixer which will be connected to the TCON if the
-+  swap bit is set.
-+
-   The output should have two endpoints. The first is the block
-   connected to the TCON channel 0 (usually a panel or a bridge), the
-   second the block connected to the TCON channel 1 (usually the TV
-   encoder)
- 
--On SoCs other than the A33 and V3s, there is one more clock required:
-+For the following compatibles:
-+   * allwinner,sun5i-a13-tcon
-+   * allwinner,sun6i-a31-tcon
-+   * allwinner,sun6i-a31s-tcon
-+   * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-v3s-tcon
-+there is one more clock and one more property required:
-+ - clocks:
-+   - 'tcon-ch0': The clock driving the TCON channel 0
-+ - clock-output-names: Name of the pixel clock created
-+
-+For the following compatibles:
-+   * allwinner,sun5i-a13-tcon
-+   * allwinner,sun6i-a31-tcon
-+   * allwinner,sun6i-a31s-tcon
-+   * allwinner,sun8i-h3-tcon0
-+there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
- 
- DRC
-@@ -158,6 +189,8 @@ supported.
- Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-v3s-de2-mixer
-+    * allwinner,sun8i-h3-de2-mixer0
-+    * allwinner,sun8i-h3-de2-mixer1
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-     * bus: the mixer interface clock
-@@ -169,6 +202,11 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoints, the second one the output
- 
-+  In the situation of Display Engine 2.0 that the connection between
-+  the mixer and the TCON can be swapped, the output should have two
-+  endpoints. The first is the default TCON connected to the mixer,
-+  the second the TCON which will be connected to the mixer if the
-+  swap bit is set.
- 
- Display Engine Pipeline
- -----------------------
-@@ -183,6 +221,7 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-h3-display-engine
-     * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--- 
-2.12.2
+The array values below are supposed to match these values, so array
+index 0 represents the clock for value 0 and so on. So this is really only
+a description of the hardware clock layout.
 
+If you want to actually switch the mux value, please assign the vcodec
+clock an id and use the assigned-clocks mechanism in the devicetree.
+
+
+Heiko
