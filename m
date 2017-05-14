@@ -1,68 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:39249 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932436AbdEDLu4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 07:50:56 -0400
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 10/13] drm/sun4i: tcon: add support for V3s TCON
-Date: Thu,  4 May 2017 19:48:55 +0800
-Message-Id: <20170504114858.9008-11-icenowy@aosc.io>
-In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v7 09/13] drm/sun4i: Add compatible string for V3s display
+ engine
+Date: Mon, 15 May 2017 00:30:41 +0800
+Message-Id: <20170514163045.40366-10-icenowy@aosc.io>
+In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a TCON without channel 1.
+Allwinner V3s features the new "Display Engine 2.0", which can now also
+be driven with our subdrivers in sun4i-drm.
 
-Add support for it.
+Add the compatible string for in sun4i_drv.c, in order to make the
+display engine and its components probed.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index dcfb241f817d..367e4e8e9656 100644
+index 35cad9cb44c5..4a979d17ddaa 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -188,7 +188,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
--		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
-+		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
- }
- 
- static int compare_of(struct device *dev, void *data)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index c48135a10fda..e76acf06e91b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -681,11 +681,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
- 	/* nothing is supported */
- };
- 
-+static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
-+	/* nothing is supported */
-+};
-+
- static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
- 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-+	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+@@ -296,6 +296,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
+ 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
++	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
  	{ }
  };
- MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
+ MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
 -- 
 2.12.2
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
