@@ -1,91 +1,93 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:41950 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752345AbdEDOmE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 10:42:04 -0400
-Date: Thu, 4 May 2017 16:41:52 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 03/10] pinctrl: sunxi: add A20 support to A10 driver
-Message-ID: <20170504144152.34yzk424aqrizmbu@lukather>
-References: <20170504135006.16483-1-icenowy@aosc.io>
- <20170504135006.16483-4-icenowy@aosc.io>
- <20170504140220.26kguf3trz7ocylv@lukather>
- <83062089-19CD-4805-A6DC-2C25D75621FF@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dlvuxrph54un2kyy"
-In-Reply-To: <83062089-19CD-4805-A6DC-2C25D75621FF@aosc.io>
+Received: from hermes.aosc.io ([199.195.250.187]:55915 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759405AbdENQcU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 14 May 2017 12:32:20 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v7 06/13] drm/sun4i: add a dedicated module for sun4i-backend and sun4i-layer
+Date: Mon, 15 May 2017 00:30:38 +0800
+Message-Id: <20170514163045.40366-7-icenowy@aosc.io>
+In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
+References: <20170514163045.40366-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Currently the direct call from CRTC code to layer code has disappeared,
+instead the layer's init function is called via the backend's ops.
 
---dlvuxrph54un2kyy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add a dedicated module for sun4i-backend and sun4i-layer, and drop the
+EXPORT_SYMBOL from backend code to layer code.
 
-On Thu, May 04, 2017 at 10:03:26PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2017=E5=B9=B45=E6=9C=884=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=881=
-0:02:20, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
-=B0:
-> >On Thu, May 04, 2017 at 09:49:59PM +0800, Icenowy Zheng wrote:
-> >>  static const struct of_device_id sun4i_a10_pinctrl_match[] =3D {
-> >> -	{ .compatible =3D "allwinner,sun4i-a10-pinctrl", },
-> >> +	{
-> >> +		.compatible =3D "allwinner,sun4i-a10-pinctrl",
-> >> +		.data =3D (void *)PINCTRL_SUN4I_A10
-> >> +	},
-> >> +	{
-> >> +		.compatible =3D "allwinner,sun7i-a20-pinctrl",
-> >> +		.data =3D (void *)PINCTRL_SUN7I_A20
-> >> +	},
-> >>  	{}
-> >>  };
-> >
-> >This means you're going to have two drivers probing for the same
-> >device: this driver, and the old one. This is not ok, and probably
-> >introduces some corner cases.
->=20
-> The A20 driver is dropped in the next commit.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+Changes in v7:
+- Added Chen-Yu's Reviewed-by.
 
-Yes, and that is an issue for bisectability. Anyone that will checkout
-between those two commits will have a broken kernel, and that is not
-ok. Any commit should be in a working state.
+ drivers/gpu/drm/sun4i/Makefile        | 5 +++--
+ drivers/gpu/drm/sun4i/sun4i_backend.c | 4 ----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-Maxime
+diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+index 59b757350a1f..a251fb36c951 100644
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -5,9 +5,10 @@ sun4i-tcon-y += sun4i_tcon.o
+ sun4i-tcon-y += sun4i_rgb.o
+ sun4i-tcon-y += sun4i_dotclock.o
+ sun4i-tcon-y += sun4i_crtc.o
+-sun4i-tcon-y += sun4i_layer.o
++
++sun4i-backend-y += sun4i_backend.o sun4i_layer.o
+ 
+ obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
+-obj-$(CONFIG_DRM_SUN4I)		+= sun4i_backend.o
++obj-$(CONFIG_DRM_SUN4I)		+= sun4i-backend.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index 611cdcb9c182..fac1a414ba49 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -83,7 +83,6 @@ void sun4i_backend_layer_enable(struct sun4i_backend *backend,
+ 	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
+ 			   SUN4I_BACKEND_MODCTL_LAY_EN(layer), val);
+ }
+-EXPORT_SYMBOL(sun4i_backend_layer_enable);
+ 
+ static int sun4i_backend_drm_format_to_layer(struct drm_plane *plane,
+ 					     u32 format, u32 *mode)
+@@ -170,7 +169,6 @@ int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(sun4i_backend_update_layer_coord);
+ 
+ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
+ 				       int layer, struct drm_plane *plane)
+@@ -205,7 +203,6 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(sun4i_backend_update_layer_formats);
+ 
+ int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
+ 				      int layer, struct drm_plane *plane)
+@@ -246,7 +243,6 @@ int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(sun4i_backend_update_layer_buffer);
+ 
+ static int sun4i_backend_init_sat(struct device *dev) {
+ 	struct sun4i_backend *backend = dev_get_drvdata(dev);
+-- 
+2.12.2
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---dlvuxrph54un2kyy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJZCz2wAAoJEBx+YmzsjxAgpoMQAKOM+EcFZ3GEHJz9V3sVI0Ma
-h+vSiJOY1KvyeaMzAZbvHeoXvgFS7UDMXJivNoJwTamKXOY3NgXoAyodFt/9HSoM
-gk4XLdoYe4LuGOlHg+KQQ1sEqYYCYPXMiTbexAobS40pa/WK+rQaDnMeiE9uaB5o
-xygkA4UeBKiOais+MFJTfQt+p5iKTzlYqKAaRK0q/OWkJaii/RQ1666SAdguyyDn
-5IVpfPihlYQFIHBu4k7IbrpyOe89TrBEiuFUkvUPTLx7PDm2wUTEdlmokTAQ2Tva
-smWn9/hs6/DD5y9b7gDQ/lEQXNxf/njxctSUN7VVHq/H7kpzm/pdSSS/Pkxcdm+G
-6K6YiXPGUUFRwajVGvNtw+eJ2iS0y0br5opOapMxA9QYJnagfOcwlrAvfQAgApTq
-vqqNMSMg17SukQpvaJ8hhaXGuuznA+i7Oz3wlp/8oexcJv6QiAvD6Q9RXKaF6q+p
-djab2Md25qEWgNhc+EW7zDycjsTDJoq8HO7vbm4BtacQ2lscrdDxiF2ENqCxSM6r
-xfoSjl1pKY9APF+kKglUITSaqNZ+5B8ibcRPLWta+/gaMCuMlcIygYKZU2HCc+Mt
-7CSqKmYM416qLZJ496SDP4XcoDiDZQG1g4FFJLEpK1V8uGshH0N5LEwCJETwqB2W
-wli4/dc82++ijoRsO7wP
-=WhVS
------END PGP SIGNATURE-----
-
---dlvuxrph54un2kyy--
