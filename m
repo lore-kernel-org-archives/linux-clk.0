@@ -1,98 +1,31 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sat, 20 May 2017 02:00:22 +0800
-In-Reply-To: <20170519175753.sygqnwopk7tuv35n@flea.home>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <20170517164354.16399-4-icenowy@aosc.io>
- <20170519175753.sygqnwopk7tuv35n@flea.home>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, andy.yan@rock-chips.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH v2 6/6] ARM: dts: rockchip: rename RK1108-evb to RV1108-evb
+Date: Sun, 14 May 2017 14:54:53 +0200
+Message-ID: <17588038.0Ltp2v6IRL@phil>
+In-Reply-To: <20170317171840.4683-7-heiko@sntech.de>
+References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-7-heiko@sntech.de>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH 03/11] drm: sun4i: ignore swapped mixer<->tcon
- connection for DE2
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <ECF29F56-DF18-4E3C-9C85-B29F89BD4228@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Cgrkuo4gMjAxN+W5tDXmnIgyMOaXpSBHTVQrMDg6MDAg5LiK5Y2IMTo1Nzo1MywgTWF4aW1lIFJp
-cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFRodSwg
-TWF5IDE4LCAyMDE3IGF0IDEyOjQzOjQ2QU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
-IFNvbWUgU29DJ3MgREUyIGhhcyB0d28gbWl4ZXJzLiBEZWZhdWx0bHkgdGhlIG1peGVyMCBpcyBj
-b25uZWN0ZWQgdG8KPj4gdGNvbjAgYW5kIG1peGVyMSBpcyBjb25uZWN0ZWQgdG8gdGNvbjE7IGhv
-d2V2ZXIgYnkgc2V0dGluZyBhIGJpdAo+PiB0aGUgY29ubmVjdGlvbiBjYW4gYmUgc3dhcHBlZC4K
-Pj4gCj4+IEFzIHdlIG5vdyBoYXJkY29kZSB0aGUgZGVmYXVsdCBjb25uZWN0aW9uLCBpZ25vcmUg
-dGhlIGJvbnVzIGVuZHBvaW50Cj5mb3IKPj4gdGhlIG1peGVyJ3Mgb3V0cHV0IGFuZCB0aGUgVENP
-TidzIGlucHV0LCBhcyB0aGV5IHN0YW5kcyBmb3IgdGhlCj5zd2FwcGVkCj4+IGNvbm5lY3Rpb24u
-Cj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MuaW8+Cj4+
-IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2Rydi5jICB8IDI3ICsrKysrKysr
-KysrKysrKysrKysrKysrKysrCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfdGNvbi5j
-IHwgMzkKPisrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tCj4+ICBkcml2ZXJz
-L2dwdS9kcm0vc3VuNGkvc3VuNGlfdGNvbi5oIHwgIDIgKysKPj4gIDMgZmlsZXMgY2hhbmdlZCwg
-NTkgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMKPmIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1
-bjRpX2Rydi5jCj4+IGluZGV4IDFkZDE5NDgwMjVkMi4uMjliZjEzMjVkZWQ2IDEwMDY0NAo+PiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3N1bjRpL3N1bjRpX2Rydi5jCj4+IEBAIC0xNzMsNiArMTczLDEzIEBAIHN0YXRpYyBi
-b29sIHN1bjRpX2Rydl9ub2RlX2lzX2Zyb250ZW5kKHN0cnVjdAo+ZGV2aWNlX25vZGUgKm5vZGUp
-Cj4+ICAJCW9mX2RldmljZV9pc19jb21wYXRpYmxlKG5vZGUsCj4iYWxsd2lubmVyLHN1bjhpLWEz
-My1kaXNwbGF5LWZyb250ZW5kIik7Cj4+ICB9Cj4+ICAKPj4gK3N0YXRpYyBib29sIHN1bjRpX2Ry
-dl9ub2RlX2lzX3N3YXBwYWJsZV9kZTJfbWl4ZXIoc3RydWN0IGRldmljZV9ub2RlCj4qbm9kZSkK
-Pj4gK3sKPj4gKwkvKiBUaGUgVjNzIGhhcyBvbmx5IG9uZSBtaXhlci10Y29uIHBhaXIsIHNvIGl0
-J3Mgbm90IGxpc3RlZCBoZXJlLgo+Ki8KPj4gKwlyZXR1cm4gb2ZfZGV2aWNlX2lzX2NvbXBhdGli
-bGUobm9kZSwKPiJhbGx3aW5uZXIsc3VuOGktaDMtZGUyLW1peGVyMCIpIHx8Cj4+ICsJCW9mX2Rl
-dmljZV9pc19jb21wYXRpYmxlKG5vZGUsICJhbGx3aW5uZXIsc3VuOGktaDMtZGUyLW1peGVyMSIp
-Owo+PiArfQo+PiArCj4+ICBzdGF0aWMgYm9vbCBzdW40aV9kcnZfbm9kZV9pc190Y29uKHN0cnVj
-dCBkZXZpY2Vfbm9kZSAqbm9kZSkKPj4gIHsKPj4gIAlyZXR1cm4gb2ZfZGV2aWNlX2lzX2NvbXBh
-dGlibGUobm9kZSwgImFsbHdpbm5lcixzdW41aS1hMTMtdGNvbiIpIHx8Cj4+IEBAIC0yNDksNiAr
-MjU2LDI2IEBAIHN0YXRpYyBpbnQgc3VuNGlfZHJ2X2FkZF9lbmRwb2ludHMoc3RydWN0IGRldmlj
-ZQo+KmRldiwKPj4gIAkJCX0KPj4gIAkJfQo+PiAgCj4+ICsJCS8qCj4+ICsJCSAqIFRoZSBzZWNv
-bmQgZW5kcG9pbnQgb2YgdGhlIG91dHB1dCBvZiBhIHN3YXBwYWJsZSBERTIgbWl4ZXIKPj4gKwkJ
-ICogaXMgdGhlIFRDT04gYWZ0ZXIgY29ubmVjdGlvbiBzd2FwcGluZy4KPj4gKwkJICogSWdub3Jl
-IGl0IG5vdywgYXMgd2Ugbm93IGhhcmRjb2RlIG1peGVyMC0+dGNvbjAsCj4+ICsJCSAqIG1peGVy
-MS0+dGNvbjEgY29ubmVjdGlvbi4KPj4gKwkJICovCj4+ICsJCWlmIChzdW40aV9kcnZfbm9kZV9p
-c19zd2FwcGFibGVfZGUyX21peGVyKG5vZGUpKSB7Cj4+ICsJCQlzdHJ1Y3Qgb2ZfZW5kcG9pbnQg
-ZW5kcG9pbnQ7Cj4+ICsKPj4gKwkJCWlmIChvZl9ncmFwaF9wYXJzZV9lbmRwb2ludChlcCwgJmVu
-ZHBvaW50KSkgewo+PiArCQkJCURSTV9ERUJVR19EUklWRVIoIkNvdWxkbid0IHBhcnNlIGVuZHBv
-aW50XG4iKTsKPj4gKwkJCQljb250aW51ZTsKPj4gKwkJCX0KPj4gKwo+PiArCQkJaWYgKGVuZHBv
-aW50LmlkKSB7Cj4+ICsJCQkJRFJNX0RFQlVHX0RSSVZFUigiRW5kcG9pbnQgaXMgYW4gdW51c2Vk
-IGNvbm5lY3Rpb24gZm9yIERFMgo+bWl4ZXIuLi4gc2tpcHBpbmdcbiIpOwo+PiArCQkJCWNvbnRp
-bnVlOwo+PiArCQkJfQo+PiArCQl9Cj4+ICsKPj4gIAkJLyogV2FsayBkb3duIG91ciB0cmVlICov
-Cj4+ICAJCWNvdW50ICs9IHN1bjRpX2Rydl9hZGRfZW5kcG9pbnRzKGRldiwgbWF0Y2gsIHJlbW90
-ZSk7Cj4+ICAKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV90Y29u
-LmMKPmIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3Rjb24uYwo+PiBpbmRleCBmNDRhMzdh
-NTk5M2QuLjg5YTIxNWZmMjM3MCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3N1bjRp
-L3N1bjRpX3Rjb24uYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfdGNvbi5j
-Cj4+IEBAIC00MjUsNyArNDI1LDggQEAgc3RhdGljIGludCBzdW40aV90Y29uX2luaXRfcmVnbWFw
-KHN0cnVjdCBkZXZpY2UKPipkZXYsCj4+ICAgKiByZXF1ZXN0ZWQgdmlhIHRoZSBnZXRfaWQgZnVu
-Y3Rpb24gb2YgdGhlIGVuZ2luZS4KPj4gICAqLwo+PiAgc3RhdGljIHN0cnVjdCBzdW54aV9lbmdp
-bmUgKnN1bjRpX3Rjb25fZmluZF9lbmdpbmUoc3RydWN0IHN1bjRpX2Rydgo+KmRydiwKPj4gLQkJ
-CQkJCSAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSkKPj4gKwkJCQkJCSAgIHN0cnVjdCBkZXZp
-Y2Vfbm9kZSAqbm9kZSwKPj4gKwkJCQkJCSAgIGJvb2wgc2tpcF9ib251c19lcCkKPj4gIHsKPj4g
-IAlzdHJ1Y3QgZGV2aWNlX25vZGUgKnBvcnQsICplcCwgKnJlbW90ZTsKPj4gIAlzdHJ1Y3Qgc3Vu
-eGlfZW5naW5lICplbmdpbmU7Cj4+IEBAIC00MzksNiArNDQwLDIwIEBAIHN0YXRpYyBzdHJ1Y3Qg
-c3VueGlfZW5naW5lCj4qc3VuNGlfdGNvbl9maW5kX2VuZ2luZShzdHJ1Y3Qgc3VuNGlfZHJ2ICpk
-cnYsCj4+ICAJCWlmICghcmVtb3RlKQo+PiAgCQkJY29udGludWU7Cj4+ICAKPj4gKwkJaWYgKHNr
-aXBfYm9udXNfZXApIHsKPj4gKwkJCXN0cnVjdCBvZl9lbmRwb2ludCBlbmRwb2ludDsKPj4gKwo+
-PiArCQkJaWYgKG9mX2dyYXBoX3BhcnNlX2VuZHBvaW50KGVwLCAmZW5kcG9pbnQpKSB7Cj4+ICsJ
-CQkJRFJNX0RFQlVHX0RSSVZFUigiQ291bGRuJ3QgcGFyc2UgZW5kcG9pbnRcbiIpOwo+PiArCQkJ
-CWNvbnRpbnVlOwo+PiArCQkJfQo+PiArCj4+ICsJCQlpZiAoZW5kcG9pbnQuaWQpIHsKPj4gKwkJ
-CQlEUk1fREVCVUdfRFJJVkVSKCJTa2lwcGluZyBib251cyBtaXhlci0+VENPTiBjb25uZWN0aW9u
-IHdoZW4KPnNlYXJjaGluZyBlbmdpbmVcbiIpOwo+PiArCQkJCWNvbnRpbnVlOwo+PiArCQkJfQo+
-PiArCQl9Cj4+ICsKPgo+WW91IGRvbid0IGxpc3QgdGhlIG1peGVycyBpbiB0aGUgdGNvbidzIG91
-dHB1dCwgd2h5IGRvIHlvdSBuZWVkIHRoYXQKPmV4YWN0bHk/CgpNaXhlcnMgYXJlIFRDT05zJyBp
-bnB1dCwgbm90IG91dHB1dC4uLgoKPgo+TWF4aW1lCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Am Freitag, 17. M=E4rz 2017, 18:18:40 CEST schrieb Heiko Stuebner:
+> From: Andy Yan <andy.yan@rock-chips.com>
+>=20
+> Rockchip finally named the SOC as RV1108, so change it
+> for compatible.
+>=20
+> The rk1108/rv1108 is completely new to the market, so there no real
+> devices exist in the wild, only the Rockchip internal evaluation
+> board. Therefore we're not breaking any existing devices when
+> changing compatible values.
+>=20
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+>=20
+> [added paragraph about no real devices existing]
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+
+adapted for Makefile changes in 4.12-rc1 and applied for 4.13
