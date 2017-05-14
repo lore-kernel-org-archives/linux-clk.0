@@ -1,56 +1,97 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Wed, 10 May 2017 16:13:56 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Michael Krummsdorf <michael.krummsdorf@tq-group.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, kernel@pengutronix.de,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-Message-ID: <20170510141356.itzgwoij4rwi6pwc@pengutronix.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
- <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
- <20170505072529.a3z4gonsygg3wqfx@pengutronix.de>
- <a5bfc04e-15cf-2b24-17f9-c9b60c1052cc@i2se.com>
- <185bc71b-f986-9dd1-3a56-a525f2f09fc7@i2se.com>
- <20170505201039.uyk2ie6zyfrdafgo@pengutronix.de>
- <16216689.278511.1494157914798@email.1und1.de>
- <20170508082456.dx4rthdsidbrkxza@pengutronix.de>
- <07a0f0c6-8fb6-6535-f042-122a5257aeb6@i2se.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <07a0f0c6-8fb6-6535-f042-122a5257aeb6@i2se.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v7 03/13] dt-bindings: add bindings for DE2 on V3s SoC
+Date: Mon, 15 May 2017 00:30:35 +0800
+Message-Id: <20170514163045.40366-4-icenowy@aosc.io>
+In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stefan,
+Allwinner V3s SoC have a display engine which have a different pipeline
+with older SoCs.
 
-On Wed, May 10, 2017 at 03:39:14PM +0200, Stefan Wahren wrote:
-> Am 08.05.2017 um 10:24 schrieb Uwe Kleine-König:
-> > The patch doesn't make the bit errors go away. The only message being
-> > generated is:
-> >
-> > 	swapper-1     [000] .......     1.134985: clk_div_set_rate: Cannot to set ssp3_div: gated 
-> >
-> > When I compare your clk_summary (with my patch) to my working one the
-> > only differences are some enable/prepare counts, you have the following
-> > clocks on while I have not:
-> >
-> > 	lradc, enet_out, lcdif_sel (also reparented), fec
-> >
-> > while I have these clocks on and you have not:
-> >
-> > 	ssp1
+Add document for it (new compatibles and the new "mixer" part).
 
-	ssp0: SD-card
-	ssp1: eMMC (which /)
-	ssp2: eeprom
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes in v7:
+- Reduced some text.
+Changes in v4:
+- Removed the refactor at TCON chapter.
+Changes in v3:
+- Remove the description of having a BE directly as allwinner,pipeline.
 
-Uwe
+ .../bindings/display/sunxi/sun4i-drm.txt           | 26 ++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 7acdbf14ae1c..66b85a195ef2 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -41,6 +41,7 @@ Required properties:
+    * allwinner,sun6i-a31-tcon
+    * allwinner,sun6i-a31s-tcon
+    * allwinner,sun8i-a33-tcon
++   * allwinner,sun8i-v3s-tcon
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON. Three are needed:
+@@ -62,7 +63,7 @@ Required properties:
+   second the block connected to the TCON channel 1 (usually the TV
+   encoder)
+ 
+-On SoCs other than the A33, there is one more clock required:
++On SoCs other than the A33 and V3s, there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
+ 
+ DRC
+@@ -148,6 +149,26 @@ Required properties:
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoints, the second one the outputs
+ 
++Display Engine 2.0 Mixer
++------------------------
++
++The DE2 mixer have many functionalities, currently only layer blending is
++supported.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-v3s-de2-mixer
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandles to the clocks feeding the mixer
++    * bus: the mixer interface clock
++    * mod: the mixer module clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset controllers driving the mixer
++
++- ports: A ports node with endpoint definitions as defined in
++  Documentation/devicetree/bindings/media/video-interfaces.txt. The
++  first port should be the input endpoints, the second one the output
++
+ 
+ Display Engine Pipeline
+ -----------------------
+@@ -162,9 +183,10 @@ Required properties:
+     * allwinner,sun6i-a31-display-engine
+     * allwinner,sun6i-a31s-display-engine
+     * allwinner,sun8i-a33-display-engine
++    * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-    frontends available.
++    frontends (DE 1.0) or mixers (DE 2.0) available.
+ 
+ Example:
+ 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.12.2
