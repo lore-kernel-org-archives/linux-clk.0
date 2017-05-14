@@ -1,104 +1,68 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
 To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v4 00/11] Broadcom Stingray SOC Initial Support
-Date: Mon, 22 May 2017 17:28:16 +0530
-Message-Id: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v7 10/13] drm/sun4i: tcon: add support for V3s TCON
+Date: Mon, 15 May 2017 00:30:42 +0800
+Message-Id: <20170514163045.40366-11-icenowy@aosc.io>
+In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support of Broadcom Stingray SOC
-by reusing existing Broadcom iProc device drivers.
+Allwinner V3s SoC features a TCON without channel 1.
 
-Most of the patches in this patchset are DT patches except
-the Stingray clock tree support which just one patch.
+Add support for it.
 
-This patchset is based on Linux-4.12-rc2 and it is also available
-at stingray-v4 branch of https://github.com/Broadcom/arm64-linux.git
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+Changes in v7:
+- Added Chen-Yu's Reviewed-by.
 
-Changes since v3:
- - Rebased patches for Linux-4.12-rc1
- - Updated PATCH3 to have all clocks except genpll3 to be
-   registered via platform driver probe
+ drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Changes since v2:
- - Remove default bootargs from chosen DT node
- - Remove "linux" prefix from stdout DT attribute of chosen DT node
- - Remove use of GIC_CPU_MASK_xxx() for PPIs
-
-Changes since v1:
- - Rebased patches for Linux-4.12-rc1
- - Removed unwanted /memreserve/ from bcm958742-base.dtsi
- - Use ranges DT property to clear view of memory-layout
- - Make bcm-sr.h part of clock DT bindings patch
-
-Anup Patel (3):
-  dt-bindings: bcm: Add Broadcom Stingray bindings document
-  arm64: dts: Initial DTS files for Broadcom Stingray SOC
-  arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
-
-Oza Pawandeep (1):
-  arm64: dts: Add I2C DT nodes for Stingray SoC
-
-Pramod Kumar (3):
-  arm64: dts: Add NAND DT nodes for Stingray SOC
-  arm64: dts: Add pinctrl DT nodes for Stingray SOC
-  arm64: dts: Add GPIO DT nodes for Stingray SOC
-
-Sandeep Tripathy (3):
-  dt-bindings: clk: Extend binding doc for Stingray SOC
-  clk: bcm: Add clocks for Stingray SOC
-  arm64: dts: Add clock DT nodes for Stingray SOC
-
-Srinath Mannam (1):
-  arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
-
- .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
- .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
- arch/arm64/boot/dts/broadcom/Makefile              |   1 +
- arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
- .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
- .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
- .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
- drivers/clk/bcm/Kconfig                            |   8 +
- drivers/clk/bcm/Makefile                           |   1 +
- drivers/clk/bcm/clk-sr.c                           | 324 +++++++++++++++
- include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
- .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
- 15 files changed, 1821 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
- create mode 100644 drivers/clk/bcm/clk-sr.c
- create mode 100644 include/dt-bindings/clock/bcm-sr.h
- create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 4a979d17ddaa..1dd1948025d2 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -178,7 +178,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
+-		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
++		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
++		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
+ }
+ 
+ static int compare_of(struct device *dev, void *data)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 288275802f92..add349f5e012 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -601,11 +601,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+ 	/* nothing is supported */
+ };
+ 
++static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
++	/* nothing is supported */
++};
++
+ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
++	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
 -- 
-2.7.4
+2.12.2
