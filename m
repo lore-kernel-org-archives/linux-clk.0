@@ -1,98 +1,136 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 2/3] dt-bindings: add bindings for rk3128 clock controller
-Date: Thu, 18 May 2017 10:16:58 +0800
-Message-Id: <1495073819-4160-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1495073819-4160-1-git-send-email-zhangqing@rock-chips.com>
-References: <1495073819-4160-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:55802 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758880AbdENQbe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 14 May 2017 12:31:34 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v7 01/13] dt-bindings: add binding for the Allwinner DE2 CCU
+Date: Mon, 15 May 2017 00:30:33 +0800
+Message-Id: <20170514163045.40366-2-icenowy@aosc.io>
+In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add devicetree bindings for Rockchip cru which found on
-Rockchip SoCs.
+Allwinner "Display Engine 2.0" contains some clock controls in it.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+In order to add them as clock drivers, we need a device tree binding.
+Add the binding here.
+
+Also add the device tree binding headers.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/clock/rockchip,rk3128-cru.txt         | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+Changes in v7:
+- Added V3s compatible.
+Changes in v6:
+- Added Rob's ACK.
+- Droped A64's compatible as it's not appropriate now.
+Changes in v5:
+- Moved dt-binding headers here.
+- Changed dt-binding headers' license header to SPDX license.
+Changes in v4:
+- Dropped the leading 0 in clock at 1000000 .
+Changes in v3:
+- Fill the address space length of DE2 CCU to 0x100000, just reach the start of mixer0.
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+ .../devicetree/bindings/clock/sun8i-de2.txt        | 31 ++++++++++++++++++++++
+ include/dt-bindings/clock/sun8i-de2.h              | 18 +++++++++++++
+ include/dt-bindings/reset/sun8i-de2.h              | 14 ++++++++++
+ 3 files changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
+ create mode 100644 include/dt-bindings/clock/sun8i-de2.h
+ create mode 100644 include/dt-bindings/reset/sun8i-de2.h
+
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
 new file mode 100644
-index 000000000000..455a9a00a623
+index 000000000000..631d27cd89d6
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-@@ -0,0 +1,56 @@
-+* Rockchip RK3128 Clock and Reset Unit
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -0,0 +1,31 @@
++Allwinner Display Engine 2.0 Clock Control Binding
++--------------------------------------------------
 +
-+The RK3128 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
++Required properties :
++- compatible: must contain one of the following compatibles:
++		- "allwinner,sun8i-a83t-de2-clk"
++		- "allwinner,sun8i-v3s-de2-clk"
++		- "allwinner,sun50i-h5-de2-clk"
 +
-+Required Properties:
++- reg: Must contain the registers base address and length
++- clocks: phandle to the clocks feeding the display engine subsystem.
++	  Three are needed:
++  - "mod": the display engine module clock
++  - "bus": the bus clock for the whole display engine subsystem
++- clock-names: Must contain the clock names described just above
++- resets: phandle to the reset control for the display engine subsystem.
++- #clock-cells : must contain 1
++- #reset-cells : must contain 1
 +
-+- compatible: should be "rockchip,rk3128-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
++Example:
++de2_clocks: clock@1000000 {
++	compatible = "allwinner,sun8i-a83t-de2-clk";
++	reg = <0x01000000 0x100000>;
++	clocks = <&ccu CLK_BUS_DE>,
++		 <&ccu CLK_DE>;
++	clock-names = "bus",
++		      "mod";
++	resets = <&ccu RST_BUS_DE>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
+new file mode 100644
+index 000000000000..3bed63b524aa
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-de2.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
 +
-+Optional Properties:
++#ifndef _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
++#define _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
 +
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing pll rates are not changeable, due to the missing pll lock status.
++#define CLK_BUS_MIXER0		0
++#define CLK_BUS_MIXER1		1
++#define CLK_BUS_WB		2
 +
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/rk3128-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
++#define CLK_MIXER0		6
++#define CLK_MIXER1		7
++#define CLK_WB			8
 +
-+External clocks:
++#endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
+diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
+new file mode 100644
+index 000000000000..9526017432f0
+--- /dev/null
++++ b/include/dt-bindings/reset/sun8i-de2.h
+@@ -0,0 +1,14 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
 +
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "ext_i2s" - external I2S clock - optional,
-+ - "gmac_clkin" - external GMAC clock - optional
++#ifndef _DT_BINDINGS_RESET_SUN8I_DE2_H_
++#define _DT_BINDINGS_RESET_SUN8I_DE2_H_
 +
-+Example: Clock controller node:
++#define RST_MIXER0	0
++#define RST_MIXER1	1
++#define RST_WB		2
 +
-+	cru: cru@20000000 {
-+		compatible = "rockchip,rk3128-cru";
-+		reg = <0x20000000 0x1000>;
-+		rockchip,grf = <&grf>;
-+
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart2: serial@20068000 {
-+		compatible = "rockchip,serial";
-+		reg = <0x20068000 0x100>;
-+		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-+		clock-frequency = <24000000>;
-+		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
-+		clock-names = "sclk_uart", "pclk_uart";
-+	};
++#endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
 -- 
-1.9.1
+2.12.2
+
