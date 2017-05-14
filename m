@@ -1,256 +1,85 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 10/10] ARM: dts: sun8i: Add board dts file for Banana Pi M2
- Ultra
-Date: Thu,  4 May 2017 21:50:06 +0800
-Message-Id: <20170504135006.16483-11-icenowy@aosc.io>
-In-Reply-To: <20170504135006.16483-1-icenowy@aosc.io>
-References: <20170504135006.16483-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v7 13/13] [DO NOT MERGE] ARM: sun8i: v3s: enable LCD panel of Lichee Pi Zero
+Date: Mon, 15 May 2017 00:30:45 +0800
+Message-Id: <20170514163045.40366-14-icenowy@aosc.io>
+In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Chen-Yu Tsai <wens@csie.org>
+A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
 
-The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
-form factor and position of various connectors, leds and buttons is
-similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
-as the latest Banana Pi M64.
+This commit connects this panel to Lichee Pi Zero.
 
-It features:
+Lichee Pi also provides a 800x480 panel without accurate model number,
+so do not merge this patch. It will finally come as device tree overlay.
 
-  - X-Powers AXP221s PMIC connected to i2c0
-  - 2 GB DDR3 DRAM
-  - 8 GB eMMC
-  - micro SD card slot
-  - DC power jack
-  - HDMI output
-  - MIPI DSI connector
-  - 2x USB 2.0 hosts
-  - 1x USB 2.0 OTG
-  - gigabit ethernet with Realtek RTL8211E transceiver
-  - WiFi/Bluetooth with AP6212 chip, with external antenna connector
-  - SATA and power connectors for native SATA support
-  - camera sensor connector
-  - consumer IR receiver
-  - audio out headphone jack
-  - onboard microphone
-  - red, green, and blue LEDs
-  - debug UART pins
-  - Li-Po battery connector
-  - Raspberry Pi B+ compatible GPIO header
-  - power, reset, and boot control buttons
-
-This patch adds a dts file that enables debug UART and MMC support.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/Makefile                        |   1 +
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 161 ++++++++++++++++++++++
- 2 files changed, 162 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 9c5e1d944d1c..07a662494eed 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -905,6 +905,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-h3-orangepi-plus.dtb \
- 	sun8i-h3-orangepi-plus2e.dtb \
- 	sun8i-r16-parrot.dtb \
-+	sun8i-r40-bananapi-m2-ultra.dtb \
- 	sun8i-v3s-licheepi-zero.dtb
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-new file mode 100644
-index 000000000000..1d824830a1ad
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -0,0 +1,161 @@
-+/*
-+ * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
+diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+index 387fc2aa546d..7ae72bf63cd0 100644
+--- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
++++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+@@ -75,6 +75,28 @@
+ 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
+ 		};
+ 	};
 +
-+/dts-v1/;
-+#include "sun8i-r40.dtsi"
-+#include "sunxi-common-regulators.dtsi"
++	panel: panel {
++		compatible = "qiaodian,qd43003c0-40", "simple-panel";
++		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+/ {
-+	model = "Banana Pi BPI-M2-Ultra";
-+	compatible = "sinovoip,bpi-m2-ultra", "allwinner,sun8i-r40";
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	wifi_pwrseq: wifi_pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&pio 6 10 GPIO_ACTIVE_LOW>; /* PG10 WIFI_EN */
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_lcd>;
++			};
++		};
 +	};
 +};
 +
-+&i2c0 {
++&de {
++	status = "okay";
+ };
+ 
+ &mmc0 {
+@@ -86,6 +108,20 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
 +	status = "okay";
 +
-+	axp22x: pmic@68 {
-+		compatible = "x-powers,axp221";
-+		reg = <0x34>;
-+		interrupt-parent = <&nmi_intc>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++};
++
++&tcon0_out {
++	tcon0_out_lcd: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&panel_input>;
 +	};
 +};
 +
-+#include "axp22x.dtsi"
-+
-+&reg_aldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <2700000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "avcc";
-+};
-+
-+&reg_dcdc1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+	regulator-name = "vcc-3v0";
-+};
-+
-+&reg_dcdc2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1000000>;
-+	regulator-max-microvolt = <1300000>;
-+	regulator-name = "vdd-cpu";
-+};
-+
-+&reg_dcdc3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1000000>;
-+	regulator-max-microvolt = <1300000>;
-+	regulator-name = "vdd-sys";
-+};
-+
-+&reg_dcdc5 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1500000>;
-+	regulator-max-microvolt = <1500000>;
-+	regulator-name = "vcc-dram";
-+};
-+
-+&reg_dldo1 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-wifi-io";
-+};
-+
-+&reg_dldo2 {
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-wifi";
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+	vmmc-supply = <&reg_dcdc1>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 7 13 GPIO_ACTIVE_HIGH>; /* PH13 */
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&mmc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc1_pins>;
-+	vmmc-supply = <&reg_dldo2>;
-+	vqmmc-supply = <&reg_dldo1>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	bus-width = <4>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_pins>;
-+	vmmc-supply = <&reg_dcdc1>;
-+	vqmmc-supply = <&reg_dcdc1>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_0>;
-+	status = "okay";
-+};
+ &uart0 {
+ 	pinctrl-0 = <&uart0_pins_a>;
+ 	pinctrl-names = "default";
 -- 
 2.12.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
