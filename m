@@ -1,90 +1,144 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>
-Subject: [PATCH 3/9] clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-Date: Mon, 15 May 2017 21:59:17 +0800
-Message-ID: <1494856763-6543-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 13 May 2017 21:23:07 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linus.walleij@linaro.org,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
+	sjaganat@codeaurora.org, sricharan@codeaurora.org,
+	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+Message-ID: <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+ <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
+ <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding CLK_FRAC_DIVIDER_ZERO_BASED flag to indicate the numerator and
-denominator value in register are start from 0.
+On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
 
-This can be used to support frac dividers like below:
-Divider output clock = Divider input clock x [(frac +1) / (div +1)]
-where frac/div in register is:
-000b - Divide by 1.
-001b - Divide by 2.
-010b - Divide by 3.
+> 
+> 
+> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
+> > On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
+> > 
+[..]
+> > > +enum ipq8074_functions {
+> > 
+> > Please keep these sorted alphabetically.
+> 
+> Ok
+> 
+> > > +	msm_mux_gpio,
+> > > +	msm_mux_qpic_pad,
+> > > +	msm_mux_blsp5_i2c,
+> > > +	msm_mux_blsp5_spi,
+> > > +	msm_mux_wci20,
+> > 
+> > What does "20" mean here?
+> 
+> This is for Wireless Coex Interface. The same functionality can be muxed on
+> to different GPIOs. WCI2, is the 2nd edition of the WCI standard and 0, 1
+> are for the muxing to different GPIOs (alternate muxes).
+> 
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/clk-fractional-divider.c | 10 ++++++++++
- include/linux/clk-provider.h         |  7 +++++++
- 2 files changed, 17 insertions(+)
+In other Qualcomm platforms the alternative muxes are denoted by letters
+(a,b,c...). Would you mind picking up this naming scheme, or do you see
+any problems with that? (E.g. wci2a in this case)
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index aab9046..455bec5 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -40,6 +40,11 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- 	m = (val & fd->mmask) >> fd->mshift;
- 	n = (val & fd->nmask) >> fd->nshift;
- 
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m++;
-+		n++;
-+	}
-+
- 	if (!n || !m)
- 		return parent_rate;
- 
-@@ -91,6 +96,11 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
- 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
- 			&m, &n);
- 
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m--;
-+		n--;
-+	}
-+
- 	if (fd->lock)
- 		spin_lock_irqsave(fd->lock, flags);
- 	else
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a6efbb9..4466cae 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -557,6 +557,11 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
-  * @lock:	register lock
-  *
-  * Clock with adjustable fractional divider affecting its output frequency.
-+ *
-+ * Flags:
-+ * CLK_FRAC_DIVIDER_ZERO_BASED - by default the divisor is the value read
-+ *	from the register.  If CLK_FRAC_DIVIDER_ZERO_BASED is set then the
-+ *	divider is the raw value read from the register plus one.
-  */
- struct clk_fractional_divider {
- 	struct clk_hw	hw;
-@@ -573,6 +578,8 @@ struct clk_fractional_divider {
- 
- #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
- 
-+#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
-+
- extern const struct clk_ops clk_fractional_divider_ops;
- struct clk *clk_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
--- 
-2.7.4
+
+Btw, do you need any additional configuration for selecting alternative
+muxing or is that automagical these days?
+
+> > > +	msm_mux_blsp3_spi3,
+> > > +	msm_mux_burn0,
+> > > +	msm_mux_pcm_zsi0,
+> > > +	msm_mux_blsp5_uart,
+> > > +	msm_mux_mac12,
+> > 
+> > What does "12" mean here?
+> 
+> The SoC has three MAC cores. Each core has two pins for the smart antenna
+> feature. macXY indicates the function select for MAC no. X and smart antenna
+> no. Y.
+> 
+
+Ok
+
+> > > +	msm_mux_blsp3_spi0,
+> > > +	msm_mux_burn1,
+> > > +	msm_mux_mac01,
+> > > +	msm_mux_qdss_cti_trig_out_b0,
+> > > +	msm_mux_qdss_cti_trig_in_b0,
+> > > +	msm_mux_qpic_pad4,
+> > 
+> > What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
+> > alternative muxings...?
+> 
+> This is for the NAND and LCD display. The pins listed are the 9 data pins.
+> 
+
+Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
+possible to reference a partial group in the DTS, if that's necessary)
+
+> > > +	msm_mux_blsp4_uart0,
+> > > +	msm_mux_blsp4_i2c0,
+> > > +	msm_mux_blsp4_spi0,
+> > > +	msm_mux_mac21,
+> > > +	msm_mux_qdss_cti_trig_out_b1,
+> > > +	msm_mux_qpic_pad5,
+> > > +	msm_mux_qdss_cti_trig_in_b1,
+> > > +	msm_mux_qpic_pad6,
+> > > +	msm_mux_qpic_pad7,
+> > > +	msm_mux_cxc0,
+> > > +	msm_mux_mac13,
+> > > +	msm_mux_qdss_cti_trig_in_a1,
+> > > +	msm_mux_qdss_cti_trig_out_a1,
+> > > +	msm_mux_wci22,
+> > > +	msm_mux_qdss_cti_trig_in_a0,
+> > > +	msm_mux_qpic_pad1,
+> > > +	msm_mux_qdss_cti_trig_out_a0,
+> > > +	msm_mux_qpic_pad2,
+> > > +	msm_mux_qpic_pad3,
+> > > +	msm_mux_qdss_traceclk_b,
+> > > +	msm_mux_qpic_pad0,
+> > > +	msm_mux_qdss_tracectl_b,
+> > > +	msm_mux_qpic_pad8,
+> > > +	msm_mux_pcm_zsi1,
+> > > +	msm_mux_qdss_tracedata_b,
+> > > +	msm_mux_led0,
+> > > +	msm_mux_pwm04,
+> > 
+> > What does "04" mean here?
+> 
+> There are 4 Pulse Width Modulation channels, pwmXY is pwm channel X and pin
+> Y.
+
+So Y is alternative mux? Can we use letters for this as well?
+
+> > 
+> > > +	msm_mux_led1,
+> > > +	msm_mux_pwm14,
+> > > +	msm_mux_led2,
+> > > +	msm_mux_pwm24,
+> > > +	msm_mux_pwm00,
+> > > +	msm_mux_blsp4_uart1,
+> > 
+> > Are uart0 vs uart1 alternative muxes?
+> 
+> These are two different uarts available at two independent pins.
+> 
+
+Ok, then I'm happy with the naming of this :)
+
+Thanks,
+Bjorn
