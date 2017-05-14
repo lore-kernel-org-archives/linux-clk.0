@@ -1,132 +1,240 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:39053 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752702AbdEDLte (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 07:49:34 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 01/13] dt-bindings: add binding for the Allwinner DE2 CCU
-Date: Thu,  4 May 2017 19:48:46 +0800
-Message-Id: <20170504114858.9008-2-icenowy@aosc.io>
-In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:34143 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754032AbdENVVO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2017 17:21:14 -0400
+Received: by mail-wm0-f43.google.com with SMTP id u65so20907711wmu.1
+        for <linux-clk@vger.kernel.org>; Sun, 14 May 2017 14:21:13 -0700 (PDT)
+MIME-Version: 1.0
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 14 May 2017 23:20:52 +0200
+Message-ID: <CAFBinCDjysBNJLQYsvzBU7U2p7gv0Lxa+qe8f5YMn0BgUw6P0g@mail.gmail.com>
+Subject: corrupt clk_core instance in clk_disable_unused_subtree (ARM Meson MX platform)
+To: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: balbes-150@yandex.ru, jbrunet@baylibre.com, narmstrong@baylibre.com
+Content-Type: multipart/mixed; boundary="001a1142477ea11cb1054f8284b1"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner "Display Engine 2.0" contains some clock controls in it.
+--001a1142477ea11cb1054f8284b1
+Content-Type: text/plain; charset="UTF-8"
 
-In order to add them as clock drivers, we need a device tree binding.
-Add the binding here.
+Hello,
 
-Also add the device tree binding headers.
+it seems that I am seeing some strange memory corruption on one of my
+Amlogic Meson MX (32-bit) devices.
+disclaimer: I have some patches in my tree which are not mainlined yet
+(see [0]), but cannot see that any of these patches would cause memory
+corruption of a clk_core instance.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Rob Herring <robh@kernel.org>
----
-Changes in v6:
-- Added Rob's ACK.
-- Drpoped A64's compatible as it's not appropriate now.
-Changes in v5:
-- Moved dt-binding headers here.
-- Changed dt-binding headers' license header to SPDX license.
-Changes in v4:
-- Dropped the leading 0 in clock at 1000000 .
-Changes in v3:
-- Fill the address space length of DE2 CCU to 0x100000, just reach the start of mixer0.
+Oleg (who is CC'ed) has first reported this when testing my kernel tree: [1]
+in the meantime I have rebased all of my patches to Linus' mainline
+tree, commit 0fcc3ab23d7395f58e8ab0834e7913e2e4314a83 [3]
 
- .../devicetree/bindings/clock/sun8i-de2.txt        | 30 ++++++++++++++++++++++
- include/dt-bindings/clock/sun8i-de2.h              | 18 +++++++++++++
- include/dt-bindings/reset/sun8i-de2.h              | 14 ++++++++++
- 3 files changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
- create mode 100644 include/dt-bindings/clock/sun8i-de2.h
- create mode 100644 include/dt-bindings/reset/sun8i-de2.h
+what I am seeing is a NULL deref in clk_disable_unused_subtree, full
+log attached and can be found here: [3]
+an explanation of what seems to be going on in my own words is:
+- in line #5 of the log the internal PWM mux clock for the first PWM
+channel is being registered (everything looks good with
+clk_core=0xeddfbf80 and clk_hw=0xeddfbf30)
+- the default parent of this mux is "xtal"
+- in line #31 of the log the "disable unused clocks" cleanup starts
+and checks the first child of the "xtal" clock and seems to find
+clk_core=0xeddfbf80 *BUT* clk_hw=0x00000003
+- this doesn't seem right and a crash is pretty obvious
 
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-new file mode 100644
-index 000000000000..d710c0111cd3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -0,0 +1,30 @@
-+Allwinner Display Engine 2.0 Clock Control Binding
-+--------------------------------------------------
-+
-+Required properties :
-+- compatible: must contain one of the following compatibles:
-+		- "allwinner,sun8i-a83t-de2-clk"
-+		- "allwinner,sun50i-h5-de2-clk"
-+
-+- reg: Must contain the registers base address and length
-+- clocks: phandle to the clocks feeding the display engine subsystem.
-+	  Three are needed:
-+  - "mod": the display engine module clock
-+  - "bus": the bus clock for the whole display engine subsystem
-+- clock-names: Must contain the clock names described just above
-+- resets: phandle to the reset control for the display engine subsystem.
-+- #clock-cells : must contain 1
-+- #reset-cells : must contain 1
-+
-+Example:
-+de2_clocks: clock@1000000 {
-+	compatible = "allwinner,sun8i-a83t-de2-clk";
-+	reg = <0x01000000 0x100000>;
-+	clocks = <&ccu CLK_DE>,
-+		 <&ccu CLK_BUS_DE>;
-+	clock-names = "mod",
-+		      "bus";
-+	resets = <&ccu RST_BUS_DE>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
-diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
-new file mode 100644
-index 000000000000..3bed63b524aa
---- /dev/null
-+++ b/include/dt-bindings/clock/sun8i-de2.h
-@@ -0,0 +1,18 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
-+#define _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
-+
-+#define CLK_BUS_MIXER0		0
-+#define CLK_BUS_MIXER1		1
-+#define CLK_BUS_WB		2
-+
-+#define CLK_MIXER0		6
-+#define CLK_MIXER1		7
-+#define CLK_WB			8
-+
-+#endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
-diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
-new file mode 100644
-index 000000000000..9526017432f0
---- /dev/null
-+++ b/include/dt-bindings/reset/sun8i-de2.h
-@@ -0,0 +1,14 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_SUN8I_DE2_H_
-+#define _DT_BINDINGS_RESET_SUN8I_DE2_H_
-+
-+#define RST_MIXER0	0
-+#define RST_MIXER1	1
-+#define RST_WB		2
-+
-+#endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
--- 
-2.12.2
+I also attached the patch which introduces this additional logspam -
+just in case anyone wants to know what these values mean exactly.
 
+now the interesting part:
+I can reproduce this with multi_v7_defconfig and
+arch/arm/boot/dts/meson8m2-m8s.dts from my tree.
+if I leave everything as it is and *only* enable CONFIG_DEBUG_SPINLOCK
+then this crash goes away. so this *might* be a race-condition
+somewhere...
+
+has anybody seen this crash before? I can help debugging/testing
+potential fixes/trying out various things to solve this - just let me
+know!
+
+
+Regards,
+Martin
+
+
+[0] https://github.com/xdarklight/linux/tree/meson-mx-integration-4.12-20170513
+[1] http://lists.infradead.org/pipermail/linux-amlogic/2017-May/003497.html
+[2] https://github.com/torvalds/linux/commit/0fcc3ab23d7395f58e8ab0834e7913e2e4314a83
+[3] https://paste.kde.org/pbefvmqgr
+
+--001a1142477ea11cb1054f8284b1
+Content-Type: text/plain; charset="US-ASCII"; name="clk_pwm_logspam.diff"
+Content-Disposition: attachment; filename="clk_pwm_logspam.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_j2p72oo20
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay5jIGIvZHJpdmVycy9jbGsvY2xrLmMKaW5kZXgg
+ZmM1OGM1MmEyNmI0Li4xOTQyZmUyYzI4YjAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvY2xrL2Nsay5j
+CisrKyBiL2RyaXZlcnMvY2xrL2Nsay5jCkBAIC03NTksNyArNzU5LDcgQEAgc3RhdGljIHZvaWQg
+Y2xrX2Rpc2FibGVfdW51c2VkX3N1YnRyZWUoc3RydWN0IGNsa19jb3JlICpjb3JlKQogewogCXN0
+cnVjdCBjbGtfY29yZSAqY2hpbGQ7CiAJdW5zaWduZWQgbG9uZyBmbGFnczsKLQorcHJpbnRrKCIl
+cygweCUwOHgvMHglMDh4LyVzKSAtIGVtcHR5PSVkXG4iLCBfX2Z1bmNfXywgY29yZSwgY29yZS0+
+aHcsIGNvcmUtPm5hbWUsIGhsaXN0X2VtcHR5KCZjb3JlLT5jaGlsZHJlbikpOwogCWxvY2tkZXBf
+YXNzZXJ0X2hlbGQoJnByZXBhcmVfbG9jayk7CiAKIAlobGlzdF9mb3JfZWFjaF9lbnRyeShjaGls
+ZCwgJmNvcmUtPmNoaWxkcmVuLCBjaGlsZF9ub2RlKQpAQCAtMTc5NSw3ICsxNzk1LDcgQEAgc3Rh
+dGljIGludCBjbGtfY29yZV9zZXRfcGFyZW50KHN0cnVjdCBjbGtfY29yZSAqY29yZSwgc3RydWN0
+IGNsa19jb3JlICpwYXJlbnQpCiAKIAlpZiAoIWNvcmUpCiAJCXJldHVybiAwOwotCitwcmludGso
+IiVzKDB4JTA4eC8weCUwOHgvJXMsICVzKVxuIiwgX19mdW5jX18sIGNvcmUsIGNvcmUtPmh3LCBj
+b3JlLT5uYW1lLCBwYXJlbnQgPyBwYXJlbnQtPm5hbWUgOiAiTlVMTCIpOwogCS8qIHByZXZlbnQg
+cmFjaW5nIHdpdGggdXBkYXRlcyB0byB0aGUgY2xvY2sgdG9wb2xvZ3kgKi8KIAljbGtfcHJlcGFy
+ZV9sb2NrKCk7CiAKQEAgLTI0MjIsNiArMjQyMiw3IEBAIHN0YXRpYyBpbnQgX19jbGtfY29yZV9p
+bml0KHN0cnVjdCBjbGtfY29yZSAqY29yZSkKIAkJaGxpc3RfYWRkX2hlYWQoJmNvcmUtPmNoaWxk
+X25vZGUsCiAJCQkJJmNvcmUtPnBhcmVudC0+Y2hpbGRyZW4pOwogCQljb3JlLT5vcnBoYW4gPSBj
+b3JlLT5wYXJlbnQtPm9ycGhhbjsKKwkJcHJpbnRrKCIlcygweCUwOHgvMHglMDh4LyVzKSAtPiBw
+YXJlbnQgPSAweCUwOHgvMHglMDh4LyVzXG4iLCBfX2Z1bmNfXywgY29yZSwgY29yZS0+aHcsIGNv
+cmUtPm5hbWUsIGNvcmUtPnBhcmVudCwgY29yZS0+cGFyZW50LT5odywgY29yZS0+cGFyZW50LT5u
+YW1lKTsKIAl9IGVsc2UgaWYgKCFjb3JlLT5udW1fcGFyZW50cykgewogCQlobGlzdF9hZGRfaGVh
+ZCgmY29yZS0+Y2hpbGRfbm9kZSwgJmNsa19yb290X2xpc3QpOwogCQljb3JlLT5vcnBoYW4gPSBm
+YWxzZTsKQEAgLTI2MjEsMTcgKzI2MjIsMTggQEAgc3RydWN0IGNsayAqY2xrX3JlZ2lzdGVyKHN0
+cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGNsa19odyAqaHcpCiAJfTsKIAogCUlOSVRfSExJU1Rf
+SEVBRCgmY29yZS0+Y2xrcyk7CisJSU5JVF9ITElTVF9IRUFEKCZjb3JlLT5jaGlsZHJlbik7CiAK
+IAlody0+Y2xrID0gX19jbGtfY3JlYXRlX2NsayhodywgTlVMTCwgTlVMTCk7CiAJaWYgKElTX0VS
+Uihody0+Y2xrKSkgewogCQlyZXQgPSBQVFJfRVJSKGh3LT5jbGspOwogCQlnb3RvIGZhaWxfcGFy
+ZW50czsKIAl9Ci0KK3ByaW50aygiJXMoMHglMDh4LzB4JTA4eC8lcylcbiIsIF9fZnVuY19fLCBj
+b3JlLCBjb3JlLT5odywgY29yZS0+bmFtZSk7CiAJcmV0ID0gX19jbGtfY29yZV9pbml0KGNvcmUp
+OwogCWlmICghcmV0KQogCQlyZXR1cm4gaHctPmNsazsKLQorcHJpbnRrKCIuLi5mYWlsZWQhXG4i
+KTsKIAlfX2Nsa19mcmVlX2Nsayhody0+Y2xrKTsKIAlody0+Y2xrID0gTlVMTDsKIApAQCAtMjY3
+MSw3ICsyNjczLDcgQEAgc3RhdGljIHZvaWQgX19jbGtfcmVsZWFzZShzdHJ1Y3Qga3JlZiAqcmVm
+KQogewogCXN0cnVjdCBjbGtfY29yZSAqY29yZSA9IGNvbnRhaW5lcl9vZihyZWYsIHN0cnVjdCBj
+bGtfY29yZSwgcmVmKTsKIAlpbnQgaSA9IGNvcmUtPm51bV9wYXJlbnRzOwotCitwcmludGsoIiVz
+KDB4JTA4eC8lcylcbiIsIF9fZnVuY19fLCBjb3JlLT5odywgY29yZS0+bmFtZSk7CiAJbG9ja2Rl
+cF9hc3NlcnRfaGVsZCgmcHJlcGFyZV9sb2NrKTsKIAogCWtmcmVlKGNvcmUtPnBhcmVudHMpOwpA
+QCAtMjcyOCw3ICsyNzMwLDcgQEAgdm9pZCBjbGtfdW5yZWdpc3RlcihzdHJ1Y3QgY2xrICpjbGsp
+CiAKIAlpZiAoIWNsayB8fCBXQVJOX09OX09OQ0UoSVNfRVJSKGNsaykpKQogCQlyZXR1cm47Ci0K
+K3ByaW50aygiJXMoJXMpXG4iLCBfX2Z1bmNfXywgY2xrLT5jb3JlLT5uYW1lKTsKIAljbGtfZGVi
+dWdfdW5yZWdpc3RlcihjbGstPmNvcmUpOwogCiAJY2xrX3ByZXBhcmVfbG9jaygpOwpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9wd20vcHdtLW1lc29uLmMgYi9kcml2ZXJzL3B3bS9wd20tbWVzb24uYwpp
+bmRleCA0YmYwYjU0M2FkNTAuLmM3MjM4NzgyNTU3ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9wd20v
+cHdtLW1lc29uLmMKKysrIGIvZHJpdmVycy9wd20vcHdtLW1lc29uLmMKQEAgLTEyMSwxMiArMTIx
+LDE1IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IG1lc29uX3B3bSAqdG9fbWVzb25fcHdtKHN0cnVj
+dCBwd21fY2hpcCAqY2hpcCkKIHN0YXRpYyBpbnQgbWVzb25fcHdtX3JlcXVlc3Qoc3RydWN0IHB3
+bV9jaGlwICpjaGlwLCBzdHJ1Y3QgcHdtX2RldmljZSAqcHdtKQogewogCXN0cnVjdCBtZXNvbl9w
+d21fY2hhbm5lbCAqY2hhbm5lbCA9IHB3bV9nZXRfY2hpcF9kYXRhKHB3bSk7CisJc3RydWN0IG1l
+c29uX3B3bSAqbWVzb24gPSB0b19tZXNvbl9wd20oY2hpcCk7CisJc3RydWN0IG1lc29uX3B3bV9j
+aGFubmVsICpjaGFuMCA9IHB3bV9nZXRfY2hpcF9kYXRhKCZtZXNvbi0+Y2hpcC5wd21zWzBdKTsK
+IAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBjaGlwLT5kZXY7CiAJaW50IGVycjsKIAogCWlmICghY2hh
+bm5lbCkKIAkJcmV0dXJuIC1FTk9ERVY7Ci0KK3ByaW50aygiJXMgLSBjaGFubmVsLT5tdXguaHcg
+PSAweCUwOHhcbiIsIF9fZnVuY19fLCAmY2hhbm5lbC0+bXV4Lmh3KTsKK3ByaW50aygiJXMgLSBj
+aGFubmVsMC0+bXV4Lmh3ID0gMHglMDh4XG4iLCBfX2Z1bmNfXywgJmNoYW4wLT5tdXguaHcpOwog
+CWlmIChjaGFubmVsLT5jbGtfcGFyZW50KSB7CiAJCWVyciA9IGNsa19zZXRfcGFyZW50KGNoYW5u
+ZWwtPmNsaywgY2hhbm5lbC0+Y2xrX3BhcmVudCk7CiAJCWlmIChlcnIgPCAwKSB7CkBAIC00MzQs
+NiArNDM3LDggQEAgc3RhdGljIGludCBtZXNvbl9wd21faW5pdF9jaGFubmVscyhzdHJ1Y3QgbWVz
+b25fcHdtICptZXNvbiwKIAkJCWVyciA9IFBUUl9FUlIoY2hhbm5lbC0+Y2xrKTsKIAkJCWRldl9l
+cnIoZGV2LCAiZmFpbGVkIHRvIHJlZ2lzdGVyICVzOiAlZFxuIiwgbmFtZSwgZXJyKTsKIAkJCXJl
+dHVybiBlcnI7CisJCX0gZWxzZSB7CisJCQlkZXZfaW5mbyhkZXYsICJjaGFubmVsLT5tdXguaHcg
+PSAweCUwOHhcbiIsICZjaGFubmVsLT5tdXguaHcpOwogCQl9CiAKIAkJc25wcmludGYobmFtZSwg
+c2l6ZW9mKG5hbWUpLCAiY2xraW4ldSIsIGkpOwpAQCAtNDU2LDggKzQ2MSwxMCBAQCBzdGF0aWMg
+dm9pZCBtZXNvbl9wd21fYWRkX2NoYW5uZWxzKHN0cnVjdCBtZXNvbl9wd20gKm1lc29uLAogewog
+CXVuc2lnbmVkIGludCBpOwogCi0JZm9yIChpID0gMDsgaSA8IG1lc29uLT5jaGlwLm5wd207IGkr
+KykKKwlmb3IgKGkgPSAwOyBpIDwgbWVzb24tPmNoaXAubnB3bTsgaSsrKSB7CiAJCXB3bV9zZXRf
+Y2hpcF9kYXRhKCZtZXNvbi0+Y2hpcC5wd21zW2ldLCAmY2hhbm5lbHNbaV0pOworCQlwcmludGso
+IiVzKCVkKSA9IDB4JTA4eFxuIiwgX19mdW5jX18sIGksICZjaGFubmVsc1tpXS5tdXguaHcpOwor
+CX0KIH0KIAogc3RhdGljIGludCBtZXNvbl9wd21fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rldmlj
+ZSAqcGRldikK
+--001a1142477ea11cb1054f8284b1
+Content-Type: text/plain; charset="UTF-8"; name="crash-log.txt"
+Content-Disposition: attachment; filename="crash-log.txt"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_j2p77ahp1
+
+WyAgICA3LjA0OTI1MF0gS2V5IHR5cGUgZG5zX3Jlc29sdmVyIHJlZ2lzdGVyZWQNClsgICAgNy4w
+NTM0MjRdIFRodW1iRUUgQ1BVIGV4dGVuc2lvbiBzdXBwb3J0ZWQuDQpbICAgIDcuMDU3NTUxXSBS
+ZWdpc3RlcmluZyBTV1AvU1dQQiBlbXVsYXRpb24gaGFuZGxlcg0KWyAgICA3LjA2MzQ2M10gQnRy
+ZnMgbG9hZGVkLCBjcmMzMmM9Y3JjMzJjLWdlbmVyaWMNClsgICAgNy4wNzAxNTFdIGNsa19yZWdp
+c3RlcigweGVkZGZiZjgwLzB4ZWRkZmJmMzAvL3NvYy9jYnVzQGMxMTAwMDAwL3B3bUA4NmMwI211
+eDApDQpbICAgIDcuMDc0MjUwXSBfX2Nsa19jb3JlX2luaXQoMHhlZGRmYmY4MC8weGVkZGZiZjMw
+Ly9zb2MvY2J1c0BjMTEwMDAwMC9wd21AODZjMCNtdXgwKSAtPiBwYXJlbnQgPSAweGVkYWJhZjgw
+LzB4YzE2OTllZjAveHRhbA0KWyAgICA3LjA4NTIxN10gbWVzb24tcHdtIGMxMTA4NmMwLnB3bTog
+Y2hhbm5lbC0+bXV4Lmh3ID0gMHhlZGRmYmYzMA0KWyAgICA3LjA5MTE5MV0gY2xrX3JlZ2lzdGVy
+KDB4ZWRkMjI5MDAvMHhlZGRmYmY3NC8vc29jL2NidXNAYzExMDAwMDAvcHdtQDg2YzAjbXV4MSkN
+ClsgICAgNy4wOTg1NjJdIF9fY2xrX2NvcmVfaW5pdCgweGVkZDIyOTAwLzB4ZWRkZmJmNzQvL3Nv
+Yy9jYnVzQGMxMTAwMDAwL3B3bUA4NmMwI211eDEpIC0+IHBhcmVudCA9IDB4ZWRhYmFmODAvMHhj
+MTY5OWVmMC94dGFsDQpbICAgIDcuMTA5NTY5XSBtZXNvbi1wd20gYzExMDg2YzAucHdtOiBjaGFu
+bmVsLT5tdXguaHcgPSAweGVkZGZiZjc0DQpbICAgIDcuMTE1NjA4XSBtZXNvbl9wd21fYWRkX2No
+YW5uZWxzKDApID0gMHhlZGRmYmYzMA0KWyAgICA3LjEyMDMwNV0gbWVzb25fcHdtX2FkZF9jaGFu
+bmVscygxKSA9IDB4ZWRkZmJmNzQNClsgICAgNy4xMjU5MTJdIGR3YzIgYzkwNDAwMDAudXNiOiBj
+OTA0MDAwMC51c2Igc3VwcGx5IHZ1c2JfZCBub3QgZm91bmQsIHVzaW5nIGR1bW15IHJlZ3VsYXRv
+cg0KWyAgICA3LjEzMzM2OV0gZHdjMiBjOTA0MDAwMC51c2I6IGM5MDQwMDAwLnVzYiBzdXBwbHkg
+dnVzYl9hIG5vdCBmb3VuZCwgdXNpbmcgZHVtbXkgcmVndWxhdG9yDQpbICAgIDcuMTYxOTAyXSBk
+d2MyIGM5MDQwMDAwLnVzYjogRFdDIE9URyBDb250cm9sbGVyDQpbICAgIDcuMTYxOTQ0XSBkd2My
+IGM5MDQwMDAwLnVzYjogbmV3IFVTQiBidXMgcmVnaXN0ZXJlZCwgYXNzaWduZWQgYnVzIG51bWJl
+ciAxDQpbICAgIDcuMTY4MDAxXSBkd2MyIGM5MDQwMDAwLnVzYjogaXJxIDIwLCBpbyBtZW0gMHhj
+OTA0MDAwMA0KWyAgICA3LjE3Mzc3M10gaHViIDEtMDoxLjA6IFVTQiBodWIgZm91bmQNClsgICAg
+Ny4xNzcwMTldIGh1YiAxLTA6MS4wOiAxIHBvcnQgZGV0ZWN0ZWQNClsgICAgNy4xODE5MzhdIGR3
+YzIgYzkwYzAwMDAudXNiOiBjOTBjMDAwMC51c2Igc3VwcGx5IHZ1c2JfZCBub3QgZm91bmQsIHVz
+aW5nIGR1bW15IHJlZ3VsYXRvcg0KWyAgICA3LjE4OTE2M10gZHdjMiBjOTBjMDAwMC51c2I6IGM5
+MGMwMDAwLnVzYiBzdXBwbHkgdnVzYl9hIG5vdCBmb3VuZCwgdXNpbmcgZHVtbXkgcmVndWxhdG9y
+DQpbICAgIDcuMzMxODUwXSBkd2MyIGM5MGMwMDAwLnVzYjogRFdDIE9URyBDb250cm9sbGVyDQpb
+ICAgIDcuMzMxODkyXSBkd2MyIGM5MGMwMDAwLnVzYjogbmV3IFVTQiBidXMgcmVnaXN0ZXJlZCwg
+YXNzaWduZWQgYnVzIG51bWJlciAyDQpbICAgIDcuMzM3OTQ2XSBkd2MyIGM5MGMwMDAwLnVzYjog
+aXJxIDIxLCBpbyBtZW0gMHhjOTBjMDAwMA0KWyAgICA3LjM0MzY1Nl0gaHViIDItMDoxLjA6IFVT
+QiBodWIgZm91bmQNClsgICAgNy4zNDY5NjRdIGh1YiAyLTA6MS4wOiAxIHBvcnQgZGV0ZWN0ZWQN
+ClsgICAgNy4zNTI2NDddIG1lc29uX3B3bV9yZXF1ZXN0IC0gY2hhbm5lbC0+bXV4Lmh3ID0gMHhl
+ZGRmYmY3NA0KWyAgICA3LjM1NjQ4NF0gbWVzb25fcHdtX3JlcXVlc3QgLSBjaGFubmVsMC0+bXV4
+Lmh3ID0gMHhlZGRmYmYzMA0KWyAgICA3LjM2MjIyMl0gY2xrX2NvcmVfc2V0X3BhcmVudCgweGVk
+ZDIyOTAwLzB4ZWRkZmJmNzQvL3NvYy9jYnVzQGMxMTAwMDAwL3B3bUA4NmMwI211eDEsIGZjbGtf
+ZGl2NCkNClsgICAgNy4zNzIyMTVdIGhjdG9zeXM6IHVuYWJsZSB0byBvcGVuIHJ0YyBkZXZpY2Ug
+KHJ0YzApDQpbICAgIDcuMzc2MzM4XSBjbGtfZGlzYWJsZV91bnVzZWRfc3VidHJlZSgweGVkYWJh
+ZjgwLzB4YzE2OTllZjAveHRhbCkgLSBlbXB0eT0wDQpbICAgIDcuMzgzMjAzXSBjbGtfZGlzYWJs
+ZV91bnVzZWRfc3VidHJlZSgweGVkZGZiZjgwLzB4MDAwMDAwMDMv77+9KSAtIGVtcHR5PTENClsg
+ICAgNy4zODk5NDddIFVuYWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVy
+ZW5jZSBhdCB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAwMTgNClsgICAgNy4zOTgwMDVdIHBnZCA9IGMw
+MjA0MDAwDQpbICAgIDcuNDAwNjkyXSBbMDAwMDAwMThdICpwZ2Q9MDAwMDAwMDANClsgICAgNy40
+MDQyNDhdIEludGVybmFsIGVycm9yOiBPb3BzOiAxNyBbIzFdIFNNUCBBUk0NClsgICAgNy40MDg5
+MjddIE1vZHVsZXMgbGlua2VkIGluOg0KWyAgICA3LjQxMTk2NF0gQ1BVOiAwIFBJRDogMSBDb21t
+OiBzd2FwcGVyLzAgTm90IHRhaW50ZWQgNC4xMS4wLXJjNSsgIzc2Mw0KWyAgICA3LjQxODQ2Ml0g
+SGFyZHdhcmUgbmFtZTogQW1sb2dpYyBNZXNvbiBwbGF0Zm9ybQ0KWyAgICA3LjQyMzE0M10gdGFz
+azogYzAyNTAwMDAgdGFzay5zdGFjazogYzAyNGMwMDANClsgICAgNy40Mjc2NThdIFBDIGlzIGF0
+IGNsa19kaXNhYmxlX3VudXNlZF9zdWJ0cmVlKzB4YjAvMHgxMTgNClsgICAgNy40MzMxMTddIExS
+IGlzIGF0IGNsa19lbmFibGVfbG9jaysweDIwLzB4MTA0DQpbICAgIDcuNDM3NjIwXSBwYyA6IFs8
+YzA4ZTQ3Mjg+XSAgICBsciA6IFs8YzA4ZTJjNDA+XSAgICBwc3I6IDYwMGMwMDkzDQpbICAgIDcu
+NDM3NjIwXSBzcCA6IGMwMjRkZWQwICBpcCA6IDAwMDAwMDAwICBmcCA6IDAwMDAwMDAwDQpbICAg
+IDcuNDQ5MDYxXSByMTA6IDAwMDAwMDA4ICByOSA6IDAwMDAwMTU0ICByOCA6IGMxNGIyODNjDQpb
+ICAgIDcuNDU0MjYyXSByNyA6IGMxNGIyODM4ICByNiA6IDAwMDAwMDAwICByNSA6IGVkZGZiZjgw
+ICByNCA6IDQwMGMwMDEzDQpbICAgIDcuNDYwNzY0XSByMyA6IDAwMDAwMDAwICByMiA6IDAwMDAw
+MDAxICByMSA6IDAwMTIwMDExICByMCA6IDQwMGMwMDEzDQpbICAgIDcuNDY3MjY2XSBGbGFnczog
+blpDdiAgSVJRcyBvZmYgIEZJUXMgb24gIE1vZGUgU1ZDXzMyICBJU0EgQVJNICBTZWdtZW50IG5v
+bmUNClsgICAgNy40NzQ0NTldIENvbnRyb2w6IDEwYzUzODdkICBUYWJsZTogMmRkZTgwNGEgIERB
+QzogMDAwMDAwNTENClsgICAgNy40ODAxODBdIFByb2Nlc3Mgc3dhcHBlci8wIChwaWQ6IDEsIHN0
+YWNrIGxpbWl0ID0gMHhjMDI0YzIyMCkNClsgICAgNy40ODYxNjFdIFN0YWNrOiAoMHhjMDI0ZGVk
+MCB0byAweGMwMjRlMDAwKQ0KWyAgICA3LjQ5MDQ5N10gZGVjMDogICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgZjBmM2M2YzggMDAwMDAwMDEgYzEyNTMzYzggZWRkZmJmODANClsg
+ICAgNy40OTg2NDZdIGRlZTA6IGVkYWJhZjgwIGMwOGU0NmQwIGMxMjlkMjEwIDAwMDAwMDAwIGMx
+NDkzNzYwIGVkYWJhZjgwIGMxN2M1ODI4IGMwOGU0N2M4DQpbICAgIDcuNTA2Nzk0XSBkZjAwOiBm
+ZmZmZTAwMCBjMDhlNDc5MCAwMDAwMDAwMCBjMDMwMWU5YyBjMGYwYmE0MCBjMDIxZjk4MCAwMDAw
+MDAwMCBjMTYzNGYwNA0KWyAgICA3LjUxNDk0Ml0gZGYyMDogYzEzNTUyNWMgYzBmMmI0YzQgMDAw
+MDAxNTQgYzAzNWQzMDQgYzExYjkwNmMgYzEzNTM3Y2MgMDAwMDAwMDAgMDAwMDAwMDcNClsgICAg
+Ny41MjMwOTBdIGRmNDA6IDAwMDAwMDA3IGMxMWNiYTc4IGMxNjM0ZWVjIGMxNzJmMDAwIGMxNzJm
+MDAwIDAwMDAwMDA3IGMxNzJmMDAwIGMxNzJmMDAwDQpbICAgIDcuNTMxMjM4XSBkZjYwOiBjMTUy
+MTFjMCBjMTRiMjgzYyAwMDAwMDE1NCBjMTQwMGRkMCAwMDAwMDAwNyAwMDAwMDAwNyAwMDAwMDAw
+MCBjMTQwMDVhYw0KWyAgICA3LjUzOTM4Nl0gZGY4MDogMDAwMDAwMDAgMDAwMDAwMDAgYzBlOGVi
+YTAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDANClsgICAgNy41
+NDc1MzRdIGRmYTA6IDAwMDAwMDAwIGMwZThlYmE4IDAwMDAwMDAwIGMwMzA3ZDM4IDAwMDAwMDAw
+IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwDQpbICAgIDcuNTU1NjgyXSBkZmMwOiAwMDAwMDAw
+MCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAw
+MDAwMDAwMA0KWyAgICA3LjU2MzgzMF0gZGZlMDogMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAg
+MDAwMDAwMDAgMDAwMDAwMTMgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDANClsgICAgNy41NzE5
+ODZdIFs8YzA4ZTQ3Mjg+XSAoY2xrX2Rpc2FibGVfdW51c2VkX3N1YnRyZWUpIGZyb20gWzxjMDhl
+NDZkMD5dIChjbGtfZGlzYWJsZV91bnVzZWRfc3VidHJlZSsweDU4LzB4MTE4KQ0KWyAgICA3LjU4
+MjAzNl0gWzxjMDhlNDZkMD5dIChjbGtfZGlzYWJsZV91bnVzZWRfc3VidHJlZSkgZnJvbSBbPGMw
+OGU0N2M4Pl0gKGNsa19kaXNhYmxlX3VudXNlZCsweDM4LzB4MTMwKQ0KWyAgICA3LjU5MTM5OV0g
+WzxjMDhlNDdjOD5dIChjbGtfZGlzYWJsZV91bnVzZWQpIGZyb20gWzxjMDMwMWU5Yz5dIChkb19v
+bmVfaW5pdGNhbGwrMHg0NC8weDE2OCkNClsgICAgNy41OTk4MDldIFs8YzAzMDFlOWM+XSAoZG9f
+b25lX2luaXRjYWxsKSBmcm9tIFs8YzE0MDBkZDA+XSAoa2VybmVsX2luaXRfZnJlZWFibGUrMHgx
+NjAvMHgxZWMpDQpbICAgIDcuNjA4NDc3XSBbPGMxNDAwZGQwPl0gKGtlcm5lbF9pbml0X2ZyZWVh
+YmxlKSBmcm9tIFs8YzBlOGViYTg+XSAoa2VybmVsX2luaXQrMHg4LzB4MTEwKQ0KWyAgICA3LjYx
+NjYyNV0gWzxjMGU4ZWJhOD5dIChrZXJuZWxfaW5pdCkgZnJvbSBbPGMwMzA3ZDM4Pl0gKHJldF9m
+cm9tX2ZvcmsrMHgxNC8weDNjKQ0KWyAgICA3LjYyNDE2M10gQ29kZTogMWEwMDAwMTAgZTI4ZGQw
+MGMgZThiZDgwMzAgZTU5NTMwMDQgKGU1OTMzMDE4KSANClsgICAgNy42MzAyMzNdIC0tLVsgZW5k
+IHRyYWNlIDU5Y2Q3OGM1NGViYTc2ZWMgXS0tLQ==
+--001a1142477ea11cb1054f8284b1--
