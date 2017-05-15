@@ -1,585 +1,2057 @@
-Return-Path: <j-keerthy@ti.com>
-Subject: Re: [PATCH] clk: Add functions to save and restore clock/dpll context
- en-masse
-To: Tero Kristo <t-kristo@ti.com>,
-        Peter De Schrijver
-	<pdeschrijver@nvidia.com>
-References: <1492492369-19662-1-git-send-email-j-keerthy@ti.com>
- <20170504075129.GS30730@tbergstrom-lnx.Nvidia.com>
- <14802c14-78fa-5f64-e375-2e1b1bbf3c37@ti.com>
-CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <linux@armlinux.org.uk>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>
+CC: <xiaolong.zhang@spreadtrum.com>, <orson.zhai@spreadtrum.com>,
+        <geng.ren@spreadtrum.com>, <arnd@arndb.de>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Russ Dill
-	<Russ.Dill@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <51133856-f838-4ac8-8cc8-370f7c7d5df3@ti.com>
-Date: Thu, 4 May 2017 13:56:49 +0530
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <zhang.lyra@gmail.com>,
+        <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH 1/3] arm64: dts: add SC9860 clock tree data
+Date: Mon, 15 May 2017 16:35:00 +0800
+Message-ID: <20170515083502.4492-2-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
+References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <14802c14-78fa-5f64-e375-2e1b1bbf3c37@ti.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
 
+This patch addresses SC9860 clock topology structure and provides clock
+node to other devices (clock consumers) on chip.
 
-On Thursday 04 May 2017 01:47 PM, Tero Kristo wrote:
-> On 04/05/17 10:51, Peter De Schrijver wrote:
->> On Tue, Apr 18, 2017 at 10:42:49AM +0530, Keerthy wrote:
->>> From: Russ Dill <Russ.Dill@ti.com>
->>>
->>> The clock/dpll registers are in the WKUP power domain. Under both
->>> RTC-only
->>> suspend and hibernation, these registers are lost. Hence save/restore
->>> them accordingly.
->>>
->>
->> This won't work for Tegra, because we need a 2 pass restore. First
->> restore
->> rate/parents with all clocks enabled and then disable the ones which were
->> disabled before entering suspend. Both passes usually go from root to
->> leave.
->> However a few clocks have to be treated separately, eg the ones
->> related to
->> SDRAM.
-> 
-> Do you have your own implementation in place? Is it possible to modify
-> the base code here to add your requirements (drivers/clk/clk.c)?
-> 
-> I guess we could also just add clk_for_each() type of call that would
-> allow us to iterate over clock hierarchy.
+This patch also removed replicated node of 26m fixed clock.
 
-Any patch links to your implementation could be very helpful.
+Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860-clocks.dtsi | 1984 +++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/sc9860.dtsi        |    1 +
+ arch/arm64/boot/dts/sprd/whale2.dtsi        |    7 -
+ 3 files changed, 1985 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/sprd/sc9860-clocks.dtsi
 
-> 
-> -Tero
-> 
->>
->>
->>> Signed-off-by: Russ Dill <Russ.Dill@ti.com>
->>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>> ---
->>>  drivers/clk/clk.c            |  70 ++++++++++++++++++++++++
->>>  drivers/clk/ti/divider.c     |  36 +++++++++++++
->>>  drivers/clk/ti/dpll.c        |   6 +++
->>>  drivers/clk/ti/dpll3xxx.c    | 124
->>> +++++++++++++++++++++++++++++++++++++++++++
->>>  drivers/clk/ti/gate.c        |   3 ++
->>>  drivers/clk/ti/mux.c         |  29 ++++++++++
->>>  include/linux/clk-provider.h |  11 ++++
->>>  include/linux/clk.h          |  25 +++++++++
->>>  include/linux/clk/ti.h       |   6 +++
->>>  9 files changed, 310 insertions(+)
->>>
->>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->>> index cddddbe..1ca87f4 100644
->>> --- a/drivers/clk/clk.c
->>> +++ b/drivers/clk/clk.c
->>> @@ -687,6 +687,76 @@ static int clk_core_enable_lock(struct clk_core
->>> *core)
->>>      return ret;
->>>  }
->>>
->>> +void clk_dflt_restore_context(struct clk_hw *hw)
->>> +{
->>> +    if (hw->clk->core->enable_count)
->>> +        hw->clk->core->ops->enable(hw);
->>> +    else
->>> +        hw->clk->core->ops->disable(hw);
->>> +}
->>> +EXPORT_SYMBOL_GPL(clk_dflt_restore_context);
->>> +
->>> +static int clk_save_context(struct clk_core *clk)
->>> +{
->>> +    struct clk_core *child;
->>> +    int ret = 0;
->>> +
->>> +    hlist_for_each_entry(child, &clk->children, child_node) {
->>> +        ret = clk_save_context(child);
->>> +        if (ret < 0)
->>> +            return ret;
->>> +    }
->>> +
->>> +    if (clk->ops && clk->ops->save_context)
->>> +        ret = clk->ops->save_context(clk->hw);
->>> +
->>> +    return ret;
->>> +}
->>> +
->>> +static void clk_restore_context(struct clk_core *clk)
->>> +{
->>> +    struct clk_core *child;
->>> +
->>> +    if (clk->ops && clk->ops->restore_context)
->>> +        clk->ops->restore_context(clk->hw);
->>> +
->>> +    hlist_for_each_entry(child, &clk->children, child_node)
->>> +        clk_restore_context(child);
->>> +}
->>> +
->>> +int clks_save_context(void)
->>> +{
->>> +    struct clk_core *clk;
->>> +    int ret;
->>> +
->>> +    hlist_for_each_entry(clk, &clk_root_list, child_node) {
->>> +        ret = clk_save_context(clk);
->>> +        if (ret < 0)
->>> +            return ret;
->>> +    }
->>> +
->>> +    hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
->>> +        ret = clk_save_context(clk);
->>> +        if (ret < 0)
->>> +            return ret;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(clks_save_context);
->>> +
->>> +void clks_restore_context(void)
->>> +{
->>> +    struct clk_core *clk;
->>> +
->>> +    hlist_for_each_entry(clk, &clk_root_list, child_node)
->>> +        clk_restore_context(clk);
->>> +
->>> +    hlist_for_each_entry(clk, &clk_orphan_list, child_node)
->>> +        clk_restore_context(clk);
->>> +}
->>> +EXPORT_SYMBOL_GPL(clks_restore_context);
->>> +
->>>  /**
->>>   * clk_enable - ungate a clock
->>>   * @clk: the clk being ungated
->>> diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
->>> index d6dcb28..350a58a 100644
->>> --- a/drivers/clk/ti/divider.c
->>> +++ b/drivers/clk/ti/divider.c
->>> @@ -266,10 +266,46 @@ static int ti_clk_divider_set_rate(struct
->>> clk_hw *hw, unsigned long rate,
->>>      return 0;
->>>  }
->>>
->>> +/**
->>> + * clk_divider_save_context - Save the divider value
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Save the divider value
->>> + */
->>> +static int clk_divider_save_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_divider *divider = to_clk_divider(hw);
->>> +    u32 val;
->>> +
->>> +    val = ti_clk_ll_ops->clk_readl(divider->reg) >> divider->shift;
->>> +    divider->context = val & div_mask(divider);
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +/**
->>> + * clk_divider_restore_context - restore the saved the divider value
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Restore the saved the divider value
->>> + */
->>> +static void clk_divider_restore_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_divider *divider = to_clk_divider(hw);
->>> +    u32 val;
->>> +
->>> +    val = ti_clk_ll_ops->clk_readl(divider->reg);
->>> +    val &= ~(div_mask(divider) << divider->shift);
->>> +    val |= divider->context << divider->shift;
->>> +    ti_clk_ll_ops->clk_writel(val, divider->reg);
->>> +}
->>> +
->>>  const struct clk_ops ti_clk_divider_ops = {
->>>      .recalc_rate = ti_clk_divider_recalc_rate,
->>>      .round_rate = ti_clk_divider_round_rate,
->>>      .set_rate = ti_clk_divider_set_rate,
->>> +    .save_context = clk_divider_save_context,
->>> +    .restore_context = clk_divider_restore_context,
->>>  };
->>>
->>>  static struct clk *_register_divider(struct device *dev, const char
->>> *name,
->>> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
->>> index 96d8488..791dd31 100644
->>> --- a/drivers/clk/ti/dpll.c
->>> +++ b/drivers/clk/ti/dpll.c
->>> @@ -39,6 +39,8 @@
->>>      .set_rate_and_parent    = &omap3_noncore_dpll_set_rate_and_parent,
->>>      .determine_rate    = &omap4_dpll_regm4xen_determine_rate,
->>>      .get_parent    = &omap2_init_dpll_parent,
->>> +    .save_context    = &omap3_core_dpll_save_context,
->>> +    .restore_context = &omap3_core_dpll_restore_context,
->>>  };
->>>  #else
->>>  static const struct clk_ops dpll_m4xen_ck_ops = {};
->>> @@ -62,6 +64,8 @@
->>>      .set_rate_and_parent    = &omap3_noncore_dpll_set_rate_and_parent,
->>>      .determine_rate    = &omap3_noncore_dpll_determine_rate,
->>>      .get_parent    = &omap2_init_dpll_parent,
->>> +    .save_context    = &omap3_noncore_dpll_save_context,
->>> +    .restore_context = &omap3_noncore_dpll_restore_context,
->>>  };
->>>
->>>  static const struct clk_ops dpll_no_gate_ck_ops = {
->>> @@ -72,6 +76,8 @@
->>>      .set_parent    = &omap3_noncore_dpll_set_parent,
->>>      .set_rate_and_parent    = &omap3_noncore_dpll_set_rate_and_parent,
->>>      .determine_rate    = &omap3_noncore_dpll_determine_rate,
->>> +    .save_context    = &omap3_noncore_dpll_save_context,
->>> +    .restore_context = &omap3_noncore_dpll_restore_context
->>>  };
->>>  #else
->>>  static const struct clk_ops dpll_core_ck_ops = {};
->>> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
->>> index 4534de2..44b6b64 100644
->>> --- a/drivers/clk/ti/dpll3xxx.c
->>> +++ b/drivers/clk/ti/dpll3xxx.c
->>> @@ -782,6 +782,130 @@ unsigned long omap3_clkoutx2_recalc(struct
->>> clk_hw *hw,
->>>      return rate;
->>>  }
->>>
->>> +/**
->>> + * omap3_core_dpll_save_context - Save the m and n values of the
->>> divider
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Before the dpll registers are lost save the last rounded rate m
->>> and n
->>> + * and the enable mask.
->>> + */
->>> +int omap3_core_dpll_save_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_hw_omap *clk = to_clk_hw_omap(hw);
->>> +    struct dpll_data *dd;
->>> +    u32 v;
->>> +
->>> +    dd = clk->dpll_data;
->>> +
->>> +    v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
->>> +    clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
->>> +
->>> +    if (clk->context == DPLL_LOCKED) {
->>> +        v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
->>> +        dd->last_rounded_m = (v & dd->mult_mask) >>
->>> +                        __ffs(dd->mult_mask);
->>> +        dd->last_rounded_n = ((v & dd->div1_mask) >>
->>> +                        __ffs(dd->div1_mask)) + 1;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +/**
->>> + * omap3_core_dpll_restore_context - restore the m and n values of
->>> the divider
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Restore the last rounded rate m and n
->>> + * and the enable mask.
->>> + */
->>> +void omap3_core_dpll_restore_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_hw_omap *clk = to_clk_hw_omap(hw);
->>> +    const struct dpll_data *dd;
->>> +    u32 v;
->>> +
->>> +    dd = clk->dpll_data;
->>> +
->>> +    if (clk->context == DPLL_LOCKED) {
->>> +        _omap3_dpll_write_clken(clk, 0x4);
->>> +        _omap3_wait_dpll_status(clk, 0);
->>> +
->>> +        v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
->>> +        v &= ~(dd->mult_mask | dd->div1_mask);
->>> +        v |= dd->last_rounded_m << __ffs(dd->mult_mask);
->>> +        v |= (dd->last_rounded_n - 1) << __ffs(dd->div1_mask);
->>> +        ti_clk_ll_ops->clk_writel(v, &dd->mult_div1_reg);
->>> +
->>> +        _omap3_dpll_write_clken(clk, DPLL_LOCKED);
->>> +        _omap3_wait_dpll_status(clk, 1);
->>> +    } else {
->>> +        _omap3_dpll_write_clken(clk, clk->context);
->>> +    }
->>> +}
->>> +
->>> +/**
->>> + * omap3_non_core_dpll_save_context - Save the m and n values of the
->>> divider
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Before the dpll registers are lost save the last rounded rate m
->>> and n
->>> + * and the enable mask.
->>> + */
->>> +int omap3_noncore_dpll_save_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_hw_omap *clk = to_clk_hw_omap(hw);
->>> +    struct dpll_data *dd;
->>> +    u32 v;
->>> +
->>> +    dd = clk->dpll_data;
->>> +
->>> +    v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
->>> +    clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
->>> +
->>> +    if (clk->context == DPLL_LOCKED) {
->>> +        v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
->>> +        dd->last_rounded_m = (v & dd->mult_mask) >>
->>> +                        __ffs(dd->mult_mask);
->>> +        dd->last_rounded_n = ((v & dd->div1_mask) >>
->>> +                        __ffs(dd->div1_mask)) + 1;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +/**
->>> + * omap3_core_dpll_restore_context - restore the m and n values of
->>> the divider
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Restore the last rounded rate m and n
->>> + * and the enable mask.
->>> + */
->>> +void omap3_noncore_dpll_restore_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_hw_omap *clk = to_clk_hw_omap(hw);
->>> +    const struct dpll_data *dd;
->>> +    u32 ctrl, mult_div1;
->>> +
->>> +    dd = clk->dpll_data;
->>> +
->>> +    ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
->>> +    mult_div1 = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
->>> +
->>> +    if (clk->context == ((ctrl & dd->enable_mask) >>
->>> +                 __ffs(dd->enable_mask)) &&
->>> +        dd->last_rounded_m == ((mult_div1 & dd->mult_mask) >>
->>> +                   __ffs(dd->mult_mask)) &&
->>> +        dd->last_rounded_n == ((mult_div1 & dd->div1_mask) >>
->>> +                   __ffs(dd->div1_mask)) + 1) {
->>> +        /* nothing to be done */
->>> +        return;
->>> +    }
->>> +
->>> +    if (clk->context == DPLL_LOCKED)
->>> +        omap3_noncore_dpll_program(clk, 0);
->>> +    else
->>> +        _omap3_dpll_write_clken(clk, clk->context);
->>> +}
->>> +
->>>  /* OMAP3/4 non-CORE DPLL clkops */
->>>  const struct clk_hw_omap_ops clkhwops_omap3_dpll = {
->>>      .allow_idle    = omap3_dpll_allow_idle,
->>> diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
->>> index 7151ec3..098db66 100644
->>> --- a/drivers/clk/ti/gate.c
->>> +++ b/drivers/clk/ti/gate.c
->>> @@ -33,6 +33,7 @@
->>>      .init        = &omap2_init_clk_clkdm,
->>>      .enable        = &omap2_clkops_enable_clkdm,
->>>      .disable    = &omap2_clkops_disable_clkdm,
->>> +    .restore_context = clk_dflt_restore_context,
->>>  };
->>>
->>>  const struct clk_ops omap_gate_clk_ops = {
->>> @@ -40,6 +41,7 @@
->>>      .enable        = &omap2_dflt_clk_enable,
->>>      .disable    = &omap2_dflt_clk_disable,
->>>      .is_enabled    = &omap2_dflt_clk_is_enabled,
->>> +    .restore_context = clk_dflt_restore_context,
->>>  };
->>>
->>>  static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
->>> @@ -47,6 +49,7 @@
->>>      .enable        = &omap36xx_gate_clk_enable_with_hsdiv_restore,
->>>      .disable    = &omap2_dflt_clk_disable,
->>>      .is_enabled    = &omap2_dflt_clk_is_enabled,
->>> +    .restore_context = clk_dflt_restore_context,
->>>  };
->>>
->>>  /**
->>> diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
->>> index 18c267b..e73764a 100644
->>> --- a/drivers/clk/ti/mux.c
->>> +++ b/drivers/clk/ti/mux.c
->>> @@ -90,10 +90,39 @@ static int ti_clk_mux_set_parent(struct clk_hw
->>> *hw, u8 index)
->>>      return 0;
->>>  }
->>>
->>> +/**
->>> + * clk_mux_save_context - Save the parent selcted in the mux
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Save the parent mux value.
->>> + */
->>> +static int clk_mux_save_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_mux *mux = to_clk_mux(hw);
->>> +
->>> +    mux->saved_parent = ti_clk_mux_get_parent(hw);
->>> +    return 0;
->>> +}
->>> +
->>> +/**
->>> + * clk_mux_restore_context - Restore the parent in the mux
->>> + * @hw: pointer  struct clk_hw
->>> + *
->>> + * Restore the saved parent mux value.
->>> + */
->>> +static void clk_mux_restore_context(struct clk_hw *hw)
->>> +{
->>> +    struct clk_mux *mux = to_clk_mux(hw);
->>> +
->>> +    ti_clk_mux_set_parent(hw, mux->saved_parent);
->>> +}
->>> +
->>>  const struct clk_ops ti_clk_mux_ops = {
->>>      .get_parent = ti_clk_mux_get_parent,
->>>      .set_parent = ti_clk_mux_set_parent,
->>>      .determine_rate = __clk_mux_determine_rate,
->>> +    .save_context = clk_mux_save_context,
->>> +    .restore_context = clk_mux_restore_context,
->>>  };
->>>
->>>  static struct clk *_register_mux(struct device *dev, const char *name,
->>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
->>> index a428aec..2a8f636 100644
->>> --- a/include/linux/clk-provider.h
->>> +++ b/include/linux/clk-provider.h
->>> @@ -103,6 +103,11 @@ struct clk_rate_request {
->>>   *        Called with enable_lock held.  This function must not
->>>   *        sleep.
->>>   *
->>> + * @save_context: Save the context of the clock in prepration for
->>> poweroff.
->>> + *
->>> + * @restore_context: Restore the context of the clock after a
->>> restoration
->>> + *        of power.
->>> + *
->>>   * @recalc_rate    Recalculate the rate of this clock, by querying
->>> hardware. The
->>>   *        parent rate is an input parameter.  It is up to the caller to
->>>   *        ensure that the prepare_mutex is held across this call.
->>> @@ -198,6 +203,8 @@ struct clk_ops {
->>>      void        (*disable)(struct clk_hw *hw);
->>>      int        (*is_enabled)(struct clk_hw *hw);
->>>      void        (*disable_unused)(struct clk_hw *hw);
->>> +    int        (*save_context)(struct clk_hw *hw);
->>> +    void        (*restore_context)(struct clk_hw *hw);
->>>      unsigned long    (*recalc_rate)(struct clk_hw *hw,
->>>                      unsigned long parent_rate);
->>>      long        (*round_rate)(struct clk_hw *hw, unsigned long rate,
->>> @@ -394,6 +401,7 @@ struct clk_divider {
->>>      u8        flags;
->>>      const struct clk_div_table    *table;
->>>      spinlock_t    *lock;
->>> +    u32        context;
->>>  };
->>>
->>>  #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
->>> @@ -471,6 +479,7 @@ struct clk_mux {
->>>      u8        shift;
->>>      u8        flags;
->>>      spinlock_t    *lock;
->>> +    u8        saved_parent;
->>>  };
->>>
->>>  #define to_clk_mux(_hw) container_of(_hw, struct clk_mux, hw)
->>> @@ -912,5 +921,7 @@ struct dentry *clk_debugfs_add_file(struct clk_hw
->>> *hw, char *name, umode_t mode,
->>>                  void *data, const struct file_operations *fops);
->>>  #endif
->>>
->>> +void clk_dflt_restore_context(struct clk_hw *hw);
->>> +
->>>  #endif /* CONFIG_COMMON_CLK */
->>>  #endif /* CLK_PROVIDER_H */
->>> diff --git a/include/linux/clk.h b/include/linux/clk.h
->>> index 024cd07..d071a65 100644
->>> --- a/include/linux/clk.h
->>> +++ b/include/linux/clk.h
->>> @@ -438,6 +438,23 @@ struct clk *devm_get_clk_from_child(struct
->>> device *dev,
->>>   */
->>>  struct clk *clk_get_sys(const char *dev_id, const char *con_id);
->>>
->>> +/**
->>> + * clks_save_context - save clock context for poweroff
->>> + *
->>> + * Saves the context of the clock register for powerstates in which the
->>> + * contents of the registers will be lost. Occurs deep within the
->>> suspend
->>> + * code so locking is not necessary.
->>> + */
->>> +int clks_save_context(void);
->>> +
->>> +/**
->>> + * clks_restore_context - restore clock context after poweroff
->>> + *
->>> + * This occurs with all clocks enabled. Occurs deep within the
->>> resume code
->>> + * so locking is not necessary.
->>> + */
->>> +void clks_restore_context(void);
->>> +
->>>  #else /* !CONFIG_HAVE_CLK */
->>>
->>>  static inline struct clk *clk_get(struct device *dev, const char *id)
->>> @@ -501,6 +518,14 @@ static inline struct clk *clk_get_sys(const char
->>> *dev_id, const char *con_id)
->>>  {
->>>      return NULL;
->>>  }
->>> +
->>> +static inline int clks_save_context(void)
->>> +{
->>> +    return 0;
->>> +}
->>> +
->>> +static inline void clks_restore_context(void) {}
->>> +
->>>  #endif
->>>
->>>  /* clk_prepare_enable helps cases using clk_enable in non-atomic
->>> context. */
->>> diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
->>> index d18da83..f604936 100644
->>> --- a/include/linux/clk/ti.h
->>> +++ b/include/linux/clk/ti.h
->>> @@ -159,6 +159,7 @@ struct clk_hw_omap {
->>>      const char        *clkdm_name;
->>>      struct clockdomain    *clkdm;
->>>      const struct clk_hw_omap_ops    *ops;
->>> +    u32            context;
->>>  };
->>>
->>>  /*
->>> @@ -290,6 +291,11 @@ struct ti_clk_features {
->>>
->>>  void ti_clk_setup_features(struct ti_clk_features *features);
->>>  const struct ti_clk_features *ti_clk_get_features(void);
->>> +int omap3_noncore_dpll_save_context(struct clk_hw *hw);
->>> +void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
->>> +
->>> +int omap3_core_dpll_save_context(struct clk_hw *hw);
->>> +void omap3_core_dpll_restore_context(struct clk_hw *hw);
->>>
->>>  extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
->>>
->>> -- 
->>> 1.9.1
->>>
->>> -- 
->>> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/arm64/boot/dts/sprd/sc9860-clocks.dtsi b/arch/arm64/boot/dts/sprd/sc9860-clocks.dtsi
+new file mode 100644
+index 0000000..5756933
+--- /dev/null
++++ b/arch/arm64/boot/dts/sprd/sc9860-clocks.dtsi
+@@ -0,0 +1,1984 @@
++/*
++ * Spreadtrum SC9860 SoC DTS file
++ *
++ * Copyright (C) 2015, Spreadtrum Communications Inc.
++ *
++ * This file is licensed under a dual GPLv2 or X11 license.
++ */
++&soc {
++	aliases {
++		apb_pclk = &clk_ap_apb;
++	};
++
++	ext_26m: ext-26m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "ext_26m";
++	};
++
++	ext_32m_sine0: ext-32m-sine0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000000>;
++		clock-output-names = "ext_32m_sine0";
++	};
++
++	ext_32m_sine1: ext-32m-sine1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000000>;
++		clock-output-names = "ext_32m_sine1";
++	};
++
++	clk_pll_in: clk-pll-in {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "ext_26m";
++	};
++
++	clk_4m: clk-4m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <6>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_4m";
++	};
++
++	clk_2m: clk-2m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <13>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_2m";
++	};
++
++	clk_1m: clk-1m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <26>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_1m";
++	};
++
++	clk_250k: clk-250k {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <104>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_250k";
++	};
++
++	ext_rco_100m: ext-rco-100m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "ext_rco_100m";
++	};
++
++	ext_32k: ext-32k {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "ext_32k";
++	};
++
++	clk_rpll0_26m: clk-rpll0-26m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_rpll0_26m";
++	};
++
++	clk_rpll1_26m: clk-rpll1-26m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_rpll1_26m";
++	};
++
++	clk_rpll_gates: clk@402b016c {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402b016c 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-indices = <2>, <18>;
++		clock-output-names = "clk_rpll0_gate", "clk_rpll1_gate";
++	};
++
++	clk_mpll_gates: clk@402b00b0 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402b00b0 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-indices = <2>, <18>;
++		clock-output-names = "clk_mpll0_gate", "clk_mpll1_gate";
++	};
++
++	clk_dpll_gates: clk@402b00b4 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402b00b4 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-indices = <2>, <18>;
++		clock-output-names = "clk_dpll0_gate", "clk_dpll1_gate";
++	};
++
++	clk_gpll_gate: clk@402b032c {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402b032d 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_gpll_gate";
++	};
++
++	clk_cppll_gate: clk@402b02b4 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402b02b4 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-indices = <2>;
++		clock-output-names = "clk_cppll_gate";
++	};
++
++	clk_ltepll0_gate: clk@402b00b8 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402b00b8 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-indices = <2>;
++		clock-output-names = "clk_ltepll0_gate";
++	};
++
++	clk_ltepll1_gate: clk@402b010c {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402b010c 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-indices = <2>;
++		clock-output-names = "clk_ltepll1_gate";
++	};
++
++	clk_twpll_gate: clk@402b00bc {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402b00bc 0 0x3000>;
++		clocks = <&ext_26m>;
++		clock-indices = <2>;
++		clock-output-names = "clk_twpll_gate";
++	};
++
++	clk_rpll0: clk@40400044 {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x40400044 0 0x4>,
++		      <0 0x40400048 0 0x4>,
++		      <0 0x4040004c 0 0x4>;
++		clocks = <&clk_rpll_gates 2>;
++		clock-output-names = "clk_rpll0";
++	};
++
++	clk_rpll1: clk@40400050 {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x40400050 0 0x4>,
++		      <0 0x40400054 0 0x4>,
++		      <0 0x40400058 0 0x4>;
++		clocks = <&clk_rpll_gates 18>;
++		clock-output-names = "clk_rpll1";
++	};
++
++	clk_mpll0: clk@40400024 {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x40400024 0 0x4>,
++		      <0 0x40400028 0 0x4>;
++		clocks = <&clk_mpll_gates 2>;
++		clock-output-names = "clk_mpll0";
++	};
++
++	clk_mpll1: clk@4040002c {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x4040002c 0 0x4>,
++		      <0 0x40400030 0 0x4>;
++		clocks = <&clk_mpll_gates 18>;
++		clock-output-names = "clk_mpll1";
++	};
++
++	clk_dpll0: clk@40400034 {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x40400034 0 0x4>,
++		      <0 0x40400038 0 0x4>;
++		clocks = <&clk_dpll_gates 2>;
++		clock-output-names = "clk_dpll0";
++	};
++
++	clk_dpll1: clk@4040003c {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x4040003c 0 0x4>,
++		      <0 0x40400040 0 0x4>;
++		clocks = <&clk_dpll_gates 18>;
++		clock-output-names = "clk_dpll1";
++	};
++
++	clk_gpll: clk@4040009c {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x4040009c 0 0x4>,
++		      <0 0x404000a0 0 0x4>;
++		clocks = <&clk_gpll_gate>;
++		clock-output-names = "clk_gpll";
++	};
++
++	clk_cppll: clk@404000c4 {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x404000c4 0 0x4>,
++		      <0 0x404000c8 0 0x4>;
++		clocks = <&clk_cppll_gate 2>;
++		clock-output-names = "clk_cppll";
++	};
++
++	clk_ltepll0: clk@40400064 {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x40400064 0 0x4>,
++		      <0 0x40400068 0 0x4>;
++		clocks = <&clk_ltepll0_gate 2>;
++		clock-output-names = "clk_ltepll0";
++	};
++
++	clk_ltepll1: clk@4040006c {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x4040006c 0 0x4>,
++		      <0 0x40400070 0 0x4>;
++		clocks = <&clk_ltepll1_gate 2>;
++		clock-output-names = "clk_ltepll1";
++	};
++
++	clk_twpll: clk@4040005c {
++		compatible = "sprd,sc9860-adjustable-pll-clock";
++		#clock-cells = <0>;
++		reg = <0 0x4040005c 0 0x4>,
++		      <0 0x40400060 0 0x4>;
++		clocks = <&clk_twpll_gate 2>;
++		clock-output-names = "clk_twpll";
++	};
++
++	clk_gpll_42m5: clk-gpll-42m5 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <20>;
++		clocks = <&clk_gpll>;
++		clock-output-names = "clk_gpll_42m5";
++	};
++
++	clk_twpll_768m: clk-tw-768m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <2>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_768m";
++	};
++
++	clk_twpll_384m: clk-tw-384m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <4>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_384m";
++	};
++
++	clk_twpll_192m: clk-tw-192m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <8>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_192m";
++	};
++
++	clk_twpll_96m: clk-tw-96m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <16>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_96m";
++	};
++
++	clk_twpll_48m: clk-tw-48m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <32>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_48m";
++	};
++
++	clk_twpll_24m: clk-tw-24m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <64>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_24m";
++	};
++
++	clk_twpll_12m: clk-tw-12m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <128>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_12m";
++	};
++
++	clk_twpll_512m: clk-tw-512m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <3>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_512m";
++	};
++
++	clk_twpll_256m: clk-tw-256m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <6>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_256m";
++	};
++
++	clk_twpll_128m: clk-tw-128m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <12>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_128m";
++	};
++
++	clk_twpll_64m: clk-tw-64m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <24>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_64m";
++	};
++
++	clk_twpll_307m2: clk-tw-307m2 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <5>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_307m2";
++	};
++
++	clk_twpll_153m6: clk-tw-153m6 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <10>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_153m6";
++	};
++
++	clk_twpll_76m8: clk-tw-76m8 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <20>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_76m8";
++	};
++
++	clk_twpll_51m2: clk-tw-51m2 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <30>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_51m2";
++	};
++
++	clk_twpll_38m4: clk-tw-38m4 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <40>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_38m4";
++	};
++
++	clk_twpll_19m2: clk-tw-19m2 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <80>;
++		clocks = <&clk_twpll>;
++		clock-output-names = "clk_twpll_19m2";
++	};
++
++	clk_l0_614m4: clk-l0-614m4 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <2>;
++		clocks = <&clk_ltepll0>;
++		clock-output-names = "clk_l0_614m4";
++	};
++
++	clk_l0_38m: clk-l0-38m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <32>;
++		clocks = <&clk_ltepll0>;
++		clock-output-names = "clk_l0_38m";
++	};
++
++	clk_l0_409m6: clk-l0-409m6 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <3>;
++		clocks = <&clk_ltepll0>;
++		clock-output-names = "clk_l0_409m6";
++	};
++
++	clk_l1_38m: clk-l1-38m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <32>;
++		clocks = <&clk_ltepll1>;
++		clock-output-names = "clk_l1_38m";
++	};
++
++	clk_rpll0_192m: clk-rpll0-192m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <6>;
++		clocks = <&clk_rpll0>;
++		clock-output-names = "clk_rpll0_192m";
++	};
++
++	clk_rpll0_96m: clk-rpll0-96m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <12>;
++		clocks = <&clk_rpll0>;
++		clock-output-names = "clk_rpll0_96m";
++	};
++
++	clk_rpll0_48m: clk-rpll0-48m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <24>;
++		clocks = <&clk_rpll0>;
++		clock-output-names = "clk_rpll0_48m";
++	};
++
++	clk_rpll1_468m: clk-rpll1-468m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <2>;
++		clocks = <&clk_rpll1>;
++		clock-output-names = "clk_rpll1_468m";
++	};
++
++	clk_rpll1_192m: clk-rpll1-192m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <6>;
++		clocks = <&clk_rpll1>;
++		clock-output-names = "clk_rpll1_192m";
++	};
++
++	clk_rpll1_96m: clk-rpll1-96m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <12>;
++		clocks = <&clk_rpll1>;
++		clock-output-names = "clk_rpll1_96m";
++	};
++
++	clk_rpll1_64m: clk-rpll1-64m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <18>;
++		clocks = <&clk_rpll1>;
++		clock-output-names = "clk_rpll1_64m";
++	};
++
++	clk_rpll1_48m: clk-rpll1-48m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <24>;
++		clocks = <&clk_rpll1>;
++		clock-output-names = "clk_rpll1_48m";
++	};
++
++	clk_dpll0_50m: clk-dpll0-50m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <16>;
++		clocks = <&clk_dpll0>;
++		clock-output-names = "clk_dpll0_50m";
++	};
++
++	clk_dpll1_50m: clk-dpll1-50m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <16>;
++		clocks = <&clk_dpll1>;
++		clock-output-names = "clk_dpll1_50m";
++	};
++
++	clk_cppll_50m: clk-cppll-50m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <18>;
++		clocks = <&clk_cppll>;
++		clock-output-names = "clk_cppll_50m";
++	};
++
++	clk_rco_25m: clk-rco-25m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <4>;
++		clocks = <&ext_rco_100m>;
++		clock-output-names = "clk_rco_25m";
++	};
++
++	clk_rco_4m: clk-rco-4m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <25>;
++		clocks = <&ext_rco_100m>;
++		clock-output-names = "clk_rco_4m";
++	};
++
++	clk_rco_2m: clk-rco-2m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <50>;
++		clocks = <&ext_rco_100m>;
++		clock-output-names = "clk_rco_2m";
++	};
++
++	clk_3k2: clk-3k2 {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <10>;
++		clocks = <&ext_32k>;
++		clock-output-names = "clk_3k2";
++	};
++
++	clk_1k: clk-1k {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <32>;
++		clocks = <&ext_32k>;
++		clock-output-names = "clk_1k";
++	};
++
++	clk_aon_apb: clk@402d0230 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0230 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		sprd,div-msk = <0x300>;
++		clocks = <&clk_rco_25m>, <&ext_26m>, <&ext_rco_100m>,
++			 <&clk_twpll_96m>, <&clk_twpll_128m>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_aon_apb";
++	};
++
++	clk_adi: clk@402d0234 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0234 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_rco_4m>, <&ext_26m>, <&clk_rco_25m>,
++			 <&clk_twpll_38m4>, <&clk_twpll_51m2>;
++		clock-output-names = "clk_adi";
++	};
++
++	clk_m0_39m: clk-m0-39m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <32>;
++		clocks = <&clk_mpll0>;
++		clock-output-names = "clk_m0_39m";
++	};
++
++	clk_m1_63m: clk-m1-63m {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clock-mult = <1>;
++		clock-div = <32>;
++		clocks = <&clk_mpll1>;
++		clock-output-names = "clk_m1_63m";
++	};
++
++	clk_aux0: clk@402d0238 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0238 0 0x4>;
++		sprd,mux-msk = <0x1f>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&ext_32k>, <&clk_rpll0_26m>, <&clk_rpll1_26m>,
++			 <&ext_26m>, <&clk_cppll_50m>, <&clk_rco_25m>,
++			 <&clk_dpll0_50m>, <&clk_dpll1_50m>, <&clk_gpll_42m5>,
++			 <&clk_twpll_48m>, <&clk_m0_39m>, <&clk_m1_63m>,
++			 <&clk_l0_38m>, <&clk_l1_38m>;
++		clock-output-names = "clk_aux0";
++	};
++
++	clk_aux1: clk@402d023c {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d023c 0 0x4>;
++		sprd,mux-msk = <0x1f>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&ext_32k>, <&clk_rpll0_26m>, <&clk_rpll1_26m>,
++			 <&ext_26m>, <&clk_cppll_50m>, <&clk_rco_25m>,
++			 <&clk_dpll0_50m>, <&clk_dpll1_50m>, <&clk_gpll_42m5>,
++			 <&clk_twpll_48m>, <&clk_m0_39m>, <&clk_m1_63m>,
++			 <&clk_l0_38m>, <&clk_l1_38m>;
++		clock-output-names = "clk_aux1";
++	};
++
++	clk_aux2: clk@402d0240 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0240 0 0x4>;
++		sprd,mux-msk = <0x1f>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&ext_32k>, <&clk_rpll0_26m>, <&clk_rpll1_26m>,
++			 <&ext_26m>, <&clk_cppll_50m>, <&clk_rco_25m>,
++			 <&clk_dpll0_50m>, <&clk_dpll1_50m>, <&clk_gpll_42m5>,
++			 <&clk_twpll_48m>, <&clk_m0_39m>, <&clk_m1_63m>,
++			 <&clk_l0_38m>, <&clk_l1_38m>;
++		clock-output-names = "clk_aux2";
++	};
++
++	clk_probe: clk@402d0244 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0244 0 0x4>;
++		sprd,mux-msk = <0x1f>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&ext_32k>, <&clk_rpll0_26m>, <&clk_rpll1_26m>,
++			 <&ext_26m>, <&clk_cppll_50m>, <&clk_rco_25m>,
++			 <&clk_dpll0_50m>, <&clk_dpll1_50m>, <&clk_gpll_42m5>,
++			 <&clk_twpll_48m>, <&clk_m0_39m>, <&clk_m1_63m>,
++			 <&clk_l0_38m>, <&clk_l1_38m>;
++		clock-output-names = "clk_probe";
++	};
++
++	clk_pwm0: clk@402d0248 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0248 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&ext_32k>, <&ext_26m>, <&clk_rco_4m>,
++			 <&clk_rco_25m>, <&clk_twpll_48m>;
++		clock-output-names = "clk_pwm0";
++	};
++
++	clk_pwm1: clk@402d024c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d024c 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&ext_32k>, <&ext_26m>, <&clk_rco_4m>,
++			 <&clk_rco_25m>, <&clk_twpll_48m>;
++		clock-output-names = "clk_pwm1";
++	};
++
++	clk_pwm2: clk@402d0250 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0250 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&ext_32k>, <&ext_26m>, <&clk_rco_4m>,
++			 <&clk_rco_25m>, <&clk_twpll_48m>;
++		clock-output-names = "clk_pwm2";
++	};
++
++	clk_pwm3: clk@402d0254 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0254 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&ext_32k>, <&ext_26m>, <&clk_rco_4m>,
++			 <&clk_rco_25m>, <&clk_twpll_48m>;
++		clock-output-names = "clk_pwm3";
++	};
++
++	clk_efuse: clk@402d0258 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0258 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&clk_rco_25m>, <&ext_26m>;
++		clock-output-names = "clk_efuse";
++	};
++
++	clk_cm3_uart0: clk@402d025c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d025c 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_rco_4m>, <&ext_26m>,<&ext_rco_100m>,
++			 <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>, <&clk_twpll_128m>;
++		clock-output-names = "clk_cm3_uart0";
++	};
++
++	clk_cm3_uart1: clk@402d0260 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0260 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_rco_4m>, <&ext_26m>,<&ext_rco_100m>,
++			 <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>, <&clk_twpll_128m>;
++		clock-output-names = "clk_cm3_uart1";
++	};
++
++	clk_thm: clk@402d0270 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0270 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_32k>, <&clk_250k>;
++		clock-output-names = "clk_thm";
++	};
++
++	clk_cm3_i2c0: clk@402d0274 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0274 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_rco_4m>, <&ext_26m>, <&ext_rco_100m>,
++			 <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_cm3_i2c0";
++	};
++
++	clk_cm3_i2c1: clk@402d0278 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0278 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_rco_4m>, <&ext_26m>, <&ext_rco_100m>,
++			 <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_cm3_i2c1";
++	};
++
++	clk_cm4_spi: clk@402d027c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d027c 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&ext_26m>, <&clk_twpll_96m>, <&ext_rco_100m>,
++			 <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>;
++		clock-output-names = "clk_cm4_spi";
++	};
++
++	clk_aon_i2c: clk@402d0280 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0280 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_rco_4m>, <&ext_26m>, <&ext_rco_100m>,
++			 <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_aon_i2c";
++	};
++
++	clk_avs: clk@402d0284 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0284 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_avs";
++	};
++
++	clk_ca53_dap: clk@402d0288 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0288 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&ext_26m>, <&clk_rco_4m>, <&ext_rco_100m>,
++			 <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_ca53_dap";
++	};
++
++	clk_ca53_ts: clk@402d0290 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0290 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_32k>, <&ext_26m>, <&clk_twpll_128m>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_ca53_ts";
++	};
++
++	clk_26m_lvdsdis: clk@402d0294 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0294 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_26m_lvdsdis";
++	};
++
++	clk_lvdsrf_cali: clk@402d02b8 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02b8 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_lvdsrf_cali";
++	};
++
++	clk_mdar_chk: clk@402d02bc {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02bc 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_mdar_chk";
++	};
++
++	clk_rco100m_ref: clk@402d02c0 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02c0 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&clk_2m>;
++		clock-output-names = "clk_rco100m_ref";
++	};
++
++	clk_rco100m_fdk: clk@402d02c4 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02c4 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&clk_rco_2m>;
++		clock-output-names = "clk_rco100m_fdk";
++	};
++
++	clk_djtag_tck: clk@402d02c8 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02c8 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&clk_rco_4m>, <&ext_26m>;
++		clock-output-names = "clk_djtag_tck";
++	};
++
++	clk_sp_ahb: clk@402d02d0 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02d0 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		sprd,div-msk = <0x300>;
++		clocks = <&clk_rco_4m>, <&ext_26m>, <&ext_rco_100m>,
++			 <&clk_twpll_96m>, <&clk_twpll_128m>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_sp_ahb";
++	};
++
++	clk_det_32k: clk@402d02dc {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02dc 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&clk_rco_4m>;
++		clock-output-names = "clk_det_32k";
++	};
++
++	clk_pmu: clk@402d02e0 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02e0 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_32k>, <&clk_rco_4m>, <&clk_4m>;
++		clock-output-names = "clk_pmu";
++	};
++
++	clk_pmu_26m: clk@402d02e4 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02e4 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&clk_rco_25m>, <&ext_26m>;
++		clock-output-names = "clk_pmu_26m";
++	};
++
++	clk_debounce: clk@402d02e8 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02e8 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_32k>, <&clk_rco_4m>,
++			 <&clk_rco_25m>, <&ext_26m>;
++		clock-output-names = "clk_debounce";
++	};
++
++	clk_dphy_ref: clk@402d02f0 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02f0 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_dphy_ref";
++	};
++
++	clk_otg2_ref: clk@402d02f4 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02f4 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&clk_twpll_12m>, <&clk_twpll_24m>;
++		clock-output-names = "clk_otg2_ref";
++	};
++
++	clk_usb3_ref: clk@402d02f8 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02f8 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_24m>, <&clk_twpll_19m2>, <&clk_twpll_48m>;
++		clock-output-names = "clk_usb3_ref";
++	};
++
++	clk_usb3_suspend: clk@402d02fc {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d02fc 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_32k>, <&clk_1m>;
++		clock-output-names = "clk_usb3_suspend";
++	};
++
++	clk_cci: clk@402d0300 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0300 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x300>;
++		clocks = <&ext_26m>, <&clk_twpll_384m>, <&clk_l0_614m4>,
++			 <&clk_twpll_768m>;
++		clock-output-names = "clk_cci";
++	};
++
++	clk_gic: clk@402d0304 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0304 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x300>;
++		clocks = <&ext_26m>, <&clk_twpll_384m>, <&clk_l0_614m4>,
++			 <&clk_twpll_768m>;
++		clock-output-names = "clk_gic";
++	};
++
++	clk_ap_axi: clk@402d0324 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0324 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_26m>, <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>;
++		clock-output-names = "clk_ap_axi";
++	};
++
++	clk_sdio_gates: clk@402e013c {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402e013c 0 0x3000>;
++		clock-indices = <2>, <3>,
++				<4>, <5>, <6>, <7>,
++				<8>, <9>;
++		clock-output-names = "sdio0_2x_en", "sdio0_1x_en",
++				     "sdio1_2x_en", "sdio1_1x_en",
++				     "sdio2_2x_en", "sdio2_1x_en",
++				     "emmc_1x_en", "emmc_2x_en";
++	};
++
++	clk_sdio0_2x: clk@402d0328 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0328 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&clk_1m>, <&ext_26m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>, <&clk_l0_409m6>;
++		clock-output-names = "clk_sdio0_2x";
++	};
++
++	clk_sdio0_1x: clk@402d032c {
++		compatible = "sprd,divider-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d032c 0 0x4>;
++		sprd,div-msk = <0x100>;
++		clocks = <&clk_sdio0_2x>;
++		clock-output-names = "clk_sdio0_1x";
++	};
++
++	clk_sdio1_2x: clk@402d0330 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0330 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&clk_1m>, <&ext_26m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>, <&clk_l0_409m6>;
++		clock-output-names = "clk_sdio1_2x";
++	};
++
++	clk_sdio1_1x: clk@402d0334 {
++		compatible = "sprd,divider-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0334 0 0x4>;
++		sprd,div-msk = <0x100>;
++		clocks = <&clk_sdio1_2x>;
++		clock-output-names = "clk_sdio1_1x";
++	};
++
++	clk_sdio2_2x: clk@402d0338 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0338 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&clk_1m>, <&ext_26m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>, <&clk_l0_409m6>;
++		clock-output-names = "clk_sdio2_2x";
++	};
++
++	clk_sdio2_1x: clk@402d033c {
++		compatible = "sprd,divider-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d033c 0 0x4>;
++		sprd,div-msk = <0x100>;
++		clocks = <&clk_sdio2_2x>;
++		clock-output-names = "clk_sdio2_1x";
++	};
++
++	clk_emmc_2x: clk@402d0340 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0340 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&clk_1m>, <&ext_26m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>, <&clk_l0_409m6>;
++		clock-output-names = "clk_emmc_2x";
++	};
++
++	clk_emmc_1x: clk@402d0344 {
++		compatible = "sprd,divider-clock";
++		#clock-cells = <0>;
++		reg = <0 0x402d0344 0 0x4>;
++		sprd,div-msk = <0x100>;
++		clocks = <&clk_emmc_2x>;
++		clock-output-names = "clk_emmc_1x";
++	};
++
++	clk_ap_apb: clk@20000020 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000020 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_26m>, <&clk_twpll_64m>, <&clk_twpll_96m>,
++			 <&clk_twpll_128m>;
++		clock-output-names = "clk_ap_apb";
++	};
++
++	clk_ap_usb3_ref: clk@2000002c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x2000002c 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_32k>, <&clk_twpll_24m>;
++		clock-output-names = "clk_ap_usb3_ref";
++	};
++
++	clk_uart0: clk@20000030 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000030 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_uart0";
++	};
++
++	clk_uart1: clk@20000034 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000034 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_uart1";
++	};
++
++	clk_uart2: clk@20000038 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000038 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_uart2";
++	};
++
++	clk_uart3: clk@2000003c {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x2000003c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_uart3";
++	};
++
++	clk_uart4: clk@20000040 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000040 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_uart4";
++	};
++
++	clk_i2c0: clk@20000044 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000044 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_i2c0";
++	};
++
++	clk_i2c1: clk@20000048 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000048 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_i2c1";
++	};
++
++	clk_i2c2: clk@2000004c {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x2000004c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_i2c2";
++	};
++
++	clk_i2c3: clk@20000050 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000050 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_i2c3";
++	};
++
++	clk_i2c4: clk@20000054 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000054 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_i2c4";
++	};
++
++	clk_i2c5: clk@20000058 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000058 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_51m2>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_i2c5";
++	};
++
++	clk_spi0: clk@2000005c {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x2000005c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>;
++		clock-output-names = "clk_spi0";
++	};
++
++	clk_spi1: clk@20000060 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000060 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>;
++		clock-output-names = "clk_spi1";
++	};
++
++	clk_spi2: clk@20000064 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000064 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>;
++		clock-output-names = "clk_spi2";
++	};
++
++	clk_spi3: clk@20000068 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000068 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>;
++		clock-output-names = "clk_spi3";
++	};
++
++	clk_iis0: clk@2000006c {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x2000006c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x3f00>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>;
++		clock-output-names = "clk_iis0";
++	};
++
++	clk_iis1: clk@20000070 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000070 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x3f00>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>;
++		clock-output-names = "clk_iis1";
++	};
++
++	clk_iis2: clk@20000074 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000074 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x3f00>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>;
++		clock-output-names = "clk_iis2";
++	};
++
++	clk_iis3: clk@20000078 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x20000078 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x3f00>;
++		clocks = <&ext_26m>, <&clk_twpll_128m>, <&clk_twpll_153m6>;
++		clock-output-names = "clk_iis3";
++	};
++
++	clk_big_mcu: clk@40880024 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x40880024 0 0x4>;
++		sprd,mux-msk = <0xf>;
++		sprd,div-msk = <0x70>;
++		clocks = <&ext_26m>, <&clk_twpll_512m>, <&clk_twpll_768m>,
++			 <&clk_ltepll0>, <&clk_twpll>, <&clk_twpll>,
++			 <&clk_twpll>, <&clk_twpll>, <&clk_mpll1>;
++		clock-output-names = "clk_big_mcu";
++	};
++
++	clk_lit_mcu: clk@40880020 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x40880020 0 0x4>;
++		sprd,mux-msk = <0xf>;
++		sprd,div-msk = <0x70>;
++		clocks = <&ext_26m>, <&clk_twpll_512m>, <&clk_twpll_768m>,
++			<&clk_ltepll0>, <&clk_twpll>, <&clk_twpll>,
++			<&clk_twpll>, <&clk_twpll>, <&clk_mpll0>;
++		clock-output-names = "clk_lit_mcu";
++	};
++
++	/* gpu domain */
++	clk_gpu: clk@60200020 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x60200020 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0xf00>;
++		clocks = <&clk_twpll_512m>, <&clk_twpll_768m>, <&clk_gpll>;
++		clock-output-names = "clk_gpu";
++	};
++
++	/* vsp domain */
++	clk_ahb_vsp: clk@61000020 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x61000020 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_26m>, <&clk_twpll_96m>, <&clk_twpll_128m>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_ahb_vsp";
++	};
++
++	clk_vsp: clk@61000024 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x61000024 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		sprd,div-msk = <0x300>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>;
++		clock-output-names = "clk_vsp";
++	};
++
++	clk_vsp_enc: clk@61000028 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x61000028 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x300>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>;
++		clock-output-names = "clk_vsp_enc";
++	};
++
++	clk_vpp: clk@6100002c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6100002c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_96m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>, <&clk_twpll_256m>;
++		clock-output-names = "clk_vpp";
++	};
++
++	clk_vsp_26m: clk@61000030 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x61000030 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_vsp_26m";
++	};
++
++	clk_ahb_disp: clk@63000020 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000020 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_26m>, <&clk_twpll_96m>, <&clk_twpll_128m>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_ahb_disp";
++	};
++
++	clk_gsp0: clk@63000024 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000024 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_512m>, <&clk_l0_614m4>;
++		clock-output-names = "clk_gsp0";
++	};
++
++	clk_gsp1: clk@63000028 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000028 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_512m>, <&clk_l0_614m4>;
++		clock-output-names = "clk_gsp1";
++	};
++
++	clk_dispc0: clk@6300002c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6300002c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_192m>, <&clk_twpll_256m>,
++			 <&clk_twpll_384m>, <&clk_twpll_512m>;
++		clock-output-names = "clk_dispc0";
++	};
++
++	clk_dispc0_dbi: clk@63000030 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000030 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>, <&clk_twpll_256m>;
++		clock-output-names = "clk_dispc0_dbi";
++	};
++
++	clk_dispc0_dpi: clk@63000034 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000034 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x300>;
++		clocks = <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>, <&clk_twpll_256m>;
++		clock-output-names = "clk_dispc0_dpi";
++	};
++
++	clk_dispc1: clk@63000038 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000038 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_192m>, <&clk_twpll_256m>,
++			 <&clk_twpll_384m>, <&clk_twpll_512m>;
++		clock-output-names = "clk_dispc1";
++	};
++
++	clk_dispc1_dbi: clk@6300003c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6300003c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>, <&clk_twpll_256m>;
++		clock-output-names = "clk_dispc1_dbi";
++	};
++
++	clk_dispc1_dpi: clk@63000040 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000040 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x300>;
++		clocks = <&clk_twpll_128m>, <&clk_twpll_153m6>,
++			 <&clk_twpll_192m>, <&clk_twpll_256m>;
++		clock-output-names = "clk_dispc1_dpi";
++	};
++
++	clk_dphy0: clk@6300004c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6300004c 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_dphy0";
++	};
++
++	clk_dphy1: clk@63000058 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x63000058 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_dphy1";
++	};
++
++	clk_ahb_cam: clk@62000020 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000020 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_26m>, <&clk_twpll_96m>, <&clk_twpll_128m>,
++			 <&clk_twpll_153m6>;
++		clock-output-names = "clk_ahb_cam";
++	};
++
++	clk_sensor0: clk@62000024 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000024 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_76m8>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_sensor0";
++	};
++
++	clk_sensor1: clk@62000028 {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000028 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_76m8>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_sensor1";
++	};
++
++	clk_sensor2: clk@6200002c {
++		compatible = "sprd,composite-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6200002c 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		sprd,div-msk = <0x700>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_76m8>,
++			 <&clk_twpll_96m>;
++		clock-output-names = "clk_sensor2";
++	};
++
++	clk_dcam0: clk@62000030 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000030 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_153m6>,
++			 <&clk_twpll_307m2>, <&clk_twpll_384m>;
++		clock-output-names = "clk_dcam0";
++	};
++
++	clk_dcam1: clk@62000034 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000034 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>;
++		clock-output-names = "clk_dcam1";
++	};
++
++	clk_dcam0_if: clk@62000038 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000038 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_256m>,
++			 <&clk_twpll_307m2>, <&clk_twpll_384m>,
++			 <&clk_twpll_512m>;
++		clock-output-names = "clk_dcam0_if";
++	};
++
++	clk_isp0: clk@6200003c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6200003c 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_256m>,
++			 <&clk_twpll_307m2>, <&clk_twpll_384m>,
++			 <&clk_twpll_512m>;
++		clock-output-names = "clk_isp0";
++	};
++
++	clk_isp1: clk@62000040 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000040 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_256m>,
++			 <&clk_twpll_307m2>, <&clk_twpll_384m>,
++			 <&clk_twpll_512m>;
++		clock-output-names = "clk_isp1";
++	};
++
++	clk_jpg0: clk@62000044 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000044 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>;
++		clock-output-names = "clk_jpg0";
++	};
++
++	clk_jpg1: clk@62000048 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000048 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>;
++		clock-output-names = "clk_jpg1";
++	};
++
++	clk_mipi_csi0_gate: clk@6200004c {
++		compatible = "sprd,gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x6200004c 0 0x4>;
++		clock-indices = <16>;
++		clocks = <&clk_ahb_cam>;
++		clock-output-names = "mipi_csi0_eb";
++	};
++
++	clk_mipi_csi1_gate: clk@62000050 {
++		compatible = "sprd,gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x62000050 0 0x4>;
++		clock-indices = <16>;
++		clocks = <&clk_ahb_cam>;
++		clock-output-names = "mipi_csi1_eb";
++	};
++
++	clk_cpp: clk@6200005c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6200005c 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>;
++		clock-output-names = "clk_cpp";
++	};
++
++	clk_isp_mclk: clk@62000060 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000060 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>;
++		clock-output-names = "clk_isp_mclk";
++	};
++
++	clk_isp_pclk: clk@62000064 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000064 0 0x4>;
++		sprd,mux-msk = <0x3>;
++		clocks = <&ext_26m>, <&clk_twpll_48m>, <&clk_twpll_76m8>;
++		clock-output-names = "clk_isp_pclk";
++	};
++
++	clk_isp_iclk: clk@62000068 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000068 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_256m>,
++			 <&clk_twpll_307m2>, <&clk_twpll_384m>,
++			 <&clk_twpll_512m>;
++		clock-output-names = "clk_isp_iclk";
++	};
++
++	clk_isp_lclk: clk@6200006c {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x6200006c 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>;
++		clock-output-names = "clk_isp_lclk";
++	};
++
++	clk_isp2: clk@62000070 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000070 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_128m>,
++			 <&clk_twpll_256m>, <&clk_twpll_307m2>,
++			 <&clk_twpll_384m>;
++		clock-output-names = "clk_isp2";
++	};
++
++	clk_isp2dcam: clk@62000074 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000074 0 0x4>;
++		sprd,mux-msk = <0x7>;
++		clocks = <&clk_twpll_76m8>, <&clk_twpll_153m6>,
++			 <&clk_twpll_307m2>, <&clk_twpll_384m>;
++		clock-output-names = "clk_isp2dcam";
++	};
++
++	clk_cam_26m: clk@62000078 {
++		compatible = "sprd,muxed-clock";
++		#clock-cells = <0>;
++		reg = <0 0x62000078 0 0x4>;
++		sprd,mux-msk = <0x1>;
++		clocks = <&ext_26m>;
++		clock-output-names = "clk_cam_26m";
++	};
++
++	clk_ap_ahb_gates: clk@20210000 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x20210000 0 0x3000>;
++		clock-indices = <2>, <3>, <4>, <5>,
++				<7>, <8>, <9>, <10>,
++				<12>, <13>, <22>,
++				<23>, <24>, <25>;
++		clocks = <&clk_ap_axi>;
++		clock-output-names = "usb3_eb", "usb3_suspend_eb",
++				     "usb3_ref_eb", "dma_eb",
++				     "sdio0_eb", "sdio1_eb",
++				     "sdio2_eb", "emmc_eb",
++				     "rom_eb", "busmon_eb",
++				     "cc63s_eb", "cc63p_eb",
++				     "ce0_eb", "ce1_eb";
++	};
++
++	clk_aon_apb_gates0: clk@402e0000 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402e0000 0 0x3000>;
++		clocks = <&clk_aon_apb>;
++		clock-output-names = "avs_ca53_lit_eb", "avs_ca53_big_eb",
++				     "ap_intc5_eb", "gpio_eb",
++				     "pwm0_eb", "pwm1_eb",
++				     "pwm2_eb", "pwm3_eb",
++				     "kpd_eb", "aon_syst_eb",
++				     "ap_syst_eb", "aon_tmr_eb",
++				     "ap_tmr0_eb", "efuse_eb",
++				     "eic_eb", "pub1_reg_eb",
++				     "adi_eb", "ap_intc0_eb",
++				     "ap_intc1_eb", "ap_intc2_eb",
++				     "ap_intc3_eb", "ap_intc4_eb",
++				     "splk_eb", "mspi_eb",
++				     "pub0_reg_eb", "pin_eb",
++				     "aon_ckg_eb", "gpu_eb",
++				     "apcpu_ts0_eb", "apcpu_ts1_eb",
++				     "dap_eb", "i2c_eb";
++	};
++
++	clk_aon_apb_gates1: clk@402e0004 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x402e0004 0 0x3000>;
++		clocks = <&clk_aon_apb>;
++		clock-output-names = "pmu_eb", "thm_eb",
++				     "aux0_eb", "aux1_eb",
++				     "aux2_eb", "probe_eb",
++				     "gpu0_avs_eb", "gpu1_avs_eb",
++				     "apcpu_wdg_eb", "ap_tmr1_eb",
++				     "ap_tmr2_eb", "disp_emc_eb",
++				     "zip_emc_eb", "gsp_emc_eb",
++				     "osc_aon_eb", "lvds_trx_eb",
++				     "lvds_tcxo_eb", "mdar_eb",
++				     "rtc4m0_cal_eb", "rct100m_cal_eb",
++				     "djtag_eb", "mbox_eb",
++				     "aon_dma_eb", "dbg_emc_eb",
++				     "lvds_pll_div_en", "def_eb",
++				     "aon_apb_gate1_rsv0", "orp_jtag_eb",
++				     "vsp_eb", "cam_eb",
++				     "disp_eb", "dbg_axi_if_eb";
++	};
++
++	clk_agcp_ahb_gates: clk@415e0000 {
++		compatible = "sprd,sc100-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x415e0000 0 0x300>;
++		clock-indices = <0>, <1>, <2>, <3>,
++				<4>, <5>, <6>,
++				<10>, <11>,
++				<12>, <13>, <14>, <15>,
++				<16>, <17>, <18>, <19>,
++				<20>;
++		clock-output-names = "agcp_iis0_eb", "agcp_iis1_eb",
++				     "agcp_iis2_eb", "agcp_iis3_eb",
++				     "agcp_uart_eb", "agcp_dmacp_eb",
++				     "agcp_dmaap_eb", "agcp_arc48k_eb",
++				     "agcp_src44p1k_eb", "agcp_mcdt_eb",
++				     "agcp_vbcifd_eb", "agcp_vbc_eb",
++				     "agcp_spinlock_eb", "agcp_icu_eb",
++				     "agcp_ap_ashb_eb", "agcp_cp_ashb_eb",
++				     "agcp_aud_eb", "agcp_audif_eb";
++	};
++
++	clk_ahb_vsp_gates: clk@61100000 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x61100000 0 0x3000>;
++		clocks = <&clk_ahb_vsp>;
++		clock-output-names = "vsp_dec_eb", "vsp_ckg_eb",
++				     "vsp_mmu_eb", "vsp_enc_eb",
++				     "vpp_eb", "vsp_26m_eb";
++	};
++
++	clk_vsp_axi_gates: clk@61100008 {
++		compatible = "sprd,gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x61100008 0 0x4>;
++		clock-indices = <0>, <1>, <2>,
++				<8>, <9>, <10>;
++		clocks = <&clk_ahb_vsp>;
++		clock-output-names = "vsp_axi_gate", "vsp_enc_gate",
++				     "vpp_axi_gate", "vsp_bm_gate",
++				     "vsp_enc_bm_gate", "vpp_bm_gate";
++	};
++
++	clk_ahb_cam_gates: clk@62100000 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x62100000 0 0x3000>;
++		clocks = <&clk_ahb_cam>;
++		clock-output-names = "dcam0_eb", "dcam1_eb",
++				     "isp0_eb", "csi0_eb",
++				     "csi1_eb", "jpg0_eb",
++				     "jpg1_eb", "cam_ckg_eb",
++				     "cam_mmu_eb", "isp1_eb",
++				     "cpp_eb", "mmu_pf_eb",
++				     "isp2_eb", "dcam2isp_if_eb",
++				     "isp2dcam_if_eb", "isp_lclk_eb",
++				     "isp_iclk_eb", "isp_mclk_eb",
++				     "isp_pclk_eb", "isp_isp2dcam_eb",
++				     "dcam0_if_eb", "clk26m_if_eb";
++	};
++
++	clk_cam_axi_gates: clk@62100008 {
++		compatible = "sprd,gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x62100008 0 0x4>;
++		clocks = <&clk_ahb_cam>;
++		clock-output-names = "cphy0_gate", "mipi_csi0_gate",
++				     "cphy1_gate", "mipi_csi1",
++				     "dcam0_axi_gate", "dcam1_axi_gate",
++				     "sensor0_gate", "sensor1_gate",
++				     "jpg0_axi_gate", "gpg1_axi_gate",
++				     "isp0_axi_gate", "isp1_axi_gate",
++				     "isp2_axi_gate", "cpp_axi_gate",
++				     "d0_if_axi_gate", "d2i_if_axi_gate",
++				     "i2d_if_axi_gate", "spare_axi_gate",
++				     "sensor2_gate";
++	};
++
++	clk_cam_module_gates: clk@62100028 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x62100028 0 0x3000>;
++		clocks = <&clk_ahb_cam>;
++		clock-output-names = "d0if_in_d_en", "d1if_in_d_en",
++				     "d0if_in_d2i_en", "d1if_in_d2i_en",
++				     "ia_in_d2i_en", "ib_in_d2i_en",
++				     "ic_in_d2i_en", "ia_in_i_en",
++				     "ib_in_i_en", "ic_in_i_en";
++	};
++
++	clk_ahb_disp_gates: clk@63100000 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x63100000 0 0x3000>;
++		clock-indices = <0>, <1>, <2>, <3>,
++				<4>, <5>, <6>, <7>,
++				<8>, <9>, <10>,
++				<13>, <14>, <15>,
++				<16>;
++		clocks = <&clk_ahb_disp>;
++		clock-output-names = "dispc0_eb", "dispc1_eb",
++				     "dispc_mmu_eb", "gsp0_eb",
++				     "gsp1_eb", "gsp0_mmu_eb",
++				     "gsp1_mmu_eb", "dsi0_eb",
++				     "dsi1_eb", "disp_ckg_eb",
++				     "disp_gpu_eb", "gpu_mtx_eb",
++				     "gsp_mtx_eb", "tmc_mtx_eb",
++				     "dispc_mtx_eb";
++	};
++
++	clk_disp_axi_gates: clk@63100008 {
++		compatible = "sprd,gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x63100008 0 0x4>;
++		clocks = <&clk_ahb_disp>;
++		clock-output-names = "dphy0_gate", "dphy1_gate",
++				     "gsp0_a_gate", "gsp1_a_gate",
++				     "gsp0_f_gate", "gsp1_f_gate",
++				     "d_mtx_f_gate", "d_mtx_a_gate",
++				     "d_noc_f_gate", "d_noc_a_gate",
++				     "gsp_mtx_f_gate", "gsp_mtx_a_gate",
++				     "gsp_noc_f_gate", "gsp_noc_a_gate",
++				     "dispm0idle_gate", "gspm0idle_gate";
++	};
++
++	clk_ap_apb_gates: clk@70b00000 {
++		compatible = "sprd,sc1000-gates-clock";
++		#clock-cells = <1>;
++		reg = <0 0x70b00000 0 0x3000>;
++		clocks = <&clk_ap_apb>;
++		clock-output-names = "sim0_eb", "iis0_eb",
++				     "iis1_eb", "iis2_eb",
++				     "iis3_eb", "spi0_eb",
++				     "spi1_eb", "spi2_eb",
++				     "i2c0_eb", "i2c1_eb",
++				     "i2c2_eb", "i2c3_eb",
++				     "i2c4_eb", "i2c5_eb",
++				     "uart0_eb", "uart1_eb",
++				     "uart2_eb", "uart3_eb",
++				     "uart4_eb", "ap_ckg_eb",
++				     "spi3_eb";
++	};
++};
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..97794fe 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -8,6 +8,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include "whale2.dtsi"
++#include "sc9860-clocks.dtsi"
+ 
+ / {
+ 	cpus {
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index cd5a71f..8d1f8aa 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -79,11 +79,4 @@
+ 		};
+ 
+ 	};
+-
+-	ext_26m: ext-26m {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
+-	};
+ };
+-- 
+2.7.4
