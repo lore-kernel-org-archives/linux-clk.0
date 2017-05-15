@@ -1,76 +1,159 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170527201913.GN12920@tuxbook>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-5-linus.walleij@linaro.org> <20170527201913.GN12920@tuxbook>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 29 May 2017 14:23:01 +0200
-Message-ID: <CACRpkdYtMfhpuY-9siVuRULuPh542rK==m+mrmfmfr3y4KdWiw@mail.gmail.com>
-Subject: Re: [PATCH 5/5 v2] clk: qcom: Add support for MSM8660 LCC
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v2 10/11] arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+Date: Mon, 15 May 2017 17:32:20 +0530
+Message-Id: <1494849741-21294-11-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 27, 2017 at 10:19 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
->> diff --git a/drivers/clk/qcom/lcc-msm8660.c b/drivers/clk/qcom/lcc-msm8660.c
-> [..]
->> +/* The vendor code uses PLL4 as parent everywhere */
->> +static const struct parent_map lcc_parent_map[] = {
->> +     { P_PXO, 0 },
->> +     { P_CXO, 1 },
->> +     /* Select RPM PLL4, but also used for selecting LPA PLL0 */
->> +     { P_PLL4_LPA_PLL0, 2 },
->> +     /* Will just ground the line */
->> +     { P_GND, 6 },
->> +};
->> +
->> +static const char * const lcc_parent_tbl[] = {
->> +     "pxo",
->> +     "cxo",
->> +     /*
->> +      * PLL4 is an RPM clock on MSM8660/APQ8060, set to "pll4" for this
->> +      * If we enable and mux in the LPA_PLL0 on this platform, we can
->> +      * set this to "lpa_pll0" instead
->> +      */
->> +     "pll4_clk",
->> +     "gnd", /* This is a very inactive parent */
->> +};
->> +
->> +/*
->> + * This table is evidently for using PLL4 as parent, if we start using
->> + * LPA_PLL0 we need to provide a second table.
->> + */
->
-> Aren't you muxing in LPA_PLL0 as source instead of PLL4 at the bottom of
-> probe()? And as you hard code that selector, shouldn't the parent table
-> reference lpa_pll0?
+We have two instance of PL022 SPI controllers, one instance of
+DMA PL330, and one non-secure SP805 Watchdog on Stingray SOC.
 
-I think it's just a naming problem.
+This patch adds DT nodes for the above mentioned devices in
+Stingray DT.
 
-I'm actually using:
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Pramod KUMAR <pramod.kumar@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
+---
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      | 30 +++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 52 ++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
 
->> +     {   768000, P_PLL4_LPA_PLL0, 4,  1, 176 },
-
-Because as far as I can tell, RPM clock PLL4 and LPA_PLL0 is the
-same thing, just different names.
-
-I don't think the 8660 has its own LPA PLL, it's just the layers of
-confusion in the code that make it seem like so.
-
-Or maybe someone was in the planning stages of adding the LPA PLL
-to the hardware and never got there. So some code confusingly
-refers to that...
-
-I would really like to see how it actually works.
-
-BTW: do you have a pointer to a vendor tree for a Sony thing using
-the MSM8660 or APQ8060 that I can look at? I need more known
-working code to inspect.
-
-Yours,
-Linus Walleij
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+index c309cda..5671669 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+@@ -46,3 +46,33 @@
+ &uart3 {
+ 	status = "okay";
+ };
++
++&ssp0 {
++	pinctrl-0 = <&spi0_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 34 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
++
++&ssp1 {
++	pinctrl-0 = <&spi1_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 96 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 476a6fa..6d9c9f8 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -284,6 +284,14 @@
+ 			status = "disabled";
+ 		};
+ 
++		wdt0: watchdog@689c0000 {
++			compatible = "arm,sp805", "arm,primecell";
++			reg = <0x000c0000 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_25m_div2_clk>, <&hsls_div4_clk>;
++			clock-names = "wdogclk", "apb_pclk";
++		};
++
+ 		gpio_hsls: gpio@689d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x000d0000 0x864>;
+@@ -364,11 +372,55 @@
+ 			status = "disabled";
+ 		};
+ 
++		ssp0: ssp@68a80000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00180000 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		ssp1: ssp@68a90000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00190000 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		hwrng: hwrng@68b20000 {
+ 			compatible = "brcm,iproc-rng200";
+ 			reg = <0x00220000 0x28>;
+ 		};
+ 
++		dma0: dma@68c10000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x00310000 0x1000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++			clocks = <&hsls_div2_clk>;
++			clock-names = "apb_pclk";
++			iommus = <&smmu 0x6000 0x0000>;
++		};
++
+ 		nand: nand@68c60000 {
+ 			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
+ 			reg = <0x00360000 0x600>,
+-- 
+2.7.4
