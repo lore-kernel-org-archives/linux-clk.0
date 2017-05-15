@@ -1,86 +1,59 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 19 May 2017 22:54:30 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>, linus.walleij@linaro.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>,
-	linux-gpio@vger.kernel.org, catalin.marinas@arm.com,
-	mturquette@baylibre.com, sjaganat@codeaurora.org,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	will.deacon@arm.com, linux-clk@vger.kernel.org,
-	david.brown@linaro.org, absahu@codeaurora.org, robh+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-	sricharan@codeaurora.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-Message-ID: <20170520055430.GU12920@tuxbook>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org>
- <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
- <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
- <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
- <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
- <20170517193315.GF12920@tuxbook>
- <f5a3da8b-c3a4-3cb3-9f5f-0cbdb87688ed@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f5a3da8b-c3a4-3cb3-9f5f-0cbdb87688ed@codeaurora.org>
+Return-Path: <guodong.xu@linaro.org>
+Return-Path: <guodong.xu@linaro.org>
+From: Guodong Xu <guodong.xu@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	guodong.xu@linaro.org,
+	chenjun14@huawei.com,
+	zhongkaihua@huawei.com,
+	zhangfei.gao@linaro.org,
+	leo.yan@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	John Stultz <john.stultz@linaro.org>
+Subject: [PATCH 1/3] clk: hi3660: fix wrong parent name of clk_mux_sysbus
+Date: Mon, 15 May 2017 13:54:21 +0800
+Message-Id: <20170515055423.1803-1-guodong.xu@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 18 May 01:39 PDT 2017, Varadarajan Narayanan wrote:
+From: Chen Jun <chenjun14@huawei.com>
 
-> 
-> 
-> On 5/18/2017 1:03 AM, Bjorn Andersson wrote:
-> > On Mon 15 May 02:05 PDT 2017, Varadarajan Narayanan wrote:
-> > 
-> > > On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
-> > > > On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
-> > > > 
-> > > > > On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
-> > > > > > On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
-> > [..]
-> > > > > > > +	msm_mux_qpic_pad4,
-> > > > > > 
-> > > > > > What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
-> > > > > > alternative muxings...?
-> > > > > 
-> > > > > This is for the NAND and LCD display. The pins listed are the 9 data pins.
-> > > > > 
-> > > > 
-> > > > Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
-> > > > possible to reference a partial group in the DTS, if that's necessary)
-> > > 
-> > > There are two sets of 9 pins, either of which can go to NAND or LCD.
-> > > Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
-> > > Is that ok?
-> > > 
-> > 
-> > So you have NAND and LCD hardware muxed to either "a" or "b" and then
-> > you mux either "a" or "b" out onto actual pins?
-> > 
-> > How is this first mux configured?
-> > 
-> > I think the a/b scheme sounds reasonable, if above is how it works.
-> 
-> Sorry, I was wrong. I had misread the documentation.
-> 
-> There are 18 pins. 15 pins are common between LCD and NAND. The QPIC
-> controller arbitrates between LCD and NAND. Of the remaining 4, 2 are for
-> NAND and 2 are for LCD exclusively. We plan to group the qpic pins into 3
-> groups namely, qpic_common, qpic_nand and qpic_lcd. Is that ok?
-> 
+Parent name of clk_mux_sysbus is not correct. This patch fixes it.
 
-If you consider that you are defining the available functions for this
-pinmuxer and then define the sets of pins exposing these available
-functions it does make sense to just name it "qpic".
+Signed-off-by: Chen Jun <chenjun14@huawei.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi3660.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I think that naming them _common, _lcd and _nand is just adding
-confusion when it comes to writing the dts files.
-
-
-@Linus, do you have a different preference here?
-
-Regards,
-Bjorn
+diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+index 96a9697..143ce0c 100644
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -206,6 +206,8 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_clks[] = {
+ };
+ 
+ static const char *const
++clk_mux_sysbus_p[] = {"clk_ppll1", "clk_ppll0"};
++static const char *const
+ clk_mux_sdio_sys_p[] = {"clk_factor_mmc", "clk_div_sdio",};
+ static const char *const
+ clk_mux_sd_sys_p[] = {"clk_factor_mmc", "clk_div_sd",};
+@@ -239,8 +241,8 @@ static const char *const
+ clk_mux_i2c_p[] = {"clkin_sys", "clk_div_i2c",};
+ 
+ static const struct hisi_mux_clock hi3660_crgctrl_mux_clks[] = {
+-	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sdio_sys_p,
+-	  ARRAY_SIZE(clk_mux_sdio_sys_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
++	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sysbus_p,
++	  ARRAY_SIZE(clk_mux_sysbus_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
+ 	  CLK_MUX_HIWORD_MASK, },
+ 	{ HI3660_CLK_MUX_UART0, "clk_mux_uart0", clk_mux_uart0_p,
+ 	  ARRAY_SIZE(clk_mux_uart0_p), CLK_SET_RATE_PARENT, 0xac, 2, 1,
+-- 
+2.10.2
