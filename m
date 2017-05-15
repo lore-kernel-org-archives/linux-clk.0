@@ -1,105 +1,224 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 7/20] clk: sunxi-ng: mux: Re-adjust parent rate
-Date: Wed,  3 May 2017 13:59:44 +0200
-Message-Id: <0d8fc6d976c64be906fa86ead20aa10bb490386b.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
+	<aisheng.dong@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+Subject: [PATCH 7/9] dt-bindings: clock: add imx7ulp clock binding doc
+Date: Mon, 15 May 2017 21:59:21 +0800
+Message-ID: <1494856763-6543-8-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, the parent rate given back to the clock framework in our
-request is the original parent rate we calculated before trying to round
-the rate of our clock.
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
 
-This works fine unless our clock also changes its parent rate, in which
-case we will simply ignore that change and still use the previous parent
-rate.
+Note IMX7ULP has two clock domains: M4 and A7. This binding doc
+is only for A7 clock domain.
 
-Create a new function to re-adjust the parent rate to take the pre-dividers
-into account, and give that back to the clock framework.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/sunxi-ng/ccu_mux.c | 33 ++++++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+ .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++++++++
+ include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++++++++++++++
+ 2 files changed, 170 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+ create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index c33210972581..1ce62cc23f8a 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -64,6 +64,14 @@ unsigned long ccu_mux_helper_apply_prediv(struct ccu_common *common,
- 	return parent_rate / ccu_mux_get_prediv(common, cm, parent_index);
- }
- 
-+unsigned long ccu_mux_helper_unapply_prediv(struct ccu_common *common,
-+					    struct ccu_mux_internal *cm,
-+					    int parent_index,
-+					    unsigned long parent_rate)
-+{
-+	return parent_rate * ccu_mux_get_prediv(common, cm, parent_index);
-+}
+diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+new file mode 100644
+index 0000000..76ea3c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+@@ -0,0 +1,62 @@
++* Clock bindings for Freescale i.MX7ULP
 +
- int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 				  struct ccu_mux_internal *cm,
- 				  struct clk_rate_request *req,
-@@ -89,22 +97,37 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 		best_rate = round(cm, best_parent, &adj_parent_rate,
- 				  req->rate, data);
- 
-+		/*
-+		 * parent_rate might have been modified by our clock.
-+		 * Re-apply the pre-divider if there's one, and give
-+		 * the actual frequency the parent needs to run at.
-+		 */
-+		best_parent_rate = ccu_mux_helper_unapply_prediv(common, cm, -1,
-+								 adj_parent_rate);
++i.MX7ULP Clock functions are under joint control of the System
++Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
++modules, and Core Mode Controller (CMC)1 blocks
 +
- 		goto out;
- 	}
- 
- 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
--		unsigned long tmp_rate, parent_rate, adj_parent_rate;
-+		unsigned long tmp_rate, parent_rate;
- 		struct clk_hw *parent;
- 
- 		parent = clk_hw_get_parent_by_index(hw, i);
- 		if (!parent)
- 			continue;
- 
--		parent_rate = clk_hw_get_rate(parent);
--		adj_parent_rate = ccu_mux_helper_apply_prediv(common, cm, i,
--							      parent_rate);
-+		parent_rate = ccu_mux_helper_apply_prediv(common, cm, i,
-+							  clk_hw_get_rate(parent));
++The clocking scheme provides clear separation between M4 domain
++and A7 domain. Except for a few clock sources shared between two
++domains, such as the System Oscillator clock, the Slow IRC (SIRC),
++and and the Fast IRC clock (FIRCLK), clock sources and clock
++management are separated and contained within each domain.
 +
-+		tmp_rate = round(cm, parent, &parent_rate, req->rate, data);
- 
--		tmp_rate = round(cm, parent, &adj_parent_rate, req->rate, data);
-+		/*
-+		 * parent_rate might have been modified by our clock.
-+		 * Re-apply the pre-divider if there's one, and give
-+		 * the actual frequency the parent needs to run at.
-+		 */
-+		parent_rate = ccu_mux_helper_unapply_prediv(common, cm, i,
-+							    parent_rate);
- 		if (tmp_rate == req->rate) {
- 			best_parent = parent;
- 			best_parent_rate = parent_rate;
++M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
++A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
++
++Note: this binding doc is only for A7 clock domain.
++
++Required properties:
++
++- compatible:	Should be "fsl,imx7ulp-clock".
++- reg : 	Should contain registers location and length for scg1,
++		pcc2 and pcc3.
++- reg-names:	Should contain the according reg names "scg1", "pcc2"
++		and "pcc3".
++- #clock-cells:	Should be <1>.
++- clocks:	Should contain the fixed input clocks.
++- clock-name:   Should contain the following clock names:"rsoc", "sosc",
++		"sirc", "firc", "upll", "mpll".
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell.
++See include/dt-bindings/clock/imx7ulp-clock.h
++for the full list of i.MX7ULP clock IDs.
++
++Examples:
++
++#include <dt-bindings/clock/imx7ulp-clock.h>
++
++clks: scg1@403e0000 {
++	compatible = "fsl,imx7ulp-clock";
++	reg = <0x403e0000 0x10000>
++	      <0x403f0000 0x10000>
++	      <0x40b30000 0x10000>;
++	reg-names = "scg1", "pcc2", "pcc3";
++	clocks = <&rsoc>, <&sosc>, <&sirc>,
++		 <&firc>, <&upll>, <&mpll>;
++	clock-names = "rsoc", "sosc", "sirc",
++		      "firc", "upll", "mpll";
++	#clock-cells = <1>;
++};
++
++usdhc1: usdhc@40380000 {
++	compatible = "fsl,imx7ulp-usdhc";
++	reg = <0x40380000 0x10000>;
++	interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&clks IMX7ULP_CLK_NIC1_BUS_DIV>,
++		 <&clks IMX7ULP_CLK_NIC1_DIV>,
++		 <&clks IMX7ULP_CLK_USDHC1>;
++	clock-names ="ipg", "ahb", "per";
++	bus-width = <4>;
++	status = "disabled";
++};
+diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
+new file mode 100644
+index 0000000..2556106
+--- /dev/null
++++ b/include/dt-bindings/clock/imx7ulp-clock.h
+@@ -0,0 +1,108 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_IMX7ULP_H
++#define __DT_BINDINGS_CLOCK_IMX7ULP_H
++
++#define IMX7ULP_CLK_DUMMY		0
++#define IMX7ULP_CLK_ROSC		1
++#define IMX7ULP_CLK_SOSC		2
++#define IMX7ULP_CLK_FIRC		3
++
++/* SCG1 */
++#define IMX7ULP_CLK_SPLL_PRE_SEL	4
++#define IMX7ULP_CLK_SPLL_PRE_DIV	5
++#define IMX7ULP_CLK_SPLL		6
++#define IMX7ULP_CLK_SPLL_POST_DIV1	7
++#define IMX7ULP_CLK_SPLL_POST_DIV2	8
++#define IMX7ULP_CLK_SPLL_PFD0		9
++#define IMX7ULP_CLK_SPLL_PFD1		10
++#define IMX7ULP_CLK_SPLL_PFD2		11
++#define IMX7ULP_CLK_SPLL_PFD3		12
++#define IMX7ULP_CLK_SPLL_PFD_SEL	13
++#define IMX7ULP_CLK_SPLL_SEL		14
++#define IMX7ULP_CLK_APLL_PRE_SEL	15
++#define IMX7ULP_CLK_APLL_PRE_DIV	16
++#define IMX7ULP_CLK_APLL		17
++#define IMX7ULP_CLK_APLL_POST_DIV1	18
++#define IMX7ULP_CLK_APLL_POST_DIV2	19
++#define IMX7ULP_CLK_APLL_PFD0		20
++#define IMX7ULP_CLK_APLL_PFD1		21
++#define IMX7ULP_CLK_APLL_PFD2		22
++#define IMX7ULP_CLK_APLL_PFD3		23
++#define IMX7ULP_CLK_APLL_PFD_SEL	24
++#define IMX7ULP_CLK_APLL_SEL		25
++#define IMX7ULP_CLK_UPLL		26
++#define IMX7ULP_CLK_SYS_SEL		27
++#define IMX7ULP_CLK_CORE_DIV		28
++#define IMX7ULP_CLK_BUS_DIV		29
++#define IMX7ULP_CLK_PLAT_DIV		30
++#define IMX7ULP_CLK_DDR_SEL		31
++#define IMX7ULP_CLK_DDR_DIV		32
++#define IMX7ULP_CLK_NIC_SEL		33
++#define IMX7ULP_CLK_NIC0_DIV		34
++#define IMX7ULP_CLK_GPU_DIV		35
++#define IMX7ULP_CLK_NIC1_DIV		36
++#define IMX7ULP_CLK_NIC1_BUS_DIV	37
++#define IMX7ULP_CLK_NIC1_EXT_DIV	38
++
++/* PCG2 */
++#define IMX7ULP_CLK_DMA1		39
++#define IMX7ULP_CLK_RGPIO2P1		40
++#define IMX7ULP_CLK_FLEXBUS		41
++#define IMX7ULP_CLK_SEMA42_1		42
++#define IMX7ULP_CLK_DMA_MUX1		43
++#define IMX7ULP_CLK_SNVS		44
++#define IMX7ULP_CLK_CAAM		45
++#define IMX7ULP_CLK_LPTPM4		46
++#define IMX7ULP_CLK_LPTPM5		47
++#define IMX7ULP_CLK_LPIT1		48
++#define IMX7ULP_CLK_LPSPI2		49
++#define IMX7ULP_CLK_LPSPI3		50
++#define IMX7ULP_CLK_LPI2C4		51
++#define IMX7ULP_CLK_LPI2C5		52
++#define IMX7ULP_CLK_LPUART4		53
++#define IMX7ULP_CLK_LPUART5		54
++#define IMX7ULP_CLK_FLEXIO1		55
++#define IMX7ULP_CLK_USB0		56
++#define IMX7ULP_CLK_USB1		57
++#define IMX7ULP_CLK_USB_PHY		58
++#define IMX7ULP_CLK_USB_PL301		59
++#define IMX7ULP_CLK_USDHC0		60
++#define IMX7ULP_CLK_USDHC1		61
++#define IMX7ULP_CLK_WDG1		62
++#define IMX7ULP_CLK_WDG2		63
++
++/* PCG3 */
++#define IMX7ULP_CLK_LPTPM6		64
++#define IMX7ULP_CLK_LPTPM7		65
++#define IMX7ULP_CLK_LPI2C6		66
++#define IMX7ULP_CLK_LPI2C7		67
++#define IMX7ULP_CLK_LPUART6		68
++#define IMX7ULP_CLK_LPUART7		69
++#define IMX7ULP_CLK_VIU			70
++#define IMX7ULP_CLK_DSI			71
++#define IMX7ULP_CLK_LCDIF		72
++#define IMX7ULP_CLK_MMDC		73
++#define IMX7ULP_CLK_PCTLC		74
++#define IMX7ULP_CLK_PCTLD		75
++#define IMX7ULP_CLK_PCTLE		76
++#define IMX7ULP_CLK_PCTLF		77
++#define IMX7ULP_CLK_GPU3D		78
++#define IMX7ULP_CLK_GPU2D		79
++#define IMX7ULP_CLK_MIPI_PLL		80
++#define IMX7ULP_CLK_SIRC		81
++#define IMX7ULP_CLK_SOSC_BUS_CLK	82
++#define IMX7ULP_CLK_FIRC_BUS_CLK	83
++#define IMX7ULP_CLK_SPLL_BUS_CLK	84
++
++#define IMX7ULP_CLK_END			85
++
++#endif /* __DT_BINDINGS_CLOCK_IMX7ULP_H */
 -- 
-git-series 0.8.11
+2.7.4
