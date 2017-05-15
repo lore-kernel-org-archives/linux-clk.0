@@ -1,72 +1,184 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Cc: Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v2 0/5] Add minimal boot support for IPQ8074
-Date: Thu,  4 May 2017 17:23:56 +0530
-Message-Id: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/5 v3] dt-bindings: Augment Gemini for clocks, resets
+Date: Mon, 15 May 2017 19:18:39 +0200
+Message-Id: <20170515171839.953-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-v2:
-  * Addressed review feedback from Stephen
-    - Removed cpu-map entries
-    - Added mmio-timer nodes
-  * Fix sparse warnings in the gcc-ipq8074.c
-  * Updated pinctrl documentation
+This augments the platform bindings for the Gemini SoC to include
+the fact that the system controller also provides clock and reset
+lindes, and adds all the required include files.
 
-v1:
-  https://www.spinics.net/lists/kernel/msg2498734.html
-  This series adds minimal board boot support for ipq8074-hk01
-  board.
+Cc: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v2->v3:
+- Essentially a new patch from the two old patches adding
+  bindings to the reset and clock controller separately.
+  Instead add it all into the system controller and use one
+  single compatible.
 
-Abhishek Sahu (2):
-  clk: qcom: ipq8074: Add Global Clock Controller support
-  arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
+Rob: I need to merge this together in front of the device tree
+changes that sprinkle references to the headers all over the
+Gemini device trees, so if this sits good with you please ACK
+it.
+---
+ Documentation/devicetree/bindings/arm/gemini.txt | 24 +++++++++++++++-
+ include/dt-bindings/clock/cortina,gemini-clock.h | 29 +++++++++++++++++++
+ include/dt-bindings/reset/cortina,gemini-reset.h | 36 ++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+), 1 deletion(-)
+ create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
+ create mode 100644 include/dt-bindings/reset/cortina,gemini-reset.h
 
-Varadarajan Narayanan (3):
-  pinctrl: qcom: Add ipq8074 pinctrl driver
-  dt-bindings: qcom: Add IPQ8074 bindings
-  arm64: dts: Add ipq8074 SoC and HK01 board support
-
- Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  187 +++
- arch/arm64/boot/dts/qcom/Makefile                  |    1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   53 +
- arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
- arch/arm64/configs/defconfig                       |    2 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-ipq8074.c                     | 1032 +++++++++++++++++
- drivers/pinctrl/qcom/Kconfig                       |   10 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1217 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
- 14 files changed, 2862 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
- create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
-
+diff --git a/Documentation/devicetree/bindings/arm/gemini.txt b/Documentation/devicetree/bindings/arm/gemini.txt
+index 0041eb031116..55bf7ce96c44 100644
+--- a/Documentation/devicetree/bindings/arm/gemini.txt
++++ b/Documentation/devicetree/bindings/arm/gemini.txt
+@@ -24,6 +24,19 @@ Required nodes:
+   global control registers, with the compatible string
+   "cortina,gemini-syscon", "syscon";
+ 
++  Required properties on the syscon:
++  - reg: syscon register location and size.
++  - #clock-cells: should be set to <1> - the system controller is also a
++                  clock provider.
++  - #reset-cells: should be set to <1> - the system controller is also a
++                  reset line provider.
++
++  The clock sources have shorthand defines in the include file:
++  <dt-bindings/clock/cortina,gemini-clock.h>
++
++  The reset lines have shorthand defines in the include file:
++  <dt-bindings/reset/cortina,gemini-reset.h>
++
+ - timer: the soc bus node must have a timer node pointing to the SoC timer
+   block, with the compatible string "cortina,gemini-timer"
+   See: clocksource/cortina,gemini-timer.txt
+@@ -56,12 +69,15 @@ Example:
+ 		syscon: syscon@40000000 {
+ 			compatible = "cortina,gemini-syscon", "syscon";
+ 			reg = <0x40000000 0x1000>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		uart0: serial@42000000 {
+ 			compatible = "ns16550a";
+ 			reg = <0x42000000 0x100>;
+-			clock-frequency = <48000000>;
++			resets = <&syscon GEMINI_RESET_UART>;
++			clocks = <&syscon GEMINI_CLK_UART>;
+ 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 		};
+@@ -73,12 +89,18 @@ Example:
+ 			interrupts = <14 IRQ_TYPE_EDGE_FALLING>, /* Timer 1 */
+ 				     <15 IRQ_TYPE_EDGE_FALLING>, /* Timer 2 */
+ 				     <16 IRQ_TYPE_EDGE_FALLING>; /* Timer 3 */
++			resets = <&syscon GEMINI_RESET_TIMER>;
++			/* APB clock or RTC clock */
++			clocks = <&syscon GEMINI_CLK_APB>,
++				 <&syscon GEMINI_CLK_RTC>;
++			clock-names = "PCLK", "EXTCLK";
+ 			syscon = <&syscon>;
+ 		};
+ 
+ 		intcon: interrupt-controller@48000000 {
+ 			compatible = "cortina,gemini-interrupt-controller";
+ 			reg = <0x48000000 0x1000>;
++			resets = <&syscon GEMINI_RESET_INTCON0>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h b/include/dt-bindings/clock/cortina,gemini-clock.h
+new file mode 100644
+index 000000000000..acf5cd550b0c
+--- /dev/null
++++ b/include/dt-bindings/clock/cortina,gemini-clock.h
+@@ -0,0 +1,29 @@
++#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++
++/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
++#define GEMINI_NUM_CLKS 20
++
++#define GEMINI_CLK_RTC 0
++#define GEMINI_CLK_AHB 1
++#define GEMINI_CLK_APB 2
++#define GEMINI_CLK_CPU 3
++#define GEMINI_CLK_PCI 4
++#define GEMINI_CLK_TVC 5
++#define GEMINI_CLK_UART 6
++#define GEMINI_CLK_GATES 7
++#define GEMINI_CLK_GATE_SECURITY 7
++#define GEMINI_CLK_GATE_GMAC0 8
++#define GEMINI_CLK_GATE_GMAC1 9
++#define GEMINI_CLK_GATE_SATA0 10
++#define GEMINI_CLK_GATE_SATA1 11
++#define GEMINI_CLK_GATE_USB0 12
++#define GEMINI_CLK_GATE_USB1 13
++#define GEMINI_CLK_GATE_IDE 14
++#define GEMINI_CLK_GATE_PCI 15
++#define GEMINI_CLK_GATE_DDR 16
++#define GEMINI_CLK_GATE_FLASH 17
++#define GEMINI_CLK_GATE_TVC 18
++#define GEMINI_CLK_GATE_BOOT 19
++
++#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
+diff --git a/include/dt-bindings/reset/cortina,gemini-reset.h b/include/dt-bindings/reset/cortina,gemini-reset.h
+new file mode 100644
+index 000000000000..aebecae43721
+--- /dev/null
++++ b/include/dt-bindings/reset/cortina,gemini-reset.h
+@@ -0,0 +1,36 @@
++#ifndef _DT_BINDINGS_RESET_CORTINA_GEMINI_H
++#define _DT_BINDINGS_RESET_CORTINA_GEMINI_H
++
++#define GEMINI_RESET_DRAM	0
++#define GEMINI_RESET_FLASH	1
++#define GEMINI_RESET_IDE	2
++#define GEMINI_RESET_RAID	3
++#define GEMINI_RESET_SECURITY	4
++#define GEMINI_RESET_GMAC0	5
++#define GEMINI_RESET_GMAC1	6
++#define GEMINI_RESET_PCI	7
++#define GEMINI_RESET_USB0	8
++#define GEMINI_RESET_USB1	9
++#define GEMINI_RESET_DMAC	10
++#define GEMINI_RESET_APB	11
++#define GEMINI_RESET_LPC	12
++#define GEMINI_RESET_LCD	13
++#define GEMINI_RESET_INTCON0	14
++#define GEMINI_RESET_INTCON1	15
++#define GEMINI_RESET_RTC	16
++#define GEMINI_RESET_TIMER	17
++#define GEMINI_RESET_UART	18
++#define GEMINI_RESET_SSP	19
++#define GEMINI_RESET_GPIO0	20
++#define GEMINI_RESET_GPIO1	21
++#define GEMINI_RESET_GPIO2	22
++#define GEMINI_RESET_WDOG	23
++#define GEMINI_RESET_EXTERN	24
++#define GEMINI_RESET_CIR	25
++#define GEMINI_RESET_SATA0	26
++#define GEMINI_RESET_SATA1	27
++#define GEMINI_RESET_TVE	28
++#define GEMINI_RESET_CPU1	30
++#define GEMINI_RESET_GLOBAL	31
++
++#endif
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.9.3
