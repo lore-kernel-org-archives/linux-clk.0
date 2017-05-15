@@ -1,69 +1,86 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 6/8] ARM: sun8i: a83t: Add CCU device nodes
-Date: Wed,  3 May 2017 11:09:27 +0800
-Message-Id: <20170503030929.28763-7-wens@csie.org>
-In-Reply-To: <20170503030929.28763-1-wens@csie.org>
-References: <20170503030929.28763-1-wens@csie.org>
+Return-Path: <scott.branden@broadcom.com>
+Return-Path: <scott.branden@broadcom.com>
+Subject: Re: [PATCH v2 04/11] arm64: dts: Initial DTS files for Broadcom
+ Stingray SOC
+To: Mark Rutland <mark.rutland@arm.com>, Anup Patel <anup.patel@broadcom.com>
+References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+ <1494849741-21294-5-git-send-email-anup.patel@broadcom.com>
+ <20170515131334.GE17776@leverpostej>
+Cc: Rob Herring <robh+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Oza Pawandeep
+ <oza.oza@broadcom.com>, Srinath Mannam <srinath.mannam@broadcom.com>,
+ Pramod Kumar <pramod.kumar@broadcom.com>,
+ Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com
+From: Scott Branden <scott.branden@broadcom.com>
+Message-ID: <a8ada733-b1a0-b038-78da-e59de76c106c@broadcom.com>
+Date: Mon, 15 May 2017 09:04:20 -0700
+MIME-Version: 1.0
+In-Reply-To: <20170515131334.GE17776@leverpostej>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have support for the A83T CCU, add a device node for it,
-and replace any existing placeholder clock phandles with the correct
-ones.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index c0a1e4f74b89..c9a5d07b2ada 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -162,13 +162,23 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		ccu: clock@1c20000 {
-+			compatible = "allwinner,sun8i-a83t-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc16Md512>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		pio: pinctrl@1c20800 {
- 			compatible = "allwinner,sun8i-a83t-pinctrl";
- 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01c20800 0x400>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -214,7 +224,8 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu 53>;
-+			resets = <&ccu 40>;
- 			status = "disabled";
- 		};
- 
--- 
-2.11.0
+On 17-05-15 06:13 AM, Mark Rutland wrote:
+> Hi,
+>
+> On Mon, May 15, 2017 at 05:32:14PM +0530, Anup Patel wrote:
+>> +/ {
+>> +	chosen { /* Default kernel args */
+>> +		bootargs = "root=/dev/ram rw rootwait \
+>> +			    earlycon=uart8250,mmio32,0x68a10000 \
+>> +			    pci=pcie_bus_safe cma=64M";
+>
+> Why do we need all of these?
+Agreed - we don't need the default kernels args here - they are passed 
+in by bootloader as needed.
+>
+>> +		linux,stdout-path = "serial0:115200n8";
+>
+> Please drop the 'linux,' prefix here.
+>
+> [...]
+>
+>> +	memory: memory@80000000 {
+>> +		device_type = "memory";
+>> +		reg = <0x00000000 0x80000000 0 0x40000000>;
+>> +	};
+>> +
+>> +	psci {
+>> +		compatible = "arm,psci-0.2";
+>> +		method = "smc";
+>> +	};
+>> +
+>> +	pmu {
+>> +		compatible = "arm,armv8-pmuv3";
+>> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
+>> +	};
+>> +
+>> +	timer {
+>> +		compatible = "arm,armv8-timer";
+>> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>;
+>
+> GICv3 PPIs don't have a mask. See
+>
+> Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
+>
+> Please remove the GIC_CPU_MASK_*() uses here and in this dts. They
+> shouldn't be there.
+>
+> Thanks,
+> Mark.
+>
