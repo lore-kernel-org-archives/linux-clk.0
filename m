@@ -1,80 +1,114 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Subject: [RFC PATCH 02/11] drm: sun4i: add support for H3 mixers
-Date: Thu, 18 May 2017 00:43:45 +0800
-Message-Id: <20170517164354.16399-3-icenowy@aosc.io>
-In-Reply-To: <20170517164354.16399-1-icenowy@aosc.io>
-References: <20170517164354.16399-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v2 09/11] arm64: dts: Add I2C DT nodes for Stingray SoC
+Date: Mon, 15 May 2017 17:32:19 +0530
+Message-Id: <1494849741-21294-10-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+From: Oza Pawandeep <oza.oza@broadcom.com>
 
-Allwinner H3 SoC has two mixers, one has 1 VI channel and 3 UI channels,
-and the other has 1 VI and 1 UI.
+This patch adds I2C DT nodes on Stingray SoC.
 
-Add support for these two variants.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Oza Pawandeep <oza.oza@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 22 ++++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 20 ++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index cb193c5f1686..d658a3a8159a 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -390,11 +390,29 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.ui_num = 1,
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index ce46224..e3f8c89 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -57,6 +57,28 @@
+ 	status = "okay";
  };
  
-+static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
-+	.vi_num = 1,
-+	.ui_num = 3,
++&i2c0 {
++	status = "okay";
++
++	pca9505: pca9505@20 {
++		compatible = "nxp,pca9505";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x20>;
++	};
 +};
 +
-+static const struct sun8i_mixer_cfg sun8i_h3_mixer1_cfg = {
-+	.vi_num = 1,
-+	.ui_num = 1,
++&i2c1 {
++	status = "okay";
++
++	pcf8574: pcf8574@20 {
++		compatible = "nxp,pcf8574a";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x27>;
++	};
 +};
 +
- static const struct of_device_id sun8i_mixer_of_table[] = {
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-h3-de2-mixer0",
-+		.data = &sun8i_h3_mixer0_cfg
-+	},
-+	{
-+		.compatible = "allwinner,sun8i-h3-de2-mixer1",
-+		.data = &sun8i_h3_mixer1_cfg
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
+ &nand {
+ 	status = "ok";
+ 	nandcs@0 {
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 2b24d07..476a6fa 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -274,6 +274,16 @@
+ 
+ 		#include "stingray-pinctrl.dtsi"
+ 
++		i2c0: i2c@689b0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x000b0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 177 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
++
+ 		gpio_hsls: gpio@689d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x000d0000 0x864>;
+@@ -300,6 +310,16 @@
+ 					<&pinmux 151 91 4>;
+ 		};
+ 
++		i2c1: i2c@689e0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x000e0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 178 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
++
+ 		uart0: uart@68a00000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
 -- 
-2.12.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
