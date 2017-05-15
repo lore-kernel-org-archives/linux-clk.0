@@ -1,89 +1,60 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v2 10/11] arm64: dts: marvell: remove *-clock-output-names on cp110
-Date: Wed, 31 May 2017 15:41:54 +0200
-Message-Id: <161fdab8848052b8cd6e2ef630c1a2bbab6532d5.1496237893.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1494863690.13948.0.camel@baylibre.com>
+Subject: Re: [PATCH v2 1/2] clk: meson-gxbb: un-export the CPU clock
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, narmstrong@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org, khilman@baylibre.com, carlo@caione.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 15 May 2017 17:54:50 +0200
+In-Reply-To: <20170504181920.21880-2-martin.blumenstingl@googlemail.com>
+References: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
+	 <20170504181920.21880-1-martin.blumenstingl@googlemail.com>
+	 <20170504181920.21880-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The *-clock-output-names of the cp110-system-controller0 node are not
-used anymore, so remove them.
+On Thu, 2017-05-04 at 20:19 +0200, Martin Blumenstingl wrote:
+> The CPU clock defined in the Meson GX clock driver is actually a
+> left-over from the Meson8b clock controller. Un-export the clock so we
+> can remove it from the driver.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/gxbb.h              | 2 +-
+>  include/dt-bindings/clock/gxbb-clkc.h | 1 -
+>  2 files changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index 3e5f375af7b6..c15bbce8c585 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -171,7 +171,7 @@
+>   * to be exposed to client nodes in DT: include/dt-bindings/clock/gxbb-clkc.h
+>   */
+>  #define CLKID_SYS_PLL		  0
+> -/* CLKID_CPUCLK */
+> +#define CLKID_CPUCLK		  1
+>  /* CLKID_HDMI_PLL */
+>  #define CLKID_FIXED_PLL		  3
+>  /* CLKID_FCLK_DIV2 */
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-
+> bindings/clock/gxbb-clkc.h
+> index 3190e30b9398..46ff81fbc02e 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -5,7 +5,6 @@
+>  #ifndef __GXBB_CLKC_H
+>  #define __GXBB_CLKC_H
+>  
+> -#define CLKID_CPUCLK		1
+>  #define CLKID_HDMI_PLL		2
+>  #define CLKID_FCLK_DIV2		4
+>  #define CLKID_FCLK_DIV3		5
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 13 +-------------
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 13 +-------------
- 2 files changed, 26 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-index 59259270964c..a0f57a8e5dcb 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-@@ -101,19 +101,6 @@
- 					     "syscon";
- 				reg = <0x440000 0x1000>;
- 				#clock-cells = <2>;
--				core-clock-output-names =
--					"cpm-apll", "cpm-ppv2-core", "cpm-eip",
--					"cpm-core", "cpm-nand-core";
--				gate-clock-output-names =
--					"cpm-audio", "cpm-communit", "cpm-nand",
--					"cpm-ppv2", "cpm-sdio", "cpm-mg-domain",
--					"cpm-mg-core", "cpm-xor1", "cpm-xor0",
--					"cpm-gop-dp", "none", "cpm-pcie_x10",
--					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
--					"cpm-sata", "cpm-sata-usb", "cpm-main",
--					"cpm-gop", "none", "none",
--					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
--					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 			};
- 
- 			cpm_rtc: rtc@284000 {
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-index 046d3fe53cda..9584bc8d8b3f 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-@@ -108,19 +108,6 @@
- 					     "syscon";
- 				reg = <0x440000 0x1000>;
- 				#clock-cells = <2>;
--				core-clock-output-names =
--					"cps-apll", "cps-ppv2-core", "cps-eip",
--					"cps-core", "cps-nand-core";
--				gate-clock-output-names =
--					"cps-audio", "cps-communit", "cps-nand",
--					"cps-ppv2", "cps-sdio", "cps-mg-domain",
--					"cps-mg-core", "cps-xor1", "cps-xor0",
--					"cps-gop-dp", "none", "cps-pcie_x10",
--					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
--					"cps-sata", "cps-sata-usb", "cps-main",
--					"cps-gop", "none", "none",
--					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
--					"cps-usb3dev", "cps-eip150", "cps-eip197";
- 			};
- 
- 			cps_sata0: sata@540000 {
--- 
-git-series 0.9.1
+Applied. Thanks
+Jerome
