@@ -1,79 +1,75 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sat, 20 May 2017 02:10:35 +0800
-In-Reply-To: <20170519180616.vzrlu2avuucsjkiu@flea.home>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <20170517164354.16399-11-icenowy@aosc.io>
- <20170519180616.vzrlu2avuucsjkiu@flea.home>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
+	<aisheng.dong@nxp.com>
+Subject: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+Date: Mon, 15 May 2017 21:59:15 +0800
+Message-ID: <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Subject: Re: [linux-sunxi] Re: [RFC PATCH 10/11] ARM: sun8i: h3: add display
- engine pipeline for TVE
-To: maxime.ripard@free-electrons.com,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <B72028D8-B055-4F53-A4EA-7E93A28DB8FF@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Cgrkuo4gMjAxN+W5tDXmnIgyMOaXpSBHTVQrMDg6MDAg5LiK5Y2IMjowNjoxNiwgTWF4aW1lIFJp
-cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFRodSwg
-TWF5IDE4LCAyMDE3IGF0IDEyOjQzOjUzQU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
-IEFzIHdlIGhhdmUgYWxyZWFkeSB0aGUgc3VwcG9ydCBmb3IgdGhlIFRWIGVuY29kZXIgb24gQWxs
-d2lubmVyIEgzLAo+YWRkCj4+IHRoZSBkaXNwbGF5IGVuZ2luZSBwaXBlbGluZSBkZXZpY2UgdHJl
-ZSBub2RlcyB0byBpdHMgRFRTSSBmaWxlLgo+PiAKPj4gVGhlIEg1IHBpcGVsaW5lIGhhcyBzb21l
-IGRpZmZlcmVuY2VzIGFuZCB3aWxsIGJlIGVuYWJsZWQgbGF0ZXIuCj4+IAo+PiBUaGUgY3VycmVu
-dGx5LXVudXNlZCBtaXhlcjAgYW5kIHRjb24wIGFyZSBhbHNvIG5lZWRlZCwgZm9yIHRoZQo+PiBj
-b21wbGV0ZW1lbnQgb2YgdGhlIHBpcGVsaW5lLgo+PiAKPj4gU2lnbmVkLW9mZi1ieTogSWNlbm93
-eSBaaGVuZyA8aWNlbm93eUBhb3NjLmlvPgo+PiAtLS0KPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3N1
-bjhpLWgzLmR0c2kgfCAxODkKPisrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAxODkgaW5zZXJ0aW9ucygrKQo+PiAKPj4gZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWgzLmR0c2kKPmIvYXJjaC9hcm0vYm9vdC9kdHMv
-c3VuOGktaDMuZHRzaQo+PiBpbmRleCBiMzZmOWY0MjNjMzkuLjIwMTcyZWY5MjQxNSAxMDA2NDQK
-Pj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvc3VuOGktaDMuZHRzaQo+PiArKysgYi9hcmNoL2Fy
-bS9ib290L2R0cy9zdW44aS1oMy5kdHNpCj4+IEBAIC00MSw2ICs0MSw4IEBACj4+ICAgKi8KPj4g
-IAo+PiAgI2luY2x1ZGUgInN1bnhpLWgzLWg1LmR0c2kiCj4+ICsjaW5jbHVkZSA8ZHQtYmluZGlu
-Z3MvY2xvY2svc3VuOGktZGUyLmg+Cj4+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvcmVzZXQvc3Vu
-OGktZGUyLmg+Cj4+ICAKPj4gIC8gewo+PiAgCWNwdXMgewo+PiBAQCAtNzIsNiArNzQsMTkzIEBA
-Cj4+ICAJCX07Cj4+ICAJfTsKPj4gIAo+PiArCWRlOiBkaXNwbGF5LWVuZ2luZSB7Cj4+ICsJCWNv
-bXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjhpLWgzLWRpc3BsYXktZW5naW5lIjsKPj4gKwkJYWxs
-d2lubmVyLHBpcGVsaW5lcyA9IDwmbWl4ZXIwPiwKPj4gKwkJCQkgICAgICA8Jm1peGVyMT47Cj4+
-ICsJCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cj4+ICsJfTsKPj4gKwo+PiArCXNvYyB7Cj4+ICsJCWRp
-c3BsYXlfY2xvY2tzOiBjbG9ja0AxMDAwMDAwIHsKPj4gKwkJCWNvbXBhdGlibGUgPSAiYWxsd2lu
-bmVyLHN1bjhpLWE4M3QtZGUyLWNsayI7Cj4+ICsJCQlyZWcgPSA8MHgwMTAwMDAwMCAweDEwMDAw
-MD47Cj4+ICsJCQljbG9ja3MgPSA8JmNjdSBDTEtfQlVTX0RFPiwKPj4gKwkJCQkgPCZjY3UgQ0xL
-X0RFPjsKPj4gKwkJCWNsb2NrLW5hbWVzID0gImJ1cyIsCj4+ICsJCQkJICAgICAgIm1vZCI7Cj4+
-ICsJCQlyZXNldHMgPSA8JmNjdSBSU1RfQlVTX0RFPjsKPj4gKwkJCSNjbG9jay1jZWxscyA9IDwx
-PjsKPj4gKwkJCSNyZXNldC1jZWxscyA9IDwxPjsKPj4gKwkJCWFzc2lnbmVkLWNsb2NrcyA9IDwm
-Y2N1IENMS19ERT47Cj4+ICsJCQlhc3NpZ25lZC1jbG9jay1wYXJlbnRzID0gPCZjY3UgQ0xLX1BM
-TF9ERT47Cj4+ICsJCQlhc3NpZ25lZC1jbG9jay1yYXRlcyA9IDw0MzIwMDAwMDA+Owo+Cj5UaGlz
-IHNob3VsZG4ndCBiZSBzZXQgaW4gdGhlIERULCBidXQgZXZhbHVhdGVkIGF0IHJ1bnRpbWUgd2hl
-biBjYWxsaW5nCj5jbGtfc2V0X3JhdGUuCgpOb3BlLCBERTIgY2xvY2sgZG9lc24ndCBuZWVkIGV2
-YWx1dGlvbiwgYXMgdGhlIGNsb2NrIGlzIGRlY291cGxlZCB3aXRoCkRFMiBtaXhlcnMnIG91dHB1
-dCBzaWduYWwuIChBbHRob3VnaCBpdCBzZWVtcyB0aGF0IFNvQ3Mgd2l0aCBsYXJnZXIKcGxhbmUg
-c2l6ZSB3aWxsIHVzZSBoaWdoZXIgY2xvY2suKQoKQW5kIHNldHRpbmcgaXQgdG8gNDMyTUh6IGlz
-IGFsc28gbmVlZGVkIGZvciBwcm9wZXJseSAyMTZNSHogY2xvY2sgdG8gVFZFLgoKPgo+PiArCQl0
-dmUwOiB0di1lbmNvZGVyQDFlMDAwMDAgewo+PiArCQkJY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIs
-c3VuOGktaDMtdHYtZW5jb2RlciI7Cj4+ICsJCQlyZWcgPSA8MHgwMWUwMDAwMCAweDEwMDA+Owo+
-PiArCQkJY2xvY2tzID0gPCZjY3UgQ0xLX0JVU19UVkU+LCA8JmNjdSBDTEtfVFZFPjsKPj4gKwkJ
-CWNsb2NrLW5hbWVzID0gImJ1cyIsICJtb2QiOwo+PiArCQkJcmVzZXRzID0gPCZjY3UgUlNUX0JV
-U19UVkU+Owo+PiArCQkJc3RhdHVzID0gImRpc2FibGVkIjsKPj4gKwo+PiArCQkJYXNzaWduZWQt
-Y2xvY2tzID0gPCZjY3UgQ0xLX1RWRT47Cj4+ICsJCQlhc3NpZ25lZC1jbG9jay1wYXJlbnRzID0g
-PCZjY3UgQ0xLX1BMTF9ERT47Cj4KPlNhbWUgdGhpbmcgaGVyZS4gY2xrX3NldF9yYXRlIHNob3Vs
-ZCBqdXN0IGRvIHRoZSByaWdodCB0aGluZy4KPgo+PiArCQkJYXNzaWduZWQtY2xvY2stcmF0ZXMg
-PSA8MjE2MDAwMDAwPjsKPgo+QW5kIHdoeSBhcmUgeW91IHNldHRpbmcgaXQgaW4gdGhlIGRyaXZl
-ciBhbmQgaW4gdGhlIERUPwo+Cj5NYXhpbWUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+For dividers with zero indicating clock is disabled, instead of giving a
+warning each time like "clkx: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not
+set" in exist code, we'd consider it as a normal case and just return 0 in
+divider_recalc_rate function. For such clocks users should be aware of
+setting a correct rate before using.
+
+e.g.
+000b - Clock disabled
+001b - Divide by 1
+010b - Divide by 2
+...
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk-divider.c    | 2 ++
+ include/linux/clk-provider.h | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 96386ff..f78ba7a 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -125,6 +125,8 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+ 
+ 	div = _get_div(table, val, flags, divider->width);
+ 	if (!div) {
++		if (flags & CLK_DIVIDER_ZERO_GATE)
++			return 0;
+ 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+ 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+ 			clk_hw_get_name(hw));
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a428aec..a6efbb9 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -385,6 +385,9 @@ struct clk_div_table {
+  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+  *	except when the value read from the register is zero, the divisor is
+  *	2^width of the field.
++ * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
++ *	when the value read from the register is zero, it means the divisor
++ *	output is disabled and the rate calculated will be 0.
+  */
+ struct clk_divider {
+ 	struct clk_hw	hw;
+@@ -405,6 +408,7 @@ struct clk_divider {
+ #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
+ #define CLK_DIVIDER_READ_ONLY		BIT(5)
+ #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
++#define CLK_DIVIDER_ZERO_GATE		BIT(7)
+ 
+ extern const struct clk_ops clk_divider_ops;
+ extern const struct clk_ops clk_divider_ro_ops;
+-- 
+2.7.4
