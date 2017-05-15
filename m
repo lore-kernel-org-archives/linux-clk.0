@@ -1,137 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:39144 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752839AbdEEIir (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2017 04:38:47 -0400
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: Phil Elwell <phil@raspberrypi.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: bcm2835: Correct the prediv logic
+In-Reply-To: <1373231207.445862.1494870459462@email.1und1.de>
+References: <20170515173504.11337-1-eric@anholt.net> <1373231207.445862.1494870459462@email.1und1.de>
+Date: Mon, 15 May 2017 12:03:29 -0700
+Message-ID: <87bmqundry.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <a6dc783f7bd6e625fe456dffd93c4d57@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-6-icenowy@aosc.io>
- <CAGb2v65a8+CdO5K_8G2m6uFf22yvXvOdX=3sDcHkYebbOiff-Q@mail.gmail.com> <a6dc783f7bd6e625fe456dffd93c4d57@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 5 May 2017 16:38:16 +0800
-Message-ID: <CAGb2v65JxaifRt=QXH80Li3RrVzGULpfeYfSW-QeUn7SuNyGew@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v6 05/13] drm/sun4i: abstract a engine type
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 5, 2017 at 4:36 PM,  <icenowy@aosc.io> wrote:
-> 在 2017-05-05 10:56，Chen-Yu Tsai 写道：
->>
->> On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->>>
->>> As we are going to add support for the Allwinner DE2 engine in sun4i-drm
->>> driver, we will finally have two types of display engines -- the DE1
->>> backend and the DE2 mixer. They both do some display blending and feed
->>> graphics data to TCON, so I choose to call them both "engine" here.
->>
->>
->> These engines composite different layers into a final image which is
->> then sent out to the TCONs. As such, "compositor" would be an accurate
->> name.
->>
->> However, "engine" is OK, since Allwinner calls this stuff Display Engine
->> 1.0 and 2.0. Hope there won't be a 3.0 ...
->>
->> Maybe you should note that in your commit message. That is justifies the
->> name.
->>
->>>
->>> Abstract the engine type to a new struct with an ops struct, which
->>> contains
->>> functions that should be called outside the engine-specified code (in
->>> TCON, CRTC or TV Encoder code).
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>> Changes in v6:
->>> - Rebased on wens's multi-pipeline patchset.
->>> - Split out Makefile changes.
->>> Changes in v5:
->>> - Really made a sunxi_engine struct type, and moved ops pointer
->>>   into it.
->>> - Added checked ops wrappers.
->>> - Changed the second parameter of layers_init from crtc to engine.
->>> Changes in v4:
->>> - Comments to tag the color correction functions as optional.
->>> - Check before calling the optional functions.
->>> - Change layers_init to satisfy new PATCH v4 04/11.
->>>
->>>  drivers/gpu/drm/sun4i/sun4i_backend.c |  68 ++++++++++++---------
->>>  drivers/gpu/drm/sun4i/sun4i_backend.h |  17 +++---
->>>  drivers/gpu/drm/sun4i/sun4i_crtc.c    |  11 ++--
->>>  drivers/gpu/drm/sun4i/sun4i_crtc.h    |   4 +-
->>>  drivers/gpu/drm/sun4i/sun4i_drv.c     |   2 +-
->>>  drivers/gpu/drm/sun4i/sun4i_drv.h     |   2 +-
->>>  drivers/gpu/drm/sun4i/sun4i_layer.c   |   8 +--
->>>  drivers/gpu/drm/sun4i/sun4i_layer.h   |   5 +-
->>>  drivers/gpu/drm/sun4i/sun4i_tcon.c    |  36 ++++++-----
->>>  drivers/gpu/drm/sun4i/sun4i_tv.c      |   9 ++-
->>>  drivers/gpu/drm/sun4i/sunxi_engine.h  | 112
->>> ++++++++++++++++++++++++++++++++++
->>>  11 files changed, 198 insertions(+), 76 deletions(-)
->>>  create mode 100644 drivers/gpu/drm/sun4i/sunxi_engine.h
->>>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+Stefan Wahren <stefan.wahren@i2se.com> writes:
 
->>> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> b/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> index 5ea5c994d6ea..004b7cfe8ffb 100644
->>> --- a/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> @@ -13,6 +13,8 @@
->>>  #ifndef _SUN4I_LAYER_H_
->>>  #define _SUN4I_LAYER_H_
->>>
->>> +struct sunxi_engine;
->>> +
->>>  struct sun4i_layer {
->>>         struct drm_plane        plane;
->>>         struct sun4i_drv        *drv;
->>> @@ -27,6 +29,5 @@ plane_to_sun4i_layer(struct drm_plane *plane)
->>>  }
->>>
->>>  struct drm_plane **sun4i_layers_init(struct drm_device *drm,
->>> -                                    struct sun4i_crtc *crtc);
->>> -
->>> +                                    struct sunxi_engine *engine);
->>
->>
->> Please keep the newline.
->>
->>>  #endif /* _SUN4I_LAYER_H_ */
->>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>> b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>> index 29fd829aa54c..c48135a10fda 100644
->>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>> @@ -26,12 +26,12 @@
->>>  #include <linux/regmap.h>
->>>  #include <linux/reset.h>
->>>
->>> -#include "sun4i_backend.h"
->>>  #include "sun4i_crtc.h"
->>>  #include "sun4i_dotclock.h"
->>>  #include "sun4i_drv.h"
->>>  #include "sun4i_rgb.h"
->>>  #include "sun4i_tcon.h"
->>> +#include "sunxi_engine.h"
->>
->>
->> Please keep the headers in alphabetical order.
+> Hi Eric,
 >
+>> Eric Anholt <eric@anholt.net> hat am 15. Mai 2017 um 19:35 geschrieben:
+>>=20
+>>=20
+>> From: Phil Elwell <phil@raspberrypi.org>
+>>=20
+>> If a clock has the prediv flag set, both the integer and fractional
+>> parts must be scaled when calculating the resulting frequency.
+>>=20
+>> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>> ---
+>>=20
+>> While this is a bugfix, I haven't put a "Fixes:" line in here to get
+>> it automatically backported to stable.=20=20
 >
-> sunxi is of course after sun4i.
+> sorry, i can't follow. How should this happen without "Fixes: "?
 
-Sorry. My bad. :(
+I didn't want it to be backported to stable, because of the risk.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkZ+4EACgkQtdYpNtH8
+nui6Vg/+JF2r+ADnHhGGUEnfljusxqkXGMnckdMqh9WzyY6mlVVP6bL7qcOk+1ah
+4nW9usP7HeTMvjAcCc4a8hb0x5xqKiNzYvAAcIvqheEq3ONyID0eqJRf07M4D02V
+kUZ5hMtEajw7Lx8/MiZix51PbdI7JjdDs+vhvhzM3L2eF2MHRGr3moFFoLru6DJn
+jq9Pm8oGy2ZkR/SXtbDiLiEYm+9XG6PntNr48hX7Ecgr7/kl5TLBPP11wkHDbRYZ
+lMQ9Yss/e6YUfgHNMJhPYyBUc8i9ROHevi2gfgQrAEH/Oa6h2mEpfZ3YSpbWC1pZ
+HZx2o6MDm64DOWRUvL3ZbQxkV7RMuSf0w7r5DG886RUSdbagvZQ7iXWUQfduXc+4
+/bi31OIQWlnLme7wPS2VFYmuSngYHfEl1OaIF9N2pQdK2sVsNkK0kurflB4+ZpE/
+iI5a9k9u5/k8izDhlCuORJd0rlZPRzauXSCnu3kzIKDkotZ2jgVtX0UfKRK9Sx/m
+4weJ8W4IfVyySo1Psx7Se33O95q8+pfJfATIx5DXCPBVDe7BhsPteQ9RB/KeChoW
+X55SieI7Hn9MDtu4IqfhLA267NgpuH4uuVFk323sqV/BWc8zu/JDJTA6OqdXNNt/
+/65qt12GU5fmZBWqc9to3pcNr6Yx0xhNc9tRHD26U3iI7CW1gOk=
+=pcvU
+-----END PGP SIGNATURE-----
+--=-=-=--
