@@ -1,171 +1,144 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 15 May 2017 11:24:00 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v7 11/13] ARM: sun8i: v3s: add device nodes for DE2
+ display pipeline
+Message-ID: <20170515092400.nzxmocrdqgt4u476@flea.home>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+ <20170514163045.40366-12-icenowy@aosc.io>
 MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Hilman" <khilman@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org
-References: <20170321183330.26722-1-jbrunet@baylibre.com>
-Message-ID: <149228583018.88277.3542713369128557565@resonance>
-Subject: Re: [RFC 0/7] clk: implement clock locking mechanism
-Date: Sat, 15 Apr 2017 21:50:30 +0200
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="wkdg7dacrwu6npqt"
+In-Reply-To: <20170514163045.40366-12-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
 
-Thanks for sending this series. The concept is one we've been talking
-about for years, and your approach makes sense. Some comments below.
+--wkdg7dacrwu6npqt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Quoting Jerome Brunet (2017-03-21 19:33:23)
-> This RFC patchset is related to the discussion around CLK_SET_RATE_GATE a=
-nd
-> clk_lock which available here [0]
+On Mon, May 15, 2017 at 12:30:43AM +0800, Icenowy Zheng wrote:
+> +		de2_clocks: clock@1000000 {
 
-If we merge this solution then we may want to convert some of those
-CLK_SET_RATE_GATE users and potentially some of the rate-range users
-that set min/max to the same value over to this new api.
+display_clocks would be better there, we don't have to dissociate de1
+with de2
 
-> =
+> +			compatible =3D "allwinner,sun8i-v3s-de2-clk";
+> +			reg =3D <0x01000000 0x100000>;
+> +			clocks =3D <&ccu CLK_DE>,
+> +				 <&ccu CLK_BUS_DE>;
+> +			clock-names =3D "mod",
+> +				      "bus";
+> +			resets =3D <&ccu RST_BUS_DE>;
+> +			#clock-cells =3D <1>;
+> +			#reset-cells =3D <1>;
+> +		};
+> +
+> +		de2_mixer0: mixer@1100000 {
 
-> The goal of this patchset is to provide a way for consumers to inform the
-> system that they depend on the rate of the clock source and can't tolerate
-> other consumers changing the rate or causing glitches.
-> =
+and mixer0 here is enough too.
 
-> Patches 1 to 3 are just rework to ease the integration of the locking
-> mechanism. They should not introduce any functional differences.
-> =
+Is there several of them? Why not just use mixer if there's only one?
 
-> Patch 4 is the important bit. It introduce 2 new functions to the CCF API:
-> clk_protect and clk_unprotect (The "lock" word is already used lot in
-> clk.c. Using clk_lock and clk_unlock would have been very messy. If you
-> found "protect" to be a poor choice, I'm happy to sed the whole thing in
-> future version)
-> =
+> +			compatible =3D "allwinner,sun8i-v3s-de2-mixer";
+> +			reg =3D <0x01100000 0x100000>;
+> +			clocks =3D <&de2_clocks CLK_MIXER0>,
+> +				 <&de2_clocks CLK_BUS_MIXER0>;
+> +			clock-names =3D "mod",
+> +				      "bus";
+> +			resets =3D <&de2_clocks RST_MIXER0>;
+> +			assigned-clocks =3D <&de2_clocks CLK_MIXER0>;
+> +			assigned-clock-rates =3D <150000000>;
+> +
+> +			ports {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				mixer0_out: port@1 {
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +					reg =3D <1>;
+> +
+> +					mixer0_out_tcon0: endpoint@0 {
+> +						reg =3D <0>;
+> +						remote-endpoint =3D <&tcon0_in_mixer0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		tcon0: lcd-controller@1c0c000 {
+> +			compatible =3D "allwinner,sun8i-v3s-tcon";
+> +			reg =3D <0x01c0c000 0x1000>;
+> +			interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&ccu CLK_BUS_TCON0>,
+> +				 <&ccu CLK_TCON0>;
+> +			clock-names =3D "ahb",
+> +				      "tcon-ch0";
+> +			clock-output-names =3D "tcon-pixel-clock";
+> +			resets =3D <&ccu RST_BUS_TCON0>;
+> +			reset-names =3D "lcd";
+> +			status =3D "disabled";
+> +
+> +			ports {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				tcon0_in: port@0 {
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +					reg =3D <0>;
+> +
+> +					tcon0_in_mixer0: endpoint@0 {
+> +						reg =3D <0>;
+> +						remote-endpoint =3D <&mixer0_out_tcon0>;
+> +					};
+> +				};
+> +
+> +				tcon0_out: port@1 {
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +					reg =3D <1>;
+> +				};
+> +			};
+> +		};
+> +
+> +
 
-> These calls can happen at anytime during the life of the clk. As for
-> prepare and enable, the calls must be balanced.
-> =
+You have an extra new line here.
 
-> Inside the clock framework, 2 new count values are introduced to keep tra=
-ck
-> of the protection:
-> * core "protect_count": this reference count value works in the same way =
-as
->   prepare and enable count, and track whether the clock is protected or
->   not. This is the value that will checked to allow operation which may
->   cause glitches or change the rate of clock source.
-> * clk consumer "protect_ucount": this allows to track if the consumer is
->   protecting the clock.
-> =
+Maxime
 
-> Requiring the consumer to unprotect its clock before changing it would ha=
-ve
-> been very annoying for the consumer. It would also be unsafe, as it would
-> still be possible for another consumer to change the rate between the call
-> to set_rate and protect. This needs to happen in a critical section.  A
-> solution would be to add "set_rate_protect", but we would need to do the
-> same for the set_parent and set_phase (and the possible future
-> functions). It does not scale well.  The solution proposed in this patch =
-is
-> to use the consumer protect count.
-> =
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> In function altering the clock, if the consumer is protecting the clock,
-> the protection is temporarily release under the prepare_lock. This ensure
-> that:
-> * the clock is still protect from another consumer because of the
->   prepare_lock
-> * the rate set on a protected clock cannot change between set_rate and
->   later enable
-> * only a consumer protecting a clock can do this temporary protection
->   removal (less chance of people messing with the refcount)
-> * if more than one consumer protect the clock, it remains protected.
->   Because the protection is removed for the calling consumer, it gives
->   it a chance to jump to another provider, if available.
-> =
+--wkdg7dacrwu6npqt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> This protection mechanism assume that "protecting" consumer knows what it
-> is doing when it comes to setting the rate, and does not expect to be
-> protected against itself.
-> =
+-----BEGIN PGP SIGNATURE-----
 
-> This was tested with the audio use case mentioned in [0]
-> =
+iQIcBAEBAgAGBQJZGXOwAAoJEBx+YmzsjxAgOwkP/REPXiebsiLXxW2Jv++ylW5L
+L8UmwiKpTBeK0/AGmToDRwCG6LBlKtHm61o2wAQ3unExqvB2/adQtPVomVZ2Bc5K
+z4/dJ6oyZCIhL2mniwYQD+E2hGPtoUQIDOtoFUxMZnzkdtTqg1kk0gs+F1c/BQPU
+IwW6+M0IPGVmvPmK5qQAmwa1ZLfQRMb2+fB0U/5Dmr1KGHYOyrWkMmMLrimNsIIg
+kI4tcEPdp0sZFyfzn2qndkvXyVpcfTJ3Uo+BWUDrPuEikEzo1IdpEDpz80PLTbJk
+85un3cR+4dckXzg5EXd29+ygFqmvVGXHRB5ex9QXakjuvoCXhR8P2q47WUJmfCfh
+fEQ5XXew3pUgh2Ga31G5H0o7xVnl2wdFt3lCIRvvnBmvuEgK/ATOTytSPUHIblQu
+MVCaCHlx7/PVa+PSoVvcwzA9gHe3GFBMfPmvuvqXrl1Tp2wNYoj6F5NNQM/5V+rA
+58mjsIyDYK5lhXureugayrULVICApyZ3vVbDEN/W2SforJljzqqc/adWsxlYZBjt
+p2JHGrtRr5EJJMbUJwHBSncze6RUsLWKzW6W0s1DQrpiY7HtqYDi4T8rxRBKL1+1
+MpsMgsWR3jkek79ZEtojTC+7qcXbBcC/kGDR185B/fzpYPswiz9+t7StHKUPDgWf
+cA+pjNAZWxMXwEvl8ESU
+=vHX0
+-----END PGP SIGNATURE-----
 
-> One caveat is the following case:
-> N+1 consumers protect their clocks. These clocks come from N possible
-> providers. We should able to satisfy at least N consumers before exhausti=
-ng
-> the resources.  In the particular case where all the consumers call
-> "protect" before having a chance to call "set_rate", the last 2 consumers
-> will remains stuck on the last provider w/o being able to set the rate on
-> it. This means that in situation where there is 2 consumers on 1
-> providers, they will compete for the clock, and may end up in situation
-> where both protect the clock and none can set the rate they need.  This c=
-an
-> be solved if, when the rate fails to be set, the consumer release the
-> protection. Then the second consumer will be able to satisfy its request.
-
-This situation can be handled a bit more gracefully if clk_set_rate_lock
-both returns an error code if setting the rate failes AND it releases
-the rate lock in that case. At least that helps for the case of
-initializing rates during .probe(). Automatically dropping the lock
-might complicate things in other cases though...
-
-Best regards,
-Mike
-
-> =
-
-> Patch 5 is a small change on set_rate_range to restore the old range on
-> failure. It don't use set_rate_range in any driver so I could not test th=
-is
-> change.
-> =
-
-> Patch 6 is just a cosmetic change to clk_summary debugfs entry to make it
-> less wide after adding protect count in it.
-> =
-
-> Patch 7 fix a warning reported by checkpatch.pl. Apparently, ENOSYS is us=
-ed
-> incorrectly.
-> =
-
-> Bonus:
-> =
-
-> With this patchset, we should probably change the use the flags
-> "CLK_SET_RATE_GATE" and "CLK_SET_PARENT_GATE" We discussed removing
-> them. Another solution would be to have them automatically gate the clock
-> before performing the related operation.  What is your view on this ?
-> =
-
-> [0]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@res=
-onance
-> =
-
-> Jerome Brunet (7):
->   clk: take the prepare lock out of clk_core_set_parent
->   clk: add set_phase core function
->   clk: rework calls to round and determine rate callbacks
->   clk: add support for clock protection
->   clk: rollback set_rate_range changes on failure
->   clk: cosmetic changes to clk_summary debugfs entry
->   clk: fix incorrect usage of ENOSYS
-> =
-
->  drivers/clk/clk.c            | 313 ++++++++++++++++++++++++++++++++++---=
-------
->  include/linux/clk-provider.h |   1 +
->  include/linux/clk.h          |  29 ++++
->  3 files changed, 279 insertions(+), 64 deletions(-)
-> =
-
-> -- =
-
-> 2.9.3
->=20
+--wkdg7dacrwu6npqt--
