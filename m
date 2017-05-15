@@ -1,24 +1,76 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Eddie Cai <eddie.cai.linux@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, zhengxing@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH V2  2/2] clk: rockchip: fix the incorrect ids
-Date: Wed, 17 May 2017 19:57:02 +0200
-Message-ID: <1707274.tv1fl5P7jF@phil>
-In-Reply-To: <1493102470-22965-3-git-send-email-eddie.cai.linux@gmail.com>
-References: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com> <1493102470-22965-3-git-send-email-eddie.cai.linux@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>
+CC: <xiaolong.zhang@spreadtrum.com>, <orson.zhai@spreadtrum.com>,
+        <geng.ren@spreadtrum.com>, <arnd@arndb.de>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <zhang.lyra@gmail.com>,
+        <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH 0/3] add clock driver for Spreadtrum platforms
+Date: Mon, 15 May 2017 16:34:59 +0800
+Message-ID: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 25. April 2017, 14:41:10 CEST schrieb Eddie Cai:
-> the ids of clk_testout1 and clk_testout2 is incorrect now. let's correct it
-> 
-> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
+In the last cycle, the patches support Whale2 sc9860 mobile chip have been
+merged. This patchset adds clock driver which is used on almost all
+Spreadtrum SoCs.
 
-applied for 4.13, after fixing the subject up a bit [the old ids are not
-incorrect, there simply weren't any assigned to the testclks yet :-) ]
+This series also adds Spreadtrum clock bindings and SC9860 clock devicetree
+data.
+
+This driver has been validated on Spreadtrum SC9860 mobile phone.
+
+Any comments would be greatly appreciated.
+
+Thanks,
+Chunyan
 
 
-Thanks
-Heiko
+Chunyan Zhang (1):
+  Documentation: add sprd clock bindings
+
+Xiaolong Zhang (2):
+  arm64: dts: add SC9860 clock tree data
+  clk: Add common clock driver for Spreadtrum SoCs
+
+ .../clock/sprd/sprd,adjustable-pll-clock.txt       |   17 +
+ .../bindings/clock/sprd/sprd,composite-clock.txt   |   28 +
+ .../bindings/clock/sprd/sprd,divider-clock.txt     |   24 +
+ .../bindings/clock/sprd/sprd,gates-clock.txt       |   73 +
+ .../bindings/clock/sprd/sprd,muxed-clock.txt       |   23 +
+ arch/arm64/boot/dts/sprd/sc9860-clocks.dtsi        | 1984 ++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/sc9860.dtsi               |    1 +
+ arch/arm64/boot/dts/sprd/whale2.dtsi               |    7 -
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/sprd/Makefile                          |    3 +
+ drivers/clk/sprd/clk-gates.c                       |  366 ++++
+ drivers/clk/sprd/composite.c                       |  109 ++
+ drivers/clk/sprd/divider.c                         |   79 +
+ drivers/clk/sprd/mux.c                             |   77 +
+ drivers/clk/sprd/pll.c                             |  359 ++++
+ drivers/clk/sprd/pll.h                             |   73 +
+ drivers/clk/sprd/pll_cfg.h                         |  390 ++++
+ 17 files changed, 3607 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
+ create mode 100644 arch/arm64/boot/dts/sprd/sc9860-clocks.dtsi
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/clk-gates.c
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/divider.c
+ create mode 100644 drivers/clk/sprd/mux.c
+ create mode 100644 drivers/clk/sprd/pll.c
+ create mode 100644 drivers/clk/sprd/pll.h
+ create mode 100644 drivers/clk/sprd/pll_cfg.h
+
+-- 
+2.7.4
