@@ -1,437 +1,124 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/5 v3] clk: Add Gemini SoC clock controller
-Date: Mon, 15 May 2017 19:19:22 +0200
-Message-Id: <20170515171922.1069-1-linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:43550 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760043AbdEOJUI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2017 05:20:08 -0400
+Date: Mon, 15 May 2017 11:20:01 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v7 05/13] drm/sun4i: abstract a engine type
+Message-ID: <20170515092001.ik7qrqmg5pgtp2ct@flea.home>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+ <20170514163045.40366-6-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uyxswgfiqviio6dj"
+In-Reply-To: <20170514163045.40366-6-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
-controller that derive all clocks from a single crystal, using some
-documented and some undocumented PLLs, half dividers, counters and
-gates. This is a best attempt to construct a clock driver for the
-clocks so at least we can gate off unused hardware and driver the
-PCI bus clock.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v2->v3:
-- Augment driver to probe directly from the system controller.
-- Mike/Stephen: when you're happy with this please ACK it so I
-  can merge it through ARM SoC. This is needed because of
-  the mess of #include <dt-bindings/*> from the DT bindings
-  that is then used all over the DTS files.
-ChangeLog v1->v2:
-- Move the clock controller to be part of the syscon node. No
-  need for a separate child node for this.
----
- drivers/clk/Kconfig      |   7 +
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-gemini.c | 357 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 365 insertions(+)
- create mode 100644 drivers/clk/clk-gemini.c
+--uyxswgfiqviio6dj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 36cfea38135f..69178fd58ac8 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -126,6 +126,13 @@ config COMMON_CLK_CS2000_CP
- 	help
- 	  If you say yes here you get support for the CS2000 clock multiplier.
- 
-+config COMMON_CLK_GEMINI
-+	bool "Clock driver for Cortina Systems Gemini SoC"
-+	select MFD_SYSCON
-+	---help---
-+	  This driver supports the SoC clocks on the Cortina Systems Gemini
-+	  platform, also known as SL3516 or CS3516.
-+
- config COMMON_CLK_S2MPS11
- 	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
- 	depends on MFD_SEC_CORE || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index c19983afcb81..a625c002a810 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
- obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
- obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
-+obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
- obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
-diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
-new file mode 100644
-index 000000000000..5a0de8415f91
---- /dev/null
-+++ b/drivers/clk/clk-gemini.c
-@@ -0,0 +1,357 @@
-+/*
-+ * Cortina Gemini Clock Controller driver
-+ * Copyright (c) 2017 Linus Walleij <linus.walleij@linaro.org>
-+ */
-+
-+#define pr_fmt(fmt) "clk-gemini: " fmt
-+
-+#include <linux/clkdev.h>
-+#include <linux/slab.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <dt-bindings/clock/cortina,gemini-clock.h>
-+
-+/* Globally visible clocks */
-+static DEFINE_SPINLOCK(gemini_clk_lock);
-+static struct clk *gemini_clks[GEMINI_NUM_CLKS];
-+static struct clk_onecell_data gemini_clk_data;
-+
-+#define GEMINI_GLOBAL_STATUS 0x04
-+#define PLL_OSC_SEL BIT(30)
-+#define AHBSPEED_SHIFT (15)
-+#define AHBSPEED_MASK 0x07
-+#define CPU_AHB_RATIO_SHIFT (18)
-+#define CPU_AHB_RATIO_MASK 0x03
-+
-+#define GEMINI_GLOBAL_PLL_CONTROL 0x08
-+
-+#define GEMINI_GLOBAL_MISC_CONTROL 0x30
-+#define PCI_CLK_66MHZ BIT(18)
-+#define PCI_CLK_OE BIT(17)
-+
-+#define GEMINI_GLOBAL_CLOCK_CONTROL 0x34
-+#define PCI_CLKRUN_EN BIT(16)
-+#define TVC_HALFDIV_SHIFT (24)
-+#define TVC_HALFDIV_MASK 0x1f
-+#define SECURITY_CLK_SEL BIT(29)
-+
-+#define GEMINI_GLOBAL_PCI_DLL_CONTROL 0x44
-+#define PCI_DLL_BYPASS BIT(31)
-+#define PCI_DLL_TAP_SEL_MASK 0x1f
-+
-+struct gemini_gate_data {
-+	u8 bit_idx;
-+	const char *name;
-+	const char *parent_name;
-+	unsigned long flags;
-+};
-+
-+/**
-+ * struct clk_gemini_pci - Gemini PCI clock
-+ * @hw: corresponding clock hardware entry
-+ * @map: regmap to access the registers
-+ * @rate: current rate
-+ */
-+struct clk_gemini_pci {
-+	struct clk_hw hw;
-+	struct regmap *map;
-+	unsigned long rate;
-+};
-+
-+/*
-+ * FIXME: some clocks are marked as CLK_IGNORE_UNUSED: this is
-+ * because their kernel drivers lack proper clock handling so we
-+ * need to avoid them being gated off by default. Remove this as
-+ * the drivers get fixed to handle clocks properly.
-+ *
-+ * The DDR controller may never have a driver, but certainly must
-+ * not be gated off.
-+ */
-+static const struct gemini_gate_data gemini_gates[] __initconst = {
-+	{ 1, "security-gate", "secdiv", 0 },
-+	{ 2, "gmac0-gate", "ahb", 0 },
-+	{ 3, "gmac1-gate", "ahb", 0 },
-+	{ 4, "sata0-gate", "ahb", 0 },
-+	{ 5, "sata1-gate", "ahb", 0 },
-+	{ 6, "usb0-gate", "ahb", 0 },
-+	{ 7, "usb1-gate", "ahb", 0 },
-+	{ 8, "ide-gate", "ahb", 0 },
-+	{ 9, "pci-gate", "ahb", 0 },
-+	{ 10, "ddr-gate", "ahb", CLK_IGNORE_UNUSED },
-+	{ 11, "flash-gate", "ahb", CLK_IGNORE_UNUSED },
-+	{ 12, "tvc-gate", "ahb", 0 },
-+	{ 13, "boot-gate", "apb", 0 },
-+};
-+
-+#define to_pciclk(_hw) container_of(_hw, struct clk_gemini_pci, hw)
-+
-+static unsigned long gemini_pci_recalc_rate(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	struct clk_gemini_pci *pciclk = to_pciclk(hw);
-+	u32 val;
-+	int ret;
-+
-+	ret = regmap_read(pciclk->map, GEMINI_GLOBAL_MISC_CONTROL, &val);
-+	if (ret)
-+		return ret;
-+	if (val & PCI_CLK_66MHZ)
-+		return 66000000;
-+	return 33000000;
-+}
-+
-+static long gemini_pci_round_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long *prate)
-+{
-+	/* We support 33 and 66 MHz */
-+	if (rate < 48000000)
-+		return 33000000;
-+	return 66000000;
-+}
-+
-+static int gemini_pci_set_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long parent_rate)
-+{
-+	struct clk_gemini_pci *pciclk = to_pciclk(hw);
-+
-+	if (rate == 33000000)
-+		return regmap_update_bits(pciclk->map,
-+					  GEMINI_GLOBAL_MISC_CONTROL,
-+					  PCI_CLK_66MHZ, 0);
-+	if (rate == 66000000)
-+		return regmap_update_bits(pciclk->map,
-+					  GEMINI_GLOBAL_MISC_CONTROL,
-+					  0, PCI_CLK_66MHZ);
-+	return -EINVAL;
-+}
-+
-+static int gemini_pci_enable(struct clk_hw *hw)
-+{
-+	struct clk_gemini_pci *pciclk = to_pciclk(hw);
-+
-+	regmap_update_bits(pciclk->map, GEMINI_GLOBAL_CLOCK_CONTROL,
-+			   0, PCI_CLKRUN_EN);
-+	regmap_update_bits(pciclk->map,
-+			   GEMINI_GLOBAL_MISC_CONTROL,
-+			   0, PCI_CLK_OE);
-+	return 0;
-+}
-+
-+static void gemini_pci_disable(struct clk_hw *hw)
-+{
-+	struct clk_gemini_pci *pciclk = to_pciclk(hw);
-+
-+	regmap_update_bits(pciclk->map,
-+			   GEMINI_GLOBAL_MISC_CONTROL,
-+			   PCI_CLK_OE, 0);
-+	regmap_update_bits(pciclk->map, GEMINI_GLOBAL_CLOCK_CONTROL,
-+			   PCI_CLKRUN_EN, 0);
-+}
-+
-+static int gemini_pci_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_gemini_pci *pciclk = to_pciclk(hw);
-+	int ret;
-+	unsigned int val;
-+
-+	ret = regmap_read(pciclk->map, GEMINI_GLOBAL_CLOCK_CONTROL, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !!(val & PCI_CLKRUN_EN);
-+}
-+
-+static const struct clk_ops gemini_pci_clk_ops = {
-+	.recalc_rate = gemini_pci_recalc_rate,
-+	.round_rate = gemini_pci_round_rate,
-+	.set_rate = gemini_pci_set_rate,
-+	.enable = gemini_pci_enable,
-+	.disable = gemini_pci_disable,
-+	.is_enabled = gemini_pci_is_enabled,
-+};
-+
-+static struct clk *gemini_pci_clk_setup(const char *name,
-+					const char *parent_name,
-+					struct regmap *map)
-+{
-+	struct clk_gemini_pci *pciclk;
-+	struct clk_init_data init;
-+	struct clk *clk;
-+
-+	pciclk = kzalloc(sizeof(*pciclk), GFP_KERNEL);
-+	if (!pciclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &gemini_pci_clk_ops;
-+	init.flags = 0;
-+	init.parent_names = (parent_name ? &parent_name : NULL);
-+	init.num_parents = (parent_name ? 1 : 0);
-+	pciclk->map = map;
-+	pciclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pciclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(pciclk);
-+
-+	return clk;
-+}
-+
-+static void __init gemini_cc_init(struct device_node *np)
-+{
-+	void __iomem *base;
-+	struct regmap *map;
-+	struct clk *clk;
-+	unsigned int mult, div;
-+	unsigned long freq;
-+	u32 val;
-+	int ret;
-+	int i;
-+
-+	/* Remap the system controller for the exclusive register */
-+	base = of_iomap(np, 0);
-+	if (!base) {
-+		pr_err("no memory base\n");
-+		return;
-+	}
-+	map = syscon_node_to_regmap(np);
-+	if (IS_ERR(map)) {
-+		pr_err("no syscon regmap\n");
-+		return;
-+	}
-+
-+	/* RTC clock 32768 Hz */
-+	clk = clk_register_fixed_rate(NULL, "rtc", NULL, CLK_IGNORE_UNUSED,
-+				      32768);
-+	gemini_clks[GEMINI_CLK_RTC] = clk;
-+
-+	ret = regmap_read(map, GEMINI_GLOBAL_STATUS, &val);
-+	if (ret) {
-+		pr_err("failed to read global status register\n");
-+		return;
-+	}
-+
-+	/*
-+	 * XTAL is the crystal oscillator, 60 or 30 MHz selected from
-+	 * strap pin E6
-+	 */
-+	if (val & PLL_OSC_SEL)
-+		freq = 30000000;
-+	else
-+		freq = 60000000;
-+	clk = clk_register_fixed_rate(NULL, "xtal", NULL, CLK_IGNORE_UNUSED,
-+				      freq);
-+	pr_info("main crystal @%lu MHz\n", (freq/1000000));
-+
-+	/* VCO clock derived from the crystal */
-+	mult = 13 + ((val >> AHBSPEED_SHIFT) & AHBSPEED_MASK);
-+	div = 2;
-+	/* If we run on 30 Mhz crystal we have to multiply with two */
-+	if (val & PLL_OSC_SEL)
-+		mult *= 2;
-+	clk = clk_register_fixed_factor(NULL, "vco", "xtal", CLK_IGNORE_UNUSED,
-+					mult, div);
-+
-+	/* The AHB clock is always 1/3 of the VCO */
-+	clk = clk_register_fixed_factor(NULL, "ahb", "vco",
-+					CLK_IGNORE_UNUSED, 1, 3);
-+	gemini_clks[GEMINI_CLK_AHB] = clk;
-+
-+	/* The APB clock is always 1/6 of the AHB */
-+	clk = clk_register_fixed_factor(NULL, "apb", "ahb",
-+					CLK_IGNORE_UNUSED, 1, 6);
-+	gemini_clks[GEMINI_CLK_APB] = clk;
-+
-+	/* CPU clock derived as a fixed ratio from the AHB clock */
-+	switch ((val >> CPU_AHB_RATIO_SHIFT) & CPU_AHB_RATIO_MASK) {
-+	case 0x0:
-+		/* 1x */
-+		mult = 1;
-+		div = 1;
-+		break;
-+	case 0x1:
-+		/* 1.5x */
-+		mult = 3;
-+		div = 2;
-+		break;
-+	case 0x2:
-+		/* 1.85x */
-+		mult = 24;
-+		div = 13;
-+		break;
-+	case 0x3:
-+		/* 2x */
-+		mult = 2;
-+		div = 1;
-+		break;
-+	}
-+	clk = clk_register_fixed_factor(NULL, "cpu", "ahb",
-+					CLK_IGNORE_UNUSED, mult, div);
-+	gemini_clks[GEMINI_CLK_CPU] = clk;
-+
-+	/* Security clock is 1:1 or 0.75 of APB */
-+	ret = regmap_read(map, GEMINI_GLOBAL_CLOCK_CONTROL, &val);
-+	if (ret) {
-+		pr_err("failed to read global clock control register\n");
-+		return;
-+	}
-+	if (val & SECURITY_CLK_SEL) {
-+		mult = 1;
-+		div = 1;
-+	} else {
-+		mult = 3;
-+		div = 4;
-+	}
-+	clk = clk_register_fixed_factor(NULL, "secdiv", "ahb",
-+					0, mult, div);
-+
-+	/*
-+	 * These are the leaf gates, at boot no clocks are gated.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(gemini_gates); i++) {
-+		const struct gemini_gate_data *gd;
-+
-+		gd = &gemini_gates[i];
-+		gemini_clks[GEMINI_CLK_GATES + i] =
-+			clk_register_gate(NULL, gd->name,
-+					  gd->parent_name,
-+					  gd->flags,
-+					  base + GEMINI_GLOBAL_CLOCK_CONTROL,
-+					  gd->bit_idx,
-+					  CLK_GATE_SET_TO_DISABLE,
-+					  &gemini_clk_lock);
-+	}
-+
-+	/*
-+	 * The TV Interface Controller has a 5-bit half divider register.
-+	 * This clock is supposed to be 27MHz as this is an exact multiple
-+	 * of PAL and NTSC frequencies. The register is undocumented :(
-+	 * FIXME: figure out the parent and how the divider works.
-+	 */
-+	mult = 1;
-+	div = ((val >> TVC_HALFDIV_SHIFT) & TVC_HALFDIV_MASK);
-+	pr_debug("TVC half divider value = %d\n", div);
-+	div += 1;
-+	clk = clk_register_fixed_rate(NULL, "tvcdiv", "xtal", 0, 27000000);
-+	gemini_clks[GEMINI_CLK_TVC] = clk;
-+
-+	/* FIXME: very unclear what the parent is */
-+	clk = gemini_pci_clk_setup("PCI", "xtal", map);
-+	gemini_clks[GEMINI_CLK_PCI] = clk;
-+
-+	/* FIXME: very unclear what the parent is */
-+	clk = clk_register_fixed_rate(NULL, "uart", "xtal", CLK_IGNORE_UNUSED,
-+				      48000000);
-+	gemini_clks[GEMINI_CLK_UART] = clk;
-+
-+	/* Register the clocks to be accessed by the device tree */
-+	gemini_clk_data.clks = gemini_clks;
-+	gemini_clk_data.clk_num = ARRAY_SIZE(gemini_clks);
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &gemini_clk_data);
-+}
-+CLK_OF_DECLARE_DRIVER(gemini_cc, "cortina,gemini-syscon", gemini_cc_init);
--- 
-2.9.3
+On Mon, May 15, 2017 at 12:30:37AM +0800, Icenowy Zheng wrote:
+> As we are going to add support for the Allwinner DE2 engine in sun4i-drm
+> driver, we will finally have two types of display engines -- the DE1
+> backend and the DE2 mixer. They both do some display blending and feed
+> graphics data to TCON, and is part of the "Display Engine" called by
+> Allwinner, so I choose to call them both "engine" here.
+>=20
+> Abstract the engine type to a new struct with an ops struct, which contai=
+ns
+> functions that should be called outside the engine-specified code (in
+> TCON, CRTC or TV Encoder code).
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+> Changes in v7:
+> - Mention "Display Engine" for the name "engine".
+> - Fixed some small issues found by Chen-Yu and added his ACK.
+> Changes in v6:
+> - Rebased on wens's multi-pipeline patchset.
+> - Split out Makefile changes.
+
+You also added a get_id callback here...
+
+> +static const struct sunxi_engine_ops sun4i_backend_engine_ops =3D {
+> +	.commit				=3D sun4i_backend_commit,
+> +	.layers_init			=3D sun4i_layers_init,
+> +	.apply_color_correction		=3D sun4i_backend_apply_color_correction,
+> +	.disable_color_correction	=3D sun4i_backend_disable_color_correction,
+> +};
+> +
+
+=2E.. that you don't populate ...
+
+> @@ -477,7 +481,7 @@ static int sun4i_tcon_bind(struct device *dev, struct=
+ device *master,
+>  	dev_set_drvdata(dev, tcon);
+>  	tcon->drm =3D drm;
+>  	tcon->dev =3D dev;
+> -	tcon->id =3D backend->id;
+> +	tcon->id =3D sunxi_engine_get_id(engine);
+
+=2E.. that you call to fill the TCON ID ...
+
+> +/**
+> + * sunxi_engine_get_id - Get the ID of the engine.
+> + * @engine:	pointer to the engine
+> + *
+> + * If the ID is not necessary, just do not implement it in sunxi_engine_=
+ops,
+> + * and a default -1 will be returned.
+> + */
+> +static inline int
+> +sunxi_engine_get_id(struct sunxi_engine *engine)
+> +{
+> +	if (engine->ops && engine->ops->get_id)
+> +		return engine->ops->get_id(engine);
+> +
+> +	return -1;
+
+=2E.. and will return -1 if not populated, which essentially means that
+instead of having 0 or 1, we're now having -1 as our id.
+
+This is a regression, and I'm even wondering if we can't just store
+the ID in the sunxi_engine structure. Is anything preventing us to do
+that, instead of using a callback?
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--uyxswgfiqviio6dj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZGXLAAAoJEBx+YmzsjxAgg2IQAI9v3T5SjR/OtBfDFOTdzuNv
+E6V9jJj57X2yg6JA/PG7ALWsx/hePBJfXCJZ31Cmkjk/iDO1pFSa5DS52eRszUQT
+1634g5aKs8sO3TGSzsmz+5Xb5rNqZXpAtZjnbakjsXhMN5jjqgbM/4n6ts6rIZfE
+Q5WUFUZdh8Ua0wq/sxmTDcgaQhxttVxSFSc6aBwzaBbSyU8Qk1njfs3fwBWZilvD
+D1xf03VSOmqlTTb5q7lzwnf9fB3ufUHxFc3no3diPCMM6PDettKVGODU9C2rPbNh
+H22cDxQN6He5nuJAi3qfa5ZzEDJjgMY40s6FRukXpOh5PUyGE8QjZKRg4k5O5PYI
+54an7VkcUcN1jwRpe/Y74SggSBDJkgxfQ9+GeCkawydEFd09/kOVPbbjSrH04mjF
+DGdB7iDErMf50zxnmAiHjFdxf16BiCJv2EZEq60+XsFQc1K9GS+8vANORv23BJLq
+32plwp7qtCimpA5k6uIFiiomHqfqQHk9t2e6X5xrdxJAp3HGp2/1QZbTGdv0qPiq
+wVIcvShdhd2RdsPasNevKjhLgjigxjZkN/RVcV/c2kWnn2SDlc/9HO512tzmkBWO
+eH57gR++NATdnrO4xfnGPYtKAkH7WhYQKSmHBVGfcUr0vhO47yBBc4yZ6d5ygSTO
+KS+RHvYcZtrAAEFKozHH
+=nwP+
+-----END PGP SIGNATURE-----
+
+--uyxswgfiqviio6dj--
