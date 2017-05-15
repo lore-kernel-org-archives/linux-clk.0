@@ -1,94 +1,59 @@
-Return-Path: <phil@raspberrypi.org>
-Subject: Re: [PATCH 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
-To: Stefan Wahren <stefan.wahren@i2se.com>, linux-clk@vger.kernel.org,
-        Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Florian Fainelli
- <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org
-References: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
- <684006892.45085.1496169665454@email.1und1.de>
-From: Phil Elwell <phil@raspberrypi.org>
-Message-ID: <56d5f9c5-ba15-4d3e-7956-fb697fe12114@raspberrypi.org>
-Date: Wed, 31 May 2017 09:28:31 +0100
-MIME-Version: 1.0
-In-Reply-To: <684006892.45085.1496169665454@email.1und1.de>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v2 01/11] dt-bindings: bcm: Add Broadcom Stingray bindings document
+Date: Mon, 15 May 2017 17:32:11 +0530
+Message-Id: <1494849741-21294-2-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+This patch adds DT bindings info for Broadcom Stingray SOC
+and related reference boards.
 
-On 30/05/2017 19:41, Stefan Wahren wrote:
-> Hi Phil,
-> 
->> Phil Elwell <phil@raspberrypi.org> hat am 30. Mai 2017 um 18:28 geschrieben:
->>
->>
->> Restrict clock sources for the PCM peripheral to the oscillator and
->> PLLD_PER because other source may have varying rates or be switched off.
-> 
->> Prevent other sources from being selected by replacing their names in
->> the list of potential parents with dummy entries (entry index is
->> significant).
-> 
-> i like to have this as a comment above the definition of bcm2835_pcm_per_parents.
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
 
-Sure - good idea.
-
->>
->> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
->> ---
->>  drivers/clk/bcm/clk-bcm2835.c | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
->> index 0258538..facc346 100644
->> --- a/drivers/clk/bcm/clk-bcm2835.c
->> +++ b/drivers/clk/bcm/clk-bcm2835.c
->> @@ -1511,6 +1511,16 @@ struct bcm2835_clk_desc {
->>  	"pllh_aux",
->>  };
->>
->> +static const char *const bcm2835_pcm_per_parents[] = {
-> 
-> As mentioned above, there should be a comment like all the others.
-
-Yes, will do.
-
->> +	"-",
->> +	"xosc",
->> +	"-",
->> +	"-",
->> +	"-",
->> +	"-",
->> +	"plld_per",
->> +};
-> 
-> Is there a dummy entry for "pllh_aux" missing?
-
-Yes and no - adding it will cause an extra iteration around the loop, but 
-perhaps it's less confusing. I'll add one.
-
->> +
->>  #define REGISTER_PER_CLK(...)	REGISTER_CLK(				\
->>  	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),	\
->>  	.parents = bcm2835_clock_per_parents,				\
->> @@ -2000,6 +2010,7 @@ struct bcm2835_clk_desc {
->>  		.int_bits = 12,
->>  		.frac_bits = 12,
->>  		.is_mash_clock = true,
->> +		.parents = bcm2835_pcm_per_parents,
-> 
-> This looks a little bit hacky to me. Not sure, but can we do something like this?
-> 
-> #define REGISTER_PCM_CLK(...)	REGISTER_CLK(				\
-> 	.num_mux_parents = ARRAY_SIZE(bcm2835_pcm_per_parents),	\
-> 	.parents = bcm2835_pcm_per_parents,				\
-> 	__VA_ARGS__)
-
-Of course - no problem.
-
-Thanks for the feedback - it will be incorporated into V2.
-
-Phil
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+new file mode 100644
+index 0000000..23a0217
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+@@ -0,0 +1,12 @@
++Broadcom Stingray device tree bindings
++------------------------------------------------
++
++Boards with Stingray shall have the following properties:
++
++Required root node property:
++
++Stingray Combo SVK board
++compatible = "brcm,bcm958742k", "brcm,stingray";
++
++Stingray SST100 board
++compatible = "brcm,bcm958742t", "brcm,stingray";
+-- 
+2.7.4
