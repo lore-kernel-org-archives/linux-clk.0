@@ -1,61 +1,59 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 5 May 2017 22:04:40 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Yong Deng <iemdey@gmail.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH v2] clk: sunxi-ng: v3s: Fix usb otg device reset bit
-Message-ID: <20170505200440.zje5s7x2seglxzi6@lukather>
-References: <1493980317-39775-1-git-send-email-iemdey@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sjuwigzvkwue2d5a"
-In-Reply-To: <1493980317-39775-1-git-send-email-iemdey@gmail.com>
+Return-Path: <guodong.xu@linaro.org>
+Return-Path: <guodong.xu@linaro.org>
+From: Guodong Xu <guodong.xu@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	guodong.xu@linaro.org,
+	chenjun14@huawei.com,
+	zhongkaihua@huawei.com,
+	zhangfei.gao@linaro.org,
+	leo.yan@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Zheng Shaobo <zhengshaobo1@huawei.com>
+Subject: [PATCH 3/3] clk: hi3660: Set PPLL2 to 2880M
+Date: Mon, 15 May 2017 13:54:23 +0800
+Message-Id: <20170515055423.1803-3-guodong.xu@linaro.org>
+In-Reply-To: <20170515055423.1803-1-guodong.xu@linaro.org>
+References: <20170515055423.1803-1-guodong.xu@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Zhong Kaihua <zhongkaihua@huawei.com>
 
---sjuwigzvkwue2d5a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Set PPLL2 to 2880M. With this patch, we saw better compatibility
+on various 1080p HDMI monitors.
 
-Hi,
+Signed-off-by: Zhong Kaihua <zhongkaihua@huawei.com>
+Signed-off-by: Zheng Shaobo <zhengshaobo1@huawei.com>
+---
+ drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Fri, May 05, 2017 at 06:31:57PM +0800, Yong Deng wrote:
-> V3S's usb otg device reset bit should be 24, not 23.
->=20
-> Signed-off-by: Yong Deng <iemdey@gmail.com>
-> Reviewed-By: Icenowy Zheng <icenowy@aosc.io>
-
-Applied, thanks.
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---sjuwigzvkwue2d5a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJZDNrTAAoJEBx+YmzsjxAgt1gP/jz2mZKFfW0M9+r9AyS8iyJF
-obN/nycxGtPUweNdPWWPxEcN+hllB7w9BllCwgtM/10eNo3Xt2OPnU6XjMD21RRr
-PBtpVd0gFzNDFtNDJ4UEi8Wrx0LzPEkTZJhA9jgUhghd3nNus9g5FF3qTHwN2Zy5
-MfNW9pwriCbGlATmIWNNejsDG897vM3XiNRtHxsHPLWGmSmSJk+akwvY1hV4bbJN
-/xbcL6+/OoOq2Sd3Yts/bQu2ZEa2NwO6Uj5djPFZ8++JEzoj3pEFKbLJcHUGMKcP
-hiCXdUwitiOnEKVwcmrzYgJHhtmay8YNbUnRPlUGGhZy5xq/PJxfYkLSrxspKO/h
-L8i6gvD069JOyo3EMVp+D7kSarJke38lf3rJLtV/S+b3FOS2G5SpjnBOMlCBwxBR
-Ihk8Uzxx7voZrmq/tZU8B0Pw8VETffVxhL8TiB603JHKQYWFm2myqETFLZMOZOLl
-J+rkKzGmpKlV1gYwnLDUxUPXJ5ECQAsXKWK32geNuvFItYddDCyzvQNB06tccPDl
-dt4ojCCewG8a2q8ZlEyhkw0a1rrynS8ScEWvHJdR99PfCgTx4/06SgpRRE9KkPMO
-UAE//JNl81fYfqkxBY4le+IgSs0812+YMpeWG3zOkoqeCPEBcGKidiVTRuXftyq5
-B3+Da97v9Zu2xd6927WA
-=m2CX
------END PGP SIGNATURE-----
-
---sjuwigzvkwue2d5a--
+diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+index ffc765a..fd5ce7f 100644
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -20,7 +20,7 @@ static const struct hisi_fixed_rate_clock hi3660_fixed_rate_clks[] = {
+ 	{ HI3660_CLK_FLL_SRC, "clk_fll_src", NULL, 0, 128000000, },
+ 	{ HI3660_CLK_PPLL0, "clk_ppll0", NULL, 0, 1600000000, },
+ 	{ HI3660_CLK_PPLL1, "clk_ppll1", NULL, 0, 1866000000, },
+-	{ HI3660_CLK_PPLL2, "clk_ppll2", NULL, 0, 960000000, },
++	{ HI3660_CLK_PPLL2, "clk_ppll2", NULL, 0, 2880000000, },
+ 	{ HI3660_CLK_PPLL3, "clk_ppll3", NULL, 0, 1290000000, },
+ 	{ HI3660_CLK_SCPLL, "clk_scpll", NULL, 0, 245760000, },
+ 	{ HI3660_PCLK, "pclk", NULL, 0, 20000000, },
+@@ -42,7 +42,7 @@ static const struct hisi_fixed_factor_clock hi3660_crg_fixed_factor_clks[] = {
+ 	{ HI3660_CLK_GATE_I2C6, "clk_gate_i2c6", "clk_i2c6_iomcu", 1, 4, 0, },
+ 	{ HI3660_CLK_DIV_SYSBUS, "clk_div_sysbus", "clk_mux_sysbus", 1, 7, 0, },
+ 	{ HI3660_CLK_DIV_320M, "clk_div_320m", "clk_320m_pll_gt", 1, 5, 0, },
+-	{ HI3660_CLK_DIV_A53, "clk_div_a53hpm", "clk_a53hpm_andgt", 1, 2, 0, },
++	{ HI3660_CLK_DIV_A53, "clk_div_a53hpm", "clk_a53hpm_andgt", 1, 6, 0, },
+ 	{ HI3660_CLK_GATE_SPI0, "clk_gate_spi0", "clk_ppll0", 1, 8, 0, },
+ 	{ HI3660_CLK_GATE_SPI2, "clk_gate_spi2", "clk_ppll0", 1, 8, 0, },
+ 	{ HI3660_PCIEPHY_REF, "clk_pciephy_ref", "clk_div_pciephy", 1, 1, 0, },
+-- 
+2.10.2
