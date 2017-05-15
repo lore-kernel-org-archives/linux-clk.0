@@ -1,103 +1,86 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:52250 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758178AbdEONOM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 May 2017 09:14:12 -0400
+Date: Mon, 15 May 2017 14:13:35 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Anup Patel <anup.patel@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Oza Pawandeep <oza.oza@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Pramod Kumar <pramod.kumar@broadcom.com>,
+        Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: Re: [PATCH v2 04/11] arm64: dts: Initial DTS files for Broadcom
+ Stingray SOC
+Message-ID: <20170515131334.GE17776@leverpostej>
+References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+ <1494849741-21294-5-git-send-email-anup.patel@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com>
-References: <20170508201159.31634-1-linus.walleij@linaro.org> <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 8 May 2017 23:41:38 +0200
-Message-ID: <CACRpkdY+EzbbTy6PzN5-YhCnSxPoKej2z=t-7eC3CPqDa6Q4_w@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] clk: Add bindings for the Gemini Clock Controller
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, openwrt-devel@openwrt.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494849741-21294-5-git-send-email-anup.patel@broadcom.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 8, 2017 at 11:24 PM, Rob Herring <robh+dt@kernel.org> wrote:
+Hi,
 
->> +Example:
->> +
->> +syscon: syscon@40000000 {
->> +       compatible = "cortina,gemini-syscon", "cortina,gemini-clock-controller",
->> +                    "syscon", "simple-mfd";
->
-> There are no child nodes, so you don't need simple-mfd.
+On Mon, May 15, 2017 at 05:32:14PM +0530, Anup Patel wrote:
+> +/ {
+> +	chosen { /* Default kernel args */
+> +		bootargs = "root=/dev/ram rw rootwait \
+> +			    earlycon=uart8250,mmio32,0x68a10000 \
+> +			    pci=pcie_bus_safe cma=64M";
 
-The example is taken from an actual device tree (look below),
-where there are child nodes, I can trim it down.
+Why do we need all of these?
 
->> +       reg = <0x40000000 0x1000>;
->
-> Looks like you have 2 nodes pointing to the same address with your
-> reset binding? You shouldn't have overlapping resources. It's allowed
-> for historical reasons but breaks resource creation in Linux.
+> +		linux,stdout-path = "serial0:115200n8";
 
-No... they are all in the same node, just sharing the same
-resource by way of regmap (syscon).
+Please drop the 'linux,' prefix here.
 
-In the end, as I think you requested, when you said:
+[...]
 
->> +     clock-controller {
->> +             compatible = "cortina,gemini-clock-controller";
->> +             #clock-cells = <1>;
-(...)
-> There's not really much reason to have a child node here. The parent can
-> be the clock provider.
-(...)
-> Same comment as clocks. The parent can be the provider.
+> +	memory: memory@80000000 {
+> +		device_type = "memory";
+> +		reg = <0x00000000 0x80000000 0 0x40000000>;
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	pmu {
+> +		compatible = "arm,armv8-pmuv3";
+> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
+> +			      IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
+> +			      IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
+> +			      IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
+> +			      IRQ_TYPE_LEVEL_LOW)>;
 
-So as you say, no specific child is needed and syscon provides
-clocks and resets:
+GICv3 PPIs don't have a mask. See
 
-                syscon: syscon@40000000 {
-                        compatible = "cortina,gemini-syscon",
-                                     "cortina,gemini-clock-controller",
-                                     "cortina,gemini-reset",
-                                     "syscon", "simple-mfd";
-                        reg = <0x40000000 0x1000>;
-                        #clock-cells = <1>;
-                        #reset-cells = <1>;
+Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
 
-                        syscon-reboot {
-                                compatible = "syscon-reboot";
-                                regmap = <&syscon>;
-                                /* GLOBAL_RESET register */
-                                offset = <0x0c>;
-                                /* RESET_GLOBAL | RESET_CPU1 */
-                                mask = <0xC0000000>;
-                        };
-                };
+Please remove the GIC_CPU_MASK_*() uses here and in this dts. They
+shouldn't be there.
 
-Before your (as I percieved it) requested changes to avoid
-surplus children in the syscon it looked like this:
-
-                syscon: syscon@40000000 {
-                        compatible = "cortina,gemini-syscon",
-"syscon", "simple-mfd";
-                        reg = <0x40000000 0x1000>;
-
-                        syscon-reboot {
-                                compatible = "syscon-reboot";
-                                regmap = <&syscon>;
-                                /* GLOBAL_RESET register */
-                                offset = <0x0c>;
-                                /* RESET_GLOBAL | RESET_CPU1 */
-                                mask = <0xC0000000>;
-                        };
-
-                        rcon: reset-controller {
-                                compatible = "cortina,gemini-reset";
-                                #reset-cells = <1>;
-                        };
-
-                        gcc: clock-controller {
-                                compatible = "cortina,gemini-clock-controller";
-                                #clock-cells = <1>;
-                        };
-                };
-
-
-Yours,
-Linus Walleij
+Thanks,
+Mark.
