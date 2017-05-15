@@ -1,48 +1,153 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 12/13] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-Date: Thu,  4 May 2017 19:48:57 +0800
-Message-Id: <20170504114858.9008-13-icenowy@aosc.io>
-In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v2 11/11] arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+Date: Mon, 15 May 2017 17:32:21 +0530
+Message-Id: <1494849741-21294-12-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a set of pins that have functionality of RGB
-LCD, the pins are at different pin ban than other SoCs.
+From: Srinath Mannam <srinath.mannam@broadcom.com>
 
-Add pinctrl node for them.
+The Stingray SoC has two instances of SDHCI controller
+and one instance of iProc PWM.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Let's enable above mentioned devices in Stingray DT.
+
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 39 ++++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 28 ++++++++++++++++
+ 2 files changed, 67 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 0a895179d8ae..a37d68b227bc 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -297,6 +297,15 @@
- 				function = "i2c0";
- 			};
- 
-+			lcd_rgb666_pins: lcd_rgb666@0 {
-+				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
-+				       "PE5", "PE6", "PE7", "PE8", "PE9",
-+				       "PE10", "PE11", "PE12", "PE13", "PE14",
-+				       "PE15", "PE16", "PE17", "PE18", "PE19",
-+				       "PE23", "PE24";
-+				function = "lcd";
-+			};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index e3f8c89..6185561 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -46,6 +46,28 @@
+ 		serial2 = &uart2;
+ 		serial3 = &uart3;
+ 	};
 +
- 			uart0_pins_a: uart0@0 {
- 				pins = "PB8", "PB9";
- 				function = "uart0";
++	sdio0_vddo_ctrl_reg: sdio0_vddo_ctrl {
++		compatible = "regulator-gpio";
++		regulator-name = "sdio0_vddo_ctrl_reg";
++		regulator-type = "voltage";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		gpios = <&pca9505 18 0>;
++		states = <3300000 0x0
++			  1800000 0x1>;
++	};
++
++	sdio1_vddo_ctrl_reg: sdio1_vddo_ctrl {
++		compatible = "regulator-gpio";
++		regulator-name = "sdio1_vddo_ctrl_reg";
++		regulator-type = "voltage";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		gpios = <&pca9505 19 0>;
++		states = <3300000 0x0
++			  1800000 0x1>;
++	};
+ };
+ 
+ &memory { /* Default DRAM banks */
+@@ -57,6 +79,10 @@
+ 	status = "okay";
+ };
+ 
++&pwm {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -93,3 +119,16 @@
+ 		#size-cells = <1>;
+ 	};
+ };
++
++&sdio0 {
++	vqmmc-supply = <&sdio0_vddo_ctrl_reg>;
++	non-removable;
++	full-pwr-cycle;
++	status = "okay";
++};
++
++&sdio1 {
++	vqmmc-supply = <&sdio1_vddo_ctrl_reg>;
++	full-pwr-cycle;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 6d9c9f8..aa0ecec 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -274,6 +274,14 @@
+ 
+ 		#include "stingray-pinctrl.dtsi"
+ 
++		pwm: pwm@68910000{
++			compatible = "brcm,iproc-pwm";
++			reg = <0x00010000 0x1000>;
++			clocks = <&crmu_ref25m>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@689b0000 {
+ 			compatible = "brcm,iproc-i2c";
+ 			reg = <0x000b0000 0x100>;
+@@ -433,5 +441,25 @@
+ 			brcm,nand-has-wp;
+ 			status = "disabled";
+ 		};
++
++		sdio0: sdhci@68cf1000 {
++			compatible = "brcm,sdhci-iproc";
++			reg = <0x003f1000 0x100>;
++			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
++			bus-width = <8>;
++			clocks = <&sdio0_clk>;
++			iommus = <&smmu 0x6002 0x0000>;
++			status = "disabled";
++		};
++
++		sdio1: sdhci@68cf2000 {
++			compatible = "brcm,sdhci-iproc";
++			reg = <0x003f2000 0x100>;
++			interrupts = <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
++			bus-width = <8>;
++			clocks = <&sdio1_clk>;
++			iommus = <&smmu 0x6003 0x0000>;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
-2.12.2
+2.7.4
