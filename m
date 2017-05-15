@@ -1,46 +1,38 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:33268 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934164AbdEOLfF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2017 07:35:05 -0400
+Received: by mail-oi0-f44.google.com with SMTP id w10so126699502oif.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 May 2017 04:35:04 -0700 (PDT)
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170511144534.GB21895@verge.net.au>
-References: <1494496275-2433-1-git-send-email-geert+renesas@glider.be> <20170511144534.GB21895@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 May 2017 14:13:35 +0200
-Message-ID: <CAMuHMdV4HFCG37U7ZYnM9Dq4Sfj-EfHPMTR=GAUxH8mhZ4zutQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent
- clocks on ES2.0
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
+In-Reply-To: <6350d43f82a6bea3867777de46082fb6@agner.ch>
+References: <1494791940-12499-1-git-send-email-festevam@gmail.com> <6350d43f82a6bea3867777de46082fb6@agner.ch>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 15 May 2017 08:35:04 -0300
+Message-ID: <CAOMZO5BYWzfoASZfBOW0LpERb4OtU9=vjUiMronFmbDR70ngSw@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx7d: Fix the powerdown bit location of PLL DDR
+To: Stefan Agner <stefan@agner.ch>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-clk@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 11, 2017 at 4:45 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, May 11, 2017 at 11:51:15AM +0200, Geert Uytterhoeven wrote:
->> Cfr. the errata of April 14, 2017, for the R-Car Gen3 Hardware Manual
->> Rev. 0.53E.
->>
->> These have no user-visible effect, as the clock frequencies stay the
->> same.
->>
->> Fixes: 5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> To be queued in clk-renesas-for-v4.13.
->
-> This matches the documentation I have.
->
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On Mon, May 15, 2017 at 2:54 AM, Stefan Agner <stefan@agner.ch> wrote:
 
-Thanks, queued in clk-renesas-for-v4.13.
+> BM_PLL_POWER_IMX7_DDR?
 
-Gr{oetje,eeting}s,
+I will name it IMX7_DDR_PLL_POWER to make it consistent with
+IMX7_ENET_PLL_POWER.
 
-                        Geert
+> The other PLL on i.MX 7 still have it at 12...
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+PLL Audio and Video have the powerdown bit at 12, ENET has it at bit 5
+and is already handled by the special IMX7_ENET_PLL_POWER.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Will send a v2 with just the bit rename.
+
+Thanks
