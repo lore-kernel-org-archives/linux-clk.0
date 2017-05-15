@@ -1,55 +1,56 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 23 May 2017 10:22:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 4/7] clk: mvebu: cp110: introduce a new binding
-Message-ID: <20170523152233.5jxya2rgluric2pd@rob-hp-laptop>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
- <a9ba62b9d6432af430e2f9cf7212c3ba8e1c5f03.1495208533.git-series.gregory.clement@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <a9ba62b9d6432af430e2f9cf7212c3ba8e1c5f03.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Lee Jones <lee@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Phil Elwell <phil@raspberrypi.org>,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH] clk: bcm2835: Correct the prediv logic
+Date: Mon, 15 May 2017 10:35:04 -0700
+Message-Id: <20170515173504.11337-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 19, 2017 at 05:55:22PM +0200, Gregory CLEMENT wrote:
-> The initial intent when the binding of the cp110 system controller was to
-> have one flat node. The idea being that what is currently a clock-only
-> driver in drivers would become a MFD driver, exposing the clock, GPIO and
-> pinctrl functionality. However, after taking a step back, this would lead
-> to a messy binding. Indeed, a single node would be a GPIO controller,
-> clock controller, pinmux controller, and more.
-> 
-> This patch adopts a more classical solution of a top-level syscon node
-> with sub-nodes for the individual devices. The main benefit will be to
-> have each functional block associated to its own sub-node where we can
-> put its own properties.
-> 
-> The introduction of the Armada 7K/8K is still in the early stage so the
-> plan is to remove the old binding. However, we don't want to break the
-> device tree compatibility for the few devices already in the field. For
-> this we still keep the support of the legacy compatible string with a big
-> warning in the kernel about updating the device tree.
+From: Phil Elwell <phil@raspberrypi.org>
 
-Good.
+If a clock has the prediv flag set, both the integer and fractional
+parts must be scaled when calculating the resulting frequency.
 
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 18 ++++++++++++++----
->  drivers/clk/mvebu/cp110-system-controller.c                                | 63 ++++++++++++++++++++++++++++++++++++++++++++++++---------------
->  2 files changed, 62 insertions(+), 19 deletions(-)
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
 
-Acked-by: Rob Herring <robh@kernel.org>
+While this is a bugfix, I haven't put a "Fixes:" line in here to get
+it automatically backported to stable.  We had trouble with the
+out-of-tree DSI panel driver, at least: Our old set_rate() didn't
+work, because the new PLL was just barely too fast to get the integer
+PLL divider we needed.  We may run into similar troubles
+elsewhere. --anholt
+
+ drivers/clk/bcm/clk-bcm2835.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 025853870619..7a35df6b45bd 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -616,8 +616,10 @@ static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
+ 	using_prediv = cprman_read(cprman, data->ana_reg_base + 4) &
+ 		data->ana->fb_prediv_mask;
+ 
+-	if (using_prediv)
++	if (using_prediv) {
+ 		ndiv *= 2;
++		fdiv *= 2;
++	}
+ 
+ 	return bcm2835_pll_rate_from_divisors(parent_rate, ndiv, fdiv, pdiv);
+ }
+-- 
+2.11.0
