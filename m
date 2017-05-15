@@ -1,63 +1,48 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 11/21] drm/sun4i: tcon: Switch mux on only for composite
-Date: Wed, 17 May 2017 09:40:40 +0200
-Message-Id: <c67a3f59ba50aace65f2c9b28330826944e682ce.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1494863779.13948.2.camel@baylibre.com>
+Subject: Re: [PATCH v2 2/2] clk: meson: gxbb: remove the "cpu_clk" from the
+ GXBB and GXL driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, narmstrong@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org, khilman@baylibre.com, carlo@caione.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 15 May 2017 17:56:19 +0200
+In-Reply-To: <20170504181920.21880-3-martin.blumenstingl@googlemail.com>
+References: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
+	 <20170504181920.21880-1-martin.blumenstingl@googlemail.com>
+	 <20170504181920.21880-3-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Even though that mux is undocumented, it seems like it needs to be set to 1
-when using composite, and 0 when using HDMI.
+On Thu, 2017-05-04 at 20:19 +0200, Martin Blumenstingl wrote:
+> It seems that the "cpu_clk" was carried over from the meson8b clock
+> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
+> used by the cpu_clk have a different purpose (in other words: they don't
+> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
+> reserved according to the public S905 datasheet, while bit 23 is the
+> "A53_trace_clk_DIS" gate (which according to the datasheet should only
+> be used in case a silicon bug is discovered) and bits 22:20 are a
+> divider (A53_trace_clk). The meson clk-cpu code however expects that
+> bits 28:20 are reserved for a divider (according to the public S805
+> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
+> input clock.").
+> 
+> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
+> driver instead. Two examples from a Meson GXL S905X SoC:
+> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
+> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
+> 
+> Unfortunately the CLKID_CPUCLK was already exported (but is currently
+> not used) to DT. Due to the removal of this clock definition there is
+> now a hole in the clk_hw_onecell_data (which is not a problem because
+> this case is already handled in gxbb_clkc_probe).
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c |  9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index a3fc6ab3c14b..74aa01e75e32 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -112,16 +112,23 @@ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
- 			struct drm_encoder *encoder)
- {
-+	u32 val;
-+
- 	if (!tcon->quirks->has_unknown_mux)
- 		return;
- 
- 	if (channel != 1)
- 		return;
- 
-+	if (encoder->encoder_type == DRM_MODE_ENCODER_TVDAC)
-+		val = 1;
-+	else
-+		val = 0;
-+
- 	/*
- 	 * FIXME: Undocumented bits
- 	 */
--	regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, 1);
-+	regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, val);
- }
- EXPORT_SYMBOL(sun4i_tcon_set_mux);
- 
--- 
-git-series 0.9.1
+Applied, Thanks
+Jerome
