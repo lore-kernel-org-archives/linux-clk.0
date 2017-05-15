@@ -1,299 +1,157 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 3/7] clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
-Date: Fri, 19 May 2017 17:55:21 +0200
-Message-Id: <e47d288af5d42d4cc145eb7fa708f984a0fc0d9d.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <varada@codeaurora.org>
+Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org,
+ david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
+ sjaganat@codeaurora.org, sricharan@codeaurora.org,
+ Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+ <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
+ <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
+ <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Message-ID: <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
+Date: Mon, 15 May 2017 14:35:58 +0530
+MIME-Version: 1.0
+In-Reply-To: <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Using the *-clock-output-names property was a convenient way to have a
-unique name for each clock even when there are multiple cp110 blocks
-as we can find on Armada 8K.
+On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
+> On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
+> 
+>> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
+>>> On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
+>>>
+> [..]
+>>>> +enum ipq8074_functions {
+>>>
+>>> Please keep these sorted alphabetically.
+>>
+>> Ok
+>>
+>>>> +	msm_mux_gpio,
+>>>> +	msm_mux_qpic_pad,
+>>>> +	msm_mux_blsp5_i2c,
+>>>> +	msm_mux_blsp5_spi,
+>>>> +	msm_mux_wci20,
+>>>
+>>> What does "20" mean here?
+>>
+>> This is for Wireless Coex Interface. The same functionality can be muxed on
+>> to different GPIOs. WCI2, is the 2nd edition of the WCI standard and 0, 1
+>> are for the muxing to different GPIOs (alternate muxes).
+>>
+> 
+> In other Qualcomm platforms the alternative muxes are denoted by letters
+> (a,b,c...). Would you mind picking up this naming scheme, or do you see
+> any problems with that? (E.g. wci2a in this case)
 
-However it has some drawbacks: the main one being a stronger link than
-necessary between the driver and the device tree. For example the clock
-name can't be changed, removed or moved. It is still the early stage of
-introduction of the Armada 7K/8K and the hardware is still not totally
-documented, especially for the clock part. By removing the use of
-*-clock-output-names it will be easier to add new clocks without breaking
-the compatibility.
+Ok
 
-The name of each clock is now created by using its physical address as a
-prefix (as it was done for the platform device names). Thanks to this we
-have an automatic way to compute a unique name.
+> Btw, do you need any additional configuration for selecting alternative
+> muxing or is that automagical these days?
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  14 +----------
- drivers/clk/mvebu/cp110-system-controller.c                                | 106 ++++++++++++++++++++++++++++++++++++++++++++----------------------------
- 2 files changed, 65 insertions(+), 55 deletions(-)
+No additional configuration is needed.
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-index eb6cf44caa0f..47f1cf800e25 100644
---- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-@@ -59,14 +59,6 @@ Required properties:
-      "marvell,cp110-system-controller0", "syscon";
-  - reg: register area of the CP110 system controller 0
-  - #clock-cells: must be set to 2
-- - core-clock-output-names must be set to:
--	"cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
-- - gate-clock-output-names must be set to:
--	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
--	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
--	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
--	"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
--	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 
- Example:
- 
-@@ -74,10 +66,4 @@ Example:
- 		compatible = "marvell,cp110-system-controller0", "syscon";
- 		reg = <0x440000 0x1000>;
- 		#clock-cells = <2>;
--		core-clock-output-names = "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core";
--		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
--			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
--			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
--			"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
--			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 	};
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 2a75397f9304..c7df8a69ed9a 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -84,6 +84,33 @@ enum {
- #define CP110_GATE_EIP150		25
- #define CP110_GATE_EIP197		26
- 
-+const char *gate_base_names[] = {
-+	[CP110_GATE_AUDIO]	= "audio",
-+	[CP110_GATE_COMM_UNIT]	= "communit",
-+	[CP110_GATE_NAND]	= "nand",
-+	[CP110_GATE_PPV2]	= "ppv2",
-+	[CP110_GATE_SDIO]	= "sdio",
-+	[CP110_GATE_MG]		= "mg-domain",
-+	[CP110_GATE_MG_CORE]	= "mg-core",
-+	[CP110_GATE_XOR1]	= "xor1",
-+	[CP110_GATE_XOR0]	= "xor0",
-+	[CP110_GATE_GOP_DP]	= "gop-dp",
-+	[CP110_GATE_PCIE_X1_0]	= "pcie_x10",
-+	[CP110_GATE_PCIE_X1_1]	= "pcie_x11",
-+	[CP110_GATE_PCIE_X4]	= "pcie_x4",
-+	[CP110_GATE_PCIE_XOR]	= "pcie-xor",
-+	[CP110_GATE_SATA]	= "sata",
-+	[CP110_GATE_SATA_USB]	= "sata-usb",
-+	[CP110_GATE_MAIN]	= "main",
-+	[CP110_GATE_GOP]	= "gop",
-+	[CP110_GATE_SLOW_IO]	= "slow-io",
-+	[CP110_GATE_USB3H0]	= "usb3h0",
-+	[CP110_GATE_USB3H1]	= "usb3h1",
-+	[CP110_GATE_USB3DEV]	= "usb3dev",
-+	[CP110_GATE_EIP150]	= "eip150",
-+	[CP110_GATE_EIP197]	= "eip197"
-+};
-+
- struct cp110_gate_clk {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-@@ -186,15 +213,33 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
- 	return ERR_PTR(-EINVAL);
- }
- 
-+static char *cp110_unique_name(struct device *dev, const char *name)
-+{
-+	struct device_node *np = dev->of_node;
-+	const __be32 *reg;
-+	u64 addr;
-+
-+	/* Do not create a name if there is no clock */
-+	if (!name)
-+		return NULL;
-+
-+	reg = of_get_property(np, "reg", NULL);
-+	addr = of_translate_address(np, reg);
-+	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
-+			      (unsigned long long)addr, name);
-+}
-+
- static int cp110_syscon_clk_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
- 	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
- 	struct clk_hw_onecell_data *cp110_clk_data;
- 	struct clk_hw *hw, **cp110_clks;
- 	u32 nand_clk_ctrl;
- 	int i, ret;
-+	char *gate_name[ARRAY_SIZE(gate_base_names)];
- 
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap))
-@@ -205,7 +250,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	cp110_clk_data = devm_kzalloc(&pdev->dev, sizeof(*cp110_clk_data) +
-+	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
- 				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
- 				      GFP_KERNEL);
- 	if (!cp110_clk_data)
-@@ -215,8 +260,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	cp110_clk_data->num = CP110_CLK_NUM;
- 
- 	/* Register the APLL which is the root of the hw tree */
--	of_property_read_string_index(np, "core-clock-output-names",
--				      CP110_CORE_APLL, &apll_name);
-+	apll_name = cp110_unique_name(dev, "apll");
- 	hw = clk_hw_register_fixed_rate(NULL, apll_name, NULL, 0,
- 					1000 * 1000 * 1000);
- 	if (IS_ERR(hw)) {
-@@ -227,8 +271,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	cp110_clks[CP110_CORE_APLL] = hw;
- 
- 	/* PPv2 is APLL/3 */
--	of_property_read_string_index(np, "core-clock-output-names",
--				      CP110_CORE_PPV2, &ppv2_name);
-+	ppv2_name = cp110_unique_name(dev, "ppv2-core");
- 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
-@@ -238,8 +281,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	cp110_clks[CP110_CORE_PPV2] = hw;
- 
- 	/* EIP clock is APLL/2 */
--	of_property_read_string_index(np, "core-clock-output-names",
--				      CP110_CORE_EIP, &eip_name);
-+	eip_name = cp110_unique_name(dev, "eip");
- 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
-@@ -249,8 +291,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	cp110_clks[CP110_CORE_EIP] = hw;
- 
- 	/* Core clock is EIP/2 */
--	of_property_read_string_index(np, "core-clock-output-names",
--				      CP110_CORE_CORE, &core_name);
-+	core_name = cp110_unique_name(dev, "core");
- 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
-@@ -258,10 +299,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	cp110_clks[CP110_CORE_CORE] = hw;
--
- 	/* NAND can be either APLL/2.5 or core clock */
--	of_property_read_string_index(np, "core-clock-output-names",
--				      CP110_CORE_NAND, &nand_name);
-+	nand_name = cp110_unique_name(dev, "nand-core");
- 	if (nand_clk_ctrl & NF_CLOCK_SEL_400_MASK)
- 		hw = clk_hw_register_fixed_factor(NULL, nand_name,
- 						   apll_name, 0, 2, 5);
-@@ -275,18 +314,14 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 
- 	cp110_clks[CP110_CORE_NAND] = hw;
- 
--	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
--		const char *parent, *name;
--		int ret;
--
--		ret = of_property_read_string_index(np,
--						    "gate-clock-output-names",
--						    i, &name);
--		/* Reached the end of the list? */
--		if (ret < 0)
--			break;
-+	/* create the unique name for all the gate clocks */
-+	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++)
-+		gate_name[i] =	cp110_unique_name(dev, gate_base_names[i]);
- 
--		if (!strcmp(name, "none"))
-+	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++) {
-+		const char *parent;
-+
-+		if (gate_name[i] == NULL)
- 			continue;
- 
- 		switch (i) {
-@@ -295,14 +330,10 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 		case CP110_GATE_EIP150:
- 		case CP110_GATE_EIP197:
- 		case CP110_GATE_SLOW_IO:
--			of_property_read_string_index(np,
--						      "gate-clock-output-names",
--						      CP110_GATE_MAIN, &parent);
-+			parent = gate_name[CP110_GATE_MAIN];
- 			break;
- 		case CP110_GATE_MG:
--			of_property_read_string_index(np,
--						      "gate-clock-output-names",
--						      CP110_GATE_MG_CORE, &parent);
-+			parent = gate_name[CP110_GATE_MG_CORE];
- 			break;
- 		case CP110_GATE_NAND:
- 			parent = nand_name;
-@@ -312,34 +343,27 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 			break;
- 		case CP110_GATE_SDIO:
- 		case CP110_GATE_GOP_DP:
--			of_property_read_string_index(np,
--						      "gate-clock-output-names",
--						      CP110_GATE_GOP, &parent);
--
-+			parent = gate_name[CP110_GATE_GOP];
- 			break;
- 		case CP110_GATE_XOR1:
- 		case CP110_GATE_XOR0:
- 		case CP110_GATE_PCIE_X1_0:
- 		case CP110_GATE_PCIE_X1_1:
- 		case CP110_GATE_PCIE_X4:
--			of_property_read_string_index(np,
--						      "gate-clock-output-names",
--						      CP110_GATE_PCIE_XOR, &parent);
-+			parent = gate_name[CP110_GATE_PCIE_XOR];
- 			break;
- 		case CP110_GATE_SATA:
- 		case CP110_GATE_USB3H0:
- 		case CP110_GATE_USB3H1:
- 		case CP110_GATE_USB3DEV:
--			of_property_read_string_index(np,
--						      "gate-clock-output-names",
--						      CP110_GATE_SATA_USB, &parent);
-+			parent = gate_name[CP110_GATE_SATA_USB];
- 			break;
- 		default:
- 			parent = core_name;
- 			break;
- 		}
-+		hw = cp110_register_gate(gate_name[i], parent, regmap, i);
- 
--		hw = cp110_register_gate(name, parent, regmap, i);
- 		if (IS_ERR(hw)) {
- 			ret = PTR_ERR(hw);
- 			goto fail_gate;
+>>>> +	msm_mux_blsp3_spi3,
+>>>> +	msm_mux_burn0,
+>>>> +	msm_mux_pcm_zsi0,
+>>>> +	msm_mux_blsp5_uart,
+>>>> +	msm_mux_mac12,
+>>>
+>>> What does "12" mean here?
+>>
+>> The SoC has three MAC cores. Each core has two pins for the smart antenna
+>> feature. macXY indicates the function select for MAC no. X and smart antenna
+>> no. Y.
+>>
+> 
+> Ok
+> 
+>>>> +	msm_mux_blsp3_spi0,
+>>>> +	msm_mux_burn1,
+>>>> +	msm_mux_mac01,
+>>>> +	msm_mux_qdss_cti_trig_out_b0,
+>>>> +	msm_mux_qdss_cti_trig_in_b0,
+>>>> +	msm_mux_qpic_pad4,
+>>>
+>>> What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
+>>> alternative muxings...?
+>>
+>> This is for the NAND and LCD display. The pins listed are the 9 data pins.
+>>
+> 
+> Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
+> possible to reference a partial group in the DTS, if that's necessary)
+
+There are two sets of 9 pins, either of which can go to NAND or LCD.
+Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
+Is that ok?
+
+>>>> +	msm_mux_blsp4_uart0,
+>>>> +	msm_mux_blsp4_i2c0,
+>>>> +	msm_mux_blsp4_spi0,
+>>>> +	msm_mux_mac21,
+>>>> +	msm_mux_qdss_cti_trig_out_b1,
+>>>> +	msm_mux_qpic_pad5,
+>>>> +	msm_mux_qdss_cti_trig_in_b1,
+>>>> +	msm_mux_qpic_pad6,
+>>>> +	msm_mux_qpic_pad7,
+>>>> +	msm_mux_cxc0,
+>>>> +	msm_mux_mac13,
+>>>> +	msm_mux_qdss_cti_trig_in_a1,
+>>>> +	msm_mux_qdss_cti_trig_out_a1,
+>>>> +	msm_mux_wci22,
+>>>> +	msm_mux_qdss_cti_trig_in_a0,
+>>>> +	msm_mux_qpic_pad1,
+>>>> +	msm_mux_qdss_cti_trig_out_a0,
+>>>> +	msm_mux_qpic_pad2,
+>>>> +	msm_mux_qpic_pad3,
+>>>> +	msm_mux_qdss_traceclk_b,
+>>>> +	msm_mux_qpic_pad0,
+>>>> +	msm_mux_qdss_tracectl_b,
+>>>> +	msm_mux_qpic_pad8,
+>>>> +	msm_mux_pcm_zsi1,
+>>>> +	msm_mux_qdss_tracedata_b,
+>>>> +	msm_mux_led0,
+>>>> +	msm_mux_pwm04,
+>>>
+>>> What does "04" mean here?
+>>
+>> There are 4 Pulse Width Modulation channels, pwmXY is pwm channel X and pin
+>> Y.
+> 
+> So Y is alternative mux? Can we use letters for this as well?
+
+Ok
+
+>>>> +	msm_mux_led1,
+>>>> +	msm_mux_pwm14,
+>>>> +	msm_mux_led2,
+>>>> +	msm_mux_pwm24,
+>>>> +	msm_mux_pwm00,
+>>>> +	msm_mux_blsp4_uart1,
+>>>
+>>> Are uart0 vs uart1 alternative muxes?
+>>
+>> These are two different uarts available at two independent pins.
+>>
+> 
+> Ok, then I'm happy with the naming of this :)
+> 
+> Thanks,
+> Bjorn
+> 
+
+Thanks
+Varada
 -- 
-git-series 0.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum, a Linux Foundation Collaborative Project
