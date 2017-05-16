@@ -1,74 +1,111 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 8/20] clk: sunxi-ng: sun5i: Export video PLLs
-Date: Wed,  3 May 2017 13:59:45 +0200
-Message-Id: <1fc17b7a14830306a83747b5086c0fd5d6dff290.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <olof@lixom.net>
+MIME-Version: 1.0
+In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+From: Olof Johansson <olof@lixom.net>
+Date: Tue, 16 May 2017 11:53:04 -0700
+Message-ID: <CAOesGMiwspTuVWp8nPcWK2MhuWh8x9XSkZWJE2x=FxTCtU47Sw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Broadcom Stingray SOC Initial Support
+To: Anup Patel <anup.patel@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>, Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The video PLLs are used directly by the HDMI controller. Export them so
-that we can use them in our DT node.
+Hi,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu-sun5i.h      | 6 ++++--
- include/dt-bindings/clock/sun5i-ccu.h | 3 +++
- 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.h b/drivers/clk/sunxi-ng/ccu-sun5i.h
-index 8144487eb7ca..93a275fbd9a9 100644
---- a/drivers/clk/sunxi-ng/ccu-sun5i.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun5i.h
-@@ -28,15 +28,17 @@
- #define CLK_PLL_AUDIO_4X	6
- #define CLK_PLL_AUDIO_8X	7
- #define CLK_PLL_VIDEO0		8
--#define CLK_PLL_VIDEO0_2X	9
-+
-+/* The PLL_VIDEO0_2X is exported for HDMI */
-+
- #define CLK_PLL_VE		10
- #define CLK_PLL_DDR_BASE	11
- #define CLK_PLL_DDR		12
- #define CLK_PLL_DDR_OTHER	13
- #define CLK_PLL_PERIPH		14
- #define CLK_PLL_VIDEO1		15
--#define CLK_PLL_VIDEO1_2X	16
- 
-+/* The PLL_VIDEO1_2X is exported for HDMI */
- /* The CPU clock is exported */
- 
- #define CLK_AXI			18
-diff --git a/include/dt-bindings/clock/sun5i-ccu.h b/include/dt-bindings/clock/sun5i-ccu.h
-index aeb2e2f781fb..81f34d477aeb 100644
---- a/include/dt-bindings/clock/sun5i-ccu.h
-+++ b/include/dt-bindings/clock/sun5i-ccu.h
-@@ -19,6 +19,9 @@
- 
- #define CLK_HOSC		1
- 
-+#define CLK_PLL_VIDEO0_2X	9
-+
-+#define CLK_PLL_VIDEO1_2X	16
- #define CLK_CPU			17
- 
- #define CLK_AHB_OTG		23
--- 
-git-series 0.8.11
+
+On Tue, May 16, 2017 at 4:30 AM, Anup Patel <anup.patel@broadcom.com> wrote:
+> This patchset adds initial support of Broadcom Stingray SOC
+> by reusing existing Broadcom iProc device drivers.
+>
+> Most of the patches in this patchset are DT patches except
+> the Stingray clock tree support which just one patch.
+>
+> This patchset is based on Linux-4.12-rc1 and it is also available
+> at stingray-v3 branch of https://github.com/Broadcom/arm64-linux.git
+>
+> Changes since v2:
+>  - Remove default bootargs from chosen DT node
+>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
+>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
+>
+> Changes since v1:
+>  - Rebased patches for Linux-4.12-rc1
+>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+>  - Use ranges DT property to clear view of memory-layout
+>  - Make bcm-sr.h part of clock DT bindings patch
+>
+> Anup Patel (3):
+>   dt-bindings: bcm: Add Broadcom Stingray bindings document
+>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
+>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+>
+> Oza Pawandeep (1):
+>   arm64: dts: Add I2C DT nodes for Stingray SoC
+>
+> Pramod Kumar (3):
+>   arm64: dts: Add NAND DT nodes for Stingray SOC
+>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
+>   arm64: dts: Add GPIO DT nodes for Stingray SOC
+>
+> Sandeep Tripathy (3):
+>   dt-bindings: clk: Extend binding doc for Stingray SOC
+>   clk: bcm: Add clocks for Stingray SOC
+>   arm64: dts: Add clock DT nodes for Stingray SOC
+>
+> Srinath Mannam (1):
+>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+>
+>  .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
+>  .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
+>  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+>  arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+>  .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
+>  .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
+>  .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
+>  .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
+>  .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
+>  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
+>  drivers/clk/bcm/Kconfig                            |   8 +
+>  drivers/clk/bcm/Makefile                           |   1 +
+>  drivers/clk/bcm/clk-sr.c                           | 300 ++++++++++++++
+>  include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
+>  .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
+>  15 files changed, 1797 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+>  create mode 100644 drivers/clk/bcm/clk-sr.c
+>  create mode 100644 include/dt-bindings/clock/bcm-sr.h
+>  create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+
+Grouping as one patchset for review is fine, but when you submit this
+for merge you need to split it up:
+
+- Documentation/devicetree can go with the driver pieces or with the
+DT changes, your choice
+- DTS/DTSI changes should go through the Broadcom maintainers to arm-soc
+- clk changes should go to clk maintainers.
+
+Also, there's usually no need to split up a DT introduction and having
+separate pieces for NAND/pinctrl/GPIO/etc: They can all go in the main
+DT submission patch.
+
+
+-Olof
