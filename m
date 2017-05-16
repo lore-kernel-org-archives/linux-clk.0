@@ -1,187 +1,240 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Subject: [RFC PATCH 03/11] drm: sun4i: ignore swapped mixer<->tcon connection
- for DE2
-Date: Thu, 18 May 2017 00:43:46 +0800
-Message-Id: <20170517164354.16399-4-icenowy@aosc.io>
-In-Reply-To: <20170517164354.16399-1-icenowy@aosc.io>
-References: <20170517164354.16399-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v3 05/11] arm64: dts: Add clock DT nodes for Stingray SOC
+Date: Tue, 16 May 2017 17:00:50 +0530
+Message-Id: <1494934256-1350-6-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
-tcon0 and mixer1 is connected to tcon1; however by setting a bit
-the connection can be swapped.
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
-As we now hardcode the default connection, ignore the bonus endpoint for
-the mixer's output and the TCON's input, as they stands for the swapped
-connection.
+This patch describes Stingray SOC clock tree using
+DT nodes in Stingray DTS.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c  | 27 ++++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 +++++++++++++++++++++++++++++---------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
- 3 files changed, 59 insertions(+), 9 deletions(-)
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 +++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   9 ++
+ 2 files changed, 179 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 1dd1948025d2..29bf1325ded6 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -173,6 +173,13 @@ static bool sun4i_drv_node_is_frontend(struct device_node *node)
- 		of_device_is_compatible(node, "allwinner,sun8i-a33-display-frontend");
- }
- 
-+static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node *node)
-+{
-+	/* The V3s has only one mixer-tcon pair, so it's not listed here. */
-+	return of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer0") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
-+}
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+new file mode 100644
+index 0000000..070e22e2
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+@@ -0,0 +1,170 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
 +
- static bool sun4i_drv_node_is_tcon(struct device_node *node)
- {
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
-@@ -249,6 +256,26 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 			}
- 		}
- 
-+		/*
-+		 * The second endpoint of the output of a swappable DE2 mixer
-+		 * is the TCON after connection swapping.
-+		 * Ignore it now, as we now hardcode mixer0->tcon0,
-+		 * mixer1->tcon1 connection.
-+		 */
-+		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
-+			struct of_endpoint endpoint;
++#include <dt-bindings/clock/bcm-sr.h>
 +
-+			if (of_graph_parse_endpoint(ep, &endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+				continue;
-+			}
++		osc: oscillator {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <50000000>;
++		};
 +
-+			if (endpoint.id) {
-+				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2 mixer... skipping\n");
-+				continue;
-+			}
-+		}
++		crmu_ref25m: crmu_ref25m {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&osc>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
 +
- 		/* Walk down our tree */
- 		count += sun4i_drv_add_endpoints(dev, match, remote);
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index f44a37a5993d..89a215ff2370 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -425,7 +425,8 @@ static int sun4i_tcon_init_regmap(struct device *dev,
-  * requested via the get_id function of the engine.
-  */
- static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
--						   struct device_node *node)
-+						   struct device_node *node,
-+						   bool skip_bonus_ep)
- {
- 	struct device_node *port, *ep, *remote;
- 	struct sunxi_engine *engine;
-@@ -439,6 +440,20 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
- 		if (!remote)
- 			continue;
- 
-+		if (skip_bonus_ep) {
-+			struct of_endpoint endpoint;
++		genpll0: genpll0@6641d104 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll0";
++			reg = <0x0001d104 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll0", "clk_125", "clk_scr",
++					     "clk_250", "clk_pcie_axi",
++					     "clk_paxc_axi_x2",
++					     "clk_paxc_axi";
++		};
 +
-+			if (of_graph_parse_endpoint(ep, &endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+				continue;
-+			}
++		genpll3: genpll3@6641d1e0 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll3";
++			reg = <0x0001d1e0 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll3", "clk_hsls",
++					     "clk_sdio";
++		};
 +
-+			if (endpoint.id) {
-+				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when searching engine\n");
-+				continue;
-+			}
-+		}
++		genpll4: genpll4@6641d214 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll4";
++			reg = <0x0001d214 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll4", "clk_ccn",
++					     "clk_tpiu_pll", "noc_clk",
++					     "pll_chclk_fs4",
++					     "clk_bridge_fscpu";
++		};
 +
- 		/* does this node match any registered engines? */
- 		list_for_each_entry(engine, &drv->engine_list, list) {
- 			if (remote == engine->node) {
-@@ -449,7 +464,7 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
- 		}
- 
- 		/* keep looking through upstream ports */
--		engine = sun4i_tcon_find_engine(drv, remote);
-+		engine = sun4i_tcon_find_engine(drv, remote, skip_bonus_ep);
- 		if (!IS_ERR(engine)) {
- 			of_node_put(remote);
- 			of_node_put(port);
-@@ -469,21 +484,27 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	struct sun4i_tcon *tcon;
- 	int ret;
- 
--	engine = sun4i_tcon_find_engine(drv, dev->of_node);
--	if (IS_ERR(engine)) {
--		dev_err(dev, "Couldn't find matching engine\n");
--		return -EPROBE_DEFER;
--	}
--
- 	tcon = devm_kzalloc(dev, sizeof(*tcon), GFP_KERNEL);
- 	if (!tcon)
- 		return -ENOMEM;
- 	dev_set_drvdata(dev, tcon);
- 	tcon->drm = drm;
- 	tcon->dev = dev;
--	tcon->id = engine->id;
- 	tcon->quirks = of_device_get_match_data(dev);
- 
-+	/*
-+	 * As we keep the connection between DE2 mixer and TCON not swapped,
-+	 * skip the bonus endpoints (which stand for swapped connection)
-+	 * when finding the correspoing engine.
-+	 */
-+	engine = sun4i_tcon_find_engine(drv, dev->of_node,
-+					tcon->quirks->swappable_input);
-+	if (IS_ERR(engine)) {
-+		dev_err(dev, "Couldn't find matching engine\n");
-+		return -EPROBE_DEFER;
-+	}
-+	tcon->id = engine->id;
++		genpll5: genpll5@6641d248 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll5";
++			reg = <0x0001d248 0x32>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll5", "fs4_hf_clk",
++					     "crypto_ae_clk", "raid_ae_clk";
++		};
 +
- 	tcon->lcd_rst = devm_reset_control_get(dev, "lcd");
- 	if (IS_ERR(tcon->lcd_rst)) {
- 		dev_err(dev, "Couldn't get our reset line\n");
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index d37e1e2ed60e..568dc736238a 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -146,6 +146,8 @@
- struct sun4i_tcon_quirks {
- 	bool	has_unknown_mux; /* sun5i has undocumented mux */
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
-+	/* Some DE2 can swap the mixer<->TCON connection */
-+	bool	swappable_input;
- };
++		lcpll0: lcpll0 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-lcpll0";
++			reg = <0x0001d0c4 0x3c>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll0", "clk_sata_refp",
++					     "clk_sata_refn", "clk_sata_350",
++					     "clk_sata_500";
++		};
++
++		lcpll1: lcpll1 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-lcpll1";
++			reg = <0x0001d138 0x3c>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll1", "clk_wanpn",
++					     "clk_usb_ref",
++					     "timesync_evt_clk";
++		};
++
++		hsls_clk: hsls_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 1>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		hsls_div2_clk: hsls_div2_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
++			clock-div = <2>;
++			clock-mult = <1>;
++
++		};
++
++		hsls_div4_clk: hsls_div4_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
++			clock-div = <4>;
++			clock-mult = <1>;
++		};
++
++		hsls_25m_clk: hsls_25m_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&crmu_ref25m>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		hsls_25m_div2_clk: hsls_25m_div2_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&hsls_25m_clk>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		sdio0_clk: sdio0_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		sdio1_clk: sdio1_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 9fe19a2..6b690db 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -244,6 +244,15 @@
+ 		};
+ 	};
  
- struct sun4i_tcon {
++	crmu: crmu {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x66400000 0x100000>;
++
++		#include "stingray-clock.dtsi"
++	};
++
+ 	hsls {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
-2.12.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
