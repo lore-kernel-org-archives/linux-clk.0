@@ -1,56 +1,114 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 09/21] drm/sun4i: tcon: Add channel debug
-Date: Wed, 17 May 2017 09:40:38 +0200
-Message-Id: <fdbddab4a5ab3945acb56b3402016cf32eccb0cd.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v3 09/11] arm64: dts: Add I2C DT nodes for Stingray SoC
+Date: Tue, 16 May 2017 17:00:54 +0530
+Message-Id: <1494934256-1350-10-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-While all functions have debug logs, the channel enable and disable are not
-logged. Make sure this is the case.
+From: Oza Pawandeep <oza.oza@broadcom.com>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This patch adds I2C DT nodes on Stingray SoC.
+
+Signed-off-by: Oza Pawandeep <oza.oza@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 22 ++++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 20 ++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 8b6aaa60037d..48fadd188d65 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -55,6 +55,8 @@ EXPORT_SYMBOL(sun4i_tcon_enable);
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index aad45a2..ff59a26 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -54,6 +54,28 @@
+ 	status = "okay";
+ };
  
- void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
- {
-+	DRM_DEBUG_DRIVER("Disabling TCON channel %d\n", channel);
++&i2c0 {
++	status = "okay";
 +
- 	/* Disable the TCON's channel */
- 	if (channel == 0) {
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
-@@ -72,6 +74,8 @@ EXPORT_SYMBOL(sun4i_tcon_channel_disable);
++	pca9505: pca9505@20 {
++		compatible = "nxp,pca9505";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x20>;
++	};
++};
++
++&i2c1 {
++	status = "okay";
++
++	pcf8574: pcf8574@20 {
++		compatible = "nxp,pcf8574a";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x27>;
++	};
++};
++
+ &nand {
+ 	status = "ok";
+ 	nandcs@0 {
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 059086f..8a077ff 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -269,6 +269,16 @@
  
- void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
- {
-+	DRM_DEBUG_DRIVER("Enabling TCON channel %d\n", channel);
+ 		#include "stingray-pinctrl.dtsi"
+ 
++		i2c0: i2c@689b0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x000b0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 177 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
 +
- 	/* Enable the TCON's channel */
- 	if (channel == 0) {
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 		gpio_hsls: gpio@689d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x000d0000 0x864>;
+@@ -295,6 +305,16 @@
+ 					<&pinmux 151 91 4>;
+ 		};
+ 
++		i2c1: i2c@689e0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x000e0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 178 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
++
+ 		uart0: uart@68a00000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
 -- 
-git-series 0.9.1
+2.7.4
