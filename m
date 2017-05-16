@@ -1,93 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55915 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759405AbdENQcU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 May 2017 12:32:20 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
 To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v7 06/13] drm/sun4i: add a dedicated module for sun4i-backend and sun4i-layer
-Date: Mon, 15 May 2017 00:30:38 +0800
-Message-Id: <20170514163045.40366-7-icenowy@aosc.io>
-In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
-References: <20170514163045.40366-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Abhishek Shah <abhishek.shah@broadcom.com>
+Subject: [PATCH v3 06/11] arm64: dts: Add NAND DT nodes for Stingray SOC
+Date: Tue, 16 May 2017 17:00:51 +0530
+Message-Id: <1494934256-1350-7-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the direct call from CRTC code to layer code has disappeared,
-instead the layer's init function is called via the backend's ops.
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Add a dedicated module for sun4i-backend and sun4i-layer, and drop the
-EXPORT_SYMBOL from backend code to layer code.
+This patch adds NAND controller DT Node and NAND chip DT
+node for Stingray SOC and Stingray reference boards.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
-Changes in v7:
-- Added Chen-Yu's Reviewed-by.
+ arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 15 +++++++++++++++
+ arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 13 +++++++++++++
+ 2 files changed, 28 insertions(+)
 
- drivers/gpu/drm/sun4i/Makefile        | 5 +++--
- drivers/gpu/drm/sun4i/sun4i_backend.c | 4 ----
- 2 files changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-index 59b757350a1f..a251fb36c951 100644
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -5,9 +5,10 @@ sun4i-tcon-y += sun4i_tcon.o
- sun4i-tcon-y += sun4i_rgb.o
- sun4i-tcon-y += sun4i_dotclock.o
- sun4i-tcon-y += sun4i_crtc.o
--sun4i-tcon-y += sun4i_layer.o
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index 992944b..aad45a2 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -53,3 +53,18 @@
+ &uart1 {
+ 	status = "okay";
+ };
 +
-+sun4i-backend-y += sun4i_backend.o sun4i_layer.o
- 
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
--obj-$(CONFIG_DRM_SUN4I)		+= sun4i_backend.o
-+obj-$(CONFIG_DRM_SUN4I)		+= sun4i-backend.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index 611cdcb9c182..fac1a414ba49 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -83,7 +83,6 @@ void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
- 			   SUN4I_BACKEND_MODCTL_LAY_EN(layer), val);
- }
--EXPORT_SYMBOL(sun4i_backend_layer_enable);
- 
- static int sun4i_backend_drm_format_to_layer(struct drm_plane *plane,
- 					     u32 format, u32 *mode)
-@@ -170,7 +169,6 @@ int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
- 
- 	return 0;
- }
--EXPORT_SYMBOL(sun4i_backend_update_layer_coord);
- 
- int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
- 				       int layer, struct drm_plane *plane)
-@@ -205,7 +203,6 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
- 
- 	return 0;
- }
--EXPORT_SYMBOL(sun4i_backend_update_layer_formats);
- 
- int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
- 				      int layer, struct drm_plane *plane)
-@@ -246,7 +243,6 @@ int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
- 
- 	return 0;
- }
--EXPORT_SYMBOL(sun4i_backend_update_layer_buffer);
- 
- static int sun4i_backend_init_sat(struct device *dev) {
- 	struct sun4i_backend *backend = dev_get_drvdata(dev);
++&nand {
++	status = "ok";
++	nandcs@0 {
++		compatible = "brcm,nandcs";
++		reg = <0>;
++		nand-ecc-mode = "hw";
++		nand-ecc-strength = <8>;
++		nand-ecc-step-size = <512>;
++		nand-bus-width = <16>;
++		brcm,nand-oob-sector-size = <16>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 6b690db..003f814 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -307,5 +307,18 @@
+ 			compatible = "brcm,iproc-rng200";
+ 			reg = <0x00220000 0x28>;
+ 		};
++
++		nand: nand@68c60000 {
++			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
++			reg = <0x00360000 0x600>,
++			      <0x0050a408 0x600>,
++			      <0x00360f00 0x20>;
++			reg-names = "nand", "iproc-idm", "iproc-ext";
++			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			brcm,nand-has-wp;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
-2.12.2
-
+2.7.4
