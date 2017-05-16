@@ -1,85 +1,95 @@
-Return-Path: <wens@wens.csie.org>
-Date: Tue, 23 May 2017 15:19:40 +0800
-From: Chen-Yu Tsai <wens@csie.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Tobias Regnery <tobias.regnery@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
-Message-ID: <20170523071940.xbnahikb4d5dge7v@wens.csie.org>
-References: <20170522202951.2896280-1-arnd@arndb.de>
- <20170523005553.GH20170@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170523005553.GH20170@codeaurora.org>
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Pramod Kumar <pramodku@broadcom.com>
+Subject: [PATCH v3 08/11] arm64: dts: Add GPIO DT nodes for Stingray SOC
+Date: Tue, 16 May 2017 17:00:53 +0530
+Message-Id: <1494934256-1350-9-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 22, 2017 at 05:55:53PM -0700, Stephen Boyd wrote:
-> On 05/22, Arnd Bergmann wrote:
-> > We get a link error when CCU_MULT is not set with the
-> > newly added driver:
-> > 
-> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_mult_ops'
-> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.3+0x4): undefined reference to `ccu_mult_ops'
-> > 
-> > Fixes: 46b492116666 ("clk: sunxi-ng: Add driver for A83T CCU")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+The GPIOs on Stingray SOC are based on iProc GPIOs hence
+using this we add GPIO DT nodes for Stingray SOC.
 
-> Is there any way we can automate finding these build errors and
-> prevent them from creeping into the tree? It may be asking too
-> much, but it seems like we should be able to find these
-> particular problems with some script that greps for ccu_*_ops and
-> checks that any file's Kconfig symbol also has that selected.
-> 
-> Anyway, I'm just tired of seeing these sorts of things in my
-> inbox.
+Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
+---
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-The (ugly) script below does the trick, though it does give results
-for some symbols that are indirectly selected:
-
-SUN5I_CCU uses SUNXI_CCU_GATE but does not select it
-SUN5I_CCU uses SUNXI_CCU_MUX but does not select it
-SUN5I_CCU uses SUNXI_CCU_NKMP but does not select it
-SUN6I_A31_CCU uses SUNXI_CCU_GATE but does not select it
-SUN6I_A31_CCU uses SUNXI_CCU_MUX but does not select it
-SUN8I_A23_CCU uses SUNXI_CCU_GATE but does not select it
-SUN8I_A23_CCU uses SUNXI_CCU_MUX but does not select it
-SUN8I_A33_CCU uses SUNXI_CCU_GATE but does not select it
-SUN8I_A33_CCU uses SUNXI_CCU_MUX but does not select it
-SUN8I_A83T_CCU uses SUNXI_CCU_MULT but does not select it
-SUN8I_H3_CCU uses SUNXI_CCU_GATE but does not select it
-SUN8I_H3_CCU uses SUNXI_CCU_MUX but does not select it
-SUN8I_V3S_CCU uses SUNXI_CCU_GATE but does not select it
-SUN8I_V3S_CCU uses SUNXI_CCU_MUX but does not select it
-SUN9I_A80_CCU uses SUNXI_CCU_MUX but does not select it
-
-------------------------------------------------------------------------
-
-#!/bin/bash
-
-LANG=C
-
-for i in drivers/clk/sunxi-ng/ccu-*.o; do
-	FILE=`basename $i`
-	CLKS=`nm -g $i | grep -P -o "ccu_.*(?=_ops)" | tr [a-z] [A-Z]`
-	CFG=`grep $FILE drivers/clk/sunxi-ng/Makefile |
-		grep -P -o "(?<=CONFIG_)SUN[A-Z0-9_]*"`
-
-	for clk in $CLKS; do
-		perl -0777 -ne "/$CFG(.*?)^(?:config|endif)/sm; print \$1" \
-			drivers/clk/sunxi-ng/Kconfig | grep -q "SUNXI_$clk" ||
-			echo "$CFG uses SUNXI_$clk but does not select it"
-	done
-done
-
-------------------------------------------------------------------------
-
-
-Regards
-ChenYu
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index a4afd44..059086f 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -251,6 +251,14 @@
+ 		ranges = <0x0 0x0 0x66400000 0x100000>;
+ 
+ 		#include "stingray-clock.dtsi"
++
++		gpio_crmu: gpio@66424800 {
++			compatible = "brcm,iproc-gpio";
++			reg = <0x00024800 0x4c>;
++			ngpios = <6>;
++			#gpio-cells = <2>;
++			gpio-controller;
++		};
+ 	};
+ 
+ 	hsls {
+@@ -261,6 +269,32 @@
+ 
+ 		#include "stingray-pinctrl.dtsi"
+ 
++		gpio_hsls: gpio@689d0000 {
++			compatible = "brcm,iproc-gpio";
++			reg = <0x000d0000 0x864>;
++			ngpios = <151>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			interrupt-controller;
++			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-ranges = <&pinmux 0 0 16>,
++					<&pinmux 16 71 2>,
++					<&pinmux 18 131 8>,
++					<&pinmux 26 83 6>,
++					<&pinmux 32 123 4>,
++					<&pinmux 36 43 24>,
++					<&pinmux 60 89 2>,
++					<&pinmux 62 73 4>,
++					<&pinmux 66 95 28>,
++					<&pinmux 94 127 4>,
++					<&pinmux 98 139 10>,
++					<&pinmux 108 16 27>,
++					<&pinmux 135 77 6>,
++					<&pinmux 141 67 4>,
++					<&pinmux 145 149 6>,
++					<&pinmux 151 91 4>;
++		};
++
+ 		uart0: uart@68a00000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
+-- 
+2.7.4
