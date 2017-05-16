@@ -1,138 +1,159 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 0/6] clk: sunxi-ng: Add support for A83T CCU
-Date: Fri, 19 May 2017 15:06:06 +0800
-Message-Id: <20170519070612.32159-1-wens@csie.org>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v3 10/11] arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+Date: Tue, 16 May 2017 17:00:55 +0530
+Message-Id: <1494934256-1350-11-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+We have two instance of PL022 SPI controllers, one instance of
+DMA PL330, and one non-secure SP805 Watchdog on Stingray SOC.
 
-This is v4 of my A83T CCU series. This is for 4.13.
+This patch adds DT nodes for the above mentioned devices in
+Stingray DT.
 
-Changes since v3:
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Pramod KUMAR <pramod.kumar@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
+---
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      | 30 +++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 52 ++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
 
-  - Dropped predivider for new timing mode on mmc2 clock. Replaced with
-    a TODO note for new timing mode support. This is the last trace of
-    new timing mode code.
-
-  - Simplified PLL_CPUx clocks into multiplier clocks, just like we did
-    for the A80. At probe time the extra P dividers are forced to /1.
-    These P dividers should only be used for clock rates under 288 MHz,
-    and never used by the boot loader or the BSP kernel.
-
-Changes since v2:
-
-  - Dropped patches "clk: Provide option to query hardware for clk phase"
-    and "clk: sunxi-ng: Add class of phase clocks supporting MMC new timing
-    modes".
-    
-  - Dropped support for MMC new timing mode. This will be added later with
-    MMC support. The goal for this series is to get clk support for the A83t
-    in. This is long overdue.
-
-  - Explicitly include ccu_mux.h and select SUNXI_CCU_MUX
-
-Changes since v1:
-
-  - Dropped two patches that were merged
-
-  - Added clk core flag to disable caching of clock phases
-
-  - Added support for multiple variable pre-dividers
-
-  - Merged "pll-periph-ahb1" pre-divider clock into "ahb1" clock
-    with multiple variable pre-dividers
-
-  - Introduced new class of phase clocks that return -ENOTSUPP
-    when the clock is in new timing mode
-
-  - Force mmc2 clock to new timing mode
-
-  - Added back mmc2 output and sample clocks
-
-  - Fixed bit ops for forcing audio PLL configuration
-
-  - Added requirement for "losc" clock in device tree binding
-
-  - Stripped leading 0 in device node name
-
-  - Updated subject prefixes for various patches
-
-Patch 1 adds a compatible string for the A83T CCU to the sunxi-ccu
-bindings.
-
-Patch 2 adds support for multiple variable pre-dividers to the sunxi-ng
-mux class.
-
-Patch 3 adds the driver for the A83T CCU.
-
-Patch 4 adds the CCU device nodes, and fixes up any existing clock
-phandles in the dtsi, without using the macros.
-
-Patch 5 sets the clock accuracy for the main oscillator.
-
-Patch 6 is for the next -rc2, switch the clock indices from raw numbers
-to macros we introduced with the driver. This will be updated if more
-peripherals are introduced in the same cycle.
-
-Let me know what you think.
-
-Cover letter excerpt from v1:
-
-This is yet another series that adds support for the A83T CCU.
-The A83T CCU has a mix of new styled (like the A80) clocks at
-old (like A3x) offsets. Some differences include:
-
-  - D1/D2 style PLL clocks
-  - divisible audio module clocks
-  - new timing mode for mmc2 module clock
-
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (6):
-  dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
-  clk: sunxi-ng: Support multiple variable pre-dividers
-  clk: sunxi-ng: Add driver for A83T CCU
-  ARM: sun8i: a83t: Add CCU device nodes
-  ARM: sun8i: a83t: Set clock accuracy for 24MHz oscillator
-  ARM: sun8i: a83t: Switch to CCU device tree binding macros
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   2 +
- arch/arm/boot/dts/sun8i-a83t.dtsi                  |  19 +-
- drivers/clk/sunxi-ng/Kconfig                       |  11 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c              |  10 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              | 922 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.h              |  64 ++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r.c                 |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c               |  10 +-
- drivers/clk/sunxi-ng/ccu_mux.c                     |  15 +-
- drivers/clk/sunxi-ng/ccu_mux.h                     |  13 +-
- include/dt-bindings/clock/sun8i-a83t-ccu.h         | 140 ++++
- include/dt-bindings/reset/sun8i-a83t-ccu.h         |  98 +++
- 17 files changed, 1306 insertions(+), 49 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.h
- create mode 100644 include/dt-bindings/clock/sun8i-a83t-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-a83t-ccu.h
-
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+index c309cda..5671669 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+@@ -46,3 +46,33 @@
+ &uart3 {
+ 	status = "okay";
+ };
++
++&ssp0 {
++	pinctrl-0 = <&spi0_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 34 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
++
++&ssp1 {
++	pinctrl-0 = <&spi1_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 96 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 8a077ff..642d42c 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -279,6 +279,14 @@
+ 			status = "disabled";
+ 		};
+ 
++		wdt0: watchdog@689c0000 {
++			compatible = "arm,sp805", "arm,primecell";
++			reg = <0x000c0000 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_25m_div2_clk>, <&hsls_div4_clk>;
++			clock-names = "wdogclk", "apb_pclk";
++		};
++
+ 		gpio_hsls: gpio@689d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x000d0000 0x864>;
+@@ -359,11 +367,55 @@
+ 			status = "disabled";
+ 		};
+ 
++		ssp0: ssp@68a80000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00180000 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		ssp1: ssp@68a90000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00190000 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		hwrng: hwrng@68b20000 {
+ 			compatible = "brcm,iproc-rng200";
+ 			reg = <0x00220000 0x28>;
+ 		};
+ 
++		dma0: dma@68c10000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x00310000 0x1000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++			clocks = <&hsls_div2_clk>;
++			clock-names = "apb_pclk";
++			iommus = <&smmu 0x6000 0x0000>;
++		};
++
+ 		nand: nand@68c60000 {
+ 			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
+ 			reg = <0x00360000 0x600>,
 -- 
-2.11.0
+2.7.4
