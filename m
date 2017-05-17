@@ -1,97 +1,115 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Wed, 10 May 2017 22:26:34 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Michael Krummsdorf <michael.krummsdorf@tq-group.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, kernel@pengutronix.de,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-Message-ID: <20170510202634.z3xgdfdrnvejkm7o@pengutronix.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
- <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
- <20170505072529.a3z4gonsygg3wqfx@pengutronix.de>
- <a5bfc04e-15cf-2b24-17f9-c9b60c1052cc@i2se.com>
- <185bc71b-f986-9dd1-3a56-a525f2f09fc7@i2se.com>
- <20170505201039.uyk2ie6zyfrdafgo@pengutronix.de>
- <16216689.278511.1494157914798@email.1und1.de>
- <20170508082456.dx4rthdsidbrkxza@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20170508082456.dx4rthdsidbrkxza@pengutronix.de>
+Return-Path: <frank.wang@rock-chips.com>
+From: Frank Wang <frank.wang@rock-chips.com>
+To: heiko@sntech.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	rui.zhang@intel.com,
+	edubezval@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	charles.chen@rock-chips.com,
+	cody.xie@rock-chips.com,
+	kevan.lan@rock-chips.com,
+	huangtao@rock-chips.com,
+	rocky.hao@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wmc@rock-chips.com,
+	Frank Wang <frank.wang@rock-chips.com>
+Subject: [PATCH v2 2/4] arm: dts: rk322x: add operating-points-v2 property for cpu
+Date: Wed, 17 May 2017 18:16:15 +0800
+Message-Id: <1495016177-2413-3-git-send-email-frank.wang@rock-chips.com>
+In-Reply-To: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
+References: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+From: Finley Xiao <finley.xiao@rock-chips.com>
 
-	# cat dumpclk 
-	#!/bin/sh
+This patch adds a new opp table for cpu on rk322x SoC.
 
-	for r in 0x80014070 0x80040060 0x80040090 0x800400A0 0x800400B0 0x800400C0 0x800400F0 0x800401B0 0x800401D0; do
-		memtool md $r+4
-	done
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm/boot/dts/rk322x.dtsi | 36 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
 
-	# cat dumpeeprom 
-	#!/bin/sh
-
-	dd if=/sys/bus/spi/devices/spi1.0/eeprom bs=16 count=1 2>/dev/null | hexdump -C
-
-Now when booting with an unpatched 4.9 kernel I have after startup:
-
-	# ./dumpclk 
-	80014070: 00000204                                           ....
-	80040060: 00000003                                           ....
-	80040090: 00000005                                           ....
-	800400a0: 00000005                                           ....
-	800400b0: 00000002                                           ....
-	800400c0: 80000005                                           ....
-	800400f0: 00000102                                           ....
-	800401b0: 5e5b5513                                           .U[^
-	800401d0: 00000104                                           ....
-	# ./dumpeeprom 
-	00000000  08 ab 00 00 5f 70 00 00  00 80 00 03 00 00 cb 00  |...._p..........|
-	00000010
-
-(which is broken, because the first byte in the eeprom is a 0x09).
-
-Now I make ref_io slower again:
-
-	# memtool mw 0x800401b0 0x5e5e5513
-	# ./dumpclk
-	80014070: 00000204                                           ....
-	80040060: 00000003                                           ....
-	80040090: 00000005                                           ....
-	800400a0: 00000005                                           ....
-	800400b0: 00000002                                           ....
-	800400c0: 80000005                                           ....
-	800400f0: 00000102                                           ....
-	800401b0: 1e1e5513                                           .U^.
-	800401d0: 00000104                                           ....
-	# ./dumpeeprom
-	00000000  09 aa 00 00 5f 70 00 00  00 80 00 02 00 00 ca 00  |...._p..........|
-	00000010
-
-So on my machine it really seems to only depend on ref-io1 clk speed.
-With all available slower speeds resulting from IOFRAC1 in [0x1f ..
-0x23] accessing the eeprom works fine. With IOFRAC = 0x1d reading works
-fine already. With all lower values [0x12 .. 0x1c] reading shows these
-bit errors. Also more or less randomly jumping between different
-settings for IO1FRAC doesn't suggest that there might be something else
-influencing the bug. It was always [0x12 .. 0x1c] shows the bug, [0x1d
-.. 0x23] doesn't.
-
-I also did a test using different values for SSP2_TIMING.CLOCK_DIVIDE
-and SSP2_TIMING.CLOCK_RATE. Going through all 32504 settings that don't
-yield a bus freq > 16 MHz with ssp2-clk running at 144 MHz or 160 MHz
-doesn't show any variation. It's always fine on 144 MHz (IOFRAC = 0x1e)
-and always fails on 160 MHz (IOFRAC = 0x1b).
-
-Best regards
-Uwe
-
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index 64368b0..9a9da1f 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -66,10 +66,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0xf00>;
+ 			resets = <&cru SRST_CORE0>;
+-			operating-points = <
+-				/* KHz    uV */
+-				 816000 1000000
+-			>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			clock-latency = <40000>;
+ 			clocks = <&cru ARMCLK>;
+@@ -80,6 +77,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0xf01>;
+ 			resets = <&cru SRST_CORE1>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu2: cpu@f02 {
+@@ -87,6 +85,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0xf02>;
+ 			resets = <&cru SRST_CORE2>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu3: cpu@f03 {
+@@ -94,6 +93,35 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0xf03>;
+ 			resets = <&cru SRST_CORE3>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++	};
++
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-408000000 {
++			opp-hz = /bits/ 64 <408000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <40000>;
++			opp-suspend;
++		};
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <975000>;
++		};
++		opp-816000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp-1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1175000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1275000>;
+ 		};
+ 	};
+ 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.0.0
