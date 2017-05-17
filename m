@@ -1,29 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:47996 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750968AbdENVnX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2017 17:43:23 -0400
-Date: Sun, 14 May 2017 22:43:14 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: linux-clk@vger.kernel.org, trivial@kernel.org
-Subject: Re: [PATCH] clk: Fix comment to clk_get_parent
-Message-ID: <20170514214314.GR22219@n2100.armlinux.org.uk>
-References: <20170514202825.20389-1-alexander.sverdlin@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170514202825.20389-1-alexander.sverdlin@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 12/21] drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
+Date: Wed, 17 May 2017 09:40:41 +0200
+Message-Id: <e4c28363d94e8966866792df3bbd786332c8e931.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, May 14, 2017 at 10:28:25PM +0200, Alexander Sverdlin wrote:
-> There is no single implementation of clk_get_parent, which returns ERR_PTR().
-> Therefore, fix the comment in common header linux/clk.h, which claims otherwise.
+It seems like what's called a backporch in the datasheet is actually the
+backporch plus the sync period. Fix that in our driver.
 
-clk.h is the API definition, not the documentation of the implementation(s).
-Please leave it as-is.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 74aa01e75e32..931dd374552e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -269,7 +269,7 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 		     SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
+ 
+ 	/* Set horizontal display timings */
+-	bp = mode->crtc_htotal - mode->crtc_hsync_end;
++	bp = mode->crtc_htotal - mode->crtc_hsync_start;
+ 	DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
+ 			 mode->htotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
+@@ -277,7 +277,7 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
+ 
+ 	/* Set vertical display timings */
+-	bp = mode->crtc_vtotal - mode->crtc_vsync_end;
++	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+ 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+ 			 mode->vtotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+git-series 0.9.1
