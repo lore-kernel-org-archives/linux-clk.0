@@ -1,45 +1,68 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	jbrunet@baylibre.com,
-	narmstrong@baylibre.com,
-	linux-clk@vger.kernel.org
-Cc: khilman@baylibre.com,
-	carlo@caione.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/1] clk: meson: meson8b: mark clk81 as critical
-Date: Thu,  4 May 2017 20:32:01 +0200
-Message-Id: <20170504183201.13175-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170504183201.13175-1-martin.blumenstingl@googlemail.com>
-References: <20170504183201.13175-1-martin.blumenstingl@googlemail.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 17/21] dt-bindings: display: sun4i: Add allwinner,tcon-channel property
+Date: Wed, 17 May 2017 09:40:46 +0200
+Message-Id: <8767a7a1372530c192a1047bfc3271571ab0affc.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Disabling clk81 results in an immediate freeze of the whole system. This
-can happen "accidentally" when the last child-clock of clk81 is disabled
-(in this case the common clock framework also disables clk81, even if it
-was only enabled indirectly before).
+The Allwinner Timings Controller has two, mutually exclusive, channels.
+When the binding has been introduced, it was assumed that there would be
+only a single user per channel in the system.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+While this is likely for the channel 0 which only connects to LCD displays,
+it turns out that the channel 1 can be connected to multiple controllers in
+the SoC (HDMI and TV encoders for example). And while the simultaneous use
+of HDMI and TV outputs cannot be achieved, switching from one to the other
+at runtime definitely sounds plausible.
+
+Add an extra property, allwinner,tcon-channel, to specify for a given
+endpoint which TCON channel it is connected to, while falling back to the
+previous mechanism if that property is missing.
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/meson/meson8b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 ++++---
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e9985503165c..bfd1690724de 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -399,7 +399,7 @@ struct clk_gate meson8b_clk81 = {
- 		.ops = &clk_gate_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_div" },
- 		.num_parents = 1,
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL),
- 	},
- };
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index e74794f20ec5..0832c8491895 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -85,10 +85,13 @@ Required properties:
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoint, the second one the output
  
+-  The output should have two endpoints. The first is the block
+-  connected to the TCON channel 0 (usually a panel or a bridge), the
+-  second the block connected to the TCON channel 1 (usually the TV
+-  encoder)
++  The output may have multiple endpoints. The TCON has two channels,
++  usually with the first channel being used for the panels interfaces
++  (RGB, LVDS, etc.), and the second being used for the outputs that
++  require another controller (TV Encoder, HDMI, etc.). The endpoints
++  will take an extra property, allwinner,tcon-channel, to specify the
++  channel the endpoint is associated to. If that property is not
++  present, the endpoint number will be used as the channel number.
+ 
+ On SoCs other than the A33, there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
 -- 
-2.12.2
+git-series 0.9.1
