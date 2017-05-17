@@ -1,84 +1,67 @@
-Return-Path: <phil@raspberrypi.org>
-Subject: Re: CLK_OF_DECLARE advice required
-To: Stefan Wahren <stefan.wahren@i2se.com>,
-        Stephen Warren <swarren@wwwdotorg.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        linux-clk@vger.kernel.org
-References: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
- <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
- <0794f430-9761-c855-9a89-13d9871c5831@i2se.com>
-From: Phil Elwell <phil@raspberrypi.org>
-Message-ID: <6765be64-9cf6-4663-4182-5b63f27bfb93@raspberrypi.org>
-Date: Wed, 31 May 2017 17:28:58 +0100
-MIME-Version: 1.0
-In-Reply-To: <0794f430-9761-c855-9a89-13d9871c5831@i2se.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 04/21] clk: sunxi-ng: mux: Don't just rely on the parent for CLK_SET_RATE_PARENT
+Date: Wed, 17 May 2017 09:40:33 +0200
+Message-Id: <ce84114d26706769eb6f7c2404bd20b9f2b0d868.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31/05/2017 16:58, Stefan Wahren wrote:
-> Am 31.05.2017 um 17:27 schrieb Stephen Warren:
->> On 05/30/2017 06:23 AM, Phil Elwell wrote:
->>> Hi,
->>>
->>> I've run into a problem using the fixed-factor clock on Raspberry Pi
->>> and I'd
->>> like some advice before I submit a patch.
->>>
->>> Some context: the aim is to use a standard UART and some external
->>> circuitry
->>> as a MIDI interface. This would be straightforward except that Linux
->>> doesn't
->>> recognise the required 31.25KHz as a valid UART baud rate. Rhe
->>> workaround is
->>> to declare the UART clock such that the reported rate differs from
->>> the actual
->>> rate. If one sets the reported rate to be (actual*38400)/31250 then
->>> requesting a 38400 baud rate will result in an actual 31250 baud signal.
->>
->> This sounds like the wrong approach. Forcing the port to use a
->> different clock rate than the user requests would prevent anyone from
->> using that port for its standard purpose; it'd turn what should be a
->> runtime decision into a compile-time decision.
->>
->> Are you sure there's no way to simply select the correct baud rate on
->> the port? I see plenty of references to configuring custom baud rates
->> under Linux when I search Google, e.g.:
->>
->>> https://stackoverflow.com/questions/12646324/how-to-set-a-custom-baud-rate-on-linux
->>>
->> "How to set a custom baud rate on Linux?"
->>
->>> https://sourceware.org/ml/libc-help/2009-06/msg00016.html
->> "Re: Terminal interface and non-standard baudrates"
->>
-> 
-> I remember this gist from Peter Hurley:
-> 
-> https://gist.github.com/peterhurley/fbace59b55d87306a5b8
+The current code only rely on the parent to change its rate in the case
+where CLK_SET_RATE_PARENT is set.
 
-Thank you, Stephen and Stephan. Stephen - the clock scaling is applied by a DT overlay so
-it effectively a runtime setting, but I take your point about the elegance of the solution.
-Stefan - anybaud looks promising, although I would have preferred for users to continue to
-use the existing user-space tools - kernel changes can be deployed more easily.
+However, some clock rates might be obtained only through a modification of
+the parent and the clock divider. Just rely on the round rate of the clocks
+to give us the best computation that might be achieved for a given rate.
 
-For my edification, can you pretend for a moment that the application was a valid one and
-answer any of my original questions?:
+round_rate functions now need to honor CLK_SET_RATE_PARENT, but either the
+functions already do that if they modify the parent, or don't modify the
+praents at all.
 
-1. Should all system clock drivers use OF_CLK_DECLARE? Doing so would probably
-avoid this problem, but further initialisation order dependencies may
-require more drivers to be initialised early.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_mux.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-2. Why does the clock initialisation hook registered by OF_CLK_DECLARE not
-return any indication of success? If it did, and if the OF_POPULATED flag
-was only set after successful initialisation then the normal retrying of
-a deferred probe would also avoid this problem.
-
-3. Would adding the OF_CLK_DECLARE hook prevent the use of the devm_ managed
-functions like devm_kzalloc? If not, why doesn't fixed-factor-clock use it?
-
-Thanks,
-
-Phil
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index bae735e252b6..58b6e349a0ed 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -95,19 +95,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 		if (!parent)
+ 			continue;
+ 
+-		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+-			struct clk_rate_request parent_req = *req;
+-			int ret = __clk_determine_rate(parent, &parent_req);
+-
+-			if (ret)
+-				continue;
+-
+-			parent_rate = parent_req.rate;
+-		} else {
+-			parent_rate = clk_hw_get_rate(parent);
+-		}
+-
+-		adj_parent_rate = parent_rate;
++		adj_parent_rate = parent_rate = clk_hw_get_rate(parent);
+ 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
+ 							&adj_parent_rate);
+ 
+-- 
+git-series 0.9.1
