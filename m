@@ -1,60 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:45999 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751653AbdEDOpV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 10:45:21 -0400
-Date: Thu, 04 May 2017 22:45:11 +0800
-In-Reply-To: <20170504144152.34yzk424aqrizmbu@lukather>
-References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-4-icenowy@aosc.io> <20170504140220.26kguf3trz7ocylv@lukather> <83062089-19CD-4805-A6DC-2C25D75621FF@aosc.io> <20170504144152.34yzk424aqrizmbu@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v2 03/10] pinctrl: sunxi: add A20 support to A10 driver
-To: linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <52C75207-6F41-4B3F-8953-F4F040358792@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <frank.wang@rock-chips.com>
+From: Frank Wang <frank.wang@rock-chips.com>
+To: heiko@sntech.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	rui.zhang@intel.com,
+	edubezval@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	charles.chen@rock-chips.com,
+	cody.xie@rock-chips.com,
+	kevan.lan@rock-chips.com,
+	huangtao@rock-chips.com,
+	rocky.hao@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wmc@rock-chips.com,
+	Frank Wang <frank.wang@rock-chips.com>
+Subject: [PATCH v2 1/4] arm: dts: rk322x: add some assigned-clocks
+Date: Wed, 17 May 2017 18:16:14 +0800
+Message-Id: <1495016177-2413-2-git-send-email-frank.wang@rock-chips.com>
+In-Reply-To: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
+References: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
+Add CPLL, GPLL and some other assigned-clocks for rk322x SoC.
 
-于 2017年5月4日 GMT+08:00 下午10:41:52, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->On Thu, May 04, 2017 at 10:03:26PM +0800, Icenowy Zheng wrote:
->> 
->> 
->> 于 2017年5月4日 GMT+08:00 下午10:02:20, Maxime Ripard
-><maxime.ripard@free-electrons.com> 写到:
->> >On Thu, May 04, 2017 at 09:49:59PM +0800, Icenowy Zheng wrote:
->> >>  static const struct of_device_id sun4i_a10_pinctrl_match[] = {
->> >> -	{ .compatible = "allwinner,sun4i-a10-pinctrl", },
->> >> +	{
->> >> +		.compatible = "allwinner,sun4i-a10-pinctrl",
->> >> +		.data = (void *)PINCTRL_SUN4I_A10
->> >> +	},
->> >> +	{
->> >> +		.compatible = "allwinner,sun7i-a20-pinctrl",
->> >> +		.data = (void *)PINCTRL_SUN7I_A20
->> >> +	},
->> >>  	{}
->> >>  };
->> >
->> >This means you're going to have two drivers probing for the same
->> >device: this driver, and the old one. This is not ok, and probably
->> >introduces some corner cases.
->> 
->> The A20 driver is dropped in the next commit.
->
->Yes, and that is an issue for bisectability. Anyone that will checkout
->between those two commits will have a broken kernel, and that is not
->ok. Any commit should be in a working state.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+---
+ arch/arm/boot/dts/rk322x.dtsi | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-Squash them together?
-
->
->Maxime
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index f7498b3..64368b0 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -346,8 +346,18 @@
+ 		rockchip,grf = <&grf>;
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+-		assigned-clocks = <&cru PLL_GPLL>;
+-		assigned-clock-rates = <594000000>;
++		assigned-clocks =
++			<&cru PLL_GPLL>, <&cru ARMCLK>,
++			<&cru PLL_CPLL>, <&cru ACLK_PERI>,
++			<&cru HCLK_PERI>, <&cru PCLK_PERI>,
++			<&cru ACLK_CPU>, <&cru HCLK_CPU>,
++			<&cru PCLK_CPU>;
++		assigned-clock-rates =
++			<594000000>, <816000000>,
++			<500000000>, <150000000>,
++			<150000000>, <75000000>,
++			<150000000>, <150000000>,
++			<75000000>;
+ 	};
+ 
+ 	thermal-zones {
+-- 
+2.0.0
