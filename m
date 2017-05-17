@@ -1,151 +1,106 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:56034 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758982AbdENQcy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 May 2017 12:32:54 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v7 11/13] ARM: sun8i: v3s: add device nodes for DE2 display pipeline
-Date: Mon, 15 May 2017 00:30:43 +0800
-Message-Id: <20170514163045.40366-12-icenowy@aosc.io>
-In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
-References: <20170514163045.40366-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 05/21] clk: sunxi-ng: mux: split out the pre-divider computation code
+Date: Wed, 17 May 2017 09:40:34 +0200
+Message-Id: <6d3e9ce05c3f58e42975136481a71fa5d556ad1c.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a "Display Engine 2.0" with only one mixer
-and only one TCON connected to this mixer, which have RGB LCD output.
+The pre-divider retrieval code was merged into the function to apply the
+current pre-divider onto the parent clock rate so that we can use that
+adjusted value to do our factors computation.
 
-Add device nodes for this display pipeline.
+However, since we'll need to do the reverse operation, we need to split out
+that code into a function that will be shared.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 ---
-Changes in v7:
-- Change DE2 clock compatible to V3s one.
-- Mention only one TCON in commit message.
-- Changed commit brief.
+ drivers/clk/sunxi-ng/ccu_mux.c | 32 ++++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
 
- arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 71075969e5e6..b71b35734515 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -41,6 +41,10 @@
-  */
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 58b6e349a0ed..3eb23d4e6534 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -15,24 +15,20 @@
+ #include "ccu_gate.h"
+ #include "ccu_mux.h"
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sun8i-v3s-ccu.h>
-+#include <dt-bindings/clock/sun8i-de2.h>
-+#include <dt-bindings/reset/sun8i-v3s-ccu.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
+-void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+-					     struct ccu_mux_internal *cm,
+-					     int parent_index,
+-					     unsigned long *parent_rate)
++static u16 ccu_mux_get_prediv(struct ccu_common *common,
++			      struct ccu_mux_internal *cm,
++			      int parent_index)
+ {
+ 	u16 prediv = 1;
+ 	u32 reg;
+-	int i;
  
- / {
- 	#address-cells = <1>;
-@@ -59,6 +63,12 @@
- 		};
- 	};
+ 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
+ 	      (common->features & CCU_FEATURE_VARIABLE_PREDIV) ||
+ 	      (common->features & CCU_FEATURE_ALL_PREDIV)))
+-		return;
++		return 1;
  
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-v3s-display-engine";
-+		allwinner,pipelines = <&de2_mixer0>;
-+		status = "disabled";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -93,6 +103,83 @@
- 		#size-cells = <1>;
- 		ranges;
+-	if (common->features & CCU_FEATURE_ALL_PREDIV) {
+-		*parent_rate = *parent_rate / common->prediv;
+-		return;
+-	}
++	if (common->features & CCU_FEATURE_ALL_PREDIV)
++		return common->prediv;
  
-+		de2_clocks: clock@1000000 {
-+			compatible = "allwinner,sun8i-v3s-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
+ 	reg = readl(common->base + common->reg);
+ 	if (parent_index < 0) {
+@@ -40,10 +36,13 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+ 		parent_index &= (1 << cm->width) - 1;
+ 	}
+ 
+-	if (common->features & CCU_FEATURE_FIXED_PREDIV)
++	if (common->features & CCU_FEATURE_FIXED_PREDIV) {
++		int i;
 +
-+		de2_mixer0: mixer@1100000 {
-+			compatible = "allwinner,sun8i-v3s-de2-mixer";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&de2_clocks CLK_MIXER0>,
-+				 <&de2_clocks CLK_BUS_MIXER0>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&de2_clocks RST_MIXER0>;
-+			assigned-clocks = <&de2_clocks CLK_MIXER0>;
-+			assigned-clock-rates = <150000000>;
+ 		for (i = 0; i < cm->n_predivs; i++)
+ 			if (parent_index == cm->fixed_predivs[i].index)
+ 				prediv = cm->fixed_predivs[i].div;
++	}
+ 
+ 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
+ 		if (parent_index == cm->variable_prediv.index) {
+@@ -54,7 +53,16 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+ 			prediv = div + 1;
+ 		}
+ 
+-	*parent_rate = *parent_rate / prediv;
++	return prediv;
++}
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun8i-v3s-tcon";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>,
-+				 <&ccu CLK_TCON0>;
-+			clock-names = "ahb",
-+				      "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+
- 		mmc0: mmc@01c0f000 {
- 			compatible = "allwinner,sun7i-a20-mmc";
- 			reg = <0x01c0f000 0x1000>;
++void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
++					     struct ccu_mux_internal *cm,
++					     int parent_index,
++					     unsigned long *parent_rate)
++{
++	*parent_rate = *parent_rate / ccu_mux_get_prediv(common, cm,
++							 parent_index);
+ }
+ 
+ int ccu_mux_helper_determine_rate(struct ccu_common *common,
 -- 
-2.12.2
-
+git-series 0.9.1
