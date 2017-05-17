@@ -1,42 +1,63 @@
-Return-Path: <weiyj.lk@gmail.com>
-Return-Path: <weiyj.lk@gmail.com>
-From: Wei Yongjun <weiyj.lk@gmail.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Icenowy Zheng <icenowy@aosc.io>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH -next] clk: sunxi-ng: de2: fix wrong pointer passed to PTR_ERR()
-Date: Thu, 18 May 2017 15:55:13 +0000
-Message-Id: <20170518155513.29628-1-weiyj.lk@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
+	<mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	linux-samsung-soc@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <485fbe0c-473d-fe6a-6cad-a3d1beadfab8@samsung.com>
+Date: Wed, 17 May 2017 14:19:25 +0200
+MIME-version: 1.0
+In-reply-to: <d3368372-c7c7-8d34-e8c1-64c94ffd06a9@samsung.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <d3368372-c7c7-8d34-e8c1-64c94ffd06a9@samsung.com>
+	<CGME20170517121929epcas1p18a1b1759cffbaa709b03c9516dced905@epcas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On 04/25/2017 12:48 PM, Sylwester Nawrocki wrote:
+> Hi Stephen, Mike,
+>
+> This pull request contains only patches converting clk/samsung to the clk_hw
+> API, if it's too late please just postpone that to 4.13 merge window. Thanks.
 
-PTR_ERR should access the value just tested by IS_ERR, otherwise
-the wrong error code will be returned.
 
-Fixes: b0d9a4bd52bd ("clk: sunxi-ng: add support for DE2 CCU")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please ignore this pull request, I will rebase and resend with some
+patches updated since it turned out there were some issues in this
+series.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 15aaa9c..5cdaf52 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -184,7 +184,7 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
- 
- 	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
- 	if (IS_ERR(rstc)) {
--		ret = PTR_ERR(bus_clk);
-+		ret = PTR_ERR(rstc);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(&pdev->dev,
- 				"Couldn't get reset control: %d\n", ret);
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+>
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+>
+> are available in the git repository at:
+>
+>   git://linuxtv.org/snawrocki/samsung.git for-v4.12/clk/next
+>
+> for you to fetch changes up to 6a907d767e72eaf26c57fc54a372d34ab303bfbb:
+>
+>   clk: samsung: s5pv210-audss: Convert to the new clk_hw API (2017-04-25 11:32:55 +0200)
+>
+> ----------------------------------------------------------------
+> Marek Szyprowski (6):
+>       clk: samsung: Remove dead code
+>       clk: samsung: Add local variable to match its purpose
+>       clk: samsung: Convert common drivers to the new clk_hw API
+>       clk: samsung: exynos-audss: Convert to the new clk_hw API
+>       clk: samsung: exynos-clkout: Convert to the new clk_hw API
+>       clk: samsung: s5pv210-audss: Convert to the new clk_hw API
+>
+>  drivers/clk/samsung/clk-cpu.c           | 17 +++--
+>  drivers/clk/samsung/clk-exynos-audss.c  | 55 +++++++-------
+>  drivers/clk/samsung/clk-exynos-clkout.c | 18 ++---
+>  drivers/clk/samsung/clk-pll.c           | 14 ++--
+>  drivers/clk/samsung/clk-pll.h           |  4 --
+>  drivers/clk/samsung/clk-s3c2410-dclk.c  | 75 ++++++++++---------
+>  drivers/clk/samsung/clk-s5pv210-audss.c | 50 ++++++-------
+>  drivers/clk/samsung/clk.c               | 91 +++++++++++-------------
+>  drivers/clk/samsung/clk.h               |  9 ++-
+>  9 files changed, 160 insertions(+), 173 deletions(-)
+
+--
+Regards,
+Sylwester
