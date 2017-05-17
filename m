@@ -1,79 +1,92 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sat, 27 May 2017 13:19:13 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 5/5 v2] clk: qcom: Add support for MSM8660 LCC
-Message-ID: <20170527201913.GN12920@tuxbook>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-5-linus.walleij@linaro.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170419091326.11226-5-linus.walleij@linaro.org>
+In-Reply-To: <a8d8a93ddbac69e5dddd9c89a147f8cf2ad043a4.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+ <a8d8a93ddbac69e5dddd9c89a147f8cf2ad043a4.1495006350.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 17 May 2017 17:50:45 +0800
+Message-ID: <CAGb2v65ZWHi_Dhsy__yVrz7330pfyMbBDTqoEE37NcSXOU_W7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 14/21] drm/sun4i: tcon: multiply the vtotal when not in interlace
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
-> diff --git a/drivers/clk/qcom/lcc-msm8660.c b/drivers/clk/qcom/lcc-msm8660.c
-[..]
-> +/* The vendor code uses PLL4 as parent everywhere */
-> +static const struct parent_map lcc_parent_map[] = {
-> +	{ P_PXO, 0 },
-> +	{ P_CXO, 1 },
-> +	/* Select RPM PLL4, but also used for selecting LPA PLL0 */
-> +	{ P_PLL4_LPA_PLL0, 2 },
-> +	/* Will just ground the line */
-> +	{ P_GND, 6 },
-> +};
+On Wed, May 17, 2017 at 3:40 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> It appears that the total vertical resolution needs to be doubled when
+> we're not in interlaced. Make sure that is the case.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index 62e254aedb57..a0f9a8a516c7 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -153,7 +153,7 @@ static int sun4i_tcon_get_clk_delay(struct drm_display_mode *mode,
+>  void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+>                           struct drm_display_mode *mode)
+>  {
+> -       unsigned int bp, hsync, vsync;
+> +       unsigned int bp, hsync, vsync, vtotal;
+>         u8 clk_delay;
+>         u32 val = 0;
+>
+> @@ -192,9 +192,26 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+>         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+>                          mode->crtc_vtotal, bp);
+>
+> +       /*
+> +        * The vertical resolution needs to be doubled in all
+> +        * cases. We could use crtc_vtotal and always multiply by two,
+> +        * but that leads to a rounding error in interlace when vtotal
+> +        * is odd.
+> +        *
+> +        * This happens with TV's PAL for example, where vtotal will
+> +        * be 625, crtc_vtotal 312, and thus crtc_vtotal * 2 will be
+> +        * 624, which apparently confuses the hardware.
+> +        *
+> +        * To work around this, we will always use vtotal, and
+> +        * multiply by two only if we're not in interlace.
+> +        */
+> +       vtotal = mode->vtotal;
+> +       if (!(mode->flags & DRM_MODE_FLAG_INTERLACE))
+> +               vtotal = vtotal * 2;
 > +
-> +static const char * const lcc_parent_tbl[] = {
-> +	"pxo",
-> +	"cxo",
-> +	/*
-> +	 * PLL4 is an RPM clock on MSM8660/APQ8060, set to "pll4" for this
-> +	 * If we enable and mux in the LPA_PLL0 on this platform, we can
-> +	 * set this to "lpa_pll0" instead
-> +	 */
-> +	"pll4_clk",
-> +	"gnd", /* This is a very inactive parent */
-> +};
-> +
-> +/*
-> + * This table is evidently for using PLL4 as parent, if we start using
-> + * LPA_PLL0 we need to provide a second table.
-> + */
+>         /* Set vertical display timings */
+>         regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
+> -                    SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
+> +                    SUN4I_TCON0_BASIC2_V_TOTAL(vtotal) |
+>                      SUN4I_TCON0_BASIC2_V_BACKPORCH(bp));
+>
+>         /* Set Hsync and Vsync length */
+> @@ -279,9 +296,9 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+>         /* Set vertical display timings */
+>         bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+>         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+> -                        mode->vtotal, bp);
+> +                        mode->crtc_vtotal, bp);
 
-Aren't you muxing in LPA_PLL0 as source instead of PLL4 at the bottom of
-probe()? And as you hard code that selector, shouldn't the parent table
-reference lpa_pll0?
+You should duplicate the logic from channel 0 to channel 1.
+In fact, interlaced modes happen predominantly on channel 1,
+for composite and HDMI modes.
 
-> +static struct freq_tbl clk_tbl_aif_osr_pll4[] = {
-> +	{   768000, P_PLL4_LPA_PLL0, 4,  1, 176 },
-> +	{  1024000, P_PLL4_LPA_PLL0, 4,  1, 132 },
-> +	{  1536000, P_PLL4_LPA_PLL0, 4,  1,  88 },
-> +	{  2048000, P_PLL4_LPA_PLL0, 4,  1,  66 },
-> +	{  3072000, P_PLL4_LPA_PLL0, 4,  1,  44 },
-> +	{  4096000, P_PLL4_LPA_PLL0, 4,  1,  33 },
-> +	{  6144000, P_PLL4_LPA_PLL0, 4,  1,  22 },
-> +	{  8192000, P_PLL4_LPA_PLL0, 2,  1,  33 },
-> +	{ 12288000, P_PLL4_LPA_PLL0, 4,  1,  11 },
-> +	{ 24576000, P_PLL4_LPA_PLL0, 2,  1,  11 },
-> +	{ 27000000, P_PXO,           1,  0,   0 },
-> +	{ }
-> +};
-> +
-[..]
-> +static int lcc_msm8660_probe(struct platform_device *pdev)
-> +{
-[..]
-> +	/*
-> +	 * Enable LPA_PLL0 source on the LPASS Primary PLL Mux. Incidentally
-> +	 * this is set to 0x00000001 at boot.
-> +	 * 0x01 = LPA_PLL0
-> +	 */
-> +	regmap_write(regmap, 0xc4, 0x1);
+ChenYu
 
-Regards,
-Bjorn
+>         regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
+> -                    SUN4I_TCON1_BASIC4_V_TOTAL(mode->vtotal) |
+> +                    SUN4I_TCON1_BASIC4_V_TOTAL(mode->crtc_vtotal * 2) |
+>                      SUN4I_TCON1_BASIC4_V_BACKPORCH(bp));
+>
+>         /* Set Hsync and Vsync length */
+> --
+> git-series 0.9.1
