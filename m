@@ -1,41 +1,40 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH 08/10] clk: fix incorrect usage of ENOSYS
-Date: Thu, 18 May 2017 18:38:02 +0200
-Message-Id: <20170518163804.14123-9-jbrunet@baylibre.com>
-In-Reply-To: <20170518163804.14123-1-jbrunet@baylibre.com>
-References: <20170518163804.14123-1-jbrunet@baylibre.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 17 May 2017 11:01:22 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Frank Wang <frank.wang@rock-chips.com>
+Cc: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com,
+	linux@armlinux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, rjw@rjwysocki.net, rui.zhang@intel.com,
+	edubezval@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, charles.chen@rock-chips.com,
+	cody.xie@rock-chips.com, kevan.lan@rock-chips.com,
+	huangtao@rock-chips.com, rocky.hao@rock-chips.com,
+	finley.xiao@rock-chips.com, zhangqing@rock-chips.com,
+	wmc@rock-chips.com
+Subject: Re: [PATCH 2/4] arm: dts: rk322x: add operating-points-v2 property
+ for cpu
+Message-ID: <20170517053122.GB17481@vireshk-i7>
+References: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
+ <1494996323-4678-3-git-send-email-frank.wang@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494996323-4678-3-git-send-email-frank.wang@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-ENOSYS is special and should only be used for incorrect syscall number.
-It does not seem to be the case here.
+On 17-05-17, 12:45, Frank Wang wrote:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
+> 
+> This patch adds a new opp table for cpu on rk322x SoC.
+> 
+> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+> ---
+>  arch/arm/boot/dts/rk322x.dtsi | 36 ++++++++++++++++++++++++++++++++----
+>  1 file changed, 32 insertions(+), 4 deletions(-)
 
-Reported by checkpatch.pl while working on clock protection.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e60d86d7c082..5980080a86c0 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2004,7 +2004,7 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 
- 	/* verify ops for for multi-parent clks */
- 	if ((core->num_parents > 1) && (!core->ops->set_parent))
--		return -ENOSYS;
-+		return -EPERM;
- 
- 	/* check that we are allowed to re-parent if the clock is in use */
- 	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
 -- 
-2.9.4
+viresh
