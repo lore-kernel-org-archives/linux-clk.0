@@ -1,106 +1,187 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 31 May 2017 23:39:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Phil Elwell <phil@raspberrypi.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: CLK_OF_DECLARE advice required
-Message-ID: <20170601063937.GN20170@codeaurora.org>
-References: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
- <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
- <0794f430-9761-c855-9a89-13d9871c5831@i2se.com>
- <6765be64-9cf6-4663-4182-5b63f27bfb93@raspberrypi.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: [RFC PATCH 03/11] drm: sun4i: ignore swapped mixer<->tcon connection
+ for DE2
+Date: Thu, 18 May 2017 00:43:46 +0800
+Message-Id: <20170517164354.16399-4-icenowy@aosc.io>
+In-Reply-To: <20170517164354.16399-1-icenowy@aosc.io>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <6765be64-9cf6-4663-4182-5b63f27bfb93@raspberrypi.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/31, Phil Elwell wrote:
-> On 31/05/2017 16:58, Stefan Wahren wrote:
-> > Am 31.05.2017 um 17:27 schrieb Stephen Warren:
-> >> On 05/30/2017 06:23 AM, Phil Elwell wrote:
-> >>> Hi,
-> >>>
-> >>> I've run into a problem using the fixed-factor clock on Raspberry Pi
-> >>> and I'd
-> >>> like some advice before I submit a patch.
-> >>>
-> >>> Some context: the aim is to use a standard UART and some external
-> >>> circuitry
-> >>> as a MIDI interface. This would be straightforward except that Linux
-> >>> doesn't
-> >>> recognise the required 31.25KHz as a valid UART baud rate. Rhe
-> >>> workaround is
-> >>> to declare the UART clock such that the reported rate differs from
-> >>> the actual
-> >>> rate. If one sets the reported rate to be (actual*38400)/31250 then
-> >>> requesting a 38400 baud rate will result in an actual 31250 baud signal.
-> >>
-> >> This sounds like the wrong approach. Forcing the port to use a
-> >> different clock rate than the user requests would prevent anyone from
-> >> using that port for its standard purpose; it'd turn what should be a
-> >> runtime decision into a compile-time decision.
-> >>
-> >> Are you sure there's no way to simply select the correct baud rate on
-> >> the port? I see plenty of references to configuring custom baud rates
-> >> under Linux when I search Google, e.g.:
-> >>
-> >>> https://stackoverflow.com/questions/12646324/how-to-set-a-custom-baud-rate-on-linux
-> >>>
-> >> "How to set a custom baud rate on Linux?"
-> >>
-> >>> https://sourceware.org/ml/libc-help/2009-06/msg00016.html
-> >> "Re: Terminal interface and non-standard baudrates"
-> >>
-> > 
-> > I remember this gist from Peter Hurley:
-> > 
-> > https://gist.github.com/peterhurley/fbace59b55d87306a5b8
-> 
-> Thank you, Stephen and Stephan. Stephen - the clock scaling is applied by a DT overlay so
-> it effectively a runtime setting, but I take your point about the elegance of the solution.
-> Stefan - anybaud looks promising, although I would have preferred for users to continue to
-> use the existing user-space tools - kernel changes can be deployed more easily.
-> 
-> For my edification, can you pretend for a moment that the application was a valid one and
-> answer any of my original questions?:
-> 
-> 1. Should all system clock drivers use OF_CLK_DECLARE? Doing so would probably
-> avoid this problem, but further initialisation order dependencies may
-> require more drivers to be initialised early.
+Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
+tcon0 and mixer1 is connected to tcon1; however by setting a bit
+the connection can be swapped.
 
-No. CLK_OF_DECLARE() is only there to register clks early for
-things that need them early, i.e. interrupts and timers.
-Otherwise they should be plain drivers (platform or some other
-bus). If the same node has both then we have
-CLK_OF_DECLARE for that.
+As we now hardcode the default connection, ignore the bonus endpoint for
+the mixer's output and the TCON's input, as they stands for the swapped
+connection.
 
-> 
-> 2. Why does the clock initialisation hook registered by OF_CLK_DECLARE not
-> return any indication of success? If it did, and if the OF_POPULATED flag
-> was only set after successful initialisation then the normal retrying of
-> a deferred probe would also avoid this problem.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c  | 27 ++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 +++++++++++++++++++++++++++++---------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
+ 3 files changed, 59 insertions(+), 9 deletions(-)
 
-Historical raisins. Honestly if it fails the whole system should
-probably panic because we aren't going to get interrupts or
-schedule properly. Of course, we have whole drivers that register
-with CLK_OF_DECLARE() though when they should really be a driver
-that can do probe defer, etc., so making a change isn't really
-feasible right now.
-
-> 
-> 3. Would adding the OF_CLK_DECLARE hook prevent the use of the devm_ managed
-> functions like devm_kzalloc? If not, why doesn't fixed-factor-clock use it?
-> 
-
-If you use CLK_OF_DECLARE() then you don't get a struct device to
-pass to devm functions and thus you can't use them. I don't
-follow the question.
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 1dd1948025d2..29bf1325ded6 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -173,6 +173,13 @@ static bool sun4i_drv_node_is_frontend(struct device_node *node)
+ 		of_device_is_compatible(node, "allwinner,sun8i-a33-display-frontend");
+ }
+ 
++static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node *node)
++{
++	/* The V3s has only one mixer-tcon pair, so it's not listed here. */
++	return of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer0") ||
++		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
++}
++
+ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ {
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+@@ -249,6 +256,26 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 			}
+ 		}
+ 
++		/*
++		 * The second endpoint of the output of a swappable DE2 mixer
++		 * is the TCON after connection swapping.
++		 * Ignore it now, as we now hardcode mixer0->tcon0,
++		 * mixer1->tcon1 connection.
++		 */
++		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
++			struct of_endpoint endpoint;
++
++			if (of_graph_parse_endpoint(ep, &endpoint)) {
++				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
++				continue;
++			}
++
++			if (endpoint.id) {
++				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2 mixer... skipping\n");
++				continue;
++			}
++		}
++
+ 		/* Walk down our tree */
+ 		count += sun4i_drv_add_endpoints(dev, match, remote);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index f44a37a5993d..89a215ff2370 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -425,7 +425,8 @@ static int sun4i_tcon_init_regmap(struct device *dev,
+  * requested via the get_id function of the engine.
+  */
+ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+-						   struct device_node *node)
++						   struct device_node *node,
++						   bool skip_bonus_ep)
+ {
+ 	struct device_node *port, *ep, *remote;
+ 	struct sunxi_engine *engine;
+@@ -439,6 +440,20 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+ 		if (!remote)
+ 			continue;
+ 
++		if (skip_bonus_ep) {
++			struct of_endpoint endpoint;
++
++			if (of_graph_parse_endpoint(ep, &endpoint)) {
++				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
++				continue;
++			}
++
++			if (endpoint.id) {
++				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when searching engine\n");
++				continue;
++			}
++		}
++
+ 		/* does this node match any registered engines? */
+ 		list_for_each_entry(engine, &drv->engine_list, list) {
+ 			if (remote == engine->node) {
+@@ -449,7 +464,7 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+ 		}
+ 
+ 		/* keep looking through upstream ports */
+-		engine = sun4i_tcon_find_engine(drv, remote);
++		engine = sun4i_tcon_find_engine(drv, remote, skip_bonus_ep);
+ 		if (!IS_ERR(engine)) {
+ 			of_node_put(remote);
+ 			of_node_put(port);
+@@ -469,21 +484,27 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon;
+ 	int ret;
+ 
+-	engine = sun4i_tcon_find_engine(drv, dev->of_node);
+-	if (IS_ERR(engine)) {
+-		dev_err(dev, "Couldn't find matching engine\n");
+-		return -EPROBE_DEFER;
+-	}
+-
+ 	tcon = devm_kzalloc(dev, sizeof(*tcon), GFP_KERNEL);
+ 	if (!tcon)
+ 		return -ENOMEM;
+ 	dev_set_drvdata(dev, tcon);
+ 	tcon->drm = drm;
+ 	tcon->dev = dev;
+-	tcon->id = engine->id;
+ 	tcon->quirks = of_device_get_match_data(dev);
+ 
++	/*
++	 * As we keep the connection between DE2 mixer and TCON not swapped,
++	 * skip the bonus endpoints (which stand for swapped connection)
++	 * when finding the correspoing engine.
++	 */
++	engine = sun4i_tcon_find_engine(drv, dev->of_node,
++					tcon->quirks->swappable_input);
++	if (IS_ERR(engine)) {
++		dev_err(dev, "Couldn't find matching engine\n");
++		return -EPROBE_DEFER;
++	}
++	tcon->id = engine->id;
++
+ 	tcon->lcd_rst = devm_reset_control_get(dev, "lcd");
+ 	if (IS_ERR(tcon->lcd_rst)) {
+ 		dev_err(dev, "Couldn't get our reset line\n");
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index d37e1e2ed60e..568dc736238a 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -146,6 +146,8 @@
+ struct sun4i_tcon_quirks {
+ 	bool	has_unknown_mux; /* sun5i has undocumented mux */
+ 	bool	has_channel_1;	/* a33 does not have channel 1 */
++	/* Some DE2 can swap the mixer<->TCON connection */
++	bool	swappable_input;
+ };
+ 
+ struct sun4i_tcon {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
