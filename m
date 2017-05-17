@@ -1,72 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:43733 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753132AbdEDNu0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 09:50:26 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 00/10] Initial Allwinner R40 support
-Date: Thu,  4 May 2017 21:49:56 +0800
-Message-Id: <20170504135006.16483-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 03/21] clk: sunxi-ng: div: Switch to divider_round_rate
+Date: Wed, 17 May 2017 09:40:32 +0200
+Message-Id: <13c78d9da524cd9f123a75f56e097fa7bd07cc74.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is the first non-RFC version of this patchset, which added basical
-support including I2C, UART and MMC to the mainline Linux.
+divider_round_rate_parent already evaluates changing the parent rate if
+CLK_SET_RATE_PARENT is set. Now that we can do that on muxes too, let's
+just use it.
 
-The pinctrl driver of A20 is also merged into the one of A10 before
-R40 support is added into the A10 driver.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_div.c | 27 ++++-----------------------
+ 1 file changed, 4 insertions(+), 23 deletions(-)
 
-Chen-Yu Tsai (2):
-  ARM: dts: sun8i: Add basic dtsi file for Allwinner R40
-  ARM: dts: sun8i: Add board dts file for Banana Pi M2 Ultra
-
-Icenowy Zheng (8):
-  arm: sunxi: add support for R40 SoC
-  pinctrl: sunxi: add definitions for add A20 and R40 support to A10
-    driver
-  pinctrl: sunxi: add A20 support to A10 driver
-  pinctrl: sunxi: switch A20's pinctrl driver to use the A10 version
-  dt-bindings: add compatible string for Allwinner R40 pinctrl
-  pinctrl: sunxi: add support of R40 to A10 pinctrl driver
-  dt-bindings: add compatible string for Allwinner R40 CCU
-  clk: sunxi-ng: support R40 SoC
-
- Documentation/arm/sunxi/README                     |    4 +
- Documentation/devicetree/bindings/arm/sunxi.txt    |    1 +
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  161 +++
- arch/arm/boot/dts/sun8i-r40.dtsi                   |  404 +++++++
- arch/arm/mach-sunxi/sunxi.c                        |    1 +
- drivers/clk/sunxi-ng/Kconfig                       |   10 +
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c               | 1153 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h               |   68 ++
- drivers/pinctrl/sunxi/Kconfig                      |    6 +-
- drivers/pinctrl/sunxi/Makefile                     |    1 -
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |  449 ++++++--
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c          | 1056 ------------------
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |    3 +
- include/dt-bindings/clock/sun8i-r40-ccu.h          |  191 ++++
- include/dt-bindings/reset/sun8i-r40-ccu.h          |  129 +++
- 19 files changed, 2495 insertions(+), 1146 deletions(-)
- create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
- create mode 100644 arch/arm/boot/dts/sun8i-r40.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
- delete mode 100644 drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
- create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
-
+diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+index a489f18a3c01..419463375bc1 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.c
++++ b/drivers/clk/sunxi-ng/ccu_div.c
+@@ -20,18 +20,11 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
+ 					void *data)
+ {
+ 	struct ccu_div *cd = data;
+-	unsigned long val;
+-
+-	/*
+-	 * We can't use divider_round_rate that assumes that there's
+-	 * several parents, while we might be called to evaluate
+-	 * several different parents.
+-	 */
+-	val = divider_get_val(rate, *parent_rate, cd->div.table, cd->div.width,
+-			      cd->div.flags);
+ 
+-	return divider_recalc_rate(&cd->common.hw, *parent_rate, val,
+-				   cd->div.table, cd->div.flags);
++	return divider_round_rate_parent(&cd->common.hw, parent,
++					 rate, parent_rate,
++					 cd->div.table, cd->div.width,
++					 cd->div.flags);
+ }
+ 
+ static void ccu_div_disable(struct clk_hw *hw)
+@@ -78,18 +71,6 @@ static int ccu_div_determine_rate(struct clk_hw *hw,
+ {
+ 	struct ccu_div *cd = hw_to_ccu_div(hw);
+ 
+-	if (clk_hw_get_num_parents(hw) == 1) {
+-		req->rate = divider_round_rate(hw, req->rate,
+-					       &req->best_parent_rate,
+-					       cd->div.table,
+-					       cd->div.width,
+-					       cd->div.flags);
+-
+-		req->best_parent_hw = clk_hw_get_parent(hw);
+-
+-		return 0;
+-	}
+-
+ 	return ccu_mux_helper_determine_rate(&cd->common, &cd->mux,
+ 					     req, ccu_div_round_rate, cd);
+ }
 -- 
-2.12.2
-
+git-series 0.9.1
