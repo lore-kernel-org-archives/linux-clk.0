@@ -1,106 +1,24 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 18 May 2017 18:37:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Anup Patel <anup.patel@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 03/11] clk: bcm: Add clocks for Stingray SOC
-Message-ID: <20170519013709.GD20170@codeaurora.org>
-References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
- <1494071686-19098-4-git-send-email-anup.patel@broadcom.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Eddie Cai <eddie.cai.linux@gmail.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, zhengxing@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH V2  2/2] clk: rockchip: fix the incorrect ids
+Date: Wed, 17 May 2017 19:57:02 +0200
+Message-ID: <1707274.tv1fl5P7jF@phil>
+In-Reply-To: <1493102470-22965-3-git-send-email-eddie.cai.linux@gmail.com>
+References: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com> <1493102470-22965-3-git-send-email-eddie.cai.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494071686-19098-4-git-send-email-anup.patel@broadcom.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06, Anup Patel wrote:
-> From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Am Dienstag, 25. April 2017, 14:41:10 CEST schrieb Eddie Cai:
+> the ids of clk_testout1 and clk_testout2 is incorrect now. let's correct it
 > 
-> This patch adds support for Stingray clocks in iproc
-> ccf. The Stingray SOC has various plls based on iproc
-> pll architecture.
-> 
+> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
 
-Does it have anything besides PLLs?
+applied for 4.13, after fixing the subject up a bit [the old ids are not
+incorrect, there simply weren't any assigned to the testclks yet :-) ]
 
-> +CLK_OF_DECLARE(sr_genpll0_clk, "brcm,sr-genpll0",
-> +				sr_genpll0_clk_init);
-> +
-> +static const struct iproc_pll_ctrl genpll3 = {
-> +	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-> +		IPROC_CLK_PLL_NEEDS_SW_CFG,
-> +	.aon = AON_VAL(0x0, 1, 19, 18),
-> +	.reset = RESET_VAL(0x0, 12, 11),
-> +	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-> +	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-> +	.ndiv_int = REG_VAL(0x10, 20, 10),
-> +	.ndiv_frac = REG_VAL(0x10, 0, 20),
-> +	.pdiv = REG_VAL(0x14, 0, 4),
-> +	.status = REG_VAL(0x30, 12, 1),
-> +};
-> +
-> +static const struct iproc_clk_ctrl genpll3_clk[] = {
-> +	[BCM_SR_GENPLL3_HSLS_CLK] = {
-> +		.channel = BCM_SR_GENPLL3_HSLS_CLK,
-> +		.flags = IPROC_CLK_AON,
-> +		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-> +		.mdiv = REG_VAL(0x18, 0, 9),
-> +	},
-> +	[BCM_SR_GENPLL3_SDIO_CLK] = {
-> +		.channel = BCM_SR_GENPLL3_SDIO_CLK,
-> +		.flags = IPROC_CLK_AON,
-> +		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-> +		.mdiv = REG_VAL(0x18, 10, 9),
-> +	},
-> +};
-> +
-> +static void __init sr_genpll3_clk_init(struct device_node *node)
-> +{
-> +	iproc_pll_clk_setup(node, &genpll3, NULL, 0, genpll3_clk,
-> +				ARRAY_SIZE(genpll3_clk));
-> +}
-> +CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
-> +			sr_genpll3_clk_init);
 
-Can you make this a platform driver instead? Are all these clks
-really used for getting the interrupt and timers running?
-
-> +
-> +static const struct iproc_pll_ctrl genpll4 = {
-> +	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-> +		IPROC_CLK_PLL_NEEDS_SW_CFG,
-> +	.aon = AON_VAL(0x0, 1, 25, 24),
-> +	.reset = RESET_VAL(0x0, 12, 11),
-> +	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-> +	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-> +	.ndiv_int = REG_VAL(0x10, 20, 10),
-> +	.ndiv_frac = REG_VAL(0x10, 0, 20),
-> +	.pdiv = REG_VAL(0x14, 0, 4),
-> +	.status = REG_VAL(0x30, 12, 1),
-> +};
-> +
-> +static const struct iproc_clk_ctrl genpll4_clk[] = {
-> +	[BCM_SR_GENPLL4_CCN_CLK] = {
-> +		.channel = BCM_SR_GENPLL4_CCN_CLK,
-> +		.flags = IPROC_CLK_AON,
-> +		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-> +		.mdiv = REG_VAL(0x18, 0, 9),
-> +	},
-> +};
-> +
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks
+Heiko
