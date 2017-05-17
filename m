@@ -1,139 +1,242 @@
-Return-Path: <frank.wang@rock-chips.com>
-From: Frank Wang <frank.wang@rock-chips.com>
-To: heiko@sntech.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	rui.zhang@intel.com,
-	edubezval@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	charles.chen@rock-chips.com,
-	cody.xie@rock-chips.com,
-	kevan.lan@rock-chips.com,
-	huangtao@rock-chips.com,
-	rocky.hao@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	wmc@rock-chips.com,
-	Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH v2 3/4] arm: dts: rk3229: add a new cpu opp table
-Date: Wed, 17 May 2017 18:16:16 +0800
-Message-Id: <1495016177-2413-4-git-send-email-frank.wang@rock-chips.com>
-In-Reply-To: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
-References: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: [RFC PATCH 04/11] drm: sun4i: add support for H3's TCON0/1
+Date: Thu, 18 May 2017 00:43:47 +0800
+Message-Id: <20170517164354.16399-5-icenowy@aosc.io>
+In-Reply-To: <20170517164354.16399-1-icenowy@aosc.io>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-This patch adds some new frequencies for rk3229 board.
+Allwinner H3 has two special TCONs, both come without channel0. And the
+TCON1 of H3 has no special clocks even for the channel1.
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Add support for these kinds of TCON.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/rk3229-cpu-opp.dtsi | 85 +++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
- create mode 100644 arch/arm/boot/dts/rk3229-cpu-opp.dtsi
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 78 ++++++++++++++++++++++++++++----------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  3 ++
+ 2 files changed, 61 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3229-cpu-opp.dtsi b/arch/arm/boot/dts/rk3229-cpu-opp.dtsi
-new file mode 100644
-index 0000000..89e8413
---- /dev/null
-+++ b/arch/arm/boot/dts/rk3229-cpu-opp.dtsi
-@@ -0,0 +1,85 @@
-+/*
-+ * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This library is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This library is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ *  Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 89a215ff2370..7009292f99e4 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -57,6 +57,7 @@ void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
+ {
+ 	/* Disable the TCON's channel */
+ 	if (channel == 0) {
++		WARN_ON(!tcon->quirks->has_channel_0);
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE, 0);
+ 		clk_disable_unprepare(tcon->dclk);
+@@ -66,7 +67,8 @@ void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
+ 	WARN_ON(!tcon->quirks->has_channel_1);
+ 	regmap_update_bits(tcon->regs, SUN4I_TCON1_CTL_REG,
+ 			   SUN4I_TCON1_CTL_TCON_ENABLE, 0);
+-	clk_disable_unprepare(tcon->sclk1);
++	if (tcon->quirks->has_channel_1_clk)
++		clk_disable_unprepare(tcon->sclk1);
+ }
+ EXPORT_SYMBOL(sun4i_tcon_channel_disable);
+ 
+@@ -74,6 +76,7 @@ void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
+ {
+ 	/* Enable the TCON's channel */
+ 	if (channel == 0) {
++		WARN_ON(!tcon->quirks->has_channel_0);
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE);
+@@ -85,7 +88,8 @@ void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
+ 	regmap_update_bits(tcon->regs, SUN4I_TCON1_CTL_REG,
+ 			   SUN4I_TCON1_CTL_TCON_ENABLE,
+ 			   SUN4I_TCON1_CTL_TCON_ENABLE);
+-	clk_prepare_enable(tcon->sclk1);
++	if (tcon->quirks->has_channel_1_clk)
++		clk_prepare_enable(tcon->sclk1);
+ }
+ EXPORT_SYMBOL(sun4i_tcon_channel_enable);
+ 
+@@ -132,6 +136,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+ 
+ 	/* Configure the dot clock */
+ 	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
++	WARN_ON(!tcon->quirks->has_channel_0);
+ 
+ 	/* Adjust clock delay */
+ 	clk_delay = sun4i_tcon_get_clk_delay(mode, 0);
+@@ -209,7 +214,8 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 	WARN_ON(!tcon->quirks->has_channel_1);
+ 
+ 	/* Configure the dot clock */
+-	clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000);
++	if (tcon->quirks->has_channel_1_clk)
++		clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000);
+ 
+ 	/* Adjust clock delay */
+ 	clk_delay = sun4i_tcon_get_clk_delay(mode, 1);
+@@ -327,13 +333,15 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+ 	}
+ 	clk_prepare_enable(tcon->clk);
+ 
+-	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
+-	if (IS_ERR(tcon->sclk0)) {
+-		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
+-		return PTR_ERR(tcon->sclk0);
++	if (tcon->quirks->has_channel_0) {
++		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
++		if (IS_ERR(tcon->sclk0)) {
++			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
++			return PTR_ERR(tcon->sclk0);
++		}
+ 	}
+ 
+-	if (tcon->quirks->has_channel_1) {
++	if (tcon->quirks->has_channel_1 && tcon->quirks->has_channel_1_clk) {
+ 		tcon->sclk1 = devm_clk_get(dev, "tcon-ch1");
+ 		if (IS_ERR(tcon->sclk1)) {
+ 			dev_err(dev, "Couldn't get the TCON channel 1 clock\n");
+@@ -533,10 +541,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 		goto err_free_clocks;
+ 	}
+ 
+-	ret = sun4i_dclk_create(dev, tcon);
+-	if (ret) {
+-		dev_err(dev, "Couldn't create our TCON dot clock\n");
+-		goto err_free_clocks;
++	if (tcon->quirks->has_channel_0) {
++		ret = sun4i_dclk_create(dev, tcon);
++		if (ret) {
++			dev_err(dev, "Couldn't create our TCON dot clock\n");
++			goto err_free_clocks;
++		}
+ 	}
+ 
+ 	ret = sun4i_tcon_init_irq(dev, tcon);
+@@ -561,7 +571,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 	return 0;
+ 
+ err_free_dotclock:
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ err_free_clocks:
+ 	sun4i_tcon_free_clocks(tcon);
+ err_assert_reset:
+@@ -575,7 +586,9 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
+ 
+ 	list_del(&tcon->list);
+-	sun4i_dclk_free(tcon);
 +
-+/ {
-+	/delete-node/ opp-table0;
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-408000000 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-microvolt = <950000>;
-+			clock-latency-ns = <40000>;
-+			opp-suspend;
-+		};
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <975000>;
-+		};
-+		opp-816000000 {
-+			opp-hz = /bits/ 64 <816000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp-1008000000 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <1175000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1275000>;
-+		};
-+		opp-1296000000 {
-+			opp-hz = /bits/ 64 <1296000000>;
-+			opp-microvolt = <1325000>;
-+		};
-+		opp-1392000000 {
-+			opp-hz = /bits/ 64 <1392000000>;
-+			opp-microvolt = <1375000>;
-+		};
-+		opp-1464000000 {
-+			opp-hz = /bits/ 64 <1464000000>;
-+			opp-microvolt = <1400000>;
-+		};
-+	};
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ 	sun4i_tcon_free_clocks(tcon);
+ }
+ 
+@@ -606,24 +619,41 @@ static int sun4i_tcon_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
+-	.has_unknown_mux = true,
+-	.has_channel_1	= true,
++	.has_unknown_mux	= true,
++	.has_channel_0		= true,
++	.has_channel_1		= true,
++	.has_channel_1_clk	= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
+-	.has_channel_1	= true,
++	.has_channel_0		= true,
++	.has_channel_1		= true,
++	.has_channel_1_clk	= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
+-	.has_channel_1	= true,
++	.has_channel_0		= true,
++	.has_channel_1		= true,
++	.has_channel_1_clk	= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+-	/* nothing is supported */
++	.has_channel_0	= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+-	/* nothing is supported */
++	.has_channel_0	= true,
 +};
++
++static const struct sun4i_tcon_quirks sun8i_h3_tcon0_quirks = {
++	.has_channel_1		= true,
++	.has_channel_1_clk	= true,
++	.swappable_input	= true,
++};
++
++static const struct sun4i_tcon_quirks sun8i_h3_tcon1_quirks = {
++	.has_channel_1		= true,
++	.swappable_input	= true,
+ };
+ 
+ static const struct of_device_id sun4i_tcon_of_table[] = {
+@@ -632,6 +662,14 @@ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+ 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
++	{
++		.compatible = "allwinner,sun8i-h3-tcon0",
++		.data = &sun8i_h3_tcon0_quirks
++	},
++	{
++		.compatible = "allwinner,sun8i-h3-tcon1",
++		.data = &sun8i_h3_tcon1_quirks
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index 568dc736238a..6aeb2d68b523 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -145,7 +145,10 @@
+ 
+ struct sun4i_tcon_quirks {
+ 	bool	has_unknown_mux; /* sun5i has undocumented mux */
++	bool	has_channel_0;	/* some A83T+ TCONs don't have channel 0*/
+ 	bool	has_channel_1;	/* a33 does not have channel 1 */
++	/* H3 TCON1 doesn't have channel 1 sclk */
++	bool	has_channel_1_clk;
+ 	/* Some DE2 can swap the mixer<->TCON connection */
+ 	bool	swappable_input;
+ };
 -- 
-2.0.0
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
