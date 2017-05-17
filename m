@@ -1,159 +1,204 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v2 10/11] arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
-Date: Mon, 15 May 2017 17:32:20 +0530
-Message-Id: <1494849741-21294-11-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
-References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 06/21] clk: sunxi-ng: mux: Change pre-divider application function prototype
+Date: Wed, 17 May 2017 09:40:35 +0200
+Message-Id: <2e0b7726cd92e0123c0ffdc6d8f8266ebcb7e160.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We have two instance of PL022 SPI controllers, one instance of
-DMA PL330, and one non-secure SP805 Watchdog on Stingray SOC.
+The current function name is a bit confusing, and doesn't really allow to
+create an explicit function to reverse the operation.
 
-This patch adds DT nodes for the above mentioned devices in
-Stingray DT.
+We also for now change the parent rate through a pointer, while we don't
+return anything.
 
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Reviewed-by: Pramod KUMAR <pramod.kumar@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
+In order to be less confusing, and easier to use for downstream users,
+change the function name to something hopefully clearer, and return the
+adjusted rate instead of changing the pointer.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../boot/dts/broadcom/stingray/bcm958742k.dts      | 30 +++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 52 ++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
+ drivers/clk/sunxi-ng/ccu_div.c  |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_mp.c   |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_mult.c |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_mux.c  | 29 ++++++++++++-----------------
+ drivers/clk/sunxi-ng/ccu_mux.h  |  8 ++++----
+ 5 files changed, 28 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-index c309cda..5671669 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-@@ -46,3 +46,33 @@
- &uart3 {
- 	status = "okay";
- };
-+
-+&ssp0 {
-+	pinctrl-0 = <&spi0_pins>;
-+	pinctrl-names = "default";
-+	cs-gpios = <&gpio_hsls 34 0>;
-+	status = "okay";
-+
-+	spi-flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-+
-+&ssp1 {
-+	pinctrl-0 = <&spi1_pins>;
-+	pinctrl-names = "default";
-+	cs-gpios = <&gpio_hsls 96 0>;
-+	status = "okay";
-+
-+	spi-flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 476a6fa..6d9c9f8 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -284,6 +284,14 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+index 419463375bc1..c0e5c10d0091 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.c
++++ b/drivers/clk/sunxi-ng/ccu_div.c
+@@ -59,8 +59,8 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
+ 	val = reg >> cd->div.shift;
+ 	val &= (1 << cd->div.width) - 1;
  
-+		wdt0: watchdog@689c0000 {
-+			compatible = "arm,sp805", "arm,primecell";
-+			reg = <0x000c0000 0x1000>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&hsls_25m_div2_clk>, <&hsls_div4_clk>;
-+			clock-names = "wdogclk", "apb_pclk";
-+		};
-+
- 		gpio_hsls: gpio@689d0000 {
- 			compatible = "brcm,iproc-gpio";
- 			reg = <0x000d0000 0x864>;
-@@ -364,11 +372,55 @@
- 			status = "disabled";
- 		};
+-	ccu_mux_helper_adjust_parent_for_prediv(&cd->common, &cd->mux, -1,
+-						&parent_rate);
++	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
++						  parent_rate);
  
-+		ssp0: ssp@68a80000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x00180000 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
-+			clock-names = "spiclk", "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		ssp1: ssp@68a90000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x00190000 0x1000>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
-+			clock-names = "spiclk", "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		hwrng: hwrng@68b20000 {
- 			compatible = "brcm,iproc-rng200";
- 			reg = <0x00220000 0x28>;
- 		};
+ 	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+ 				   cd->div.flags);
+@@ -83,8 +83,8 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long val;
+ 	u32 reg;
  
-+		dma0: dma@68c10000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x00310000 0x1000>;
-+			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+			clocks = <&hsls_div2_clk>;
-+			clock-names = "apb_pclk";
-+			iommus = <&smmu 0x6000 0x0000>;
-+		};
-+
- 		nand: nand@68c60000 {
- 			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
- 			reg = <0x00360000 0x600>,
+-	ccu_mux_helper_adjust_parent_for_prediv(&cd->common, &cd->mux, -1,
+-						&parent_rate);
++	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
++						  parent_rate);
+ 
+ 	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
+ 			      cd->div.flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index de02e6c386d8..b917ad7a386c 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -87,8 +87,8 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+ 	u32 reg;
+ 
+ 	/* Adjust parent_rate according to pre-dividers */
+-	ccu_mux_helper_adjust_parent_for_prediv(&cmp->common, &cmp->mux,
+-						-1, &parent_rate);
++	parent_rate = ccu_mux_helper_apply_prediv(&cmp->common, &cmp->mux, -1,
++						  parent_rate);
+ 
+ 	reg = readl(cmp->common.base + cmp->common.reg);
+ 
+@@ -123,8 +123,8 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 
+ 	/* Adjust parent_rate according to pre-dividers */
+-	ccu_mux_helper_adjust_parent_for_prediv(&cmp->common, &cmp->mux,
+-						-1, &parent_rate);
++	parent_rate = ccu_mux_helper_apply_prediv(&cmp->common, &cmp->mux, -1,
++						  parent_rate);
+ 
+ 	max_m = cmp->m.max ?: 1 << cmp->m.width;
+ 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 6ee7ba0738fb..20d0300867f2 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -88,8 +88,8 @@ static unsigned long ccu_mult_recalc_rate(struct clk_hw *hw,
+ 	val = reg >> cm->mult.shift;
+ 	val &= (1 << cm->mult.width) - 1;
+ 
+-	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+-						&parent_rate);
++	parent_rate = ccu_mux_helper_apply_prediv(&cm->common, &cm->mux, -1,
++						  parent_rate);
+ 
+ 	return parent_rate * (val + cm->mult.offset);
+ }
+@@ -116,8 +116,8 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	else
+ 		ccu_frac_helper_disable(&cm->common, &cm->frac);
+ 
+-	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+-						&parent_rate);
++	parent_rate = ccu_mux_helper_apply_prediv(&cm->common, &cm->mux, -1,
++						  parent_rate);
+ 
+ 	_cm.min = cm->mult.min;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 3eb23d4e6534..c33210972581 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -56,13 +56,12 @@ static u16 ccu_mux_get_prediv(struct ccu_common *common,
+ 	return prediv;
+ }
+ 
+-void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+-					     struct ccu_mux_internal *cm,
+-					     int parent_index,
+-					     unsigned long *parent_rate)
++unsigned long ccu_mux_helper_apply_prediv(struct ccu_common *common,
++					  struct ccu_mux_internal *cm,
++					  int parent_index,
++					  unsigned long parent_rate)
+ {
+-	*parent_rate = *parent_rate / ccu_mux_get_prediv(common, cm,
+-							 parent_index);
++	return parent_rate / ccu_mux_get_prediv(common, cm, parent_index);
+ }
+ 
+ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+@@ -84,10 +83,8 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 
+ 		best_parent = clk_hw_get_parent(hw);
+ 		best_parent_rate = clk_hw_get_rate(best_parent);
+-
+-		adj_parent_rate = best_parent_rate;
+-		ccu_mux_helper_adjust_parent_for_prediv(common, cm, -1,
+-							&adj_parent_rate);
++		adj_parent_rate = ccu_mux_helper_apply_prediv(common, cm, -1,
++							      best_parent_rate);
+ 
+ 		best_rate = round(cm, best_parent, &adj_parent_rate,
+ 				  req->rate, data);
+@@ -103,9 +100,9 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 		if (!parent)
+ 			continue;
+ 
+-		adj_parent_rate = parent_rate = clk_hw_get_rate(parent);
+-		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
+-							&adj_parent_rate);
++		parent_rate = clk_hw_get_rate(parent);
++		adj_parent_rate = ccu_mux_helper_apply_prediv(common, cm, i,
++							      parent_rate);
+ 
+ 		tmp_rate = round(cm, parent, &adj_parent_rate, req->rate, data);
+ 		if (tmp_rate == req->rate) {
+@@ -215,10 +212,8 @@ static unsigned long ccu_mux_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct ccu_mux *cm = hw_to_ccu_mux(hw);
+ 
+-	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+-						&parent_rate);
+-
+-	return parent_rate;
++	return ccu_mux_helper_apply_prediv(&cm->common, &cm->mux, -1,
++					   parent_rate);
+ }
+ 
+ const struct clk_ops ccu_mux_ops = {
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index 4be56eee2bfd..dba12c76cf54 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -78,10 +78,10 @@ static inline struct ccu_mux *hw_to_ccu_mux(struct clk_hw *hw)
+ 
+ extern const struct clk_ops ccu_mux_ops;
+ 
+-void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+-					     struct ccu_mux_internal *cm,
+-					     int parent_index,
+-					     unsigned long *parent_rate);
++unsigned long ccu_mux_helper_apply_prediv(struct ccu_common *common,
++					  struct ccu_mux_internal *cm,
++					  int parent_index,
++					  unsigned long parent_rate);
+ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 				  struct ccu_mux_internal *cm,
+ 				  struct clk_rate_request *req,
 -- 
-2.7.4
+git-series 0.9.1
