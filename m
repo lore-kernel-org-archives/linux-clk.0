@@ -1,71 +1,61 @@
-Return-Path: <frank.wang@rock-chips.com>
-From: Frank Wang <frank.wang@rock-chips.com>
-To: heiko@sntech.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	rui.zhang@intel.com,
-	edubezval@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	charles.chen@rock-chips.com,
-	cody.xie@rock-chips.com,
-	kevan.lan@rock-chips.com,
-	huangtao@rock-chips.com,
-	rocky.hao@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	wmc@rock-chips.com,
-	Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH v2 1/4] arm: dts: rk322x: add some assigned-clocks
-Date: Wed, 17 May 2017 18:16:14 +0800
-Message-Id: <1495016177-2413-2-git-send-email-frank.wang@rock-chips.com>
-In-Reply-To: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
-References: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: [RFC PATCH 08/11] clk: sunxi-ng: allow CLK_DE to set CLK_PLL_DE for H3
+Date: Thu, 18 May 2017 00:43:51 +0800
+Message-Id: <20170517164354.16399-9-icenowy@aosc.io>
+In-Reply-To: <20170517164354.16399-1-icenowy@aosc.io>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Allwinner H3 features a PLL named CLK_PLL_DE, and a mod clock for the
+"Display Engine 2.0" named CLK_DE. As the name indicated, the CLK_PLL_DE
+is a PLL for CLK_DE.
 
-Add CPLL, GPLL and some other assigned-clocks for rk322x SoC.
+Only CLK_DE and CLK_TVE have a parent of CLK_PLL_DE, and CLK_TVE is also
+one part of the display clocks.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+So allow CLK_DE to set CLK_PLL_DE (add CLK_SET_RATE_PARENT to it).
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/rk322x.dtsi | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index f7498b3..64368b0 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -346,8 +346,18 @@
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
--		assigned-clocks = <&cru PLL_GPLL>;
--		assigned-clock-rates = <594000000>;
-+		assigned-clocks =
-+			<&cru PLL_GPLL>, <&cru ARMCLK>,
-+			<&cru PLL_CPLL>, <&cru ACLK_PERI>,
-+			<&cru HCLK_PERI>, <&cru PCLK_PERI>,
-+			<&cru ACLK_CPU>, <&cru HCLK_CPU>,
-+			<&cru PCLK_CPU>;
-+		assigned-clock-rates =
-+			<594000000>, <816000000>,
-+			<500000000>, <150000000>,
-+			<150000000>, <75000000>,
-+			<150000000>, <150000000>,
-+			<75000000>;
- 	};
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 4cbc1b701b7c..6e39ba7cb173 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -439,7 +439,7 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
  
- 	thermal-zones {
+ static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
+-				 0x104, 0, 4, 24, 3, BIT(31), 0);
++				 0x104, 0, 4, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static const char * const tcon_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
 -- 
-2.0.0
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
