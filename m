@@ -1,148 +1,139 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Zhong Kaihua <zhongkaihua@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 00/21] drm: sun4i: Add support for the HDMI controller
-Date: Wed, 17 May 2017 09:40:29 +0200
-Message-Id: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+	linux-clk@vger.kernel.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v1 1/2] clk: Hi3660: change to register clock with CLK_OF_DECLARE
+Date: Wed, 17 May 2017 22:46:31 +0800
+Message-Id: <1495032392-19102-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1495032392-19102-1-git-send-email-leo.yan@linaro.org>
+References: <1495032392-19102-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The timer will register into system at very early phase at kernel boot;
+if timer needs to use clock, the clock should be get ready in function
+of_clk_init() so later the timer driver probe can retrieve clock
+successfully. This is finished in below flow on arm64:
 
-Here is an attempt at getting the HDMI controller running.
+  start_kernel()
+    `-> time_init()
+          `-> of_clk_init(NULL)    => register timer's clock
+          `-> clocksource_probe()  => register timer
 
-This HDMI controller is found on a number of old Allwinner SoCs (A10, A10s,
-A20, A31).
+On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
+as platform driver rather than CLK_OF_DECLARE method. As result, sp804
+timer probe returns failure due if cannot bind clock properly. To fix
+the failure, this patch is to change crgctrl clock registration from
+platform driver to CLK_OF_DECLARE method so the clocks can be
+registered ahead with function of_clk_init() and then timer driver can
+use it.
 
-This driver only supports for now the A10s because it was an easy target,
-being very close to the A13 that is already supported by our DRM driver.
+In the clock driver clk-hi3660.c, it's pointless to mix clock
+registration with platform driver mode and CLK_OF_DECLARE mode; this
+patch changes all clocks registration to CLK_OF_DECLARE mode to make
+code neat.
 
-There's nothing out of the extraordinary there, except maybe the clock
-setup. All the internal clocks (TMDS, DDC) have been modeled using the
-common clock framework, the TMDS clock being the parent of the DDC one.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi3660.c | 48 ++++----------------------------------
+ 1 file changed, 5 insertions(+), 43 deletions(-)
 
-While this might sound overkill, other SoC have a different, external
-source for the DDC clock, which will be easier to support through the clock
-framework.
-
-The IP also supports audio (through an already supported i2s controller,
-and some missing configuration in the HDMI controller) and CEC. Both will
-come eventually.
-
-Let me know what you think!
-Maxime
-
-Changes from v2:
-  - Fixed the PLL control macros definitions
-  - Called clk_enable / disable on the DDC clock
-  - Added the flags to enable the connection polling
-  - Fixed the vtotal computation in TCON's code, and added a comment
-  - Added and documented the A10s display engine compatible
-  - Reworked the component parsing code to bail out when a standard
-    connector is found
-  - Fixed a inconsistent comment in the predivider unapplication
-  - Fixed a commit log
-  - Added Chen-Yu's and Rob's Acked-By
-  - Changed divider_round_rate to a static, inline function in the header
-  - Added and document the A10s display pipeline compatible
-  - Rebased on top of 4.12
-
-Changes from v1:
-  - Fixed typos in the CCU header and the HDMI code
-  - Reintroduced the comment for the backporch timings
-  - Renamed the hdmi node to hdmi, instead of hdmi0
-  - Added support for hdmi-connector
-  - Added a separate Kconfig option for the HDMI support
-  - Changed the TCON muxing configuration for an explicit call in the
-    TCON's "clients"
-  - Fixed the initialisation sequence that was clearing the clocks bits
-  - Constified the HDMI's structures and removed whitespaces errors
-  - Fixed an issue in the sunxi-ng code that was not reporting the proper
-    parent clock rate if it was modified
-  - Removed unused headers
-  - Removed CLK_SET_RATE_PARENT for the DDC clock
-  - Used the DDC address defines
-  - Removed the interlace flag that wasn't supported at the moment
-  - Moved most of the HDMI encoder init to the bind function like we do for
-    the other encoders
-  - Switched to drm_of_find_possible_crtcs
-  - Removed the extra printk that were still in my code
-  - Rebased on top of linux-next
-  - Removed the patch changing the divider_round_rate prototype to
-    introduce a new function instead that takes the parent clock to
-    evaluate
-  - Added a clk_set_rate for the hdmi module clock
-  - Fixed the V_TOTAL TCON ch0 calculation to be consistent with ch1's
-  - Defined all registers, and remove the TODOs
-  - Fixed the EDID issues by increasing the timeout.
-  - Added an atomic_check to prevent the DBLCLK modes to be used, as it is
-    not supported yet
-  - Updated the binding to add the interrupts and DMA channels
-
-Maxime Ripard (21):
-  clk: divider: Make divider_round_rate take the parent clock
-  clk: sunxi-ng: Pass the parent and a pointer to the clocks round rate
-  clk: sunxi-ng: div: Switch to divider_round_rate
-  clk: sunxi-ng: mux: Don't just rely on the parent for CLK_SET_RATE_PARENT
-  clk: sunxi-ng: mux: split out the pre-divider computation code
-  clk: sunxi-ng: mux: Change pre-divider application function prototype
-  clk: sunxi-ng: mux: Re-adjust parent rate
-  clk: sunxi-ng: sun5i: Export video PLLs
-  drm/sun4i: tcon: Add channel debug
-  drm/sun4i: tcon: Move the muxing out of the mode set function
-  drm/sun4i: tcon: Switch mux on only for composite
-  drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
-  drm/sun4i: tcon: Change vertical total size computation inconsistency
-  drm/sun4i: tcon: multiply the vtotal when not in interlace
-  drm/sun4i: Ignore the generic connectors for components
-  dt-bindings: display: sun4i: Add HDMI display bindings
-  dt-bindings: display: sun4i: Add allwinner,tcon-channel property
-  drm/sun4i: Add HDMI support
-  drm/sun4i: Add compatible for the A10s pipeline
-  ARM: sun5i: a10s: Add the HDMI controller node
-  ARM: sun5i: a10s-olinuxino: Enable HDMI
-
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt |  91 +-
- arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts              |  29 +-
- arch/arm/boot/dts/sun5i-a10s.dtsi                             |  47 +-
- arch/arm/boot/dts/sun5i.dtsi                                  |   1 +-
- drivers/clk/clk-divider.c                                     |  19 +-
- drivers/clk/sunxi-ng/ccu-sun5i.h                              |   6 +-
- drivers/clk/sunxi-ng/ccu_div.c                                |  38 +-
- drivers/clk/sunxi-ng/ccu_mp.c                                 |  15 +-
- drivers/clk/sunxi-ng/ccu_mult.c                               |  19 +-
- drivers/clk/sunxi-ng/ccu_mux.c                                |  90 +-
- drivers/clk/sunxi-ng/ccu_mux.h                                |  11 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                                |   7 +-
- drivers/gpu/drm/sun4i/Kconfig                                 |   9 +-
- drivers/gpu/drm/sun4i/Makefile                                |   6 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                             |  13 +-
- drivers/gpu/drm/sun4i/sun4i_hdmi.h                            | 157 ++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c                    | 127 ++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c                        | 501 +++++++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c                   | 225 +++-
- drivers/gpu/drm/sun4i/sun4i_rgb.c                             |   1 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                            |  62 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                            |   4 +-
- drivers/gpu/drm/sun4i/sun4i_tv.c                              |   1 +-
- include/dt-bindings/clock/sun5i-ccu.h                         |   3 +-
- include/linux/clk-provider.h                                  |  16 +-
- 25 files changed, 1378 insertions(+), 120 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi.h
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-
-base-commit: cf80aeef958f2e5b0041c72b567ae949f5b2738d
+diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+index fd5ce7f..fc11719 100644
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -465,6 +465,7 @@ static void hi3660_clk_iomcu_init(struct device_node *np)
+ 				   ARRAY_SIZE(hi3660_iomcu_gate_sep_clks),
+ 				   clk_data);
+ }
++CLK_OF_DECLARE(hi3660_clk_iomcu, "hisilicon,hi3660-iomcu", hi3660_clk_iomcu_init);
+ 
+ static void hi3660_clk_pmuctrl_init(struct device_node *np)
+ {
+@@ -478,6 +479,7 @@ static void hi3660_clk_pmuctrl_init(struct device_node *np)
+ 	hisi_clk_register_gate(hi3660_pmu_gate_clks,
+ 			       ARRAY_SIZE(hi3660_pmu_gate_clks), clk_data);
+ }
++CLK_OF_DECLARE(hi3660_clk_pmuctrl, "hisilicon,hi3660-pmuctrl", hi3660_clk_pmuctrl_init);
+ 
+ static void hi3660_clk_pctrl_init(struct device_node *np)
+ {
+@@ -490,6 +492,7 @@ static void hi3660_clk_pctrl_init(struct device_node *np)
+ 	hisi_clk_register_gate(hi3660_pctrl_gate_clks,
+ 			       ARRAY_SIZE(hi3660_pctrl_gate_clks), clk_data);
+ }
++CLK_OF_DECLARE(hi3660_clk_pctrl, "hisilicon,hi3660-pctrl", hi3660_clk_pctrl_init);
+ 
+ static void hi3660_clk_sctrl_init(struct device_node *np)
+ {
+@@ -513,6 +516,7 @@ static void hi3660_clk_sctrl_init(struct device_node *np)
+ 				  ARRAY_SIZE(hi3660_sctrl_divider_clks),
+ 				  clk_data);
+ }
++CLK_OF_DECLARE(hi3660_clk_sctrl, "hisilicon,hi3660-sctrl", hi3660_clk_sctrl_init);
+ 
+ static void hi3660_clk_crgctrl_init(struct device_node *np)
+ {
+@@ -547,46 +551,4 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
+ 				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
+ 				  clk_data);
+ }
+-
+-static const struct of_device_id hi3660_clk_match_table[] = {
+-	{ .compatible = "hisilicon,hi3660-crgctrl",
+-	  .data = hi3660_clk_crgctrl_init },
+-	{ .compatible = "hisilicon,hi3660-pctrl",
+-	  .data = hi3660_clk_pctrl_init },
+-	{ .compatible = "hisilicon,hi3660-pmuctrl",
+-	  .data = hi3660_clk_pmuctrl_init },
+-	{ .compatible = "hisilicon,hi3660-sctrl",
+-	  .data = hi3660_clk_sctrl_init },
+-	{ .compatible = "hisilicon,hi3660-iomcu",
+-	  .data = hi3660_clk_iomcu_init },
+-	{ }
+-};
+-
+-static int hi3660_clk_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct device_node *np = pdev->dev.of_node;
+-	void (*init_func)(struct device_node *np);
+-
+-	init_func = of_device_get_match_data(dev);
+-	if (!init_func)
+-		return -ENODEV;
+-
+-	init_func(np);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver hi3660_clk_driver = {
+-	.probe          = hi3660_clk_probe,
+-	.driver         = {
+-		.name   = "hi3660-clk",
+-		.of_match_table = hi3660_clk_match_table,
+-	},
+-};
+-
+-static int __init hi3660_clk_init(void)
+-{
+-	return platform_driver_register(&hi3660_clk_driver);
+-}
+-core_initcall(hi3660_clk_init);
++CLK_OF_DECLARE(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl", hi3660_clk_crgctrl_init);
 -- 
-git-series 0.9.1
+1.9.1
