@@ -1,51 +1,60 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: linux@rempel-privat.de
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/6] iMX6: Implement power off over standby signal
-Date: Wed, 31 May 2017 08:14:51 +0200
-Message-Id: <20170531061457.23744-1-o.rempel@pengutronix.de>
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 19/21] drm/sun4i: Add compatible for the A10s pipeline
+Date: Wed, 17 May 2017 09:40:48 +0200
+Message-Id: <d1bc2420845061a9c057d47a5556c621f8bcd025.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-v2:
- - export pm_power_off_prepare to fix pfuze100-regulator as module compilation.
+The A10s has a slightly different display pipeline than the A13, with an
+HDMI controller.
 
-Oleksij Rempel (6):
-  ARM: imx6q: provide documentation for new fsl,pmic_stby_poweroff
-    property
-  ARM: imx6: register pm_power_off handler if "fsl,pmic_stby_poweroff"
-    is set
-  kernel/reboot.c: export pm_power_off_prepare
-  regulator: pfuze100: add fsl,pmic_stby_poweroff property
-  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-  ARM: dts: imx6: RIoTboard provide Standby to PowerOff option
+Add a compatible for it.
 
- .../devicetree/bindings/clock/imx6q-clock.txt      |  4 ++
- .../devicetree/bindings/regulator/pfuze100.txt     |  4 ++
- arch/arm/boot/dts/imx6dl-riotboard.dts             |  5 ++
- arch/arm/mach-imx/pm-imx6.c                        | 30 +++++++++
- drivers/regulator/pfuze100-regulator.c             | 76 ++++++++++++++++++++++
- kernel/reboot.c                                    |  1 +
- 6 files changed, 120 insertions(+)
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+ drivers/gpu/drm/sun4i/sun4i_drv.c                             | 1 +
+ 2 files changed, 2 insertions(+)
 
-Cc: kernel@pengutronix.de
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 0832c8491895..1b74a412aec2 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -189,6 +189,7 @@ extra node.
+ 
+ Required properties:
+   - compatible: value must be one of:
++    * allwinner,sun5i-a10s-display-engine
+     * allwinner,sun5i-a13-display-engine
+     * allwinner,sun6i-a31-display-engine
+     * allwinner,sun6i-a31s-display-engine
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 9b3e8c8d7c75..4e0e7bd542ee 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -304,6 +304,7 @@ static int sun4i_drv_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id sun4i_drv_of_table[] = {
++	{ .compatible = "allwinner,sun5i-a10s-display-engine" },
+ 	{ .compatible = "allwinner,sun5i-a13-display-engine" },
+ 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
+ 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
 -- 
-2.11.0
+git-series 0.9.1
