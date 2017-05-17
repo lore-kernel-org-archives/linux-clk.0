@@ -1,37 +1,177 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 31 May 2017 14:42:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] arm: sunxi: add support for R40 SoC
-Message-ID: <20170531194232.fhiz7z3iqhnkacev@rob-hp-laptop>
-References: <20170527102308.1988-1-icenowy@aosc.io>
- <20170527102308.1988-2-icenowy@aosc.io>
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170527102308.1988-2-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20170515083502.4492-3-chunyan.zhang@spreadtrum.com>
+References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com> <20170515083502.4492-3-chunyan.zhang@spreadtrum.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 17 May 2017 21:43:26 +0200
+Message-ID: <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Documentation: add sprd clock bindings
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	xiaolong.zhang@spreadtrum.com,
+	=?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?= <orson.zhai@spreadtrum.com>,
+	geng.ren@spreadtrum.com, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Lyra Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 27, 2017 at 06:22:59PM +0800, Icenowy Zheng wrote:
-> Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
-> like A20.
-> 
-> Add support for it.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+On Mon, May 15, 2017 at 10:35 AM, Chunyan Zhang
+<chunyan.zhang@spreadtrum.com> wrote:
+> This patch adds a new directory under the 'clock' for Spreadtrum platform,
+> also bindings which document compatible strings and properties used for
+> devicetree node of clocks on Spreadtrum SoCs.
+>
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 > ---
-> Changes in v3:
-> - Use V1.0 documents.
-> 
->  Documentation/arm/sunxi/README                  | 6 ++++++
->  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
->  arch/arm/mach-sunxi/sunxi.c                     | 1 +
->  3 files changed, 8 insertions(+)
+>  .../clock/sprd/sprd,adjustable-pll-clock.txt       | 17 +++++
+>  .../bindings/clock/sprd/sprd,composite-clock.txt   | 28 +++++++++
+>  .../bindings/clock/sprd/sprd,divider-clock.txt     | 24 +++++++
+>  .../bindings/clock/sprd/sprd,gates-clock.txt       | 73 ++++++++++++++++++++++
+>  .../bindings/clock/sprd/sprd,muxed-clock.txt       | 23 +++++++
+>  5 files changed, 165 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+> new file mode 100644
+> index 0000000..476e315
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+> @@ -0,0 +1,17 @@
+> +Spreadtrum adjustable pll clock driver
+> +
+> +Required properties:
+> +
+> +- compatible : must be one of:
+> +       "sprd,sc9836-adjustable-pll-clock"
+> +       "sprd,sc9860-adjustable-pll-clock"
+> +
+> +Example:
+> +       clk_mpll0: clk@40400024 {
+> +               compatible = "sprd,sc9860-adjustable-pll-clock";
+> +               #clock-cells = <0>;
+> +               reg = <0 0x40400024 0 0x4>,
+> +                     <0 0x40400028 0 0x4>;
+> +               clocks = <&clk_mpll_gates 2>;
+> +               clock-output-names = "clk_mpll0";
+> +       };
 
-Acked-by: Rob Herring <robh@kernel.org>
+The properties listed in the example must all be either
+defined as "required" or "optional" properties and have a
+description.
+
+The reg property here is a bit odd, as it lists two consecutive
+4-byte areas, and both are suspiciously close to a round
+address (0x40400000), so I would guess that they are
+in fact part of a clock controller with several registers.
+
+If so, please define a node for the entire clock controller,
+the DT description should reflect the design of the hardware
+rather than the design of your device driver.
+
+> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
+> new file mode 100644
+> index 0000000..a476eb6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
+> @@ -0,0 +1,28 @@
+> +Spreadtrum composite clock driver.
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +
+> +- compatible:  should be "sprd,composite-clock"
+> +
+> +- sprd,mux-msk:        arbitrary bitmask for selecting clock input
+
+"arbitrary" is not a good word to use in a specification document ;-)
+
+Are there no constraints whatsoever on the allowed values? How
+many bits are there?
+
+> +- sprd,div-msk:        arbitrary bitmask for programming the divider,
+> +               denominator of divider is the value consisted
+> +               of these bits plus 1
+
+This sounds like it should just be the denominator, you can add
+or subtract one in the driver.
+
+> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
+> new file mode 100644
+> index 0000000..f23ecb6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
+> @@ -0,0 +1,73 @@
+> +Spreadtrum gate clock driver
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Spreadtrum's SoCs often use one register to control more than one gate clocks.
+> +Clock consumers can use index to get the correct gate clock.
+> +
+> +In Spreadtrum platform, some of gate clocks have three registers, respectively
+> +used for controlling, setting and clearing gate clock, the addresses of
+> +these three registers generally are <start>, <start + offset>, and
+> +<start + offset * 2>, and offset would be 0x1000 or 0x100, so the register
+> +size of gate clocks is either 0x3000 or 0x300. While for some historical issue
+> +there also are some clocks which don't have independent set/clear registers.
+> +Please see bellow for more specific information.
+> +
+> +Required properties:
+> +
+> +- compatible:  should be one of the following:
+> +               "sprd,sc1000-gates-clock"
+> +               - offset of the registers for setting gate is 0x1000
+> +
+> +               "sprd,sc100-gates-clock"
+> +               - offset of the registers for setting gate is 0x100
+> +
+> +               "sprd,gates-clock"
+> +               - for clocks without independent set/clear registers
+
+I think the compatible value should refer to at least some more
+specific product that uses these: I would guess that there are
+some chips that spreadtrum has made that have clock gates
+which are not compatible with this.
+
+Can all three appear in the same chip, or would you always
+have only one of them?
+
+> +- reg: the first cell represents the address of this clock gate controller
+> +       register, the second cell implies how is the offset of set/clear
+> +       registers of this clock gate, like addressed in the head of this
+> +       file
+> +
+> +optional properties:
+> +
+> +- clock-indices:       If the identifying number for the clocks in the node
+> +                       is not linear from zero, this property is necessary
+> +
+> +Example:
+> +
+> +       clk_mpll_gates: clk@402b00b0 {
+> +               compatible = "sprd,sc1000-gates-clock";
+> +               #clock-cells = <1>;
+> +               reg = <0 0x402b00b0 0 0x3000>;
+> +               clocks = <&ext_26m>;
+> +               clock-indices = <2>, <18>;
+> +               clock-output-names = "clk_mpll0_gate", "clk_mpll1_gate";
+> +       };
+>
+
+For clock-output-names, please drop the "clk_" prefix from each
+identifier, and maybe use '-' instead of '_' as the separator.
+
+       Arnd
