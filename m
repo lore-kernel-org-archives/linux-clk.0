@@ -1,74 +1,134 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 12 May 2017 10:21:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Anup Patel <anup.patel@broadcom.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 02/11] dt-bindings: clk: Extend binding doc for Stingray
- SOC
-Message-ID: <20170512152134.tjuc5exo4plalujs@rob-hp-laptop>
-References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
- <1494071686-19098-3-git-send-email-anup.patel@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494071686-19098-3-git-send-email-anup.patel@broadcom.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 16/21] dt-bindings: display: sun4i: Add HDMI display bindings
+Date: Wed, 17 May 2017 09:40:45 +0200
+Message-Id: <67bd9d191ce9cc8a172abbc558901ac79da9daab.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 06, 2017 at 05:24:37PM +0530, Anup Patel wrote:
-> From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-> 
-> Update iproc clock dt-binding documentation with
-> Stingray pll and clock details.
-> 
-> Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> ---
->  .../bindings/clock/brcm,iproc-clocks.txt           | 76 ++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-> index 6f66e9a..f2c5f0e4a 100644
-> --- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-> +++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-> @@ -219,3 +219,79 @@ BCM63138
->  --------
->  PLL and leaf clock compatible strings for BCM63138 are:
->      "brcm,bcm63138-armpll"
-> +
-> +Stingray
-> +-----------
-> +PLL and leaf clock compatible strings for Stingray are:
-> +    "brcm,sr-genpll0"
-> +    "brcm,sr-genpll1"
-> +    "brcm,sr-genpll2"
-> +    "brcm,sr-genpll3"
-> +    "brcm,sr-genpll4"
-> +    "brcm,sr-genpll5"
-> +    "brcm,sr-genpll6"
-> +
-> +    "brcm,sr-lcpll0"
-> +    "brcm,sr-lcpll1"
-> +    "brcm,sr-lcpll-pcie"
-> +
-> +
-> +The following table defines the set of PLL/clock index and ID for Stingray.
-> +These clock IDs are defined in:
-> +    "include/dt-bindings/clock/bcm-sr.h"
+One of the possible output of the display pipeline, on the SoCs that have
+it, is the HDMI controller.
 
-This header should be part of this commit. With that,
+Add a binding for it.
 
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 79 +++++++-
+ 1 file changed, 79 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 7acdbf14ae1c..e74794f20ec5 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -14,6 +14,34 @@ Conversely, for the output ports of the same group, the remote endpoint
+ ID must be the index of the local hardware block. If the local backend
+ is backend 1, then the remote endpoint ID must be 1.
+ 
++HDMI Encoder
++------------
++
++The HDMI Encoder supports the HDMI video and audio outputs, and does
++CEC. It is one end of the pipeline.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun5i-a10s-hdmi
++  - reg: base address and size of memory-mapped region
++  - interrupts: interrupt associated to this IP
++  - clocks: phandles to the clocks feeding the HDMI encoder
++    * ahb: the HDMI interface clock
++    * mod: the HDMI module clock
++    * pll-0: the first video PLL
++    * pll-1: the second video PLL
++  - clock-names: the clock names mentioned above
++  - dmas: phandles to the DMA channels used by the HDMI encoder
++    * ddc-tx: The channel for DDC transmission
++    * ddc-rx: The channel for DDC reception
++    * audio-tx: The channel used for audio transmission
++  - dma-names: the channel names mentioned above
++
++  - ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The
++    first port should be the input endpoint. The second should be the
++    output, usually to an HDMI connector.
++
+ TV Encoder
+ ----------
+ 
+@@ -183,6 +211,57 @@ panel: panel {
+ 	};
+ };
+ 
++connector {
++	compatible = "hdmi-connector";
++	type = "a";
++
++	port {
++		hdmi_con_in: endpoint {
++			remote-endpoint = <&hdmi_out_con>;
++		};
++	};
++};
++
++hdmi: hdmi@01c16000 {
++	compatible = "allwinner,sun5i-a10s-hdmi";
++	reg = <0x01c16000 0x1000>;
++	interrupts = <58>;
++	clocks = <&ccu CLK_AHB_HDMI>, <&ccu CLK_HDMI>,
++		 <&ccu CLK_PLL_VIDEO0_2X>,
++		 <&ccu CLK_PLL_VIDEO1_2X>;
++	clock-names = "ahb", "mod", "pll-0", "pll-1";
++	dmas = <&dma SUN4I_DMA_NORMAL 16>,
++	       <&dma SUN4I_DMA_NORMAL 16>,
++	       <&dma SUN4I_DMA_DEDICATED 24>;
++	dma-names = "ddc-tx", "ddc-rx", "audio-tx";
++	status = "disabled";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			hdmi_in_tcon0: endpoint {
++				remote-endpoint = <&tcon0_out_hdmi>;
++			};
++		};
++
++		port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			hdmi_out_con: endpoint {
++				remote-endpoint = <&hdmi_con_in>;
++			};
++		};
++	};
++};
++
+ tve0: tv-encoder@01c0a000 {
+ 	compatible = "allwinner,sun4i-a10-tv-encoder";
+ 	reg = <0x01c0a000 0x1000>;
+-- 
+git-series 0.9.1
