@@ -1,61 +1,63 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Phil Elwell <phil@raspberrypi.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: bcm2835: Correct the prediv logic
-In-Reply-To: <1373231207.445862.1494870459462@email.1und1.de>
-References: <20170515173504.11337-1-eric@anholt.net> <1373231207.445862.1494870459462@email.1und1.de>
-Date: Mon, 15 May 2017 12:03:29 -0700
-Message-ID: <87bmqundry.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 11/21] drm/sun4i: tcon: Switch mux on only for composite
+Date: Wed, 17 May 2017 09:40:40 +0200
+Message-Id: <c67a3f59ba50aace65f2c9b28330826944e682ce.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Even though that mux is undocumented, it seems like it needs to be set to 1
+when using composite, and 0 when using HDMI.
 
-Stefan Wahren <stefan.wahren@i2se.com> writes:
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c |  9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-> Hi Eric,
->
->> Eric Anholt <eric@anholt.net> hat am 15. Mai 2017 um 19:35 geschrieben:
->>=20
->>=20
->> From: Phil Elwell <phil@raspberrypi.org>
->>=20
->> If a clock has the prediv flag set, both the integer and fractional
->> parts must be scaled when calculating the resulting frequency.
->>=20
->> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->> ---
->>=20
->> While this is a bugfix, I haven't put a "Fixes:" line in here to get
->> it automatically backported to stable.=20=20
->
-> sorry, i can't follow. How should this happen without "Fixes: "?
-
-I didn't want it to be backported to stable, because of the risk.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkZ+4EACgkQtdYpNtH8
-nui6Vg/+JF2r+ADnHhGGUEnfljusxqkXGMnckdMqh9WzyY6mlVVP6bL7qcOk+1ah
-4nW9usP7HeTMvjAcCc4a8hb0x5xqKiNzYvAAcIvqheEq3ONyID0eqJRf07M4D02V
-kUZ5hMtEajw7Lx8/MiZix51PbdI7JjdDs+vhvhzM3L2eF2MHRGr3moFFoLru6DJn
-jq9Pm8oGy2ZkR/SXtbDiLiEYm+9XG6PntNr48hX7Ecgr7/kl5TLBPP11wkHDbRYZ
-lMQ9Yss/e6YUfgHNMJhPYyBUc8i9ROHevi2gfgQrAEH/Oa6h2mEpfZ3YSpbWC1pZ
-HZx2o6MDm64DOWRUvL3ZbQxkV7RMuSf0w7r5DG886RUSdbagvZQ7iXWUQfduXc+4
-/bi31OIQWlnLme7wPS2VFYmuSngYHfEl1OaIF9N2pQdK2sVsNkK0kurflB4+ZpE/
-iI5a9k9u5/k8izDhlCuORJd0rlZPRzauXSCnu3kzIKDkotZ2jgVtX0UfKRK9Sx/m
-4weJ8W4IfVyySo1Psx7Se33O95q8+pfJfATIx5DXCPBVDe7BhsPteQ9RB/KeChoW
-X55SieI7Hn9MDtu4IqfhLA267NgpuH4uuVFk323sqV/BWc8zu/JDJTA6OqdXNNt/
-/65qt12GU5fmZBWqc9to3pcNr6Yx0xhNc9tRHD26U3iI7CW1gOk=
-=pcvU
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index a3fc6ab3c14b..74aa01e75e32 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -112,16 +112,23 @@ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
+ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+ 			struct drm_encoder *encoder)
+ {
++	u32 val;
++
+ 	if (!tcon->quirks->has_unknown_mux)
+ 		return;
+ 
+ 	if (channel != 1)
+ 		return;
+ 
++	if (encoder->encoder_type == DRM_MODE_ENCODER_TVDAC)
++		val = 1;
++	else
++		val = 0;
++
+ 	/*
+ 	 * FIXME: Undocumented bits
+ 	 */
+-	regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, 1);
++	regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, val);
+ }
+ EXPORT_SYMBOL(sun4i_tcon_set_mux);
+ 
+-- 
+git-series 0.9.1
