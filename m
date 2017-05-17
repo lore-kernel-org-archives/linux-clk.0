@@ -1,59 +1,59 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Fri, 26 May 2017 14:06:38 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-Message-ID: <20170526120638.2dfvy4nbzjzbampc@pengutronix.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
+Return-Path: <frank.wang@rock-chips.com>
+From: Frank Wang <frank.wang@rock-chips.com>
+To: heiko@sntech.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	rui.zhang@intel.com,
+	edubezval@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	charles.chen@rock-chips.com,
+	cody.xie@rock-chips.com,
+	kevan.lan@rock-chips.com,
+	huangtao@rock-chips.com,
+	rocky.hao@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wmc@rock-chips.com,
+	Frank Wang <frank.wang@rock-chips.com>
+Subject: [PATCH 4/4] arm: dts: rk322x: update tsadc's frequence setting
+Date: Wed, 17 May 2017 12:45:23 +0800
+Message-Id: <1494996323-4678-5-git-send-email-frank.wang@rock-chips.com>
+In-Reply-To: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
+References: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+From: Rocky Hao <rocky.hao@rock-chips.com>
 
-On Wed, May 03, 2017 at 04:53:09PM -0300, Fabio Estevam wrote:
-> On Wed, May 3, 2017 at 3:56 PM, Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
-> > 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
-> > SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
-> > to 288 MHz because the initial frequency "seems too high to be ssp clock
-> > source directly". However this isn't enough to ensure that the frequency
-> > isn't increased later again. In fact this happens on my machine as the
-> > mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
-> > ssp2 which is resolved to
-> >
-> >         ref_io1.rate = 320 MHz
-> >         ssp2_sel.parent = ref_io1
-> >         ssp2_div.divider = 2
-> >
-> > . The observed effect is that reading MISO reliably fails: Instead of
-> > the least significant bit the second least significant bit is reported
-> > twice. This is probably related to the reports
-> >
-> >         https://community.nxp.com/thread/290209
-> >         https://community.nxp.com/thread/310434
-> 
-> Adding Stefan on Cc in he could help testing this patch, as he was the
-> one that created this thread.
+Update freq of tsadc's working clock as 32768 hz, if not set, tsadc
+will work at a default frequence.
 
-Even though my patch doesn't help Stefan, I think it should be applied
-nevertheless as it makes my machine work, just completes the
-workaround/fix that is already in mainline and nobody who still has the
-issue has the time to debug this further.
+Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+---
+ arch/arm/boot/dts/rk322x.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards
-Uwe
-
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index 7809e56..d2e9641 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -434,6 +434,8 @@
+ 		interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru SCLK_TSADC>, <&cru PCLK_TSADC>;
+ 		clock-names = "tsadc", "apb_pclk";
++		assigned-clocks = <&cru SCLK_TSADC>;
++		assigned-clock-rates = <32768>;
+ 		resets = <&cru SRST_TSADC>;
+ 		reset-names = "tsadc-apb";
+ 		pinctrl-names = "init", "default", "sleep";
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.0.0
