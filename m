@@ -1,65 +1,128 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 15/20] drm/sun4i: Ignore the generic connectors for components
-Date: Wed,  3 May 2017 13:59:52 +0200
-Message-Id: <88de0f79b508e51b5fbf38fac058921a3c748807.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>
+CC: <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Paul
+ Walmsley <paul@pwsan.com>
+Subject: [PATCHv3 1/4] Documentation: dt-bindings: Add binding documentation for TI clkctrl clocks
+Date: Wed, 17 May 2017 18:50:06 +0300
+Message-ID: <1495036209-11298-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1495036209-11298-1-git-send-email-t-kristo@ti.com>
+References: <1495036209-11298-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The generic connectors such as hdmi-connector doesn't have any driver in,
-so if they are added to the component list, we will be waiting forever for
-a non-existing driver to probe.
+From: Tony Lindgren <tony@atomide.com>
 
-Add a list of the connectors we want to ignore when building our component
-list.
+Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+clock controller instance for each interconnect target module. The clkctrl
+controls functional and interface clocks for the module.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+With this binding and a related clock device driver we can start moving the
+clkctrl clock handling to live in drivers/clk/ti.
+
+Note that this binding allows keeping the clockdomain related parts out of
+drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
+needs to know it's clocks, we can just set the the clkctrl device
+instances to be children of the related clockdomain device.
+
+Each clkctrl clock can have multiple optional gate clocks, and multiple
+optional mux clocks. To represent this in device tree, it seems that
+it is best done using four clock cells #clock-cells = <2> property.
+
+The reasons for using #clock-cells = <2> are:
+
+1. We need to specify the clkctrl offset from the instance base. Otherwise
+   we end up with a large number of device tree nodes that need to be
+   patched when new clocks are discovered in a clkctrl clock with minor
+   hardware revision changes for example
+
+2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
+   need to use a separate cell for optional gate clocks to avoid address
+   space conflicts
+
+There is probably no need to list input clocks for each clkctrl clock
+instance in the binding. If we want to add them, the standard clocks
+binding can be used for that.
+
+For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
+Mapping Summary" for example. It shows one instance of a clkctrl clock
+controller with multiple clkctrl registers.
+
+Cc: Paul Walmsley <paul@pwsan.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/clock/ti-clkctrl.txt       | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 8ddd72cd5873..8c9d2e36be55 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -164,6 +164,11 @@ static const struct component_master_ops sun4i_drv_master_ops = {
- 	.unbind	= sun4i_drv_unbind,
- };
- 
-+static bool sun4i_drv_node_is_connector(struct device_node *node)
-+{
-+	return of_device_is_compatible(node, "hdmi-connector");
-+}
+diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+new file mode 100644
+index 0000000..48ee699
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+@@ -0,0 +1,56 @@
++Texas Instruments clkctrl clock binding
 +
- static bool sun4i_drv_node_is_frontend(struct device_node *node)
- {
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-display-frontend") ||
-@@ -204,7 +209,8 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 	    !of_device_is_available(node))
- 		return 0;
- 
--	if (!sun4i_drv_node_is_frontend(node)) {
-+	if (!sun4i_drv_node_is_connector(node) &&
-+	    !sun4i_drv_node_is_frontend(node)) {
- 		/* Add current component */
- 		DRM_DEBUG_DRIVER("Adding component %s\n",
- 				 of_node_full_name(node));
++Texas Instruments SoCs can have a clkctrl clock controller for each
++interconnect target module. The clkctrl clock controller manages functional
++and interface clocks for each module. Each clkctrl controller can also
++gate one or more optional functional clocks for a module, and can have one
++or more clock muxes. There is a clkctrl clock controller typically for each
++interconnect target module on omap4 and later variants.
++
++The clock consumers can specify the index of the clkctrl clock using
++the hardware offset from the clkctrl instance register space. The optional
++clocks can be specified by clkctrl hardware offset and the index of the
++optional clock.
++
++For more information, please see the Linux clock framework binding at
++Documentation/devicetree/bindings/clock/clock-bindings.txt.
++
++Required properties :
++- compatible : shall be "ti,clkctrl"
++- #clock-cells : shall contain 2 with the first entry being the instance
++		 offset from the clock domain base and the second being the
++		 clock index
++
++Example: Clock controller node on omap 4430:
++
++&cm2 {
++	l4per: cm@1400 {
++		cm_l4per@0 {
++			cm_l4per_clkctrl: clk@20 {
++				compatible = "ti,clkctrl";
++				reg = <0x20 0x1b0>;
++				#clock-cells = <2>;
++			};
++		};
++	};
++};
++
++Example: Preprocessor helper macros in dt-bindings/clock/ti-clkctrl.h
++
++#define OMAP4_CLKCTRL_OFFSET		0x20
++#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
++#define MODULEMODE_HWCTRL		1
++#define MODULEMODE_SWCTRL		2
++
++#define OMAP4_GPTIMER10_CLKTRL		OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_GPTIMER11_CLKTRL		OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_GPTIMER2_CLKTRL		OMAP4_CLKCTRL_INDEX(0x38)
++...
++#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
++
++Example: Clock consumer node for GPIO2:
++
++&gpio2 {
++       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0
++		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 8>;
++};
 -- 
-git-series 0.8.11
+1.9.1
