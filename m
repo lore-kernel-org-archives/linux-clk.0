@@ -1,64 +1,130 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 8/8] ARM: sun8i: a83t: Switch to CCU device tree binding macros
-Date: Wed,  3 May 2017 11:09:29 +0800
-Message-Id: <20170503030929.28763-9-wens@csie.org>
-In-Reply-To: <20170503030929.28763-1-wens@csie.org>
-References: <20170503030929.28763-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:32924 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751637AbdEQJcT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 May 2017 05:32:19 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 17 May 2017 17:32:15 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v7 11/13] ARM: sun8i: v3s: add device nodes for DE2
+ display pipeline
+In-Reply-To: <45e3b368b80fb74f33b18afcc3f783c5@aosc.io>
+References: <20170514163045.40366-1-icenowy@aosc.io>
+ <20170514163045.40366-12-icenowy@aosc.io>
+ <20170515092400.nzxmocrdqgt4u476@flea.home>
+ <45e3b368b80fb74f33b18afcc3f783c5@aosc.io>
+Message-ID: <8c191ed093f97c60a1c758cc219ea63b@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that the CCU device tree binding headers have been merged, we can
-use the properly named macros in the device tree, instead of raw
-numbers.
+在 2017-05-17 17:27，icenowy@aosc.io 写道：
+> 在 2017-05-15 17:24，Maxime Ripard 写道：
+>> On Mon, May 15, 2017 at 12:30:43AM +0800, Icenowy Zheng wrote:
+>>> +		de2_clocks: clock@1000000 {
+>> 
+>> display_clocks would be better there, we don't have to dissociate de1
+>> with de2
+> 
+> How about de_clocks ? (See A80 DTSI)
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Oh I regretted... de here indicates "de1".
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index e12dd7170b8f..050d3e347740 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -44,6 +44,9 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-+#include <dt-bindings/clock/sun8i-a83t-ccu.h>
-+#include <dt-bindings/reset/sun8i-a83t-ccu.h>
-+
- / {
- 	interrupt-parent = <&gic>;
- 	#address-cells = <1>;
-@@ -178,7 +181,7 @@
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01c20800 0x400>;
--			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
-+			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc16Md512>;
- 			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
-@@ -225,8 +228,8 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&ccu 53>;
--			resets = <&ccu 40>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
- 			status = "disabled";
- 		};
- 
--- 
-2.11.0
+display_clocks is better.
+
+> 
+>> 
+>>> +			compatible = "allwinner,sun8i-v3s-de2-clk";
+>>> +			reg = <0x01000000 0x100000>;
+>>> +			clocks = <&ccu CLK_DE>,
+>>> +				 <&ccu CLK_BUS_DE>;
+>>> +			clock-names = "mod",
+>>> +				      "bus";
+>>> +			resets = <&ccu RST_BUS_DE>;
+>>> +			#clock-cells = <1>;
+>>> +			#reset-cells = <1>;
+>>> +		};
+>>> +
+>>> +		de2_mixer0: mixer@1100000 {
+>> 
+>> and mixer0 here is enough too.
+>> 
+>> Is there several of them? Why not just use mixer if there's only one?
+> 
+> Nope, here it's tagged 0 only for consistency with other SoCs.
+> 
+>> 
+>>> +			compatible = "allwinner,sun8i-v3s-de2-mixer";
+>>> +			reg = <0x01100000 0x100000>;
+>>> +			clocks = <&de2_clocks CLK_MIXER0>,
+>>> +				 <&de2_clocks CLK_BUS_MIXER0>;
+>>> +			clock-names = "mod",
+>>> +				      "bus";
+>>> +			resets = <&de2_clocks RST_MIXER0>;
+>>> +			assigned-clocks = <&de2_clocks CLK_MIXER0>;
+>>> +			assigned-clock-rates = <150000000>;
+>>> +
+>>> +			ports {
+>>> +				#address-cells = <1>;
+>>> +				#size-cells = <0>;
+>>> +
+>>> +				mixer0_out: port@1 {
+>>> +					#address-cells = <1>;
+>>> +					#size-cells = <0>;
+>>> +					reg = <1>;
+>>> +
+>>> +					mixer0_out_tcon0: endpoint@0 {
+>>> +						reg = <0>;
+>>> +						remote-endpoint = <&tcon0_in_mixer0>;
+>>> +					};
+>>> +				};
+>>> +			};
+>>> +		};
+>>> +
+>>> +		tcon0: lcd-controller@1c0c000 {
+>>> +			compatible = "allwinner,sun8i-v3s-tcon";
+>>> +			reg = <0x01c0c000 0x1000>;
+>>> +			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			clocks = <&ccu CLK_BUS_TCON0>,
+>>> +				 <&ccu CLK_TCON0>;
+>>> +			clock-names = "ahb",
+>>> +				      "tcon-ch0";
+>>> +			clock-output-names = "tcon-pixel-clock";
+>>> +			resets = <&ccu RST_BUS_TCON0>;
+>>> +			reset-names = "lcd";
+>>> +			status = "disabled";
+>>> +
+>>> +			ports {
+>>> +				#address-cells = <1>;
+>>> +				#size-cells = <0>;
+>>> +
+>>> +				tcon0_in: port@0 {
+>>> +					#address-cells = <1>;
+>>> +					#size-cells = <0>;
+>>> +					reg = <0>;
+>>> +
+>>> +					tcon0_in_mixer0: endpoint@0 {
+>>> +						reg = <0>;
+>>> +						remote-endpoint = <&mixer0_out_tcon0>;
+>>> +					};
+>>> +				};
+>>> +
+>>> +				tcon0_out: port@1 {
+>>> +					#address-cells = <1>;
+>>> +					#size-cells = <0>;
+>>> +					reg = <1>;
+>>> +				};
+>>> +			};
+>>> +		};
+>>> +
+>>> +
+>> 
+>> You have an extra new line here.
+>> 
+>> Maxime
