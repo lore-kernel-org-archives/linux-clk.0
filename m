@@ -1,56 +1,134 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdbXEFeVkD8rETyrnuoAxUvnFt2BL07UsXuXfSnq3Qdyfw@mail.gmail.com>
-References: <20170419091326.11226-1-linus.walleij@linaro.org> <CACRpkdbXEFeVkD8rETyrnuoAxUvnFt2BL07UsXuXfSnq3Qdyfw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 24 May 2017 11:16:22 +0200
-Message-ID: <CACRpkdYvwwJcxKPtKUyZBLWsmjXji7pHDKNz9NRTETqj2P3drQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5 v2] clk: qcom: Update DT bindings for the
- MSM8660/APQ8060 RPMCC
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 01/21] clk: divider: Make divider_round_rate take the parent clock
+Date: Wed, 17 May 2017 09:40:30 +0200
+Message-Id: <af976be0ecc2ea335cd9694a83fb29174d87e17d.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 17, 2017 at 9:23 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Apr 19, 2017 at 11:13 AM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
->
->> These compatible strings need to be added to extend support
->> for the RPM CC to cover MSM8660/APQ8060. We also need to add
->> enumberators to the include file for a few clocks that were
->> missing.
->>
->> Cc: devicetree@vger.kernel.org
->> Acked-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> ChangeLog v1->v2:
->> - Collect Rob's ACK
->
-> Ping on this patch set. It's been sitting for a month and was
-> not changed from v1 either, if you want me to change something
-> it'd be good to know.
+So far, divider_round_rate only considers the parent clock returned by
+clk_hw_get_parent.
 
-Ping on this again.
+This works fine on clocks that have a single parents, this doesn't work on
+muxes, since we will only consider the first parent, while other parents
+may totally be able to provide a better combination.
 
-I am sorry if you guys are swamped, I just don't know what to do,
-clock drivers are starting to become the bottleneck for everything
-I do. I bet the ARM SoC maintainers must be noticing it too.
+Clocks in that case cannot use divider_round_rate, so would have to come up
+with a very similar logic to work around it. Instead of having to do
+something like this, and duplicate that logic everywhere, create a
+divider_round_rate parent to allow caller to give an additional parameter
+for the parent clock to consider.
 
-Unfortunately I am already managing two subsystems and cannot
-volunteer to help out with a third, I would blow a fuse.
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/clk-divider.c    | 19 ++++++++++---------
+ include/linux/clk-provider.h | 16 +++++++++++++---
+ 2 files changed, 23 insertions(+), 12 deletions(-)
 
-But it seems the CLK subsystem could use some co-maintainers?
-
-Peter de Schrijver is a big authority in all things clocking (I clearly
-remember him discussing the subject a lot at conferences with lots
-of good points) so I would ask him to help, but I don't know how busy
-Peter may be with nVidia business etc these days...
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 96386ffc8483..9bb472cccca6 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -275,7 +275,8 @@ static int _next_div(const struct clk_div_table *table, int div,
+ 	return div;
+ }
+ 
+-static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
++static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
++			       unsigned long rate,
+ 			       unsigned long *best_parent_rate,
+ 			       const struct clk_div_table *table, u8 width,
+ 			       unsigned long flags)
+@@ -314,8 +315,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
+ 			*best_parent_rate = parent_rate_saved;
+ 			return i;
+ 		}
+-		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
+-					       rate * i);
++		parent_rate = clk_hw_round_rate(parent, rate * i);
+ 		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
+ 		if (_is_best_div(rate, now, best, flags)) {
+ 			bestdiv = i;
+@@ -326,23 +326,24 @@ static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (!bestdiv) {
+ 		bestdiv = _get_maxdiv(table, width, flags);
+-		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
++		*best_parent_rate = clk_hw_round_rate(parent, 1);
+ 	}
+ 
+ 	return bestdiv;
+ }
+ 
+-long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+-			unsigned long *prate, const struct clk_div_table *table,
+-			u8 width, unsigned long flags)
++long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
++			       unsigned long rate, unsigned long *prate,
++			       const struct clk_div_table *table,
++			       u8 width, unsigned long flags)
+ {
+ 	int div;
+ 
+-	div = clk_divider_bestdiv(hw, rate, prate, table, width, flags);
++	div = clk_divider_bestdiv(hw, parent, rate, prate, table, width, flags);
+ 
+ 	return DIV_ROUND_UP_ULL((u64)*prate, div);
+ }
+-EXPORT_SYMBOL_GPL(divider_round_rate);
++EXPORT_SYMBOL_GPL(divider_round_rate_parent);
+ 
+ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a428aec36ace..c59c62571e4f 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -412,9 +412,10 @@ extern const struct clk_ops clk_divider_ro_ops;
+ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+ 		unsigned int val, const struct clk_div_table *table,
+ 		unsigned long flags);
+-long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+-		unsigned long *prate, const struct clk_div_table *table,
+-		u8 width, unsigned long flags);
++long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
++			       unsigned long rate, unsigned long *prate,
++			       const struct clk_div_table *table,
++			       u8 width, unsigned long flags);
+ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+ 		const struct clk_div_table *table, u8 width,
+ 		unsigned long flags);
+@@ -757,6 +758,15 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+ 	dst->core = src->core;
+ }
+ 
++static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *prate,
++				      const struct clk_div_table *table,
++				      u8 width, unsigned long flags)
++{
++	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
++					 rate, prate, table, width, flags);
++}
++
+ /*
+  * FIXME clock api without lock protection
+  */
+-- 
+git-series 0.9.1
