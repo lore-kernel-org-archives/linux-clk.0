@@ -1,85 +1,69 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH 02/10] clk: add clk_core_set_phase_nolock function
-Date: Thu, 18 May 2017 18:37:56 +0200
-Message-Id: <20170518163804.14123-3-jbrunet@baylibre.com>
-In-Reply-To: <20170518163804.14123-1-jbrunet@baylibre.com>
-References: <20170518163804.14123-1-jbrunet@baylibre.com>
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 13/21] drm/sun4i: tcon: Change vertical total size computation inconsistency
+Date: Wed, 17 May 2017 09:40:42 +0200
+Message-Id: <5f1e156ed132defe5ec58b4e2a97764d73eba5f3.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Create a core function for set_phase, as it is done for set_rate and
-set_parent.
+Both TCON channels need to have the resolution doubled, since the size the
+hardware is going to use is whatever we put in the register divided by two.
 
-This rework is done to ease the integration of "protected" clock
-functionality.
+However, we handle it differently for the two channels: in the channel 0,
+our register access macro does the multiplication of the value passed as
+paremeter, while in the channel 1, the macro doesn't do this, and we need
+to do it before calling it.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Make this consistent by aligning the channel 0 with the channel 1
+behaviour.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f5c371532509..6031fada37f9 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 931dd374552e..62e254aedb57 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -194,7 +194,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
  
-+static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
-+{
-+	int ret = -EINVAL;
-+
-+	if (!core)
-+		return 0;
-+
-+	trace_clk_set_phase(clk->core, degrees);
-+
-+	if (core->ops->set_phase)
-+		ret = core->ops->set_phase(core->hw, degrees);
-+
-+	trace_clk_set_phase_complete(core, degrees);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_set_phase - adjust the phase shift of a clock signal
-  * @clk: clock signal source
-@@ -1895,7 +1912,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
-  */
- int clk_set_phase(struct clk *clk, int degrees)
- {
--	int ret = -EINVAL;
-+	int ret;
+ 	/* Set vertical display timings */
+ 	regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
+-		     SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal) |
++		     SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
+ 		     SUN4I_TCON0_BASIC2_V_BACKPORCH(bp));
  
- 	if (!clk)
- 		return 0;
-@@ -1906,17 +1923,7 @@ int clk_set_phase(struct clk *clk, int degrees)
- 		degrees += 360;
+ 	/* Set Hsync and Vsync length */
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index f60e0b4c6db8..e3c50ecdcd04 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -52,7 +52,7 @@
+ #define SUN4I_TCON0_BASIC1_H_BACKPORCH(bp)		(((bp) - 1) & 0xfff)
  
- 	clk_prepare_lock();
--
--	trace_clk_set_phase(clk->core, degrees);
--
--	if (clk->core->ops->set_phase)
--		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
--
--	trace_clk_set_phase_complete(clk->core, degrees);
--
--	if (!ret)
--		clk->core->phase = degrees;
--
-+	ret = clk_core_set_phase_nolock(clk->core, degrees);
- 	clk_prepare_unlock();
+ #define SUN4I_TCON0_BASIC2_REG			0x50
+-#define SUN4I_TCON0_BASIC2_V_TOTAL(total)		((((total) * 2) & 0x1fff) << 16)
++#define SUN4I_TCON0_BASIC2_V_TOTAL(total)		(((total) & 0x1fff) << 16)
+ #define SUN4I_TCON0_BASIC2_V_BACKPORCH(bp)		(((bp) - 1) & 0xfff)
  
- 	return ret;
+ #define SUN4I_TCON0_BASIC3_REG			0x54
 -- 
-2.9.4
+git-series 0.9.1
