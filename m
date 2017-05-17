@@ -1,48 +1,56 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 0/2] clk: meson: mark clk81 as critical
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20170524093932.5262-1-jbrunet@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, carlo@caione.org,
- Kevin Hilman <khilman@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <a550aa57-c1b5-8849-095d-01586aaf5b50@baylibre.com>
-Date: Mon, 29 May 2017 09:54:36 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170524093932.5262-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.133]:50719 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751498AbdEQKQ1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2017 06:16:27 -0400
+From: Frank Wang <frank.wang@rock-chips.com>
+To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, mturquette@baylibre.com,
+        sboyd@codeaurora.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        rui.zhang@intel.com, edubezval@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, charles.chen@rock-chips.com,
+        cody.xie@rock-chips.com, kevan.lan@rock-chips.com,
+        huangtao@rock-chips.com, rocky.hao@rock-chips.com,
+        finley.xiao@rock-chips.com, zhangqing@rock-chips.com,
+        wmc@rock-chips.com, Frank Wang <frank.wang@rock-chips.com>
+Subject: [PATCH v2 0/4] amend some properties related clk and cpu for rk322x
+Date: Wed, 17 May 2017 18:16:13 +0800
+Message-Id: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/24/2017 11:39 AM, Jerome Brunet wrote:
-> The GX (gxbb.c) clock controller driver already marks the clk81 clock
-> as criticial. However, the Meson8b clock controller driver does not do
-> this yet.
-> This can lead to a freeze of the whole system when clk81 is disabled
-> by the common clock framework (for example after the last child clock
-> is disabled by a driver which used that child clock).
-> 
-> Changes since v1: [0]
-> With the clock flagged as CRITICAL, CLK_IGNORE_UNUSED is no longer
-> useful. Remove this flag from meson8b and gxbb's clk81.
-> 
-> [0]: https://lkml.kernel.org/r/20170504183201.13175-1-martin.blumenstingl@googlemail.com
-> 
-> Jerome Brunet (1):
->   clk: gxbb: remove CLK_IGNORE_UNUSED from clk81
-> 
-> Martin Blumenstingl (1):
->   clk: meson: meson8b: mark clk81 as critical
-> 
->  drivers/clk/meson/gxbb.c    | 2 +-
->  drivers/clk/meson/meson8b.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
+These series of patches amend some assigned-clocks and add cpu opp table
+for rk322x SoCs.
 
-Applied,
+the following patches on patchwork are required for this change.
+https://patchwork.kernel.org/patch/9627639/
+https://patchwork.kernel.org/patch/9703945/
+https://patchwork.kernel.org/patch/9703939/
+https://patchwork.kernel.org/patch/9707517/
 
-Thanks,
-Neil
+Changes from v1:
+ - Updated the 'Signed-off-by' tag with original authors' email id.
+ - Updated the 'Acked-by' tag from Viresh Kumar <viresh.kumar@linaro.org>.
+
+Elaine Zhang (1):
+  arm: dts: rk322x: add some assigned-clocks
+
+Finley Xiao (2):
+  arm: dts: rk322x: add operating-points-v2 property for cpu
+  arm: dts: rk3229: add a new cpu opp table
+
+Rocky Hao (1):
+  arm: dts: rk322x: update tsadc's frequence setting
+
+ arch/arm/boot/dts/rk3229-cpu-opp.dtsi | 85 +++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/rk322x.dtsi         | 52 ++++++++++++++++++---
+ 2 files changed, 131 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm/boot/dts/rk3229-cpu-opp.dtsi
+
+-- 
+2.0.0
+
+
