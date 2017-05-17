@@ -1,56 +1,124 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 12/21] drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
-Date: Wed, 17 May 2017 09:40:41 +0200
-Message-Id: <e4c28363d94e8966866792df3bbd786332c8e931.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <anup.patel@broadcom.com>
+MIME-Version: 1.0
+In-Reply-To: <CAOesGMiwspTuVWp8nPcWK2MhuWh8x9XSkZWJE2x=FxTCtU47Sw@mail.gmail.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com> <CAOesGMiwspTuVWp8nPcWK2MhuWh8x9XSkZWJE2x=FxTCtU47Sw@mail.gmail.com>
+From: Anup Patel <anup.patel@broadcom.com>
+Date: Wed, 17 May 2017 09:54:34 +0530
+Message-ID: <CAALAos8sRb+cLeHLP4yuD5oXRP1RWn=PGCkPGEBq+6X+DdkuQg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Broadcom Stingray SOC Initial Support
+To: Olof Johansson <olof@lixom.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>, Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-It seems like what's called a backporch in the datasheet is actually the
-backporch plus the sync period. Fix that in our driver.
+On Wed, May 17, 2017 at 12:23 AM, Olof Johansson <olof@lixom.net> wrote:
+> Hi,
+>
+>
+>
+> On Tue, May 16, 2017 at 4:30 AM, Anup Patel <anup.patel@broadcom.com> wrote:
+>> This patchset adds initial support of Broadcom Stingray SOC
+>> by reusing existing Broadcom iProc device drivers.
+>>
+>> Most of the patches in this patchset are DT patches except
+>> the Stingray clock tree support which just one patch.
+>>
+>> This patchset is based on Linux-4.12-rc1 and it is also available
+>> at stingray-v3 branch of https://github.com/Broadcom/arm64-linux.git
+>>
+>> Changes since v2:
+>>  - Remove default bootargs from chosen DT node
+>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
+>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
+>>
+>> Changes since v1:
+>>  - Rebased patches for Linux-4.12-rc1
+>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+>>  - Use ranges DT property to clear view of memory-layout
+>>  - Make bcm-sr.h part of clock DT bindings patch
+>>
+>> Anup Patel (3):
+>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
+>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
+>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+>>
+>> Oza Pawandeep (1):
+>>   arm64: dts: Add I2C DT nodes for Stingray SoC
+>>
+>> Pramod Kumar (3):
+>>   arm64: dts: Add NAND DT nodes for Stingray SOC
+>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
+>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
+>>
+>> Sandeep Tripathy (3):
+>>   dt-bindings: clk: Extend binding doc for Stingray SOC
+>>   clk: bcm: Add clocks for Stingray SOC
+>>   arm64: dts: Add clock DT nodes for Stingray SOC
+>>
+>> Srinath Mannam (1):
+>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+>>
+>>  .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
+>>  .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
+>>  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+>>  arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+>>  .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
+>>  .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
+>>  .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
+>>  .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
+>>  .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
+>>  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
+>>  drivers/clk/bcm/Kconfig                            |   8 +
+>>  drivers/clk/bcm/Makefile                           |   1 +
+>>  drivers/clk/bcm/clk-sr.c                           | 300 ++++++++++++++
+>>  include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
+>>  .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
+>>  15 files changed, 1797 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+>>  create mode 100644 drivers/clk/bcm/clk-sr.c
+>>  create mode 100644 include/dt-bindings/clock/bcm-sr.h
+>>  create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+>
+> Grouping as one patchset for review is fine, but when you submit this
+> for merge you need to split it up:
+>
+> - Documentation/devicetree can go with the driver pieces or with the
+> DT changes, your choice
+> - DTS/DTSI changes should go through the Broadcom maintainers to arm-soc
+> - clk changes should go to clk maintainers.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Only PATCH3 needs to go through clk maintainers rest all patches
+are DT bindings document and DTS changes which can go through
+Broadcom tree. Right ??
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 74aa01e75e32..931dd374552e 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -269,7 +269,7 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
- 		     SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
- 
- 	/* Set horizontal display timings */
--	bp = mode->crtc_htotal - mode->crtc_hsync_end;
-+	bp = mode->crtc_htotal - mode->crtc_hsync_start;
- 	DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
- 			 mode->htotal, bp);
- 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
-@@ -277,7 +277,7 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
- 		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
- 
- 	/* Set vertical display timings */
--	bp = mode->crtc_vtotal - mode->crtc_vsync_end;
-+	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
- 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
- 			 mode->vtotal, bp);
- 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
--- 
-git-series 0.9.1
+>
+> Also, there's usually no need to split up a DT introduction and having
+> separate pieces for NAND/pinctrl/GPIO/etc: They can all go in the main
+> DT submission patch.
+
+Yes, we have already squashed DTS patches from same author into
+one DTS patch except NAND, PINCTRL and GPIO patches.
+
+The NAND, PINCTRL, and GPIO patches were not squashed into
+one patch for easy review but since you suggest I will squash these
+three DTS patches into one DTS patch.
+
+Regards,
+Anup
