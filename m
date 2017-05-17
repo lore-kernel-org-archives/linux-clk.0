@@ -1,193 +1,94 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1494597899.2135.3.camel@baylibre.com>
-Subject: Re: [RFC 0/7] clk: implement clock locking mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-Date: Fri, 12 May 2017 16:04:59 +0200
-In-Reply-To: <149228583018.88277.3542713369128557565@resonance>
-References: <20170321183330.26722-1-jbrunet@baylibre.com>
-	 <149228583018.88277.3542713369128557565@resonance>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v3 21/21] ARM: sun5i: a10s-olinuxino: Enable HDMI
+Date: Wed, 17 May 2017 09:40:50 +0200
+Message-Id: <231bed128af2b4d06093d2a5b24aed4e4ab86a6a.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2017-04-15 at 21:50 +0200, Michael Turquette wrote:
-> Hi Jerome,
-> 
-> Thanks for sending this series. The concept is one we've been talking
-> about for years, and your approach makes sense. Some comments below.
-> 
-> Quoting Jerome Brunet (2017-03-21 19:33:23)
-> > This RFC patchset is related to the discussion around CLK_SET_RATE_GATE and
-> > clk_lock which available here [0]
-> 
-> If we merge this solution then we may want to convert some of those
-> CLK_SET_RATE_GATE users and 
+The A10s Olinuxino has an HDMI connector. Make sure we can use it.
 
-It would be nice, but this would be on a case by case basis and would require
-the help of the platform maintainers. I think there two kind of users of
-CLK_SET_RATE_GATE at this moment:
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts | 29 +++++++++++++++++-
+ 1 file changed, 29 insertions(+)
 
-1) The clock must be gated - disabled - to change the rate safely:
-clk_protect_rate won't help here, it does not enforce such thing. We should
-provide another fix for this because CLK_SET_RATE_GATE does really enforce this
-constraint along the clock tree either
-
-2) The one (like me) trying to abuse the enable_count to get some protection:
-This never worked, and these drivers had no protection until now. If they really
-need protection they can start using clk_protect_rate.
-
-What I mean with this two point is: even if the intent is the same, there is
-real functional difference between CLK_SET_RATE_GATE and clk_protect_rate. We
-will have to be careful ...
-
-> potentially some of the rate-range users
-> that set min/max to the same value over to this new api.
-> 
-
-This case is easier, if they use min=max, yes for sure.
-
-> > 
-> > The goal of this patchset is to provide a way for consumers to inform the
-> > system that they depend on the rate of the clock source and can't tolerate
-> > other consumers changing the rate or causing glitches.
-> > 
-> > Patches 1 to 3 are just rework to ease the integration of the locking
-> > mechanism. They should not introduce any functional differences.
-> > 
-> > Patch 4 is the important bit. It introduce 2 new functions to the CCF API:
-> > clk_protect and clk_unprotect (The "lock" word is already used lot in
-> > clk.c. Using clk_lock and clk_unlock would have been very messy. If you
-> > found "protect" to be a poor choice, I'm happy to sed the whole thing in
-> > future version)
-> > 
-> > These calls can happen at anytime during the life of the clk. As for
-> > prepare and enable, the calls must be balanced.
-> > 
-> > Inside the clock framework, 2 new count values are introduced to keep track
-> > of the protection:
-> > * core "protect_count": this reference count value works in the same way as
-> >   prepare and enable count, and track whether the clock is protected or
-> >   not. This is the value that will checked to allow operation which may
-> >   cause glitches or change the rate of clock source.
-> > * clk consumer "protect_ucount": this allows to track if the consumer is
-> >   protecting the clock.
-> > 
-> > Requiring the consumer to unprotect its clock before changing it would have
-> > been very annoying for the consumer. It would also be unsafe, as it would
-> > still be possible for another consumer to change the rate between the call
-> > to set_rate and protect. This needs to happen in a critical section.  A
-> > solution would be to add "set_rate_protect", but we would need to do the
-> > same for the set_parent and set_phase (and the possible future
-> > functions). It does not scale well.  The solution proposed in this patch is
-> > to use the consumer protect count.
-> > 
-> > In function altering the clock, if the consumer is protecting the clock,
-> > the protection is temporarily release under the prepare_lock. This ensure
-> > that:
-> > * the clock is still protect from another consumer because of the
-> >   prepare_lock
-> > * the rate set on a protected clock cannot change between set_rate and
-> >   later enable
-> > * only a consumer protecting a clock can do this temporary protection
-> >   removal (less chance of people messing with the refcount)
-> > * if more than one consumer protect the clock, it remains protected.
-> >   Because the protection is removed for the calling consumer, it gives
-> >   it a chance to jump to another provider, if available.
-> > 
-> > This protection mechanism assume that "protecting" consumer knows what it
-> > is doing when it comes to setting the rate, and does not expect to be
-> > protected against itself.
-> > 
-> > This was tested with the audio use case mentioned in [0]
-> > 
-> > One caveat is the following case:
-> > N+1 consumers protect their clocks. These clocks come from N possible
-> > providers. We should able to satisfy at least N consumers before exhausting
-> > the resources.  In the particular case where all the consumers call
-> > "protect" before having a chance to call "set_rate", the last 2 consumers
-> > will remains stuck on the last provider w/o being able to set the rate on
-> > it. This means that in situation where there is 2 consumers on 1
-> > providers, they will compete for the clock, and may end up in situation
-> > where both protect the clock and none can set the rate they need.  This can
-> > be solved if, when the rate fails to be set, the consumer release the
-> > protection. Then the second consumer will be able to satisfy its request.
-> 
-> This situation can be handled a bit more gracefully if clk_set_rate_lock
-> both returns an error code if setting the rate failes AND it releases
-> the rate lock in that case. At least that helps for the case of
-> initializing rates during .probe(). Automatically dropping the lock
-> might complicate things in other cases though...
-
-set_rate_lock would solve the problem for 
-> > "the last 2 consumers
-> > will remains stuck on the last provider w/o being able to set the rate"
-
-With set_rate_lock, only the last one won't be satisfied, which is fine I
-suppose.
-
->  if setting the rate failes
-
-Setting aside this RFC, when can we consider a that setting the rate failed ?
-CCF always give the best it can, according to a set of constraints (possible
-parents, range of the parents, ...) but does not return an error.
-
-Clock protect is just one more constraint added to the equation, right ?
-
-set_rate having failed depends on the accuracy you need.
-For exemple You ask for 100Mhz out of :
-* a PLL: you get 98 MHz
-* a very slow clock: you get 10Hz
-
-Which one has failed ?
-
-Thanks for taking time to review this RFC Mike !
-Cheers
-Jerome
-
-> 
-> Best regards,
-> Mike
-> 
-> > 
-> > Patch 5 is a small change on set_rate_range to restore the old range on
-> > failure. It don't use set_rate_range in any driver so I could not test this
-> > change.
-> > 
-> > Patch 6 is just a cosmetic change to clk_summary debugfs entry to make it
-> > less wide after adding protect count in it.
-> > 
-> > Patch 7 fix a warning reported by checkpatch.pl. Apparently, ENOSYS is used
-> > incorrectly.
-> > 
-> > Bonus:
-> > 
-> > With this patchset, we should probably change the use the flags
-> > "CLK_SET_RATE_GATE" and "CLK_SET_PARENT_GATE" We discussed removing
-> > them. Another solution would be to have them automatically gate the clock
-> > before performing the related operation.  What is your view on this ?
-> > 
-> > [0]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@resona
-> > nce
-> > 
-> > Jerome Brunet (7):
-> >   clk: take the prepare lock out of clk_core_set_parent
-> >   clk: add set_phase core function
-> >   clk: rework calls to round and determine rate callbacks
-> >   clk: add support for clock protection
-> >   clk: rollback set_rate_range changes on failure
-> >   clk: cosmetic changes to clk_summary debugfs entry
-> >   clk: fix incorrect usage of ENOSYS
-> > 
-> >  drivers/clk/clk.c            | 313 ++++++++++++++++++++++++++++++++++----
-> > -----
-> >  include/linux/clk-provider.h |   1 +
-> >  include/linux/clk.h          |  29 ++++
-> >  3 files changed, 279 insertions(+), 64 deletions(-)
-> > 
-> > -- 
-> > 2.9.3
-> > 
+diff --git a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+index 894f874a5beb..1d13b6407222 100644
+--- a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
++++ b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+@@ -63,6 +63,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -76,6 +87,10 @@
+ 	};
+ };
+ 
++&be0 {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -91,6 +106,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c0_pins_a>;
+@@ -248,6 +273,10 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+-- 
+git-series 0.9.1
