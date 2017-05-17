@@ -1,75 +1,137 @@
-Return-Path: <anup.patel@broadcom.com>
-MIME-Version: 1.0
-In-Reply-To: <20170512152134.tjuc5exo4plalujs@rob-hp-laptop>
-References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
- <1494071686-19098-3-git-send-email-anup.patel@broadcom.com> <20170512152134.tjuc5exo4plalujs@rob-hp-laptop>
-From: Anup Patel <anup.patel@broadcom.com>
-Date: Mon, 15 May 2017 10:37:53 +0530
-Message-ID: <CAALAos-5wd6qPvvZqezswsBXm=n1UJhB9kFkoYeanT-RwaXW1A@mail.gmail.com>
-Subject: Re: [PATCH 02/11] dt-bindings: clk: Extend binding doc for Stingray SOC
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza@broadcom.com>, Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>, Device Tree <devicetree@vger.kernel.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>,
-	BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <frank.wang@rock-chips.com>
+From: Frank Wang <frank.wang@rock-chips.com>
+To: heiko@sntech.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	rui.zhang@intel.com,
+	edubezval@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	charles.chen@rock-chips.com,
+	cody.xie@rock-chips.com,
+	kevan.lan@rock-chips.com,
+	huangtao@rock-chips.com,
+	rocky.hao@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wmc@rock-chips.com,
+	Frank Wang <frank.wang@rock-chips.com>
+Subject: [PATCH 3/4] arm: dts: rk3229: add a new cpu opp table
+Date: Wed, 17 May 2017 12:45:22 +0800
+Message-Id: <1494996323-4678-4-git-send-email-frank.wang@rock-chips.com>
+In-Reply-To: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
+References: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 12, 2017 at 8:51 PM, Rob Herring <robh@kernel.org> wrote:
-> On Sat, May 06, 2017 at 05:24:37PM +0530, Anup Patel wrote:
->> From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
->>
->> Update iproc clock dt-binding documentation with
->> Stingray pll and clock details.
->>
->> Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
->> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->> ---
->>  .../bindings/clock/brcm,iproc-clocks.txt           | 76 ++++++++++++++++++++++
->>  1 file changed, 76 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
->> index 6f66e9a..f2c5f0e4a 100644
->> --- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
->> +++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
->> @@ -219,3 +219,79 @@ BCM63138
->>  --------
->>  PLL and leaf clock compatible strings for BCM63138 are:
->>      "brcm,bcm63138-armpll"
->> +
->> +Stingray
->> +-----------
->> +PLL and leaf clock compatible strings for Stingray are:
->> +    "brcm,sr-genpll0"
->> +    "brcm,sr-genpll1"
->> +    "brcm,sr-genpll2"
->> +    "brcm,sr-genpll3"
->> +    "brcm,sr-genpll4"
->> +    "brcm,sr-genpll5"
->> +    "brcm,sr-genpll6"
->> +
->> +    "brcm,sr-lcpll0"
->> +    "brcm,sr-lcpll1"
->> +    "brcm,sr-lcpll-pcie"
->> +
->> +
->> +The following table defines the set of PLL/clock index and ID for Stingray.
->> +These clock IDs are defined in:
->> +    "include/dt-bindings/clock/bcm-sr.h"
->
-> This header should be part of this commit. With that,
+From: Finley Xiao <finley.xiao@rock-chips.com>
 
-Sure, I will include bcm-sr.h as-part of this commit.
+This patch adds some new frequencies for rk3229 board.
 
->
-> Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+---
+ arch/arm/boot/dts/rk3229-cpu-opp.dtsi | 85 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
+ create mode 100644 arch/arm/boot/dts/rk3229-cpu-opp.dtsi
 
-Thanks,
-Anup
+diff --git a/arch/arm/boot/dts/rk3229-cpu-opp.dtsi b/arch/arm/boot/dts/rk3229-cpu-opp.dtsi
+new file mode 100644
+index 0000000..89e8413
+--- /dev/null
++++ b/arch/arm/boot/dts/rk3229-cpu-opp.dtsi
+@@ -0,0 +1,85 @@
++/*
++ * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ *  Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/ {
++	/delete-node/ opp-table0;
++
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-408000000 {
++			opp-hz = /bits/ 64 <408000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <40000>;
++			opp-suspend;
++		};
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <975000>;
++		};
++		opp-816000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp-1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1175000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1275000>;
++		};
++		opp-1296000000 {
++			opp-hz = /bits/ 64 <1296000000>;
++			opp-microvolt = <1325000>;
++		};
++		opp-1392000000 {
++			opp-hz = /bits/ 64 <1392000000>;
++			opp-microvolt = <1375000>;
++		};
++		opp-1464000000 {
++			opp-hz = /bits/ 64 <1464000000>;
++			opp-microvolt = <1400000>;
++		};
++	};
++};
+-- 
+2.0.0
