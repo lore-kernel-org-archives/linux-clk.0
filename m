@@ -1,132 +1,70 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 01/11] clk: take the prepare lock out of clk_core_set_parent
-Date: Sun, 21 May 2017 23:59:48 +0200
-Message-Id: <20170521215958.19743-2-jbrunet@baylibre.com>
-In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 4/6] ARM: sun8i: a83t: Add CCU device nodes
+Date: Thu, 18 May 2017 11:58:07 +0800
+Message-Id: <20170518035809.15487-5-wens@csie.org>
+In-Reply-To: <20170518035809.15487-1-wens@csie.org>
+References: <20170518035809.15487-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Now that we have support for the A83T CCU, add a device node for it,
+and replace any existing placeholder clock phandles with the correct
+ones.
 
-Rework set_parent core function so it can be called when the prepare lock
-is already held by the caller.
-
-This rework is done to ease the integration of the "protected" clock
-functionality.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk.c | 39 ++++++++++++++++++---------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fc58c52a26b4..f5c371532509 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1787,7 +1787,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_has_parent);
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index c0a1e4f74b89..c9a5d07b2ada 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -162,13 +162,23 @@
+ 		#size-cells = <1>;
+ 		ranges;
  
--static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
-+static int clk_core_set_parent_nolock(struct clk_core *core,
-+				      struct clk_core *parent)
- {
- 	int ret = 0;
- 	int p_index = 0;
-@@ -1796,23 +1797,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 	if (!core)
- 		return 0;
- 
--	/* prevent racing with updates to the clock topology */
--	clk_prepare_lock();
--
- 	if (core->parent == parent)
--		goto out;
-+		return 0;
- 
- 	/* verify ops for for multi-parent clks */
--	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
--		ret = -ENOSYS;
--		goto out;
--	}
-+	if ((core->num_parents > 1) && (!core->ops->set_parent))
-+		return -ENOSYS;
- 
- 	/* check that we are allowed to re-parent if the clock is in use */
--	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
--		ret = -EBUSY;
--		goto out;
--	}
-+	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
-+		return -EBUSY;
- 
- 	/* try finding the new parent index */
- 	if (parent) {
-@@ -1820,8 +1814,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		if (p_index < 0) {
- 			pr_debug("%s: clk %s can not be parent of clk %s\n",
- 					__func__, parent->name, core->name);
--			ret = p_index;
--			goto out;
-+			return p_index;
- 		}
- 		p_rate = parent->rate;
- 	}
-@@ -1831,7 +1824,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto out;
-+		return ret;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -1844,9 +1837,6 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		__clk_recalc_accuracies(core);
- 	}
- 
--out:
--	clk_prepare_unlock();
--
- 	return ret;
- }
- 
-@@ -1869,10 +1859,17 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
-  */
- int clk_set_parent(struct clk *clk, struct clk *parent)
- {
-+	int ret;
++		ccu: clock@1c20000 {
++			compatible = "allwinner,sun8i-a83t-ccu";
++			reg = <0x01c20000 0x400>;
++			clocks = <&osc24M>, <&osc16Md512>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
 +
- 	if (!clk)
- 		return 0;
+ 		pio: pinctrl@1c20800 {
+ 			compatible = "allwinner,sun8i-a83t-pinctrl";
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
++			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+@@ -214,7 +224,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu 53>;
++			resets = <&ccu 40>;
+ 			status = "disabled";
+ 		};
  
--	return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
-+	clk_prepare_lock();
-+	ret = clk_core_set_parent_nolock(clk->core,
-+					 parent ? parent->core : NULL);
-+	clk_prepare_unlock();
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
- 
-@@ -2753,7 +2750,7 @@ void clk_unregister(struct clk *clk)
- 		/* Reparent all children to the orphan list. */
- 		hlist_for_each_entry_safe(child, t, &clk->core->children,
- 					  child_node)
--			clk_core_set_parent(child, NULL);
-+			clk_core_set_parent_nolock(child, NULL);
- 	}
- 
- 	hlist_del_init(&clk->core->child_node);
 -- 
-2.9.4
+2.11.0
