@@ -1,31 +1,82 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, andy.yan@rock-chips.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH v2 6/6] ARM: dts: rockchip: rename RK1108-evb to RV1108-evb
-Date: Sun, 14 May 2017 14:54:53 +0200
-Message-ID: <17588038.0Ltp2v6IRL@phil>
-In-Reply-To: <20170317171840.4683-7-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-7-heiko@sntech.de>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20170518073943.hu4bsz5qggpkvyv2@flea.home>
+References: <20170518035809.15487-1-wens@csie.org> <20170518035809.15487-4-wens@csie.org>
+ <20170518073943.hu4bsz5qggpkvyv2@flea.home>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 18 May 2017 15:51:41 +0800
+Message-ID: <CAGb2v66tenCVXWiEu6=X60eJo9zZiHuj2C2GJe_sjs_Zbg4c2A@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] clk: sunxi-ng: Add driver for A83T CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 17. M=E4rz 2017, 18:18:40 CEST schrieb Heiko Stuebner:
-> From: Andy Yan <andy.yan@rock-chips.com>
->=20
-> Rockchip finally named the SOC as RV1108, so change it
-> for compatible.
->=20
-> The rk1108/rv1108 is completely new to the market, so there no real
-> devices exist in the wild, only the Rockchip internal evaluation
-> board. Therefore we're not breaking any existing devices when
-> changing compatible values.
->=20
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Acked-by: Rob Herring <robh@kernel.org>
->=20
-> [added paragraph about no real devices existing]
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Thu, May 18, 2017 at 3:39 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Thu, May 18, 2017 at 11:58:06AM +0800, Chen-Yu Tsai wrote:
+>> +/*
+>> + * MMC2 supports both old and new timing modes. When the new timing
+>> + * mode is active, the output clock rate is halved by two. Here we
+>> + * treat it as a variable pre-divider. Note that the pre-divider is
+>> + * _not_ included in the possible factors during a set clock rate
+>> + * operation. It is only read out.
+>> + */
+>> +#define SUN8I_A83T_MMC2_REG  0x090
+>> +static const struct ccu_mux_var_prediv mmc2_new_timing_predivs[] = {
+>> +     { .index = 0, .shift = 30, .width = 1 },
+>> +     { .index = 1, .shift = 30, .width = 1 },
+>> +};
+>> +static struct ccu_mp mmc2_clk = {
+>> +     .enable = BIT(31),
+>> +     .m      = _SUNXI_CCU_DIV(0, 4),
+>> +     .p      = _SUNXI_CCU_DIV(16, 2),
+>> +     .mux    = {
+>> +             .shift  = 24,
+>> +             .width  = 2,
+>> +             .var_predivs    = mmc2_new_timing_predivs,
+>> +             .n_var_predivs  = ARRAY_SIZE(mmc2_new_timing_predivs),
+>> +     },
+>> +     .common         = {
+>> +             .reg            = 0x090,
+>> +             .hw.init        = CLK_HW_INIT_PARENTS("mmc2",
+>> +                                                   mod0_default_parents,
+>> +                                                   &ccu_mp_ops,
+>> +                                                   CLK_GET_RATE_NOCACHE),
+>> +     },
+>> +};
+>> +
+>> +static SUNXI_CCU_PHASE(mmc2_sample_clk, "mmc2-sample", "mmc2",
+>> +                    0x090, 20, 3, 0);
+>> +static SUNXI_CCU_PHASE(mmc2_output_clk, "mmc2-output", "mmc2",
+>> +                    0x090, 8, 3, 0);
+>
+> I'm sorry to be a pain for this, but we're in the exact same situation
+> for the A83T than the A33 or the H3. There's no reason we'd do
+> something different with the MMC clocks only on the A83T.
+>
+> What I'd like to happen is:
+>   1) Get the A83T ccu driver in, without *any* of the new mode
+>      handling.
+>   2) Work on the new mode for the A33, A83T and H3 (and the other I
+>      might have forgotten).
+>
+> This issue really isn't A83 specific, there's no reason to come up
+> with A83 specific code.
 
-adapted for Makefile changes in 4.12-rc1 and applied for 4.13
+So to recap, you want mmc2_clk without the new pre-dividers here.
+Then we add them for _all_ SoCs that have the old/new mode switch
+at the same time. Is that correct?
+
+This really isn't A83T specific code. It's just one way to handle
+the extra divider for the new timing mode. Obviously we will add the
+functions to query and set the timing mode bit, but that will be
+generic. If you want all code related to the new mode in one patch,
+then I understand.
+
+ChenYu
