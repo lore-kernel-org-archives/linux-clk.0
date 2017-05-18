@@ -1,52 +1,27 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:36650 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757748AbdEVMs6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2017 08:48:58 -0400
-Received: by mail-wm0-f47.google.com with SMTP id 7so63382980wmo.1
-        for <linux-clk@vger.kernel.org>; Mon, 22 May 2017 05:48:58 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: narmstrong@baylibre.com, jbrunet@baylibre.com
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] clk: meson-gxbb: Expose SPICC gate
-Date: Mon, 22 May 2017 14:48:46 +0200
-Message-Id: <1495457326-32659-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170517212035.3100471-1-arnd@arndb.de>
+References: <20170517212035.3100471-1-arnd@arndb.de>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 18 May 2017 10:25:23 +0800
+Message-ID: <CAGb2v67EHRVrbR9dsNtMuuG+L11WxHcoqVw4GyyD0-hhJ3EPnw@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: enable SUNXI_CCU_MP for PRCM
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.xyz>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/gxbb.h              | 2 +-
- include/dt-bindings/clock/gxbb-clkc.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+On Thu, May 18, 2017 at 5:19 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> The newly added PRCM CCU driver uses SUNXI_CCU_MP_WITH_MUX_GATE, which causes
+> a link error when no other driver enables SUNXI_CCU_MP:
+>
+> drivers/clk/built-in.o:(.data+0x5c8c8): undefined reference to `ccu_mp_ops'
+>
+> This adds an explicit 'select' statement for it.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 93b8f07..cc7b35c 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -191,7 +191,7 @@
- #define CLKID_ISA		  18
- #define CLKID_PL301		  19
- #define CLKID_PERIPHS		  20
--#define CLKID_SPICC		  21
-+/* CLKID_SPICC */
- /* CLKID_I2C */
- /* #define CLKID_SAR_ADC */
- #define CLKID_SMART_CARD	  24
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 3190e30..88da194 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -13,6 +13,7 @@
- #define CLKID_GP0_PLL		9
- #define CLKID_CLK81		12
- #define CLKID_MPLL2		15
-+#define CLKID_SPICC		21
- #define CLKID_I2C		22
- #define CLKID_SAR_ADC		23
- #define CLKID_RNG0		25
--- 
-1.9.1
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
