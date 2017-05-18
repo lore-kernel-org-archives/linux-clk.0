@@ -1,41 +1,57 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1493373403-23462-2-git-send-email-varada@codeaurora.org>
-References: <1493373403-23462-1-git-send-email-varada@codeaurora.org> <1493373403-23462-2-git-send-email-varada@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 7 May 2017 09:45:53 +0200
-Message-ID: <CACRpkdbvUBMMnY90gmAUMrUiEx3+gSdvm_oLPTLYej3vJivf1A@mail.gmail.com>
-Subject: Re: [PATCH 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-To: Varadarajan Narayanan <varada@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Sricharan R <sricharan@codeaurora.org>, absahu@codeaurora.org, sjaganat@codeaurora.org,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Zhong Kaihua <zhongkaihua@huawei.com>,
+	Chen Jun <chenjun14@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 0/2] Hi3660: enable sp804 timer
+Date: Thu, 18 May 2017 09:50:45 +0800
+Message-Id: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 11:56 AM, Varadarajan Narayanan
-<varada@codeaurora.org> wrote:
+This patch set is to enable sp804 timer on Hi3660 for Hikey960 platform.
 
-> Add initial pinctrl driver to support pin configuration with
-> pinctrl framework for ipq8074.
->
-> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+On Hi3660, the sp804 timer co-exists with CPUs' architecture timer; but
+sp804 timer is located in SoC level but CPU's architecture timer is in
+CPU power domain. sp804 timer is used as broadcast timer when CPU enters
+idle states and the CPU (includes architecture timer) power domain is
+powered off. So sp804 timer enabling is prerequisite before we enable
+CPUIdle on Hi3660.
 
-Bjorn Andersson is the maintainer of the qcom pinctrl drivers so you need
-to put him on the To: line so he can review and comment on the patches
-for new qcom pin control drivers.
+This patch set is to enable sp804 timer, the first patch is to adjust
+crgctrl clock regiseration so ensure clock is avaiable for timer. The
+second patch is to add description for timer in dts. Have rebased this
+patch set on Guodong's dts patch set [1] and verified this patch set on
+Hikey960.
 
-Bjorn maybe you should patch MAINTAINERS so you do not get missed...
+[1] http://archive.armlinux.org.uk/lurker/message/20170517.083733.8207a50e.en.html
 
-Yours,
-Linus Walleij
+Changes from v1:
+* Follow Steven's suggestion on IRC, Change to only use
+  CLK_OF_DECLARE_DRIVER for crgctrl clock.
+
+Leo Yan (2):
+  clk: Hi3660: change to register crgctrl clock with
+    CLK_OF_DECLARE_DRIVER
+  arm64: dts: add sp804 timer node for Hi3660
+
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
+ drivers/clk/hisilicon/clk-hi3660.c        |  4 ++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+-- 
+1.9.1
