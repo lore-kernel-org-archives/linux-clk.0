@@ -1,104 +1,129 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:39029 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751616AbdEDLtV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 07:49:21 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 00/13] Initial Allwinner Display Engine 2.0 Support
-Date: Thu,  4 May 2017 19:48:45 +0800
-Message-Id: <20170504114858.9008-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH 01/10] clk: take the prepare lock out of clk_core_set_paren
+Date: Thu, 18 May 2017 18:37:55 +0200
+Message-Id: <20170518163804.14123-2-jbrunet@baylibre.com>
+In-Reply-To: <20170518163804.14123-1-jbrunet@baylibre.com>
+References: <20170518163804.14123-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-I'm sorry that some patch from this version is wrongly sent
-without decorations.
+Rework set_parent core function so it can be called when the prepare lock
+is already held by the caller.
 
-This patchset is the initial patchset for Allwinner DE2 support.
+This rework is done to ease the integration of the "protected" clock
+functionality.
 
-It contains the support of clocks in DE2 and the mixers in DE2.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 39 ++++++++++++++++++---------------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
 
-The SoC used to develop this patchset is V3s, as V3s is the simplest
-one of the SoCs that have DE2.
-(Allwinner V3s features only one mixer, although its clock control
-unit contains support for second mixer's clock; and its only video
-output is RGB LCD, which is already supported in our TCON driver)
-
-The last patch is only a testing patch, it shouldn't be merged; and
-for the patch to be really usable, the RFC fix of the TCON driver [1]
-is needed.
-
-No HDMI, TV encoder or other internal bridges' support is included
-in this patchset, which makes it currently not usable on H3. (Some
-WIP code have already been written based on v4 of this patchset by
-Jernej Skrabec and be, including TVE support (basical but usable)
-and HDMI support (can display something, but still not so usable
-because of some problem). )
-
-Thanks to Jean-Francois Moine and Jernej Skrabec for their efforts
-to discover the internal of DE2!
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2016-December/126264.html
-
-Icenowy Zheng (13):
-  dt-bindings: add binding for the Allwinner DE2 CCU
-  clk: sunxi-ng: add support for DE2 CCU
-  dt-bindings: add bindings for DE2 on V3s SoC
-  drm/sun4i: return only planes for layers created
-  drm/sun4i: abstract a engine type
-  drm/sun4i: add a dedicated module for sun4i-backend and sun4i-layer
-  drm/sun4i: add a Kconfig option for sun4i-backend
-  drm/sun4i: add support for Allwinner DE2 mixers
-  drm/sun4i: Add compatible string for V3s display engine
-  drm/sun4i: tcon: add support for V3s TCON
-  ARM: dts: sun8i: add DE2 nodes for V3s SoC
-  ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-  [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
-
- .../devicetree/bindings/clock/sun8i-de2.txt        |  30 ++
- .../bindings/display/sunxi/sun4i-drm.txt           |  29 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts      |  36 ++
- arch/arm/boot/dts/sun8i-v3s.dtsi                   |  96 +++++
- drivers/clk/sunxi-ng/Kconfig                       |   5 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 218 ++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.h               |  28 ++
- drivers/gpu/drm/sun4i/Kconfig                      |  20 ++
- drivers/gpu/drm/sun4i/Makefile                     |   8 +-
- drivers/gpu/drm/sun4i/sun4i_backend.c              |  72 ++--
- drivers/gpu/drm/sun4i/sun4i_backend.h              |  17 +-
- drivers/gpu/drm/sun4i/sun4i_crtc.c                 |  32 +-
- drivers/gpu/drm/sun4i/sun4i_crtc.h                 |   5 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   6 +-
- drivers/gpu/drm/sun4i/sun4i_drv.h                  |   2 +-
- drivers/gpu/drm/sun4i/sun4i_layer.c                |  20 +-
- drivers/gpu/drm/sun4i/sun4i_layer.h                |   7 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  41 ++-
- drivers/gpu/drm/sun4i/sun4i_tv.c                   |   9 +-
- drivers/gpu/drm/sun4i/sun8i_layer.c                | 140 ++++++++
- drivers/gpu/drm/sun4i/sun8i_layer.h                |  36 ++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                | 394 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.h                | 137 +++++++
- drivers/gpu/drm/sun4i/sunxi_engine.h               | 112 ++++++
- include/dt-bindings/clock/sun8i-de2.h              |  18 +
- include/dt-bindings/reset/sun8i-de2.h              |  14 +
- 27 files changed, 1431 insertions(+), 102 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
- create mode 100644 drivers/gpu/drm/sun4i/sunxi_engine.h
- create mode 100644 include/dt-bindings/clock/sun8i-de2.h
- create mode 100644 include/dt-bindings/reset/sun8i-de2.h
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fc58c52a26b4..f5c371532509 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1787,7 +1787,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
+ }
+ EXPORT_SYMBOL_GPL(clk_has_parent);
+ 
+-static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
++static int clk_core_set_parent_nolock(struct clk_core *core,
++				      struct clk_core *parent)
+ {
+ 	int ret = 0;
+ 	int p_index = 0;
+@@ -1796,23 +1797,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 	if (!core)
+ 		return 0;
+ 
+-	/* prevent racing with updates to the clock topology */
+-	clk_prepare_lock();
+-
+ 	if (core->parent == parent)
+-		goto out;
++		return 0;
+ 
+ 	/* verify ops for for multi-parent clks */
+-	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+-		ret = -ENOSYS;
+-		goto out;
+-	}
++	if ((core->num_parents > 1) && (!core->ops->set_parent))
++		return -ENOSYS;
+ 
+ 	/* check that we are allowed to re-parent if the clock is in use */
+-	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
+-		ret = -EBUSY;
+-		goto out;
+-	}
++	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
++		return -EBUSY;
+ 
+ 	/* try finding the new parent index */
+ 	if (parent) {
+@@ -1820,8 +1814,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		if (p_index < 0) {
+ 			pr_debug("%s: clk %s can not be parent of clk %s\n",
+ 					__func__, parent->name, core->name);
+-			ret = p_index;
+-			goto out;
++			return p_index;
+ 		}
+ 		p_rate = parent->rate;
+ 	}
+@@ -1831,7 +1824,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 
+ 	/* abort if a driver objects */
+ 	if (ret & NOTIFY_STOP_MASK)
+-		goto out;
++		return ret;
+ 
+ 	/* do the re-parent */
+ 	ret = __clk_set_parent(core, parent, p_index);
+@@ -1844,9 +1837,6 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		__clk_recalc_accuracies(core);
+ 	}
+ 
+-out:
+-	clk_prepare_unlock();
+-
+ 	return ret;
+ }
+ 
+@@ -1869,10 +1859,17 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+  */
+ int clk_set_parent(struct clk *clk, struct clk *parent)
+ {
++	int ret;
++
+ 	if (!clk)
+ 		return 0;
+ 
+-	return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
++	clk_prepare_lock();
++	ret = clk_core_set_parent_nolock(clk->core,
++					 parent ? parent->core : NULL);
++	clk_prepare_unlock();
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_set_parent);
+ 
+@@ -2753,7 +2750,7 @@ void clk_unregister(struct clk *clk)
+ 		/* Reparent all children to the orphan list. */
+ 		hlist_for_each_entry_safe(child, t, &clk->core->children,
+ 					  child_node)
+-			clk_core_set_parent(child, NULL);
++			clk_core_set_parent_nolock(child, NULL);
+ 	}
+ 
+ 	hlist_del_init(&clk->core->child_node);
 -- 
-2.12.2
-
+2.9.4
