@@ -1,157 +1,41 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 5 May 2017 09:58:24 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v2 3/8] clk: sunxi-ng: Add class of phase clocks
- supporting MMC new timing modes
-Message-ID: <20170505075824.d35sr2pehm6g42ig@lukather>
-References: <20170503031658.29299-1-wens@csie.org>
- <20170503031658.29299-4-wens@csie.org>
- <20170503203402.5mwhx5wjniav24nd@lukather>
- <CAGb2v67VhJCZuu4EGHgTATe=z6ab9meRSWpGYU-cCjWmDh6aUA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m5t5xavcy7hthe5m"
-In-Reply-To: <CAGb2v67VhJCZuu4EGHgTATe=z6ab9meRSWpGYU-cCjWmDh6aUA@mail.gmail.com>
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH 08/10] clk: fix incorrect usage of ENOSYS
+Date: Thu, 18 May 2017 18:38:02 +0200
+Message-Id: <20170518163804.14123-9-jbrunet@baylibre.com>
+In-Reply-To: <20170518163804.14123-1-jbrunet@baylibre.com>
+References: <20170518163804.14123-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+ENOSYS is special and should only be used for incorrect syscall number.
+It does not seem to be the case here.
 
---m5t5xavcy7hthe5m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported by checkpatch.pl while working on clock protection.
 
-On Thu, May 04, 2017 at 11:08:43AM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> On Thu, May 4, 2017 at 4:34 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Hi,
-> >
-> > On Wed, May 03, 2017 at 11:16:53AM +0800, Chen-Yu Tsai wrote:
-> >> The MMC clocks on newer SoCs, such as the A83T and H3, support the
-> >> "new timing mode". Under this mode, the output of the clock is divided
-> >> by 2, and the clock delays no longer apply.
-> >>
-> >> Due to how the clock tree is modeled and setup, we need to model
-> >> this function in two places, the master mmc clock and the two
-> >> child phase clocks. In the mmc clock, we can easily model the
-> >> mode bit as an extra variable post-divider. In the phase clocks,
-> >> we check the bit and return -ENOTSUPP if the bit is set, signaling
-> >> that the phase clocks are not to be used.
-> >>
-> >> This patch introduces a class of phase clocks that checks the
-> >> timing mode bit.
-> >
-> > We've been over this quite some times already...
-> >
-> > How do you retrieve the mode used in the clock so that you can also
-> > switch the MMC driver in the new mode?
->=20
-> This part is covered. As mentioned above, the phase clks will return
-> -ENOTSUPP if the mmc clk is set in the new timing mode. The MMC driver
-> would try getting the current phase, check if it fails, and if it does,
-> realizes the clk is in new timing mode, and will switch the mmc controller
-> to it as well. I think this semantic fits the hardware well enough,
-> though it might be confusing without the accompanying comments.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is confusing, and impossible to debug without getting your hands
-in the driver. Triggerring the new mode is also not really something
-that is rate-based. We might want to switch to it explicitly, without
-any doubt. This is what we're doing for the A64 for example.
-
-Since some rates can be obtained both in the old and new modes
-likewise, you don't have that guarantee in the MMC driver and might
-end up in the old mode, even though you actually want it. And you
-can't.
-
-Which is why I argued several times for a custom function calls. Every
-other solutions that we evaluated so far was a hack, at best, and was
-not entirely predictable and debuggable, which is not a very nice
-combination.
-
-> See this commit for an example on how it should work.
-> https://github.com/wens/linux/commit/41e386f1f945a0a135a20a00601b977a0013=
-53da
-
-This is unrelated, but it breaks A64. A64 doesn't have the phase
-clocks at all, and need to be switched to the new mode all the time,
-without any cooperation from the CCU. Your code will try to change the
-phase, fail since you don't have any phase clock, and fall back to not
-using the new mode. I think we need to make a distinction between MMC
-controllers that can use both the old and new mode (A23, A33, H3,
-A83T, etc.) and the one that always need to use it (A64 eMMC).
-
-You should also retrieve whether you can use the new mode or not after
-changing the rate and not at probe time. Each call to clk_set_rate
-might change that.
-
-> > And do you prevent that from happening on the DT we already have that
-> > use the old clock drivers that do not support this new timing at all?
->=20
-> I admit this is not taken care of in this patch. Mostly because there
-> is no existing DT for the A83T to cater to. For the H3 and other SoCs
-> that do, we need some way of asking the CCU to switch the mode.
->=20
-> IIRC the output and sample clocks do not support a phase delay of 0.
-
-That's a weak assumption, since we're not even sure what the phase
-actually is. My recollection is that it doesn't, but I'm not entirely
-sure, and both the datasheet and the BSP code are not really clear on
-that part either.
-
-> So what if we design the semantic for this class of clocks as, if
-> phase =3D=3D 0, switch to new timing mode, otherwise use old timing mode?
-> That would allow us to support this without adding extra functions,
-> and kind of matches what the hardware does. If you're using the new
-> timing mode, the delays in the mmc clk are bypassed.
-
-To be honest, I have the feeling that it should be a separate
-discussion.
-
-The whole A83T support has been completely stalled because of a single
-board's eMMC. This is pretty much a cross-SoC issue, at least 4 other
-SoCs have that issue already, and we need to deal with this for all of
-them.
-
-Merging a clock driver without the support for the MMC new mode would
-just bring us in the same situation than the A33 or H3, which I
-believe quite good.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---m5t5xavcy7hthe5m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJZDDCcAAoJEBx+YmzsjxAg9rcP/0D8AOLWHYCL9xV7JcNBIrhA
-90bnzfAmu+wRJHjgknLXJ9Z3lH2/wmFhHFssW5evLsn276Am298/GRNRi5zjFX3f
-A6mD5g1KqEVpMyxm192p4EQU4oyR04nYDXSwD20iHB49NZX5Oak9a5rnsUbKLuV8
-PjajeXbScb6FM/2hhX7p+dyb/aZrfMPMf2+LiBxz5QGDK/SJjmDwnQ0F7mAkJYVo
-qYUkU5qv/JDfso6/lSVB78RhqACdBj5YTdRN0eOOkBuOX833YRhIAKLskqwXO+Kb
-2pRPsFstBFVR4SPw6qUNvHNyl9HNNJc5VAFBi0ddAVB2BWlycDbi4+GFbte7rssu
-zkgnnUjPLwf0GVzRxzmtO4EoE3SuvPh3Wre3cjn2M5ePcwttXVII08RggP46hAsF
-cIcbQth4TvbK0jYx+cUYwnfZdRwwOT7D/Bxll58HZL0tIuASagTxKtySKoAYgeI9
-fhZzOAnFhzWslmScy2BUrarDW0dlwjmiaKNuK4uTGTViC8Md6pc2OrOzwUErklLW
-ARf0N2TIw6y3lCWb3W/HxvBfmzQ902/TDywNUUCYgElYMpBWl38cqP4efWPHPMFY
-FvevrndzQdbwcw654tfcsro4jYewOqQPZOXiVAgOi4lStebdAJNixsXgxe0+SCZ0
-zBZ8OW8pVoz3sHYIxWp4
-=u13G
------END PGP SIGNATURE-----
-
---m5t5xavcy7hthe5m--
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e60d86d7c082..5980080a86c0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2004,7 +2004,7 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 
+ 	/* verify ops for for multi-parent clks */
+ 	if ((core->num_parents > 1) && (!core->ops->set_parent))
+-		return -ENOSYS;
++		return -EPERM;
+ 
+ 	/* check that we are allowed to re-parent if the clock is in use */
+ 	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
+-- 
+2.9.4
