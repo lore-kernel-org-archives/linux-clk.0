@@ -1,43 +1,81 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Date: Thu, 18 May 2017 11:32:26 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 09/11] clk: fix incorrect usage of ENOSYS
-Date: Sun, 21 May 2017 23:59:56 +0200
-Message-Id: <20170521215958.19743-10-jbrunet@baylibre.com>
-In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	Guodong Xu <guodong.xu@linaro.org>,
+	Zhong Kaihua <zhongkaihua@huawei.com>,
+	Chen Jun <chenjun14@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: Hi3660: change to register crgctrl clock
+ with CLK_OF_DECLARE_DRIVER
+Message-ID: <20170518093226.GA2125@mai>
+References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
+ <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-ENOSYS is special and should only be used for incorrect syscall number.
-It does not seem to be the case here.
+On Thu, May 18, 2017 at 09:50:46AM +0800, Leo Yan wrote:
+> The timer will register into system at very early phase at kernel boot;
+> if timer needs to use clock, the clock should be get ready in function
+> of_clk_init() so later the timer driver probe can retrieve clock
+> successfully. This is finished in below flow on arm64:
+> 
+>   start_kernel()
+>     `-> time_init()
+>           `-> of_clk_init(NULL)    => register timer's clock
+>           `-> clocksource_probe()  => register timer
+> 
+> On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
+> as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
+> sp804 timer probe returns failure due if cannot bind clock properly.
+> To fix the failure, this patch is to change crgctrl clock registration
+> from platform driver to CLK_OF_DECLARE_DRIVER method so the clocks can
+> be registered ahead with function of_clk_init() and then timer driver
+> can use it.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+> index fd5ce7f..4e5713b 100644
+> --- a/drivers/clk/hisilicon/clk-hi3660.c
+> +++ b/drivers/clk/hisilicon/clk-hi3660.c
+> @@ -547,10 +547,10 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
+>  				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
+>  				  clk_data);
+>  }
+> +CLK_OF_DECLARE_DRIVER(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl",
+> +		      hi3660_clk_crgctrl_init);
+>  
+>  static const struct of_device_id hi3660_clk_match_table[] = {
+> -	{ .compatible = "hisilicon,hi3660-crgctrl",
+> -	  .data = hi3660_clk_crgctrl_init },
+>  	{ .compatible = "hisilicon,hi3660-pctrl",
+>  	  .data = hi3660_clk_pctrl_init },
+>  	{ .compatible = "hisilicon,hi3660-pmuctrl",
 
-Reported by checkpatch.pl while working on clock protection.
+Why not do the change for all the clocks and remove the
+hi3660_clk_match_table[]? and all the related platform driver code?
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That will be consistent with the other clk-hi* drivers.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 955dae044f11..01306191133c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2032,7 +2032,7 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 
- 	/* verify ops for for multi-parent clks */
- 	if ((core->num_parents > 1) && (!core->ops->set_parent))
--		return -ENOSYS;
-+		return -EPERM;
- 
- 	/* check that we are allowed to re-parent if the clock is in use */
- 	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
 -- 
-2.9.4
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
