@@ -7,79 +7,46 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
 	linux-amlogic@lists.infradead.org
-Subject: [PATCH 10/10] clk: move CLK_SET_RATE_GATE protection from prepare to enable
-Date: Thu, 18 May 2017 18:38:04 +0200
-Message-Id: <20170518163804.14123-11-jbrunet@baylibre.com>
+Subject: [PATCH 07/10] clk: cosmetic changes to clk_summary debugfs entry
+Date: Thu, 18 May 2017 18:38:01 +0200
+Message-Id: <20170518163804.14123-8-jbrunet@baylibre.com>
 In-Reply-To: <20170518163804.14123-1-jbrunet@baylibre.com>
 References: <20170518163804.14123-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-CLK_SET_RATE_GATE name suggest that the rate can be set when the provider
-is gated (disabled). With the current implementation, the rate can only be
-set when the provider is unprepared, while it should be allowed to set a
-prepared and disable provider.
-Fix this by moving the rate protection mechanism in the enable/disable
-core functions
+clk_summary debugfs entry was already well over the traditional 80
+characters per line limit but it grew even larger with the addition of
+clock protection.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/clk.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/clk/clk.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 1db3ad28dd85..3e2eb21ca8cd 100644
+index d61218d1f41e..e60d86d7c082 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -491,9 +491,6 @@ static void clk_core_unprepare(struct clk_core *core)
- 	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
+@@ -2234,7 +2234,7 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	if (!c)
  		return;
  
--	if (core->flags & CLK_SET_RATE_GATE)
--		clk_core_rate_unprotect(core);
--
- 	if (--core->prepare_count > 0)
- 		return;
+-	seq_printf(s, "%*s%-*s %11d %12d %12d %11lu %10lu %-3d\n",
++	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %-3d\n",
+ 		   level * 3 + 1, "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+@@ -2261,8 +2261,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = (struct hlist_head **)s->private;
  
-@@ -564,14 +561,6 @@ static int clk_core_prepare(struct clk_core *core)
+-	seq_puts(s, "   clock                         enable_cnt  prepare_cnt  protect_cnt        rate   accuracy   phase\n");
+-	seq_puts(s, "----------------------------------------------------------------------------------------------------\n");
++	seq_puts(s, "                                 enable  prepare  protect                               \n");
++	seq_puts(s, "   clock                          count    count    count        rate   accuracy   phase\n");
++	seq_puts(s, "----------------------------------------------------------------------------------------\n");
  
- 	core->prepare_count++;
- 
--	/*
--	 * CLK_SET_RATE_GATE is a special case of clock protection
--	 * Instead of a consumer protection, the provider is protecting
--	 * itself when prepared
--	 */
--	if (core->flags & CLK_SET_RATE_GATE)
--		clk_core_rate_protect(core);
--
- 	return 0;
- }
- 
-@@ -716,6 +705,9 @@ static void clk_core_disable(struct clk_core *core)
- 	if (WARN_ON(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL))
- 		return;
- 
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_unprotect(core);
-+
- 	if (--core->enable_count > 0)
- 		return;
- 
-@@ -791,6 +783,15 @@ static int clk_core_enable(struct clk_core *core)
- 	}
- 
- 	core->enable_count++;
-+
-+	/*
-+	 * CLK_SET_RATE_GATE is a special case of clock protection
-+	 * Instead of a consumer protection, the provider is protecting
-+	 * itself when enabled
-+	 */
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_protect(core);
-+
- 	return 0;
- }
+ 	clk_prepare_lock();
  
 -- 
 2.9.4
