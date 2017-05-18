@@ -1,69 +1,102 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Fri, 19 May 2017 20:02:15 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 18 May 2017 09:51:21 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [RFC PATCH 01/11] dt-bindings: update the binding for Allwinner
- H3 TVE support
-Message-ID: <20170519180215.7lc7duueu74pt4kz@flea.home>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <20170517164354.16399-2-icenowy@aosc.io>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v3 14/21] drm/sun4i: tcon: multiply the vtotal when not
+ in interlace
+Message-ID: <20170518075121.tfhnbljutcseaxzq@flea.home>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+ <a8d8a93ddbac69e5dddd9c89a147f8cf2ad043a4.1495006350.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v65ZWHi_Dhsy__yVrz7330pfyMbBDTqoEE37NcSXOU_W7Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170517164354.16399-2-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============4214209941031905922=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7n4nzmqpeqi4h6oi"
+In-Reply-To: <CAGb2v65ZWHi_Dhsy__yVrz7330pfyMbBDTqoEE37NcSXOU_W7Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---===============4214209941031905922==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zhwnzsjpz5kvdc7d"
-Content-Disposition: inline
-
-
---zhwnzsjpz5kvdc7d
+--7n4nzmqpeqi4h6oi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 18, 2017 at 12:43:44AM +0800, Icenowy Zheng wrote:
-> -On SoCs other than the A33 and V3s, there is one more clock required:
-> +For the following compatibles:
-> +   * allwinner,sun5i-a13-tcon
-> +   * allwinner,sun6i-a31-tcon
-> +   * allwinner,sun6i-a31s-tcon
-> +   * allwinner,sun8i-a33-tcon
-> +   * allwinner,sun8i-v3s-tcon
-> +there is one more clock and one more property required:
-> + - clocks:
-> +   - 'tcon-ch0': The clock driving the TCON channel 0
-> + - clock-output-names: Name of the pixel clock created
-> +
-> +For the following compatibles:
-> +   * allwinner,sun5i-a13-tcon
-> +   * allwinner,sun6i-a31-tcon
-> +   * allwinner,sun6i-a31s-tcon
-> +   * allwinner,sun8i-h3-tcon0
-> +there is one more clock required:
->     - 'tcon-ch1': The clock driving the TCON channel 1
+On Wed, May 17, 2017 at 05:50:45PM +0800, Chen-Yu Tsai wrote:
+> On Wed, May 17, 2017 at 3:40 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > It appears that the total vertical resolution needs to be doubled when
+> > we're not in interlaced. Make sure that is the case.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 25 +++++++++++++++++++++----
+> >  1 file changed, 21 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i=
+/sun4i_tcon.c
+> > index 62e254aedb57..a0f9a8a516c7 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > @@ -153,7 +153,7 @@ static int sun4i_tcon_get_clk_delay(struct drm_disp=
+lay_mode *mode,
+> >  void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+> >                           struct drm_display_mode *mode)
+> >  {
+> > -       unsigned int bp, hsync, vsync;
+> > +       unsigned int bp, hsync, vsync, vtotal;
+> >         u8 clk_delay;
+> >         u32 val =3D 0;
+> >
+> > @@ -192,9 +192,26 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+> >         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+> >                          mode->crtc_vtotal, bp);
+> >
+> > +       /*
+> > +        * The vertical resolution needs to be doubled in all
+> > +        * cases. We could use crtc_vtotal and always multiply by two,
+> > +        * but that leads to a rounding error in interlace when vtotal
+> > +        * is odd.
+> > +        *
+> > +        * This happens with TV's PAL for example, where vtotal will
+> > +        * be 625, crtc_vtotal 312, and thus crtc_vtotal * 2 will be
+> > +        * 624, which apparently confuses the hardware.
+> > +        *
+> > +        * To work around this, we will always use vtotal, and
+> > +        * multiply by two only if we're not in interlace.
+> > +        */
+> > +       vtotal =3D mode->vtotal;
+> > +       if (!(mode->flags & DRM_MODE_FLAG_INTERLACE))
+> > +               vtotal =3D vtotal * 2;
+> > +
+> >         /* Set vertical display timings */
+> >         regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
+> > -                    SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
+> > +                    SUN4I_TCON0_BASIC2_V_TOTAL(vtotal) |
+> >                      SUN4I_TCON0_BASIC2_V_BACKPORCH(bp));
+> >
+> >         /* Set Hsync and Vsync length */
+> > @@ -279,9 +296,9 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+> >         /* Set vertical display timings */
+> >         bp =3D mode->crtc_vtotal - mode->crtc_vsync_start;
+> >         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+> > -                        mode->vtotal, bp);
+> > +                        mode->crtc_vtotal, bp);
+>=20
+> You should duplicate the logic from channel 0 to channel 1.
+> In fact, interlaced modes happen predominantly on channel 1,
+> for composite and HDMI modes.
 
-Putting ID's in the compatible name is usually a bad idea. What is the
-difference between the two? Only that the second one doesn't have a
-clock?
-
-That seems highly unlikely. How does it generate the pixel clock
-frequency?
+Gaah, you're right, this was obviously meant for the channel 1.. I'll
+resend.
 
 Maxime
 
@@ -72,38 +105,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---zhwnzsjpz5kvdc7d
+--7n4nzmqpeqi4h6oi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZHzMnAAoJEBx+YmzsjxAghdkP/jMCKTu4ahssq/exK6mZLsvH
-V2VRotU/ZEa6xlA8XbwPZeq+XwzcNPGfvy8rF04xA5uyjp9UIig0Volhhg/R41l9
-YWDVntRsJ9Z7DeadkC/5fx34D07t5YT9hNWYdCzYqhsgReB2q/SjwfLGB7ZanEg0
-dL9h9hGfr2A+VHn0slwVoalR+VrIh+3VFC7ZJ5oV1juAQ4oNFMmEmzNDHnrlj1iT
-9kRuwgoirGtOh9WR4NnpEobrHJF8W0OfgpTvS/gevUSJVkYWh9rtKDzEfDebLLqx
-SLZxe0FtR6XPVBSAFPkl6aP3Nq9zglIYrgE+YEFosi2njyh4g60JTXJejC5LSuZT
-FokK6izsHnkor93YZ05ubX7a7Et4M6Jxy1HPfuN8GZpf2ytrR04CGTLBLubKMdcr
-eADaEsROii6YS+M26vJ8A3z9QoQpxOVmUN49puSVU4KDPj+7CpLe1NPpbHQ8yq22
-7RT035qqQXKXLDG211VC+gK6E/pI0mslCzTcbMJIGxG31YCxosOowY2s3zEVZ2Ej
-GuN7Up3iX3dJevW/hr/YHES8NrNsLBZFx3H6T/Ju8onS4LLMToMhweGIIiIGTNg2
-UlZrJkPqIsPUENaQ+MqCXVO2z6H1urk5WYhX2xKnc4cQAzqcA8iJUWsikTxsLfTl
-WQGqP2xZjdIsou0Qjj5B
-=rBMI
+iQIcBAEBAgAGBQJZHVJ5AAoJEBx+YmzsjxAgwmAP/AqM020fZxTOL21MC8RcgpRe
+B1hFZGA1sqIntH2S872AiJ/TNiMrTxdPgdS8DelhbXGp+aI9z/PqUJMX+JnqT1Cu
+6hw2vRb3nkHGBzpI7pm6UyKM8QTwRBaLlIFQ/b/CwIF0dpGJ7bUAHol+SOXJb0IU
+/oMx9whfrdrdgyj89reHjT3iW2ASU2zFF/iVam2MwhBlzCvhcCTjB/QiJM2MEXrl
+Zz0yYNwUIJNX20JoQVVUmdjpnv2R7dr50g7TLEkFUa9hNWYFNVn+QQ1owkQ7eCVP
+Iju403KDD1yasT9AgZ8QatqNtq7RvQ0oDppB6KqIvW8y2mB9aOBzluWwUJZoR0Pl
+TVCdTIsZrOATnEl/Bcvk0S25bTba/8P5YvlWKop77YG8hSNUtpgaT69+q7YJrO/9
+osjLkwrCYKrBXNcWotR4PxeDG1/WuBDaLAAlzx1exPTvzZeIiTUBWnuaY6lCFJvo
++D9s4mbHWe+wyhnUssyeYJiCTW+DGY8VrUl+kwMEtJ9FiYOjl2CxU/sJwIOpudwg
+MY3tIRPMJ+A580NRaUeRHdTFM1kVGvpWcc7hukrVAQlm7vcan+1qs9XP/og4wOwj
+5xTQ9WWNqIn+UvX6yC1dVHTfMr1McB8GhJs/bXHYqlQmcb33Krsm3MTD15vNVXqM
+7OJj/Oav2igDgeZxgsz7
+=DOlg
 -----END PGP SIGNATURE-----
 
---zhwnzsjpz5kvdc7d--
-
-
---===============4214209941031905922==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============4214209941031905922==--
+--7n4nzmqpeqi4h6oi--
