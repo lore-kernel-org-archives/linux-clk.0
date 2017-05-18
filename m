@@ -1,56 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:60146 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751666AbdESJOX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:14:23 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 19 May 2017 11:14:12 +0200
-Message-Id: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Zhong Kaihua <zhongkaihua@huawei.com>,
+	Chen Jun <chenjun14@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 2/2] arm64: dts: add sp804 timer node for Hi3660
+Date: Thu, 18 May 2017 09:50:47 +0800
+Message-Id: <1495072247-25217-3-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
+References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Simon, Magnus,
+The Hi3660 SoC comes with the sp804 timer in addition to the
+architecture timers. These ones are shutdown when reaching a deep idle
+states and a backup timer is needed. The sp804 belongs to another power
+domain and can fulfill the purpose of replacing temporarily an
+architecture timer when the CPU is idle.
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+Describe it in the device tree, so it can be enabled at boot time.
 
-Hence this patch series implements this for the various R-Car Gen2
-DTSes that still need this (r8a7792.dtsi is OK).
+Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-As this depends on "[PATCH 0/5] ARM: dts: rcar-gen2: Convert to new
-CPG/MSSR bindings", it cannot be applied yet, but it's never too early
-to gather Acked-by's ;-)
-
-Thanks!
-
-Geert Uytterhoeven (4):
-  ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
-  ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
-  ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
-  ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
-
- arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
- arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
- arch/arm/boot/dts/r8a7793.dtsi | 125 ++++++++++++++++++-------------------
- arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++-------------------
- 4 files changed, 251 insertions(+), 272 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index 138fcba..f75c792 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -173,6 +173,17 @@
+ 			#clock-cells = <1>;
+ 		};
+ 
++		dual_timer0: timer@fff14000 {
++			compatible = "arm,sp804", "arm,primecell";
++			reg = <0x0 0xfff14000 0x0 0x1000>;
++			interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg_ctrl HI3660_OSC32K>,
++				 <&crg_ctrl HI3660_OSC32K>,
++				 <&crg_ctrl HI3660_OSC32K>;
++			clock-names = "timer1", "timer2", "apb_pclk";
++		};
++
+ 		ufs: ufs@ff3b0000 {
+ 			compatible = "jedec,ufs-1.1", "hisilicon,hi3660-ufs";
+ 			reg = <0x0 0xff3b0000 0x0 0x1000>, /* 0: HCI standard */
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+1.9.1
