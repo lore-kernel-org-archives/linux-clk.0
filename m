@@ -1,143 +1,88 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v2 09/11] clk: mvebu: cp110: add sdio clock to cp-110 system controller
-Date: Wed, 31 May 2017 15:41:53 +0200
-Message-Id: <d0021421e2446b0eedf7d64a7ab19581fcedd124.1496237893.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Thu, 18 May 2017 17:48:54 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Zhong Kaihua <zhongkaihua@huawei.com>,
+	Chen Jun <chenjun14@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: Hi3660: change to register crgctrl clock
+ with CLK_OF_DECLARE_DRIVER
+Message-ID: <20170518094853.GB25294@leoy-ThinkPad-T440>
+References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
+ <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
+ <20170518093226.GA2125@mai>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170518093226.GA2125@mai>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Konstantin Porotchkin <kostap@marvell.com>
+Hi Daniel,
 
-This commit updates the CP110 system controller driver to add the
-definition for a missing clock.
+On Thu, May 18, 2017 at 11:32:26AM +0200, Daniel Lezcano wrote:
+> On Thu, May 18, 2017 at 09:50:46AM +0800, Leo Yan wrote:
+> > The timer will register into system at very early phase at kernel boot;
+> > if timer needs to use clock, the clock should be get ready in function
+> > of_clk_init() so later the timer driver probe can retrieve clock
+> > successfully. This is finished in below flow on arm64:
+> > 
+> >   start_kernel()
+> >     `-> time_init()
+> >           `-> of_clk_init(NULL)    => register timer's clock
+> >           `-> clocksource_probe()  => register timer
+> > 
+> > On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
+> > as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
+> > sp804 timer probe returns failure due if cannot bind clock properly.
+> > To fix the failure, this patch is to change crgctrl clock registration
+> > from platform driver to CLK_OF_DECLARE_DRIVER method so the clocks can
+> > be registered ahead with function of_clk_init() and then timer driver
+> > can use it.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+> > index fd5ce7f..4e5713b 100644
+> > --- a/drivers/clk/hisilicon/clk-hi3660.c
+> > +++ b/drivers/clk/hisilicon/clk-hi3660.c
+> > @@ -547,10 +547,10 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
+> >  				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
+> >  				  clk_data);
+> >  }
+> > +CLK_OF_DECLARE_DRIVER(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl",
+> > +		      hi3660_clk_crgctrl_init);
+> >  
+> >  static const struct of_device_id hi3660_clk_match_table[] = {
+> > -	{ .compatible = "hisilicon,hi3660-crgctrl",
+> > -	  .data = hi3660_clk_crgctrl_init },
+> >  	{ .compatible = "hisilicon,hi3660-pctrl",
+> >  	  .data = hi3660_clk_pctrl_init },
+> >  	{ .compatible = "hisilicon,hi3660-pmuctrl",
+> 
+> Why not do the change for all the clocks and remove the
+> hi3660_clk_match_table[]? and all the related platform driver code?
+> 
+> That will be consistent with the other clk-hi* drivers.
 
-The SDIO clock is dedicated driving the SDHCI interface and its frequency
-is 400MHz (2/5 of PLL source clock).
+I checked a bit with Stephen on IRC, follow the suggestion to 'split
+the clks are registsered between CLK_OF_DECLARE_DRIVER() and driver
+probe so that the ones you need really early are done through the
+CLK_OF path and the other ones are done through regular driver probe'.
 
-The SDIO interface should be bound to this clock and not the core clock
-as in the older code.
-Using the wrong clock lead to a maximum SDHCI frequency of 250 Mhz, while
-the HW really supports up to 400 Mhz.
+Also checked for mainline kernel, now there have some examples,
+like: drivers/clk/mediatek/clk-mt2701.c.
 
-This patch also fixes the NAND clock relationship documentation.
-
-Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
-[gregory.clement@free-electrons.com:
-- use sdio instead of emmc to name the clock]
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/cp110-system-controller.c | 28 ++++++++++++++++++----
- 1 file changed, 23 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index ecbcae321424..8be7ae25c7eb 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -11,15 +11,16 @@
-  */
- 
- /*
-- * CP110 has 5 core clocks:
-+ * CP110 has 6 core clocks:
-  *
-  *  - APLL		(1 Ghz)
-  *    - PPv2 core	(1/3 APLL)
-  *    - EIP		(1/2 APLL)
-- *      - Core		(1/2 EIP)
-+ *     - Core		(1/2 EIP)
-+ *    - SDIO		(2/5 APLL)
-  *
-  *  - NAND clock, which is either:
-- *    - Equal to the core clock
-+ *    - Equal to SDIO clock
-  *    - 2/5 APLL
-  *
-  * CP110 has 32 gatable clocks, for the various peripherals in the
-@@ -46,7 +47,7 @@ enum {
- 	CP110_CLK_TYPE_GATABLE,
- };
- 
--#define CP110_MAX_CORE_CLOCKS		5
-+#define CP110_MAX_CORE_CLOCKS		6
- #define CP110_MAX_GATABLE_CLOCKS	32
- 
- #define CP110_CLK_NUM \
-@@ -57,6 +58,7 @@ enum {
- #define CP110_CORE_EIP			2
- #define CP110_CORE_CORE			3
- #define CP110_CORE_NAND			4
-+#define CP110_CORE_SDIO			5
- 
- /* A number of gatable clocks need special handling */
- #define CP110_GATE_AUDIO		0
-@@ -235,7 +237,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 	struct regmap *regmap;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
-+	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name,
-+		*sdio_name;
- 	struct clk_hw_onecell_data *cp110_clk_data;
- 	struct clk_hw *hw, **cp110_clks;
- 	u32 nand_clk_ctrl;
-@@ -315,6 +318,17 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 
- 	cp110_clks[CP110_CORE_NAND] = hw;
- 
-+	/* SDIO clock is APLL/2.5 */
-+	sdio_name = cp110_unique_name(dev, syscon_node, "sdio-core");
-+	hw = clk_hw_register_fixed_factor(NULL, sdio_name,
-+					  apll_name, 0, 2, 5);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
-+		goto fail_sdio;
-+	}
-+
-+	cp110_clks[CP110_CORE_SDIO] = hw;
-+
- 	/* create the unique name for all the gate clocks */
- 	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++)
- 		gate_name[i] =	cp110_unique_name(dev, syscon_node,
-@@ -344,6 +358,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 			parent = ppv2_name;
- 			break;
- 		case CP110_GATE_SDIO:
-+			parent = sdio_name;
-+			break;
- 		case CP110_GATE_GOP_DP:
- 			parent = gate_name[CP110_GATE_GOP];
- 			break;
-@@ -391,6 +407,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 			cp110_unregister_gate(hw);
- 	}
- 
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_SDIO]);
-+fail_sdio:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
- fail_nand:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
--- 
-git-series 0.9.1
+Thanks,
+Leo Yan
