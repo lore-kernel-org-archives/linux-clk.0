@@ -1,50 +1,84 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/1] clk: meson: meson8b: mark clk81 as critical
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
- linux-clk@vger.kernel.org
-References: <20170504183201.13175-1-martin.blumenstingl@googlemail.com>
- <20170504183201.13175-2-martin.blumenstingl@googlemail.com>
-Cc: khilman@baylibre.com, carlo@caione.org, sboyd@codeaurora.org,
- mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <0efb9498-2806-8042-b73e-201de6a458cb@baylibre.com>
-Date: Mon, 29 May 2017 09:57:49 +0200
+Return-Path: <varada@codeaurora.org>
+Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ Manoharan Vijaya Raghavan <mraghava@codeaurora.org>,
+ linux-gpio@vger.kernel.org, catalin.marinas@arm.com,
+ mturquette@baylibre.com, sjaganat@codeaurora.org, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org, will.deacon@arm.com,
+ linux-clk@vger.kernel.org, david.brown@linaro.org, absahu@codeaurora.org,
+ robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
+ sricharan@codeaurora.org, linux-soc@vger.kernel.org,
+ linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+ <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
+ <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
+ <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
+ <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
+ <20170517193315.GF12920@tuxbook>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Message-ID: <f5a3da8b-c3a4-3cb3-9f5f-0cbdb87688ed@codeaurora.org>
+Date: Thu, 18 May 2017 14:09:26 +0530
 MIME-Version: 1.0
-In-Reply-To: <20170504183201.13175-2-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20170517193315.GF12920@tuxbook>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/04/2017 08:32 PM, Martin Blumenstingl wrote:
-> Disabling clk81 results in an immediate freeze of the whole system. This
-> can happen "accidentally" when the last child-clock of clk81 is disabled
-> (in this case the common clock framework also disables clk81, even if it
-> was only enabled indirectly before).
+
+
+On 5/18/2017 1:03 AM, Bjorn Andersson wrote:
+> On Mon 15 May 02:05 PDT 2017, Varadarajan Narayanan wrote:
 > 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/meson8b.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
+>>> On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
+>>>
+>>>> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
+>>>>> On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
+> [..]
+>>>>>> +	msm_mux_qpic_pad4,
+>>>>>
+>>>>> What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
+>>>>> alternative muxings...?
+>>>>
+>>>> This is for the NAND and LCD display. The pins listed are the 9 data pins.
+>>>>
+>>>
+>>> Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
+>>> possible to reference a partial group in the DTS, if that's necessary)
+>>
+>> There are two sets of 9 pins, either of which can go to NAND or LCD.
+>> Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
+>> Is that ok?
+>>
 > 
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index e9985503165c..bfd1690724de 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -399,7 +399,7 @@ struct clk_gate meson8b_clk81 = {
->  		.ops = &clk_gate_ops,
->  		.parent_names = (const char *[]){ "mpeg_clk_div" },
->  		.num_parents = 1,
-> -		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-> +		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL),
->  	},
->  };
->  
+> So you have NAND and LCD hardware muxed to either "a" or "b" and then
+> you mux either "a" or "b" out onto actual pins?
+> 
+> How is this first mux configured?
+> 
+> I think the a/b scheme sounds reasonable, if above is how it works.
+
+Sorry, I was wrong. I had misread the documentation.
+
+There are 18 pins. 15 pins are common between LCD and NAND. The QPIC 
+controller arbitrates between LCD and NAND. Of the remaining 4, 2 are 
+for NAND and 2 are for LCD exclusively. We plan to group the qpic pins 
+into 3 groups namely, qpic_common, qpic_nand and qpic_lcd. Is that ok?
+
+Thanks
+Varada
+
+> 
+> Regards,
+> Bjorn
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 > 
 
-Hi Martin,
-
-I applied the patch resent by Jerome,
-
-Thanks,
-Neil
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum, a Linux Foundation Collaborative Project
