@@ -1,65 +1,65 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+WQijqm43U_SzSVzCn6_eeFLjggcWnbwbCpW99ct4XOQ@mail.gmail.com>
-References: <20170508201159.31634-1-linus.walleij@linaro.org>
- <CAL_JsqLAMObobPrBDdA8bjaKTX4rEo2=_qd86ibbA2kQP6AvBg@mail.gmail.com>
- <CACRpkdY+EzbbTy6PzN5-YhCnSxPoKej2z=t-7eC3CPqDa6Q4_w@mail.gmail.com> <CAL_Jsq+WQijqm43U_SzSVzCn6_eeFLjggcWnbwbCpW99ct4XOQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 10 May 2017 17:47:12 +0200
-Message-ID: <CACRpkdbMqwGj3gx1h_GXy1xxkxeEgj6LTy1y8rd04WRorGSymg@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] clk: Add bindings for the Gemini Clock Controller
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, openwrt-devel@openwrt.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 00/10] clk: implement clock rate protection mechanism
+Date: Thu, 18 May 2017 18:37:54 +0200
+Message-Id: <20170518163804.14123-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 9, 2017 at 4:23 PM, Rob Herring <robh+dt@kernel.org> wrote:
-> On Mon, May 8, 2017 at 4:41 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Mon, May 8, 2017 at 11:24 PM, Rob Herring <robh+dt@kernel.org> wrote:
->>
->>>> +Example:
->>>> +
->>>> +syscon: syscon@40000000 {
->>>> +       compatible = "cortina,gemini-syscon", "cortina,gemini-clock-controller",
->>>> +                    "syscon", "simple-mfd";
->>>
->>> There are no child nodes, so you don't need simple-mfd.
->>
->> The example is taken from an actual device tree (look below),
->> where there are child nodes, I can trim it down.
->>
->>>> +       reg = <0x40000000 0x1000>;
->>>
->>> Looks like you have 2 nodes pointing to the same address with your
->>> reset binding? You shouldn't have overlapping resources. It's allowed
->>> for historical reasons but breaks resource creation in Linux.
->>
->> No... they are all in the same node, just sharing the same
->> resource by way of regmap (syscon).
->
-> Okay, then please document at least the parent syscon node in a single
-> doc. Splitting it is very confusing.
+This Patchset is related the RFC [0] and the discussion around
+CLK_SET_RATE_GATE available here [1]
 
-I'm sorry. :(
+The goal of this patchset is to provide a way for consumers to inform the
+system that they depend on the rate of the clock source and can't tolerate
+other consumers changing the rate or causing glitches.
 
-I'll patch the document in arm/gemini.txt
-where the syscon node is documented, with a single patch adding
-both clock and reset bindings.
+With this series there is 3 use-case:
+ - the provider is not protected: nothing changes
+ - the provider is protected by only 1 consumer (and only once), then only
+   this consumer will be able to alter the rate of the clock, as it is the only
+   one depending on it.
+ - If the provider is protected more than once, or by the provider itself, the rate
+   is basically locked.
 
->>                 syscon: syscon@40000000 {
->>                         compatible = "cortina,gemini-syscon",
->>                                      "cortina,gemini-clock-controller",
->>                                      "cortina,gemini-reset",
->
-> This mostly looks fine, but you shouldn't need 3 compatible strings
-> for the block.
+Changes since RFC:
+ - s/clk_protect/clk_rate_protect
+ - Request rework around core_nolock function
+ - Add clk_set_rate_protect
+ - Reword clk_rate_protect and clk_unprotect documentation
+ - Add few comments to explain the code
+ - Add 2 last patches to fix users of CLK_SET_RATE_GATE
 
-OK I'll see if I can make it work with just "cortina,gemini-syscon"
-and skip the two others.
+The last 2 patches provide the same functionnality for providers themself by
+fixing the issue with CLK_SET_RATE_GATE.
 
-Yours,
-Linus Walleij
+This was tested with the audio use case mentioned in [1]
+
+[0]: http://lkml.kernel.org/r/20170321183330.26722-1-jbrunet@baylibre.com
+[1]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@resonance
+
+Jerome Brunet (10):
+  clk: take the prepare lock out of clk_core_set_parent
+  clk: add clk_core_set_phase_nolock function
+  clk: rework calls to round and determine rate callbacks
+  clk: add support for clock protection
+  clk: add clk_set_rate_protect
+  clk: rollback set_rate_range changes on failure
+  clk: cosmetic changes to clk_summary debugfs entry
+  clk: fix incorrect usage of ENOSYS
+  clk: fix CLK_SET_RATE_GATE with clock rate protection
+  clk: move CLK_SET_RATE_GATE protection from prepare to enable
+
+ drivers/clk/clk.c            | 397 +++++++++++++++++++++++++++++++++++--------
+ include/linux/clk-provider.h |   1 +
+ include/linux/clk.h          |  43 +++++
+ 3 files changed, 373 insertions(+), 68 deletions(-)
+
+-- 
+2.9.4
