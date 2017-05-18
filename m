@@ -1,123 +1,297 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1496049173.7514.2.camel@baylibre.com>
-Subject: Re: [PATCH v2 04/11] clk: use round rate to bail out early in
- set_rate
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus
- Walleij <linus.walleij@linaro.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>
-Date: Mon, 29 May 2017 11:12:53 +0200
-In-Reply-To: <149574365034.52617.9521289317050513324@resonance>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
-	 <20170521215958.19743-5-jbrunet@baylibre.com>
-	 <149574365034.52617.9521289317050513324@resonance>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 2/6] clk: sunxi-ng: Support multiple variable pre-dividers
+Date: Thu, 18 May 2017 11:58:05 +0800
+Message-Id: <20170518035809.15487-3-wens@csie.org>
+In-Reply-To: <20170518035809.15487-1-wens@csie.org>
+References: <20170518035809.15487-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-05-25 at 13:20 -0700, Michael Turquette wrote:
-> Quoting Jerome Brunet (2017-05-21 14:59:51)
-> > The current implementation of clk_core_set_rate_nolock bails out early if
-> > the requested rate is exactly the same as the one set. It should bail out
-> > if the request would not result in rate a change.  This important when rate
-> > is not exactly what is requested, which is fairly common with PLLs.
-> > 
-> > Ex: provider able to give any rate with steps of 100Hz
-> >  - 1st consumer request 48000Hz and gets it.
-> >  - 2nd consumer request 48010Hz as well. If we were to perform the usual
-> >    mechanism, we would get 48000Hz as well. The clock would not change so
-> >    there is no point performing any checks to make sure the clock can
-> >    change, we know it won't.
-> > 
-> > This is important to prepare the addition of the clock protection mechanism
-> 
-> Why is this change necessary for the rate_protect feature? I don't see a
-> major problem with it, but not sure I want to change the expected
-> behavior unless it is required.
+On the A83T, the AHB1 clock has a shared pre-divider on the two
+PLL-PERIPH clock parents. To support such instances of shared
+pre-dividers, this patch extends the mux clock type to support
+multiple variable pre-dividers.
 
-It isn't strictly required for the clock protection to work but it allows the
-consumer to get a coherent feedback from set_rate.
+As the pre-dividers are only used to calculate the rate, but
+do not participate in the factorization process, this is fairly
+straightforward.
 
-Without this, we may end up in a situation where the set_rate return with -EBUSY
-while the rate of the clock is actually the best possible we could have wished
-for (like in the example: we ask for 48010 and the rate set in 48000)
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 10 +++++-----
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c  | 10 +++++-----
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c  | 10 +++++-----
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c  | 10 +++++-----
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c   | 10 +++++-----
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c    | 10 +++++-----
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c  | 10 +++++-----
+ drivers/clk/sunxi-ng/ccu_mux.c        | 15 ++++++++-------
+ drivers/clk/sunxi-ng/ccu_mux.h        | 13 ++++++++-----
+ 9 files changed, 51 insertions(+), 47 deletions(-)
 
-With this patch, If a consumer gets EBUSY, it knows the rate set is not optimal.
-It could have been closer to what is requested if it wasn't busy doing something
-else.
-
-If the rate is (already) optimally set, as requested by the consumer, I think we
-should not return an error here.
-
-I don't think this changes the behavior of the function, the rate set will be
-same anyway, it just won't return an error in a particular case.
-
-If you firmly oppose this idea, I suppose It can be dropped but I think it could
-be a valuable addition.
-
-> 
-> Thanks,
-> Mike
-> 
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  drivers/clk/clk.c | 23 +++++++++++++++++++++--
-> >  1 file changed, 21 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 100f72472e10..1a8c0d013238 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -1570,15 +1570,34 @@ static void clk_change_rate(struct clk_core *core)
-> >                 clk_change_rate(core->new_child);
-> >  }
-> >  
-> > +static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-> > +                                                    unsigned long req_rate)
-> > +{
-> > +       int ret;
-> > +       struct clk_rate_request req;
-> > +
-> > +       if (!core)
-> > +               return 0;
-> > +
-> > +       clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
-> > +       req.rate = req_rate;
-> > +
-> > +       ret = clk_core_round_rate_nolock(core, &req);
-> > +
-> > +       return ret ? 0 : req.rate;
-> > +}
-> > +
-> >  static int clk_core_set_rate_nolock(struct clk_core *core,
-> >                                     unsigned long req_rate)
-> >  {
-> >         struct clk_core *top, *fail_clk;
-> > -       unsigned long rate = req_rate;
-> > +       unsigned long rate;
-> >  
-> >         if (!core)
-> >                 return 0;
-> >  
-> > +       rate = clk_core_req_round_rate_nolock(core, req_rate);
-> > +
-> >         /* bail early if nothing to do */
-> >         if (rate == clk_core_get_rate_nolock(core))
-> >                 return 0;
-> > @@ -1587,7 +1606,7 @@ static int clk_core_set_rate_nolock(struct clk_core
-> > *core,
-> >                 return -EBUSY;
-> >  
-> >         /* calculate new rates and get the topmost changed clock */
-> > -       top = clk_calc_new_rates(core, rate);
-> > +       top = clk_calc_new_rates(core, req_rate);
-> >         if (!top)
-> >                 return -EINVAL;
-> >  
-> > -- 
-> > 2.9.4
-> > 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index f54114c607df..2bb4cabf802f 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -211,6 +211,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
+ 
+ static const char * const ahb1_parents[] = { "osc32k", "osc24M",
+ 					     "axi", "pll-periph0" };
++static const struct ccu_mux_var_prediv ahb1_predivs[] = {
++	{ .index = 3, .shift = 6, .width = 2 },
++};
+ static struct ccu_div ahb1_clk = {
+ 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+ 
+@@ -218,11 +221,8 @@ static struct ccu_div ahb1_clk = {
+ 		.shift	= 12,
+ 		.width	= 2,
+ 
+-		.variable_prediv	= {
+-			.index	= 3,
+-			.shift	= 6,
+-			.width	= 2,
+-		},
++		.var_predivs	= ahb1_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index df97e25aec76..4d6078fca9ac 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -195,6 +195,9 @@ static SUNXI_CCU_DIV_TABLE(axi_clk, "axi", "cpu",
+ 
+ static const char * const ahb1_parents[] = { "osc32k", "osc24M",
+ 					     "axi", "pll-periph" };
++static const struct ccu_mux_var_prediv ahb1_predivs[] = {
++	{ .index = 3, .shift = 6, .width = 2 },
++};
+ 
+ static struct ccu_div ahb1_clk = {
+ 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+@@ -203,11 +206,8 @@ static struct ccu_div ahb1_clk = {
+ 		.shift	= 12,
+ 		.width	= 2,
+ 
+-		.variable_prediv	= {
+-			.index	= 3,
+-			.shift	= 6,
+-			.width	= 2,
+-		},
++		.var_predivs	= ahb1_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+index 5c6d37bdf247..8a753ed0426d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+@@ -169,6 +169,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
+ 
+ static const char * const ahb1_parents[] = { "osc32k", "osc24M",
+ 					     "axi" , "pll-periph" };
++static const struct ccu_mux_var_prediv ahb1_predivs[] = {
++	{ .index = 3, .shift = 6, .width = 2 },
++};
+ static struct ccu_div ahb1_clk = {
+ 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+ 
+@@ -176,11 +179,8 @@ static struct ccu_div ahb1_clk = {
+ 		.shift	= 12,
+ 		.width	= 2,
+ 
+-		.variable_prediv	= {
+-			.index	= 3,
+-			.shift	= 6,
+-			.width	= 2,
+-		},
++		.var_predivs	= ahb1_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 8d38e6510e29..10b38dc46f75 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -180,6 +180,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
+ 
+ static const char * const ahb1_parents[] = { "osc32k", "osc24M",
+ 					     "axi" , "pll-periph" };
++static const struct ccu_mux_var_prediv ahb1_predivs[] = {
++	{ .index = 3, .shift = 6, .width = 2 },
++};
+ static struct ccu_div ahb1_clk = {
+ 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+ 
+@@ -187,11 +190,8 @@ static struct ccu_div ahb1_clk = {
+ 		.shift	= 12,
+ 		.width	= 2,
+ 
+-		.variable_prediv	= {
+-			.index	= 3,
+-			.shift	= 6,
+-			.width	= 2,
+-		},
++		.var_predivs	= ahb1_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 4cbc1b701b7c..62e4f0d2b2fc 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -141,6 +141,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
+ 
+ static const char * const ahb1_parents[] = { "osc32k", "osc24M",
+ 					     "axi" , "pll-periph0" };
++static const struct ccu_mux_var_prediv ahb1_predivs[] = {
++	{ .index = 3, .shift = 6, .width = 2 },
++};
+ static struct ccu_div ahb1_clk = {
+ 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+ 
+@@ -148,11 +151,8 @@ static struct ccu_div ahb1_clk = {
+ 		.shift	= 12,
+ 		.width	= 2,
+ 
+-		.variable_prediv	= {
+-			.index	= 3,
+-			.shift	= 6,
+-			.width	= 2,
+-		},
++		.var_predivs	= ahb1_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+index 119f47b568ea..de02be75785c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+@@ -27,6 +27,9 @@
+ 
+ static const char * const ar100_parents[] = { "osc32k", "osc24M",
+ 					     "pll-periph0", "iosc" };
++static const struct ccu_mux_var_prediv ar100_predivs[] = {
++	{ .index = 2, .shift = 8, .width = 5 },
++};
+ 
+ static struct ccu_div ar100_clk = {
+ 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+@@ -35,11 +38,8 @@ static struct ccu_div ar100_clk = {
+ 		.shift	= 16,
+ 		.width	= 2,
+ 
+-		.variable_prediv	= {
+-			.index	= 2,
+-			.shift	= 8,
+-			.width	= 5,
+-		},
++		.var_predivs	= ar100_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ar100_predivs),
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index 6297add857b5..a34a78d7fb28 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -132,6 +132,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpu", 0x050, 0, 2, 0);
+ 
+ static const char * const ahb1_parents[] = { "osc32k", "osc24M",
+ 					     "axi", "pll-periph0" };
++static const struct ccu_mux_var_prediv ahb1_predivs[] = {
++	{ .index = 3, .shift = 6, .width = 2 },
++};
+ static struct ccu_div ahb1_clk = {
+ 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+ 
+@@ -139,11 +142,8 @@ static struct ccu_div ahb1_clk = {
+ 		.shift	= 12,
+ 		.width	= 2,
+ 
+-		.variable_prediv	= {
+-			.index	= 3,
+-			.shift	= 6,
+-			.width	= 2,
+-		},
++		.var_predivs	= ahb1_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
+ 	},
+ 
+ 	.common		= {
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index c6bb1f523232..b1eaafac9f23 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -46,13 +46,14 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+ 				prediv = cm->fixed_predivs[i].div;
+ 
+ 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
+-		if (parent_index == cm->variable_prediv.index) {
+-			u8 div;
+-
+-			div = reg >> cm->variable_prediv.shift;
+-			div &= (1 << cm->variable_prediv.width) - 1;
+-			prediv = div + 1;
+-		}
++		for (i = 0; i < cm->n_var_predivs; i++)
++			if (parent_index == cm->var_predivs[i].index) {
++				u8 div;
++
++				div = reg >> cm->var_predivs[i].shift;
++				div &= (1 << cm->var_predivs[i].width) - 1;
++				prediv = div + 1;
++			}
+ 
+ 	*parent_rate = *parent_rate / prediv;
+ }
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index 47aba3a48245..044262245c07 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -10,6 +10,12 @@ struct ccu_mux_fixed_prediv {
+ 	u16	div;
+ };
+ 
++struct ccu_mux_var_prediv {
++	u8	index;
++	u8	shift;
++	u8	width;
++};
++
+ struct ccu_mux_internal {
+ 	u8		shift;
+ 	u8		width;
+@@ -18,11 +24,8 @@ struct ccu_mux_internal {
+ 	const struct ccu_mux_fixed_prediv	*fixed_predivs;
+ 	u8		n_predivs;
+ 
+-	struct {
+-		u8	index;
+-		u8	shift;
+-		u8	width;
+-	} variable_prediv;
++	const struct ccu_mux_var_prediv		*var_predivs;
++	u8		n_var_predivs;
+ };
+ 
+ #define _SUNXI_CCU_MUX_TABLE(_shift, _width, _table)	\
+-- 
+2.11.0
