@@ -1,105 +1,43 @@
-Return-Path: <phil@raspberrypi.org>
-Subject: Re: [PATCH 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
-To: Stefan Wahren <stefan.wahren@i2se.com>, linux-clk@vger.kernel.org,
-        Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Florian Fainelli
- <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org
-References: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
- <1412052002.45738.1496171081779@email.1und1.de>
-From: Phil Elwell <phil@raspberrypi.org>
-Message-ID: <7aa4fb5f-65e3-56ed-9792-e38a947346b9@raspberrypi.org>
-Date: Wed, 31 May 2017 09:33:26 +0100
-MIME-Version: 1.0
-In-Reply-To: <1412052002.45738.1496171081779@email.1und1.de>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 5/6] ARM: sun8i: a83t: Set clock accuracy for 24MHz oscillator
+Date: Thu, 18 May 2017 11:58:08 +0800
+Message-Id: <20170518035809.15487-6-wens@csie.org>
+In-Reply-To: <20170518035809.15487-1-wens@csie.org>
+References: <20170518035809.15487-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+The datasheets for Allwinner SoCs set strict requirements on the
+stability of the external crystal oscillators. Add the accuracy
+for the main 24MHz oscillator to the device tree.
 
-On 30/05/2017 20:04, Stefan Wahren wrote:
-> Hi Phil,
-> 
->> Phil Elwell <phil@raspberrypi.org> hat am 30. Mai 2017 um 18:28 geschrieben:
->>
->>
->> Fractional clock dividers generate accurate average frequencies but
->> with jitter, particularly when the integer divisor is small.
->>
->> Introduce a new metric of clock accuracy to penalise clocks with a good
->> average but worse jitter compared to clocks with an average which is no
->> better but with lower jitter. The metric is the ideal rate minus the
->> worse deviation from that ideal using the nearest integer divisors.
->>
->> Use this metric for parent selection for clocks requiring low jitter
->> (currently just PCM).
->>
->> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
->> ---
->>  drivers/clk/bcm/clk-bcm2835.c | 39 ++++++++++++++++++++++++++++++++++-----
->>  1 file changed, 34 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
->> index facc346..e0ce5e7 100644
->> --- a/drivers/clk/bcm/clk-bcm2835.c
->> +++ b/drivers/clk/bcm/clk-bcm2835.c
->> @@ -530,6 +530,7 @@ struct bcm2835_clock_data {
->>  
->>  	bool is_vpu_clock;
->>  	bool is_mash_clock;
->> +	bool low_jitter;
->>  
->>  	u32 tcnt_mux;
->>  };
->> @@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
->>  							int parent_idx,
->>  							unsigned long rate,
->>  							u32 *div,
->> -							unsigned long *prate)
->> +							unsigned long *prate,
->> +							unsigned long *avgrate)
->>  {
->>  	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
->>  	struct bcm2835_cprman *cprman = clock->cprman;
->> @@ -1136,11 +1138,33 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
->>  	parent = clk_hw_get_parent_by_index(hw, parent_idx);
->>  
->>  	if (!(BIT(parent_idx) & data->set_rate_parent)) {
->> +		unsigned long tmp_rate;
->> +
->>  		*prate = clk_hw_get_rate(parent);
->>  		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
->>  
->> -		return bcm2835_clock_rate_from_divisor(clock, *prate,
->> -						       *div);
->> +		tmp_rate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
->> +		*avgrate = tmp_rate;
->> +
->> +		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
->> +			unsigned long high, low;
->> +			u32 idiv = *div & ~CM_DIV_FRAC_MASK;
->> +
->> +			high = bcm2835_clock_rate_from_divisor(clock, *prate,
->> +							       idiv);
->> +			idiv += CM_DIV_FRAC_MASK + 1;
->> +			low = bcm2835_clock_rate_from_divisor(clock, *prate,
->> +							      idiv);
-> 
-> What about int_div or intdiv instead of idiv as variable name?
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-OK - int_div matches tmp_rate.
-
->> +
->> +			/* Return a value which is the maximum deviation
->> +			 * below the ideal rate, for use as a metric.
->> +			 */
-> 
-> Please fix coding style of the comment.
-
-Oops. I'm surprised checkpatch didn't complain about that.
-
-Thanks,
-
-Phil
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index c9a5d07b2ada..e12dd7170b8f 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -126,6 +126,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <24000000>;
++			clock-accuracy = <50000>;
+ 			clock-output-names = "osc24M";
+ 		};
+ 
+-- 
+2.11.0
