@@ -1,82 +1,241 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:35145 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965286AbdEXJDQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2017 05:03:16 -0400
-Received: by mail-it0-f43.google.com with SMTP id c15so34570027ith.0
-        for <linux-clk@vger.kernel.org>; Wed, 24 May 2017 02:03:16 -0700 (PDT)
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 24 May 2017 11:03:14 +0200
-Message-ID: <CACRpkdYVqQ4qyraofQO3sLUV=NjBn48a9sX-k+O9ASSaBY7pyA@mail.gmail.com>
-Subject: [GIT PULL] Gemini DTS updates, take one
-To: "arm@kernel.org" <arm@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+In-Reply-To: <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
+References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
+ <20170515083502.4492-3-chunyan.zhang@spreadtrum.com> <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 18 May 2017 16:47:34 +0800
+Message-ID: <CAAfSe-u-+snc=b6QYgA4ysknxYDXS5UqbvWBqrnZ92sSBQqJRQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Documentation: add sprd clock bindings
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	xiaolong.zhang@spreadtrum.com,
+	=?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?= <orson.zhai@spreadtrum.com>,
+	"geng.ren@spreadtrum.com" <geng.ren@spreadtrum.com>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi ARM SoC folks,
+Hi Arnd,
 
-this is a first pull request of DTS updates to the Gemini architecture.
+Many thanks for your time.
 
-It tries to follow the merge strategy to merge DTS files with numeral
-and then patch in macros after -rc1.
+On 18 May 2017 at 03:43, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, May 15, 2017 at 10:35 AM, Chunyan Zhang
+> <chunyan.zhang@spreadtrum.com> wrote:
+>> This patch adds a new directory under the 'clock' for Spreadtrum platform,
+>> also bindings which document compatible strings and properties used for
+>> devicetree node of clocks on Spreadtrum SoCs.
+>>
+>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>> ---
+>>  .../clock/sprd/sprd,adjustable-pll-clock.txt       | 17 +++++
+>>  .../bindings/clock/sprd/sprd,composite-clock.txt   | 28 +++++++++
+>>  .../bindings/clock/sprd/sprd,divider-clock.txt     | 24 +++++++
+>>  .../bindings/clock/sprd/sprd,gates-clock.txt       | 73 ++++++++++++++++++++++
+>>  .../bindings/clock/sprd/sprd,muxed-clock.txt       | 23 +++++++
+>>  5 files changed, 165 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+>>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
+>>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
+>>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
+>>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+>> new file mode 100644
+>> index 0000000..476e315
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+>> @@ -0,0 +1,17 @@
+>> +Spreadtrum adjustable pll clock driver
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : must be one of:
+>> +       "sprd,sc9836-adjustable-pll-clock"
+>> +       "sprd,sc9860-adjustable-pll-clock"
+>> +
+>> +Example:
+>> +       clk_mpll0: clk@40400024 {
+>> +               compatible = "sprd,sc9860-adjustable-pll-clock";
+>> +               #clock-cells = <0>;
+>> +               reg = <0 0x40400024 0 0x4>,
+>> +                     <0 0x40400028 0 0x4>;
+>> +               clocks = <&clk_mpll_gates 2>;
+>> +               clock-output-names = "clk_mpll0";
+>> +       };
+>
+> The properties listed in the example must all be either
+> defined as "required" or "optional" properties and have a
+> description.
 
-The combines clock+reset DT bindings are part of the pull request,
-but the macros and drivers are merged by the subsystem maintainers
-for clock and reset respectively.
+Since these common properties are documented in the common clock binding [1]
 
-I will likely submit more Gemini DTS pulls based on this one as drivers
-trickle in: ATA/SATA, DMA and maybe Hans' USB work come to mind.
-But let's create a firm base for it all first.
+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-Please pull it into ARM SoC!
+I will add explanation in this file like I do in other bindings
+introduced in this patch, and will address 'reg' which probably is not
+similar to the common usage.
 
-Yours,
-Linus Walleij
+>
+> The reg property here is a bit odd, as it lists two consecutive
+> 4-byte areas, and both are suspiciously close to a round
+> address (0x40400000), so I would guess that they are
+> in fact part of a clock controller with several registers.
 
+They are PLL clock configuration registers.
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+Different PLL has different configurations which listed in pll_cfg.h,
+and probably has different number of registers for storing
+configurations, and on some Spreadtrum's SoCs PLL clock configuration
+registers aren't consecutive, but all PLLs on all Spreadtrum's SoCs
+(at least so far) are using the same driver.
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+>
+> If so, please define a node for the entire clock controller,
+> the DT description should reflect the design of the hardware
+> rather than the design of your device driver.
 
-are available in the git repository at:
+I also realized our implementation might not be easy to be understood,
+but I haven't thought out a better solution considering the hardware
+limitation I explained above.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-nomadik.git
-tags/gemini-v4.13-dts-1
+>
+>> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
+>> new file mode 100644
+>> index 0000000..a476eb6
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
+>> @@ -0,0 +1,28 @@
+>> +Spreadtrum composite clock driver.
+>> +
+>> +This binding uses the common clock binding[1].
+>> +
+>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +Required properties:
+>> +
+>> +- compatible:  should be "sprd,composite-clock"
+>> +
+>> +- sprd,mux-msk:        arbitrary bitmask for selecting clock input
+>
+> "arbitrary" is not a good word to use in a specification document ;-)
+>
+> Are there no constraints whatsoever on the allowed values? How
+> many bits are there?
 
-for you to fetch changes up to 664ed4e283926d753e876a1347b7729135a3f6b8:
+This actually represents which bits in the register of this clock
+should be used for selecting clock inputs, so it depends on how many
+clock inputs this composite-clock includes.  Also different
+composite-clock has different combination of clock inputs.
 
-  ARM: dts: Add clocks to the Gemini SoC (2017-05-24 10:50:22 +0200)
+>
+>> +- sprd,div-msk:        arbitrary bitmask for programming the divider,
+>> +               denominator of divider is the value consisted
+>> +               of these bits plus 1
+>
+> This sounds like it should just be the denominator, you can add
+> or subtract one in the driver.
 
-----------------------------------------------------------------
-This is a first set of Gemini DTS patches for the v4.13 cycle.
+I will rephrase this description.  This represents which bits in the
+register of this clock should be used for setting the value of
+denominator (more exactly to say that the value plus 1 as
+denominator).
 
-This adds the reset and clock lines to the Gemini core DTS SoC.
+>
+>> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
+>> new file mode 100644
+>> index 0000000..f23ecb6
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
+>> @@ -0,0 +1,73 @@
+>> +Spreadtrum gate clock driver
+>> +
+>> +This binding uses the common clock binding[1].
+>> +
+>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +Spreadtrum's SoCs often use one register to control more than one gate clocks.
+>> +Clock consumers can use index to get the correct gate clock.
+>> +
+>> +In Spreadtrum platform, some of gate clocks have three registers, respectively
+>> +used for controlling, setting and clearing gate clock, the addresses of
+>> +these three registers generally are <start>, <start + offset>, and
+>> +<start + offset * 2>, and offset would be 0x1000 or 0x100, so the register
+>> +size of gate clocks is either 0x3000 or 0x300. While for some historical issue
+>> +there also are some clocks which don't have independent set/clear registers.
+>> +Please see bellow for more specific information.
+>> +
+>> +Required properties:
+>> +
+>> +- compatible:  should be one of the following:
+>> +               "sprd,sc1000-gates-clock"
+>> +               - offset of the registers for setting gate is 0x1000
+>> +
+>> +               "sprd,sc100-gates-clock"
+>> +               - offset of the registers for setting gate is 0x100
+>> +
+>> +               "sprd,gates-clock"
+>> +               - for clocks without independent set/clear registers
+>
+> I think the compatible value should refer to at least some more
+> specific product that uses these: I would guess that there are
+> some chips that spreadtrum has made that have clock gates
+> which are not compatible with this.
 
-These bindings have been ACKed by the DT maintainer Rob.
+All chips that Spreadtrum has made so far have the similar h/w design
+on clock gates, only the meaning of each bit in their registers is a
+little different.
 
-The reset driver is going to be merged by the reset maintainer.
-The clock driver is going to be merged by the clock maintainers.
-Each of these have their macro defines coming with them, split
-off as separate patches.
+The 'sc1000-gates-clock' has dedicated registers respectively used for
+setting and clearing gate clocks.
 
-A post-rc1 patch will be sumbitted for switching the numerical
-values to the defined macros in line with the ARM SoC DT header
-merge strategy.
+Like documented in this binding, 1000 means the address of registers
+for setting is the address of gate clock control register plus 1000,
+and clearing registers plus 1000 * 2, the similar with
+'sc100-gates-clock'.
 
-----------------------------------------------------------------
-Linus Walleij (3):
-      dt-bindings: Augment Gemini for clocks, resets
-      ARM: dts: Add the Gemini reset controller
-      ARM: dts: Add clocks to the Gemini SoC
+>
+> Can all three appear in the same chip, or would you always
+> have only one of them?
 
- Documentation/devicetree/bindings/arm/gemini.txt | 24 +++++++++++++++++++-
- arch/arm/boot/dts/gemini.dtsi                    | 29 +++++++++++++++++++++---
- 2 files changed, 49 insertions(+), 4 deletions(-)
+All these three kinds of gates indeed are being used on SC9860.
+
+>
+>> +- reg: the first cell represents the address of this clock gate controller
+>> +       register, the second cell implies how is the offset of set/clear
+>> +       registers of this clock gate, like addressed in the head of this
+>> +       file
+>> +
+>> +optional properties:
+>> +
+>> +- clock-indices:       If the identifying number for the clocks in the node
+>> +                       is not linear from zero, this property is necessary
+>> +
+>> +Example:
+>> +
+>> +       clk_mpll_gates: clk@402b00b0 {
+>> +               compatible = "sprd,sc1000-gates-clock";
+>> +               #clock-cells = <1>;
+>> +               reg = <0 0x402b00b0 0 0x3000>;
+>> +               clocks = <&ext_26m>;
+>> +               clock-indices = <2>, <18>;
+>> +               clock-output-names = "clk_mpll0_gate", "clk_mpll1_gate";
+>> +       };
+>>
+>
+> For clock-output-names, please drop the "clk_" prefix from each
+> identifier, and maybe use '-' instead of '_' as the separator.
+
+Ok, will address this.
+
+Thanks for the review,
+Chunyan
+
+>
+>        Arnd
