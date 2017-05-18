@@ -1,52 +1,65 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>
-CC: <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 0/4] clk: ti: add support for clkctrl clocks
-Date: Wed, 17 May 2017 18:50:05 +0300
-Message-ID: <1495036209-11298-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 6/6] ARM: sun8i: a83t: Switch to CCU device tree binding macros
+Date: Thu, 18 May 2017 11:58:09 +0800
+Message-Id: <20170518035809.15487-7-wens@csie.org>
+In-Reply-To: <20170518035809.15487-1-wens@csie.org>
+References: <20170518035809.15487-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Now that the CCU device tree binding headers have been merged, we can
+use the properly named macros in the device tree, instead of raw
+numbers.
 
-Basically a rebase on top of 4.12-rc1, with some minor fixes.
-This series is now against the clock driver only, and should be ready
-to pull in.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Changes compared to v2:
-
-Patch #1: fixed the typo for #clock-cells property in the example
-Patch #2: fixed a compile bug detected by kbuild bot, basically added
-	  default clkctrl data, and moved the registration of omap4
-	  version of the same to patch #4
-Patch #3: grouped the macro definitions based on clock instance and
-	  added header rows before the clock instances
-Patch #4: Moved the registration of the clkctrl data under this patch
-
-Dropped rest of the patches from series to be reviewed / pulled separately
-by Tony, as they are all against mach-omap2 / omap DTS. I will post the
-remaining patches separately on linux-omap list only.
-
-Boot testing done against:
-am335x-evm, am335x-evmsk, am37x-evm, am437x-sk, am43x-epos-evm,
-am437x-gp-evm, omap3-beagle-xm, omap3-beagle, am335x-boneblack,
-am335x-bone, craneboard, dra72x-evm, dra7xx-evm, omap3-n900,
-omap5-uevm, omap4-panda-es, omap4-panda, omap2430-sdp,
-omap3430-sdp, omap4-sdp-es23plus
-
-Boot failures detected on:
-am335x-evm, am43x-epos-evm, dra72x-evm, dra7xx-evm
-
-  => all board fail to mount NFS rootfs but are otherwise fine
-  => same failure seen on same boards on plain 4.12-rc1 also
-
-Basic suspend-resume test done on omap4-panda-es.
-
-Public branch:
-tree: https://github.com/t-kristo/linux-pm.git
-branch: 4.12-rc1-clkctrl
-
--Tero
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index e12dd7170b8f..050d3e347740 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -44,6 +44,9 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
++#include <dt-bindings/clock/sun8i-a83t-ccu.h>
++#include <dt-bindings/reset/sun8i-a83t-ccu.h>
++
+ / {
+ 	interrupt-parent = <&gic>;
+ 	#address-cells = <1>;
+@@ -178,7 +181,7 @@
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
++			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc16Md512>;
+ 			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+@@ -225,8 +228,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 53>;
+-			resets = <&ccu 40>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.11.0
