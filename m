@@ -1,59 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 07/13] drm/sun4i: add a Kconfig option for sun4i-backend
-Date: Thu,  4 May 2017 19:48:52 +0800
-Message-Id: <20170504114858.9008-8-icenowy@aosc.io>
-In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Zhong Kaihua <zhongkaihua@huawei.com>,
+	Chen Jun <chenjun14@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 1/2] clk: Hi3660: change to register crgctrl clock with CLK_OF_DECLARE_DRIVER
+Date: Thu, 18 May 2017 09:50:46 +0800
+Message-Id: <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
+References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-As sun4i-backend is now a dedicated module, add an Kconfig option for
-it to make it optional, since some build may only use other engines.
+The timer will register into system at very early phase at kernel boot;
+if timer needs to use clock, the clock should be get ready in function
+of_clk_init() so later the timer driver probe can retrieve clock
+successfully. This is finished in below flow on arm64:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+  start_kernel()
+    `-> time_init()
+          `-> of_clk_init(NULL)    => register timer's clock
+          `-> clocksource_probe()  => register timer
+
+On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
+as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
+sp804 timer probe returns failure due if cannot bind clock properly.
+To fix the failure, this patch is to change crgctrl clock registration
+from platform driver to CLK_OF_DECLARE_DRIVER method so the clocks can
+be registered ahead with function of_clk_init() and then timer driver
+can use it.
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
-Splited out patch.
+ drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/sun4i/Kconfig  | 10 ++++++++++
- drivers/gpu/drm/sun4i/Makefile |  2 +-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index a4b357db8856..5a8227f37cc4 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -12,3 +12,13 @@ config DRM_SUN4I
- 	  Choose this option if you have an Allwinner SoC with a
- 	  Display Engine. If M is selected the module will be called
- 	  sun4i-drm.
-+
-+config DRM_SUN4I_BACKEND
-+	tristate "Support for Allwinner A10 Display Engine Backend"
-+	depends on DRM_SUN4I
-+	default DRM_SUN4I
-+	help
-+	  Choose this option if you have an Allwinner SoC with the
-+	  original Allwinner Display Engine, which has a backend to
-+	  do some alpha blending and feed graphics to TCON. If M is
-+	  selected the module will be called sun4i-backend.
-diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-index a251fb36c951..a08df56759e3 100644
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -9,6 +9,6 @@ sun4i-tcon-y += sun4i_crtc.o
- sun4i-backend-y += sun4i_backend.o sun4i_layer.o
+diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+index fd5ce7f..4e5713b 100644
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -547,10 +547,10 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
+ 				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
+ 				  clk_data);
+ }
++CLK_OF_DECLARE_DRIVER(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl",
++		      hi3660_clk_crgctrl_init);
  
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
--obj-$(CONFIG_DRM_SUN4I)		+= sun4i-backend.o
-+obj-$(CONFIG_DRM_SUN4I_BACKEND)		+= sun4i-backend.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
+ static const struct of_device_id hi3660_clk_match_table[] = {
+-	{ .compatible = "hisilicon,hi3660-crgctrl",
+-	  .data = hi3660_clk_crgctrl_init },
+ 	{ .compatible = "hisilicon,hi3660-pctrl",
+ 	  .data = hi3660_clk_pctrl_init },
+ 	{ .compatible = "hisilicon,hi3660-pmuctrl",
 -- 
-2.12.2
+1.9.1
