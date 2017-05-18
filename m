@@ -1,228 +1,176 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
-	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
-	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
-	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
-	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>,
-	<dongas86@gmail.com>, Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH V3 3/3] cpufreq: imx6q: refine clk operations
-Date: Fri, 19 May 2017 21:49:06 +0800
-Message-ID: <1495201746-31841-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
-References: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <varada@codeaurora.org>
+Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org,
+ david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
+ sjaganat@codeaurora.org, sricharan@codeaurora.org,
+ Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+ <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
+ <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
+ <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
+ <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
+ <4a39c13b-378d-08b5-a2fc-d3bdb32d106f@codeaurora.org>
+ <20170517194733.GG12920@tuxbook>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Message-ID: <4eff646f-533c-5c85-7431-3c514cd06508@codeaurora.org>
+Date: Thu, 18 May 2017 14:07:34 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170517194733.GG12920@tuxbook>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Use clk_bulk_get to ease the driver clocks handling.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Anson Huang <anson.huang@nxp.com>
-Cc: Robin Gong <yibin.gong@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Octavian Purdila <octavian.purdila@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-ChangeLog:
-v1->v3: No changes
----
- drivers/cpufreq/imx6q-cpufreq.c | 119 ++++++++++++++++++----------------------
- 1 file changed, 53 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-index 7719b02..6158910 100644
---- a/drivers/cpufreq/imx6q-cpufreq.c
-+++ b/drivers/cpufreq/imx6q-cpufreq.c
-@@ -24,15 +24,29 @@ static struct regulator *arm_reg;
- static struct regulator *pu_reg;
- static struct regulator *soc_reg;
- 
--static struct clk *arm_clk;
--static struct clk *pll1_sys_clk;
--static struct clk *pll1_sw_clk;
--static struct clk *step_clk;
--static struct clk *pll2_pfd2_396m_clk;
--
--/* clk used by i.MX6UL */
--static struct clk *pll2_bus_clk;
--static struct clk *secondary_sel_clk;
-+enum IMX6_CPUFREQ_CLKS {
-+	ARM,
-+	PLL1_SYS,
-+	STEP,
-+	PLL1_SW,
-+	PLL2_PFD2_396M,
-+	/* MX6UL requires two more clks */
-+	PLL2_BUS,
-+	SECONDARY_SEL,
-+};
-+#define IMX6Q_CPUFREQ_CLK_NUM		5
-+#define IMX6UL_CPUFREQ_CLK_NUM		7
-+
-+static int num_clks;
-+static struct clk_bulk_data clks[] = {
-+	{ .id = "arm" },
-+	{ .id = "pll1_sys" },
-+	{ .id = "step" },
-+	{ .id = "pll1_sw" },
-+	{ .id = "pll2_pfd2_396m" },
-+	{ .id = "pll2_bus" },
-+	{ .id = "secondary_sel" },
-+};
- 
- static struct device *cpu_dev;
- static bool free_opp;
-@@ -51,7 +65,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 
- 	new_freq = freq_table[index].frequency;
- 	freq_hz = new_freq * 1000;
--	old_freq = clk_get_rate(arm_clk) / 1000;
-+	old_freq = clk_get_rate(clks[ARM].clk) / 1000;
- 
- 	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &freq_hz);
- 	if (IS_ERR(opp)) {
-@@ -109,25 +123,27 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 		 * voltage of 528MHz, so lower the CPU frequency to one
- 		 * half before changing CPU frequency.
- 		 */
--		clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
--		clk_set_parent(pll1_sw_clk, pll1_sys_clk);
--		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
--			clk_set_parent(secondary_sel_clk, pll2_bus_clk);
-+		clk_set_rate(clks[ARM].clk, (old_freq >> 1) * 1000);
-+		clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
-+		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk))
-+			clk_set_parent(clks[SECONDARY_SEL].clk,
-+				       clks[PLL2_BUS].clk);
- 		else
--			clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
--		clk_set_parent(step_clk, secondary_sel_clk);
--		clk_set_parent(pll1_sw_clk, step_clk);
-+			clk_set_parent(clks[SECONDARY_SEL].clk,
-+				       clks[PLL2_PFD2_396M].clk);
-+		clk_set_parent(clks[STEP].clk, clks[SECONDARY_SEL].clk);
-+		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
- 	} else {
--		clk_set_parent(step_clk, pll2_pfd2_396m_clk);
--		clk_set_parent(pll1_sw_clk, step_clk);
--		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk)) {
--			clk_set_rate(pll1_sys_clk, new_freq * 1000);
--			clk_set_parent(pll1_sw_clk, pll1_sys_clk);
-+		clk_set_parent(clks[STEP].clk, clks[PLL2_PFD2_396M].clk);
-+		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
-+		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk)) {
-+			clk_set_rate(clks[PLL1_SYS].clk, new_freq * 1000);
-+			clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
- 		}
- 	}
- 
- 	/* Ensure the arm clock divider is what we expect */
--	ret = clk_set_rate(arm_clk, new_freq * 1000);
-+	ret = clk_set_rate(clks[ARM].clk, new_freq * 1000);
- 	if (ret) {
- 		dev_err(cpu_dev, "failed to set clock rate: %d\n", ret);
- 		regulator_set_voltage_tol(arm_reg, volt_old, 0);
-@@ -161,7 +177,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 
- static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
- {
--	policy->clk = arm_clk;
-+	policy->clk = clks[ARM].clk;
- 	return cpufreq_generic_init(policy, freq_table, transition_latency);
- }
- 
-@@ -197,27 +213,14 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	arm_clk = clk_get(cpu_dev, "arm");
--	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
--	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
--	step_clk = clk_get(cpu_dev, "step");
--	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
--	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
--	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
--		dev_err(cpu_dev, "failed to get clocks\n");
--		ret = -ENOENT;
--		goto put_clk;
--	}
-+	if (of_machine_is_compatible("fsl,imx6ul"))
-+		num_clks = IMX6UL_CPUFREQ_CLK_NUM;
-+	else
-+		num_clks = IMX6Q_CPUFREQ_CLK_NUM;
- 
--	if (of_machine_is_compatible("fsl,imx6ul")) {
--		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
--		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
--		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
--			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
--			ret = -ENOENT;
--			goto put_clk;
--		}
--	}
-+	ret = clk_bulk_get(cpu_dev, num_clks, clks);
-+	if (ret)
-+		goto put_node;
- 
- 	arm_reg = regulator_get(cpu_dev, "arm");
- 	pu_reg = regulator_get_optional(cpu_dev, "pu");
-@@ -354,22 +357,11 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
- 		regulator_put(pu_reg);
- 	if (!IS_ERR(soc_reg))
- 		regulator_put(soc_reg);
--put_clk:
--	if (!IS_ERR(arm_clk))
--		clk_put(arm_clk);
--	if (!IS_ERR(pll1_sys_clk))
--		clk_put(pll1_sys_clk);
--	if (!IS_ERR(pll1_sw_clk))
--		clk_put(pll1_sw_clk);
--	if (!IS_ERR(step_clk))
--		clk_put(step_clk);
--	if (!IS_ERR(pll2_pfd2_396m_clk))
--		clk_put(pll2_pfd2_396m_clk);
--	if (!IS_ERR(pll2_bus_clk))
--		clk_put(pll2_bus_clk);
--	if (!IS_ERR(secondary_sel_clk))
--		clk_put(secondary_sel_clk);
-+
-+	clk_bulk_put(num_clks, clks);
-+put_node:
- 	of_node_put(np);
-+
- 	return ret;
- }
- 
-@@ -383,13 +375,8 @@ static int imx6q_cpufreq_remove(struct platform_device *pdev)
- 	if (!IS_ERR(pu_reg))
- 		regulator_put(pu_reg);
- 	regulator_put(soc_reg);
--	clk_put(arm_clk);
--	clk_put(pll1_sys_clk);
--	clk_put(pll1_sw_clk);
--	clk_put(step_clk);
--	clk_put(pll2_pfd2_396m_clk);
--	clk_put(pll2_bus_clk);
--	clk_put(secondary_sel_clk);
-+
-+	clk_bulk_put(num_clks, clks);
- 
- 	return 0;
- }
+On 5/18/2017 1:17 AM, Bjorn Andersson wrote:
+> On Mon 15 May 04:24 PDT 2017, Varadarajan Narayanan wrote:
+> 
+>>
+>>
+>> On 5/15/2017 2:35 PM, Varadarajan Narayanan wrote:
+>>> On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
+>>>> On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
+>>>>
+>>>>> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
+>>>>>> On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
+>>>>>>
+>>>> [..]
+>>>>>>> +enum ipq8074_functions {
+>>>>>>
+>>>>>> Please keep these sorted alphabetically.
+>>>>>
+>>>>> Ok
+>>>>>
+>>>>>>> +    msm_mux_gpio,
+>>>>>>> +    msm_mux_qpic_pad,
+>>>>>>> +    msm_mux_blsp5_i2c,
+>>>>>>> +    msm_mux_blsp5_spi,
+>>>>>>> +    msm_mux_wci20,
+>>>>>>
+>>>>>> What does "20" mean here?
+>>>>>
+>>>>> This is for Wireless Coex Interface. The same functionality can
+>>>>> be muxed on
+>>>>> to different GPIOs. WCI2, is the 2nd edition of the WCI standard
+>>>>> and 0, 1
+>>>>> are for the muxing to different GPIOs (alternate muxes).
+>>>>>
+>>>>
+>>>> In other Qualcomm platforms the alternative muxes are denoted by letters
+>>>> (a,b,c...). Would you mind picking up this naming scheme, or do you see
+>>>> any problems with that? (E.g. wci2a in this case)
+>>>
+>>> Ok
+>>>
+>>>> Btw, do you need any additional configuration for selecting alternative
+>>>> muxing or is that automagical these days?
+>>>
+>>> No additional configuration is needed.
+>>>
+>>>>>>> +    msm_mux_blsp3_spi3,
+>>>>>>> +    msm_mux_burn0,
+>>>>>>> +    msm_mux_pcm_zsi0,
+>>>>>>> +    msm_mux_blsp5_uart,
+>>>>>>> +    msm_mux_mac12,
+>>>>>>
+>>>>>> What does "12" mean here?
+>>>>>
+>>>>> The SoC has three MAC cores. Each core has two pins for the
+>>>>> smart antenna
+>>>>> feature. macXY indicates the function select for MAC no. X and
+>>>>> smart antenna
+>>>>> no. Y.
+>>>>>
+>>>>
+>>>> Ok
+>>>>
+>>>>>>> +    msm_mux_blsp3_spi0,
+>>>>>>> +    msm_mux_burn1,
+>>>>>>> +    msm_mux_mac01,
+>>>>>>> +    msm_mux_qdss_cti_trig_out_b0,
+>>>>>>> +    msm_mux_qdss_cti_trig_in_b0,
+>>>>>>> +    msm_mux_qpic_pad4,
+>>>>>>
+>>>>>> What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
+>>>>>> alternative muxings...?
+>>>>>
+>>>>> This is for the NAND and LCD display. The pins listed are the 9
+>>>>> data pins.
+>>>>>
+>>>>
+>>>> Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
+>>>> possible to reference a partial group in the DTS, if that's necessary)
+>>>
+>>> There are two sets of 9 pins, either of which can go to NAND or LCD.
+>>> Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
+>>> Is that ok?
+>>>
+>>>>>>> +    msm_mux_blsp4_uart0,
+>>>>>>> +    msm_mux_blsp4_i2c0,
+>>>>>>> +    msm_mux_blsp4_spi0,
+>>>>>>> +    msm_mux_mac21,
+>>>>>>> +    msm_mux_qdss_cti_trig_out_b1,
+>>>>>>> +    msm_mux_qpic_pad5,
+>>>>>>> +    msm_mux_qdss_cti_trig_in_b1,
+>>>>>>> +    msm_mux_qpic_pad6,
+>>>>>>> +    msm_mux_qpic_pad7,
+>>>>>>> +    msm_mux_cxc0,
+>>>>>>> +    msm_mux_mac13,
+>>>>>>> +    msm_mux_qdss_cti_trig_in_a1,
+>>>>>>> +    msm_mux_qdss_cti_trig_out_a1,
+>>>>>>> +    msm_mux_wci22,
+>>>>>>> +    msm_mux_qdss_cti_trig_in_a0,
+>>>>>>> +    msm_mux_qpic_pad1,
+>>>>>>> +    msm_mux_qdss_cti_trig_out_a0,
+>>>>>>> +    msm_mux_qpic_pad2,
+>>>>>>> +    msm_mux_qpic_pad3,
+>>>>>>> +    msm_mux_qdss_traceclk_b,
+>>>>>>> +    msm_mux_qpic_pad0,
+>>>>>>> +    msm_mux_qdss_tracectl_b,
+>>>>>>> +    msm_mux_qpic_pad8,
+>>>>>>> +    msm_mux_pcm_zsi1,
+>>>>>>> +    msm_mux_qdss_tracedata_b,
+>>>>>>> +    msm_mux_led0,
+>>>>>>> +    msm_mux_pwm04,
+>>>>>>
+>>>>>> What does "04" mean here?
+>>>>>
+>>>>> There are 4 Pulse Width Modulation channels, pwmXY is pwm
+>>>>> channel X and pin
+>>>>> Y.
+>>>>
+>>>> So Y is alternative mux? Can we use letters for this as well?
+>>>
+>>> Ok
+>>
+>> Sorry, actually they are not alternative muxes. There are 4 different PWM
+>> instances. Each PWM instance can handle 'n' different GPIOs (for example,
+>> that can be connected to LED etc.).
+>>
+> 
+> So we have 4 PWMs and the output from a single PWM can muxed to drive
+> the output of 4 pins?
+> 
+> Then skip the last digit and just go pwm0, ... pwm3 and include all four
+> pins that can be part of each instance. As the pingroup configuration is
+> per pin in the TLMM it's possible to configure subsets of the pins in a
+> group.
+
+Ok
+
+Thanks
+Varada
+
+> Regards,
+> Bjorn
+> 
+
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum, a Linux Foundation Collaborative Project
