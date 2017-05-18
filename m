@@ -1,52 +1,80 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: [PATCH v2 0/2] clk: bcm2835: PCM clock improvements
-To: Phil Elwell <phil@raspberrypi.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <4c11ad43-ef4e-3fbd-500a-02b2b46e0fbd@raspberrypi.org>
- <c44d1f29-4ec6-6b87-59a4-71aeb1f5c4d7@raspberrypi.org>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <d9c1303d-a170-bb83-f9a9-94f201e4ac2c@i2se.com>
-Date: Wed, 31 May 2017 16:58:01 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:35075 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753332AbdERShR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2017 14:37:17 -0400
+Received: by mail-wm0-f45.google.com with SMTP id b84so211786420wmh.0
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2017 11:37:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <c44d1f29-4ec6-6b87-59a4-71aeb1f5c4d7@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAFBinCDjysBNJLQYsvzBU7U2p7gv0Lxa+qe8f5YMn0BgUw6P0g@mail.gmail.com>
+References: <CAFBinCDjysBNJLQYsvzBU7U2p7gv0Lxa+qe8f5YMn0BgUw6P0g@mail.gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 18 May 2017 20:36:55 +0200
+Message-ID: <CAFBinCDr2ocZ3J4JEvXF-W=tT8Zw-t02J09Ciiud6RTrkcEidA@mail.gmail.com>
+Subject: Re: corrupt clk_core instance in clk_disable_unused_subtree (ARM
+ Meson MX platform)
+To: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: balbes-150@yandex.ru, jbrunet@baylibre.com, narmstrong@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 31.05.2017 um 11:18 schrieb Phil Elwell:
-> The switch to using the upstream bcm2835_cprman clock driver caused a
-> few problems for users of PCM (I2S) peripherals. Audio applications
-> require accurate, stable clocks, and the cprman driver wasn't
-> conservative enough in its choice of clock sources.
+On Sun, May 14, 2017 at 11:20 PM, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+> Hello,
 >
-> These patches restrict the clock sources for the PCM peripheral in two
-> ways: the first causes all possible sources except OSC and PLLD_PER
-> to be ignored, while the second allows clocks to be specified as
-> "low_jitter", causing the effects of fractional divisors to be taken
-> into account when comparing potential clocks for accuracy. In practice,
-> the combined effect of the two patches is to choose OSC as a source if
-> an integer divisor can be used, otherwise PLLD_PER is chosen.
+> it seems that I am seeing some strange memory corruption on one of my
+> Amlogic Meson MX (32-bit) devices.
+> disclaimer: I have some patches in my tree which are not mainlined yet
+> (see [0]), but cannot see that any of these patches would cause memory
+> corruption of a clk_core instance.
 >
-> Changes in v2:
-> * Extended bcm2835_pcm_per_parents to cover the pllh_aux slot, and gave
->   it a comment in patch 1.
-> * Added a REGISTER_PCM_CLK analagous to REGISTER_PER_CLK in patch 1.
-> * Renamed temporary variable idiv to int_div in patch 2.
+> Oleg (who is CC'ed) has first reported this when testing my kernel tree: [1]
+> in the meantime I have rebased all of my patches to Linus' mainline
+> tree, commit 0fcc3ab23d7395f58e8ab0834e7913e2e4314a83 [3]
 >
-> Phil Elwell (2):
->   clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
->   clk: bcm2835: Minimise clock jitter for PCM clock
+> what I am seeing is a NULL deref in clk_disable_unused_subtree, full
+> log attached and can be found here: [3]
+> an explanation of what seems to be going on in my own words is:
+> - in line #5 of the log the internal PWM mux clock for the first PWM
+> channel is being registered (everything looks good with
+> clk_core=0xeddfbf80 and clk_hw=0xeddfbf30)
+> - the default parent of this mux is "xtal"
+> - in line #31 of the log the "disable unused clocks" cleanup starts
+> and checks the first child of the "xtal" clock and seems to find
+> clk_core=0xeddfbf80 *BUT* clk_hw=0x00000003
+> - this doesn't seem right and a crash is pretty obvious
 >
->  drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 45 insertions(+), 5 deletions(-)
+> I also attached the patch which introduces this additional logspam -
+> just in case anyone wants to know what these values mean exactly.
 >
-For the whole series:
+> now the interesting part:
+> I can reproduce this with multi_v7_defconfig and
+> arch/arm/boot/dts/meson8m2-m8s.dts from my tree.
+> if I leave everything as it is and *only* enable CONFIG_DEBUG_SPINLOCK
+> then this crash goes away. so this *might* be a race-condition
+> somewhere...
+a user named "wilson2000" (since I missed you on IRC: thank you!)
+pointed out on IRC that there's a memory corruption bug in v4.11 and
+early v4.12 kernels which is fixed by [0] "perf/core: Avoid removing
+shared pmu_context on unregister"
+I have not tested this yet but this looks suspicious (so the common
+clock framework may be innocent). I will report back once I had time
+to test this.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+> has anybody seen this crash before? I can help debugging/testing
+> potential fixes/trying out various things to solve this - just let me
+> know!
+>
+>
+> Regards,
+> Martin
+>
+>
+> [0] https://github.com/xdarklight/linux/tree/meson-mx-integration-4.12-20170513
+> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-May/003497.html
+> [2] https://github.com/torvalds/linux/commit/0fcc3ab23d7395f58e8ab0834e7913e2e4314a83
+> [3] https://paste.kde.org/pbefvmqgr
 
-I hope Eric as the author of the driver has a chance to look over the
-patches.
 
-Stefan
+[0] https://cgit.freedesktop.org/drm/drm-intel/commit/?h=drm-intel-nightly&id=73ac44749e71333bce7d2f8c0bbdc1bbc57dae1b
