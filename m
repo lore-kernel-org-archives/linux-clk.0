@@ -1,38 +1,122 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170527102308.1988-5-icenowy@aosc.io>
-References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-5-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 28 May 2017 23:08:02 +0800
-Message-ID: <CAGb2v64ycEzmyZBMvvmHosJSpp2hqRo4gc6xKKPhqK96Npq5xg@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] pinctrl: sunxi: drop dedicated A20 driver
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 05/10] clk: add clk_set_rate_protect
+Date: Thu, 18 May 2017 18:37:59 +0200
+Message-Id: <20170518163804.14123-6-jbrunet@baylibre.com>
+In-Reply-To: <20170518163804.14123-1-jbrunet@baylibre.com>
+References: <20170518163804.14123-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 27, 2017 at 6:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> As we added A20 support to A10 pinctrl driver, now we can delete the
-> dedicated A20 pinctrl driver, which is duplicated code.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - Only remove the A20 driver(A10 driver for A20 is enabled in
->   the previous commit now).
->
->  drivers/pinctrl/sunxi/Kconfig             |    4 -
->  drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 1056 -----------------------------
+clk_set_rate_protect is a combination of clk_set_rate and clk_rate_protect
+within a critical section. In case where several protecting consumers
+compete to set the rate of the same provider, it provides a way to make
+sure that at least one of them will be satisfied before the resource is
+locked.
 
-You forgot to remove the Makefile entry. Otherwise,
+This is to avoid the unlikely situation where several consumers protect a
+clock provider and none actually get a rate it can work with.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h | 14 ++++++++++++++
+ 2 files changed, 59 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9c15319bc454..132eb1a2938f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1781,6 +1781,51 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+ EXPORT_SYMBOL_GPL(clk_set_rate);
+ 
+ /**
++ * clk_set_rate_protect - specify a new rate and protect it
++ * @clk: the clk whose rate is being changed
++ * @rate: the new rate for clk
++ *
++ * This is a combination of clk_set_rate and clk_rate_protect within
++ * a critical section
++ *
++ * This can be used initially to ensure that at least 1 consumers is
++ * statisfied when several protecting consummers are competing for the
++ * same clock provider.
++ *
++ * The protection is not applied if setting the rate failed.
++ *
++ * Returns 0 on success, -EERROR otherwise.
++ */
++int clk_set_rate_protect(struct clk *clk, unsigned long rate)
++{
++	int ret;
++
++	if (!clk)
++		return 0;
++
++	/* prevent racing with updates to the clock topology */
++	clk_prepare_lock();
++
++	/*
++	 * The temporary protection removal is not here, on purpose
++	 * This function is meant to be used in instead of clk_rate_protect,
++	 * so before the consumer code path protect the clock provider
++	 */
++
++	ret = clk_core_set_rate_nolock(clk->core, rate);
++
++	if (!ret) {
++		clk_core_rate_protect(clk->core);
++		clk->protect_count++;
++	}
++
++	clk_prepare_unlock();
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(clk_set_rate_protect);
++
++/**
+  * clk_set_rate_range - set a rate range for a clock source
+  * @clk: clock source
+  * @min: desired minimum clock rate in Hz, inclusive
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 85d73e02df40..d3c299d23ae7 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -388,6 +388,15 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
+ int clk_set_rate(struct clk *clk, unsigned long rate);
+ 
+ /**
++ * clk_set_rate_protect - set and protect the clock rate for a clock source
++ * @clk: clock source
++ * @rate: desired clock rate in Hz
++ *
++ * Returns success (0) or negative errno.
++ */
++int clk_set_rate_protect(struct clk *clk, unsigned long rate);
++
++/**
+  * clk_has_parent - check if a clock is a possible parent for another
+  * @clk: clock source
+  * @parent: parent clock source
+@@ -506,6 +515,11 @@ static inline int clk_set_rate(struct clk *clk, unsigned long rate)
+ 	return 0;
+ }
+ 
++static inline int clk_set_rate_protect(struct clk *clk, unsigned long rate)
++{
++	return 0;
++}
++
+ static inline long clk_round_rate(struct clk *clk, unsigned long rate)
+ {
+ 	return 0;
+-- 
+2.9.4
