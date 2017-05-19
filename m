@@ -1,141 +1,306 @@
-Return-Path: <phil@raspberrypi.org>
-Subject: [PATCH v2 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
-From: Phil Elwell <phil@raspberrypi.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
-Message-ID: <a507a7e7-3c64-1dcb-98f1-a7f94364f26c@raspberrypi.org>
-Date: Wed, 31 May 2017 10:18:33 +0100
-MIME-Version: 1.0
-In-Reply-To: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] clk: renesas: Rework Kconfig and Makefile logic
+Date: Fri, 19 May 2017 10:30:07 +0200
+Message-Id: <1495182607-20856-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fractional clock dividers generate accurate average frequencies but
-with jitter, particularly when the integer divisor is small.
+The goals are to:
+  - Allow precise control over and automatic selection of which
+    (sub)drivers are used for which SoC (which may change in the
+    future),
+  - Allow adding support for new SoCs easily,
+  - Allow compile-testing of all (sub)drivers,
+  - Keep driver selection logic in the subsystem-specific Kconfig,
+    independent from the architecture-specific Kconfig (i.e. no "select"
+    from arch/arm64/Kconfig.platforms), to avoid dependencies.
 
-Introduce a new metric of clock accuracy to penalise clocks with a good
-average but worse jitter compared to clocks with an average which is no
-better but with lower jitter. The metric is the ideal rate minus the
-worse deviation from that ideal using the nearest integer divisors.
+This is implemented by:
+  - Introducing Kconfig symbols for all drivers and sub-drivers,
+  - Introducing the Kconfig symbol CLK_RENESAS, which is enabled
+    automatically when building for a Renesas ARM platform, and which
+    enables all required drivers without interaction of the user, based
+    on SoC-specific ARCH_* symbols,
+  - Allowing the user to enable any Kconfig symbol manually if
+    COMPILE_TEST is enabled,
+  - Using the new Kconfig symbols instead of the ARCH_* symbols to
+    control compilation in the Makefile,
+  - Always entering drivers/clk/renesas/ during the build.
 
-Use this metric for parent selection for clocks requiring low jitter
-(currently just PCM).
+Note that currently not all (sub)drivers are enabled for
+compile-testing, as they depend on independent fixes in other
+subsystems.
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 40 +++++++++++++++++++++++++++++++++++-----
- 1 file changed, 35 insertions(+), 5 deletions(-)
+To be queued in clk-renesas-for-v4.13.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 81ecd4c..c7ee951 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -530,6 +530,7 @@ struct bcm2835_clock_data {
- 
- 	bool is_vpu_clock;
- 	bool is_mash_clock;
-+	bool low_jitter;
- 
- 	u32 tcnt_mux;
- };
-@@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 							int parent_idx,
- 							unsigned long rate,
- 							u32 *div,
--							unsigned long *prate)
-+							unsigned long *prate,
-+							unsigned long *avgrate)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
-@@ -1136,11 +1138,34 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 	parent = clk_hw_get_parent_by_index(hw, parent_idx);
- 
- 	if (!(BIT(parent_idx) & data->set_rate_parent)) {
-+		unsigned long tmp_rate;
+v2:
+  - Add Acked-by,
+  - Remove ability to do compile-testing from all drivers that need
+    pending fixes:
+      - dummy of_clk_get_from_provider() for CONFIG_OF=n,
+      - dummy of_device_compatible_match() for CONFIG_OF=n,
+      - dummy rcar_rst_read_mode_pins() if rcar-rst is not built,
+      - new helper of_node_get_match_data().
+    These will be re-enabled for compile-testing later.
+
+This rework was sparked by a discussion with Olof about the Renesas
+clock driver dependencies.
+
+Before anyone responds "But the CLK_R8A779[0-4] symbols can be removed,
+just select CLK_RCAR_GEN2 directly!": the latter will go away, as the
+shared R-Car Gen2 clock driver (which depends on describing most clocks
+in DT, which is error prone, inflexible, and which prevents implementing
+module reset support) will be replaced by SoC-specific drivers using the
+CPG/MSSR driver core, as is already done on R-Car Gen3 and on RZ/G.
+Compatibility with old DTBs will be preserved through a new Kconfig
+option.
+---
+ drivers/clk/Makefile                   |   2 +-
+ drivers/clk/renesas/Kconfig            | 125 +++++++++++++++++++++++++++++----
+ drivers/clk/renesas/Makefile           |  37 +++++-----
+ drivers/clk/renesas/renesas-cpg-mssr.c |   8 +--
+ 4 files changed, 135 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index c19983afcb81c9d1..8ea0c55645b0db95 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -75,7 +75,7 @@ obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+-obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
++obj-y					+= renesas/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 2586dfa0026bb015..9c8b44db39f14326 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -1,20 +1,115 @@
++config CLK_RENESAS
++	bool "Renesas SoC clock support" if COMPILE_TEST && !ARCH_RENESAS
++	default y if ARCH_RENESAS
++	select CLK_EMEV2 if ARCH_EMEV2
++	select CLK_RZA1 if ARCH_R7S72100
++	select CLK_R8A73A4 if ARCH_R8A73A4
++	select CLK_R8A7740 if ARCH_R8A7740
++	select CLK_R8A7743 if ARCH_R8A7743
++	select CLK_R8A7745 if ARCH_R8A7745
++	select CLK_R8A7778 if ARCH_R8A7778
++	select CLK_R8A7779 if ARCH_R8A7779
++	select CLK_R8A7790 if ARCH_R8A7790
++	select CLK_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
++	select CLK_R8A7792 if ARCH_R8A7792
++	select CLK_R8A7794 if ARCH_R8A7794
++	select CLK_R8A7795 if ARCH_R8A7795
++	select CLK_R8A7796 if ARCH_R8A7796
++	select CLK_SH73A0 if ARCH_SH73A0
 +
- 		*prate = clk_hw_get_rate(parent);
- 		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
- 
--		return bcm2835_clock_rate_from_divisor(clock, *prate,
--						       *div);
-+		tmp_rate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
-+		*avgrate = tmp_rate;
++if CLK_RENESAS
 +
-+		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
-+			unsigned long high, low;
-+			u32 int_div = *div & ~CM_DIV_FRAC_MASK;
++# SoC
++config CLK_EMEV2
++	bool "Emma Mobile EV2 clock support" if COMPILE_TEST
 +
-+			high = bcm2835_clock_rate_from_divisor(clock, *prate,
-+							       int_div);
-+			int_div += CM_DIV_FRAC_MASK + 1;
-+			low = bcm2835_clock_rate_from_divisor(clock, *prate,
-+							      int_div);
++config CLK_RZA1
++	bool
++	select CLK_RENESAS_CPG_MSTP
 +
-+			/*
-+			 * Return a value which is the maximum deviation
-+			 * below the ideal rate, for use as a metric.
-+			 */
-+			if ((tmp_rate - low) < (high - tmp_rate))
-+				tmp_rate = low;
-+			else
-+				tmp_rate -= high - tmp_rate;
-+		}
-+		return tmp_rate;
- 	}
++config CLK_R8A73A4
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7740
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7743
++	bool
++	select CLK_RCAR_GEN2_CPG
++
++config CLK_R8A7745
++	bool
++	select CLK_RCAR_GEN2_CPG
++
++config CLK_R8A7778
++	bool
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A7779
++	bool
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A7790
++	bool
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7791
++	bool
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7792
++	bool
++	select CLK_RCAR_GEN2
++
++config CLK_R8A7794
++	bool
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7795
++	bool
++	select CLK_RCAR_GEN3_CPG
++
++config CLK_R8A7796
++	bool
++	select CLK_RCAR_GEN3_CPG
++
++config CLK_SH73A0
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++
++# Family
++config CLK_RCAR_GEN2
++	bool
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_RCAR_GEN2_CPG
++	bool
++	select CLK_RENESAS_CPG_MSSR
++
++config CLK_RCAR_GEN3_CPG
++	bool
++	select CLK_RENESAS_CPG_MSSR
++
++
++# Generic
+ config CLK_RENESAS_CPG_MSSR
+ 	bool
+-	default y if ARCH_R8A7743
+-	default y if ARCH_R8A7745
+-	default y if ARCH_R8A7795
+-	default y if ARCH_R8A7796
++	select CLK_RENESAS_DIV6
  
- 	if (data->frac_bits)
-@@ -1167,6 +1192,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ config CLK_RENESAS_CPG_MSTP
+ 	bool
+-	default y if ARCH_R7S72100
+-	default y if ARCH_R8A73A4
+-	default y if ARCH_R8A7740
+-	default y if ARCH_R8A7778
+-	default y if ARCH_R8A7779
+-	default y if ARCH_R8A7790
+-	default y if ARCH_R8A7791
+-	default y if ARCH_R8A7792
+-	default y if ARCH_R8A7793
+-	default y if ARCH_R8A7794
+-	default y if ARCH_SH73A0
++
++config CLK_RENESAS_DIV6
++	bool "DIV6 clock support" if COMPILE_TEST
++
++endif # CLK_RENESAS
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 5b8fccf574787632..aa24c2f5078ca333 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -1,19 +1,22 @@
+-obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7743)		+= r8a7743-cpg-mssr.o rcar-gen2-cpg.o
+-obj-$(CONFIG_ARCH_R8A7745)		+= r8a7745-cpg-mssr.o rcar-gen2-cpg.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
+-obj-$(CONFIG_ARCH_R8A7796)		+= r8a7796-cpg-mssr.o rcar-gen3-cpg.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
++# SoC
++obj-$(CONFIG_CLK_EMEV2)			+= clk-emev2.o
++obj-$(CONFIG_CLK_RZA1)			+= clk-rz.o
++obj-$(CONFIG_CLK_R8A73A4)		+= clk-r8a73a4.o
++obj-$(CONFIG_CLK_R8A7740)		+= clk-r8a7740.o
++obj-$(CONFIG_CLK_R8A7743)		+= r8a7743-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7745)		+= r8a7745-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7778)		+= clk-r8a7778.o
++obj-$(CONFIG_CLK_R8A7779)		+= clk-r8a7779.o
++obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
++obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
  
- 	*div = curdiv << CM_DIV_FRAC_BITS;
- 	*prate = curdiv * best_rate;
-+	*avgrate = best_rate;
+-obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
++# Family
++obj-$(CONFIG_CLK_RCAR_GEN2)		+= clk-rcar-gen2.o
++obj-$(CONFIG_CLK_RCAR_GEN2_CPG)		+= rcar-gen2-cpg.o
++obj-$(CONFIG_CLK_RCAR_GEN3_CPG)		+= rcar-gen3-cpg.o
++
++# Generic
++obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o
+ obj-$(CONFIG_CLK_RENESAS_CPG_MSTP)	+= clk-mstp.o
++obj-$(CONFIG_CLK_RENESAS_DIV6)		+= clk-div6.o
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 51d4af0a53ec2d38..9ebe0bec42a8dbfc 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -627,25 +627,25 @@ static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
  
- 	return best_rate;
- }
-@@ -1178,6 +1204,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 	bool current_parent_is_pllc;
- 	unsigned long rate, best_rate = 0;
- 	unsigned long prate, best_prate = 0;
-+	unsigned long avgrate, best_avgrate = 0;
- 	size_t i;
- 	u32 div;
  
-@@ -1202,11 +1229,13 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
--							  &div, &prate);
-+							  &div, &prate,
-+							  &avgrate);
- 		if (rate > best_rate && rate <= req->rate) {
- 			best_parent = parent;
- 			best_prate = prate;
- 			best_rate = rate;
-+			best_avgrate = avgrate;
- 		}
- 	}
- 
-@@ -1216,7 +1245,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 	req->best_parent_hw = best_parent;
- 	req->best_parent_rate = best_prate;
- 
--	req->rate = best_rate;
-+	req->rate = best_avgrate;
- 
- 	return 0;
- }
-@@ -2025,6 +2054,7 @@ struct bcm2835_clk_desc {
- 		.int_bits = 12,
- 		.frac_bits = 12,
- 		.is_mash_clock = true,
-+		.low_jitter = true,
- 		.tcnt_mux = 23),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
- 		.name = "pwm",
+ static const struct of_device_id cpg_mssr_match[] = {
+-#ifdef CONFIG_ARCH_R8A7743
++#ifdef CONFIG_CLK_R8A7743
+ 	{
+ 		.compatible = "renesas,r8a7743-cpg-mssr",
+ 		.data = &r8a7743_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7745
++#ifdef CONFIG_CLK_R8A7745
+ 	{
+ 		.compatible = "renesas,r8a7745-cpg-mssr",
+ 		.data = &r8a7745_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7795
++#ifdef CONFIG_CLK_R8A7795
+ 	{
+ 		.compatible = "renesas,r8a7795-cpg-mssr",
+ 		.data = &r8a7795_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7796
++#ifdef CONFIG_CLK_R8A7796
+ 	{
+ 		.compatible = "renesas,r8a7796-cpg-mssr",
+ 		.data = &r8a7796_cpg_mssr_info,
 -- 
-1.9.1
+2.7.4
