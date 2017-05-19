@@ -1,81 +1,220 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Date: Thu, 18 May 2017 11:32:26 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Zhong Kaihua <zhongkaihua@huawei.com>,
-	Chen Jun <chenjun14@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: Hi3660: change to register crgctrl clock
- with CLK_OF_DECLARE_DRIVER
-Message-ID: <20170518093226.GA2125@mai>
-References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
- <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 3/5] clk: mvebu: ap806: introduce a new binding
+Date: Fri, 19 May 2017 17:58:03 +0200
+Message-Id: <fd62952c043aec1d87ff65d9d69105103a195908.1495209464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 18, 2017 at 09:50:46AM +0800, Leo Yan wrote:
-> The timer will register into system at very early phase at kernel boot;
-> if timer needs to use clock, the clock should be get ready in function
-> of_clk_init() so later the timer driver probe can retrieve clock
-> successfully. This is finished in below flow on arm64:
-> 
->   start_kernel()
->     `-> time_init()
->           `-> of_clk_init(NULL)    => register timer's clock
->           `-> clocksource_probe()  => register timer
-> 
-> On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
-> as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
-> sp804 timer probe returns failure due if cannot bind clock properly.
-> To fix the failure, this patch is to change crgctrl clock registration
-> from platform driver to CLK_OF_DECLARE_DRIVER method so the clocks can
-> be registered ahead with function of_clk_init() and then timer driver
-> can use it.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-> index fd5ce7f..4e5713b 100644
-> --- a/drivers/clk/hisilicon/clk-hi3660.c
-> +++ b/drivers/clk/hisilicon/clk-hi3660.c
-> @@ -547,10 +547,10 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
->  				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
->  				  clk_data);
->  }
-> +CLK_OF_DECLARE_DRIVER(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl",
-> +		      hi3660_clk_crgctrl_init);
->  
->  static const struct of_device_id hi3660_clk_match_table[] = {
-> -	{ .compatible = "hisilicon,hi3660-crgctrl",
-> -	  .data = hi3660_clk_crgctrl_init },
->  	{ .compatible = "hisilicon,hi3660-pctrl",
->  	  .data = hi3660_clk_pctrl_init },
->  	{ .compatible = "hisilicon,hi3660-pmuctrl",
+As for cp110, the initial intent when the binding of the ap806 system
+controller was to have one flat node. The idea being that what is
+currently a clock-only driver in drivers would become a MFD driver,
+exposing the clock, GPIO and pinctrl functionality. However, after taking
+a step back, this would lead to a messy binding. Indeed, a single node
+would be a GPIO controller, clock controller, pinmux controller, and
+more.
 
-Why not do the change for all the clocks and remove the
-hi3660_clk_match_table[]? and all the related platform driver code?
+This patch adopts a more classical solution of a top-level syscon node
+with sub-nodes for the individual devices. The main benefit will be to
+have each functional block associated to its own sub-node where we can
+put its own properties.
 
-That will be consistent with the other clk-hi* drivers.
+The introduction of the Armada 7K/8K is still in the early stage so the
+plan is to remove the old binding. However, we don't want to break the
+device tree compatibility for the few devices already in the field. For
+this we still keep the support of the legacy compatible string with a big
+warning in the kernel about updating the device tree.
 
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt | 20 +++++++++++++++-----
+ drivers/clk/mvebu/ap806-system-controller.c                               | 56 ++++++++++++++++++++++++++++++++++++++++++++------------
+ 2 files changed, 59 insertions(+), 17 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+index 3faab71dff9f..888c50e0d64f 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+@@ -7,6 +7,14 @@ registers giving access to numerous features: clocks, pin-muxing and
+ many other SoC configuration items. This DT binding allows to describe
+ this system controller.
+ 
++For the top level node:
++ - compatible: must be: "syscon", "simple-mfd";
++  - reg: register area of the AP806 system controller
++
++Clocks:
++-------
++
++
+ The Device Tree node representing the AP806 system controller provides
+ a number of clocks:
+ 
+@@ -17,15 +25,17 @@ a number of clocks:
+ 
+ Required properties:
+ 
+- - compatible: must be:
+-     "marvell,ap806-system-controller", "syscon"
+- - reg: register area of the AP806 system controller
++ - compatible: must be: "marvell,ap806-clock"
+  - #clock-cells: must be set to 1
+ 
+ Example:
+ 
+ 	syscon: system-controller@6f4000 {
+-		compatible = "marvell,ap806-system-controller", "syscon";
+-		#clock-cells = <1>;
++		compatible = "syscon", "simple-mfd";
+ 		reg = <0x6f4000 0x1000>;
++
++		ap_clk: clock {
++			compatible = "marvell,ap806-clock";
++			#clock-cells = <1>;
++		};
+ 	};
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 95ae16e203ea..fa2fbd2cef4a 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -44,7 +44,8 @@ static char *ap806_unique_name(struct device *dev, struct device_node *np,
+ 			(unsigned long long)addr, name);
+ }
+ 
+-static int ap806_syscon_clk_probe(struct platform_device *pdev)
++static int ap806_syscon_common_probe(struct platform_device *pdev,
++				     struct device_node *syscon_node)
+ {
+ 	unsigned int freq_mode, cpuclk_freq;
+ 	const char *name, *fixedclk_name;
+@@ -54,7 +55,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	u32 reg;
+ 	int ret;
+ 
+-	regmap = syscon_node_to_regmap(np);
++	regmap = syscon_node_to_regmap(syscon_node);
+ 	if (IS_ERR(regmap)) {
+ 		dev_err(dev, "cannot get regmap\n");
+ 		return PTR_ERR(regmap);
+@@ -110,7 +111,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	cpuclk_freq *= 1000 * 1000;
+ 
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+-	name = ap806_unique_name(dev, np, "cpu-cluster-0");
++	name = ap806_unique_name(dev, syscon_node, "cpu-cluster-0");
+ 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+@@ -118,7 +119,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 		goto fail0;
+ 	}
+ 
+-	name = ap806_unique_name(dev, np, "cpu-cluster-1");
++	name = ap806_unique_name(dev, syscon_node, "cpu-cluster-1");
+ 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
+@@ -127,7 +128,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Fixed clock is always 1200 Mhz */
+-	fixedclk_name = ap806_unique_name(dev, np, "fixed");
++	fixedclk_name = ap806_unique_name(dev, syscon_node, "fixed");
+ 	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
+ 						0, 1200 * 1000 * 1000);
+ 	if (IS_ERR(ap806_clks[2])) {
+@@ -136,7 +137,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* MSS Clock is fixed clock divided by 6 */
+-	name = ap806_unique_name(dev, np, "mss");
++	name = ap806_unique_name(dev, syscon_node, "mss");
+ 	ap806_clks[3] = clk_register_fixed_factor(NULL, name, fixedclk_name,
+ 						  0, 1, 6);
+ 	if (IS_ERR(ap806_clks[3])) {
+@@ -145,7 +146,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* SDIO(/eMMC) Clock is fixed clock divided by 3 */
+-	name = ap806_unique_name(dev, np, "sdio");
++	name = ap806_unique_name(dev, syscon_node, "sdio");
+ 	ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+ 						  fixedclk_name,
+ 						  0, 1, 3);
+@@ -175,17 +176,48 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static const struct of_device_id ap806_syscon_of_match[] = {
++static int ap806_syscon_legacy_probe(struct platform_device *pdev)
++{
++	dev_warn(&pdev->dev, FW_WARN "Using legacy device tree binding\n");
++	dev_warn(&pdev->dev, FW_WARN "Update your device tree:\n");
++	dev_warn(&pdev->dev, FW_WARN
++		 "This binding won't be supported in future kernel\n");
++
++	return ap806_syscon_common_probe(pdev, pdev->dev.of_node);
++
++}
++
++static int ap806_clock_probe(struct platform_device *pdev)
++{
++	return ap806_syscon_common_probe(pdev, pdev->dev.of_node->parent);
++}
++
++static const struct of_device_id ap806_syscon_legacy_of_match[] = {
+ 	{ .compatible = "marvell,ap806-system-controller", },
+ 	{ }
+ };
+ 
+-static struct platform_driver ap806_syscon_driver = {
+-	.probe = ap806_syscon_clk_probe,
++static struct platform_driver ap806_syscon_legacy_driver = {
++	.probe = ap806_syscon_legacy_probe,
+ 	.driver		= {
+ 		.name	= "marvell-ap806-system-controller",
+-		.of_match_table = ap806_syscon_of_match,
++		.of_match_table = ap806_syscon_legacy_of_match,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(ap806_syscon_legacy_driver);
++
++static const struct of_device_id ap806_clock_of_match[] = {
++	{ .compatible = "marvell,ap806-clock", },
++	{ }
++};
++
++static struct platform_driver ap806_clock_driver = {
++	.probe = ap806_clock_probe,
++	.driver		= {
++		.name	= "marvell-ap806-clock",
++		.of_match_table = ap806_clock_of_match,
+ 		.suppress_bind_attrs = true,
+ 	},
+ };
+-builtin_platform_driver(ap806_syscon_driver);
++builtin_platform_driver(ap806_clock_driver);
 -- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+git-series 0.9.1
