@@ -1,98 +1,93 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 2/3] dt-bindings: add bindings for rk312x clock controller
-Date: Wed, 17 May 2017 15:49:21 +0800
-Message-Id: <1495007362-10684-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1495007362-10684-1-git-send-email-zhangqing@rock-chips.com>
-References: <1495007362-10684-1-git-send-email-zhangqing@rock-chips.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 02/10] clk: renesas: Add r8a7790 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:45:57 +0200
+Message-Id: <1495183565-21679-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add devicetree bindings for Rockchip cru which found on
-Rockchip SoCs.
+Add all R-Car H2 Clock Pulse Generator Core Clock Outputs, as listed in
+Table 7.2a ("List of Clocks [R-Car H2]") of the R-Car Gen2 Hardware
+User's Manual rev. 2.00.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- .../bindings/clock/rockchip,rk312x-cru.txt         | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk312x-cru.txt
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7790-cpg-mssr.h | 52 ++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk312x-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk312x-cru.txt
+diff --git a/include/dt-bindings/clock/r8a7790-cpg-mssr.h b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
 new file mode 100644
-index 000000000000..4a862fe9bea3
+index 0000000000000000..1625b8bf34822b6e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk312x-cru.txt
-@@ -0,0 +1,56 @@
-+* Rockchip RK312X Clock and Reset Unit
++++ b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
+@@ -0,0 +1,52 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
 +
-+The RK312X clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
++#ifndef __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
 +
-+Required Properties:
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
-+- compatible: should be "rockchip,rk312x-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
++/* r8a7790 CPG Core Clocks */
++#define R8A7790_CLK_Z			0
++#define R8A7790_CLK_Z2			1
++#define R8A7790_CLK_ZG			2
++#define R8A7790_CLK_ZTR			3
++#define R8A7790_CLK_ZTRD2		4
++#define R8A7790_CLK_ZT			5
++#define R8A7790_CLK_ZX			6
++#define R8A7790_CLK_ZS			7
++#define R8A7790_CLK_HP			8
++#define R8A7790_CLK_I			9
++#define R8A7790_CLK_B			10
++#define R8A7790_CLK_LB			11
++#define R8A7790_CLK_P			12
++#define R8A7790_CLK_CL			13
++#define R8A7790_CLK_M2			14
++#define R8A7790_CLK_ADSP		15
++#define R8A7790_CLK_IMP			16
++#define R8A7790_CLK_ZB3			17
++#define R8A7790_CLK_ZB3D2		18
++#define R8A7790_CLK_DDR			19
++#define R8A7790_CLK_SDH			20
++#define R8A7790_CLK_SD0			21
++#define R8A7790_CLK_SD1			22
++#define R8A7790_CLK_SD2			23
++#define R8A7790_CLK_SD3			24
++#define R8A7790_CLK_MMC0		25
++#define R8A7790_CLK_MMC1		26
++#define R8A7790_CLK_MP			27
++#define R8A7790_CLK_SSP			28
++#define R8A7790_CLK_SSPRS		29
++#define R8A7790_CLK_QSPI		30
++#define R8A7790_CLK_CP			31
++#define R8A7790_CLK_RCAN		32
++#define R8A7790_CLK_R			33
++#define R8A7790_CLK_OSC			34
 +
-+Optional Properties:
-+
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/rk312x-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "ext_i2s" - external I2S clock - optional,
-+ - "gmac_clkin" - external GMAC clock - optional
-+
-+Example: Clock controller node:
-+
-+	cru: cru@20000000 {
-+		compatible = "rockchip,rk312x-cru";
-+		reg = <0x20000000 0x1000>;
-+		rockchip,grf = <&grf>;
-+
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+uart2: serial@20068000 {
-+		compatible = "rockchip,serial";
-+		reg = <0x20068000 0x100>;
-+		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-+		clock-frequency = <24000000>;
-+		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
-+		clock-names = "sclk_uart", "pclk_uart";
-+	};
++#endif /* __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__ */
 -- 
-1.9.1
+2.7.4
