@@ -1,36 +1,44 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <b7fab9142ae318f9188b93dfba0b6bd2b530a514.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
- <b7fab9142ae318f9188b93dfba0b6bd2b530a514.1493812478.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 4 May 2017 11:27:13 +0800
-Message-ID: <CAGb2v672x244T9OWg10Y0+kithOOxn9p1WFipmovDqjZOc4WaA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/20] clk: sunxi-ng: mux: Change pre-divider
- application function prototype
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170515171922.1069-1-linus.walleij@linaro.org>
+References: <20170515171922.1069-1-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 19 May 2017 17:37:48 +0200
+Message-ID: <CACRpkda0V8dcxgaFg5M3jEK+wgsWR8ndK=LYwLdnpqFeKwzCbQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5 v3] clk: Add Gemini SoC clock controller
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Cc: Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The current function name is a bit confusing, and doesn't really allow to
-> create an explicit function to reverse the operation.
->
-> We also for now change the parent rate through a pointer, while we don't
-> return anything.
->
-> In order to be less confusing, and easier to use for downstream users,
-> change the function name to something hopefully clearer, and return the
-> adjusted rate instead of changing the pointer.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Mon, May 15, 2017 at 7:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+> The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
+> controller that derive all clocks from a single crystal, using some
+> documented and some undocumented PLLs, half dividers, counters and
+> gates. This is a best attempt to construct a clock driver for the
+> clocks so at least we can gate off unused hardware and driver the
+> PCI bus clock.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Augment driver to probe directly from the system controller.
+> - Mike/Stephen: when you're happy with this please ACK it so I
+>   can merge it through ARM SoC. This is needed because of
+>   the mess of #include <dt-bindings/*> from the DT bindings
+>   that is then used all over the DTS files.
+
+Mike/Stephen:
+
+Can I have an ACK from either of you if this looks all right?
+
+I want to merge this through ARM SoC to get the dependencies
+for the DTS includes right.
+
+Yours,
+Linus Walleij
