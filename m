@@ -1,70 +1,56 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 4/6] ARM: sun8i: a83t: Add CCU device nodes
-Date: Fri, 19 May 2017 15:06:10 +0800
-Message-Id: <20170519070612.32159-5-wens@csie.org>
-In-Reply-To: <20170519070612.32159-1-wens@csie.org>
-References: <20170519070612.32159-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:60146 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751666AbdESJOX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:14:23 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 19 May 2017 11:14:12 +0200
+Message-Id: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have support for the A83T CCU, add a device node for it,
-and replace any existing placeholder clock phandles with the correct
-ones.
+	Hi Simon, Magnus,
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index c0a1e4f74b89..c9a5d07b2ada 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -162,13 +162,23 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		ccu: clock@1c20000 {
-+			compatible = "allwinner,sun8i-a83t-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc16Md512>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		pio: pinctrl@1c20800 {
- 			compatible = "allwinner,sun8i-a83t-pinctrl";
- 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01c20800 0x400>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -214,7 +224,8 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu 53>;
-+			resets = <&ccu 40>;
- 			status = "disabled";
- 		};
- 
+Hence this patch series implements this for the various R-Car Gen2
+DTSes that still need this (r8a7792.dtsi is OK).
+
+As this depends on "[PATCH 0/5] ARM: dts: rcar-gen2: Convert to new
+CPG/MSSR bindings", it cannot be applied yet, but it's never too early
+to gather Acked-by's ;-)
+
+Thanks!
+
+Geert Uytterhoeven (4):
+  ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
+
+ arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7793.dtsi | 125 ++++++++++++++++++-------------------
+ arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++-------------------
+ 4 files changed, 251 insertions(+), 272 deletions(-)
+
 -- 
-2.11.0
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
