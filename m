@@ -1,55 +1,27 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Mon, 8 May 2017 19:07:26 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
-	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 0/3] clk: introduce clk_bulk_get accessories
-Message-ID: <20170508110726.GA18153@b29396-OptiPlex-7040>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <20170422030419.GV7065@codeaurora.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Frank Wang <frank.wang@rock-chips.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, rui.zhang@intel.com, edubezval@gmail.com, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, charles.chen@rock-chips.com, cody.xie@rock-chips.com, kevan.lan@rock-chips.com, huangtao@rock-chips.com, rocky.hao@rock-chips.com, finley.xiao@rock-chips.com, zhangqing@rock-chips.com, wmc@rock-chips.com
+Subject: Re: [PATCH v2 2/4] arm: dts: rk322x: add operating-points-v2 property for cpu
+Date: Fri, 19 May 2017 13:26:40 +0200
+Message-ID: <3731211.JADOUzngTJ@phil>
+In-Reply-To: <1495016177-2413-3-git-send-email-frank.wang@rock-chips.com>
+References: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com> <1495016177-2413-3-git-send-email-frank.wang@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170422030419.GV7065@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 08:04:19PM -0700, Stephen Boyd wrote:
-> On 04/12, Dong Aisheng wrote:
-> > 
-> > Together with the err path handling for each clocks, it does make
-> > things a bit ugly.
-> > 
-> > Since we already have regulator_bulk_get accessories, i thought we
-> > probably could introduce clk_bulk_get as well to handle such case to
-> > ease the driver owners' life. 
-> > 
-> > Besides IMX cpufreq driver, there is also some similar cases
-> > in kernel which could befinit from this api as well.
-> > e.g.
-> > drivers/cpufreq/tegra124-cpufreq.c
-> > drivers/cpufreq/s3c2412-cpufreq.c
-> > sound/soc/samsung/smdk_spdif.c
-> > arch/arm/mach-omap1/serial.c
-> > ...
-> > 
-> > And actually, if we handle clocks more than 3, then it might be
-> > worthy to try, which there is quite many manay in kernel and
-> > that probably could save a lot codes.
-> > 
-> > This is a RFC patch intending to bring up the idea to discuss.
-> > 
+Am Mittwoch, 17. Mai 2017, 18:16:15 CEST schrieb Frank Wang:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
 > 
-> Idea seems fine to me. Please also add Russell King, as we need
-> an ack from him on the clk.h API changes.
+> This patch adds a new opp table for cpu on rk322x SoC.
 > 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Great! Thanks! And sorry to miss Russell King.
-Quite willing to add him to help review in the next series.
+applied for 4.13 after adapting the subject a bit
 
-Regards
-Dong Aisheng
+
+Thanks
+Heiko
