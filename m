@@ -1,136 +1,59 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 3/8] clk: sunxi-ng: Add class of phase clocks supporting MMC new timing modes
-Date: Wed,  3 May 2017 11:16:53 +0800
-Message-Id: <20170503031658.29299-4-wens@csie.org>
-In-Reply-To: <20170503031658.29299-1-wens@csie.org>
-References: <20170503031658.29299-1-wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sat, 20 May 2017 02:06:57 +0800
+In-Reply-To: <20170519180215.7lc7duueu74pt4kz@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-2-icenowy@aosc.io>
+ <20170519180215.7lc7duueu74pt4kz@flea.home>
+MIME-Version: 1.0
+Subject: Re: [RFC PATCH 01/11] dt-bindings: update the binding for Allwinner
+ H3 TVE support
+To: linux-arm-kernel@lists.infradead.org,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <ED64A56C-4FD3-4878-B67E-1501F20C7B8D@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMC clocks on newer SoCs, such as the A83T and H3, support the
-"new timing mode". Under this mode, the output of the clock is divided
-by 2, and the clock delays no longer apply.
-
-Due to how the clock tree is modeled and setup, we need to model
-this function in two places, the master mmc clock and the two
-child phase clocks. In the mmc clock, we can easily model the
-mode bit as an extra variable post-divider. In the phase clocks,
-we check the bit and return -ENOTSUPP if the bit is set, signaling
-that the phase clocks are not to be used.
-
-This patch introduces a class of phase clocks that checks the
-timing mode bit.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_phase.c | 47 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_phase.h | 16 ++++++++++++++
- 2 files changed, 63 insertions(+)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_phase.c b/drivers/clk/sunxi-ng/ccu_phase.c
-index 400c58ad72fd..e6ff7551c855 100644
---- a/drivers/clk/sunxi-ng/ccu_phase.c
-+++ b/drivers/clk/sunxi-ng/ccu_phase.c
-@@ -8,6 +8,7 @@
-  * the License, or (at your option) any later version.
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/clk-provider.h>
- #include <linux/spinlock.h>
- 
-@@ -124,3 +125,49 @@ const struct clk_ops ccu_phase_ops = {
- 	.get_phase	= ccu_phase_get_phase,
- 	.set_phase	= ccu_phase_set_phase,
- };
-+
-+/*
-+ * The MMC clocks on newer SoCs support the "new timing mode". Under
-+ * this mode, the output of the clock is divided by 2, and the clock
-+ * delays no longer apply.
-+ *
-+ * Due to how the clock tree is modeled and setup, we need to model
-+ * this function in two places, the master mmc clock and the two
-+ * child phase clocks. In the mmc clock, we can easily model the
-+ * mode bit as an extra variable post-divider. In the phase clocks,
-+ * we check the bit and return -ENOTSUPP if the bit is set, signaling
-+ * that the phase clocks are not to be used.
-+ *
-+ * We do not support runtime configuration of the modes. Instead a
-+ * mode is enforced at CCU probe time.
-+ */
-+#define CCU_MMC_NEW_TIMING_MODE	    BIT(30)
-+
-+static int ccu_phase_mmc_new_timing_get_phase(struct clk_hw *hw)
-+{
-+	struct ccu_phase *phase = hw_to_ccu_phase(hw);
-+	u32 reg;
-+
-+	reg = readl(phase->common.base + phase->common.reg);
-+	if (reg & CCU_MMC_NEW_TIMING_MODE)
-+		return -ENOTSUPP;
-+
-+	return ccu_phase_get_phase(hw);
-+}
-+
-+static int ccu_phase_mmc_new_timing_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct ccu_phase *phase = hw_to_ccu_phase(hw);
-+	u32 reg;
-+
-+	reg = readl(phase->common.base + phase->common.reg);
-+	if (reg & CCU_MMC_NEW_TIMING_MODE)
-+		return -ENOTSUPP;
-+
-+	return ccu_phase_set_phase(hw, degrees);
-+}
-+
-+const struct clk_ops ccu_phase_mmc_new_timing_ops = {
-+	.get_phase	= ccu_phase_mmc_new_timing_get_phase,
-+	.set_phase	= ccu_phase_mmc_new_timing_set_phase,
-+};
-diff --git a/drivers/clk/sunxi-ng/ccu_phase.h b/drivers/clk/sunxi-ng/ccu_phase.h
-index 75a091a4c565..c514d1798cdd 100644
---- a/drivers/clk/sunxi-ng/ccu_phase.h
-+++ b/drivers/clk/sunxi-ng/ccu_phase.h
-@@ -38,6 +38,20 @@ struct ccu_phase {
- 		}							\
- 	}
- 
-+#define SUNXI_CCU_PHASE_MMC_NEW_TIMING(_struct, _name, _parent, _reg,	\
-+				       _shift, _width, _flags)		\
-+	struct ccu_phase _struct = {					\
-+		.shift	= _shift,					\
-+		.width	= _width,					\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_phase_mmc_new_timing_ops, \
-+						      _flags),		\
-+		}							\
-+	}
-+
- static inline struct ccu_phase *hw_to_ccu_phase(struct clk_hw *hw)
- {
- 	struct ccu_common *common = hw_to_ccu_common(hw);
-@@ -47,4 +61,6 @@ static inline struct ccu_phase *hw_to_ccu_phase(struct clk_hw *hw)
- 
- extern const struct clk_ops ccu_phase_ops;
- 
-+extern const struct clk_ops ccu_phase_mmc_new_timing_ops;
-+
- #endif /* _CCU_PHASE_H_ */
--- 
-2.11.0
+Cgrkuo4gMjAxN+W5tDXmnIgyMOaXpSBHTVQrMDg6MDAg5LiK5Y2IMjowMjoxNSwgTWF4aW1lIFJp
+cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFRodSwg
+TWF5IDE4LCAyMDE3IGF0IDEyOjQzOjQ0QU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
+IC1PbiBTb0NzIG90aGVyIHRoYW4gdGhlIEEzMyBhbmQgVjNzLCB0aGVyZSBpcyBvbmUgbW9yZSBj
+bG9jawo+cmVxdWlyZWQ6Cj4+ICtGb3IgdGhlIGZvbGxvd2luZyBjb21wYXRpYmxlczoKPj4gKyAg
+ICogYWxsd2lubmVyLHN1bjVpLWExMy10Y29uCj4+ICsgICAqIGFsbHdpbm5lcixzdW42aS1hMzEt
+dGNvbgo+PiArICAgKiBhbGx3aW5uZXIsc3VuNmktYTMxcy10Y29uCj4+ICsgICAqIGFsbHdpbm5l
+cixzdW44aS1hMzMtdGNvbgo+PiArICAgKiBhbGx3aW5uZXIsc3VuOGktdjNzLXRjb24KPj4gK3Ro
+ZXJlIGlzIG9uZSBtb3JlIGNsb2NrIGFuZCBvbmUgbW9yZSBwcm9wZXJ0eSByZXF1aXJlZDoKPj4g
+KyAtIGNsb2NrczoKPj4gKyAgIC0gJ3Rjb24tY2gwJzogVGhlIGNsb2NrIGRyaXZpbmcgdGhlIFRD
+T04gY2hhbm5lbCAwCj4+ICsgLSBjbG9jay1vdXRwdXQtbmFtZXM6IE5hbWUgb2YgdGhlIHBpeGVs
+IGNsb2NrIGNyZWF0ZWQKPj4gKwo+PiArRm9yIHRoZSBmb2xsb3dpbmcgY29tcGF0aWJsZXM6Cj4+
+ICsgICAqIGFsbHdpbm5lcixzdW41aS1hMTMtdGNvbgo+PiArICAgKiBhbGx3aW5uZXIsc3VuNmkt
+YTMxLXRjb24KPj4gKyAgICogYWxsd2lubmVyLHN1bjZpLWEzMXMtdGNvbgo+PiArICAgKiBhbGx3
+aW5uZXIsc3VuOGktaDMtdGNvbjAKPj4gK3RoZXJlIGlzIG9uZSBtb3JlIGNsb2NrIHJlcXVpcmVk
+Ogo+PiAgICAgLSAndGNvbi1jaDEnOiBUaGUgY2xvY2sgZHJpdmluZyB0aGUgVENPTiBjaGFubmVs
+IDEKPgo+UHV0dGluZyBJRCdzIGluIHRoZSBjb21wYXRpYmxlIG5hbWUgaXMgdXN1YWxseSBhIGJh
+ZCBpZGVhLiBXaGF0IGlzIHRoZQo+ZGlmZmVyZW5jZSBiZXR3ZWVuIHRoZSB0d28/IE9ubHkgdGhh
+dCB0aGUgc2Vjb25kIG9uZSBkb2Vzbid0IGhhdmUgYQo+Y2xvY2s/CgpZZXMuCgo+Cj5UaGF0IHNl
+ZW1zIGhpZ2hseSB1bmxpa2VseS4gSG93IGRvZXMgaXQgZ2VuZXJhdGUgdGhlIHBpeGVsIGNsb2Nr
+Cj5mcmVxdWVuY3k/CgpZZXMgaXQgc2VlbXMgaW1wb3NzaWJsZSwgYnV0IGl0J3MgYWxzbyB0aGUg
+ZmFjdC4KClRoZXJlJ3Mgb25seSBvbmUgQ0xLX1RDT04gaW4gSDMvNSwgd2hpY2ggaXMgZm9yIFRD
+T04wLgoKSXQncyBwb3NzaWJsZSB0aGF0IGxjZC1jaDEgY2xrIGlzIENMS19UVkUsIGJ1dCBpdCdz
+IHN0aWxsIGEgd2VpcmQgc2l0dWF0aW9uIC0tCkFsdGhvdWdoIHdlIGhhdmUgYSBsY2QtY2gxIGNs
+b2NrLCB3ZSBjYW5ub3QgdG91Y2ggaXQsIG90aGVyd2lzZQp0aGUgVFZFIHdpbGwgcmVmdXNlIHRv
+IHdvcmsgKHRoZSBUVkUgY2FuIG9ubHkgd29yayB1bmRlciAyMTZNSHopLgoKPgo+TWF4aW1lCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
+a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
+bmVsCg==
