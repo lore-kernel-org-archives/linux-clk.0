@@ -1,69 +1,92 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:60472 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751439AbdE0KX1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 27 May 2017 06:23:27 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 00/10] Initial Allwinner R40 support
-Date: Sat, 27 May 2017 18:22:58 +0800
-Message-Id: <20170527102308.1988-1-icenowy@aosc.io>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:33168 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753545AbdESJDe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:03:34 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/5] ARM: dts: rcar-gen2: Convert to new CPG/MSSR bindings
+Date: Fri, 19 May 2017 11:03:15 +0200
+Message-Id: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is the first non-RFC version of this patchset, which added basical
-support including I2C, UART and MMC to the mainline Linux.
+	Hi Simon, Magnus,
 
-The pinctrl driver of A20 is also merged into the one of A10 before
-R40 support is added into the A10 driver.
+Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
+clk-mstp, and clk-div6 drivers, which depend on most clocks being
+described in DT.  Especially the module (MSTP) clocks are cumbersome and
+error prone, due to 3 arrays (clocks, clock-indices, and
+clock-output-names) to be kept in sync. In addition, the clk-mstp driver
+cannot be extended easily to also support module resets, which are
+provided by the same hardware module.
 
-Chen-Yu Tsai (2):
-  ARM: dts: sun8i: Add basic dtsi file for Allwinner R40
-  ARM: dts: sun8i: Add board dts file for Banana Pi M2 Ultra
+Hence when developing support for R-Car Gen3 SoCs, another approach was
+chosen, which led to the CPG/MSSR driver core, and SoC-specific
+subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
 
-Icenowy Zheng (8):
-  arm: sunxi: add support for R40 SoC
-  pinctrl: sunxi: Add SoC ID definitions for A10, A20 and R40 SoCs
-  pinctrl: sunxi: add A20 support to A10 driver
-  pinctrl: sunxi: drop dedicated A20 driver
-  dt-bindings: add compatible string for Allwinner R40 pinctrl
-  pinctrl: sunxi: add support of R40 to A10 pinctrl driver
-  dt-bindings: add compatible string for Allwinner R40 CCU
-  clk: sunxi-ng: support R40 SoC
+This series complements the series "[PATCH v2 00/10] clk: renesas:
+rcar-gen2: Add new CPG/MSSR drivers", and converts the various R-Car
+Gen2 DTSes to migrate to the new CPG/MSSR drivers.
 
- Documentation/arm/sunxi/README                     |    6 +
- Documentation/devicetree/bindings/arm/sunxi.txt    |    1 +
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  157 +++
- arch/arm/boot/dts/sun8i-r40.dtsi                   |  408 +++++++
- arch/arm/mach-sunxi/sunxi.c                        |    1 +
- drivers/clk/sunxi-ng/Kconfig                       |   10 +
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c               | 1153 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h               |   68 ++
- drivers/pinctrl/sunxi/Kconfig                      |    6 +-
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |  449 ++++++--
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c          | 1056 ------------------
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |    3 +
- include/dt-bindings/clock/sun8i-r40-ccu.h          |  191 ++++
- include/dt-bindings/reset/sun8i-r40-ccu.h          |  129 +++
- 18 files changed, 2497 insertions(+), 1145 deletions(-)
- create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
- create mode 100644 arch/arm/boot/dts/sun8i-r40.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
- delete mode 100644 drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
- create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+Note that module reset descriptions will be added later.
+
+Dependencies:
+  - This has a hard dependency on "[PATCH v2 00/10] clk: renesas:
+    rcar-gen2: Add new CPG/MSSR drivers", which is planned to be queued
+    for v4.13.
+    Hence this series must _not_ be applied before v4.13-rc1!
+  - To avoid a small but harmless regression (Ethernet PHY falling back
+    to polling instead of using its IRQ), "of_mdio: Fix broken PHY IRQ
+    in case of probe deferral" should be applied first.
+
+For testing, this patch series, incl. all dependencies, are available in
+the topic/rcar2-cpg-mssr-v2 branch of my renesas-drivers git repository
+at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
+r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
+been compared before and after the conversion.
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  ARM: dts: r8a7790: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7791: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7792: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7793: Convert to new CPG/MSSR bindings
+  ARM: dts: r8a7794: Convert to new CPG/MSSR bindings
+
+ arch/arm/boot/dts/r8a7790-lager.dts   |   7 +-
+ arch/arm/boot/dts/r8a7790.dtsi        | 557 ++++++----------------------------
+ arch/arm/boot/dts/r8a7791-koelsch.dts |   4 +-
+ arch/arm/boot/dts/r8a7791-porter.dts  |   4 +-
+ arch/arm/boot/dts/r8a7791.dtsi        | 557 +++++++---------------------------
+ arch/arm/boot/dts/r8a7792-blanche.dts |   3 +-
+ arch/arm/boot/dts/r8a7792-wheat.dts   |   3 +-
+ arch/arm/boot/dts/r8a7792.dtsi        | 333 ++++----------------
+ arch/arm/boot/dts/r8a7793-gose.dts    |   4 +-
+ arch/arm/boot/dts/r8a7793.dtsi        | 459 +++++-----------------------
+ arch/arm/boot/dts/r8a7794-alt.dts     |   3 +-
+ arch/arm/boot/dts/r8a7794-silk.dts    |   3 +-
+ arch/arm/boot/dts/r8a7794.dtsi        | 528 +++++---------------------------
+ 13 files changed, 430 insertions(+), 2035 deletions(-)
 
 -- 
-2.12.2
+2.7.4
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
