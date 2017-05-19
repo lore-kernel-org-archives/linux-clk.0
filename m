@@ -1,62 +1,48 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v2 5/5] arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
-Date: Thu,  4 May 2017 17:24:01 +0530
-Message-Id: <1493898841-20583-6-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 18 May 2017 20:36:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/5 v3] dt-bindings: Augment Gemini for clocks, resets
+Message-ID: <20170519013649.trvu3ss6hc3edtcn@rob-hp-laptop>
+References: <20170515171839.953-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170515171839.953-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+On Mon, May 15, 2017 at 07:18:39PM +0200, Linus Walleij wrote:
+> This augments the platform bindings for the Gemini SoC to include
+> the fact that the system controller also provides clock and reset
+> lindes, and adds all the required include files.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Essentially a new patch from the two old patches adding
+>   bindings to the reset and clock controller separately.
+>   Instead add it all into the system controller and use one
+>   single compatible.
+> 
+> Rob: I need to merge this together in front of the device tree
+> changes that sprinkle references to the headers all over the
+> Gemini device trees, so if this sits good with you please ACK
+> it.
+> ---
+>  Documentation/devicetree/bindings/arm/gemini.txt | 24 +++++++++++++++-
+>  include/dt-bindings/clock/cortina,gemini-clock.h | 29 +++++++++++++++++++
+>  include/dt-bindings/reset/cortina,gemini-reset.h | 36 ++++++++++++++++++++++++
+>  3 files changed, 88 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
+>  create mode 100644 include/dt-bindings/reset/cortina,gemini-reset.h
 
-These configs are required for booting kernel in QCOM
-IPQ8074 boards.
-
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7c48028..e6aeb69 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -266,6 +266,7 @@ CONFIG_SPI_SPIDEV=m
- CONFIG_SPI_S3C64XX=y
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -439,6 +440,7 @@ CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_RK808=y
- CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_QCOM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Acked-by: Rob Herring <robh@kernel.org>
