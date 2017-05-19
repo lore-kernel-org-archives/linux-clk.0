@@ -1,114 +1,178 @@
-Return-Path: <dongas86@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVDOor0E2cjEKO+=Pm+1MGO4BibGTdULPvPKd390fTxuw@mail.gmail.com>
-References: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
- <1494252233-21074-2-git-send-email-aisheng.dong@nxp.com> <CAMuHMdVDOor0E2cjEKO+=Pm+1MGO4BibGTdULPvPKd390fTxuw@mail.gmail.com>
-From: Dong Aisheng <dongas86@gmail.com>
-Date: Tue, 9 May 2017 20:14:35 +0800
-Message-ID: <CAA+hA=TaC2Mdekz1KSPpOGiFY1vKRd+CqLXGd1yb7iRP_j_tnQ@mail.gmail.com>
-Subject: Re: [PATCH V2 1/3] clk: add clk_bulk_get accessories
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Mark Brown <broonie@kernel.org>, Robin Gong <yibin.gong@nxp.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, anson.huang@nxp.com,
-	Bai Ping <ping.bai@nxp.com>, Leonard Crestez <leonard.crestez@nxp.com>,
-	Octavian Purdila <octavian.purdila@nxp.com>, Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40142 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbdESJOX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:14:23 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/4] ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 19 May 2017 11:14:13 +0200
+Message-Id: <1495185256-26674-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-On Mon, May 8, 2017 at 11:08 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Dong,
->
-> On Mon, May 8, 2017 at 4:03 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
->> --- /dev/null
->> +++ b/drivers/clk/clk-bulk.c
->> @@ -0,0 +1,165 @@
->
->> +int __must_check clk_bulk_get(struct device *dev, int num_clks,
->> +                             struct clk_bulk_data *clks)
->> +{
->> +       int ret;
->> +       int i;
->> +
->> +       for (i = 0; i < num_clks; i++)
->> +               clks[i].clk = NULL;
->> +
->> +       for (i = 0; i < num_clks; i++) {
->> +               clks[i].clk = clk_get(dev, clks[i].id);
->> +               if (IS_ERR(clks[i].clk)) {
->> +                       ret = PTR_ERR(clks[i].clk);
->> +                       dev_err(dev, "Failed to get clk '%s': %d\n",
->> +                               clks[i].id, ret);
->> +                       clks[i].clk = NULL;
->> +                       goto err;
->> +               }
->> +       }
->> +
->> +       return 0;
->> +
->> +err:
->> +       while (--i >= 0)
->> +               clk_put(clks[i].clk);
->
-> These are released in inverse order, which is good.
->
->> +
->> +       return ret;
->> +}
->> +EXPORT_SYMBOL(clk_bulk_get);
->> +
->> +void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i < num_clks; i++) {
->> +               clk_put(clks[i].clk);
->> +               clks[i].clk = NULL;
->
-> These aren't.
->
-> Typically resources are released in the inverse order. Not doing so may
-> cause subtle issues.
->
-> I can't come up with an example. but I'm quite sure the real world will find
-> one soon ;-)
->
-> The same is true for enable vs. disable, and prepare vs. unprepare.
->
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
+ 1 file changed, 66 insertions(+), 71 deletions(-)
 
-I thought of it before and was wondering whether it's necessary to do it
-as i believe it may be wrong for drivers to reply on the clk_bulk API to
-do some some magic ordering to make things run because the API does not
-guarantee it.
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 522f4f81d70601d8..e36d6dd1b086dbba 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1043,77 +1043,72 @@
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+-	clocks {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		/* External root clock */
+-		extal_clk: extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overriden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External PCIe clock - can be overridden by the board */
+-		pcie_bus_clk: pcie_bus {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/*
+-		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
+-		 * default. Boards that provide audio clocks should override them.
+-		 */
+-		audio_clk_a: audio_clk_a {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_b: audio_clk_b {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_c: audio_clk_c {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External SCIF clock */
+-		scif_clk: scif {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External USB clock - can be overridden by the board */
+-		usb_extal_clk: usb_extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
+-		};
+-
+-		/* External CAN clock */
+-		can_clk: can {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a7790-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&usb_extal_clk>;
+-			clock-names = "extal", "usb_extal";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-		};
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7790-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&usb_extal_clk>;
++		clock-names = "extal", "usb_extal";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
+ 	};
+ 
+ 	prr: chipid@ff000044 {
+-- 
+2.7.4
 
-But i do agree with you that it might be a common sense to release resource
-in inverse order, just harmless to do it!
-So i will make it in V3 if no objection from Maintainer later.
-
-Thanks for your suggestion!
-
-Regards
-Dong Aisheng
-
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
