@@ -1,43 +1,26 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 23 May 2017 10:18:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 1/7] clk: mvebu: cp110 fix name of the GOP gate clock
-Message-ID: <20170523151808.iz7jtqgdfbskfh4y@rob-hp-laptop>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
- <062f869fb140c2626efadef80f325d9f03c330f6.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Frank Wang <frank.wang@rock-chips.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, rui.zhang@intel.com, edubezval@gmail.com, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, charles.chen@rock-chips.com, cody.xie@rock-chips.com, kevan.lan@rock-chips.com, huangtao@rock-chips.com, rocky.hao@rock-chips.com, finley.xiao@rock-chips.com, zhangqing@rock-chips.com, wmc@rock-chips.com
+Subject: Re: [PATCH v2 1/4] arm: dts: rk322x: add some assigned-clocks
+Date: Fri, 19 May 2017 13:18:59 +0200
+Message-ID: <4506142.lmyXEeDPFG@phil>
+In-Reply-To: <1495016177-2413-2-git-send-email-frank.wang@rock-chips.com>
+References: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com> <1495016177-2413-2-git-send-email-frank.wang@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <062f869fb140c2626efadef80f325d9f03c330f6.1495208533.git-series.gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 19, 2017 at 05:55:19PM +0200, Gregory CLEMENT wrote:
-> Actually the GOP clock (bit 18) is not at all used for emmc but only
-> for GOP: let's fix the name.
+Am Mittwoch, 17. Mai 2017, 18:16:14 CEST schrieb Frank Wang:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
 > 
-> Changing the name in the device tree is not an issue because the name
-> itself is not used to reference the clock. Thanks to this the ABI remains
-> backward compatible.
+> Add CPLL, GPLL and some other assigned-clocks for rk322x SoC.
 > 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 6 +++---
->  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       | 2 +-
->  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        | 2 +-
->  drivers/clk/mvebu/cp110-system-controller.c                                | 5 +++--
->  4 files changed, 8 insertions(+), 7 deletions(-)
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+applied for 4.13 after adapting subject and commit message a bit
+
+
+Thanks
+Heiko
