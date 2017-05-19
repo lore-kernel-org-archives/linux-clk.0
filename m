@@ -1,57 +1,146 @@
-Return-Path: <Michael.Krummsdorf@tq-group.com>
-From: Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>
-To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-CC: Fabio Estevam <festevam@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam
-	<fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: AW: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-Date: Mon, 8 May 2017 09:53:28 +0000
-Message-ID: <ae7631748701472c837c225a8c62c9fc@desrvmail02.tq-net.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
- <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
- <20170505072529.a3z4gonsygg3wqfx@pengutronix.de>
- <a5bfc04e-15cf-2b24-17f9-c9b60c1052cc@i2se.com>
- <185bc71b-f986-9dd1-3a56-a525f2f09fc7@i2se.com>
- <20170505201039.uyk2ie6zyfrdafgo@pengutronix.de>
-In-Reply-To: <20170505201039.uyk2ie6zyfrdafgo@pengutronix.de>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH v3 00/11] Broadcom Stingray SOC Initial Support
+To: Anup Patel <anup.patel@broadcom.com>, Olof Johansson <olof@lixom.net>,
+ Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Oza Pawandeep
+ <oza.oza@broadcom.com>, Srinath Mannam <srinath.mannam@broadcom.com>,
+ Pramod Kumar <pramod.kumar@broadcom.com>,
+ Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+ <CAOesGMiwspTuVWp8nPcWK2MhuWh8x9XSkZWJE2x=FxTCtU47Sw@mail.gmail.com>
+ <CAALAos8sRb+cLeHLP4yuD5oXRP1RWn=PGCkPGEBq+6X+DdkuQg@mail.gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <f76fb782-66f2-e0e1-b526-80befe184c26@gmail.com>
+Date: Fri, 19 May 2017 11:38:35 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <CAALAos8sRb+cLeHLP4yuD5oXRP1RWn=PGCkPGEBq+6X+DdkuQg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Uwe,=20
+On 05/16/2017 09:24 PM, Anup Patel wrote:
+> On Wed, May 17, 2017 at 12:23 AM, Olof Johansson <olof@lixom.net> wrote:
+>> Hi,
+>>
+>>
+>>
+>> On Tue, May 16, 2017 at 4:30 AM, Anup Patel <anup.patel@broadcom.com> wrote:
+>>> This patchset adds initial support of Broadcom Stingray SOC
+>>> by reusing existing Broadcom iProc device drivers.
+>>>
+>>> Most of the patches in this patchset are DT patches except
+>>> the Stingray clock tree support which just one patch.
+>>>
+>>> This patchset is based on Linux-4.12-rc1 and it is also available
+>>> at stingray-v3 branch of https://github.com/Broadcom/arm64-linux.git
+>>>
+>>> Changes since v2:
+>>>  - Remove default bootargs from chosen DT node
+>>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
+>>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
+>>>
+>>> Changes since v1:
+>>>  - Rebased patches for Linux-4.12-rc1
+>>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+>>>  - Use ranges DT property to clear view of memory-layout
+>>>  - Make bcm-sr.h part of clock DT bindings patch
+>>>
+>>> Anup Patel (3):
+>>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
+>>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
+>>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+>>>
+>>> Oza Pawandeep (1):
+>>>   arm64: dts: Add I2C DT nodes for Stingray SoC
+>>>
+>>> Pramod Kumar (3):
+>>>   arm64: dts: Add NAND DT nodes for Stingray SOC
+>>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
+>>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
+>>>
+>>> Sandeep Tripathy (3):
+>>>   dt-bindings: clk: Extend binding doc for Stingray SOC
+>>>   clk: bcm: Add clocks for Stingray SOC
+>>>   arm64: dts: Add clock DT nodes for Stingray SOC
+>>>
+>>> Srinath Mannam (1):
+>>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+>>>
+>>>  .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
+>>>  .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
+>>>  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+>>>  arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+>>>  .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
+>>>  .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
+>>>  .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
+>>>  .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
+>>>  .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
+>>>  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
+>>>  drivers/clk/bcm/Kconfig                            |   8 +
+>>>  drivers/clk/bcm/Makefile                           |   1 +
+>>>  drivers/clk/bcm/clk-sr.c                           | 300 ++++++++++++++
+>>>  include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
+>>>  .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
+>>>  15 files changed, 1797 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+>>>  create mode 100644 drivers/clk/bcm/clk-sr.c
+>>>  create mode 100644 include/dt-bindings/clock/bcm-sr.h
+>>>  create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+>>
+>> Grouping as one patchset for review is fine, but when you submit this
+>> for merge you need to split it up:
+>>
+>> - Documentation/devicetree can go with the driver pieces or with the
+>> DT changes, your choice
+>> - DTS/DTSI changes should go through the Broadcom maintainers to arm-soc
+>> - clk changes should go to clk maintainers.
+> 
+> Only PATCH3 needs to go through clk maintainers rest all patches
+> are DT bindings document and DTS changes which can go through
+> Broadcom tree. Right ??
 
-> (adding Michael Krummsdorf who authored a different patch for the same
-> problem back in 2014 which Stefan found in TQ's patch stack.)
+Patch 2 and 3 should go through the clock maintainers, and I can take
+the remaining patches through the Broadcom ARM/ARM64 SoC pull requests,
+no problem.
 
-thanks for adding me.
-Back then I narrowed the issue down to two conditions:
-* ref_io had to be clock source and
-* ssp clock div had to be 1
+Unless there are specific changes requested which warrant a v4, I can
+coordinate with Stephen and Mike to make sure that they take the
+appropriate patches.
 
-Limiting ssp clock div to be at least 2 eliminated the error.
-So in the driver I capped clk_freq to 480 MHz / 2.
-I did not consider changing ref_io frequency.
+> 
+>>
+>> Also, there's usually no need to split up a DT introduction and having
+>> separate pieces for NAND/pinctrl/GPIO/etc: They can all go in the main
+>> DT submission patch.
+> 
+> Yes, we have already squashed DTS patches from same author into
+> one DTS patch except NAND, PINCTRL and GPIO patches.
+> 
+> The NAND, PINCTRL, and GPIO patches were not squashed into
+> one patch for easy review but since you suggest I will squash these
+> three DTS patches into one DTS patch.
+> 
+> Regards,
+> Anup
+> 
 
-Best regards,
-i.A. Michael Krummsdorf
-Entwicklung Standort Leipzig
-Tel. +49 341 308598-27, Fax +49 341 308598-11,
-Friedrich-List-Platz 2, 04103 Leipzig
-mailto:michael.krummsdorf@tq-group.com
-=20
-TQ-Systems GmbH
-M=FChlstra=DFe 2, Gut Delling, 82229 Seefeld
-Amtsgericht M=FCnchen, HRB 105018
-Sitz der Gesellschaft: Seefeld
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-www.tq-group.com
 
-Besuchen Sie uns:
-Intersolar Europe, M=FCnchen, 31. Mai - 2. Juni 2017, Halle B2, Stand B2.23=
-4
-MT-CONNECT, N=FCrnberg, 21. - 22. Juni 2017, Halle 10.1, Stand 10.1-116
+-- 
+Florian
