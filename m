@@ -1,88 +1,178 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: gxbb: expose UART clocks
-To: Helmut Klein <hgkr.klein@gmail.com>, mturquette@baylibre.com,
- sboyd@codeaurora.org
-References: <20170331165437.26227-1-hgkr.klein@gmail.com>
- <20170331165437.26227-2-hgkr.klein@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <95a5e461-a145-b301-564f-150aed2eea91@baylibre.com>
-Date: Tue, 23 May 2017 11:17:22 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170331165437.26227-2-hgkr.klein@gmail.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:38100 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750818AbdESJOX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:14:23 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 19 May 2017 11:14:14 +0200
+Message-Id: <1495185256-26674-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Helmut,
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-On 03/31/2017 06:54 PM, Helmut Klein wrote:
-> Expose the clock ids of the three none AO uarts to the dt-bindings
-> 
-> Signed-off-by: Helmut Klein <hgkr.klein@gmail.com>
-> ---
->  drivers/clk/meson/gxbb.h              | 6 +++---
->  include/dt-bindings/clock/gxbb-clkc.h | 3 +++
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index 8ee2022ce5d5..1edfaa5fe307 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -194,7 +194,7 @@
->  /* #define CLKID_SAR_ADC */
->  #define CLKID_SMART_CARD	  24
->  #define CLKID_RNG0		  25
-> -#define CLKID_UART0		  26
-> +/* CLKID_UART0 */
->  #define CLKID_SDHC		  27
->  #define CLKID_STREAM		  28
->  #define CLKID_ASYNC_FIFO	  29
-> @@ -216,7 +216,7 @@
->  #define CLKID_ADC		  45
->  #define CLKID_BLKMV		  46
->  #define CLKID_AIU		  47
-> -#define CLKID_UART1		  48
-> +/* CLKID_UART1 */
->  #define CLKID_G2D		  49
->  /* CLKID_USB0 */
->  /* CLKID_USB1 */
-> @@ -236,7 +236,7 @@
->  /* CLKID_USB0_DDR_BRIDGE */
->  #define CLKID_MMC_PCLK		  66
->  #define CLKID_DVIN		  67
-> -#define CLKID_UART2		  68
-> +/* CLKID_UART2 */
->  /* #define CLKID_SANA */
->  #define CLKID_VPU_INTR		  70
->  #define CLKID_SEC_AHB_AHB3_BRIDGE 71
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-> index 692846c7941b..7b329df47752 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -15,13 +15,16 @@
->  #define CLKID_SPI		34
->  #define CLKID_I2C		22
->  #define CLKID_SAR_ADC		23
-> +#define CLKID_UART0		26
->  #define CLKID_ETH		36
-> +#define CLKID_UART1		48
->  #define CLKID_USB0		50
->  #define CLKID_USB1		51
->  #define CLKID_USB		55
->  #define CLKID_HDMI_PCLK		63
->  #define CLKID_USB1_DDR_BRIDGE	64
->  #define CLKID_USB0_DDR_BRIDGE	65
-> +#define CLKID_UART2		68
->  #define CLKID_SANA		69
->  #define CLKID_GCLK_VENCI_INT0	77
->  #define CLKID_AO_I2C		93
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
+ 1 file changed, 66 insertions(+), 71 deletions(-)
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index f6314f701d91acd4..74d42c9b77f4a2a3 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1079,77 +1079,72 @@
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 	};
+ 
+-	clocks {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		/* External root clock */
+-		extal_clk: extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overriden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/*
+-		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
+-		 * default. Boards that provide audio clocks should override them.
+-		 */
+-		audio_clk_a: audio_clk_a {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_b: audio_clk_b {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_c: audio_clk_c {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External PCIe clock - can be overridden by the board */
+-		pcie_bus_clk: pcie_bus {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External SCIF clock */
+-		scif_clk: scif {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External USB clock - can be overridden by the board */
+-		usb_extal_clk: usb_extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
+-		};
+-
+-		/* External CAN clock */
+-		can_clk: can {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a7791-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&usb_extal_clk>;
+-			clock-names = "extal", "usb_extal";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-		};
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7791-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&usb_extal_clk>;
++		clock-names = "extal", "usb_extal";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
+ 	};
+ 
+ 	rst: reset-controller@e6160000 {
+-- 
+2.7.4
 
-I rebased on 4.12-rc1 and applied on next/headers.
-
-Thanks,
-Neil
