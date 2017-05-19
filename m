@@ -1,115 +1,84 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 04/10] clk: renesas: Add r8a7792 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:45:59 +0200
+Message-Id: <1495183565-21679-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20170504135006.16483-2-icenowy@aosc.io>
-References: <20170504135006.16483-1-icenowy@aosc.io>
- <20170504135006.16483-2-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 5 May 2017 11:35:53 +0800
-Message-ID: <CAGb2v67qVkQhsRoEb_EyX09KrgN7eQ756wSEVbnzuMf_tHRuhw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 01/10] arm: sunxi: add support for R40 SoC
-To: Icenowy Zheng <icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 4, 2017 at 9:49 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> From: Icenowy Zheng <icenowy@aosc.xyz>
+Add all R-Car V2H Clock Pulse Generator Core Clock Outputs, as listed in
+Table 7.2c ("List of Clocks [R-Car V2H]") of the R-Car Gen2 Hardware
+User's Manual rev. 2.00.
 
-Do you want to update your author email address?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7792-cpg-mssr.h | 43 ++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
 
->
-> Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
-> like A20.
->
-> Add support for it.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-Same here.
-
-For the subject, "ARM" should be uppercase.
-
-> ---
->  Documentation/arm/sunxi/README                  | 4 ++++
->  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
->  arch/arm/mach-sunxi/sunxi.c                     | 1 +
->  3 files changed, 6 insertions(+)
->
-> diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-> index d7b1f016bd62..25c814adcd47 100644
-> --- a/Documentation/arm/sunxi/README
-> +++ b/Documentation/arm/sunxi/README
-> @@ -75,6 +75,10 @@ SunXi family
->          + Datasheet
->            http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
->
-> +      - Allwinner R40 (sun8i)
-> +        + Datasheet Draft
-> +          http://linux-sunxi.org/File:Allwinner_R40_Datasheet_V0.1.pdf
-
-We have the official 1.0 version, don't we? Also please keep the README
-entries in alphabetical order
-
-
-Regards
-ChenYu
-
-> +
->      * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
->        - Allwinner A80
->          + Datasheet
-> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-> index d2c46449b4eb..b3ffe6cf821a 100644
-> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-> @@ -14,6 +14,7 @@ using one of the following compatible strings:
->    allwinner,sun8i-a83t
->    allwinner,sun8i-h2-plus
->    allwinner,sun8i-h3
-> +  allwinner-sun8i-r40
->    allwinner,sun9i-a80
->    allwinner,sun50i-a64
->    nextthing,gr8
-> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> index f44e3acb5c90..aea616759451 100644
-> --- a/arch/arm/mach-sunxi/sunxi.c
-> +++ b/arch/arm/mach-sunxi/sunxi.c
-> @@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
->         "allwinner,sun8i-h2-plus",
->         "allwinner,sun8i-h3",
->         "allwinner,sun8i-v3s",
-> +       "allwinner,sun8i-r40",
->         NULL,
->  };
->
-> --
-> 2.12.2
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/include/dt-bindings/clock/r8a7792-cpg-mssr.h b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..72ce85cb2f94b0ab
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7792 CPG Core Clocks */
++#define R8A7792_CLK_Z			0
++#define R8A7792_CLK_ZG			1
++#define R8A7792_CLK_ZTR			2
++#define R8A7792_CLK_ZTRD2		3
++#define R8A7792_CLK_ZT			4
++#define R8A7792_CLK_ZX			5
++#define R8A7792_CLK_ZS			6
++#define R8A7792_CLK_HP			7
++#define R8A7792_CLK_I			8
++#define R8A7792_CLK_B			9
++#define R8A7792_CLK_LB			10
++#define R8A7792_CLK_P			11
++#define R8A7792_CLK_CL			12
++#define R8A7792_CLK_M2			13
++#define R8A7792_CLK_IMP			14
++#define R8A7792_CLK_ZB3			15
++#define R8A7792_CLK_ZB3D2		16
++#define R8A7792_CLK_DDR			17
++#define R8A7792_CLK_SD			18
++#define R8A7792_CLK_MP			19
++#define R8A7792_CLK_QSPI		20
++#define R8A7792_CLK_CP			21
++#define R8A7792_CLK_CPEX		22
++#define R8A7792_CLK_RCAN		23
++#define R8A7792_CLK_R			24
++#define R8A7792_CLK_OSC			25
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__ */
+-- 
+2.7.4
