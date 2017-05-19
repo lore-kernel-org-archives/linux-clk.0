@@ -1,177 +1,125 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>
-CC: <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 3/4] dt-bindings: clk: add omap4 clkctrl definitions
-Date: Wed, 17 May 2017 18:50:08 +0300
-Message-ID: <1495036209-11298-4-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1495036209-11298-1-git-send-email-t-kristo@ti.com>
-References: <1495036209-11298-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 1/7] clk: mvebu: cp110 fix name of the GOP gate clock
+Date: Fri, 19 May 2017 17:55:19 +0200
+Message-Id: <062f869fb140c2626efadef80f325d9f03c330f6.1495208533.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Contains offsets for all omap4 clkctrl main and optional clocks.
+Actually the GOP clock (bit 18) is not at all used for emmc but only
+for GOP: let's fix the name.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
+Changing the name in the device tree is not an issue because the name
+itself is not used to reference the clock. Thanks to this the ABI remains
+backward compatible.
+
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- include/dt-bindings/clock/omap4.h | 146 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 146 insertions(+)
- create mode 100644 include/dt-bindings/clock/omap4.h
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 6 +++---
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       | 2 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        | 2 +-
+ drivers/clk/mvebu/cp110-system-controller.c                                | 5 +++--
+ 4 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/include/dt-bindings/clock/omap4.h b/include/dt-bindings/clock/omap4.h
-new file mode 100644
-index 0000000..e86c758
---- /dev/null
-+++ b/include/dt-bindings/clock/omap4.h
-@@ -0,0 +1,146 @@
-+/*
-+ * Copyright 2017 Texas Instruments, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#ifndef __DT_BINDINGS_CLK_OMAP4_H
-+#define __DT_BINDINGS_CLK_OMAP4_H
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+index 07dbb358182c..eb6cf44caa0f 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -45,7 +45,7 @@ The following clocks are available:
+    - 1 15	SATA
+    - 1 16	SATA USB
+    - 1 17	Main
+-   - 1 18	SD/MMC/GOP
++   - 1 18	GOP
+    - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
+    - 1 22	USB3H0
+    - 1 23	USB3H1
+@@ -65,7 +65,7 @@ Required properties:
+ 	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+ 	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+ 	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
++	"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
+ 	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 
+ Example:
+@@ -78,6 +78,6 @@ Example:
+ 		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+ 			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+ 			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
++			"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
+ 			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 	};
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index ac8df5201cd6..59259270964c 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -111,7 +111,7 @@
+ 					"cpm-gop-dp", "none", "cpm-pcie_x10",
+ 					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
+ 					"cpm-sata", "cpm-sata-usb", "cpm-main",
+-					"cpm-sd-mmc-gop", "none", "none",
++					"cpm-gop", "none", "none",
+ 					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
+ 					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 			};
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+index 7740a75a8230..046d3fe53cda 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+@@ -118,7 +118,7 @@
+ 					"cps-gop-dp", "none", "cps-pcie_x10",
+ 					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
+ 					"cps-sata", "cps-sata-usb", "cps-main",
+-					"cps-sd-mmc-gop", "none", "none",
++					"cps-gop", "none", "none",
+ 					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
+ 					"cps-usb3dev", "cps-eip150", "cps-eip197";
+ 			};
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 6b11d7b3e0e0..8f315c74997e 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -76,7 +76,7 @@ enum {
+ #define CP110_GATE_SATA			15
+ #define CP110_GATE_SATA_USB		16
+ #define CP110_GATE_MAIN			17
+-#define CP110_GATE_SDMMC_GOP		18
++#define CP110_GATE_GOP			18
+ #define CP110_GATE_SLOW_IO		21
+ #define CP110_GATE_USB3H0		22
+ #define CP110_GATE_USB3H1		23
+@@ -314,7 +314,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 		case CP110_GATE_GOP_DP:
+ 			of_property_read_string_index(np,
+ 						      "gate-clock-output-names",
+-						      CP110_GATE_SDMMC_GOP, &parent);
++						      CP110_GATE_GOP, &parent);
 +
-+#define OMAP4_CLKCTRL_OFFSET	0x20
-+#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
-+
-+/* mpuss clocks */
-+#define OMAP4_MPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* tesla clocks */
-+#define OMAP4_DSP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* abe clocks */
-+#define OMAP4_L4_ABE_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_AESS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_MCPDM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_DMIC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
-+#define OMAP4_MCASP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
-+#define OMAP4_MCBSP1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x48)
-+#define OMAP4_MCBSP2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x50)
-+#define OMAP4_MCBSP3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x58)
-+#define OMAP4_SLIMBUS1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x60)
-+#define OMAP4_TIMER5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x68)
-+#define OMAP4_TIMER6_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x70)
-+#define OMAP4_TIMER7_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x78)
-+#define OMAP4_TIMER8_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x80)
-+#define OMAP4_WD_TIMER3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x88)
-+
-+/* l4_ao clocks */
-+#define OMAP4_SMARTREFLEX_MPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_SMARTREFLEX_IVA_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_SMARTREFLEX_CORE_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
-+
-+/* l3_1 clocks */
-+#define OMAP4_L3_MAIN_1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* l3_2 clocks */
-+#define OMAP4_L3_MAIN_2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_GPMC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_OCMC_RAM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+
-+/* ducati clocks */
-+#define OMAP4_IPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* l3_dma clocks */
-+#define OMAP4_DMA_SYSTEM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* l3_emif clocks */
-+#define OMAP4_DMM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_EMIF1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_EMIF2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
-+
-+/* d2d clocks */
-+#define OMAP4_C2C_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* l4_cfg clocks */
-+#define OMAP4_L4_CFG_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_SPINLOCK_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_MAILBOX_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+
-+/* l3_instr clocks */
-+#define OMAP4_L3_MAIN_3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_L3_INSTR_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_OCP_WP_NOC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
-+
-+/* ivahd clocks */
-+#define OMAP4_IVA_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_SL2IF_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+
-+/* iss clocks */
-+#define OMAP4_ISS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_FDIF_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+
-+/* l3_dss clocks */
-+#define OMAP4_DSS_CORE_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* l3_gfx clocks */
-+#define OMAP4_GPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+/* l3_init clocks */
-+#define OMAP4_MMC1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_MMC2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_HSI_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
-+#define OMAP4_USB_HOST_HS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x58)
-+#define OMAP4_USB_OTG_HS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x60)
-+#define OMAP4_USB_TLL_HS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x68)
-+#define OMAP4_USB_HOST_FS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xd0)
-+#define OMAP4_OCP2SCP_USB_PHY_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xe0)
-+
-+/* l4_per clocks */
-+#define OMAP4_TIMER10_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_TIMER11_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_TIMER2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
-+#define OMAP4_TIMER3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
-+#define OMAP4_TIMER4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x48)
-+#define OMAP4_TIMER9_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x50)
-+#define OMAP4_ELM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x58)
-+#define OMAP4_GPIO2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x60)
-+#define OMAP4_GPIO3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x68)
-+#define OMAP4_GPIO4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x70)
-+#define OMAP4_GPIO5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x78)
-+#define OMAP4_GPIO6_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x80)
-+#define OMAP4_HDQ1W_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x88)
-+#define OMAP4_I2C1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xa0)
-+#define OMAP4_I2C2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xa8)
-+#define OMAP4_I2C3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xb0)
-+#define OMAP4_I2C4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xb8)
-+#define OMAP4_L4_PER_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xc0)
-+#define OMAP4_MCBSP4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xe0)
-+#define OMAP4_MCSPI1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xf0)
-+#define OMAP4_MCSPI2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xf8)
-+#define OMAP4_MCSPI3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x100)
-+#define OMAP4_MCSPI4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x108)
-+#define OMAP4_MMC3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x120)
-+#define OMAP4_MMC4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x128)
-+#define OMAP4_SLIMBUS2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x138)
-+#define OMAP4_UART1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x140)
-+#define OMAP4_UART2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x148)
-+#define OMAP4_UART3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x150)
-+#define OMAP4_UART4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x158)
-+#define OMAP4_MMC5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x160)
-+
-+/* l4_wkup clocks */
-+#define OMAP4_L4_WKUP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+#define OMAP4_WD_TIMER2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_GPIO1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
-+#define OMAP4_TIMER1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
-+#define OMAP4_COUNTER_32K_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x50)
-+#define OMAP4_KBD_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x78)
-+
-+/* emu_sys clocks */
-+#define OMAP4_DEBUGSS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
-+
-+#endif
+ 			break;
+ 		case CP110_GATE_XOR1:
+ 		case CP110_GATE_XOR0:
 -- 
-1.9.1
+git-series 0.9.1
