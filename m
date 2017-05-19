@@ -1,59 +1,88 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 16 May 2017 19:05:16 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: explicitly include linux/spinlock.h
-Message-ID: <20170516170516.d6uvqzhuswj7skjj@flea.home>
-References: <20170515102307.28743-1-tklauser@distanz.ch>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 06/10] clk: renesas: Add r8a7794 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:46:01 +0200
+Message-Id: <1495183565-21679-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3t557hjcbrutc5jj"
-In-Reply-To: <20170515102307.28743-1-tklauser@distanz.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Add all R-Car E2 Clock Pulse Generator Core Clock Outputs, as listed in
+Table 7.2d ("List of Clocks [R-Car E2]") of the R-Car Gen2 Hardware
+User's Manual rev. 2.00.
 
---3t557hjcbrutc5jj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7794-cpg-mssr.h | 47 ++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
 
-On Mon, May 15, 2017 at 12:23:07PM +0200, Tobias Klauser wrote:
-> ccu_reset.h and ccu_reset.c use spinlock_t and associated functions but
-> rely on implict inclusion of linux/spinlock.h which means that changes
-> in other headers could break the build. Thus, add an explicit include.
->=20
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---3t557hjcbrutc5jj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZGzFMAAoJEBx+YmzsjxAgzmMP/3VguDjCXX0e1tzATiSK93Si
-9yzlvcvuT8vVFqtgbycTPB/mfq16FUD0Kpj2m5c4xc1CjH7D6v+W0x4p4Tt6C7G2
-lgUyYPgJxgcIPE2Lj4JMFcXyOUNb1/NUIxIfIxXwfLRLg4O4JwVwJjOzs68e+lEz
-N4M0XP0yy4mnoH9iW6rII9bEsM97P4CPMOP/4uMiew/cfuQLxV3mbp8XGQdG3gZQ
-qUP4fK32eU9n5QAL1W6EBejscjE1hvVg37zcZSNckJxq+BSeUguU07QAAQL7JRtb
-7Lwh6uBnaX3ekVlC2p6bjbh+YS/y/f5K/0CRKGy3t2/gBkbU6yB1Hx/r8O4/JYwy
-F6YqqRLBgvlMnbupKxotE6pqi69/4JVLZ5u/p10EYyYeRsHMaMQ4DlKMVP1sKDMd
-nvpTFVQdsXHwNE5NchtEOFkou2XgvY3Zanv5QQQCTv8NhZT/eObSHObmd+5MJra6
-jMBWxuLkgH1rSF7GoQGvzB4pr03ZVRXZ9mGD0saD0pxBQkwABZOAzpC/I20Ay5TM
-6My+c77aQhOLnxyiUi/v6HLMpg2pxB+NI2wG7EjfeQzbIIIjuYb+hEeyDEfPgZNW
-vo9M0G77T+9C6go70W7w6eg9CyLf8nCZMdfSmUK8/5KUNBiNE8x/RodONv3mL4+g
-8mFCnLWH4S/j6acCSWEy
-=x7Fm
------END PGP SIGNATURE-----
-
---3t557hjcbrutc5jj--
+diff --git a/include/dt-bindings/clock/r8a7794-cpg-mssr.h b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..9d720311ae3a229a
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7794-cpg-mssr.h
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7794 CPG Core Clocks */
++#define R8A7794_CLK_Z2			0
++#define R8A7794_CLK_ZG			1
++#define R8A7794_CLK_ZTR			2
++#define R8A7794_CLK_ZTRD2		3
++#define R8A7794_CLK_ZT			4
++#define R8A7794_CLK_ZX			5
++#define R8A7794_CLK_ZS			6
++#define R8A7794_CLK_HP			7
++#define R8A7794_CLK_I			8
++#define R8A7794_CLK_B			9
++#define R8A7794_CLK_LB			10
++#define R8A7794_CLK_P			11
++#define R8A7794_CLK_CL			12
++#define R8A7794_CLK_CP			13
++#define R8A7794_CLK_M2			14
++#define R8A7794_CLK_ADSP		15
++#define R8A7794_CLK_ZB3			16
++#define R8A7794_CLK_ZB3D2		17
++#define R8A7794_CLK_DDR			18
++#define R8A7794_CLK_SDH			19
++#define R8A7794_CLK_SD0			20
++#define R8A7794_CLK_SD2			21
++#define R8A7794_CLK_SD3			22
++#define R8A7794_CLK_MMC0		23
++#define R8A7794_CLK_MP			24
++#define R8A7794_CLK_QSPI		25
++#define R8A7794_CLK_CPEX		26
++#define R8A7794_CLK_RCAN		27
++#define R8A7794_CLK_R			28
++#define R8A7794_CLK_OSC			29
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7794_CPG_MSSR_H__ */
+-- 
+2.7.4
