@@ -1,144 +1,133 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sat, 13 May 2017 21:23:07 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linus.walleij@linaro.org,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
-	sjaganat@codeaurora.org, sricharan@codeaurora.org,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-Message-ID: <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org>
- <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
- <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Fri, 19 May 2017 19:47:29 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [RFC PATCH 02/11] drm: sun4i: add support for H3 mixers
+Message-ID: <20170519174729.q5qk2vqlibzx3zrv@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-3-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
+In-Reply-To: <20170517164354.16399-3-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============8009321250339008674=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
 
-> 
-> 
-> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
-> > On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
-> > 
-[..]
-> > > +enum ipq8074_functions {
-> > 
-> > Please keep these sorted alphabetically.
-> 
-> Ok
-> 
-> > > +	msm_mux_gpio,
-> > > +	msm_mux_qpic_pad,
-> > > +	msm_mux_blsp5_i2c,
-> > > +	msm_mux_blsp5_spi,
-> > > +	msm_mux_wci20,
-> > 
-> > What does "20" mean here?
-> 
-> This is for Wireless Coex Interface. The same functionality can be muxed on
-> to different GPIOs. WCI2, is the 2nd edition of the WCI standard and 0, 1
-> are for the muxing to different GPIOs (alternate muxes).
-> 
-
-In other Qualcomm platforms the alternative muxes are denoted by letters
-(a,b,c...). Would you mind picking up this naming scheme, or do you see
-any problems with that? (E.g. wci2a in this case)
+--===============8009321250339008674==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f2htxhdcagrftz33"
+Content-Disposition: inline
 
 
-Btw, do you need any additional configuration for selecting alternative
-muxing or is that automagical these days?
+--f2htxhdcagrftz33
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > +	msm_mux_blsp3_spi3,
-> > > +	msm_mux_burn0,
-> > > +	msm_mux_pcm_zsi0,
-> > > +	msm_mux_blsp5_uart,
-> > > +	msm_mux_mac12,
-> > 
-> > What does "12" mean here?
-> 
-> The SoC has three MAC cores. Each core has two pins for the smart antenna
-> feature. macXY indicates the function select for MAC no. X and smart antenna
-> no. Y.
-> 
+On Thu, May 18, 2017 at 12:43:45AM +0800, Icenowy Zheng wrote:
+> From: Icenowy Zheng <icenowy@aosc.xyz>
+>=20
+> Allwinner H3 SoC has two mixers, one has 1 VI channel and 3 UI channels,
+> and the other has 1 VI and 1 UI.
+>=20
+> Add support for these two variants.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/=
+sun8i_mixer.c
+> index cb193c5f1686..d658a3a8159a 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> @@ -390,11 +390,29 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer=
+_cfg =3D {
+>  	.ui_num =3D 1,
+>  };
+> =20
+> +static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg =3D {
+> +	.vi_num =3D 1,
+> +	.ui_num =3D 3,
+> +};
+> +
+> +static const struct sun8i_mixer_cfg sun8i_h3_mixer1_cfg =3D {
+> +	.vi_num =3D 1,
+> +	.ui_num =3D 1,
+> +};
+> +
+>  static const struct of_device_id sun8i_mixer_of_table[] =3D {
+>  	{
+>  		.compatible =3D "allwinner,sun8i-v3s-de2-mixer",
+>  		.data =3D &sun8i_v3s_mixer_cfg,
+>  	},
+> +	{
+> +		.compatible =3D "allwinner,sun8i-h3-de2-mixer0",
+> +		.data =3D &sun8i_h3_mixer0_cfg
+> +	},
+> +	{
+> +		.compatible =3D "allwinner,sun8i-h3-de2-mixer1",
+> +		.data =3D &sun8i_h3_mixer1_cfg
+> +	},
 
-Ok
+So the only difference between the two is the number of ui planes?
 
-> > > +	msm_mux_blsp3_spi0,
-> > > +	msm_mux_burn1,
-> > > +	msm_mux_mac01,
-> > > +	msm_mux_qdss_cti_trig_out_b0,
-> > > +	msm_mux_qdss_cti_trig_in_b0,
-> > > +	msm_mux_qpic_pad4,
-> > 
-> > What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
-> > alternative muxings...?
-> 
-> This is for the NAND and LCD display. The pins listed are the 9 data pins.
-> 
+Why not create a property to give the number then, instead of a
+compatible?
 
-Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
-possible to reference a partial group in the DTS, if that's necessary)
+Maxime
 
-> > > +	msm_mux_blsp4_uart0,
-> > > +	msm_mux_blsp4_i2c0,
-> > > +	msm_mux_blsp4_spi0,
-> > > +	msm_mux_mac21,
-> > > +	msm_mux_qdss_cti_trig_out_b1,
-> > > +	msm_mux_qpic_pad5,
-> > > +	msm_mux_qdss_cti_trig_in_b1,
-> > > +	msm_mux_qpic_pad6,
-> > > +	msm_mux_qpic_pad7,
-> > > +	msm_mux_cxc0,
-> > > +	msm_mux_mac13,
-> > > +	msm_mux_qdss_cti_trig_in_a1,
-> > > +	msm_mux_qdss_cti_trig_out_a1,
-> > > +	msm_mux_wci22,
-> > > +	msm_mux_qdss_cti_trig_in_a0,
-> > > +	msm_mux_qpic_pad1,
-> > > +	msm_mux_qdss_cti_trig_out_a0,
-> > > +	msm_mux_qpic_pad2,
-> > > +	msm_mux_qpic_pad3,
-> > > +	msm_mux_qdss_traceclk_b,
-> > > +	msm_mux_qpic_pad0,
-> > > +	msm_mux_qdss_tracectl_b,
-> > > +	msm_mux_qpic_pad8,
-> > > +	msm_mux_pcm_zsi1,
-> > > +	msm_mux_qdss_tracedata_b,
-> > > +	msm_mux_led0,
-> > > +	msm_mux_pwm04,
-> > 
-> > What does "04" mean here?
-> 
-> There are 4 Pulse Width Modulation channels, pwmXY is pwm channel X and pin
-> Y.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-So Y is alternative mux? Can we use letters for this as well?
+--f2htxhdcagrftz33
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > 
-> > > +	msm_mux_led1,
-> > > +	msm_mux_pwm14,
-> > > +	msm_mux_led2,
-> > > +	msm_mux_pwm24,
-> > > +	msm_mux_pwm00,
-> > > +	msm_mux_blsp4_uart1,
-> > 
-> > Are uart0 vs uart1 alternative muxes?
-> 
-> These are two different uarts available at two independent pins.
-> 
+-----BEGIN PGP SIGNATURE-----
 
-Ok, then I'm happy with the naming of this :)
+iQIcBAEBAgAGBQJZHy+xAAoJEBx+YmzsjxAgpYAQAIHckqt0yEEt/ubflinJKhZQ
+uZCU3nWJNTyCfAPPjgsqivyEAsu8DJD5/k9dBcZns/9mdqD+KStAon7aspGSuoxq
+urt+7mvptBGNQPeByXT+C99oGOSJ8VsCv3MS1q10uDpfzB1VpdqfUI84xAU+piVf
+UuiQyshmwS8Nb7a9YR4QsYcTx9XLgUDWOj/q0s2QlVp9VWF7Xo4keRiLeZbtjQtj
+TCt/Ph7R86qZ2KH8N7A4LdKdRUTpyCaWl7Uengc+grVhg4wuHZRTyV9iFwmakJ+K
+GW4WE6TWvLRtljIrtB1jLHCmbnPiBrfD/xV+xScwZ/1Ng51d1mqHMyQMnud6qMQL
+gcIICikbrquy/MbNoz/s/f8beXRKVtkoNhRfIuaqTF1b0PdcNV0UgO/HY8EJOq0u
+24EupSafqjSsNTAl5c/+L/W/wNjg3dDSsoAnvPFrHZvPvYkzYA3VM4BLrrUyKPcJ
+37e5N5yh6IrFp5MnCvFh/CJNvsXHz4kfuTvFHYzs7hU3esvEstRh0YJua5DsrJRk
+fEewoJb+I+wbr6+usBu12AEG9OMQa92e5FHoY66yY2oYb21/o2C7PzjPtnWZn1v3
+ubxfAUsJiCsm1KtMNFbZ7IHevE6RDhcYAtM6MmdEBhkzYKZplNLbFz7iIvJCDvqs
+wSkwXRoj5/g7O2sCXcPA
+=XhaW
+-----END PGP SIGNATURE-----
 
-Thanks,
-Bjorn
+--f2htxhdcagrftz33--
+
+
+--===============8009321250339008674==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8009321250339008674==--
