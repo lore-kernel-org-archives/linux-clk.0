@@ -1,95 +1,123 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Pramod Kumar <pramodku@broadcom.com>
-Subject: [PATCH v2 08/11] arm64: dts: Add GPIO DT nodes for Stingray SOC
-Date: Mon, 15 May 2017 17:32:18 +0530
-Message-Id: <1494849741-21294-9-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
-References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
+	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
+	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>,
+	<dongas86@gmail.com>
+Subject: [PATCH V3 0/3] clk: introduce clk_bulk_get accessories
+Date: Fri, 19 May 2017 21:49:03 +0800
+Message-ID: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+These helper function allows drivers to get several clk consumers in
+one operation.  If any of the clk cannot be acquired then any clks
+that were got will be put before returning to the caller.
 
-The GPIOs on Stingray SOC are based on iProc GPIOs hence
-using this we add GPIO DT nodes for Stingray SOC.
+The idea firstly came out when i wanted to clean up and optimize
+imx6q-cpufreq driver which needs to handle a lot of clocks as it
+becomes a bit mess.
 
-Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+e.g. drivers/cpufreq/imx6q-cpufreq.c
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index c3a8cee..2b24d07 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -256,6 +256,14 @@
- 		ranges = <0x0 0x0 0x66400000 0x100000>;
- 
- 		#include "stingray-clock.dtsi"
-+
-+		gpio_crmu: gpio@66424800 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x00024800 0x4c>;
-+			ngpios = <6>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+		};
- 	};
- 
- 	hsls {
-@@ -266,6 +274,32 @@
- 
- 		#include "stingray-pinctrl.dtsi"
- 
-+		gpio_hsls: gpio@689d0000 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x000d0000 0x864>;
-+			ngpios = <151>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-ranges = <&pinmux 0 0 16>,
-+					<&pinmux 16 71 2>,
-+					<&pinmux 18 131 8>,
-+					<&pinmux 26 83 6>,
-+					<&pinmux 32 123 4>,
-+					<&pinmux 36 43 24>,
-+					<&pinmux 60 89 2>,
-+					<&pinmux 62 73 4>,
-+					<&pinmux 66 95 28>,
-+					<&pinmux 94 127 4>,
-+					<&pinmux 98 139 10>,
-+					<&pinmux 108 16 27>,
-+					<&pinmux 135 77 6>,
-+					<&pinmux 141 67 4>,
-+					<&pinmux 145 149 6>,
-+					<&pinmux 151 91 4>;
-+		};
-+
- 		uart0: uart@68a00000 {
- 			device_type = "serial";
- 			compatible = "snps,dw-apb-uart";
+You will see we need get 7 clocks during driver probe.
+(Add there will be more, e.g. pll1, pll1_bypass, pll1_bypass_src,
+in the future when adding busfreq support).
+
+static int imx6q_cpufreq_probe(struct platform_device *pdev)
+{
+....
+	arm_clk = clk_get(cpu_dev, "arm");
+	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
+	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
+	step_clk = clk_get(cpu_dev, "step");
+	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
+	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
+	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
+		dev_err(cpu_dev, "failed to get clocks\n");
+		ret = -ENOENT;
+		goto put_clk;
+	}
+
+	if (of_machine_is_compatible("fsl,imx6ul")) {
+		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
+		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
+		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
+			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
+			ret = -ENOENT;
+			goto put_clk;
+		}
+	}
+....
+put_clk: 
+        if (!IS_ERR(arm_clk))
+                clk_put(arm_clk);
+        if (!IS_ERR(pll1_sys_clk))
+                clk_put(pll1_sys_clk);
+	...........
+}
+
+Together with the err path handling for each clocks, it does make
+things a bit ugly.
+
+Since we already have regulator_bulk_get accessories, i thought we
+probably could introduce clk_bulk_get as well to handle such case to
+ease the driver owners' life. 
+
+Besides IMX cpufreq driver, there is also some similar cases
+in kernel which could befinit from this api as well.
+e.g.
+drivers/cpufreq/tegra124-cpufreq.c
+drivers/cpufreq/s3c2412-cpufreq.c
+sound/soc/samsung/smdk_spdif.c
+arch/arm/mach-omap1/serial.c
+...
+
+And actually, if we handle clocks more than 3, then it might be
+worthy to try, which there is quite many manay in kernel and
+that probably could save a lot codes.
+
+Comments are welcome and appreciated!
+
+Tested on MX6Q SabreSD board with CPUfreq stress.
+Also ran IA64 and m68k compiling test:
+make.cross ARCH=m68k 
+make.cross ARCH=ia64
+
+ChangeLog:
+v2->v3:
+ Only Patch 1 changed.
+ * release resource in reversed order in case an error according to
+   Geert Uytterhoeven's suggestion
+
+v1->v2:
+ * Most significant change is introducing clk-bulk.c to centrally
+   handle bulk_clks and fix !CONFIG_CLKDEV_LOOKUP platforms build break.
+   Other are comments fix, adding const annotation and etc.
+   Refer to individual patches for details.
+
+[v1] https://lkml.org/lkml/2017/4/11/335
+[v2] https://lkml.org/lkml/2017/5/8/276
+
+Dong Aisheng (3):
+  clk: add clk_bulk_get accessories
+  clk: add managed version of clk_bulk_get
+  cpufreq: imx6q: refine clk operations
+
+ drivers/clk/Makefile            |   2 +-
+ drivers/clk/clk-bulk.c          | 157 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-devres.c        |  36 +++++++++
+ drivers/cpufreq/imx6q-cpufreq.c | 119 ++++++++++++++----------------
+ include/linux/clk.h             | 132 +++++++++++++++++++++++++++++++++
+ 5 files changed, 379 insertions(+), 67 deletions(-)
+ create mode 100644 drivers/clk/clk-bulk.c
+
 -- 
 2.7.4
