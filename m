@@ -1,175 +1,64 @@
-Return-Path: <varada@codeaurora.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org,
- david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
- sjaganat@codeaurora.org, sricharan@codeaurora.org,
- Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org>
- <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
- <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
- <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
- <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
-Message-ID: <4a39c13b-378d-08b5-a2fc-d3bdb32d106f@codeaurora.org>
-Date: Mon, 15 May 2017 16:54:51 +0530
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sat, 20 May 2017 01:49:58 +0800
+In-Reply-To: <20170519174729.q5qk2vqlibzx3zrv@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-3-icenowy@aosc.io>
+ <20170519174729.q5qk2vqlibzx3zrv@flea.home>
 MIME-Version: 1.0
-In-Reply-To: <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Subject: Re: [linux-sunxi] Re: [RFC PATCH 02/11] drm: sun4i: add support for
+ H3 mixers
+To: maxime.ripard@free-electrons.com,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <695DFDD0-1925-433C-AB88-B90EE461C203@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 5/15/2017 2:35 PM, Varadarajan Narayanan wrote:
-> On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
->> On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
->>
->>> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
->>>> On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
->>>>
->> [..]
->>>>> +enum ipq8074_functions {
->>>>
->>>> Please keep these sorted alphabetically.
->>>
->>> Ok
->>>
->>>>> +    msm_mux_gpio,
->>>>> +    msm_mux_qpic_pad,
->>>>> +    msm_mux_blsp5_i2c,
->>>>> +    msm_mux_blsp5_spi,
->>>>> +    msm_mux_wci20,
->>>>
->>>> What does "20" mean here?
->>>
->>> This is for Wireless Coex Interface. The same functionality can be 
->>> muxed on
->>> to different GPIOs. WCI2, is the 2nd edition of the WCI standard and 
->>> 0, 1
->>> are for the muxing to different GPIOs (alternate muxes).
->>>
->>
->> In other Qualcomm platforms the alternative muxes are denoted by letters
->> (a,b,c...). Would you mind picking up this naming scheme, or do you see
->> any problems with that? (E.g. wci2a in this case)
-> 
-> Ok
-> 
->> Btw, do you need any additional configuration for selecting alternative
->> muxing or is that automagical these days?
-> 
-> No additional configuration is needed.
-> 
->>>>> +    msm_mux_blsp3_spi3,
->>>>> +    msm_mux_burn0,
->>>>> +    msm_mux_pcm_zsi0,
->>>>> +    msm_mux_blsp5_uart,
->>>>> +    msm_mux_mac12,
->>>>
->>>> What does "12" mean here?
->>>
->>> The SoC has three MAC cores. Each core has two pins for the smart 
->>> antenna
->>> feature. macXY indicates the function select for MAC no. X and smart 
->>> antenna
->>> no. Y.
->>>
->>
->> Ok
->>
->>>>> +    msm_mux_blsp3_spi0,
->>>>> +    msm_mux_burn1,
->>>>> +    msm_mux_mac01,
->>>>> +    msm_mux_qdss_cti_trig_out_b0,
->>>>> +    msm_mux_qdss_cti_trig_in_b0,
->>>>> +    msm_mux_qpic_pad4,
->>>>
->>>> What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
->>>> alternative muxings...?
->>>
->>> This is for the NAND and LCD display. The pins listed are the 9 data 
->>> pins.
->>>
->>
->> Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
->> possible to reference a partial group in the DTS, if that's necessary)
-> 
-> There are two sets of 9 pins, either of which can go to NAND or LCD.
-> Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
-> Is that ok?
-> 
->>>>> +    msm_mux_blsp4_uart0,
->>>>> +    msm_mux_blsp4_i2c0,
->>>>> +    msm_mux_blsp4_spi0,
->>>>> +    msm_mux_mac21,
->>>>> +    msm_mux_qdss_cti_trig_out_b1,
->>>>> +    msm_mux_qpic_pad5,
->>>>> +    msm_mux_qdss_cti_trig_in_b1,
->>>>> +    msm_mux_qpic_pad6,
->>>>> +    msm_mux_qpic_pad7,
->>>>> +    msm_mux_cxc0,
->>>>> +    msm_mux_mac13,
->>>>> +    msm_mux_qdss_cti_trig_in_a1,
->>>>> +    msm_mux_qdss_cti_trig_out_a1,
->>>>> +    msm_mux_wci22,
->>>>> +    msm_mux_qdss_cti_trig_in_a0,
->>>>> +    msm_mux_qpic_pad1,
->>>>> +    msm_mux_qdss_cti_trig_out_a0,
->>>>> +    msm_mux_qpic_pad2,
->>>>> +    msm_mux_qpic_pad3,
->>>>> +    msm_mux_qdss_traceclk_b,
->>>>> +    msm_mux_qpic_pad0,
->>>>> +    msm_mux_qdss_tracectl_b,
->>>>> +    msm_mux_qpic_pad8,
->>>>> +    msm_mux_pcm_zsi1,
->>>>> +    msm_mux_qdss_tracedata_b,
->>>>> +    msm_mux_led0,
->>>>> +    msm_mux_pwm04,
->>>>
->>>> What does "04" mean here?
->>>
->>> There are 4 Pulse Width Modulation channels, pwmXY is pwm channel X 
->>> and pin
->>> Y.
->>
->> So Y is alternative mux? Can we use letters for this as well?
-> 
-> Ok
-
-Sorry, actually they are not alternative muxes. There are 4 different 
-PWM instances. Each PWM instance can handle 'n' different GPIOs (for 
-example, that can be connected to LED etc.).
-
-Thanks
-Varada
-
->>>>> +    msm_mux_led1,
->>>>> +    msm_mux_pwm14,
->>>>> +    msm_mux_led2,
->>>>> +    msm_mux_pwm24,
->>>>> +    msm_mux_pwm00,
->>>>> +    msm_mux_blsp4_uart1,
->>>>
->>>> Are uart0 vs uart1 alternative muxes?
->>>
->>> These are two different uarts available at two independent pins.
->>>
->>
->> Ok, then I'm happy with the naming of this :)
->>
->> Thanks,
->> Bjorn
->>
-> 
-> Thanks
-> Varada
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum, a Linux Foundation Collaborative Project
+Cgrkuo4gMjAxN+W5tDXmnIgyMOaXpSBHTVQrMDg6MDAg5LiK5Y2IMTo0NzoyOSwgTWF4aW1lIFJp
+cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFRodSwg
+TWF5IDE4LCAyMDE3IGF0IDEyOjQzOjQ1QU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
+IEZyb206IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+IAo+PiBBbGx3aW5uZXIg
+SDMgU29DIGhhcyB0d28gbWl4ZXJzLCBvbmUgaGFzIDEgVkkgY2hhbm5lbCBhbmQgMyBVSQo+Y2hh
+bm5lbHMsCj4+IGFuZCB0aGUgb3RoZXIgaGFzIDEgVkkgYW5kIDEgVUkuCj4+IAo+PiBBZGQgc3Vw
+cG9ydCBmb3IgdGhlc2UgdHdvIHZhcmlhbnRzLgo+PiAKPj4gU2lnbmVkLW9mZi1ieTogSWNlbm93
+eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3Vu
+NGkvc3VuOGlfbWl4ZXIuYyB8IDE4ICsrKysrKysrKysrKysrKysrKwo+PiAgMSBmaWxlIGNoYW5n
+ZWQsIDE4IGluc2VydGlvbnMoKykKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+c3VuNGkvc3VuOGlfbWl4ZXIuYwo+Yi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuOGlfbWl4ZXIu
+Ywo+PiBpbmRleCBjYjE5M2M1ZjE2ODYuLmQ2NThhM2E4MTU5YSAxMDA2NDQKPj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL3N1bjRpL3N1bjhpX21peGVyLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L3N1bjRpL3N1bjhpX21peGVyLmMKPj4gQEAgLTM5MCwxMSArMzkwLDI5IEBAIHN0YXRpYyBjb25z
+dCBzdHJ1Y3Qgc3VuOGlfbWl4ZXJfY2ZnCj5zdW44aV92M3NfbWl4ZXJfY2ZnID0gewo+PiAgCS51
+aV9udW0gPSAxLAo+PiAgfTsKPj4gIAo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBzdW44aV9taXhl
+cl9jZmcgc3VuOGlfaDNfbWl4ZXIwX2NmZyA9IHsKPj4gKwkudmlfbnVtID0gMSwKPj4gKwkudWlf
+bnVtID0gMywKPj4gK307Cj4+ICsKPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc3VuOGlfbWl4ZXJf
+Y2ZnIHN1bjhpX2gzX21peGVyMV9jZmcgPSB7Cj4+ICsJLnZpX251bSA9IDEsCj4+ICsJLnVpX251
+bSA9IDEsCj4+ICt9Owo+PiArCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBz
+dW44aV9taXhlcl9vZl90YWJsZVtdID0gewo+PiAgCXsKPj4gIAkJLmNvbXBhdGlibGUgPSAiYWxs
+d2lubmVyLHN1bjhpLXYzcy1kZTItbWl4ZXIiLAo+PiAgCQkuZGF0YSA9ICZzdW44aV92M3NfbWl4
+ZXJfY2ZnLAo+PiAgCX0sCj4+ICsJewo+PiArCQkuY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIsc3Vu
+OGktaDMtZGUyLW1peGVyMCIsCj4+ICsJCS5kYXRhID0gJnN1bjhpX2gzX21peGVyMF9jZmcKPj4g
+Kwl9LAo+PiArCXsKPj4gKwkJLmNvbXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjhpLWgzLWRlMi1t
+aXhlcjEiLAo+PiArCQkuZGF0YSA9ICZzdW44aV9oM19taXhlcjFfY2ZnCj4+ICsJfSwKPgo+U28g
+dGhlIG9ubHkgZGlmZmVyZW5jZSBiZXR3ZWVuIHRoZSB0d28gaXMgdGhlIG51bWJlciBvZiB1aSBw
+bGFuZXM/CgpOb3Qgb25seS4sIGJ1dCBjdXJyZW50bHkgd2Ugb25seSBpbXBsZW1lbnRlZCB0aGlz
+LgoKTW9yZSBmdW5jdGlvbnMgZGlmZmVyLCBidXQgd2Ugc3RpbGwgZG9uJ3Qgc3VwcG9ydCB0aGVt
+Li4uCgo+Cj5XaHkgbm90IGNyZWF0ZSBhIHByb3BlcnR5IHRvIGdpdmUgdGhlIG51bWJlciB0aGVu
+LCBpbnN0ZWFkIG9mIGEKPmNvbXBhdGlibGU/Cj4KPk1heGltZQoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxp
+c3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZy
+YWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
