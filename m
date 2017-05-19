@@ -1,134 +1,106 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 0/20] drm: sun4i: Add support for the HDMI controller
-Date: Wed,  3 May 2017 13:59:37 +0200
-Message-Id: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 18 May 2017 18:37:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Anup Patel <anup.patel@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 03/11] clk: bcm: Add clocks for Stingray SOC
+Message-ID: <20170519013709.GD20170@codeaurora.org>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+ <1494071686-19098-4-git-send-email-anup.patel@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494071686-19098-4-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 05/06, Anup Patel wrote:
+> From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+> 
+> This patch adds support for Stingray clocks in iproc
+> ccf. The Stingray SOC has various plls based on iproc
+> pll architecture.
+> 
 
-Here is an attempt at getting the HDMI controller running.
+Does it have anything besides PLLs?
 
-This HDMI controller is found on a number of old Allwinner SoCs (A10, A10s,
-A20, A31).
+> +CLK_OF_DECLARE(sr_genpll0_clk, "brcm,sr-genpll0",
+> +				sr_genpll0_clk_init);
+> +
+> +static const struct iproc_pll_ctrl genpll3 = {
+> +	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+> +		IPROC_CLK_PLL_NEEDS_SW_CFG,
+> +	.aon = AON_VAL(0x0, 1, 19, 18),
+> +	.reset = RESET_VAL(0x0, 12, 11),
+> +	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
+> +	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
+> +	.ndiv_int = REG_VAL(0x10, 20, 10),
+> +	.ndiv_frac = REG_VAL(0x10, 0, 20),
+> +	.pdiv = REG_VAL(0x14, 0, 4),
+> +	.status = REG_VAL(0x30, 12, 1),
+> +};
+> +
+> +static const struct iproc_clk_ctrl genpll3_clk[] = {
+> +	[BCM_SR_GENPLL3_HSLS_CLK] = {
+> +		.channel = BCM_SR_GENPLL3_HSLS_CLK,
+> +		.flags = IPROC_CLK_AON,
+> +		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+> +		.mdiv = REG_VAL(0x18, 0, 9),
+> +	},
+> +	[BCM_SR_GENPLL3_SDIO_CLK] = {
+> +		.channel = BCM_SR_GENPLL3_SDIO_CLK,
+> +		.flags = IPROC_CLK_AON,
+> +		.enable = ENABLE_VAL(0x4, 7, 1, 13),
+> +		.mdiv = REG_VAL(0x18, 10, 9),
+> +	},
+> +};
+> +
+> +static void __init sr_genpll3_clk_init(struct device_node *node)
+> +{
+> +	iproc_pll_clk_setup(node, &genpll3, NULL, 0, genpll3_clk,
+> +				ARRAY_SIZE(genpll3_clk));
+> +}
+> +CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
+> +			sr_genpll3_clk_init);
 
-This driver only supports for now the A10s because it was an easy target,
-being very close to the A13 that is already supported by our DRM driver.
+Can you make this a platform driver instead? Are all these clks
+really used for getting the interrupt and timers running?
 
-There's nothing out of the extraordinary there, except maybe the clock
-setup. All the internal clocks (TMDS, DDC) have been modeled using the
-common clock framework, the TMDS clock being the parent of the DDC one.
+> +
+> +static const struct iproc_pll_ctrl genpll4 = {
+> +	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+> +		IPROC_CLK_PLL_NEEDS_SW_CFG,
+> +	.aon = AON_VAL(0x0, 1, 25, 24),
+> +	.reset = RESET_VAL(0x0, 12, 11),
+> +	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
+> +	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
+> +	.ndiv_int = REG_VAL(0x10, 20, 10),
+> +	.ndiv_frac = REG_VAL(0x10, 0, 20),
+> +	.pdiv = REG_VAL(0x14, 0, 4),
+> +	.status = REG_VAL(0x30, 12, 1),
+> +};
+> +
+> +static const struct iproc_clk_ctrl genpll4_clk[] = {
+> +	[BCM_SR_GENPLL4_CCN_CLK] = {
+> +		.channel = BCM_SR_GENPLL4_CCN_CLK,
+> +		.flags = IPROC_CLK_AON,
+> +		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+> +		.mdiv = REG_VAL(0x18, 0, 9),
+> +	},
+> +};
+> +
 
-While this might sound overkill, other SoC have a different, external
-source for the DDC clock, which will be easier to support through the clock
-framework.
-
-The IP also supports audio (through an already supported i2s controller,
-and some missing configuration in the HDMI controller) and CEC. Both will
-come eventually.
-
-Let me know what you think!
-Maxime
-
-Changes from v1:
-  - Fixed typos in the CCU header and the HDMI code
-  - Reintroduced the comment for the backporch timings
-  - Renamed the hdmi node to hdmi, instead of hdmi0
-  - Added support for hdmi-connector
-  - Added a separate Kconfig option for the HDMI support
-  - Changed the TCON muxing configuration for an explicit call in the
-    TCON's "clients"
-  - Fixed the initialisation sequence that was clearing the clocks bits
-  - Constified the HDMI's structures and removed whitespaces errors
-  - Fixed an issue in the sunxi-ng code that was not reporting the proper
-    parent clock rate if it was modified
-  - Removed unused headers
-  - Removed CLK_SET_RATE_PARENT for the DDC clock
-  - Used the DDC address defines
-  - Removed the interlace flag that wasn't supported at the moment
-  - Moved most of the HDMI encoder init to the bind function like we do for
-    the other encoders
-  - Switched to drm_of_find_possible_crtcs
-  - Removed the extra printk that were still in my code
-  - Rebased on top of linux-next
-  - Removed the patch changing the divider_round_rate prototype to
-    introduce a new function instead that takes the parent clock to
-    evaluate
-  - Added a clk_set_rate for the hdmi module clock
-  - Fixed the V_TOTAL TCON ch0 calculation to be consistent with ch1's
-  - Defined all registers, and remove the TODOs
-  - Fixed the EDID issues by increasing the timeout.
-  - Added an atomic_check to prevent the DBLCLK modes to be used, as it is
-    not supported yet
-  - Updated the binding to add the interrupts and DMA channels
-
-Maxime Ripard (20):
-  clk: divider: Make divider_round_rate take the parent clock
-  clk: sunxi-ng: Pass the parent and a pointer to the clocks round rate
-  clk: sunxi-ng: div: Switch to divider_round_rate
-  clk: sunxi-ng: mux: Don't just rely on the parent for CLK_SET_RATE_PARENT
-  clk: sunxi-ng: mux: split out the pre-divider computation code
-  clk: sunxi-ng: mux: Change pre-divider application function prototype
-  clk: sunxi-ng: mux: Re-adjust parent rate
-  clk: sunxi-ng: sun5i: Export video PLLs
-  drm/sun4i: tcon: Add channel debug
-  drm/sun4i: tcon: Move the muxing out of the mode set function
-  drm/sun4i: tcon: Switch mux on only for composite
-  drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
-  drm/sun4i: tcon: Change vertical total size computation inconsistency
-  drm/sun4i: tcon: multiply the vtotal when not in interlace
-  drm/sun4i: Ignore the generic connectors for components
-  dt-bindings: display: sun4i: Add HDMI display bindings
-  dt-bindings: display: sun4i: Add allwinner,tcon-channel property
-  drm/sun4i: Add HDMI support
-  ARM: sun5i: a10s: Add the HDMI controller node
-  ARM: sun5i: a10s-olinuxino: Enable HDMI
-
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt |  90 +-
- arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts              |  29 +-
- arch/arm/boot/dts/sun5i-a10s.dtsi                             |  50 +-
- arch/arm/boot/dts/sun5i.dtsi                                  |   1 +-
- drivers/clk/clk-divider.c                                     |  26 +-
- drivers/clk/sunxi-ng/ccu-sun5i.h                              |   6 +-
- drivers/clk/sunxi-ng/ccu_div.c                                |  38 +-
- drivers/clk/sunxi-ng/ccu_mp.c                                 |  15 +-
- drivers/clk/sunxi-ng/ccu_mult.c                               |  19 +-
- drivers/clk/sunxi-ng/ccu_mux.c                                |  90 +-
- drivers/clk/sunxi-ng/ccu_mux.h                                |  11 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                                |   7 +-
- drivers/gpu/drm/sun4i/Kconfig                                 |   9 +-
- drivers/gpu/drm/sun4i/Makefile                                |   6 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                             |   8 +-
- drivers/gpu/drm/sun4i/sun4i_hdmi.h                            | 157 ++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c                    | 127 ++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c                        | 493 +++++++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c                   | 225 +++-
- drivers/gpu/drm/sun4i/sun4i_rgb.c                             |   1 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                            |  43 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                            |   4 +-
- drivers/gpu/drm/sun4i/sun4i_tv.c                              |   1 +-
- include/dt-bindings/clock/sun5i-ccu.h                         |   3 +-
- include/linux/clk-provider.h                                  |   4 +-
- 25 files changed, 1347 insertions(+), 116 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi.h
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
- create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-
-base-commit: ee91aaf669ac4fbb09283958f69d57dcad5c4963
 -- 
-git-series 0.8.11
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
