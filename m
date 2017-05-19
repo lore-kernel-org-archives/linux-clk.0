@@ -1,139 +1,89 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Zhong Kaihua <zhongkaihua@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 1/2] clk: Hi3660: change to register clock with CLK_OF_DECLARE
-Date: Wed, 17 May 2017 22:46:31 +0800
-Message-Id: <1495032392-19102-2-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1495032392-19102-1-git-send-email-leo.yan@linaro.org>
-References: <1495032392-19102-1-git-send-email-leo.yan@linaro.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 03/10] clk: renesas: Add r8a7791 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:45:58 +0200
+Message-Id: <1495183565-21679-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The timer will register into system at very early phase at kernel boot;
-if timer needs to use clock, the clock should be get ready in function
-of_clk_init() so later the timer driver probe can retrieve clock
-successfully. This is finished in below flow on arm64:
+Add all R-Car M2-W Clock Pulse Generator Core Clock Outputs, as listed
+in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+Hardware User's Manual rev. 2.00.
 
-  start_kernel()
-    `-> time_init()
-          `-> of_clk_init(NULL)    => register timer's clock
-          `-> clocksource_probe()  => register timer
-
-On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
-as platform driver rather than CLK_OF_DECLARE method. As result, sp804
-timer probe returns failure due if cannot bind clock properly. To fix
-the failure, this patch is to change crgctrl clock registration from
-platform driver to CLK_OF_DECLARE method so the clocks can be
-registered ahead with function of_clk_init() and then timer driver can
-use it.
-
-In the clock driver clk-hi3660.c, it's pointless to mix clock
-registration with platform driver mode and CLK_OF_DECLARE mode; this
-patch changes all clocks registration to CLK_OF_DECLARE mode to make
-code neat.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/clk/hisilicon/clk-hi3660.c | 48 ++++----------------------------------
- 1 file changed, 5 insertions(+), 43 deletions(-)
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7791-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index fd5ce7f..fc11719 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -465,6 +465,7 @@ static void hi3660_clk_iomcu_init(struct device_node *np)
- 				   ARRAY_SIZE(hi3660_iomcu_gate_sep_clks),
- 				   clk_data);
- }
-+CLK_OF_DECLARE(hi3660_clk_iomcu, "hisilicon,hi3660-iomcu", hi3660_clk_iomcu_init);
- 
- static void hi3660_clk_pmuctrl_init(struct device_node *np)
- {
-@@ -478,6 +479,7 @@ static void hi3660_clk_pmuctrl_init(struct device_node *np)
- 	hisi_clk_register_gate(hi3660_pmu_gate_clks,
- 			       ARRAY_SIZE(hi3660_pmu_gate_clks), clk_data);
- }
-+CLK_OF_DECLARE(hi3660_clk_pmuctrl, "hisilicon,hi3660-pmuctrl", hi3660_clk_pmuctrl_init);
- 
- static void hi3660_clk_pctrl_init(struct device_node *np)
- {
-@@ -490,6 +492,7 @@ static void hi3660_clk_pctrl_init(struct device_node *np)
- 	hisi_clk_register_gate(hi3660_pctrl_gate_clks,
- 			       ARRAY_SIZE(hi3660_pctrl_gate_clks), clk_data);
- }
-+CLK_OF_DECLARE(hi3660_clk_pctrl, "hisilicon,hi3660-pctrl", hi3660_clk_pctrl_init);
- 
- static void hi3660_clk_sctrl_init(struct device_node *np)
- {
-@@ -513,6 +516,7 @@ static void hi3660_clk_sctrl_init(struct device_node *np)
- 				  ARRAY_SIZE(hi3660_sctrl_divider_clks),
- 				  clk_data);
- }
-+CLK_OF_DECLARE(hi3660_clk_sctrl, "hisilicon,hi3660-sctrl", hi3660_clk_sctrl_init);
- 
- static void hi3660_clk_crgctrl_init(struct device_node *np)
- {
-@@ -547,46 +551,4 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
- 				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
- 				  clk_data);
- }
--
--static const struct of_device_id hi3660_clk_match_table[] = {
--	{ .compatible = "hisilicon,hi3660-crgctrl",
--	  .data = hi3660_clk_crgctrl_init },
--	{ .compatible = "hisilicon,hi3660-pctrl",
--	  .data = hi3660_clk_pctrl_init },
--	{ .compatible = "hisilicon,hi3660-pmuctrl",
--	  .data = hi3660_clk_pmuctrl_init },
--	{ .compatible = "hisilicon,hi3660-sctrl",
--	  .data = hi3660_clk_sctrl_init },
--	{ .compatible = "hisilicon,hi3660-iomcu",
--	  .data = hi3660_clk_iomcu_init },
--	{ }
--};
--
--static int hi3660_clk_probe(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--	struct device_node *np = pdev->dev.of_node;
--	void (*init_func)(struct device_node *np);
--
--	init_func = of_device_get_match_data(dev);
--	if (!init_func)
--		return -ENODEV;
--
--	init_func(np);
--
--	return 0;
--}
--
--static struct platform_driver hi3660_clk_driver = {
--	.probe          = hi3660_clk_probe,
--	.driver         = {
--		.name   = "hi3660-clk",
--		.of_match_table = hi3660_clk_match_table,
--	},
--};
--
--static int __init hi3660_clk_init(void)
--{
--	return platform_driver_register(&hi3660_clk_driver);
--}
--core_initcall(hi3660_clk_init);
-+CLK_OF_DECLARE(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl", hi3660_clk_crgctrl_init);
+diff --git a/include/dt-bindings/clock/r8a7791-cpg-mssr.h b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..e8823410c01c5a09
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7791 CPG Core Clocks */
++#define R8A7791_CLK_Z			0
++#define R8A7791_CLK_ZG			1
++#define R8A7791_CLK_ZTR			2
++#define R8A7791_CLK_ZTRD2		3
++#define R8A7791_CLK_ZT			4
++#define R8A7791_CLK_ZX			5
++#define R8A7791_CLK_ZS			6
++#define R8A7791_CLK_HP			7
++#define R8A7791_CLK_I			8
++#define R8A7791_CLK_B			9
++#define R8A7791_CLK_LB			10
++#define R8A7791_CLK_P			11
++#define R8A7791_CLK_CL			12
++#define R8A7791_CLK_M2			13
++#define R8A7791_CLK_ADSP		14
++#define R8A7791_CLK_ZB3			15
++#define R8A7791_CLK_ZB3D2		16
++#define R8A7791_CLK_DDR			17
++#define R8A7791_CLK_SDH			18
++#define R8A7791_CLK_SD0			19
++#define R8A7791_CLK_SD2			20
++#define R8A7791_CLK_SD3			21
++#define R8A7791_CLK_MMC0		22
++#define R8A7791_CLK_MP			23
++#define R8A7791_CLK_SSP			24
++#define R8A7791_CLK_SSPRS		25
++#define R8A7791_CLK_QSPI		26
++#define R8A7791_CLK_CP			27
++#define R8A7791_CLK_RCAN		28
++#define R8A7791_CLK_R			29
++#define R8A7791_CLK_OSC			30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__ */
 -- 
-1.9.1
+2.7.4
