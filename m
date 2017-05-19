@@ -1,44 +1,89 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	zhengxing@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 0/3] clk: rockchip: support clk controller for RK3128 SoC
-Date: Thu, 18 May 2017 10:16:56 +0800
-Message-Id: <1495073819-4160-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 May 2017 11:00:41 +0200
+Message-ID: <CAMuHMdVcQXfyY_mG1-iZ4F62JsxLgZwpEt8Sm=MVphFJdZFx1w@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] clk: renesas: rcar-gen2: Add new CPG/MSSR drivers
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver and clk ID\SRST ID it's also applies to the RK3126 SoC.
+On Fri, May 19, 2017 at 10:45 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
+> clk-mstp, and clk-div6 drivers, which depend on most clocks being
+> described in DT.  Especially the module (MSTP) clocks are cumbersome and
+> error prone, due to 3 arrays (clocks, clock-indices, and
+> clock-output-names) to be kept in sync. In addition, the clk-mstp driver
+> cannot be extended easily to also support module resets, which are
+> provided by the same hardware module.
+>
+> Hence when developing support for R-Car Gen3 SoCs, another approach was
+> chosen, which led to the CPG/MSSR driver core, and SoC-specific
+> subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
+>
+> This series introduces new clock drivers for all supported R-Car Gen2
+> SoCs, using the CPG/MSSR driver core, and the support for RZ/G1.  They
+> provide all clocks supported by the old driver, plus a few more.
+> The old driver can still be used through a Kconfig option, to preserve
+> backward compatibility with old DTBs.
+>
+> This series does not include the corresponding DTS updates.  These will
+> be posted as a separate series later.
 
-change in V2:
-rename the rk312x to rk3128. 
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
+>  drivers/clk/renesas/Kconfig                        |  22 +-
+>  drivers/clk/renesas/Makefile                       |   4 +
+>  drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 ++++++++++++++++++++
+>  drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++++++++
+>  drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
+>  drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 ++++++++++++++++++
+>  drivers/clk/renesas/renesas-cpg-mssr.c             |  29 +++
+>  drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
+>  include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
+>  include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
+>  include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
+>  include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
+>  include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
+>  14 files changed, 1341 insertions(+), 6 deletions(-)
 
-Elaine Zhang (3):
-  clk: rockchip: add dt-binding header for rk3128
-  dt-bindings: add bindings for rk3128 clock controller
-  clk: rockchip: add clock controller for rk3128
+BTW, the above diffstat should be combined with the diffstat for the DTS
+conversion:
 
- .../bindings/clock/rockchip,rk3128-cru.txt         |  56 ++
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-rk3128.c                  | 612 +++++++++++++++++++++
- include/dt-bindings/clock/rk3128-cru.h             | 281 ++++++++++
- 4 files changed, 950 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-rk3128.c
- create mode 100644 include/dt-bindings/clock/rk3128-cru.h
+ arch/arm/boot/dts/r8a7790-lager.dts   |   7 +-
+ arch/arm/boot/dts/r8a7790.dtsi        | 557 ++++++----------------------------
+ arch/arm/boot/dts/r8a7791-koelsch.dts |   4 +-
+ arch/arm/boot/dts/r8a7791-porter.dts  |   4 +-
+ arch/arm/boot/dts/r8a7791.dtsi        | 557 +++++++---------------------------
+ arch/arm/boot/dts/r8a7792-blanche.dts |   3 +-
+ arch/arm/boot/dts/r8a7792-wheat.dts   |   3 +-
+ arch/arm/boot/dts/r8a7792.dtsi        | 333 ++++----------------
+ arch/arm/boot/dts/r8a7793-gose.dts    |   4 +-
+ arch/arm/boot/dts/r8a7793.dtsi        | 459 +++++-----------------------
+ arch/arm/boot/dts/r8a7794-alt.dts     |   3 +-
+ arch/arm/boot/dts/r8a7794-silk.dts    |   3 +-
+ arch/arm/boot/dts/r8a7794.dtsi        | 528 +++++---------------------------
+ 13 files changed, 430 insertions(+), 2035 deletions(-)
 
--- 
-1.9.1
+Giving a net removal of 270 lines.
+That is, before removal of the backward compatibility of the drivers with
+old DTBs, which would remove ca. 500 more lines.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
