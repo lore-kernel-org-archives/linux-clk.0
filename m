@@ -1,402 +1,937 @@
-Return-Path: <geert@linux-m68k.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:32844 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752874AbdESJD0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:03:26 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 08/10] clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
-Date: Fri, 19 May 2017 10:46:03 +0200
-Message-Id: <1495183565-21679-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/5] ARM: dts: r8a7793: Convert to new CPG/MSSR bindings
+Date: Fri, 19 May 2017 11:03:19 +0200
+Message-Id: <1495184600-22745-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
+References: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a new R-Car M2-W/N Clock Pulse Generator / Module Standby and
-Software Reset driver, using the CPG/MSSR driver core.  This will enable
-support for module resets, which are not supported by the existing
-driver.
+Convert the R-Car M2-N SoC from the old "Renesas R-Car Gen2 Clock Pulse
+Generator (CPG)", "Renesas CPG DIV6 Clock", and "Renesas CPG Module Stop
+(MSTP) Clocks" DT bindings to the new unified "Renesas Clock Pulse
+Generator / Module Standby and Software Reset" DT bindings.
 
-The old driver can still be used through a Kconfig option, to preserve
-backward compatibility with old DTBs.
+This simplifies the DTS files, and allows to add support for reset
+control later.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - Rebase,
-  - Add more rationale.
----
- drivers/clk/renesas/Kconfig            |   5 +-
- drivers/clk/renesas/Makefile           |   1 +
- drivers/clk/renesas/r8a7791-cpg-mssr.c | 286 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c |  11 ++
- drivers/clk/renesas/renesas-cpg-mssr.h |   1 +
- 5 files changed, 302 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
+ arch/arm/boot/dts/r8a7793-gose.dts |   4 +-
+ arch/arm/boot/dts/r8a7793.dtsi     | 459 +++++++------------------------------
+ 2 files changed, 82 insertions(+), 381 deletions(-)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index beeeefc6e45b8ef7..9826ac6a7596fd69 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -21,7 +21,7 @@ if CLK_RENESAS
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 95e51b79c1d7fa6b..57088a03376ebc79 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -282,9 +282,7 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
  
- config CLK_RENESAS_LEGACY
- 	bool "Legacy DT clock support"
--	depends on CLK_R8A7790
-+	depends on CLK_R8A7790 || CLK_R8A7791
- 	default y
- 	help
- 	  Enable backward compatibility with old device trees describing a
-@@ -71,7 +71,8 @@ config CLK_R8A7790
+-	clocks = <&mstp7_clks R8A7793_CLK_DU0>,
+-		 <&mstp7_clks R8A7793_CLK_DU1>,
+-		 <&mstp7_clks R8A7793_CLK_LVDS0>,
++	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
+ 		 <&x13_clk>, <&x2_clk>;
+ 	clock-names = "du.0", "du.1", "lvds.0",
+ 		      "dclkin.0", "dclkin.1";
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 13b980f27bbc885f..da6d877c2d93f569 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -8,7 +8,7 @@
+  * kind, whether express or implied.
+  */
  
- config CLK_R8A7791
- 	bool
--	select CLK_RCAR_GEN2
-+	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
-+	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
+-#include <dt-bindings/clock/r8a7793-clock.h>
++#include <dt-bindings/clock/r8a7793-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/power/r8a7793-sysc.h>
+@@ -43,7 +43,7 @@
+ 			reg = <0>;
+ 			clock-frequency = <1500000000>;
+ 			voltage-tolerance = <1>; /* 1% */
+-			clocks = <&cpg_clocks R8A7793_CLK_Z>;
++			clocks = <&cpg CPG_CORE R8A7793_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
+ 			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
  
- config CLK_R8A7792
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index f0c622aadc6745bf..7f70a2a1c514e91f 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_CLK_R8A7745)		+= r8a7745-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7778)		+= clk-r8a7778.o
- obj-$(CONFIG_CLK_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_CLK_R8A7790)		+= r8a7790-cpg-mssr.o
-+obj-$(CONFIG_CLK_R8A7791)		+= r8a7791-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
-diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-new file mode 100644
-index 0000000000000000..c0b51f9bb2789350
---- /dev/null
-+++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-@@ -0,0 +1,286 @@
-+/*
-+ * r8a7791 Clock Pulse Generator / Module Standby and Software Reset
-+ *
-+ * Copyright (C) 2015-2017 Glider bvba
-+ *
-+ * Based on clk-rcar-gen2.c
-+ *
-+ * Copyright (C) 2013 Ideas On Board SPRL
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/soc/renesas/rcar-rst.h>
-+
-+#include <dt-bindings/clock/r8a7791-cpg-mssr.h>
-+
-+#include "renesas-cpg-mssr.h"
-+#include "rcar-gen2-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R8A7791_CLK_OSC,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+	CLK_USB_EXTAL,
-+
-+	/* Internal Core Clocks */
-+	CLK_MAIN,
-+	CLK_PLL0,
-+	CLK_PLL1,
-+	CLK_PLL3,
-+	CLK_PLL1_DIV2,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE
-+};
-+
-+static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal",     CLK_EXTAL),
-+	DEF_INPUT("usb_extal", CLK_USB_EXTAL),
-+
-+	/* Internal Core Clocks */
-+	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
-+	DEF_BASE(".pll0",       CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
-+	DEF_BASE(".pll1",       CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
-+	DEF_BASE(".pll3",       CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
-+
-+	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
-+
-+	/* Core Clock Outputs */
-+	DEF_BASE("z",    R8A7791_CLK_Z,    CLK_TYPE_GEN2_Z,    CLK_PLL0),
-+	DEF_BASE("lb",   R8A7791_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
-+	DEF_BASE("adsp", R8A7791_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
-+	DEF_BASE("sdh",  R8A7791_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
-+	DEF_BASE("sd0",  R8A7791_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-+	DEF_BASE("qspi", R8A7791_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
-+	DEF_BASE("rcan", R8A7791_CLK_RCAN, CLK_TYPE_GEN2_RCAN, CLK_USB_EXTAL),
-+
-+	DEF_FIXED("zg",     R8A7791_CLK_ZG,    CLK_PLL1,          3, 1),
-+	DEF_FIXED("zx",     R8A7791_CLK_ZX,    CLK_PLL1,          3, 1),
-+	DEF_FIXED("zs",     R8A7791_CLK_ZS,    CLK_PLL1,          6, 1),
-+	DEF_FIXED("hp",     R8A7791_CLK_HP,    CLK_PLL1,         12, 1),
-+	DEF_FIXED("i",      R8A7791_CLK_I,     CLK_PLL1,          2, 1),
-+	DEF_FIXED("b",      R8A7791_CLK_B,     CLK_PLL1,         12, 1),
-+	DEF_FIXED("p",      R8A7791_CLK_P,     CLK_PLL1,         24, 1),
-+	DEF_FIXED("cl",     R8A7791_CLK_CL,    CLK_PLL1,         48, 1),
-+	DEF_FIXED("m2",     R8A7791_CLK_M2,    CLK_PLL1,          8, 1),
-+	DEF_FIXED("zb3",    R8A7791_CLK_ZB3,   CLK_PLL3,          4, 1),
-+	DEF_FIXED("zb3d2",  R8A7791_CLK_ZB3D2, CLK_PLL3,          8, 1),
-+	DEF_FIXED("ddr",    R8A7791_CLK_DDR,   CLK_PLL3,          8, 1),
-+	DEF_FIXED("mp",     R8A7791_CLK_MP,    CLK_PLL1_DIV2,    15, 1),
-+	DEF_FIXED("cp",     R8A7791_CLK_CP,    CLK_EXTAL,         2, 1),
-+	DEF_FIXED("r",      R8A7791_CLK_R,     CLK_PLL1,      49152, 1),
-+	DEF_FIXED("osc",    R8A7791_CLK_OSC,   CLK_PLL1,      12288, 1),
-+
-+	DEF_DIV6P1("sd2",   R8A7791_CLK_SD2,   CLK_PLL1_DIV2, 0x078),
-+	DEF_DIV6P1("sd3",   R8A7791_CLK_SD3,   CLK_PLL1_DIV2, 0x26c),
-+	DEF_DIV6P1("mmc0",  R8A7791_CLK_MMC0,  CLK_PLL1_DIV2, 0x240),
-+	DEF_DIV6P1("ssp",   R8A7791_CLK_SSP,   CLK_PLL1_DIV2, 0x248),
-+	DEF_DIV6P1("ssprs", R8A7791_CLK_SSPRS, CLK_PLL1_DIV2, 0x24c),
-+};
-+
-+static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
-+	DEF_MOD("msiof0",		   0,	R8A7791_CLK_MP),
-+	DEF_MOD("vcp0",			 101,	R8A7791_CLK_ZS),
-+	DEF_MOD("vpc0",			 103,	R8A7791_CLK_ZS),
-+	DEF_MOD("jpu",			 106,	R8A7791_CLK_M2),
-+	DEF_MOD("ssp1",			 109,	R8A7791_CLK_ZS),
-+	DEF_MOD("tmu1",			 111,	R8A7791_CLK_P),
-+	DEF_MOD("3dg",			 112,	R8A7791_CLK_ZG),
-+	DEF_MOD("2d-dmac",		 115,	R8A7791_CLK_ZS),
-+	DEF_MOD("fdp1-1",		 118,	R8A7791_CLK_ZS),
-+	DEF_MOD("fdp1-0",		 119,	R8A7791_CLK_ZS),
-+	DEF_MOD("tmu3",			 121,	R8A7791_CLK_P),
-+	DEF_MOD("tmu2",			 122,	R8A7791_CLK_P),
-+	DEF_MOD("cmt0",			 124,	R8A7791_CLK_R),
-+	DEF_MOD("tmu0",			 125,	R8A7791_CLK_CP),
-+	DEF_MOD("vsp1du1",		 127,	R8A7791_CLK_ZS),
-+	DEF_MOD("vsp1du0",		 128,	R8A7791_CLK_ZS),
-+	DEF_MOD("vsp1-sy",		 131,	R8A7791_CLK_ZS),
-+	DEF_MOD("scifa2",		 202,	R8A7791_CLK_MP),
-+	DEF_MOD("scifa1",		 203,	R8A7791_CLK_MP),
-+	DEF_MOD("scifa0",		 204,	R8A7791_CLK_MP),
-+	DEF_MOD("msiof2",		 205,	R8A7791_CLK_MP),
-+	DEF_MOD("scifb0",		 206,	R8A7791_CLK_MP),
-+	DEF_MOD("scifb1",		 207,	R8A7791_CLK_MP),
-+	DEF_MOD("msiof1",		 208,	R8A7791_CLK_MP),
-+	DEF_MOD("scifb2",		 216,	R8A7791_CLK_MP),
-+	DEF_MOD("sys-dmac1",		 218,	R8A7791_CLK_ZS),
-+	DEF_MOD("sys-dmac0",		 219,	R8A7791_CLK_ZS),
-+	DEF_MOD("tpu0",			 304,	R8A7791_CLK_CP),
-+	DEF_MOD("sdhi3",		 311,	R8A7791_CLK_SD3),
-+	DEF_MOD("sdhi2",		 312,	R8A7791_CLK_SD2),
-+	DEF_MOD("sdhi0",		 314,	R8A7791_CLK_SD0),
-+	DEF_MOD("mmcif0",		 315,	R8A7791_CLK_MMC0),
-+	DEF_MOD("iic0",			 318,	R8A7791_CLK_HP),
-+	DEF_MOD("pciec",		 319,	R8A7791_CLK_MP),
-+	DEF_MOD("iic1",			 323,	R8A7791_CLK_HP),
-+	DEF_MOD("usb3.0",		 328,	R8A7791_CLK_MP),
-+	DEF_MOD("cmt1",			 329,	R8A7791_CLK_R),
-+	DEF_MOD("usbhs-dmac0",		 330,	R8A7791_CLK_HP),
-+	DEF_MOD("usbhs-dmac1",		 331,	R8A7791_CLK_HP),
-+	DEF_MOD("irqc",			 407,	R8A7791_CLK_CP),
-+	DEF_MOD("intc-sys",		 408,	R8A7791_CLK_ZS),
-+	DEF_MOD("audio-dmac1",		 501,	R8A7791_CLK_HP),
-+	DEF_MOD("audio-dmac0",		 502,	R8A7791_CLK_HP),
-+	DEF_MOD("adsp_mod",		 506,	R8A7791_CLK_ADSP),
-+	DEF_MOD("thermal",		 522,	CLK_EXTAL),
-+	DEF_MOD("pwm",			 523,	R8A7791_CLK_P),
-+	DEF_MOD("usb-ehci",		 703,	R8A7791_CLK_MP),
-+	DEF_MOD("usbhs",		 704,	R8A7791_CLK_HP),
-+	DEF_MOD("hscif2",		 713,	R8A7791_CLK_ZS),
-+	DEF_MOD("scif5",		 714,	R8A7791_CLK_P),
-+	DEF_MOD("scif4",		 715,	R8A7791_CLK_P),
-+	DEF_MOD("hscif1",		 716,	R8A7791_CLK_ZS),
-+	DEF_MOD("hscif0",		 717,	R8A7791_CLK_ZS),
-+	DEF_MOD("scif3",		 718,	R8A7791_CLK_P),
-+	DEF_MOD("scif2",		 719,	R8A7791_CLK_P),
-+	DEF_MOD("scif1",		 720,	R8A7791_CLK_P),
-+	DEF_MOD("scif0",		 721,	R8A7791_CLK_P),
-+	DEF_MOD("du1",			 723,	R8A7791_CLK_ZX),
-+	DEF_MOD("du0",			 724,	R8A7791_CLK_ZX),
-+	DEF_MOD("lvds0",		 726,	R8A7791_CLK_ZX),
-+	DEF_MOD("ipmmu-sgx",		 800,	R8A7791_CLK_ZX),
-+	DEF_MOD("mlb",			 802,	R8A7791_CLK_HP),
-+	DEF_MOD("vin2",			 809,	R8A7791_CLK_ZG),
-+	DEF_MOD("vin1",			 810,	R8A7791_CLK_ZG),
-+	DEF_MOD("vin0",			 811,	R8A7791_CLK_ZG),
-+	DEF_MOD("etheravb",		 812,	R8A7791_CLK_HP),
-+	DEF_MOD("ether",		 813,	R8A7791_CLK_P),
-+	DEF_MOD("sata1",		 814,	R8A7791_CLK_ZS),
-+	DEF_MOD("sata0",		 815,	R8A7791_CLK_ZS),
-+	DEF_MOD("gyro-adc",		 901,	R8A7791_CLK_P),
-+	DEF_MOD("gpio7",		 904,	R8A7791_CLK_CP),
-+	DEF_MOD("gpio6",		 905,	R8A7791_CLK_CP),
-+	DEF_MOD("gpio5",		 907,	R8A7791_CLK_CP),
-+	DEF_MOD("gpio4",		 908,	R8A7791_CLK_CP),
-+	DEF_MOD("gpio3",		 909,	R8A7791_CLK_CP),
-+	DEF_MOD("gpio2",		 910,	R8A7791_CLK_CP),
-+	DEF_MOD("gpio1",		 911,	R8A7791_CLK_CP),
-+	DEF_MOD("gpio0",		 912,	R8A7791_CLK_CP),
-+	DEF_MOD("can1",			 915,	R8A7791_CLK_P),
-+	DEF_MOD("can0",			 916,	R8A7791_CLK_P),
-+	DEF_MOD("qspi_mod",		 917,	R8A7791_CLK_QSPI),
-+	DEF_MOD("i2c5",			 925,	R8A7791_CLK_HP),
-+	DEF_MOD("iicdvfs",		 926,	R8A7791_CLK_CP),
-+	DEF_MOD("i2c4",			 927,	R8A7791_CLK_HP),
-+	DEF_MOD("i2c3",			 928,	R8A7791_CLK_HP),
-+	DEF_MOD("i2c2",			 929,	R8A7791_CLK_HP),
-+	DEF_MOD("i2c1",			 930,	R8A7791_CLK_HP),
-+	DEF_MOD("i2c0",			 931,	R8A7791_CLK_HP),
-+	DEF_MOD("ssi-all",		1005,	R8A7791_CLK_P),
-+	DEF_MOD("ssi9",			1006,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi8",			1007,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi7",			1008,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi6",			1009,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi5",			1010,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi4",			1011,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi3",			1012,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
-+	DEF_MOD("scu-all",		1017,	R8A7791_CLK_P),
-+	DEF_MOD("scu-dvc1",		1018,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scifa3",		1106,	R8A7791_CLK_MP),
-+	DEF_MOD("scifa4",		1107,	R8A7791_CLK_MP),
-+	DEF_MOD("scifa5",		1108,	R8A7791_CLK_MP),
-+};
-+
-+static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
-+};
-+
-+/*
-+ * CPG Clock Data
-+ */
-+
-+/*
-+ *   MD		EXTAL		PLL0	PLL1	PLL3
-+ * 14 13 19	(MHz)		*1	*1
-+ *---------------------------------------------------
-+ * 0  0  0	15		x172/2	x208/2	x106
-+ * 0  0  1	15		x172/2	x208/2	x88
-+ * 0  1  0	20		x130/2	x156/2	x80
-+ * 0  1  1	20		x130/2	x156/2	x66
-+ * 1  0  0	26 / 2		x200/2	x240/2	x122
-+ * 1  0  1	26 / 2		x200/2	x240/2	x102
-+ * 1  1  0	30 / 2		x172/2	x208/2	x106
-+ * 1  1  1	30 / 2		x172/2	x208/2	x88
-+ *
-+ * *1 :	Table 7.5a indicates VCO output (PLLx = VCO/2)
-+ */
-+#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
-+					 (((md) & BIT(13)) >> 12) | \
-+					 (((md) & BIT(19)) >> 19))
-+static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
-+	{ 1, 208, 106 }, { 1, 208,  88 }, { 1, 156,  80 }, { 1, 156,  66 },
-+	{ 2, 240, 122 }, { 2, 240, 102 }, { 2, 208, 106 }, { 2, 208,  88 },
-+};
-+
-+static int __init r8a7791_cpg_mssr_init(struct device *dev)
-+{
-+	const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
-+	struct device_node *np = dev->of_node;
-+	unsigned int i;
-+	u32 cpg_mode;
-+	int error;
-+
-+	error = rcar_rst_read_mode_pins(&cpg_mode);
-+	if (error)
-+		return error;
-+
-+	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
-+
-+	if (of_device_is_compatible(np, "renesas,r8a7793-cpg-mssr")) {
-+		/* R-Car M2-N uses a 1/5 divider for ZG */
-+		for (i = 0; i < ARRAY_SIZE(r8a7791_core_clks); i++)
-+			if (r8a7791_core_clks[i].id == R8A7791_CLK_ZG) {
-+				r8a7791_core_clks[i].div = 5;
-+				break;
-+			}
-+	}
-+	return rcar_gen2_cpg_init(cpg_pll_config, 2, cpg_mode);
-+}
-+
-+const struct cpg_mssr_info r8a7791_cpg_mssr_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r8a7791_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r8a7791_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r8a7791_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r8a7791_mod_clks),
-+	.num_hw_mod_clks = 12 * 32,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r8a7791_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r8a7791_crit_mod_clks),
-+
-+	/* Callbacks */
-+	.init = r8a7791_cpg_mssr_init,
-+	.cpg_clk_register = rcar_gen2_cpg_clk_register,
-+};
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 76cb7a992b1a88eb..ea6a47148030c208 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -645,6 +645,17 @@ static const struct of_device_id cpg_mssr_match[] = {
- 		.data = &r8a7790_cpg_mssr_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R8A7791
-+	{
-+		.compatible = "renesas,r8a7791-cpg-mssr",
-+		.data = &r8a7791_cpg_mssr_info,
-+	},
-+	/* R-Car M2-N is (almost) identical to R-Car M2-W w.r.t. clocks. */
-+	{
-+		.compatible = "renesas,r8a7793-cpg-mssr",
-+		.data = &r8a7791_cpg_mssr_info,
-+	},
-+#endif
- #ifdef CONFIG_CLK_R8A7795
- 	{
- 		.compatible = "renesas,r8a7795-cpg-mssr",
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 38fcb25c876ea3b5..c93f36c471a32841 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -133,6 +133,7 @@ struct cpg_mssr_info {
- extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7790_cpg_mssr_info;
-+extern const struct cpg_mssr_info r8a7791_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+@@ -108,7 +108,7 @@
+ 			<0 0xf1004000 0 0x2000>,
+ 			<0 0xf1006000 0 0x2000>;
+ 		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+-		clocks = <&mstp4_clks R8A7793_CLK_INTC_SYS>;
++		clocks = <&cpg CPG_MOD 408>;
+ 		clock-names = "clk";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+@@ -122,7 +122,7 @@
+ 		gpio-ranges = <&pfc 0 0 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO0>;
++		clocks = <&cpg CPG_MOD 912>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
  
+@@ -135,7 +135,7 @@
+ 		gpio-ranges = <&pfc 0 32 26>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO1>;
++		clocks = <&cpg CPG_MOD 911>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -148,7 +148,7 @@
+ 		gpio-ranges = <&pfc 0 64 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO2>;
++		clocks = <&cpg CPG_MOD 910>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -161,7 +161,7 @@
+ 		gpio-ranges = <&pfc 0 96 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO3>;
++		clocks = <&cpg CPG_MOD 909>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -174,7 +174,7 @@
+ 		gpio-ranges = <&pfc 0 128 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO4>;
++		clocks = <&cpg CPG_MOD 908>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -187,7 +187,7 @@
+ 		gpio-ranges = <&pfc 0 160 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO5>;
++		clocks = <&cpg CPG_MOD 907>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -200,7 +200,7 @@
+ 		gpio-ranges = <&pfc 0 192 32>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO6>;
++		clocks = <&cpg CPG_MOD 905>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -213,7 +213,7 @@
+ 		gpio-ranges = <&pfc 0 224 26>;
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+-		clocks = <&mstp9_clks R8A7793_CLK_GPIO7>;
++		clocks = <&cpg CPG_MOD 904>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -223,7 +223,7 @@
+ 				"renesas,rcar-thermal";
+ 		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp5_clks R8A7793_CLK_THERMAL>;
++		clocks = <&cpg CPG_MOD 522>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#thermal-sensor-cells = <0>;
+ 	};
+@@ -241,7 +241,7 @@
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7793_CLK_CMT0>;
++		clocks = <&cpg CPG_MOD 124>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 
+@@ -261,7 +261,7 @@
+ 			     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7793_CLK_CMT1>;
++		clocks = <&cpg CPG_MOD 329>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 
+@@ -285,7 +285,7 @@
+ 			     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp4_clks R8A7793_CLK_IRQC>;
++		clocks = <&cpg CPG_MOD 407>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+@@ -313,7 +313,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12", "ch13", "ch14";
+-		clocks = <&mstp2_clks R8A7793_CLK_SYS_DMAC0>;
++		clocks = <&cpg CPG_MOD 219>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -344,7 +344,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12", "ch13", "ch14";
+-		clocks = <&mstp2_clks R8A7793_CLK_SYS_DMAC1>;
++		clocks = <&cpg CPG_MOD 218>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -373,7 +373,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12";
+-		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC0>;
++		clocks = <&cpg CPG_MOD 502>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -402,7 +402,7 @@
+ 				"ch4", "ch5", "ch6", "ch7",
+ 				"ch8", "ch9", "ch10", "ch11",
+ 				"ch12";
+-		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC1>;
++		clocks = <&cpg CPG_MOD 501>;
+ 		clock-names = "fck";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+@@ -416,7 +416,7 @@
+ 		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6508000 0 0x40>;
+ 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_I2C0>;
++		clocks = <&cpg CPG_MOD 931>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+@@ -428,7 +428,7 @@
+ 		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6518000 0 0x40>;
+ 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_I2C1>;
++		clocks = <&cpg CPG_MOD 930>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+@@ -440,7 +440,7 @@
+ 		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6530000 0 0x40>;
+ 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_I2C2>;
++		clocks = <&cpg CPG_MOD 929>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+@@ -452,7 +452,7 @@
+ 		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6540000 0 0x40>;
+ 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_I2C3>;
++		clocks = <&cpg CPG_MOD 928>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+@@ -464,7 +464,7 @@
+ 		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6520000 0 0x40>;
+ 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_I2C4>;
++		clocks = <&cpg CPG_MOD 927>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+@@ -477,7 +477,7 @@
+ 		compatible = "renesas,i2c-r8a7793", "renesas,rcar-gen2-i2c";
+ 		reg = <0 0xe6528000 0 0x40>;
+ 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_I2C5>;
++		clocks = <&cpg CPG_MOD 925>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <110>;
+ 		status = "disabled";
+@@ -491,7 +491,7 @@
+ 			     "renesas,rmobile-iic";
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
++		clocks = <&cpg CPG_MOD 926>;
+ 		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
+ 		       <&dmac1 0x77>, <&dmac1 0x78>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -506,7 +506,7 @@
+ 			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
++		clocks = <&cpg CPG_MOD 318>;
+ 		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
+ 		       <&dmac1 0x61>, <&dmac1 0x62>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -521,7 +521,7 @@
+ 			     "renesas,rmobile-iic";
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
++		clocks = <&cpg CPG_MOD 323>;
+ 		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
+ 		       <&dmac1 0x65>, <&dmac1 0x66>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -538,7 +538,7 @@
+ 		compatible = "renesas,sdhi-r8a7793";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7793_CLK_SDHI0>;
++		clocks = <&cpg CPG_MOD 314>;
+ 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
+ 		       <&dmac1 0xcd>, <&dmac1 0xce>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -551,7 +551,7 @@
+ 		compatible = "renesas,sdhi-r8a7793";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7793_CLK_SDHI1>;
++		clocks = <&cpg CPG_MOD 312>;
+ 		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
+ 		       <&dmac1 0xc1>, <&dmac1 0xc2>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -564,7 +564,7 @@
+ 		compatible = "renesas,sdhi-r8a7793";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7793_CLK_SDHI2>;
++		clocks = <&cpg CPG_MOD 311>;
+ 		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
+ 		       <&dmac1 0xd3>, <&dmac1 0xd4>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -577,7 +577,7 @@
+ 		compatible = "renesas,mmcif-r8a7793", "renesas,sh-mmcif";
+ 		reg = <0 0xee200000 0 0x80>;
+ 		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7793_CLK_MMCIF0>;
++		clocks = <&cpg CPG_MOD 315>;
+ 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
+ 		       <&dmac1 0xd1>, <&dmac1 0xd2>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -592,7 +592,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c40000 0 64>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7793_CLK_SCIFA0>;
++		clocks = <&cpg CPG_MOD 204>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
+ 		       <&dmac1 0x21>, <&dmac1 0x22>;
+@@ -606,7 +606,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c50000 0 64>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7793_CLK_SCIFA1>;
++		clocks = <&cpg CPG_MOD 203>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
+ 		       <&dmac1 0x25>, <&dmac1 0x26>;
+@@ -620,7 +620,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c60000 0 64>;
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7793_CLK_SCIFA2>;
++		clocks = <&cpg CPG_MOD 202>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
+ 		       <&dmac1 0x27>, <&dmac1 0x28>;
+@@ -634,7 +634,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c70000 0 64>;
+ 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp11_clks R8A7793_CLK_SCIFA3>;
++		clocks = <&cpg CPG_MOD 1106>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
+ 		       <&dmac1 0x1b>, <&dmac1 0x1c>;
+@@ -648,7 +648,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c78000 0 64>;
+ 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp11_clks R8A7793_CLK_SCIFA4>;
++		clocks = <&cpg CPG_MOD 1107>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
+ 		       <&dmac1 0x1f>, <&dmac1 0x20>;
+@@ -662,7 +662,7 @@
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c80000 0 64>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp11_clks R8A7793_CLK_SCIFA5>;
++		clocks = <&cpg CPG_MOD 1108>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
+ 		       <&dmac1 0x23>, <&dmac1 0x24>;
+@@ -676,7 +676,7 @@
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7793_CLK_SCIFB0>;
++		clocks = <&cpg CPG_MOD 206>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
+ 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
+@@ -690,7 +690,7 @@
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7793_CLK_SCIFB1>;
++		clocks = <&cpg CPG_MOD 207>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
+ 		       <&dmac1 0x19>, <&dmac1 0x1a>;
+@@ -704,7 +704,7 @@
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp2_clks R8A7793_CLK_SCIFB2>;
++		clocks = <&cpg CPG_MOD 216>;
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
+ 		       <&dmac1 0x1d>, <&dmac1 0x1e>;
+@@ -718,7 +718,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6e60000 0 64>;
+ 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_SCIF0>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 721>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
+@@ -733,7 +733,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6e68000 0 64>;
+ 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_SCIF1>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 720>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
+@@ -748,7 +748,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6e58000 0 64>;
+ 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_SCIF2>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 719>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
+@@ -763,7 +763,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6ea8000 0 64>;
+ 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_SCIF3>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 718>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
+@@ -778,7 +778,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6ee0000 0 64>;
+ 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_SCIF4>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 715>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
+@@ -793,7 +793,7 @@
+ 			     "renesas,scif";
+ 		reg = <0 0xe6ee8000 0 64>;
+ 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_SCIF5>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 714>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
+@@ -808,7 +808,7 @@
+ 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c0000 0 96>;
+ 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_HSCIF0>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 717>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
+@@ -823,7 +823,7 @@
+ 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c8000 0 96>;
+ 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_HSCIF1>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 716>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
+@@ -838,7 +838,7 @@
+ 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62d0000 0 96>;
+ 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_HSCIF2>, <&zs_clk>,
++		clocks = <&cpg CPG_MOD 713>, <&cpg CPG_CORE R8A7793_CLK_ZS>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
+@@ -852,7 +852,7 @@
+ 		compatible = "renesas,ether-r8a7793";
+ 		reg = <0 0xee700000 0 0x400>;
+ 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7793_CLK_ETHER>;
++		clocks = <&cpg CPG_MOD 813>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		phy-mode = "rmii";
+ 		#address-cells = <1>;
+@@ -864,7 +864,7 @@
+ 		compatible = "renesas,vin-r8a7793", "renesas,rcar-gen2-vin";
+ 		reg = <0 0xe6ef0000 0 0x1000>;
+ 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7793_CLK_VIN0>;
++		clocks = <&cpg CPG_MOD 811>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -873,7 +873,7 @@
+ 		compatible = "renesas,vin-r8a7793", "renesas,rcar-gen2-vin";
+ 		reg = <0 0xe6ef1000 0 0x1000>;
+ 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7793_CLK_VIN1>;
++		clocks = <&cpg CPG_MOD 810>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -882,7 +882,7 @@
+ 		compatible = "renesas,vin-r8a7793", "renesas,rcar-gen2-vin";
+ 		reg = <0 0xe6ef2000 0 0x1000>;
+ 		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp8_clks R8A7793_CLK_VIN2>;
++		clocks = <&cpg CPG_MOD 809>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -891,7 +891,7 @@
+ 		compatible = "renesas,qspi-r8a7793", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
+ 		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_QSPI_MOD>;
++		clocks = <&cpg CPG_MOD 917>;
+ 		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
+ 		       <&dmac1 0x17>, <&dmac1 0x18>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+@@ -909,9 +909,9 @@
+ 		reg-names = "du", "lvds.0";
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp7_clks R8A7793_CLK_DU0>,
+-			 <&mstp7_clks R8A7793_CLK_DU1>,
+-			 <&mstp7_clks R8A7793_CLK_LVDS0>;
++		clocks = <&cpg CPG_MOD 724>,
++			 <&cpg CPG_MOD 723>,
++			 <&cpg CPG_MOD 726>;
+ 		clock-names = "du.0", "du.1", "lvds.0";
+ 		status = "disabled";
+ 
+@@ -936,8 +936,8 @@
+ 		compatible = "renesas,can-r8a7793", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e80000 0 0x1000>;
+ 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_RCAN0>,
+-			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
++		clocks = <&cpg CPG_MOD 916>, <&cpg CPG_CORE R8A7793_CLK_RCAN>,
++			 <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+@@ -947,8 +947,8 @@
+ 		compatible = "renesas,can-r8a7793", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e88000 0 0x1000>;
+ 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp9_clks R8A7793_CLK_RCAN1>,
+-			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
++		clocks = <&cpg CPG_MOD 915>, <&cpg CPG_CORE R8A7793_CLK_RCAN>,
++			 <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+@@ -1011,312 +1011,14 @@
+ 		};
+ 
+ 		/* Special CPG clocks */
+-		cpg_clocks: cpg_clocks@e6150000 {
+-			compatible = "renesas,r8a7793-cpg-clocks",
+-				     "renesas,rcar-gen2-cpg-clocks";
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a7793-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk &usb_extal_clk>;
+-			#clock-cells = <1>;
+-			clock-output-names = "main", "pll0", "pll1", "pll3",
+-					     "lb", "qspi", "sdh", "sd0", "z",
+-					     "rcan", "adsp";
++			clocks = <&extal_clk>, <&usb_extal_clk>;
++			clock-names = "extal", "usb_extal";
++			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
+ 		};
+-
+-		/* Variable factor clocks */
+-		sd2_clk: sd2@e6150078 {
+-			compatible = "renesas,r8a7793-div6-clock",
+-				     "renesas,cpg-div6-clock";
+-			reg = <0 0xe6150078 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-		sd3_clk: sd3@e615026c {
+-			compatible = "renesas,r8a7793-div6-clock",
+-				     "renesas,cpg-div6-clock";
+-			reg = <0 0xe615026c 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-		mmc0_clk: mmc0@e6150240 {
+-			compatible = "renesas,r8a7793-div6-clock",
+-				     "renesas,cpg-div6-clock";
+-			reg = <0 0xe6150240 0 4>;
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-		};
+-
+-		/* Fixed factor clocks */
+-		pll1_div2_clk: pll1_div2 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <2>;
+-			clock-mult = <1>;
+-		};
+-		zg_clk: zg {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <5>;
+-			clock-mult = <1>;
+-		};
+-		zx_clk: zx {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <3>;
+-			clock-mult = <1>;
+-		};
+-		zs_clk: zs {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <6>;
+-			clock-mult = <1>;
+-		};
+-		hp_clk: hp {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <12>;
+-			clock-mult = <1>;
+-		};
+-		p_clk: p {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <24>;
+-			clock-mult = <1>;
+-		};
+-		m2_clk: m2 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <8>;
+-			clock-mult = <1>;
+-		};
+-		rclk_clk: rclk {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+-			#clock-cells = <0>;
+-			clock-div = <(48 * 1024)>;
+-			clock-mult = <1>;
+-		};
+-		mp_clk: mp {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&pll1_div2_clk>;
+-			#clock-cells = <0>;
+-			clock-div = <15>;
+-			clock-mult = <1>;
+-		};
+-		cp_clk: cp {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&extal_clk>;
+-			#clock-cells = <0>;
+-			clock-div = <2>;
+-			clock-mult = <1>;
+-		};
+-
+-		/* Gate clocks */
+-		mstp1_clks: mstp1_clks@e6150134 {
+-			compatible = "renesas,r8a7793-mstp-clocks",
+-				     "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
+-			clocks = <&zs_clk>, <&zs_clk>, <&zs_clk>, <&p_clk>,
+-				 <&zg_clk>, <&zs_clk>, <&zs_clk>, <&zs_clk>,
+-				 <&p_clk>, <&p_clk>, <&rclk_clk>, <&cp_clk>,
+-				 <&zs_clk>, <&zs_clk>, <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_VCP0 R8A7793_CLK_VPC0
+-				R8A7793_CLK_SSP1 R8A7793_CLK_TMU1
+-				R8A7793_CLK_3DG R8A7793_CLK_2DDMAC
+-				R8A7793_CLK_FDP1_1 R8A7793_CLK_FDP1_0
+-				R8A7793_CLK_TMU3 R8A7793_CLK_TMU2
+-				R8A7793_CLK_CMT0 R8A7793_CLK_TMU0
+-				R8A7793_CLK_VSP1_DU1 R8A7793_CLK_VSP1_DU0
+-				R8A7793_CLK_VSP1_S
+-			>;
+-			clock-output-names =
+-				"vcp0", "vpc0", "ssp_dev", "tmu1",
+-				"pvrsrvkm", "tddmac", "fdp1", "fdp0",
+-				"tmu3", "tmu2", "cmt0", "tmu0", "vsp1-du1",
+-				"vsp1-du0", "vsps";
+-		};
+-		mstp2_clks: mstp2_clks@e6150138 {
+-			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
+-			clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>,
+-				 <&mp_clk>, <&mp_clk>, <&zs_clk>, <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_SCIFA2 R8A7793_CLK_SCIFA1 R8A7793_CLK_SCIFA0
+-				R8A7793_CLK_SCIFB0 R8A7793_CLK_SCIFB1 R8A7793_CLK_SCIFB2
+-				R8A7793_CLK_SYS_DMAC1 R8A7793_CLK_SYS_DMAC0
+-			>;
+-			clock-output-names =
+-				"scifa2", "scifa1", "scifa0", "scifb0",
+-				"scifb1", "scifb2", "sys-dmac1", "sys-dmac0";
+-		};
+-		mstp3_clks: mstp3_clks@e615013c {
+-			compatible = "renesas,r8a7793-mstp-clocks",
+-				     "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
+-			clocks = <&cp_clk>, <&sd3_clk>, <&sd2_clk>,
+-				 <&cpg_clocks R8A7793_CLK_SD0>, <&mmc0_clk>,
+-				 <&hp_clk>, <&mp_clk>, <&hp_clk>, <&mp_clk>,
+-				 <&rclk_clk>, <&hp_clk>, <&hp_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_TPU0 R8A7793_CLK_SDHI2
+-				R8A7793_CLK_SDHI1 R8A7793_CLK_SDHI0
+-				R8A7793_CLK_MMCIF0 R8A7793_CLK_IIC0
+-				R8A7793_CLK_PCIEC R8A7793_CLK_IIC1
+-				R8A7793_CLK_SSUSB R8A7793_CLK_CMT1
+-				R8A7793_CLK_USBDMAC0 R8A7793_CLK_USBDMAC1
+-			>;
+-			clock-output-names =
+-				"tpu0", "sdhi2", "sdhi1", "sdhi0", "mmcif0",
+-				"i2c7", "pciec", "i2c8", "ssusb", "cmt1",
+-				"usbdmac0", "usbdmac1";
+-		};
+-		mstp4_clks: mstp4_clks@e6150140 {
+-			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
+-			clocks = <&cp_clk>, <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_IRQC R8A7793_CLK_INTC_SYS
+-			>;
+-			clock-output-names = "irqc", "intc-sys";
+-		};
+-		mstp5_clks: mstp5_clks@e6150144 {
+-			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
+-			clocks = <&hp_clk>, <&hp_clk>, <&extal_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <R8A7793_CLK_AUDIO_DMAC0 R8A7793_CLK_AUDIO_DMAC1
+-					 R8A7793_CLK_THERMAL>;
+-			clock-output-names = "audmac0", "audmac1", "thermal";
+-		};
+-		mstp7_clks: mstp7_clks@e615014c {
+-			compatible = "renesas,r8a7793-mstp-clocks",
+-				     "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+-			clocks = <&mp_clk>,  <&hp_clk>, <&zs_clk>, <&p_clk>,
+-				 <&p_clk>, <&zs_clk>, <&zs_clk>, <&p_clk>,
+-				 <&p_clk>, <&p_clk>, <&p_clk>, <&zx_clk>,
+-				 <&zx_clk>, <&zx_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_EHCI R8A7793_CLK_HSUSB
+-				R8A7793_CLK_HSCIF2 R8A7793_CLK_SCIF5
+-				R8A7793_CLK_SCIF4 R8A7793_CLK_HSCIF1
+-				R8A7793_CLK_HSCIF0 R8A7793_CLK_SCIF3
+-				R8A7793_CLK_SCIF2 R8A7793_CLK_SCIF1
+-				R8A7793_CLK_SCIF0 R8A7793_CLK_DU1
+-				R8A7793_CLK_DU0 R8A7793_CLK_LVDS0
+-			>;
+-			clock-output-names =
+-				"ehci", "hsusb", "hscif2", "scif5", "scif4",
+-				"hscif1", "hscif0", "scif3", "scif2",
+-				"scif1", "scif0", "du1", "du0", "lvds0";
+-		};
+-		mstp8_clks: mstp8_clks@e6150990 {
+-			compatible = "renesas,r8a7793-mstp-clocks",
+-				     "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
+-			clocks = <&zx_clk>, <&zg_clk>, <&zg_clk>, <&zg_clk>,
+-				 <&p_clk>, <&zs_clk>, <&zs_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_IPMMU_SGX R8A7793_CLK_VIN2
+-				R8A7793_CLK_VIN1 R8A7793_CLK_VIN0
+-				R8A7793_CLK_ETHER R8A7793_CLK_SATA1
+-				R8A7793_CLK_SATA0
+-			>;
+-			clock-output-names =
+-				"ipmmu_sgx", "vin2", "vin1", "vin0", "ether",
+-				"sata1", "sata0";
+-		};
+-		mstp9_clks: mstp9_clks@e6150994 {
+-			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
+-			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&p_clk>, <&p_clk>,
+-				 <&cpg_clocks R8A7793_CLK_QSPI>, <&hp_clk>,
+-				 <&cp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>,
+-				 <&hp_clk>, <&hp_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_GPIO7 R8A7793_CLK_GPIO6
+-				R8A7793_CLK_GPIO5 R8A7793_CLK_GPIO4
+-				R8A7793_CLK_GPIO3 R8A7793_CLK_GPIO2
+-				R8A7793_CLK_GPIO1 R8A7793_CLK_GPIO0
+-				R8A7793_CLK_QSPI_MOD R8A7793_CLK_RCAN1
+-				R8A7793_CLK_RCAN0 R8A7793_CLK_I2C5
+-				R8A7793_CLK_IICDVFS R8A7793_CLK_I2C4
+-				R8A7793_CLK_I2C3 R8A7793_CLK_I2C2
+-				R8A7793_CLK_I2C1 R8A7793_CLK_I2C0
+-			>;
+-			clock-output-names =
+-				"gpio7", "gpio6", "gpio5", "gpio4",
+-				"gpio3", "gpio2", "gpio1", "gpio0",
+-				"rcan1", "rcan0", "qspi_mod", "i2c5",
+-				"i2c6", "i2c4", "i2c3", "i2c2", "i2c1",
+-				"i2c0";
+-		};
+-		mstp10_clks: mstp10_clks@e6150998 {
+-			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
+-			clocks = <&p_clk>,
+-				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SSI_ALL>, <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+-				<&p_clk>,
+-				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>,
+-				<&mstp10_clks R8A7793_CLK_SCU_ALL>, <&mstp10_clks R8A7793_CLK_SCU_ALL>;
+-
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_SSI_ALL
+-				R8A7793_CLK_SSI9 R8A7793_CLK_SSI8 R8A7793_CLK_SSI7 R8A7793_CLK_SSI6 R8A7793_CLK_SSI5
+-				R8A7793_CLK_SSI4 R8A7793_CLK_SSI3 R8A7793_CLK_SSI2 R8A7793_CLK_SSI1 R8A7793_CLK_SSI0
+-				R8A7793_CLK_SCU_ALL
+-				R8A7793_CLK_SCU_DVC1 R8A7793_CLK_SCU_DVC0
+-				R8A7793_CLK_SCU_CTU1_MIX1 R8A7793_CLK_SCU_CTU0_MIX0
+-				R8A7793_CLK_SCU_SRC9 R8A7793_CLK_SCU_SRC8 R8A7793_CLK_SCU_SRC7 R8A7793_CLK_SCU_SRC6 R8A7793_CLK_SCU_SRC5
+-				R8A7793_CLK_SCU_SRC4 R8A7793_CLK_SCU_SRC3 R8A7793_CLK_SCU_SRC2 R8A7793_CLK_SCU_SRC1 R8A7793_CLK_SCU_SRC0
+-			>;
+-			clock-output-names =
+-				"ssi-all",
+-				"ssi9", "ssi8", "ssi7", "ssi6", "ssi5",
+-				"ssi4", "ssi3", "ssi2", "ssi1", "ssi0",
+-				"scu-all",
+-				"scu-dvc1", "scu-dvc0",
+-				"scu-ctu1-mix1", "scu-ctu0-mix0",
+-				"scu-src9", "scu-src8", "scu-src7", "scu-src6", "scu-src5",
+-				"scu-src4", "scu-src3", "scu-src2", "scu-src1", "scu-src0";
+-		};
+-		mstp11_clks: mstp11_clks@e615099c {
+-			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+-			reg = <0 0xe615099c 0 4>, <0 0xe61509ac 0 4>;
+-			clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>;
+-			#clock-cells = <1>;
+-			clock-indices = <
+-				R8A7793_CLK_SCIFA3 R8A7793_CLK_SCIFA4 R8A7793_CLK_SCIFA5
+-			>;
+-			clock-output-names = "scifa3", "scifa4", "scifa5";
+-		};
+ 	};
+ 
+ 	rst: reset-controller@e6160000 {
+@@ -1410,19 +1112,20 @@
+ 			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
+ 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+ 
+-		clocks = <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+-			<&mstp10_clks R8A7793_CLK_SSI9>, <&mstp10_clks R8A7793_CLK_SSI8>,
+-			<&mstp10_clks R8A7793_CLK_SSI7>, <&mstp10_clks R8A7793_CLK_SSI6>,
+-			<&mstp10_clks R8A7793_CLK_SSI5>, <&mstp10_clks R8A7793_CLK_SSI4>,
+-			<&mstp10_clks R8A7793_CLK_SSI3>, <&mstp10_clks R8A7793_CLK_SSI2>,
+-			<&mstp10_clks R8A7793_CLK_SSI1>, <&mstp10_clks R8A7793_CLK_SSI0>,
+-			<&mstp10_clks R8A7793_CLK_SCU_SRC9>, <&mstp10_clks R8A7793_CLK_SCU_SRC8>,
+-			<&mstp10_clks R8A7793_CLK_SCU_SRC7>, <&mstp10_clks R8A7793_CLK_SCU_SRC6>,
+-			<&mstp10_clks R8A7793_CLK_SCU_SRC5>, <&mstp10_clks R8A7793_CLK_SCU_SRC4>,
+-			<&mstp10_clks R8A7793_CLK_SCU_SRC3>, <&mstp10_clks R8A7793_CLK_SCU_SRC2>,
+-			<&mstp10_clks R8A7793_CLK_SCU_SRC1>, <&mstp10_clks R8A7793_CLK_SCU_SRC0>,
+-			<&mstp10_clks R8A7793_CLK_SCU_DVC0>, <&mstp10_clks R8A7793_CLK_SCU_DVC1>,
+-			<&audio_clk_a>, <&audio_clk_b>, <&audio_clk_c>, <&m2_clk>;
++		clocks = <&cpg CPG_MOD 1005>,
++			 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++			 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++			 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++			 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++			 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++			 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++			 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++			 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++			 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++			 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++			 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++			 <&audio_clk_a>, <&audio_clk_b>, <&audio_clk_c>,
++			 <&cpg CPG_CORE R8A7793_CLK_M2>;
+ 		clock-names = "ssi-all",
+ 				"ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
+ 				"ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0",
 -- 
 2.7.4
+
