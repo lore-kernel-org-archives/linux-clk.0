@@ -1,50 +1,64 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 1/2] clk: meson: meson8b: mark clk81 as critical
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20170524093932.5262-1-jbrunet@baylibre.com>
- <20170524093932.5262-2-jbrunet@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, carlo@caione.org,
- Kevin Hilman <khilman@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <18cf4eec-0bd0-aefe-9736-1aadd3e40942@baylibre.com>
-Date: Wed, 24 May 2017 11:45:30 +0200
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Fri, 19 May 2017 10:01:49 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Zhong Kaihua <zhongkaihua@huawei.com>,
+	Chen Jun <chenjun14@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2 1/2] clk: Hi3660: change to register crgctrl clock
+ with CLK_OF_DECLARE_DRIVER
+Message-ID: <20170519020149.GI25294@leoy-ThinkPad-T440>
+References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
+ <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
+ <20170519015137.GE20170@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170524093932.5262-2-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170519015137.GE20170@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/24/2017 11:39 AM, Jerome Brunet wrote:
-> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Thu, May 18, 2017 at 06:51:37PM -0700, Stephen Boyd wrote:
+> On 05/18, Leo Yan wrote:
+> > diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+> > index fd5ce7f..4e5713b 100644
+> > --- a/drivers/clk/hisilicon/clk-hi3660.c
+> > +++ b/drivers/clk/hisilicon/clk-hi3660.c
+> > @@ -547,10 +547,10 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
+> >  				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
+> >  				  clk_data);
+> >  }
+> > +CLK_OF_DECLARE_DRIVER(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl",
+> > +		      hi3660_clk_crgctrl_init);
+> >  
+> >  static const struct of_device_id hi3660_clk_match_table[] = {
+> > -	{ .compatible = "hisilicon,hi3660-crgctrl",
+> > -	  .data = hi3660_clk_crgctrl_init },
 > 
-> Disabling clk81 results in an immediate freeze of the whole system. This
-> can happen "accidentally" when the last child-clock of clk81 is disabled
-> (in this case the common clock framework also disables clk81, even if it
-> was only enabled indirectly before).
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/meson8b.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index e9985503165c..9d1aaf6e9ac6 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -399,7 +399,7 @@ struct clk_gate meson8b_clk81 = {
->  		.ops = &clk_gate_ops,
->  		.parent_names = (const char *[]){ "mpeg_clk_div" },
->  		.num_parents = 1,
-> -		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-> +		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
->  	},
->  };
->  
-> 
+> I'm slightly confused. CLK_OF_DECLARE_DRIVER is for when a
+> platform driver _and_ CLK_OF_DELARE need to "probe" the same
+> device node. But in this patch, the compatible string is being
+> deleted from the driver's match table. Also, are all the
+> registered in hi3660_clk_crgctrl_init() actually needed for the
+> timer?
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+No.
+
+> If only a subset, then I would expect to split the code
+> and have the CLK_OF_DECLARE_DRIVER() path register just the clks
+> that matter for the timer, and then leave the rest of the clks to
+> be registered by the probe of the platform driver.
+
+I'm also puzzled if need divide crgctrl clock into two parts. Thanks
+for suggestion, will do this.
+
+Thanks,
+Leo Yan
