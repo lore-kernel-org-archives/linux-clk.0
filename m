@@ -1,207 +1,89 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 10 May 2017 15:43:55 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linus.walleij@linaro.org,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
-	sjaganat@codeaurora.org, sricharan@codeaurora.org,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-Message-ID: <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Fri, 19 May 2017 20:03:30 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [RFC PATCH 07/11] drm: sun4i: add support for the TV encoder in
+ H3 SoC
+Message-ID: <20170519180330.7hpfkdqk3r2x3kn5@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-8-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+In-Reply-To: <20170517164354.16399-8-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============3120115475870840910=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
 
-> Add initial pinctrl driver to support pin configuration with
-> pinctrl framework for ipq8074.
-> 
-> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> ---
->  .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  187 +++
->  drivers/pinctrl/qcom/Kconfig                       |   10 +
->  drivers/pinctrl/qcom/Makefile                      |    1 +
->  drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1217 ++++++++++++++++++++
->  4 files changed, 1415 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
->  create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-[..]
-> +- pins:
-> +	Usage: required
-> +	Value type: <string-array>
-> +	Definition: List of gpio pins affected by the properties specified in
-> +		    this subnode.  Valid pins are:
-> +		    gpio0-gpio121,
-> +		    sdc1_clk,
-> +		    sdc1_cmd,
-> +		    sdc1_data
-> +		    sdc2_clk,
-> +		    sdc2_cmd,
-> +		    sdc2_data,
-> +		    qdsd_cmd,
-> +		    qdsd_data0,
-> +		    qdsd_data1,
-> +		    qdsd_data2,
-> +		    qdsd_data3
+--===============3120115475870840910==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="p2w6z7xlkbrkzjzj"
+Content-Disposition: inline
 
-These doesn't match the implementation.
 
-> +
-> +- function:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Specify the alternative function to be configured for the
-> +		    specified pins. Functions are only valid for gpio pins.
-> +		    Valid values are:
-> +	gpio, qpic_pad, blsp5_i2c, blsp5_spi, wci20, blsp3_spi3,
-> +	burn0, pcm_zsi0, blsp5_uart, mac12, blsp3_spi0, burn1, mac01,
-> +	qdss_cti_trig_out_b0, qdss_cti_trig_in_b0, qpic_pad4,
-> +	blsp4_uart0, blsp4_i2c0, blsp4_spi0, mac21,
-> +	qdss_cti_trig_out_b1, qpic_pad5, qdss_cti_trig_in_b1,
-> +	qpic_pad6, qpic_pad7, cxc0, mac13, qdss_cti_trig_in_a1,
-> +	qdss_cti_trig_out_a1, wci22, qdss_cti_trig_in_a0, qpic_pad1,
-> +	qdss_cti_trig_out_a0, qpic_pad2, qpic_pad3, qdss_traceclk_b,
-> +	qpic_pad0, qdss_tracectl_b, qpic_pad8, pcm_zsi1,
-> +	qdss_tracedata_b, led0, pwm04, led1, pwm14, led2, pwm24,
-> +	pwm00, blsp4_uart1, blsp4_i2c1, blsp4_spi1, wci23, mac11,
-> +	blsp3_spi2, pwm10, pwm20, pwm30, audio_txmclk, pwm02,
-> +	audio_txbclk, pwm12, audio_txfsync, pwm22, audio_txd, pwm32,
-> +	audio_rxmclk, pwm03, atest_char0, audio_rxbclk, pwm13,
-> +	atest_char1, audio_rxfsync, pwm23, atest_char2, audio_rxd,
-> +	pwm33, atest_char3, pcm_drx, mac10, mac00, pcm_dtx, pcm_fsync,
-> +	mac20, qdss_traceclk_a, pcm_pclk, qdss_tracectl_a, atest_char,
-> +	qdss_tracedata_a, blsp0_uart, blsp0_i2c, blsp0_spi,
-> +	blsp1_uart, blsp1_i2c, blsp1_spi, blsp2_uart, blsp2_i2c,
-> +	blsp2_spi, blsp3_uart, blsp3_i2c, blsp3_spi, pta2_0, wci21,
-> +	cxc1, blsp3_spi1, pta2_1, pta2_2, pcie0_clk, dbg_out,
-> +	cri_trng0, pcie0_rst, cri_trng1, pcie0_wake, cri_trng,
-> +	pcie1_clk, rx2, ldo_update, pcie1_rst, ldo_en, pcie1_wake,
-> +	gcc_plltest, sd_card, pwm01, pta1_1, pwm11, rx1, pta1_2,
-> +	gcc_tlmm, pta1_0, pwm21, prng_rosc, sd_write, pwm31, rx0,
-> +	tsens_max, mdc, mdio, NA
+--p2w6z7xlkbrkzjzj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please indent these to the same level as the description.
+On Thu, May 18, 2017 at 12:43:50AM +0800, Icenowy Zheng wrote:
+> Allwinner H3 features a TV encoder similar to the one in earlier SoCs,
+> but with some different points about clocks:
+> - It has a mod clock and a bus clock.
+> - The mod clock must be at a fixed rate to generate signal.
 
-> +
-[..]
-> +
-> +- output-high:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins are configured in output mode, driven
-> +		    high.
-> +		    Not valid for sdc pins.
+Why?
 
-If you don't have any sdc pins, drop this.
+Maxime
 
-> +
-> +- output-low:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins are configured in output mode, driven
-> +		    low.
-> +		    Not valid for sdc pins.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-If you don't have any sdc pins, drop this.
+--p2w6z7xlkbrkzjzj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +- drive-strength:
-> +	Usage: optional
-> +	Value type: <u32>
-> +	Definition: Selects the drive strength for the specified pins, in mA.
-> +		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
-> +
-[..]
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq8074.c b/drivers/pinctrl/qcom/pinctrl-ipq8074.c
-[..]
-> +
-> +enum ipq8074_functions {
+-----BEGIN PGP SIGNATURE-----
 
-Please keep these sorted alphabetically.
+iQIcBAEBAgAGBQJZHzNyAAoJEBx+YmzsjxAgx7MP/RJSD4GDzbybI8R2uI/oRAh7
+05A6hblDto7rn0WKZ1KPsrK0fNLtGc4ccVBUoABo6wvhUoTuvTSJuGRKexuV/1uV
+WJ/gUutbktlmrusHS9fU5nXrA/K1rhKEeEdVlaQHPeW2qWdGYGLpu9S3b59ZqRhL
+wbPxT6A/OJeVzlAtKYaf4WjpDjABtWIBb1CEfaRmiuFDgjBu7eijSBocEU4VWBfj
+/rFP6RpLXOV15d2oS7ImqiEtZZCQDo1H+Jt+aKoc2VD7MbXUc/31jdkDHD0Rx0TB
+YJ8B4476eMX744N5JcJY6RvZt09LNHLPgGEwtA7MezKtCj2OpTWxWEeYYCdsNrkF
+MB1eu8F3ZDW7fm4x+SBymefFeDZ/mLxbauW5hFV0UY0l/jyc3aR4m9iwVg+Q0YxA
+SgIgWkMIWxQ/MbSWoYKDQgW6nsqVUXspV3b6wIEu1AnAq7jaEQg0z/8vPSVMXTgR
+rexP0yKtgV7FpN2DcU1D8p2Sp6lPSXSQNHwVIR54uc/huErtWSMuuvIncGMmHExL
+/LfDaEMbiS076R9iTgMEAY7ndEIO50tVJ1FA+XDXSbWtrPAQcNlDhgy6Hse/bn9n
+efBseAa01Yv57u32t9U8K4x5C6pN6rjnssCEhpvJyh991ch/K30c9jqvL52McWHB
+ljMZd0n9+2+zXQAdZKQ/
+=FZtQ
+-----END PGP SIGNATURE-----
 
-> +	msm_mux_gpio,
-> +	msm_mux_qpic_pad,
-> +	msm_mux_blsp5_i2c,
-> +	msm_mux_blsp5_spi,
-> +	msm_mux_wci20,
+--p2w6z7xlkbrkzjzj--
 
-What does "20" mean here?
 
-> +	msm_mux_blsp3_spi3,
-> +	msm_mux_burn0,
-> +	msm_mux_pcm_zsi0,
-> +	msm_mux_blsp5_uart,
-> +	msm_mux_mac12,
+--===============3120115475870840910==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-What does "12" mean here?
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-> +	msm_mux_blsp3_spi0,
-> +	msm_mux_burn1,
-> +	msm_mux_mac01,
-> +	msm_mux_qdss_cti_trig_out_b0,
-> +	msm_mux_qdss_cti_trig_in_b0,
-> +	msm_mux_qpic_pad4,
-
-What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
-alternative muxings...?
-
-> +	msm_mux_blsp4_uart0,
-> +	msm_mux_blsp4_i2c0,
-> +	msm_mux_blsp4_spi0,
-> +	msm_mux_mac21,
-> +	msm_mux_qdss_cti_trig_out_b1,
-> +	msm_mux_qpic_pad5,
-> +	msm_mux_qdss_cti_trig_in_b1,
-> +	msm_mux_qpic_pad6,
-> +	msm_mux_qpic_pad7,
-> +	msm_mux_cxc0,
-> +	msm_mux_mac13,
-> +	msm_mux_qdss_cti_trig_in_a1,
-> +	msm_mux_qdss_cti_trig_out_a1,
-> +	msm_mux_wci22,
-> +	msm_mux_qdss_cti_trig_in_a0,
-> +	msm_mux_qpic_pad1,
-> +	msm_mux_qdss_cti_trig_out_a0,
-> +	msm_mux_qpic_pad2,
-> +	msm_mux_qpic_pad3,
-> +	msm_mux_qdss_traceclk_b,
-> +	msm_mux_qpic_pad0,
-> +	msm_mux_qdss_tracectl_b,
-> +	msm_mux_qpic_pad8,
-> +	msm_mux_pcm_zsi1,
-> +	msm_mux_qdss_tracedata_b,
-> +	msm_mux_led0,
-> +	msm_mux_pwm04,
-
-What does "04" mean here?
-
-> +	msm_mux_led1,
-> +	msm_mux_pwm14,
-> +	msm_mux_led2,
-> +	msm_mux_pwm24,
-> +	msm_mux_pwm00,
-> +	msm_mux_blsp4_uart1,
-
-Are uart0 vs uart1 alternative muxes?
-
-[..]
-> +static const struct msm_function ipq8074_functions[] = {
-
-Please keep these sorted alphabetically too.
-
-Regards,
-Bjorn
+--===============3120115475870840910==--
