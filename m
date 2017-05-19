@@ -1,40 +1,79 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 8 May 2017 12:36:46 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: rjw@rjwysocki.net, robh+dt@kernel.org, matthias.bgg@gmail.com,
-	mark.rutland@arm.com, mturquette@baylibre.com,
-	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
-	shunli.wang@mediatek.com, erin.lo@mediatek.com, jdelvare@suse.de,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] dt-bindings: cpufreq: enhance Mediatek cpufreq
- dt-binding document
-Message-ID: <20170508070646.GE17010@vireshk-i7>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
- <1493997974-17699-7-git-send-email-sean.wang@mediatek.com>
- <20170508042010.GD17010@vireshk-i7>
- <1494226711.9662.22.camel@mtkswgap22>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sat, 20 May 2017 02:10:35 +0800
+In-Reply-To: <20170519180616.vzrlu2avuucsjkiu@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-11-icenowy@aosc.io>
+ <20170519180616.vzrlu2avuucsjkiu@flea.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494226711.9662.22.camel@mtkswgap22>
+Subject: Re: [linux-sunxi] Re: [RFC PATCH 10/11] ARM: sun8i: h3: add display
+ engine pipeline for TVE
+To: maxime.ripard@free-electrons.com,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <B72028D8-B055-4F53-A4EA-7E93A28DB8FF@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08-05-17, 14:58, Sean Wang wrote:
-> > > +		opp@598000000 {
-> > 
-> > s/opp@/opp-/
-> 
-> I have referred to other dt-binding as examples where they also use opp@
-> as the prefix word.  e.g bindings/cpufreq/ti-cpufreq.txt did it.
-> 
-> Or I misunderstand something you pointed out here ?
-
-Its on the way:
-
-https://marc.info/?l=linux-kernel&m=149266711829469&w=2
-
--- 
-viresh
+Cgrkuo4gMjAxN+W5tDXmnIgyMOaXpSBHTVQrMDg6MDAg5LiK5Y2IMjowNjoxNiwgTWF4aW1lIFJp
+cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFRodSwg
+TWF5IDE4LCAyMDE3IGF0IDEyOjQzOjUzQU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
+IEFzIHdlIGhhdmUgYWxyZWFkeSB0aGUgc3VwcG9ydCBmb3IgdGhlIFRWIGVuY29kZXIgb24gQWxs
+d2lubmVyIEgzLAo+YWRkCj4+IHRoZSBkaXNwbGF5IGVuZ2luZSBwaXBlbGluZSBkZXZpY2UgdHJl
+ZSBub2RlcyB0byBpdHMgRFRTSSBmaWxlLgo+PiAKPj4gVGhlIEg1IHBpcGVsaW5lIGhhcyBzb21l
+IGRpZmZlcmVuY2VzIGFuZCB3aWxsIGJlIGVuYWJsZWQgbGF0ZXIuCj4+IAo+PiBUaGUgY3VycmVu
+dGx5LXVudXNlZCBtaXhlcjAgYW5kIHRjb24wIGFyZSBhbHNvIG5lZWRlZCwgZm9yIHRoZQo+PiBj
+b21wbGV0ZW1lbnQgb2YgdGhlIHBpcGVsaW5lLgo+PiAKPj4gU2lnbmVkLW9mZi1ieTogSWNlbm93
+eSBaaGVuZyA8aWNlbm93eUBhb3NjLmlvPgo+PiAtLS0KPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3N1
+bjhpLWgzLmR0c2kgfCAxODkKPisrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAxODkgaW5zZXJ0aW9ucygrKQo+PiAKPj4gZGlmZiAtLWdp
+dCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWgzLmR0c2kKPmIvYXJjaC9hcm0vYm9vdC9kdHMv
+c3VuOGktaDMuZHRzaQo+PiBpbmRleCBiMzZmOWY0MjNjMzkuLjIwMTcyZWY5MjQxNSAxMDA2NDQK
+Pj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvc3VuOGktaDMuZHRzaQo+PiArKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy9zdW44aS1oMy5kdHNpCj4+IEBAIC00MSw2ICs0MSw4IEBACj4+ICAgKi8KPj4g
+IAo+PiAgI2luY2x1ZGUgInN1bnhpLWgzLWg1LmR0c2kiCj4+ICsjaW5jbHVkZSA8ZHQtYmluZGlu
+Z3MvY2xvY2svc3VuOGktZGUyLmg+Cj4+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvcmVzZXQvc3Vu
+OGktZGUyLmg+Cj4+ICAKPj4gIC8gewo+PiAgCWNwdXMgewo+PiBAQCAtNzIsNiArNzQsMTkzIEBA
+Cj4+ICAJCX07Cj4+ICAJfTsKPj4gIAo+PiArCWRlOiBkaXNwbGF5LWVuZ2luZSB7Cj4+ICsJCWNv
+bXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjhpLWgzLWRpc3BsYXktZW5naW5lIjsKPj4gKwkJYWxs
+d2lubmVyLHBpcGVsaW5lcyA9IDwmbWl4ZXIwPiwKPj4gKwkJCQkgICAgICA8Jm1peGVyMT47Cj4+
+ICsJCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cj4+ICsJfTsKPj4gKwo+PiArCXNvYyB7Cj4+ICsJCWRp
+c3BsYXlfY2xvY2tzOiBjbG9ja0AxMDAwMDAwIHsKPj4gKwkJCWNvbXBhdGlibGUgPSAiYWxsd2lu
+bmVyLHN1bjhpLWE4M3QtZGUyLWNsayI7Cj4+ICsJCQlyZWcgPSA8MHgwMTAwMDAwMCAweDEwMDAw
+MD47Cj4+ICsJCQljbG9ja3MgPSA8JmNjdSBDTEtfQlVTX0RFPiwKPj4gKwkJCQkgPCZjY3UgQ0xL
+X0RFPjsKPj4gKwkJCWNsb2NrLW5hbWVzID0gImJ1cyIsCj4+ICsJCQkJICAgICAgIm1vZCI7Cj4+
+ICsJCQlyZXNldHMgPSA8JmNjdSBSU1RfQlVTX0RFPjsKPj4gKwkJCSNjbG9jay1jZWxscyA9IDwx
+PjsKPj4gKwkJCSNyZXNldC1jZWxscyA9IDwxPjsKPj4gKwkJCWFzc2lnbmVkLWNsb2NrcyA9IDwm
+Y2N1IENMS19ERT47Cj4+ICsJCQlhc3NpZ25lZC1jbG9jay1wYXJlbnRzID0gPCZjY3UgQ0xLX1BM
+TF9ERT47Cj4+ICsJCQlhc3NpZ25lZC1jbG9jay1yYXRlcyA9IDw0MzIwMDAwMDA+Owo+Cj5UaGlz
+IHNob3VsZG4ndCBiZSBzZXQgaW4gdGhlIERULCBidXQgZXZhbHVhdGVkIGF0IHJ1bnRpbWUgd2hl
+biBjYWxsaW5nCj5jbGtfc2V0X3JhdGUuCgpOb3BlLCBERTIgY2xvY2sgZG9lc24ndCBuZWVkIGV2
+YWx1dGlvbiwgYXMgdGhlIGNsb2NrIGlzIGRlY291cGxlZCB3aXRoCkRFMiBtaXhlcnMnIG91dHB1
+dCBzaWduYWwuIChBbHRob3VnaCBpdCBzZWVtcyB0aGF0IFNvQ3Mgd2l0aCBsYXJnZXIKcGxhbmUg
+c2l6ZSB3aWxsIHVzZSBoaWdoZXIgY2xvY2suKQoKQW5kIHNldHRpbmcgaXQgdG8gNDMyTUh6IGlz
+IGFsc28gbmVlZGVkIGZvciBwcm9wZXJseSAyMTZNSHogY2xvY2sgdG8gVFZFLgoKPgo+PiArCQl0
+dmUwOiB0di1lbmNvZGVyQDFlMDAwMDAgewo+PiArCQkJY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIs
+c3VuOGktaDMtdHYtZW5jb2RlciI7Cj4+ICsJCQlyZWcgPSA8MHgwMWUwMDAwMCAweDEwMDA+Owo+
+PiArCQkJY2xvY2tzID0gPCZjY3UgQ0xLX0JVU19UVkU+LCA8JmNjdSBDTEtfVFZFPjsKPj4gKwkJ
+CWNsb2NrLW5hbWVzID0gImJ1cyIsICJtb2QiOwo+PiArCQkJcmVzZXRzID0gPCZjY3UgUlNUX0JV
+U19UVkU+Owo+PiArCQkJc3RhdHVzID0gImRpc2FibGVkIjsKPj4gKwo+PiArCQkJYXNzaWduZWQt
+Y2xvY2tzID0gPCZjY3UgQ0xLX1RWRT47Cj4+ICsJCQlhc3NpZ25lZC1jbG9jay1wYXJlbnRzID0g
+PCZjY3UgQ0xLX1BMTF9ERT47Cj4KPlNhbWUgdGhpbmcgaGVyZS4gY2xrX3NldF9yYXRlIHNob3Vs
+ZCBqdXN0IGRvIHRoZSByaWdodCB0aGluZy4KPgo+PiArCQkJYXNzaWduZWQtY2xvY2stcmF0ZXMg
+PSA8MjE2MDAwMDAwPjsKPgo+QW5kIHdoeSBhcmUgeW91IHNldHRpbmcgaXQgaW4gdGhlIGRyaXZl
+ciBhbmQgaW4gdGhlIERUPwo+Cj5NYXhpbWUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
