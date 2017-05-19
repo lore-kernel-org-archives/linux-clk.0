@@ -1,241 +1,446 @@
-Return-Path: <zhang.lyra@gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
+	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
+	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>,
+	<dongas86@gmail.com>, Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH V3 1/3] clk: add clk_bulk_get accessories
+Date: Fri, 19 May 2017 21:49:04 +0800
+Message-ID: <1495201746-31841-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
+References: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
-References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
- <20170515083502.4492-3-chunyan.zhang@spreadtrum.com> <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 18 May 2017 16:47:34 +0800
-Message-ID: <CAAfSe-u-+snc=b6QYgA4ysknxYDXS5UqbvWBqrnZ92sSBQqJRQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] Documentation: add sprd clock bindings
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	xiaolong.zhang@spreadtrum.com,
-	=?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?= <orson.zhai@spreadtrum.com>,
-	"geng.ren@spreadtrum.com" <geng.ren@spreadtrum.com>, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
+These helper function allows drivers to get several clk consumers in
+one operation. If any of the clk cannot be acquired then any clks
+that were got will be put before returning to the caller.
 
-Many thanks for your time.
+This can relieve the driver owners' life who needs to handle many clocks,
+as well as each clock error reporting.
 
-On 18 May 2017 at 03:43, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, May 15, 2017 at 10:35 AM, Chunyan Zhang
-> <chunyan.zhang@spreadtrum.com> wrote:
->> This patch adds a new directory under the 'clock' for Spreadtrum platform,
->> also bindings which document compatible strings and properties used for
->> devicetree node of clocks on Spreadtrum SoCs.
->>
->> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
->> ---
->>  .../clock/sprd/sprd,adjustable-pll-clock.txt       | 17 +++++
->>  .../bindings/clock/sprd/sprd,composite-clock.txt   | 28 +++++++++
->>  .../bindings/clock/sprd/sprd,divider-clock.txt     | 24 +++++++
->>  .../bindings/clock/sprd/sprd,gates-clock.txt       | 73 ++++++++++++++++++++++
->>  .../bindings/clock/sprd/sprd,muxed-clock.txt       | 23 +++++++
->>  5 files changed, 165 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
->>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
->>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
->>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
->>  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
->> new file mode 100644
->> index 0000000..476e315
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
->> @@ -0,0 +1,17 @@
->> +Spreadtrum adjustable pll clock driver
->> +
->> +Required properties:
->> +
->> +- compatible : must be one of:
->> +       "sprd,sc9836-adjustable-pll-clock"
->> +       "sprd,sc9860-adjustable-pll-clock"
->> +
->> +Example:
->> +       clk_mpll0: clk@40400024 {
->> +               compatible = "sprd,sc9860-adjustable-pll-clock";
->> +               #clock-cells = <0>;
->> +               reg = <0 0x40400024 0 0x4>,
->> +                     <0 0x40400028 0 0x4>;
->> +               clocks = <&clk_mpll_gates 2>;
->> +               clock-output-names = "clk_mpll0";
->> +       };
->
-> The properties listed in the example must all be either
-> defined as "required" or "optional" properties and have a
-> description.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Anson Huang <anson.huang@nxp.com>
+Cc: Robin Gong <yibin.gong@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Octavian Purdila <octavian.purdila@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ChangeLog:
+v2->v3:
+ * release resource in reversed order in case an error according to
+   Geert Uytterhoeven's suggestion
 
-Since these common properties are documented in the common clock binding [1]
+v1->v2:
+ * fix comments of clk_bulk_get that only one dev is possible with the API.
+ * Comments 'bulk of clock source' replaced by 'set of clks'
+ * Mark clk_bulk_data structure as const for the following API:
+   clk_bulk_{enable|disable}
+   clk_bulk_{prepare|unprepare}
+   Except clk_bulk_{get|put} which needs update clk_bulk_date
+ * Introduce clk-bulk.c to centrally handle bulk_clks, especially moving
+   platform independant clk_bulk_{get|put} out of clkdev.c which depends on
+   CONFIG_CLKDEV_LOOKUP and is used in devm_clk_bulk_get(clk-devres.c) later
+   which is independant of CONFIG_CLKDEV_LOOKUP.
+ * Should call clk_disable in error path of clk_bulk_enable
+ * Fix a build warning of clk_bulk_get in !CONFIG_COMMON_CLK case
+ * Add __must_check anatation in function definition as well to make it
+   more explicitly
+---
+ drivers/clk/Makefile   |   2 +-
+ drivers/clk/clk-bulk.c | 157 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h    | 111 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 269 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/clk-bulk.c
 
-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-
-I will add explanation in this file like I do in other bindings
-introduced in this patch, and will address 'reg' which probably is not
-similar to the common usage.
-
->
-> The reg property here is a bit odd, as it lists two consecutive
-> 4-byte areas, and both are suspiciously close to a round
-> address (0x40400000), so I would guess that they are
-> in fact part of a clock controller with several registers.
-
-They are PLL clock configuration registers.
-
-Different PLL has different configurations which listed in pll_cfg.h,
-and probably has different number of registers for storing
-configurations, and on some Spreadtrum's SoCs PLL clock configuration
-registers aren't consecutive, but all PLLs on all Spreadtrum's SoCs
-(at least so far) are using the same driver.
-
->
-> If so, please define a node for the entire clock controller,
-> the DT description should reflect the design of the hardware
-> rather than the design of your device driver.
-
-I also realized our implementation might not be easy to be understood,
-but I haven't thought out a better solution considering the hardware
-limitation I explained above.
-
->
->> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
->> new file mode 100644
->> index 0000000..a476eb6
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
->> @@ -0,0 +1,28 @@
->> +Spreadtrum composite clock driver.
->> +
->> +This binding uses the common clock binding[1].
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Required properties:
->> +
->> +- compatible:  should be "sprd,composite-clock"
->> +
->> +- sprd,mux-msk:        arbitrary bitmask for selecting clock input
->
-> "arbitrary" is not a good word to use in a specification document ;-)
->
-> Are there no constraints whatsoever on the allowed values? How
-> many bits are there?
-
-This actually represents which bits in the register of this clock
-should be used for selecting clock inputs, so it depends on how many
-clock inputs this composite-clock includes.  Also different
-composite-clock has different combination of clock inputs.
-
->
->> +- sprd,div-msk:        arbitrary bitmask for programming the divider,
->> +               denominator of divider is the value consisted
->> +               of these bits plus 1
->
-> This sounds like it should just be the denominator, you can add
-> or subtract one in the driver.
-
-I will rephrase this description.  This represents which bits in the
-register of this clock should be used for setting the value of
-denominator (more exactly to say that the value plus 1 as
-denominator).
-
->
->> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
->> new file mode 100644
->> index 0000000..f23ecb6
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
->> @@ -0,0 +1,73 @@
->> +Spreadtrum gate clock driver
->> +
->> +This binding uses the common clock binding[1].
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Spreadtrum's SoCs often use one register to control more than one gate clocks.
->> +Clock consumers can use index to get the correct gate clock.
->> +
->> +In Spreadtrum platform, some of gate clocks have three registers, respectively
->> +used for controlling, setting and clearing gate clock, the addresses of
->> +these three registers generally are <start>, <start + offset>, and
->> +<start + offset * 2>, and offset would be 0x1000 or 0x100, so the register
->> +size of gate clocks is either 0x3000 or 0x300. While for some historical issue
->> +there also are some clocks which don't have independent set/clear registers.
->> +Please see bellow for more specific information.
->> +
->> +Required properties:
->> +
->> +- compatible:  should be one of the following:
->> +               "sprd,sc1000-gates-clock"
->> +               - offset of the registers for setting gate is 0x1000
->> +
->> +               "sprd,sc100-gates-clock"
->> +               - offset of the registers for setting gate is 0x100
->> +
->> +               "sprd,gates-clock"
->> +               - for clocks without independent set/clear registers
->
-> I think the compatible value should refer to at least some more
-> specific product that uses these: I would guess that there are
-> some chips that spreadtrum has made that have clock gates
-> which are not compatible with this.
-
-All chips that Spreadtrum has made so far have the similar h/w design
-on clock gates, only the meaning of each bit in their registers is a
-little different.
-
-The 'sc1000-gates-clock' has dedicated registers respectively used for
-setting and clearing gate clocks.
-
-Like documented in this binding, 1000 means the address of registers
-for setting is the address of gate clock control register plus 1000,
-and clearing registers plus 1000 * 2, the similar with
-'sc100-gates-clock'.
-
->
-> Can all three appear in the same chip, or would you always
-> have only one of them?
-
-All these three kinds of gates indeed are being used on SC9860.
-
->
->> +- reg: the first cell represents the address of this clock gate controller
->> +       register, the second cell implies how is the offset of set/clear
->> +       registers of this clock gate, like addressed in the head of this
->> +       file
->> +
->> +optional properties:
->> +
->> +- clock-indices:       If the identifying number for the clocks in the node
->> +                       is not linear from zero, this property is necessary
->> +
->> +Example:
->> +
->> +       clk_mpll_gates: clk@402b00b0 {
->> +               compatible = "sprd,sc1000-gates-clock";
->> +               #clock-cells = <1>;
->> +               reg = <0 0x402b00b0 0 0x3000>;
->> +               clocks = <&ext_26m>;
->> +               clock-indices = <2>, <18>;
->> +               clock-output-names = "clk_mpll0_gate", "clk_mpll1_gate";
->> +       };
->>
->
-> For clock-output-names, please drop the "clk_" prefix from each
-> identifier, and maybe use '-' instead of '_' as the separator.
-
-Ok, will address this.
-
-Thanks for the review,
-Chunyan
-
->
->        Arnd
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index c19983a..ed1e99f 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -1,5 +1,5 @@
+ # common clock types
+-obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o
++obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o clk-bulk.o
+ obj-$(CONFIG_CLKDEV_LOOKUP)	+= clkdev.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+new file mode 100644
+index 0000000..c834f5a
+--- /dev/null
++++ b/drivers/clk/clk-bulk.c
+@@ -0,0 +1,157 @@
++/*
++ * Copyright 2017 NXP
++ *
++ * Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk.h>
++#include <linux/device.h>
++#include <linux/export.h>
++
++void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
++{
++	while (--num_clks >= 0) {
++		clk_put(clks[num_clks].clk);
++		clks[num_clks].clk = NULL;
++	}
++}
++EXPORT_SYMBOL_GPL(clk_bulk_put);
++
++int __must_check clk_bulk_get(struct device *dev, int num_clks,
++			      struct clk_bulk_data *clks)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < num_clks; i++)
++		clks[i].clk = NULL;
++
++	for (i = 0; i < num_clks; i++) {
++		clks[i].clk = clk_get(dev, clks[i].id);
++		if (IS_ERR(clks[i].clk)) {
++			ret = PTR_ERR(clks[i].clk);
++			dev_err(dev, "Failed to get clk '%s': %d\n",
++				clks[i].id, ret);
++			clks[i].clk = NULL;
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	clk_bulk_put(i, clks);
++
++	return ret;
++}
++EXPORT_SYMBOL(clk_bulk_get);
++
++#ifdef CONFIG_HAVE_CLK_PREPARE
++
++/**
++ * clk_bulk_unprepare - undo preparation of a set of clock sources
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table being unprepared
++ *
++ * clk_bulk_unprepare may sleep, which differentiates it from clk_bulk_disable.
++ * Returns 0 on success, -EERROR otherwise.
++ */
++void clk_bulk_unprepare(int num_clks, const struct clk_bulk_data *clks)
++{
++	while (--num_clks >= 0)
++		clk_unprepare(clks[num_clks].clk);
++}
++EXPORT_SYMBOL_GPL(clk_bulk_unprepare);
++
++/**
++ * clk_bulk_prepare - prepare a set of clocks
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table being prepared
++ *
++ * clk_bulk_prepare may sleep, which differentiates it from clk_bulk_enable.
++ * Returns 0 on success, -EERROR otherwise.
++ */
++int __must_check clk_bulk_prepare(int num_clks,
++				  const struct clk_bulk_data *clks)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < num_clks; i++) {
++		ret = clk_prepare(clks[i].clk);
++		if (ret) {
++			pr_err("Failed to prepare clk '%s': %d\n",
++				clks[i].id, ret);
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	clk_bulk_unprepare(i, clks);
++
++	return  ret;
++}
++
++#endif /* CONFIG_HAVE_CLK_PREPARE */
++
++/**
++ * clk_bulk_disable - gate a set of clocks
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table being gated
++ *
++ * clk_bulk_disable must not sleep, which differentiates it from
++ * clk_bulk_unprepare. clk_bulk_disable must be called before
++ * clk_bulk_unprepare.
++ */
++void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks)
++{
++
++	while (--num_clks >= 0)
++		clk_disable(clks[num_clks].clk);
++}
++EXPORT_SYMBOL_GPL(clk_bulk_disable);
++
++/**
++ * clk_bulk_enable - ungate a set of clocks
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table being ungated
++ *
++ * clk_bulk_enable must not sleep
++ * Returns 0 on success, -EERROR otherwise.
++ */
++int __must_check clk_bulk_enable(int num_clks, const struct clk_bulk_data *clks)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < num_clks; i++) {
++		ret = clk_enable(clks[i].clk);
++		if (ret) {
++			pr_err("Failed to enable clk '%s': %d\n",
++				clks[i].id, ret);
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	clk_bulk_disable(i, clks);
++
++	return  ret;
++}
++EXPORT_SYMBOL_GPL(clk_bulk_enable);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index e9d36b3..1201944 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -77,6 +77,21 @@ struct clk_notifier_data {
+ 	unsigned long		new_rate;
+ };
+ 
++/**
++ * struct clk_bulk_data - Data used for bulk clk operations.
++ *
++ * @id: clock consumer ID
++ * @clk: struct clk * to store the associated clock
++ *
++ * The CLK APIs provide a series of clk_bulk_() API calls as
++ * a convenience to consumers which require multiple clks.  This
++ * structure is used to manage data for these calls.
++ */
++struct clk_bulk_data {
++	const char		*id;
++	struct clk		*clk;
++};
++
+ #ifdef CONFIG_COMMON_CLK
+ 
+ /**
+@@ -185,12 +200,20 @@ static inline bool clk_is_match(const struct clk *p, const struct clk *q)
+  */
+ #ifdef CONFIG_HAVE_CLK_PREPARE
+ int clk_prepare(struct clk *clk);
++int __must_check clk_bulk_prepare(int num_clks,
++				  const struct clk_bulk_data *clks);
+ #else
+ static inline int clk_prepare(struct clk *clk)
+ {
+ 	might_sleep();
+ 	return 0;
+ }
++
++static inline int clk_bulk_prepare(int num_clks, struct clk_bulk_data *clks)
++{
++	might_sleep();
++	return 0;
++}
+ #endif
+ 
+ /**
+@@ -204,11 +227,16 @@ static inline int clk_prepare(struct clk *clk)
+  */
+ #ifdef CONFIG_HAVE_CLK_PREPARE
+ void clk_unprepare(struct clk *clk);
++void clk_bulk_unprepare(int num_clks, const struct clk_bulk_data *clks);
+ #else
+ static inline void clk_unprepare(struct clk *clk)
+ {
+ 	might_sleep();
+ }
++static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
++{
++	might_sleep();
++}
+ #endif
+ 
+ #ifdef CONFIG_HAVE_CLK
+@@ -230,6 +258,29 @@ static inline void clk_unprepare(struct clk *clk)
+ struct clk *clk_get(struct device *dev, const char *id);
+ 
+ /**
++ * clk_bulk_get - lookup and obtain a number of references to clock producer.
++ * @dev: device for clock "consumer"
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * This helper function allows drivers to get several clk consumers in one
++ * operation. If any of the clk cannot be acquired then any clks
++ * that were obtained will be freed before returning to the caller.
++ *
++ * Returns 0 if all clocks specified in clk_bulk_data table are obtained
++ * successfully, or valid IS_ERR() condition containing errno.
++ * The implementation uses @dev and @clk_bulk_data.id to determine the
++ * clock consumer, and thereby the clock producer.
++ * The clock returned is stored in each @clk_bulk_data.clk field.
++ *
++ * Drivers must assume that the clock source is not enabled.
++ *
++ * clk_bulk_get should not be called from within interrupt context.
++ */
++int __must_check clk_bulk_get(struct device *dev, int num_clks,
++			      struct clk_bulk_data *clks);
++
++/**
+  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+  * @dev: device for clock "consumer"
+  * @id: clock consumer ID
+@@ -279,6 +330,18 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+ int clk_enable(struct clk *clk);
+ 
+ /**
++ * clk_bulk_enable - inform the system when the set of clks should be running.
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * May be called from atomic contexts.
++ *
++ * Returns success (0) or negative errno.
++ */
++int __must_check clk_bulk_enable(int num_clks,
++				 const struct clk_bulk_data *clks);
++
++/**
+  * clk_disable - inform the system when the clock source is no longer required.
+  * @clk: clock source
+  *
+@@ -295,6 +358,24 @@ int clk_enable(struct clk *clk);
+ void clk_disable(struct clk *clk);
+ 
+ /**
++ * clk_bulk_disable - inform the system when the set of clks is no
++ *		      longer required.
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * Inform the system that a set of clks is no longer required by
++ * a driver and may be shut down.
++ *
++ * May be called from atomic contexts.
++ *
++ * Implementation detail: if the set of clks is shared between
++ * multiple drivers, clk_bulk_enable() calls must be balanced by the
++ * same number of clk_bulk_disable() calls for the clock source to be
++ * disabled.
++ */
++void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks);
++
++/**
+  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
+  *		  This is only valid once the clock source has been enabled.
+  * @clk: clock source
+@@ -314,6 +395,19 @@ unsigned long clk_get_rate(struct clk *clk);
+ void clk_put(struct clk *clk);
+ 
+ /**
++ * clk_bulk_put	- "free" the clock source
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * Note: drivers must ensure that all clk_bulk_enable calls made on this
++ * clock source are balanced by clk_bulk_disable calls prior to calling
++ * this function.
++ *
++ * clk_bulk_put should not be called from within interrupt context.
++ */
++void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
++
++/**
+  * devm_clk_put	- "free" a managed clock source
+  * @dev: device used to acquire the clock
+  * @clk: clock source acquired with devm_clk_get()
+@@ -445,6 +539,12 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline int clk_bulk_get(struct device *dev, int num_clks,
++			       struct clk_bulk_data *clks)
++{
++	return 0;
++}
++
+ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ {
+ 	return NULL;
+@@ -458,6 +558,8 @@ static inline struct clk *devm_get_clk_from_child(struct device *dev,
+ 
+ static inline void clk_put(struct clk *clk) {}
+ 
++static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
++
+ static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+ 
+ static inline int clk_enable(struct clk *clk)
+@@ -465,8 +567,17 @@ static inline int clk_enable(struct clk *clk)
+ 	return 0;
+ }
+ 
++static inline int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
++{
++	return 0;
++}
++
+ static inline void clk_disable(struct clk *clk) {}
+ 
++
++static inline void clk_bulk_disable(int num_clks,
++				    struct clk_bulk_data *clks) {}
++
+ static inline unsigned long clk_get_rate(struct clk *clk)
+ {
+ 	return 0;
+-- 
+2.7.4
