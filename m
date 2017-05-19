@@ -1,84 +1,111 @@
-Return-Path: <varada@codeaurora.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- Manoharan Vijaya Raghavan <mraghava@codeaurora.org>,
- linux-gpio@vger.kernel.org, catalin.marinas@arm.com,
- mturquette@baylibre.com, sjaganat@codeaurora.org, sboyd@codeaurora.org,
- linux-kernel@vger.kernel.org, will.deacon@arm.com,
- linux-clk@vger.kernel.org, david.brown@linaro.org, absahu@codeaurora.org,
- robh+dt@kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
- sricharan@codeaurora.org, linux-soc@vger.kernel.org,
- linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org>
- <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
- <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
- <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
- <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
- <20170517193315.GF12920@tuxbook>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-Message-ID: <f5a3da8b-c3a4-3cb3-9f5f-0cbdb87688ed@codeaurora.org>
-Date: Thu, 18 May 2017 14:09:26 +0530
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 00/10] clk: renesas: rcar-gen2: Add new CPG/MSSR drivers
+Date: Fri, 19 May 2017 10:45:55 +0200
+Message-Id: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20170517193315.GF12920@tuxbook>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+	Hi all,
 
+Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
+clk-mstp, and clk-div6 drivers, which depend on most clocks being
+described in DT.  Especially the module (MSTP) clocks are cumbersome and
+error prone, due to 3 arrays (clocks, clock-indices, and
+clock-output-names) to be kept in sync. In addition, the clk-mstp driver
+cannot be extended easily to also support module resets, which are
+provided by the same hardware module.
 
-On 5/18/2017 1:03 AM, Bjorn Andersson wrote:
-> On Mon 15 May 02:05 PDT 2017, Varadarajan Narayanan wrote:
-> 
->> On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
->>> On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
->>>
->>>> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
->>>>> On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
-> [..]
->>>>>> +	msm_mux_qpic_pad4,
->>>>>
->>>>> What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
->>>>> alternative muxings...?
->>>>
->>>> This is for the NAND and LCD display. The pins listed are the 9 data pins.
->>>>
->>>
->>> Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
->>> possible to reference a partial group in the DTS, if that's necessary)
->>
->> There are two sets of 9 pins, either of which can go to NAND or LCD.
->> Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
->> Is that ok?
->>
-> 
-> So you have NAND and LCD hardware muxed to either "a" or "b" and then
-> you mux either "a" or "b" out onto actual pins?
-> 
-> How is this first mux configured?
-> 
-> I think the a/b scheme sounds reasonable, if above is how it works.
+Hence when developing support for R-Car Gen3 SoCs, another approach was
+chosen, which led to the CPG/MSSR driver core, and SoC-specific
+subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
 
-Sorry, I was wrong. I had misread the documentation.
+This series introduces new clock drivers for all supported R-Car Gen2
+SoCs, using the CPG/MSSR driver core, and the support for RZ/G1.  They
+provide all clocks supported by the old driver, plus a few more.
+The old driver can still be used through a Kconfig option, to preserve
+backward compatibility with old DTBs.
 
-There are 18 pins. 15 pins are common between LCD and NAND. The QPIC 
-controller arbitrates between LCD and NAND. Of the remaining 4, 2 are 
-for NAND and 2 are for LCD exclusively. We plan to group the qpic pins 
-into 3 groups namely, qpic_common, qpic_nand and qpic_lcd. Is that ok?
+This series does not include the corresponding DTS updates.  These will
+be posted as a separate series later.
 
-Thanks
-Varada
+Changes compared to v1:
+  - Add Acked-by, Reviewed-by,
+  - Add more rationale to the clock driver patch descriptions.
 
-> 
-> Regards,
-> Bjorn
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+This series depends on "[PATCH v2] clk: renesas: Rework Kconfig and
+Makefile logic", which I posted before.
+
+For testing, this patch series, incl. all dependencies and the DTS
+updates, are available in the topic/rcar2-cpg-mssr-v2 branch of my
+renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
+r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
+been compared before and after the conversion.
+
+I plan to queue this up in clk-renesas-for-v4.13, so the DTS updates can
+be queued for v4.14 later.
+
+Thanks!
+
+Geert Uytterhoeven (10):
+  clk: renesas: cpg-mssr: Document R-Car Gen2 support
+  clk: renesas: Add r8a7790 CPG Core Clock Definitions
+  clk: renesas: Add r8a7791 CPG Core Clock Definitions
+  clk: renesas: Add r8a7792 CPG Core Clock Definitions
+  clk: renesas: Add r8a7793 CPG Core Clock Definitions
+  clk: renesas: Add r8a7794 CPG Core Clock Definitions
+  clk: renesas: r8a7790: Add new CPG/MSSR driver
+  clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
+  clk: renesas: r8a7792: Add new CPG/MSSR driver
+  clk: renesas: r8a7794: Add new CPG/MSSR driver
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
+ drivers/clk/renesas/Kconfig                        |  22 +-
+ drivers/clk/renesas/Makefile                       |   4 +
+ drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 ++++++++++++++++++++
+ drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++++++++
+ drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
+ drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 ++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  29 +++
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
+ include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
+ include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
+ include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
+ include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
+ include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
+ 14 files changed, 1341 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum, a Linux Foundation Collaborative Project
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
