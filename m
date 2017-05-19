@@ -1,121 +1,155 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sat, 27 May 2017 13:00:08 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/5 v2] clk: qcom: Implement RPM clocks for
- MSM8660/APQ8060
-Message-ID: <20170527200008.GM12920@tuxbook>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-3-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170419091326.11226-3-linus.walleij@linaro.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 2/5] clk: mvebu: ap806: do not depend anymore of the *-clock-output-names
+Date: Fri, 19 May 2017 17:58:02 +0200
+Message-Id: <83d2035a1d00773c8e4c4d09134c81b0cd24152c.1495209464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
+As it was done for the cp110, this patch modifies the way the clock names
+are created. The name of each clock is now created by using its physical
+address as a prefix (as it was done for the platform device
+names). Thanks to this we have an automatic way to compute a unique name.
 
-> The RPM clocks were missing for MSM8660/APQ8060. For this to be
-> completed we need to add a special fixed rate RPM clock that is used
-> for the PLL4 on these SoCs. The rest of the clocks are pretty
-> similar to the other supported platforms.
-> 
-> The "active" clock pattern is mirrored in all the clocks. I guess
-> that the PLL4 that clocks the LPASS is actually never used as
-> "active only" since the low-power audio subsystem should be left
-> on when the system suspends, so it can be used as a stand-alone
-> MP3 player type of device.
-> 
-> As we do not have firmware for the LPASS we will probably only use
-> this clock when the system is up and running (not suspended) for now,
-> so that will be using the "active" clock.
-> 
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt |  4 ----
+ drivers/clk/mvebu/ap806-system-controller.c                               | 46 ++++++++++++++++++++++++----------------------
+ 2 files changed, 24 insertions(+), 26 deletions(-)
 
-Note that "active" vs "sleep" is not related to the Linux suspend state,
-but rather the CPU idle state; at the bottom of the CPU idle path the
-RPM will react and reconfigure resources to their sleep state (if one is
-configured) and then reconfigured based on the active state before
-returning from the idle.
-
-The PLL4 seems to be enabled only on behalf of the booting LPASS Hexagon
-- which will cast its own vote once its booted - and as such we only
-configure the active state (meaning both states will have same
-configuration).  The result is that PLL4 will be on from prepare() to
-unprepare() regardless of what the application CPU does.
-
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Add the small hunk to the clk_rpm_handoff() function that just
->   skip over this for the fixed PLL4 clock. This accidentally
->   ended up in another patch.
-> ---
->  drivers/clk/qcom/clk-rpm.c | 106 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 106 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-> index df3e5fe8442a..61c67e93bea3 100644
-> --- a/drivers/clk/qcom/clk-rpm.c
-> +++ b/drivers/clk/qcom/clk-rpm.c
-> @@ -56,6 +56,30 @@
->  		},							      \
->  	}
->  
-> +#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
-
-Is there a reason why you don't use DEFINE_CLK_RPM_PXO_BRANCH() for
-PLL4?
-
-Looking at the downstream code PLL4 is explicitly handled differently
-and is only exposing one state. So if you're seeing issues with reusing
-the PXO_BRANCH() I think you should slim this down further and only
-register a single clk_rpm from this.
-
-> +	static struct clk_rpm _platform##_##_name = {			      \
-> +		.rpm_clk_id = (r_id),					      \
-> +		.rate = (r),						      \
-> +		.hw.init = &(struct clk_init_data){			      \
-> +			.ops = &clk_rpm_fixed_ops,			      \
-> +			.name = #_name,					      \
-> +			.parent_names = (const char *[]){ "pxo_board" },      \
-> +			.num_parents = 1,				      \
-> +		},							      \
-> +	};								      \
-> +	static struct clk_rpm _platform##_##_active = {			      \
-> +		.rpm_clk_id = (r_id),					      \
-> +		.peer = &_platform##_##_name,				      \
-> +		.active_only = true,					      \
-> +		.rate = (r),						      \
-> +		.hw.init = &(struct clk_init_data){			      \
-> +			.ops = &clk_rpm_fixed_ops,			      \
-> +			.name = #_active,				      \
-> +			.parent_names = (const char *[]){ "pxo_board" },      \
-> +			.num_parents = 1,				      \
-> +		},							      \
-> +	}
-> +
-[..]
-> @@ -348,6 +412,46 @@ static const struct clk_ops clk_rpm_branch_ops = {
->  	.recalc_rate	= clk_rpm_recalc_rate,
->  };
->  
-> +/* MSM8660/APQ8060 */
-> +DEFINE_CLK_RPM_FIXED(msm8660, pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
-
-My OCD wants this at the bottom of the list...
-
-> +DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-> +DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-> +DEFINE_CLK_RPM(msm8660, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
-> +DEFINE_CLK_RPM(msm8660, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-> +DEFINE_CLK_RPM(msm8660, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-> +DEFINE_CLK_RPM(msm8660, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-> +DEFINE_CLK_RPM(msm8660, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
-> +DEFINE_CLK_RPM(msm8660, smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
-> +DEFINE_CLK_RPM(msm8660, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-
-Regards,
-Bjorn
+diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+index 8968371d84e2..3faab71dff9f 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+@@ -21,15 +21,11 @@ Required properties:
+      "marvell,ap806-system-controller", "syscon"
+  - reg: register area of the AP806 system controller
+  - #clock-cells: must be set to 1
+- - clock-output-names: must be defined to:
+-    "ap-cpu-cluster-0", "ap-cpu-cluster-1", "ap-fixed", "ap-mss"
+ 
+ Example:
+ 
+ 	syscon: system-controller@6f4000 {
+ 		compatible = "marvell,ap806-system-controller", "syscon";
+ 		#clock-cells = <1>;
+-		clock-output-names = "ap-cpu-cluster-0", "ap-cpu-cluster-1",
+-				     "ap-fixed", "ap-mss";
+ 		reg = <0x6f4000 0x1000>;
+ 	};
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index b2666b5c944f..95ae16e203ea 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -32,6 +32,18 @@ static struct clk_onecell_data ap806_clk_data = {
+ 	.clk_num = AP806_CLK_NUM,
+ };
+ 
++static char *ap806_unique_name(struct device *dev, struct device_node *np,
++			       char *name)
++{
++	const __be32 *reg;
++	u64 addr;
++
++	reg = of_get_property(np, "reg", NULL);
++	addr = of_translate_address(np, reg);
++	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
++			(unsigned long long)addr, name);
++}
++
+ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ {
+ 	unsigned int freq_mode, cpuclk_freq;
+@@ -98,8 +110,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	cpuclk_freq *= 1000 * 1000;
+ 
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+-	of_property_read_string_index(np, "clock-output-names",
+-				      0, &name);
++	name = ap806_unique_name(dev, np, "cpu-cluster-0");
+ 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+@@ -107,8 +118,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 		goto fail0;
+ 	}
+ 
+-	of_property_read_string_index(np, "clock-output-names",
+-				      1, &name);
++	name = ap806_unique_name(dev, np, "cpu-cluster-1");
+ 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
+@@ -117,8 +127,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Fixed clock is always 1200 Mhz */
+-	of_property_read_string_index(np, "clock-output-names",
+-				      2, &fixedclk_name);
++	fixedclk_name = ap806_unique_name(dev, np, "fixed");
+ 	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
+ 						0, 1200 * 1000 * 1000);
+ 	if (IS_ERR(ap806_clks[2])) {
+@@ -127,8 +136,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* MSS Clock is fixed clock divided by 6 */
+-	of_property_read_string_index(np, "clock-output-names",
+-				      3, &name);
++	name = ap806_unique_name(dev, np, "mss");
+ 	ap806_clks[3] = clk_register_fixed_factor(NULL, name, fixedclk_name,
+ 						  0, 1, 6);
+ 	if (IS_ERR(ap806_clks[3])) {
+@@ -136,20 +144,14 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 		goto fail3;
+ 	}
+ 
+-	/* eMMC Clock is fixed clock divided by 3 */
+-	if (of_property_read_string_index(np, "clock-output-names",
+-					  4, &name)) {
+-		ap806_clk_data.clk_num--;
+-		dev_warn(&pdev->dev,
+-			 "eMMC clock missing: update the device tree!\n");
+-	} else {
+-		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+-							  fixedclk_name,
+-							  0, 1, 3);
+-		if (IS_ERR(ap806_clks[4])) {
+-			ret = PTR_ERR(ap806_clks[4]);
+-			goto fail4;
+-		}
++	/* SDIO(/eMMC) Clock is fixed clock divided by 3 */
++	name = ap806_unique_name(dev, np, "sdio");
++	ap806_clks[4] = clk_register_fixed_factor(NULL, name,
++						  fixedclk_name,
++						  0, 1, 3);
++	if (IS_ERR(ap806_clks[4])) {
++		ret = PTR_ERR(ap806_clks[4]);
++		goto fail4;
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
+-- 
+git-series 0.9.1
