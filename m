@@ -1,69 +1,134 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 10 May 2017 21:23:58 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 19 May 2017 19:57:53 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH v2 20/20] ARM: sun5i: a10s-olinuxino:
- Enable HDMI
-Message-ID: <20170510192358.taufs5tsyifueued@flea.home>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
- <c7ac6faa0568e6418291255af537c4b070bdea63.1493812478.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v65S2pw3z8NZ+tkPkF=A=5z2toRkC+26pAs6La6CNyeXoQ@mail.gmail.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [RFC PATCH 03/11] drm: sun4i: ignore swapped mixer<->tcon
+ connection for DE2
+Message-ID: <20170519175753.sygqnwopk7tuv35n@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-4-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nnojppk2eig6un6o"
-In-Reply-To: <CAGb2v65S2pw3z8NZ+tkPkF=A=5z2toRkC+26pAs6La6CNyeXoQ@mail.gmail.com>
+        protocol="application/pgp-signature"; boundary="6fekn7spmm7wi5km"
+In-Reply-To: <20170517164354.16399-4-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---nnojppk2eig6un6o
+--6fekn7spmm7wi5km
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Thu, May 04, 2017 at 04:05:18PM +0800, Chen-Yu Tsai wrote:
-> On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The A10s Olinuxino has an HDMI connector. Make sure we can use it.
-> >
-> > Acked-by: Chen-Yu Tsai <wens@csie.org>
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts | 29 ++++++++++++++++=
-+-
-> >  1 file changed, 29 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts b/arch/ar=
-m/boot/dts/sun5i-a10s-olinuxino-micro.dts
-> > index 894f874a5beb..1d13b6407222 100644
-> > --- a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
-> > +++ b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
-> > @@ -63,6 +63,17 @@
-> >                 stdout-path =3D "serial0:115200n8";
-> >         };
-> >
-> > +       connector {
-> > +               compatible =3D "hdmi-connector";
-> > +               type =3D "a";
+On Thu, May 18, 2017 at 12:43:46AM +0800, Icenowy Zheng wrote:
+> Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
+> tcon0 and mixer1 is connected to tcon1; however by setting a bit
+> the connection can be swapped.
 >=20
-> Just curious, should we take this into consideration when creating
-> drm_connector?
+> As we now hardcode the default connection, ignore the bonus endpoint for
+> the mixer's output and the TCON's input, as they stands for the swapped
+> connection.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_drv.c  | 27 ++++++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 +++++++++++++++++++++++++++++---=
+------
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
+>  3 files changed, 59 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/su=
+n4i_drv.c
+> index 1dd1948025d2..29bf1325ded6 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> @@ -173,6 +173,13 @@ static bool sun4i_drv_node_is_frontend(struct device=
+_node *node)
+>  		of_device_is_compatible(node, "allwinner,sun8i-a33-display-frontend");
+>  }
+> =20
+> +static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node *no=
+de)
+> +{
+> +	/* The V3s has only one mixer-tcon pair, so it's not listed here. */
+> +	return of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer0") ||
+> +		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
+> +}
+> +
+>  static bool sun4i_drv_node_is_tcon(struct device_node *node)
+>  {
+>  	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+> @@ -249,6 +256,26 @@ static int sun4i_drv_add_endpoints(struct device *de=
+v,
+>  			}
+>  		}
+> =20
+> +		/*
+> +		 * The second endpoint of the output of a swappable DE2 mixer
+> +		 * is the TCON after connection swapping.
+> +		 * Ignore it now, as we now hardcode mixer0->tcon0,
+> +		 * mixer1->tcon1 connection.
+> +		 */
+> +		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
+> +			struct of_endpoint endpoint;
+> +
+> +			if (of_graph_parse_endpoint(ep, &endpoint)) {
+> +				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+> +				continue;
+> +			}
+> +
+> +			if (endpoint.id) {
+> +				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2 mixer... =
+skipping\n");
+> +				continue;
+> +			}
+> +		}
+> +
+>  		/* Walk down our tree */
+>  		count +=3D sun4i_drv_add_endpoints(dev, match, remote);
+> =20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.c
+> index f44a37a5993d..89a215ff2370 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -425,7 +425,8 @@ static int sun4i_tcon_init_regmap(struct device *dev,
+>   * requested via the get_id function of the engine.
+>   */
+>  static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+> -						   struct device_node *node)
+> +						   struct device_node *node,
+> +						   bool skip_bonus_ep)
+>  {
+>  	struct device_node *port, *ep, *remote;
+>  	struct sunxi_engine *engine;
+> @@ -439,6 +440,20 @@ static struct sunxi_engine *sun4i_tcon_find_engine(s=
+truct sun4i_drv *drv,
+>  		if (!remote)
+>  			continue;
+> =20
+> +		if (skip_bonus_ep) {
+> +			struct of_endpoint endpoint;
+> +
+> +			if (of_graph_parse_endpoint(ep, &endpoint)) {
+> +				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+> +				continue;
+> +			}
+> +
+> +			if (endpoint.id) {
+> +				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when searchi=
+ng engine\n");
+> +				continue;
+> +			}
+> +		}
+> +
 
-I'm not sure, no other driver does so. And I haven't seen any of our
-boards with a HDMI-B, C or mini-HDMI connector.
+You don't list the mixers in the tcon's output, why do you need that
+exactly?
 
 Maxime
 
@@ -72,24 +137,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---nnojppk2eig6un6o
+--6fekn7spmm7wi5km
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZE2jOAAoJEBx+YmzsjxAgCioP/2rIPNKWgGmGCDyprDbgnHIK
-09g/WDmj5wAkxrbo2Y7e8+Uz0vuT78uzDLPQUzgwZK6Jvs8nZUkYWcdTFKKF+D96
-5t50lP78C/x31+jvGM8F+kmj2SbH5Yc0OjIcQyro06TBUigmR1nP+Aa5FwJqY6FF
-ZwHYbLMt+rRnNwqQ0s+D1QUu2fPiQwPzdNcL1mbzagb4Q7ZlXQWAotGfJT16Mw5I
-iO+MThbP+PJLUygYiJA2CJWvzzH3ghjUr98dSJK+6Y2KFGCerYo+gsqR7hyvWMwv
-kkfVJXwpPjQw6J+xWNI6LlvHvClhLT2QDAgLaGfC7nmtpxWHWhiWGy35XbZghQIm
-QK0gNM6v7lcyhrTFcFbW2WEvbnN8WH1+c0JO570BBCcmgIOUEO8i+rjxoji2lER6
-dsv1MdDgSFi9CHUG1+lBACgNDdCP2uojBK+4NfBr3QPP9O4+g6MypGNxE70X3Tlh
-7qywL76RiQ2kXSMcFJTbpUdwNxRIyhOchFeIDvUTcPG22MvRxLn6i3MsdX/9M50x
-7CUFjSLW4q2Mk/HFB7o8LZtBIfzLFGprj+J1RvzL1Bkq6bugZUohfEts7pYXrie9
-IPjSnsB/rYRji1p8bDbxdghzRTYtUqy2dheSvf4HWgB6k67VVmiOAHte3M4ykjs7
-zTm2R87KYoYS3SrgpwEo
-=2Zca
+iQIcBAEBAgAGBQJZHzIhAAoJEBx+YmzsjxAgMoYP/i0eLoWtlVqd8E5Gnv0dY9FM
+P7fsV/J53W37CKGPtRgLFJIed288JGxWPdgK+B5KCOHeA04feDXohedsPV2A91QQ
+O1dMAyizHueGQVO193//56VM8ZQJ8A2I7QHF+Pl5N3xSWQODwdoyc5tN0K1iXdSl
+DRpUfJSgCDSgUuZgc++bch8xbm7Dv5ROTw+V5EG/KbBABT5peu7QCGUHW2JiR0zB
+zTJ0IHrvFh5QPP/LfddSj/FG/+nTZcPeCv6ZuWiZT3MOABgqTSTQRrs9CnWGogO9
+f6pWzd/kozM6GLTZyDhbMMBJOXQCH6G7FNalTRoJO7Z6WYNPhUcd/rgvsiF6Cmsg
+JSuh84z6TdgUoV5bNjp/DyjvMgph7fA0Dak0NTOanhO6qSw8JBg735EaxtE381NP
+LcOZGES0spou9w9cYIFGXwYgDro3dGauvkHNhQbK1agICqUvCu5fmhfW83qrBuA7
+p0zuYPnxS2498xguoL/+3yVdpyrfruzPYxVIcPGeADuEj4sS4b21cSwxdeQ0zrQH
+y+v2PGeH/9PGKaXHNi9Ln93ObKwPrh8UdjdW5+fZWsiVzqkNfQ1u1yz+lH33oNtb
+A4sINSNQcBxPcNS+8G76oqCw8C+Goud98uXwKu5jbmu9gW+uhJwExW9cyYfvjpV/
+eqG2jT4holdmwKRe0Y5A
+=fHTd
 -----END PGP SIGNATURE-----
 
---nnojppk2eig6un6o--
+--6fekn7spmm7wi5km--
