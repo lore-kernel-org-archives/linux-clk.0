@@ -1,197 +1,112 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
 	Rob Herring <robh+dt@kernel.org>,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 2/20] clk: sunxi-ng: Pass the parent and a pointer to the clocks round rate
-Date: Wed,  3 May 2017 13:59:39 +0200
-Message-Id: <83d508e254c6656aee02bbe5c410922ea66cf3d7.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 2/7] clk: mvebu: cp110: make failure labels more meaningful
+Date: Fri, 19 May 2017 17:55:20 +0200
+Message-Id: <e78e9ddbfe7dbcd49539ca9181c8ee697eeba085.1495208533.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clocks might need to modify their parent clocks. In order to make that
-possible, give them access to the parent clock being evaluated, and to a
-pointer to the parent rate so that they can modify it if needed.
+In preparation to the addition of a new clock, rename the goto labels
+used to handle the failure cases using a name related to the failure
+cause. This will allow to insert additional failing cases without
+renaming all the labels.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/clk/sunxi-ng/ccu_div.c  |  7 ++++---
- drivers/clk/sunxi-ng/ccu_mp.c   |  7 ++++---
- drivers/clk/sunxi-ng/ccu_mult.c | 11 ++++++-----
- drivers/clk/sunxi-ng/ccu_mux.c  |  8 +++++---
- drivers/clk/sunxi-ng/ccu_mux.h  |  3 ++-
- drivers/clk/sunxi-ng/ccu_nkm.c  |  7 ++++---
- 6 files changed, 25 insertions(+), 18 deletions(-)
+ drivers/clk/mvebu/cp110-system-controller.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-index 4057e6021aa9..a489f18a3c01 100644
---- a/drivers/clk/sunxi-ng/ccu_div.c
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -14,7 +14,8 @@
- #include "ccu_div.h"
- 
- static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
--					unsigned long parent_rate,
-+					struct clk_hw *parent,
-+					unsigned long *parent_rate,
- 					unsigned long rate,
- 					void *data)
- {
-@@ -26,10 +27,10 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
- 	 * several parents, while we might be called to evaluate
- 	 * several different parents.
- 	 */
--	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
-+	val = divider_get_val(rate, *parent_rate, cd->div.table, cd->div.width,
- 			      cd->div.flags);
- 
--	return divider_recalc_rate(&cd->common.hw, parent_rate, val,
-+	return divider_recalc_rate(&cd->common.hw, *parent_rate, val,
- 				   cd->div.table, cd->div.flags);
- }
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-index b583f186a804..de02e6c386d8 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.c
-+++ b/drivers/clk/sunxi-ng/ccu_mp.c
-@@ -41,7 +41,8 @@ static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
- }
- 
- static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
--				       unsigned long parent_rate,
-+				       struct clk_hw *hw,
-+				       unsigned long *parent_rate,
- 				       unsigned long rate,
- 				       void *data)
- {
-@@ -52,9 +53,9 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
- 	max_m = cmp->m.max ?: 1 << cmp->m.width;
- 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
- 
--	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
-+	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
- 
--	return parent_rate / p / m;
-+	return *parent_rate / p / m;
- }
- 
- static void ccu_mp_disable(struct clk_hw *hw)
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index 671141359895..6ee7ba0738fb 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -33,9 +33,10 @@ static void ccu_mult_find_best(unsigned long parent, unsigned long rate,
- }
- 
- static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
--					unsigned long parent_rate,
--					unsigned long rate,
--					void *data)
-+					 struct clk_hw *parent,
-+					 unsigned long *parent_rate,
-+					 unsigned long rate,
-+					 void *data)
- {
- 	struct ccu_mult *cm = data;
- 	struct _ccu_mult _cm;
-@@ -47,9 +48,9 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
- 	else
- 		_cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
- 
--	ccu_mult_find_best(parent_rate, rate, &_cm);
-+	ccu_mult_find_best(*parent_rate, rate, &_cm);
- 
--	return parent_rate * _cm.mult;
-+	return *parent_rate * _cm.mult;
- }
- 
- static void ccu_mult_disable(struct clk_hw *hw)
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index c6bb1f523232..bae735e252b6 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -61,7 +61,8 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 				  struct ccu_mux_internal *cm,
- 				  struct clk_rate_request *req,
- 				  unsigned long (*round)(struct ccu_mux_internal *,
--							 unsigned long,
-+							 struct clk_hw *,
-+							 unsigned long *,
- 							 unsigned long,
- 							 void *),
- 				  void *data)
-@@ -80,7 +81,8 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, -1,
- 							&adj_parent_rate);
- 
--		best_rate = round(cm, adj_parent_rate, req->rate, data);
-+		best_rate = round(cm, best_parent, &adj_parent_rate,
-+				  req->rate, data);
- 
- 		goto out;
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 8f315c74997e..2a75397f9304 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -221,7 +221,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 					1000 * 1000 * 1000);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail0;
++		goto fail_apll;
  	}
-@@ -109,7 +111,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
- 							&adj_parent_rate);
  
--		tmp_rate = round(cm, adj_parent_rate, req->rate, data);
-+		tmp_rate = round(cm, parent, &adj_parent_rate, req->rate, data);
- 		if (tmp_rate == req->rate) {
- 			best_parent = parent;
- 			best_parent_rate = parent_rate;
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 47aba3a48245..4be56eee2bfd 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -86,7 +86,8 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 				  struct ccu_mux_internal *cm,
- 				  struct clk_rate_request *req,
- 				  unsigned long (*round)(struct ccu_mux_internal *,
--							 unsigned long,
-+							 struct clk_hw *,
-+							 unsigned long *,
- 							 unsigned long,
- 							 void *),
- 				  void *data);
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index cba84afe1cf1..44b16dc8fea6 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -102,7 +102,8 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
+ 	cp110_clks[CP110_CORE_APLL] = hw;
+@@ -232,7 +232,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail1;
++		goto fail_ppv2;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_PPV2] = hw;
+@@ -243,7 +243,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail2;
++		goto fail_eip;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_EIP] = hw;
+@@ -254,7 +254,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail3;
++		goto fail_core;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_CORE] = hw;
+@@ -270,7 +270,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 						   core_name, 0, 1, 1);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail4;
++		goto fail_nand;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_NAND] = hw;
+@@ -366,15 +366,15 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
+-fail4:
++fail_nand:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
+-fail3:
++fail_core:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
+-fail2:
++fail_eip:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
+-fail1:
++fail_ppv2:
+ 	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
+-fail0:
++fail_apll:
+ 	return ret;
  }
  
- static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
--					unsigned long parent_rate,
-+					struct clk_hw *hw,
-+					unsigned long *parent_rate,
- 					unsigned long rate,
- 					void *data)
- {
-@@ -116,9 +117,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	_nkm.min_m = 1;
- 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
- 
--	ccu_nkm_find_best(parent_rate, rate, &_nkm);
-+	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
- 
--	return parent_rate * _nkm.n * _nkm.k / _nkm.m;
-+	return *parent_rate * _nkm.n * _nkm.k / _nkm.m;
- }
- 
- static int ccu_nkm_determine_rate(struct clk_hw *hw,
 -- 
-git-series 0.8.11
+git-series 0.9.1
