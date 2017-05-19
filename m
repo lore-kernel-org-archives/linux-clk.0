@@ -1,345 +1,89 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 7/7] arm64: dts: marvell: use new binding for the system controller on cp110
-Date: Fri, 19 May 2017 17:55:25 +0200
-Message-Id: <4139fcd6c66df1c3d3fa0a0a7cf7f8a8c601a16c.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 05/10] clk: renesas: Add r8a7793 CPG Core Clock Definitions
+Date: Fri, 19 May 2017 10:46:00 +0200
+Message-Id: <1495183565-21679-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+References: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The new binding for the system controller on cp110 moved the clock
-controller into a subnode. This preliminary step will allow to add gpio
-and pinctrl subnodes.
+Add all R-Car M2-N Clock Pulse Generator Core Clock Outputs, as listed
+in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+Hardware User's Manual rev. 2.00.
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 41 ++++++-------
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 35 +++++------
- 2 files changed, 41 insertions(+), 35 deletions(-)
+v2:
+  - Add Reviewed-by.
+---
+ include/dt-bindings/clock/r8a7793-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-index a0f57a8e5dcb..96a4ff75b3b0 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-@@ -62,7 +62,7 @@
- 			cpm_ethernet: ethernet@0 {
- 				compatible = "marvell,armada-7k-pp22";
- 				reg = <0x0 0x100000>, <0x129000 0xb000>;
--				clocks = <&cpm_syscon0 1 3>, <&cpm_syscon0 1 9>, <&cpm_syscon0 1 5>;
-+				clocks = <&cpm_clk 1 3>, <&cpm_clk 1 9>, <&cpm_clk 1 5>;
- 				clock-names = "pp_clk", "gop_clk", "mg_clk";
- 				status = "disabled";
- 				dma-coherent;
-@@ -97,10 +97,13 @@
- 			};
- 
- 			cpm_syscon0: system-controller@440000 {
--				compatible = "marvell,cp110-system-controller0",
--					     "syscon";
-+				compatible = "syscon", "simple-mfd";
- 				reg = <0x440000 0x1000>;
--				#clock-cells = <2>;
+diff --git a/include/dt-bindings/clock/r8a7793-cpg-mssr.h b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..8809b0f62d615457
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
 +
-+				cpm_clk: clock {
-+					compatible = "marvell,cp110-clock";
-+					#clock-cells = <2>;
-+				};
- 			};
- 
- 			cpm_rtc: rtc@284000 {
-@@ -115,7 +118,7 @@
- 					     "generic-ahci";
- 				reg = <0x540000 0x30000>;
- 				interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cpm_syscon0 1 15>;
-+				clocks = <&cpm_clk 1 15>;
- 				status = "disabled";
- 			};
- 
-@@ -125,7 +128,7 @@
- 				reg = <0x500000 0x4000>;
- 				dma-coherent;
- 				interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cpm_syscon0 1 22>;
-+				clocks = <&cpm_clk 1 22>;
- 				status = "disabled";
- 			};
- 
-@@ -135,7 +138,7 @@
- 				reg = <0x510000 0x4000>;
- 				dma-coherent;
- 				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cpm_syscon0 1 23>;
-+				clocks = <&cpm_clk 1 23>;
- 				status = "disabled";
- 			};
- 
-@@ -145,7 +148,7 @@
- 				      <0x6b0000 0x1000>;
- 				dma-coherent;
- 				msi-parent = <&gic_v2m0>;
--				clocks = <&cpm_syscon0 1 8>;
-+				clocks = <&cpm_clk 1 8>;
- 			};
- 
- 			cpm_xor1: xor@6c0000 {
-@@ -154,7 +157,7 @@
- 				      <0x6d0000 0x1000>;
- 				dma-coherent;
- 				msi-parent = <&gic_v2m0>;
--				clocks = <&cpm_syscon0 1 7>;
-+				clocks = <&cpm_clk 1 7>;
- 			};
- 
- 			cpm_spi0: spi@700600 {
-@@ -163,7 +166,7 @@
- 				#address-cells = <0x1>;
- 				#size-cells = <0x0>;
- 				cell-index = <1>;
--				clocks = <&cpm_syscon0 1 21>;
-+				clocks = <&cpm_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -173,7 +176,7 @@
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				cell-index = <2>;
--				clocks = <&cpm_syscon0 1 21>;
-+				clocks = <&cpm_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -183,7 +186,7 @@
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cpm_syscon0 1 21>;
-+				clocks = <&cpm_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -193,7 +196,7 @@
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cpm_syscon0 1 21>;
-+				clocks = <&cpm_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -201,7 +204,7 @@
- 				compatible = "marvell,armada-8k-rng", "inside-secure,safexcel-eip76";
- 				reg = <0x760000 0x7d>;
- 				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cpm_syscon0 1 25>;
-+				clocks = <&cpm_clk 1 25>;
- 				status = "okay";
- 			};
- 
-@@ -210,7 +213,7 @@
- 				reg = <0x780000 0x300>;
- 				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "core";
--				clocks = <&cpm_syscon0 1 4>;
-+				clocks = <&cpm_clk 1 4>;
- 				dma-coherent;
- 				status = "disabled";
- 			};
-@@ -227,7 +230,7 @@
- 					     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-names = "mem", "ring0", "ring1",
- 				"ring2", "ring3", "eip";
--				clocks = <&cpm_syscon0 1 26>;
-+				clocks = <&cpm_clk 1 26>;
- 				status = "disabled";
- 			};
- 		};
-@@ -254,7 +257,7 @@
- 			interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 			num-lanes = <1>;
--			clocks = <&cpm_syscon0 1 13>;
-+			clocks = <&cpm_clk 1 13>;
- 			status = "disabled";
- 		};
- 
-@@ -281,7 +284,7 @@
- 			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			num-lanes = <1>;
--			clocks = <&cpm_syscon0 1 11>;
-+			clocks = <&cpm_clk 1 11>;
- 			status = "disabled";
- 		};
- 
-@@ -308,7 +311,7 @@
- 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			num-lanes = <1>;
--			clocks = <&cpm_syscon0 1 12>;
-+			clocks = <&cpm_clk 1 12>;
- 			status = "disabled";
- 		};
- 	};
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-index 9584bc8d8b3f..48a658aa5b32 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-@@ -104,10 +104,13 @@
- 			};
- 
- 			cps_syscon0: system-controller@440000 {
--				compatible = "marvell,cp110-system-controller0",
--					     "syscon";
-+				compatible = "syscon", "simple-mfd";
- 				reg = <0x440000 0x1000>;
--				#clock-cells = <2>;
++#ifndef __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
 +
-+				cps_clk: clock {
-+					compatible = "marvell,cp110-clock";
-+					#clock-cells = <2>;
-+				};
- 			};
- 
- 			cps_sata0: sata@540000 {
-@@ -115,7 +118,7 @@
- 					     "generic-ahci";
- 				reg = <0x540000 0x30000>;
- 				interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cps_syscon0 1 15>;
-+				clocks = <&cps_clk 1 15>;
- 				status = "disabled";
- 			};
- 
-@@ -125,7 +128,7 @@
- 				reg = <0x500000 0x4000>;
- 				dma-coherent;
- 				interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cps_syscon0 1 22>;
-+				clocks = <&cps_clk 1 22>;
- 				status = "disabled";
- 			};
- 
-@@ -135,7 +138,7 @@
- 				reg = <0x510000 0x4000>;
- 				dma-coherent;
- 				interrupts = <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cps_syscon0 1 23>;
-+				clocks = <&cps_clk 1 23>;
- 				status = "disabled";
- 			};
- 
-@@ -145,7 +148,7 @@
- 				      <0x6b0000 0x1000>;
- 				dma-coherent;
- 				msi-parent = <&gic_v2m0>;
--				clocks = <&cps_syscon0 1 8>;
-+				clocks = <&cps_clk 1 8>;
- 			};
- 
- 			cps_xor1: xor@6c0000 {
-@@ -154,7 +157,7 @@
- 				      <0x6d0000 0x1000>;
- 				dma-coherent;
- 				msi-parent = <&gic_v2m0>;
--				clocks = <&cps_syscon0 1 7>;
-+				clocks = <&cps_clk 1 7>;
- 			};
- 
- 			cps_spi0: spi@700600 {
-@@ -163,7 +166,7 @@
- 				#address-cells = <0x1>;
- 				#size-cells = <0x0>;
- 				cell-index = <3>;
--				clocks = <&cps_syscon0 1 21>;
-+				clocks = <&cps_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -173,7 +176,7 @@
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				cell-index = <4>;
--				clocks = <&cps_syscon0 1 21>;
-+				clocks = <&cps_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -183,7 +186,7 @@
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				interrupts = <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cps_syscon0 1 21>;
-+				clocks = <&cps_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -193,7 +196,7 @@
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				interrupts = <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cps_syscon0 1 21>;
-+				clocks = <&cps_clk 1 21>;
- 				status = "disabled";
- 			};
- 
-@@ -201,7 +204,7 @@
- 				compatible = "marvell,armada-8k-rng", "inside-secure,safexcel-eip76";
- 				reg = <0x760000 0x7d>;
- 				interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&cps_syscon0 1 25>;
-+				clocks = <&cps_clk 1 25>;
- 				status = "okay";
- 			};
- 
-@@ -244,7 +247,7 @@
- 			interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
- 			num-lanes = <1>;
--			clocks = <&cps_syscon0 1 13>;
-+			clocks = <&cps_clk 1 13>;
- 			status = "disabled";
- 		};
- 
-@@ -271,7 +274,7 @@
- 			interrupts = <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			num-lanes = <1>;
--			clocks = <&cps_syscon0 1 11>;
-+			clocks = <&cps_clk 1 11>;
- 			status = "disabled";
- 		};
- 
-@@ -298,7 +301,7 @@
- 			interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			num-lanes = <1>;
--			clocks = <&cps_syscon0 1 12>;
-+			clocks = <&cps_clk 1 12>;
- 			status = "disabled";
- 		};
- 	};
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7793 CPG Core Clocks */
++#define R8A7793_CLK_Z			0
++#define R8A7793_CLK_ZG			1
++#define R8A7793_CLK_ZTR			2
++#define R8A7793_CLK_ZTRD2		3
++#define R8A7793_CLK_ZT			4
++#define R8A7793_CLK_ZX			5
++#define R8A7793_CLK_ZS			6
++#define R8A7793_CLK_HP			7
++#define R8A7793_CLK_I			8
++#define R8A7793_CLK_B			9
++#define R8A7793_CLK_LB			10
++#define R8A7793_CLK_P			11
++#define R8A7793_CLK_CL			12
++#define R8A7793_CLK_M2			13
++#define R8A7793_CLK_ADSP		14
++#define R8A7793_CLK_ZB3			15
++#define R8A7793_CLK_ZB3D2		16
++#define R8A7793_CLK_DDR			17
++#define R8A7793_CLK_SDH			18
++#define R8A7793_CLK_SD0			19
++#define R8A7793_CLK_SD2			20
++#define R8A7793_CLK_SD3			21
++#define R8A7793_CLK_MMC0		22
++#define R8A7793_CLK_MP			23
++#define R8A7793_CLK_SSP			24
++#define R8A7793_CLK_SSPRS		25
++#define R8A7793_CLK_QSPI		26
++#define R8A7793_CLK_CP			27
++#define R8A7793_CLK_RCAN		28
++#define R8A7793_CLK_R			29
++#define R8A7793_CLK_OSC			30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__ */
 -- 
-git-series 0.9.1
+2.7.4
