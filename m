@@ -1,44 +1,43 @@
-Return-Path: <stefan.wahren@i2se.com>
-Date: Mon, 15 May 2017 19:47:39 +0200 (CEST)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Cc: Phil Elwell <phil@raspberrypi.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Message-ID: <1373231207.445862.1494870459462@email.1und1.de>
-In-Reply-To: <20170515173504.11337-1-eric@anholt.net>
-References: <20170515173504.11337-1-eric@anholt.net>
-Subject: Re: [PATCH] clk: bcm2835: Correct the prediv logic
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 18 May 2017 18:54:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v3 01/21] clk: divider: Make divider_round_rate take the
+ parent clock
+Message-ID: <20170519015430.GF20170@codeaurora.org>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+ <af976be0ecc2ea335cd9694a83fb29174d87e17d.1495006350.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <af976be0ecc2ea335cd9694a83fb29174d87e17d.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Eric,
-
-> Eric Anholt <eric@anholt.net> hat am 15. Mai 2017 um 19:35 geschrieben:
+On 05/17, Maxime Ripard wrote:
+> So far, divider_round_rate only considers the parent clock returned by
+> clk_hw_get_parent.
 > 
+> This works fine on clocks that have a single parents, this doesn't work on
+> muxes, since we will only consider the first parent, while other parents
+> may totally be able to provide a better combination.
 > 
-> From: Phil Elwell <phil@raspberrypi.org>
+> Clocks in that case cannot use divider_round_rate, so would have to come up
+> with a very similar logic to work around it. Instead of having to do
+> something like this, and duplicate that logic everywhere, create a
+> divider_round_rate parent to allow caller to give an additional parameter
+> for the parent clock to consider.
 > 
-> If a clock has the prediv flag set, both the integer and fractional
-> parts must be scaled when calculating the resulting frequency.
-> 
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
-> 
-> While this is a bugfix, I haven't put a "Fixes:" line in here to get
-> it automatically backported to stable.  
 
-sorry, i can't follow. How should this happen without "Fixes: "?
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-> We had trouble with the
-> out-of-tree DSI panel driver, at least: Our old set_rate() didn't
-> work, because the new PLL was just barely too fast to get the integer
-> PLL divider we needed.  We may run into similar troubles
-> elsewhere. --anholt
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
