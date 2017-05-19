@@ -1,317 +1,79 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org,
-	Russell King <linux@armlinux.org.uk>,
-	linus.walleij@linaro.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2] drm/pl111: Register the clock divider and use it.
-Date: Mon,  8 May 2017 12:33:48 -0700
-Message-Id: <20170508193348.30236-1-eric@anholt.net>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 0/7] Improve cp110 clk support on Marvell Armada 7K/8K
+Date: Fri, 19 May 2017 17:55:18 +0200
+Message-Id: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is required for the panel to work on bcm911360, where CLCDCLK is
-the fixed 200Mhz AXI41 clock.  The rate set is still passed up to the
-CLCDCLK, for platforms that have a settable rate on that one.
+Hi,
 
-v2: Set SET_RATE_PARENT (caught by Linus Walleij), depend on
-    COMMON_CLK.
+We got more information about the clock controllers and the clock tree
+of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- drivers/gpu/drm/pl111/Kconfig         |   1 +
- drivers/gpu/drm/pl111/pl111_display.c | 162 ++++++++++++++++++++++++++++++----
- drivers/gpu/drm/pl111/pl111_drm.h     |   8 ++
- drivers/gpu/drm/pl111/pl111_drv.c     |  11 +--
- include/linux/amba/clcd-regs.h        |   5 ++
- 5 files changed, 163 insertions(+), 24 deletions(-)
+The clock tree needs to be fixed, indeed the GOP clock is only the
+clock for the GOIP and not for the SDIO, it is fixed in the first
+patch.
 
-diff --git a/drivers/gpu/drm/pl111/Kconfig b/drivers/gpu/drm/pl111/Kconfig
-index ede49efd531f..309f4fd52de7 100644
---- a/drivers/gpu/drm/pl111/Kconfig
-+++ b/drivers/gpu/drm/pl111/Kconfig
-@@ -2,6 +2,7 @@ config DRM_PL111
- 	tristate "DRM Support for PL111 CLCD Controller"
- 	depends on DRM
- 	depends on ARM || ARM64 || COMPILE_TEST
-+	depends on COMMON_CLK
- 	select DRM_KMS_HELPER
- 	select DRM_KMS_CMA_HELPER
- 	select DRM_GEM_CMA_HELPER
-diff --git a/drivers/gpu/drm/pl111/pl111_display.c b/drivers/gpu/drm/pl111/pl111_display.c
-index 39a5c33bce7d..2d924a6bf43c 100644
---- a/drivers/gpu/drm/pl111/pl111_display.c
-+++ b/drivers/gpu/drm/pl111/pl111_display.c
-@@ -108,7 +108,7 @@ static void pl111_display_enable(struct drm_simple_display_pipe *pipe,
- 	u32 cntl;
- 	u32 ppl, hsw, hfp, hbp;
- 	u32 lpp, vsw, vfp, vbp;
--	u32 cpl;
-+	u32 cpl, tim2;
- 	int ret;
- 
- 	ret = clk_set_rate(priv->clk, mode->clock * 1000);
-@@ -142,20 +142,28 @@ static void pl111_display_enable(struct drm_simple_display_pipe *pipe,
- 	       (vfp << 16) |
- 	       (vbp << 24),
- 	       priv->regs + CLCD_TIM1);
--	/* XXX: We currently always use CLCDCLK with no divisor.  We
--	 * could probably reduce power consumption by using HCLK
--	 * (apb_pclk) with a divisor when it gets us near our target
--	 * pixel clock.
--	 */
--	writel(((mode->flags & DRM_MODE_FLAG_NHSYNC) ? TIM2_IHS : 0) |
--	       ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? TIM2_IVS : 0) |
--	       ((connector->display_info.bus_flags &
--		 DRM_BUS_FLAG_DE_LOW) ? TIM2_IOE : 0) |
--	       ((connector->display_info.bus_flags &
--		 DRM_BUS_FLAG_PIXDATA_NEGEDGE) ? TIM2_IPC : 0) |
--	       TIM2_BCD |
--	       (cpl << 16),
--	       priv->regs + CLCD_TIM2);
-+
-+	spin_lock(&priv->tim2_lock);
-+
-+	tim2 = readl(priv->regs + CLCD_TIM2);
-+	tim2 &= (TIM2_BCD | TIM2_PCD_LO_MASK | TIM2_PCD_HI_MASK);
-+
-+	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-+		tim2 |= TIM2_IHS;
-+
-+	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-+		tim2 |= TIM2_IVS;
-+
-+	if (connector->display_info.bus_flags & DRM_BUS_FLAG_DE_LOW)
-+		tim2 |= TIM2_IOE;
-+
-+	if (connector->display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
-+		tim2 |= TIM2_IPC;
-+
-+	tim2 |= cpl << 16;
-+	writel(tim2, priv->regs + CLCD_TIM2);
-+	spin_unlock(&priv->tim2_lock);
-+
- 	writel(0, priv->regs + CLCD_TIM3);
- 
- 	drm_panel_prepare(priv->connector.panel);
-@@ -288,6 +296,126 @@ const struct drm_simple_display_pipe_funcs pl111_display_funcs = {
- 	.prepare_fb = pl111_display_prepare_fb,
- };
- 
-+static int pl111_clk_div_choose_div(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long *prate, bool set_parent)
-+{
-+	int best_div = 1, div;
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long best_prate = 0;
-+	unsigned long best_diff = ~0ul;
-+	int max_div = (1 << (TIM2_PCD_LO_BITS + TIM2_PCD_HI_BITS)) - 1;
-+
-+	for (div = 1; div < max_div; div++) {
-+		unsigned long this_prate, div_rate, diff;
-+
-+		if (set_parent)
-+			this_prate = clk_hw_round_rate(parent, rate * div);
-+		else
-+			this_prate = *prate;
-+		div_rate = DIV_ROUND_UP_ULL(this_prate, div);
-+		diff = abs(rate - div_rate);
-+
-+		if (diff < best_diff) {
-+			best_div = div;
-+			best_diff = diff;
-+			best_prate = this_prate;
-+		}
-+	}
-+
-+	*prate = best_prate;
-+	return best_div;
-+}
-+
-+static long pl111_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long *prate)
-+{
-+	int div = pl111_clk_div_choose_div(hw, rate, prate, true);
-+
-+	return DIV_ROUND_UP_ULL(*prate, div);
-+}
-+
-+static unsigned long pl111_clk_div_recalc_rate(struct clk_hw *hw,
-+					       unsigned long prate)
-+{
-+	struct pl111_drm_dev_private *priv =
-+		container_of(hw, struct pl111_drm_dev_private, clk_div);
-+	u32 tim2 = readl(priv->regs + CLCD_TIM2);
-+	int div;
-+
-+	if (tim2 & TIM2_BCD)
-+		return prate;
-+
-+	div = tim2 & TIM2_PCD_LO_MASK;
-+	div |= (tim2 & TIM2_PCD_HI_MASK) >>
-+		(TIM2_PCD_HI_SHIFT - TIM2_PCD_LO_BITS);
-+	div += 2;
-+
-+	return DIV_ROUND_UP_ULL(prate, div);
-+}
-+
-+static int pl111_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long prate)
-+{
-+	struct pl111_drm_dev_private *priv =
-+		container_of(hw, struct pl111_drm_dev_private, clk_div);
-+	int div = pl111_clk_div_choose_div(hw, rate, &prate, false);
-+	u32 tim2;
-+
-+	spin_lock(&priv->tim2_lock);
-+	tim2 = readl(priv->regs + CLCD_TIM2);
-+	tim2 &= ~(TIM2_BCD | TIM2_PCD_LO_MASK | TIM2_PCD_HI_MASK);
-+
-+	if (div == 1) {
-+		tim2 |= TIM2_BCD;
-+	} else {
-+		div -= 2;
-+		tim2 |= div & TIM2_PCD_LO_MASK;
-+		tim2 |= (div >> TIM2_PCD_LO_BITS) << TIM2_PCD_HI_SHIFT;
-+	}
-+
-+	writel(tim2, priv->regs + CLCD_TIM2);
-+	spin_unlock(&priv->tim2_lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops pl111_clk_div_ops = {
-+	.recalc_rate = pl111_clk_div_recalc_rate,
-+	.round_rate = pl111_clk_div_round_rate,
-+	.set_rate = pl111_clk_div_set_rate,
-+};
-+
-+static int
-+pl111_init_clock_divider(struct drm_device *drm)
-+{
-+	struct pl111_drm_dev_private *priv = drm->dev_private;
-+	struct clk *parent = devm_clk_get(drm->dev, "clcdclk");
-+	struct clk_hw *div = &priv->clk_div;
-+	const char *parent_name;
-+	struct clk_init_data init = {
-+		.name = "pl111_div",
-+		.ops = &pl111_clk_div_ops,
-+		.parent_names = &parent_name,
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	};
-+	int ret;
-+
-+	if (IS_ERR(parent)) {
-+		dev_err(drm->dev, "CLCD: unable to get clcdclk.\n");
-+		return PTR_ERR(parent);
-+	}
-+	parent_name = __clk_get_name(parent);
-+
-+	spin_lock_init(&priv->tim2_lock);
-+	div->init = &init;
-+
-+	ret = devm_clk_hw_register(drm->dev, div);
-+
-+	priv->clk = div->clk;
-+	return ret;
-+}
-+
- int pl111_display_init(struct drm_device *drm)
- {
- 	struct pl111_drm_dev_private *priv = drm->dev_private;
-@@ -333,6 +461,10 @@ int pl111_display_init(struct drm_device *drm)
- 		return -EINVAL;
- 	}
- 
-+	ret = pl111_init_clock_divider(drm);
-+	if (ret)
-+		return ret;
-+
- 	ret = drm_simple_display_pipe_init(drm, &priv->pipe,
- 					   &pl111_display_funcs,
- 					   formats, ARRAY_SIZE(formats),
-diff --git a/drivers/gpu/drm/pl111/pl111_drm.h b/drivers/gpu/drm/pl111/pl111_drm.h
-index f381593921b7..4162c6aa5dbb 100644
---- a/drivers/gpu/drm/pl111/pl111_drm.h
-+++ b/drivers/gpu/drm/pl111/pl111_drm.h
-@@ -21,6 +21,7 @@
- 
- #include <drm/drm_gem.h>
- #include <drm/drm_simple_kms_helper.h>
-+#include <linux/clk-provider.h>
- 
- #define CLCD_IRQ_NEXTBASE_UPDATE BIT(2)
- 
-@@ -37,7 +38,14 @@ struct pl111_drm_dev_private {
- 	struct drm_fbdev_cma *fbdev;
- 
- 	void *regs;
-+	/* The pixel clock (a reference to our clock divider off of CLCDCLK). */
- 	struct clk *clk;
-+	/* pl111's internal clock divider. */
-+	struct clk_hw clk_div;
-+	/* Lock to sync access to CLCD_TIM2 between the common clock
-+	 * subsystem and pl111_display_enable().
-+	 */
-+	spinlock_t tim2_lock;
- };
- 
- #define to_pl111_connector(x) \
-diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
-index 936403f65508..9d1467492cb9 100644
---- a/drivers/gpu/drm/pl111/pl111_drv.c
-+++ b/drivers/gpu/drm/pl111/pl111_drv.c
-@@ -50,8 +50,8 @@
-  * - Read back hardware state at boot to skip reprogramming the
-  *   hardware when doing a no-op modeset.
-  *
-- * - Use the internal clock divisor to reduce power consumption by
-- *   using HCLK (apb_pclk) when appropriate.
-+ * - Use the CLKSEL bit to support switching between the two external
-+ *   clock parents.
-  */
- 
- #include <linux/amba/bus.h>
-@@ -195,13 +195,6 @@ static int pl111_amba_probe(struct amba_device *amba_dev,
- 	priv->drm = drm;
- 	drm->dev_private = priv;
- 
--	priv->clk = devm_clk_get(dev, "clcdclk");
--	if (IS_ERR(priv->clk)) {
--		dev_err(dev, "CLCD: unable to get clk.\n");
--		ret = PTR_ERR(priv->clk);
--		goto dev_unref;
--	}
--
- 	priv->regs = devm_ioremap_resource(dev, &amba_dev->res);
- 	if (!priv->regs) {
- 		dev_err(dev, "%s failed mmio\n", __func__);
-diff --git a/include/linux/amba/clcd-regs.h b/include/linux/amba/clcd-regs.h
-index 69c0e2143003..516a6fda83c5 100644
---- a/include/linux/amba/clcd-regs.h
-+++ b/include/linux/amba/clcd-regs.h
-@@ -39,12 +39,17 @@
- #define CLCD_PALL 		0x00000200
- #define CLCD_PALETTE		0x00000200
- 
-+#define TIM2_PCD_LO_MASK	GENMASK(4, 0)
-+#define TIM2_PCD_LO_BITS	5
- #define TIM2_CLKSEL		(1 << 5)
- #define TIM2_IVS		(1 << 11)
- #define TIM2_IHS		(1 << 12)
- #define TIM2_IPC		(1 << 13)
- #define TIM2_IOE		(1 << 14)
- #define TIM2_BCD		(1 << 26)
-+#define TIM2_PCD_HI_MASK	GENMASK(31, 27)
-+#define TIM2_PCD_HI_BITS	5
-+#define TIM2_PCD_HI_SHIFT	27
- 
- #define CNTL_LCDEN		(1 << 0)
- #define CNTL_LCDBPP1		(0 << 1)
+The second patch does a small improve of the code itself.
+
+The purpose of the third patch is to have an easier way to add new
+clocks without breaking the backward compatibility. Indeed, we expect
+to continue to have new update on the datasheet and this patch will
+allow integrating this change easier and faster.
+
+The forth patch is needed to ease the integration of the pinctrl node
+in the device tree.
+
+The fifth patch adds a new clock for the SDIO, it also fixes the clock
+tree.
+
+The last two patches modify the device tree to take into account
+theses changes. They must be merged through the mvebu tree to avoid
+future conflict.
+
+In this series, even if there is some change in the device tree
+binding, we paid attention to the backward compatibility, and the
+driver can still work with the old device tree.
+
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (6):
+  clk: mvebu: cp110 fix name of the GOP gate clock
+  clk: mvebu: cp110: make failure labels more meaningful
+  clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
+  clk: mvebu: cp110: introduce a new binding
+  arm64: dts: marvell: remove *-clock-output-names on cp110
+  arm64: dts: marvell: use new binding for the system controller on cp110
+
+Konstantin Porotchkin (1):
+  clk: mvebu: cp110: add sdio clock to cp-110 system controller
+
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  35 +++++-------
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
+ drivers/clk/mvebu/cp110-system-controller.c                                | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
+ 4 files changed, 196 insertions(+), 143 deletions(-)
+
+base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
 -- 
-2.11.0
+git-series 0.9.1
