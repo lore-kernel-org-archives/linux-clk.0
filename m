@@ -1,74 +1,156 @@
-Return-Path: <phil@raspberrypi.org>
-Subject: [PATCH v2 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
-From: Phil Elwell <phil@raspberrypi.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
-Message-ID: <8a9ebac4-b299-b887-27b2-86f4f61846fd@raspberrypi.org>
-Date: Wed, 31 May 2017 10:18:25 +0100
-MIME-Version: 1.0
-In-Reply-To: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH 5/7] clk: mvebu: cp110: add sdio clock to cp-110 system controller
+Date: Fri, 19 May 2017 17:55:23 +0200
+Message-Id: <1833f47fdfa5fd05e9135d98e03501d9634a865b.1495208533.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Restrict clock sources for the PCM peripheral to the oscillator and
-PLLD_PER because other source may have varying rates or be switched off.
-Prevent other sources from being selected by replacing their names in
-the list of potential parents with dummy entries (entry index is
-significant).
+From: Konstantin Porotchkin <kostap@marvell.com>
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+This commit updates the CP110 system controller driver to add the
+definition for a missing clock.
+
+The SDIO clock is dedicated driving the SDHCI interface and its frequency
+is 400MHz (2/5 of PLL source clock).
+
+The SDIO interface should be bound to this clock and not the core clock
+as in the older code.
+Using the wrong clock lead to a maximum SDHCI frequency of 250 Mhz, while
+the HW really supports up to 400 Mhz.
+
+This patch also fixes the NAND clock relationship documentation.
+
+Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
+[gregory.clement@free-electrons.com:
+- use sdio instead of emmc to name the clock
+- update binding documentation]
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  1 +
+ drivers/clk/mvebu/cp110-system-controller.c                                | 28 +++++++++++++++++++++++-----
+ 2 files changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 0258538..81ecd4c 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1516,6 +1516,31 @@ struct bcm2835_clk_desc {
- 	.parents = bcm2835_clock_per_parents,				\
- 	__VA_ARGS__)
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+index 139e46cc6786..e0b9ef5d3dde 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -34,6 +34,7 @@ The following clocks are available:
+    - 0 2	EIP
+    - 0 3	Core
+    - 0 4	NAND core
++   - 0 5	SDIO core
+  - Gatable clocks
+    - 1 0	Audio
+    - 1 1	Comm Unit
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index ecbcae321424..8be7ae25c7eb 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -11,15 +11,16 @@
+  */
  
-+/*
-+ * Restrict clock sources for the PCM peripheral to the oscillator and
-+ * PLLD_PER because other source may have varying rates or be switched
-+ * off.
-+ *
-+ * Prevent other sources from being selected by replacing their names in
-+ * the list of potential parents with dummy entries (entry index is
-+ * significant).
-+ */
-+static const char *const bcm2835_pcm_per_parents[] = {
-+	"-",
-+	"xosc",
-+	"-",
-+	"-",
-+	"-",
-+	"-",
-+	"plld_per",
-+	"-",
-+};
+ /*
+- * CP110 has 5 core clocks:
++ * CP110 has 6 core clocks:
+  *
+  *  - APLL		(1 Ghz)
+  *    - PPv2 core	(1/3 APLL)
+  *    - EIP		(1/2 APLL)
+- *      - Core		(1/2 EIP)
++ *     - Core		(1/2 EIP)
++ *    - SDIO		(2/5 APLL)
+  *
+  *  - NAND clock, which is either:
+- *    - Equal to the core clock
++ *    - Equal to SDIO clock
+  *    - 2/5 APLL
+  *
+  * CP110 has 32 gatable clocks, for the various peripherals in the
+@@ -46,7 +47,7 @@ enum {
+ 	CP110_CLK_TYPE_GATABLE,
+ };
+ 
+-#define CP110_MAX_CORE_CLOCKS		5
++#define CP110_MAX_CORE_CLOCKS		6
+ #define CP110_MAX_GATABLE_CLOCKS	32
+ 
+ #define CP110_CLK_NUM \
+@@ -57,6 +58,7 @@ enum {
+ #define CP110_CORE_EIP			2
+ #define CP110_CORE_CORE			3
+ #define CP110_CORE_NAND			4
++#define CP110_CORE_SDIO			5
+ 
+ /* A number of gatable clocks need special handling */
+ #define CP110_GATE_AUDIO		0
+@@ -235,7 +237,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 	struct regmap *regmap;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
++	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name,
++		*sdio_name;
+ 	struct clk_hw_onecell_data *cp110_clk_data;
+ 	struct clk_hw *hw, **cp110_clks;
+ 	u32 nand_clk_ctrl;
+@@ -315,6 +318,17 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 
+ 	cp110_clks[CP110_CORE_NAND] = hw;
+ 
++	/* SDIO clock is APLL/2.5 */
++	sdio_name = cp110_unique_name(dev, syscon_node, "sdio-core");
++	hw = clk_hw_register_fixed_factor(NULL, sdio_name,
++					  apll_name, 0, 2, 5);
++	if (IS_ERR(hw)) {
++		ret = PTR_ERR(hw);
++		goto fail_sdio;
++	}
 +
-+#define REGISTER_PCM_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_pcm_per_parents),	\
-+	.parents = bcm2835_clock_pcm_per_parents,			\
-+	__VA_ARGS__)
++	cp110_clks[CP110_CORE_SDIO] = hw;
 +
- /* main vpu parent mux */
- static const char *const bcm2835_clock_vpu_parents[] = {
- 	"gnd",
-@@ -1993,7 +2018,7 @@ struct bcm2835_clk_desc {
- 		.int_bits = 4,
- 		.frac_bits = 8,
- 		.tcnt_mux = 22),
--	[BCM2835_CLOCK_PCM]	= REGISTER_PER_CLK(
-+	[BCM2835_CLOCK_PCM]	= REGISTER_PCM_CLK(
- 		.name = "pcm",
- 		.ctl_reg = CM_PCMCTL,
- 		.div_reg = CM_PCMDIV,
+ 	/* create the unique name for all the gate clocks */
+ 	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++)
+ 		gate_name[i] =	cp110_unique_name(dev, syscon_node,
+@@ -344,6 +358,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 			parent = ppv2_name;
+ 			break;
+ 		case CP110_GATE_SDIO:
++			parent = sdio_name;
++			break;
+ 		case CP110_GATE_GOP_DP:
+ 			parent = gate_name[CP110_GATE_GOP];
+ 			break;
+@@ -391,6 +407,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 			cp110_unregister_gate(hw);
+ 	}
+ 
++	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_SDIO]);
++fail_sdio:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
+ fail_nand:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
 -- 
-1.9.1
+git-series 0.9.1
