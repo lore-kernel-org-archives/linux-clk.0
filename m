@@ -1,36 +1,43 @@
-Return-Path: <tklauser@distanz.ch>
-From: Tobias Klauser <tklauser@distanz.ch>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: explicitly include linux/spinlock.h
-Date: Mon, 15 May 2017 12:23:07 +0200
-Message-Id: <20170515102307.28743-1-tklauser@distanz.ch>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v4 5/6] ARM: sun8i: a83t: Set clock accuracy for 24MHz oscillator
+Date: Fri, 19 May 2017 15:06:11 +0800
+Message-Id: <20170519070612.32159-6-wens@csie.org>
+In-Reply-To: <20170519070612.32159-1-wens@csie.org>
+References: <20170519070612.32159-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-ccu_reset.h and ccu_reset.c use spinlock_t and associated functions but
-rely on implict inclusion of linux/spinlock.h which means that changes
-in other headers could break the build. Thus, add an explicit include.
+The datasheets for Allwinner SoCs set strict requirements on the
+stability of the external crystal oscillators. Add the accuracy
+for the main 24MHz oscillator to the device tree.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu_reset.h | 1 +
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_reset.h b/drivers/clk/sunxi-ng/ccu_reset.h
-index 36a4679210bd..ff8f5ebca435 100644
---- a/drivers/clk/sunxi-ng/ccu_reset.h
-+++ b/drivers/clk/sunxi-ng/ccu_reset.h
-@@ -15,6 +15,7 @@
- #define _CCU_RESET_H_
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index c9a5d07b2ada..e12dd7170b8f 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -126,6 +126,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <24000000>;
++			clock-accuracy = <50000>;
+ 			clock-output-names = "osc24M";
+ 		};
  
- #include <linux/reset-controller.h>
-+#include <linux/spinlock.h>
- 
- struct ccu_reset_map {
- 	u16	reg;
 -- 
-2.13.0
+2.11.0
