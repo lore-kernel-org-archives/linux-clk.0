@@ -1,76 +1,64 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 19 May 2017 10:26:31 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 00/11] clk: implement clock rate protection mechanism
-Date: Sun, 21 May 2017 23:59:47 +0200
-Message-Id: <20170521215958.19743-1-jbrunet@baylibre.com>
+	Icenowy Zheng <icenowy@aosc.io>,
+	Wei Yongjun <weiyongjun1@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH -next] clk: sunxi-ng: de2: fix wrong pointer passed to
+ PTR_ERR()
+Message-ID: <20170519082631.epwxqh3dqhxr6va5@flea.home>
+References: <20170518155513.29628-1-weiyj.lk@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lqybtb436w47a4z3"
+In-Reply-To: <20170518155513.29628-1-weiyj.lk@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This Patchset is related the RFC [0] and the discussion around
-CLK_SET_RATE_GATE available here [1]
 
-The goal of this patchset is to provide a way for consumers to inform the
-system that they depend on the rate of the clock source and can't tolerate
-other consumers changing the rate or causing glitches.
+--lqybtb436w47a4z3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-With this series there is 3 use-case:
- - the provider is not protected: nothing changes
- - the provider is protected by only 1 consumer (and only once), then only
-   this consumer will be able to alter the rate of the clock, as it is the
-   only one depending on it.
- - If the provider is protected more than once, or by the provider itself,
-   the rate is basically locked.
+On Thu, May 18, 2017 at 03:55:13PM +0000, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+>=20
+> PTR_ERR should access the value just tested by IS_ERR, otherwise
+> the wrong error code will be returned.
+>=20
+> Fixes: b0d9a4bd52bd ("clk: sunxi-ng: add support for DE2 CCU")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-The last 2 patches provide the same functionnality for providers themself
-by fixing CLK_SET_RATE_GATE (enforce clock gating along the tree)
+Applied, thanks!
+Maxime
 
-qcom, at91 and ux500 are the heaviest users of this flag. If anybody having
-one these platform could try this series, I would help build confidence
-that they are relying on CLK_SET_RATE_GATE being broken.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Changes since RFC:
- - s/clk_protect/clk_rate_protect
- - Request rework around core_nolock function
- - Add clk_set_rate_protect
- - Reword clk_rate_protect and clk_unprotect documentation
- - Add few comments to explain the code
- - Add 2 last patches to fix users of CLK_SET_RATE_GATE
+--lqybtb436w47a4z3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Changes since v1:
- - Add patch 4: Check if the rate would actually change before continuing, a
-   possibly in clk_set_rate.
+-----BEGIN PGP SIGNATURE-----
 
-This was tested with the audio use case mentioned in [1]
+iQIcBAEBAgAGBQJZHqw3AAoJEBx+YmzsjxAgXfsQAJVW1t0A+YqOgsTaqPt/VD23
+JtS5S/VR37btvq4K0wd6xhCB5y2woGDTg5K15NQZdvL5mfBmp+NQI5EwYVaDM0I4
+vL96Kt5Dn+k9GDSECnSXx0duKPTkTi3gZdZdTr7kiZ4uGSkpYFSWcdjuad8y+2a4
+bt+mrWZFwoEvKDCKxkVg4liyk113ZU0c6DYaaKOz2EUfWlLkwCFwqkVOJ4FcQUie
+fSuo75C5BGrcXFej3Tx4D8VKLPwSkcWGYtAn/Yj7t3JBvf41rOAvt+U/cU1Vu6hx
+ryVGuKsN/2qUFTy0e/ZPGsVO4yhv1sfP+Q7t14pyyvwtfnl1+iPaB0VGa9udZEeb
+X1lP0NjwtvZFo4O3hVKrvBXoL1IWFHKxFZ5GDJAMZPh3dE85e2CpWOUg+l8kQ5mY
+IhgIPHG58UbfmRWJpZ7F3x828bABBff4sA5V6Ew7/s4cKuPvOSAn5dZ/qGBD7Yht
+Ch4uql53E6vKZYDORhVwaq7atxkSwQUQuE9qIZ53tyYVUszJzQDlcCfDRxno8Bov
+FtFTBGJ4cJIn5yMpJQxT/eVbXF5MKjcxfKCWWOY61urmBy12vLpICrUPWCdU0uRI
+UAOWsf+PkkCD9u0NPuCGYDcHhEmfelxzHPMlV5JpdQ5k3BzOIwX8/YYlFzBBEOja
+/3q04t+6PZF8M8kq+Vt0
+=utuD
+-----END PGP SIGNATURE-----
 
-[0]: http://lkml.kernel.org/r/20170321183330.26722-1-jbrunet@baylibre.com
-[1]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@resonance
-
-Jerome Brunet (11):
-  clk: take the prepare lock out of clk_core_set_parent
-  clk: add clk_core_set_phase_nolock function
-  clk: rework calls to round and determine rate callbacks
-  clk: use round rate to bail out early in set_rate
-  clk: add support for clock protection
-  clk: add clk_set_rate_protect
-  clk: rollback set_rate_range changes on failure
-  clk: cosmetic changes to clk_summary debugfs entry
-  clk: fix incorrect usage of ENOSYS
-  clk: fix CLK_SET_RATE_GATE with clock rate protection
-  clk: move CLK_SET_RATE_GATE protection from prepare to enable
-
- drivers/clk/clk.c            | 429 ++++++++++++++++++++++++++++++++++++-------
- include/linux/clk-provider.h |   1 +
- include/linux/clk.h          |  43 +++++
- 3 files changed, 403 insertions(+), 70 deletions(-)
-
--- 
-2.9.4
+--lqybtb436w47a4z3--
