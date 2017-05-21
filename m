@@ -1,40 +1,157 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 12 May 2017 10:18:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Anup Patel <anup.patel@broadcom.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 01/11] dt-bindings: bcm: Add Broadcom Stingray bindings
- document
-Message-ID: <20170512151813.ole4c7c6piahonbu@rob-hp-laptop>
-References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
- <1494071686-19098-2-git-send-email-anup.patel@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494071686-19098-2-git-send-email-anup.patel@broadcom.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 03/11] clk: rework calls to round and determine rate callbacks
+Date: Sun, 21 May 2017 23:59:50 +0200
+Message-Id: <20170521215958.19743-4-jbrunet@baylibre.com>
+In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 06, 2017 at 05:24:36PM +0530, Anup Patel wrote:
-> This patch adds DT bindings info for Broadcom Stingray SOC
-> and related reference boards.
-> 
-> Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-> ---
->  Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+Rework the way the callbacks round_rate and determine_rate are called. The
+goal is to do this at a single point and make it easier to add conditions
+before calling them.
 
-Acked-by: Rob Herring <robh@kernel.org>
+This rework is done to ease the integration of "protected" clock
+functionality.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 78 +++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 44 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 6031fada37f9..100f72472e10 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -833,16 +833,34 @@ static int clk_disable_unused(void)
+ }
+ late_initcall_sync(clk_disable_unused);
+ 
+-static int clk_core_round_rate_nolock(struct clk_core *core,
+-				      struct clk_rate_request *req)
++static int clk_core_determine_round(struct clk_core *core,
++				    struct clk_rate_request *req)
+ {
+-	struct clk_core *parent;
+ 	long rate;
+ 
+-	lockdep_assert_held(&prepare_lock);
++	if (core->ops->determine_rate) {
++		return core->ops->determine_rate(core->hw, req);
++	} else if (core->ops->round_rate) {
++		rate = core->ops->round_rate(core->hw, req->rate,
++					     &req->best_parent_rate);
++		if (rate < 0)
++			return rate;
+ 
+-	if (!core)
+-		return 0;
++		req->rate = rate;
++	} else {
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void clk_core_init_rate_req(struct clk_core *core,
++				   struct clk_rate_request *req)
++{
++	struct clk_core *parent;
++
++	if (WARN_ON(!core || !req))
++		return;
+ 
+ 	parent = core->parent;
+ 	if (parent) {
+@@ -852,22 +870,24 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 		req->best_parent_hw = NULL;
+ 		req->best_parent_rate = 0;
+ 	}
++}
+ 
+-	if (core->ops->determine_rate) {
+-		return core->ops->determine_rate(core->hw, req);
+-	} else if (core->ops->round_rate) {
+-		rate = core->ops->round_rate(core->hw, req->rate,
+-					     &req->best_parent_rate);
+-		if (rate < 0)
+-			return rate;
++static int clk_core_round_rate_nolock(struct clk_core *core,
++				      struct clk_rate_request *req)
++{
++	lockdep_assert_held(&prepare_lock);
+ 
+-		req->rate = rate;
+-	} else if (core->flags & CLK_SET_RATE_PARENT) {
+-		return clk_core_round_rate_nolock(parent, req);
+-	} else {
+-		req->rate = core->rate;
+-	}
++	if (!core)
++		return 0;
++
++	clk_core_init_rate_req(core, req);
++
++	if (core->ops->determine_rate || core->ops->round_rate)
++		return clk_core_determine_round(core, req);
++	else if (core->flags & CLK_SET_RATE_PARENT)
++		return clk_core_round_rate_nolock(core->parent, req);
+ 
++	req->rate = core->rate;
+ 	return 0;
+ }
+ 
+@@ -1356,36 +1376,26 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 	clk_core_get_boundaries(core, &min_rate, &max_rate);
+ 
+ 	/* find the closest rate and parent clk/rate */
+-	if (core->ops->determine_rate) {
++	if (core->ops->determine_rate || core->ops->round_rate) {
+ 		struct clk_rate_request req;
+ 
+ 		req.rate = rate;
+ 		req.min_rate = min_rate;
+ 		req.max_rate = max_rate;
+-		if (parent) {
+-			req.best_parent_hw = parent->hw;
+-			req.best_parent_rate = parent->rate;
+-		} else {
+-			req.best_parent_hw = NULL;
+-			req.best_parent_rate = 0;
+-		}
+ 
+-		ret = core->ops->determine_rate(core->hw, &req);
++		clk_core_init_rate_req(core, &req);
++
++		ret = clk_core_determine_round(core, &req);
+ 		if (ret < 0)
+ 			return NULL;
+ 
+ 		best_parent_rate = req.best_parent_rate;
+ 		new_rate = req.rate;
+ 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
+-	} else if (core->ops->round_rate) {
+-		ret = core->ops->round_rate(core->hw, rate,
+-					    &best_parent_rate);
+-		if (ret < 0)
+-			return NULL;
+ 
+-		new_rate = ret;
+ 		if (new_rate < min_rate || new_rate > max_rate)
+ 			return NULL;
++
+ 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
+ 		/* pass-through clock without adjustable parent */
+ 		core->new_rate = core->rate;
+-- 
+2.9.4
