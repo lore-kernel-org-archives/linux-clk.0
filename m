@@ -1,69 +1,132 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 13/21] drm/sun4i: tcon: Change vertical total size computation inconsistency
-Date: Wed, 17 May 2017 09:40:42 +0200
-Message-Id: <5f1e156ed132defe5ec58b4e2a97764d73eba5f3.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+	linux-amlogic@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 01/11] clk: take the prepare lock out of clk_core_set_parent
+Date: Sun, 21 May 2017 23:59:48 +0200
+Message-Id: <20170521215958.19743-2-jbrunet@baylibre.com>
+In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Both TCON channels need to have the resolution doubled, since the size the
-hardware is going to use is whatever we put in the register divided by two.
 
-However, we handle it differently for the two channels: in the channel 0,
-our register access macro does the multiplication of the value passed as
-paremeter, while in the channel 1, the macro doesn't do this, and we need
-to do it before calling it.
+Rework set_parent core function so it can be called when the prepare lock
+is already held by the caller.
 
-Make this consistent by aligning the channel 0 with the channel 1
-behaviour.
+This rework is done to ease the integration of the "protected" clock
+functionality.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk.c | 39 ++++++++++++++++++---------------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 931dd374552e..62e254aedb57 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -194,7 +194,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fc58c52a26b4..f5c371532509 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1787,7 +1787,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
+ }
+ EXPORT_SYMBOL_GPL(clk_has_parent);
  
- 	/* Set vertical display timings */
- 	regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
--		     SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal) |
-+		     SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
- 		     SUN4I_TCON0_BASIC2_V_BACKPORCH(bp));
+-static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
++static int clk_core_set_parent_nolock(struct clk_core *core,
++				      struct clk_core *parent)
+ {
+ 	int ret = 0;
+ 	int p_index = 0;
+@@ -1796,23 +1797,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 	if (!core)
+ 		return 0;
  
- 	/* Set Hsync and Vsync length */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index f60e0b4c6db8..e3c50ecdcd04 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -52,7 +52,7 @@
- #define SUN4I_TCON0_BASIC1_H_BACKPORCH(bp)		(((bp) - 1) & 0xfff)
+-	/* prevent racing with updates to the clock topology */
+-	clk_prepare_lock();
+-
+ 	if (core->parent == parent)
+-		goto out;
++		return 0;
  
- #define SUN4I_TCON0_BASIC2_REG			0x50
--#define SUN4I_TCON0_BASIC2_V_TOTAL(total)		((((total) * 2) & 0x1fff) << 16)
-+#define SUN4I_TCON0_BASIC2_V_TOTAL(total)		(((total) & 0x1fff) << 16)
- #define SUN4I_TCON0_BASIC2_V_BACKPORCH(bp)		(((bp) - 1) & 0xfff)
+ 	/* verify ops for for multi-parent clks */
+-	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+-		ret = -ENOSYS;
+-		goto out;
+-	}
++	if ((core->num_parents > 1) && (!core->ops->set_parent))
++		return -ENOSYS;
  
- #define SUN4I_TCON0_BASIC3_REG			0x54
+ 	/* check that we are allowed to re-parent if the clock is in use */
+-	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
+-		ret = -EBUSY;
+-		goto out;
+-	}
++	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
++		return -EBUSY;
+ 
+ 	/* try finding the new parent index */
+ 	if (parent) {
+@@ -1820,8 +1814,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		if (p_index < 0) {
+ 			pr_debug("%s: clk %s can not be parent of clk %s\n",
+ 					__func__, parent->name, core->name);
+-			ret = p_index;
+-			goto out;
++			return p_index;
+ 		}
+ 		p_rate = parent->rate;
+ 	}
+@@ -1831,7 +1824,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 
+ 	/* abort if a driver objects */
+ 	if (ret & NOTIFY_STOP_MASK)
+-		goto out;
++		return ret;
+ 
+ 	/* do the re-parent */
+ 	ret = __clk_set_parent(core, parent, p_index);
+@@ -1844,9 +1837,6 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		__clk_recalc_accuracies(core);
+ 	}
+ 
+-out:
+-	clk_prepare_unlock();
+-
+ 	return ret;
+ }
+ 
+@@ -1869,10 +1859,17 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+  */
+ int clk_set_parent(struct clk *clk, struct clk *parent)
+ {
++	int ret;
++
+ 	if (!clk)
+ 		return 0;
+ 
+-	return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
++	clk_prepare_lock();
++	ret = clk_core_set_parent_nolock(clk->core,
++					 parent ? parent->core : NULL);
++	clk_prepare_unlock();
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_set_parent);
+ 
+@@ -2753,7 +2750,7 @@ void clk_unregister(struct clk *clk)
+ 		/* Reparent all children to the orphan list. */
+ 		hlist_for_each_entry_safe(child, t, &clk->core->children,
+ 					  child_node)
+-			clk_core_set_parent(child, NULL);
++			clk_core_set_parent_nolock(child, NULL);
+ 	}
+ 
+ 	hlist_del_init(&clk->core->child_node);
 -- 
-git-series 0.9.1
+2.9.4
