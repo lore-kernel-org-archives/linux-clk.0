@@ -1,80 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:60481 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755519AbdE0KXc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 27 May 2017 06:23:32 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 01/10] arm: sunxi: add support for R40 SoC
-Date: Sat, 27 May 2017 18:22:59 +0800
-Message-Id: <20170527102308.1988-2-icenowy@aosc.io>
-In-Reply-To: <20170527102308.1988-1-icenowy@aosc.io>
-References: <20170527102308.1988-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 04/11] clk: use round rate to bail out early in set_rate
+Date: Sun, 21 May 2017 23:59:51 +0200
+Message-Id: <20170521215958.19743-5-jbrunet@baylibre.com>
+In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
-like A20.
+The current implementation of clk_core_set_rate_nolock bails out early if
+the requested rate is exactly the same as the one set. It should bail out
+if the request would not result in rate a change.  This important when rate
+is not exactly what is requested, which is fairly common with PLLs.
 
-Add support for it.
+Ex: provider able to give any rate with steps of 100Hz
+ - 1st consumer request 48000Hz and gets it.
+ - 2nd consumer request 48010Hz as well. If we were to perform the usual
+   mechanism, we would get 48000Hz as well. The clock would not change so
+   there is no point performing any checks to make sure the clock can
+   change, we know it won't.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+This is important to prepare the addition of the clock protection mechanism
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-Changes in v3:
-- Use V1.0 documents.
+ drivers/clk/clk.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
- Documentation/arm/sunxi/README                  | 6 ++++++
- Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
- arch/arm/mach-sunxi/sunxi.c                     | 1 +
- 3 files changed, 8 insertions(+)
-
-diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-index d7b1f016bd62..af56321137e8 100644
---- a/Documentation/arm/sunxi/README
-+++ b/Documentation/arm/sunxi/README
-@@ -75,6 +75,12 @@ SunXi family
-         + Datasheet
-           http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 100f72472e10..1a8c0d013238 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1570,15 +1570,34 @@ static void clk_change_rate(struct clk_core *core)
+ 		clk_change_rate(core->new_child);
+ }
  
-+      - Allwinner R40 (sun8i)
-+        + Datasheet
-+          https://github.com/tinalinux/docs/blob/r40-v1.y/R40_Datasheet_V1.0.pdf
-+        + User Manual
-+          https://github.com/tinalinux/docs/blob/r40-v1.y/Allwinner_R40_User_Manual_V1.0.pdf
++static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
++						     unsigned long req_rate)
++{
++	int ret;
++	struct clk_rate_request req;
 +
-     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
-       - Allwinner A80
-         + Datasheet
-diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-index d2c46449b4eb..b3ffe6cf821a 100644
---- a/Documentation/devicetree/bindings/arm/sunxi.txt
-+++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-@@ -14,6 +14,7 @@ using one of the following compatible strings:
-   allwinner,sun8i-a83t
-   allwinner,sun8i-h2-plus
-   allwinner,sun8i-h3
-+  allwinner-sun8i-r40
-   allwinner,sun9i-a80
-   allwinner,sun50i-a64
-   nextthing,gr8
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index f44e3acb5c90..aea616759451 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-h2-plus",
- 	"allwinner,sun8i-h3",
- 	"allwinner,sun8i-v3s",
-+	"allwinner,sun8i-r40",
- 	NULL,
- };
++	if (!core)
++		return 0;
++
++	clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
++	req.rate = req_rate;
++
++	ret = clk_core_round_rate_nolock(core, &req);
++
++	return ret ? 0 : req.rate;
++}
++
+ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 				    unsigned long req_rate)
+ {
+ 	struct clk_core *top, *fail_clk;
+-	unsigned long rate = req_rate;
++	unsigned long rate;
+ 
+ 	if (!core)
+ 		return 0;
+ 
++	rate = clk_core_req_round_rate_nolock(core, req_rate);
++
+ 	/* bail early if nothing to do */
+ 	if (rate == clk_core_get_rate_nolock(core))
+ 		return 0;
+@@ -1587,7 +1606,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 		return -EBUSY;
+ 
+ 	/* calculate new rates and get the topmost changed clock */
+-	top = clk_calc_new_rates(core, rate);
++	top = clk_calc_new_rates(core, req_rate);
+ 	if (!top)
+ 		return -EINVAL;
  
 -- 
-2.12.2
-
+2.9.4
