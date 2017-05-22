@@ -1,67 +1,64 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 10/11] clk: fix CLK_SET_RATE_GATE with clock rate protection
-Date: Sun, 21 May 2017 23:59:57 +0200
-Message-Id: <20170521215958.19743-11-jbrunet@baylibre.com>
-In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 2/2] arm64: dts: add sp804 timer node for Hi3660
+Date: Mon, 22 May 2017 12:52:28 +0800
+Message-Id: <1495428748-11153-3-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
+References: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
-clock tree
+The Hi3660 SoC comes with the sp804 timer in addition to the
+architecture timers. These ones are shutdown when reaching a deep idle
+states and a backup timer is needed. The sp804 belongs to another power
+domain and can fulfill the purpose of replacing temporarily an
+architecture timer when the CPU is idle.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Describe it in the device tree, so it can be enabled at boot time.
+
+Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- drivers/clk/clk.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 01306191133c..6ee5fc59cf1f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -491,6 +491,9 @@ static void clk_core_unprepare(struct clk_core *core)
- 	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
- 		return;
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index 138fcba..f75c792 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -173,6 +173,17 @@
+ 			#clock-cells = <1>;
+ 		};
  
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_unprotect(core);
++		dual_timer0: timer@fff14000 {
++			compatible = "arm,sp804", "arm,primecell";
++			reg = <0x0 0xfff14000 0x0 0x1000>;
++			interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg_ctrl HI3660_OSC32K>,
++				 <&crg_ctrl HI3660_OSC32K>,
++				 <&crg_ctrl HI3660_OSC32K>;
++			clock-names = "timer1", "timer2", "apb_pclk";
++		};
 +
- 	if (--core->prepare_count > 0)
- 		return;
- 
-@@ -561,6 +564,14 @@ static int clk_core_prepare(struct clk_core *core)
- 
- 	core->prepare_count++;
- 
-+	/*
-+	 * CLK_SET_RATE_GATE is a special case of clock protection
-+	 * Instead of a consumer protection, the provider is protecting
-+	 * itself when prepared
-+	 */
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_protect(core);
-+
- 	return 0;
- }
- 
-@@ -1738,9 +1749,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (clk_core_rate_is_protected(core))
- 		return -EBUSY;
- 
--	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
--		return -EBUSY;
--
- 	/* calculate new rates and get the topmost changed clock */
- 	top = clk_calc_new_rates(core, req_rate);
- 	if (!top)
+ 		ufs: ufs@ff3b0000 {
+ 			compatible = "jedec,ufs-1.1", "hisilicon,hi3660-ufs";
+ 			reg = <0x0 0xff3b0000 0x0 0x1000>, /* 0: HCI standard */
 -- 
-2.9.4
+1.9.1
