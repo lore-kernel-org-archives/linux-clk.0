@@ -1,221 +1,402 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1495697404.22797.2.camel@mtkswgap22>
-Subject: Re: [PATCH 1/6] clk: mediatek: add missing cpu mux causing Mediatek
- cpufreq can't work
-From: Sean Wang <sean.wang@mediatek.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <viresh.kumar@linaro.org>, <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
-	<mark.rutland@arm.com>, <jamesjj.liao@mediatek.com>,
-	<p.zabel@pengutronix.de>, <shunli.wang@mediatek.com>, <erin.lo@mediatek.com>,
-	<jdelvare@suse.de>, <devicetree@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Date: Thu, 25 May 2017 15:30:04 +0800
-In-Reply-To: <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-	 <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v4 03/11] clk: bcm: Add clocks for Stingray SOC
+Date: Mon, 22 May 2017 17:28:19 +0530
+Message-Id: <1495454307-23464-4-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael and Stephen
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
+This patch adds support for Stingray clocks in iproc
+ccf. The Stingray SOC has various plls based on iproc
+pll architecture.
 
-Just a gentle ping on this one :)
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ drivers/clk/bcm/Kconfig  |   8 ++
+ drivers/clk/bcm/Makefile |   1 +
+ drivers/clk/bcm/clk-sr.c | 324 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 333 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-sr.c
 
-
-Cheers, Sean
-
-
-On Fri, 2017-05-05 at 23:26 +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> This patch adds CPU multiplexer clocks which are essential for Mediatek
-> cpufreq driver. It would use the CPU clock multiplexer to switch to the
-> intermediate clock source temporarily and then wait for the primary clock
-> changing getting stable.
-> 
-> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  drivers/clk/mediatek/Makefile     |   2 +-
->  drivers/clk/mediatek/clk-cpumux.c | 120 ++++++++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-cpumux.h |  30 ++++++++++
->  3 files changed, 151 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
->  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
-> 
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 5c3afb8..2a755b5 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -1,4 +1,4 @@
-> -obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-> +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o
->  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
->  obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
->  obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
-> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-> new file mode 100644
-> index 0000000..edd8e69
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-cpumux.c
-> @@ -0,0 +1,120 @@
-> +/*
-> + * Copyright (c) 2015 Linaro Ltd.
-> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/slab.h>
-> +
-> +#include "clk-mtk.h"
-> +#include "clk-cpumux.h"
-> +
-> +static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
-> +{
-> +	return container_of(_hw, struct mtk_clk_cpumux, hw);
-> +}
-> +
-> +static u8 clk_cpumux_get_parent(struct clk_hw *hw)
-> +{
-> +	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-> +	int num_parents = clk_hw_get_num_parents(hw);
-> +	unsigned int val;
-> +
-> +	regmap_read(mux->regmap, mux->reg, &val);
-> +
-> +	val >>= mux->shift;
-> +	val &= mux->mask;
-> +
-> +	if (val >= num_parents)
-> +		return -EINVAL;
-> +
-> +	return val;
-> +}
-> +
-> +static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-> +	u32 mask, val;
-> +
-> +	val = index << mux->shift;
-> +	mask = mux->mask << mux->shift;
-> +
-> +	return regmap_update_bits(mux->regmap, mux->reg, mask, val);
-> +}
-> +
-> +static const struct clk_ops clk_cpumux_ops = {
-> +	.get_parent = clk_cpumux_get_parent,
-> +	.set_parent = clk_cpumux_set_parent,
-> +};
-> +
-> +static struct clk __init *
-> +mtk_clk_register_cpumux(const struct mtk_composite *mux,
-> +			struct regmap *regmap)
-> +{
-> +	struct mtk_clk_cpumux *cpumux;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +
-> +	cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
-> +	if (!cpumux)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name = mux->name;
-> +	init.ops = &clk_cpumux_ops;
-> +	init.parent_names = mux->parent_names;
-> +	init.num_parents = mux->num_parents;
-> +	init.flags = mux->flags;
-> +
-> +	cpumux->reg = mux->mux_reg;
-> +	cpumux->shift = mux->mux_shift;
-> +	cpumux->mask = BIT(mux->mux_width) - 1;
-> +	cpumux->regmap = regmap;
-> +	cpumux->hw.init = &init;
-> +
-> +	clk = clk_register(NULL, &cpumux->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(cpumux);
-> +
-> +	return clk;
-> +}
-> +
-> +int __init mtk_clk_register_cpumuxes(struct device_node *node,
-> +				     const struct mtk_composite *clks, int num,
-> +				     struct clk_onecell_data *clk_data)
-> +{
-> +	int i;
-> +	struct clk *clk;
-> +	struct regmap *regmap;
-> +
-> +	regmap = syscon_node_to_regmap(node);
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-> +		       PTR_ERR(regmap));
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	for (i = 0; i < num; i++) {
-> +		const struct mtk_composite *mux = &clks[i];
-> +
-> +		clk = mtk_clk_register_cpumux(mux, regmap);
-> +		if (IS_ERR(clk)) {
-> +			pr_err("Failed to register clk %s: %ld\n",
-> +			       mux->name, PTR_ERR(clk));
-> +			continue;
-> +		}
-> +
-> +		clk_data->clks[mux->id] = clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
-> new file mode 100644
-> index 0000000..dddaad5
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-cpumux.h
-> @@ -0,0 +1,30 @@
-> +/*
-> + * Copyright (c) 2015 Linaro Ltd.
-> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef __DRV_CLK_CPUMUX_H
-> +#define __DRV_CLK_CPUMUX_H
-> +
-> +struct mtk_clk_cpumux {
-> +	struct clk_hw	hw;
-> +	struct regmap	*regmap;
-> +	u32		reg;
-> +	u32		mask;
-> +	u8		shift;
-> +};
-> +
-> +int mtk_clk_register_cpumuxes(struct device_node *node,
-> +			      const struct mtk_composite *clks, int num,
-> +			      struct clk_onecell_data *clk_data);
-> +
-> +#endif /* __DRV_CLK_CPUMUX_H */
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index b5ae531..1d9187d 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -46,3 +46,11 @@ config CLK_BCM_NS2
+ 	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
++
++config CLK_BCM_SR
++	bool "Broadcom Stingray clock support"
++	depends on ARCH_BCM_IPROC || COMPILE_TEST
++	select COMMON_CLK_IPROC
++	default ARCH_BCM_IPROC
++	help
++	  Enable common clock framework support for the Broadcom Stingray SoC
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index d9dc848..a0c14fa 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+ obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
+ obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
++obj-$(CONFIG_CLK_BCM_SR)	+= clk-sr.o
+diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
+new file mode 100644
+index 0000000..87b9543
+--- /dev/null
++++ b/drivers/clk/bcm/clk-sr.c
+@@ -0,0 +1,324 @@
++/*
++ * Copyright 2017 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License, version 2, as
++ * published by the Free Software Foundation (the "GPL").
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License version 2 (GPLv2) for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * version 2 (GPLv2) along with this source code.
++ */
++
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++
++#include <dt-bindings/clock/bcm-sr.h>
++#include "clk-iproc.h"
++
++#define REG_VAL(o, s, w) { .offset = o, .shift = s, .width = w, }
++
++#define AON_VAL(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
++	.pwr_shift = ps, .iso_shift = is }
++
++#define SW_CTRL_VAL(o, s) { .offset = o, .shift = s, }
++
++#define RESET_VAL(o, rs, prs) { .offset = o, .reset_shift = rs, \
++	.p_reset_shift = prs }
++
++#define DF_VAL(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
++	.ki_shift = kis, .ki_width = kiw, .kp_shift = kps, .kp_width = kpw, \
++	.ka_shift = kas, .ka_width = kaw }
++
++#define VCO_CTRL_VAL(uo, lo) { .u_offset = uo, .l_offset = lo }
++
++#define ENABLE_VAL(o, es, hs, bs) { .offset = o, .enable_shift = es, \
++	.hold_shift = hs, .bypass_shift = bs }
++
++
++static const struct iproc_pll_ctrl genpll0 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 5, 1, 0),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll0_clk[] = {
++	[BCM_SR_GENPLL0_SATA_CLK] = {
++		.channel = BCM_SR_GENPLL0_SATA_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL0_SCR_CLK] = {
++		.channel = BCM_SR_GENPLL0_SCR_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++	[BCM_SR_GENPLL0_250M_CLK] = {
++		.channel = BCM_SR_GENPLL0_250M_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
++	[BCM_SR_GENPLL0_PCIE_AXI_CLK] = {
++		.channel = BCM_SR_GENPLL0_PCIE_AXI_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x1c, 0, 9),
++	},
++	[BCM_SR_GENPLL0_PAXC_AXI_X2_CLK] = {
++		.channel = BCM_SR_GENPLL0_PAXC_AXI_X2_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x1c, 10, 9),
++	},
++	[BCM_SR_GENPLL0_PAXC_AXI_CLK] = {
++		.channel = BCM_SR_GENPLL0_PAXC_AXI_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 11, 5, 17),
++		.mdiv = REG_VAL(0x1c, 20, 9),
++	},
++};
++
++static void __init sr_genpll0_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll0, NULL, 0, genpll0_clk,
++				ARRAY_SIZE(genpll0_clk));
++}
++
++static const struct iproc_pll_ctrl genpll3 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 19, 18),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll3_clk[] = {
++	[BCM_SR_GENPLL3_HSLS_CLK] = {
++		.channel = BCM_SR_GENPLL3_HSLS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL3_SDIO_CLK] = {
++		.channel = BCM_SR_GENPLL3_SDIO_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++};
++
++static void __init sr_genpll3_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll3, NULL, 0, genpll3_clk,
++				ARRAY_SIZE(genpll3_clk));
++}
++CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
++			sr_genpll3_clk_init);
++
++static const struct iproc_pll_ctrl genpll4 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 25, 24),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll4_clk[] = {
++	[BCM_SR_GENPLL4_CCN_CLK] = {
++		.channel = BCM_SR_GENPLL4_CCN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++};
++
++static void __init sr_genpll4_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll4, NULL, 0, genpll4_clk,
++				ARRAY_SIZE(genpll4_clk));
++}
++
++static const struct iproc_pll_ctrl genpll5 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 1, 0),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll5_clk[] = {
++	[BCM_SR_GENPLL5_FS_CLK] = {
++		.channel = BCM_SR_GENPLL5_FS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL5_SPU_CLK] = {
++		.channel = BCM_SR_GENPLL5_SPU_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++};
++
++static void __init sr_genpll5_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll5, NULL, 0, genpll5_clk,
++				ARRAY_SIZE(genpll5_clk));
++}
++
++static const struct iproc_pll_ctrl lcpll0 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 19, 18),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl lcpll0_clk[] = {
++	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++	[BCM_SR_LCPLL0_USB_REF_CLK] = {
++		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 8, 2, 14),
++		.mdiv = REG_VAL(0x14, 10, 9),
++	},
++	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 9, 3, 15),
++		.mdiv = REG_VAL(0x14, 20, 9),
++	},
++};
++
++static void __init sr_lcpll0_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &lcpll0, NULL, 0, lcpll0_clk,
++				ARRAY_SIZE(lcpll0_clk));
++}
++
++static const struct iproc_pll_ctrl lcpll1 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 22, 21),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl lcpll1_clk[] = {
++	[BCM_SR_LCPLL1_WAN_CLK] = {
++		.channel = BCM_SR_LCPLL1_WAN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++};
++
++static void __init sr_lcpll1_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &lcpll1, NULL, 0, lcpll1_clk,
++				ARRAY_SIZE(lcpll1_clk));
++}
++
++static const struct iproc_pll_ctrl lcpll_pcie = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 25, 24),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl lcpll_pcie_clk[] = {
++	[BCM_SR_LCPLL_PCIE_PHY_REF_CLK] = {
++		.channel = BCM_SR_LCPLL_PCIE_PHY_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++};
++
++static void __init sr_lcpll_pcie_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &lcpll_pcie, NULL, 0, lcpll_pcie_clk,
++		ARRAY_SIZE(lcpll_pcie_clk));
++}
++
++static const struct of_device_id sr_clk_dt_ids[] = {
++{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init, },
++{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init, },
++{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init, },
++{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init, },
++{ .compatible = "brcm,sr-lcpll1", .data = sr_lcpll1_clk_init, },
++{ .compatible = "brcm,sr-lcpll-pcie", .data = sr_lcpll_pcie_clk_init, },
++{ /* sentinel */ }
++};
++
++static int sr_clk_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *device;
++	void (*init_func)(struct device_node *);
++
++	device = of_match_device(sr_clk_dt_ids, &pdev->dev);
++	if (!device)
++		return -ENODEV;
++	init_func = device->data;
++
++	init_func(pdev->dev.of_node);
++
++	return 0;
++}
++
++static struct platform_driver sr_clk_driver = {
++	.driver = {
++		.name = "sr-clk",
++		.of_match_table = sr_clk_dt_ids,
++	},
++	.probe = sr_clk_probe,
++};
++builtin_platform_driver(sr_clk_driver);
+-- 
+2.7.4
