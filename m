@@ -1,71 +1,128 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <anup.patel@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Thu, 11 May 2017 14:25:23 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [linux-sunxi] [PATCH v2 20/20] ARM: sun5i: a10s-olinuxino: Enable
- HDMI
-In-Reply-To: <20170510192358.taufs5tsyifueued@flea.home>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
- <c7ac6faa0568e6418291255af537c4b070bdea63.1493812478.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v65S2pw3z8NZ+tkPkF=A=5z2toRkC+26pAs6La6CNyeXoQ@mail.gmail.com>
- <20170510192358.taufs5tsyifueued@flea.home>
-Message-ID: <e273b954cab66fb17d07c9eb987778b6@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <f76fb782-66f2-e0e1-b526-80befe184c26@gmail.com>
+References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+ <CAOesGMiwspTuVWp8nPcWK2MhuWh8x9XSkZWJE2x=FxTCtU47Sw@mail.gmail.com>
+ <CAALAos8sRb+cLeHLP4yuD5oXRP1RWn=PGCkPGEBq+6X+DdkuQg@mail.gmail.com> <f76fb782-66f2-e0e1-b526-80befe184c26@gmail.com>
+From: Anup Patel <anup.patel@broadcom.com>
+Date: Mon, 22 May 2017 17:27:09 +0530
+Message-ID: <CAALAos-U_=y+ENc2u3eZWXE24Vqcfzpf0WNsQ-Zi4kVvJEq1CQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Broadcom Stingray SOC Initial Support
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>, Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>, Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-05-11 03:23，Maxime Ripard 写道：
-> Hi,
-> 
-> On Thu, May 04, 2017 at 04:05:18PM +0800, Chen-Yu Tsai wrote:
->> On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > The A10s Olinuxino has an HDMI connector. Make sure we can use it.
->> >
->> > Acked-by: Chen-Yu Tsai <wens@csie.org>
->> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> > ---
->> >  arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts | 29 +++++++++++++++++-
->> >  1 file changed, 29 insertions(+), 0 deletions(-)
->> >
->> > diff --git a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
->> > index 894f874a5beb..1d13b6407222 100644
->> > --- a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
->> > +++ b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
->> > @@ -63,6 +63,17 @@
->> >                 stdout-path = "serial0:115200n8";
->> >         };
->> >
->> > +       connector {
->> > +               compatible = "hdmi-connector";
->> > +               type = "a";
->> 
->> Just curious, should we take this into consideration when creating
->> drm_connector?
-> 
-> I'm not sure, no other driver does so. And I haven't seen any of our
-> boards with a HDMI-B, C or mini-HDMI connector.
+On Sat, May 20, 2017 at 12:08 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> On 05/16/2017 09:24 PM, Anup Patel wrote:
+>> On Wed, May 17, 2017 at 12:23 AM, Olof Johansson <olof@lixom.net> wrote:
+>>> Hi,
+>>>
+>>>
+>>>
+>>> On Tue, May 16, 2017 at 4:30 AM, Anup Patel <anup.patel@broadcom.com> wrote:
+>>>> This patchset adds initial support of Broadcom Stingray SOC
+>>>> by reusing existing Broadcom iProc device drivers.
+>>>>
+>>>> Most of the patches in this patchset are DT patches except
+>>>> the Stingray clock tree support which just one patch.
+>>>>
+>>>> This patchset is based on Linux-4.12-rc1 and it is also available
+>>>> at stingray-v3 branch of https://github.com/Broadcom/arm64-linux.git
+>>>>
+>>>> Changes since v2:
+>>>>  - Remove default bootargs from chosen DT node
+>>>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
+>>>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
+>>>>
+>>>> Changes since v1:
+>>>>  - Rebased patches for Linux-4.12-rc1
+>>>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+>>>>  - Use ranges DT property to clear view of memory-layout
+>>>>  - Make bcm-sr.h part of clock DT bindings patch
+>>>>
+>>>> Anup Patel (3):
+>>>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
+>>>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
+>>>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+>>>>
+>>>> Oza Pawandeep (1):
+>>>>   arm64: dts: Add I2C DT nodes for Stingray SoC
+>>>>
+>>>> Pramod Kumar (3):
+>>>>   arm64: dts: Add NAND DT nodes for Stingray SOC
+>>>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
+>>>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
+>>>>
+>>>> Sandeep Tripathy (3):
+>>>>   dt-bindings: clk: Extend binding doc for Stingray SOC
+>>>>   clk: bcm: Add clocks for Stingray SOC
+>>>>   arm64: dts: Add clock DT nodes for Stingray SOC
+>>>>
+>>>> Srinath Mannam (1):
+>>>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+>>>>
+>>>>  .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
+>>>>  .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
+>>>>  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+>>>>  arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+>>>>  .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
+>>>>  .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
+>>>>  .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
+>>>>  .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
+>>>>  .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
+>>>>  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
+>>>>  drivers/clk/bcm/Kconfig                            |   8 +
+>>>>  drivers/clk/bcm/Makefile                           |   1 +
+>>>>  drivers/clk/bcm/clk-sr.c                           | 300 ++++++++++++++
+>>>>  include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
+>>>>  .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
+>>>>  15 files changed, 1797 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+>>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+>>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+>>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+>>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+>>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+>>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+>>>>  create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+>>>>  create mode 100644 drivers/clk/bcm/clk-sr.c
+>>>>  create mode 100644 include/dt-bindings/clock/bcm-sr.h
+>>>>  create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+>>>
+>>> Grouping as one patchset for review is fine, but when you submit this
+>>> for merge you need to split it up:
+>>>
+>>> - Documentation/devicetree can go with the driver pieces or with the
+>>> DT changes, your choice
+>>> - DTS/DTSI changes should go through the Broadcom maintainers to arm-soc
+>>> - clk changes should go to clk maintainers.
+>>
+>> Only PATCH3 needs to go through clk maintainers rest all patches
+>> are DT bindings document and DTS changes which can go through
+>> Broadcom tree. Right ??
+>
+> Patch 2 and 3 should go through the clock maintainers, and I can take
+> the remaining patches through the Broadcom ARM/ARM64 SoC pull requests,
+> no problem.
+>
+> Unless there are specific changes requested which warrant a v4, I can
+> coordinate with Stephen and Mike to make sure that they take the
+> appropriate patches.
 
-Tablets usually come with micro-HDMI connector.
+We have minor changes in clk driver to address Stephen's comments.
 
-> 
-> Maxime
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+I will send v4 patchset will updated clk driver.
+
+Thanks,
+Anup
