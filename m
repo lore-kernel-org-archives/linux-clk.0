@@ -1,151 +1,115 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Subject: Re: [linux-sunxi] [RFC PATCH 06/11] drm: sun4i: add color space
- correction support for DE2 mixer
-Date: Wed, 17 May 2017 22:14:35 +0200
-Message-ID: <3168098.MulOhl7Yb4@jernej-laptop>
-In-Reply-To: <20170517164354.16399-7-icenowy@aosc.io>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <20170517164354.16399-7-icenowy@aosc.io>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v4 09/11] arm64: dts: Add I2C DT nodes for Stingray SoC
+Date: Mon, 22 May 2017 17:28:25 +0530
+Message-Id: <1495454307-23464-10-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Oza Pawandeep <oza.oza@broadcom.com>
 
-Dne sreda, 17. maj 2017 ob 18:43:49 CEST je Icenowy Zheng napisal(a):
-> The DE2 mixer can do color space correction needed by TV Encoder with
-> its DCSC sub-engine.
-> 
-> Add support for it.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.c | 35
-> +++++++++++++++++++++++++++++++++++ drivers/gpu/drm/sun4i/sun8i_mixer.h | 
-> 6 +++++-
->  2 files changed, 40 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> b/drivers/gpu/drm/sun4i/sun8i_mixer.c index d658a3a8159a..65f86641eca3
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -29,6 +29,14 @@
->  #include "sun8i_layer.h"
->  #include "sunxi_engine.h"
-> 
-> +static const u32 sun8i_rgb2yuv_coef[12] = {
-> +	0x00000107, 0x00000204, 0x00000064, 0x00004200,
-> +	0x00001f68, 0x00001ed6, 0x000001c2, 0x00020200,
-> +	0x000001c2, 0x00001e87, 0x00001fb7, 0x00020200,
-> +};
-> +
-> +static const u32 sun8i_rgb2yuv_dcsc_alpha = 0x00020200;
-> +
+This patch adds I2C DT nodes on Stingray SoC.
 
-There is no need to set/use alpha. BSP code doesn't set it and 0x00020200 
-value is default.
+Signed-off-by: Oza Pawandeep <oza.oza@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 22 ++++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 20 ++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-Best regards,
-Jernej
-
->  static void sun8i_mixer_commit(struct sunxi_engine *engine)
->  {
->  	DRM_DEBUG_DRIVER("Committing changes\n");
-> @@ -37,6 +45,31 @@ static void sun8i_mixer_commit(struct sunxi_engine
-> *engine) SUN8I_MIXER_GLOBAL_DBUFF_ENABLE);
->  }
-> 
-> +static void sun8i_mixer_apply_color_correction(struct sunxi_engine *engine)
-> +{
-> +	int i;
-> +
-> +	DRM_DEBUG_DRIVER("Applying RGB to YUV color correction\n");
-> +
-> +	/* Set color correction */
-> +	regmap_write(engine->regs, SUN8I_MIXER_DCSC_EN, 1);
-> +
-> +	for (i = 0; i < 12; i++)
-> +		regmap_write(engine->regs, SUN8I_MIXER_DCSC_COEF_REG(i),
-> +			     sun8i_rgb2yuv_coef[i]);
-> +
-> +	regmap_write(engine->regs, SUN8I_MIXER_DCSC_COEF_ALPHA,
-> +		     sun8i_rgb2yuv_dcsc_alpha);
-> +}
-> +
-> +static void sun8i_mixer_disable_color_correction(struct sunxi_engine
-> *engine) +{
-> +	DRM_DEBUG_DRIVER("Disabling color correction\n");
-> +
-> +	/* Disable color correction */
-> +	regmap_write(engine->regs, SUN8I_MIXER_DCSC_EN, 0);
-> +}
-> +
->  void sun8i_mixer_layer_enable(struct sun8i_mixer *mixer,
->  				int layer, bool enable)
->  {
-> @@ -229,6 +262,8 @@ int sun8i_mixer_update_layer_buffer(struct sun8i_mixer
-> *mixer, static const struct sunxi_engine_ops sun8i_engine_ops = {
->  	.commit		= sun8i_mixer_commit,
->  	.layers_init	= sun8i_layers_init,
-> +	.apply_color_correction		= sun8i_mixer_apply_color_correction,
-> +	.disable_color_correction	= sun8i_mixer_disable_color_correction,
->  };
-> 
->  static struct regmap_config sun8i_mixer_regmap_config = {
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 4785ac090b8c..d7f7513898b6
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -88,6 +88,11 @@
->  #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_RGB888	(8 << 8)
->  #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF	(0xff << 24)
-> 
-> +/* The DCSC sub-engine is used to do color space conversation */
-> +#define SUN8I_MIXER_DCSC_EN			0xb0000
-> +#define SUN8I_MIXER_DCSC_COEF_REG(x)		(0xb0010 + 0x4 * x)
-> +#define SUN8I_MIXER_DCSC_COEF_ALPHA		0xb0040
-> +
->  /*
->   * These sub-engines are still unknown now, the EN registers are here only
-> to * be used to disable these sub-engines.
-> @@ -102,7 +107,6 @@
->  #define SUN8I_MIXER_PEAK_EN			0xa6000
->  #define SUN8I_MIXER_ASE_EN			0xa8000
->  #define SUN8I_MIXER_FCC_EN			0xaa000
-> -#define SUN8I_MIXER_DCSC_EN			0xb0000
-> 
->  struct sun8i_mixer_cfg {
->  	int		vi_num;
-> --
-> 2.12.2
-> 
-> --
-> You received this message because you are subscribed to the Google Groups
-> "linux-sunxi" group. To unsubscribe from this group and stop receiving
-> emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
-
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index aad45a2..ff59a26 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -54,6 +54,28 @@
+ 	status = "okay";
+ };
+ 
++&i2c0 {
++	status = "okay";
++
++	pca9505: pca9505@20 {
++		compatible = "nxp,pca9505";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x20>;
++	};
++};
++
++&i2c1 {
++	status = "okay";
++
++	pcf8574: pcf8574@20 {
++		compatible = "nxp,pcf8574a";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x27>;
++	};
++};
++
+ &nand {
+ 	status = "ok";
+ 	nandcs@0 {
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 059086f..8a077ff 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -269,6 +269,16 @@
+ 
+ 		#include "stingray-pinctrl.dtsi"
+ 
++		i2c0: i2c@689b0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x000b0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 177 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
++
+ 		gpio_hsls: gpio@689d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x000d0000 0x864>;
+@@ -295,6 +305,16 @@
+ 					<&pinmux 151 91 4>;
+ 		};
+ 
++		i2c1: i2c@689e0000 {
++			compatible = "brcm,iproc-i2c";
++			reg = <0x000e0000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 178 IRQ_TYPE_NONE>;
++			clock-frequency = <100000>;
++			status = "disabled";
++		};
++
+ 		uart0: uart@68a00000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
+-- 
+2.7.4
