@@ -1,41 +1,60 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sat, 20 May 2017 02:08:18 +0800
-In-Reply-To: <20170519180330.7hpfkdqk3r2x3kn5@flea.home>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <20170517164354.16399-8-icenowy@aosc.io>
- <20170519180330.7hpfkdqk3r2x3kn5@flea.home>
-MIME-Version: 1.0
-Subject: Re: [RFC PATCH 07/11] drm: sun4i: add support for the TV encoder in
- H3 SoC
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <3FCDBC05-20A1-460C-A21B-8C3E9C776768@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v4 01/11] dt-bindings: bcm: Add Broadcom Stingray bindings document
+Date: Mon, 22 May 2017 17:28:17 +0530
+Message-Id: <1495454307-23464-2-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Cgrkuo4gMjAxN+W5tDXmnIgyMOaXpSBHTVQrMDg6MDAg5LiK5Y2IMjowMzozMCwgTWF4aW1lIFJp
-cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFRodSwg
-TWF5IDE4LCAyMDE3IGF0IDEyOjQzOjUwQU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
-IEFsbHdpbm5lciBIMyBmZWF0dXJlcyBhIFRWIGVuY29kZXIgc2ltaWxhciB0byB0aGUgb25lIGlu
-IGVhcmxpZXIKPlNvQ3MsCj4+IGJ1dCB3aXRoIHNvbWUgZGlmZmVyZW50IHBvaW50cyBhYm91dCBj
-bG9ja3M6Cj4+IC0gSXQgaGFzIGEgbW9kIGNsb2NrIGFuZCBhIGJ1cyBjbG9jay4KPj4gLSBUaGUg
-bW9kIGNsb2NrIG11c3QgYmUgYXQgYSBmaXhlZCByYXRlIHRvIGdlbmVyYXRlIHNpZ25hbC4KPgo+
-V2h5PwoKSXQncyBleHBlcmltZW50IHJlc3VsdCBieSBKZXJuZWouCgpUaGUgY2xvY2sgcmF0ZXMg
-aW4gQlNQIGtlcm5lbCBpcyBhbHNvIHNwZWNpYWxseSBkZXNpZ25lZAooUExMX0RFIGF0IDQzMk1I
-eikgaW4gb3JkZXIgdG8gYmUgYWJsZSB0byBmZWVkIHRoZSBUVkUuCgo+Cj5NYXhpbWUKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJu
-ZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRw
-Oi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+This patch adds DT bindings info for Broadcom Stingray SOC
+and related reference boards.
+
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+new file mode 100644
+index 0000000..23a0217
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+@@ -0,0 +1,12 @@
++Broadcom Stingray device tree bindings
++------------------------------------------------
++
++Boards with Stingray shall have the following properties:
++
++Required root node property:
++
++Stingray Combo SVK board
++compatible = "brcm,bcm958742k", "brcm,stingray";
++
++Stingray SST100 board
++compatible = "brcm,bcm958742t", "brcm,stingray";
+-- 
+2.7.4
