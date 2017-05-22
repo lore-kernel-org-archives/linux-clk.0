@@ -1,70 +1,44 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 13/20] drm/sun4i: tcon: Change vertical total size computation inconsistency
-Date: Wed,  3 May 2017 13:59:50 +0200
-Message-Id: <745b9fc450798635d50f449473e9263ab3ace48e.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f172.google.com ([209.85.223.172]:33069 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752061AbdEVIsz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2017 04:48:55 -0400
+Received: by mail-io0-f172.google.com with SMTP id p24so77005336ioi.0
+        for <linux-clk@vger.kernel.org>; Mon, 22 May 2017 01:48:54 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170504135006.16483-1-icenowy@aosc.io>
+References: <20170504135006.16483-1-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 22 May 2017 10:48:53 +0200
+Message-ID: <CACRpkdYwsyo6YT6SinisMDxhGEox5iRHZgO7xQpv-xTMjy-FOg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] Initial Allwinner R40 support
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Both TCON channels need to have the resolution doubled, since the size the
-hardware is going to use is whatever we put in the register divided by two.
+On Thu, May 4, 2017 at 3:49 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-However, we handle it differently for the two channels: in the channel 0,
-our register access macro does the multiplication of the value passed as
-paremeter, while in the channel 1, the macro doesn't do this, and we need
-to do it before calling it.
+> This is the first non-RFC version of this patchset, which added basical
+> support including I2C, UART and MMC to the mainline Linux.
+>
+> The pinctrl driver of A20 is also merged into the one of A10 before
+> R40 support is added into the A10 driver.
 
-Make this consistent by aligning the channel 0 with the channel 1
-behaviour.
+I'd be happy to merge the pinctrl parts as soon as you fixed the
+things pointed out during review. Include Rob's ACKs on the
+DT binding patches please.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 2 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 86a806fae9fb..0f91ec8a4b26 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -190,7 +190,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
- 
- 	/* Set vertical display timings */
- 	regmap_write(tcon->regs, SUN4I_TCON0_BASIC2_REG,
--		     SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal) |
-+		     SUN4I_TCON0_BASIC2_V_TOTAL(mode->crtc_vtotal * 2) |
- 		     SUN4I_TCON0_BASIC2_V_BACKPORCH(bp));
- 
- 	/* Set Hsync and Vsync length */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index 0350936b413c..3517122ee679 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -51,7 +51,7 @@
- #define SUN4I_TCON0_BASIC1_H_BACKPORCH(bp)		(((bp) - 1) & 0xfff)
- 
- #define SUN4I_TCON0_BASIC2_REG			0x50
--#define SUN4I_TCON0_BASIC2_V_TOTAL(total)		((((total) * 2) & 0x1fff) << 16)
-+#define SUN4I_TCON0_BASIC2_V_TOTAL(total)		(((total) & 0x1fff) << 16)
- #define SUN4I_TCON0_BASIC2_V_BACKPORCH(bp)		(((bp) - 1) & 0xfff)
- 
- #define SUN4I_TCON0_BASIC3_REG			0x54
--- 
-git-series 0.8.11
+Yours,
+Linus Walleij
