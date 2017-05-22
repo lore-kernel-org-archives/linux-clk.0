@@ -1,263 +1,241 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:47892 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761536AbdEXFY5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2017 01:24:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170517164354.16399-11-icenowy@aosc.io>
-References: <20170517164354.16399-1-icenowy@aosc.io> <20170517164354.16399-11-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 24 May 2017 13:24:29 +0800
-Message-ID: <CAGb2v64nVA=hHjXkVNMN68vQizMBE6vyYfaE895b0L6umv_Ycw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [RFC PATCH 10/11] ARM: sun8i: h3: add display
- engine pipeline for TVE
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v4 05/11] arm64: dts: Add clock DT nodes for Stingray SOC
+Date: Mon, 22 May 2017 17:28:21 +0530
+Message-Id: <1495454307-23464-6-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 18, 2017 at 12:43 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> As we have already the support for the TV encoder on Allwinner H3, add
-> the display engine pipeline device tree nodes to its DTSI file.
->
-> The H5 pipeline has some differences and will be enabled later.
->
-> The currently-unused mixer0 and tcon0 are also needed, for the
-> completement of the pipeline.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  arch/arm/boot/dts/sun8i-h3.dtsi | 189 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 189 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-> index b36f9f423c39..20172ef92415 100644
-> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-> @@ -41,6 +41,8 @@
->   */
->
->  #include "sunxi-h3-h5.dtsi"
-> +#include <dt-bindings/clock/sun8i-de2.h>
-> +#include <dt-bindings/reset/sun8i-de2.h>
->
->  / {
->         cpus {
-> @@ -72,6 +74,193 @@
->                 };
->         };
->
-> +       de: display-engine {
-> +               compatible = "allwinner,sun8i-h3-display-engine";
-> +               allwinner,pipelines = <&mixer0>,
-> +                                     <&mixer1>;
-> +               status = "disabled";
-> +       };
-> +
-> +       soc {
-> +               display_clocks: clock@1000000 {
-> +                       compatible = "allwinner,sun8i-a83t-de2-clk";
-> +                       reg = <0x01000000 0x100000>;
-> +                       clocks = <&ccu CLK_BUS_DE>,
-> +                                <&ccu CLK_DE>;
-> +                       clock-names = "bus",
-> +                                     "mod";
-> +                       resets = <&ccu RST_BUS_DE>;
-> +                       #clock-cells = <1>;
-> +                       #reset-cells = <1>;
-> +                       assigned-clocks = <&ccu CLK_DE>;
-> +                       assigned-clock-parents = <&ccu CLK_PLL_DE>;
-> +                       assigned-clock-rates = <432000000>;
-> +               };
-> +
-> +               mixer0: mixer@1100000 {
-> +                       compatible = "allwinner,sun8i-h3-de2-mixer0";
-> +                       reg = <0x01100000 0x100000>;
-> +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
-> +                                <&display_clocks CLK_MIXER0>;
-> +                       clock-names = "bus",
-> +                                     "mod";
-> +                       resets = <&display_clocks RST_MIXER0>;
-> +                       status = "disabled";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               mixer0_out: port@1 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <1>;
-> +
-> +                                       mixer0_out_tcon0: endpoint@0 {
-> +                                               reg = <0>;
-> +                                               remote-endpoint = <&tcon0_in_mixer0>;
-> +                                       };
-> +
-> +                                       mixer0_out_tcon1: endpoint@1 {
-> +                                               reg = <1>;
-> +                                               remote-endpoint = <&tcon1_in_mixer0>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +
-> +               mixer1: mixer@1200000 {
-> +                       compatible = "allwinner,sun8i-h3-de2-mixer1";
-> +                       reg = <0x01200000 0x100000>;
-> +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
-> +                                <&display_clocks CLK_MIXER1>;
-> +                       clock-names = "bus",
-> +                                     "mod";
-> +                       resets = <&display_clocks RST_WB>;
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               mixer1_out: port@1 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <1>;
-> +
-> +                                       mixer1_out_tcon1: endpoint@0 {
-> +                                               reg = <0>;
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
-I would prefer if you could stick to the numbering scheme we're using for
-Display Engine 1.0, as in endpoint 0 links to component 0 of whatever type.
+This patch describes Stingray SOC clock tree using
+DT nodes in Stingray DTS.
 
-We're probably going to stick to that for the R40's incredibly complicated
-pipeline. I don't want to have any outliers unless absolutely necessary.
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 +++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   9 ++
+ 2 files changed, 179 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
 
-ChenYu
-
-> +                                               remote-endpoint = <&tcon1_in_mixer1>;
-> +                                       };
-> +
-> +                                       mixer1_out_tcon0: endpoint@1 {
-> +                                               reg = <1>;
-> +                                               remote-endpoint = <&tcon0_in_mixer1>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +
-> +               tcon0: lcd-controller@1c0c000 {
-> +                       compatible = "allwinner,sun8i-h3-tcon0";
-> +                       reg = <0x01c0c000 0x1000>;
-> +                       interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_TCON0>,
-> +                                <&ccu CLK_TCON0>;
-> +                       clock-names = "ahb",
-> +                                     "tcon-ch1";
-> +                       resets = <&ccu RST_BUS_TCON0>;
-> +                       reset-names = "lcd";
-> +                       status = "disabled";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               tcon0_in: port@0 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <0>;
-> +
-> +                                       tcon0_in_mixer0: endpoint@0 {
-> +                                               reg = <0>;
-> +                                               remote-endpoint = <&mixer0_out_tcon0>;
-> +                                       };
-> +
-> +                                       tcon0_in_mixer1: endpoint@1 {
-> +                                               reg = <1>;
-> +                                               remote-endpoint = <&mixer1_out_tcon0>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +
-> +               tcon1: lcd-controller@1c0d000 {
-> +                       compatible = "allwinner,sun8i-h3-tcon1";
-> +                       reg = <0x01c0d000 0x1000>;
-> +                       interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_TCON1>;
-> +                       clock-names = "ahb";
-> +                       resets = <&ccu RST_BUS_TCON1>;
-> +                       reset-names = "lcd";
-> +                       status = "disabled";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               tcon1_in: port@0 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <0>;
-> +
-> +                                       tcon1_in_mixer1: endpoint@0 {
-> +                                               reg = <0>;
-> +                                               remote-endpoint = <&mixer1_out_tcon1>;
-> +                                       };
-> +
-> +                                       tcon1_in_mixer0: endpoint@1 {
-> +                                               reg = <1>;
-> +                                               remote-endpoint = <&mixer0_out_tcon1>;
-> +                                       };
-> +                               };
-> +
-> +                               tcon1_out: port@1 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <1>;
-> +
-> +                                       tcon1_out_tve0: endpoint@1 {
-> +                                               reg = <1>;
-> +                                               remote-endpoint = <&tve0_in_tcon1>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +
-> +               tve0: tv-encoder@1e00000 {
-> +                       compatible = "allwinner,sun8i-h3-tv-encoder";
-> +                       reg = <0x01e00000 0x1000>;
-> +                       clocks = <&ccu CLK_BUS_TVE>, <&ccu CLK_TVE>;
-> +                       clock-names = "bus", "mod";
-> +                       resets = <&ccu RST_BUS_TVE>;
-> +                       status = "disabled";
-> +
-> +                       assigned-clocks = <&ccu CLK_TVE>;
-> +                       assigned-clock-parents = <&ccu CLK_PLL_DE>;
-> +                       assigned-clock-rates = <216000000>;
-> +
-> +                       port {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               tve0_in_tcon1: endpoint@0 {
-> +                                       reg = <0>;
-> +                                       remote-endpoint = <&tcon1_out_tve0>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
->         timer {
->                 compatible = "arm,armv7-timer";
->                 interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> --
-> 2.12.2
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+new file mode 100644
+index 0000000..070e22e2
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+@@ -0,0 +1,170 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include <dt-bindings/clock/bcm-sr.h>
++
++		osc: oscillator {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <50000000>;
++		};
++
++		crmu_ref25m: crmu_ref25m {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&osc>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		genpll0: genpll0@6641d104 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll0";
++			reg = <0x0001d104 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll0", "clk_125", "clk_scr",
++					     "clk_250", "clk_pcie_axi",
++					     "clk_paxc_axi_x2",
++					     "clk_paxc_axi";
++		};
++
++		genpll3: genpll3@6641d1e0 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll3";
++			reg = <0x0001d1e0 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll3", "clk_hsls",
++					     "clk_sdio";
++		};
++
++		genpll4: genpll4@6641d214 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll4";
++			reg = <0x0001d214 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll4", "clk_ccn",
++					     "clk_tpiu_pll", "noc_clk",
++					     "pll_chclk_fs4",
++					     "clk_bridge_fscpu";
++		};
++
++		genpll5: genpll5@6641d248 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll5";
++			reg = <0x0001d248 0x32>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll5", "fs4_hf_clk",
++					     "crypto_ae_clk", "raid_ae_clk";
++		};
++
++		lcpll0: lcpll0 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-lcpll0";
++			reg = <0x0001d0c4 0x3c>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll0", "clk_sata_refp",
++					     "clk_sata_refn", "clk_sata_350",
++					     "clk_sata_500";
++		};
++
++		lcpll1: lcpll1 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-lcpll1";
++			reg = <0x0001d138 0x3c>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll1", "clk_wanpn",
++					     "clk_usb_ref",
++					     "timesync_evt_clk";
++		};
++
++		hsls_clk: hsls_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 1>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		hsls_div2_clk: hsls_div2_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
++			clock-div = <2>;
++			clock-mult = <1>;
++
++		};
++
++		hsls_div4_clk: hsls_div4_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
++			clock-div = <4>;
++			clock-mult = <1>;
++		};
++
++		hsls_25m_clk: hsls_25m_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&crmu_ref25m>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		hsls_25m_div2_clk: hsls_25m_div2_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&hsls_25m_clk>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		sdio0_clk: sdio0_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		sdio1_clk: sdio1_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 9fe19a2..6b690db 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -244,6 +244,15 @@
+ 		};
+ 	};
+ 
++	crmu: crmu {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x66400000 0x100000>;
++
++		#include "stingray-clock.dtsi"
++	};
++
+ 	hsls {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+-- 
+2.7.4
