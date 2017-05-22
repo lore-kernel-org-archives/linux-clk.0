@@ -1,104 +1,113 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 1/5] clk: mvebu: ap806: cosmetic improvement
-Date: Fri, 19 May 2017 17:58:01 +0200
-Message-Id: <5a55e081d96fc6d2a28331b59df90f56d32a9f24.1495209464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <sandeep.tripathy@broadcom.com>
+MIME-Version: 1.0
+In-Reply-To: <20170519013709.GD20170@codeaurora.org>
+References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+ <1494071686-19098-4-git-send-email-anup.patel@broadcom.com> <20170519013709.GD20170@codeaurora.org>
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Date: Mon, 22 May 2017 17:23:58 +0530
+Message-ID: <CALf0Xcxv3QfgDLC9DaRc6c28FZzjARX+38KjSHfVftwhkh3Dcw@mail.gmail.com>
+Subject: Re: [PATCH 03/11] clk: bcm: Add clocks for Stingray SOC
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Anup Patel <anup.patel@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza@broadcom.com>, Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of using &pdev->dev all over the place, introduce a pointer
-variable for it.
-
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/ap806-system-controller.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 8155baccc98e..b2666b5c944f 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -36,20 +36,21 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- {
- 	unsigned int freq_mode, cpuclk_freq;
- 	const char *name, *fixedclk_name;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
- 	struct regmap *regmap;
- 	u32 reg;
- 	int ret;
- 
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap)) {
--		dev_err(&pdev->dev, "cannot get regmap\n");
-+		dev_err(dev, "cannot get regmap\n");
- 		return PTR_ERR(regmap);
- 	}
- 
- 	ret = regmap_read(regmap, AP806_SAR_REG, &reg);
- 	if (ret) {
--		dev_err(&pdev->dev, "cannot read from regmap\n");
-+		dev_err(dev, "cannot read from regmap\n");
- 		return ret;
- 	}
- 
-@@ -89,7 +90,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 		cpuclk_freq = 600;
- 		break;
- 	default:
--		dev_err(&pdev->dev, "invalid SAR value\n");
-+		dev_err(dev, "invalid SAR value\n");
- 		return -EINVAL;
- 	}
- 
-@@ -99,7 +100,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	/* CPU clocks depend on the Sample At Reset configuration */
- 	of_property_read_string_index(np, "clock-output-names",
- 				      0, &name);
--	ap806_clks[0] = clk_register_fixed_rate(&pdev->dev, name, NULL,
-+	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
- 						0, cpuclk_freq);
- 	if (IS_ERR(ap806_clks[0])) {
- 		ret = PTR_ERR(ap806_clks[0]);
-@@ -108,7 +109,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 
- 	of_property_read_string_index(np, "clock-output-names",
- 				      1, &name);
--	ap806_clks[1] = clk_register_fixed_rate(&pdev->dev, name, NULL, 0,
-+	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
- 						cpuclk_freq);
- 	if (IS_ERR(ap806_clks[1])) {
- 		ret = PTR_ERR(ap806_clks[1]);
-@@ -118,7 +119,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	/* Fixed clock is always 1200 Mhz */
- 	of_property_read_string_index(np, "clock-output-names",
- 				      2, &fixedclk_name);
--	ap806_clks[2] = clk_register_fixed_rate(&pdev->dev, fixedclk_name, NULL,
-+	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
- 						0, 1200 * 1000 * 1000);
- 	if (IS_ERR(ap806_clks[2])) {
- 		ret = PTR_ERR(ap806_clks[2]);
--- 
-git-series 0.9.1
+On Fri, May 19, 2017 at 7:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>
+> On 05/06, Anup Patel wrote:
+> > From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+> >
+> > This patch adds support for Stingray clocks in iproc
+> > ccf. The Stingray SOC has various plls based on iproc
+> > pll architecture.
+> >
+>
+> Does it have anything besides PLLs?
+It describes various plls and soc specific details for the particular
+SOC based on
+bcm iproc architecture. the core functionality is implemented for all
+Broadcom SOC
+using iproc pll architecture in generic iproc drivers  eg: clk-iproc-pll.c
+>
+> > +CLK_OF_DECLARE(sr_genpll0_clk, "brcm,sr-genpll0",
+> > +                             sr_genpll0_clk_init);
+> > +
+> > +static const struct iproc_pll_ctrl genpll3 = {
+> > +     .flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+> > +             IPROC_CLK_PLL_NEEDS_SW_CFG,
+> > +     .aon = AON_VAL(0x0, 1, 19, 18),
+> > +     .reset = RESET_VAL(0x0, 12, 11),
+> > +     .dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
+> > +     .sw_ctrl = SW_CTRL_VAL(0x10, 31),
+> > +     .ndiv_int = REG_VAL(0x10, 20, 10),
+> > +     .ndiv_frac = REG_VAL(0x10, 0, 20),
+> > +     .pdiv = REG_VAL(0x14, 0, 4),
+> > +     .status = REG_VAL(0x30, 12, 1),
+> > +};
+> > +
+> > +static const struct iproc_clk_ctrl genpll3_clk[] = {
+> > +     [BCM_SR_GENPLL3_HSLS_CLK] = {
+> > +             .channel = BCM_SR_GENPLL3_HSLS_CLK,
+> > +             .flags = IPROC_CLK_AON,
+> > +             .enable = ENABLE_VAL(0x4, 6, 0, 12),
+> > +             .mdiv = REG_VAL(0x18, 0, 9),
+> > +     },
+> > +     [BCM_SR_GENPLL3_SDIO_CLK] = {
+> > +             .channel = BCM_SR_GENPLL3_SDIO_CLK,
+> > +             .flags = IPROC_CLK_AON,
+> > +             .enable = ENABLE_VAL(0x4, 7, 1, 13),
+> > +             .mdiv = REG_VAL(0x18, 10, 9),
+> > +     },
+> > +};
+> > +
+> > +static void __init sr_genpll3_clk_init(struct device_node *node)
+> > +{
+> > +     iproc_pll_clk_setup(node, &genpll3, NULL, 0, genpll3_clk,
+> > +                             ARRAY_SIZE(genpll3_clk));
+> > +}
+> > +CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
+> > +                     sr_genpll3_clk_init);
+>
+> Can you make this a platform driver instead? Are all these clks
+> really used for getting the interrupt and timers running?
+Not all clocks needed early except the genpll3. sp804 timer clks are derived
+from genpll. we will send revised patch to have most of the clocks registered
+via platform driver probe.
+>
+> > +
+> > +static const struct iproc_pll_ctrl genpll4 = {
+> > +     .flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+> > +             IPROC_CLK_PLL_NEEDS_SW_CFG,
+> > +     .aon = AON_VAL(0x0, 1, 25, 24),
+> > +     .reset = RESET_VAL(0x0, 12, 11),
+> > +     .dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
+> > +     .sw_ctrl = SW_CTRL_VAL(0x10, 31),
+> > +     .ndiv_int = REG_VAL(0x10, 20, 10),
+> > +     .ndiv_frac = REG_VAL(0x10, 0, 20),
+> > +     .pdiv = REG_VAL(0x14, 0, 4),
+> > +     .status = REG_VAL(0x30, 12, 1),
+> > +};
+> > +
+> > +static const struct iproc_clk_ctrl genpll4_clk[] = {
+> > +     [BCM_SR_GENPLL4_CCN_CLK] = {
+> > +             .channel = BCM_SR_GENPLL4_CCN_CLK,
+> > +             .flags = IPROC_CLK_AON,
+> > +             .enable = ENABLE_VAL(0x4, 6, 0, 12),
+> > +             .mdiv = REG_VAL(0x18, 0, 9),
+> > +     },
+> > +};
+> > +
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+regards
+Sandeep
