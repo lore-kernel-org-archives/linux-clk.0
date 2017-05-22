@@ -1,63 +1,43 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Wed, 31 May 2017 15:52:56 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: linux@rempel-privat.de, kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic_stby_poweroff property
-Message-ID: <20170531145255.GC10351@leverpostej>
-References: <20170531061457.23744-1-o.rempel@pengutronix.de>
- <20170531061457.23744-2-o.rempel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170531061457.23744-2-o.rempel@pengutronix.de>
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Tobias Regnery <tobias.regnery@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
+Date: Mon, 22 May 2017 22:29:40 +0200
+Message-Id: <20170522202951.2896280-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 31, 2017 at 08:14:52AM +0200, Oleksij Rempel wrote:
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Cc: kernel@pengutronix.de
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> index 9252912a5b0e..214cb5f461c7 100644
-> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> @@ -6,6 +6,10 @@ Required properties:
->  - interrupts: Should contain CCM interrupt
->  - #clock-cells: Should be <1>
->  
-> +Optional properties:
-> +- fsl,pmic_stby_poweroff: Configure CCM to assert PMIC_STBY_REQ signal
-> +  on power off.
+We get a link error when CCU_MULT is not set with the
+newly added driver:
 
-s/_/-/ in property names, please.
+drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_mult_ops'
+drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.3+0x4): undefined reference to `ccu_mult_ops'
 
-When/why is this needed?
+Fixes: 46b492116666 ("clk: sunxi-ng: Add driver for A83T CCU")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/sunxi-ng/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Why should a DT author (not) set this?
-
-Thanks,
-Mark.
-
-> +
->  The clock consumer should specify the desired clock by having the clock
->  ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
->  for the full list of i.MX6 Quad and DualLite clock IDs.
-> -- 
-> 2.11.0
-> 
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index a384c695b388..67acef3d2494 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -121,6 +121,7 @@ config SUN8I_A83T_CCU
+ 	select SUNXI_CCU_DIV
+ 	select SUNXI_CCU_GATE
+ 	select SUNXI_CCU_MP
++	select SUNXI_CCU_MULT
+ 	select SUNXI_CCU_MUX
+ 	select SUNXI_CCU_NKMP
+ 	select SUNXI_CCU_NM
+-- 
+2.9.0
