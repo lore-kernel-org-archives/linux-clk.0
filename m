@@ -1,234 +1,129 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>
-CC: <xiaolong.zhang@spreadtrum.com>, <orson.zhai@spreadtrum.com>,
-        <geng.ren@spreadtrum.com>, <arnd@arndb.de>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <zhang.lyra@gmail.com>, <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH 2/3] Documentation: add sprd clock bindings
-Date: Mon, 15 May 2017 16:35:01 +0800
-Message-ID: <20170515083502.4492-3-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
-References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v6 1/4] clk: Add support for runtime PM
+To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <4049980f-1837-93cc-49e0-e9dee2760cf1@samsung.com>
+Date: Mon, 22 May 2017 14:34:30 +0200
+MIME-version: 1.0
+In-reply-to: <5b4b2f3e-dc4b-0866-c4b8-4c7e4dba2be0@samsung.com>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
+ <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
+ <149081897388.31513.7062843004022908296@resonance>
+ <75509e0f-26cd-52e7-8c71-b004ab6abc81@samsung.com>
+ <149089387341.31513.7531874072502656432@resonance>
+ <5b4b2f3e-dc4b-0866-c4b8-4c7e4dba2be0@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a new directory under the 'clock' for Spreadtrum platform,
-also bindings which document compatible strings and properties used for
-devicetree node of clocks on Spreadtrum SoCs.
+Hi All,
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- .../clock/sprd/sprd,adjustable-pll-clock.txt       | 17 +++++
- .../bindings/clock/sprd/sprd,composite-clock.txt   | 28 +++++++++
- .../bindings/clock/sprd/sprd,divider-clock.txt     | 24 +++++++
- .../bindings/clock/sprd/sprd,gates-clock.txt       | 73 ++++++++++++++++++++++
- .../bindings/clock/sprd/sprd,muxed-clock.txt       | 23 +++++++
- 5 files changed, 165 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
+On 2017-04-06 14:46, Marek Szyprowski wrote:
+> Hi Michael,
+>
+> On 2017-03-30 19:11, Michael Turquette wrote:
+>> Quoting Marek Szyprowski (2017-03-30 00:24:15)
+>>> On 2017-03-29 22:22, Michael Turquette wrote:
+>>>> Quoting Marek Szyprowski (2017-03-22 04:35:40)
+>>>>> Registers for some clocks might be located in the SOC area, which 
+>>>>> are under the
+>>>>> power domain. To enable access to those registers respective 
+>>>>> domain has to be
+>>>>> turned on. Additionally, registers for such clocks will usually 
+>>>>> loose its
+>>>>> contents when power domain is turned off, so additional saving and 
+>>>>> restoring of
+>>>>> them might be needed in the clock controller driver.
+>>>>>
+>>>>> This patch adds basic infrastructure in the clocks core to allow 
+>>>>> implementing
+>>>>> driver for such clocks under power domains. Clock provider can 
+>>>>> supply a
+>>>>> struct device pointer, which is the used by clock core for 
+>>>>> tracking and managing
+>>>>> clock's controller runtime pm state. Each clk_prepare() operation
+>>>>> will first call pm_runtime_get_sync() on the supplied device, while
+>>>>> clk_unprepare() will do pm_runtime_put_sync() at the end.
+>>>>>
+>>>>> Additional calls to pm_runtime_get/put functions are required to 
+>>>>> ensure that any
+>>>>> register access (like calculating/changing clock rates and 
+>>>>> unpreparing/disabling
+>>>>> unused clocks on boot) will be done with clock controller in 
+>>>>> runtime resumend
+>>>>> state.
+>>>> The above is a bit confusing. Is clk_prepare really special? It 
+>>>> seems to
+>>>> me that every single clk_ops callback will need this?
+>>> clk_prepare/unprepare are special, because they allow sleeping, so they
+>>> are natural
+>>> candidates for the place for calling runtime PM operations.
+>>> clk_enable()/disable()
+>>> is called under a spinlock, so runtime pm cannot be called efficiently
+>>> there, but
+>>> core guarantees that they are called after clk_prepare(), so accessing
+>>> hw registers
+>>> is safe. The only remaining calls are not guaranteed to be called 
+>>> always
+>>> after
+>>> clk_prepare(), so those additional calls and checks in runtime pm are
+>>> needed there.
+>> Right, so any call that holds prepare_lock and might touch the hardware
+>> needs to first call pm_runtime_get_sync.
+>>
+>>>> That leads to my second question: why put this in the clk core? Can 
+>>>> the
+>>>> clk provider driver simply add pm_runtime_{get,put} calls into its
+>>>> clk_ops callbacks instead? The clk core does not directly touch 
+>>>> hardware
+>>>> (e.g. reading registers) so putting the pm runtime calls into the
+>>>> provider callbacks should be sufficient.
+>>> In theory is should be possible to duplicate all kind of clock build 
+>>> blocks
+>>> (gates, muxes, dividers, ...) with additional runtime pm calls. This
+>>> would however
+>>> end in much more code and a bit more complicated locking. Implementing
+>>> it in clk
+>>> core made the code simpler. It also turned out that runtime pm
+>>> integration is
+>>> needed for more that a single clock provider: besides Samsung SoCs
+>>> (Exynos 5433
+>>> and newer, Exynos 4412 ISP, Exynos Audio Subsystem, hacks in Exynos 
+>>> 542x
+>>> can be
+>>> also replaced by runtime PM calls), Ulf mentioned that exactly similar
+>>> pattern
+>>> is used for some UX500 SoCs (STE). More will probably come once the
+>>> feature is
+>>> in, because for now such drivers simply forces runtime active state 
+>>> as a
+>>> workaround or don't instantiate related power domains at all.
+>> I agree with the above, but I'm also wondering about the folks that use
+>> regmap internally to their own clock provider drivers. I guess they will
+>> have the option to either do their own thing or use this framework-level
+>> solution.
+>>
+>> I've started reviewing the code itself and will respond to those mails
+>> separately.
+>
+> Is there a chance to get your comments soon? I would really like to give
+> this patchset a try in linux-next for a few days, but for now Sylwester
+> waits for you.
+>
+> Stephen: what is your opinion on this patchset? Would you like to give it
+> a try in -next?
+>
 
-diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
-new file mode 100644
-index 0000000..476e315
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
-@@ -0,0 +1,17 @@
-+Spreadtrum adjustable pll clock driver
-+
-+Required properties:
-+
-+- compatible : must be one of:
-+	"sprd,sc9836-adjustable-pll-clock"
-+	"sprd,sc9860-adjustable-pll-clock"
-+
-+Example:
-+	clk_mpll0: clk@40400024 {
-+		compatible = "sprd,sc9860-adjustable-pll-clock";
-+		#clock-cells = <0>;
-+		reg = <0 0x40400024 0 0x4>,
-+		      <0 0x40400028 0 0x4>;
-+		clocks = <&clk_mpll_gates 2>;
-+		clock-output-names = "clk_mpll0";
-+	};
-diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
-new file mode 100644
-index 0000000..a476eb6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
-@@ -0,0 +1,28 @@
-+Spreadtrum composite clock driver.
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+
-+- compatible:	should be "sprd,composite-clock"
-+
-+- sprd,mux-msk:	arbitrary bitmask for selecting clock input
-+
-+- sprd,div-msk:	arbitrary bitmask for programming the divider,
-+		denominator of divider is the value consisted
-+		of these bits plus 1
-+
-+Example:
-+
-+	clk_sensor: clk@60e00024 {
-+		compatible = "sprd,composite-clock";
-+		#clock-cells = <0>;
-+		reg = <0 0x60e00024 0 0x4>;
-+		clocks = <&ext_26m>, <&clk_twpll_48m_def>,
-+			 <&clk_twpll_76m8_def>, <&clk_twpll_96m_def>;
-+		clock-output-names = "clk_sensor";
-+		sprd,mux-msk = <0x3>;
-+		sprd,div-msk = <0x700>;
-+	};
-diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
-new file mode 100644
-index 0000000..0bfc0ee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
-@@ -0,0 +1,24 @@
-+Spreadtrum divider clock driver which only supports simple indexed divider
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+
-+- compatible : should be "sprd,divider-clock"
-+
-+- sprd,div-msk:	arbitrary bitmask for programming the divider,
-+		denominator of divider is the value consisted
-+		of these bits plus 1.
-+
-+Example:
-+
-+	clk_sdio0_1x: clk@402d032c {
-+		compatible = "sprd,divider-clock";
-+		#clock-cells = <0>;
-+		reg = <0 0x402d032c 0 0x4>;
-+		sprd,div-msk = <0x100>;
-+		clocks = <&clk_sdio0_2x>;
-+		clock-output-names = "clk_sdio0_1x";
-+	};
-diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
-new file mode 100644
-index 0000000..f23ecb6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
-@@ -0,0 +1,73 @@
-+Spreadtrum gate clock driver
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Spreadtrum's SoCs often use one register to control more than one gate clocks.
-+Clock consumers can use index to get the correct gate clock.
-+
-+In Spreadtrum platform, some of gate clocks have three registers, respectively
-+used for controlling, setting and clearing gate clock, the addresses of
-+these three registers generally are <start>, <start + offset>, and
-+<start + offset * 2>, and offset would be 0x1000 or 0x100, so the register
-+size of gate clocks is either 0x3000 or 0x300. While for some historical issue
-+there also are some clocks which don't have independent set/clear registers.
-+Please see bellow for more specific information.
-+
-+Required properties:
-+
-+- compatible:	should be one of the following:
-+		"sprd,sc1000-gates-clock"
-+		- offset of the registers for setting gate is 0x1000
-+
-+		"sprd,sc100-gates-clock"
-+		- offset of the registers for setting gate is 0x100
-+
-+		"sprd,gates-clock"
-+		- for clocks without independent set/clear registers
-+
-+- reg:	the first cell represents the address of this clock gate controller
-+	register, the second cell implies how is the offset of set/clear
-+	registers of this clock gate, like addressed in the head of this
-+	file
-+
-+optional properties:
-+
-+- clock-indices:	If the identifying number for the clocks in the node
-+			is not linear from zero, this property is necessary
-+
-+Example:
-+
-+	clk_mpll_gates: clk@402b00b0 {
-+		compatible = "sprd,sc1000-gates-clock";
-+		#clock-cells = <1>;
-+		reg = <0 0x402b00b0 0 0x3000>;
-+		clocks = <&ext_26m>;
-+		clock-indices = <2>, <18>;
-+		clock-output-names = "clk_mpll0_gate", "clk_mpll1_gate";
-+	};
-+
-+Below are two examples of how consumers use the gate clock.
-+The 'clk_mpll0' uses index 2 of 'clk_mpll_gates' and 'clk_mpll1'
-+uses index 18.
-+
-+Examples:
-+
-+	clk_mpll0: clk@40400024 {
-+		compatible = "sprd,sc9860-adjustable-pll-clock";
-+		#clock-cells = <0>;
-+		reg = <0 0x40400024 0 0x4>,
-+		      <0 0x40400028 0 0x4>;
-+		clocks = <&clk_mpll_gates 2>;
-+		clock-output-names = "clk_mpll0";
-+	};
-+
-+	clk_mpll1: clk@4040002c {
-+		compatible = "sprd,sc9860-adjustable-pll-clock";
-+		#clock-cells = <0>;
-+		reg = <0 0x4040002c 0 0x4>,
-+		      <0 0x40400030 0 0x4>;
-+		clocks = <&clk_mpll_gates 18>;
-+		clock-output-names = "clk_mpll1";
-+	};
-diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
-new file mode 100644
-index 0000000..b752977
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
-@@ -0,0 +1,23 @@
-+Spreadtrum multiplexed clock driver
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+
-+- compatible : should be "sprd,muxed-clock"
-+
-+- sprd,mux-msk:	arbitrary bitmask for selecting clock input
-+
-+Example:
-+
-+	clk_adi: clk@402d0234 {
-+		compatible = "sprd,muxed-clock";
-+		#clock-cells = <0>;
-+		reg = <0 0x402d0234 0 0x4>;
-+		sprd,mux-msk = <0x7>;
-+		clocks = <&clk_rco_4m>, <&ext_26m>, <&clk_rco_25m>,
-+			 <&clk_twpll_38m4>, <&clk_twpll_51m2>;
-+		clock-output-names = "clk_adi";
-+	};
+Mike, Stephen: any comments? We already missed v4.12 merge window...
+
+Best regards
 -- 
-2.7.4
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
