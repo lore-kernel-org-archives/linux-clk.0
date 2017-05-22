@@ -1,135 +1,82 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>
-Subject: [PATCH 8/9] clk: imx: make mux parent strings const
-Date: Mon, 15 May 2017 21:59:22 +0800
-Message-ID: <1494856763-6543-9-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <ssantosh@kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 1/2] Documentation: dt: Add TI SCI clock driver
+Date: Mon, 22 May 2017 16:01:52 +0300
+Message-ID: <1495458113-7366-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1495458113-7366-1-git-send-email-t-kristo@ti.com>
+References: <1495458113-7366-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
+Add a clock implementation, TI SCI clock, that will hook to the common
+clock framework, and allow each clock to be controlled via TI SCI
+protocol.
 
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
-
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
- of type 'const char * const*'
-...
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
+ .../devicetree/bindings/clock/ti,sci-clk.txt       | 37 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 5cc9959..097625c 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static struct clk_ops clk_busy_mux_ops = {
+diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+new file mode 100644
+index 0000000..1e884c4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+@@ -0,0 +1,37 @@
++Texas Instruments TI-SCI Clocks
++===============================
++
++All clocks on Texas Instruments' SoCs that contain a System Controller,
++are only controlled by this entity. Communication between a host processor
++running an OS and the System Controller happens through a protocol known
++as TI-SCI[1]. This clock implementation plugs into the common clock
++framework and makes use of the TI-SCI protocol on clock API requests.
++
++[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
++
++Required properties:
++-------------------
++- compatible: Must be "ti,k2g-sci-clk"
++- #clock-cells: Shall be 2.
++  In clock consumers, this cell represents the device ID and clock ID
++  exposed by the PM firmware. The assignments can be found in the header
++  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
++  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
++  is the SoC involved, for example 'k2g'.
++
++Examples:
++--------
++
++pmmc: pmmc {
++	compatible = "ti,k2g-sci";
++
++	k2g_clks: clocks {
++		compatible = "ti,k2g-sci-clk";
++		#clock-cells = <2>;
++	};
++};
++
++uart0: serial@2530c00 {
++	compatible = "ns16550a";
++	clocks = <&k2g_clks 0x2c 0>;
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f7d568b..880a23d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12630,6 +12630,7 @@ F:	include/linux/soc/ti/ti_sci_protocol.h
+ F:	Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+ F:	include/dt-bindings/genpd/k2g.h
+ F:	drivers/soc/ti/ti_sci_pm_domains.c
++F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
  
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index c9b327e..44817c1 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
- };
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 665777e..d09fa0c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -67,7 +67,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
- 
- struct clk *imx_clk_composite(const char *name,
- 			      const char * const *parent_names,
-@@ -80,7 +80,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void (*fixup)(u32 *val));
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
- 
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -89,7 +89,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- }
- 
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -188,7 +189,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- }
- 
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -196,7 +198,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -204,8 +207,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+ THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+ M:	Hans Verkuil <hverkuil@xs4all.nl>
 -- 
-2.7.4
+1.9.1
