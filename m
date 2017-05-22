@@ -1,48 +1,93 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1494863779.13948.2.camel@baylibre.com>
-Subject: Re: [PATCH v2 2/2] clk: meson: gxbb: remove the "cpu_clk" from the
- GXBB and GXL driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org, narmstrong@baylibre.com,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org, khilman@baylibre.com, carlo@caione.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 15 May 2017 17:56:19 +0200
-In-Reply-To: <20170504181920.21880-3-martin.blumenstingl@googlemail.com>
-References: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
-	 <20170504181920.21880-1-martin.blumenstingl@googlemail.com>
-	 <20170504181920.21880-3-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Abhishek Shah <abhishek.shah@broadcom.com>
+Subject: [PATCH v4 06/11] arm64: dts: Add NAND DT nodes for Stingray SOC
+Date: Mon, 22 May 2017 17:28:22 +0530
+Message-Id: <1495454307-23464-7-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-05-04 at 20:19 +0200, Martin Blumenstingl wrote:
-> It seems that the "cpu_clk" was carried over from the meson8b clock
-> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
-> used by the cpu_clk have a different purpose (in other words: they don't
-> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
-> reserved according to the public S905 datasheet, while bit 23 is the
-> "A53_trace_clk_DIS" gate (which according to the datasheet should only
-> be used in case a silicon bug is discovered) and bits 22:20 are a
-> divider (A53_trace_clk). The meson clk-cpu code however expects that
-> bits 28:20 are reserved for a divider (according to the public S805
-> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
-> input clock.").
-> 
-> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
-> driver instead. Two examples from a Meson GXL S905X SoC:
-> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
-> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
-> 
-> Unfortunately the CLKID_CPUCLK was already exported (but is currently
-> not used) to DT. Due to the removal of this clock definition there is
-> now a hole in the clk_hw_onecell_data (which is not a problem because
-> this case is already handled in gxbb_clkc_probe).
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Applied, Thanks
-Jerome
+This patch adds NAND controller DT Node and NAND chip DT
+node for Stingray SOC and Stingray reference boards.
+
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 15 +++++++++++++++
+ arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 13 +++++++++++++
+ 2 files changed, 28 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index 992944b..aad45a2 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -53,3 +53,18 @@
+ &uart1 {
+ 	status = "okay";
+ };
++
++&nand {
++	status = "ok";
++	nandcs@0 {
++		compatible = "brcm,nandcs";
++		reg = <0>;
++		nand-ecc-mode = "hw";
++		nand-ecc-strength = <8>;
++		nand-ecc-step-size = <512>;
++		nand-bus-width = <16>;
++		brcm,nand-oob-sector-size = <16>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 6b690db..003f814 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -307,5 +307,18 @@
+ 			compatible = "brcm,iproc-rng200";
+ 			reg = <0x00220000 0x28>;
+ 		};
++
++		nand: nand@68c60000 {
++			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
++			reg = <0x00360000 0x600>,
++			      <0x0050a408 0x600>,
++			      <0x00360f00 0x20>;
++			reg-names = "nand", "iproc-idm", "iproc-ext";
++			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			brcm,nand-has-wp;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+2.7.4
