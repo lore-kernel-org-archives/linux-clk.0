@@ -1,82 +1,33 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 3/20] clk: sunxi-ng: div: Switch to divider_round_rate
-Date: Wed,  3 May 2017 13:59:40 +0200
-Message-Id: <8ea7c8c0ac01fe06f7ded94e03532a1838f2bf8f.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <ssantosh@kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv4 0/2] clk: keystone: add sci-clk support
+Date: Mon, 22 May 2017 16:01:51 +0300
+Message-ID: <1495458113-7366-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-divider_round_rate already evaluates changing the parent rate if
-CLK_SET_RATE_PARENT is set. Now that we can do that on muxes too, let's
-just use it.
+Hi,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_div.c | 27 ++++-----------------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
+This revision is a rebase on top of 4.12-rc1, with following changes:
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-index a489f18a3c01..419463375bc1 100644
---- a/drivers/clk/sunxi-ng/ccu_div.c
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -20,18 +20,11 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
- 					void *data)
- {
- 	struct ccu_div *cd = data;
--	unsigned long val;
--
--	/*
--	 * We can't use divider_round_rate that assumes that there's
--	 * several parents, while we might be called to evaluate
--	 * several different parents.
--	 */
--	val = divider_get_val(rate, *parent_rate, cd->div.table, cd->div.width,
--			      cd->div.flags);
- 
--	return divider_recalc_rate(&cd->common.hw, *parent_rate, val,
--				   cd->div.table, cd->div.flags);
-+	return divider_round_rate_parent(&cd->common.hw, parent,
-+					 rate, parent_rate,
-+					 cd->div.table, cd->div.width,
-+					 cd->div.flags);
- }
- 
- static void ccu_div_disable(struct clk_hw *hw)
-@@ -78,18 +71,6 @@ static int ccu_div_determine_rate(struct clk_hw *hw,
- {
- 	struct ccu_div *cd = hw_to_ccu_div(hw);
- 
--	if (clk_hw_get_num_parents(hw) == 1) {
--		req->rate = divider_round_rate(hw, req->rate,
--					       &req->best_parent_rate,
--					       cd->div.table,
--					       cd->div.width,
--					       cd->div.flags);
--
--		req->best_parent_hw = clk_hw_get_parent(hw);
--
--		return 0;
--	}
--
- 	return ccu_mux_helper_determine_rate(&cd->common, &cd->mux,
- 					     req, ccu_div_round_rate, cd);
- }
--- 
-git-series 0.8.11
+1) Dropped the usage of dt-bindings include genpd/k2g.h as this is
+   apparently going to be removed
+2) Dropped the dt-bindings include file for the clock identifiers
+   based on item [1]. The identifiers are only used once for anything
+   within the driver, and it is more readable this way also. The DT
+   users should use magic numbers for accessing the clocks, relative
+   to what is done for example for IP addresses etc.
+3) Fixed the node name for the clocks in patch #1
+4) Init time failure fixes in patch #2
+5) Some other minor fixes for comments provided for v3 of the patch #2
+
+Boot tested with some additional patches on top on keystone-k2g.
+
+(Bootable reference branch, NOT FOR MERGE:
+ https://github.com/t-kristo/linux-pm/tree/4.12-rc1-ti-sci-v4c-integ)
+
+-Tero
