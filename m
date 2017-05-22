@@ -1,66 +1,85 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Wed, 31 May 2017 15:55:42 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: linux@rempel-privat.de, kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic_stby_poweroff" is set
-Message-ID: <20170531145542.GD10351@leverpostej>
-References: <20170531061457.23744-1-o.rempel@pengutronix.de>
- <20170531061457.23744-3-o.rempel@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs4.siol.net ([213.250.19.137]:45233 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1759092AbdEVR4C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 May 2017 13:56:02 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, wens@csie.org
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [linux-sunxi] Re: [RFC PATCH 07/11] drm: sun4i: add support for the TV encoder in H3 SoC
+Date: Mon, 22 May 2017 19:55:56 +0200
+Message-ID: <3164416.5xR36OcyjH@jernej-laptop>
+In-Reply-To: <CAGb2v66aD=G+V75N-_nYo=dGqhxpKhadM84h9G-B34=dnDwCbg@mail.gmail.com>
+References: <20170517164354.16399-1-icenowy@aosc.io> <1958057.WDKm0nQKgW@jernej-laptop> <CAGb2v66aD=G+V75N-_nYo=dGqhxpKhadM84h9G-B34=dnDwCbg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170531061457.23744-3-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 31, 2017 at 08:14:53AM +0200, Oleksij Rempel wrote:
-> One of the Freescale recommended sequences for power off with external
-> PMIC is the following:
-> ...
-> 3.  SoC is programming PMIC for power off when standby is asserted.
-> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+Hi,
+
+Dne sobota, 20. maj 2017 ob 03:37:53 CEST je Chen-Yu Tsai napisal(a):
+> On Sat, May 20, 2017 at 2:23 AM, Jernej Škrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Hi,
+> > 
+> > Dne petek, 19. maj 2017 ob 20:08:18 CEST je Icenowy Zheng napisal(a):
+> >> 于 2017年5月20日 GMT+08:00 上午2:03:30, Maxime Ripard <maxime.ripard@free-
+> > 
+> > electrons.com> 写到:
+> >> >On Thu, May 18, 2017 at 12:43:50AM +0800, Icenowy Zheng wrote:
+> >> >> Allwinner H3 features a TV encoder similar to the one in earlier
+> >> >
+> >> >SoCs,
+> >> >
+> >> >> but with some different points about clocks:
+> >> >> - It has a mod clock and a bus clock.
+> >> >> - The mod clock must be at a fixed rate to generate signal.
+> >> >
+> >> >Why?
+> >> 
+> >> It's experiment result by Jernej.
+> >> 
+> >> The clock rates in BSP kernel is also specially designed
+> >> (PLL_DE at 432MHz) in order to be able to feed the TVE.
+> > 
+> > My experiments and search through BSP code showed that TVE seems to have
+> > additional fixed predivider 8. So if you want to generate 27 MHz clock,
+> > unit has to be feed with 216 MHz.
+> > 
+> > TVE has only one PLL source PLL_DE. And since 216 MHz is a bit low for
+> > DE2,
+> > BSP defaults to 432 MHz for PLL_DE and use divider 2 to generate 216 MHz.
+> > This clock is then divided by 8 internaly to get final 27 MHz.
+> > 
+> > Please note that I don't have any hard evidence to support that, only
+> > experimental data. However, only that explanation make sense to me.
+> > 
+> > BTW, BSP H3/H5 TV driver supports only PAL and NTSC which both use 27 MHz
+> > base clock. Further experiments are needed to check if there is any
+> > possibility to have other resolutions by manipulating clocks and give
+> > other proper settings. I plan to do that, but not in very near future.
 > 
-> See:
-> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-> page 5083
+> You only have composite video output, and those are the only 2 standard
+> resolutions that make any sense.
 
-> +static int imx6_pm_poweroff_probe(void)
-> +{
-> +	char symname[KSYM_NAME_LEN];
-> +
-> +	if (pm_power_off) {
-> +		lookup_symbol_name((ulong)pm_power_off, symname);
-> +		pr_warn("%s: pm_power_off already claimed  %p %s!\n",
-> +			__func__, pm_power_off, symname);
+Right, other resolutions are for VGA.
 
-Please use %pf rather than lookup_symbol_name*(,
+Anyway, I did some more digging in A10 and R40 datasheets. I think that H3 TVE 
+unit is something in between. R40 TVE has a setting to select "up sample". 
+Possible settings are 27 MHz, 54 MHz, 108 MHz and 216 MHz. BSP driver on R40 
+has this setting enabled only for PAL and NTSC and it is always 216 MHz. I 
+think that H3 may have this hardwired to 216 MHz and this would be the reason 
+why 216 MHz is needed.
 
-> +		return -EBUSY;
-> +	}
-> +
-> +	pm_power_off = imx6_pm_poweroff;
-> +	return 0;
-> +}
-> +
->  void __init imx6_pm_ccm_init(const char *ccm_compat)
->  {
->  	struct device_node *np;
-> @@ -618,6 +645,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
->  	val = readl_relaxed(ccm_base + CLPCR);
->  	val &= ~BM_CLPCR_LPM;
->  	writel_relaxed(val, ccm_base + CLPCR);
-> +
-> +	if (of_property_read_bool(np, "fsl,pmic_stby_poweroff"))
-> +		imx6_pm_poweroff_probe();
+Has anyone else any better explanation?
 
-This neesd s/_/-/, as commented on the binding.
-
-My what/why query on the binding stadns, regardless.
-
-Thanks,
-Mark.
+Best regards,
+Jernej
