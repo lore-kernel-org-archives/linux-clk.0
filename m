@@ -1,53 +1,160 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:51186 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750995AbdEaH6d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 31 May 2017 03:58:33 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 4/6] ARM: sunxi: h3-h5: Add PLL_PERIPH0 clock to the R_CCU
-Date: Wed, 31 May 2017 15:58:22 +0800
-Message-Id: <20170531075824.657-5-wens@csie.org>
-In-Reply-To: <20170531075824.657-1-wens@csie.org>
-References: <20170531075824.657-1-wens@csie.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v4 10/11] arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+Date: Mon, 22 May 2017 17:28:26 +0530
+Message-Id: <1495454307-23464-11-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The AR100 clock within the R_CCU (PRCM) has the PLL_PERIPH0 as one of
-its parents.
+We have two instance of PL022 SPI controllers, one instance of
+DMA PL330, and one non-secure SP805 Watchdog on Stingray SOC.
 
-This adds the reference in the device tree describing this relationship.
-This patch uses a raw number for the clock index to ease merging by
-avoiding cross tree dependencies.
+This patch adds DT nodes for the above mentioned devices in
+Stingray DT.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Pramod KUMAR <pramod.kumar@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
 ---
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      | 30 +++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 52 ++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index d0067fec99de..d4f600dbb7eb 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -560,8 +560,9 @@
- 		r_ccu: clock@1f01400 {
- 			compatible = "allwinner,sun8i-h3-r-ccu";
- 			reg = <0x01f01400 0x100>;
--			clocks = <&osc24M>, <&osc32k>, <&iosc>;
--			clock-names = "hosc", "losc", "iosc";
-+			clocks = <&osc24M>, <&osc32k>, <&iosc>,
-+				 <&ccu 9>;
-+			clock-names = "hosc", "losc", "iosc", "pll-periph";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+index c309cda..5671669 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+@@ -46,3 +46,33 @@
+ &uart3 {
+ 	status = "okay";
+ };
++
++&ssp0 {
++	pinctrl-0 = <&spi0_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 34 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
++
++&ssp1 {
++	pinctrl-0 = <&spi1_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 96 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 8a077ff..642d42c 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -279,6 +279,14 @@
+ 			status = "disabled";
  		};
+ 
++		wdt0: watchdog@689c0000 {
++			compatible = "arm,sp805", "arm,primecell";
++			reg = <0x000c0000 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_25m_div2_clk>, <&hsls_div4_clk>;
++			clock-names = "wdogclk", "apb_pclk";
++		};
++
+ 		gpio_hsls: gpio@689d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x000d0000 0x864>;
+@@ -359,11 +367,55 @@
+ 			status = "disabled";
+ 		};
+ 
++		ssp0: ssp@68a80000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00180000 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		ssp1: ssp@68a90000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00190000 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		hwrng: hwrng@68b20000 {
+ 			compatible = "brcm,iproc-rng200";
+ 			reg = <0x00220000 0x28>;
+ 		};
+ 
++		dma0: dma@68c10000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x00310000 0x1000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++			clocks = <&hsls_div2_clk>;
++			clock-names = "apb_pclk";
++			iommus = <&smmu 0x6000 0x0000>;
++		};
++
+ 		nand: nand@68c60000 {
+ 			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
+ 			reg = <0x00360000 0x600>,
 -- 
-2.11.0
-
+2.7.4
