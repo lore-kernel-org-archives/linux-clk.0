@@ -1,92 +1,52 @@
-Return-Path: <anup.patel@broadcom.com>
-MIME-Version: 1.0
-In-Reply-To: <20170515131334.GE17776@leverpostej>
-References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
- <1494849741-21294-5-git-send-email-anup.patel@broadcom.com> <20170515131334.GE17776@leverpostej>
-From: Anup Patel <anup.patel@broadcom.com>
-Date: Tue, 16 May 2017 16:17:58 +0530
-Message-ID: <CAALAos8W72yntS746Q2JE_6qwSBJV65acwapUR_3H7nf6skcFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 04/11] arm64: dts: Initial DTS files for Broadcom
- Stingray SOC
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>, Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>, Device Tree <devicetree@vger.kernel.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>,
-	BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-	Scott Branden <scott.branden@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:36650 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757748AbdEVMs6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2017 08:48:58 -0400
+Received: by mail-wm0-f47.google.com with SMTP id 7so63382980wmo.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 May 2017 05:48:58 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: narmstrong@baylibre.com, jbrunet@baylibre.com
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH] clk: meson-gxbb: Expose SPICC gate
+Date: Mon, 22 May 2017 14:48:46 +0200
+Message-Id: <1495457326-32659-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 15, 2017 at 6:43 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> Hi,
->
-> On Mon, May 15, 2017 at 05:32:14PM +0530, Anup Patel wrote:
->> +/ {
->> +     chosen { /* Default kernel args */
->> +             bootargs = "root=/dev/ram rw rootwait \
->> +                         earlycon=uart8250,mmio32,0x68a10000 \
->> +                         pci=pcie_bus_safe cma=64M";
->
-> Why do we need all of these?
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.h              | 2 +-
+ include/dt-bindings/clock/gxbb-clkc.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Yes, we don't need bootargs here. This were just for reference.
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 93b8f07..cc7b35c 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -191,7 +191,7 @@
+ #define CLKID_ISA		  18
+ #define CLKID_PL301		  19
+ #define CLKID_PERIPHS		  20
+-#define CLKID_SPICC		  21
++/* CLKID_SPICC */
+ /* CLKID_I2C */
+ /* #define CLKID_SAR_ADC */
+ #define CLKID_SMART_CARD	  24
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 3190e30..88da194 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -13,6 +13,7 @@
+ #define CLKID_GP0_PLL		9
+ #define CLKID_CLK81		12
+ #define CLKID_MPLL2		15
++#define CLKID_SPICC		21
+ #define CLKID_I2C		22
+ #define CLKID_SAR_ADC		23
+ #define CLKID_RNG0		25
+-- 
+1.9.1
 
-I will remove default bootargs because its responsibility of
-bootloader to add it.
-
->
->> +             linux,stdout-path = "serial0:115200n8";
->
-> Please drop the 'linux,' prefix here.
-
-Sure, will do.
-
->
-> [...]
->
->> +     memory: memory@80000000 {
->> +             device_type = "memory";
->> +             reg = <0x00000000 0x80000000 0 0x40000000>;
->> +     };
->> +
->> +     psci {
->> +             compatible = "arm,psci-0.2";
->> +             method = "smc";
->> +     };
->> +
->> +     pmu {
->> +             compatible = "arm,armv8-pmuv3";
->> +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
->> +     };
->> +
->> +     timer {
->> +             compatible = "arm,armv8-timer";
->> +             interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) |
->> +                           IRQ_TYPE_LEVEL_LOW)>,
->> +                          <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
->> +                           IRQ_TYPE_LEVEL_LOW)>,
->> +                          <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
->> +                           IRQ_TYPE_LEVEL_LOW)>,
->> +                          <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
->> +                           IRQ_TYPE_LEVEL_LOW)>;
->
-> GICv3 PPIs don't have a mask. See
->
-> Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt
->
-> Please remove the GIC_CPU_MASK_*() uses here and in this dts. They
-> shouldn't be there.
-
-Thanks for catching.
-
-We had taken care of this in PMU DT node but did not cleanup timer
-DT node.
-
-Thanks,
-Anup
