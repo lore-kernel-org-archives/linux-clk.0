@@ -1,68 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v7 10/13] drm/sun4i: tcon: add support for V3s TCON
-Date: Mon, 15 May 2017 00:30:42 +0800
-Message-Id: <20170514163045.40366-11-icenowy@aosc.io>
-In-Reply-To: <20170514163045.40366-1-icenowy@aosc.io>
-References: <20170514163045.40366-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 23 May 2017 10:23:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH 5/7] clk: mvebu: cp110: add sdio clock to cp-110 system
+ controller
+Message-ID: <20170523152339.ngjr6djukrrqcvxm@rob-hp-laptop>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+ <1833f47fdfa5fd05e9135d98e03501d9634a865b.1495208533.git-series.gregory.clement@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1833f47fdfa5fd05e9135d98e03501d9634a865b.1495208533.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a TCON without channel 1.
+On Fri, May 19, 2017 at 05:55:23PM +0200, Gregory CLEMENT wrote:
+> From: Konstantin Porotchkin <kostap@marvell.com>
+> 
+> This commit updates the CP110 system controller driver to add the
+> definition for a missing clock.
+> 
+> The SDIO clock is dedicated driving the SDHCI interface and its frequency
+> is 400MHz (2/5 of PLL source clock).
+> 
+> The SDIO interface should be bound to this clock and not the core clock
+> as in the older code.
+> Using the wrong clock lead to a maximum SDHCI frequency of 250 Mhz, while
+> the HW really supports up to 400 Mhz.
+> 
+> This patch also fixes the NAND clock relationship documentation.
+> 
+> Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
+> [gregory.clement@free-electrons.com:
+> - use sdio instead of emmc to name the clock
+> - update binding documentation]
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  1 +
+>  drivers/clk/mvebu/cp110-system-controller.c                                | 28 +++++++++++++++++++++++-----
+>  2 files changed, 24 insertions(+), 5 deletions(-)
 
-Add support for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes in v7:
-- Added Chen-Yu's Reviewed-by.
-
- drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 4a979d17ddaa..1dd1948025d2 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -178,7 +178,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
--		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
-+		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
- }
- 
- static int compare_of(struct device *dev, void *data)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 288275802f92..add349f5e012 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -601,11 +601,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
- 	/* nothing is supported */
- };
- 
-+static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
-+	/* nothing is supported */
-+};
-+
- static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
- 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-+	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
--- 
-2.12.2
+Acked-by: Rob Herring <robh@kernel.org>
