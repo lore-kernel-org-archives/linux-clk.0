@@ -1,28 +1,33 @@
-Return-Path: <wens@csie.org>
+Return-Path: <andrew@lunn.ch>
+Date: Tue, 23 May 2017 14:15:14 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Imre Kaloz <kaloz@openwrt.org>, Jason Cooper <jason@lakedaemon.net>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 12/13] clk: mvebu: add support for 1866MHz variants
+Message-ID: <20170523121514.GS13759@lunn.ch>
+References: <20170521124903.11050-1-ralph.sennhauser@gmail.com>
+ <20170521124903.11050-13-ralph.sennhauser@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <9f97dbff6f99c108b5f4b7f144d02dde8c253ab6.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
- <9f97dbff6f99c108b5f4b7f144d02dde8c253ab6.1493812478.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 4 May 2017 11:57:42 +0800
-Message-ID: <CAGb2v67xw6sWuKY=LZv60mrWb8jCfa4VNfirEpnK21+wEypGYA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/20] drm/sun4i: tcon: Switch mux on only for composite
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170521124903.11050-13-ralph.sennhauser@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Even though that mux is undocumented, it seems like it needs to be set to 1
-> when using composite, and 0 when using HDMI.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Sun, May 21, 2017 at 02:49:01PM +0200, Ralph Sennhauser wrote:
+> The Linksys WRT3200ACM CPU is clocked at 1866MHz. Add 1866MHz to
+> the list of supported CPU frequencies.
+> 
+> Noticed by the following warning:
+> [    0.000000] Selected CPU frequency (16) unsupported
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Are the L2 and DDR clocks using sensible values?
+
+    Andrew
