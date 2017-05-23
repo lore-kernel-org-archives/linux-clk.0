@@ -1,65 +1,85 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
- <ddf5fcd3-cae2-b3c6-c995-e7bf5b65875e@i2se.com>
- <20170505072529.a3z4gonsygg3wqfx@pengutronix.de>
- <a5bfc04e-15cf-2b24-17f9-c9b60c1052cc@i2se.com>
-Cc: Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
- Sascha Hauer <kernel@pengutronix.de>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <185bc71b-f986-9dd1-3a56-a525f2f09fc7@i2se.com>
-Date: Fri, 5 May 2017 17:49:09 +0200
+Return-Path: <wens@wens.csie.org>
+Date: Tue, 23 May 2017 15:19:40 +0800
+From: Chen-Yu Tsai <wens@csie.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Tobias Regnery <tobias.regnery@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
+Message-ID: <20170523071940.xbnahikb4d5dge7v@wens.csie.org>
+References: <20170522202951.2896280-1-arnd@arndb.de>
+ <20170523005553.GH20170@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <a5bfc04e-15cf-2b24-17f9-c9b60c1052cc@i2se.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170523005553.GH20170@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 05.05.2017 um 09:49 schrieb Stefan Wahren:
-> Hello Uwe,
->
-> Am 05.05.2017 um 09:25 schrieb Uwe Kleine-König:
->> Hello Stefan,
->>
->> On Thu, May 04, 2017 at 02:25:07PM +0200, Stefan Wahren wrote:
->>>        ref_io1                            1            1  
->>> 320000000          0 0
->> That means your ref_io1 is running at 320 MHz which my patch should
->> prevent. Are you sure it is applied?
-> sorry for the mess in the dumps.
->
-> Your patch works fine regarding to ref_io1. I made 3 dumps:
->
-> 1. without any patch ( ref_io1 320000000 )
-> 2. with my ref_xtal patch ( ref_io1 288000000 )
-> 3. with your patch ( ref_io1 288000000 )
->
-> I assume you looked at the wrong dump.
->
+On Mon, May 22, 2017 at 05:55:53PM -0700, Stephen Boyd wrote:
+> On 05/22, Arnd Bergmann wrote:
+> > We get a link error when CCU_MULT is not set with the
+> > newly added driver:
+> > 
+> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_mult_ops'
+> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.3+0x4): undefined reference to `ccu_mult_ops'
+> > 
+> > Fixes: 46b492116666 ("clk: sunxi-ng: Add driver for A83T CCU")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Uwe and i made some investigations regards to this issue. The busy bit
-of the HW_CLKCTRL_SSP3 was high after boot up, but this shouldn't be the
-case. I have the suspicion that there is an issue during clock init or
-in the mxs clock driver.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-Duckbill (Linux 4.11 Mainline)
+> Is there any way we can automate finding these build errors and
+> prevent them from creeping into the tree? It may be asking too
+> much, but it seems like we should be able to find these
+> particular problems with some script that greps for ccu_*_ops and
+> checks that any file's Kconfig symbol also has that selected.
+> 
+> Anyway, I'm just tired of seeing these sorts of things in my
+> inbox.
 
-HW_SSP2_TIMING    0x80014070 00000209
-HW_CLKCTRL_HBUS   0x80040060 00000003
-HW_CLKCTRL_SSP0   0x80040090 00000005
-HW_CLKCTRL_SSP1   0x800400A0 80000001
-HW_CLKCTRL_SSP2   0x800400B0 00000002
-HW_CLKCTRL_SSP3   0x800400C0 A0000001
-HW_CLKCTRL_EMI    0x800400F0 00000102
-HW_CLKCTRL_FRAC0  0x800401B0 5E5B5513
-HW_CLKCTRL_CLKSEQ 0x800401D0 00004104
+The (ugly) script below does the trick, though it does give results
+for some symbols that are indirectly selected:
 
-@Uwe: Additionaly applying "spi: mxs: implement runtime pm" to this
-patch also doesn't fix the bit error.
+SUN5I_CCU uses SUNXI_CCU_GATE but does not select it
+SUN5I_CCU uses SUNXI_CCU_MUX but does not select it
+SUN5I_CCU uses SUNXI_CCU_NKMP but does not select it
+SUN6I_A31_CCU uses SUNXI_CCU_GATE but does not select it
+SUN6I_A31_CCU uses SUNXI_CCU_MUX but does not select it
+SUN8I_A23_CCU uses SUNXI_CCU_GATE but does not select it
+SUN8I_A23_CCU uses SUNXI_CCU_MUX but does not select it
+SUN8I_A33_CCU uses SUNXI_CCU_GATE but does not select it
+SUN8I_A33_CCU uses SUNXI_CCU_MUX but does not select it
+SUN8I_A83T_CCU uses SUNXI_CCU_MULT but does not select it
+SUN8I_H3_CCU uses SUNXI_CCU_GATE but does not select it
+SUN8I_H3_CCU uses SUNXI_CCU_MUX but does not select it
+SUN8I_V3S_CCU uses SUNXI_CCU_GATE but does not select it
+SUN8I_V3S_CCU uses SUNXI_CCU_MUX but does not select it
+SUN9I_A80_CCU uses SUNXI_CCU_MUX but does not select it
 
-Regards Stefan
+------------------------------------------------------------------------
+
+#!/bin/bash
+
+LANG=C
+
+for i in drivers/clk/sunxi-ng/ccu-*.o; do
+	FILE=`basename $i`
+	CLKS=`nm -g $i | grep -P -o "ccu_.*(?=_ops)" | tr [a-z] [A-Z]`
+	CFG=`grep $FILE drivers/clk/sunxi-ng/Makefile |
+		grep -P -o "(?<=CONFIG_)SUN[A-Z0-9_]*"`
+
+	for clk in $CLKS; do
+		perl -0777 -ne "/$CFG(.*?)^(?:config|endif)/sm; print \$1" \
+			drivers/clk/sunxi-ng/Kconfig | grep -q "SUNXI_$clk" ||
+			echo "$CFG uses SUNXI_$clk but does not select it"
+	done
+done
+
+------------------------------------------------------------------------
+
+
+Regards
+ChenYu
