@@ -1,60 +1,100 @@
-Return-Path: <frank.wang@rock-chips.com>
-From: Frank Wang <frank.wang@rock-chips.com>
-To: heiko@sntech.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	rui.zhang@intel.com,
-	edubezval@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	charles.chen@rock-chips.com,
-	cody.xie@rock-chips.com,
-	kevan.lan@rock-chips.com,
-	huangtao@rock-chips.com,
-	rocky.hao@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	wmc@rock-chips.com,
-	Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH v2 4/4] arm: dts: rk322x: update tsadc's frequence setting
-Date: Wed, 17 May 2017 18:16:17 +0800
-Message-Id: <1495016177-2413-5-git-send-email-frank.wang@rock-chips.com>
-In-Reply-To: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
-References: <1495016177-2413-1-git-send-email-frank.wang@rock-chips.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1495552190.2344.17.camel@baylibre.com>
+Subject: Re: [PATCH v2 10/11] clk: fix CLK_SET_RATE_GATE with clock rate
+ protection
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Adriana Reus <adi.reus@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus Walleij
+ <linus.walleij@linaro.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>
+Date: Tue, 23 May 2017 17:09:50 +0200
+In-Reply-To: <CABjU8GuZQ_2ynUTJpwNoG19zPq-P8Ld=4mwk0EvpHrPROF=bXg@mail.gmail.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	 <20170521215958.19743-11-jbrunet@baylibre.com>
+	 <CABjU8GuZQ_2ynUTJpwNoG19zPq-P8Ld=4mwk0EvpHrPROF=bXg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rocky Hao <rocky.hao@rock-chips.com>
+On Tue, 2017-05-23 at 16:42 +0300, Adriana Reus wrote:
+> On Mon, May 22, 2017 at 12:59 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
+> > clock tree
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/clk/clk.c | 14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 01306191133c..6ee5fc59cf1f 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -491,6 +491,9 @@ static void clk_core_unprepare(struct clk_core *core)
+> >         if (WARN_ON(core->prepare_count == 1 && core->flags &
+> > CLK_IS_CRITICAL))
+> >                 return;
+> > 
+> > +       if (core->flags & CLK_SET_RATE_GATE)
+> > +               clk_core_rate_unprotect(core);
+> 
+> ^ function call before declaration (unless i missed something when applying),
+>   gets fixed in following patch, but makes this one not compile standalone.
+> 
 
-Update freq of tsadc's working clock as 32768 hz, if not set, tsadc
-will work at a default frequence.
+You didn't miss anything, I did. It is now fixed
 
-Signed-off-by: Rocky Hao <rocky.hao@rock-chips.com>
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
----
- arch/arm/boot/dts/rk322x.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index 9a9da1f..c054e9e 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -434,6 +434,8 @@
- 		interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru SCLK_TSADC>, <&cru PCLK_TSADC>;
- 		clock-names = "tsadc", "apb_pclk";
-+		assigned-clocks = <&cru SCLK_TSADC>;
-+		assigned-clock-rates = <32768>;
- 		resets = <&cru SRST_TSADC>;
- 		reset-names = "tsadc-apb";
- 		pinctrl-names = "init", "default", "sleep";
--- 
-2.0.0
+> drivers/clk/clk.c: In function 'clk_core_unprepare':
+> drivers/clk/clk.c:495:3: error: implicit declaration of function
+> 'clk_core_rate_unprotect' [-Werror=implicit-function-declaration]
+>    clk_core_rate_unprotect(core);
+> 
+> > +
+> >         if (--core->prepare_count > 0)
+> >                 return;
+> > 
+> > @@ -561,6 +564,14 @@ static int clk_core_prepare(struct clk_core *core)
+> > 
+> >         core->prepare_count++;
+> > 
+> > +       /*
+> > +        * CLK_SET_RATE_GATE is a special case of clock protection
+> > +        * Instead of a consumer protection, the provider is protecting
+> > +        * itself when prepared
+> > +        */
+> > +       if (core->flags & CLK_SET_RATE_GATE)
+> > +               clk_core_rate_protect(core);
+> 
+> ^ same here;
+> Note: maybe have a quick check that each patch compiles individually
+> (if you haven't already), I did not check them all.
+
+I should have. Now it is done and it is OK (with our remarks fixed, of course)
+Thanks a lot for pointing this out.
+
+> > +
+> >         return 0;
+> >  }
+> > 
+> > @@ -1738,9 +1749,6 @@ static int clk_core_set_rate_nolock(struct clk_core
+> > *core,
+> >         if (clk_core_rate_is_protected(core))
+> >                 return -EBUSY;
+> > 
+> > -       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+> > -               return -EBUSY;
+> > -
+> >         /* calculate new rates and get the topmost changed clock */
+> >         top = clk_calc_new_rates(core, req_rate);
+> >         if (!top)
+> > --
+> > 2.9.4
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
