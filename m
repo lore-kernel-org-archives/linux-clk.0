@@ -1,85 +1,35 @@
-Return-Path: <jdelvare@suse.de>
-Date: Sat, 6 May 2017 10:00:59 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: <sean.wang@mediatek.com>
-Cc: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
- <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
- <mturquette@baylibre.com>, <jamesjj.liao@mediatek.com>,
- <p.zabel@pengutronix.de>, <shunli.wang@mediatek.com>,
- <erin.lo@mediatek.com>, <devicetree@vger.kernel.org>,
- <linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/6] cpufreq: mediatek: Add support of cpufreq to
- MT2701/MT7623 SoC
-Message-ID: <20170506100059.6003d9ef@endymion>
-In-Reply-To: <1493997974-17699-5-git-send-email-sean.wang@mediatek.com>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-	<1493997974-17699-5-git-send-email-sean.wang@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:33415 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752602AbdEWPeR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2017 11:34:17 -0400
+Received: by mail-oi0-f54.google.com with SMTP id w10so206563767oif.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 May 2017 08:34:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1494849305-1405-1-git-send-email-festevam@gmail.com>
+References: <1494849305-1405-1-git-send-email-festevam@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 23 May 2017 12:34:16 -0300
+Message-ID: <CAOMZO5CAPZ1f9Mh2E1T9Hx++-c6aaOnR=KEfZApHCNQJOpR9NA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx7d: Fix the powerdown bit location of PLL DDR
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sean,
+Hi Stephen,
 
-On Fri, 5 May 2017 23:26:12 +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> MT2701/MT7623 is an 32-bit ARMv7 based quad-core (4 * Cortex-A7) with
-> single cluster and this hardware is also compatible with the existing
-> driver through enabling CPU frequency feature with operating-points-v2
-> bindings.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  drivers/cpufreq/Kconfig.arm      | 4 ++--
->  drivers/cpufreq/mt8173-cpufreq.c | 2 ++
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 74ed7e9..68b387a 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -90,11 +90,11 @@ config ARM_KIRKWOOD_CPUFREQ
->  config ARM_MT8173_CPUFREQ
->  	tristate "Mediatek MT8173 CPUFreq support"
->  	depends on ARCH_MEDIATEK && REGULATOR
-> -	depends on ARM64 || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
-> +	depends on (ARM || ARM64) || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
+On Mon, May 15, 2017 at 8:55 AM, Fabio Estevam <festevam@gmail.com> wrote:
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+>
+> According to the MX7D Reference Manual the powerdown bit of
+> CCM_ANALOG_PLL_DDRn register is bit 20, so fix it accordingly.
+>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> Reviewed-by: Stefan Agner <stefan@agner.ch>
 
-Parentheses not needed. I am also curious if ARM_CPU_TOPOLOGY can
-actually be set when neither ARM nor ARM64 is. I suspect not, and then
-the above can be simplified to just:
-
-	depends on ARM || ARM64
-
->  	depends on !CPU_THERMAL || THERMAL
->  	select PM_OPP
->  	help
-> -	  This adds the CPUFreq driver support for Mediatek MT8173 SoC.
-> +	  This adds the CPUFreq driver support for Mediatek SoCs.
-
-If this driver actually support all Mediatek SoCs, the menu entry
-itself should be updated to drop "MT8173".
-
->  
->  config ARM_OMAP2PLUS_CPUFREQ
->  	bool "TI OMAP2+"
-> diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
-> index fd1886f..481ec77 100644
-> --- a/drivers/cpufreq/mt8173-cpufreq.c
-> +++ b/drivers/cpufreq/mt8173-cpufreq.c
-> @@ -575,6 +575,8 @@ static struct platform_driver mt8173_cpufreq_platdrv = {
->  
->  /* List of machines supported by this driver */
->  static const struct of_device_id mt8173_cpufreq_machines[] __initconst = {
-> +	{ .compatible = "mediatek,mt2701", },
-> +	{ .compatible = "mediatek,mt7623", },
->  	{ .compatible = "mediatek,mt817x", },
->  	{ .compatible = "mediatek,mt8173", },
->  	{ .compatible = "mediatek,mt8176", },
-
-
--- 
-Jean Delvare
-SUSE L3 Support
+A gentle ping.
