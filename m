@@ -1,63 +1,105 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Fri, 26 May 2017 14:57:06 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann
-	<arnd@arndb.de>, Olof Johansson <olof@lixom.net>, <talho@nvidia.com>
-Subject: Re: [PATCH 1/5 v2] clk: qcom: Update DT bindings for the
- MSM8660/APQ8060 RPMCC
-Message-ID: <20170526115706.GY30730@tbergstrom-lnx.Nvidia.com>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <CACRpkdbXEFeVkD8rETyrnuoAxUvnFt2BL07UsXuXfSnq3Qdyfw@mail.gmail.com>
- <CACRpkdYvwwJcxKPtKUyZBLWsmjXji7pHDKNz9NRTETqj2P3drQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CACRpkdYvwwJcxKPtKUyZBLWsmjXji7pHDKNz9NRTETqj2P3drQ@mail.gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1495532928.2344.14.camel@baylibre.com>
+Subject: Re: [PATCH v2 02/11] clk: add clk_core_set_phase_nolock function
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Adriana Reus <adi.reus@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus Walleij
+ <linus.walleij@linaro.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>
+Date: Tue, 23 May 2017 11:48:48 +0200
+In-Reply-To: <CABjU8Gu_0xgto6UfaOofW1RjZkEQtbreqqBS2Ukd+Q0DLSZG8w@mail.gmail.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	 <20170521215958.19743-3-jbrunet@baylibre.com>
+	 <CABjU8Gu_0xgto6UfaOofW1RjZkEQtbreqqBS2Ukd+Q0DLSZG8w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 24, 2017 at 11:16:22AM +0200, Linus Walleij wrote:
-> On Wed, May 17, 2017 at 9:23 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Wed, Apr 19, 2017 at 11:13 AM, Linus Walleij
-> > <linus.walleij@linaro.org> wrote:
-> >
-> >> These compatible strings need to be added to extend support
-> >> for the RPM CC to cover MSM8660/APQ8060. We also need to add
-> >> enumberators to the include file for a few clocks that were
-> >> missing.
-> >>
-> >> Cc: devicetree@vger.kernel.org
-> >> Acked-by: Rob Herring <robh@kernel.org>
-> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> >> ---
-> >> ChangeLog v1->v2:
-> >> - Collect Rob's ACK
-> >
-> > Ping on this patch set. It's been sitting for a month and was
-> > not changed from v1 either, if you want me to change something
-> > it'd be good to know.
+On Tue, 2017-05-23 at 12:35 +0300, Adriana Reus wrote:
+> On Mon, May 22, 2017 at 12:59 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > Create a core function for set_phase, as it is done for set_rate and
+> > set_parent.
+> > 
+> > This rework is done to ease the integration of "protected" clock
+> > functionality.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/clk/clk.c | 31 +++++++++++++++++++------------
+> >  1 file changed, 19 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index f5c371532509..6031fada37f9 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk
+> > *parent)
+> >  }
+> >  EXPORT_SYMBOL_GPL(clk_set_parent);
+> > 
+> > +static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+> > +{
+> > +       int ret = -EINVAL;
+> > +
+> > +       if (!core)
+> > +               return 0;
+> > +
+> > +       trace_clk_set_phase(clk->core, degrees);
 > 
-> Ping on this again.
-> 
-> I am sorry if you guys are swamped, I just don't know what to do,
-> clock drivers are starting to become the bottleneck for everything
-> I do. I bet the ARM SoC maintainers must be noticing it too.
-> 
-> Unfortunately I am already managing two subsystems and cannot
-> volunteer to help out with a third, I would blow a fuse.
-> 
-> But it seems the CLK subsystem could use some co-maintainers?
-> 
-> Peter de Schrijver is a big authority in all things clocking (I clearly
-> remember him discussing the subject a lot at conferences with lots
-> of good points) so I would ask him to help, but I don't know how busy
-> Peter may be with nVidia business etc these days...
-> 
+>  ^ trace_clk_set_phase(core, degrees)
 
-I'm usually rather busy yes, but I could try to find some time for this if
-asked for.
+Shame ... Once again this is a poor use of 'git add --patch'.
+This particular diff ended up in patch 5.
 
-Peter.
+Thanks a lot for catching it!
+
+> > +
+> > +       if (core->ops->set_phase)
+> > +               ret = core->ops->set_phase(core->hw, degrees);
+> > +
+> > +       trace_clk_set_phase_complete(core, degrees);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> >  /**
+> >   * clk_set_phase - adjust the phase shift of a clock signal
+> >   * @clk: clock signal source
+> > @@ -1895,7 +1912,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+> >   */
+> >  int clk_set_phase(struct clk *clk, int degrees)
+> >  {
+> > -       int ret = -EINVAL;
+> > +       int ret;
+> > 
+> >         if (!clk)
+> >                 return 0;
+> > @@ -1906,17 +1923,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+> >                 degrees += 360;
+> > 
+> >         clk_prepare_lock();
+> > -
+> > -       trace_clk_set_phase(clk->core, degrees);
+> > -
+> > -       if (clk->core->ops->set_phase)
+> > -               ret = clk->core->ops->set_phase(clk->core->hw, degrees);
+> > -
+> > -       trace_clk_set_phase_complete(clk->core, degrees);
+> > -
+> > -       if (!ret)
+> > -               clk->core->phase = degrees;
+> > -
+> > +       ret = clk_core_set_phase_nolock(clk->core, degrees);
+> >         clk_prepare_unlock();
+> > 
+> >         return ret;
+> > --
+> > 2.9.4
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
