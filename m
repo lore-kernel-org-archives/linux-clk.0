@@ -1,23 +1,34 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Eddie Cai <eddie.cai.linux@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, zhengxing@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH V2  1/2] clk: rockchip: add ids for camera
-Date: Wed, 17 May 2017 19:56:15 +0200
-Message-ID: <6419046.Qy3oMCxKgg@phil>
-In-Reply-To: <1493102470-22965-2-git-send-email-eddie.cai.linux@gmail.com>
-References: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com> <1493102470-22965-2-git-send-email-eddie.cai.linux@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 22 May 2017 19:33:12 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v3 19/21] drm/sun4i: Add compatible for the A10s pipeline
+Message-ID: <20170523003312.33xdw4r3ngek4fot@rob-hp-laptop>
+References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+ <d1bc2420845061a9c057d47a5556c621f8bcd025.1495006350.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <d1bc2420845061a9c057d47a5556c621f8bcd025.1495006350.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 25. April 2017, 14:41:09 CEST schrieb Eddie Cai:
-> we use SCLK_TESTCLKOUT1 and SCLK_TESTCLKOUT2 for camera, so add those ids.
+On Wed, May 17, 2017 at 09:40:48AM +0200, Maxime Ripard wrote:
+> The A10s has a slightly different display pipeline than the A13, with an
+> HDMI controller.
 > 
-> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
+> Add a compatible for it.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                             | 1 +
+>  2 files changed, 2 insertions(+)
 
-applied for 4.13
-
-
-Thanks
-Heiko
+Acked-by: Rob Herring <robh@kernel.org>
