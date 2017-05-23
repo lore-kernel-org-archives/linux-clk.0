@@ -1,62 +1,43 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 17 May 2017 12:33:15 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linus.walleij@linaro.org,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
-	sjaganat@codeaurora.org, sricharan@codeaurora.org,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-Message-ID: <20170517193315.GF12920@tuxbook>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org>
- <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
- <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
- <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
- <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 23 May 2017 10:18:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH 1/7] clk: mvebu: cp110 fix name of the GOP gate clock
+Message-ID: <20170523151808.iz7jtqgdfbskfh4y@rob-hp-laptop>
+References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+ <062f869fb140c2626efadef80f325d9f03c330f6.1495208533.git-series.gregory.clement@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
+In-Reply-To: <062f869fb140c2626efadef80f325d9f03c330f6.1495208533.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon 15 May 02:05 PDT 2017, Varadarajan Narayanan wrote:
-
-> On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
-> > On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
-> > 
-> > > On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
-> > > > On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
-[..]
-> > > > > +	msm_mux_qpic_pad4,
-> > > > 
-> > > > What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
-> > > > alternative muxings...?
-> > > 
-> > > This is for the NAND and LCD display. The pins listed are the 9 data pins.
-> > > 
-> > 
-> > Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
-> > possible to reference a partial group in the DTS, if that's necessary)
+On Fri, May 19, 2017 at 05:55:19PM +0200, Gregory CLEMENT wrote:
+> Actually the GOP clock (bit 18) is not at all used for emmc but only
+> for GOP: let's fix the name.
 > 
-> There are two sets of 9 pins, either of which can go to NAND or LCD.
-> Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
-> Is that ok?
+> Changing the name in the device tree is not an issue because the name
+> itself is not used to reference the clock. Thanks to this the ABI remains
+> backward compatible.
 > 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 6 +++---
+>  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       | 2 +-
+>  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        | 2 +-
+>  drivers/clk/mvebu/cp110-system-controller.c                                | 5 +++--
+>  4 files changed, 8 insertions(+), 7 deletions(-)
 
-So you have NAND and LCD hardware muxed to either "a" or "b" and then
-you mux either "a" or "b" out onto actual pins?
-
-How is this first mux configured?
-
-
-I think the a/b scheme sounds reasonable, if above is how it works.
-
-Regards,
-Bjorn
+Acked-by: Rob Herring <robh@kernel.org>
