@@ -1,52 +1,52 @@
-Return-Path: <ralph.sennhauser@gmail.com>
-Return-Path: <ralph.sennhauser@gmail.com>
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Gregory Clement <gregory.clement@free-electrons.com>,
-	Imre Kaloz <kaloz@openwrt.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170520055430.GU12920@tuxbook>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-2-git-send-email-varada@codeaurora.org> <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
+ <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org> <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
+ <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org> <20170517193315.GF12920@tuxbook>
+ <f5a3da8b-c3a4-3cb3-9f5f-0cbdb87688ed@codeaurora.org> <20170520055430.GU12920@tuxbook>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 23 May 2017 11:26:24 +0200
+Message-ID: <CACRpkdaiXq9ivmPOcAS4UVM-7Fz1aPYuqPw5bOHjOn2PJvSKzw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Varadarajan Narayanan <varada@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, sjaganat@codeaurora.org,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 12/13] clk: mvebu: add support for 1866MHz variants
-Date: Sun, 21 May 2017 14:49:01 +0200
-Message-Id: <20170521124903.11050-13-ralph.sennhauser@gmail.com>
-In-Reply-To: <20170521124903.11050-1-ralph.sennhauser@gmail.com>
-References: <20170521124903.11050-1-ralph.sennhauser@gmail.com>
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Will Deacon <will.deacon@arm.com>,
+	linux-clk <linux-clk@vger.kernel.org>, David Brown <david.brown@linaro.org>,
+	absahu@codeaurora.org, Rob Herring <robh+dt@kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
+	Sricharan R <sricharan@codeaurora.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The Linksys WRT3200ACM CPU is clocked at 1866MHz. Add 1866MHz to
-the list of supported CPU frequencies.
+On Sat, May 20, 2017 at 7:54 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Thu 18 May 01:39 PDT 2017, Varadarajan Narayanan wrote:
 
-Noticed by the following warning:
-[    0.000000] Selected CPU frequency (16) unsupported
+>> There are 18 pins. 15 pins are common between LCD and NAND. The QPIC
+>> controller arbitrates between LCD and NAND. Of the remaining 4, 2 are for
+>> NAND and 2 are for LCD exclusively. We plan to group the qpic pins into 3
+>> groups namely, qpic_common, qpic_nand and qpic_lcd. Is that ok?
+>>
+>
+> If you consider that you are defining the available functions for this
+> pinmuxer and then define the sets of pins exposing these available
+> functions it does make sense to just name it "qpic".
+>
+> I think that naming them _common, _lcd and _nand is just adding
+> confusion when it comes to writing the dts files.
+>
+> @Linus, do you have a different preference here?
 
-Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
----
- drivers/clk/mvebu/armada-38x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+No I pretty much trust the driver maintainer to know this best.
 
-diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
-index 8bccf4e..6a92eb6 100644
---- a/drivers/clk/mvebu/armada-38x.c
-+++ b/drivers/clk/mvebu/armada-38x.c
-@@ -49,7 +49,8 @@ static const u32 armada_38x_cpu_frequencies[] __initconst = {
- 	0, 0, 0, 0,
- 	1066 * 1000 * 1000, 0, 0, 0,
- 	1332 * 1000 * 1000, 0, 0, 0,
--	1600 * 1000 * 1000,
-+	1600 * 1000 * 1000, 0, 0, 0,
-+	1866 * 1000 * 1000
- };
- 
- static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
--- 
-2.10.2
+Yours,
+Linus Walleij
