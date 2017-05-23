@@ -1,47 +1,41 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 22 May 2017 17:55:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Tobias Regnery <tobias.regnery@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
+Message-ID: <20170523005553.GH20170@codeaurora.org>
+References: <20170522202951.2896280-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20170428182401.rpn7ytxvu6shy5sn@rob-hp-laptop>
-References: <20170424185545.26608-1-linus.walleij@linaro.org> <20170428182401.rpn7ytxvu6shy5sn@rob-hp-laptop>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 7 May 2017 12:33:52 +0200
-Message-ID: <CACRpkdbMTete8j0PFUnZUQBSMtu+FR+7TSwMJ-gh-Tt=hY0v+w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: Add bindings for the Gemini Clock Controller
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170522202951.2896280-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 8:24 PM, Rob Herring <robh@kernel.org> wrote:
-> On Mon, Apr 24, 2017 at 08:55:45PM +0200, Linus Walleij wrote:
+On 05/22, Arnd Bergmann wrote:
+> We get a link error when CCU_MULT is not set with the
+> newly added driver:
+> 
+> drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_mult_ops'
+> drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.3+0x4): undefined reference to `ccu_mult_ops'
+> 
+> Fixes: 46b492116666 ("clk: sunxi-ng: Add driver for A83T CCU")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
->> This adds device tree bindings and a header for the Gemini SoC
->> Clock Controller.
-(...)
->> +- compatible : shall contain the following:
->> +  "cortina,gemini-clock-controller"
->> +- #clock-cells should be <1>
-(...)
->> +Example:
->> +
->> +syscon: syscon@40000000 {
->> +     compatible = "cortina,gemini-syscon", "syscon", "simple-mfd";
->> +     reg = <0x40000000 0x1000>;
->> +
->> +     clock-controller {
->> +             compatible = "cortina,gemini-clock-controller";
->> +             #clock-cells = <1>;
->
-> There's not really much reason to have a child node here. The parent can
-> be the clock provider.
+Is there any way we can automate finding these build errors and
+prevent them from creeping into the tree? It may be asking too
+much, but it seems like we should be able to find these
+particular problems with some script that greps for ccu_*_ops and
+checks that any file's Kconfig symbol also has that selected.
 
-But I should still keep the special clock controller compatible-string?
-I guess it is also possible to just bind all the drivers to
-"cortina,gemini-syscon".
+Anyway, I'm just tired of seeing these sorts of things in my
+inbox.
 
-Yours,
-Linus Walleij
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
