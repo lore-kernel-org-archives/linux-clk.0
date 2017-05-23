@@ -1,68 +1,64 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>
-Subject: [PATCH 0/9] clk: add imx7ulp clk support
-Date: Mon, 15 May 2017 21:59:14 +0800
-Message-ID: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20170523071940.xbnahikb4d5dge7v@wens.csie.org>
+References: <20170522202951.2896280-1-arnd@arndb.de> <20170523005553.GH20170@codeaurora.org>
+ <20170523071940.xbnahikb4d5dge7v@wens.csie.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 23 May 2017 09:54:38 +0200
+Message-ID: <CAK8P3a37CT0tzdy4V8Hj=-Mu=JrdR08zv2fqVH5Y+hzT7OK4Vg@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tobias Regnery <tobias.regnery@gmail.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series intends to add imx7ulp clk support.
+On Tue, May 23, 2017 at 9:19 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Mon, May 22, 2017 at 05:55:53PM -0700, Stephen Boyd wrote:
+>> On 05/22, Arnd Bergmann wrote:
+>> > We get a link error when CCU_MULT is not set with the
+>> > newly added driver:
+>> >
+>> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_mult_ops'
+>> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.3+0x4): undefined reference to `ccu_mult_ops'
+>> >
+>> > Fixes: 46b492116666 ("clk: sunxi-ng: Add driver for A83T CCU")
+>> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+>
+>> Is there any way we can automate finding these build errors and
+>> prevent them from creeping into the tree? It may be asking too
+>> much, but it seems like we should be able to find these
+>> particular problems with some script that greps for ccu_*_ops and
+>> checks that any file's Kconfig symbol also has that selected.
+>>
+>> Anyway, I'm just tired of seeing these sorts of things in my
+>> inbox.
 
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
+Definitely, I'm also tired of writing the patches ;-)
 
-The clocking scheme provides clear separation between M4 domain
-and A7 domain. Except for a few clock sources shared between two
-domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-and and the Fast IRC clock (FIRCLK), clock sources and clock
-management are separated and contained within each domain.
+> The (ugly) script below does the trick, though it does give results
+> for some symbols that are indirectly selected:
+>
+> SUN5I_CCU uses SUNXI_CCU_GATE but does not select it
+> SUN5I_CCU uses SUNXI_CCU_MUX but does not select it
 
-M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+I think they are all caught implicitly, otherwise I would have run
+into them.
 
-Note: this series only adds A7 clock domain support as M4 clock
-domain will be handled by M4 seperately.
+> SUN5I_CCU uses SUNXI_CCU_NKMP but does not select it
 
-Dong Aisheng (9):
-  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-  clk: reparent orphans after critical clocks enabled
-  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-  clk: imx: add pllv4 support
-  clk: imx: add pfdv2 support
-  clk: imx: add composite clk support
-  dt-bindings: clock: add imx7ulp clock binding doc
-  clk: imx: make mux parent strings const
-  clk: imx: add imx7ulp clk driver
+I sent a patch for this on Feb 14 and again March 13, but haven't
+gotten around to resubmit again.
 
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 +++++++
- drivers/clk/clk-divider.c                          |   2 +
- drivers/clk/clk-fractional-divider.c               |  10 ++
- drivers/clk/clk.c                                  |  39 ++--
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-busy.c                         |   2 +-
- drivers/clk/imx/clk-composite.c                    |  93 ++++++++++
- drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
- drivers/clk/imx/clk-imx7ulp.c                      | 171 ++++++++++++++++++
- drivers/clk/imx/clk-pfdv2.c                        | 199 +++++++++++++++++++++
- drivers/clk/imx/clk-pllv4.c                        | 196 ++++++++++++++++++++
- drivers/clk/imx/clk.h                              |  31 +++-
- include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++++
- include/linux/clk-provider.h                       |  11 ++
- 14 files changed, 902 insertions(+), 30 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 drivers/clk/imx/clk-composite.c
- create mode 100644 drivers/clk/imx/clk-imx7ulp.c
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
- create mode 100644 drivers/clk/imx/clk-pllv4.c
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
+An alternative would be to remove all the dependencies as 'lib-y'
+in the Makefile and remove the individual Kconfig symbols. That
+way, we would always build all of them when CONFIG_SUNXI_CCU
+is enabled, but the linker would drop the ones that do not get
+referenced.
 
--- 
-2.7.4
+         Arnd
