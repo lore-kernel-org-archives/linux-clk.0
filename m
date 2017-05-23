@@ -1,53 +1,92 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 2/6] ARM: sun8i: a83t: Add device node for PRCM
-Date: Wed, 31 May 2017 15:58:20 +0800
-Message-Id: <20170531075824.657-3-wens@csie.org>
-In-Reply-To: <20170531075824.657-1-wens@csie.org>
-References: <20170531075824.657-1-wens@csie.org>
+Return-Path: <adi.reus@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20170521215958.19743-3-jbrunet@baylibre.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com> <20170521215958.19743-3-jbrunet@baylibre.com>
+From: Adriana Reus <adi.reus@gmail.com>
+Date: Tue, 23 May 2017 12:35:43 +0300
+Message-ID: <CABjU8Gu_0xgto6UfaOofW1RjZkEQtbreqqBS2Ukd+Q0DLSZG8w@mail.gmail.com>
+Subject: Re: [PATCH v2 02/11] clk: add clk_core_set_phase_nolock function
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T's PRCM has the same set of clocks and resets as the A64.
-However, a few dividers are different. And due to the lack of a low
-speed 32.768 kHz oscillator, a few of the clock parents are different.
-
-The PRCM also has controls for various power domains. These are not
-supported yet, neither in software nor in the device tree binding.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 1dc4cfe81534..49aeb56970ba 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -270,5 +270,15 @@
- 			#interrupt-cells = <3>;
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
-+
-+		r_ccu: clock@1f01400 {
-+			compatible = "allwinner,sun8i-a83t-r-ccu";
-+			reg = <0x01f01400 0x400>;
-+			clocks = <&osc24M>, <&osc16Md512>, <&osc16M>,
-+				 <&ccu 6>;
-+			clock-names = "hosc", "losc", "iosc", "pll-periph";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
- 	};
- };
--- 
-2.11.0
+On Mon, May 22, 2017 at 12:59 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> Create a core function for set_phase, as it is done for set_rate and
+> set_parent.
+>
+> This rework is done to ease the integration of "protected" clock
+> functionality.
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/clk.c | 31 +++++++++++++++++++------------
+>  1 file changed, 19 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f5c371532509..6031fada37f9 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_set_parent);
+>
+> +static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+> +{
+> +       int ret = -EINVAL;
+> +
+> +       if (!core)
+> +               return 0;
+> +
+> +       trace_clk_set_phase(clk->core, degrees);
+ ^ trace_clk_set_phase(core, degrees)
+> +
+> +       if (core->ops->set_phase)
+> +               ret = core->ops->set_phase(core->hw, degrees);
+> +
+> +       trace_clk_set_phase_complete(core, degrees);
+> +
+> +       return ret;
+> +}
+> +
+>  /**
+>   * clk_set_phase - adjust the phase shift of a clock signal
+>   * @clk: clock signal source
+> @@ -1895,7 +1912,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+>   */
+>  int clk_set_phase(struct clk *clk, int degrees)
+>  {
+> -       int ret = -EINVAL;
+> +       int ret;
+>
+>         if (!clk)
+>                 return 0;
+> @@ -1906,17 +1923,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+>                 degrees += 360;
+>
+>         clk_prepare_lock();
+> -
+> -       trace_clk_set_phase(clk->core, degrees);
+> -
+> -       if (clk->core->ops->set_phase)
+> -               ret = clk->core->ops->set_phase(clk->core->hw, degrees);
+> -
+> -       trace_clk_set_phase_complete(clk->core, degrees);
+> -
+> -       if (!ret)
+> -               clk->core->phase = degrees;
+> -
+> +       ret = clk_core_set_phase_nolock(clk->core, degrees);
+>         clk_prepare_unlock();
+>
+>         return ret;
+> --
+> 2.9.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
