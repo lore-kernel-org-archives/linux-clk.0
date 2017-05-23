@@ -1,236 +1,128 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v3 02/11] dt-bindings: clk: Extend binding doc for Stingray SOC
-Date: Tue, 16 May 2017 17:00:47 +0530
-Message-Id: <1494934256-1350-3-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
-References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:33267 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758912AbdEWM40 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 May 2017 08:56:26 -0400
+Date: Tue, 23 May 2017 20:56:06 +0800
+In-Reply-To: <20170523125321.t7y7yfrrfokpkzgd@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io> <1958057.WDKm0nQKgW@jernej-laptop> <CAGb2v66aD=G+V75N-_nYo=dGqhxpKhadM84h9G-B34=dnDwCbg@mail.gmail.com> <3164416.5xR36OcyjH@jernej-laptop> <20170523125321.t7y7yfrrfokpkzgd@flea.home>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] Re: [RFC PATCH 07/11] drm: sun4i: add support for the TV encoder in H3 SoC
+To: maxime.ripard@free-electrons.com,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+CC: linux-sunxi@googlegroups.com, wens@csie.org,
+        Rob Herring <robh+dt@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <29C6A41B-491B-4000-99EE-351118D4E5B2@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
-Update iproc clock dt-binding documentation with
-Stingray pll and clock details.
 
-Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++++++++++++++
- include/dt-bindings/clock/bcm-sr.h                 | 101 +++++++++++++++++++++
- 2 files changed, 177 insertions(+)
- create mode 100644 include/dt-bindings/clock/bcm-sr.h
+于 2017年5月23日 GMT+08:00 下午8:53:21, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>On Mon, May 22, 2017 at 07:55:56PM +0200, Jernej Škrabec wrote:
+>> Hi,
+>> 
+>> Dne sobota, 20. maj 2017 ob 03:37:53 CEST je Chen-Yu Tsai napisal(a):
+>> > On Sat, May 20, 2017 at 2:23 AM, Jernej Škrabec
+><jernej.skrabec@siol.net> 
+>> wrote:
+>> > > Hi,
+>> > > 
+>> > > Dne petek, 19. maj 2017 ob 20:08:18 CEST je Icenowy Zheng
+>napisal(a):
+>> > >> 于 2017年5月20日 GMT+08:00 上午2:03:30, Maxime Ripard
+><maxime.ripard@free-
+>> > > 
+>> > > electrons.com> 写到:
+>> > >> >On Thu, May 18, 2017 at 12:43:50AM +0800, Icenowy Zheng wrote:
+>> > >> >> Allwinner H3 features a TV encoder similar to the one in
+>earlier
+>> > >> >
+>> > >> >SoCs,
+>> > >> >
+>> > >> >> but with some different points about clocks:
+>> > >> >> - It has a mod clock and a bus clock.
+>> > >> >> - The mod clock must be at a fixed rate to generate signal.
+>> > >> >
+>> > >> >Why?
+>> > >> 
+>> > >> It's experiment result by Jernej.
+>> > >> 
+>> > >> The clock rates in BSP kernel is also specially designed
+>> > >> (PLL_DE at 432MHz) in order to be able to feed the TVE.
+>> > > 
+>> > > My experiments and search through BSP code showed that TVE seems
+>to have
+>> > > additional fixed predivider 8. So if you want to generate 27 MHz
+>clock,
+>> > > unit has to be feed with 216 MHz.
+>> > > 
+>> > > TVE has only one PLL source PLL_DE. And since 216 MHz is a bit
+>low for
+>> > > DE2,
+>> > > BSP defaults to 432 MHz for PLL_DE and use divider 2 to generate
+>216 MHz.
+>> > > This clock is then divided by 8 internaly to get final 27 MHz.
+>> > > 
+>> > > Please note that I don't have any hard evidence to support that,
+>only
+>> > > experimental data. However, only that explanation make sense to
+>me.
+>> > > 
+>> > > BTW, BSP H3/H5 TV driver supports only PAL and NTSC which both
+>use 27 MHz
+>> > > base clock. Further experiments are needed to check if there is
+>any
+>> > > possibility to have other resolutions by manipulating clocks and
+>give
+>> > > other proper settings. I plan to do that, but not in very near
+>future.
+>> > 
+>> > You only have composite video output, and those are the only 2
+>standard
+>> > resolutions that make any sense.
+>> 
+>> Right, other resolutions are for VGA.
+>> 
+>> Anyway, I did some more digging in A10 and R40 datasheets. I think
+>that H3 TVE 
+>> unit is something in between. R40 TVE has a setting to select "up
+>sample".
+>
+>That might be just another translation of oversampling :)
+>
+>I didn't know it could be applied to composite signals though, but I
+>guess this is just another analog signal after all.
+>
+>> Possible settings are 27 MHz, 54 MHz, 108 MHz and 216 MHz. BSP driver
+>on R40 
+>> has this setting enabled only for PAL and NTSC and it is always 216
+>MHz. I 
+>> think that H3 may have this hardwired to 216 MHz and this would be
+>the reason 
+>> why 216 MHz is needed.
+>> 
+>> Has anyone else any better explanation?
+>
+>That's already a pretty good one.
+>
+>Either way, wether this is upsampling, oversampling or just a
+>pre-divider, this can and should be dealt with in the mode_set
+>callback, and not in the probe.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index 6f66e9a..f2c5f0e4a 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -219,3 +219,79 @@ BCM63138
- --------
- PLL and leaf clock compatible strings for BCM63138 are:
-     "brcm,bcm63138-armpll"
-+
-+Stingray
-+-----------
-+PLL and leaf clock compatible strings for Stingray are:
-+    "brcm,sr-genpll0"
-+    "brcm,sr-genpll1"
-+    "brcm,sr-genpll2"
-+    "brcm,sr-genpll3"
-+    "brcm,sr-genpll4"
-+    "brcm,sr-genpll5"
-+    "brcm,sr-genpll6"
-+
-+    "brcm,sr-lcpll0"
-+    "brcm,sr-lcpll1"
-+    "brcm,sr-lcpll-pcie"
-+
-+
-+The following table defines the set of PLL/clock index and ID for Stingray.
-+These clock IDs are defined in:
-+    "include/dt-bindings/clock/bcm-sr.h"
-+
-+    Clock		Source		Index	ID
-+    ---			-----		-----	---------
-+    crystal		N/A		N/A	N/A
-+    crmu_ref25m		crystal		N/A	N/A
-+
-+    genpll0		crystal		0	BCM_SR_GENPLL0
-+    clk_125m		genpll0		1	BCM_SR_GENPLL0_125M_CLK
-+    clk_scr		genpll0		2	BCM_SR_GENPLL0_SCR_CLK
-+    clk_250		genpll0		3	BCM_SR_GENPLL0_250M_CLK
-+    clk_pcie_axi	genpll0		4	BCM_SR_GENPLL0_PCIE_AXI_CLK
-+    clk_paxc_axi_x2	genpll0		5	BCM_SR_GENPLL0_PAXC_AXI_X2_CLK
-+    clk_paxc_axi	genpll0		6	BCM_SR_GENPLL0_PAXC_AXI_CLK
-+
-+    genpll1		crystal		0	BCM_SR_GENPLL1
-+    clk_pcie_tl		genpll1		1	BCM_SR_GENPLL1_PCIE_TL_CLK
-+    clk_mhb_apb		genpll1		2	BCM_SR_GENPLL1_MHB_APB_CLK
-+
-+    genpll2		crystal		0	BCM_SR_GENPLL2
-+    clk_nic		genpll2		1	BCM_SR_GENPLL2_NIC_CLK
-+    clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
-+    clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
-+    clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
-+    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
-+
-+    genpll3		crystal		0	BCM_SR_GENPLL3
-+    clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
-+    clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
-+
-+    genpll4		crystal		0	BCM_SR_GENPLL4
-+    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-+    clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
-+    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-+    clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
-+    clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
-+
-+
-+    genpll5		crystal		0	BCM_SR_GENPLL5
-+    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
-+    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
-+    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
-+
-+    genpll6		crystal		0	BCM_SR_GENPLL6
-+    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
-+
-+    lcpll0		crystal		0	BCM_SR_LCPLL0
-+    clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
-+    clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
-+    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
-+    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
-+
-+    lcpll1		crystal		0	BCM_SR_LCPLL1
-+    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
-+
-+    lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
-+    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-new file mode 100644
-index 0000000..cff6c6f
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -0,0 +1,101 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2017 Broadcom. All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom Corporation nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#ifndef _CLOCK_BCM_SR_H
-+#define _CLOCK_BCM_SR_H
-+
-+/* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
-+#define BCM_SR_GENPLL0			0
-+#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_SCR_CLK		2
-+#define BCM_SR_GENPLL0_250M_CLK		3
-+#define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-+#define BCM_SR_GENPLL0_PAXC_AXI_X2_CLK	5
-+#define BCM_SR_GENPLL0_PAXC_AXI_CLK	6
-+
-+/* GENPLL 1 clock channel ID MHB PCIE NITRO */
-+#define BCM_SR_GENPLL1			0
-+#define BCM_SR_GENPLL1_PCIE_TL_CLK	1
-+#define BCM_SR_GENPLL1_MHB_APB_CLK	2
-+
-+/* GENPLL 2 clock channel ID NITRO MHB*/
-+#define BCM_SR_GENPLL2			0
-+#define BCM_SR_GENPLL2_NIC_CLK		1
-+#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_125_NITRO_CLK	3
-+#define BCM_SR_GENPLL2_CHIMP_CLK	4
-+
-+/* GENPLL 3 HSLS clock channel ID */
-+#define BCM_SR_GENPLL3			0
-+#define BCM_SR_GENPLL3_HSLS_CLK		1
-+#define BCM_SR_GENPLL3_SDIO_CLK		2
-+
-+/* GENPLL 4 SCR clock channel ID */
-+#define BCM_SR_GENPLL4			0
-+#define BCM_SR_GENPLL4_CCN_CLK		1
-+
-+/* GENPLL 5 FS4 clock channel ID */
-+#define BCM_SR_GENPLL5			0
-+#define BCM_SR_GENPLL5_FS_CLK		1
-+#define BCM_SR_GENPLL5_SPU_CLK		2
-+
-+/* GENPLL 6 NITRO clock channel ID */
-+#define BCM_SR_GENPLL6			0
-+#define BCM_SR_GENPLL6_48_USB_CLK	1
-+
-+/* LCPLL0  clock channel ID */
-+#define BCM_SR_LCPLL0			0
-+#define BCM_SR_LCPLL0_SATA_REF_CLK	1
-+#define BCM_SR_LCPLL0_USB_REF_CLK	2
-+#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+
-+/* LCPLL1  clock channel ID */
-+#define BCM_SR_LCPLL1			0
-+#define BCM_SR_LCPLL1_WAN_CLK		1
-+
-+/* LCPLL PCIE  clock channel ID */
-+#define BCM_SR_LCPLL_PCIE		0
-+#define BCM_SR_LCPLL_PCIE_PHY_REF_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL0			0
-+#define BCM_SR_EMEMPLL0_EMEM_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL1			0
-+#define BCM_SR_EMEMPLL1_EMEM_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL2			0
-+#define BCM_SR_EMEMPLL2_EMEM_CLK	1
-+
-+#endif /* _CLOCK_BCM_SR_H */
--- 
-2.7.4
+What should we do for this?
+
+Add a hook in TCON driver and let TVE driver affect the clock value (*16, as the dotclock is halfed)?
+
+>
+>Thanks!
+>Maxime
