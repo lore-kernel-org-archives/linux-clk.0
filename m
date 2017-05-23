@@ -1,41 +1,76 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 23 May 2017 10:25:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH 2/5] clk: mvebu: ap806: do not depend anymore of the
- *-clock-output-names
-Message-ID: <20170523152506.ooa2hoyzfssbozid@rob-hp-laptop>
-References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
- <83d2035a1d00773c8e4c4d09134c81b0cd24152c.1495209464.git-series.gregory.clement@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <83d2035a1d00773c8e4c4d09134c81b0cd24152c.1495209464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <ralph.sennhauser@gmail.com>
+Return-Path: <ralph.sennhauser@gmail.com>
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Ralph Sennhauser <ralph.sennhauser@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: mvebu: add support for 1866MHz variants
+Date: Tue, 23 May 2017 23:01:06 +0200
+Message-Id: <20170523210106.16307-1-ralph.sennhauser@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 19, 2017 at 05:58:02PM +0200, Gregory CLEMENT wrote:
-> As it was done for the cp110, this patch modifies the way the clock names
-> are created. The name of each clock is now created by using its physical
-> address as a prefix (as it was done for the platform device
-> names). Thanks to this we have an automatic way to compute a unique name.
-> 
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt |  4 ----
->  drivers/clk/mvebu/ap806-system-controller.c                               | 46 ++++++++++++++++++++++++----------------------
->  2 files changed, 24 insertions(+), 26 deletions(-)
+The Linksys WRT3200ACM CPU is clocked at 1866MHz. Add 1866MHz to the
+list of supported CPU frequencies. Also update multiplier and divisor
+for the l2clk and ddrclk.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Noticed by the following warning:
+[    0.000000] Selected CPU frequency (16) unsupported
+
+Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+---
+
+Hi everyone,
+
+This patch was part of a series adding support for the Linksys WRT3200ACM which
+got mostly merged already. So this one comes as a stand-alone patch intended
+for 4.13.
+
+Thanks
+Ralph
+---
+
+Changes since v1:
+
+  - Update multipliers for and divisors for l2clk and ddrclk
+---
+ drivers/clk/mvebu/armada-38x.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+index 8bccf4e..394aa6f 100644
+--- a/drivers/clk/mvebu/armada-38x.c
++++ b/drivers/clk/mvebu/armada-38x.c
+@@ -49,7 +49,8 @@ static const u32 armada_38x_cpu_frequencies[] __initconst = {
+ 	0, 0, 0, 0,
+ 	1066 * 1000 * 1000, 0, 0, 0,
+ 	1332 * 1000 * 1000, 0, 0, 0,
+-	1600 * 1000 * 1000,
++	1600 * 1000 * 1000, 0, 0, 0,
++	1866 * 1000 * 1000,
+ };
+ 
+ static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+@@ -79,7 +80,7 @@ static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{0, 1}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+@@ -90,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{0, 1}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+-- 
+2.10.2
