@@ -1,31 +1,53 @@
-Return-Path: <horms@verge.net.au>
-Date: Thu, 11 May 2017 16:45:35 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent
- clocks on ES2.0
-Message-ID: <20170511144534.GB21895@verge.net.au>
-References: <1494496275-2433-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 23 May 2017 10:26:12 -0500
+From: Rob Herring <robh@kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH 3/5] clk: mvebu: ap806: introduce a new binding
+Message-ID: <20170523152612.e5kpra2ir2vibgrh@rob-hp-laptop>
+References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+ <fd62952c043aec1d87ff65d9d69105103a195908.1495209464.git-series.gregory.clement@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494496275-2433-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <fd62952c043aec1d87ff65d9d69105103a195908.1495209464.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 11, 2017 at 11:51:15AM +0200, Geert Uytterhoeven wrote:
-> Cfr. the errata of April 14, 2017, for the R-Car Gen3 Hardware Manual
-> Rev. 0.53E.
+On Fri, May 19, 2017 at 05:58:03PM +0200, Gregory CLEMENT wrote:
+> As for cp110, the initial intent when the binding of the ap806 system
+> controller was to have one flat node. The idea being that what is
+> currently a clock-only driver in drivers would become a MFD driver,
+> exposing the clock, GPIO and pinctrl functionality. However, after taking
+> a step back, this would lead to a messy binding. Indeed, a single node
+> would be a GPIO controller, clock controller, pinmux controller, and
+> more.
 > 
-> These have no user-visible effect, as the clock frequencies stay the
-> same.
+> This patch adopts a more classical solution of a top-level syscon node
+> with sub-nodes for the individual devices. The main benefit will be to
+> have each functional block associated to its own sub-node where we can
+> put its own properties.
 > 
-> Fixes: 5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> The introduction of the Armada 7K/8K is still in the early stage so the
+> plan is to remove the old binding. However, we don't want to break the
+> device tree compatibility for the few devices already in the field. For
+> this we still keep the support of the legacy compatible string with a big
+> warning in the kernel about updating the device tree.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 > ---
-> To be queued in clk-renesas-for-v4.13.
+>  Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt | 20 +++++++++++++++-----
+>  drivers/clk/mvebu/ap806-system-controller.c                               | 56 ++++++++++++++++++++++++++++++++++++++++++++------------
+>  2 files changed, 59 insertions(+), 17 deletions(-)
 
-This matches the documentation I have.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
