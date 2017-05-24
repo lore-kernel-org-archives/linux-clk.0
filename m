@@ -1,114 +1,341 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v3 09/11] arm64: dts: Add I2C DT nodes for Stingray SoC
-Date: Tue, 16 May 2017 17:00:54 +0530
-Message-Id: <1494934256-1350-10-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
-References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:36881 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933821AbdEXFhH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 May 2017 01:37:07 -0400
+Date: Wed, 24 May 2017 13:36:53 +0800
+In-Reply-To: <CAGb2v64-3TYDgCBhGFNDqvoTa1ch=j3k__rnbB80dsFQn3JsKw@mail.gmail.com>
+References: <20170517164354.16399-1-icenowy@aosc.io> <20170517164354.16399-11-icenowy@aosc.io> <CAGb2v64nVA=hHjXkVNMN68vQizMBE6vyYfaE895b0L6umv_Ycw@mail.gmail.com> <299627EE-8D9C-451A-9F74-0C5037D19DCC@aosc.io> <CAGb2v64-3TYDgCBhGFNDqvoTa1ch=j3k__rnbB80dsFQn3JsKw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [RFC PATCH 10/11] ARM: sun8i: h3: add display engine pipeline for TVE
+To: wens@csie.org, Chen-Yu Tsai <wens@csie.org>
+CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <8358C867-68B8-43CB-A6FA-76A073B29958@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Oza Pawandeep <oza.oza@broadcom.com>
 
-This patch adds I2C DT nodes on Stingray SoC.
 
-Signed-off-by: Oza Pawandeep <oza.oza@broadcom.com>
-Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 22 ++++++++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 20 ++++++++++++++++++++
- 2 files changed, 42 insertions(+)
+于 2017年5月24日 GMT+08:00 下午1:34:58, Chen-Yu Tsai <wens@csie.org> 写到:
+>On Wed, May 24, 2017 at 1:28 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>
+>>
+>> 于 2017年5月24日 GMT+08:00 下午1:24:29, Chen-Yu Tsai <wens@csie.org> 写到:
+>>>On Thu, May 18, 2017 at 12:43 AM, Icenowy Zheng <icenowy@aosc.io>
+>>>wrote:
+>>>> As we have already the support for the TV encoder on Allwinner H3,
+>>>add
+>>>> the display engine pipeline device tree nodes to its DTSI file.
+>>>>
+>>>> The H5 pipeline has some differences and will be enabled later.
+>>>>
+>>>> The currently-unused mixer0 and tcon0 are also needed, for the
+>>>> completement of the pipeline.
+>>>>
+>>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>>> ---
+>>>>  arch/arm/boot/dts/sun8i-h3.dtsi | 189
+>>>++++++++++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 189 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+>>>b/arch/arm/boot/dts/sun8i-h3.dtsi
+>>>> index b36f9f423c39..20172ef92415 100644
+>>>> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+>>>> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+>>>> @@ -41,6 +41,8 @@
+>>>>   */
+>>>>
+>>>>  #include "sunxi-h3-h5.dtsi"
+>>>> +#include <dt-bindings/clock/sun8i-de2.h>
+>>>> +#include <dt-bindings/reset/sun8i-de2.h>
+>>>>
+>>>>  / {
+>>>>         cpus {
+>>>> @@ -72,6 +74,193 @@
+>>>>                 };
+>>>>         };
+>>>>
+>>>> +       de: display-engine {
+>>>> +               compatible = "allwinner,sun8i-h3-display-engine";
+>>>> +               allwinner,pipelines = <&mixer0>,
+>>>> +                                     <&mixer1>;
+>>>> +               status = "disabled";
+>>>> +       };
+>>>> +
+>>>> +       soc {
+>>>> +               display_clocks: clock@1000000 {
+>>>> +                       compatible =
+>"allwinner,sun8i-a83t-de2-clk";
+>>>> +                       reg = <0x01000000 0x100000>;
+>>>> +                       clocks = <&ccu CLK_BUS_DE>,
+>>>> +                                <&ccu CLK_DE>;
+>>>> +                       clock-names = "bus",
+>>>> +                                     "mod";
+>>>> +                       resets = <&ccu RST_BUS_DE>;
+>>>> +                       #clock-cells = <1>;
+>>>> +                       #reset-cells = <1>;
+>>>> +                       assigned-clocks = <&ccu CLK_DE>;
+>>>> +                       assigned-clock-parents = <&ccu CLK_PLL_DE>;
+>>>> +                       assigned-clock-rates = <432000000>;
+>>>> +               };
+>>>> +
+>>>> +               mixer0: mixer@1100000 {
+>>>> +                       compatible =
+>"allwinner,sun8i-h3-de2-mixer0";
+>>>> +                       reg = <0x01100000 0x100000>;
+>>>> +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
+>>>> +                                <&display_clocks CLK_MIXER0>;
+>>>> +                       clock-names = "bus",
+>>>> +                                     "mod";
+>>>> +                       resets = <&display_clocks RST_MIXER0>;
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +                       ports {
+>>>> +                               #address-cells = <1>;
+>>>> +                               #size-cells = <0>;
+>>>> +
+>>>> +                               mixer0_out: port@1 {
+>>>> +                                       #address-cells = <1>;
+>>>> +                                       #size-cells = <0>;
+>>>> +                                       reg = <1>;
+>>>> +
+>>>> +                                       mixer0_out_tcon0:
+>endpoint@0
+>>>{
+>>>> +                                               reg = <0>;
+>>>> +                                               remote-endpoint =
+>>><&tcon0_in_mixer0>;
+>>>> +                                       };
+>>>> +
+>>>> +                                       mixer0_out_tcon1:
+>endpoint@1
+>>>{
+>>>> +                                               reg = <1>;
+>>>> +                                               remote-endpoint =
+>>><&tcon1_in_mixer0>;
+>>>> +                                       };
+>>>> +                               };
+>>>> +                       };
+>>>> +               };
+>>>> +
+>>>> +               mixer1: mixer@1200000 {
+>>>> +                       compatible =
+>"allwinner,sun8i-h3-de2-mixer1";
+>>>> +                       reg = <0x01200000 0x100000>;
+>>>> +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
+>>>> +                                <&display_clocks CLK_MIXER1>;
+>>>> +                       clock-names = "bus",
+>>>> +                                     "mod";
+>>>> +                       resets = <&display_clocks RST_WB>;
+>>>> +
+>>>> +                       ports {
+>>>> +                               #address-cells = <1>;
+>>>> +                               #size-cells = <0>;
+>>>> +
+>>>> +                               mixer1_out: port@1 {
+>>>> +                                       #address-cells = <1>;
+>>>> +                                       #size-cells = <0>;
+>>>> +                                       reg = <1>;
+>>>> +
+>>>> +                                       mixer1_out_tcon1:
+>endpoint@0
+>>>{
+>>>> +                                               reg = <0>;
+>>>
+>>>I would prefer if you could stick to the numbering scheme we're using
+>>>for
+>>>Display Engine 1.0, as in endpoint 0 links to component 0 of whatever
+>>>type.
+>>
+>> If we keep this we will need a ugly id property in mixer node,
+>> otherwise we cannot know which TCON to be bind.
+>
+>Why? You can simply change the logic in your driver from:
+>
+>    if (remote_endpoint.id) { continue; }
+>
+>to:
+>
+>    if (local_endpoint.id != remote_endpoint.id) { continue; }
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index aad45a2..ff59a26 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -54,6 +54,28 @@
- 	status = "okay";
- };
- 
-+&i2c0 {
-+	status = "okay";
-+
-+	pca9505: pca9505@20 {
-+		compatible = "nxp,pca9505";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		reg = <0x20>;
-+	};
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	pcf8574: pcf8574@20 {
-+		compatible = "nxp,pcf8574a";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		reg = <0x27>;
-+	};
-+};
-+
- &nand {
- 	status = "ok";
- 	nandcs@0 {
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 059086f..8a077ff 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -269,6 +269,16 @@
- 
- 		#include "stingray-pinctrl.dtsi"
- 
-+		i2c0: i2c@689b0000 {
-+			compatible = "brcm,iproc-i2c";
-+			reg = <0x000b0000 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 177 IRQ_TYPE_NONE>;
-+			clock-frequency = <100000>;
-+			status = "disabled";
-+		};
-+
- 		gpio_hsls: gpio@689d0000 {
- 			compatible = "brcm,iproc-gpio";
- 			reg = <0x000d0000 0x864>;
-@@ -295,6 +305,16 @@
- 					<&pinmux 151 91 4>;
- 		};
- 
-+		i2c1: i2c@689e0000 {
-+			compatible = "brcm,iproc-i2c";
-+			reg = <0x000e0000 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 178 IRQ_TYPE_NONE>;
-+			clock-frequency = <100000>;
-+			status = "disabled";
-+		};
-+
- 		uart0: uart@68a00000 {
- 			device_type = "serial";
- 			compatible = "snps,dw-apb-uart";
--- 
-2.7.4
+Thanks, I forgot that there's two endpoint ids...
+
+So silly I am.
+
+>
+>I don't see the need for any ID property in the mixer node in this
+>case.
+>The ID is already encoded into the endpoint IDs.
+>
+>ChenYu
+>
+>>>
+>>>We're probably going to stick to that for the R40's incredibly
+>>>complicated
+>>>pipeline. I don't want to have any outliers unless absolutely
+>>>necessary.
+>>>
+>>>ChenYu
+>>>
+>>>> +                                               remote-endpoint =
+>>><&tcon1_in_mixer1>;
+>>>> +                                       };
+>>>> +
+>>>> +                                       mixer1_out_tcon0:
+>endpoint@1
+>>>{
+>>>> +                                               reg = <1>;
+>>>> +                                               remote-endpoint =
+>>><&tcon0_in_mixer1>;
+>>>> +                                       };
+>>>> +                               };
+>>>> +                       };
+>>>> +               };
+>>>> +
+>>>> +               tcon0: lcd-controller@1c0c000 {
+>>>> +                       compatible = "allwinner,sun8i-h3-tcon0";
+>>>> +                       reg = <0x01c0c000 0x1000>;
+>>>> +                       interrupts = <GIC_SPI 86
+>>>IRQ_TYPE_LEVEL_HIGH>;
+>>>> +                       clocks = <&ccu CLK_BUS_TCON0>,
+>>>> +                                <&ccu CLK_TCON0>;
+>>>> +                       clock-names = "ahb",
+>>>> +                                     "tcon-ch1";
+>>>> +                       resets = <&ccu RST_BUS_TCON0>;
+>>>> +                       reset-names = "lcd";
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +                       ports {
+>>>> +                               #address-cells = <1>;
+>>>> +                               #size-cells = <0>;
+>>>> +
+>>>> +                               tcon0_in: port@0 {
+>>>> +                                       #address-cells = <1>;
+>>>> +                                       #size-cells = <0>;
+>>>> +                                       reg = <0>;
+>>>> +
+>>>> +                                       tcon0_in_mixer0: endpoint@0
+>{
+>>>> +                                               reg = <0>;
+>>>> +                                               remote-endpoint =
+>>><&mixer0_out_tcon0>;
+>>>> +                                       };
+>>>> +
+>>>> +                                       tcon0_in_mixer1: endpoint@1
+>{
+>>>> +                                               reg = <1>;
+>>>> +                                               remote-endpoint =
+>>><&mixer1_out_tcon0>;
+>>>> +                                       };
+>>>> +                               };
+>>>> +                       };
+>>>> +               };
+>>>> +
+>>>> +               tcon1: lcd-controller@1c0d000 {
+>>>> +                       compatible = "allwinner,sun8i-h3-tcon1";
+>>>> +                       reg = <0x01c0d000 0x1000>;
+>>>> +                       interrupts = <GIC_SPI 87
+>>>IRQ_TYPE_LEVEL_HIGH>;
+>>>> +                       clocks = <&ccu CLK_BUS_TCON1>;
+>>>> +                       clock-names = "ahb";
+>>>> +                       resets = <&ccu RST_BUS_TCON1>;
+>>>> +                       reset-names = "lcd";
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +                       ports {
+>>>> +                               #address-cells = <1>;
+>>>> +                               #size-cells = <0>;
+>>>> +
+>>>> +                               tcon1_in: port@0 {
+>>>> +                                       #address-cells = <1>;
+>>>> +                                       #size-cells = <0>;
+>>>> +                                       reg = <0>;
+>>>> +
+>>>> +                                       tcon1_in_mixer1: endpoint@0
+>{
+>>>> +                                               reg = <0>;
+>>>> +                                               remote-endpoint =
+>>><&mixer1_out_tcon1>;
+>>>> +                                       };
+>>>> +
+>>>> +                                       tcon1_in_mixer0: endpoint@1
+>{
+>>>> +                                               reg = <1>;
+>>>> +                                               remote-endpoint =
+>>><&mixer0_out_tcon1>;
+>>>> +                                       };
+>>>> +                               };
+>>>> +
+>>>> +                               tcon1_out: port@1 {
+>>>> +                                       #address-cells = <1>;
+>>>> +                                       #size-cells = <0>;
+>>>> +                                       reg = <1>;
+>>>> +
+>>>> +                                       tcon1_out_tve0: endpoint@1
+>{
+>>>> +                                               reg = <1>;
+>>>> +                                               remote-endpoint =
+>>><&tve0_in_tcon1>;
+>>>> +                                       };
+>>>> +                               };
+>>>> +                       };
+>>>> +               };
+>>>> +
+>>>> +               tve0: tv-encoder@1e00000 {
+>>>> +                       compatible =
+>"allwinner,sun8i-h3-tv-encoder";
+>>>> +                       reg = <0x01e00000 0x1000>;
+>>>> +                       clocks = <&ccu CLK_BUS_TVE>, <&ccu
+>CLK_TVE>;
+>>>> +                       clock-names = "bus", "mod";
+>>>> +                       resets = <&ccu RST_BUS_TVE>;
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +                       assigned-clocks = <&ccu CLK_TVE>;
+>>>> +                       assigned-clock-parents = <&ccu CLK_PLL_DE>;
+>>>> +                       assigned-clock-rates = <216000000>;
+>>>> +
+>>>> +                       port {
+>>>> +                               #address-cells = <1>;
+>>>> +                               #size-cells = <0>;
+>>>> +
+>>>> +                               tve0_in_tcon1: endpoint@0 {
+>>>> +                                       reg = <0>;
+>>>> +                                       remote-endpoint =
+>>><&tcon1_out_tve0>;
+>>>> +                               };
+>>>> +                       };
+>>>> +               };
+>>>> +       };
+>>>> +
+>>>>         timer {
+>>>>                 compatible = "arm,armv7-timer";
+>>>>                 interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
+>>>IRQ_TYPE_LEVEL_LOW)>,
+>>>> --
+>>>> 2.12.2
+>>>>
+>>>> --
+>>>> You received this message because you are subscribed to the Google
+>>>Groups "linux-sunxi" group.
+>>>> To unsubscribe from this group and stop receiving emails from it,
+>>>send an email to linux-sunxi+unsubscribe@googlegroups.com.
+>>>> For more options, visit https://groups.google.com/d/optout.
+>>
+>> --
+>> You received this message because you are subscribed to the Google
+>Groups "linux-sunxi" group.
+>> To unsubscribe from this group and stop receiving emails from it,
+>send an email to linux-sunxi+unsubscribe@googlegroups.com.
+>> For more options, visit https://groups.google.com/d/optout.
