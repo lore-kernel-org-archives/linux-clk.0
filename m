@@ -1,253 +1,106 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
-	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH 6/6] dt-bindings: cpufreq: enhance Mediatek cpufreq dt-binding document
-Date: Fri, 5 May 2017 23:26:14 +0800
-Message-ID: <1493997974-17699-7-git-send-email-sean.wang@mediatek.com>
-In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: sean.wang@mediatek.com
+In-Reply-To: <20170519021202.GG20170@codeaurora.org>
+References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com>
+ <20170515083502.4492-3-chunyan.zhang@spreadtrum.com> <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
+ <CAAfSe-u-+snc=b6QYgA4ysknxYDXS5UqbvWBqrnZ92sSBQqJRQ@mail.gmail.com> <20170519021202.GG20170@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 24 May 2017 10:48:24 +0800
+Message-ID: <CAAfSe-vY=KwwfBE5KyGByOZ+LVuTR8kwjxp1ykmJoqTT6RqMeg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Documentation: add sprd clock bindings
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, xiaolong.zhang@spreadtrum.com,
+	=?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?= <orson.zhai@spreadtrum.com>,
+	"geng.ren@spreadtrum.com" <geng.ren@spreadtrum.com>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+Hi Stephen,
 
-Update binding document to reflect the lastest driver logic and
-add more examples guiding people how to use Mediatek cpufreq driver.
+On 19 May 2017 at 10:12, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 05/18, Chunyan Zhang wrote:
+>> On 18 May 2017 at 03:43, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > On Mon, May 15, 2017 at 10:35 AM, Chunyan Zhang
+>> > <chunyan.zhang@spreadtrum.com> wrote:
+>> >> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+>> >> new file mode 100644
+>> >> index 0000000..476e315
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
+>> >> @@ -0,0 +1,17 @@
+>> >> +Spreadtrum adjustable pll clock driver
+>> >> +
+>> >> +Required properties:
+>> >> +
+>> >> +- compatible : must be one of:
+>> >> +       "sprd,sc9836-adjustable-pll-clock"
+>> >> +       "sprd,sc9860-adjustable-pll-clock"
+>> >> +
+>> >> +Example:
+>> >> +       clk_mpll0: clk@40400024 {
+>> >> +               compatible = "sprd,sc9860-adjustable-pll-clock";
+>> >> +               #clock-cells = <0>;
+>> >> +               reg = <0 0x40400024 0 0x4>,
+>> >> +                     <0 0x40400028 0 0x4>;
+>> >> +               clocks = <&clk_mpll_gates 2>;
+>> >> +               clock-output-names = "clk_mpll0";
+>> >> +       };
+>> >
+>> > The properties listed in the example must all be either
+>> > defined as "required" or "optional" properties and have a
+>> > description.
+>>
+>> Since these common properties are documented in the common clock binding [1]
+>>
+>> [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>
+>> I will add explanation in this file like I do in other bindings
+>> introduced in this patch, and will address 'reg' which probably is not
+>> similar to the common usage.
+>>
+>> >
+>> > The reg property here is a bit odd, as it lists two consecutive
+>> > 4-byte areas, and both are suspiciously close to a round
+>> > address (0x40400000), so I would guess that they are
+>> > in fact part of a clock controller with several registers.
+>>
+>> They are PLL clock configuration registers.
+>>
+>> Different PLL has different configurations which listed in pll_cfg.h,
+>> and probably has different number of registers for storing
+>> configurations, and on some Spreadtrum's SoCs PLL clock configuration
+>> registers aren't consecutive, but all PLLs on all Spreadtrum's SoCs
+>> (at least so far) are using the same driver.
+>>
+>> >
+>> > If so, please define a node for the entire clock controller,
+>> > the DT description should reflect the design of the hardware
+>> > rather than the design of your device driver.
+>>
+>> I also realized our implementation might not be easy to be understood,
+>> but I haven't thought out a better solution considering the hardware
+>> limitation I explained above.
+>
+> This binding is going down the wrong path. Please look at how
+> drivers such as sunxi-ng have done the binding in comparison to
+> original sunxi design. We don't put this level of detail into DT,
+> instead we put the details into the driver code and have clock
+> controller nodes in DT. A quick glance shows that this binding is
+> making a node per-clk, which is not going to be accepted.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- .../bindings/cpufreq/cpufreq-mediatek.txt          | 170 ++++++++++++++++++++-
- 1 file changed, 167 insertions(+), 3 deletions(-)
+I have had a look at sunxi-ng design, I will try to rewrite the driver
+included in this patch-set, also DT and bindings.
 
-diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
-index 52b457c..0703927 100644
---- a/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
-+++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
-@@ -1,4 +1,5 @@
--Device Tree Clock bindins for CPU DVFS of Mediatek MT8173 SoC
-+Binding for Mediatek's CPUFreq driver
-+=====================================
- 
- Required properties:
- - clocks: A list of phandle + clock-specifier pairs for the clocks listed in clock names.
-@@ -9,6 +10,8 @@ Required properties:
- 			  transition and not stable yet.
- 	Please refer to Documentation/devicetree/bindings/clk/clock-bindings.txt for
- 	generic clock consumer properties.
-+- operating-points-v2: Pleaser refer to Documentation/devicetree/bindings/opp/opp.txt
-+	for detail.
- - proc-supply: Regulator for Vproc of CPU cluster.
- 
- Optional properties:
-@@ -17,9 +20,166 @@ Optional properties:
- 	       Vsram to fit SoC specific needs. When absent, the voltage scaling
- 	       flow is handled by hardware, hence no software "voltage tracking" is
- 	       needed.
-+- #cooling-cells:
-+- cooling-min-level:
-+- cooling-max-level:
-+	Please refer to Documentation/devicetree/bindings/thermal/thermal.txt
-+	for detail.
-+
-+Example 1 (MT7623 SoC):
-+
-+	cpu_opp_table: opp_table {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@598000000 {
-+			opp-hz = /bits/ 64 <598000000>;
-+			opp-microvolt = <1050000>;
-+		};
-+
-+		opp@747500000 {
-+			opp-hz = /bits/ 64 <747500000>;
-+			opp-microvolt = <1050000>;
-+		};
-+
-+		opp@1040000000 {
-+			opp-hz = /bits/ 64 <1040000000>;
-+			opp-microvolt = <1150000>;
-+		};
-+
-+		opp@1196000000 {
-+			opp-hz = /bits/ 64 <1196000000>;
-+			opp-microvolt = <1200000>;
-+		};
-+
-+		opp@1300000000 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1300000>;
-+		};
-+	};
-+
-+	cpu0: cpu@0 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a7";
-+		reg = <0x0>;
-+		clocks = <&infracfg CLK_INFRA_CPUSEL>,
-+			 <&apmixedsys CLK_APMIXED_MAINPLL>;
-+		clock-names = "cpu", "intermediate";
-+		operating-points-v2 = <&cpu_opp_table>;
-+		#cooling-cells = <2>;
-+		cooling-min-level = <0>;
-+		cooling-max-level = <7>;
-+	};
-+	cpu@1 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a7";
-+		reg = <0x1>;
-+		operating-points-v2 = <&cpu_opp_table>;
-+	};
-+	cpu@2 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a7";
-+		reg = <0x2>;
-+		operating-points-v2 = <&cpu_opp_table>;
-+	};
-+	cpu@3 {
-+		device_type = "cpu";
-+		compatible = "arm,cortex-a7";
-+		reg = <0x3>;
-+		operating-points-v2 = <&cpu_opp_table>;
-+	};
-+
-+Example 2 (MT8173 SoC):
-+	cpu_opp_table_a: opp_table_a {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@507000000 {
-+			opp-hz = /bits/ 64 <507000000>;
-+			opp-microvolt = <859000>;
-+		};
-+
-+		opp@702000000 {
-+			opp-hz = /bits/ 64 <702000000>;
-+			opp-microvolt = <908000>;
-+		};
-+
-+		opp@1001000000 {
-+			opp-hz = /bits/ 64 <1001000000>;
-+			opp-microvolt = <983000>;
-+		};
-+
-+		opp@1105000000 {
-+			opp-hz = /bits/ 64 <1105000000>;
-+			opp-microvolt = <1009000>;
-+		};
-+
-+		opp@1183000000 {
-+			opp-hz = /bits/ 64 <1183000000>;
-+			opp-microvolt = <1028000>;
-+		};
-+
-+		opp@1404000000 {
-+			opp-hz = /bits/ 64 <1404000000>;
-+			opp-microvolt = <1083000>;
-+		};
-+
-+		opp@1508000000 {
-+			opp-hz = /bits/ 64 <1508000000>;
-+			opp-microvolt = <1109000>;
-+		};
-+
-+		opp@1573000000 {
-+			opp-hz = /bits/ 64 <1573000000>;
-+			opp-microvolt = <1125000>;
-+		};
-+	};
-+
-+	cpu_opp_table_b: opp_table_b {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@507000000 {
-+			opp-hz = /bits/ 64 <507000000>;
-+			opp-microvolt = <828000>;
-+		};
-+
-+		opp@702000000 {
-+			opp-hz = /bits/ 64 <702000000>;
-+			opp-microvolt = <867000>;
-+		};
-+
-+		opp@1001000000 {
-+			opp-hz = /bits/ 64 <1001000000>;
-+			opp-microvolt = <927000>;
-+		};
-+
-+		opp@1209000000 {
-+			opp-hz = /bits/ 64 <1209000000>;
-+			opp-microvolt = <968000>;
-+		};
-+
-+		opp@1404000000 {
-+			opp-hz = /bits/ 64 <1007000000>;
-+			opp-microvolt = <1028000>;
-+		};
-+
-+		opp@1612000000 {
-+			opp-hz = /bits/ 64 <1612000000>;
-+			opp-microvolt = <1049000>;
-+		};
-+
-+		opp@1807000000 {
-+			opp-hz = /bits/ 64 <1807000000>;
-+			opp-microvolt = <1089000>;
-+		};
-+
-+		opp@1989000000 {
-+			opp-hz = /bits/ 64 <1989000000>;
-+			opp-microvolt = <1125000>;
-+		};
-+	};
- 
--Example:
----------
- 	cpu0: cpu@0 {
- 		device_type = "cpu";
- 		compatible = "arm,cortex-a53";
-@@ -29,6 +189,7 @@ Example:
- 		clocks = <&infracfg CLK_INFRA_CA53SEL>,
- 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
- 		clock-names = "cpu", "intermediate";
-+		operating-points-v2 = <&cpu_opp_table_a>;
- 	};
- 
- 	cpu1: cpu@1 {
-@@ -40,6 +201,7 @@ Example:
- 		clocks = <&infracfg CLK_INFRA_CA53SEL>,
- 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
- 		clock-names = "cpu", "intermediate";
-+		operating-points-v2 = <&cpu_opp_table_a>;
- 	};
- 
- 	cpu2: cpu@100 {
-@@ -51,6 +213,7 @@ Example:
- 		clocks = <&infracfg CLK_INFRA_CA57SEL>,
- 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
- 		clock-names = "cpu", "intermediate";
-+		operating-points-v2 = <&cpu_opp_table_b>;
- 	};
- 
- 	cpu3: cpu@101 {
-@@ -62,6 +225,7 @@ Example:
- 		clocks = <&infracfg CLK_INFRA_CA57SEL>,
- 			 <&apmixedsys CLK_APMIXED_MAINPLL>;
- 		clock-names = "cpu", "intermediate";
-+		operating-points-v2 = <&cpu_opp_table_b>;
- 	};
- 
- 	&cpu0 {
--- 
-2.7.4
+Thanks for your comments,
+Chunyan
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
