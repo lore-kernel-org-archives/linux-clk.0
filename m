@@ -1,165 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:60142 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751513AbdESJOX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:14:23 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 19 May 2017 11:14:16 +0200
-Message-Id: <1495185256-26674-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	carlo@caione.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v2 1/2] clk: meson: meson8b: mark clk81 as critical
+Date: Wed, 24 May 2017 11:39:31 +0200
+Message-Id: <20170524093932.5262-2-jbrunet@baylibre.com>
+In-Reply-To: <20170524093932.5262-1-jbrunet@baylibre.com>
+References: <20170524093932.5262-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Disabling clk81 results in an immediate freeze of the whole system. This
+can happen "accidentally" when the last child-clock of clk81 is disabled
+(in this case the common clock framework also disables clk81, even if it
+was only enabled indirectly before).
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++++---------------------
- 1 file changed, 59 insertions(+), 65 deletions(-)
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 9d137cdeaed96638..1d0ce0b4dafba8f4 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -968,71 +968,65 @@
- 		status = "disabled";
- 	};
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index e9985503165c..9d1aaf6e9ac6 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -399,7 +399,7 @@ struct clk_gate meson8b_clk81 = {
+ 		.ops = &clk_gate_ops,
+ 		.parent_names = (const char *[]){ "mpeg_clk_div" },
+ 		.num_parents = 1,
+-		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
++		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
+ 	},
+ };
  
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured  as 0 Hz fixed
--		 * frequency clocks by default.  Boards that provide audio
--		 * clocks should override them.
--		 */
--		audio_clka: audio_clka {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkb: audio_clkb {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkc: audio_clkc {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7794-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured  as 0 Hz fixed
-+	 * frequency clocks by default.  Boards that provide audio
-+	 * clocks should override them.
-+	 */
-+	audio_clka: audio_clka {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkb: audio_clkb {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkc: audio_clkc {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7794-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	rst: reset-controller@e6160000 {
 -- 
-2.7.4
-
+2.9.4
