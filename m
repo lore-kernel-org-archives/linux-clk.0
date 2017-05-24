@@ -1,297 +1,263 @@
-Return-Path: <wens@wens.csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:47892 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761536AbdEXFY5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2017 01:24:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170517164354.16399-11-icenowy@aosc.io>
+References: <20170517164354.16399-1-icenowy@aosc.io> <20170517164354.16399-11-icenowy@aosc.io>
 From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 2/6] clk: sunxi-ng: Support multiple variable pre-dividers
-Date: Fri, 19 May 2017 15:06:08 +0800
-Message-Id: <20170519070612.32159-3-wens@csie.org>
-In-Reply-To: <20170519070612.32159-1-wens@csie.org>
-References: <20170519070612.32159-1-wens@csie.org>
+Date: Wed, 24 May 2017 13:24:29 +0800
+Message-ID: <CAGb2v64nVA=hHjXkVNMN68vQizMBE6vyYfaE895b0L6umv_Ycw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [RFC PATCH 10/11] ARM: sun8i: h3: add display
+ engine pipeline for TVE
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On the A83T, the AHB1 clock has a shared pre-divider on the two
-PLL-PERIPH clock parents. To support such instances of shared
-pre-dividers, this patch extends the mux clock type to support
-multiple variable pre-dividers.
+On Thu, May 18, 2017 at 12:43 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> As we have already the support for the TV encoder on Allwinner H3, add
+> the display engine pipeline device tree nodes to its DTSI file.
+>
+> The H5 pipeline has some differences and will be enabled later.
+>
+> The currently-unused mixer0 and tcon0 are also needed, for the
+> completement of the pipeline.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm/boot/dts/sun8i-h3.dtsi | 189 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 189 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+> index b36f9f423c39..20172ef92415 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -41,6 +41,8 @@
+>   */
+>
+>  #include "sunxi-h3-h5.dtsi"
+> +#include <dt-bindings/clock/sun8i-de2.h>
+> +#include <dt-bindings/reset/sun8i-de2.h>
+>
+>  / {
+>         cpus {
+> @@ -72,6 +74,193 @@
+>                 };
+>         };
+>
+> +       de: display-engine {
+> +               compatible = "allwinner,sun8i-h3-display-engine";
+> +               allwinner,pipelines = <&mixer0>,
+> +                                     <&mixer1>;
+> +               status = "disabled";
+> +       };
+> +
+> +       soc {
+> +               display_clocks: clock@1000000 {
+> +                       compatible = "allwinner,sun8i-a83t-de2-clk";
+> +                       reg = <0x01000000 0x100000>;
+> +                       clocks = <&ccu CLK_BUS_DE>,
+> +                                <&ccu CLK_DE>;
+> +                       clock-names = "bus",
+> +                                     "mod";
+> +                       resets = <&ccu RST_BUS_DE>;
+> +                       #clock-cells = <1>;
+> +                       #reset-cells = <1>;
+> +                       assigned-clocks = <&ccu CLK_DE>;
+> +                       assigned-clock-parents = <&ccu CLK_PLL_DE>;
+> +                       assigned-clock-rates = <432000000>;
+> +               };
+> +
+> +               mixer0: mixer@1100000 {
+> +                       compatible = "allwinner,sun8i-h3-de2-mixer0";
+> +                       reg = <0x01100000 0x100000>;
+> +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
+> +                                <&display_clocks CLK_MIXER0>;
+> +                       clock-names = "bus",
+> +                                     "mod";
+> +                       resets = <&display_clocks RST_MIXER0>;
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               mixer0_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +
+> +                                       mixer0_out_tcon0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&tcon0_in_mixer0>;
+> +                                       };
+> +
+> +                                       mixer0_out_tcon1: endpoint@1 {
+> +                                               reg = <1>;
+> +                                               remote-endpoint = <&tcon1_in_mixer0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               mixer1: mixer@1200000 {
+> +                       compatible = "allwinner,sun8i-h3-de2-mixer1";
+> +                       reg = <0x01200000 0x100000>;
+> +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
+> +                                <&display_clocks CLK_MIXER1>;
+> +                       clock-names = "bus",
+> +                                     "mod";
+> +                       resets = <&display_clocks RST_WB>;
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               mixer1_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +
+> +                                       mixer1_out_tcon1: endpoint@0 {
+> +                                               reg = <0>;
 
-As the pre-dividers are only used to calculate the rate, but
-do not participate in the factorization process, this is fairly
-straightforward.
+I would prefer if you could stick to the numbering scheme we're using for
+Display Engine 1.0, as in endpoint 0 links to component 0 of whatever type.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c   | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-r.c    | 10 +++++-----
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c  | 10 +++++-----
- drivers/clk/sunxi-ng/ccu_mux.c        | 15 ++++++++-------
- drivers/clk/sunxi-ng/ccu_mux.h        | 13 ++++++++-----
- 9 files changed, 51 insertions(+), 47 deletions(-)
+We're probably going to stick to that for the R40's incredibly complicated
+pipeline. I don't want to have any outliers unless absolutely necessary.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index f54114c607df..2bb4cabf802f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -211,6 +211,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi", "pll-periph0" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -218,11 +221,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index df97e25aec76..4d6078fca9ac 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -195,6 +195,9 @@ static SUNXI_CCU_DIV_TABLE(axi_clk, "axi", "cpu",
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi", "pll-periph" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- 
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
-@@ -203,11 +206,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index 5c6d37bdf247..8a753ed0426d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -169,6 +169,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi" , "pll-periph" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -176,11 +179,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 8d38e6510e29..10b38dc46f75 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -180,6 +180,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi" , "pll-periph" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -187,11 +190,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 4cbc1b701b7c..62e4f0d2b2fc 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -141,6 +141,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi" , "pll-periph0" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -148,11 +151,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-index 119f47b568ea..de02be75785c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-@@ -27,6 +27,9 @@
- 
- static const char * const ar100_parents[] = { "osc32k", "osc24M",
- 					     "pll-periph0", "iosc" };
-+static const struct ccu_mux_var_prediv ar100_predivs[] = {
-+	{ .index = 2, .shift = 8, .width = 5 },
-+};
- 
- static struct ccu_div ar100_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
-@@ -35,11 +38,8 @@ static struct ccu_div ar100_clk = {
- 		.shift	= 16,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 2,
--			.shift	= 8,
--			.width	= 5,
--		},
-+		.var_predivs	= ar100_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ar100_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index 6297add857b5..a34a78d7fb28 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -132,6 +132,9 @@ static SUNXI_CCU_M(axi_clk, "axi", "cpu", 0x050, 0, 2, 0);
- 
- static const char * const ahb1_parents[] = { "osc32k", "osc24M",
- 					     "axi", "pll-periph0" };
-+static const struct ccu_mux_var_prediv ahb1_predivs[] = {
-+	{ .index = 3, .shift = 6, .width = 2 },
-+};
- static struct ccu_div ahb1_clk = {
- 	.div		= _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
- 
-@@ -139,11 +142,8 @@ static struct ccu_div ahb1_clk = {
- 		.shift	= 12,
- 		.width	= 2,
- 
--		.variable_prediv	= {
--			.index	= 3,
--			.shift	= 6,
--			.width	= 2,
--		},
-+		.var_predivs	= ahb1_predivs,
-+		.n_var_predivs	= ARRAY_SIZE(ahb1_predivs),
- 	},
- 
- 	.common		= {
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index c6bb1f523232..b1eaafac9f23 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -46,13 +46,14 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 				prediv = cm->fixed_predivs[i].div;
- 
- 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
--		if (parent_index == cm->variable_prediv.index) {
--			u8 div;
--
--			div = reg >> cm->variable_prediv.shift;
--			div &= (1 << cm->variable_prediv.width) - 1;
--			prediv = div + 1;
--		}
-+		for (i = 0; i < cm->n_var_predivs; i++)
-+			if (parent_index == cm->var_predivs[i].index) {
-+				u8 div;
-+
-+				div = reg >> cm->var_predivs[i].shift;
-+				div &= (1 << cm->var_predivs[i].width) - 1;
-+				prediv = div + 1;
-+			}
- 
- 	*parent_rate = *parent_rate / prediv;
- }
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
-index 47aba3a48245..044262245c07 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.h
-+++ b/drivers/clk/sunxi-ng/ccu_mux.h
-@@ -10,6 +10,12 @@ struct ccu_mux_fixed_prediv {
- 	u16	div;
- };
- 
-+struct ccu_mux_var_prediv {
-+	u8	index;
-+	u8	shift;
-+	u8	width;
-+};
-+
- struct ccu_mux_internal {
- 	u8		shift;
- 	u8		width;
-@@ -18,11 +24,8 @@ struct ccu_mux_internal {
- 	const struct ccu_mux_fixed_prediv	*fixed_predivs;
- 	u8		n_predivs;
- 
--	struct {
--		u8	index;
--		u8	shift;
--		u8	width;
--	} variable_prediv;
-+	const struct ccu_mux_var_prediv		*var_predivs;
-+	u8		n_var_predivs;
- };
- 
- #define _SUNXI_CCU_MUX_TABLE(_shift, _width, _table)	\
--- 
-2.11.0
+ChenYu
+
+> +                                               remote-endpoint = <&tcon1_in_mixer1>;
+> +                                       };
+> +
+> +                                       mixer1_out_tcon0: endpoint@1 {
+> +                                               reg = <1>;
+> +                                               remote-endpoint = <&tcon0_in_mixer1>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               tcon0: lcd-controller@1c0c000 {
+> +                       compatible = "allwinner,sun8i-h3-tcon0";
+> +                       reg = <0x01c0c000 0x1000>;
+> +                       interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_TCON0>,
+> +                                <&ccu CLK_TCON0>;
+> +                       clock-names = "ahb",
+> +                                     "tcon-ch1";
+> +                       resets = <&ccu RST_BUS_TCON0>;
+> +                       reset-names = "lcd";
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               tcon0_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       tcon0_in_mixer0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&mixer0_out_tcon0>;
+> +                                       };
+> +
+> +                                       tcon0_in_mixer1: endpoint@1 {
+> +                                               reg = <1>;
+> +                                               remote-endpoint = <&mixer1_out_tcon0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               tcon1: lcd-controller@1c0d000 {
+> +                       compatible = "allwinner,sun8i-h3-tcon1";
+> +                       reg = <0x01c0d000 0x1000>;
+> +                       interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_TCON1>;
+> +                       clock-names = "ahb";
+> +                       resets = <&ccu RST_BUS_TCON1>;
+> +                       reset-names = "lcd";
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               tcon1_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       tcon1_in_mixer1: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&mixer1_out_tcon1>;
+> +                                       };
+> +
+> +                                       tcon1_in_mixer0: endpoint@1 {
+> +                                               reg = <1>;
+> +                                               remote-endpoint = <&mixer0_out_tcon1>;
+> +                                       };
+> +                               };
+> +
+> +                               tcon1_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +
+> +                                       tcon1_out_tve0: endpoint@1 {
+> +                                               reg = <1>;
+> +                                               remote-endpoint = <&tve0_in_tcon1>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               tve0: tv-encoder@1e00000 {
+> +                       compatible = "allwinner,sun8i-h3-tv-encoder";
+> +                       reg = <0x01e00000 0x1000>;
+> +                       clocks = <&ccu CLK_BUS_TVE>, <&ccu CLK_TVE>;
+> +                       clock-names = "bus", "mod";
+> +                       resets = <&ccu RST_BUS_TVE>;
+> +                       status = "disabled";
+> +
+> +                       assigned-clocks = <&ccu CLK_TVE>;
+> +                       assigned-clock-parents = <&ccu CLK_PLL_DE>;
+> +                       assigned-clock-rates = <216000000>;
+> +
+> +                       port {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               tve0_in_tcon1: endpoint@0 {
+> +                                       reg = <0>;
+> +                                       remote-endpoint = <&tcon1_out_tve0>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+>         timer {
+>                 compatible = "arm,armv7-timer";
+>                 interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> --
+> 2.12.2
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
