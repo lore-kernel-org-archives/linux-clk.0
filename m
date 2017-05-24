@@ -1,59 +1,57 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	guodong.xu@linaro.org,
-	chenjun14@huawei.com,
-	zhongkaihua@huawei.com,
-	zhangfei.gao@linaro.org,
-	leo.yan@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Zheng Shaobo <zhengshaobo1@huawei.com>
-Subject: [PATCH 3/3] clk: hi3660: Set PPLL2 to 2880M
-Date: Mon, 15 May 2017 13:54:23 +0800
-Message-Id: <20170515055423.1803-3-guodong.xu@linaro.org>
-In-Reply-To: <20170515055423.1803-1-guodong.xu@linaro.org>
-References: <20170515055423.1803-1-guodong.xu@linaro.org>
+Return-Path: <angus@akkea.ca>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Wed, 24 May 2017 12:51:20 -0600
+From: Angus Ainslie <angus@akkea.ca>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai
+ <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+In-Reply-To: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
+Message-ID: <ad72ceff73364add5cfe25b6143a68ca@www.akkea.ca>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zhong Kaihua <zhongkaihua@huawei.com>
+On 2017-05-24 10:34, Boris Brezillon wrote:
+> AHB BIST gate is actually controlled with bit 7.
+> 
+> This bug was detected while trying to use the NAND controller which is
+> using the DMA engine to transfer data to the NAND.
+> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate 
+> bit,
+> the core was disabling the DMA engine clock as part of its 'disable
+> unused clks' procedure, which was causing all DMA transfers to fail 
+> after
+> this point.
+> 
+> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> Cc: stable@vger.kernel.org
+> Reported-by: Angus Ainslie <angus@akkea.ca>compatible = 
+> "nextthing,chip-pro", "nextthing,gr8";
+> Signed-off-by: Boris Brezillon <boris.brezillon@frecompatible = 
+> "nextthing,chip-pro", "nextthing,gr8";e-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c 
+> b/drivers/clk/sunxi-ng/ccu-sun5i.c
+> index 5c476f966a72..5372bf8be5e6 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
+> @@ -243,7 +243,7 @@ static SUNXI_CCU_GATE(ahb_ss_clk,	"ahb-ss",	"ahb",
+>  static SUNXI_CCU_GATE(ahb_dma_clk,	"ahb-dma",	"ahb",
+>  		      0x060, BIT(6), 0);
+>  static SUNXI_CCU_GATE(ahb_bist_clk,	"ahb-bist",	"ahb",
+> -		      0x060, BIT(6), 0);
+> +		      0x060, BIT(7), 0);
+>  static SUNXI_CCU_GATE(ahb_mmc0_clk,	"ahb-mmc0",	"ahb",
+>  		      0x060, BIT(8), 0);
+>  static SUNXI_CCU_GATE(ahb_mmc1_clk,	"ahb-mmc1",	"ahb",
 
-Set PPLL2 to 2880M. With this patch, we saw better compatibility
-on various 1080p HDMI monitors.
 
-Signed-off-by: Zhong Kaihua <zhongkaihua@huawei.com>
-Signed-off-by: Zheng Shaobo <zhengshaobo1@huawei.com>
----
- drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index ffc765a..fd5ce7f 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -20,7 +20,7 @@ static const struct hisi_fixed_rate_clock hi3660_fixed_rate_clks[] = {
- 	{ HI3660_CLK_FLL_SRC, "clk_fll_src", NULL, 0, 128000000, },
- 	{ HI3660_CLK_PPLL0, "clk_ppll0", NULL, 0, 1600000000, },
- 	{ HI3660_CLK_PPLL1, "clk_ppll1", NULL, 0, 1866000000, },
--	{ HI3660_CLK_PPLL2, "clk_ppll2", NULL, 0, 960000000, },
-+	{ HI3660_CLK_PPLL2, "clk_ppll2", NULL, 0, 2880000000, },
- 	{ HI3660_CLK_PPLL3, "clk_ppll3", NULL, 0, 1290000000, },
- 	{ HI3660_CLK_SCPLL, "clk_scpll", NULL, 0, 245760000, },
- 	{ HI3660_PCLK, "pclk", NULL, 0, 20000000, },
-@@ -42,7 +42,7 @@ static const struct hisi_fixed_factor_clock hi3660_crg_fixed_factor_clks[] = {
- 	{ HI3660_CLK_GATE_I2C6, "clk_gate_i2c6", "clk_i2c6_iomcu", 1, 4, 0, },
- 	{ HI3660_CLK_DIV_SYSBUS, "clk_div_sysbus", "clk_mux_sysbus", 1, 7, 0, },
- 	{ HI3660_CLK_DIV_320M, "clk_div_320m", "clk_320m_pll_gt", 1, 5, 0, },
--	{ HI3660_CLK_DIV_A53, "clk_div_a53hpm", "clk_a53hpm_andgt", 1, 2, 0, },
-+	{ HI3660_CLK_DIV_A53, "clk_div_a53hpm", "clk_a53hpm_andgt", 1, 6, 0, },
- 	{ HI3660_CLK_GATE_SPI0, "clk_gate_spi0", "clk_ppll0", 1, 8, 0, },
- 	{ HI3660_CLK_GATE_SPI2, "clk_gate_spi2", "clk_ppll0", 1, 8, 0, },
- 	{ HI3660_PCIEPHY_REF, "clk_pciephy_ref", "clk_div_pciephy", 1, 1, 0, },
--- 
-2.10.2
+The patch works perfectly. Using that I was able to remove the 
+clk_ignore_unsed and CLK_IS_CRITICAL.
