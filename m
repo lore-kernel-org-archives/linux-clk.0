@@ -1,98 +1,112 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:43550 "EHLO
+Received: from mail.free-electrons.com ([62.4.15.54]:59512 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760043AbdEOJUI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2017 05:20:08 -0400
-Date: Mon, 15 May 2017 11:20:01 +0200
+        with ESMTP id S968460AbdEXITl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2017 04:19:41 -0400
+Date: Wed, 24 May 2017 10:19:28 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Icenowy Zheng <icenowy@aosc.io>
 Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v7 05/13] drm/sun4i: abstract a engine type
-Message-ID: <20170515092001.ik7qrqmg5pgtp2ct@flea.home>
-References: <20170514163045.40366-1-icenowy@aosc.io>
- <20170514163045.40366-6-icenowy@aosc.io>
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] Re: [RFC PATCH 10/11] ARM: sun8i: h3: add display
+ engine pipeline for TVE
+Message-ID: <20170524081928.xcbepxdt7txnadki@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-11-icenowy@aosc.io>
+ <20170519180616.vzrlu2avuucsjkiu@flea.home>
+ <B72028D8-B055-4F53-A4EA-7E93A28DB8FF@aosc.io>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uyxswgfiqviio6dj"
-In-Reply-To: <20170514163045.40366-6-icenowy@aosc.io>
+        protocol="application/pgp-signature"; boundary="gn2k2r4rgqlpirho"
+In-Reply-To: <B72028D8-B055-4F53-A4EA-7E93A28DB8FF@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---uyxswgfiqviio6dj
-Content-Type: text/plain; charset=us-ascii
+--gn2k2r4rgqlpirho
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 15, 2017 at 12:30:37AM +0800, Icenowy Zheng wrote:
-> As we are going to add support for the Allwinner DE2 engine in sun4i-drm
-> driver, we will finally have two types of display engines -- the DE1
-> backend and the DE2 mixer. They both do some display blending and feed
-> graphics data to TCON, and is part of the "Display Engine" called by
-> Allwinner, so I choose to call them both "engine" here.
+On Sat, May 20, 2017 at 02:10:35AM +0800, Icenowy Zheng wrote:
 >=20
-> Abstract the engine type to a new struct with an ops struct, which contai=
-ns
-> functions that should be called outside the engine-specified code (in
-> TCON, CRTC or TV Encoder code).
 >=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> ---
-> Changes in v7:
-> - Mention "Display Engine" for the name "engine".
-> - Fixed some small issues found by Chen-Yu and added his ACK.
-> Changes in v6:
-> - Rebased on wens's multi-pipeline patchset.
-> - Split out Makefile changes.
+> =E4=BA=8E 2017=E5=B9=B45=E6=9C=8820=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
+2:06:16, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
+=B0:
+> >On Thu, May 18, 2017 at 12:43:53AM +0800, Icenowy Zheng wrote:
+> >> As we have already the support for the TV encoder on Allwinner H3,
+> >add
+> >> the display engine pipeline device tree nodes to its DTSI file.
+> >>=20
+> >> The H5 pipeline has some differences and will be enabled later.
+> >>=20
+> >> The currently-unused mixer0 and tcon0 are also needed, for the
+> >> completement of the pipeline.
+> >>=20
+> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> ---
+> >>  arch/arm/boot/dts/sun8i-h3.dtsi | 189
+> >++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 189 insertions(+)
+> >>=20
+> >> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+> >b/arch/arm/boot/dts/sun8i-h3.dtsi
+> >> index b36f9f423c39..20172ef92415 100644
+> >> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> >> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> >> @@ -41,6 +41,8 @@
+> >>   */
+> >> =20
+> >>  #include "sunxi-h3-h5.dtsi"
+> >> +#include <dt-bindings/clock/sun8i-de2.h>
+> >> +#include <dt-bindings/reset/sun8i-de2.h>
+> >> =20
+> >>  / {
+> >>  	cpus {
+> >> @@ -72,6 +74,193 @@
+> >>  		};
+> >>  	};
+> >> =20
+> >> +	de: display-engine {
+> >> +		compatible =3D "allwinner,sun8i-h3-display-engine";
+> >> +		allwinner,pipelines =3D <&mixer0>,
+> >> +				      <&mixer1>;
+> >> +		status =3D "disabled";
+> >> +	};
+> >> +
+> >> +	soc {
+> >> +		display_clocks: clock@1000000 {
+> >> +			compatible =3D "allwinner,sun8i-a83t-de2-clk";
+> >> +			reg =3D <0x01000000 0x100000>;
+> >> +			clocks =3D <&ccu CLK_BUS_DE>,
+> >> +				 <&ccu CLK_DE>;
+> >> +			clock-names =3D "bus",
+> >> +				      "mod";
+> >> +			resets =3D <&ccu RST_BUS_DE>;
+> >> +			#clock-cells =3D <1>;
+> >> +			#reset-cells =3D <1>;
+> >> +			assigned-clocks =3D <&ccu CLK_DE>;
+> >> +			assigned-clock-parents =3D <&ccu CLK_PLL_DE>;
+> >> +			assigned-clock-rates =3D <432000000>;
+> >
+> >This shouldn't be set in the DT, but evaluated at runtime when calling
+> >clk_set_rate.
+>=20
+> Nope, DE2 clock doesn't need evalution, as the clock is decoupled with
+> DE2 mixers' output signal. (Although it seems that SoCs with larger
+> plane size will use higher clock.)
 
-You also added a get_id callback here...
+So it's the display engine that needs that clock to operate properly?
+This is the wrong DT node to set that value then. It should be in the
+mixer node, or even better in the mixers' driver.
 
-> +static const struct sunxi_engine_ops sun4i_backend_engine_ops =3D {
-> +	.commit				=3D sun4i_backend_commit,
-> +	.layers_init			=3D sun4i_layers_init,
-> +	.apply_color_correction		=3D sun4i_backend_apply_color_correction,
-> +	.disable_color_correction	=3D sun4i_backend_disable_color_correction,
-> +};
-> +
+> And setting it to 432MHz is also needed for properly 216MHz clock to
+> TVE.
 
-=2E.. that you don't populate ...
-
-> @@ -477,7 +481,7 @@ static int sun4i_tcon_bind(struct device *dev, struct=
- device *master,
->  	dev_set_drvdata(dev, tcon);
->  	tcon->drm =3D drm;
->  	tcon->dev =3D dev;
-> -	tcon->id =3D backend->id;
-> +	tcon->id =3D sunxi_engine_get_id(engine);
-
-=2E.. that you call to fill the TCON ID ...
-
-> +/**
-> + * sunxi_engine_get_id - Get the ID of the engine.
-> + * @engine:	pointer to the engine
-> + *
-> + * If the ID is not necessary, just do not implement it in sunxi_engine_=
-ops,
-> + * and a default -1 will be returned.
-> + */
-> +static inline int
-> +sunxi_engine_get_id(struct sunxi_engine *engine)
-> +{
-> +	if (engine->ops && engine->ops->get_id)
-> +		return engine->ops->get_id(engine);
-> +
-> +	return -1;
-
-=2E.. and will return -1 if not populated, which essentially means that
-instead of having 0 or 1, we're now having -1 as our id.
-
-This is a regression, and I'm even wondering if we can't just store
-the ID in the sunxi_engine structure. Is anything preventing us to do
-that, instead of using a callback?
+Just like the parenthood, this can and should be evaluated at runtime.
 
 Maxime
 
@@ -101,24 +115,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---uyxswgfiqviio6dj
+--gn2k2r4rgqlpirho
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZGXLAAAoJEBx+YmzsjxAgg2IQAI9v3T5SjR/OtBfDFOTdzuNv
-E6V9jJj57X2yg6JA/PG7ALWsx/hePBJfXCJZ31Cmkjk/iDO1pFSa5DS52eRszUQT
-1634g5aKs8sO3TGSzsmz+5Xb5rNqZXpAtZjnbakjsXhMN5jjqgbM/4n6ts6rIZfE
-Q5WUFUZdh8Ua0wq/sxmTDcgaQhxttVxSFSc6aBwzaBbSyU8Qk1njfs3fwBWZilvD
-D1xf03VSOmqlTTb5q7lzwnf9fB3ufUHxFc3no3diPCMM6PDettKVGODU9C2rPbNh
-H22cDxQN6He5nuJAi3qfa5ZzEDJjgMY40s6FRukXpOh5PUyGE8QjZKRg4k5O5PYI
-54an7VkcUcN1jwRpe/Y74SggSBDJkgxfQ9+GeCkawydEFd09/kOVPbbjSrH04mjF
-DGdB7iDErMf50zxnmAiHjFdxf16BiCJv2EZEq60+XsFQc1K9GS+8vANORv23BJLq
-32plwp7qtCimpA5k6uIFiiomHqfqQHk9t2e6X5xrdxJAp3HGp2/1QZbTGdv0qPiq
-wVIcvShdhd2RdsPasNevKjhLgjigxjZkN/RVcV/c2kWnn2SDlc/9HO512tzmkBWO
-eH57gR++NATdnrO4xfnGPYtKAkH7WhYQKSmHBVGfcUr0vhO47yBBc4yZ6d5ygSTO
-KS+RHvYcZtrAAEFKozHH
-=nwP+
+iQIcBAEBAgAGBQJZJUIQAAoJEBx+YmzsjxAgVxcP/iTUzfmy3TIryWWV0qe9yyY9
+gJGYSrF7nzJZ4GHEb5Rq7n+M8kVBjD8UTjLo/p7lXnol6xm/dgMPNzIQ8PWrpEqj
+dGmSX5qD0wqK+FeWsfBeU9pmsHgOmNkgi9LIaa1uh++M/LPdrHcWaiZBireQCX8L
+t3Imq+zMgxUWYM4fFnzcZVoMKfOVYI5u8/yisoGOcLnfvltuwT3AuhWvDa4NCRWO
+l1MHy2S4BuywiNf1C837c7i5KF4xqK5wr6zkPM/2ML9Eqq0KUcnY/2YezyuSREFR
+DfV+DVmMKPJewVg2AdWfS1DZCMspdF9MAu4lSrA+hCumSck2ltyJ40KuOIrLZRPW
+Jswz0APX45ZXryV35FliUsCOofkC4r2Lq+kRsfiGw2DF6p5ghvJMofVpgOcfWswK
++Dycm6CQZknSsmHki48HNtsY7kk593IbHA4CKM4BPtNJY8qyaKq2lQgauE9jo9Dw
+7OVf3uYKvbrnwDWgxbI2A2sRNWxPq1NOTnexGUhwhU7nl4SiOx8i6dXJogaTESK7
++McdnSdKVbTQebYrWArZfHTaMGdfhkxAjqFYUqgZv3Q+vSMN3C4O2IbquTF6KkgH
+r3uYho8wANY7eMmoBpm2zidUw7u130gf5YINLcxckvT2TXDcj5ekCb28tq8ZCEBd
+sRI8RqAxXTgE19O2nEya
+=aMy1
 -----END PGP SIGNATURE-----
 
---uyxswgfiqviio6dj--
+--gn2k2r4rgqlpirho--
