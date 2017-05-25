@@ -1,106 +1,65 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 5/5] arm64: dts: marvell: use new binding for the system controller on ap806
-Date: Fri, 19 May 2017 17:58:05 +0200
-Message-Id: <dd50dc10764735d46c8e493b8c6907aa5a3d1783.1495209464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
-References: <cover.fd6093dbad53cdac70eef4e53b238768721218ac.1495209464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Chen-Yu Tsai" <wens@csie.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, "Angus Ainslie" <angus@akkea.ca>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+ stable@vger.kernel.org
+References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
+Message-ID: <149573823221.52617.2350903252470015903@resonance>
+Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
+Date: Thu, 25 May 2017 11:50:32 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The new binding for the system controller on ap806 moved the clock into a
-subnode. This preliminary step will allow to add gpio and pinctrl
-subnodes
+Quoting Boris Brezillon (2017-05-24 09:34:29)
+> AHB BIST gate is actually controlled with bit 7.
+> =
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+> This bug was detected while trying to use the NAND controller which is
+> using the DMA engine to transfer data to the NAND.
+> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate bit,
+> the core was disabling the DMA engine clock as part of its 'disable
+> unused clks' procedure, which was causing all DMA transfers to fail after
+> this point.
+> =
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 0c25ec62a2a3..205037e3e7dc 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -193,7 +193,7 @@
- 				#size-cells = <0>;
- 				cell-index = <0>;
- 				interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 			};
- 
-@@ -204,7 +204,7 @@
- 				#size-cells = <0>;
- 				interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 				timeout-ms = <1000>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 			};
- 
-@@ -214,7 +214,7 @@
- 				reg-shift = <2>;
- 				interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 				reg-io-width = <1>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 			};
- 
-@@ -224,7 +224,7 @@
- 				reg-shift = <2>;
- 				interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 				reg-io-width = <1>;
--				clocks = <&ap_syscon 3>;
-+				clocks = <&ap_clk 3>;
- 				status = "disabled";
- 
- 			};
-@@ -234,17 +234,20 @@
- 				reg = <0x6e0000 0x300>;
- 				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "core";
--				clocks = <&ap_syscon 4>;
-+				clocks = <&ap_clk 4>;
- 				dma-coherent;
- 				marvell,xenon-phy-slow-mode;
- 				status = "disabled";
- 			};
- 
- 			ap_syscon: system-controller@6f4000 {
--				compatible = "marvell,ap806-system-controller",
--					     "syscon";
--				#clock-cells = <1>;
-+				compatible = "syscon", "simple-mfd";
- 				reg = <0x6f4000 0x1000>;
-+
-+				ap_clk: clock {
-+					compatible = "marvell,ap806-clock";
-+					#clock-cells = <1>;
-+				};
- 			};
- 		};
- 	};
--- 
-git-series 0.9.1
+> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> Cc: stable@vger.kernel.org
+> Reported-by: Angus Ainslie <angus@akkea.ca>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+Patch looks good to me. Did this ever work? I'm trying to figure out if
+it should go into -fixes or -next.
+
+Thanks,
+Mike
+
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
+
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-=
+sun5i.c
+> index 5c476f966a72..5372bf8be5e6 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
+> @@ -243,7 +243,7 @@ static SUNXI_CCU_GATE(ahb_ss_clk,   "ahb-ss",       "=
+ahb",
+>  static SUNXI_CCU_GATE(ahb_dma_clk,     "ahb-dma",      "ahb",
+>                       0x060, BIT(6), 0);
+>  static SUNXI_CCU_GATE(ahb_bist_clk,    "ahb-bist",     "ahb",
+> -                     0x060, BIT(6), 0);
+> +                     0x060, BIT(7), 0);
+>  static SUNXI_CCU_GATE(ahb_mmc0_clk,    "ahb-mmc0",     "ahb",
+>                       0x060, BIT(8), 0);
+>  static SUNXI_CCU_GATE(ahb_mmc1_clk,    "ahb-mmc1",     "ahb",
+> -- =
+
+> 2.7.4
+>=20
