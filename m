@@ -1,102 +1,142 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:39098 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753177AbdEDLt7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 07:49:59 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 03/13] dt-bindings: add bindings for DE2 on V3s SoC
-Date: Thu,  4 May 2017 19:48:48 +0800
-Message-Id: <20170504114858.9008-4-icenowy@aosc.io>
-In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>, "Adriana Reus" <adi.reus@gmail.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1495532928.2344.14.camel@baylibre.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Kevin Hilman" <khilman@baylibre.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+ <20170521215958.19743-3-jbrunet@baylibre.com>
+ <CABjU8Gu_0xgto6UfaOofW1RjZkEQtbreqqBS2Ukd+Q0DLSZG8w@mail.gmail.com>
+ <1495532928.2344.14.camel@baylibre.com>
+Message-ID: <149573872145.52617.10663444060792708996@resonance>
+Subject: Re: [PATCH v2 02/11] clk: add clk_core_set_phase_nolock function
+Date: Thu, 25 May 2017 11:58:41 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC have a display engine which have a different pipeline
-with older SoCs.
+Quoting Jerome Brunet (2017-05-23 02:48:48)
+> On Tue, 2017-05-23 at 12:35 +0300, Adriana Reus wrote:
+> > On Mon, May 22, 2017 at 12:59 AM, Jerome Brunet <jbrunet@baylibre.com> =
+wrote:
+> > > Create a core function for set_phase, as it is done for set_rate and
+> > > set_parent.
+> > > =
 
-Add document for it (new compatibles and the new "mixer" part).
+> > > This rework is done to ease the integration of "protected" clock
+> > > functionality.
+> > > =
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Rob Herring <robh@kernel.org>
----
-Changes in v4:
-- Removed the refactor at TCON chapter.
-Changes in v3:
-- Remove the description of having a BE directly as allwinner,pipeline.
+> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > ---
+> > > =C2=A0drivers/clk/clk.c | 31 +++++++++++++++++++------------
+> > > =C2=A01 file changed, 19 insertions(+), 12 deletions(-)
+> > > =
 
- .../bindings/display/sunxi/sun4i-drm.txt           | 29 ++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index f5c371532509..6031fada37f9 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk
+> > > *parent)
+> > > =C2=A0}
+> > > =C2=A0EXPORT_SYMBOL_GPL(clk_set_parent);
+> > > =
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 7acdbf14ae1c..33452884b96e 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -41,6 +41,7 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON. Three are needed:
-@@ -62,7 +63,7 @@ Required properties:
-   second the block connected to the TCON channel 1 (usually the TV
-   encoder)
- 
--On SoCs other than the A33, there is one more clock required:
-+On SoCs other than the A33 and V3s, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
- 
- DRC
-@@ -148,6 +149,26 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoints, the second one the outputs
- 
-+Display Engine 2.0 Mixer
-+------------------------
-+
-+The DE2 mixer have many functionalities, currently only layer blending is
-+supported.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun8i-v3s-de2-mixer
-+  - reg: base address and size of the memory-mapped region.
-+  - clocks: phandles to the clocks feeding the frontend and backend
-+    * bus: the backend interface clock
-+    * ram: the backend DRAM clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset controllers driving the backend
-+
-+- ports: A ports node with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+  first port should be the input endpoints, the second one the output
-+
- 
- Display Engine Pipeline
- -----------------------
-@@ -162,9 +183,13 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--    frontends available.
-+    pipeline entry point. For SoCs with original DE (currently
-+    all SoCs supported by display engine except V3s), this
-+    phandle should be a display frontend; for SoCs with DE2,
-+    this phandle should be a mixer.
- 
- Example:
- 
--- 
-2.12.2
+> > > +static int clk_core_set_phase_nolock(struct clk_core *core, int degr=
+ees)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret =3D -EINVAL;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!core)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0trace_clk_set_phase(clk->c=
+ore, degrees);
+> > =
 
+> > =C2=A0^ trace_clk_set_phase(core, degrees)
+> =
+
+> Shame ... Once again this is a poor use of 'git add --patch'.
+> This particular diff ended up in patch 5.
+> =
+
+> Thanks a lot for catching it!
+
+Patch looks good to me overall. Can you reply here with V3? I'll apply
+it to clk-next-protect for testing.
+
+Regards,
+Mike
+
+> =
+
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (core->ops->set_phase)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0ret =3D core->ops->set_phase(core->hw, degrees);
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0trace_clk_set_phase_comple=
+te(core, degrees);
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return ret;
+> > > +}
+> > > +
+> > > =C2=A0/**
+> > > =C2=A0 * clk_set_phase - adjust the phase shift of a clock signal
+> > > =C2=A0 * @clk: clock signal source
+> > > @@ -1895,7 +1912,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+> > > =C2=A0 */
+> > > =C2=A0int clk_set_phase(struct clk *clk, int degrees)
+> > > =C2=A0{
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret =3D -EINVAL;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
+> > > =
+
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!clk)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> > > @@ -1906,17 +1923,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0degrees +=3D 360;
+> > > =
+
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk_prepare_lock();
+> > > -
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0trace_clk_set_phase(clk->c=
+ore, degrees);
+> > > -
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (clk->core->ops->set_ph=
+ase)
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0ret =3D clk->core->ops->set_phase(clk->core->hw, de=
+grees);
+> > > -
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0trace_clk_set_phase_comple=
+te(clk->core, degrees);
+> > > -
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ret)
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0clk->core->phase =3D degrees;
+> > > -
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D clk_core_set_phase=
+_nolock(clk->core, degrees);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk_prepare_unlock();
+> > > =
+
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return ret;
+> > > --
+> > > 2.9.4
+> > > =
+
+> > > --
+> > > To unsubscribe from this list: send the line "unsubscribe linux-clk" =
+in
+> > > the body of a message to majordomo@vger.kernel.org
+> > > More majordomo info at=C2=A0=C2=A0http://vger.kernel.org/majordomo-in=
+fo.html
+>=20
