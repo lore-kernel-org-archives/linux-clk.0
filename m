@@ -1,88 +1,221 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Pramod Kumar <pramodku@broadcom.com>
-Subject: [PATCH 08/11] arm64: dts: Add GPIO DT nodes for Stingray SOC
-Date: Sat,  6 May 2017 17:24:43 +0530
-Message-Id: <1494071686-19098-9-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
-References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1495697404.22797.2.camel@mtkswgap22>
+Subject: Re: [PATCH 1/6] clk: mediatek: add missing cpu mux causing Mediatek
+ cpufreq can't work
+From: Sean Wang <sean.wang@mediatek.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <viresh.kumar@linaro.org>, <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
+	<mark.rutland@arm.com>, <jamesjj.liao@mediatek.com>,
+	<p.zabel@pengutronix.de>, <shunli.wang@mediatek.com>, <erin.lo@mediatek.com>,
+	<jdelvare@suse.de>, <devicetree@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Date: Thu, 25 May 2017 15:30:04 +0800
+In-Reply-To: <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
+References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
+	 <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+Hi Michael and Stephen
 
-The GPIOs on Stingray SOC are based on iProc GPIOs hence
-using this we add GPIO DT nodes for Stingray SOC.
 
-Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Just a gentle ping on this one :)
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index f9a8e8d..fb51473 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -258,6 +258,40 @@
- 		#include "stingray-clock.dtsi"
- 		#include "stingray-pinctrl.dtsi"
- 
-+		gpio_crmu: gpio@66424800 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x66424800 0x4c>;
-+			ngpios = <6>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+		};
-+
-+		gpio_hsls: gpio@689d0000 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x689d0000 0x864>;
-+			ngpios = <151>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-ranges = <&pinmux 0 0 16>,
-+					<&pinmux 16 71 2>,
-+					<&pinmux 18 131 8>,
-+					<&pinmux 26 83 6>,
-+					<&pinmux 32 123 4>,
-+					<&pinmux 36 43 24>,
-+					<&pinmux 60 89 2>,
-+					<&pinmux 62 73 4>,
-+					<&pinmux 66 95 28>,
-+					<&pinmux 94 127 4>,
-+					<&pinmux 98 139 10>,
-+					<&pinmux 108 16 27>,
-+					<&pinmux 135 77 6>,
-+					<&pinmux 141 67 4>,
-+					<&pinmux 145 149 6>,
-+					<&pinmux 151 91 4>;
-+		};
-+
- 		uart0: uart@68a00000 {
- 			device_type = "serial";
- 			compatible = "snps,dw-apb-uart";
--- 
-2.7.4
+
+Cheers, Sean
+
+
+On Fri, 2017-05-05 at 23:26 +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> This patch adds CPU multiplexer clocks which are essential for Mediatek
+> cpufreq driver. It would use the CPU clock multiplexer to switch to the
+> intermediate clock source temporarily and then wait for the primary clock
+> changing getting stable.
+> 
+> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  drivers/clk/mediatek/Makefile     |   2 +-
+>  drivers/clk/mediatek/clk-cpumux.c | 120 ++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/mediatek/clk-cpumux.h |  30 ++++++++++
+>  3 files changed, 151 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
+>  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
+> 
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index 5c3afb8..2a755b5 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -1,4 +1,4 @@
+> -obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+> +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o
+>  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+>  obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
+>  obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
+> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+> new file mode 100644
+> index 0000000..edd8e69
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-cpumux.c
+> @@ -0,0 +1,120 @@
+> +/*
+> + * Copyright (c) 2015 Linaro Ltd.
+> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-cpumux.h"
+> +
+> +static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
+> +{
+> +	return container_of(_hw, struct mtk_clk_cpumux, hw);
+> +}
+> +
+> +static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+> +	unsigned int val;
+> +
+> +	regmap_read(mux->regmap, mux->reg, &val);
+> +
+> +	val >>= mux->shift;
+> +	val &= mux->mask;
+> +
+> +	if (val >= num_parents)
+> +		return -EINVAL;
+> +
+> +	return val;
+> +}
+> +
+> +static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
+> +	u32 mask, val;
+> +
+> +	val = index << mux->shift;
+> +	mask = mux->mask << mux->shift;
+> +
+> +	return regmap_update_bits(mux->regmap, mux->reg, mask, val);
+> +}
+> +
+> +static const struct clk_ops clk_cpumux_ops = {
+> +	.get_parent = clk_cpumux_get_parent,
+> +	.set_parent = clk_cpumux_set_parent,
+> +};
+> +
+> +static struct clk __init *
+> +mtk_clk_register_cpumux(const struct mtk_composite *mux,
+> +			struct regmap *regmap)
+> +{
+> +	struct mtk_clk_cpumux *cpumux;
+> +	struct clk *clk;
+> +	struct clk_init_data init;
+> +
+> +	cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
+> +	if (!cpumux)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = mux->name;
+> +	init.ops = &clk_cpumux_ops;
+> +	init.parent_names = mux->parent_names;
+> +	init.num_parents = mux->num_parents;
+> +	init.flags = mux->flags;
+> +
+> +	cpumux->reg = mux->mux_reg;
+> +	cpumux->shift = mux->mux_shift;
+> +	cpumux->mask = BIT(mux->mux_width) - 1;
+> +	cpumux->regmap = regmap;
+> +	cpumux->hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &cpumux->hw);
+> +	if (IS_ERR(clk))
+> +		kfree(cpumux);
+> +
+> +	return clk;
+> +}
+> +
+> +int __init mtk_clk_register_cpumuxes(struct device_node *node,
+> +				     const struct mtk_composite *clks, int num,
+> +				     struct clk_onecell_data *clk_data)
+> +{
+> +	int i;
+> +	struct clk *clk;
+> +	struct regmap *regmap;
+> +
+> +	regmap = syscon_node_to_regmap(node);
+> +	if (IS_ERR(regmap)) {
+> +		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
+> +		       PTR_ERR(regmap));
+> +		return PTR_ERR(regmap);
+> +	}
+> +
+> +	for (i = 0; i < num; i++) {
+> +		const struct mtk_composite *mux = &clks[i];
+> +
+> +		clk = mtk_clk_register_cpumux(mux, regmap);
+> +		if (IS_ERR(clk)) {
+> +			pr_err("Failed to register clk %s: %ld\n",
+> +			       mux->name, PTR_ERR(clk));
+> +			continue;
+> +		}
+> +
+> +		clk_data->clks[mux->id] = clk;
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
+> new file mode 100644
+> index 0000000..dddaad5
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-cpumux.h
+> @@ -0,0 +1,30 @@
+> +/*
+> + * Copyright (c) 2015 Linaro Ltd.
+> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef __DRV_CLK_CPUMUX_H
+> +#define __DRV_CLK_CPUMUX_H
+> +
+> +struct mtk_clk_cpumux {
+> +	struct clk_hw	hw;
+> +	struct regmap	*regmap;
+> +	u32		reg;
+> +	u32		mask;
+> +	u8		shift;
+> +};
+> +
+> +int mtk_clk_register_cpumuxes(struct device_node *node,
+> +			      const struct mtk_composite *clks, int num,
+> +			      struct clk_onecell_data *clk_data);
+> +
+> +#endif /* __DRV_CLK_CPUMUX_H */
