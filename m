@@ -1,159 +1,113 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH 10/11] arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
-Date: Sat,  6 May 2017 17:24:45 +0530
-Message-Id: <1494071686-19098-11-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
-References: <1494071686-19098-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Hilman" <khilman@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170521215958.19743-5-jbrunet@baylibre.com>
+Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+ <20170521215958.19743-5-jbrunet@baylibre.com>
+Message-ID: <149574365034.52617.9521289317050513324@resonance>
+Subject: Re: [PATCH v2 04/11] clk: use round rate to bail out early in set_rate
+Date: Thu, 25 May 2017 13:20:50 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-We have two instance of PL022 SPI controllers, one instance of
-DMA PL330, and one non-secure SP805 Watchdog on Stingray SOC.
+Quoting Jerome Brunet (2017-05-21 14:59:51)
+> The current implementation of clk_core_set_rate_nolock bails out early if
+> the requested rate is exactly the same as the one set. It should bail out
+> if the request would not result in rate a change.  This important when ra=
+te
+> is not exactly what is requested, which is fairly common with PLLs.
+> =
 
-This patch adds DT nodes for the above mentioned devices in
-Stingray DT.
+> Ex: provider able to give any rate with steps of 100Hz
+>  - 1st consumer request 48000Hz and gets it.
+>  - 2nd consumer request 48010Hz as well. If we were to perform the usual
+>    mechanism, we would get 48000Hz as well. The clock would not change so
+>    there is no point performing any checks to make sure the clock can
+>    change, we know it won't.
+> =
 
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Reviewed-by: Pramod KUMAR <pramod.kumar@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- .../boot/dts/broadcom/stingray/bcm958742k.dts      | 30 +++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 52 ++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
+> This is important to prepare the addition of the clock protection mechani=
+sm
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-index c309cda..5671669 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-@@ -46,3 +46,33 @@
- &uart3 {
- 	status = "okay";
- };
-+
-+&ssp0 {
-+	pinctrl-0 = <&spi0_pins>;
-+	pinctrl-names = "default";
-+	cs-gpios = <&gpio_hsls 34 0>;
-+	status = "okay";
-+
-+	spi-flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-+
-+&ssp1 {
-+	pinctrl-0 = <&spi1_pins>;
-+	pinctrl-names = "default";
-+	cs-gpios = <&gpio_hsls 96 0>;
-+	status = "okay";
-+
-+	spi-flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <20000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index d046b04..36b8ced 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -276,6 +276,14 @@
- 			status = "disabled";
- 		};
- 
-+		wdt0: watchdog@689c0000 {
-+			compatible = "arm,sp805", "arm,primecell";
-+			reg = <0x689c0000 0x1000>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&hsls_25m_div2_clk>, <&hsls_div4_clk>;
-+			clock-names = "wdogclk", "apb_pclk";
-+		};
-+
- 		gpio_hsls: gpio@689d0000 {
- 			compatible = "brcm,iproc-gpio";
- 			reg = <0x689d0000 0x864>;
-@@ -356,11 +364,55 @@
- 			status = "disabled";
- 		};
- 
-+		ssp0: ssp@68a80000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x68a80000 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
-+			clock-names = "spiclk", "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		ssp1: ssp@68a90000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x68a90000 0x1000>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
-+			clock-names = "spiclk", "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		hwrng: hwrng@68b20000 {
- 			compatible = "brcm,iproc-rng200";
- 			reg = <0x68b20000 0x28>;
- 		};
- 
-+		dma0: dma@68c10000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x68c10000 0x1000>;
-+			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+			clocks = <&hsls_div2_clk>;
-+			clock-names = "apb_pclk";
-+			iommus = <&smmu 0x6000 0x0000>;
-+		};
-+
- 		nand: nand@68c60000 {
- 			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
- 			reg = <0x68c60000 0x600>,
--- 
-2.7.4
+Why is this change necessary for the rate_protect feature? I don't see a
+major problem with it, but not sure I want to change the expected
+behavior unless it is required.
+
+Thanks,
+Mike
+
+> =
+
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/clk.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> =
+
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 100f72472e10..1a8c0d013238 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1570,15 +1570,34 @@ static void clk_change_rate(struct clk_core *core)
+>                 clk_change_rate(core->new_child);
+>  }
+>  =
+
+> +static unsigned long clk_core_req_round_rate_nolock(struct clk_core *cor=
+e,
+> +                                                    unsigned long req_ra=
+te)
+> +{
+> +       int ret;
+> +       struct clk_rate_request req;
+> +
+> +       if (!core)
+> +               return 0;
+> +
+> +       clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
+> +       req.rate =3D req_rate;
+> +
+> +       ret =3D clk_core_round_rate_nolock(core, &req);
+> +
+> +       return ret ? 0 : req.rate;
+> +}
+> +
+>  static int clk_core_set_rate_nolock(struct clk_core *core,
+>                                     unsigned long req_rate)
+>  {
+>         struct clk_core *top, *fail_clk;
+> -       unsigned long rate =3D req_rate;
+> +       unsigned long rate;
+>  =
+
+>         if (!core)
+>                 return 0;
+>  =
+
+> +       rate =3D clk_core_req_round_rate_nolock(core, req_rate);
+> +
+>         /* bail early if nothing to do */
+>         if (rate =3D=3D clk_core_get_rate_nolock(core))
+>                 return 0;
+> @@ -1587,7 +1606,7 @@ static int clk_core_set_rate_nolock(struct clk_core=
+ *core,
+>                 return -EBUSY;
+>  =
+
+>         /* calculate new rates and get the topmost changed clock */
+> -       top =3D clk_calc_new_rates(core, rate);
+> +       top =3D clk_calc_new_rates(core, req_rate);
+>         if (!top)
+>                 return -EINVAL;
+>  =
+
+> -- =
+
+> 2.9.4
+>=20
