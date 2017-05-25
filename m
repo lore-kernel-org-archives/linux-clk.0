@@ -1,61 +1,46 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: chenjun14@huawei.com,
-	zhongkaihua@huawei.com,
-	zhangfei.gao@linaro.org,
-	leo.yan@linaro.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>
-Subject: [PATCH v2 1/3] clk: hi3660: fix wrong parent name of clk_mux_sysbus
-Date: Fri, 26 May 2017 15:38:19 +0800
-Message-Id: <20170526073821.25971-2-guodong.xu@linaro.org>
-In-Reply-To: <20170526073821.25971-1-guodong.xu@linaro.org>
-References: <20170526073821.25971-1-guodong.xu@linaro.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Anup Patel <anup.patel@broadcom.com>, "Rob Herring" <robh+dt@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1495454307-23464-4-git-send-email-anup.patel@broadcom.com>
+Cc: "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will.deacon@arm.com>, "Ray Jui" <rjui@broadcom.com>,
+ "Scott Branden" <sbranden@broadcom.com>, "Jon Mason" <jonmason@broadcom.com>,
+ "Florian Fainelli" <f.fainelli@gmail.com>,
+ "Oza Pawandeep" <oza.oza@broadcom.com>,
+ "Srinath Mannam" <srinath.mannam@broadcom.com>,
+ "Pramod Kumar" <pramod.kumar@broadcom.com>,
+ "Sandeep Tripathy" <sandeep.tripathy@broadcom.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com
+References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+ <1495454307-23464-4-git-send-email-anup.patel@broadcom.com>
+Message-ID: <149574798866.52617.17864487502272102012@resonance>
+Subject: Re: [PATCH v4 03/11] clk: bcm: Add clocks for Stingray SOC
+Date: Thu, 25 May 2017 14:33:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Chen Jun <chenjun14@huawei.com>
+Hello Anup,
 
-Parent name of clk_mux_sysbus is not correct. This patch fixes it.
+Quoting Anup Patel (2017-05-22 04:58:19)
+> +#include <linux/kernel.h>
+> +#include <linux/err.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
 
-Signed-off-by: Chen Jun <chenjun14@huawei.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
----
- drivers/clk/hisilicon/clk-hi3660.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Are all of those headers really needed?
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index 96a9697..143ce0c 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -206,6 +206,8 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_clks[] = {
- };
- 
- static const char *const
-+clk_mux_sysbus_p[] = {"clk_ppll1", "clk_ppll0"};
-+static const char *const
- clk_mux_sdio_sys_p[] = {"clk_factor_mmc", "clk_div_sdio",};
- static const char *const
- clk_mux_sd_sys_p[] = {"clk_factor_mmc", "clk_div_sd",};
-@@ -239,8 +241,8 @@ static const char *const
- clk_mux_i2c_p[] = {"clkin_sys", "clk_div_i2c",};
- 
- static const struct hisi_mux_clock hi3660_crgctrl_mux_clks[] = {
--	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sdio_sys_p,
--	  ARRAY_SIZE(clk_mux_sdio_sys_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
-+	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sysbus_p,
-+	  ARRAY_SIZE(clk_mux_sysbus_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
- 	  CLK_MUX_HIWORD_MASK, },
- 	{ HI3660_CLK_MUX_UART0, "clk_mux_uart0", clk_mux_uart0_p,
- 	  ARRAY_SIZE(clk_mux_uart0_p), CLK_SET_RATE_PARENT, 0xac, 2, 1,
--- 
-2.10.2
+> +CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
+> +                       sr_genpll3_clk_init);
+
+Why use CLK_OF_DECLARE here? You've got a proper platform driver here.
+
+Regards,
+Mike
