@@ -1,33 +1,92 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <ssantosh@kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <devicetree@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv4 0/2] clk: keystone: add sci-clk support
-Date: Mon, 22 May 2017 16:01:51 +0300
-Message-ID: <1495458113-7366-1-git-send-email-t-kristo@ti.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Angus Ainslie <angus@akkea.ca>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <ae41e508eac104a1d0c305cceccea84a@www.akkea.ca>
+Cc: "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Chen-Yu Tsai" <wens@csie.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ stable@vger.kernel.org
+References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
+ <149573823221.52617.2350903252470015903@resonance>
+ <ae41e508eac104a1d0c305cceccea84a@www.akkea.ca>
+Message-ID: <149574635703.52617.18257216525587339599@resonance>
+Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
+Date: Thu, 25 May 2017 14:05:57 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Quoting Angus Ainslie (2017-05-25 12:23:54)
+> On 2017-05-25 12:50, Michael Turquette wrote:
+> > Quoting Boris Brezillon (2017-05-24 09:34:29)
+> >> AHB BIST gate is actually controlled with bit 7.
+> >> =
 
-This revision is a rebase on top of 4.12-rc1, with following changes:
+> >> This bug was detected while trying to use the NAND controller which is
+> >> using the DMA engine to transfer data to the NAND.
+> >> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate =
 
-1) Dropped the usage of dt-bindings include genpd/k2g.h as this is
-   apparently going to be removed
-2) Dropped the dt-bindings include file for the clock identifiers
-   based on item [1]. The identifiers are only used once for anything
-   within the driver, and it is more readable this way also. The DT
-   users should use magic numbers for accessing the clocks, relative
-   to what is done for example for IP addresses etc.
-3) Fixed the node name for the clocks in patch #1
-4) Init time failure fixes in patch #2
-5) Some other minor fixes for comments provided for v3 of the patch #2
+> >> bit,
+> >> the core was disabling the DMA engine clock as part of its 'disable
+> >> unused clks' procedure, which was causing all DMA transfers to fail =
 
-Boot tested with some additional patches on top on keystone-k2g.
+> >> after
+> >> this point.
+> >> =
 
-(Bootable reference branch, NOT FOR MERGE:
- https://github.com/t-kristo/linux-pm/tree/4.12-rc1-ti-sci-v4c-integ)
+> >> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> >> Cc: stable@vger.kernel.org
+> >> Reported-by: Angus Ainslie <angus@akkea.ca>
+> >> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > =
 
--Tero
+> > Patch looks good to me. Did this ever work? I'm trying to figure out if
+> > it should go into -fixes or -next.
+> > =
+
+> > Thanks,
+> > Mike
+> > =
+
+> =
+
+> It fixed the problem for me so I think fixes is the right place.
+
+Applied to clk-fixes towards -rc3 or -rc4.
+
+Regards,
+Mike
+
+> =
+
+> Angus
+> =
+
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> =
+
+> >> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c =
+
+> >> b/drivers/clk/sunxi-ng/ccu-sun5i.c
+> >> index 5c476f966a72..5372bf8be5e6 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
+> >> @@ -243,7 +243,7 @@ static SUNXI_CCU_GATE(ahb_ss_clk,   "ahb-ss",      =
+
+> >>  "ahb",
+> >>  static SUNXI_CCU_GATE(ahb_dma_clk,     "ahb-dma",      "ahb",
+> >>                       0x060, BIT(6), 0);
+> >>  static SUNXI_CCU_GATE(ahb_bist_clk,    "ahb-bist",     "ahb",
+> >> -                     0x060, BIT(6), 0);
+> >> +                     0x060, BIT(7), 0);
+> >>  static SUNXI_CCU_GATE(ahb_mmc0_clk,    "ahb-mmc0",     "ahb",
+> >>                       0x060, BIT(8), 0);
+> >>  static SUNXI_CCU_GATE(ahb_mmc1_clk,    "ahb-mmc1",     "ahb",
+> >> --
+> >> 2.7.4
+> >> =
+
+>=20
