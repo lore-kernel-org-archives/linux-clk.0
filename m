@@ -1,84 +1,75 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v6 13/13] [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
-Date: Thu,  4 May 2017 19:48:58 +0800
-Message-Id: <20170504114858.9008-14-icenowy@aosc.io>
-In-Reply-To: <20170504114858.9008-1-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <angus@akkea.ca>
+To: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Thu, 25 May 2017 06:39:16 -0600
+From: Angus Ainslie <angus@akkea.ca>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Mike Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk
+ <linux-clk@vger.kernel.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>, stable@vger.kernel.org
+In-Reply-To: <CAGb2v66tpj4y2TdF2kz7Cb9fM-M1pBhuq137a80o0rjenF2AJA@mail.gmail.com>
+References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
+ <ad72ceff73364add5cfe25b6143a68ca@www.akkea.ca>
+ <CAGb2v66tpj4y2TdF2kz7Cb9fM-M1pBhuq137a80o0rjenF2AJA@mail.gmail.com>
+Message-ID: <174d7dbf70471f4b823d8fa295303ad7@www.akkea.ca>
 List-ID: <linux-clk.vger.kernel.org>
 
-A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
+On 2017-05-25 01:47, Chen-Yu Tsai wrote:
+> On Thu, May 25, 2017 at 2:51 AM, Angus Ainslie <angus@akkea.ca> wrote:
+>> On 2017-05-24 10:34, Boris Brezillon wrote:
+>>> 
+>>> AHB BIST gate is actually controlled with bit 7.
+>>> 
+>>> This bug was detected while trying to use the NAND controller which 
+>>> is
+>>> using the DMA engine to transfer data to the NAND.
+>>> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate 
+>>> bit,
+>>> the core was disabling the DMA engine clock as part of its 'disable
+>>> unused clks' procedure, which was causing all DMA transfers to fail 
+>>> after
+>>> this point.
+>>> 
+>>> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+>>> Cc: stable@vger.kernel.org
+>>> Reported-by: Angus Ainslie <angus@akkea.ca>compatible =
+>>> "nextthing,chip-pro", "nextthing,gr8";
+>>> Signed-off-by: Boris Brezillon <boris.brezillon@frecompatible =
+>>> "nextthing,chip-pro", "nextthing,gr8";e-electrons.com>
+>>> ---
+>>>  drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>> 
+>>> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c
+>>> b/drivers/clk/sunxi-ng/ccu-sun5i.c
+>>> index 5c476f966a72..5372bf8be5e6 100644
+>>> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
+>>> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
+>>> @@ -243,7 +243,7 @@ static SUNXI_CCU_GATE(ahb_ss_clk,   "ahb-ss",
+>>> "ahb",
+>>>  static SUNXI_CCU_GATE(ahb_dma_clk,     "ahb-dma",      "ahb",
+>>>                       0x060, BIT(6), 0);
+>>>  static SUNXI_CCU_GATE(ahb_bist_clk,    "ahb-bist",     "ahb",
+>>> -                     0x060, BIT(6), 0);
+>>> +                     0x060, BIT(7), 0);
+>>>  static SUNXI_CCU_GATE(ahb_mmc0_clk,    "ahb-mmc0",     "ahb",
+>>>                       0x060, BIT(8), 0);
+>>>  static SUNXI_CCU_GATE(ahb_mmc1_clk,    "ahb-mmc1",     "ahb",
+>> 
+>> 
+>> 
+>> The patch works perfectly. Using that I was able to remove the
+>> clk_ignore_unsed and CLK_IS_CRITICAL.
+>> 
+> 
+> Is that a Tested-by? :)
+> 
+> ChenYu
 
-This commit connects this panel to Lichee Pi Zero.
+Yeah :)
 
-Lichee Pi also provides a 800x480 panel without accurate model number,
-so do not merge this patch. It will finally come as device tree overlay.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-index 387fc2aa546d..7ae72bf63cd0 100644
---- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-+++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-@@ -75,6 +75,28 @@
- 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
- 		};
- 	};
-+
-+	panel: panel {
-+		compatible = "qiaodian,qd43003c0-40", "simple-panel";
-+		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			panel_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_lcd>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &mmc0 {
-@@ -86,6 +108,20 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+	status = "okay";
-+
-+};
-+
-+&tcon0_out {
-+	tcon0_out_lcd: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-0 = <&uart0_pins_a>;
- 	pinctrl-names = "default";
--- 
-2.12.2
+Tested-by: Angus Ainslie <angus@akkea.ca>
