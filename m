@@ -1,100 +1,188 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55774 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758880AbdENQbO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 May 2017 12:31:14 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v7 00/13] Initial Allwinner Display Engine 2.0 Support
-Date: Mon, 15 May 2017 00:30:32 +0800
-Message-Id: <20170514163045.40366-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Hilman" <khilman@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170521215958.19743-4-jbrunet@baylibre.com>
+Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+ <20170521215958.19743-4-jbrunet@baylibre.com>
+Message-ID: <149574323517.52617.4260102317848146827@resonance>
+Subject: Re: [PATCH v2 03/11] clk: rework calls to round and determine rate callbacks
+Date: Thu, 25 May 2017 13:13:55 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is the initial patchset for Allwinner DE2 support.
+Quoting Jerome Brunet (2017-05-21 14:59:50)
+> Rework the way the callbacks round_rate and determine_rate are called. The
+> goal is to do this at a single point and make it easier to add conditions
+> before calling them.
+> =
 
-It contains the support of clocks in DE2 and the mixers in DE2.
+> This rework is done to ease the integration of "protected" clock
+> functionality.
+> =
 
-The SoC used to develop this patchset is V3s, as V3s is the simplest
-one of the SoCs that have DE2.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-(Allwinner V3s features only one mixer, and its only video output is
-RGB LCD, which is already supported in our TCON driver)
+Looks good to me. I wonder if we should rename __clk_determine_rate to
+clk_hw_determine_rate to bring it in line with clk_hw_round_rate? Only
+two users of that clk provider function...
 
-The last patch is only a testing patch, it shouldn't be merged; and
-for the patch to be really usable, the RFC fix of the TCON driver [1]
-is needed.
+Regards,
+Mike
 
-No HDMI, TV encoder or other internal bridges' support is included
-in this patchset, which makes it currently not usable on H3. (For TVE
-I have some code that made it working; for HDMI there is a driver by
-Jernej Skrabec which is based on the dw-hdmi common code.)
+> ---
+>  drivers/clk/clk.c | 78 +++++++++++++++++++++++++++++++------------------=
+------
+>  1 file changed, 44 insertions(+), 34 deletions(-)
+> =
 
-Thanks to Jean-Francois Moine and Jernej Skrabec for their efforts
-to discover the internal of DE2!
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 6031fada37f9..100f72472e10 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -833,16 +833,34 @@ static int clk_disable_unused(void)
+>  }
+>  late_initcall_sync(clk_disable_unused);
+>  =
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2016-December/126264.html
+> -static int clk_core_round_rate_nolock(struct clk_core *core,
+> -                                     struct clk_rate_request *req)
+> +static int clk_core_determine_round(struct clk_core *core,
+> +                                   struct clk_rate_request *req)
+>  {
+> -       struct clk_core *parent;
+>         long rate;
+>  =
 
-Icenowy Zheng (13):
-  dt-bindings: add binding for the Allwinner DE2 CCU
-  clk: sunxi-ng: add support for DE2 CCU
-  dt-bindings: add bindings for DE2 on V3s SoC
-  drm/sun4i: return only planes for layers created
-  drm/sun4i: abstract a engine type
-  drm/sun4i: add a dedicated module for sun4i-backend and sun4i-layer
-  drm/sun4i: add a Kconfig option for sun4i-backend
-  drm/sun4i: add support for Allwinner DE2 mixers
-  drm/sun4i: Add compatible string for V3s display engine
-  drm/sun4i: tcon: add support for V3s TCON
-  ARM: sun8i: v3s: add device nodes for DE2 display pipeline
-  ARM: sun8i: v3s: add pinmux for LCD pins of V3s SoC
-  [DO NOT MERGE] ARM: sun8i: v3s: enable LCD panel of Lichee Pi Zero
+> -       lockdep_assert_held(&prepare_lock);
+> +       if (core->ops->determine_rate) {
+> +               return core->ops->determine_rate(core->hw, req);
+> +       } else if (core->ops->round_rate) {
+> +               rate =3D core->ops->round_rate(core->hw, req->rate,
+> +                                            &req->best_parent_rate);
+> +               if (rate < 0)
+> +                       return rate;
+>  =
 
- .../devicetree/bindings/clock/sun8i-de2.txt        |  31 ++
- .../bindings/display/sunxi/sun4i-drm.txt           |  26 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts      |  36 ++
- arch/arm/boot/dts/sun8i-v3s.dtsi                   |  96 +++++
- drivers/clk/sunxi-ng/Kconfig                       |   5 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 260 +++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.h               |  28 ++
- drivers/gpu/drm/sun4i/Kconfig                      |  20 +
- drivers/gpu/drm/sun4i/Makefile                     |   9 +-
- drivers/gpu/drm/sun4i/sun4i_backend.c              |  72 ++--
- drivers/gpu/drm/sun4i/sun4i_backend.h              |  17 +-
- drivers/gpu/drm/sun4i/sun4i_crtc.c                 |  32 +-
- drivers/gpu/drm/sun4i/sun4i_crtc.h                 |   5 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   6 +-
- drivers/gpu/drm/sun4i/sun4i_drv.h                  |   2 +-
- drivers/gpu/drm/sun4i/sun4i_layer.c                |  21 +-
- drivers/gpu/drm/sun4i/sun4i_layer.h                |   6 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  43 ++-
- drivers/gpu/drm/sun4i/sun4i_tv.c                   |   9 +-
- drivers/gpu/drm/sun4i/sun8i_layer.c                | 134 +++++++
- drivers/gpu/drm/sun4i/sun8i_layer.h                |  36 ++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                | 412 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.h                | 137 +++++++
- drivers/gpu/drm/sun4i/sunxi_engine.h               | 111 ++++++
- include/dt-bindings/clock/sun8i-de2.h              |  18 +
- include/dt-bindings/reset/sun8i-de2.h              |  14 +
- 27 files changed, 1485 insertions(+), 102 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
- create mode 100644 drivers/gpu/drm/sun4i/sunxi_engine.h
- create mode 100644 include/dt-bindings/clock/sun8i-de2.h
- create mode 100644 include/dt-bindings/reset/sun8i-de2.h
+> -       if (!core)
+> -               return 0;
+> +               req->rate =3D rate;
+> +       } else {
+> +               return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void clk_core_init_rate_req(struct clk_core *core,
+> +                                  struct clk_rate_request *req)
+> +{
+> +       struct clk_core *parent;
+> +
+> +       if (WARN_ON(!core || !req))
+> +               return;
+>  =
 
--- 
-2.12.2
+>         parent =3D core->parent;
+>         if (parent) {
+> @@ -852,22 +870,24 @@ static int clk_core_round_rate_nolock(struct clk_co=
+re *core,
+>                 req->best_parent_hw =3D NULL;
+>                 req->best_parent_rate =3D 0;
+>         }
+> +}
+>  =
 
+> -       if (core->ops->determine_rate) {
+> -               return core->ops->determine_rate(core->hw, req);
+> -       } else if (core->ops->round_rate) {
+> -               rate =3D core->ops->round_rate(core->hw, req->rate,
+> -                                            &req->best_parent_rate);
+> -               if (rate < 0)
+> -                       return rate;
+> +static int clk_core_round_rate_nolock(struct clk_core *core,
+> +                                     struct clk_rate_request *req)
+> +{
+> +       lockdep_assert_held(&prepare_lock);
+>  =
+
+> -               req->rate =3D rate;
+> -       } else if (core->flags & CLK_SET_RATE_PARENT) {
+> -               return clk_core_round_rate_nolock(parent, req);
+> -       } else {
+> -               req->rate =3D core->rate;
+> -       }
+> +       if (!core)
+> +               return 0;
+> +
+> +       clk_core_init_rate_req(core, req);
+> +
+> +       if (core->ops->determine_rate || core->ops->round_rate)
+> +               return clk_core_determine_round(core, req);
+> +       else if (core->flags & CLK_SET_RATE_PARENT)
+> +               return clk_core_round_rate_nolock(core->parent, req);
+>  =
+
+> +       req->rate =3D core->rate;
+>         return 0;
+>  }
+>  =
+
+> @@ -1356,36 +1376,26 @@ static struct clk_core *clk_calc_new_rates(struct=
+ clk_core *core,
+>         clk_core_get_boundaries(core, &min_rate, &max_rate);
+>  =
+
+>         /* find the closest rate and parent clk/rate */
+> -       if (core->ops->determine_rate) {
+> +       if (core->ops->determine_rate || core->ops->round_rate) {
+>                 struct clk_rate_request req;
+>  =
+
+>                 req.rate =3D rate;
+>                 req.min_rate =3D min_rate;
+>                 req.max_rate =3D max_rate;
+> -               if (parent) {
+> -                       req.best_parent_hw =3D parent->hw;
+> -                       req.best_parent_rate =3D parent->rate;
+> -               } else {
+> -                       req.best_parent_hw =3D NULL;
+> -                       req.best_parent_rate =3D 0;
+> -               }
+>  =
+
+> -               ret =3D core->ops->determine_rate(core->hw, &req);
+> +               clk_core_init_rate_req(core, &req);
+> +
+> +               ret =3D clk_core_determine_round(core, &req);
+>                 if (ret < 0)
+>                         return NULL;
+>  =
+
+>                 best_parent_rate =3D req.best_parent_rate;
+>                 new_rate =3D req.rate;
+>                 parent =3D req.best_parent_hw ? req.best_parent_hw->core =
+: NULL;
+> -       } else if (core->ops->round_rate) {
+> -               ret =3D core->ops->round_rate(core->hw, rate,
+> -                                           &best_parent_rate);
+> -               if (ret < 0)
+> -                       return NULL;
+>  =
+
+> -               new_rate =3D ret;
+>                 if (new_rate < min_rate || new_rate > max_rate)
+>                         return NULL;
+> +
+>         } else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
+>                 /* pass-through clock without adjustable parent */
+>                 core->new_rate =3D core->rate;
+> -- =
+
+> 2.9.4
+>=20
