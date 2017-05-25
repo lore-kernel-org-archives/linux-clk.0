@@ -1,668 +1,607 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:50063 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755621AbdEDQ5K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 12:57:10 -0400
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Fri, 05 May 2017 00:57:08 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v6 08/13] drm/sun4i: add support for Allwinner DE2 mixers
-In-Reply-To: <522ab8cb2939f0017917c5e9b4065089@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io>
- <20170504114858.9008-9-icenowy@aosc.io>
- <20170504130535.6nokhni5a3uxwy66@lukather>
- <522ab8cb2939f0017917c5e9b4065089@aosc.io>
-Message-ID: <7f2ef89c2a78015ec31ba83266ac0d0e@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Hilman" <khilman@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170521215958.19743-6-jbrunet@baylibre.com>
+Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+ <20170521215958.19743-6-jbrunet@baylibre.com>
+Message-ID: <149574593212.52617.14333843834487739920@resonance>
+Subject: Re: [PATCH v2 05/11] clk: add support for clock protection
+Date: Thu, 25 May 2017 13:58:52 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-05-05 00:50，icenowy@aosc.io 写道：
-> 在 2017-05-04 21:05，Maxime Ripard 写道：
->> On Thu, May 04, 2017 at 07:48:53PM +0800, Icenowy Zheng wrote:
->>> Allwinner have a new "Display Engine 2.0" in their new SoCs, which 
->>> comes
->>> with mixers to do graphic processing and feed data to TCON, like the 
->>> old
->>> backends and frontends.
->>> 
->>> Add support for the mixer on Allwinner V3s SoC; it's the simplest 
->>> one.
->>> 
->>> Currently a lot of functions are still missing -- more investigations
->>> are needed to gain enough information for them.
->>> 
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>> Changes in v6:
->>> - Rebased on wens's multi-pipeline patchset.
->>> Changes in v5:
->>> - Changed some code alignment.
->>> - Request real 32-bit DMA (prepare for 64-bit SoCs).
->>> Changes in v4:
->>> - Killed some dead code according to Jernej.
->>> 
->>>  drivers/gpu/drm/sun4i/Kconfig       |  10 +
->>>  drivers/gpu/drm/sun4i/Makefile      |   3 +
->>>  drivers/gpu/drm/sun4i/sun8i_layer.c | 140 +++++++++++++
->>>  drivers/gpu/drm/sun4i/sun8i_layer.h |  36 ++++
->>>  drivers/gpu/drm/sun4i/sun8i_mixer.c | 394 
->>> ++++++++++++++++++++++++++++++++++++
->>>  drivers/gpu/drm/sun4i/sun8i_mixer.h | 137 +++++++++++++
->>>  6 files changed, 720 insertions(+)
->>>  create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.c
->>>  create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.h
->>>  create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
->>>  create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
->>> 
->>> diff --git a/drivers/gpu/drm/sun4i/Kconfig 
->>> b/drivers/gpu/drm/sun4i/Kconfig
->>> index 5a8227f37cc4..15557484520d 100644
->>> --- a/drivers/gpu/drm/sun4i/Kconfig
->>> +++ b/drivers/gpu/drm/sun4i/Kconfig
->>> @@ -22,3 +22,13 @@ config DRM_SUN4I_BACKEND
->>>  	  original Allwinner Display Engine, which has a backend to
->>>  	  do some alpha blending and feed graphics to TCON. If M is
->>>  	  selected the module will be called sun4i-backend.
->>> +
->>> +config DRM_SUN4I_SUN8I_MIXER
->> 
->> DRM_SUN8I_MIXER?
->> 
->>> +	tristate "Support for Allwinner Display Engine 2.0 Mixer"
->>> +	depends on DRM_SUN4I
->>> +	default MACH_SUN8I
->>> +	help
->>> +	  Choose this option if you have an Allwinner SoC with the
->>> +	  Allwinner Display Engine 2.0, which has a mixer to do some
->>> +	  graphics mixture and feed graphics to TCON, If M is
->>> +	  selected the module will be called sun8i-mixer.
->>> diff --git a/drivers/gpu/drm/sun4i/Makefile 
->>> b/drivers/gpu/drm/sun4i/Makefile
->>> index a08df56759e3..a876c6b3027c 100644
->>> --- a/drivers/gpu/drm/sun4i/Makefile
->>> +++ b/drivers/gpu/drm/sun4i/Makefile
->>> @@ -8,7 +8,10 @@ sun4i-tcon-y += sun4i_crtc.o
->>> 
->>>  sun4i-backend-y += sun4i_backend.o sun4i_layer.o
->>> 
->>> +sun8i-mixer-y += sun8i_mixer.o sun8i_layer.o
->>> +
->>>  obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
->>>  obj-$(CONFIG_DRM_SUN4I_BACKEND)		+= sun4i-backend.o
->>> +obj-$(CONFIG_DRM_SUN4I_SUN8I_MIXER)	+= sun8i-mixer.o
->>>  obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
->>>  obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
->>> diff --git a/drivers/gpu/drm/sun4i/sun8i_layer.c 
->>> b/drivers/gpu/drm/sun4i/sun8i_layer.c
->>> new file mode 100644
->>> index 000000000000..48f33d8e013b
->>> --- /dev/null
->>> +++ b/drivers/gpu/drm/sun4i/sun8i_layer.c
->>> @@ -0,0 +1,140 @@
->>> +/*
->>> + * Copyright (C) Icenowy Zheng <icenowy@aosc.io>
->>> + *
->>> + * Based on sun4i_layer.h, which is:
->>> + *   Copyright (C) 2015 Free Electrons
->>> + *   Copyright (C) 2015 NextThing Co
->>> + *
->>> + *   Maxime Ripard <maxime.ripard@free-electrons.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> + * modify it under the terms of the GNU General Public License as
->>> + * published by the Free Software Foundation; either version 2 of
->>> + * the License, or (at your option) any later version.
->>> + */
->>> +
->>> +#include <drm/drm_atomic_helper.h>
->>> +#include <drm/drm_plane_helper.h>
->>> +#include <drm/drmP.h>
->>> +
->>> +#include "sun8i_layer.h"
->>> +#include "sun8i_mixer.h"
->>> +
->>> +struct sun8i_plane_desc {
->>> +	       enum drm_plane_type     type;
->>> +	       const uint32_t          *formats;
->>> +	       uint32_t                nformats;
->>> +};
->>> +
->>> +static int sun8i_mixer_layer_atomic_check(struct drm_plane *plane,
->>> +					    struct drm_plane_state *state)
->>> +{
->>> +	return 0;
->>> +}
->> 
->> This isn't needed.
->> 
->>> +static void sun8i_mixer_layer_atomic_disable(struct drm_plane 
->>> *plane,
->>> +					       struct drm_plane_state *old_state)
->>> +{
->>> +	struct sun8i_layer *layer = plane_to_sun8i_layer(plane);
->>> +	struct sun8i_mixer *mixer = layer->mixer;
->>> +
->>> +	sun8i_mixer_layer_enable(mixer, layer->id, false);
->>> +}
->>> +
->>> +static void sun8i_mixer_layer_atomic_update(struct drm_plane *plane,
->>> +					      struct drm_plane_state *old_state)
->>> +{
->>> +	struct sun8i_layer *layer = plane_to_sun8i_layer(plane);
->>> +	struct sun8i_mixer *mixer = layer->mixer;
->>> +
->>> +	sun8i_mixer_update_layer_coord(mixer, layer->id, plane);
->>> +	sun8i_mixer_update_layer_formats(mixer, layer->id, plane);
->>> +	sun8i_mixer_update_layer_buffer(mixer, layer->id, plane);
->>> +	sun8i_mixer_layer_enable(mixer, layer->id, true);
->>> +}
->>> +
->>> +static struct drm_plane_helper_funcs sun8i_mixer_layer_helper_funcs 
->>> = {
->>> +	.atomic_check	= sun8i_mixer_layer_atomic_check,
->>> +	.atomic_disable	= sun8i_mixer_layer_atomic_disable,
->>> +	.atomic_update	= sun8i_mixer_layer_atomic_update,
->>> +};
->>> +
->>> +static const struct drm_plane_funcs sun8i_mixer_layer_funcs = {
->>> +	.atomic_destroy_state	= drm_atomic_helper_plane_destroy_state,
->>> +	.atomic_duplicate_state	= drm_atomic_helper_plane_duplicate_state,
->>> +	.destroy		= drm_plane_cleanup,
->>> +	.disable_plane		= drm_atomic_helper_disable_plane,
->>> +	.reset			= drm_atomic_helper_plane_reset,
->>> +	.update_plane		= drm_atomic_helper_update_plane,
->>> +};
->>> +
->>> +static const uint32_t sun8i_mixer_layer_formats[] = {
->>> +	DRM_FORMAT_RGB888,
->>> +	DRM_FORMAT_XRGB8888,
->>> +};
->>> +
->>> +static const struct sun8i_plane_desc sun8i_mixer_planes[] = {
->>> +	{
->>> +		.type = DRM_PLANE_TYPE_PRIMARY,
->>> +		.formats = sun8i_mixer_layer_formats,
->>> +		.nformats = ARRAY_SIZE(sun8i_mixer_layer_formats),
->>> +	},
->>> +};
->>> +
->>> +static struct sun8i_layer *sun8i_layer_init_one(struct drm_device 
->>> *drm,
->>> +						struct sun8i_mixer *mixer,
->>> +						const struct sun8i_plane_desc *plane)
->>> +{
->>> +	struct sun8i_layer *layer;
->>> +	int ret;
->>> +
->>> +	layer = devm_kzalloc(drm->dev, sizeof(*layer), GFP_KERNEL);
->>> +	if (!layer)
->>> +		return ERR_PTR(-ENOMEM);
->>> +
->>> +	/* possible crtcs are set later */
->>> +	ret = drm_universal_plane_init(drm, &layer->plane, 0,
->>> +				       &sun8i_mixer_layer_funcs,
->>> +				       plane->formats, plane->nformats,
->>> +				       plane->type, NULL);
->>> +	if (ret) {
->>> +		dev_err(drm->dev, "Couldn't initialize layer\n");
->>> +		return ERR_PTR(ret);
->>> +	}
->>> +
->>> +	drm_plane_helper_add(&layer->plane,
->>> +			     &sun8i_mixer_layer_helper_funcs);
->>> +	layer->mixer = mixer;
->>> +
->>> +	return layer;
->>> +}
->>> +
->>> +struct drm_plane **sun8i_layers_init(struct drm_device *drm,
->>> +				     struct sunxi_engine *engine)
->>> +{
->>> +	struct drm_plane **planes;
->>> +	struct sun8i_mixer *mixer = engine_to_sun8i_mixer(engine);
->>> +	int i;
->>> +
->>> +	planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun8i_mixer_planes) + 1,
->>> +			      sizeof(*planes), GFP_KERNEL);
->>> +	if (!planes)
->>> +		return ERR_PTR(-ENOMEM);
->>> +
->>> +	for (i = 0; i < ARRAY_SIZE(sun8i_mixer_planes); i++) {
->>> +		const struct sun8i_plane_desc *plane = &sun8i_mixer_planes[i];
->>> +		struct sun8i_layer *layer;
->>> +
->>> +		layer = sun8i_layer_init_one(drm, mixer, plane);
->>> +		if (IS_ERR(layer)) {
->>> +			dev_err(drm->dev, "Couldn't initialize %s plane\n",
->>> +				i ? "overlay" : "primary");
->>> +			return ERR_CAST(layer);
->>> +		};
->>> +
->>> +		layer->id = i;
->>> +		planes[i] = &layer->plane;
->>> +	};
->>> +
->>> +	return planes;
->>> +}
->>> diff --git a/drivers/gpu/drm/sun4i/sun8i_layer.h 
->>> b/drivers/gpu/drm/sun4i/sun8i_layer.h
->>> new file mode 100644
->>> index 000000000000..e5eccd27cff0
->>> --- /dev/null
->>> +++ b/drivers/gpu/drm/sun4i/sun8i_layer.h
->>> @@ -0,0 +1,36 @@
->>> +/*
->>> + * Copyright (C) Icenowy Zheng <icenowy@aosc.io>
->>> + *
->>> + * Based on sun4i_layer.h, which is:
->>> + *   Copyright (C) 2015 Free Electrons
->>> + *   Copyright (C) 2015 NextThing Co
->>> + *
->>> + *   Maxime Ripard <maxime.ripard@free-electrons.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> + * modify it under the terms of the GNU General Public License as
->>> + * published by the Free Software Foundation; either version 2 of
->>> + * the License, or (at your option) any later version.
->>> + */
->>> +
->>> +#ifndef _SUN8I_LAYER_H_
->>> +#define _SUN8I_LAYER_H_
->>> +
->>> +struct sunxi_engine;
->>> +
->>> +struct sun8i_layer {
->>> +	struct drm_plane	plane;
->>> +	struct sun4i_drv	*drv;
->>> +	struct sun8i_mixer	*mixer;
->>> +	int			id;
->>> +};
->>> +
->>> +static inline struct sun8i_layer *
->>> +plane_to_sun8i_layer(struct drm_plane *plane)
->>> +{
->>> +	return container_of(plane, struct sun8i_layer, plane);
->>> +}
->>> +
->>> +struct drm_plane **sun8i_layers_init(struct drm_device *drm,
->>> +				     struct sunxi_engine *engine);
->>> +#endif /* _SUN8I_LAYER_H_ */
->>> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c 
->>> b/drivers/gpu/drm/sun4i/sun8i_mixer.c
->>> new file mode 100644
->>> index 000000000000..e216b84d5bb2
->>> --- /dev/null
->>> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
->>> @@ -0,0 +1,394 @@
->>> +/*
->>> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
->>> + *
->>> + * Based on sun4i_backend.c, which is:
->>> + *   Copyright (C) 2015 Free Electrons
->>> + *   Copyright (C) 2015 NextThing Co
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> + * modify it under the terms of the GNU General Public License as
->>> + * published by the Free Software Foundation; either version 2 of
->>> + * the License, or (at your option) any later version.
->>> + */
->>> +
->>> +#include <drm/drmP.h>
->>> +#include <drm/drm_atomic_helper.h>
->>> +#include <drm/drm_crtc.h>
->>> +#include <drm/drm_crtc_helper.h>
->>> +#include <drm/drm_fb_cma_helper.h>
->>> +#include <drm/drm_gem_cma_helper.h>
->>> +#include <drm/drm_plane_helper.h>
->>> +
->>> +#include <linux/component.h>
->>> +#include <linux/dma-mapping.h>
->>> +#include <linux/reset.h>
->>> +#include <linux/of_device.h>
->>> +
->>> +#include "sun4i_drv.h"
->>> +#include "sun8i_mixer.h"
->>> +#include "sun8i_layer.h"
->>> +#include "sunxi_engine.h"
->>> +
->>> +void sun8i_mixer_commit(struct sunxi_engine *engine)
->>> +{
->>> +	DRM_DEBUG_DRIVER("Committing changes\n");
->>> +
->>> +	regmap_write(engine->regs, SUN8I_MIXER_GLOBAL_DBUFF,
->>> +		     SUN8I_MIXER_GLOBAL_DBUFF_ENABLE);
->>> +}
->> 
->> This function can be static
->> 
->>> +
->>> +void sun8i_mixer_layer_enable(struct sun8i_mixer *mixer,
->>> +				int layer, bool enable)
->>> +{
->>> +	u32 val;
->>> +	/* Currently the first UI channel is used */
->>> +	int chan = mixer->cfg->vi_num;
->>> +
->>> +	DRM_DEBUG_DRIVER("Enabling layer %d in channel %d\n", layer, chan);
->>> +
->>> +	if (enable)
->>> +		val = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN;
->>> +	else
->>> +		val = 0;
->>> +
->>> +	regmap_update_bits(mixer->engine.regs,
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN, val);
->>> +
->>> +	/* Set the alpha configuration */
->>> +	regmap_update_bits(mixer->engine.regs,
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK,
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_DEF);
->>> +	regmap_update_bits(mixer->engine.regs,
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK,
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF);
->>> +}
->> 
->> This one too.
-> 
-> It's called from sun8i_layer.c, so it cannot be static.
-> 
->> 
->>> +static int sun8i_mixer_drm_format_to_layer(struct drm_plane *plane,
->>> +					     u32 format, u32 *mode)
->>> +{
->>> +	switch (format) {
->>> +	case DRM_FORMAT_XRGB8888:
->>> +		*mode = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_XRGB8888;
->>> +		break;
->>> +
->>> +	case DRM_FORMAT_RGB888:
->>> +		*mode = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_RGB888;
->>> +		break;
->>> +
->>> +	default:
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +int sun8i_mixer_update_layer_coord(struct sun8i_mixer *mixer,
->>> +				     int layer, struct drm_plane *plane)
->>> +{
->>> +	struct drm_plane_state *state = plane->state;
->>> +	struct drm_framebuffer *fb = state->fb;
->>> +	/* Currently the first UI channel is used */
->>> +	int chan = mixer->cfg->vi_num;
->>> +
->>> +	DRM_DEBUG_DRIVER("Updating layer %d\n", layer);
->>> +
->>> +	if (plane->type == DRM_PLANE_TYPE_PRIMARY) {
->>> +		DRM_DEBUG_DRIVER("Primary layer, updating global size W: %u H: 
->>> %u\n",
->>> +				 state->crtc_w, state->crtc_h);
->>> +		regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_SIZE,
->>> +			     SUN8I_MIXER_SIZE(state->crtc_w,
->>> +					      state->crtc_h));
->>> +		DRM_DEBUG_DRIVER("Updating blender size\n");
->>> +		regmap_write(mixer->engine.regs,
->>> +			     SUN8I_MIXER_BLEND_ATTR_INSIZE(0),
->>> +			     SUN8I_MIXER_SIZE(state->crtc_w,
->>> +					      state->crtc_h));
->>> +		regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_OUTSIZE,
->>> +			     SUN8I_MIXER_SIZE(state->crtc_w,
->>> +					      state->crtc_h));
->>> +		DRM_DEBUG_DRIVER("Updating channel size\n");
->>> +		regmap_write(mixer->engine.regs,
->>> +			     SUN8I_MIXER_CHAN_UI_OVL_SIZE(chan),
->>> +			     SUN8I_MIXER_SIZE(state->crtc_w,
->>> +					      state->crtc_h));
->>> +	}
->>> +
->>> +	/* Set the line width */
->>> +	DRM_DEBUG_DRIVER("Layer line width: %d bytes\n", fb->pitches[0]);
->>> +	regmap_write(mixer->engine.regs,
->>> +		     SUN8I_MIXER_CHAN_UI_LAYER_PITCH(chan, layer),
->>> +		     fb->pitches[0]);
->>> +
->>> +	/* Set height and width */
->>> +	DRM_DEBUG_DRIVER("Layer size W: %u H: %u\n",
->>> +			 state->crtc_w, state->crtc_h);
->>> +	regmap_write(mixer->engine.regs,
->>> +		     SUN8I_MIXER_CHAN_UI_LAYER_SIZE(chan, layer),
->>> +		     SUN8I_MIXER_SIZE(state->crtc_w, state->crtc_h));
->>> +
->>> +	/* Set base coordinates */
->>> +	DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
->>> +			 state->crtc_x, state->crtc_y);
->>> +	regmap_write(mixer->engine.regs,
->>> +		     SUN8I_MIXER_CHAN_UI_LAYER_COORD(chan, layer),
->>> +		     SUN8I_MIXER_COORD(state->crtc_x, state->crtc_y));
->> 
->> X and Y are fixed point numbers. You want to keep only the higher 16
->> bits there.
-> 
-> Do you mean "lower 16 bits"? Thus should I (x & 0xffff) or ((u16)x) ?
+Quoting Jerome Brunet (2017-05-21 14:59:52)
+> The patch adds clk_protect and clk_unprotect to the CCF API. These
+> functions allow a consumer to inform the system that the rate of clock is
+> critical to for its operations and it can't tolerate other consumers
+> changing the rate or introducing glitches while the clock is protected.
+> =
 
-Oh sorry, it's 16.16 ...
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/clk.c            | 207 +++++++++++++++++++++++++++++++++++++=
+++++--
+>  include/linux/clk-provider.h |   1 +
+>  include/linux/clk.h          |  29 ++++++
+>  3 files changed, 230 insertions(+), 7 deletions(-)
+> =
 
-I'm misled by the sun4i_backend driver.
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 1a8c0d013238..a0524e3bfaca 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -60,6 +60,7 @@ struct clk_core {
+>         bool                    orphan;
+>         unsigned int            enable_count;
+>         unsigned int            prepare_count;
+> +       unsigned int            protect_count;
+>         unsigned long           min_rate;
+>         unsigned long           max_rate;
+>         unsigned long           accuracy;
+> @@ -84,6 +85,7 @@ struct clk {
+>         const char *con_id;
+>         unsigned long min_rate;
+>         unsigned long max_rate;
+> +       unsigned long protect_count;
+>         struct hlist_node clks_node;
+>  };
+>  =
 
-May I soon send out a patch to fix the sun4i_backend?
+> @@ -160,6 +162,11 @@ static bool clk_core_is_prepared(struct clk_core *co=
+re)
+>         return core->ops->is_prepared(core->hw);
+>  }
+>  =
 
-> 
-> P.S. The negative coordinates are broken, how should I deal with it? or
-> is the coordinates promised to be not negative?
-> 
->> 
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +int sun8i_mixer_update_layer_formats(struct sun8i_mixer *mixer,
->>> +				       int layer, struct drm_plane *plane)
->>> +{
->>> +	struct drm_plane_state *state = plane->state;
->>> +	struct drm_framebuffer *fb = state->fb;
->>> +	bool interlaced = false;
->>> +	u32 val;
->>> +	/* Currently the first UI channel is used */
->>> +	int chan = mixer->cfg->vi_num;
->>> +	int ret;
->>> +
->>> +	if (plane->state->crtc)
->>> +		interlaced = plane->state->crtc->state->adjusted_mode.flags
->>> +			& DRM_MODE_FLAG_INTERLACE;
->>> +
->>> +	regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_OUTCTL,
->>> +			   SUN8I_MIXER_BLEND_OUTCTL_INTERLACED,
->>> +			   interlaced ?
->>> +			   SUN8I_MIXER_BLEND_OUTCTL_INTERLACED : 0);
->>> +
->>> +	DRM_DEBUG_DRIVER("Switching display mixer interlaced mode %s\n",
->>> +			 interlaced ? "on" : "off");
->>> +
->>> +	ret = sun8i_mixer_drm_format_to_layer(plane, fb->format->format,
->>> +						&val);
->>> +	if (ret) {
->>> +		DRM_DEBUG_DRIVER("Invalid format\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	regmap_update_bits(mixer->engine.regs,
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(chan, layer),
->>> +			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_MASK, val);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +int sun8i_mixer_update_layer_buffer(struct sun8i_mixer *mixer,
->>> +				      int layer, struct drm_plane *plane)
->>> +{
->>> +	struct drm_plane_state *state = plane->state;
->>> +	struct drm_framebuffer *fb = state->fb;
->>> +	struct drm_gem_cma_object *gem;
->>> +	dma_addr_t paddr;
->>> +	/* Currently the first UI channel is used */
->>> +	int chan = mixer->cfg->vi_num;
->>> +	int bpp;
->>> +
->>> +	/* Get the physical address of the buffer in memory */
->>> +	gem = drm_fb_cma_get_gem_obj(fb, 0);
->>> +
->>> +	DRM_DEBUG_DRIVER("Using GEM @ %pad\n", &gem->paddr);
->>> +
->>> +	/* Compute the start of the displayed memory */
->>> +	bpp = fb->format->cpp[0];
->>> +	paddr = gem->paddr + fb->offsets[0];
->>> +	paddr += (state->src_x >> 16) * bpp;
->>> +	paddr += (state->src_y >> 16) * fb->pitches[0];
->>> +
->>> +	DRM_DEBUG_DRIVER("Setting buffer address to %pad\n", &paddr);
->>> +
->>> +	regmap_write(mixer->engine.regs,
->>> +		     SUN8I_MIXER_CHAN_UI_LAYER_TOP_LADDR(chan, layer),
->>> +		     lower_32_bits(paddr));
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static const struct sunxi_engine_ops sun8i_engine_ops = {
->>> +	.commit		= sun8i_mixer_commit,
->>> +	.layers_init	= sun8i_layers_init,
->>> +};
->>> +
->>> +static struct regmap_config sun8i_mixer_regmap_config = {
->>> +	.reg_bits	= 32,
->>> +	.val_bits	= 32,
->>> +	.reg_stride	= 4,
->>> +	.max_register	= 0xbfffc, /* guessed */
->>> +};
->>> +
->>> +static int sun8i_mixer_bind(struct device *dev, struct device 
->>> *master,
->>> +			      void *data)
->>> +{
->>> +	struct platform_device *pdev = to_platform_device(dev);
->>> +	struct drm_device *drm = data;
->>> +	struct sun4i_drv *drv = drm->dev_private;
->>> +	struct sun8i_mixer *mixer;
->>> +	struct resource *res;
->>> +	void __iomem *regs;
->>> +	int i, ret;
->>> +
->>> +	/*
->>> +	 * The mixer uses single 32-bit register to store memory
->>> +	 * addresses, so that it cannot deal with 64-bit memory
->>> +	 * addresses.
->>> +	 * Restrict the DMA mask so that the mixer won't be
->>> +	 * allocated some memory that is too high.
->>> +	 */
->>> +	ret = dma_set_mask(dev, DMA_BIT_MASK(32));
->>> +	if (ret) {
->>> +		dev_err(dev, "Cannot do 32-bit DMA.\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	mixer = devm_kzalloc(dev, sizeof(*mixer), GFP_KERNEL);
->>> +	if (!mixer)
->>> +		return -ENOMEM;
->>> +	dev_set_drvdata(dev, mixer);
->>> +	mixer->engine.ops = &sun8i_engine_ops;
->>> +	mixer->engine.node = dev->of_node;
->>> +
->>> +	mixer->cfg = of_device_get_match_data(dev);
->>> +	if (!mixer->cfg)
->>> +		return -EINVAL;
->>> +
->>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +	regs = devm_ioremap_resource(dev, res);
->>> +	if (IS_ERR(regs))
->>> +		return PTR_ERR(regs);
->>> +
->>> +	mixer->engine.regs = devm_regmap_init_mmio(dev, regs,
->>> +						   &sun8i_mixer_regmap_config);
->>> +	if (IS_ERR(mixer->engine.regs)) {
->>> +		dev_err(dev, "Couldn't create the mixer regmap\n");
->>> +		return PTR_ERR(mixer->engine.regs);
->>> +	}
->>> +
->>> +	mixer->reset = devm_reset_control_get(dev, NULL);
->>> +	if (IS_ERR(mixer->reset)) {
->>> +		dev_err(dev, "Couldn't get our reset line\n");
->>> +		return PTR_ERR(mixer->reset);
->>> +	}
->>> +
->>> +	ret = reset_control_deassert(mixer->reset);
->>> +	if (ret) {
->>> +		dev_err(dev, "Couldn't deassert our reset line\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	mixer->bus_clk = devm_clk_get(dev, "bus");
->>> +	if (IS_ERR(mixer->bus_clk)) {
->>> +		dev_err(dev, "Couldn't get the mixer bus clock\n");
->>> +		ret = PTR_ERR(mixer->bus_clk);
->>> +		goto err_assert_reset;
->>> +	}
->>> +	clk_prepare_enable(mixer->bus_clk);
->>> +
->>> +	mixer->mod_clk = devm_clk_get(dev, "mod");
->>> +	if (IS_ERR(mixer->mod_clk)) {
->>> +		dev_err(dev, "Couldn't get the mixer module clock\n");
->>> +		ret = PTR_ERR(mixer->mod_clk);
->>> +		goto err_disable_bus_clk;
->>> +	}
->>> +	clk_prepare_enable(mixer->mod_clk);
->>> +
->>> +	list_add_tail(&mixer->engine.list, &drv->engine_list);
->> 
->> You didn't call INIT_LIST_HEAD on that list.
->> 
->>> +
->>> +	/* Reset the registers */
->>> +	for (i = 0x0; i < 0x20000; i += 4)
->>> +		regmap_write(mixer->engine.regs, i, 0);
->>> +
->>> +	/* Enable the mixer */
->>> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
->>> +		     SUN8I_MIXER_GLOBAL_CTL_RT_EN);
->>> +
->>> +	/* Initialize blender */
->>> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_FCOLOR_CTL,
->>> +		     SUN8I_MIXER_BLEND_FCOLOR_CTL_DEF);
->>> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PREMULTIPLY,
->>> +		     SUN8I_MIXER_BLEND_PREMULTIPLY_DEF);
->>> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR,
->>> +		     SUN8I_MIXER_BLEND_BKCOLOR_DEF);
->>> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_MODE(0),
->>> +		     SUN8I_MIXER_BLEND_MODE_DEF);
->>> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_CK_CTL,
->>> +		     SUN8I_MIXER_BLEND_CK_CTL_DEF);
->>> +
->>> +	regmap_write(mixer->engine.regs,
->>> +		     SUN8I_MIXER_BLEND_ATTR_FCOLOR(0),
->>> +		     SUN8I_MIXER_BLEND_ATTR_FCOLOR_DEF);
->>> +
->>> +	/* Select the first UI channel */
->>> +	DRM_DEBUG_DRIVER("Selecting channel %d (first UI channel)\n",
->>> +			 mixer->cfg->vi_num);
->>> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ROUTE,
->>> +		     mixer->cfg->vi_num);
->>> +
->>> +	return 0;
->>> +
->>> +	clk_disable_unprepare(mixer->mod_clk);
->> 
->> This line cannot be reached.
->> 
->> Maxime
+> +static bool clk_core_rate_is_protected(struct clk_core *core)
+> +{
+> +       return core->protect_count;
+> +}
+> +
+>  static bool clk_core_is_enabled(struct clk_core *core)
+>  {
+>         /*
+> @@ -328,6 +335,11 @@ bool clk_hw_is_prepared(const struct clk_hw *hw)
+>         return clk_core_is_prepared(hw->core);
+>  }
+>  =
+
+> +bool clk_hw_rate_is_protected(const struct clk_hw *hw)
+> +{
+> +       return clk_core_rate_is_protected(hw->core);
+> +}
+> +
+>  bool clk_hw_is_enabled(const struct clk_hw *hw)
+>  {
+>         return clk_core_is_enabled(hw->core);
+> @@ -584,6 +596,102 @@ int clk_prepare(struct clk *clk)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_prepare);
+>  =
+
+> +static void clk_core_rate_unprotect(struct clk_core *core)
+> +{
+> +       lockdep_assert_held(&prepare_lock);
+> +
+> +       if (!core)
+> +               return;
+> +
+> +       if (WARN_ON(core->protect_count =3D=3D 0))
+> +               return;
+> +
+> +       if (--core->protect_count > 0)
+> +               return;
+> +
+> +       clk_core_rate_unprotect(core->parent);
+> +}
+> +
+> +/**
+> + * clk_rate_unprotect - unprotect the rate of a clock source
+> + * @clk: the clk being unprotected
+> + *
+> + * clk_unprotect completes a critical section during which the clock
+> + * consumer cannot tolerate any change to the clock rate. If no other cl=
+ock
+> + * consumers have protected clocks in the parent chain, then calls to th=
+is
+> + * function will allow the clocks in the parent chain to change rates
+> + * freely.
+> + *
+> + * Unlike the clk_set_rate_range method, which allows the rate to change
+> + * within a given range, protected clocks cannot have their rate changed,
+> + * either directly or indirectly due to changes further up the parent ch=
+ain
+> + * of clocks.
+> + *
+> + * Calls to clk_unprotect must be balanced with calls to clk_protect. Ca=
+lls
+> + * to this function may sleep, and do not return error status.
+> + */
+> +void clk_rate_unprotect(struct clk *clk)
+> +{
+> +       if (!clk)
+> +               return;
+> +
+> +       clk_prepare_lock();
+> +
+> +       /*
+> +        * if there is something wrong with this consumer protect count, =
+stop
+> +        * here before messing with the provider
+> +        */
+> +       if (WARN_ON(clk->protect_count <=3D 0))
+> +               goto out;
+> +
+> +       clk_core_rate_unprotect(clk->core);
+> +       clk->protect_count--;
+> +out:
+> +       clk_prepare_unlock();
+> +}
+> +EXPORT_SYMBOL_GPL(clk_rate_unprotect);
+> +
+> +static void clk_core_rate_protect(struct clk_core *core)
+> +{
+> +       lockdep_assert_held(&prepare_lock);
+> +
+> +       if (!core)
+> +               return;
+> +
+> +       if (core->protect_count =3D=3D 0)
+> +               clk_core_rate_protect(core->parent);
+> +
+> +       core->protect_count++;
+> +}
+> +
+> +/**
+> + * clk_rate_protect - protect a clock source
+> + * @clk: the clk being protected
+> + *
+> + * clk_protect begins a critical section during which the clock consumer
+> + * cannot tolerate any change to the clock rate. This results in all clo=
+cks
+> + * up the parent chain to also be rate-protected.
+> + *
+> + * Unlike the clk_set_rate_range method, which allows the rate to change
+> + * within a given range, protected clocks cannot have their rate changed,
+> + * either directly or indirectly due to changes further up the parent ch=
+ain
+> + * of clocks.
+> + *
+> + * Calls to clk_protect should be balanced with calls to clk_unprotect.
+> + * Calls to this function may sleep, and do not return error status.
+> + */
+> +void clk_rate_protect(struct clk *clk)
+> +{
+> +       if (!clk)
+> +               return;
+> +
+> +       clk_prepare_lock();
+> +       clk_core_rate_protect(clk->core);
+> +       clk->protect_count++;
+> +       clk_prepare_unlock();
+> +}
+> +EXPORT_SYMBOL_GPL(clk_rate_protect);
+> +
+>  static void clk_core_disable(struct clk_core *core)
+>  {
+>         lockdep_assert_held(&enable_lock);
+> @@ -838,7 +946,15 @@ static int clk_core_determine_round(struct clk_core =
+*core,
+>  {
+>         long rate;
+>  =
+
+> -       if (core->ops->determine_rate) {
+> +       /*
+> +        * At this point, core protection will be disabled if
+> +        * - if the provider is not protected at all
+> +        * - if the calling consumer is the only one protecting the
+> +        *   provider (and only once)
+> +        */
+> +       if (clk_core_rate_is_protected(core)) {
+> +               req->rate =3D core->rate;
+> +       } else if (core->ops->determine_rate) {
+>                 return core->ops->determine_rate(core->hw, req);
+>         } else if (core->ops->round_rate) {
+>                 rate =3D core->ops->round_rate(core->hw, req->rate,
+> @@ -944,10 +1060,17 @@ long clk_round_rate(struct clk *clk, unsigned long=
+ rate)
+>  =
+
+>         clk_prepare_lock();
+>  =
+
+> +       if (clk->protect_count)
+> +               clk_core_rate_unprotect(clk->core);
+> +
+>         clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
+>         req.rate =3D rate;
+>  =
+
+>         ret =3D clk_core_round_rate_nolock(clk->core, &req);
+> +
+> +       if (clk->protect_count)
+> +               clk_core_rate_protect(clk->core);
+> +
+>         clk_prepare_unlock();
+>  =
+
+>         if (ret)
+> @@ -1575,15 +1698,24 @@ static unsigned long clk_core_req_round_rate_nolo=
+ck(struct clk_core *core,
+
+There are way too many round_rate and determine_rate functions.
+
+Here is a list of round_rate and determine_rate "helpers":
+
+static int clk_core_determine_round(struct clk_core *core,
+                                    struct clk_rate_request *req)
+(called by clk_core_round_rate_nolock and clk_calc_new_rates)
+
+static int clk_core_round_rate_nolock(struct clk_core *core,
+                                      struct clk_rate_request *req)
+(called in several places)
+
+int __clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+(called by a few provider drivers. Should probably be renamed as I
+mentioned in my previous response)
+
+unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
+(used a whole lot)
+
+static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
+                                                     unsigned long req_rate)
+(only called by clk_core_set_rate_nolock. Can we replace with one of the
+options above? Probably clk_core_round_rate_nolock)
+
+>  {
+>         int ret;
+>         struct clk_rate_request req;
+> +       unsigned int cnt =3D core->protect_count;
+>  =
+
+>         if (!core)
+>                 return 0;
+>  =
+
+> +       /* simulate what the rate would be if it could be freely set */
+> +       while (core->protect_count)
+> +               clk_core_rate_unprotect(core);
+
+Gross. Why do this here and not in similar functions like
+clk_core_round_rate_nolock?
+
+> +
+>         clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
+>         req.rate =3D req_rate;
+>  =
+
+>         ret =3D clk_core_round_rate_nolock(core, &req);
+>  =
+
+> +       /* restore the protection */
+> +       while (core->protect_count < cnt)
+> +               clk_core_rate_protect(core);
+> +
+>         return ret ? 0 : req.rate;
+>  }
+>  =
+
+> @@ -1602,6 +1734,10 @@ static int clk_core_set_rate_nolock(struct clk_cor=
+e *core,
+>         if (rate =3D=3D clk_core_get_rate_nolock(core))
+>                 return 0;
+>  =
+
+> +       /* fail on a direct rate set of a protected provider */
+> +       if (clk_core_rate_is_protected(core))
+> +               return -EBUSY;
+
+Again, why bother unrolling the protected clocks in
+clk_core_req_round_rate_nolock if any protection will cause the
+operation to fail here?
+
+Best regards,
+Mike
+
+> +
+>         if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+>                 return -EBUSY;
+>  =
+
+> @@ -1658,8 +1794,14 @@ int clk_set_rate(struct clk *clk, unsigned long ra=
+te)
+>         /* prevent racing with updates to the clock topology */
+>         clk_prepare_lock();
+>  =
+
+> +       if (clk->protect_count)
+> +               clk_core_rate_unprotect(clk->core);
+> +
+>         ret =3D clk_core_set_rate_nolock(clk->core, rate);
+>  =
+
+> +       if (clk->protect_count)
+> +               clk_core_rate_protect(clk->core);
+> +
+>         clk_prepare_unlock();
+>  =
+
+>         return ret;
+> @@ -1690,12 +1832,18 @@ int clk_set_rate_range(struct clk *clk, unsigned =
+long min, unsigned long max)
+>  =
+
+>         clk_prepare_lock();
+>  =
+
+> +       if (clk->protect_count)
+> +               clk_core_rate_unprotect(clk->core);
+> +
+>         if (min !=3D clk->min_rate || max !=3D clk->max_rate) {
+>                 clk->min_rate =3D min;
+>                 clk->max_rate =3D max;
+>                 ret =3D clk_core_set_rate_nolock(clk->core, clk->core->re=
+q_rate);
+>         }
+>  =
+
+> +       if (clk->protect_count)
+> +               clk_core_rate_protect(clk->core);
+> +
+>         clk_prepare_unlock();
+>  =
+
+>         return ret;
+> @@ -1837,6 +1985,9 @@ static int clk_core_set_parent_nolock(struct clk_co=
+re *core,
+>         if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
+>                 return -EBUSY;
+>  =
+
+> +       if (clk_core_rate_is_protected(core))
+> +               return -EBUSY;
+> +
+>         /* try finding the new parent index */
+>         if (parent) {
+>                 p_index =3D clk_fetch_parent_index(core, parent);
+> @@ -1894,8 +2045,16 @@ int clk_set_parent(struct clk *clk, struct clk *pa=
+rent)
+>                 return 0;
+>  =
+
+>         clk_prepare_lock();
+> +
+> +       if (clk->protect_count)
+> +               clk_core_rate_unprotect(clk->core);
+> +
+>         ret =3D clk_core_set_parent_nolock(clk->core,
+>                                          parent ? parent->core : NULL);
+> +
+> +       if (clk->protect_count)
+> +               clk_core_rate_protect(clk->core);
+> +
+>         clk_prepare_unlock();
+>  =
+
+>         return ret;
+> @@ -1909,7 +2068,10 @@ static int clk_core_set_phase_nolock(struct clk_co=
+re *core, int degrees)
+>         if (!core)
+>                 return 0;
+>  =
+
+> -       trace_clk_set_phase(clk->core, degrees);
+> +       if (clk_core_rate_is_protected(core))
+> +               return -EBUSY;
+> +
+> +       trace_clk_set_phase(core, degrees);
+>  =
+
+>         if (core->ops->set_phase)
+>                 ret =3D core->ops->set_phase(core->hw, degrees);
+> @@ -1952,7 +2114,15 @@ int clk_set_phase(struct clk *clk, int degrees)
+>                 degrees +=3D 360;
+>  =
+
+>         clk_prepare_lock();
+> +
+> +       if (clk->protect_count)
+> +               clk_core_rate_unprotect(clk->core);
+> +
+>         ret =3D clk_core_set_phase_nolock(clk->core, degrees);
+> +
+> +       if (clk->protect_count)
+> +               clk_core_rate_protect(clk->core);
+> +
+>         clk_prepare_unlock();
+>  =
+
+>         return ret;
+> @@ -2039,11 +2209,12 @@ static void clk_summary_show_one(struct seq_file =
+*s, struct clk_core *c,
+>         if (!c)
+>                 return;
+>  =
+
+> -       seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+> +       seq_printf(s, "%*s%-*s %11d %12d %12d %11lu %10lu %-3d\n",
+>                    level * 3 + 1, "",
+>                    30 - level * 3, c->name,
+> -                  c->enable_count, c->prepare_count, clk_core_get_rate(c=
+),
+> -                  clk_core_get_accuracy(c), clk_core_get_phase(c));
+> +                  c->enable_count, c->prepare_count, c->protect_count,
+> +                  clk_core_get_rate(c), clk_core_get_accuracy(c),
+> +                  clk_core_get_phase(c));
+>  }
+>  =
+
+>  static void clk_summary_show_subtree(struct seq_file *s, struct clk_core=
+ *c,
+> @@ -2065,8 +2236,8 @@ static int clk_summary_show(struct seq_file *s, voi=
+d *data)
+>         struct clk_core *c;
+>         struct hlist_head **lists =3D (struct hlist_head **)s->private;
+>  =
+
+> -       seq_puts(s, "   clock                         enable_cnt  prepare=
+_cnt        rate   accuracy   phase\n");
+> -       seq_puts(s, "----------------------------------------------------=
+------------------------------------\n");
+> +       seq_puts(s, "   clock                         enable_cnt  prepare=
+_cnt  protect_cnt        rate   accuracy   phase\n");
+> +       seq_puts(s, "----------------------------------------------------=
+------------------------------------------------\n");
+>  =
+
+>         clk_prepare_lock();
+>  =
+
+> @@ -2101,6 +2272,7 @@ static void clk_dump_one(struct seq_file *s, struct=
+ clk_core *c, int level)
+>         seq_printf(s, "\"%s\": { ", c->name);
+>         seq_printf(s, "\"enable_count\": %d,", c->enable_count);
+>         seq_printf(s, "\"prepare_count\": %d,", c->prepare_count);
+> +       seq_printf(s, "\"protect_count\": %d,", c->protect_count);
+>         seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
+>         seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
+>         seq_printf(s, "\"phase\": %d", clk_core_get_phase(c));
+> @@ -2231,6 +2403,11 @@ static int clk_debug_create_one(struct clk_core *c=
+ore, struct dentry *pdentry)
+>         if (!d)
+>                 goto err_out;
+>  =
+
+> +       d =3D debugfs_create_u32("clk_protect_count", S_IRUGO, core->dent=
+ry,
+> +                       (u32 *)&core->protect_count);
+> +       if (!d)
+> +               goto err_out;
+> +
+>         d =3D debugfs_create_u32("clk_notifier_count", S_IRUGO, core->den=
+try,
+>                         (u32 *)&core->notifier_count);
+>         if (!d)
+> @@ -2794,6 +2971,11 @@ void clk_unregister(struct clk *clk)
+>         if (clk->core->prepare_count)
+>                 pr_warn("%s: unregistering prepared clock: %s\n",
+>                                         __func__, clk->core->name);
+> +
+> +       if (clk->core->protect_count)
+> +               pr_warn("%s: unregistering protected clock: %s\n",
+> +                                       __func__, clk->core->name);
+> +
+>         kref_put(&clk->core->ref, __clk_release);
+>  unlock:
+>         clk_prepare_unlock();
+> @@ -2952,6 +3134,17 @@ void __clk_put(struct clk *clk)
+>  =
+
+>         clk_prepare_lock();
+>  =
+
+> +       /*
+> +        * Before calling clk_put, all calls to clk_rate_protect from a g=
+iven
+> +        * user must be balanced with calls to clk_rate_unprotect and by =
+that
+> +        * same user
+> +        */
+> +       WARN_ON(clk->protect_count);
+> +
+> +       /* We voiced our concern, let's sanitize the situation */
+> +       for (; clk->protect_count; clk->protect_count--)
+> +               clk_core_rate_unprotect(clk->core);
+> +
+>         hlist_del(&clk->clks_node);
+>         if (clk->min_rate > clk->core->req_rate ||
+>             clk->max_rate < clk->core->req_rate)
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index a428aec36ace..ebd7df5f375f 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -739,6 +739,7 @@ unsigned long clk_hw_get_rate(const struct clk_hw *hw=
+);
+>  unsigned long __clk_get_flags(struct clk *clk);
+>  unsigned long clk_hw_get_flags(const struct clk_hw *hw);
+>  bool clk_hw_is_prepared(const struct clk_hw *hw);
+> +bool clk_hw_rate_is_protected(const struct clk_hw *hw);
+>  bool clk_hw_is_enabled(const struct clk_hw *hw);
+>  bool __clk_is_enabled(struct clk *clk);
+>  struct clk *__clk_lookup(const char *name);
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 024cd07870d0..85d73e02df40 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -265,6 +265,30 @@ struct clk *devm_clk_get(struct device *dev, const c=
+har *id);
+>   */
+>  struct clk *devm_get_clk_from_child(struct device *dev,
+>                                     struct device_node *np, const char *c=
+on_id);
+> +/**
+> + * clk_rate_protect - inform the system when the clock rate must be prot=
+ected.
+> + * @clk: clock source
+> + *
+> + * This function informs the system that the consumer protecting the clo=
+ck
+> + * depends on the rate of the clock source and can't tolerate any glitch=
+es
+> + * introduced by further clock rate change or re-parenting of the clock =
+source.
+> + *
+> + * Must not be called from within atomic context.
+> + */
+> +void clk_rate_protect(struct clk *clk);
+> +
+> +/**
+> + * clk_rate_unprotect - release the protection of the clock source.
+> + * @clk: clock source
+> + *
+> + * This function informs the system that the consumer previously protect=
+ing the
+> + * clock rate can now deal with other consumer altering the clock source=
+ rate
+> + *
+> + * The caller must balance the number of rate_protect and rate_unprotect=
+ calls.
+> + *
+> + * Must not be called from within atomic context.
+> + */
+> +void clk_rate_unprotect(struct clk *clk);
+>  =
+
+>  /**
+>   * clk_enable - inform the system when the clock source should be runnin=
+g.
+> @@ -460,6 +484,11 @@ static inline void clk_put(struct clk *clk) {}
+>  =
+
+>  static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+>  =
+
+> +
+> +static inline void clk_protect(struct clk *clk) {}
+> +
+> +static inline void clk_unprotect(struct clk *clk) {}
+> +
+>  static inline int clk_enable(struct clk *clk)
+>  {
+>         return 0;
+> -- =
+
+> 2.9.4
+> =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
