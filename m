@@ -1,54 +1,67 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 1/8] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
-Date: Wed,  3 May 2017 11:09:22 +0800
-Message-Id: <20170503030929.28763-2-wens@csie.org>
-In-Reply-To: <20170503030929.28763-1-wens@csie.org>
-References: <20170503030929.28763-1-wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Neil Armstrong <narmstrong@baylibre.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <3059c91b-034c-3da3-9ca4-06ad11bcec42@baylibre.com>
+Cc: jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+ "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+ "Tobias Regnery" <tobias.regnery@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <3059c91b-034c-3da3-9ca4-06ad11bcec42@baylibre.com>
+Message-ID: <149574669436.52617.1861172521136194942@resonance>
+Subject: Re: [GIT PULL] Meson Kconfig fixes for 4.12-rc1
+Date: Thu, 25 May 2017 14:11:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T clock control unit is a hybrid of some new style clock designs
-from the A80, and old style layout from the other Allwinner SoCs.
+Quoting Neil Armstrong (2017-05-16 02:14:55)
+> Hi Mike, Stephen,
+> =
 
-Like the A80, the SoC does not have a low speed 32.768 kHz oscillator.
-Unlike the A80, there is no clock input either. The only low speed clock
-available is the internal oscillator which runs at around 16 MHz,
-divided by 512, yielding a low speed clock around 31.250 kHz.
+> Here is a single fix for the Meson Kconfig, that could go for 4.12-rc2.
+> =
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 2 ++
- 1 file changed, 2 insertions(+)
+> Thanks,
+> Neil
+> =
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index e9c5a1d9834a..34b2a9249a94 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun6i-a31-ccu"
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
-+		- "allwinner,sun8i-a83t-ccu"
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-h3-r-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
-@@ -18,6 +19,7 @@ Required properties :
- - clocks: phandle to the oscillators feeding the CCU. Two are needed:
-   - "hosc": the high frequency oscillator (usually at 24MHz)
-   - "losc": the low frequency oscillator (usually at 32kHz)
-+	    On the A83T, this is the internal 16MHz oscillator divided by 512
- - clock-names: Must contain the clock names described just above
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
--- 
-2.11.0
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43=
+f6:
+> =
+
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> =
+
+> are available in the git repository at:
+> =
+
+>   git://github.com/baylibre/clk-meson.git tags/meson-clk-fixes-for-4.12-r=
+c2
+> =
+
+> for you to fetch changes up to dbed87a9d3a857a86f602775b5845f5f6d9652b5:
+> =
+
+>   clk: meson: gxbb: fix build error without RESET_CONTROLLER (2017-05-16 =
+11:05:01 +0200)
+
+Pulled into clk-fixes.
+
+Regards,
+Mike
+
+> =
+
+> ----------------------------------------------------------------
+> KConfig fix:
+> - clk: meson: gxbb: fix build error without RESET_CONTROLLER
+> =
+
+> ----------------------------------------------------------------
+> Tobias Regnery (1):
+>       clk: meson: gxbb: fix build error without RESET_CONTROLLER
+> =
+
+>  drivers/clk/meson/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
