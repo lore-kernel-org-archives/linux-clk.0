@@ -1,154 +1,54 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v5 11/11] arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
-Date: Fri, 26 May 2017 14:55:04 +0530
-Message-Id: <1495790704-2438-12-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
-References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 1/3] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T PRCM
+Date: Fri, 26 May 2017 16:00:23 +0800
+Message-Id: <20170526080025.28532-2-wens@csie.org>
+In-Reply-To: <20170526080025.28532-1-wens@csie.org>
+References: <20170526080025.28532-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Srinath Mannam <srinath.mannam@broadcom.com>
+The A83T's PRCM has the same set of clocks and resets as the A64.
+However, a few dividers are different. And due to the lack of a low
+speed 32.768 kHz oscillator, a few of the clock parents are different.
 
-The Stingray SoC has two instances of SDHCI controller
-and one instance of iProc PWM.
+The PRCM also has controls for various power domains. These are not
+supported yet.
 
-Let's enable above mentioned devices in Stingray DT.
-
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 39 ++++++++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 28 ++++++++++++++++
- 2 files changed, 67 insertions(+)
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index ff59a26..5dca7d1 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -43,6 +43,28 @@
- 		serial2 = &uart2;
- 		serial3 = &uart3;
- 	};
-+
-+	sdio0_vddo_ctrl_reg: sdio0_vddo_ctrl {
-+		compatible = "regulator-gpio";
-+		regulator-name = "sdio0_vddo_ctrl_reg";
-+		regulator-type = "voltage";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&pca9505 18 0>;
-+		states = <3300000 0x0
-+			  1800000 0x1>;
-+	};
-+
-+	sdio1_vddo_ctrl_reg: sdio1_vddo_ctrl {
-+		compatible = "regulator-gpio";
-+		regulator-name = "sdio1_vddo_ctrl_reg";
-+		regulator-type = "voltage";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&pca9505 19 0>;
-+		states = <3300000 0x0
-+			  1800000 0x1>;
-+	};
- };
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 34b2a9249a94..095a5807d874 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -7,6 +7,7 @@ Required properties :
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
+ 		- "allwinner,sun8i-a83t-ccu"
++		- "allwinner,sun8i-a83t-r-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
+ 		- "allwinner,sun8i-h3-r-ccu"
+ 		- "allwinner,sun8i-v3s-ccu"
+@@ -24,7 +25,7 @@ Required properties :
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
  
- &memory { /* Default DRAM banks */
-@@ -54,6 +76,10 @@
- 	status = "okay";
- };
+-For the PRCM CCUs on H3/A64, one more clock is needed:
++For the PRCM CCUs on A83T/H3/A64, one more clock is needed:
+ - "iosc": the SoC's internal frequency oscillator
  
-+&pwm {
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -90,3 +116,16 @@
- 		#size-cells = <1>;
- 	};
- };
-+
-+&sdio0 {
-+	vqmmc-supply = <&sdio0_vddo_ctrl_reg>;
-+	non-removable;
-+	full-pwr-cycle;
-+	status = "okay";
-+};
-+
-+&sdio1 {
-+	vqmmc-supply = <&sdio1_vddo_ctrl_reg>;
-+	full-pwr-cycle;
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 642d42c..44ed73c 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -269,6 +269,14 @@
- 
- 		#include "stingray-pinctrl.dtsi"
- 
-+		pwm: pwm@68910000{
-+			compatible = "brcm,iproc-pwm";
-+			reg = <0x00010000 0x1000>;
-+			clocks = <&crmu_ref25m>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@689b0000 {
- 			compatible = "brcm,iproc-i2c";
- 			reg = <0x000b0000 0x100>;
-@@ -428,5 +436,25 @@
- 			brcm,nand-has-wp;
- 			status = "disabled";
- 		};
-+
-+		sdio0: sdhci@68cf1000 {
-+			compatible = "brcm,sdhci-iproc";
-+			reg = <0x003f1000 0x100>;
-+			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
-+			bus-width = <8>;
-+			clocks = <&sdio0_clk>;
-+			iommus = <&smmu 0x6002 0x0000>;
-+			status = "disabled";
-+		};
-+
-+		sdio1: sdhci@68cf2000 {
-+			compatible = "brcm,sdhci-iproc";
-+			reg = <0x003f2000 0x100>;
-+			interrupts = <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
-+			bus-width = <8>;
-+			clocks = <&sdio1_clk>;
-+			iommus = <&smmu 0x6003 0x0000>;
-+			status = "disabled";
-+		};
- 	};
- };
+ Example for generic CCU:
 -- 
-2.7.4
+2.11.0
