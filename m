@@ -1,103 +1,107 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: linux@rempel-privat.de
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic_stby_poweroff" is set
-Date: Wed, 31 May 2017 08:14:53 +0200
-Message-Id: <20170531061457.23744-3-o.rempel@pengutronix.de>
-In-Reply-To: <20170531061457.23744-1-o.rempel@pengutronix.de>
-References: <20170531061457.23744-1-o.rempel@pengutronix.de>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v5 00/11] Broadcom Stingray SOC Initial Support
+Date: Fri, 26 May 2017 14:54:53 +0530
+Message-Id: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+This patchset adds initial support of Broadcom Stingray SOC
+by reusing existing Broadcom iProc device drivers.
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+Most of the patches in this patchset are DT patches except
+the Stingray clock tree support which just one patch.
 
-This patch implements step 4. of this sequence.
+This patchset is based on Linux-4.12-rc2 and it is also available
+at stingray-v5 branch of https://github.com/Broadcom/arm64-linux.git
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: kernel@pengutronix.de
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm/mach-imx/pm-imx6.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Changes since v4:
+ - Reduce number of include headers in Stingray clk driver
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index e61b1d1027e1..fd7b95f340e5 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -27,6 +27,8 @@
- #include <asm/proc-fns.h>
- #include <asm/suspend.h>
- #include <asm/tlb.h>
-+#include <linux/kallsyms.h>
-+#include <linux/regulator/machine.h>
- 
- #include "common.h"
- #include "hardware.h"
-@@ -602,6 +604,31 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	cpu_suspend(0, imx6q_suspend_finish);
-+
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_poweroff_probe(void)
-+{
-+	char symname[KSYM_NAME_LEN];
-+
-+	if (pm_power_off) {
-+		lookup_symbol_name((ulong)pm_power_off, symname);
-+		pr_warn("%s: pm_power_off already claimed  %p %s!\n",
-+			__func__, pm_power_off, symname);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -618,6 +645,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic_stby_poweroff"))
-+		imx6_pm_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
+Changes since v3:
+ - Rebased patches for Linux-4.12-rc1
+ - Updated PATCH3 to have all clocks except genpll3 to be
+   registered via platform driver probe
+
+Changes since v2:
+ - Remove default bootargs from chosen DT node
+ - Remove "linux" prefix from stdout DT attribute of chosen DT node
+ - Remove use of GIC_CPU_MASK_xxx() for PPIs
+
+Changes since v1:
+ - Rebased patches for Linux-4.12-rc1
+ - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+ - Use ranges DT property to clear view of memory-layout
+ - Make bcm-sr.h part of clock DT bindings patch
+
+Anup Patel (3):
+  dt-bindings: bcm: Add Broadcom Stingray bindings document
+  arm64: dts: Initial DTS files for Broadcom Stingray SOC
+  arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+
+Oza Pawandeep (1):
+  arm64: dts: Add I2C DT nodes for Stingray SoC
+
+Pramod Kumar (3):
+  arm64: dts: Add NAND DT nodes for Stingray SOC
+  arm64: dts: Add pinctrl DT nodes for Stingray SOC
+  arm64: dts: Add GPIO DT nodes for Stingray SOC
+
+Sandeep Tripathy (3):
+  dt-bindings: clk: Extend binding doc for Stingray SOC
+  clk: bcm: Add clocks for Stingray SOC
+  arm64: dts: Add clock DT nodes for Stingray SOC
+
+Srinath Mannam (1):
+  arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+
+ .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
+ .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
+ arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+ arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
+ .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
+ .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
+ drivers/clk/bcm/Kconfig                            |   8 +
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-sr.c                           | 320 ++++++++++++++
+ include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
+ .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
+ 15 files changed, 1817 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+ create mode 100644 drivers/clk/bcm/clk-sr.c
+ create mode 100644 include/dt-bindings/clock/bcm-sr.h
+ create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+
 -- 
-2.11.0
+2.7.4
