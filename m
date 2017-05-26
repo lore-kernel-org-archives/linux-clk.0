@@ -1,50 +1,52 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Zhong Kaihua <zhongkaihua@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 0/2] Hi3660: enable sp804 timer
-Date: Wed, 17 May 2017 22:46:30 +0800
-Message-Id: <1495032392-19102-1-git-send-email-leo.yan@linaro.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 3/3] ARM: sun8i: a83t: Add device node for PRCM
+Date: Fri, 26 May 2017 16:00:25 +0800
+Message-Id: <20170526080025.28532-4-wens@csie.org>
+In-Reply-To: <20170526080025.28532-1-wens@csie.org>
+References: <20170526080025.28532-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set is to enable sp804 timer on Hi3660 for Hikey960 platform.
+The A83T's PRCM has the same set of clocks and resets as the A64.
+However, a few dividers are different. And due to the lack of a low
+speed 32.768 kHz oscillator, a few of the clock parents are different.
 
-On Hi3660, the sp804 timer co-exists with CPUs' architecture timer; but
-sp804 timer is located in SoC level but CPU's architecture timer is in
-CPU power domain. sp804 timer is used as broadcast timer when CPU enters
-idle states and the CPU (includes architecture timer) power domain is
-powered off. So sp804 timer enabling is prerequisite before we enable
-CPUIdle on Hi3660.
+The PRCM also has controls for various power domains. These are not
+supported yet, neither in software nor in the device tree binding.
 
-This patch set is to enable sp804 timer, the first patch is to adjust
-timer regiseration so ensure clock is avaiable for timer. the second
-timer is to add description for timer in dts. Have rebased this patch
-set on Guodong's dts patch set [1] and verified this patch set on
-Hikey960.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-[1] http://archive.armlinux.org.uk/lurker/message/20170517.083733.8207a50e.en.html
-
-Leo Yan (2):
-  clk: Hi3660: change to register clock with CLK_OF_DECLARE
-  arm64: dts: add sp804 timer node for Hi3660
-
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++
- drivers/clk/hisilicon/clk-hi3660.c        | 48 ++++---------------------------
- 2 files changed, 16 insertions(+), 43 deletions(-)
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 1dc4cfe81534..8089f36deeff 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -270,5 +270,14 @@
+ 			#interrupt-cells = <3>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
++
++		r_ccu: clock@1f01400 {
++			compatible = "allwinner,sun8i-a83t-r-ccu";
++			reg = <0x01f01400 0x400>;
++			clocks = <&osc24M>, <&osc16Md512>, <&osc16M>;
++			clock-names = "hosc", "losc", "iosc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
+ 	};
+ };
 -- 
-1.9.1
+2.11.0
