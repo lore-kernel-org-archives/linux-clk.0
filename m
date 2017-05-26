@@ -1,254 +1,96 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Subject: [RFC PATCH 10/11] ARM: sun8i: h3: add display engine pipeline for TVE
-Date: Thu, 18 May 2017 00:43:53 +0800
-Message-Id: <20170517164354.16399-11-icenowy@aosc.io>
-In-Reply-To: <20170517164354.16399-1-icenowy@aosc.io>
-References: <20170517164354.16399-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Pramod Kumar <pramodku@broadcom.com>
+Subject: [PATCH v5 08/11] arm64: dts: Add GPIO DT nodes for Stingray SOC
+Date: Fri, 26 May 2017 14:55:01 +0530
+Message-Id: <1495790704-2438-9-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As we have already the support for the TV encoder on Allwinner H3, add
-the display engine pipeline device tree nodes to its DTSI file.
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-The H5 pipeline has some differences and will be enabled later.
+The GPIOs on Stingray SOC are based on iProc GPIOs hence
+using this we add GPIO DT nodes for Stingray SOC.
 
-The currently-unused mixer0 and tcon0 are also needed, for the
-completement of the pipeline.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
 ---
- arch/arm/boot/dts/sun8i-h3.dtsi | 189 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 189 insertions(+)
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index b36f9f423c39..20172ef92415 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -41,6 +41,8 @@
-  */
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index a4afd44..059086f 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -251,6 +251,14 @@
+ 		ranges = <0x0 0x0 0x66400000 0x100000>;
  
- #include "sunxi-h3-h5.dtsi"
-+#include <dt-bindings/clock/sun8i-de2.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- 
- / {
- 	cpus {
-@@ -72,6 +74,193 @@
- 		};
+ 		#include "stingray-clock.dtsi"
++
++		gpio_crmu: gpio@66424800 {
++			compatible = "brcm,iproc-gpio";
++			reg = <0x00024800 0x4c>;
++			ngpios = <6>;
++			#gpio-cells = <2>;
++			gpio-controller;
++		};
  	};
  
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-h3-display-engine";
-+		allwinner,pipelines = <&mixer0>,
-+				      <&mixer1>;
-+		status = "disabled";
-+	};
-+
-+	soc {
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun8i-a83t-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_BUS_DE>,
-+				 <&ccu CLK_DE>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			assigned-clocks = <&ccu CLK_DE>;
-+			assigned-clock-parents = <&ccu CLK_PLL_DE>;
-+			assigned-clock-rates = <432000000>;
+ 	hsls {
+@@ -261,6 +269,32 @@
+ 
+ 		#include "stingray-pinctrl.dtsi"
+ 
++		gpio_hsls: gpio@689d0000 {
++			compatible = "brcm,iproc-gpio";
++			reg = <0x000d0000 0x864>;
++			ngpios = <151>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			interrupt-controller;
++			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-ranges = <&pinmux 0 0 16>,
++					<&pinmux 16 71 2>,
++					<&pinmux 18 131 8>,
++					<&pinmux 26 83 6>,
++					<&pinmux 32 123 4>,
++					<&pinmux 36 43 24>,
++					<&pinmux 60 89 2>,
++					<&pinmux 62 73 4>,
++					<&pinmux 66 95 28>,
++					<&pinmux 94 127 4>,
++					<&pinmux 98 139 10>,
++					<&pinmux 108 16 27>,
++					<&pinmux 135 77 6>,
++					<&pinmux 141 67 4>,
++					<&pinmux 145 149 6>,
++					<&pinmux 151 91 4>;
 +		};
 +
-+		mixer0: mixer@1100000 {
-+			compatible = "allwinner,sun8i-h3-de2-mixer0";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER0>,
-+				 <&display_clocks CLK_MIXER0>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_MIXER0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+
-+					mixer0_out_tcon1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&tcon1_in_mixer0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun8i-h3-de2-mixer1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer1_out_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+
-+					mixer1_out_tcon0: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&tcon0_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun8i-h3-tcon0";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>,
-+				 <&ccu CLK_TCON0>;
-+			clock-names = "ahb",
-+				      "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON0>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+
-+					tcon0_in_mixer1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&mixer1_out_tcon0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun8i-h3-tcon1";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>;
-+			clock-names = "ahb";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+
-+					tcon1_in_mixer0: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&mixer0_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_tve0: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&tve0_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tve0: tv-encoder@1e00000 {
-+			compatible = "allwinner,sun8i-h3-tv-encoder";
-+			reg = <0x01e00000 0x1000>;
-+			clocks = <&ccu CLK_BUS_TVE>, <&ccu CLK_TVE>;
-+			clock-names = "bus", "mod";
-+			resets = <&ccu RST_BUS_TVE>;
-+			status = "disabled";
-+
-+			assigned-clocks = <&ccu CLK_TVE>;
-+			assigned-clock-parents = <&ccu CLK_PLL_DE>;
-+			assigned-clock-rates = <216000000>;
-+
-+			port {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tve0_in_tcon1: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&tcon1_out_tve0>;
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+ 		uart0: uart@68a00000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
 -- 
-2.12.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
