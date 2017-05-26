@@ -1,103 +1,154 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: linux@rempel-orivat.de
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/5] ARM: imx6: register pm_power_off handler if "fsl,pmic_stby_poweroff" is set
-Date: Mon, 29 May 2017 19:09:21 +0200
-Message-Id: <20170529170924.25488-2-o.rempel@pengutronix.de>
-In-Reply-To: <20170529170924.25488-1-o.rempel@pengutronix.de>
-References: <20170529170924.25488-1-o.rempel@pengutronix.de>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v5 11/11] arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+Date: Fri, 26 May 2017 14:55:04 +0530
+Message-Id: <1495790704-2438-12-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+From: Srinath Mannam <srinath.mannam@broadcom.com>
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+The Stingray SoC has two instances of SDHCI controller
+and one instance of iProc PWM.
 
-This patch implements step 4. of this sequence.
+Let's enable above mentioned devices in Stingray DT.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: kernel@pengutronix.de
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- arch/arm/mach-imx/pm-imx6.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 39 ++++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 28 ++++++++++++++++
+ 2 files changed, 67 insertions(+)
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index e61b1d1027e1..fd7b95f340e5 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -27,6 +27,8 @@
- #include <asm/proc-fns.h>
- #include <asm/suspend.h>
- #include <asm/tlb.h>
-+#include <linux/kallsyms.h>
-+#include <linux/regulator/machine.h>
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index ff59a26..5dca7d1 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -43,6 +43,28 @@
+ 		serial2 = &uart2;
+ 		serial3 = &uart3;
+ 	};
++
++	sdio0_vddo_ctrl_reg: sdio0_vddo_ctrl {
++		compatible = "regulator-gpio";
++		regulator-name = "sdio0_vddo_ctrl_reg";
++		regulator-type = "voltage";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		gpios = <&pca9505 18 0>;
++		states = <3300000 0x0
++			  1800000 0x1>;
++	};
++
++	sdio1_vddo_ctrl_reg: sdio1_vddo_ctrl {
++		compatible = "regulator-gpio";
++		regulator-name = "sdio1_vddo_ctrl_reg";
++		regulator-type = "voltage";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		gpios = <&pca9505 19 0>;
++		states = <3300000 0x0
++			  1800000 0x1>;
++	};
+ };
  
- #include "common.h"
- #include "hardware.h"
-@@ -602,6 +604,31 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
+ &memory { /* Default DRAM banks */
+@@ -54,6 +76,10 @@
+ 	status = "okay";
+ };
  
-+static void imx6_pm_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	cpu_suspend(0, imx6q_suspend_finish);
++&pwm {
++	status = "okay";
++};
 +
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_poweroff_probe(void)
-+{
-+	char symname[KSYM_NAME_LEN];
-+
-+	if (pm_power_off) {
-+		lookup_symbol_name((ulong)pm_power_off, symname);
-+		pr_warn("%s: pm_power_off already claimed  %p %s!\n",
-+			__func__, pm_power_off, symname);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -618,6 +645,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic_stby_poweroff"))
-+		imx6_pm_poweroff_probe();
- }
+ &i2c0 {
+ 	status = "okay";
  
- void __init imx6q_pm_init(void)
+@@ -90,3 +116,16 @@
+ 		#size-cells = <1>;
+ 	};
+ };
++
++&sdio0 {
++	vqmmc-supply = <&sdio0_vddo_ctrl_reg>;
++	non-removable;
++	full-pwr-cycle;
++	status = "okay";
++};
++
++&sdio1 {
++	vqmmc-supply = <&sdio1_vddo_ctrl_reg>;
++	full-pwr-cycle;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 642d42c..44ed73c 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -269,6 +269,14 @@
+ 
+ 		#include "stingray-pinctrl.dtsi"
+ 
++		pwm: pwm@68910000{
++			compatible = "brcm,iproc-pwm";
++			reg = <0x00010000 0x1000>;
++			clocks = <&crmu_ref25m>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@689b0000 {
+ 			compatible = "brcm,iproc-i2c";
+ 			reg = <0x000b0000 0x100>;
+@@ -428,5 +436,25 @@
+ 			brcm,nand-has-wp;
+ 			status = "disabled";
+ 		};
++
++		sdio0: sdhci@68cf1000 {
++			compatible = "brcm,sdhci-iproc";
++			reg = <0x003f1000 0x100>;
++			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
++			bus-width = <8>;
++			clocks = <&sdio0_clk>;
++			iommus = <&smmu 0x6002 0x0000>;
++			status = "disabled";
++		};
++
++		sdio1: sdhci@68cf2000 {
++			compatible = "brcm,sdhci-iproc";
++			reg = <0x003f2000 0x100>;
++			interrupts = <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
++			bus-width = <8>;
++			clocks = <&sdio1_clk>;
++			iommus = <&smmu 0x6003 0x0000>;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
-2.11.0
+2.7.4
