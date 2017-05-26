@@ -1,43 +1,61 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Return-Path: <guodong.xu@linaro.org>
+Return-Path: <guodong.xu@linaro.org>
+From: Guodong Xu <guodong.xu@linaro.org>
 To: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	jbrunet@baylibre.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: chenjun14@huawei.com,
+	zhongkaihua@huawei.com,
+	zhangfei.gao@linaro.org,
+	leo.yan@linaro.org,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	narmstrong@baylibre.com
-Cc: carlo@caione.org,
-	khilman@baylibre.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 0/1] add support for the NAND clocks on Meson8b
-Date: Sat,  1 Apr 2017 15:10:00 +0200
-Message-Id: <20170401131001.9988-1-martin.blumenstingl@googlemail.com>
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>
+Subject: [PATCH v2 1/3] clk: hi3660: fix wrong parent name of clk_mux_sysbus
+Date: Fri, 26 May 2017 15:38:19 +0800
+Message-Id: <20170526073821.25971-2-guodong.xu@linaro.org>
+In-Reply-To: <20170526073821.25971-1-guodong.xu@linaro.org>
+References: <20170526073821.25971-1-guodong.xu@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for the NAND clocks found in the Meson8b SoC.
-The clocks consist of a simple gate, a divider and a mux. The mux
-parents are not documented in the public S805 datasheet [0], so I
-had to use a bit of math and take the vendor kernel as reference [1]
-to find the actual parent clocks.
-Some mux parents cannot be divided down without remainder to the
-target clocks (as expected by the vendor NAND driver) these clocks
-have the ROUND_CLOSEST flag set.
+From: Chen Jun <chenjun14@huawei.com>
 
-This is based on the "clk-meson" branch (e65ae3fb97b4 "dt-bindings:
-clock: gxbb-clkc: Add GXL compatible variant")
+Parent name of clk_mux_sysbus is not correct. This patch fixes it.
 
+Signed-off-by: Chen Jun <chenjun14@huawei.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi3660.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-[0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-[1] https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/amlnf_ctrl.c#L314
-
-Martin Blumenstingl (1):
-  clk: meson: meson8b: add support for the NAND clocks
-
- drivers/clk/meson/meson8b.c | 53 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h |  6 ++++-
- 2 files changed, 58 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+index 96a9697..143ce0c 100644
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -206,6 +206,8 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_clks[] = {
+ };
+ 
+ static const char *const
++clk_mux_sysbus_p[] = {"clk_ppll1", "clk_ppll0"};
++static const char *const
+ clk_mux_sdio_sys_p[] = {"clk_factor_mmc", "clk_div_sdio",};
+ static const char *const
+ clk_mux_sd_sys_p[] = {"clk_factor_mmc", "clk_div_sd",};
+@@ -239,8 +241,8 @@ static const char *const
+ clk_mux_i2c_p[] = {"clkin_sys", "clk_div_i2c",};
+ 
+ static const struct hisi_mux_clock hi3660_crgctrl_mux_clks[] = {
+-	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sdio_sys_p,
+-	  ARRAY_SIZE(clk_mux_sdio_sys_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
++	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sysbus_p,
++	  ARRAY_SIZE(clk_mux_sysbus_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
+ 	  CLK_MUX_HIWORD_MASK, },
+ 	{ HI3660_CLK_MUX_UART0, "clk_mux_uart0", clk_mux_uart0_p,
+ 	  ARRAY_SIZE(clk_mux_uart0_p), CLK_SET_RATE_PARENT, 0xac, 2, 1,
 -- 
-2.12.1
+2.10.2
