@@ -1,100 +1,491 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1494223768.9662.4.camel@mtkswgap22>
-Subject: Re: [PATCH 4/6] cpufreq: mediatek: Add support of cpufreq to
- MT2701/MT7623 SoC
-From: Sean Wang <sean.wang@mediatek.com>
-To: Jean Delvare <jdelvare@suse.de>
-CC: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
-	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Mon, 8 May 2017 14:09:28 +0800
-In-Reply-To: <20170506100059.6003d9ef@endymion>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-	 <1493997974-17699-5-git-send-email-sean.wang@mediatek.com>
-	 <20170506100059.6003d9ef@endymion>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v5 07/11] arm64: dts: Add pinctrl DT nodes for Stingray SOC
+Date: Fri, 26 May 2017 14:55:00 +0530
+Message-Id: <1495790704-2438-8-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jean,
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Appreciate your reviewing and suggestion. I added my comment inline.
+This patch adds pinctrl and pinmux related DT nodes for
+Stingray SOC.
 
-On Sat, 2017-05-06 at 10:00 +0200, Jean Delvare wrote:
-> Hi Sean,
-> 
-> On Fri, 5 May 2017 23:26:12 +0800, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > MT2701/MT7623 is an 32-bit ARMv7 based quad-core (4 * Cortex-A7) with
-> > single cluster and this hardware is also compatible with the existing
-> > driver through enabling CPU frequency feature with operating-points-v2
-> > bindings.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  drivers/cpufreq/Kconfig.arm      | 4 ++--
-> >  drivers/cpufreq/mt8173-cpufreq.c | 2 ++
-> >  2 files changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> > index 74ed7e9..68b387a 100644
-> > --- a/drivers/cpufreq/Kconfig.arm
-> > +++ b/drivers/cpufreq/Kconfig.arm
-> > @@ -90,11 +90,11 @@ config ARM_KIRKWOOD_CPUFREQ
-> >  config ARM_MT8173_CPUFREQ
-> >  	tristate "Mediatek MT8173 CPUFreq support"
-> >  	depends on ARCH_MEDIATEK && REGULATOR
-> > -	depends on ARM64 || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
-> > +	depends on (ARM || ARM64) || (ARM_CPU_TOPOLOGY && COMPILE_TEST)
-> 
-> Parentheses not needed. I am also curious if ARM_CPU_TOPOLOGY can
-> actually be set when neither ARM nor ARM64 is. I suspect not, and then
-> the above can be simplified to just:
-> 
+For manageability, pinctrl and pinmum DT nodes are added
+as separate DTSi file and included in main DTSi file.
 
-I agree with you and I will look into more whether ARM_CPU_TOPOLOGY can
-be removed safely since I can't make fully sure here and then update
-those into the next version.
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 +++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   2 +
+ .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 ++++
+ 3 files changed, 415 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+ create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
 
-> 	depends on ARM || ARM64
-> 
-> >  	depends on !CPU_THERMAL || THERMAL
-> >  	select PM_OPP
-> >  	help
-> > -	  This adds the CPUFreq driver support for Mediatek MT8173 SoC.
-> > +	  This adds the CPUFreq driver support for Mediatek SoCs.
-> 
-> If this driver actually support all Mediatek SoCs, the menu entry
-> itself should be updated to drop "MT8173".
-> 
-
-I will drop MT8173 wording because the driver also works for those
-Mediatek SoCs not belonged to MT817x series.
-
-In fact, the driver should also be extended and being more generic to
-support more Mediatek SoCs in the future.
-
-> >  
-> >  config ARM_OMAP2PLUS_CPUFREQ
-> >  	bool "TI OMAP2+"
-> > diff --git a/drivers/cpufreq/mt8173-cpufreq.c b/drivers/cpufreq/mt8173-cpufreq.c
-> > index fd1886f..481ec77 100644
-> > --- a/drivers/cpufreq/mt8173-cpufreq.c
-> > +++ b/drivers/cpufreq/mt8173-cpufreq.c
-> > @@ -575,6 +575,8 @@ static struct platform_driver mt8173_cpufreq_platdrv = {
-> >  
-> >  /* List of machines supported by this driver */
-> >  static const struct of_device_id mt8173_cpufreq_machines[] __initconst = {
-> > +	{ .compatible = "mediatek,mt2701", },
-> > +	{ .compatible = "mediatek,mt7623", },
-> >  	{ .compatible = "mediatek,mt817x", },
-> >  	{ .compatible = "mediatek,mt8173", },
-> >  	{ .compatible = "mediatek,mt8176", },
-> 
-> 
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+new file mode 100644
+index 0000000..af5d480
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+@@ -0,0 +1,345 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include <dt-bindings/pinctrl/brcm,pinctrl-stingray.h>
++
++		pinconf: pinconf@68a40000 {
++			compatible = "pinconf-single";
++			reg = <0x00140000 0x250>;
++			pinctrl-single,register-width = <32>;
++
++			/* pinconf functions */
++		};
++
++		pinmux: pinmux@68a4029c {
++			compatible = "pinctrl-single";
++			reg = <0x0014029c 0x250>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			pinctrl-single,register-width = <32>;
++			pinctrl-single,function-mask = <0xf>;
++			pinctrl-single,gpio-range = <
++				&range 0 154 MODE_GPIO
++				>;
++			range: gpio-range {
++				#pinctrl-single,gpio-range-cells = <3>;
++			};
++
++			/* pinctrl functions */
++			tsio_pins: pinmux_gpio_14 {
++				pinctrl-single,pins = <
++					0x038 MODE_NITRO /* tsio_0 */
++					0x03c MODE_NITRO /* tsio_1 */
++				>;
++			};
++
++			nor_pins: pinmux_pnor_adv_n {
++				pinctrl-single,pins = <
++					0x0ac MODE_PNOR /* nand_ce1_n */
++					0x0b0 MODE_PNOR /* nand_ce0_n */
++					0x0b4 MODE_PNOR /* nand_we_n */
++					0x0b8 MODE_PNOR /* nand_wp_n */
++					0x0bc MODE_PNOR /* nand_re_n */
++					0x0c0 MODE_PNOR /* nand_rdy_bsy_n */
++					0x0c4 MODE_PNOR /* nand_io0_0 */
++					0x0c8 MODE_PNOR /* nand_io1_0 */
++					0x0cc MODE_PNOR /* nand_io2_0 */
++					0x0d0 MODE_PNOR /* nand_io3_0 */
++					0x0d4 MODE_PNOR /* nand_io4_0 */
++					0x0d8 MODE_PNOR /* nand_io5_0 */
++					0x0dc MODE_PNOR /* nand_io6_0 */
++					0x0e0 MODE_PNOR /* nand_io7_0 */
++					0x0e4 MODE_PNOR /* nand_io8_0 */
++					0x0e8 MODE_PNOR /* nand_io9_0 */
++					0x0ec MODE_PNOR /* nand_io10_0 */
++					0x0f0 MODE_PNOR /* nand_io11_0 */
++					0x0f4 MODE_PNOR /* nand_io12_0 */
++					0x0f8 MODE_PNOR /* nand_io13_0 */
++					0x0fc MODE_PNOR /* nand_io14_0 */
++					0x100 MODE_PNOR /* nand_io15_0 */
++					0x104 MODE_PNOR /* nand_ale_0 */
++					0x108 MODE_PNOR /* nand_cle_0 */
++					0x040 MODE_PNOR /* pnor_adv_n */
++					0x044 MODE_PNOR /* pnor_baa_n */
++					0x048 MODE_PNOR /* pnor_bls_0_n */
++					0x04c MODE_PNOR /* pnor_bls_1_n */
++					0x050 MODE_PNOR /* pnor_cre */
++					0x054 MODE_PNOR /* pnor_cs_2_n */
++					0x058 MODE_PNOR /* pnor_cs_1_n */
++					0x05c MODE_PNOR /* pnor_cs_0_n */
++					0x060 MODE_PNOR /* pnor_we_n */
++					0x064 MODE_PNOR /* pnor_oe_n */
++					0x068 MODE_PNOR /* pnor_intr */
++					0x06c MODE_PNOR /* pnor_dat_0 */
++					0x070 MODE_PNOR /* pnor_dat_1 */
++					0x074 MODE_PNOR /* pnor_dat_2 */
++					0x078 MODE_PNOR /* pnor_dat_3 */
++					0x07c MODE_PNOR /* pnor_dat_4 */
++					0x080 MODE_PNOR /* pnor_dat_5 */
++					0x084 MODE_PNOR /* pnor_dat_6 */
++					0x088 MODE_PNOR /* pnor_dat_7 */
++					0x08c MODE_PNOR /* pnor_dat_8 */
++					0x090 MODE_PNOR /* pnor_dat_9 */
++					0x094 MODE_PNOR /* pnor_dat_10 */
++					0x098 MODE_PNOR /* pnor_dat_11 */
++					0x09c MODE_PNOR /* pnor_dat_12 */
++					0x0a0 MODE_PNOR /* pnor_dat_13 */
++					0x0a4 MODE_PNOR /* pnor_dat_14 */
++					0x0a8 MODE_PNOR /* pnor_dat_15 */
++				>;
++			};
++
++			nand_pins: pinmux_nand_ce1_n {
++				pinctrl-single,pins = <
++					0x0ac MODE_NAND /* nand_ce1_n */
++					0x0b0 MODE_NAND /* nand_ce0_n */
++					0x0b4 MODE_NAND /* nand_we_n */
++					0x0b8 MODE_NAND /* nand_wp_n */
++					0x0bc MODE_NAND /* nand_re_n */
++					0x0c0 MODE_NAND /* nand_rdy_bsy_n */
++					0x0c4 MODE_NAND /* nand_io0_0 */
++					0x0c8 MODE_NAND /* nand_io1_0 */
++					0x0cc MODE_NAND /* nand_io2_0 */
++					0x0d0 MODE_NAND /* nand_io3_0 */
++					0x0d4 MODE_NAND /* nand_io4_0 */
++					0x0d8 MODE_NAND /* nand_io5_0 */
++					0x0dc MODE_NAND /* nand_io6_0 */
++					0x0e0 MODE_NAND /* nand_io7_0 */
++					0x0e4 MODE_NAND /* nand_io8_0 */
++					0x0e8 MODE_NAND /* nand_io9_0 */
++					0x0ec MODE_NAND /* nand_io10_0 */
++					0x0f0 MODE_NAND /* nand_io11_0 */
++					0x0f4 MODE_NAND /* nand_io12_0 */
++					0x0f8 MODE_NAND /* nand_io13_0 */
++					0x0fc MODE_NAND /* nand_io14_0 */
++					0x100 MODE_NAND /* nand_io15_0 */
++					0x104 MODE_NAND /* nand_ale_0 */
++					0x108 MODE_NAND /* nand_cle_0 */
++				>;
++			};
++
++			pwm0_pins: pinmux_pwm_0 {
++				pinctrl-single,pins = <
++					0x10c MODE_NITRO
++				>;
++			};
++
++			pwm1_pins: pinmux_pwm_1 {
++				pinctrl-single,pins = <
++					0x110 MODE_NITRO
++				>;
++			};
++
++			pwm2_pins: pinmux_pwm_2 {
++				pinctrl-single,pins = <
++					0x114 MODE_NITRO
++				>;
++			};
++
++			pwm3_pins: pinmux_pwm_3 {
++				pinctrl-single,pins = <
++					0x118 MODE_NITRO
++				>;
++			};
++
++			dbu_rxd_pins: pinmux_uart1_sin_nitro {
++				pinctrl-single,pins = <
++					0x11c MODE_NITRO /* dbu_rxd */
++					0x120 MODE_NITRO /* dbu_txd */
++				>;
++			};
++
++			uart1_pins: pinmux_uart1_sin_nand {
++				pinctrl-single,pins = <
++					0x11c MODE_NAND /* uart1_sin */
++					0x120 MODE_NAND /* uart1_out */
++				>;
++			};
++
++			uart2_pins: pinmux_uart2_sin {
++				pinctrl-single,pins = <
++					0x124 MODE_NITRO /* uart2_sin */
++					0x128 MODE_NITRO /* uart2_out */
++				>;
++			};
++
++			uart3_pins: pinmux_uart3_sin {
++				pinctrl-single,pins = <
++					0x12c MODE_NITRO /* uart3_sin */
++					0x130 MODE_NITRO /* uart3_out */
++				>;
++			};
++
++			i2s_pins: pinmux_i2s_bitclk {
++				pinctrl-single,pins = <
++					0x134 MODE_NITRO /* i2s_bitclk */
++					0x138 MODE_NITRO /* i2s_sdout */
++					0x13c MODE_NITRO /* i2s_sdin */
++					0x140 MODE_NITRO /* i2s_ws */
++					0x144 MODE_NITRO /* i2s_mclk */
++					0x148 MODE_NITRO /* i2s_spdif_out */
++				>;
++			};
++
++			qspi_pins: pinumx_qspi_hold_n {
++				pinctrl-single,pins = <
++					0x14c MODE_NAND /* qspi_hold_n */
++					0x150 MODE_NAND /* qspi_wp_n */
++					0x154 MODE_NAND /* qspi_sck */
++					0x158 MODE_NAND /* qspi_cs_n */
++					0x15c MODE_NAND /* qspi_mosi */
++					0x160 MODE_NAND /* qspi_miso */
++				>;
++			};
++
++			mdio_pins: pinumx_ext_mdio {
++				pinctrl-single,pins = <
++					0x164 MODE_NITRO /* ext_mdio */
++					0x168 MODE_NITRO /* ext_mdc */
++				>;
++			};
++
++			i2c0_pins: pinmux_i2c0_sda {
++				pinctrl-single,pins = <
++					0x16c MODE_NITRO /* i2c0_sda */
++					0x170 MODE_NITRO /* i2c0_scl */
++				>;
++			};
++
++			i2c1_pins: pinmux_i2c1_sda {
++				pinctrl-single,pins = <
++					0x174 MODE_NITRO /* i2c1_sda */
++					0x178 MODE_NITRO /* i2c1_scl */
++				>;
++			};
++
++			sdio0_pins: pinmux_sdio0_cd_l {
++				pinctrl-single,pins = <
++					0x17c MODE_NITRO /* sdio0_cd_l */
++					0x180 MODE_NITRO /* sdio0_clk_sdcard */
++					0x184 MODE_NITRO /* sdio0_data0 */
++					0x188 MODE_NITRO /* sdio0_data1 */
++					0x18c MODE_NITRO /* sdio0_data2 */
++					0x190 MODE_NITRO /* sdio0_data3 */
++					0x194 MODE_NITRO /* sdio0_data4 */
++					0x198 MODE_NITRO /* sdio0_data5 */
++					0x19c MODE_NITRO /* sdio0_data6 */
++					0x1a0 MODE_NITRO /* sdio0_data7 */
++					0x1a4 MODE_NITRO /* sdio0_cmd */
++					0x1a8 MODE_NITRO /* sdio0_emmc_rst_n */
++					0x1ac MODE_NITRO /* sdio0_led_on */
++					0x1b0 MODE_NITRO /* sdio0_wp */
++				>;
++			};
++
++			sdio1_pins: pinmux_sdio1_cd_l {
++				pinctrl-single,pins = <
++					0x1b4 MODE_NITRO /* sdio1_cd_l */
++					0x1b8 MODE_NITRO /* sdio1_clk_sdcard */
++					0x1bc MODE_NITRO /* sdio1_data0 */
++					0x1c0 MODE_NITRO /* sdio1_data1 */
++					0x1c4 MODE_NITRO /* sdio1_data2 */
++					0x1c8 MODE_NITRO /* sdio1_data3 */
++					0x1cc MODE_NITRO /* sdio1_data4 */
++					0x1d0 MODE_NITRO /* sdio1_data5 */
++					0x1d4 MODE_NITRO /* sdio1_data6 */
++					0x1d8 MODE_NITRO /* sdio1_data7 */
++					0x1dc MODE_NITRO /* sdio1_cmd */
++					0x1e0 MODE_NITRO /* sdio1_emmc_rst_n */
++					0x1e4 MODE_NITRO /* sdio1_led_on */
++					0x1e8 MODE_NITRO /* sdio1_wp */
++				>;
++			};
++
++			spi0_pins: pinmux_spi0_sck_nand {
++				pinctrl-single,pins = <
++					0x1ec MODE_NITRO /* spi0_sck */
++					0x1f0 MODE_NITRO /* spi0_rxd */
++					0x1f4 MODE_NITRO /* spi0_fss */
++					0x1f8 MODE_NITRO /* spi0_txd */
++				>;
++			};
++
++			spi1_pins: pinmux_spi1_sck_nand {
++				pinctrl-single,pins = <
++					0x1fc MODE_NITRO /* spi1_sck */
++					0x200 MODE_NITRO /* spi1_rxd */
++					0x204 MODE_NITRO /* spi1_fss */
++					0x208 MODE_NITRO /* spi1_txd */
++				>;
++			};
++
++			nuart_pins: pinmux_uart0_sin_nitro {
++				pinctrl-single,pins = <
++					0x20c MODE_NITRO /* nuart_rxd */
++					0x210 MODE_NITRO /* nuart_txd */
++				>;
++			};
++
++			uart0_pins: pinumux_uart0_sin_nand {
++				pinctrl-single,pins = <
++					0x20c MODE_NAND /* uart0_sin */
++					0x210 MODE_NAND /* uart0_out */
++					0x214 MODE_NAND /* uart0_rts */
++					0x218 MODE_NAND /* uart0_cts */
++					0x21c MODE_NAND /* uart0_dtr */
++					0x220 MODE_NAND /* uart0_dcd */
++					0x224 MODE_NAND /* uart0_dsr */
++					0x228 MODE_NAND /* uart0_ri */
++				>;
++			};
++
++			drdu2_pins: pinmux_drdu2_overcurrent {
++				pinctrl-single,pins = <
++					0x22c MODE_NITRO /* drdu2_overcurrent */
++					0x230 MODE_NITRO /* drdu2_vbus_ppc */
++					0x234 MODE_NITRO /* drdu2_vbus_present */
++					0x238 MODE_NITRO /* drdu2_id */
++				>;
++			};
++
++			drdu3_pins: pinmux_drdu3_overcurrent {
++				pinctrl-single,pins = <
++					0x23c MODE_NITRO /* drdu3_overcurrent */
++					0x240 MODE_NITRO /* drdu3_vbus_ppc */
++					0x244 MODE_NITRO /* drdu3_vbus_present */
++					0x248 MODE_NITRO /* drdu3_id */
++				>;
++			};
++
++			usb3h_pins: pinmux_usb3h_overcurrent {
++				pinctrl-single,pins = <
++					0x24c MODE_NITRO /* usb3h_overcurrent */
++					0x250 MODE_NITRO /* usb3h_vbus_ppc */
++				>;
++			};
++		};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 003f814..a4afd44 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -259,6 +259,8 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x0 0x68900000 0x17700000>;
+ 
++		#include "stingray-pinctrl.dtsi"
++
+ 		uart0: uart@68a00000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
+diff --git a/include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h b/include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+new file mode 100644
+index 0000000..caa6c66
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+@@ -0,0 +1,68 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2017 Broadcom Corporation.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom Corporation nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef __DT_BINDINGS_PINCTRL_BRCM_STINGRAY_H__
++#define __DT_BINDINGS_PINCTRL_BRCM_STINGRAY_H__
++
++/* Alternate functions available in MUX controller */
++#define MODE_NITRO				0
++#define MODE_NAND				1
++#define MODE_PNOR				2
++#define MODE_GPIO				3
++
++/* Pad configuration attribute */
++#define PAD_SLEW_RATE_ENA			(1 << 0)
++#define PAD_SLEW_RATE_ENA_MASK			(1 << 0)
++
++#define PAD_DRIVE_STRENGTH_2_MA			(0 << 1)
++#define PAD_DRIVE_STRENGTH_4_MA			(1 << 1)
++#define PAD_DRIVE_STRENGTH_6_MA			(2 << 1)
++#define PAD_DRIVE_STRENGTH_8_MA			(3 << 1)
++#define PAD_DRIVE_STRENGTH_10_MA		(4 << 1)
++#define PAD_DRIVE_STRENGTH_12_MA		(5 << 1)
++#define PAD_DRIVE_STRENGTH_14_MA		(6 << 1)
++#define PAD_DRIVE_STRENGTH_16_MA		(7 << 1)
++#define PAD_DRIVE_STRENGTH_MASK			(7 << 1)
++
++#define PAD_PULL_UP_ENA				(1 << 4)
++#define PAD_PULL_UP_ENA_MASK			(1 << 4)
++
++#define PAD_PULL_DOWN_ENA			(1 << 5)
++#define PAD_PULL_DOWN_ENA_MASK			(1 << 5)
++
++#define PAD_INPUT_PATH_DIS			(1 << 6)
++#define PAD_INPUT_PATH_DIS_MASK			(1 << 6)
++
++#define PAD_HYSTERESIS_ENA			(1 << 7)
++#define PAD_HYSTERESIS_ENA_MASK			(1 << 7)
++
++#endif
+-- 
+2.7.4
