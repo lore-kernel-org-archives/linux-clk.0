@@ -1,177 +1,237 @@
-Return-Path: <arndbergmann@gmail.com>
-MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20170515083502.4492-3-chunyan.zhang@spreadtrum.com>
-References: <20170515083502.4492-1-chunyan.zhang@spreadtrum.com> <20170515083502.4492-3-chunyan.zhang@spreadtrum.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 17 May 2017 21:43:26 +0200
-Message-ID: <CAK8P3a0M6M9fUTpdnW+Eso0+HKD-MF-fKPmvj+wN8GBdzu_u8A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] Documentation: add sprd clock bindings
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	xiaolong.zhang@spreadtrum.com,
-	=?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?= <orson.zhai@spreadtrum.com>,
-	geng.ren@spreadtrum.com, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Lyra Zhang <zhang.lyra@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v5 02/11] dt-bindings: clk: Extend binding doc for Stingray SOC
+Date: Fri, 26 May 2017 14:54:55 +0530
+Message-Id: <1495790704-2438-3-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 15, 2017 at 10:35 AM, Chunyan Zhang
-<chunyan.zhang@spreadtrum.com> wrote:
-> This patch adds a new directory under the 'clock' for Spreadtrum platform,
-> also bindings which document compatible strings and properties used for
-> devicetree node of clocks on Spreadtrum SoCs.
->
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  .../clock/sprd/sprd,adjustable-pll-clock.txt       | 17 +++++
->  .../bindings/clock/sprd/sprd,composite-clock.txt   | 28 +++++++++
->  .../bindings/clock/sprd/sprd,divider-clock.txt     | 24 +++++++
->  .../bindings/clock/sprd/sprd,gates-clock.txt       | 73 ++++++++++++++++++++++
->  .../bindings/clock/sprd/sprd,muxed-clock.txt       | 23 +++++++
->  5 files changed, 165 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,divider-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd/sprd,muxed-clock.txt
->
-> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
-> new file mode 100644
-> index 0000000..476e315
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,adjustable-pll-clock.txt
-> @@ -0,0 +1,17 @@
-> +Spreadtrum adjustable pll clock driver
-> +
-> +Required properties:
-> +
-> +- compatible : must be one of:
-> +       "sprd,sc9836-adjustable-pll-clock"
-> +       "sprd,sc9860-adjustable-pll-clock"
-> +
-> +Example:
-> +       clk_mpll0: clk@40400024 {
-> +               compatible = "sprd,sc9860-adjustable-pll-clock";
-> +               #clock-cells = <0>;
-> +               reg = <0 0x40400024 0 0x4>,
-> +                     <0 0x40400028 0 0x4>;
-> +               clocks = <&clk_mpll_gates 2>;
-> +               clock-output-names = "clk_mpll0";
-> +       };
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
-The properties listed in the example must all be either
-defined as "required" or "optional" properties and have a
-description.
+Update iproc clock dt-binding documentation with
+Stingray pll and clock details.
 
-The reg property here is a bit odd, as it lists two consecutive
-4-byte areas, and both are suspiciously close to a round
-address (0x40400000), so I would guess that they are
-in fact part of a clock controller with several registers.
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++++++++++++++
+ include/dt-bindings/clock/bcm-sr.h                 | 101 +++++++++++++++++++++
+ 2 files changed, 177 insertions(+)
+ create mode 100644 include/dt-bindings/clock/bcm-sr.h
 
-If so, please define a node for the entire clock controller,
-the DT description should reflect the design of the hardware
-rather than the design of your device driver.
-
-> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
-> new file mode 100644
-> index 0000000..a476eb6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,composite-clock.txt
-> @@ -0,0 +1,28 @@
-> +Spreadtrum composite clock driver.
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +
-> +- compatible:  should be "sprd,composite-clock"
-> +
-> +- sprd,mux-msk:        arbitrary bitmask for selecting clock input
-
-"arbitrary" is not a good word to use in a specification document ;-)
-
-Are there no constraints whatsoever on the allowed values? How
-many bits are there?
-
-> +- sprd,div-msk:        arbitrary bitmask for programming the divider,
-> +               denominator of divider is the value consisted
-> +               of these bits plus 1
-
-This sounds like it should just be the denominator, you can add
-or subtract one in the driver.
-
-> diff --git a/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
-> new file mode 100644
-> index 0000000..f23ecb6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sprd/sprd,gates-clock.txt
-> @@ -0,0 +1,73 @@
-> +Spreadtrum gate clock driver
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Spreadtrum's SoCs often use one register to control more than one gate clocks.
-> +Clock consumers can use index to get the correct gate clock.
-> +
-> +In Spreadtrum platform, some of gate clocks have three registers, respectively
-> +used for controlling, setting and clearing gate clock, the addresses of
-> +these three registers generally are <start>, <start + offset>, and
-> +<start + offset * 2>, and offset would be 0x1000 or 0x100, so the register
-> +size of gate clocks is either 0x3000 or 0x300. While for some historical issue
-> +there also are some clocks which don't have independent set/clear registers.
-> +Please see bellow for more specific information.
-> +
-> +Required properties:
-> +
-> +- compatible:  should be one of the following:
-> +               "sprd,sc1000-gates-clock"
-> +               - offset of the registers for setting gate is 0x1000
-> +
-> +               "sprd,sc100-gates-clock"
-> +               - offset of the registers for setting gate is 0x100
-> +
-> +               "sprd,gates-clock"
-> +               - for clocks without independent set/clear registers
-
-I think the compatible value should refer to at least some more
-specific product that uses these: I would guess that there are
-some chips that spreadtrum has made that have clock gates
-which are not compatible with this.
-
-Can all three appear in the same chip, or would you always
-have only one of them?
-
-> +- reg: the first cell represents the address of this clock gate controller
-> +       register, the second cell implies how is the offset of set/clear
-> +       registers of this clock gate, like addressed in the head of this
-> +       file
-> +
-> +optional properties:
-> +
-> +- clock-indices:       If the identifying number for the clocks in the node
-> +                       is not linear from zero, this property is necessary
-> +
-> +Example:
-> +
-> +       clk_mpll_gates: clk@402b00b0 {
-> +               compatible = "sprd,sc1000-gates-clock";
-> +               #clock-cells = <1>;
-> +               reg = <0 0x402b00b0 0 0x3000>;
-> +               clocks = <&ext_26m>;
-> +               clock-indices = <2>, <18>;
-> +               clock-output-names = "clk_mpll0_gate", "clk_mpll1_gate";
-> +       };
->
-
-For clock-output-names, please drop the "clk_" prefix from each
-identifier, and maybe use '-' instead of '_' as the separator.
-
-       Arnd
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index 6f66e9a..f2c5f0e4a 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -219,3 +219,79 @@ BCM63138
+ --------
+ PLL and leaf clock compatible strings for BCM63138 are:
+     "brcm,bcm63138-armpll"
++
++Stingray
++-----------
++PLL and leaf clock compatible strings for Stingray are:
++    "brcm,sr-genpll0"
++    "brcm,sr-genpll1"
++    "brcm,sr-genpll2"
++    "brcm,sr-genpll3"
++    "brcm,sr-genpll4"
++    "brcm,sr-genpll5"
++    "brcm,sr-genpll6"
++
++    "brcm,sr-lcpll0"
++    "brcm,sr-lcpll1"
++    "brcm,sr-lcpll-pcie"
++
++
++The following table defines the set of PLL/clock index and ID for Stingray.
++These clock IDs are defined in:
++    "include/dt-bindings/clock/bcm-sr.h"
++
++    Clock		Source		Index	ID
++    ---			-----		-----	---------
++    crystal		N/A		N/A	N/A
++    crmu_ref25m		crystal		N/A	N/A
++
++    genpll0		crystal		0	BCM_SR_GENPLL0
++    clk_125m		genpll0		1	BCM_SR_GENPLL0_125M_CLK
++    clk_scr		genpll0		2	BCM_SR_GENPLL0_SCR_CLK
++    clk_250		genpll0		3	BCM_SR_GENPLL0_250M_CLK
++    clk_pcie_axi	genpll0		4	BCM_SR_GENPLL0_PCIE_AXI_CLK
++    clk_paxc_axi_x2	genpll0		5	BCM_SR_GENPLL0_PAXC_AXI_X2_CLK
++    clk_paxc_axi	genpll0		6	BCM_SR_GENPLL0_PAXC_AXI_CLK
++
++    genpll1		crystal		0	BCM_SR_GENPLL1
++    clk_pcie_tl		genpll1		1	BCM_SR_GENPLL1_PCIE_TL_CLK
++    clk_mhb_apb		genpll1		2	BCM_SR_GENPLL1_MHB_APB_CLK
++
++    genpll2		crystal		0	BCM_SR_GENPLL2
++    clk_nic		genpll2		1	BCM_SR_GENPLL2_NIC_CLK
++    clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
++    clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
++    clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
++    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
++
++    genpll3		crystal		0	BCM_SR_GENPLL3
++    clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
++    clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
++
++    genpll4		crystal		0	BCM_SR_GENPLL4
++    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
++    clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
++    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
++    clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
++    clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
++
++
++    genpll5		crystal		0	BCM_SR_GENPLL5
++    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
++    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
++    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
++
++    genpll6		crystal		0	BCM_SR_GENPLL6
++    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
++
++    lcpll0		crystal		0	BCM_SR_LCPLL0
++    clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
++    clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
++    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
++    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
++
++    lcpll1		crystal		0	BCM_SR_LCPLL1
++    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
++
++    lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
++    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
+diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
+new file mode 100644
+index 0000000..cff6c6f
+--- /dev/null
++++ b/include/dt-bindings/clock/bcm-sr.h
+@@ -0,0 +1,101 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2017 Broadcom. All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom Corporation nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef _CLOCK_BCM_SR_H
++#define _CLOCK_BCM_SR_H
++
++/* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
++#define BCM_SR_GENPLL0			0
++#define BCM_SR_GENPLL0_SATA_CLK		1
++#define BCM_SR_GENPLL0_SCR_CLK		2
++#define BCM_SR_GENPLL0_250M_CLK		3
++#define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
++#define BCM_SR_GENPLL0_PAXC_AXI_X2_CLK	5
++#define BCM_SR_GENPLL0_PAXC_AXI_CLK	6
++
++/* GENPLL 1 clock channel ID MHB PCIE NITRO */
++#define BCM_SR_GENPLL1			0
++#define BCM_SR_GENPLL1_PCIE_TL_CLK	1
++#define BCM_SR_GENPLL1_MHB_APB_CLK	2
++
++/* GENPLL 2 clock channel ID NITRO MHB*/
++#define BCM_SR_GENPLL2			0
++#define BCM_SR_GENPLL2_NIC_CLK		1
++#define BCM_SR_GENPLL2_250_NITRO_CLK	2
++#define BCM_SR_GENPLL2_125_NITRO_CLK	3
++#define BCM_SR_GENPLL2_CHIMP_CLK	4
++
++/* GENPLL 3 HSLS clock channel ID */
++#define BCM_SR_GENPLL3			0
++#define BCM_SR_GENPLL3_HSLS_CLK		1
++#define BCM_SR_GENPLL3_SDIO_CLK		2
++
++/* GENPLL 4 SCR clock channel ID */
++#define BCM_SR_GENPLL4			0
++#define BCM_SR_GENPLL4_CCN_CLK		1
++
++/* GENPLL 5 FS4 clock channel ID */
++#define BCM_SR_GENPLL5			0
++#define BCM_SR_GENPLL5_FS_CLK		1
++#define BCM_SR_GENPLL5_SPU_CLK		2
++
++/* GENPLL 6 NITRO clock channel ID */
++#define BCM_SR_GENPLL6			0
++#define BCM_SR_GENPLL6_48_USB_CLK	1
++
++/* LCPLL0  clock channel ID */
++#define BCM_SR_LCPLL0			0
++#define BCM_SR_LCPLL0_SATA_REF_CLK	1
++#define BCM_SR_LCPLL0_USB_REF_CLK	2
++#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
++
++/* LCPLL1  clock channel ID */
++#define BCM_SR_LCPLL1			0
++#define BCM_SR_LCPLL1_WAN_CLK		1
++
++/* LCPLL PCIE  clock channel ID */
++#define BCM_SR_LCPLL_PCIE		0
++#define BCM_SR_LCPLL_PCIE_PHY_REF_CLK	1
++
++/* GENPLL EMEM0 clock channel ID */
++#define BCM_SR_EMEMPLL0			0
++#define BCM_SR_EMEMPLL0_EMEM_CLK	1
++
++/* GENPLL EMEM0 clock channel ID */
++#define BCM_SR_EMEMPLL1			0
++#define BCM_SR_EMEMPLL1_EMEM_CLK	1
++
++/* GENPLL EMEM0 clock channel ID */
++#define BCM_SR_EMEMPLL2			0
++#define BCM_SR_EMEMPLL2_EMEM_CLK	1
++
++#endif /* _CLOCK_BCM_SR_H */
+-- 
+2.7.4
