@@ -1,275 +1,398 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36932 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751039AbdE2I7k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2017 04:59:40 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170527102308.1988-11-icenowy@aosc.io>
-References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-11-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 29 May 2017 16:59:14 +0800
-Message-ID: <CAGb2v65-VrWbCHHvJLirCPBdQfoO6H106iQEATVSseUMfM5rQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] ARM: dts: sun8i: Add board dts file for Banana
- Pi M2 Ultra
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v5 03/11] clk: bcm: Add clocks for Stingray SOC
+Date: Fri, 26 May 2017 14:54:56 +0530
+Message-Id: <1495790704-2438-4-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 27, 2017 at 6:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
->
-> The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
-> form factor and position of various connectors, leds and buttons is
-> similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
-> as the latest Banana Pi M64.
->
-> It features:
->
->   - X-Powers AXP221s PMIC connected to i2c0
->   - 2 GB DDR3 DRAM
->   - 8 GB eMMC
->   - micro SD card slot
->   - DC power jack
->   - HDMI output
->   - MIPI DSI connector
->   - 2x USB 2.0 hosts
->   - 1x USB 2.0 OTG
->   - gigabit ethernet with Realtek RTL8211E transceiver
->   - WiFi/Bluetooth with AP6212 chip, with external antenna connector
->   - SATA and power connectors for native SATA support
->   - camera sensor connector
->   - consumer IR receiver
->   - audio out headphone jack
->   - onboard microphone
->   - red, green, and blue LEDs
->   - debug UART pins
->   - Li-Po battery connector
->   - Raspberry Pi B+ compatible GPIO header
->   - power, reset, and boot control buttons
->
-> This patch adds a dts file that enables debug UART and MMC support.
->
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - Pinmux changes.
->
->  arch/arm/boot/dts/Makefile                        |   1 +
->  arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 157 ++++++++++++++++++++++
->  2 files changed, 158 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index f68d6e0bc746..697c600bba28 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -910,6 +910,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
->         sun8i-h3-orangepi-plus.dtb \
->         sun8i-h3-orangepi-plus2e.dtb \
->         sun8i-r16-parrot.dtb \
-> +       sun8i-r40-bananapi-m2-ultra.dtb \
->         sun8i-v3s-licheepi-zero.dtb \
->         sun8i-v3s-licheepi-zero-dock.dtb
->  dtb-$(CONFIG_MACH_SUN9I) += \
-> diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-> new file mode 100644
-> index 000000000000..c4e69847cea1
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-> @@ -0,0 +1,157 @@
-> +/*
-> + * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +/dts-v1/;
-> +#include "sun8i-r40.dtsi"
-> +#include "sunxi-common-regulators.dtsi"
-> +
-> +/ {
-> +       model = "Banana Pi BPI-M2-Ultra";
-> +       compatible = "sinovoip,bpi-m2-ultra", "allwinner,sun8i-r40";
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
-The vendor prefix "bananapi" was merged into -next through Rob's DT tree:
+This patch adds support for Stingray clocks in iproc
+ccf. The Stingray SOC has various plls based on iproc
+pll architecture.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/commit/?h=dt/next&id=79d45aed23f02022607501cd0d3c404592e027f8
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ drivers/clk/bcm/Kconfig  |   8 ++
+ drivers/clk/bcm/Makefile |   1 +
+ drivers/clk/bcm/clk-sr.c | 320 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 329 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-sr.c
 
-Lets use that instead.
-
-> +
-> +       aliases {
-> +               serial0 = &uart0;
-> +       };
-> +
-> +       chosen {
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +
-> +       wifi_pwrseq: wifi_pwrseq {
-> +               compatible = "mmc-pwrseq-simple";
-> +               reset-gpios = <&pio 6 10 GPIO_ACTIVE_LOW>; /* PG10 WIFI_EN */
-> +       };
-> +};
-> +
-> +&i2c0 {
-> +       status = "okay";
-> +
-> +       axp22x: pmic@68 {
-
-Address here does not match the reg property below.
-
-> +               compatible = "x-powers,axp221";
-> +               reg = <0x34>;
-> +               interrupt-parent = <&nmi_intc>;
-> +               interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-> +       };
-> +};
-> +
-> +#include "axp22x.dtsi"
-> +
-> +&reg_aldo3 {
-> +       regulator-always-on;
-> +       regulator-min-microvolt = <2700000>;
-> +       regulator-max-microvolt = <3300000>;
-> +       regulator-name = "avcc";
-> +};
-> +
-> +&reg_dcdc1 {
-> +       regulator-always-on;
-> +       regulator-min-microvolt = <3000000>;
-> +       regulator-max-microvolt = <3000000>;
-> +       regulator-name = "vcc-3v0";
-
-Board schematic says 3.3V.
-
-> +};
-> +
-> +&reg_dcdc2 {
-> +       regulator-always-on;
-> +       regulator-min-microvolt = <1000000>;
-> +       regulator-max-microvolt = <1300000>;
-> +       regulator-name = "vdd-cpu";
-> +};
-> +
-> +&reg_dcdc3 {
-> +       regulator-always-on;
-> +       regulator-min-microvolt = <1000000>;
-> +       regulator-max-microvolt = <1300000>;
-> +       regulator-name = "vdd-sys";
-> +};
-> +
-> +&reg_dcdc5 {
-> +       regulator-always-on;
-> +       regulator-min-microvolt = <1500000>;
-> +       regulator-max-microvolt = <1500000>;
-
-There is a small tolerance range: 1.425V ~ 1.575V.
-
-> +       regulator-name = "vcc-dram";
-> +};
-> +
-> +&reg_dldo1 {
-> +       regulator-min-microvolt = <1800000>;
-> +       regulator-max-microvolt = <3300000>;
-
-Recommended range on the AP6212 is 1.7V ~ 3.6V.
-
-> +       regulator-name = "vcc-wifi-io";
-> +};
-> +
-> +&reg_dldo2 {
-> +       regulator-min-microvolt = <3300000>;
-> +       regulator-max-microvolt = <3300000>;
-
-Recommended range on the AP6212 is 3.0V ~ 4.8V.
-
-Regards
-ChenYu
-
-> +       regulator-name = "vcc-wifi";
-> +};
-> +
-> +&mmc0 {
-> +       vmmc-supply = <&reg_dcdc1>;
-> +       bus-width = <4>;
-> +       cd-gpios = <&pio 7 13 GPIO_ACTIVE_HIGH>; /* PH13 */
-> +       cd-inverted;
-> +       status = "okay";
-> +};
-> +
-> +&mmc1 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&mmc1_pg_pins>;
-> +       vmmc-supply = <&reg_dldo2>;
-> +       vqmmc-supply = <&reg_dldo1>;
-> +       mmc-pwrseq = <&wifi_pwrseq>;
-> +       bus-width = <4>;
-> +       non-removable;
-> +       status = "okay";
-> +};
-> +
-> +&mmc2 {
-> +       vmmc-supply = <&reg_dcdc1>;
-> +       vqmmc-supply = <&reg_dcdc1>;
-> +       bus-width = <8>;
-> +       non-removable;
-> +       status = "okay";
-> +};
-> +
-> +&uart0 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&uart0_pb_pins>;
-> +       status = "okay";
-> +};
-> --
-> 2.12.2
->
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index b5ae531..1d9187d 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -46,3 +46,11 @@ config CLK_BCM_NS2
+ 	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
++
++config CLK_BCM_SR
++	bool "Broadcom Stingray clock support"
++	depends on ARCH_BCM_IPROC || COMPILE_TEST
++	select COMMON_CLK_IPROC
++	default ARCH_BCM_IPROC
++	help
++	  Enable common clock framework support for the Broadcom Stingray SoC
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index d9dc848..a0c14fa 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+ obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
+ obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
++obj-$(CONFIG_CLK_BCM_SR)	+= clk-sr.o
+diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
+new file mode 100644
+index 0000000..342f702
+--- /dev/null
++++ b/drivers/clk/bcm/clk-sr.c
+@@ -0,0 +1,320 @@
++/*
++ * Copyright 2017 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License, version 2, as
++ * published by the Free Software Foundation (the "GPL").
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License version 2 (GPLv2) for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * version 2 (GPLv2) along with this source code.
++ */
++
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++
++#include <dt-bindings/clock/bcm-sr.h>
++#include "clk-iproc.h"
++
++#define REG_VAL(o, s, w) { .offset = o, .shift = s, .width = w, }
++
++#define AON_VAL(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
++	.pwr_shift = ps, .iso_shift = is }
++
++#define SW_CTRL_VAL(o, s) { .offset = o, .shift = s, }
++
++#define RESET_VAL(o, rs, prs) { .offset = o, .reset_shift = rs, \
++	.p_reset_shift = prs }
++
++#define DF_VAL(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
++	.ki_shift = kis, .ki_width = kiw, .kp_shift = kps, .kp_width = kpw, \
++	.ka_shift = kas, .ka_width = kaw }
++
++#define VCO_CTRL_VAL(uo, lo) { .u_offset = uo, .l_offset = lo }
++
++#define ENABLE_VAL(o, es, hs, bs) { .offset = o, .enable_shift = es, \
++	.hold_shift = hs, .bypass_shift = bs }
++
++
++static const struct iproc_pll_ctrl genpll0 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 5, 1, 0),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll0_clk[] = {
++	[BCM_SR_GENPLL0_SATA_CLK] = {
++		.channel = BCM_SR_GENPLL0_SATA_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL0_SCR_CLK] = {
++		.channel = BCM_SR_GENPLL0_SCR_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++	[BCM_SR_GENPLL0_250M_CLK] = {
++		.channel = BCM_SR_GENPLL0_250M_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
++	[BCM_SR_GENPLL0_PCIE_AXI_CLK] = {
++		.channel = BCM_SR_GENPLL0_PCIE_AXI_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x1c, 0, 9),
++	},
++	[BCM_SR_GENPLL0_PAXC_AXI_X2_CLK] = {
++		.channel = BCM_SR_GENPLL0_PAXC_AXI_X2_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x1c, 10, 9),
++	},
++	[BCM_SR_GENPLL0_PAXC_AXI_CLK] = {
++		.channel = BCM_SR_GENPLL0_PAXC_AXI_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 11, 5, 17),
++		.mdiv = REG_VAL(0x1c, 20, 9),
++	},
++};
++
++static void __init sr_genpll0_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll0, NULL, 0, genpll0_clk,
++				ARRAY_SIZE(genpll0_clk));
++}
++
++static const struct iproc_pll_ctrl genpll3 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 19, 18),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll3_clk[] = {
++	[BCM_SR_GENPLL3_HSLS_CLK] = {
++		.channel = BCM_SR_GENPLL3_HSLS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL3_SDIO_CLK] = {
++		.channel = BCM_SR_GENPLL3_SDIO_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++};
++
++static void __init sr_genpll3_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll3, NULL, 0, genpll3_clk,
++				ARRAY_SIZE(genpll3_clk));
++}
++CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
++			sr_genpll3_clk_init);
++
++static const struct iproc_pll_ctrl genpll4 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 25, 24),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll4_clk[] = {
++	[BCM_SR_GENPLL4_CCN_CLK] = {
++		.channel = BCM_SR_GENPLL4_CCN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++};
++
++static void __init sr_genpll4_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll4, NULL, 0, genpll4_clk,
++				ARRAY_SIZE(genpll4_clk));
++}
++
++static const struct iproc_pll_ctrl genpll5 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 1, 0),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl genpll5_clk[] = {
++	[BCM_SR_GENPLL5_FS_CLK] = {
++		.channel = BCM_SR_GENPLL5_FS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL5_SPU_CLK] = {
++		.channel = BCM_SR_GENPLL5_SPU_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++};
++
++static void __init sr_genpll5_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &genpll5, NULL, 0, genpll5_clk,
++				ARRAY_SIZE(genpll5_clk));
++}
++
++static const struct iproc_pll_ctrl lcpll0 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 19, 18),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl lcpll0_clk[] = {
++	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++	[BCM_SR_LCPLL0_USB_REF_CLK] = {
++		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 8, 2, 14),
++		.mdiv = REG_VAL(0x14, 10, 9),
++	},
++	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 9, 3, 15),
++		.mdiv = REG_VAL(0x14, 20, 9),
++	},
++};
++
++static void __init sr_lcpll0_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &lcpll0, NULL, 0, lcpll0_clk,
++				ARRAY_SIZE(lcpll0_clk));
++}
++
++static const struct iproc_pll_ctrl lcpll1 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 22, 21),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl lcpll1_clk[] = {
++	[BCM_SR_LCPLL1_WAN_CLK] = {
++		.channel = BCM_SR_LCPLL1_WAN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++};
++
++static void __init sr_lcpll1_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &lcpll1, NULL, 0, lcpll1_clk,
++				ARRAY_SIZE(lcpll1_clk));
++}
++
++static const struct iproc_pll_ctrl lcpll_pcie = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 25, 24),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl lcpll_pcie_clk[] = {
++	[BCM_SR_LCPLL_PCIE_PHY_REF_CLK] = {
++		.channel = BCM_SR_LCPLL_PCIE_PHY_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++};
++
++static void __init sr_lcpll_pcie_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &lcpll_pcie, NULL, 0, lcpll_pcie_clk,
++		ARRAY_SIZE(lcpll_pcie_clk));
++}
++
++static const struct of_device_id sr_clk_dt_ids[] = {
++{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init, },
++{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init, },
++{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init, },
++{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init, },
++{ .compatible = "brcm,sr-lcpll1", .data = sr_lcpll1_clk_init, },
++{ .compatible = "brcm,sr-lcpll-pcie", .data = sr_lcpll_pcie_clk_init, },
++{ /* sentinel */ }
++};
++
++static int sr_clk_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *device;
++	void (*init_func)(struct device_node *);
++
++	device = of_match_device(sr_clk_dt_ids, &pdev->dev);
++	if (!device)
++		return -ENODEV;
++	init_func = device->data;
++
++	init_func(pdev->dev.of_node);
++
++	return 0;
++}
++
++static struct platform_driver sr_clk_driver = {
++	.driver = {
++		.name = "sr-clk",
++		.of_match_table = sr_clk_dt_ids,
++	},
++	.probe = sr_clk_probe,
++};
++builtin_platform_driver(sr_clk_driver);
+-- 
+2.7.4
