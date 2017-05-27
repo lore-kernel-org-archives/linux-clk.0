@@ -1,59 +1,46 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1494224387.9662.10.camel@mtkswgap22>
-Subject: Re: [PATCH 5/6] dt-bindings: cpufreq: move Mediatek cpufreq
- dt-bindings document to proper place
-From: Sean Wang <sean.wang@mediatek.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-CC: <rjw@rjwysocki.net>, <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
-	<mark.rutland@arm.com>, <mturquette@baylibre.com>,
-	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
-	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Mon, 8 May 2017 14:19:47 +0800
-In-Reply-To: <20170508041827.GC17010@vireshk-i7>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-	 <1493997974-17699-6-git-send-email-sean.wang@mediatek.com>
-	 <20170508041827.GC17010@vireshk-i7>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 07/10] dt-bindings: add compatible string for Allwinner R40 CCU
+Date: Sat, 27 May 2017 18:23:05 +0800
+Message-Id: <20170527102308.1988-8-icenowy@aosc.io>
+In-Reply-To: <20170527102308.1988-1-icenowy@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-05-08 at 09:48 +0530, Viresh Kumar wrote:
-> On 05-05-17, 23:26, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > The old place is Documentation/devicetree/bindings/clock/ that would
-> > let people hard to find how to use Mediatek cpufreq driver, so moving
-> > it to the new place as other cpufreq dirvers are done would be better.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  .../devicetree/bindings/clock/mt8173-cpu-dvfs.txt  | 83 ----------------------
-> >  .../bindings/cpufreq/cpufreq-mediatek.txt          | 83 ++++++++++++++++++++++
-> >  2 files changed, 83 insertions(+), 83 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
-> >  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt
-> 
-> Please generate patches with:
-> 
-> git format-patch -C -M --thread=shallow
-> 
-> You would be required to resend this patch at least to let us see what has
-> changed.
-> 
+Allwinner R40 has a clock controlling unit like the ones on other
+Allwinner SoCs after sun6i, and can also use a CCU-based driver.
 
-Hi Viresh,
+Add a compatible string for it.
 
-Okay, I will do it with you provided command again. 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes in v3:
+- Rebased on current linux-next.
+- Added Rob's ACK.
 
-What I did for the patch is just "git mv
-Documentation/devicetree/bindings/clock/mt8173-cpu-dvfs.txt
-Documentation/devicetree/bindings/cpufreq/cpufreq-mediatek.txt"
-and no any changing data in the content.
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks for your feedback
-
-	Sean
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 34b2a9249a94..80926c5db86b 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -9,6 +9,7 @@ Required properties :
+ 		- "allwinner,sun8i-a83t-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
+ 		- "allwinner,sun8i-h3-r-ccu"
++		- "allwinner,sun8i-r40-ccu"
+ 		- "allwinner,sun8i-v3s-ccu"
+ 		- "allwinner,sun9i-a80-ccu"
+ 		- "allwinner,sun50i-a64-ccu"
+-- 
+2.12.2
