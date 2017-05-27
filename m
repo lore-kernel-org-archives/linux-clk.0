@@ -1,57 +1,80 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: CLK_OF_DECLARE advice required
-To: Stephen Warren <swarren@wwwdotorg.org>, Phil Elwell <phil@raspberrypi.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
- linux-clk@vger.kernel.org
-References: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
- <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <0794f430-9761-c855-9a89-13d9871c5831@i2se.com>
-Date: Wed, 31 May 2017 17:58:08 +0200
-MIME-Version: 1.0
-In-Reply-To: <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:60481 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755519AbdE0KXc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 27 May 2017 06:23:32 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 01/10] arm: sunxi: add support for R40 SoC
+Date: Sat, 27 May 2017 18:22:59 +0800
+Message-Id: <20170527102308.1988-2-icenowy@aosc.io>
+In-Reply-To: <20170527102308.1988-1-icenowy@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 31.05.2017 um 17:27 schrieb Stephen Warren:
-> On 05/30/2017 06:23 AM, Phil Elwell wrote:
->> Hi,
->>
->> I've run into a problem using the fixed-factor clock on Raspberry Pi
->> and I'd
->> like some advice before I submit a patch.
->>
->> Some context: the aim is to use a standard UART and some external
->> circuitry
->> as a MIDI interface. This would be straightforward except that Linux
->> doesn't
->> recognise the required 31.25KHz as a valid UART baud rate. Rhe
->> workaround is
->> to declare the UART clock such that the reported rate differs from
->> the actual
->> rate. If one sets the reported rate to be (actual*38400)/31250 then
->> requesting a 38400 baud rate will result in an actual 31250 baud signal.
->
-> This sounds like the wrong approach. Forcing the port to use a
-> different clock rate than the user requests would prevent anyone from
-> using that port for its standard purpose; it'd turn what should be a
-> runtime decision into a compile-time decision.
->
-> Are you sure there's no way to simply select the correct baud rate on
-> the port? I see plenty of references to configuring custom baud rates
-> under Linux when I search Google, e.g.:
->
->> https://stackoverflow.com/questions/12646324/how-to-set-a-custom-baud-rate-on-linux
->>
-> "How to set a custom baud rate on Linux?"
->
->> https://sourceware.org/ml/libc-help/2009-06/msg00016.html
-> "Re: Terminal interface and non-standard baudrates"
->
+Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
+like A20.
 
-I remember this gist from Peter Hurley:
+Add support for it.
 
-https://gist.github.com/peterhurley/fbace59b55d87306a5b8
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v3:
+- Use V1.0 documents.
+
+ Documentation/arm/sunxi/README                  | 6 ++++++
+ Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+ arch/arm/mach-sunxi/sunxi.c                     | 1 +
+ 3 files changed, 8 insertions(+)
+
+diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
+index d7b1f016bd62..af56321137e8 100644
+--- a/Documentation/arm/sunxi/README
++++ b/Documentation/arm/sunxi/README
+@@ -75,6 +75,12 @@ SunXi family
+         + Datasheet
+           http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
+ 
++      - Allwinner R40 (sun8i)
++        + Datasheet
++          https://github.com/tinalinux/docs/blob/r40-v1.y/R40_Datasheet_V1.0.pdf
++        + User Manual
++          https://github.com/tinalinux/docs/blob/r40-v1.y/Allwinner_R40_User_Manual_V1.0.pdf
++
+     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
+       - Allwinner A80
+         + Datasheet
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+index d2c46449b4eb..b3ffe6cf821a 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.txt
++++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+@@ -14,6 +14,7 @@ using one of the following compatible strings:
+   allwinner,sun8i-a83t
+   allwinner,sun8i-h2-plus
+   allwinner,sun8i-h3
++  allwinner-sun8i-r40
+   allwinner,sun9i-a80
+   allwinner,sun50i-a64
+   nextthing,gr8
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index f44e3acb5c90..aea616759451 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
+ 	"allwinner,sun8i-h2-plus",
+ 	"allwinner,sun8i-h3",
+ 	"allwinner,sun8i-v3s",
++	"allwinner,sun8i-r40",
+ 	NULL,
+ };
+ 
+-- 
+2.12.2
+
