@@ -1,43 +1,46 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	carlo@caione.org,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v2 2/2] clk: gxbb: remove CLK_IGNORE_UNUSED from clk81
-Date: Wed, 24 May 2017 11:39:32 +0200
-Message-Id: <20170524093932.5262-3-jbrunet@baylibre.com>
-In-Reply-To: <20170524093932.5262-1-jbrunet@baylibre.com>
-References: <20170524093932.5262-1-jbrunet@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 02/10] pinctrl: sunxi: Add SoC ID definitions for A10, A20 and R40 SoCs
+Date: Sat, 27 May 2017 18:23:00 +0800
+Message-Id: <20170527102308.1988-3-icenowy@aosc.io>
+In-Reply-To: <20170527102308.1988-1-icenowy@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-clk81 already has CLK_IS_CRITICAL so CLK_IGNORE_UNUSED is not
-necessary
+Allwinner A10, A20 and R40 SoCs have similar GPIO layout.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Add SoC definitions in pinctrl-sunxi.h, in order to merge A20 support
+into A10 driver, and add R40 support into it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/meson/gxbb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- Commit message change.
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index ad5f027af1a2..be6350a03074 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -676,7 +676,7 @@ static struct clk_gate gxbb_clk81 = {
- 		.ops = &clk_gate_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_div" },
- 		.num_parents = 1,
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL),
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
- 	},
- };
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index a9d315a1256c..1bfc0d8a55df 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -87,6 +87,9 @@
+ #define PINCTRL_SUN5I_GR8	BIT(3)
+ #define PINCTRL_SUN6I_A31	BIT(4)
+ #define PINCTRL_SUN6I_A31S	BIT(5)
++#define PINCTRL_SUN4I_A10	BIT(6)
++#define PINCTRL_SUN7I_A20	BIT(7)
++#define PINCTRL_SUN8I_R40	BIT(8)
  
+ struct sunxi_desc_function {
+ 	unsigned long	variant;
 -- 
-2.9.4
+2.12.2
