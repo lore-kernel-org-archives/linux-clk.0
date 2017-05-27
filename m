@@ -1,156 +1,69 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 5/7] clk: mvebu: cp110: add sdio clock to cp-110 system controller
-Date: Fri, 19 May 2017 17:55:23 +0200
-Message-Id: <1833f47fdfa5fd05e9135d98e03501d9634a865b.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:60472 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751439AbdE0KX1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 27 May 2017 06:23:27 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 00/10] Initial Allwinner R40 support
+Date: Sat, 27 May 2017 18:22:58 +0800
+Message-Id: <20170527102308.1988-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Konstantin Porotchkin <kostap@marvell.com>
+This is the first non-RFC version of this patchset, which added basical
+support including I2C, UART and MMC to the mainline Linux.
 
-This commit updates the CP110 system controller driver to add the
-definition for a missing clock.
+The pinctrl driver of A20 is also merged into the one of A10 before
+R40 support is added into the A10 driver.
 
-The SDIO clock is dedicated driving the SDHCI interface and its frequency
-is 400MHz (2/5 of PLL source clock).
+Chen-Yu Tsai (2):
+  ARM: dts: sun8i: Add basic dtsi file for Allwinner R40
+  ARM: dts: sun8i: Add board dts file for Banana Pi M2 Ultra
 
-The SDIO interface should be bound to this clock and not the core clock
-as in the older code.
-Using the wrong clock lead to a maximum SDHCI frequency of 250 Mhz, while
-the HW really supports up to 400 Mhz.
+Icenowy Zheng (8):
+  arm: sunxi: add support for R40 SoC
+  pinctrl: sunxi: Add SoC ID definitions for A10, A20 and R40 SoCs
+  pinctrl: sunxi: add A20 support to A10 driver
+  pinctrl: sunxi: drop dedicated A20 driver
+  dt-bindings: add compatible string for Allwinner R40 pinctrl
+  pinctrl: sunxi: add support of R40 to A10 pinctrl driver
+  dt-bindings: add compatible string for Allwinner R40 CCU
+  clk: sunxi-ng: support R40 SoC
 
-This patch also fixes the NAND clock relationship documentation.
+ Documentation/arm/sunxi/README                     |    6 +
+ Documentation/devicetree/bindings/arm/sunxi.txt    |    1 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  157 +++
+ arch/arm/boot/dts/sun8i-r40.dtsi                   |  408 +++++++
+ arch/arm/mach-sunxi/sunxi.c                        |    1 +
+ drivers/clk/sunxi-ng/Kconfig                       |   10 +
+ drivers/clk/sunxi-ng/Makefile                      |    1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c               | 1153 ++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h               |   68 ++
+ drivers/pinctrl/sunxi/Kconfig                      |    6 +-
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |  449 ++++++--
+ drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c          | 1056 ------------------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              |    3 +
+ include/dt-bindings/clock/sun8i-r40-ccu.h          |  191 ++++
+ include/dt-bindings/reset/sun8i-r40-ccu.h          |  129 +++
+ 18 files changed, 2497 insertions(+), 1145 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-r40.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+ delete mode 100644 drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
+ create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
 
-Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
-[gregory.clement@free-electrons.com:
-- use sdio instead of emmc to name the clock
-- update binding documentation]
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  1 +
- drivers/clk/mvebu/cp110-system-controller.c                                | 28 +++++++++++++++++++++++-----
- 2 files changed, 24 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-index 139e46cc6786..e0b9ef5d3dde 100644
---- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-@@ -34,6 +34,7 @@ The following clocks are available:
-    - 0 2	EIP
-    - 0 3	Core
-    - 0 4	NAND core
-+   - 0 5	SDIO core
-  - Gatable clocks
-    - 1 0	Audio
-    - 1 1	Comm Unit
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index ecbcae321424..8be7ae25c7eb 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -11,15 +11,16 @@
-  */
- 
- /*
-- * CP110 has 5 core clocks:
-+ * CP110 has 6 core clocks:
-  *
-  *  - APLL		(1 Ghz)
-  *    - PPv2 core	(1/3 APLL)
-  *    - EIP		(1/2 APLL)
-- *      - Core		(1/2 EIP)
-+ *     - Core		(1/2 EIP)
-+ *    - SDIO		(2/5 APLL)
-  *
-  *  - NAND clock, which is either:
-- *    - Equal to the core clock
-+ *    - Equal to SDIO clock
-  *    - 2/5 APLL
-  *
-  * CP110 has 32 gatable clocks, for the various peripherals in the
-@@ -46,7 +47,7 @@ enum {
- 	CP110_CLK_TYPE_GATABLE,
- };
- 
--#define CP110_MAX_CORE_CLOCKS		5
-+#define CP110_MAX_CORE_CLOCKS		6
- #define CP110_MAX_GATABLE_CLOCKS	32
- 
- #define CP110_CLK_NUM \
-@@ -57,6 +58,7 @@ enum {
- #define CP110_CORE_EIP			2
- #define CP110_CORE_CORE			3
- #define CP110_CORE_NAND			4
-+#define CP110_CORE_SDIO			5
- 
- /* A number of gatable clocks need special handling */
- #define CP110_GATE_AUDIO		0
-@@ -235,7 +237,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 	struct regmap *regmap;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
-+	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name,
-+		*sdio_name;
- 	struct clk_hw_onecell_data *cp110_clk_data;
- 	struct clk_hw *hw, **cp110_clks;
- 	u32 nand_clk_ctrl;
-@@ -315,6 +318,17 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 
- 	cp110_clks[CP110_CORE_NAND] = hw;
- 
-+	/* SDIO clock is APLL/2.5 */
-+	sdio_name = cp110_unique_name(dev, syscon_node, "sdio-core");
-+	hw = clk_hw_register_fixed_factor(NULL, sdio_name,
-+					  apll_name, 0, 2, 5);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
-+		goto fail_sdio;
-+	}
-+
-+	cp110_clks[CP110_CORE_SDIO] = hw;
-+
- 	/* create the unique name for all the gate clocks */
- 	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++)
- 		gate_name[i] =	cp110_unique_name(dev, syscon_node,
-@@ -344,6 +358,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 			parent = ppv2_name;
- 			break;
- 		case CP110_GATE_SDIO:
-+			parent = sdio_name;
-+			break;
- 		case CP110_GATE_GOP_DP:
- 			parent = gate_name[CP110_GATE_GOP];
- 			break;
-@@ -391,6 +407,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 			cp110_unregister_gate(hw);
- 	}
- 
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_SDIO]);
-+fail_sdio:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
- fail_nand:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
 -- 
-git-series 0.9.1
+2.12.2
+
