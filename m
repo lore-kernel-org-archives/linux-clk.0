@@ -1,58 +1,79 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 9/20] drm/sun4i: tcon: Add channel debug
-Date: Wed,  3 May 2017 13:59:46 +0200
-Message-Id: <d9cecce96aa531b83f58b38df827e38ba1618858.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 27 May 2017 13:19:13 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 5/5 v2] clk: qcom: Add support for MSM8660 LCC
+Message-ID: <20170527201913.GN12920@tuxbook>
+References: <20170419091326.11226-1-linus.walleij@linaro.org>
+ <20170419091326.11226-5-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170419091326.11226-5-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-While all functions have debug logs, the channel enable and disable are not
-logged. Make sure this is the case.
+On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
+> diff --git a/drivers/clk/qcom/lcc-msm8660.c b/drivers/clk/qcom/lcc-msm8660.c
+[..]
+> +/* The vendor code uses PLL4 as parent everywhere */
+> +static const struct parent_map lcc_parent_map[] = {
+> +	{ P_PXO, 0 },
+> +	{ P_CXO, 1 },
+> +	/* Select RPM PLL4, but also used for selecting LPA PLL0 */
+> +	{ P_PLL4_LPA_PLL0, 2 },
+> +	/* Will just ground the line */
+> +	{ P_GND, 6 },
+> +};
+> +
+> +static const char * const lcc_parent_tbl[] = {
+> +	"pxo",
+> +	"cxo",
+> +	/*
+> +	 * PLL4 is an RPM clock on MSM8660/APQ8060, set to "pll4" for this
+> +	 * If we enable and mux in the LPA_PLL0 on this platform, we can
+> +	 * set this to "lpa_pll0" instead
+> +	 */
+> +	"pll4_clk",
+> +	"gnd", /* This is a very inactive parent */
+> +};
+> +
+> +/*
+> + * This table is evidently for using PLL4 as parent, if we start using
+> + * LPA_PLL0 we need to provide a second table.
+> + */
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++++
- 1 file changed, 4 insertions(+), 0 deletions(-)
+Aren't you muxing in LPA_PLL0 as source instead of PLL4 at the bottom of
+probe()? And as you hard code that selector, shouldn't the parent table
+reference lpa_pll0?
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 9a83a85529ac..66a5bb9b85e9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -54,6 +54,8 @@ EXPORT_SYMBOL(sun4i_tcon_enable);
- 
- void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
- {
-+	DRM_DEBUG_DRIVER("Disabling TCON channel %d\n", channel);
-+
- 	/* Disable the TCON's channel */
- 	if (channel == 0) {
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
-@@ -71,6 +73,8 @@ EXPORT_SYMBOL(sun4i_tcon_channel_disable);
- 
- void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
- {
-+	DRM_DEBUG_DRIVER("Enabling TCON channel %d\n", channel);
-+
- 	/* Enable the TCON's channel */
- 	if (channel == 0) {
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
--- 
-git-series 0.8.11
+> +static struct freq_tbl clk_tbl_aif_osr_pll4[] = {
+> +	{   768000, P_PLL4_LPA_PLL0, 4,  1, 176 },
+> +	{  1024000, P_PLL4_LPA_PLL0, 4,  1, 132 },
+> +	{  1536000, P_PLL4_LPA_PLL0, 4,  1,  88 },
+> +	{  2048000, P_PLL4_LPA_PLL0, 4,  1,  66 },
+> +	{  3072000, P_PLL4_LPA_PLL0, 4,  1,  44 },
+> +	{  4096000, P_PLL4_LPA_PLL0, 4,  1,  33 },
+> +	{  6144000, P_PLL4_LPA_PLL0, 4,  1,  22 },
+> +	{  8192000, P_PLL4_LPA_PLL0, 2,  1,  33 },
+> +	{ 12288000, P_PLL4_LPA_PLL0, 4,  1,  11 },
+> +	{ 24576000, P_PLL4_LPA_PLL0, 2,  1,  11 },
+> +	{ 27000000, P_PXO,           1,  0,   0 },
+> +	{ }
+> +};
+> +
+[..]
+> +static int lcc_msm8660_probe(struct platform_device *pdev)
+> +{
+[..]
+> +	/*
+> +	 * Enable LPA_PLL0 source on the LPASS Primary PLL Mux. Incidentally
+> +	 * this is set to 0x00000001 at boot.
+> +	 * 0x01 = LPA_PLL0
+> +	 */
+> +	regmap_write(regmap, 0xc4, 0x1);
+
+Regards,
+Bjorn
