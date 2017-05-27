@@ -1,153 +1,121 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v2 11/11] arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
-Date: Mon, 15 May 2017 17:32:21 +0530
-Message-Id: <1494849741-21294-12-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
-References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 27 May 2017 13:00:08 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/5 v2] clk: qcom: Implement RPM clocks for
+ MSM8660/APQ8060
+Message-ID: <20170527200008.GM12920@tuxbook>
+References: <20170419091326.11226-1-linus.walleij@linaro.org>
+ <20170419091326.11226-3-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170419091326.11226-3-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Srinath Mannam <srinath.mannam@broadcom.com>
+On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
 
-The Stingray SoC has two instances of SDHCI controller
-and one instance of iProc PWM.
+> The RPM clocks were missing for MSM8660/APQ8060. For this to be
+> completed we need to add a special fixed rate RPM clock that is used
+> for the PLL4 on these SoCs. The rest of the clocks are pretty
+> similar to the other supported platforms.
+> 
+> The "active" clock pattern is mirrored in all the clocks. I guess
+> that the PLL4 that clocks the LPASS is actually never used as
+> "active only" since the low-power audio subsystem should be left
+> on when the system suspends, so it can be used as a stand-alone
+> MP3 player type of device.
+> 
+> As we do not have firmware for the LPASS we will probably only use
+> this clock when the system is up and running (not suspended) for now,
+> so that will be using the "active" clock.
+> 
 
-Let's enable above mentioned devices in Stingray DT.
+Note that "active" vs "sleep" is not related to the Linux suspend state,
+but rather the CPU idle state; at the bottom of the CPU idle path the
+RPM will react and reconfigure resources to their sleep state (if one is
+configured) and then reconfigured based on the active state before
+returning from the idle.
 
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 39 ++++++++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 28 ++++++++++++++++
- 2 files changed, 67 insertions(+)
+The PLL4 seems to be enabled only on behalf of the booting LPASS Hexagon
+- which will cast its own vote once its booted - and as such we only
+configure the active state (meaning both states will have same
+configuration).  The result is that PLL4 will be on from prepare() to
+unprepare() regardless of what the application CPU does.
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index e3f8c89..6185561 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -46,6 +46,28 @@
- 		serial2 = &uart2;
- 		serial3 = &uart3;
- 	};
-+
-+	sdio0_vddo_ctrl_reg: sdio0_vddo_ctrl {
-+		compatible = "regulator-gpio";
-+		regulator-name = "sdio0_vddo_ctrl_reg";
-+		regulator-type = "voltage";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&pca9505 18 0>;
-+		states = <3300000 0x0
-+			  1800000 0x1>;
-+	};
-+
-+	sdio1_vddo_ctrl_reg: sdio1_vddo_ctrl {
-+		compatible = "regulator-gpio";
-+		regulator-name = "sdio1_vddo_ctrl_reg";
-+		regulator-type = "voltage";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&pca9505 19 0>;
-+		states = <3300000 0x0
-+			  1800000 0x1>;
-+	};
- };
- 
- &memory { /* Default DRAM banks */
-@@ -57,6 +79,10 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -93,3 +119,16 @@
- 		#size-cells = <1>;
- 	};
- };
-+
-+&sdio0 {
-+	vqmmc-supply = <&sdio0_vddo_ctrl_reg>;
-+	non-removable;
-+	full-pwr-cycle;
-+	status = "okay";
-+};
-+
-+&sdio1 {
-+	vqmmc-supply = <&sdio1_vddo_ctrl_reg>;
-+	full-pwr-cycle;
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 6d9c9f8..aa0ecec 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -274,6 +274,14 @@
- 
- 		#include "stingray-pinctrl.dtsi"
- 
-+		pwm: pwm@68910000{
-+			compatible = "brcm,iproc-pwm";
-+			reg = <0x00010000 0x1000>;
-+			clocks = <&crmu_ref25m>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@689b0000 {
- 			compatible = "brcm,iproc-i2c";
- 			reg = <0x000b0000 0x100>;
-@@ -433,5 +441,25 @@
- 			brcm,nand-has-wp;
- 			status = "disabled";
- 		};
-+
-+		sdio0: sdhci@68cf1000 {
-+			compatible = "brcm,sdhci-iproc";
-+			reg = <0x003f1000 0x100>;
-+			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
-+			bus-width = <8>;
-+			clocks = <&sdio0_clk>;
-+			iommus = <&smmu 0x6002 0x0000>;
-+			status = "disabled";
-+		};
-+
-+		sdio1: sdhci@68cf2000 {
-+			compatible = "brcm,sdhci-iproc";
-+			reg = <0x003f2000 0x100>;
-+			interrupts = <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
-+			bus-width = <8>;
-+			clocks = <&sdio1_clk>;
-+			iommus = <&smmu 0x6003 0x0000>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.7.4
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Add the small hunk to the clk_rpm_handoff() function that just
+>   skip over this for the fixed PLL4 clock. This accidentally
+>   ended up in another patch.
+> ---
+>  drivers/clk/qcom/clk-rpm.c | 106 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 106 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+> index df3e5fe8442a..61c67e93bea3 100644
+> --- a/drivers/clk/qcom/clk-rpm.c
+> +++ b/drivers/clk/qcom/clk-rpm.c
+> @@ -56,6 +56,30 @@
+>  		},							      \
+>  	}
+>  
+> +#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
+
+Is there a reason why you don't use DEFINE_CLK_RPM_PXO_BRANCH() for
+PLL4?
+
+Looking at the downstream code PLL4 is explicitly handled differently
+and is only exposing one state. So if you're seeing issues with reusing
+the PXO_BRANCH() I think you should slim this down further and only
+register a single clk_rpm from this.
+
+> +	static struct clk_rpm _platform##_##_name = {			      \
+> +		.rpm_clk_id = (r_id),					      \
+> +		.rate = (r),						      \
+> +		.hw.init = &(struct clk_init_data){			      \
+> +			.ops = &clk_rpm_fixed_ops,			      \
+> +			.name = #_name,					      \
+> +			.parent_names = (const char *[]){ "pxo_board" },      \
+> +			.num_parents = 1,				      \
+> +		},							      \
+> +	};								      \
+> +	static struct clk_rpm _platform##_##_active = {			      \
+> +		.rpm_clk_id = (r_id),					      \
+> +		.peer = &_platform##_##_name,				      \
+> +		.active_only = true,					      \
+> +		.rate = (r),						      \
+> +		.hw.init = &(struct clk_init_data){			      \
+> +			.ops = &clk_rpm_fixed_ops,			      \
+> +			.name = #_active,				      \
+> +			.parent_names = (const char *[]){ "pxo_board" },      \
+> +			.num_parents = 1,				      \
+> +		},							      \
+> +	}
+> +
+[..]
+> @@ -348,6 +412,46 @@ static const struct clk_ops clk_rpm_branch_ops = {
+>  	.recalc_rate	= clk_rpm_recalc_rate,
+>  };
+>  
+> +/* MSM8660/APQ8060 */
+> +DEFINE_CLK_RPM_FIXED(msm8660, pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
+
+My OCD wants this at the bottom of the list...
+
+> +DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
+> +DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
+> +DEFINE_CLK_RPM(msm8660, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
+> +DEFINE_CLK_RPM(msm8660, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
+> +DEFINE_CLK_RPM(msm8660, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
+> +DEFINE_CLK_RPM(msm8660, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
+> +DEFINE_CLK_RPM(msm8660, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
+> +DEFINE_CLK_RPM(msm8660, smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
+> +DEFINE_CLK_RPM(msm8660, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
+
+Regards,
+Bjorn
