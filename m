@@ -1,127 +1,238 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 0/6] clk: sunxi-ng: Add support for A83T CCU
-Date: Thu, 18 May 2017 11:58:03 +0800
-Message-Id: <20170518035809.15487-1-wens@csie.org>
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 10/10] ARM: dts: sun8i: Add board dts file for Banana Pi M2 Ultra
+Date: Sat, 27 May 2017 18:23:08 +0800
+Message-Id: <20170527102308.1988-11-icenowy@aosc.io>
+In-Reply-To: <20170527102308.1988-1-icenowy@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+From: Chen-Yu Tsai <wens@csie.org>
 
-This is v3 of my A83T CCU series. This is for 4.13.
+The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
+form factor and position of various connectors, leds and buttons is
+similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
+as the latest Banana Pi M64.
 
-Changes since v2:
+It features:
 
-  - Dropped patches "clk: Provide option to query hardware for clk phase"
-    and "clk: sunxi-ng: Add class of phase clocks supporting MMC new timing
-    modes".
-    
-  - Dropped support for MMC new timing mode. This will be added later with
-    MMC support. The goal for this series is to get clk support for the A83t
-    in. This is long overdue.
+  - X-Powers AXP221s PMIC connected to i2c0
+  - 2 GB DDR3 DRAM
+  - 8 GB eMMC
+  - micro SD card slot
+  - DC power jack
+  - HDMI output
+  - MIPI DSI connector
+  - 2x USB 2.0 hosts
+  - 1x USB 2.0 OTG
+  - gigabit ethernet with Realtek RTL8211E transceiver
+  - WiFi/Bluetooth with AP6212 chip, with external antenna connector
+  - SATA and power connectors for native SATA support
+  - camera sensor connector
+  - consumer IR receiver
+  - audio out headphone jack
+  - onboard microphone
+  - red, green, and blue LEDs
+  - debug UART pins
+  - Li-Po battery connector
+  - Raspberry Pi B+ compatible GPIO header
+  - power, reset, and boot control buttons
 
-  - Explicitly include ccu_mux.h and select SUNXI_CCU_MUX
+This patch adds a dts file that enables debug UART and MMC support.
 
-Changes since v1:
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v3:
+- Pinmux changes.
 
-  - Dropped two patches that were merged
+ arch/arm/boot/dts/Makefile                        |   1 +
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 157 ++++++++++++++++++++++
+ 2 files changed, 158 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
 
-  - Added clk core flag to disable caching of clock phases
-
-  - Added support for multiple variable pre-dividers
-
-  - Merged "pll-periph-ahb1" pre-divider clock into "ahb1" clock
-    with multiple variable pre-dividers
-
-  - Introduced new class of phase clocks that return -ENOTSUPP
-    when the clock is in new timing mode
-
-  - Force mmc2 clock to new timing mode
-
-  - Added back mmc2 output and sample clocks
-
-  - Fixed bit ops for forcing audio PLL configuration
-
-  - Added requirement for "losc" clock in device tree binding
-
-  - Stripped leading 0 in device node name
-
-  - Updated subject prefixes for various patches
-
-Patch 1 adds a compatible string for the A83T CCU to the sunxi-ccu
-bindings.
-
-Patch 2 adds support for multiple variable pre-dividers to the sunxi-ng
-mux class.
-
-Patch 3 adds the driver for the A83T CCU.
-
-Patch 4 adds the CCU device nodes, and fixes up any existing clock
-phandles in the dtsi, without using the macros.
-
-Patch 5 sets the clock accuracy for the main oscillator.
-
-Patch 6 is for the next -rc2, switch the clock indices from raw numbers
-to macros we introduced with the driver. This will be updated if more
-peripherals are introduced in the same cycle.
-
-Let me know what you think.
-
-Cover letter excerpt from v1:
-
-This is yet another series that adds support for the A83T CCU.
-The A83T CCU has a mix of new styled (like the A80) clocks at
-old (like A3x) offsets. Some differences include:
-
-  - D1/D2 style PLL clocks
-  - divisible audio module clocks
-  - new timing mode for mmc2 module clock
-
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (6):
-  dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
-  clk: sunxi-ng: Support multiple variable pre-dividers
-  clk: sunxi-ng: Add driver for A83T CCU
-  ARM: sun8i: a83t: Add CCU device nodes
-  ARM: sun8i: a83t: Set clock accuracy for 24MHz oscillator
-  ARM: sun8i: a83t: Switch to CCU device tree binding macros
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   2 +
- arch/arm/boot/dts/sun8i-a83t.dtsi                  |  19 +-
- drivers/clk/sunxi-ng/Kconfig                       |  11 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c              |  10 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c               |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              | 910 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.h              |  64 ++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r.c                 |  10 +-
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c               |  10 +-
- drivers/clk/sunxi-ng/ccu_mux.c                     |  15 +-
- drivers/clk/sunxi-ng/ccu_mux.h                     |  13 +-
- include/dt-bindings/clock/sun8i-a83t-ccu.h         | 140 ++++
- include/dt-bindings/reset/sun8i-a83t-ccu.h         |  98 +++
- 17 files changed, 1294 insertions(+), 49 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.h
- create mode 100644 include/dt-bindings/clock/sun8i-a83t-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-a83t-ccu.h
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f68d6e0bc746..697c600bba28 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -910,6 +910,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-h3-orangepi-plus.dtb \
+ 	sun8i-h3-orangepi-plus2e.dtb \
+ 	sun8i-r16-parrot.dtb \
++	sun8i-r40-bananapi-m2-ultra.dtb \
+ 	sun8i-v3s-licheepi-zero.dtb \
+ 	sun8i-v3s-licheepi-zero-dock.dtb
+ dtb-$(CONFIG_MACH_SUN9I) += \
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+new file mode 100644
+index 000000000000..c4e69847cea1
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -0,0 +1,157 @@
++/*
++ * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
++ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++#include "sun8i-r40.dtsi"
++#include "sunxi-common-regulators.dtsi"
++
++/ {
++	model = "Banana Pi BPI-M2-Ultra";
++	compatible = "sinovoip,bpi-m2-ultra", "allwinner,sun8i-r40";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	wifi_pwrseq: wifi_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&pio 6 10 GPIO_ACTIVE_LOW>; /* PG10 WIFI_EN */
++	};
++};
++
++&i2c0 {
++	status = "okay";
++
++	axp22x: pmic@68 {
++		compatible = "x-powers,axp221";
++		reg = <0x34>;
++		interrupt-parent = <&nmi_intc>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
++#include "axp22x.dtsi"
++
++&reg_aldo3 {
++	regulator-always-on;
++	regulator-min-microvolt = <2700000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "avcc";
++};
++
++&reg_dcdc1 {
++	regulator-always-on;
++	regulator-min-microvolt = <3000000>;
++	regulator-max-microvolt = <3000000>;
++	regulator-name = "vcc-3v0";
++};
++
++&reg_dcdc2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1000000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "vdd-cpu";
++};
++
++&reg_dcdc3 {
++	regulator-always-on;
++	regulator-min-microvolt = <1000000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "vdd-sys";
++};
++
++&reg_dcdc5 {
++	regulator-always-on;
++	regulator-min-microvolt = <1500000>;
++	regulator-max-microvolt = <1500000>;
++	regulator-name = "vcc-dram";
++};
++
++&reg_dldo1 {
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-wifi-io";
++};
++
++&reg_dldo2 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-wifi";
++};
++
++&mmc0 {
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <4>;
++	cd-gpios = <&pio 7 13 GPIO_ACTIVE_HIGH>; /* PH13 */
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc1_pg_pins>;
++	vmmc-supply = <&reg_dldo2>;
++	vqmmc-supply = <&reg_dldo1>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++};
++
++&mmc2 {
++	vmmc-supply = <&reg_dcdc1>;
++	vqmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pb_pins>;
++	status = "okay";
++};
 -- 
-2.11.0
+2.12.2
