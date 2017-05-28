@@ -1,112 +1,35 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v2 03/11] clk: mvebu: cp110: make failure labels more meaningful
-Date: Wed, 31 May 2017 15:41:47 +0200
-Message-Id: <a74d055e9c5e20cd563d6d13da4b3733411dceeb.1496237893.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:35014 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbdE1PHD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 May 2017 11:07:03 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170527102308.1988-4-icenowy@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-4-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 28 May 2017 23:06:38 +0800
+Message-ID: <CAGb2v67zr5BNub45=Uap86sfs5qOsJiiYyaxqPK8-cbYsrtK9Q@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] pinctrl: sunxi: add A20 support to A10 driver
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In preparation to the addition of a new clock, rename the goto labels
-used to handle the failure cases using a name related to the failure
-cause. This will allow to insert additional failing cases without
-renaming all the labels.
+On Sat, May 27, 2017 at 6:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> As A20 is designed as a pin-compatible upgrade of A10, their pin
+> controller are very similar, and can share one driver.
+>
+> Add A20 support to the A10 driver.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/cp110-system-controller.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 8f315c74997e..2a75397f9304 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -221,7 +221,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 					1000 * 1000 * 1000);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail0;
-+		goto fail_apll;
- 	}
- 
- 	cp110_clks[CP110_CORE_APLL] = hw;
-@@ -232,7 +232,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail1;
-+		goto fail_ppv2;
- 	}
- 
- 	cp110_clks[CP110_CORE_PPV2] = hw;
-@@ -243,7 +243,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail2;
-+		goto fail_eip;
- 	}
- 
- 	cp110_clks[CP110_CORE_EIP] = hw;
-@@ -254,7 +254,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail3;
-+		goto fail_core;
- 	}
- 
- 	cp110_clks[CP110_CORE_CORE] = hw;
-@@ -270,7 +270,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 						   core_name, 0, 1, 1);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail4;
-+		goto fail_nand;
- 	}
- 
- 	cp110_clks[CP110_CORE_NAND] = hw;
-@@ -366,15 +366,15 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
--fail4:
-+fail_nand:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
--fail3:
-+fail_core:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
--fail2:
-+fail_eip:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
--fail1:
-+fail_ppv2:
- 	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
--fail0:
-+fail_apll:
- 	return ret;
- }
- 
--- 
-git-series 0.9.1
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
