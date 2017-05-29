@@ -1,92 +1,123 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Abhishek Shah <abhishek.shah@broadcom.com>
-Subject: [PATCH v3 06/11] arm64: dts: Add NAND DT nodes for Stingray SOC
-Date: Tue, 16 May 2017 17:00:51 +0530
-Message-Id: <1494934256-1350-7-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
-References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1496049173.7514.2.camel@baylibre.com>
+Subject: Re: [PATCH v2 04/11] clk: use round rate to bail out early in
+ set_rate
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus
+ Walleij <linus.walleij@linaro.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>
+Date: Mon, 29 May 2017 11:12:53 +0200
+In-Reply-To: <149574365034.52617.9521289317050513324@resonance>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	 <20170521215958.19743-5-jbrunet@baylibre.com>
+	 <149574365034.52617.9521289317050513324@resonance>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+On Thu, 2017-05-25 at 13:20 -0700, Michael Turquette wrote:
+> Quoting Jerome Brunet (2017-05-21 14:59:51)
+> > The current implementation of clk_core_set_rate_nolock bails out early if
+> > the requested rate is exactly the same as the one set. It should bail out
+> > if the request would not result in rate a change.  This important when rate
+> > is not exactly what is requested, which is fairly common with PLLs.
+> > 
+> > Ex: provider able to give any rate with steps of 100Hz
+> >  - 1st consumer request 48000Hz and gets it.
+> >  - 2nd consumer request 48010Hz as well. If we were to perform the usual
+> >    mechanism, we would get 48000Hz as well. The clock would not change so
+> >    there is no point performing any checks to make sure the clock can
+> >    change, we know it won't.
+> > 
+> > This is important to prepare the addition of the clock protection mechanism
+> 
+> Why is this change necessary for the rate_protect feature? I don't see a
+> major problem with it, but not sure I want to change the expected
+> behavior unless it is required.
 
-This patch adds NAND controller DT Node and NAND chip DT
-node for Stingray SOC and Stingray reference boards.
+It isn't strictly required for the clock protection to work but it allows the
+consumer to get a coherent feedback from set_rate.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
-Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 15 +++++++++++++++
- arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 13 +++++++++++++
- 2 files changed, 28 insertions(+)
+Without this, we may end up in a situation where the set_rate return with -EBUSY
+while the rate of the clock is actually the best possible we could have wished
+for (like in the example: we ask for 48010 and the rate set in 48000)
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index 992944b..aad45a2 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -53,3 +53,18 @@
- &uart1 {
- 	status = "okay";
- };
-+
-+&nand {
-+	status = "ok";
-+	nandcs@0 {
-+		compatible = "brcm,nandcs";
-+		reg = <0>;
-+		nand-ecc-mode = "hw";
-+		nand-ecc-strength = <8>;
-+		nand-ecc-step-size = <512>;
-+		nand-bus-width = <16>;
-+		brcm,nand-oob-sector-size = <16>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 6b690db..003f814 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -307,5 +307,18 @@
- 			compatible = "brcm,iproc-rng200";
- 			reg = <0x00220000 0x28>;
- 		};
-+
-+		nand: nand@68c60000 {
-+			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
-+			reg = <0x00360000 0x600>,
-+			      <0x0050a408 0x600>,
-+			      <0x00360f00 0x20>;
-+			reg-names = "nand", "iproc-idm", "iproc-ext";
-+			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			brcm,nand-has-wp;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.7.4
+With this patch, If a consumer gets EBUSY, it knows the rate set is not optimal.
+It could have been closer to what is requested if it wasn't busy doing something
+else.
+
+If the rate is (already) optimally set, as requested by the consumer, I think we
+should not return an error here.
+
+I don't think this changes the behavior of the function, the rate set will be
+same anyway, it just won't return an error in a particular case.
+
+If you firmly oppose this idea, I suppose It can be dropped but I think it could
+be a valuable addition.
+
+> 
+> Thanks,
+> Mike
+> 
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/clk/clk.c | 23 +++++++++++++++++++++--
+> >  1 file changed, 21 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 100f72472e10..1a8c0d013238 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1570,15 +1570,34 @@ static void clk_change_rate(struct clk_core *core)
+> >                 clk_change_rate(core->new_child);
+> >  }
+> >  
+> > +static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
+> > +                                                    unsigned long req_rate)
+> > +{
+> > +       int ret;
+> > +       struct clk_rate_request req;
+> > +
+> > +       if (!core)
+> > +               return 0;
+> > +
+> > +       clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
+> > +       req.rate = req_rate;
+> > +
+> > +       ret = clk_core_round_rate_nolock(core, &req);
+> > +
+> > +       return ret ? 0 : req.rate;
+> > +}
+> > +
+> >  static int clk_core_set_rate_nolock(struct clk_core *core,
+> >                                     unsigned long req_rate)
+> >  {
+> >         struct clk_core *top, *fail_clk;
+> > -       unsigned long rate = req_rate;
+> > +       unsigned long rate;
+> >  
+> >         if (!core)
+> >                 return 0;
+> >  
+> > +       rate = clk_core_req_round_rate_nolock(core, req_rate);
+> > +
+> >         /* bail early if nothing to do */
+> >         if (rate == clk_core_get_rate_nolock(core))
+> >                 return 0;
+> > @@ -1587,7 +1606,7 @@ static int clk_core_set_rate_nolock(struct clk_core
+> > *core,
+> >                 return -EBUSY;
+> >  
+> >         /* calculate new rates and get the topmost changed clock */
+> > -       top = clk_calc_new_rates(core, rate);
+> > +       top = clk_calc_new_rates(core, req_rate);
+> >         if (!top)
+> >                 return -EINVAL;
+> >  
+> > -- 
+> > 2.9.4
+> > 
