@@ -1,236 +1,275 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v2 02/11] dt-bindings: clk: Extend binding doc for Stingray SOC
-Date: Mon, 15 May 2017 17:32:12 +0530
-Message-Id: <1494849741-21294-3-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
-References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36932 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751039AbdE2I7k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2017 04:59:40 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170527102308.1988-11-icenowy@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-11-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 29 May 2017 16:59:14 +0800
+Message-ID: <CAGb2v65-VrWbCHHvJLirCPBdQfoO6H106iQEATVSseUMfM5rQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 10/10] ARM: dts: sun8i: Add board dts file for Banana
+ Pi M2 Ultra
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+On Sat, May 27, 2017 at 6:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+>
+> The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
+> form factor and position of various connectors, leds and buttons is
+> similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
+> as the latest Banana Pi M64.
+>
+> It features:
+>
+>   - X-Powers AXP221s PMIC connected to i2c0
+>   - 2 GB DDR3 DRAM
+>   - 8 GB eMMC
+>   - micro SD card slot
+>   - DC power jack
+>   - HDMI output
+>   - MIPI DSI connector
+>   - 2x USB 2.0 hosts
+>   - 1x USB 2.0 OTG
+>   - gigabit ethernet with Realtek RTL8211E transceiver
+>   - WiFi/Bluetooth with AP6212 chip, with external antenna connector
+>   - SATA and power connectors for native SATA support
+>   - camera sensor connector
+>   - consumer IR receiver
+>   - audio out headphone jack
+>   - onboard microphone
+>   - red, green, and blue LEDs
+>   - debug UART pins
+>   - Li-Po battery connector
+>   - Raspberry Pi B+ compatible GPIO header
+>   - power, reset, and boot control buttons
+>
+> This patch adds a dts file that enables debug UART and MMC support.
+>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v3:
+> - Pinmux changes.
+>
+>  arch/arm/boot/dts/Makefile                        |   1 +
+>  arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 157 ++++++++++++++++++++++
+>  2 files changed, 158 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index f68d6e0bc746..697c600bba28 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -910,6 +910,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+>         sun8i-h3-orangepi-plus.dtb \
+>         sun8i-h3-orangepi-plus2e.dtb \
+>         sun8i-r16-parrot.dtb \
+> +       sun8i-r40-bananapi-m2-ultra.dtb \
+>         sun8i-v3s-licheepi-zero.dtb \
+>         sun8i-v3s-licheepi-zero-dock.dtb
+>  dtb-$(CONFIG_MACH_SUN9I) += \
+> diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+> new file mode 100644
+> index 000000000000..c4e69847cea1
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+> @@ -0,0 +1,157 @@
+> +/*
+> + * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This file is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This file is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +/dts-v1/;
+> +#include "sun8i-r40.dtsi"
+> +#include "sunxi-common-regulators.dtsi"
+> +
+> +/ {
+> +       model = "Banana Pi BPI-M2-Ultra";
+> +       compatible = "sinovoip,bpi-m2-ultra", "allwinner,sun8i-r40";
 
-Update iproc clock dt-binding documentation with
-Stingray pll and clock details.
+The vendor prefix "bananapi" was merged into -next through Rob's DT tree:
 
-Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++++++++++++++
- include/dt-bindings/clock/bcm-sr.h                 | 101 +++++++++++++++++++++
- 2 files changed, 177 insertions(+)
- create mode 100644 include/dt-bindings/clock/bcm-sr.h
+https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/commit/?h=dt/next&id=79d45aed23f02022607501cd0d3c404592e027f8
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index 6f66e9a..f2c5f0e4a 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -219,3 +219,79 @@ BCM63138
- --------
- PLL and leaf clock compatible strings for BCM63138 are:
-     "brcm,bcm63138-armpll"
-+
-+Stingray
-+-----------
-+PLL and leaf clock compatible strings for Stingray are:
-+    "brcm,sr-genpll0"
-+    "brcm,sr-genpll1"
-+    "brcm,sr-genpll2"
-+    "brcm,sr-genpll3"
-+    "brcm,sr-genpll4"
-+    "brcm,sr-genpll5"
-+    "brcm,sr-genpll6"
-+
-+    "brcm,sr-lcpll0"
-+    "brcm,sr-lcpll1"
-+    "brcm,sr-lcpll-pcie"
-+
-+
-+The following table defines the set of PLL/clock index and ID for Stingray.
-+These clock IDs are defined in:
-+    "include/dt-bindings/clock/bcm-sr.h"
-+
-+    Clock		Source		Index	ID
-+    ---			-----		-----	---------
-+    crystal		N/A		N/A	N/A
-+    crmu_ref25m		crystal		N/A	N/A
-+
-+    genpll0		crystal		0	BCM_SR_GENPLL0
-+    clk_125m		genpll0		1	BCM_SR_GENPLL0_125M_CLK
-+    clk_scr		genpll0		2	BCM_SR_GENPLL0_SCR_CLK
-+    clk_250		genpll0		3	BCM_SR_GENPLL0_250M_CLK
-+    clk_pcie_axi	genpll0		4	BCM_SR_GENPLL0_PCIE_AXI_CLK
-+    clk_paxc_axi_x2	genpll0		5	BCM_SR_GENPLL0_PAXC_AXI_X2_CLK
-+    clk_paxc_axi	genpll0		6	BCM_SR_GENPLL0_PAXC_AXI_CLK
-+
-+    genpll1		crystal		0	BCM_SR_GENPLL1
-+    clk_pcie_tl		genpll1		1	BCM_SR_GENPLL1_PCIE_TL_CLK
-+    clk_mhb_apb		genpll1		2	BCM_SR_GENPLL1_MHB_APB_CLK
-+
-+    genpll2		crystal		0	BCM_SR_GENPLL2
-+    clk_nic		genpll2		1	BCM_SR_GENPLL2_NIC_CLK
-+    clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
-+    clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
-+    clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
-+    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
-+
-+    genpll3		crystal		0	BCM_SR_GENPLL3
-+    clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
-+    clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
-+
-+    genpll4		crystal		0	BCM_SR_GENPLL4
-+    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-+    clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
-+    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-+    clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
-+    clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
-+
-+
-+    genpll5		crystal		0	BCM_SR_GENPLL5
-+    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
-+    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
-+    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
-+
-+    genpll6		crystal		0	BCM_SR_GENPLL6
-+    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
-+
-+    lcpll0		crystal		0	BCM_SR_LCPLL0
-+    clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
-+    clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
-+    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
-+    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
-+
-+    lcpll1		crystal		0	BCM_SR_LCPLL1
-+    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
-+
-+    lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
-+    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-new file mode 100644
-index 0000000..cff6c6f
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -0,0 +1,101 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2017 Broadcom. All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom Corporation nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#ifndef _CLOCK_BCM_SR_H
-+#define _CLOCK_BCM_SR_H
-+
-+/* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
-+#define BCM_SR_GENPLL0			0
-+#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_SCR_CLK		2
-+#define BCM_SR_GENPLL0_250M_CLK		3
-+#define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-+#define BCM_SR_GENPLL0_PAXC_AXI_X2_CLK	5
-+#define BCM_SR_GENPLL0_PAXC_AXI_CLK	6
-+
-+/* GENPLL 1 clock channel ID MHB PCIE NITRO */
-+#define BCM_SR_GENPLL1			0
-+#define BCM_SR_GENPLL1_PCIE_TL_CLK	1
-+#define BCM_SR_GENPLL1_MHB_APB_CLK	2
-+
-+/* GENPLL 2 clock channel ID NITRO MHB*/
-+#define BCM_SR_GENPLL2			0
-+#define BCM_SR_GENPLL2_NIC_CLK		1
-+#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_125_NITRO_CLK	3
-+#define BCM_SR_GENPLL2_CHIMP_CLK	4
-+
-+/* GENPLL 3 HSLS clock channel ID */
-+#define BCM_SR_GENPLL3			0
-+#define BCM_SR_GENPLL3_HSLS_CLK		1
-+#define BCM_SR_GENPLL3_SDIO_CLK		2
-+
-+/* GENPLL 4 SCR clock channel ID */
-+#define BCM_SR_GENPLL4			0
-+#define BCM_SR_GENPLL4_CCN_CLK		1
-+
-+/* GENPLL 5 FS4 clock channel ID */
-+#define BCM_SR_GENPLL5			0
-+#define BCM_SR_GENPLL5_FS_CLK		1
-+#define BCM_SR_GENPLL5_SPU_CLK		2
-+
-+/* GENPLL 6 NITRO clock channel ID */
-+#define BCM_SR_GENPLL6			0
-+#define BCM_SR_GENPLL6_48_USB_CLK	1
-+
-+/* LCPLL0  clock channel ID */
-+#define BCM_SR_LCPLL0			0
-+#define BCM_SR_LCPLL0_SATA_REF_CLK	1
-+#define BCM_SR_LCPLL0_USB_REF_CLK	2
-+#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+
-+/* LCPLL1  clock channel ID */
-+#define BCM_SR_LCPLL1			0
-+#define BCM_SR_LCPLL1_WAN_CLK		1
-+
-+/* LCPLL PCIE  clock channel ID */
-+#define BCM_SR_LCPLL_PCIE		0
-+#define BCM_SR_LCPLL_PCIE_PHY_REF_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL0			0
-+#define BCM_SR_EMEMPLL0_EMEM_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL1			0
-+#define BCM_SR_EMEMPLL1_EMEM_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL2			0
-+#define BCM_SR_EMEMPLL2_EMEM_CLK	1
-+
-+#endif /* _CLOCK_BCM_SR_H */
--- 
-2.7.4
+Lets use that instead.
+
+> +
+> +       aliases {
+> +               serial0 = &uart0;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +
+> +       wifi_pwrseq: wifi_pwrseq {
+> +               compatible = "mmc-pwrseq-simple";
+> +               reset-gpios = <&pio 6 10 GPIO_ACTIVE_LOW>; /* PG10 WIFI_EN */
+> +       };
+> +};
+> +
+> +&i2c0 {
+> +       status = "okay";
+> +
+> +       axp22x: pmic@68 {
+
+Address here does not match the reg property below.
+
+> +               compatible = "x-powers,axp221";
+> +               reg = <0x34>;
+> +               interrupt-parent = <&nmi_intc>;
+> +               interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> +       };
+> +};
+> +
+> +#include "axp22x.dtsi"
+> +
+> +&reg_aldo3 {
+> +       regulator-always-on;
+> +       regulator-min-microvolt = <2700000>;
+> +       regulator-max-microvolt = <3300000>;
+> +       regulator-name = "avcc";
+> +};
+> +
+> +&reg_dcdc1 {
+> +       regulator-always-on;
+> +       regulator-min-microvolt = <3000000>;
+> +       regulator-max-microvolt = <3000000>;
+> +       regulator-name = "vcc-3v0";
+
+Board schematic says 3.3V.
+
+> +};
+> +
+> +&reg_dcdc2 {
+> +       regulator-always-on;
+> +       regulator-min-microvolt = <1000000>;
+> +       regulator-max-microvolt = <1300000>;
+> +       regulator-name = "vdd-cpu";
+> +};
+> +
+> +&reg_dcdc3 {
+> +       regulator-always-on;
+> +       regulator-min-microvolt = <1000000>;
+> +       regulator-max-microvolt = <1300000>;
+> +       regulator-name = "vdd-sys";
+> +};
+> +
+> +&reg_dcdc5 {
+> +       regulator-always-on;
+> +       regulator-min-microvolt = <1500000>;
+> +       regulator-max-microvolt = <1500000>;
+
+There is a small tolerance range: 1.425V ~ 1.575V.
+
+> +       regulator-name = "vcc-dram";
+> +};
+> +
+> +&reg_dldo1 {
+> +       regulator-min-microvolt = <1800000>;
+> +       regulator-max-microvolt = <3300000>;
+
+Recommended range on the AP6212 is 1.7V ~ 3.6V.
+
+> +       regulator-name = "vcc-wifi-io";
+> +};
+> +
+> +&reg_dldo2 {
+> +       regulator-min-microvolt = <3300000>;
+> +       regulator-max-microvolt = <3300000>;
+
+Recommended range on the AP6212 is 3.0V ~ 4.8V.
+
+Regards
+ChenYu
+
+> +       regulator-name = "vcc-wifi";
+> +};
+> +
+> +&mmc0 {
+> +       vmmc-supply = <&reg_dcdc1>;
+> +       bus-width = <4>;
+> +       cd-gpios = <&pio 7 13 GPIO_ACTIVE_HIGH>; /* PH13 */
+> +       cd-inverted;
+> +       status = "okay";
+> +};
+> +
+> +&mmc1 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&mmc1_pg_pins>;
+> +       vmmc-supply = <&reg_dldo2>;
+> +       vqmmc-supply = <&reg_dldo1>;
+> +       mmc-pwrseq = <&wifi_pwrseq>;
+> +       bus-width = <4>;
+> +       non-removable;
+> +       status = "okay";
+> +};
+> +
+> +&mmc2 {
+> +       vmmc-supply = <&reg_dcdc1>;
+> +       vqmmc-supply = <&reg_dcdc1>;
+> +       bus-width = <8>;
+> +       non-removable;
+> +       status = "okay";
+> +};
+> +
+> +&uart0 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&uart0_pb_pins>;
+> +       status = "okay";
+> +};
+> --
+> 2.12.2
+>
