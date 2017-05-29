@@ -1,142 +1,94 @@
-Return-Path: <linux@rempel-privat.de>
-Subject: Re: [PATCH v2 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic_stby_poweroff property
-To: Mark Rutland <mark.rutland@arm.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>
-References: <20170531061457.23744-1-o.rempel@pengutronix.de>
- <20170531061457.23744-2-o.rempel@pengutronix.de>
- <20170531145255.GC10351@leverpostej>
-Cc: kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-From: Oleksij Rempel <linux@rempel-privat.de>
-Message-ID: <b9ba2cce-5383-636e-8e2c-4d85b2a92cb6@rempel-privat.de>
-Date: Thu, 1 Jun 2017 08:50:35 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170531145255.GC10351@leverpostej>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="mqhHG7A28Bi5ojtFwwc5pNTD1cqSe61KF"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1496049452.7514.5.camel@baylibre.com>
+Subject: Re: [PATCH v2 11/11] clk: move CLK_SET_RATE_GATE protection from
+ prepare to enable
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus
+ Walleij <linus.walleij@linaro.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>
+Date: Mon, 29 May 2017 11:17:32 +0200
+In-Reply-To: <20170521215958.19743-12-jbrunet@baylibre.com>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	 <20170521215958.19743-12-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---mqhHG7A28Bi5ojtFwwc5pNTD1cqSe61KF
-Content-Type: multipart/mixed; boundary="C7RPagmBr0a7D5kUOEPQDw7kQbnk7rr2h";
- protected-headers="v1"
-From: Oleksij Rempel <linux@rempel-privat.de>
-To: Mark Rutland <mark.rutland@arm.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Message-ID: <b9ba2cce-5383-636e-8e2c-4d85b2a92cb6@rempel-privat.de>
-Subject: Re: [PATCH v2 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic_stby_poweroff property
-References: <20170531061457.23744-1-o.rempel@pengutronix.de>
- <20170531061457.23744-2-o.rempel@pengutronix.de>
- <20170531145255.GC10351@leverpostej>
-In-Reply-To: <20170531145255.GC10351@leverpostej>
+On Sun, 2017-05-21 at 23:59 +0200, Jerome Brunet wrote:
+> CLK_SET_RATE_GATE name suggest that the rate can be set when the provider
+> is gated (disabled). With the current implementation, the rate can only be
+> set when the provider is unprepared, while it should be allowed to set a
+> prepared and disable provider.
+> Fix this by moving the rate protection mechanism in the enable/disable
+> core functions
+> 
 
---C7RPagmBr0a7D5kUOEPQDw7kQbnk7rr2h
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
+I'll drop this patch in the v3.
+The protection count should only be touch while holding the prepare_lock.
+This was disaster waiting to happen ... :(
 
-Am 31.05.2017 um 16:52 schrieb Mark Rutland:
-> On Wed, May 31, 2017 at 08:14:52AM +0200, Oleksij Rempel wrote:
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> Cc: kernel@pengutronix.de
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: linux-clk@vger.kernel.org
->> Cc: devicetree@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b=
-/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> index 9252912a5b0e..214cb5f461c7 100644
->> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> @@ -6,6 +6,10 @@ Required properties:
->>  - interrupts: Should contain CCM interrupt
->>  - #clock-cells: Should be <1>
->> =20
->> +Optional properties:
->> +- fsl,pmic_stby_poweroff: Configure CCM to assert PMIC_STBY_REQ signa=
-l
->> +  on power off.
->=20
-> s/_/-/ in property names, please.
-
-ok.
-
-I have now some more questions:
-what naming schema should be actually used?
-fsl,pmic-stby-poweroff
-or
-fsl,pmic-stby-power-off
-
-i found some existing case:
-sound/rt5660.txt:- realtek,poweroff-in-suspend
-so in my case it will be:
-fsl,standby-in-poweroff
-or
-fsl,standby-in-power-off
-
-can we have generic name for this use case?
-should I use same binding for PMIC and the SoC or they should be more lik=
-e:
-for SoC "standby-in-power-off"
-and for PMIC "power-off-in-standby"
-
-
-
-> When/why is this needed?
->=20
-> Why should a DT author (not) set this?
->=20
-> Thanks,
-> Mark.
->=20
->> +
->>  The clock consumer should specify the desired clock by having the clo=
-ck
->>  ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6q=
-dl-clock.h
->>  for the full list of i.MX6 Quad and DualLite clock IDs.
->> --=20
->> 2.11.0
->>
-
-
---=20
-Regards,
-Oleksij
-
-
---C7RPagmBr0a7D5kUOEPQDw7kQbnk7rr2h--
-
---mqhHG7A28Bi5ojtFwwc5pNTD1cqSe61KF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iF4EAREIAAYFAlkvuTsACgkQHwImuRkmbWnjTgD+OMPXuh3DWAZ3dFKYKRlyWpRj
-6G3lHy7rYcwSxcSEun8A/il84kXam14WDsmzKbTyuS9wcg2x2PfrvK3QsbiC0n25
-=VV6G
------END PGP SIGNATURE-----
-
---mqhHG7A28Bi5ojtFwwc5pNTD1cqSe61KF--
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/clk.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 6ee5fc59cf1f..e6e5048ce186 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -491,9 +491,6 @@ static void clk_core_unprepare(struct clk_core *core)
+>  	if (WARN_ON(core->prepare_count == 1 && core->flags &
+> CLK_IS_CRITICAL))
+>  		return;
+>  
+> -	if (core->flags & CLK_SET_RATE_GATE)
+> -		clk_core_rate_unprotect(core);
+> -
+>  	if (--core->prepare_count > 0)
+>  		return;
+>  
+> @@ -564,14 +561,6 @@ static int clk_core_prepare(struct clk_core *core)
+>  
+>  	core->prepare_count++;
+>  
+> -	/*
+> -	 * CLK_SET_RATE_GATE is a special case of clock protection
+> -	 * Instead of a consumer protection, the provider is protecting
+> -	 * itself when prepared
+> -	 */
+> -	if (core->flags & CLK_SET_RATE_GATE)
+> -		clk_core_rate_protect(core);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -716,6 +705,9 @@ static void clk_core_disable(struct clk_core *core)
+>  	if (WARN_ON(core->enable_count == 1 && core->flags &
+> CLK_IS_CRITICAL))
+>  		return;
+>  
+> +	if (core->flags & CLK_SET_RATE_GATE)
+> +		clk_core_rate_unprotect(core);
+> +
+>  	if (--core->enable_count > 0)
+>  		return;
+>  
+> @@ -791,6 +783,15 @@ static int clk_core_enable(struct clk_core *core)
+>  	}
+>  
+>  	core->enable_count++;
+> +
+> +	/*
+> +	 * CLK_SET_RATE_GATE is a special case of clock protection
+> +	 * Instead of a consumer protection, the provider is protecting
+> +	 * itself when enabled
+> +	 */
+> +	if (core->flags & CLK_SET_RATE_GATE)
+> +		clk_core_rate_protect(core);
+> +
+>  	return 0;
+>  }
+>  
