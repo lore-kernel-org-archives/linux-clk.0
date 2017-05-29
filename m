@@ -1,67 +1,50 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 04/21] clk: sunxi-ng: mux: Don't just rely on the parent for CLK_SET_RATE_PARENT
-Date: Wed, 17 May 2017 09:40:33 +0200
-Message-Id: <ce84114d26706769eb6f7c2404bd20b9f2b0d868.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/1] clk: meson: meson8b: mark clk81 as critical
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+ linux-clk@vger.kernel.org
+References: <20170504183201.13175-1-martin.blumenstingl@googlemail.com>
+ <20170504183201.13175-2-martin.blumenstingl@googlemail.com>
+Cc: khilman@baylibre.com, carlo@caione.org, sboyd@codeaurora.org,
+ mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <0efb9498-2806-8042-b73e-201de6a458cb@baylibre.com>
+Date: Mon, 29 May 2017 09:57:49 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170504183201.13175-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The current code only rely on the parent to change its rate in the case
-where CLK_SET_RATE_PARENT is set.
+On 05/04/2017 08:32 PM, Martin Blumenstingl wrote:
+> Disabling clk81 results in an immediate freeze of the whole system. This
+> can happen "accidentally" when the last child-clock of clk81 is disabled
+> (in this case the common clock framework also disables clk81, even if it
+> was only enabled indirectly before).
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/meson8b.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index e9985503165c..bfd1690724de 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -399,7 +399,7 @@ struct clk_gate meson8b_clk81 = {
+>  		.ops = &clk_gate_ops,
+>  		.parent_names = (const char *[]){ "mpeg_clk_div" },
+>  		.num_parents = 1,
+> -		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
+> +		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL),
+>  	},
+>  };
+>  
+> 
 
-However, some clock rates might be obtained only through a modification of
-the parent and the clock divider. Just rely on the round rate of the clocks
-to give us the best computation that might be achieved for a given rate.
+Hi Martin,
 
-round_rate functions now need to honor CLK_SET_RATE_PARENT, but either the
-functions already do that if they modify the parent, or don't modify the
-praents at all.
+I applied the patch resent by Jerome,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index bae735e252b6..58b6e349a0ed 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -95,19 +95,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 		if (!parent)
- 			continue;
- 
--		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
--			struct clk_rate_request parent_req = *req;
--			int ret = __clk_determine_rate(parent, &parent_req);
--
--			if (ret)
--				continue;
--
--			parent_rate = parent_req.rate;
--		} else {
--			parent_rate = clk_hw_get_rate(parent);
--		}
--
--		adj_parent_rate = parent_rate;
-+		adj_parent_rate = parent_rate = clk_hw_get_rate(parent);
- 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
- 							&adj_parent_rate);
- 
--- 
-git-series 0.9.1
+Thanks,
+Neil
