@@ -1,119 +1,41 @@
-Return-Path: <andy.tang@nxp.com>
-From: Andy Tang <andy.tang@nxp.com>
-To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-Date: Wed, 31 May 2017 09:22:35 +0000
-Message-ID: <HE1PR0402MB28283F05F0E7831AD210C21BF3F10@HE1PR0402MB2828.eurprd04.prod.outlook.com>
-References: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
- <DB6PR0402MB283701D478A1678D28894C77F30A0@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20170527102308.1988-7-icenowy@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-7-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 29 May 2017 18:43:09 +0200
+Message-ID: <CACRpkdb87XPN3QqxRR+U2PP8=H2yZXPLYZXHYLWP4NexgQDp6w@mail.gmail.com>
+Subject: Re: [PATCH v3 06/10] pinctrl: sunxi: add support of R40 to A10
+ pinctrl driver
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen and Michael,
+On Sat, May 27, 2017 at 12:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-How many times do I need to push those patch get merged?
+> R40 is said to be an upgrade of A20, and its pin configuration is also
+> similar to A20 (and thus similar to A10).
+>
+> Add support for R40 to the A10 pinctrl driver.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Regards,
-Andy
+Since I applied patches 2-5 you only need to resend from this point
+for pin control.
 
------Original Message-----
-From: Andy Tang=20
-Sent: Monday, April 17, 2017 9:37 AM
-To: 'mturquette@baylibre.com' <mturquette@baylibre.com>; 'sboyd@codeaurora.=
-org' <sboyd@codeaurora.org>
-Cc: 'robh+dt@kernel.org' <robh+dt@kernel.org>; 'mark.rutland@arm.com' <mark=
-.rutland@arm.com>; 'linux-clk@vger.kernel.org' <linux-clk@vger.kernel.org>;=
- 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'linux-kernel@v=
-ger.kernel.org' <linux-kernel@vger.kernel.org>; 'linux-arm-kernel@lists.inf=
-radead.org' <linux-arm-kernel@lists.infradead.org>; 'Scott Wood' <oss@buser=
-ror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
+Please send pin control patches separately from the rest of the series if you
+can, and rebase on my "devel" branch, so I don't have to sift throgh so much
+patches to find what I need to apply and what I can ignore.
 
-Hi Stephen and Michael,
-
-This patch set has been pending for more than two months since it was first=
- sent.
-I have not received any response from you until now.
-
-Could you give some comments on it?
-
-Regards,
-Andy
-
------Original Message-----
-From: Andy Tang
-Sent: Wednesday, April 05, 2017 2:16 PM
-To: mturquette@baylibre.com; sboyd@codeaurora.org
-Cc: robh+dt@kernel.org; mark.rutland@arm.com; linux-clk@vger.kernel.org; de=
-vicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@li=
-sts.infradead.org; Scott Wood <oss@buserror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-
-Hello=20
-
-Do you have any comments on this patch set which was acked by Rob?
-
-Regards,
-Andy
-
-> -----Original Message-----
-> From: Yuantian Tang [mailto:andy.tang@nxp.com]
-> Sent: Monday, March 20, 2017 10:37 AM
-> To: mturquette@baylibre.com
-> Cc: sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;=20
-> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-=20
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Scott=20
-> Wood <oss@buserror.net>; Andy Tang <andy.tang@nxp.com>
-> Subject: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
->=20
-> From: Scott Wood <oss@buserror.net>
->=20
-> ls1012a has separate input root clocks for core PLLs versus the=20
-> platform PLL, with the latter described as sysclk in the hw docs.
-> Update the qoriq-clock binding to allow a second input clock, named=20
-> "coreclk".  If present, this clock will be used for the core PLLs.
->=20
-> Signed-off-by: Scott Wood <oss@buserror.net>
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
-> v2:
-> 	-- change the author to Scott
->  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> index aa3526f..119cafd 100644
-> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> @@ -56,6 +56,11 @@ Optional properties:
->  - clocks: If clock-frequency is not specified, sysclk may be provided
->  	as an input clock.  Either clock-frequency or clocks must be
->  	provided.
-> +	A second input clock, called "coreclk", may be provided if
-> +	core PLLs are based on a different input clock from the
-> +	platform PLL.
-> +- clock-names: Required if a coreclk is present.  Valid names are
-> +	"sysclk" and "coreclk".
->=20
->  2. Clock Provider
->=20
-> @@ -72,6 +77,7 @@ second cell is the clock index for the specified type.
->  	2	hwaccel		index (n in CLKCGnHWACSR)
->  	3	fman		0 for fm1, 1 for fm2
->  	4	platform pll	0=3Dpll, 1=3Dpll/2, 2=3Dpll/3, 3=3Dpll/4
-> +	5	coreclk		must be 0
->=20
->  3. Example
->=20
-> --
-> 2.1.0.27.g96db324
+Yours,
+Linus Walleij
