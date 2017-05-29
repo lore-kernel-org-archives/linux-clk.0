@@ -1,44 +1,220 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 8 May 2017 11:24:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 17/20] dt-bindings: display: sun4i: Add
- allwinner,tcon-channel property
-Message-ID: <20170508162443.faox4hm6jmfqccwt@rob-hp-laptop>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
- <2f00be9d75b68090ffed30654be65132a156a317.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:50820 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751106AbdE2NLE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 May 2017 09:11:04 -0400
+Date: Mon, 29 May 2017 21:11:00 +0800
+From: Chen-Yu Tsai <wens@csie.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 06/10] pinctrl: sunxi: add support of R40 to A10
+ pinctrl driver
+Message-ID: <20170529131100.a56rv3e5z3kpcxuo@wens.csie.org>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+ <20170527102308.1988-7-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2f00be9d75b68090ffed30654be65132a156a317.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <20170527102308.1988-7-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 03, 2017 at 01:59:54PM +0200, Maxime Ripard wrote:
-> The Allwinner Timings Controller has two, mutually exclusive, channels.
-> When the binding has been introduced, it was assumed that there would be
-> only a single user per channel in the system.
+On Sat, May 27, 2017 at 06:23:04PM +0800, Icenowy Zheng wrote:
+> R40 is said to be an upgrade of A20, and its pin configuration is also
+> similar to A20 (and thus similar to A10).
 > 
-> While this is likely for the channel 0 which only connects to LCD displays,
-> it turns out that the channel 1 can be connected to multiple controllers in
-> the SoC (HDMI and TV encoders for example). And while the simultaneous use
-> of HDMI and TV outputs cannot be achieved, switching from one to the other
-> at runtime definitely sounds plausible.
+> Add support for R40 to the A10 pinctrl driver.
 > 
-> Add an extra property, allwinner,tcon-channel, to specify for a given
-> endpoint which TCON channel it is connected to, while falling back to the
-> previous mechanism if that property is missing.
-> 
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 ++++---
->  1 file changed, 7 insertions(+), 4 deletions(-)
+>  drivers/pinctrl/sunxi/Kconfig             |   2 +-
+>  drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 272 +++++++++++++++++++++---------
+>  2 files changed, 197 insertions(+), 77 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+> index 624d84e6c936..9d01da3b90bd 100644
+> --- a/drivers/pinctrl/sunxi/Kconfig
+> +++ b/drivers/pinctrl/sunxi/Kconfig
+> @@ -7,7 +7,7 @@ config PINCTRL_SUNXI
+>  	select GPIOLIB
+>  
+>  config PINCTRL_SUN4I_A10
+> -	def_bool MACH_SUN4I || MACH_SUN7I
+> +	def_bool MACH_SUN4I || MACH_SUN7I || MACH_SUN8I
+>  	select PINCTRL_SUNXI
+>  
+>  config PINCTRL_SUN5I
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+> index 159580c04b14..0f6ca8391ea7 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
 
-Acked-by: Rob Herring <robh@kernel.org>
+[...]
+
+> @@ -162,14 +183,19 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
+>  		  SUNXI_FUNCTION(0x3, "can"),		/* RX */
+>  		  SUNXI_FUNCTION(0x4, "uart1"),		/* RING */
+>  		  SUNXI_FUNCTION_VARIANT(0x5, "gmac",	/* GNULL / ETXERR */
+> -					 PINCTRL_SUN7I_A20),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40),
+>  		  SUNXI_FUNCTION_VARIANT(0x6, "i2s1",	/* DI */
+> -					 PINCTRL_SUN7I_A20)),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40)),
+>  	/* Hole */
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 0),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> -		  SUNXI_FUNCTION(0x2, "i2c0")),		/* SCK */
+> +		  SUNXI_FUNCTION(0x2, "i2c0"),		/* SCK */
+> +		  SUNXI_FUNCTION_VARIANT(0x3,
+> +					 "pll-lock-dbg",
+
+Can you stick to underscores to be consistent?
+
+> +					 PINCTRL_SUN8I_R40)),
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 1),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> @@ -177,11 +203,19 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 2),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> -		  SUNXI_FUNCTION(0x2, "pwm")),		/* PWM0 */
+> +		  SUNXI_FUNCTION_VARIANT(0x2, "pwm",	/* PWM0 */
+> +					 PINCTRL_SUN4I_A10 |
+> +					 PINCTRL_SUN7I_A20),
+> +		  SUNXI_FUNCTION_VARIANT(0x3, "pwm",	/* PWM0 */
+> +					 PINCTRL_SUN8I_R40)),
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 3),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> -		  SUNXI_FUNCTION(0x2, "ir0"),		/* TX */
+> +		  SUNXI_FUNCTION_VARIANT(0x2, "ir0",	/* TX */
+> +					 PINCTRL_SUN4I_A10 |
+> +					 PINCTRL_SUN7I_A20),
+> +		  SUNXI_FUNCTION_VARIANT(0x3, "pwm0",	/* PWM1 */
+
+The numbering is wrong. Just drop the number altogether, like all the
+other instances.
+
+> +					 PINCTRL_SUN8I_R40),
+>  		/*
+>  		 * The SPDIF block is not referenced at all in the A10 user
+>  		 * manual. However it is described in the code leaked and the
+> @@ -205,7 +239,8 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* MCLK */
+>  					 PINCTRL_SUN4I_A10),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* MCLK */
+> -					 PINCTRL_SUN7I_A20),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40),
+
+Maybe we could use "i2s" instead, like on the A10. I don't know where
+i2s1 is used, but it certainly isn't routed outside the SoC, and i2s2
+looks like it's for dw-hdmi's audio path.
+
+>  		  SUNXI_FUNCTION(0x3, "ac97")),		/* MCLK */
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 6),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+
+[...]
+
+> @@ -237,31 +275,41 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DO1 */
+>  					 PINCTRL_SUN4I_A10),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DO1 */
+> -					 PINCTRL_SUN7I_A20)),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40),
+> +		  SUNXI_FUNCTION_VARIANT(0x4, "pwm",	/* PWM6 */
+> +					 PINCTRL_SUN8I_R40)),
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 10),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DO2 */
+>  					 PINCTRL_SUN4I_A10),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DO2 */
+> -					 PINCTRL_SUN7I_A20)),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40),
+> +		  SUNXI_FUNCTION_VARIANT(0x4, "pwm",	/* PWM7 */
+> +					 PINCTRL_SUN8I_R40)),
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 11),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DO3 */
+>  					 PINCTRL_SUN4I_A10),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DO3 */
+> -					 PINCTRL_SUN7I_A20)),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40)),
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 12),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s",	/* DI */
+>  					 PINCTRL_SUN4I_A10),
+>  		  SUNXI_FUNCTION_VARIANT(0x2, "i2s0",	/* DI */
+> -					 PINCTRL_SUN7I_A20),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40),
+>  		  SUNXI_FUNCTION(0x3, "ac97"),		/* DI */
+>  		/* Undocumented mux function on A10 - See SPDIF MCLK above */
+> -		  SUNXI_FUNCTION(0x4, "spdif")),        /* SPDIF IN */
+> +		  SUNXI_FUNCTION_VARIANT(0x4, "spdif",	/* SPDIF IN */
+> +					 PINCTRL_SUN4I_A10 |
+> +					 PINCTRL_SUN7I_A20)),
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 13),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> @@ -308,7 +356,9 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
+
+You missed PWM4 and PWM5 on pins PB20 and PB21.
+
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+>  		  SUNXI_FUNCTION(0x2, "uart0"),		/* TX */
+> -		  SUNXI_FUNCTION(0x3, "ir1")),		/* TX */
+> +		  SUNXI_FUNCTION_VARIANT(0x3, "ir1",	/* TX */
+> +					 PINCTRL_SUN4I_A10 |
+> +					 PINCTRL_SUN7I_A20)),
+>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 23),
+>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+
+[...]
+
+> @@ -916,7 +1000,10 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
+>  		  SUNXI_FUNCTION_VARIANT(0x3, "pata",	/* ATAD12 */
+>  					 PINCTRL_SUN4I_A10),
+>  		  SUNXI_FUNCTION_VARIANT(0x3, "emac",	/* ETXD1 */
+> -					 PINCTRL_SUN7I_A20),
+> +					 PINCTRL_SUN7I_A20 |
+> +					 PINCTRL_SUN8I_R40),
+> +		  SUNXI_FUNCTION_VARIANT(0x5, "sim",	/* DET */
+> +					 PINCTRL_SUN8I_R40),
+
+This is available on all 3 variants.
+
+Should we consider sending a fix for this first? The hardware backing
+this pin is not supported, but it would be less confusing to fix it
+first instead of introducing a function for all variants in a patch
+supposedly for just the R40.
+
+>  		  SUNXI_FUNCTION(0x4, "keypad"),	/* IN6 */
+>  		  SUNXI_FUNCTION_IRQ(0x6, 16),		/* EINT16 */
+>  		  SUNXI_FUNCTION(0x7, "csi1")),		/* D16 */
+
+[...]
+
+Looks good otherwise.
+
+
+Regards
+ChenYu
