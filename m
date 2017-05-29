@@ -1,27 +1,49 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20170517212035.3100471-1-arnd@arndb.de>
-References: <20170517212035.3100471-1-arnd@arndb.de>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 18 May 2017 10:25:23 +0800
-Message-ID: <CAGb2v67EHRVrbR9dsNtMuuG+L11WxHcoqVw4GyyD0-hhJ3EPnw@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: enable SUNXI_CCU_MP for PRCM
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.xyz>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: linux@rempel-orivat.de
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/5] ARM: imx6q: provide documentation for new fsl,pmic_stby_poweroff property
+Date: Mon, 29 May 2017 19:09:20 +0200
+Message-Id: <20170529170924.25488-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 18, 2017 at 5:19 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> The newly added PRCM CCU driver uses SUNXI_CCU_MP_WITH_MUX_GATE, which causes
-> a link error when no other driver enables SUNXI_CCU_MP:
->
-> drivers/clk/built-in.o:(.data+0x5c8c8): undefined reference to `ccu_mp_ops'
->
-> This adds an explicit 'select' statement for it.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: kernel@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ Documentation/devicetree/bindings/clock/imx6q-clock.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+index 9252912a5b0e..214cb5f461c7 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+@@ -6,6 +6,10 @@ Required properties:
+ - interrupts: Should contain CCM interrupt
+ - #clock-cells: Should be <1>
+ 
++Optional properties:
++- fsl,pmic_stby_poweroff: Configure CCM to assert PMIC_STBY_REQ signal
++  on power off.
++
+ The clock consumer should specify the desired clock by having the clock
+ ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+ for the full list of i.MX6 Quad and DualLite clock IDs.
+-- 
+2.11.0
