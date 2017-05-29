@@ -1,167 +1,153 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:36322 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751033AbdE2N17 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2017 09:27:59 -0400
-Received: by mail-wm0-f46.google.com with SMTP id 7so56052994wmo.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 May 2017 06:27:53 -0700 (PDT)
-Message-ID: <1496064471.2741.0.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: Add EE 32K Clock for CEC
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1496050533.7514.9.camel@baylibre.com>
+Subject: Re: [PATCH v2 01/11] clk: take the prepare lock out of
+ clk_core_set_parent
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 29 May 2017 15:27:51 +0200
-In-Reply-To: <1495619025-1958-1-git-send-email-narmstrong@baylibre.com>
-References: <1495619025-1958-1-git-send-email-narmstrong@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, Linus
+ Walleij <linus.walleij@linaro.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>
+Date: Mon, 29 May 2017 11:35:33 +0200
+In-Reply-To: <149573849978.52617.292626696549937056@resonance>
+References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	 <20170521215958.19743-2-jbrunet@baylibre.com>
+	 <149573849978.52617.292626696549937056@resonance>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-05-24 at 11:43 +0200, Neil Armstrong wrote:
-> On Amlogic GX SoCs, there is two CEC controllers :
-> - An Amlogic CEC custom in the AO domain
-> - The Synopsys HDMI-TX Controller in the EE domain
+On Thu, 2017-05-25 at 11:54 -0700, Michael Turquette wrote:
+> Quoting Jerome Brunet (2017-05-21 14:59:48)
+> > 
+> > Rework set_parent core function so it can be called when the prepare lock
+> > is already held by the caller.
+> > 
+> > This rework is done to ease the integration of the "protected" clock
+> > functionality.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
-> Each of these controllers needs a 32.768KHz clock, but there is two paths :
-> - In the EE domain, the "32k_clk" this patchs is adding
-> - In the AO domain, with a more complex dual divider more precise setup
+> Applied to clk-next-protect for testing.
 > 
-> The AO 32K clock support will be pushed later in the corresponding
-> gxbb-aoclk driver when the AE CEC driver is ready.
-> 
-> The EE 32k_clk must be pushed earlier since mainline support for CEC in the
-> Synopsys HDMI-TX controller is nearby.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Rebased and applied.
-Thx
+Noted, I'll base the v3 on top of this branch
 
-Jerome
-
-> ---
->  drivers/clk/meson/gxbb.c | 54
-> ++++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/gxbb.h |  5 ++++-
->  2 files changed, 58 insertions(+), 1 deletion(-)
+> Regards,
+> Mike
 > 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index ad5f027..4b7d85a 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -951,6 +951,51 @@ struct pll_params_table gxl_gp0_params_table[] = {
->  	},
->  };
->  
-> +static struct clk_divider gxbb_32k_clk_div = {
-> +	.reg = (void *)HHI_32K_CLK_CNTL,
-> +	.shift = 0,
-> +	.width = 14,
-> +	.lock = &clk_lock,
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "32k_clk_div",
-> +		.ops = &clk_divider_ops,
-> +		.parent_names = (const char *[]){ "32k_clk_sel" },
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
-> +	},
-> +};
-> +
-> +static struct clk_gate gxbb_32k_clk = {
-> +	.reg = (void *)HHI_32K_CLK_CNTL,
-> +	.bit_idx = 15,
-> +	.lock = &clk_lock,
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "32k_clk",
-> +		.ops = &clk_gate_ops,
-> +		.parent_names = (const char *[]){ "32k_clk_div" },
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +static const char *gxbb_32k_clk_parent_names[] = {
-> +	"xtal", "cts_slow_oscin", "fclk_div3", "fclk_div5"
-> +};
-> +
-> +static struct clk_mux gxbb_32k_clk_sel = {
-> +	.reg = (void *)HHI_32K_CLK_CNTL,
-> +	.mask = 0x3,
-> +	.shift = 16,
-> +	.lock = &clk_lock,
-> +		.hw.init = &(struct clk_init_data){
-> +		.name = "32k_clk_sel",
-> +		.ops = &clk_mux_ops,
-> +		.parent_names = gxbb_32k_clk_parent_names,
-> +		.num_parents = 4,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
->  /* Everything Else (EE) domain gates */
->  static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
->  static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-> @@ -1158,6 +1203,9 @@ struct pll_params_table gxl_gp0_params_table[] = {
->  		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
->  		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
->  		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
-> +		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
-> +		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
-> +		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
->  	},
->  	.num = NR_CLKS,
->  };
-> @@ -1278,6 +1326,9 @@ struct pll_params_table gxl_gp0_params_table[] = {
->  		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
->  		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
->  		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
-> +		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
-> +		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
-> +		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
->  	},
->  	.num = NR_CLKS,
->  };
-> @@ -1392,6 +1443,7 @@ struct pll_params_table gxl_gp0_params_table[] = {
->  	&gxbb_mali_1,
->  	&gxbb_cts_amclk,
->  	&gxbb_cts_mclk_i958,
-> +	&gxbb_32k_clk,
->  };
->  
->  static struct clk_mux *const gxbb_clk_muxes[] = {
-> @@ -1403,6 +1455,7 @@ struct pll_params_table gxl_gp0_params_table[] = {
->  	&gxbb_cts_amclk_sel,
->  	&gxbb_cts_mclk_i958_sel,
->  	&gxbb_cts_i958,
-> +	&gxbb_32k_clk_sel,
->  };
->  
->  static struct clk_divider *const gxbb_clk_dividers[] = {
-> @@ -1411,6 +1464,7 @@ struct pll_params_table gxl_gp0_params_table[] = {
->  	&gxbb_mali_0_div,
->  	&gxbb_mali_1_div,
->  	&gxbb_cts_mclk_i958_div,
-> +	&gxbb_32k_clk_div,
->  };
->  
->  static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index 93b8f07..de5fad0 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -284,8 +284,11 @@
->  #define CLKID_CTS_MCLK_I958_SEL	  111
->  #define CLKID_CTS_MCLK_I958_DIV	  112
->  #define CLKID_CTS_I958		  113
-> +#define CLKID_32K_CLK		  114
-> +#define CLKID_32K_CLK_SEL	  115
-> +#define CLKID_32K_CLK_DIV	  116
->  
-> -#define NR_CLKS			  114
-> +#define NR_CLKS			  117
->  
->  /* include the CLKIDs that have been made part of the stable DT binding */
->  #include <dt-bindings/clock/gxbb-clkc.h>
-
+> > ---
+> >  drivers/clk/clk.c | 39 ++++++++++++++++++---------------------
+> >  1 file changed, 18 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index fc58c52a26b4..f5c371532509 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1787,7 +1787,8 @@ bool clk_has_parent(struct clk *clk, struct clk
+> > *parent)
+> >  }
+> >  EXPORT_SYMBOL_GPL(clk_has_parent);
+> >  
+> > -static int clk_core_set_parent(struct clk_core *core, struct clk_core
+> > *parent)
+> > +static int clk_core_set_parent_nolock(struct clk_core *core,
+> > +                                     struct clk_core *parent)
+> >  {
+> >         int ret = 0;
+> >         int p_index = 0;
+> > @@ -1796,23 +1797,16 @@ static int clk_core_set_parent(struct clk_core
+> > *core, struct clk_core *parent)
+> >         if (!core)
+> >                 return 0;
+> >  
+> > -       /* prevent racing with updates to the clock topology */
+> > -       clk_prepare_lock();
+> > -
+> >         if (core->parent == parent)
+> > -               goto out;
+> > +               return 0;
+> >  
+> >         /* verify ops for for multi-parent clks */
+> > -       if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+> > -               ret = -ENOSYS;
+> > -               goto out;
+> > -       }
+> > +       if ((core->num_parents > 1) && (!core->ops->set_parent))
+> > +               return -ENOSYS;
+> >  
+> >         /* check that we are allowed to re-parent if the clock is in use */
+> > -       if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
+> > -               ret = -EBUSY;
+> > -               goto out;
+> > -       }
+> > +       if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
+> > +               return -EBUSY;
+> >  
+> >         /* try finding the new parent index */
+> >         if (parent) {
+> > @@ -1820,8 +1814,7 @@ static int clk_core_set_parent(struct clk_core *core,
+> > struct clk_core *parent)
+> >                 if (p_index < 0) {
+> >                         pr_debug("%s: clk %s can not be parent of clk %s\n",
+> >                                         __func__, parent->name, core->name);
+> > -                       ret = p_index;
+> > -                       goto out;
+> > +                       return p_index;
+> >                 }
+> >                 p_rate = parent->rate;
+> >         }
+> > @@ -1831,7 +1824,7 @@ static int clk_core_set_parent(struct clk_core *core,
+> > struct clk_core *parent)
+> >  
+> >         /* abort if a driver objects */
+> >         if (ret & NOTIFY_STOP_MASK)
+> > -               goto out;
+> > +               return ret;
+> >  
+> >         /* do the re-parent */
+> >         ret = __clk_set_parent(core, parent, p_index);
+> > @@ -1844,9 +1837,6 @@ static int clk_core_set_parent(struct clk_core *core,
+> > struct clk_core *parent)
+> >                 __clk_recalc_accuracies(core);
+> >         }
+> >  
+> > -out:
+> > -       clk_prepare_unlock();
+> > -
+> >         return ret;
+> >  }
+> >  
+> > @@ -1869,10 +1859,17 @@ static int clk_core_set_parent(struct clk_core
+> > *core, struct clk_core *parent)
+> >   */
+> >  int clk_set_parent(struct clk *clk, struct clk *parent)
+> >  {
+> > +       int ret;
+> > +
+> >         if (!clk)
+> >                 return 0;
+> >  
+> > -       return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
+> > +       clk_prepare_lock();
+> > +       ret = clk_core_set_parent_nolock(clk->core,
+> > +                                        parent ? parent->core : NULL);
+> > +       clk_prepare_unlock();
+> > +
+> > +       return ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(clk_set_parent);
+> >  
+> > @@ -2753,7 +2750,7 @@ void clk_unregister(struct clk *clk)
+> >                 /* Reparent all children to the orphan list. */
+> >                 hlist_for_each_entry_safe(child, t, &clk->core->children,
+> >                                           child_node)
+> > -                       clk_core_set_parent(child, NULL);
+> > +                       clk_core_set_parent_nolock(child, NULL);
+> >         }
+> >  
+> >         hlist_del_init(&clk->core->child_node);
+> > -- 
+> > 2.9.4
+> > 
