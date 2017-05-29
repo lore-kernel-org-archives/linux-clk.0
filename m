@@ -1,65 +1,80 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <stefan.wahren@i2se.com>
+Date: Mon, 29 May 2017 23:06:42 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Fabio Estevam <festevam@gmail.com>,
+	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>
+Message-ID: <1092654219.601654.1496092002868@email.1und1.de>
+In-Reply-To: <20170526120638.2dfvy4nbzjzbampc@pengutronix.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <CAOMZO5CULvGubRcBTLiNn--6FLfTYs+5seRC2phUccB-1PXDxw@mail.gmail.com>
+ <20170526120638.2dfvy4nbzjzbampc@pengutronix.de>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
 MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- "Maxime Ripard" <maxime.ripard@free-electrons.com>,
- "Chen-Yu Tsai" <wens@csie.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, "Angus Ainslie" <angus@akkea.ca>,
- "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- stable@vger.kernel.org
-References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
-Message-ID: <149573823221.52617.2350903252470015903@resonance>
-Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
-Date: Thu, 25 May 2017 11:50:32 -0700
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Boris Brezillon (2017-05-24 09:34:29)
-> AHB BIST gate is actually controlled with bit 7.
-> =
+Hi Uwe,
 
-> This bug was detected while trying to use the NAND controller which is
-> using the DMA engine to transfer data to the NAND.
-> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate bit,
-> the core was disabling the DMA engine clock as part of its 'disable
-> unused clks' procedure, which was causing all DMA transfers to fail after
-> this point.
-> =
-
-> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-> Cc: stable@vger.kernel.org
-> Reported-by: Angus Ainslie <angus@akkea.ca>
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-Patch looks good to me. Did this ever work? I'm trying to figure out if
-it should go into -fixes or -next.
-
-Thanks,
-Mike
-
-> ---
->  drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> =
-
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-=
-sun5i.c
-> index 5c476f966a72..5372bf8be5e6 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
-> @@ -243,7 +243,7 @@ static SUNXI_CCU_GATE(ahb_ss_clk,   "ahb-ss",       "=
-ahb",
->  static SUNXI_CCU_GATE(ahb_dma_clk,     "ahb-dma",      "ahb",
->                       0x060, BIT(6), 0);
->  static SUNXI_CCU_GATE(ahb_bist_clk,    "ahb-bist",     "ahb",
-> -                     0x060, BIT(6), 0);
-> +                     0x060, BIT(7), 0);
->  static SUNXI_CCU_GATE(ahb_mmc0_clk,    "ahb-mmc0",     "ahb",
->                       0x060, BIT(8), 0);
->  static SUNXI_CCU_GATE(ahb_mmc1_clk,    "ahb-mmc1",     "ahb",
-> -- =
-
-> 2.7.4
+> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> hat am 26. Mai 201=
+7 um 14:06 geschrieben:
 >=20
+>=20
+> Hello,
+>=20
+> On Wed, May 03, 2017 at 04:53:09PM -0300, Fabio Estevam wrote:
+> > On Wed, May 3, 2017 at 3:56 PM, Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> wrote:
+> > > Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") =
+and
+> > > 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
+> > > SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initializ=
+ed
+> > > to 288 MHz because the initial frequency "seems too high to be ssp cl=
+ock
+> > > source directly". However this isn't enough to ensure that the freque=
+ncy
+> > > isn't increased later again. In fact this happens on my machine as th=
+e
+> > > mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
+> > > ssp2 which is resolved to
+> > >
+> > >         ref_io1.rate =3D 320 MHz
+> > >         ssp2_sel.parent =3D ref_io1
+> > >         ssp2_div.divider =3D 2
+> > >
+> > > . The observed effect is that reading MISO reliably fails: Instead of
+> > > the least significant bit the second least significant bit is reporte=
+d
+> > > twice. This is probably related to the reports
+> > >
+> > >         https://community.nxp.com/thread/290209
+> > >         https://community.nxp.com/thread/310434
+> >=20
+> > Adding Stefan on Cc in he could help testing this patch, as he was the
+> > one that created this thread.
+>=20
+> Even though my patch doesn't help Stefan, I think it should be applied
+> nevertheless as it makes my machine work, just completes the
+> workaround/fix that is already in mainline and nobody who still has the
+> issue has the time to debug this further.
+
+i like to see at least a comment within the code that the change is a worka=
+round.
+
+Thanks
+Stefan
+
+>=20
+> Best regards
+> Uwe
+>=20
+> --=20
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|
