@@ -1,88 +1,284 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Thu, 18 May 2017 17:48:54 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Zhong Kaihua <zhongkaihua@huawei.com>,
-	Chen Jun <chenjun14@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: Hi3660: change to register crgctrl clock
- with CLK_OF_DECLARE_DRIVER
-Message-ID: <20170518094853.GB25294@leoy-ThinkPad-T440>
-References: <1495072247-25217-1-git-send-email-leo.yan@linaro.org>
- <1495072247-25217-2-git-send-email-leo.yan@linaro.org>
- <20170518093226.GA2125@mai>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170518093226.GA2125@mai>
+In-Reply-To: <7dd239497298ccd8e946c08d1d2a679f@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-7-icenowy@aosc.io>
+ <20170529131100.a56rv3e5z3kpcxuo@wens.csie.org> <7dd239497298ccd8e946c08d1d2a679f@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 29 May 2017 21:25:44 +0800
+Message-ID: <CAGb2v66q0qV3XenyJn77YyiBq0bE984SbB-9S8Z8vJhx2m7SZw@mail.gmail.com>
+Subject: Re: [PATCH v3 06/10] pinctrl: sunxi: add support of R40 to A10
+ pinctrl driver
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Daniel,
+On Mon, May 29, 2017 at 9:19 PM,  <icenowy@aosc.io> wrote:
+> 在 2017-05-29 21:11，Chen-Yu Tsai 写道：
+>>
+>> On Sat, May 27, 2017 at 06:23:04PM +0800, Icenowy Zheng wrote:
+>>>
+>>> R40 is said to be an upgrade of A20, and its pin configuration is also
+>>> similar to A20 (and thus similar to A10).
+>>>
+>>> Add support for R40 to the A10 pinctrl driver.
+>>>
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>>  drivers/pinctrl/sunxi/Kconfig             |   2 +-
+>>>  drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 272
+>>> +++++++++++++++++++++---------
+>>>  2 files changed, 197 insertions(+), 77 deletions(-)
+>>>
+>>> diff --git a/drivers/pinctrl/sunxi/Kconfig
+>>> b/drivers/pinctrl/sunxi/Kconfig
+>>> index 624d84e6c936..9d01da3b90bd 100644
+>>> --- a/drivers/pinctrl/sunxi/Kconfig
+>>> +++ b/drivers/pinctrl/sunxi/Kconfig
+>>> @@ -7,7 +7,7 @@ config PINCTRL_SUNXI
+>>>         select GPIOLIB
+>>>
+>>>  config PINCTRL_SUN4I_A10
+>>> -       def_bool MACH_SUN4I || MACH_SUN7I
+>>> +       def_bool MACH_SUN4I || MACH_SUN7I || MACH_SUN8I
+>>>         select PINCTRL_SUNXI
+>>>
+>>>  config PINCTRL_SUN5I
+>>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+>>> b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+>>> index 159580c04b14..0f6ca8391ea7 100644
+>>> --- a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+>>> +++ b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+>>
+>>
+>> [...]
+>>
+>>> @@ -162,14 +183,19 @@ static const struct sunxi_desc_pin sun4i_a10_pins[]
+>>> = {
+>>>                   SUNXI_FUNCTION(0x3, "can"),           /* RX */
+>>>                   SUNXI_FUNCTION(0x4, "uart1"),         /* RING */
+>>>                   SUNXI_FUNCTION_VARIANT(0x5, "gmac",   /* GNULL / ETXERR
+>>> */
+>>> -                                        PINCTRL_SUN7I_A20),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40),
+>>>                   SUNXI_FUNCTION_VARIANT(0x6, "i2s1",   /* DI */
+>>> -                                        PINCTRL_SUN7I_A20)),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40)),
+>>>         /* Hole */
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 0),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>> -                 SUNXI_FUNCTION(0x2, "i2c0")),         /* SCK */
+>>> +                 SUNXI_FUNCTION(0x2, "i2c0"),          /* SCK */
+>>> +                 SUNXI_FUNCTION_VARIANT(0x3,
+>>> +                                        "pll-lock-dbg",
+>>
+>>
+>> Can you stick to underscores to be consistent?
+>
+>
+> OK...
+> This is a so strange pin name and I just picked the datasheet
+> name.
+>
+> I don't care how to name it as I don't even know what this is.
+>
+>
+>>
+>>> +                                        PINCTRL_SUN8I_R40)),
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 1),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>> @@ -177,11 +203,19 @@ static const struct sunxi_desc_pin sun4i_a10_pins[]
+>>> = {
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 2),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>> -                 SUNXI_FUNCTION(0x2, "pwm")),          /* PWM0 */
+>>> +                 SUNXI_FUNCTION_VARIANT(0x2, "pwm",    /* PWM0 */
+>>> +                                        PINCTRL_SUN4I_A10 |
+>>> +                                        PINCTRL_SUN7I_A20),
+>>> +                 SUNXI_FUNCTION_VARIANT(0x3, "pwm",    /* PWM0 */
+>>> +                                        PINCTRL_SUN8I_R40)),
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 3),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>> -                 SUNXI_FUNCTION(0x2, "ir0"),           /* TX */
+>>> +                 SUNXI_FUNCTION_VARIANT(0x2, "ir0",    /* TX */
+>>> +                                        PINCTRL_SUN4I_A10 |
+>>> +                                        PINCTRL_SUN7I_A20),
+>>> +                 SUNXI_FUNCTION_VARIANT(0x3, "pwm0",   /* PWM1 */
+>>
+>>
+>> The numbering is wrong. Just drop the number altogether, like all the
+>> other instances.
+>>
+>>> +                                        PINCTRL_SUN8I_R40),
+>>>                 /*
+>>>                  * The SPDIF block is not referenced at all in the A10
+>>> user
+>>>                  * manual. However it is described in the code leaked and
+>>> the
+>>> @@ -205,7 +239,8 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] =
+>>> {
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s",    /* MCLK */
+>>>                                          PINCTRL_SUN4I_A10),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s0",   /* MCLK */
+>>> -                                        PINCTRL_SUN7I_A20),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40),
+>>
+>>
+>> Maybe we could use "i2s" instead, like on the A10. I don't know where
+>> i2s1 is used, but it certainly isn't routed outside the SoC, and i2s2
+>> looks like it's for dw-hdmi's audio path.
+>
+>
+> Nope, it's routed at PA bank, see pins start at PA14.
+>
+> Changing this name will also break existing A20 device trees, if any of
+> them use I2S.
 
-On Thu, May 18, 2017 at 11:32:26AM +0200, Daniel Lezcano wrote:
-> On Thu, May 18, 2017 at 09:50:46AM +0800, Leo Yan wrote:
-> > The timer will register into system at very early phase at kernel boot;
-> > if timer needs to use clock, the clock should be get ready in function
-> > of_clk_init() so later the timer driver probe can retrieve clock
-> > successfully. This is finished in below flow on arm64:
-> > 
-> >   start_kernel()
-> >     `-> time_init()
-> >           `-> of_clk_init(NULL)    => register timer's clock
-> >           `-> clocksource_probe()  => register timer
-> > 
-> > On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
-> > as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
-> > sp804 timer probe returns failure due if cannot bind clock properly.
-> > To fix the failure, this patch is to change crgctrl clock registration
-> > from platform driver to CLK_OF_DECLARE_DRIVER method so the clocks can
-> > be registered ahead with function of_clk_init() and then timer driver
-> > can use it.
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  drivers/clk/hisilicon/clk-hi3660.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-> > index fd5ce7f..4e5713b 100644
-> > --- a/drivers/clk/hisilicon/clk-hi3660.c
-> > +++ b/drivers/clk/hisilicon/clk-hi3660.c
-> > @@ -547,10 +547,10 @@ static void hi3660_clk_crgctrl_init(struct device_node *np)
-> >  				  ARRAY_SIZE(hi3660_crgctrl_divider_clks),
-> >  				  clk_data);
-> >  }
-> > +CLK_OF_DECLARE_DRIVER(hi3660_clk_crgctrl, "hisilicon,hi3660-crgctrl",
-> > +		      hi3660_clk_crgctrl_init);
-> >  
-> >  static const struct of_device_id hi3660_clk_match_table[] = {
-> > -	{ .compatible = "hisilicon,hi3660-crgctrl",
-> > -	  .data = hi3660_clk_crgctrl_init },
-> >  	{ .compatible = "hisilicon,hi3660-pctrl",
-> >  	  .data = hi3660_clk_pctrl_init },
-> >  	{ .compatible = "hisilicon,hi3660-pmuctrl",
-> 
-> Why not do the change for all the clocks and remove the
-> hi3660_clk_match_table[]? and all the related platform driver code?
-> 
-> That will be consistent with the other clk-hi* drivers.
+Missed that one. Sorry about the noise.
 
-I checked a bit with Stephen on IRC, follow the suggestion to 'split
-the clks are registsered between CLK_OF_DECLARE_DRIVER() and driver
-probe so that the ones you need really early are done through the
-CLK_OF path and the other ones are done through regular driver probe'.
+>
+>
+>>
+>>>                   SUNXI_FUNCTION(0x3, "ac97")),         /* MCLK */
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 6),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>
+>>
+>> [...]
+>>
+>>> @@ -237,31 +275,41 @@ static const struct sunxi_desc_pin sun4i_a10_pins[]
+>>> = {
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s",    /* DO1 */
+>>>                                          PINCTRL_SUN4I_A10),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s0",   /* DO1 */
+>>> -                                        PINCTRL_SUN7I_A20)),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40),
+>>> +                 SUNXI_FUNCTION_VARIANT(0x4, "pwm",    /* PWM6 */
+>>> +                                        PINCTRL_SUN8I_R40)),
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 10),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s",    /* DO2 */
+>>>                                          PINCTRL_SUN4I_A10),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s0",   /* DO2 */
+>>> -                                        PINCTRL_SUN7I_A20)),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40),
+>>> +                 SUNXI_FUNCTION_VARIANT(0x4, "pwm",    /* PWM7 */
+>>> +                                        PINCTRL_SUN8I_R40)),
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 11),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s",    /* DO3 */
+>>>                                          PINCTRL_SUN4I_A10),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s0",   /* DO3 */
+>>> -                                        PINCTRL_SUN7I_A20)),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40)),
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 12),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s",    /* DI */
+>>>                                          PINCTRL_SUN4I_A10),
+>>>                   SUNXI_FUNCTION_VARIANT(0x2, "i2s0",   /* DI */
+>>> -                                        PINCTRL_SUN7I_A20),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40),
+>>>                   SUNXI_FUNCTION(0x3, "ac97"),          /* DI */
+>>>                 /* Undocumented mux function on A10 - See SPDIF MCLK
+>>> above */
+>>> -                 SUNXI_FUNCTION(0x4, "spdif")),        /* SPDIF IN */
+>>> +                 SUNXI_FUNCTION_VARIANT(0x4, "spdif",  /* SPDIF IN */
+>>> +                                        PINCTRL_SUN4I_A10 |
+>>> +                                        PINCTRL_SUN7I_A20)),
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 13),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>> @@ -308,7 +356,9 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] =
+>>> {
+>>
+>>
+>> You missed PWM4 and PWM5 on pins PB20 and PB21.
+>>
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>>                   SUNXI_FUNCTION(0x2, "uart0"),         /* TX */
+>>> -                 SUNXI_FUNCTION(0x3, "ir1")),          /* TX */
+>>> +                 SUNXI_FUNCTION_VARIANT(0x3, "ir1",    /* TX */
+>>> +                                        PINCTRL_SUN4I_A10 |
+>>> +                                        PINCTRL_SUN7I_A20)),
+>>>         SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 23),
+>>>                   SUNXI_FUNCTION(0x0, "gpio_in"),
+>>>                   SUNXI_FUNCTION(0x1, "gpio_out"),
+>>
+>>
+>> [...]
+>>
+>>> @@ -916,7 +1000,10 @@ static const struct sunxi_desc_pin sun4i_a10_pins[]
+>>> = {
+>>>                   SUNXI_FUNCTION_VARIANT(0x3, "pata",   /* ATAD12 */
+>>>                                          PINCTRL_SUN4I_A10),
+>>>                   SUNXI_FUNCTION_VARIANT(0x3, "emac",   /* ETXD1 */
+>>> -                                        PINCTRL_SUN7I_A20),
+>>> +                                        PINCTRL_SUN7I_A20 |
+>>> +                                        PINCTRL_SUN8I_R40),
+>>> +                 SUNXI_FUNCTION_VARIANT(0x5, "sim",    /* DET */
+>>> +                                        PINCTRL_SUN8I_R40),
+>>
+>>
+>> This is available on all 3 variants.
+>>
+>> Should we consider sending a fix for this first? The hardware backing
+>> this pin is not supported, but it would be less confusing to fix it
+>> first instead of introducing a function for all variants in a patch
+>> supposedly for just the R40.
+>
+>
+> OK.
+>
+> But if we do so I think I should delay this patch until the A10-A20
+> driver merge is applied...
 
-Also checked for mainline kernel, now there have some examples,
-like: drivers/clk/mediatek/clk-mt2701.c.
+Since the hardware is unsupported to begin with, I think that's OK.
+You could add an extra patch just before this one in the series.
 
-Thanks,
-Leo Yan
+
+ChenYu
+
+>
+>>
+>>>                   SUNXI_FUNCTION(0x4, "keypad"),        /* IN6 */
+>>>                   SUNXI_FUNCTION_IRQ(0x6, 16),          /* EINT16 */
+>>>                   SUNXI_FUNCTION(0x7, "csi1")),         /* D16 */
+>>
+>>
+>> [...]
+>>
+>> Looks good otherwise.
+>>
+>>
+>> Regards
+>> ChenYu
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
