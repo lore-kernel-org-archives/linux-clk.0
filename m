@@ -1,123 +1,167 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Phil Elwell <phil@raspberrypi.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
-In-Reply-To: <a507a7e7-3c64-1dcb-98f1-a7f94364f26c@raspberrypi.org>
-References: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org> <a507a7e7-3c64-1dcb-98f1-a7f94364f26c@raspberrypi.org>
-Date: Wed, 31 May 2017 14:36:05 -0700
-Message-ID: <87bmq8btfe.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:36322 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751033AbdE2N17 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2017 09:27:59 -0400
+Received: by mail-wm0-f46.google.com with SMTP id 7so56052994wmo.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 May 2017 06:27:53 -0700 (PDT)
+Message-ID: <1496064471.2741.0.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson-gxbb: Add EE 32K Clock for CEC
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Mon, 29 May 2017 15:27:51 +0200
+In-Reply-To: <1495619025-1958-1-git-send-email-narmstrong@baylibre.com>
+References: <1495619025-1958-1-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2017-05-24 at 11:43 +0200, Neil Armstrong wrote:
+> On Amlogic GX SoCs, there is two CEC controllers :
+> - An Amlogic CEC custom in the AO domain
+> - The Synopsys HDMI-TX Controller in the EE domain
+> 
+> Each of these controllers needs a 32.768KHz clock, but there is two paths :
+> - In the EE domain, the "32k_clk" this patchs is adding
+> - In the AO domain, with a more complex dual divider more precise setup
+> 
+> The AO 32K clock support will be pushed later in the corresponding
+> gxbb-aoclk driver when the AE CEC driver is ready.
+> 
+> The EE 32k_clk must be pushed earlier since mainline support for CEC in the
+> Synopsys HDMI-TX controller is nearby.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Phil Elwell <phil@raspberrypi.org> writes:
+Rebased and applied.
+Thx
 
-> Fractional clock dividers generate accurate average frequencies but
-> with jitter, particularly when the integer divisor is small.
->
-> Introduce a new metric of clock accuracy to penalise clocks with a good
-> average but worse jitter compared to clocks with an average which is no
-> better but with lower jitter. The metric is the ideal rate minus the
-> worse deviation from that ideal using the nearest integer divisors.
+Jerome
 
-"worst" the second time
-
-> Use this metric for parent selection for clocks requiring low jitter
-> (currently just PCM).
->
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 > ---
->  drivers/clk/bcm/clk-bcm2835.c | 40 +++++++++++++++++++++++++++++++++++--=
----
->  1 file changed, 35 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 81ecd4c..c7ee951 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -530,6 +530,7 @@ struct bcm2835_clock_data {
->=20=20
->  	bool is_vpu_clock;
->  	bool is_mash_clock;
-> +	bool low_jitter;
->=20=20
->  	u32 tcnt_mux;
->  };
-> @@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_p=
-rate(struct clk_hw *hw,
->  							int parent_idx,
->  							unsigned long rate,
->  							u32 *div,
-> -							unsigned long *prate)
-> +							unsigned long *prate,
-> +							unsigned long *avgrate)
->  {
->  	struct bcm2835_clock *clock =3D bcm2835_clock_from_hw(hw);
->  	struct bcm2835_cprman *cprman =3D clock->cprman;
-> @@ -1136,11 +1138,34 @@ static unsigned long bcm2835_clock_choose_div_and=
-_prate(struct clk_hw *hw,
->  	parent =3D clk_hw_get_parent_by_index(hw, parent_idx);
->=20=20
->  	if (!(BIT(parent_idx) & data->set_rate_parent)) {
-> +		unsigned long tmp_rate;
+>  drivers/clk/meson/gxbb.c | 54
+> ++++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/gxbb.h |  5 ++++-
+>  2 files changed, 58 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index ad5f027..4b7d85a 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -951,6 +951,51 @@ struct pll_params_table gxl_gp0_params_table[] = {
+>  	},
+>  };
+>  
+> +static struct clk_divider gxbb_32k_clk_div = {
+> +	.reg = (void *)HHI_32K_CLK_CNTL,
+> +	.shift = 0,
+> +	.width = 14,
+> +	.lock = &clk_lock,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "32k_clk_div",
+> +		.ops = &clk_divider_ops,
+> +		.parent_names = (const char *[]){ "32k_clk_sel" },
+> +		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
+> +	},
+> +};
 > +
->  		*prate =3D clk_hw_get_rate(parent);
->  		*div =3D bcm2835_clock_choose_div(hw, rate, *prate, true);
->=20=20
-> -		return bcm2835_clock_rate_from_divisor(clock, *prate,
-> -						       *div);
-> +		tmp_rate =3D bcm2835_clock_rate_from_divisor(clock, *prate, *div);
-> +		*avgrate =3D tmp_rate;
+> +static struct clk_gate gxbb_32k_clk = {
+> +	.reg = (void *)HHI_32K_CLK_CNTL,
+> +	.bit_idx = 15,
+> +	.lock = &clk_lock,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "32k_clk",
+> +		.ops = &clk_gate_ops,
+> +		.parent_names = (const char *[]){ "32k_clk_div" },
+> +		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
 > +
-> +		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
-> +			unsigned long high, low;
-> +			u32 int_div =3D *div & ~CM_DIV_FRAC_MASK;
+> +static const char *gxbb_32k_clk_parent_names[] = {
+> +	"xtal", "cts_slow_oscin", "fclk_div3", "fclk_div5"
+> +};
 > +
-> +			high =3D bcm2835_clock_rate_from_divisor(clock, *prate,
-> +							       int_div);
-> +			int_div +=3D CM_DIV_FRAC_MASK + 1;
-> +			low =3D bcm2835_clock_rate_from_divisor(clock, *prate,
-> +							      int_div);
+> +static struct clk_mux gxbb_32k_clk_sel = {
+> +	.reg = (void *)HHI_32K_CLK_CNTL,
+> +	.mask = 0x3,
+> +	.shift = 16,
+> +	.lock = &clk_lock,
+> +		.hw.init = &(struct clk_init_data){
+> +		.name = "32k_clk_sel",
+> +		.ops = &clk_mux_ops,
+> +		.parent_names = gxbb_32k_clk_parent_names,
+> +		.num_parents = 4,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
 > +
-> +			/*
-> +			 * Return a value which is the maximum deviation
-> +			 * below the ideal rate, for use as a metric.
-> +			 */
-> +			if ((tmp_rate - low) < (high - tmp_rate))
-> +				tmp_rate =3D low;
-> +			else
-> +				tmp_rate -=3D high - tmp_rate;
+>  /* Everything Else (EE) domain gates */
+>  static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+>  static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+> @@ -1158,6 +1203,9 @@ struct pll_params_table gxl_gp0_params_table[] = {
+>  		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
+>  		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
+>  		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
+> +		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+> +		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+> +		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
+>  	},
+>  	.num = NR_CLKS,
+>  };
+> @@ -1278,6 +1326,9 @@ struct pll_params_table gxl_gp0_params_table[] = {
+>  		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
+>  		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
+>  		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
+> +		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+> +		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+> +		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
+>  	},
+>  	.num = NR_CLKS,
+>  };
+> @@ -1392,6 +1443,7 @@ struct pll_params_table gxl_gp0_params_table[] = {
+>  	&gxbb_mali_1,
+>  	&gxbb_cts_amclk,
+>  	&gxbb_cts_mclk_i958,
+> +	&gxbb_32k_clk,
+>  };
+>  
+>  static struct clk_mux *const gxbb_clk_muxes[] = {
+> @@ -1403,6 +1455,7 @@ struct pll_params_table gxl_gp0_params_table[] = {
+>  	&gxbb_cts_amclk_sel,
+>  	&gxbb_cts_mclk_i958_sel,
+>  	&gxbb_cts_i958,
+> +	&gxbb_32k_clk_sel,
+>  };
+>  
+>  static struct clk_divider *const gxbb_clk_dividers[] = {
+> @@ -1411,6 +1464,7 @@ struct pll_params_table gxl_gp0_params_table[] = {
+>  	&gxbb_mali_0_div,
+>  	&gxbb_mali_1_div,
+>  	&gxbb_cts_mclk_i958_div,
+> +	&gxbb_32k_clk_div,
+>  };
+>  
+>  static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index 93b8f07..de5fad0 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -284,8 +284,11 @@
+>  #define CLKID_CTS_MCLK_I958_SEL	  111
+>  #define CLKID_CTS_MCLK_I958_DIV	  112
+>  #define CLKID_CTS_I958		  113
+> +#define CLKID_32K_CLK		  114
+> +#define CLKID_32K_CLK_SEL	  115
+> +#define CLKID_32K_CLK_DIV	  116
+>  
+> -#define NR_CLKS			  114
+> +#define NR_CLKS			  117
+>  
+>  /* include the CLKIDs that have been made part of the stable DT binding */
+>  #include <dt-bindings/clock/gxbb-clkc.h>
 
-Simplification suggestion: Remove tmp_rate variable, just assign to
-rate_from_divisor result to *avgrate.  At the end of the low_jitter
-block, just "return *avgrate - max(*avgrate - low, high - *avgrate)".
-
-With that, feel free to add:
-
-Reviewed-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkvN0UACgkQtdYpNtH8
-nuijaxAAtbF3m4UusEJMMTiFcLpnpemsQdMBbA37xQRPwvh2oK6/DGAHf2qezYUi
-yiHYq/JXqoC+lWJUtsZAbsbWGJqgFehAkw4FlS7fJG6RtHcdX87C5vaTnv72V6m6
-M++LyWk/KunG1jpvCo34PonHVUZMlowxzac4nG5AkhJIKLChbLPWPapoAVneG0hV
-cwm62OthWvYC65FB/+bAumrYtDk0V/srJJ1s9GgmUoMKREOxbQQ3BMfKwal5yf5W
-jXz8YPmCMG+fskSwKwyqVg4RVpdFj1SOMTPZRv50+QELCWw8VxB2qumdbV7RcHvZ
-NJNr7f84rvQavmCQNKnSgSkQd+eN8098DNtmrJUPRGJTzStoCYZit3w0CqOMWuOY
-ARk1+BNKiNfT2VM2vcmidfZjwrVpXEvxxIPcAogcYTmKhXHTvtGfW5J0uOdR1f/x
-D+X9Q6cXLhFvCkdJTLJmQxzdboFvM2PpLGWkuWw8NHYBTbPVKMvXYZ0op1KJL6ry
-z6XHx5q66WqcaAemgXY/CxOe3aYXbnQDaSCbjL7UdwPIuHRoM9j+7K3QTz5sVjjJ
-P2cCMHJaIkQFTaxoAjgZVjLhHISwS6/2R/i9yZTQrOtwuowl1PFHJDfk0YRrF6oT
-Uy2RySKezpF50a9Cly1BnrvRIiBZMTnPQwDXygG1b+i/00xhvsk=
-=kflZ
------END PGP SIGNATURE-----
---=-=-=--
