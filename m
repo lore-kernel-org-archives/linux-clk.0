@@ -1,106 +1,42 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 05/21] clk: sunxi-ng: mux: split out the pre-divider computation code
-Date: Wed, 17 May 2017 09:40:34 +0200
-Message-Id: <6d3e9ce05c3f58e42975136481a71fa5d556ad1c.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 29 May 2017 18:21:49 -0300
+Message-ID: <CAOMZO5BZ8pqBW2VfuaUGyzgn8kv3AdvhwQ5nFEWuUSpmvrW9rA@mail.gmail.com>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	Sascha Hauer <kernel@pengutronix.de>, Stefan Wahren <stefan.wahren@i2se.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The pre-divider retrieval code was merged into the function to apply the
-current pre-divider onto the parent clock rate so that we can use that
-adjusted value to do our factors computation.
+Hi Uwe,
 
-However, since we'll need to do the reverse operation, we need to split out
-that code into a function that will be shared.
+On Wed, May 3, 2017 at 3:56 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
+> 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
+> SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
+> to 288 MHz because the initial frequency "seems too high to be ssp clock
+> source directly". However this isn't enough to ensure that the frequency
+> isn't increased later again. In fact this happens on my machine as the
+> mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
+> ssp2 which is resolved to
+>
+>         ref_io1.rate =3D 320 MHz
+>         ssp2_sel.parent =3D ref_io1
+>         ssp2_div.divider =3D 2
+>
+> . The observed effect is that reading MISO reliably fails: Instead of
+> the least significant bit the second least significant bit is reported
+> twice. This is probably related to the reports
+>
+>         https://community.nxp.com/thread/290209
+>         https://community.nxp.com/thread/310434
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 58b6e349a0ed..3eb23d4e6534 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -15,24 +15,20 @@
- #include "ccu_gate.h"
- #include "ccu_mux.h"
- 
--void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
--					     struct ccu_mux_internal *cm,
--					     int parent_index,
--					     unsigned long *parent_rate)
-+static u16 ccu_mux_get_prediv(struct ccu_common *common,
-+			      struct ccu_mux_internal *cm,
-+			      int parent_index)
- {
- 	u16 prediv = 1;
- 	u32 reg;
--	int i;
- 
- 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
- 	      (common->features & CCU_FEATURE_VARIABLE_PREDIV) ||
- 	      (common->features & CCU_FEATURE_ALL_PREDIV)))
--		return;
-+		return 1;
- 
--	if (common->features & CCU_FEATURE_ALL_PREDIV) {
--		*parent_rate = *parent_rate / common->prediv;
--		return;
--	}
-+	if (common->features & CCU_FEATURE_ALL_PREDIV)
-+		return common->prediv;
- 
- 	reg = readl(common->base + common->reg);
- 	if (parent_index < 0) {
-@@ -40,10 +36,13 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 		parent_index &= (1 << cm->width) - 1;
- 	}
- 
--	if (common->features & CCU_FEATURE_FIXED_PREDIV)
-+	if (common->features & CCU_FEATURE_FIXED_PREDIV) {
-+		int i;
-+
- 		for (i = 0; i < cm->n_predivs; i++)
- 			if (parent_index == cm->fixed_predivs[i].index)
- 				prediv = cm->fixed_predivs[i].div;
-+	}
- 
- 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
- 		if (parent_index == cm->variable_prediv.index) {
-@@ -54,7 +53,16 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 			prediv = div + 1;
- 		}
- 
--	*parent_rate = *parent_rate / prediv;
-+	return prediv;
-+}
-+
-+void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
-+					     struct ccu_mux_internal *cm,
-+					     int parent_index,
-+					     unsigned long *parent_rate)
-+{
-+	*parent_rate = *parent_rate / ccu_mux_get_prediv(common, cm,
-+							 parent_index);
- }
- 
- int ccu_mux_helper_determine_rate(struct ccu_common *common,
--- 
-git-series 0.9.1
+As Stefan mentioned that your patch does not solve his issue, please
+remove this link when you submit a v2.
