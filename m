@@ -1,402 +1,64 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v4 03/11] clk: bcm: Add clocks for Stingray SOC
-Date: Mon, 22 May 2017 17:28:19 +0530
-Message-Id: <1495454307-23464-4-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
-References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:33077 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751242AbdE3IJR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2017 04:09:17 -0400
+Received: by mail-lf0-f51.google.com with SMTP id m18so44684480lfj.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2017 01:09:12 -0700 (PDT)
+From: Linus Walleij <linus.walleij@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: Janos Laube <janos.dev@gmail.com>,
+        Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+        linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] ARM: dts: Add Gemini DMA controller
+Date: Tue, 30 May 2017 10:08:57 +0200
+Message-Id: <20170530080857.13806-1-linus.walleij@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+This adds the Faraday Technology FTDMAC020 DMA controller to
+the Gemini SoC DTSI file. It is only used for memcpy work so
+we can activate it for all users of the chipset.
 
-This patch adds support for Stingray clocks in iproc
-ccf. The Stingray SOC has various plls based on iproc
-pll architecture.
-
-Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/clk/bcm/Kconfig  |   8 ++
- drivers/clk/bcm/Makefile |   1 +
- drivers/clk/bcm/clk-sr.c | 324 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 333 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-sr.c
+The driver has been merged to the DMA tree. The clock and reset
+lines are added with numerical values as we do not want to
+depend on <dt-bindings/*> headers in the merge window. Will
+be fixed post-rc1.
+---
+ arch/arm/boot/dts/gemini.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index b5ae531..1d9187d 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -46,3 +46,11 @@ config CLK_BCM_NS2
- 	default ARCH_BCM_IPROC
- 	help
- 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
+diff --git a/arch/arm/boot/dts/gemini.dtsi b/arch/arm/boot/dts/gemini.dtsi
+index 80abf84f8a80..0beaa4ef757e 100644
+--- a/arch/arm/boot/dts/gemini.dtsi
++++ b/arch/arm/boot/dts/gemini.dtsi
+@@ -175,5 +175,22 @@
+ 				#interrupt-cells = <1>;
+ 			};
+ 		};
 +
-+config CLK_BCM_SR
-+	bool "Broadcom Stingray clock support"
-+	depends on ARCH_BCM_IPROC || COMPILE_TEST
-+	select COMMON_CLK_IPROC
-+	default ARCH_BCM_IPROC
-+	help
-+	  Enable common clock framework support for the Broadcom Stingray SoC
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index d9dc848..a0c14fa 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
- obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
- obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
- obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
-+obj-$(CONFIG_CLK_BCM_SR)	+= clk-sr.o
-diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
-new file mode 100644
-index 0000000..87b9543
---- /dev/null
-+++ b/drivers/clk/bcm/clk-sr.c
-@@ -0,0 +1,324 @@
-+/*
-+ * Copyright 2017 Broadcom
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License, version 2, as
-+ * published by the Free Software Foundation (the "GPL").
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License version 2 (GPLv2) for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * version 2 (GPLv2) along with this source code.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/clock/bcm-sr.h>
-+#include "clk-iproc.h"
-+
-+#define REG_VAL(o, s, w) { .offset = o, .shift = s, .width = w, }
-+
-+#define AON_VAL(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
-+	.pwr_shift = ps, .iso_shift = is }
-+
-+#define SW_CTRL_VAL(o, s) { .offset = o, .shift = s, }
-+
-+#define RESET_VAL(o, rs, prs) { .offset = o, .reset_shift = rs, \
-+	.p_reset_shift = prs }
-+
-+#define DF_VAL(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
-+	.ki_shift = kis, .ki_width = kiw, .kp_shift = kps, .kp_width = kpw, \
-+	.ka_shift = kas, .ka_width = kaw }
-+
-+#define VCO_CTRL_VAL(uo, lo) { .u_offset = uo, .l_offset = lo }
-+
-+#define ENABLE_VAL(o, es, hs, bs) { .offset = o, .enable_shift = es, \
-+	.hold_shift = hs, .bypass_shift = bs }
-+
-+
-+static const struct iproc_pll_ctrl genpll0 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-+		IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 5, 1, 0),
-+	.reset = RESET_VAL(0x0, 12, 11),
-+	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-+	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-+	.ndiv_int = REG_VAL(0x10, 20, 10),
-+	.ndiv_frac = REG_VAL(0x10, 0, 20),
-+	.pdiv = REG_VAL(0x14, 0, 4),
-+	.status = REG_VAL(0x30, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl genpll0_clk[] = {
-+	[BCM_SR_GENPLL0_SATA_CLK] = {
-+		.channel = BCM_SR_GENPLL0_SATA_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
-+	[BCM_SR_GENPLL0_SCR_CLK] = {
-+		.channel = BCM_SR_GENPLL0_SCR_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+	[BCM_SR_GENPLL0_250M_CLK] = {
-+		.channel = BCM_SR_GENPLL0_250M_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
-+	[BCM_SR_GENPLL0_PCIE_AXI_CLK] = {
-+		.channel = BCM_SR_GENPLL0_PCIE_AXI_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 9, 3, 15),
-+		.mdiv = REG_VAL(0x1c, 0, 9),
-+	},
-+	[BCM_SR_GENPLL0_PAXC_AXI_X2_CLK] = {
-+		.channel = BCM_SR_GENPLL0_PAXC_AXI_X2_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 10, 4, 16),
-+		.mdiv = REG_VAL(0x1c, 10, 9),
-+	},
-+	[BCM_SR_GENPLL0_PAXC_AXI_CLK] = {
-+		.channel = BCM_SR_GENPLL0_PAXC_AXI_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 11, 5, 17),
-+		.mdiv = REG_VAL(0x1c, 20, 9),
-+	},
-+};
-+
-+static void __init sr_genpll0_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &genpll0, NULL, 0, genpll0_clk,
-+				ARRAY_SIZE(genpll0_clk));
-+}
-+
-+static const struct iproc_pll_ctrl genpll3 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-+		IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 1, 19, 18),
-+	.reset = RESET_VAL(0x0, 12, 11),
-+	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-+	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-+	.ndiv_int = REG_VAL(0x10, 20, 10),
-+	.ndiv_frac = REG_VAL(0x10, 0, 20),
-+	.pdiv = REG_VAL(0x14, 0, 4),
-+	.status = REG_VAL(0x30, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl genpll3_clk[] = {
-+	[BCM_SR_GENPLL3_HSLS_CLK] = {
-+		.channel = BCM_SR_GENPLL3_HSLS_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
-+	[BCM_SR_GENPLL3_SDIO_CLK] = {
-+		.channel = BCM_SR_GENPLL3_SDIO_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+};
-+
-+static void __init sr_genpll3_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &genpll3, NULL, 0, genpll3_clk,
-+				ARRAY_SIZE(genpll3_clk));
-+}
-+CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3",
-+			sr_genpll3_clk_init);
-+
-+static const struct iproc_pll_ctrl genpll4 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-+		IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 1, 25, 24),
-+	.reset = RESET_VAL(0x0, 12, 11),
-+	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-+	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-+	.ndiv_int = REG_VAL(0x10, 20, 10),
-+	.ndiv_frac = REG_VAL(0x10, 0, 20),
-+	.pdiv = REG_VAL(0x14, 0, 4),
-+	.status = REG_VAL(0x30, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl genpll4_clk[] = {
-+	[BCM_SR_GENPLL4_CCN_CLK] = {
-+		.channel = BCM_SR_GENPLL4_CCN_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
-+};
-+
-+static void __init sr_genpll4_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &genpll4, NULL, 0, genpll4_clk,
-+				ARRAY_SIZE(genpll4_clk));
-+}
-+
-+static const struct iproc_pll_ctrl genpll5 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-+		IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 1, 1, 0),
-+	.reset = RESET_VAL(0x0, 12, 11),
-+	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-+	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-+	.ndiv_int = REG_VAL(0x10, 20, 10),
-+	.ndiv_frac = REG_VAL(0x10, 0, 20),
-+	.pdiv = REG_VAL(0x14, 0, 4),
-+	.status = REG_VAL(0x30, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl genpll5_clk[] = {
-+	[BCM_SR_GENPLL5_FS_CLK] = {
-+		.channel = BCM_SR_GENPLL5_FS_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
-+	[BCM_SR_GENPLL5_SPU_CLK] = {
-+		.channel = BCM_SR_GENPLL5_SPU_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+};
-+
-+static void __init sr_genpll5_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &genpll5, NULL, 0, genpll5_clk,
-+				ARRAY_SIZE(genpll5_clk));
-+}
-+
-+static const struct iproc_pll_ctrl lcpll0 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 2, 19, 18),
-+	.reset = RESET_VAL(0x0, 31, 30),
-+	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
-+	.ndiv_int = REG_VAL(0x4, 16, 10),
-+	.pdiv = REG_VAL(0x4, 26, 4),
-+	.status = REG_VAL(0x38, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl lcpll0_clk[] = {
-+	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 7, 1, 13),
-+		.mdiv = REG_VAL(0x14, 0, 9),
-+	},
-+	[BCM_SR_LCPLL0_USB_REF_CLK] = {
-+		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 8, 2, 14),
-+		.mdiv = REG_VAL(0x14, 10, 9),
-+	},
-+	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 9, 3, 15),
-+		.mdiv = REG_VAL(0x14, 20, 9),
-+	},
-+};
-+
-+static void __init sr_lcpll0_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &lcpll0, NULL, 0, lcpll0_clk,
-+				ARRAY_SIZE(lcpll0_clk));
-+}
-+
-+static const struct iproc_pll_ctrl lcpll1 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 2, 22, 21),
-+	.reset = RESET_VAL(0x0, 31, 30),
-+	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
-+	.ndiv_int = REG_VAL(0x4, 16, 10),
-+	.pdiv = REG_VAL(0x4, 26, 4),
-+	.status = REG_VAL(0x38, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl lcpll1_clk[] = {
-+	[BCM_SR_LCPLL1_WAN_CLK] = {
-+		.channel = BCM_SR_LCPLL1_WAN_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 7, 1, 13),
-+		.mdiv = REG_VAL(0x14, 0, 9),
-+	},
-+};
-+
-+static void __init sr_lcpll1_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &lcpll1, NULL, 0, lcpll1_clk,
-+				ARRAY_SIZE(lcpll1_clk));
-+}
-+
-+static const struct iproc_pll_ctrl lcpll_pcie = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 2, 25, 24),
-+	.reset = RESET_VAL(0x0, 31, 30),
-+	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
-+	.ndiv_int = REG_VAL(0x4, 16, 10),
-+	.pdiv = REG_VAL(0x4, 26, 4),
-+	.status = REG_VAL(0x38, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl lcpll_pcie_clk[] = {
-+	[BCM_SR_LCPLL_PCIE_PHY_REF_CLK] = {
-+		.channel = BCM_SR_LCPLL_PCIE_PHY_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 7, 1, 13),
-+		.mdiv = REG_VAL(0x14, 0, 9),
-+	},
-+};
-+
-+static void __init sr_lcpll_pcie_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &lcpll_pcie, NULL, 0, lcpll_pcie_clk,
-+		ARRAY_SIZE(lcpll_pcie_clk));
-+}
-+
-+static const struct of_device_id sr_clk_dt_ids[] = {
-+{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init, },
-+{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init, },
-+{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init, },
-+{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init, },
-+{ .compatible = "brcm,sr-lcpll1", .data = sr_lcpll1_clk_init, },
-+{ .compatible = "brcm,sr-lcpll-pcie", .data = sr_lcpll_pcie_clk_init, },
-+{ /* sentinel */ }
-+};
-+
-+static int sr_clk_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *device;
-+	void (*init_func)(struct device_node *);
-+
-+	device = of_match_device(sr_clk_dt_ids, &pdev->dev);
-+	if (!device)
-+		return -ENODEV;
-+	init_func = device->data;
-+
-+	init_func(pdev->dev.of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver sr_clk_driver = {
-+	.driver = {
-+		.name = "sr-clk",
-+		.of_match_table = sr_clk_dt_ids,
-+	},
-+	.probe = sr_clk_probe,
-+};
-+builtin_platform_driver(sr_clk_driver);
++		dma-controller@67000000 {
++			compatible = "faraday,ftdma020", "arm,pl080", "arm,primecell";
++			/* Faraday Technology FTDMAC020 variant */
++			arm,primecell-periphid = <0x0003b080>;
++			reg = <0x67000000 0x1000>;
++			interrupts = <9 IRQ_TYPE_EDGE_RISING>;
++			resets = <&syscon 10>;
++			clocks = <&syscon 1>;
++			clock-names = "apb_pclk";
++			/* Bus interface AHB1 (AHB0) is totally tilted */
++			lli-bus-interface-ahb2;
++			mem-bus-interface-ahb2;
++			memcpy-burst-size = <256>;
++			memcpy-bus-width = <32>;
++			#dma-cells = <2>;
++		};
+ 	};
+ };
 -- 
-2.7.4
+2.9.4
+
