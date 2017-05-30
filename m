@@ -1,241 +1,66 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v4 05/11] arm64: dts: Add clock DT nodes for Stingray SOC
-Date: Mon, 22 May 2017 17:28:21 +0530
-Message-Id: <1495454307-23464-6-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
-References: <1495454307-23464-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Eric Anholt <eric@anholt.net>
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: CLK_OF_DECLARE advice required
+Message-ID: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
+Date: Tue, 30 May 2017 13:23:43 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Hi,
 
-This patch describes Stingray SOC clock tree using
-DT nodes in Stingray DTS.
+I've run into a problem using the fixed-factor clock on Raspberry Pi and I'd
+like some advice before I submit a patch.
 
-Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 +++++++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   9 ++
- 2 files changed, 179 insertions(+)
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+Some context: the aim is to use a standard UART and some external circuitry
+as a MIDI interface. This would be straightforward except that Linux doesn't
+recognise the required 31.25KHz as a valid UART baud rate. Rhe workaround is
+to declare the UART clock such that the reported rate differs from the actual
+rate. If one sets the reported rate to be (actual*38400)/31250 then
+requesting a 38400 baud rate will result in an actual 31250 baud signal.
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-new file mode 100644
-index 0000000..070e22e2
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-@@ -0,0 +1,170 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#include <dt-bindings/clock/bcm-sr.h>
-+
-+		osc: oscillator {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <50000000>;
-+		};
-+
-+		crmu_ref25m: crmu_ref25m {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&osc>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		genpll0: genpll0@6641d104 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll0";
-+			reg = <0x0001d104 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll0", "clk_125", "clk_scr",
-+					     "clk_250", "clk_pcie_axi",
-+					     "clk_paxc_axi_x2",
-+					     "clk_paxc_axi";
-+		};
-+
-+		genpll3: genpll3@6641d1e0 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll3";
-+			reg = <0x0001d1e0 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll3", "clk_hsls",
-+					     "clk_sdio";
-+		};
-+
-+		genpll4: genpll4@6641d214 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll4";
-+			reg = <0x0001d214 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll4", "clk_ccn",
-+					     "clk_tpiu_pll", "noc_clk",
-+					     "pll_chclk_fs4",
-+					     "clk_bridge_fscpu";
-+		};
-+
-+		genpll5: genpll5@6641d248 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll5";
-+			reg = <0x0001d248 0x32>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll5", "fs4_hf_clk",
-+					     "crypto_ae_clk", "raid_ae_clk";
-+		};
-+
-+		lcpll0: lcpll0 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-lcpll0";
-+			reg = <0x0001d0c4 0x3c>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll0", "clk_sata_refp",
-+					     "clk_sata_refn", "clk_sata_350",
-+					     "clk_sata_500";
-+		};
-+
-+		lcpll1: lcpll1 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-lcpll1";
-+			reg = <0x0001d138 0x3c>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll1", "clk_wanpn",
-+					     "clk_usb_ref",
-+					     "timesync_evt_clk";
-+		};
-+
-+		hsls_clk: hsls_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 1>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_div2_clk: hsls_div2_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+
-+		};
-+
-+		hsls_div4_clk: hsls_div4_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
-+			clock-div = <4>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_25m_clk: hsls_25m_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&crmu_ref25m>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_25m_div2_clk: hsls_25m_div2_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&hsls_25m_clk>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		sdio0_clk: sdio0_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		sdio1_clk: sdio1_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 9fe19a2..6b690db 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -244,6 +244,15 @@
- 		};
- 	};
- 
-+	crmu: crmu {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x0 0x66400000 0x100000>;
-+
-+		#include "stingray-clock.dtsi"
-+	};
-+
- 	hsls {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
--- 
-2.7.4
+The fixed-factor-clock device is perfect for such a deception, but when one
+is inserted between the clock source and the UART the probe function of the
+UART always returns -EPROBE_DEFER because its input clock isn't available.
+This is due to an initialisation order problem that requires code changes to
+resolve.
+
+fixed-factor-clock has two ways to initialise and register its clock. One is
+via a standard module probe method, and the other is through the CLK_OF_DECLARE
+macro, adding a registration to the __clk_of_table section. of_clk_init walks
+the list of clocks, calling the initialisation functions for nodes that either
+have no parent (input) clock or where the parent clock is ready. The init
+function itself has no return value, so is assumed to succeed. In the event
+that the parent never becomes ready, the initialisation function is called
+anyway and the clock node is marked as being populated, preventing the probe
+function from ever being called.
+
+In this MIDI application using UART 1 on a Raspberry Pi, the parent clock is
+provided by the clk-bcm2835-aux driver which registers using a probe function.
+Because regular platform drivers are probed long after of_clk_init returns, the
+parent clock for the fixed-factor clock doesn't become available early enough,
+resulting in a failing call to the initialisation and no subsequent probe,
+even after the parent finally becomes available.
+
+My questions are:
+
+1. Should all system clock drivers use OF_CLK_DECLARE? Doing so would probably
+avoid this problem, but further initialisation order dependencies may
+require more drivers to be initialised early.
+
+2. Why does the clock initialisation hook registered by OF_CLK_DECLARE not
+return any indication of success? If it did, and if the OF_POPULATED flag
+was only set after successful initialisation then the normal retrying of
+a deferred probe would also avoid this problem.
+
+3. Would adding the OF_CLK_DECLARE hook prevent the use of the devm_ managed
+functions like devm_kzalloc? If not, why doesn't fixed-factor-clock use it?
+
+Thank you for your time,
+
+Phil
