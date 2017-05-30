@@ -1,79 +1,36 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 0/7] Improve cp110 clk support on Marvell Armada 7K/8K
-Date: Fri, 19 May 2017 17:55:18 +0200
-Message-Id: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH 0/2] clk: bcm2835: PCM clock improvements
+Message-ID: <4c11ad43-ef4e-3fbd-500a-02b2b46e0fbd@raspberrypi.org>
+Date: Tue, 30 May 2017 17:27:56 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The switch to using the upstream bcm2835_cprman clock driver caused a
+few problems for users of PCM (I2S) peripherals. Audio applications
+require accurate, stable clocks, and the cprman driver wasn't
+conservative enough in its choice of clock sources.
 
-We got more information about the clock controllers and the clock tree
-of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
+These patches restrict the clock sources for the PCM peripheral in two
+ways: the first causes all possible sources except OSC and PLLD_PER
+to be ignored, while the second allows clocks to be specified as
+"low_jitter", causing the effects of fractional divisors to be taken
+into account when comparing potential clocks for accuracy. In practice,
+the combined effect of the two patches is to choose OSC as a source if
+an integer divisor can be used, otherwise PLLD_PER is chosen.
 
-The clock tree needs to be fixed, indeed the GOP clock is only the
-clock for the GOIP and not for the SDIO, it is fixed in the first
-patch.
+Phil Elwell (2):
+  clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+  clk: bcm2835: Minimise clock jitter for PCM clock
 
-The second patch does a small improve of the code itself.
+ drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 5 deletions(-)
 
-The purpose of the third patch is to have an easier way to add new
-clocks without breaking the backward compatibility. Indeed, we expect
-to continue to have new update on the datasheet and this patch will
-allow integrating this change easier and faster.
-
-The forth patch is needed to ease the integration of the pinctrl node
-in the device tree.
-
-The fifth patch adds a new clock for the SDIO, it also fixes the clock
-tree.
-
-The last two patches modify the device tree to take into account
-theses changes. They must be merged through the mvebu tree to avoid
-future conflict.
-
-In this series, even if there is some change in the device tree
-binding, we paid attention to the backward compatibility, and the
-driver can still work with the old device tree.
-
-Thanks,
-
-Gregory
-
-Gregory CLEMENT (6):
-  clk: mvebu: cp110 fix name of the GOP gate clock
-  clk: mvebu: cp110: make failure labels more meaningful
-  clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
-  clk: mvebu: cp110: introduce a new binding
-  arm64: dts: marvell: remove *-clock-output-names on cp110
-  arm64: dts: marvell: use new binding for the system controller on cp110
-
-Konstantin Porotchkin (1):
-  clk: mvebu: cp110: add sdio clock to cp-110 system controller
-
- Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  35 +++++-------
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
- drivers/clk/mvebu/cp110-system-controller.c                                | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
- 4 files changed, 196 insertions(+), 143 deletions(-)
-
-base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
 -- 
-git-series 0.9.1
+1.9.1
