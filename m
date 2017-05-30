@@ -1,240 +1,62 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v2 05/11] arm64: dts: Add clock DT nodes for Stingray SOC
-Date: Mon, 15 May 2017 17:32:15 +0530
-Message-Id: <1494849741-21294-6-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
-References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <stefan.wahren@i2se.com>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <CAOMZO5BZ8pqBW2VfuaUGyzgn8kv3AdvhwQ5nFEWuUSpmvrW9rA@mail.gmail.com>
+ <20170530065457.e2m4nyo2dztumyi6@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+ Sascha Hauer <kernel@pengutronix.de>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <2f36b783-72a5-6271-42c0-7d5fdad212a1@i2se.com>
+Date: Tue, 30 May 2017 10:04:33 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170530065457.e2m4nyo2dztumyi6@pengutronix.de>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Am 30.05.2017 um 08:54 schrieb Uwe Kleine-König:
+> On Mon, May 29, 2017 at 06:21:49PM -0300, Fabio Estevam wrote:
+>> Hi Uwe,
+>>
+>> On Wed, May 3, 2017 at 3:56 PM, Uwe Kleine-König
+>> <u.kleine-koenig@pengutronix.de> wrote:
+>>> Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
+>>> 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
+>>> SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
+>>> to 288 MHz because the initial frequency "seems too high to be ssp clock
+>>> source directly". However this isn't enough to ensure that the frequency
+>>> isn't increased later again. In fact this happens on my machine as the
+>>> mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
+>>> ssp2 which is resolved to
+>>>
+>>>         ref_io1.rate = 320 MHz
+>>>         ssp2_sel.parent = ref_io1
+>>>         ssp2_div.divider = 2
+>>>
+>>> . The observed effect is that reading MISO reliably fails: Instead of
+>>> the least significant bit the second least significant bit is reported
+>>> twice. This is probably related to the reports
+>>>
+>>>         https://community.nxp.com/thread/290209
+>>>         https://community.nxp.com/thread/310434
+>> As Stefan mentioned that your patch does not solve his issue, please
+>> remove this link when you submit a v2.
+> I still think it is related to these reports, don't you?
 
-This patch describes Stingray SOC clock tree using
-DT nodes in Stingray DTS.
+I think this is related somehow, but this version doesn't mention that
+it doesn't fix the linked issue. So removing the link would be the best
+in order to avoid confusion.
 
-Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 +++++++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   9 ++
- 2 files changed, 179 insertions(+)
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+Btw did you tried to disable DMA transfer during your tests?
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-new file mode 100644
-index 0000000..070e22e2
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-@@ -0,0 +1,170 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#include <dt-bindings/clock/bcm-sr.h>
-+
-+		osc: oscillator {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <50000000>;
-+		};
-+
-+		crmu_ref25m: crmu_ref25m {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&osc>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		genpll0: genpll0@6641d104 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll0";
-+			reg = <0x0001d104 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll0", "clk_125", "clk_scr",
-+					     "clk_250", "clk_pcie_axi",
-+					     "clk_paxc_axi_x2",
-+					     "clk_paxc_axi";
-+		};
-+
-+		genpll3: genpll3@6641d1e0 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll3";
-+			reg = <0x0001d1e0 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll3", "clk_hsls",
-+					     "clk_sdio";
-+		};
-+
-+		genpll4: genpll4@6641d214 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll4";
-+			reg = <0x0001d214 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll4", "clk_ccn",
-+					     "clk_tpiu_pll", "noc_clk",
-+					     "pll_chclk_fs4",
-+					     "clk_bridge_fscpu";
-+		};
-+
-+		genpll5: genpll5@6641d248 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll5";
-+			reg = <0x0001d248 0x32>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll5", "fs4_hf_clk",
-+					     "crypto_ae_clk", "raid_ae_clk";
-+		};
-+
-+		lcpll0: lcpll0 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-lcpll0";
-+			reg = <0x0001d0c4 0x3c>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll0", "clk_sata_refp",
-+					     "clk_sata_refn", "clk_sata_350",
-+					     "clk_sata_500";
-+		};
-+
-+		lcpll1: lcpll1 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-lcpll1";
-+			reg = <0x0001d138 0x3c>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll1", "clk_wanpn",
-+					     "clk_usb_ref",
-+					     "timesync_evt_clk";
-+		};
-+
-+		hsls_clk: hsls_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 1>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_div2_clk: hsls_div2_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+
-+		};
-+
-+		hsls_div4_clk: hsls_div4_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
-+			clock-div = <4>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_25m_clk: hsls_25m_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&crmu_ref25m>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_25m_div2_clk: hsls_25m_div2_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&hsls_25m_clk>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		sdio0_clk: sdio0_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		sdio1_clk: sdio1_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index c82e1d8..24856e3 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -249,6 +249,15 @@
- 		};
- 	};
- 
-+	crmu: crmu {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x0 0x66400000 0x100000>;
-+
-+		#include "stingray-clock.dtsi"
-+	};
-+
- 	hsls {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
--- 
-2.7.4
+Regards
+Stefan
+
+>
+> Best regards
+> Uwe
+>
