@@ -1,59 +1,56 @@
-Return-Path: <guodong.xu@linaro.org>
-Return-Path: <guodong.xu@linaro.org>
-From: Guodong Xu <guodong.xu@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	guodong.xu@linaro.org,
-	chenjun14@huawei.com,
-	zhongkaihua@huawei.com,
-	zhangfei.gao@linaro.org,
-	leo.yan@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	John Stultz <john.stultz@linaro.org>
-Subject: [PATCH 1/3] clk: hi3660: fix wrong parent name of clk_mux_sysbus
-Date: Mon, 15 May 2017 13:54:21 +0800
-Message-Id: <20170515055423.1803-1-guodong.xu@linaro.org>
+Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+Message-ID: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
+Date: Tue, 30 May 2017 17:28:06 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Chen Jun <chenjun14@huawei.com>
+Restrict clock sources for the PCM peripheral to the oscillator and
+PLLD_PER because other source may have varying rates or be switched off.
+Prevent other sources from being selected by replacing their names in
+the list of potential parents with dummy entries (entry index is
+significant).
 
-Parent name of clk_mux_sysbus is not correct. This patch fixes it.
-
-Signed-off-by: Chen Jun <chenjun14@huawei.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 ---
- drivers/clk/hisilicon/clk-hi3660.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
-index 96a9697..143ce0c 100644
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -206,6 +206,8 @@ static const struct hisi_gate_clock hi3660_crgctrl_gate_clks[] = {
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 0258538..facc346 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1511,6 +1511,16 @@ struct bcm2835_clk_desc {
+ 	"pllh_aux",
  };
  
- static const char *const
-+clk_mux_sysbus_p[] = {"clk_ppll1", "clk_ppll0"};
-+static const char *const
- clk_mux_sdio_sys_p[] = {"clk_factor_mmc", "clk_div_sdio",};
- static const char *const
- clk_mux_sd_sys_p[] = {"clk_factor_mmc", "clk_div_sd",};
-@@ -239,8 +241,8 @@ static const char *const
- clk_mux_i2c_p[] = {"clkin_sys", "clk_div_i2c",};
- 
- static const struct hisi_mux_clock hi3660_crgctrl_mux_clks[] = {
--	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sdio_sys_p,
--	  ARRAY_SIZE(clk_mux_sdio_sys_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
-+	{ HI3660_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sysbus_p,
-+	  ARRAY_SIZE(clk_mux_sysbus_p), CLK_SET_RATE_PARENT, 0xac, 0, 1,
- 	  CLK_MUX_HIWORD_MASK, },
- 	{ HI3660_CLK_MUX_UART0, "clk_mux_uart0", clk_mux_uart0_p,
- 	  ARRAY_SIZE(clk_mux_uart0_p), CLK_SET_RATE_PARENT, 0xac, 2, 1,
++static const char *const bcm2835_pcm_per_parents[] = {
++	"-",
++	"xosc",
++	"-",
++	"-",
++	"-",
++	"-",
++	"plld_per",
++};
++
+ #define REGISTER_PER_CLK(...)	REGISTER_CLK(				\
+ 	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),	\
+ 	.parents = bcm2835_clock_per_parents,				\
+@@ -2000,6 +2010,7 @@ struct bcm2835_clk_desc {
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+ 		.is_mash_clock = true,
++		.parents = bcm2835_pcm_per_parents,
+ 		.tcnt_mux = 23),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+ 		.name = "pwm",
 -- 
-2.10.2
+1.9.1
