@@ -1,131 +1,56 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Mon, 8 May 2017 19:34:59 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
-	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
-Message-ID: <20170508113459.GB18153@b29396-OptiPlex-7040>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
- <20170422031647.GW7065@codeaurora.org>
+Return-Path: <ukl@pengutronix.de>
+Date: Tue, 30 May 2017 08:54:57 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+Message-ID: <20170530065457.e2m4nyo2dztumyi6@pengutronix.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <CAOMZO5BZ8pqBW2VfuaUGyzgn8kv3AdvhwQ5nFEWuUSpmvrW9rA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170422031647.GW7065@codeaurora.org>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <CAOMZO5BZ8pqBW2VfuaUGyzgn8kv3AdvhwQ5nFEWuUSpmvrW9rA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 08:16:47PM -0700, Stephen Boyd wrote:
-> On 04/12, Dong Aisheng wrote:
-> >  
-> >  #ifdef CONFIG_HAVE_CLK
-> > @@ -230,6 +257,32 @@ static inline void clk_unprepare(struct clk *clk)
-> >  struct clk *clk_get(struct device *dev, const char *id);
-> >  
-> >  /**
-> > + * clk_bulk_get - lookup and obtain a number of references to clock producer.
-> > + * @dev: device for clock "consumer"
-> > + * @num_clks: the number of clk_bulk_data
-> > + * @clks: the clk_bulk_data table of consumer
-> > + *
-> > + * This helper function allows drivers to get several clk consumers in one
-> > + * operation. If any of the clk cannot be acquired then any clks
-> > + * that were obtained will be freed before returning to the caller.
-> > + *
-> > + * Returns 0 if all clocks specified in clk_bulk_data table are obtained
-> > + * successfully, or valid IS_ERR() condition containing errno.
-> > + * The implementation uses @dev and @clk_bulk_data.id to determine the
-> > + * clock consumer, and thereby the clock producer.
-> > + * (IOW, @id may be identical strings, but clk_get may return different
-> > + * clock producers depending on @dev.) The clock returned is stored in
+On Mon, May 29, 2017 at 06:21:49PM -0300, Fabio Estevam wrote:
+> Hi Uwe,
 > 
-> This comment is inaccurate. Only one dev is possible with this
-> API.
+> On Wed, May 3, 2017 at 3:56 PM, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+> > Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
+> > 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
+> > SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
+> > to 288 MHz because the initial frequency "seems too high to be ssp clock
+> > source directly". However this isn't enough to ensure that the frequency
+> > isn't increased later again. In fact this happens on my machine as the
+> > mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
+> > ssp2 which is resolved to
+> >
+> >         ref_io1.rate = 320 MHz
+> >         ssp2_sel.parent = ref_io1
+> >         ssp2_div.divider = 2
+> >
+> > . The observed effect is that reading MISO reliably fails: Instead of
+> > the least significant bit the second least significant bit is reported
+> > twice. This is probably related to the reports
+> >
+> >         https://community.nxp.com/thread/290209
+> >         https://community.nxp.com/thread/310434
 > 
+> As Stefan mentioned that your patch does not solve his issue, please
+> remove this link when you submit a v2.
 
-Good catch! Will fix it.
+I still think it is related to these reports, don't you?
 
-> > + * each @clk_bulk_data.clk field.
-> > + *
-> > + * Drivers must assume that the clock source is not enabled.
-> > + *
-> > + * clk_bulk_get should not be called from within interrupt context.
-> > + */
-> > +
-> 
-> Drop space.
-> 
+Best regards
+Uwe
 
-Got it
-
-> > +int __must_check clk_bulk_get(struct device *dev, int num_clks,
-> > +			      struct clk_bulk_data *clks);
-> > +
-> > +/**
-> >   * devm_clk_get - lookup and obtain a managed reference to a clock producer.
-> >   * @dev: device for clock "consumer"
-> >   * @id: clock consumer ID
-> > @@ -279,6 +332,20 @@ struct clk *devm_get_clk_from_child(struct device *dev,
-> >  int clk_enable(struct clk *clk);
-> >  
-> >  /**
-> > + * clk_bulk_enable - inform the system when the bulk of clock source should
-> > + *		     be running.
-> > + * @num_clks: the number of clk_bulk_data
-> > + * @clks: the clk_bulk_data table of consumer
-> > + *
-> > + * If the clock can not be enabled/disabled all, this should return success.
-> > + *
-> > + * May be called from atomic contexts.
-> > + *
-> > + * Returns success (0) or negative errno.
-> > + */
-> > +int __must_check clk_bulk_enable(int num_clks, struct clk_bulk_data *clks);
-> > +
-> > +/**
-> >   * clk_disable - inform the system when the clock source is no longer required.
-> >   * @clk: clock source
-> >   *
-> > @@ -295,6 +362,24 @@ int clk_enable(struct clk *clk);
-> >  void clk_disable(struct clk *clk);
-> >  
-> >  /**
-> > + * clk_bulk_disable - inform the system when the bulk of clock source is no
-> > + *		      longer required.
-> > + * @num_clks: the number of clk_bulk_data
-> > + * @clks: the clk_bulk_data table of consumer
-> > + *
-> > + * Inform the system that a bulk of clock source is no longer required by
-> > + * a driver and may be shut down.
-> > + *
-> > + * May be called from atomic contexts.
-> > + *
-> > + * Implementation detail: if the bulk of clock source is shared between
-> 
-> I'm not sure "bulk of clock source" is the correct terminology.
-> Perhaps "set of clks"?
-> 
-
-Good to me, will change.
-
-> > + * multiple drivers, clk_bulk_enable() calls must be balanced by the
-> > + * same number of clk_bulk_disable() calls for the clock source to be
-> > + * disabled.
-> > + */
-> > +void clk_bulk_disable(int num_clks, struct clk_bulk_data *clks);
-> 
-> We can mark clk_bulk_data structure as const here? Probably
-> applies in other places as well in this patch.
-> 
-
-Sounds good, will change the following API,
-clk_bulk_{enable|disable}
-clk_bulk_{prepare|unprepare}
-except clk_bulk_{get|put} which needs update clk_bulk_date.
-
-Regards
-Dong Aisheng
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
