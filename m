@@ -1,240 +1,95 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
+Return-Path: <stefan.wahren@i2se.com>
+Date: Tue, 30 May 2017 21:04:41 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Phil Elwell <phil@raspberrypi.org>, linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v3 05/11] arm64: dts: Add clock DT nodes for Stingray SOC
-Date: Tue, 16 May 2017 17:00:50 +0530
-Message-Id: <1494934256-1350-6-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
-References: <1494934256-1350-1-git-send-email-anup.patel@broadcom.com>
+	linux-rpi-kernel@lists.infradead.org
+Message-ID: <1412052002.45738.1496171081779@email.1und1.de>
+In-Reply-To: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
+References: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
+Subject: Re: [PATCH 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Hi Phil,
 
-This patch describes Stingray SOC clock tree using
-DT nodes in Stingray DTS.
+> Phil Elwell <phil@raspberrypi.org> hat am 30. Mai 2017 um 18:28 geschrieben:
+> 
+> 
+> Fractional clock dividers generate accurate average frequencies but
+> with jitter, particularly when the integer divisor is small.
+> 
+> Introduce a new metric of clock accuracy to penalise clocks with a good
+> average but worse jitter compared to clocks with an average which is no
+> better but with lower jitter. The metric is the ideal rate minus the
+> worse deviation from that ideal using the nearest integer divisors.
+> 
+> Use this metric for parent selection for clocks requiring low jitter
+> (currently just PCM).
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c | 39 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index facc346..e0ce5e7 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -530,6 +530,7 @@ struct bcm2835_clock_data {
+>  
+>  	bool is_vpu_clock;
+>  	bool is_mash_clock;
+> +	bool low_jitter;
+>  
+>  	u32 tcnt_mux;
+>  };
+> @@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+>  							int parent_idx,
+>  							unsigned long rate,
+>  							u32 *div,
+> -							unsigned long *prate)
+> +							unsigned long *prate,
+> +							unsigned long *avgrate)
+>  {
+>  	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+>  	struct bcm2835_cprman *cprman = clock->cprman;
+> @@ -1136,11 +1138,33 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+>  	parent = clk_hw_get_parent_by_index(hw, parent_idx);
+>  
+>  	if (!(BIT(parent_idx) & data->set_rate_parent)) {
+> +		unsigned long tmp_rate;
+> +
+>  		*prate = clk_hw_get_rate(parent);
+>  		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
+>  
+> -		return bcm2835_clock_rate_from_divisor(clock, *prate,
+> -						       *div);
+> +		tmp_rate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
+> +		*avgrate = tmp_rate;
+> +
+> +		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
+> +			unsigned long high, low;
+> +			u32 idiv = *div & ~CM_DIV_FRAC_MASK;
+> +
+> +			high = bcm2835_clock_rate_from_divisor(clock, *prate,
+> +							       idiv);
+> +			idiv += CM_DIV_FRAC_MASK + 1;
+> +			low = bcm2835_clock_rate_from_divisor(clock, *prate,
+> +							      idiv);
 
-Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 +++++++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   9 ++
- 2 files changed, 179 insertions(+)
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+What about int_div or intdiv instead of idiv as variable name?
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-new file mode 100644
-index 0000000..070e22e2
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-@@ -0,0 +1,170 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#include <dt-bindings/clock/bcm-sr.h>
-+
-+		osc: oscillator {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <50000000>;
-+		};
-+
-+		crmu_ref25m: crmu_ref25m {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&osc>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		genpll0: genpll0@6641d104 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll0";
-+			reg = <0x0001d104 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll0", "clk_125", "clk_scr",
-+					     "clk_250", "clk_pcie_axi",
-+					     "clk_paxc_axi_x2",
-+					     "clk_paxc_axi";
-+		};
-+
-+		genpll3: genpll3@6641d1e0 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll3";
-+			reg = <0x0001d1e0 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll3", "clk_hsls",
-+					     "clk_sdio";
-+		};
-+
-+		genpll4: genpll4@6641d214 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll4";
-+			reg = <0x0001d214 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll4", "clk_ccn",
-+					     "clk_tpiu_pll", "noc_clk",
-+					     "pll_chclk_fs4",
-+					     "clk_bridge_fscpu";
-+		};
-+
-+		genpll5: genpll5@6641d248 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll5";
-+			reg = <0x0001d248 0x32>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll5", "fs4_hf_clk",
-+					     "crypto_ae_clk", "raid_ae_clk";
-+		};
-+
-+		lcpll0: lcpll0 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-lcpll0";
-+			reg = <0x0001d0c4 0x3c>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll0", "clk_sata_refp",
-+					     "clk_sata_refn", "clk_sata_350",
-+					     "clk_sata_500";
-+		};
-+
-+		lcpll1: lcpll1 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-lcpll1";
-+			reg = <0x0001d138 0x3c>,
-+			      <0x0001c870 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll1", "clk_wanpn",
-+					     "clk_usb_ref",
-+					     "timesync_evt_clk";
-+		};
-+
-+		hsls_clk: hsls_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 1>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_div2_clk: hsls_div2_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+
-+		};
-+
-+		hsls_div4_clk: hsls_div4_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
-+			clock-div = <4>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_25m_clk: hsls_25m_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&crmu_ref25m>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		hsls_25m_div2_clk: hsls_25m_div2_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&hsls_25m_clk>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		sdio0_clk: sdio0_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-+
-+		sdio1_clk: sdio1_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+		};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 9fe19a2..6b690db 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -244,6 +244,15 @@
- 		};
- 	};
- 
-+	crmu: crmu {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x0 0x66400000 0x100000>;
-+
-+		#include "stingray-clock.dtsi"
-+	};
-+
- 	hsls {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
--- 
-2.7.4
+> +
+> +			/* Return a value which is the maximum deviation
+> +			 * below the ideal rate, for use as a metric.
+> +			 */
+
+Please fix coding style of the comment.
+
+Thanks
+Stefan
