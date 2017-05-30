@@ -1,87 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35365 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932284AbdETPuG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 May 2017 11:50:06 -0400
-Received: by mail-wm0-f68.google.com with SMTP id g15so3819027wmc.2
-        for <linux-clk@vger.kernel.org>; Sat, 20 May 2017 08:50:05 -0700 (PDT)
+Return-Path: <stefan.wahren@i2se.com>
+Date: Tue, 30 May 2017 20:41:05 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Phil Elwell <phil@raspberrypi.org>, linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	linux-rpi-kernel@lists.infradead.org
+Message-ID: <684006892.45085.1496169665454@email.1und1.de>
+In-Reply-To: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
+References: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
+Subject: Re: [PATCH 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCDr2ocZ3J4JEvXF-W=tT8Zw-t02J09Ciiud6RTrkcEidA@mail.gmail.com>
-References: <CAFBinCDjysBNJLQYsvzBU7U2p7gv0Lxa+qe8f5YMn0BgUw6P0g@mail.gmail.com>
- <CAFBinCDr2ocZ3J4JEvXF-W=tT8Zw-t02J09Ciiud6RTrkcEidA@mail.gmail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sat, 20 May 2017 17:49:44 +0200
-Message-ID: <CAFBinCDCosUs=EKJqr3XzsSNTN-ZVSb-wWjrrMnQtbDA6OqsqA@mail.gmail.com>
-Subject: Re: corrupt clk_core instance in clk_disable_unused_subtree (ARM
- Meson MX platform)
-To: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: balbes-150@yandex.ru, jbrunet@baylibre.com, narmstrong@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 18, 2017 at 8:36 PM, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
-> On Sun, May 14, 2017 at 11:20 PM, Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com> wrote:
->> Hello,
->>
->> it seems that I am seeing some strange memory corruption on one of my
->> Amlogic Meson MX (32-bit) devices.
->> disclaimer: I have some patches in my tree which are not mainlined yet
->> (see [0]), but cannot see that any of these patches would cause memory
->> corruption of a clk_core instance.
->>
->> Oleg (who is CC'ed) has first reported this when testing my kernel tree: [1]
->> in the meantime I have rebased all of my patches to Linus' mainline
->> tree, commit 0fcc3ab23d7395f58e8ab0834e7913e2e4314a83 [3]
->>
->> what I am seeing is a NULL deref in clk_disable_unused_subtree, full
->> log attached and can be found here: [3]
->> an explanation of what seems to be going on in my own words is:
->> - in line #5 of the log the internal PWM mux clock for the first PWM
->> channel is being registered (everything looks good with
->> clk_core=0xeddfbf80 and clk_hw=0xeddfbf30)
->> - the default parent of this mux is "xtal"
->> - in line #31 of the log the "disable unused clocks" cleanup starts
->> and checks the first child of the "xtal" clock and seems to find
->> clk_core=0xeddfbf80 *BUT* clk_hw=0x00000003
->> - this doesn't seem right and a crash is pretty obvious
->>
->> I also attached the patch which introduces this additional logspam -
->> just in case anyone wants to know what these values mean exactly.
->>
->> now the interesting part:
->> I can reproduce this with multi_v7_defconfig and
->> arch/arm/boot/dts/meson8m2-m8s.dts from my tree.
->> if I leave everything as it is and *only* enable CONFIG_DEBUG_SPINLOCK
->> then this crash goes away. so this *might* be a race-condition
->> somewhere...
-> a user named "wilson2000" (since I missed you on IRC: thank you!)
-> pointed out on IRC that there's a memory corruption bug in v4.11 and
-> early v4.12 kernels which is fixed by [0] "perf/core: Avoid removing
-> shared pmu_context on unregister"
-> I have not tested this yet but this looks suspicious (so the common
-> clock framework may be innocent). I will report back once I had time
-> to test this.
-I applied that patch and re-tested this: unfortunately it still
-crashes with the same symptoms
+Hi Phil,
 
-so I am still interested in any kind of hint
+> Phil Elwell <phil@raspberrypi.org> hat am 30. Mai 2017 um 18:28 geschrieben:
+> 
+> 
+> Restrict clock sources for the PCM peripheral to the oscillator and
+> PLLD_PER because other source may have varying rates or be switched off.
 
->> has anybody seen this crash before? I can help debugging/testing
->> potential fixes/trying out various things to solve this - just let me
->> know!
->>
->>
->> Regards,
->> Martin
->>
->>
->> [0] https://github.com/xdarklight/linux/tree/meson-mx-integration-4.12-20170513
->> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-May/003497.html
->> [2] https://github.com/torvalds/linux/commit/0fcc3ab23d7395f58e8ab0834e7913e2e4314a83
->> [3] https://paste.kde.org/pbefvmqgr
+> Prevent other sources from being selected by replacing their names in
+> the list of potential parents with dummy entries (entry index is
+> significant).
+
+i like to have this as a comment above the definition of bcm2835_pcm_per_parents.
+
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 0258538..facc346 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -1511,6 +1511,16 @@ struct bcm2835_clk_desc {
+>  	"pllh_aux",
+>  };
 >
+> +static const char *const bcm2835_pcm_per_parents[] = {
+
+As mentioned above, there should be a comment like all the others. 
+
+> +	"-",
+> +	"xosc",
+> +	"-",
+> +	"-",
+> +	"-",
+> +	"-",
+> +	"plld_per",
+> +};
+
+Is there a dummy entry for "pllh_aux" missing?
+
+> +
+>  #define REGISTER_PER_CLK(...)	REGISTER_CLK(				\
+>  	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),	\
+>  	.parents = bcm2835_clock_per_parents,				\
+> @@ -2000,6 +2010,7 @@ struct bcm2835_clk_desc {
+>  		.int_bits = 12,
+>  		.frac_bits = 12,
+>  		.is_mash_clock = true,
+> +		.parents = bcm2835_pcm_per_parents,
+
+This looks a little bit hacky to me. Not sure, but can we do something like this?
+
+#define REGISTER_PCM_CLK(...)	REGISTER_CLK(				\
+	.num_mux_parents = ARRAY_SIZE(bcm2835_pcm_per_parents),	\
+	.parents = bcm2835_pcm_per_parents,				\
+	__VA_ARGS__)
+
+Regards
+Stefan
+
+>  		.tcnt_mux = 23),
+>  	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+>  		.name = "pwm",
+> -- 
+> 1.9.1
 >
-> [0] https://cgit.freedesktop.org/drm/drm-intel/commit/?h=drm-intel-nightly&id=73ac44749e71333bce7d2f8c0bbdc1bbc57dae1b
