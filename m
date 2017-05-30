@@ -1,107 +1,42 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 5/20] clk: sunxi-ng: mux: split out the pre-divider computation code
-Date: Wed,  3 May 2017 13:59:42 +0200
-Message-Id: <fcda95612e72a1a5bb6010993181e638a41511e9.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
-References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:46211 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750925AbdE3Jus (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2017 05:50:48 -0400
+Date: Tue, 30 May 2017 11:50:35 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] clk: at91: fix clk-generated parenting
+Message-ID: <20170530095035.qbjn32452r3xhy6n@piout.net>
+References: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
+ <20170519013302.GC20170@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170519013302.GC20170@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The pre-divider retrieval code was merged into the function to apply the
-current pre-divider onto the parent clock rate so that we can use that
-adjusted value to do our factors computation.
+On 18/05/2017 at 18:33:02 -0700, Stephen Boyd wrote:
+> On 05/12, Alexandre Belloni wrote:
+> > clk_generated_startup is called after clk_hw_register. So the first call to
+> > get_parent will not have the correct value (i.e. 0) and because this is
+> > cached, it may never be updated.
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> > ---
+> 
+> Fixes tag?
 
-However, since we'll need to do the reverse operation, we need to split out
-that code into a function that will be shared.
+Yep,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+Fixes: df70aeef6083 ("clk: at91: add generated clock driver")
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 58b6e349a0ed..3eb23d4e6534 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -15,24 +15,20 @@
- #include "ccu_gate.h"
- #include "ccu_mux.h"
- 
--void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
--					     struct ccu_mux_internal *cm,
--					     int parent_index,
--					     unsigned long *parent_rate)
-+static u16 ccu_mux_get_prediv(struct ccu_common *common,
-+			      struct ccu_mux_internal *cm,
-+			      int parent_index)
- {
- 	u16 prediv = 1;
- 	u32 reg;
--	int i;
- 
- 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
- 	      (common->features & CCU_FEATURE_VARIABLE_PREDIV) ||
- 	      (common->features & CCU_FEATURE_ALL_PREDIV)))
--		return;
-+		return 1;
- 
--	if (common->features & CCU_FEATURE_ALL_PREDIV) {
--		*parent_rate = *parent_rate / common->prediv;
--		return;
--	}
-+	if (common->features & CCU_FEATURE_ALL_PREDIV)
-+		return common->prediv;
- 
- 	reg = readl(common->base + common->reg);
- 	if (parent_index < 0) {
-@@ -40,10 +36,13 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 		parent_index &= (1 << cm->width) - 1;
- 	}
- 
--	if (common->features & CCU_FEATURE_FIXED_PREDIV)
-+	if (common->features & CCU_FEATURE_FIXED_PREDIV) {
-+		int i;
-+
- 		for (i = 0; i < cm->n_predivs; i++)
- 			if (parent_index == cm->fixed_predivs[i].index)
- 				prediv = cm->fixed_predivs[i].div;
-+	}
- 
- 	if (common->features & CCU_FEATURE_VARIABLE_PREDIV)
- 		if (parent_index == cm->variable_prediv.index) {
-@@ -54,7 +53,16 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 			prediv = div + 1;
- 		}
- 
--	*parent_rate = *parent_rate / prediv;
-+	return prediv;
-+}
-+
-+void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
-+					     struct ccu_mux_internal *cm,
-+					     int parent_index,
-+					     unsigned long *parent_rate)
-+{
-+	*parent_rate = *parent_rate / ccu_mux_get_prediv(common, cm,
-+							 parent_index);
- }
- 
- int ccu_mux_helper_determine_rate(struct ccu_common *common,
+Can you add it or do you want a new version?
+
 -- 
-git-series 0.8.11
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
