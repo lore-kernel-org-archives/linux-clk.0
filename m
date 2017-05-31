@@ -1,111 +1,72 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/10] clk: renesas: rcar-gen2: Add new CPG/MSSR drivers
-Date: Fri, 19 May 2017 10:45:55 +0200
-Message-Id: <1495183565-21679-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v2 0/7] Improve ap806 clk support on Marvell Armada 7K/8K
+Date: Wed, 31 May 2017 16:07:21 +0200
+Message-Id: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi all,
+Hi,
 
-Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
-clk-mstp, and clk-div6 drivers, which depend on most clocks being
-described in DT.  Especially the module (MSTP) clocks are cumbersome and
-error prone, due to 3 arrays (clocks, clock-indices, and
-clock-output-names) to be kept in sync. In addition, the clk-mstp driver
-cannot be extended easily to also support module resets, which are
-provided by the same hardware module.
+This series modifies the device tree binding of the clock of the AP806
+part that we find in the Marvell Armada 7K/8K SoCs.
 
-Hence when developing support for R-Car Gen3 SoCs, another approach was
-chosen, which led to the CPG/MSSR driver core, and SoC-specific
-subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
+As for the previsous series the only change in this second version is
+about the binding documentation: all the documentation related changes
+are now move in their own patches. It allows to provide a stable -dt
+branch for theses changes. I also added the acked-by from Rob Herring.
 
-This series introduces new clock drivers for all supported R-Car Gen2
-SoCs, using the CPG/MSSR driver core, and the support for RZ/G1.  They
-provide all clocks supported by the old driver, plus a few more.
-The old driver can still be used through a Kconfig option, to preserve
-backward compatibility with old DTBs.
+Here again the last two patches modifying the device tree _must_ be
+merged through the mvebu tree to avoid future conflict.
 
-This series does not include the corresponding DTS updates.  These will
-be posted as a separate series later.
+For the record:
+As for the CP110, we want to be able to ease the integration of new
+clocks without breaking the backward compatibility. It is done in
+patch 3.
 
-Changes compared to v1:
-  - Add Acked-by, Reviewed-by,
-  - Add more rationale to the clock driver patch descriptions.
+We also want to ease the integration of the pinctrl node in the device
+tree. It is the purpose of the patch 5.
 
-This series depends on "[PATCH v2] clk: renesas: Rework Kconfig and
-Makefile logic", which I posted before.
+In this series (as in the previous one for CP110), even if there is
+some change in the device tree binding we paid attention to the
+backward compatibility, and the driver can still work with the old
+device tree.
 
-For testing, this patch series, incl. all dependencies and the DTS
-updates, are available in the topic/rcar2-cpg-mssr-v2 branch of my
-renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+Thanks,
 
-This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
-r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
-been compared before and after the conversion.
+Gregory
 
-I plan to queue this up in clk-renesas-for-v4.13, so the DTS updates can
-be queued for v4.14 later.
+Gregory CLEMENT (7):
+  clk: mvebu: ap806: cosmetic improvement
+  dt-bindings: ap806: do not depend anymore of the *-clock-output-names
+  clk: mvebu: ap806: do not depend anymore of the *-clock-output-names
+  dt-bindings: ap806: introduce a new binding
+  clk: mvebu: ap806: introduce a new binding
+  arm64: dts: marvell: remove clock-output-names on ap806
+  arm64: dts: marvell: use new binding for the system controller on ap806
 
-Thanks!
+ Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt |  24 ++++++++++------
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi                             |  23 +++++++--------
+ drivers/clk/mvebu/ap806-system-controller.c                               | 107 +++++++++++++++++++++++++++++++++++++++++++++++-------------------------
+ 3 files changed, 97 insertions(+), 57 deletions(-)
 
-Geert Uytterhoeven (10):
-  clk: renesas: cpg-mssr: Document R-Car Gen2 support
-  clk: renesas: Add r8a7790 CPG Core Clock Definitions
-  clk: renesas: Add r8a7791 CPG Core Clock Definitions
-  clk: renesas: Add r8a7792 CPG Core Clock Definitions
-  clk: renesas: Add r8a7793 CPG Core Clock Definitions
-  clk: renesas: Add r8a7794 CPG Core Clock Definitions
-  clk: renesas: r8a7790: Add new CPG/MSSR driver
-  clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
-  clk: renesas: r8a7792: Add new CPG/MSSR driver
-  clk: renesas: r8a7794: Add new CPG/MSSR driver
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
- drivers/clk/renesas/Kconfig                        |  22 +-
- drivers/clk/renesas/Makefile                       |   4 +
- drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 ++++++++++++++++++++
- drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++++++++
- drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
- drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 ++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  29 +++
- drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
- include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
- include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
- include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
- 14 files changed, 1341 insertions(+), 6 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
-
+base-commit: 4139fcd6c66df1c3d3fa0a0a7cf7f8a8c601a16c
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+git-series 0.9.1
