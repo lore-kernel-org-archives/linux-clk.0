@@ -1,122 +1,104 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 05/10] clk: add clk_set_rate_protect
-Date: Thu, 18 May 2017 18:37:59 +0200
-Message-Id: <20170518163804.14123-6-jbrunet@baylibre.com>
-In-Reply-To: <20170518163804.14123-1-jbrunet@baylibre.com>
-References: <20170518163804.14123-1-jbrunet@baylibre.com>
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v2 1/7] clk: mvebu: ap806: cosmetic improvement
+Date: Wed, 31 May 2017 16:07:22 +0200
+Message-Id: <5a55e081d96fc6d2a28331b59df90f56d32a9f24.1496239589.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_set_rate_protect is a combination of clk_set_rate and clk_rate_protect
-within a critical section. In case where several protecting consumers
-compete to set the rate of the same provider, it provides a way to make
-sure that at least one of them will be satisfied before the resource is
-locked.
+Instead of using &pdev->dev all over the place, introduce a pointer
+variable for it.
 
-This is to avoid the unlikely situation where several consumers protect a
-clock provider and none actually get a rate it can work with.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/clk/clk.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h | 14 ++++++++++++++
- 2 files changed, 59 insertions(+)
+ drivers/clk/mvebu/ap806-system-controller.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9c15319bc454..132eb1a2938f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1781,6 +1781,51 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
- EXPORT_SYMBOL_GPL(clk_set_rate);
- 
- /**
-+ * clk_set_rate_protect - specify a new rate and protect it
-+ * @clk: the clk whose rate is being changed
-+ * @rate: the new rate for clk
-+ *
-+ * This is a combination of clk_set_rate and clk_rate_protect within
-+ * a critical section
-+ *
-+ * This can be used initially to ensure that at least 1 consumers is
-+ * statisfied when several protecting consummers are competing for the
-+ * same clock provider.
-+ *
-+ * The protection is not applied if setting the rate failed.
-+ *
-+ * Returns 0 on success, -EERROR otherwise.
-+ */
-+int clk_set_rate_protect(struct clk *clk, unsigned long rate)
-+{
-+	int ret;
-+
-+	if (!clk)
-+		return 0;
-+
-+	/* prevent racing with updates to the clock topology */
-+	clk_prepare_lock();
-+
-+	/*
-+	 * The temporary protection removal is not here, on purpose
-+	 * This function is meant to be used in instead of clk_rate_protect,
-+	 * so before the consumer code path protect the clock provider
-+	 */
-+
-+	ret = clk_core_set_rate_nolock(clk->core, rate);
-+
-+	if (!ret) {
-+		clk_core_rate_protect(clk->core);
-+		clk->protect_count++;
-+	}
-+
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(clk_set_rate_protect);
-+
-+/**
-  * clk_set_rate_range - set a rate range for a clock source
-  * @clk: clock source
-  * @min: desired minimum clock rate in Hz, inclusive
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 85d73e02df40..d3c299d23ae7 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -388,6 +388,15 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
- int clk_set_rate(struct clk *clk, unsigned long rate);
- 
- /**
-+ * clk_set_rate_protect - set and protect the clock rate for a clock source
-+ * @clk: clock source
-+ * @rate: desired clock rate in Hz
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+int clk_set_rate_protect(struct clk *clk, unsigned long rate);
-+
-+/**
-  * clk_has_parent - check if a clock is a possible parent for another
-  * @clk: clock source
-  * @parent: parent clock source
-@@ -506,6 +515,11 @@ static inline int clk_set_rate(struct clk *clk, unsigned long rate)
- 	return 0;
- }
- 
-+static inline int clk_set_rate_protect(struct clk *clk, unsigned long rate)
-+{
-+	return 0;
-+}
-+
- static inline long clk_round_rate(struct clk *clk, unsigned long rate)
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 8155baccc98e..b2666b5c944f 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -36,20 +36,21 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
  {
- 	return 0;
+ 	unsigned int freq_mode, cpuclk_freq;
+ 	const char *name, *fixedclk_name;
+-	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
+ 	struct regmap *regmap;
+ 	u32 reg;
+ 	int ret;
+ 
+ 	regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(regmap)) {
+-		dev_err(&pdev->dev, "cannot get regmap\n");
++		dev_err(dev, "cannot get regmap\n");
+ 		return PTR_ERR(regmap);
+ 	}
+ 
+ 	ret = regmap_read(regmap, AP806_SAR_REG, &reg);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "cannot read from regmap\n");
++		dev_err(dev, "cannot read from regmap\n");
+ 		return ret;
+ 	}
+ 
+@@ -89,7 +90,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 		cpuclk_freq = 600;
+ 		break;
+ 	default:
+-		dev_err(&pdev->dev, "invalid SAR value\n");
++		dev_err(dev, "invalid SAR value\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -99,7 +100,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+ 	of_property_read_string_index(np, "clock-output-names",
+ 				      0, &name);
+-	ap806_clks[0] = clk_register_fixed_rate(&pdev->dev, name, NULL,
++	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+ 		ret = PTR_ERR(ap806_clks[0]);
+@@ -108,7 +109,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 
+ 	of_property_read_string_index(np, "clock-output-names",
+ 				      1, &name);
+-	ap806_clks[1] = clk_register_fixed_rate(&pdev->dev, name, NULL, 0,
++	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
+ 		ret = PTR_ERR(ap806_clks[1]);
+@@ -118,7 +119,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	/* Fixed clock is always 1200 Mhz */
+ 	of_property_read_string_index(np, "clock-output-names",
+ 				      2, &fixedclk_name);
+-	ap806_clks[2] = clk_register_fixed_rate(&pdev->dev, fixedclk_name, NULL,
++	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
+ 						0, 1200 * 1000 * 1000);
+ 	if (IS_ERR(ap806_clks[2])) {
+ 		ret = PTR_ERR(ap806_clks[2]);
 -- 
-2.9.4
+git-series 0.9.1
