@@ -1,128 +1,103 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>
-CC: <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Paul
- Walmsley <paul@pwsan.com>
-Subject: [PATCHv3 1/4] Documentation: dt-bindings: Add binding documentation for TI clkctrl clocks
-Date: Wed, 17 May 2017 18:50:06 +0300
-Message-ID: <1495036209-11298-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1495036209-11298-1-git-send-email-t-kristo@ti.com>
-References: <1495036209-11298-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: linux@rempel-privat.de
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic_stby_poweroff" is set
+Date: Wed, 31 May 2017 08:14:53 +0200
+Message-Id: <20170531061457.23744-3-o.rempel@pengutronix.de>
+In-Reply-To: <20170531061457.23744-1-o.rempel@pengutronix.de>
+References: <20170531061457.23744-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Tony Lindgren <tony@atomide.com>
+One of the Freescale recommended sequences for power off with external
+PMIC is the following:
+...
+3.  SoC is programming PMIC for power off when standby is asserted.
+4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 
-Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
-clock controller instance for each interconnect target module. The clkctrl
-controls functional and interface clocks for the module.
+See:
+http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+page 5083
 
-The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
-With this binding and a related clock device driver we can start moving the
-clkctrl clock handling to live in drivers/clk/ti.
+This patch implements step 4. of this sequence.
 
-Note that this binding allows keeping the clockdomain related parts out of
-drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
-a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
-needs to know it's clocks, we can just set the the clkctrl device
-instances to be children of the related clockdomain device.
-
-Each clkctrl clock can have multiple optional gate clocks, and multiple
-optional mux clocks. To represent this in device tree, it seems that
-it is best done using four clock cells #clock-cells = <2> property.
-
-The reasons for using #clock-cells = <2> are:
-
-1. We need to specify the clkctrl offset from the instance base. Otherwise
-   we end up with a large number of device tree nodes that need to be
-   patched when new clocks are discovered in a clkctrl clock with minor
-   hardware revision changes for example
-
-2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
-   need to use a separate cell for optional gate clocks to avoid address
-   space conflicts
-
-There is probably no need to list input clocks for each clkctrl clock
-instance in the binding. If we want to add them, the standard clocks
-binding can be used for that.
-
-For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
-Mapping Summary" for example. It shows one instance of a clkctrl clock
-controller with multiple clkctrl registers.
-
-Cc: Paul Walmsley <paul@pwsan.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: kernel@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- .../devicetree/bindings/clock/ti-clkctrl.txt       | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+ arch/arm/mach-imx/pm-imx6.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-new file mode 100644
-index 0000000..48ee699
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-@@ -0,0 +1,56 @@
-+Texas Instruments clkctrl clock binding
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index e61b1d1027e1..fd7b95f340e5 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -27,6 +27,8 @@
+ #include <asm/proc-fns.h>
+ #include <asm/suspend.h>
+ #include <asm/tlb.h>
++#include <linux/kallsyms.h>
++#include <linux/regulator/machine.h>
+ 
+ #include "common.h"
+ #include "hardware.h"
+@@ -602,6 +604,31 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+ 				   IMX6Q_GPR1_GINT);
+ }
+ 
++static void imx6_pm_poweroff(void)
++{
++	imx6_set_lpm(STOP_POWER_OFF);
++	cpu_suspend(0, imx6q_suspend_finish);
 +
-+Texas Instruments SoCs can have a clkctrl clock controller for each
-+interconnect target module. The clkctrl clock controller manages functional
-+and interface clocks for each module. Each clkctrl controller can also
-+gate one or more optional functional clocks for a module, and can have one
-+or more clock muxes. There is a clkctrl clock controller typically for each
-+interconnect target module on omap4 and later variants.
++	mdelay(1000);
 +
-+The clock consumers can specify the index of the clkctrl clock using
-+the hardware offset from the clkctrl instance register space. The optional
-+clocks can be specified by clkctrl hardware offset and the index of the
-+optional clock.
++	pr_emerg("Unable to poweroff system\n");
++}
 +
-+For more information, please see the Linux clock framework binding at
-+Documentation/devicetree/bindings/clock/clock-bindings.txt.
++static int imx6_pm_poweroff_probe(void)
++{
++	char symname[KSYM_NAME_LEN];
 +
-+Required properties :
-+- compatible : shall be "ti,clkctrl"
-+- #clock-cells : shall contain 2 with the first entry being the instance
-+		 offset from the clock domain base and the second being the
-+		 clock index
++	if (pm_power_off) {
++		lookup_symbol_name((ulong)pm_power_off, symname);
++		pr_warn("%s: pm_power_off already claimed  %p %s!\n",
++			__func__, pm_power_off, symname);
++		return -EBUSY;
++	}
 +
-+Example: Clock controller node on omap 4430:
++	pm_power_off = imx6_pm_poweroff;
++	return 0;
++}
 +
-+&cm2 {
-+	l4per: cm@1400 {
-+		cm_l4per@0 {
-+			cm_l4per_clkctrl: clk@20 {
-+				compatible = "ti,clkctrl";
-+				reg = <0x20 0x1b0>;
-+				#clock-cells = <2>;
-+			};
-+		};
-+	};
-+};
+ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ {
+ 	struct device_node *np;
+@@ -618,6 +645,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ 	val = readl_relaxed(ccm_base + CLPCR);
+ 	val &= ~BM_CLPCR_LPM;
+ 	writel_relaxed(val, ccm_base + CLPCR);
 +
-+Example: Preprocessor helper macros in dt-bindings/clock/ti-clkctrl.h
-+
-+#define OMAP4_CLKCTRL_OFFSET		0x20
-+#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
-+#define MODULEMODE_HWCTRL		1
-+#define MODULEMODE_SWCTRL		2
-+
-+#define OMAP4_GPTIMER10_CLKTRL		OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_GPTIMER11_CLKTRL		OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_GPTIMER2_CLKTRL		OMAP4_CLKCTRL_INDEX(0x38)
-+...
-+#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
-+
-+Example: Clock consumer node for GPIO2:
-+
-+&gpio2 {
-+       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0
-+		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 8>;
-+};
++	if (of_property_read_bool(np, "fsl,pmic_stby_poweroff"))
++		imx6_pm_poweroff_probe();
+ }
+ 
+ void __init imx6q_pm_init(void)
 -- 
-1.9.1
+2.11.0
