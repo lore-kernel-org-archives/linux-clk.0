@@ -1,92 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:33168 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753545AbdESJDe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:03:34 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] ARM: dts: rcar-gen2: Convert to new CPG/MSSR bindings
-Date: Fri, 19 May 2017 11:03:15 +0200
-Message-Id: <1495184600-22745-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v2 02/11] clk: mvebu: cp110 fix name of the GOP gate clock
+Date: Wed, 31 May 2017 15:41:46 +0200
+Message-Id: <edce259fb331015346d9af3a13dee39ef4c99dc0.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Actually the GOP clock (bit 18) is not at all used for emmc but only
+for GOP: let's fix the name.
 
-Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
-clk-mstp, and clk-div6 drivers, which depend on most clocks being
-described in DT.  Especially the module (MSTP) clocks are cumbersome and
-error prone, due to 3 arrays (clocks, clock-indices, and
-clock-output-names) to be kept in sync. In addition, the clk-mstp driver
-cannot be extended easily to also support module resets, which are
-provided by the same hardware module.
+Changing the name in the device tree is not an issue because the name
+itself is not used to reference the clock. Thanks to this the ABI remains
+backward compatible.
 
-Hence when developing support for R-Car Gen3 SoCs, another approach was
-chosen, which led to the CPG/MSSR driver core, and SoC-specific
-subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 2 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 2 +-
+ drivers/clk/mvebu/cp110-system-controller.c          | 5 +++--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-This series complements the series "[PATCH v2 00/10] clk: renesas:
-rcar-gen2: Add new CPG/MSSR drivers", and converts the various R-Car
-Gen2 DTSes to migrate to the new CPG/MSSR drivers.
-
-Note that module reset descriptions will be added later.
-
-Dependencies:
-  - This has a hard dependency on "[PATCH v2 00/10] clk: renesas:
-    rcar-gen2: Add new CPG/MSSR drivers", which is planned to be queued
-    for v4.13.
-    Hence this series must _not_ be applied before v4.13-rc1!
-  - To avoid a small but harmless regression (Ethernet PHY falling back
-    to polling instead of using its IRQ), "of_mdio: Fix broken PHY IRQ
-    in case of probe deferral" should be applied first.
-
-For testing, this patch series, incl. all dependencies, are available in
-the topic/rcar2-cpg-mssr-v2 branch of my renesas-drivers git repository
-at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
-r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
-been compared before and after the conversion.
-
-Thanks!
-
-Geert Uytterhoeven (5):
-  ARM: dts: r8a7790: Convert to new CPG/MSSR bindings
-  ARM: dts: r8a7791: Convert to new CPG/MSSR bindings
-  ARM: dts: r8a7792: Convert to new CPG/MSSR bindings
-  ARM: dts: r8a7793: Convert to new CPG/MSSR bindings
-  ARM: dts: r8a7794: Convert to new CPG/MSSR bindings
-
- arch/arm/boot/dts/r8a7790-lager.dts   |   7 +-
- arch/arm/boot/dts/r8a7790.dtsi        | 557 ++++++----------------------------
- arch/arm/boot/dts/r8a7791-koelsch.dts |   4 +-
- arch/arm/boot/dts/r8a7791-porter.dts  |   4 +-
- arch/arm/boot/dts/r8a7791.dtsi        | 557 +++++++---------------------------
- arch/arm/boot/dts/r8a7792-blanche.dts |   3 +-
- arch/arm/boot/dts/r8a7792-wheat.dts   |   3 +-
- arch/arm/boot/dts/r8a7792.dtsi        | 333 ++++----------------
- arch/arm/boot/dts/r8a7793-gose.dts    |   4 +-
- arch/arm/boot/dts/r8a7793.dtsi        | 459 +++++-----------------------
- arch/arm/boot/dts/r8a7794-alt.dts     |   3 +-
- arch/arm/boot/dts/r8a7794-silk.dts    |   3 +-
- arch/arm/boot/dts/r8a7794.dtsi        | 528 +++++---------------------------
- 13 files changed, 430 insertions(+), 2035 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index ac8df5201cd6..59259270964c 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -111,7 +111,7 @@
+ 					"cpm-gop-dp", "none", "cpm-pcie_x10",
+ 					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
+ 					"cpm-sata", "cpm-sata-usb", "cpm-main",
+-					"cpm-sd-mmc-gop", "none", "none",
++					"cpm-gop", "none", "none",
+ 					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
+ 					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 			};
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+index 7740a75a8230..046d3fe53cda 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+@@ -118,7 +118,7 @@
+ 					"cps-gop-dp", "none", "cps-pcie_x10",
+ 					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
+ 					"cps-sata", "cps-sata-usb", "cps-main",
+-					"cps-sd-mmc-gop", "none", "none",
++					"cps-gop", "none", "none",
+ 					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
+ 					"cps-usb3dev", "cps-eip150", "cps-eip197";
+ 			};
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 6b11d7b3e0e0..8f315c74997e 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -76,7 +76,7 @@ enum {
+ #define CP110_GATE_SATA			15
+ #define CP110_GATE_SATA_USB		16
+ #define CP110_GATE_MAIN			17
+-#define CP110_GATE_SDMMC_GOP		18
++#define CP110_GATE_GOP			18
+ #define CP110_GATE_SLOW_IO		21
+ #define CP110_GATE_USB3H0		22
+ #define CP110_GATE_USB3H1		23
+@@ -314,7 +314,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 		case CP110_GATE_GOP_DP:
+ 			of_property_read_string_index(np,
+ 						      "gate-clock-output-names",
+-						      CP110_GATE_SDMMC_GOP, &parent);
++						      CP110_GATE_GOP, &parent);
++
+ 			break;
+ 		case CP110_GATE_XOR1:
+ 		case CP110_GATE_XOR0:
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+git-series 0.9.1
