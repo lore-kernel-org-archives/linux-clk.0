@@ -1,75 +1,30 @@
-Return-Path: <angus@akkea.ca>
-To: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 31 May 2017 11:27:58 -0500
+From: Rob Herring <robh@kernel.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, ssantosh@kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 1/2] Documentation: dt: Add TI SCI clock driver
+Message-ID: <20170531162758.bhhj32m6zcytc7ez@rob-hp-laptop>
+References: <1495458113-7366-1-git-send-email-t-kristo@ti.com>
+ <1495458113-7366-2-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Thu, 25 May 2017 06:39:16 -0600
-From: Angus Ainslie <angus@akkea.ca>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Mike Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk
- <linux-clk@vger.kernel.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, stable@vger.kernel.org
-In-Reply-To: <CAGb2v66tpj4y2TdF2kz7Cb9fM-M1pBhuq137a80o0rjenF2AJA@mail.gmail.com>
-References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
- <ad72ceff73364add5cfe25b6143a68ca@www.akkea.ca>
- <CAGb2v66tpj4y2TdF2kz7Cb9fM-M1pBhuq137a80o0rjenF2AJA@mail.gmail.com>
-Message-ID: <174d7dbf70471f4b823d8fa295303ad7@www.akkea.ca>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1495458113-7366-2-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-05-25 01:47, Chen-Yu Tsai wrote:
-> On Thu, May 25, 2017 at 2:51 AM, Angus Ainslie <angus@akkea.ca> wrote:
->> On 2017-05-24 10:34, Boris Brezillon wrote:
->>> 
->>> AHB BIST gate is actually controlled with bit 7.
->>> 
->>> This bug was detected while trying to use the NAND controller which 
->>> is
->>> using the DMA engine to transfer data to the NAND.
->>> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate 
->>> bit,
->>> the core was disabling the DMA engine clock as part of its 'disable
->>> unused clks' procedure, which was causing all DMA transfers to fail 
->>> after
->>> this point.
->>> 
->>> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
->>> Cc: stable@vger.kernel.org
->>> Reported-by: Angus Ainslie <angus@akkea.ca>compatible =
->>> "nextthing,chip-pro", "nextthing,gr8";
->>> Signed-off-by: Boris Brezillon <boris.brezillon@frecompatible =
->>> "nextthing,chip-pro", "nextthing,gr8";e-electrons.com>
->>> ---
->>>  drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>> 
->>> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c
->>> b/drivers/clk/sunxi-ng/ccu-sun5i.c
->>> index 5c476f966a72..5372bf8be5e6 100644
->>> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
->>> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
->>> @@ -243,7 +243,7 @@ static SUNXI_CCU_GATE(ahb_ss_clk,   "ahb-ss",
->>> "ahb",
->>>  static SUNXI_CCU_GATE(ahb_dma_clk,     "ahb-dma",      "ahb",
->>>                       0x060, BIT(6), 0);
->>>  static SUNXI_CCU_GATE(ahb_bist_clk,    "ahb-bist",     "ahb",
->>> -                     0x060, BIT(6), 0);
->>> +                     0x060, BIT(7), 0);
->>>  static SUNXI_CCU_GATE(ahb_mmc0_clk,    "ahb-mmc0",     "ahb",
->>>                       0x060, BIT(8), 0);
->>>  static SUNXI_CCU_GATE(ahb_mmc1_clk,    "ahb-mmc1",     "ahb",
->> 
->> 
->> 
->> The patch works perfectly. Using that I was able to remove the
->> clk_ignore_unsed and CLK_IS_CRITICAL.
->> 
+On Mon, May 22, 2017 at 04:01:52PM +0300, Tero Kristo wrote:
+> Add a clock implementation, TI SCI clock, that will hook to the common
+> clock framework, and allow each clock to be controlled via TI SCI
+> protocol.
 > 
-> Is that a Tested-by? :)
-> 
-> ChenYu
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,sci-clk.txt
 
-Yeah :)
-
-Tested-by: Angus Ainslie <angus@akkea.ca>
+Acked-by: Rob Herring <robh@kernel.org>
