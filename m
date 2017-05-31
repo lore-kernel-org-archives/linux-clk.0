@@ -18,118 +18,95 @@ Cc: Jason Cooper <jason@lakedaemon.net>,
 	Marcin Wojtas <mw@semihalf.com>,
 	Omri Itach <omrii@marvell.com>,
 	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v2 3/7] clk: mvebu: ap806: do not depend anymore of the *-clock-output-names
-Date: Wed, 31 May 2017 16:07:24 +0200
-Message-Id: <e66cdd54d36c6bef78460a51e577f171b6ccb031.1496239589.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+Subject: [PATCH v2 03/11] clk: mvebu: cp110: make failure labels more meaningful
+Date: Wed, 31 May 2017 15:41:47 +0200
+Message-Id: <a74d055e9c5e20cd563d6d13da4b3733411dceeb.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As it was done for the cp110, this patch modifies the way the clock names
-are created. The name of each clock is now created by using its physical
-address as a prefix (as it was done for the platform device
-names). Thanks to this we have an automatic way to compute a unique name.
+In preparation to the addition of a new clock, rename the goto labels
+used to handle the failure cases using a name related to the failure
+cause. This will allow to insert additional failing cases without
+renaming all the labels.
 
 Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/clk/mvebu/ap806-system-controller.c | 46 +++++++++++-----------
- 1 file changed, 24 insertions(+), 22 deletions(-)
+ drivers/clk/mvebu/cp110-system-controller.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index b2666b5c944f..95ae16e203ea 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -32,6 +32,18 @@ static struct clk_onecell_data ap806_clk_data = {
- 	.clk_num = AP806_CLK_NUM,
- };
- 
-+static char *ap806_unique_name(struct device *dev, struct device_node *np,
-+			       char *name)
-+{
-+	const __be32 *reg;
-+	u64 addr;
-+
-+	reg = of_get_property(np, "reg", NULL);
-+	addr = of_translate_address(np, reg);
-+	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
-+			(unsigned long long)addr, name);
-+}
-+
- static int ap806_syscon_clk_probe(struct platform_device *pdev)
- {
- 	unsigned int freq_mode, cpuclk_freq;
-@@ -98,8 +110,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	cpuclk_freq *= 1000 * 1000;
- 
- 	/* CPU clocks depend on the Sample At Reset configuration */
--	of_property_read_string_index(np, "clock-output-names",
--				      0, &name);
-+	name = ap806_unique_name(dev, np, "cpu-cluster-0");
- 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
- 						0, cpuclk_freq);
- 	if (IS_ERR(ap806_clks[0])) {
-@@ -107,8 +118,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 		goto fail0;
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 8f315c74997e..2a75397f9304 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -221,7 +221,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 					1000 * 1000 * 1000);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail0;
++		goto fail_apll;
  	}
  
--	of_property_read_string_index(np, "clock-output-names",
--				      1, &name);
-+	name = ap806_unique_name(dev, np, "cpu-cluster-1");
- 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
- 						cpuclk_freq);
- 	if (IS_ERR(ap806_clks[1])) {
-@@ -117,8 +127,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	cp110_clks[CP110_CORE_APLL] = hw;
+@@ -232,7 +232,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail1;
++		goto fail_ppv2;
  	}
  
- 	/* Fixed clock is always 1200 Mhz */
--	of_property_read_string_index(np, "clock-output-names",
--				      2, &fixedclk_name);
-+	fixedclk_name = ap806_unique_name(dev, np, "fixed");
- 	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
- 						0, 1200 * 1000 * 1000);
- 	if (IS_ERR(ap806_clks[2])) {
-@@ -127,8 +136,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	cp110_clks[CP110_CORE_PPV2] = hw;
+@@ -243,7 +243,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail2;
++		goto fail_eip;
  	}
  
- 	/* MSS Clock is fixed clock divided by 6 */
--	of_property_read_string_index(np, "clock-output-names",
--				      3, &name);
-+	name = ap806_unique_name(dev, np, "mss");
- 	ap806_clks[3] = clk_register_fixed_factor(NULL, name, fixedclk_name,
- 						  0, 1, 6);
- 	if (IS_ERR(ap806_clks[3])) {
-@@ -136,20 +144,14 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 		goto fail3;
+ 	cp110_clks[CP110_CORE_EIP] = hw;
+@@ -254,7 +254,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail3;
++		goto fail_core;
  	}
  
--	/* eMMC Clock is fixed clock divided by 3 */
--	if (of_property_read_string_index(np, "clock-output-names",
--					  4, &name)) {
--		ap806_clk_data.clk_num--;
--		dev_warn(&pdev->dev,
--			 "eMMC clock missing: update the device tree!\n");
--	} else {
--		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
--							  fixedclk_name,
--							  0, 1, 3);
--		if (IS_ERR(ap806_clks[4])) {
--			ret = PTR_ERR(ap806_clks[4]);
--			goto fail4;
--		}
-+	/* SDIO(/eMMC) Clock is fixed clock divided by 3 */
-+	name = ap806_unique_name(dev, np, "sdio");
-+	ap806_clks[4] = clk_register_fixed_factor(NULL, name,
-+						  fixedclk_name,
-+						  0, 1, 3);
-+	if (IS_ERR(ap806_clks[4])) {
-+		ret = PTR_ERR(ap806_clks[4]);
-+		goto fail4;
+ 	cp110_clks[CP110_CORE_CORE] = hw;
+@@ -270,7 +270,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 						   core_name, 0, 1, 1);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail4;
++		goto fail_nand;
  	}
  
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
+ 	cp110_clks[CP110_CORE_NAND] = hw;
+@@ -366,15 +366,15 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
+-fail4:
++fail_nand:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
+-fail3:
++fail_core:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
+-fail2:
++fail_eip:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
+-fail1:
++fail_ppv2:
+ 	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
+-fail0:
++fail_apll:
+ 	return ret;
+ }
+ 
 -- 
 git-series 0.9.1
