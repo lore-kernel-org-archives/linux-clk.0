@@ -1,45 +1,61 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 2/2] clk: gxbb: remove CLK_IGNORE_UNUSED from clk81
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20170524093932.5262-1-jbrunet@baylibre.com>
- <20170524093932.5262-3-jbrunet@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, carlo@caione.org,
- Kevin Hilman <khilman@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <b1442c8a-bdfc-01ac-dada-71de43bd060a@baylibre.com>
-Date: Wed, 24 May 2017 11:45:12 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170524093932.5262-3-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 3/6] clk: sunxi-ng: h3: Export PLL_PERIPH0 clock for the PRCM
+Date: Wed, 31 May 2017 15:58:21 +0800
+Message-Id: <20170531075824.657-4-wens@csie.org>
+In-Reply-To: <20170531075824.657-1-wens@csie.org>
+References: <20170531075824.657-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/24/2017 11:39 AM, Jerome Brunet wrote:
-> clk81 already has CLK_IS_CRITICAL so CLK_IGNORE_UNUSED is not
-> necessary
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/gxbb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index ad5f027af1a2..be6350a03074 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -676,7 +676,7 @@ static struct clk_gate gxbb_clk81 = {
->  		.ops = &clk_gate_ops,
->  		.parent_names = (const char *[]){ "mpeg_clk_div" },
->  		.num_parents = 1,
-> -		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL),
-> +		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
->  	},
->  };
->  
-> 
+The PRCM takes PLL_PERIPH0 as one of its parents for the AR100 clock.
+As such we need to be able to describe this relationship in the device
+tree.
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Export the PLL_PERIPH0 clock so we can reference it in the PRCM node.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 4 +++-
+ include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+index 85973d1e8165..1b4baea37d81 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+@@ -29,7 +29,9 @@
+ #define CLK_PLL_VIDEO		6
+ #define CLK_PLL_VE		7
+ #define CLK_PLL_DDR		8
+-#define CLK_PLL_PERIPH0		9
++
++/* PLL_PERIPH0 exported for PRCM */
++
+ #define CLK_PLL_PERIPH0_2X	10
+ #define CLK_PLL_GPU		11
+ #define CLK_PLL_PERIPH1		12
+diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
+index c2afc41d6964..e139fe5c62ec 100644
+--- a/include/dt-bindings/clock/sun8i-h3-ccu.h
++++ b/include/dt-bindings/clock/sun8i-h3-ccu.h
+@@ -43,6 +43,8 @@
+ #ifndef _DT_BINDINGS_CLK_SUN8I_H3_H_
+ #define _DT_BINDINGS_CLK_SUN8I_H3_H_
+ 
++#define CLK_PLL_PERIPH0		9
++
+ #define CLK_CPUX		14
+ 
+ #define CLK_BUS_CE		20
+-- 
+2.11.0
