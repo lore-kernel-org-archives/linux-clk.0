@@ -1,25 +1,52 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, andy.yan@rock-chips.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH v2 5/6] ARM: dts: rockchip: rename core dtsi from RK1108 to RV1108
-Date: Sun, 14 May 2017 14:54:08 +0200
-Message-ID: <4347801.EzHjD7jBtI@phil>
-In-Reply-To: <20170317171840.4683-6-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-6-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v2 08/11] dt-bindings: cp110: add sdio clock to cp-110 system controller
+Date: Wed, 31 May 2017 15:41:52 +0200
+Message-Id: <8c3f2dcae7622825722982c0ea45707586a73244.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 17. M=E4rz 2017, 18:18:39 CEST schrieb Heiko Stuebner:
-> From: Andy Yan <andy.yan@rock-chips.com>
->=20
-> Rockchip finally named the SOC as RV1108, so change it
-> for compatible.
->=20
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
->=20
-> [adapt include in rk1108-evb.dts to not introduce errors]
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+This patch updates the documentation according to the change made in the
+patch "clk: mvebu: cp110: add sdio clock to cp-110 system controller"
 
-applied for 4.13
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+index 139e46cc6786..e0b9ef5d3dde 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -34,6 +34,7 @@ The following clocks are available:
+    - 0 2	EIP
+    - 0 3	Core
+    - 0 4	NAND core
++   - 0 5	SDIO core
+  - Gatable clocks
+    - 1 0	Audio
+    - 1 1	Comm Unit
+-- 
+git-series 0.9.1
