@@ -1,81 +1,84 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:53850 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755675AbdESKbb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 May 2017 06:31:31 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: xf@rock-chips.com, linux-clk@vger.kernel.org,
-        huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, zhengxing@rock-chips.com
-Subject: Re: [PATCH v2 2/3] dt-bindings: add bindings for rk3128 clock controller
-Date: Fri, 19 May 2017 12:31:18 +0200
-Message-ID: <3487841.3AV9ZOvb54@phil>
-In-Reply-To: <1495073819-4160-3-git-send-email-zhangqing@rock-chips.com>
-References: <1495073819-4160-1-git-send-email-zhangqing@rock-chips.com> <1495073819-4160-3-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Phil Elwell <phil@raspberrypi.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+In-Reply-To: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
+References: <866b60bb-d1c8-726e-3a2d-11a34f9e8ac7@raspberrypi.org>
+Date: Wed, 31 May 2017 14:24:26 -0700
+Message-ID: <87efv4btyt.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
+--=-=-=
+Content-Type: text/plain
 
-Am Donnerstag, 18. Mai 2017, 10:16:58 CEST schrieb Elaine Zhang:
-> Add devicetree bindings for Rockchip cru which found on
-> Rockchip SoCs.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  .../bindings/clock/rockchip,rk3128-cru.txt         | 56 ++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> new file mode 100644
-> index 000000000000..455a9a00a623
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> @@ -0,0 +1,56 @@
-> +* Rockchip RK3128 Clock and Reset Unit
-> +
-> +The RK3128 clock controller generates and supplies clock to various
-> +controllers within the SoC and also implements a reset controller for SoC
-> +peripherals.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be "rockchip,rk3128-cru"
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +- #clock-cells: should be 1.
-> +- #reset-cells: should be 1.
-> +
-> +Optional Properties:
-> +
-> +- rockchip,grf: phandle to the syscon managing the "general register files"
-> +  If missing pll rates are not changeable, due to the missing pll lock status.
-> +
-> +Each clock is assigned an identifier and client nodes can use this identifier
-> +to specify the clock which they consume. All available clocks are defined as
-> +preprocessor macros in the dt-bindings/clock/rk3128-cru.h headers and can be
-> +used in device tree sources. Similar macros exist for the reset sources in
-> +these files.
-> +
-> +External clocks:
-> +
-> +There are several clocks that are generated outside the SoC. It is expected
-> +that they are defined using standard clock bindings with following
-> +clock-output-names:
-> + - "xin24m" - crystal input - required,
-> + - "ext_i2s" - external I2S clock - optional,
-> + - "gmac_clkin" - external GMAC clock - optional
+Phil Elwell <phil@raspberrypi.org> writes:
 
-missing usb480m_phy as external clock, that comes back from the usbphy block.
+> Restrict clock sources for the PCM peripheral to the oscillator and
+> PLLD_PER because other source may have varying rates or be switched off.
+> Prevent other sources from being selected by replacing their names in
+> the list of potential parents with dummy entries (entry index is
+> significant).
 
+I might be up for giving my r-b on this, but first I'd like to check if
+we can simplify even more.  Looking through this list:
 
-Otherwise looks good
-Heiko
+static const char *const bcm2835_clock_per_parents[] = {
+	"gnd",
+	"xosc",
+	"testdebug0",
+	"testdebug1",
+	"plla_per",
+	"pllc_per",
+	"plld_per",
+	"pllh_aux",
+};
 
+PLLA is off and unused and we don't want any peripheral to turn it on
+(unless we wanted PCM to do so, but we aren't doing that here).
+
+PLLC's rate gets changed by the VPU and so it isn't reliable.
+67615c588a059b731df9d019edc3c561d8006ec9 made it so that nobody uses it
+that isn't using it by firmware setup, and EMMC is the only one that the
+firmware is having use PLLC.  Would we be better off just having EMMC
+always be on PLLD?  Or, we could special-case EMMC to be the only one to
+use PLLC.
+
+PLLD is stable.
+
+PLLH should only be used as a parent by VEC (or HSM, assuming that
+drm/vc4 rate-sets PLLH_PIX first, but I don't know of a reason for HSM
+to not just be fractionally divided off of PLLD).  If you've got
+firmware display in use, it may change rate or be disabled behind
+Linux's back, so we don't want anything but Linux-controlled VEC to use
+it.  We could special-case VEC to be the only one that had PLLH_AUX as
+parent.
+
+So, my proposal would be to basically make everything but VEC and maybe
+EMMC use your new list, and drop the code in
+67615c588a059b731df9d019edc3c561d8006ec9.  That said, if you want to do
+this first for PCM and then extend it to the rest of the clock
+consumers, I'm fine with that.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkvNIoACgkQtdYpNtH8
+nug6QA//cbShLjzSXXObEiu2SuNkBGqOpRq+yY1x9L9QV0lSGwCCi7kK+StYXwe0
+y61RBfEC3LVr4dXn43gTVbvArDqmo8htOEACwqiYfiWfs2WskINPEnXRgQDSht28
+1NUETjco3npS9z6XMHPmYIJlflcGcL1H8h61XRsoF5KpTTKF4jE9FP3eNjUFqufD
+RbonXHGYc8xW8lAcjBXFu9OGaCFYqLXCIYoe/JqPJJFfhoJ6zpUx8JZC+aLRc3A3
+19+MAF8YqKg+nQnruMdEnD2TUNVHw39PVoONuREgnffJiayf3c064AuEgnwt0Xxq
+CKkKCffbON6knprLfbZxsj07jCxwiEn4jtIRYEeKj3J7xRJviR8I+cQb9y1qlPiM
+JbE9DSyJDHEnS9iNcswcXVHNGRRJGLY0CPdW9yjiCoZdPKD37SNNf2fsXo8VgoPu
+UglsCNnmAQY3mOYu/Fla/USJIRu6vx61y1h1Tjn2JNSGefq5gqnCx8bzPNR1eh8B
+v8my6yRMyEzBqdZlBENws7jDkpQg1TERogIUW4BlBJNlNffcuL7fdLLELrX1F1l2
+yd71Djgm7MURZC5uz2y72jzxFcfVGOXzMH1ndeh/3yxZgxvhlzna4tzQMwumQOIq
+q41+iAhwKRYXVxdLDBvxKNqy/5QgV9mmNAczdK+JoTqKBhsbby4=
+=g/Nb
+-----END PGP SIGNATURE-----
+--=-=-=--
