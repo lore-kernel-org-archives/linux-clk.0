@@ -1,104 +1,53 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v2 1/7] clk: mvebu: ap806: cosmetic improvement
-Date: Wed, 31 May 2017 16:07:22 +0200
-Message-Id: <5a55e081d96fc6d2a28331b59df90f56d32a9f24.1496239589.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 2/6] ARM: sun8i: a83t: Add device node for PRCM
+Date: Wed, 31 May 2017 15:58:20 +0800
+Message-Id: <20170531075824.657-3-wens@csie.org>
+In-Reply-To: <20170531075824.657-1-wens@csie.org>
+References: <20170531075824.657-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of using &pdev->dev all over the place, introduce a pointer
-variable for it.
+The A83T's PRCM has the same set of clocks and resets as the A64.
+However, a few dividers are different. And due to the lack of a low
+speed 32.768 kHz oscillator, a few of the clock parents are different.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+The PRCM also has controls for various power domains. These are not
+supported yet, neither in software nor in the device tree binding.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/mvebu/ap806-system-controller.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 8155baccc98e..b2666b5c944f 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -36,20 +36,21 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- {
- 	unsigned int freq_mode, cpuclk_freq;
- 	const char *name, *fixedclk_name;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
- 	struct regmap *regmap;
- 	u32 reg;
- 	int ret;
- 
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap)) {
--		dev_err(&pdev->dev, "cannot get regmap\n");
-+		dev_err(dev, "cannot get regmap\n");
- 		return PTR_ERR(regmap);
- 	}
- 
- 	ret = regmap_read(regmap, AP806_SAR_REG, &reg);
- 	if (ret) {
--		dev_err(&pdev->dev, "cannot read from regmap\n");
-+		dev_err(dev, "cannot read from regmap\n");
- 		return ret;
- 	}
- 
-@@ -89,7 +90,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 		cpuclk_freq = 600;
- 		break;
- 	default:
--		dev_err(&pdev->dev, "invalid SAR value\n");
-+		dev_err(dev, "invalid SAR value\n");
- 		return -EINVAL;
- 	}
- 
-@@ -99,7 +100,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	/* CPU clocks depend on the Sample At Reset configuration */
- 	of_property_read_string_index(np, "clock-output-names",
- 				      0, &name);
--	ap806_clks[0] = clk_register_fixed_rate(&pdev->dev, name, NULL,
-+	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
- 						0, cpuclk_freq);
- 	if (IS_ERR(ap806_clks[0])) {
- 		ret = PTR_ERR(ap806_clks[0]);
-@@ -108,7 +109,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 
- 	of_property_read_string_index(np, "clock-output-names",
- 				      1, &name);
--	ap806_clks[1] = clk_register_fixed_rate(&pdev->dev, name, NULL, 0,
-+	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
- 						cpuclk_freq);
- 	if (IS_ERR(ap806_clks[1])) {
- 		ret = PTR_ERR(ap806_clks[1]);
-@@ -118,7 +119,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	/* Fixed clock is always 1200 Mhz */
- 	of_property_read_string_index(np, "clock-output-names",
- 				      2, &fixedclk_name);
--	ap806_clks[2] = clk_register_fixed_rate(&pdev->dev, fixedclk_name, NULL,
-+	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
- 						0, 1200 * 1000 * 1000);
- 	if (IS_ERR(ap806_clks[2])) {
- 		ret = PTR_ERR(ap806_clks[2]);
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 1dc4cfe81534..49aeb56970ba 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -270,5 +270,15 @@
+ 			#interrupt-cells = <3>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
++
++		r_ccu: clock@1f01400 {
++			compatible = "allwinner,sun8i-a83t-r-ccu";
++			reg = <0x01f01400 0x400>;
++			clocks = <&osc24M>, <&osc16Md512>, <&osc16M>,
++				 <&ccu 6>;
++			clock-names = "hosc", "losc", "iosc", "pll-periph";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
+ 	};
+ };
 -- 
-git-series 0.9.1
+2.11.0
