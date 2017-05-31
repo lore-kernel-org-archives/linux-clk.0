@@ -1,46 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 07/10] dt-bindings: add compatible string for Allwinner R40 CCU
-Date: Sat, 27 May 2017 18:23:05 +0800
-Message-Id: <20170527102308.1988-8-icenowy@aosc.io>
-In-Reply-To: <20170527102308.1988-1-icenowy@aosc.io>
-References: <20170527102308.1988-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v2 04/11] dt-bindings: cp110: do not depend anymore of the *-clock-output-names
+Date: Wed, 31 May 2017 15:41:48 +0200
+Message-Id: <6701a6c918ba8c89ef667e0ecc4fc249738a6a57.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner R40 has a clock controlling unit like the ones on other
-Allwinner SoCs after sun6i, and can also use a CCU-based driver.
+This patch updates the documentation according to the change made in the
+patch "clk: mvebu: cp110: do not depend anymore of the
+*-clock-output-names": the clock names are no more part of the binding.
 
-Add a compatible string for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
-Changes in v3:
-- Rebased on current linux-next.
-- Added Rob's ACK.
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 14 --------------
+ 1 file changed, 14 deletions(-)
 
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index 34b2a9249a94..80926c5db86b 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -9,6 +9,7 @@ Required properties :
- 		- "allwinner,sun8i-a83t-ccu"
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-h3-r-ccu"
-+		- "allwinner,sun8i-r40-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
- 		- "allwinner,sun9i-a80-ccu"
- 		- "allwinner,sun50i-a64-ccu"
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+index eb6cf44caa0f..47f1cf800e25 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -59,14 +59,6 @@ Required properties:
+      "marvell,cp110-system-controller0", "syscon";
+  - reg: register area of the CP110 system controller 0
+  - #clock-cells: must be set to 2
+- - core-clock-output-names must be set to:
+-	"cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core"
+- - gate-clock-output-names must be set to:
+-	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+-	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+-	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-	"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
+-	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 
+ Example:
+ 
+@@ -74,10 +66,4 @@ Example:
+ 		compatible = "marvell,cp110-system-controller0", "syscon";
+ 		reg = <0x440000 0x1000>;
+ 		#clock-cells = <2>;
+-		core-clock-output-names = "cpm-apll", "cpm-ppv2-core", "cpm-eip", "cpm-core", "cpm-nand-core";
+-		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+-			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+-			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-			"cpm-sata-usb", "cpm-main", "cpm-gop", "none", "none", "cpm-slow-io",
+-			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 	};
 -- 
-2.12.2
+git-series 0.9.1
