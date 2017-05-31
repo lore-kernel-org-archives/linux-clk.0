@@ -1,54 +1,37 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 1/3] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T PRCM
-Date: Fri, 26 May 2017 16:00:23 +0800
-Message-Id: <20170526080025.28532-2-wens@csie.org>
-In-Reply-To: <20170526080025.28532-1-wens@csie.org>
-References: <20170526080025.28532-1-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 31 May 2017 14:42:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] arm: sunxi: add support for R40 SoC
+Message-ID: <20170531194232.fhiz7z3iqhnkacev@rob-hp-laptop>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+ <20170527102308.1988-2-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170527102308.1988-2-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T's PRCM has the same set of clocks and resets as the A64.
-However, a few dividers are different. And due to the lack of a low
-speed 32.768 kHz oscillator, a few of the clock parents are different.
+On Sat, May 27, 2017 at 06:22:59PM +0800, Icenowy Zheng wrote:
+> Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
+> like A20.
+> 
+> Add support for it.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v3:
+> - Use V1.0 documents.
+> 
+>  Documentation/arm/sunxi/README                  | 6 ++++++
+>  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+>  arch/arm/mach-sunxi/sunxi.c                     | 1 +
+>  3 files changed, 8 insertions(+)
 
-The PRCM also has controls for various power domains. These are not
-supported yet.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index 34b2a9249a94..095a5807d874 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -7,6 +7,7 @@ Required properties :
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
- 		- "allwinner,sun8i-a83t-ccu"
-+		- "allwinner,sun8i-a83t-r-ccu"
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-h3-r-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
-@@ -24,7 +25,7 @@ Required properties :
- - #clock-cells : must contain 1
- - #reset-cells : must contain 1
- 
--For the PRCM CCUs on H3/A64, one more clock is needed:
-+For the PRCM CCUs on A83T/H3/A64, one more clock is needed:
- - "iosc": the SoC's internal frequency oscillator
- 
- Example for generic CCU:
--- 
-2.11.0
+Acked-by: Rob Herring <robh@kernel.org>
