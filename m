@@ -1,30 +1,51 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <d1bc2420845061a9c057d47a5556c621f8bcd025.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
- <d1bc2420845061a9c057d47a5556c621f8bcd025.1495006350.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 17 May 2017 17:00:35 +0800
-Message-ID: <CAGb2v64tMc2M77gknkd+EsinFS3qMN2t=pENqcNfnzGz7ddJ1Q@mail.gmail.com>
-Subject: Re: [PATCH v3 19/21] drm/sun4i: Add compatible for the A10s pipeline
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: linux@rempel-privat.de
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/6] ARM: imx6q: provide documentation for new fsl,pmic_stby_poweroff property
+Date: Wed, 31 May 2017 08:14:52 +0200
+Message-Id: <20170531061457.23744-2-o.rempel@pengutronix.de>
+In-Reply-To: <20170531061457.23744-1-o.rempel@pengutronix.de>
+References: <20170531061457.23744-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 17, 2017 at 3:40 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The A10s has a slightly different display pipeline than the A13, with an
-> HDMI controller.
->
-> Add a compatible for it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: kernel@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ Documentation/devicetree/bindings/clock/imx6q-clock.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+index 9252912a5b0e..214cb5f461c7 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+@@ -6,6 +6,10 @@ Required properties:
+ - interrupts: Should contain CCM interrupt
+ - #clock-cells: Should be <1>
+ 
++Optional properties:
++- fsl,pmic_stby_poweroff: Configure CCM to assert PMIC_STBY_REQ signal
++  on power off.
++
+ The clock consumer should specify the desired clock by having the clock
+ ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+ for the full list of i.MX6 Quad and DualLite clock IDs.
+-- 
+2.11.0
