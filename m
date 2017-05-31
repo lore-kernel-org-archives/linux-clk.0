@@ -1,212 +1,75 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-	<jamesjj.liao@mediatek.com>, <p.zabel@pengutronix.de>,
-	<shunli.wang@mediatek.com>, <erin.lo@mediatek.com>, <jdelvare@suse.de>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
-	Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Subject: [PATCH 1/6] clk: mediatek: add missing cpu mux causing Mediatek cpufreq can't work
-Date: Fri, 5 May 2017 23:26:09 +0800
-Message-ID: <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
-In-Reply-To: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: sean.wang@mediatek.com
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 0/6] clk: sunxi-ng: Add support for A83T's PRCM
+Date: Wed, 31 May 2017 15:58:18 +0800
+Message-Id: <20170531075824.657-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+Hi everyone,
 
-This patch adds CPU multiplexer clocks which are essential for Mediatek
-cpufreq driver. It would use the CPU clock multiplexer to switch to the
-intermediate clock source temporarily and then wait for the primary clock
-changing getting stable.
+This is the remaining parts of my A83T PRCM support series, along with
+changes requested by Maxime.
 
-Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/clk/mediatek/Makefile     |   2 +-
- drivers/clk/mediatek/clk-cpumux.c | 120 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-cpumux.h |  30 ++++++++++
- 3 files changed, 151 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mediatek/clk-cpumux.c
- create mode 100644 drivers/clk/mediatek/clk-cpumux.h
+Patch 1 updates the device tree bindings for the PRCM, adding pll-periph
+to the list of required clocks
 
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 5c3afb8..2a755b5 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
- obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
- obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
-diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-new file mode 100644
-index 0000000..edd8e69
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-cpumux.c
-@@ -0,0 +1,120 @@
-+/*
-+ * Copyright (c) 2015 Linaro Ltd.
-+ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-cpumux.h"
-+
-+static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
-+{
-+	return container_of(_hw, struct mtk_clk_cpumux, hw);
-+}
-+
-+static u8 clk_cpumux_get_parent(struct clk_hw *hw)
-+{
-+	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-+	int num_parents = clk_hw_get_num_parents(hw);
-+	unsigned int val;
-+
-+	regmap_read(mux->regmap, mux->reg, &val);
-+
-+	val >>= mux->shift;
-+	val &= mux->mask;
-+
-+	if (val >= num_parents)
-+		return -EINVAL;
-+
-+	return val;
-+}
-+
-+static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-+	u32 mask, val;
-+
-+	val = index << mux->shift;
-+	mask = mux->mask << mux->shift;
-+
-+	return regmap_update_bits(mux->regmap, mux->reg, mask, val);
-+}
-+
-+static const struct clk_ops clk_cpumux_ops = {
-+	.get_parent = clk_cpumux_get_parent,
-+	.set_parent = clk_cpumux_set_parent,
-+};
-+
-+static struct clk __init *
-+mtk_clk_register_cpumux(const struct mtk_composite *mux,
-+			struct regmap *regmap)
-+{
-+	struct mtk_clk_cpumux *cpumux;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
-+	if (!cpumux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = mux->name;
-+	init.ops = &clk_cpumux_ops;
-+	init.parent_names = mux->parent_names;
-+	init.num_parents = mux->num_parents;
-+	init.flags = mux->flags;
-+
-+	cpumux->reg = mux->mux_reg;
-+	cpumux->shift = mux->mux_shift;
-+	cpumux->mask = BIT(mux->mux_width) - 1;
-+	cpumux->regmap = regmap;
-+	cpumux->hw.init = &init;
-+
-+	clk = clk_register(NULL, &cpumux->hw);
-+	if (IS_ERR(clk))
-+		kfree(cpumux);
-+
-+	return clk;
-+}
-+
-+int __init mtk_clk_register_cpumuxes(struct device_node *node,
-+				     const struct mtk_composite *clks, int num,
-+				     struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-+		       PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_composite *mux = &clks[i];
-+
-+		clk = mtk_clk_register_cpumux(mux, regmap);
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk %s: %ld\n",
-+			       mux->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		clk_data->clks[mux->id] = clk;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
-new file mode 100644
-index 0000000..dddaad5
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-cpumux.h
-@@ -0,0 +1,30 @@
-+/*
-+ * Copyright (c) 2015 Linaro Ltd.
-+ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __DRV_CLK_CPUMUX_H
-+#define __DRV_CLK_CPUMUX_H
-+
-+struct mtk_clk_cpumux {
-+	struct clk_hw	hw;
-+	struct regmap	*regmap;
-+	u32		reg;
-+	u32		mask;
-+	u8		shift;
-+};
-+
-+int mtk_clk_register_cpumuxes(struct device_node *node,
-+			      const struct mtk_composite *clks, int num,
-+			      struct clk_onecell_data *clk_data);
-+
-+#endif /* __DRV_CLK_CPUMUX_H */
+Patch 2 adds a device node for the PRCM on the A83T SoC, updated from v1
+to include the pll-periph clock.
+
+Patch 3 exports the PLL_PERIPH0 clock from the CCU on the H3/H5, for
+consumption by the PRCM.
+
+Patch 4 adds the pll-periph clock to the PRCM device node on the H3/H5.
+
+Patch 5 / 6 are the same as 3 / 4, but for the A64.
+
+
+Excerpt from v1 cover letter:
+
+This series adds support for the A83T's PRCM to the existing sun8i-r-ccu
+driver. When the sun8i-r-ccu driver was introduced, indices were reserved
+for all the possible clocks and resets of the sun8i family. In patch 2
+we simply pick existing clocks, and implement ones that are different or
+missing.
+
+Differences from other sun8i implementations include different clock parent
+names, due to the A83T not having a proper 32.768 kHz oscillator, and
+different predividers for the IR clock.
+
+
+Still to come are support for R_PIO and RSB on the A83T.
+
+Regards
+ChenYu
+
+
+Chen-Yu Tsai (6):
+  dt-bindings: clock: sunxi-ccu: Add pll-periph to PRCM's needed clocks
+  ARM: sun8i: a83t: Add device node for PRCM
+  clk: sunxi-ng: h3: Export PLL_PERIPH0 clock for the PRCM
+  ARM: sunxi: h3-h5: Add PLL_PERIPH0 clock to the R_CCU
+  clk: sunxi-ng: a64: Export PLL_PERIPH0 clock for the PRCM
+  arm64: allwinner: a64: Add PLL_PERIPH0 clock to the R_CCU
+
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt |  7 ++++---
+ arch/arm/boot/dts/sun8i-a83t.dtsi                     | 10 ++++++++++
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                    |  5 +++--
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         |  5 +++--
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  4 +++-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h                   |  4 +++-
+ include/dt-bindings/clock/sun50i-a64-ccu.h            |  2 ++
+ include/dt-bindings/clock/sun8i-h3-ccu.h              |  2 ++
+ 8 files changed, 30 insertions(+), 9 deletions(-)
+
 -- 
-2.7.4
+2.11.0
