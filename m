@@ -1,75 +1,44 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<Anson.Huang@nxp.com>, <ping.bai@nxp.com>, Dong Aisheng
-	<aisheng.dong@nxp.com>
-Subject: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-Date: Mon, 15 May 2017 21:59:15 +0800
-Message-ID: <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <phil@raspberrypi.org>
+Subject: [PATCH v2 0/2] clk: bcm2835: PCM clock improvements
+From: Phil Elwell <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <4c11ad43-ef4e-3fbd-500a-02b2b46e0fbd@raspberrypi.org>
+Message-ID: <c44d1f29-4ec6-6b87-59a4-71aeb1f5c4d7@raspberrypi.org>
+Date: Wed, 31 May 2017 10:18:19 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <4c11ad43-ef4e-3fbd-500a-02b2b46e0fbd@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-For dividers with zero indicating clock is disabled, instead of giving a
-warning each time like "clkx: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not
-set" in exist code, we'd consider it as a normal case and just return 0 in
-divider_recalc_rate function. For such clocks users should be aware of
-setting a correct rate before using.
+The switch to using the upstream bcm2835_cprman clock driver caused a
+few problems for users of PCM (I2S) peripherals. Audio applications
+require accurate, stable clocks, and the cprman driver wasn't
+conservative enough in its choice of clock sources.
 
-e.g.
-000b - Clock disabled
-001b - Divide by 1
-010b - Divide by 2
-...
+These patches restrict the clock sources for the PCM peripheral in two
+ways: the first causes all possible sources except OSC and PLLD_PER
+to be ignored, while the second allows clocks to be specified as
+"low_jitter", causing the effects of fractional divisors to be taken
+into account when comparing potential clocks for accuracy. In practice,
+the combined effect of the two patches is to choose OSC as a source if
+an integer divisor can be used, otherwise PLLD_PER is chosen.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/clk-divider.c    | 2 ++
- include/linux/clk-provider.h | 4 ++++
- 2 files changed, 6 insertions(+)
+Changes in v2:
+* Extended bcm2835_pcm_per_parents to cover the pllh_aux slot, and gave
+  it a comment in patch 1.
+* Added a REGISTER_PCM_CLK analagous to REGISTER_PER_CLK in patch 1.
+* Renamed temporary variable idiv to int_div in patch 2.
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 96386ff..f78ba7a 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -125,6 +125,8 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
- 
- 	div = _get_div(table, val, flags, divider->width);
- 	if (!div) {
-+		if (flags & CLK_DIVIDER_ZERO_GATE)
-+			return 0;
- 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
- 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
- 			clk_hw_get_name(hw));
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a428aec..a6efbb9 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -385,6 +385,9 @@ struct clk_div_table {
-  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
-  *	except when the value read from the register is zero, the divisor is
-  *	2^width of the field.
-+ * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
-+ *	when the value read from the register is zero, it means the divisor
-+ *	output is disabled and the rate calculated will be 0.
-  */
- struct clk_divider {
- 	struct clk_hw	hw;
-@@ -405,6 +408,7 @@ struct clk_divider {
- #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
- #define CLK_DIVIDER_READ_ONLY		BIT(5)
- #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
-+#define CLK_DIVIDER_ZERO_GATE		BIT(7)
- 
- extern const struct clk_ops clk_divider_ops;
- extern const struct clk_ops clk_divider_ro_ops;
+Phil Elwell (2):
+  clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+  clk: bcm2835: Minimise clock jitter for PCM clock
+
+ drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 5 deletions(-)
+
 -- 
-2.7.4
+1.9.1
