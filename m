@@ -1,59 +1,63 @@
-Return-Path: <frank.wang@rock-chips.com>
-From: Frank Wang <frank.wang@rock-chips.com>
-To: heiko@sntech.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	rui.zhang@intel.com,
-	edubezval@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	charles.chen@rock-chips.com,
-	cody.xie@rock-chips.com,
-	kevan.lan@rock-chips.com,
-	huangtao@rock-chips.com,
-	rocky.hao@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	zhangqing@rock-chips.com,
-	wmc@rock-chips.com,
-	Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH 4/4] arm: dts: rk322x: update tsadc's frequence setting
-Date: Wed, 17 May 2017 12:45:23 +0800
-Message-Id: <1494996323-4678-5-git-send-email-frank.wang@rock-chips.com>
-In-Reply-To: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
-References: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
+Return-Path: <mark.rutland@arm.com>
+Date: Wed, 31 May 2017 15:52:56 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: linux@rempel-privat.de, kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic_stby_poweroff property
+Message-ID: <20170531145255.GC10351@leverpostej>
+References: <20170531061457.23744-1-o.rempel@pengutronix.de>
+ <20170531061457.23744-2-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170531061457.23744-2-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rocky Hao <rocky.hao@rock-chips.com>
+On Wed, May 31, 2017 at 08:14:52AM +0200, Oleksij Rempel wrote:
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Cc: kernel@pengutronix.de
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> index 9252912a5b0e..214cb5f461c7 100644
+> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> @@ -6,6 +6,10 @@ Required properties:
+>  - interrupts: Should contain CCM interrupt
+>  - #clock-cells: Should be <1>
+>  
+> +Optional properties:
+> +- fsl,pmic_stby_poweroff: Configure CCM to assert PMIC_STBY_REQ signal
+> +  on power off.
 
-Update freq of tsadc's working clock as 32768 hz, if not set, tsadc
-will work at a default frequence.
+s/_/-/ in property names, please.
 
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
----
- arch/arm/boot/dts/rk322x.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+When/why is this needed?
 
-diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
-index 7809e56..d2e9641 100644
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -434,6 +434,8 @@
- 		interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru SCLK_TSADC>, <&cru PCLK_TSADC>;
- 		clock-names = "tsadc", "apb_pclk";
-+		assigned-clocks = <&cru SCLK_TSADC>;
-+		assigned-clock-rates = <32768>;
- 		resets = <&cru SRST_TSADC>;
- 		reset-names = "tsadc-apb";
- 		pinctrl-names = "init", "default", "sleep";
--- 
-2.0.0
+Why should a DT author (not) set this?
+
+Thanks,
+Mark.
+
+> +
+>  The clock consumer should specify the desired clock by having the clock
+>  ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+>  for the full list of i.MX6 Quad and DualLite clock IDs.
+> -- 
+> 2.11.0
+> 
