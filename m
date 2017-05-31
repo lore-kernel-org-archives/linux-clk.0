@@ -1,72 +1,65 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:51206 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750912AbdEaH6f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 31 May 2017 03:58:35 -0400
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 3 May 2017 11:27:20 +0800
-Message-ID: <CAGb2v67vJriXzPj8nVH=F9XPXgD-+LwDvqp6dDRxyPT8UyG64A@mail.gmail.com>
-Subject: Re: [PATCH 6/15] dt-bindings: display: sun4i: Add HDMI display bindings
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 5/6] clk: sunxi-ng: a64: Export PLL_PERIPH0 clock for the PRCM
+Date: Wed, 31 May 2017 15:58:23 +0800
+Message-Id: <20170531075824.657-6-wens@csie.org>
+In-Reply-To: <20170531075824.657-1-wens@csie.org>
+References: <20170531075824.657-1-wens@csie.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> One of the possible output of the display pipeline, on the SoCs that have
-> it, is the HDMI controller.
->
-> Add a binding for it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 21 +++++++-
->  1 file changed, 21 insertions(+), 0 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index b82c00449468..4b280672658e 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -4,6 +4,27 @@ Allwinner A10 Display Pipeline
->  The Allwinner A10 Display pipeline is composed of several components
->  that are going to be documented below:
->
-> +HDMI Encoder
-> +------------
-> +
-> +The HDMI Encoder supports the HDMI video and audio outputs, and does
-> +CEC. It is one end of the pipeline.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun5i-a10s-hdmi
-> +  - reg: base address and size of memory-mapped region
-> +  - clocks: phandles to the clocks feeding the HDMI encoder
-> +    * ahb: the HDMI interface clock
-> +    * mod: the HDMI module clock
-> +    * pll-0: the first video PLL
-> +    * pll-1: the second video PLL
-> +  - clock-names: the clock names mentioned above
+The PRCM takes PLL_PERIPH0 as one of its parents for the AR100 clock.
+As such we need to be able to describe this relationship in the device
+tree.
 
-The audio part needs a DMA handle. May we add this from day one?
+Export the PLL_PERIPH0 clock so we can reference it in the PRCM node.
 
-Thanks
-ChenYu
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 4 +++-
+ include/dt-bindings/clock/sun50i-a64-ccu.h | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-> +
-> +  - ports: A ports node with endpoint definitions as defined in
-> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +    first port should be the input endpoint.
-> +
->  TV Encoder
->  ----------
->
-> --
-> git-series 0.8.11
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+index 9b3cd24b78d2..061b6fbb4f95 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+@@ -31,7 +31,9 @@
+ #define CLK_PLL_VIDEO0_2X		8
+ #define CLK_PLL_VE			9
+ #define CLK_PLL_DDR0			10
+-#define CLK_PLL_PERIPH0			11
++
++/* PLL_PERIPH0 exported for PRCM */
++
+ #define CLK_PLL_PERIPH0_2X		12
+ #define CLK_PLL_PERIPH1			13
+ #define CLK_PLL_PERIPH1_2X		14
+diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
+index 370c0a0473fc..d66432c6e675 100644
+--- a/include/dt-bindings/clock/sun50i-a64-ccu.h
++++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
+@@ -43,6 +43,8 @@
+ #ifndef _DT_BINDINGS_CLK_SUN50I_A64_H_
+ #define _DT_BINDINGS_CLK_SUN50I_A64_H_
+ 
++#define CLK_PLL_PERIPH0		11
++
+ #define CLK_BUS_MIPI_DSI	28
+ #define CLK_BUS_CE		29
+ #define CLK_BUS_DMA		30
+-- 
+2.11.0
+
