@@ -1,42 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:46211 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750925AbdE3Jus (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2017 05:50:48 -0400
-Date: Tue, 30 May 2017 11:50:35 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] clk: at91: fix clk-generated parenting
-Message-ID: <20170530095035.qbjn32452r3xhy6n@piout.net>
-References: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
- <20170519013302.GC20170@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170519013302.GC20170@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v2 00/11] Improve cp110 clk support on Marvell Armada 7K/8K
+Date: Wed, 31 May 2017 15:41:44 +0200
+Message-Id: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18/05/2017 at 18:33:02 -0700, Stephen Boyd wrote:
-> On 05/12, Alexandre Belloni wrote:
-> > clk_generated_startup is called after clk_hw_register. So the first call to
-> > get_parent will not have the correct value (i.e. 0) and because this is
-> > cached, it may never be updated.
-> > 
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> > ---
-> 
-> Fixes tag?
+Hi,
 
-Yep,
+We got more information about the clock controllers and the clock tree
+of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
 
-Fixes: df70aeef6083 ("clk: at91: add generated clock driver")
+The main change in this second version is about the binding
+documentation: all the documentation related changes are now move in
+their own patches. It allows to provide a stable -dt branch for theses
+changes. I also added the acked-by from Rob Herring.
 
-Can you add it or do you want a new version?
+However the last two patches modifying the device tree _must_ be
+merged through the mvebu tree to avoid future conflict (especially
+with the recent ICU series sent by Thomas Petazzoni).
 
+For the record:
+
+The clock tree needs to be fixed, indeed the GOP clock is only the
+clock for the GOIP and not for the SDIO, it is fixed in the first
+patch.
+
+The third patch does a small improve of the code itself.
+
+The purpose of the fifth patch is to have an easier way to add new
+clocks without breaking the backward compatibility. Indeed, we expect
+to continue to have new update on the datasheet and this patch will
+allow integrating this change easier and faster.
+
+The  patch 7 is needed to ease the integration of the pinctrl node
+in the device tree.
+
+The patch 9 adds a new clock for the SDIO, it also fixes the clock
+tree.
+
+In this series, even if there is some change in the device tree
+binding, we paid attention to the backward compatibility, and the
+driver can still work with the old device tree.
+
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (10):
+  dt-bindings: cp110: fix name of the GOP gate clock
+  clk: mvebu: cp110 fix name of the GOP gate clock
+  clk: mvebu: cp110: make failure labels more meaningful
+  dt-bindings: cp110: do not depend anymore of the *-clock-output-names
+  clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
+  dt-bindings: cp110: introduce a new binding
+  clk: mvebu: cp110: introduce a new binding
+  dt-bindings: cp110: add sdio clock to cp-110 system controller
+  arm64: dts: marvell: remove *-clock-output-names on cp110
+  arm64: dts: marvell: use new binding for the system controller on cp110
+
+Konstantin Porotchkin (1):
+  clk: mvebu: cp110: add sdio clock to cp-110 system controller
+
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  35 +++++-------
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
+ drivers/clk/mvebu/cp110-system-controller.c                                | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
+ 4 files changed, 196 insertions(+), 143 deletions(-)
+
+base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+git-series 0.9.1
