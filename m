@@ -1,24 +1,141 @@
-Return-Path: <wens@csie.org>
+Return-Path: <phil@raspberrypi.org>
+Subject: [PATCH v2 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
+From: Phil Elwell <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
+Message-ID: <a507a7e7-3c64-1dcb-98f1-a7f94364f26c@raspberrypi.org>
+Date: Wed, 31 May 2017 10:18:33 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170515102307.28743-1-tklauser@distanz.ch>
-References: <20170515102307.28743-1-tklauser@distanz.ch>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 15 May 2017 18:25:06 +0800
-Message-ID: <CAGb2v67C9xFYjs_cAuHHhSayjT5KNUCXM5a_3-Wj2BrzmEbmBw@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: explicitly include linux/spinlock.h
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 15, 2017 at 6:23 PM, Tobias Klauser <tklauser@distanz.ch> wrote:
-> ccu_reset.h and ccu_reset.c use spinlock_t and associated functions but
-> rely on implict inclusion of linux/spinlock.h which means that changes
-> in other headers could break the build. Thus, add an explicit include.
->
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Fractional clock dividers generate accurate average frequencies but
+with jitter, particularly when the integer divisor is small.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Introduce a new metric of clock accuracy to penalise clocks with a good
+average but worse jitter compared to clocks with an average which is no
+better but with lower jitter. The metric is the ideal rate minus the
+worse deviation from that ideal using the nearest integer divisors.
+
+Use this metric for parent selection for clocks requiring low jitter
+(currently just PCM).
+
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 40 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 81ecd4c..c7ee951 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -530,6 +530,7 @@ struct bcm2835_clock_data {
+ 
+ 	bool is_vpu_clock;
+ 	bool is_mash_clock;
++	bool low_jitter;
+ 
+ 	u32 tcnt_mux;
+ };
+@@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ 							int parent_idx,
+ 							unsigned long rate,
+ 							u32 *div,
+-							unsigned long *prate)
++							unsigned long *prate,
++							unsigned long *avgrate)
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+@@ -1136,11 +1138,34 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ 	parent = clk_hw_get_parent_by_index(hw, parent_idx);
+ 
+ 	if (!(BIT(parent_idx) & data->set_rate_parent)) {
++		unsigned long tmp_rate;
++
+ 		*prate = clk_hw_get_rate(parent);
+ 		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
+ 
+-		return bcm2835_clock_rate_from_divisor(clock, *prate,
+-						       *div);
++		tmp_rate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
++		*avgrate = tmp_rate;
++
++		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
++			unsigned long high, low;
++			u32 int_div = *div & ~CM_DIV_FRAC_MASK;
++
++			high = bcm2835_clock_rate_from_divisor(clock, *prate,
++							       int_div);
++			int_div += CM_DIV_FRAC_MASK + 1;
++			low = bcm2835_clock_rate_from_divisor(clock, *prate,
++							      int_div);
++
++			/*
++			 * Return a value which is the maximum deviation
++			 * below the ideal rate, for use as a metric.
++			 */
++			if ((tmp_rate - low) < (high - tmp_rate))
++				tmp_rate = low;
++			else
++				tmp_rate -= high - tmp_rate;
++		}
++		return tmp_rate;
+ 	}
+ 
+ 	if (data->frac_bits)
+@@ -1167,6 +1192,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ 
+ 	*div = curdiv << CM_DIV_FRAC_BITS;
+ 	*prate = curdiv * best_rate;
++	*avgrate = best_rate;
+ 
+ 	return best_rate;
+ }
+@@ -1178,6 +1204,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 	bool current_parent_is_pllc;
+ 	unsigned long rate, best_rate = 0;
+ 	unsigned long prate, best_prate = 0;
++	unsigned long avgrate, best_avgrate = 0;
+ 	size_t i;
+ 	u32 div;
+ 
+@@ -1202,11 +1229,13 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 			continue;
+ 
+ 		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
+-							  &div, &prate);
++							  &div, &prate,
++							  &avgrate);
+ 		if (rate > best_rate && rate <= req->rate) {
+ 			best_parent = parent;
+ 			best_prate = prate;
+ 			best_rate = rate;
++			best_avgrate = avgrate;
+ 		}
+ 	}
+ 
+@@ -1216,7 +1245,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 	req->best_parent_hw = best_parent;
+ 	req->best_parent_rate = best_prate;
+ 
+-	req->rate = best_rate;
++	req->rate = best_avgrate;
+ 
+ 	return 0;
+ }
+@@ -2025,6 +2054,7 @@ struct bcm2835_clk_desc {
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+ 		.is_mash_clock = true,
++		.low_jitter = true,
+ 		.tcnt_mux = 23),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+ 		.name = "pwm",
+-- 
+1.9.1
