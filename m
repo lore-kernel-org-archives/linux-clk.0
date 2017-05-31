@@ -1,112 +1,52 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH 2/7] clk: mvebu: cp110: make failure labels more meaningful
-Date: Fri, 19 May 2017 17:55:20 +0200
-Message-Id: <e78e9ddbfe7dbcd49539ca9181c8ee697eeba085.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
-References: <cover.737145f06ff0191d1a9210bcd141e679bf45fe5f.1495208533.git-series.gregory.clement@free-electrons.com>
+Return-Path: <stefan.wahren@i2se.com>
+Subject: Re: [PATCH v2 0/2] clk: bcm2835: PCM clock improvements
+To: Phil Elwell <phil@raspberrypi.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <4c11ad43-ef4e-3fbd-500a-02b2b46e0fbd@raspberrypi.org>
+ <c44d1f29-4ec6-6b87-59a4-71aeb1f5c4d7@raspberrypi.org>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <d9c1303d-a170-bb83-f9a9-94f201e4ac2c@i2se.com>
+Date: Wed, 31 May 2017 16:58:01 +0200
+MIME-Version: 1.0
+In-Reply-To: <c44d1f29-4ec6-6b87-59a4-71aeb1f5c4d7@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-In preparation to the addition of a new clock, rename the goto labels
-used to handle the failure cases using a name related to the failure
-cause. This will allow to insert additional failing cases without
-renaming all the labels.
+Am 31.05.2017 um 11:18 schrieb Phil Elwell:
+> The switch to using the upstream bcm2835_cprman clock driver caused a
+> few problems for users of PCM (I2S) peripherals. Audio applications
+> require accurate, stable clocks, and the cprman driver wasn't
+> conservative enough in its choice of clock sources.
+>
+> These patches restrict the clock sources for the PCM peripheral in two
+> ways: the first causes all possible sources except OSC and PLLD_PER
+> to be ignored, while the second allows clocks to be specified as
+> "low_jitter", causing the effects of fractional divisors to be taken
+> into account when comparing potential clocks for accuracy. In practice,
+> the combined effect of the two patches is to choose OSC as a source if
+> an integer divisor can be used, otherwise PLLD_PER is chosen.
+>
+> Changes in v2:
+> * Extended bcm2835_pcm_per_parents to cover the pllh_aux slot, and gave
+>   it a comment in patch 1.
+> * Added a REGISTER_PCM_CLK analagous to REGISTER_PER_CLK in patch 1.
+> * Renamed temporary variable idiv to int_div in patch 2.
+>
+> Phil Elwell (2):
+>   clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+>   clk: bcm2835: Minimise clock jitter for PCM clock
+>
+>  drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 45 insertions(+), 5 deletions(-)
+>
+For the whole series:
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/cp110-system-controller.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 8f315c74997e..2a75397f9304 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -221,7 +221,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 					1000 * 1000 * 1000);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail0;
-+		goto fail_apll;
- 	}
- 
- 	cp110_clks[CP110_CORE_APLL] = hw;
-@@ -232,7 +232,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail1;
-+		goto fail_ppv2;
- 	}
- 
- 	cp110_clks[CP110_CORE_PPV2] = hw;
-@@ -243,7 +243,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail2;
-+		goto fail_eip;
- 	}
- 
- 	cp110_clks[CP110_CORE_EIP] = hw;
-@@ -254,7 +254,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail3;
-+		goto fail_core;
- 	}
- 
- 	cp110_clks[CP110_CORE_CORE] = hw;
-@@ -270,7 +270,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 						   core_name, 0, 1, 1);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail4;
-+		goto fail_nand;
- 	}
- 
- 	cp110_clks[CP110_CORE_NAND] = hw;
-@@ -366,15 +366,15 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
--fail4:
-+fail_nand:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
--fail3:
-+fail_core:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
--fail2:
-+fail_eip:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
--fail1:
-+fail_ppv2:
- 	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
--fail0:
-+fail_apll:
- 	return ret;
- }
- 
--- 
-git-series 0.9.1
+I hope Eric as the author of the driver has a chance to look over the
+patches.
+
+Stefan
