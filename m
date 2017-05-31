@@ -1,72 +1,135 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:44391 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753059AbdEQQoP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 May 2017 12:44:15 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 00/11] Support for H3 Composite Output support
-Date: Thu, 18 May 2017 00:43:43 +0800
-Message-Id: <20170517164354.16399-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v2 3/7] clk: mvebu: ap806: do not depend anymore of the *-clock-output-names
+Date: Wed, 31 May 2017 16:07:24 +0200
+Message-Id: <e66cdd54d36c6bef78460a51e577f171b6ccb031.1496239589.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset depends on the DE2 patchset, version 8 of that patchset
-is available at [1].
+As it was done for the cp110, this patch modifies the way the clock names
+are created. The name of each clock is now created by using its physical
+address as a prefix (as it was done for the platform device
+names). Thanks to this we have an automatic way to compute a unique name.
 
-Allwinner H3 SoC features a TV Encoder like the one in Allwinner A13,
-which can only output TV Composite signal.
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/clk/mvebu/ap806-system-controller.c | 46 +++++++++++-----------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
-The display pipeline of H3 is also special -- it has two mixers and
-two TCONs, of which the connection can be swapped. The TCONs do not
-have channel 0 (as they are all connected to internal bridges, TVE
-and HDMI TX).
-
-Add support for the display pipeline and the TVE in H3, in order to
-make it possible to display something with mainline kernel with H3.
-
-The image quality of TVE is bad, so HDMI is a better output -- this
-patchset also prepared the mixers and TCONs for HDMI output, and
-the HDMI controller driver is already done by Jernej Skrabec.
-
-Currently the jack detection feature of the TVE is still not so
-clear -- so it's not implemented in this version. Thus the TV
-output shouldn't be defaultly enabled now.
-
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/506806.html
-
-Icenowy Zheng (11):
-  dt-bindings: update the binding for Allwinner H3 TVE support
-  drm: sun4i: add support for H3 mixers
-  drm: sun4i: ignore swapped mixer<->tcon connection for DE2
-  drm: sun4i: add support for H3's TCON0/1
-  drm: sun4i: add compatible for H3 display engine
-  drm: sun4i: add color space correction support for DE2 mixer
-  drm: sun4i: add support for the TV encoder in H3 SoC
-  clk: sunxi-ng: allow CLK_DE to set CLK_PLL_DE for H3
-  clk: sunxi-ng: export CLK_PLL_DE for H3
-  ARM: sun8i: h3: add display engine pipeline for TVE
-  [DO NOT MERGE] ARM: sun8i: h3: enable TV output on Orange Pi PC
-
- .../bindings/display/sunxi/sun4i-drm.txt           |  47 ++++-
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  12 ++
- arch/arm/boot/dts/sun8i-h3.dtsi                    | 189 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   3 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |  28 +++
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 117 +++++++++----
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   5 +
- drivers/gpu/drm/sun4i/sun4i_tv.c                   |  65 ++++++-
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  53 ++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.h                |   6 +-
- include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
- 12 files changed, 488 insertions(+), 41 deletions(-)
-
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index b2666b5c944f..95ae16e203ea 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -32,6 +32,18 @@ static struct clk_onecell_data ap806_clk_data = {
+ 	.clk_num = AP806_CLK_NUM,
+ };
+ 
++static char *ap806_unique_name(struct device *dev, struct device_node *np,
++			       char *name)
++{
++	const __be32 *reg;
++	u64 addr;
++
++	reg = of_get_property(np, "reg", NULL);
++	addr = of_translate_address(np, reg);
++	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
++			(unsigned long long)addr, name);
++}
++
+ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ {
+ 	unsigned int freq_mode, cpuclk_freq;
+@@ -98,8 +110,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	cpuclk_freq *= 1000 * 1000;
+ 
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+-	of_property_read_string_index(np, "clock-output-names",
+-				      0, &name);
++	name = ap806_unique_name(dev, np, "cpu-cluster-0");
+ 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+@@ -107,8 +118,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 		goto fail0;
+ 	}
+ 
+-	of_property_read_string_index(np, "clock-output-names",
+-				      1, &name);
++	name = ap806_unique_name(dev, np, "cpu-cluster-1");
+ 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
+@@ -117,8 +127,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Fixed clock is always 1200 Mhz */
+-	of_property_read_string_index(np, "clock-output-names",
+-				      2, &fixedclk_name);
++	fixedclk_name = ap806_unique_name(dev, np, "fixed");
+ 	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
+ 						0, 1200 * 1000 * 1000);
+ 	if (IS_ERR(ap806_clks[2])) {
+@@ -127,8 +136,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* MSS Clock is fixed clock divided by 6 */
+-	of_property_read_string_index(np, "clock-output-names",
+-				      3, &name);
++	name = ap806_unique_name(dev, np, "mss");
+ 	ap806_clks[3] = clk_register_fixed_factor(NULL, name, fixedclk_name,
+ 						  0, 1, 6);
+ 	if (IS_ERR(ap806_clks[3])) {
+@@ -136,20 +144,14 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 		goto fail3;
+ 	}
+ 
+-	/* eMMC Clock is fixed clock divided by 3 */
+-	if (of_property_read_string_index(np, "clock-output-names",
+-					  4, &name)) {
+-		ap806_clk_data.clk_num--;
+-		dev_warn(&pdev->dev,
+-			 "eMMC clock missing: update the device tree!\n");
+-	} else {
+-		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+-							  fixedclk_name,
+-							  0, 1, 3);
+-		if (IS_ERR(ap806_clks[4])) {
+-			ret = PTR_ERR(ap806_clks[4]);
+-			goto fail4;
+-		}
++	/* SDIO(/eMMC) Clock is fixed clock divided by 3 */
++	name = ap806_unique_name(dev, np, "sdio");
++	ap806_clks[4] = clk_register_fixed_factor(NULL, name,
++						  fixedclk_name,
++						  0, 1, 3);
++	if (IS_ERR(ap806_clks[4])) {
++		ret = PTR_ERR(ap806_clks[4]);
++		goto fail4;
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
 -- 
-2.12.2
-
+git-series 0.9.1
