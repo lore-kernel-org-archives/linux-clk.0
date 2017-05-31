@@ -1,93 +1,57 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v2 00/11] Broadcom Stingray SOC Initial Support
-Date: Mon, 15 May 2017 17:32:10 +0530
-Message-Id: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <stefan.wahren@i2se.com>
+Subject: Re: CLK_OF_DECLARE advice required
+To: Stephen Warren <swarren@wwwdotorg.org>, Phil Elwell <phil@raspberrypi.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+ linux-clk@vger.kernel.org
+References: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
+ <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <0794f430-9761-c855-9a89-13d9871c5831@i2se.com>
+Date: Wed, 31 May 2017 17:58:08 +0200
+MIME-Version: 1.0
+In-Reply-To: <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support of Broadcom Stingray SOC
-by reusing existing Broadcom iProc device drivers.
+Am 31.05.2017 um 17:27 schrieb Stephen Warren:
+> On 05/30/2017 06:23 AM, Phil Elwell wrote:
+>> Hi,
+>>
+>> I've run into a problem using the fixed-factor clock on Raspberry Pi
+>> and I'd
+>> like some advice before I submit a patch.
+>>
+>> Some context: the aim is to use a standard UART and some external
+>> circuitry
+>> as a MIDI interface. This would be straightforward except that Linux
+>> doesn't
+>> recognise the required 31.25KHz as a valid UART baud rate. Rhe
+>> workaround is
+>> to declare the UART clock such that the reported rate differs from
+>> the actual
+>> rate. If one sets the reported rate to be (actual*38400)/31250 then
+>> requesting a 38400 baud rate will result in an actual 31250 baud signal.
+>
+> This sounds like the wrong approach. Forcing the port to use a
+> different clock rate than the user requests would prevent anyone from
+> using that port for its standard purpose; it'd turn what should be a
+> runtime decision into a compile-time decision.
+>
+> Are you sure there's no way to simply select the correct baud rate on
+> the port? I see plenty of references to configuring custom baud rates
+> under Linux when I search Google, e.g.:
+>
+>> https://stackoverflow.com/questions/12646324/how-to-set-a-custom-baud-rate-on-linux
+>>
+> "How to set a custom baud rate on Linux?"
+>
+>> https://sourceware.org/ml/libc-help/2009-06/msg00016.html
+> "Re: Terminal interface and non-standard baudrates"
+>
 
-Most of the patches in this patchset are DT patches except
-the Stingray clock tree support which just one patch.
+I remember this gist from Peter Hurley:
 
-This patchset is based on Linux-4.12-rc1 and it is also available
-at stingray-v2 branch of https://github.com/Broadcom/arm64-linux.git
-
-Changes since v1:
- - Rebased patches for Linux-4.12-rc1
- - Removed unwanted /memreserve/ from bcm958742-base.dtsi
- - Use ranges DT property to clear view of memory-layout
- - Make bcm-sr.h part of clock DT bindings patch
-
-Anup Patel (3):
-  dt-bindings: bcm: Add Broadcom Stingray bindings document
-  arm64: dts: Initial DTS files for Broadcom Stingray SOC
-  arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
-
-Oza Pawandeep (1):
-  arm64: dts: Add I2C DT nodes for Stingray SoC
-
-Pramod Kumar (3):
-  arm64: dts: Add NAND DT nodes for Stingray SOC
-  arm64: dts: Add pinctrl DT nodes for Stingray SOC
-  arm64: dts: Add GPIO DT nodes for Stingray SOC
-
-Sandeep Tripathy (3):
-  dt-bindings: clk: Extend binding doc for Stingray SOC
-  clk: bcm: Add clocks for Stingray SOC
-  arm64: dts: Add clock DT nodes for Stingray SOC
-
-Srinath Mannam (1):
-  arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
-
- .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
- .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
- arch/arm64/boot/dts/broadcom/Makefile              |   1 +
- arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 134 ++++++
- .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
- .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
- .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 +++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 465 +++++++++++++++++++++
- drivers/clk/bcm/Kconfig                            |   8 +
- drivers/clk/bcm/Makefile                           |   1 +
- drivers/clk/bcm/clk-sr.c                           | 300 +++++++++++++
- include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
- .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
- 15 files changed, 1805 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
- create mode 100644 drivers/clk/bcm/clk-sr.c
- create mode 100644 include/dt-bindings/clock/bcm-sr.h
- create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
-
--- 
-2.7.4
+https://gist.github.com/peterhurley/fbace59b55d87306a5b8
