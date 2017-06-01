@@ -1,317 +1,401 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: bjorn.andersson@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: [PATCH v6 5/6] arm64: dts: Add ipq8074 SoC and HK01 board support
-Date: Fri,  9 Jun 2017 15:11:58 +0530
-Message-Id: <1497001319-30353-6-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
-References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Jun 2017 00:02:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
+Message-ID: <20170601070208.GO20170@codeaurora.org>
+References: <20170524082044.8473-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170524082044.8473-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add initial device tree support for the Qualcomm IPQ8074 SoC and
-HK01 evaluation board.
+On 05/24, Linus Walleij wrote:
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 36cfea38135f..69178fd58ac8 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -126,6 +126,13 @@ config COMMON_CLK_CS2000_CP
+>  	help
+>  	  If you say yes here you get support for the CS2000 clock multiplier.
+>  
+> +config COMMON_CLK_GEMINI
+> +	bool "Clock driver for Cortina Systems Gemini SoC"
+> +	select MFD_SYSCON
 
-Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/Makefile         |   1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  53 ++++++++
- arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 194 ++++++++++++++++++++++++++++++
- 3 files changed, 248 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+Is there an appropriate depends on ARCH_FOO || COMPILE_TEST we
+can put here? Just so that this isn't exposed to people who dont'
+like seeing options they don't care about but we still get
+compile testing coverage.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index cc0f02d..ff81d7e 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -1,5 +1,6 @@
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-new file mode 100644
-index 0000000..7d44be9
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-@@ -0,0 +1,53 @@
-+/dts-v1/;
-+/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#include "ipq8074.dtsi"
-+
-+/ {
-+	#address-cells = <0x2>;
-+	#size-cells = <0x2>;
-+	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
-+	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
-+	interrupt-parent = <&intc>;
-+
-+	aliases {
-+		serial0 = &blsp1_uart5;
-+	};
-+
-+	chosen {
-+		bootargs = "root=/dev/ram0 rw init=/init";
-+		stdout-path = "serial0";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x0 0x20000000>;
-+	};
-+
-+	soc {
-+		pinctrl@1000000 {
-+			serial_4_pins: serial4_pinmux {
-+				mux {
-+					pins = "gpio23", "gpio24";
-+					function = "blsp4_uart1";
-+					bias-disable;
-+				};
-+			};
-+		};
-+
-+		serial@78b3000 {
-+			pinctrl-0 = <&serial_4_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-new file mode 100644
-index 0000000..2bc5dec
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -0,0 +1,194 @@
-+/*
-+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ8074";
-+	compatible = "qcom,ipq8074";
-+
-+	soc: soc {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+		ranges = <0 0 0 0xffffffff>;
-+		compatible = "simple-bus";
-+
-+		pinctrl@1000000 {
-+			compatible = "qcom,ipq8074-pinctrl";
-+			reg = <0x1000000 0x300000>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <0x2>;
-+			interrupt-controller;
-+			#interrupt-cells = <0x2>;
-+		};
-+
-+		intc: interrupt-controller@b000000 {
-+			compatible = "qcom,msm-qgic2";
-+			interrupt-controller;
-+			#interrupt-cells = <0x3>;
-+			reg = <0xb000000 0x1000>, <0xb002000 0x1000>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		timer@b120000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0xb120000 0x1000>;
-+			clock-frequency = <19200000>;
-+
-+			frame@b120000 {
-+				frame-number = <0>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb121000 0x1000>,
-+				      <0xb122000 0x1000>;
-+			};
-+
-+			frame@b123000 {
-+				frame-number = <1>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb123000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b124000 {
-+				frame-number = <2>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb124000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b125000 {
-+				frame-number = <3>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb125000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b126000 {
-+				frame-number = <4>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb126000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b127000 {
-+				frame-number = <5>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb127000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b128000 {
-+				frame-number = <6>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb128000 0x1000>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		gcc: gcc@1800000 {
-+			compatible = "qcom,gcc-ipq8074";
-+			reg = <0x1800000 0x80000>;
-+			#clock-cells = <0x1>;
-+			#reset-cells = <0x1>;
-+		};
-+
-+		blsp1_uart5: serial@78b3000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78b3000 0x200>;
-+			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0>;
-+			next-level-cache = <&L2_0>;
-+			enable-method = "psci";
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x1>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x2>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x3>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		L2_0: l2-cache {
-+			compatible = "cache";
-+			cache-level = <0x2>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 7 GIC_CPU_MASK_SIMPLE(4)>;
-+	};
-+
-+	clocks {
-+		sleep_clk: sleep_clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <32000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		xo: xo {
-+			compatible = "fixed-clock";
-+			clock-frequency = <19200000>;
-+			#clock-cells = <0>;
-+		};
-+	};
-+};
+> +	---help---
+> +	  This driver supports the SoC clocks on the Cortina Systems Gemini
+> +	  platform, also known as SL3516 or CS3516.
+> +
+>  config COMMON_CLK_S2MPS11
+>  	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+>  	depends on MFD_SEC_CORE || COMPILE_TEST
+> diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+> new file mode 100644
+> index 000000000000..5a0de8415f91
+> --- /dev/null
+> +++ b/drivers/clk/clk-gemini.c
+> @@ -0,0 +1,357 @@
+> +/*
+> + * Cortina Gemini Clock Controller driver
+> + * Copyright (c) 2017 Linus Walleij <linus.walleij@linaro.org>
+> + */
+> +
+> +#define pr_fmt(fmt) "clk-gemini: " fmt
+> +
+> +#include <linux/clkdev.h>
+
+Used?
+
+> +#include <linux/slab.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +#include <dt-bindings/clock/cortina,gemini-clock.h>
+> +
+> +/* Globally visible clocks */
+> +static DEFINE_SPINLOCK(gemini_clk_lock);
+
+Include spinlock.h?
+
+> +static struct clk *gemini_clks[GEMINI_NUM_CLKS];
+> +static struct clk_onecell_data gemini_clk_data;
+> +
+> +#define GEMINI_GLOBAL_STATUS 0x04
+> +#define PLL_OSC_SEL BIT(30)
+> +#define AHBSPEED_SHIFT (15)
+> +#define AHBSPEED_MASK 0x07
+> +#define CPU_AHB_RATIO_SHIFT (18)
+> +#define CPU_AHB_RATIO_MASK 0x03
+> +
+> +#define GEMINI_GLOBAL_PLL_CONTROL 0x08
+> +
+> +#define GEMINI_GLOBAL_MISC_CONTROL 0x30
+> +#define PCI_CLK_66MHZ BIT(18)
+> +#define PCI_CLK_OE BIT(17)
+> +
+> +#define GEMINI_GLOBAL_CLOCK_CONTROL 0x34
+> +#define PCI_CLKRUN_EN BIT(16)
+> +#define TVC_HALFDIV_SHIFT (24)
+> +#define TVC_HALFDIV_MASK 0x1f
+> +#define SECURITY_CLK_SEL BIT(29)
+> +
+> +#define GEMINI_GLOBAL_PCI_DLL_CONTROL 0x44
+> +#define PCI_DLL_BYPASS BIT(31)
+> +#define PCI_DLL_TAP_SEL_MASK 0x1f
+
+Can these get some tabs to align up the numbers in each line? My
+eyes can't easily read the values from the defines.
+
+> +
+> +struct gemini_gate_data {
+
+This one doesn't get kernel doc? :(
+
+> +	u8 bit_idx;
+> +	const char *name;
+> +	const char *parent_name;
+> +	unsigned long flags;
+> +};
+> +
+> +/**
+> + * struct clk_gemini_pci - Gemini PCI clock
+> + * @hw: corresponding clock hardware entry
+> + * @map: regmap to access the registers
+> + * @rate: current rate
+> + */
+> +struct clk_gemini_pci {
+> +	struct clk_hw hw;
+> +	struct regmap *map;
+> +	unsigned long rate;
+> +};
+> +
+> +/*
+> + * FIXME: some clocks are marked as CLK_IGNORE_UNUSED: this is
+> + * because their kernel drivers lack proper clock handling so we
+> + * need to avoid them being gated off by default. Remove this as
+> + * the drivers get fixed to handle clocks properly.
+> + *
+> + * The DDR controller may never have a driver, but certainly must
+> + * not be gated off.
+
+You can use CLK_IS_CRITICAL for that then.
+
+> + */
+> +static const struct gemini_gate_data gemini_gates[] __initconst = {
+> +	{ 1, "security-gate", "secdiv", 0 },
+> +	{ 2, "gmac0-gate", "ahb", 0 },
+> +	{ 3, "gmac1-gate", "ahb", 0 },
+> +	{ 4, "sata0-gate", "ahb", 0 },
+> +	{ 5, "sata1-gate", "ahb", 0 },
+> +	{ 6, "usb0-gate", "ahb", 0 },
+> +	{ 7, "usb1-gate", "ahb", 0 },
+> +	{ 8, "ide-gate", "ahb", 0 },
+> +	{ 9, "pci-gate", "ahb", 0 },
+> +	{ 10, "ddr-gate", "ahb", CLK_IGNORE_UNUSED },
+> +	{ 11, "flash-gate", "ahb", CLK_IGNORE_UNUSED },
+> +	{ 12, "tvc-gate", "ahb", 0 },
+> +	{ 13, "boot-gate", "apb", 0 },
+> +};
+> +
+[..]
+> +
+> +static void gemini_pci_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_gemini_pci *pciclk = to_pciclk(hw);
+> +
+> +	regmap_update_bits(pciclk->map,
+
+The regmap is atomic right? Just checking to make sure we aren't
+taking a mutex instead of a spinlock inside these ops.
+
+> +			   GEMINI_GLOBAL_MISC_CONTROL,
+> +			   PCI_CLK_OE, 0);
+> +	regmap_update_bits(pciclk->map, GEMINI_GLOBAL_CLOCK_CONTROL,
+> +			   PCI_CLKRUN_EN, 0);
+
+And regmap writes can't fail right?
+
+> +}
+> +
+[..]
+> +
+> +static struct clk *gemini_pci_clk_setup(const char *name,
+
+Would need to be marked __init if this doesn't become a platform
+driver.
+
+> +					const char *parent_name,
+> +					struct regmap *map)
+> +{
+> +	struct clk_gemini_pci *pciclk;
+> +	struct clk_init_data init;
+> +	struct clk *clk;
+> +
+> +	pciclk = kzalloc(sizeof(*pciclk), GFP_KERNEL);
+> +	if (!pciclk)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = &gemini_pci_clk_ops;
+> +	init.flags = 0;
+> +	init.parent_names = (parent_name ? &parent_name : NULL);
+> +	init.num_parents = (parent_name ? 1 : 0);
+
+There's always a parent name though?
+
+> +	pciclk->map = map;
+> +	pciclk->hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &pciclk->hw);
+> +	if (IS_ERR(clk))
+> +		kfree(pciclk);
+> +
+> +	return clk;
+> +}
+> +
+> +static void __init gemini_cc_init(struct device_node *np)
+> +{
+> +	void __iomem *base;
+> +	struct regmap *map;
+> +	struct clk *clk;
+> +	unsigned int mult, div;
+> +	unsigned long freq;
+> +	u32 val;
+> +	int ret;
+> +	int i;
+> +
+> +	/* Remap the system controller for the exclusive register */
+> +	base = of_iomap(np, 0);
+> +	if (!base) {
+> +		pr_err("no memory base\n");
+> +		return;
+> +	}
+> +	map = syscon_node_to_regmap(np);
+> +	if (IS_ERR(map)) {
+> +		pr_err("no syscon regmap\n");
+> +		return;
+> +	}
+> +
+> +	/* RTC clock 32768 Hz */
+> +	clk = clk_register_fixed_rate(NULL, "rtc", NULL, CLK_IGNORE_UNUSED,
+> +				      32768);
+> +	gemini_clks[GEMINI_CLK_RTC] = clk;
+> +
+> +	ret = regmap_read(map, GEMINI_GLOBAL_STATUS, &val);
+> +	if (ret) {
+> +		pr_err("failed to read global status register\n");
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * XTAL is the crystal oscillator, 60 or 30 MHz selected from
+> +	 * strap pin E6
+> +	 */
+> +	if (val & PLL_OSC_SEL)
+> +		freq = 30000000;
+> +	else
+> +		freq = 60000000;
+> +	clk = clk_register_fixed_rate(NULL, "xtal", NULL, CLK_IGNORE_UNUSED,
+
+The CLK_IGNORE_UNUSED is not really meaningful because fixed rate
+clks don't have enable/disable ops. Please remove the flag from
+all fixed rate clk registrations.
+
+> +				      freq);
+> +	pr_info("main crystal @%lu MHz\n", (freq/1000000));
+
+Please add space around that freq / 1000000.
+
+> +
+> +	/* VCO clock derived from the crystal */
+> +	mult = 13 + ((val >> AHBSPEED_SHIFT) & AHBSPEED_MASK);
+> +	div = 2;
+> +	/* If we run on 30 Mhz crystal we have to multiply with two */
+
+s/Mhz/MHz/
+
+> +	if (val & PLL_OSC_SEL)
+> +		mult *= 2;
+> +	clk = clk_register_fixed_factor(NULL, "vco", "xtal", CLK_IGNORE_UNUSED,
+> +					mult, div);
+
+Drop ignore unused flag.
+
+> +
+> +	/* The AHB clock is always 1/3 of the VCO */
+> +	clk = clk_register_fixed_factor(NULL, "ahb", "vco",
+> +					CLK_IGNORE_UNUSED, 1, 3);
+
+Drop ignore unused flag.
+
+Also, please move to using clk_hw_register*() APIs so that clk
+pointers aren't used in this provider driver.
+
+> +	gemini_clks[GEMINI_CLK_AHB] = clk;
+> +
+> +	/* The APB clock is always 1/6 of the AHB */
+> +	clk = clk_register_fixed_factor(NULL, "apb", "ahb",
+> +					CLK_IGNORE_UNUSED, 1, 6);
+> +	gemini_clks[GEMINI_CLK_APB] = clk;
+> +
+> +	/* CPU clock derived as a fixed ratio from the AHB clock */
+> +	switch ((val >> CPU_AHB_RATIO_SHIFT) & CPU_AHB_RATIO_MASK) {
+> +	case 0x0:
+> +		/* 1x */
+> +		mult = 1;
+> +		div = 1;
+> +		break;
+> +	case 0x1:
+> +		/* 1.5x */
+> +		mult = 3;
+> +		div = 2;
+> +		break;
+> +	case 0x2:
+> +		/* 1.85x */
+> +		mult = 24;
+> +		div = 13;
+> +		break;
+> +	case 0x3:
+> +		/* 2x */
+> +		mult = 2;
+> +		div = 1;
+> +		break;
+
+Could this be an array of mult/div pairs that we index directly?
+Would save some lines and save lives! Well maybe not that last
+part.
+
+> +	}
+> +	clk = clk_register_fixed_factor(NULL, "cpu", "ahb",
+> +					CLK_IGNORE_UNUSED, mult, div);
+> +	gemini_clks[GEMINI_CLK_CPU] = clk;
+> +
+> +	/* Security clock is 1:1 or 0.75 of APB */
+> +	ret = regmap_read(map, GEMINI_GLOBAL_CLOCK_CONTROL, &val);
+> +	if (ret) {
+> +		pr_err("failed to read global clock control register\n");
+> +		return;
+> +	}
+> +	if (val & SECURITY_CLK_SEL) {
+> +		mult = 1;
+> +		div = 1;
+> +	} else {
+> +		mult = 3;
+> +		div = 4;
+> +	}
+> +	clk = clk_register_fixed_factor(NULL, "secdiv", "ahb",
+> +					0, mult, div);
+> +
+> +	/*
+> +	 * These are the leaf gates, at boot no clocks are gated.
+> +	 */
+> +	for (i = 0; i < ARRAY_SIZE(gemini_gates); i++) {
+> +		const struct gemini_gate_data *gd;
+> +
+> +		gd = &gemini_gates[i];
+> +		gemini_clks[GEMINI_CLK_GATES + i] =
+> +			clk_register_gate(NULL, gd->name,
+
+clk_hw_register_gate().
+
+> +					  gd->parent_name,
+> +					  gd->flags,
+> +					  base + GEMINI_GLOBAL_CLOCK_CONTROL,
+> +					  gd->bit_idx,
+> +					  CLK_GATE_SET_TO_DISABLE,
+> +					  &gemini_clk_lock);
+> +	}
+> +
+> +	/*
+> +	 * The TV Interface Controller has a 5-bit half divider register.
+> +	 * This clock is supposed to be 27MHz as this is an exact multiple
+> +	 * of PAL and NTSC frequencies. The register is undocumented :(
+> +	 * FIXME: figure out the parent and how the divider works.
+> +	 */
+> +	mult = 1;
+> +	div = ((val >> TVC_HALFDIV_SHIFT) & TVC_HALFDIV_MASK);
+> +	pr_debug("TVC half divider value = %d\n", div);
+> +	div += 1;
+> +	clk = clk_register_fixed_rate(NULL, "tvcdiv", "xtal", 0, 27000000);
+> +	gemini_clks[GEMINI_CLK_TVC] = clk;
+> +
+> +	/* FIXME: very unclear what the parent is */
+> +	clk = gemini_pci_clk_setup("PCI", "xtal", map);
+> +	gemini_clks[GEMINI_CLK_PCI] = clk;
+> +
+> +	/* FIXME: very unclear what the parent is */
+> +	clk = clk_register_fixed_rate(NULL, "uart", "xtal", CLK_IGNORE_UNUSED,
+> +				      48000000);
+> +	gemini_clks[GEMINI_CLK_UART] = clk;
+> +
+> +	/* Register the clocks to be accessed by the device tree */
+> +	gemini_clk_data.clks = gemini_clks;
+> +	gemini_clk_data.clk_num = ARRAY_SIZE(gemini_clks);
+> +	of_clk_add_provider(np, of_clk_src_onecell_get, &gemini_clk_data);
+
+And of_clk_add_hw_provider().
+
+> +}
+> +CLK_OF_DECLARE_DRIVER(gemini_cc, "cortina,gemini-syscon", gemini_cc_init);
+
+Is there a reason why this isn't a platform driver?
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
