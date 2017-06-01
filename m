@@ -1,46 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-by2nam01on0056.outbound.protection.outlook.com ([104.47.34.56]:60416
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751281AbdFFPqG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Jun 2017 11:46:06 -0400
-From: Fabio Estevam <fabio.estevam@nxp.com>
-To: <sboyd@codeaurora.org>
-CC: <shawnguo@kernel.org>, <kernel@pengutronix.de>, <stefan@agner.ch>,
-        <linux-clk@vger.kernel.org>, <leonard.crestez@nxp.com>,
-        <festevam@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH] clk: imx7d: Fix the DDR PLL enable bit
-Date: Tue, 6 Jun 2017 12:45:54 -0300
-Message-ID: <1496763954-10981-1-git-send-email-fabio.estevam@nxp.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Jun 2017 00:25:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Cc: linux-clk@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk: mvebu: armada-38x: add support for 1866MHz
+ variants
+Message-ID: <20170601072511.GR20170@codeaurora.org>
+References: <20170524145852.9077-1-ralph.sennhauser@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170524145852.9077-1-ralph.sennhauser@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit ad14972422899b6 ("clk: imx7d: Fix the powerdown bit location
-of PLL DDR") used the incorrect bit for the IMX_PLLV3_DDR_IMX7 case.
+On 05/24, Ralph Sennhauser wrote:
+> The Linksys WRT3200ACM CPU is clocked at 1866MHz. Add 1866MHz to the
+> list of supported CPU frequencies. Also update multiplier and divisor
+> for the l2clk and ddrclk.
+> 
+> Noticed by the following warning:
+> [    0.000000] Selected CPU frequency (16) unsupported
+> 
+> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+> Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+> 
+> Hi everyone,
+> 
+> This patch was part of a series adding support for the Linksys WRT3200ACM which
+> got merged already. This patch is the reminder and intended for 4.13.
+> 
+> Thanks
+> Ralph
+> ---
+> 
+> Changes since v2:
+> 
+>   - Add armada-38x tag to subject
 
-Fix it accordingly to avoid a kernel hang.
+OK sure I'll do that manually.
 
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- drivers/clk/imx/clk-pllv3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 0039b16..9af62ee 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -453,7 +453,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 		ops = &clk_pllv3_enet_ops;
- 		break;
- 	case IMX_PLLV3_DDR_IMX7:
--		pll->power_bit = IMX7_ENET_PLL_POWER;
-+		pll->power_bit = IMX7_DDR_PLL_POWER;
- 		ops = &clk_pllv3_av_ops;
- 		break;
- 	default:
 -- 
-2.7.4
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
