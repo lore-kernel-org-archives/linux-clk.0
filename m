@@ -1,88 +1,63 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
-Date: Tue, 20 Jun 2017 16:09:06 +0200
-Message-Id: <20170620140910.7568-3-o.rempel@pengutronix.de>
-In-Reply-To: <20170620140910.7568-1-o.rempel@pengutronix.de>
-References: <20170620140910.7568-1-o.rempel@pengutronix.de>
+Return-Path: <andy.tang@nxp.com>
+From: Andy Tang <andy.tang@nxp.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>
+Subject: RE: [PATCH 2/2 v2] clk: qoriq: Separate root input clock for core
+ PLLs on ls1012a
+Date: Thu, 1 Jun 2017 08:34:24 +0000
+Message-ID: <HE1PR0402MB282824858F29C431E97DBF07F3F60@HE1PR0402MB2828.eurprd04.prod.outlook.com>
+References: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
+ <1489977443-33582-2-git-send-email-andy.tang@nxp.com>
+ <20170601082804.GE20170@codeaurora.org>
+In-Reply-To: <20170601082804.GE20170@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+Hi Stephen,
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+Thanks for your applying.
 
-This patch implements step 4. of this sequence.
+There are other two patches sent on April 6, 2017:
+https://patchwork.kernel.org/patch/9665973/
+https://patchwork.kernel.org/patch/9665977/
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Hope they are in your review queue. Please give it a review.
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index e61b1d1027e1..0f141caa71f6 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_stby_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	cpu_suspend(0, imx6q_suspend_finish);
-+
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_stby_poweroff_probe(void)
-+{
-+	if (pm_power_off) {
-+		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
-+			__func__, pm_power_off, pm_power_off);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_stby_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -618,6 +640,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
-+		imx6_pm_stby_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
--- 
-2.11.0
+Regards,
+Andy
+
+-----Original Message-----
+From: Stephen Boyd [mailto:sboyd@codeaurora.org]=20
+Sent: Thursday, June 01, 2017 4:28 PM
+To: Andy Tang <andy.tang@nxp.com>
+Cc: mturquette@baylibre.com; robh+dt@kernel.org; mark.rutland@arm.com; linu=
+x-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel=
+.org; linux-arm-kernel@lists.infradead.org; Scott Wood <oss@buserror.net>
+Subject: Re: [PATCH 2/2 v2] clk: qoriq: Separate root input clock for core =
+PLLs on ls1012a
+
+On 03/20, Yuantian Tang wrote:
+> From: Scott Wood <oss@buserror.net>
+>=20
+> ls1012a has separate input root clocks for core PLLs versus the=20
+> platform PLL, with the latter described as sysclk in the hw docs.
+> If a second input clock, named "coreclk", is present, this clock will=20
+> be used for the core PLLs.
+>=20
+> Signed-off-by: Scott Wood <oss@buserror.net>
+> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+
+Applied to clk-next
+
+--
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux =
+Foundation Collaborative Project
