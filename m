@@ -1,189 +1,112 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
 	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v4 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-Date: Fri,  9 Jun 2017 16:07:38 +0200
-Message-Id: <20170609140739.15726-6-o.rempel@pengutronix.de>
-In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
-References: <20170609140739.15726-1-o.rempel@pengutronix.de>
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v3 1/9] clk: mvebu: cp110: make failure labels more meaningful
+Date: Thu,  1 Jun 2017 16:55:34 +0200
+Message-Id: <29e6beb5a55fe79c94e0f746d0de7bd851cd3618.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
-about state changes. In this case internal state of PMIC must be
-preconfigured for upcomming state change.
-It works fine with the current regulator framework, except with the
-power-off case.
+In preparation to the addition of a new clock, rename the goto labels
+used to handle the failure cases using a name related to the failure
+cause. This will allow to insert additional failing cases without
+renaming all the labels.
 
-This patch is providing an optional pm_power_off_prepare handler
-which will configure standby state of the PMIC to disable all power lines.
-
-In my power consumption test on RIoTBoard, I got the following results:
-power off without this patch:	320 mA
-power off with this patch:	2   mA
-suspend to ram:			40  mA
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+ drivers/clk/mvebu/cp110-system-controller.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 63922a2167e5..f6c276ed91d8 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -28,6 +28,7 @@
- #include <linux/regulator/pfuze100.h>
- #include <linux/i2c.h>
- #include <linux/slab.h>
-+#include <linux/kallsyms.h>
- #include <linux/regmap.h>
- 
- #define PFUZE_NUMREGS		128
-@@ -42,11 +43,17 @@
- 
- #define PFUZE100_COINVOL	0x1a
- #define PFUZE100_SW1ABVOL	0x20
-+#define PFUZE100_SW1ABMODE	0x23
- #define PFUZE100_SW1CVOL	0x2e
-+#define PFUZE100_SW1CMODE	0x31
- #define PFUZE100_SW2VOL		0x35
-+#define PFUZE100_SW2MODE	0x38
- #define PFUZE100_SW3AVOL	0x3c
-+#define PFUZE100_SW3AMODE	0x3f
- #define PFUZE100_SW3BVOL	0x43
-+#define PFUZE100_SW3BMODE	0x46
- #define PFUZE100_SW4VOL		0x4a
-+#define PFUZE100_SW4MODE	0x4d
- #define PFUZE100_SWBSTCON1	0x66
- #define PFUZE100_VREFDDRCON	0x6a
- #define PFUZE100_VSNVSVOL	0x6b
-@@ -57,6 +64,13 @@
- #define PFUZE100_VGEN5VOL	0x70
- #define PFUZE100_VGEN6VOL	0x71
- 
-+#define PFUZE100_SWxMODE_MASK	0xf
-+#define PFUZE100_SWxMODE_APS_APS	0x8
-+#define PFUZE100_SWxMODE_APS_OFF	0x4
-+
-+#define PFUZE100_VGENxLPWR	BIT(6)
-+#define PFUZE100_VGENxSTBY	BIT(5)
-+
- enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
- 
- struct pfuze_regulator {
-@@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(int index)
- }
- #endif
- 
-+static struct pfuze_chip *syspm_pfuze_chip;
-+
-+static void pfuze_power_off_prepare(void)
-+{
-+	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
-+
-+	/* Switch from default mode: APS/APS to APS/Off */
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+}
-+
-+static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
-+{
-+	if (pfuze_chip->chip_id != PFUZE100) {
-+		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
-+		return -ENODEV;
-+	}
-+
-+	if (pm_power_off_prepare) {
-+		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
-+		return -EBUSY;
-+	}
-+
-+	if (syspm_pfuze_chip) {
-+		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
-+		return -EBUSY;
-+	}
-+
-+	syspm_pfuze_chip = pfuze_chip;
-+	pm_power_off_prepare = pfuze_power_off_prepare;
-+
-+	return 0;
-+}
-+
- static int pfuze_identify(struct pfuze_chip *pfuze_chip)
- {
- 	unsigned int value;
-@@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
- 		}
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 6b11d7b3e0e0..3b27a6056c73 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -221,7 +221,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 					1000 * 1000 * 1000);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail0;
++		goto fail_apll;
  	}
  
-+	if (of_property_read_bool(client->dev.of_node,
-+				  "fsl,pmic-stby-poweroff"))
-+		return pfuze_power_off_prepare_init(pfuze_chip);
-+
-+	return 0;
-+}
-+
-+static int pfuze100_regulator_remove(struct i2c_client *client)
-+{
-+	if (syspm_pfuze_chip) {
-+		syspm_pfuze_chip = NULL;
-+		pm_power_off_prepare = NULL;
-+	}
-+
- 	return 0;
+ 	cp110_clks[CP110_CORE_APLL] = hw;
+@@ -232,7 +232,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail1;
++		goto fail_ppv2;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_PPV2] = hw;
+@@ -243,7 +243,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail2;
++		goto fail_eip;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_EIP] = hw;
+@@ -254,7 +254,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail3;
++		goto fail_core;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_CORE] = hw;
+@@ -270,7 +270,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 						   core_name, 0, 1, 1);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+-		goto fail4;
++		goto fail_nand;
+ 	}
+ 
+ 	cp110_clks[CP110_CORE_NAND] = hw;
+@@ -365,15 +365,15 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
+-fail4:
++fail_nand:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
+-fail3:
++fail_core:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
+-fail2:
++fail_eip:
+ 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
+-fail1:
++fail_ppv2:
+ 	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
+-fail0:
++fail_apll:
+ 	return ret;
  }
  
-@@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver = {
- 		.of_match_table = pfuze_dt_ids,
- 	},
- 	.probe = pfuze100_regulator_probe,
-+	.remove = pfuze100_regulator_remove,
- };
- module_i2c_driver(pfuze_driver);
- 
 -- 
-2.11.0
+git-series 0.9.1
