@@ -1,46 +1,63 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 16/17] devicetree/bindings: Add GCW vendor prefix
-Date: Tue, 20 Jun 2017 17:18:54 +0200
-Message-Id: <20170620151855.19399-16-paul@crapouillou.net>
-In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170620151855.19399-1-paul@crapouillou.net>
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	varada@codeaurora.org,
+	mraghava@codeaurora.org
+Subject: [PATCH v3 5/5] arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
+Date: Thu,  1 Jun 2017 16:58:02 +0530
+Message-Id: <1496316482-25468-6-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
+References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Game Consoles Worldwide, mostly known under the acronym GCW, is the
-creator of the GCW Zero open-source video game system.
+From: Abhishek Sahu <absahu@codeaurora.org>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Rob Herring <robh@kernel.org>
+These configs are required for booting kernel in QCOM
+IPQ8074 boards.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
- v2: It's 'Game Consoles Worldwide', not 'Games Consoles Worldwide'
-
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index c03d20140366..5921aa1248fb 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -114,6 +114,7 @@ focaltech	FocalTech Systems Co.,Ltd
- friendlyarm	Guangzhou FriendlyARM Computer Tech Co., Ltd
- fsl	Freescale Semiconductor
- fujitsu	Fujitsu Ltd.
-+gcw Game Consoles Worldwide
- ge	General Electric Company
- geekbuying	GeekBuying
- gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 65cdd87..c20328e 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -267,6 +267,7 @@ CONFIG_SPI_S3C64XX=y
+ CONFIG_SPI_SPIDEV=m
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_SINGLE=y
++CONFIG_PINCTRL_IPQ8074=y
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_MSM8916=y
+ CONFIG_PINCTRL_MSM8994=y
+@@ -450,6 +451,7 @@ CONFIG_CLK_QORIQ=y
+ CONFIG_COMMON_CLK_PWM=y
+ CONFIG_COMMON_CLK_QCOM=y
+ CONFIG_QCOM_CLK_SMD_RPM=y
++CONFIG_IPQ_GCC_8074=y
+ CONFIG_MSM_GCC_8916=y
+ CONFIG_MSM_GCC_8994=y
+ CONFIG_MSM_MMCC_8996=y
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
