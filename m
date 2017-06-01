@@ -1,57 +1,345 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        "daniel.thompson@linaro.org"
-	<daniel.thompson@linaro.org>,
-        "andrea.merello@gmail.com"
-	<andrea.merello@gmail.com>,
-        "radoslaw.pietrzyk@gmail.com"
-	<radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        "Olivier
- BIDEAU" <olivier.bideau@st.com>,
-        Amelie DELAUNAY <amelie.delaunay@st.com>,
-        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
-        "Gabriel
- FERNANDEZ" <gabriel.fernandez@st.com>
-Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
-Date: Thu, 29 Jun 2017 13:41:04 +0000
-Message-ID: <7c0c3861-cf61-a9e2-cd5d-2ae30b8f32fa@st.com>
-References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
- <20170621220703.GI4493@codeaurora.org>
- <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
- <20170628155956.GA5316@codeaurora.org>
-In-Reply-To: <20170628155956.GA5316@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v3 9/9] arm64: dts: marvell: use new binding for the system controller on cp110
+Date: Thu,  1 Jun 2017 16:55:42 +0200
+Message-Id: <9c5807cafb03413f4318f6c95a2e093bd9cdcdcf.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCk9uIDA2LzI4LzIwMTcgMDU6NTkgUE0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gT24gMDYv
-MjcsIEdhYnJpZWwgRkVSTkFOREVaIHdyb3RlOg0KPj4NCj4+IE9uIDA2LzIyLzIwMTcgMTI6MDcg
-QU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4+PiByZWFkbF9wb2xsX3RpbWVvdXQ/DQo+Pj4NCj4+
-IGlmIGkgdXNlIHJlYWRsX3BvbGxfdGltZW91dCAod2ljaCB1c2UgJ2t0aW1lX2dldCgpJykgaXQg
-Y2FuIGJlDQo+PiBvcGVyYXRpb25hbCBvbmx5IGFmdGVyIHRoZSBzZWxlY3Rpb24gb2YgY2xvY2tz
-b3VyY2UgPyAoZGV2aWNlX2luaXRjYWxsKS4NCj4+IEFuZCB0aGVuIGlmIGEgZHJpdmVyIHR1cm4g
-b24gYSBjbG9jayBiZWZvcmUsIGl0IGNvdWxkIGJsb2NrZWQgdGhlIGxpbnV4DQo+PiBjb25zb2xl
-ID8NCj4+DQo+IE9rLiBJIHdvbmRlciBpZiB3ZSBjb3VsZCBhZGQgc29tZSBzb3J0IG9mIHN0YXJ0
-aW5nIGNoZWNrIHRvDQo+IHJlYWRsX3BvbGxfdGltZW91dCgpIHRoYXQgdGVzdHMgc3lzdGVtX3N0
-YXRlIGZvciBib290aW5nIHZzLg0KPiBzY2hlZHVsaW5nPyBUaGF0IHNob3VsZCBiZSBzdWZmaWNp
-ZW50IHRvIGhhbmRsZSB0aGlzIGNhc2U/DQo+DQpPb3BzIGkgdGhpbmsgaSB1bmRlcnN0b29kIG15
-IHByb2JsZW0uLi4NCmkgdXNlZCByZWFkbF9wb2xsX3RpbWVvdXQgaW4gYXRvbWljIGNvbnRleHQu
-DQpJIGhhdmUgdG8gbW92ZSBteSBjb2RlIGluIHRoZSAucHJlcGFyZSBvcHMuDQoNCklmIHlvdSBh
-cmUgb2sgd2l0aCB0aGF0IGkgd2lsbCBzZW5kIGEgdjUNCg0KVGhhbmtzDQoNCkdhYnJpZWwNCg0K
+The new binding for the system controller on cp110 moved the clock
+controller into a subnode. This preliminary step will allow to add gpio
+and pinctrl subnodes.
+
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 41 ++++++-------
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 35 +++++------
+ 2 files changed, 41 insertions(+), 35 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index a0f57a8e5dcb..96a4ff75b3b0 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -62,7 +62,7 @@
+ 			cpm_ethernet: ethernet@0 {
+ 				compatible = "marvell,armada-7k-pp22";
+ 				reg = <0x0 0x100000>, <0x129000 0xb000>;
+-				clocks = <&cpm_syscon0 1 3>, <&cpm_syscon0 1 9>, <&cpm_syscon0 1 5>;
++				clocks = <&cpm_clk 1 3>, <&cpm_clk 1 9>, <&cpm_clk 1 5>;
+ 				clock-names = "pp_clk", "gop_clk", "mg_clk";
+ 				status = "disabled";
+ 				dma-coherent;
+@@ -97,10 +97,13 @@
+ 			};
+ 
+ 			cpm_syscon0: system-controller@440000 {
+-				compatible = "marvell,cp110-system-controller0",
+-					     "syscon";
++				compatible = "syscon", "simple-mfd";
+ 				reg = <0x440000 0x1000>;
+-				#clock-cells = <2>;
++
++				cpm_clk: clock {
++					compatible = "marvell,cp110-clock";
++					#clock-cells = <2>;
++				};
+ 			};
+ 
+ 			cpm_rtc: rtc@284000 {
+@@ -115,7 +118,7 @@
+ 					     "generic-ahci";
+ 				reg = <0x540000 0x30000>;
+ 				interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cpm_syscon0 1 15>;
++				clocks = <&cpm_clk 1 15>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -125,7 +128,7 @@
+ 				reg = <0x500000 0x4000>;
+ 				dma-coherent;
+ 				interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cpm_syscon0 1 22>;
++				clocks = <&cpm_clk 1 22>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -135,7 +138,7 @@
+ 				reg = <0x510000 0x4000>;
+ 				dma-coherent;
+ 				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cpm_syscon0 1 23>;
++				clocks = <&cpm_clk 1 23>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -145,7 +148,7 @@
+ 				      <0x6b0000 0x1000>;
+ 				dma-coherent;
+ 				msi-parent = <&gic_v2m0>;
+-				clocks = <&cpm_syscon0 1 8>;
++				clocks = <&cpm_clk 1 8>;
+ 			};
+ 
+ 			cpm_xor1: xor@6c0000 {
+@@ -154,7 +157,7 @@
+ 				      <0x6d0000 0x1000>;
+ 				dma-coherent;
+ 				msi-parent = <&gic_v2m0>;
+-				clocks = <&cpm_syscon0 1 7>;
++				clocks = <&cpm_clk 1 7>;
+ 			};
+ 
+ 			cpm_spi0: spi@700600 {
+@@ -163,7 +166,7 @@
+ 				#address-cells = <0x1>;
+ 				#size-cells = <0x0>;
+ 				cell-index = <1>;
+-				clocks = <&cpm_syscon0 1 21>;
++				clocks = <&cpm_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -173,7 +176,7 @@
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				cell-index = <2>;
+-				clocks = <&cpm_syscon0 1 21>;
++				clocks = <&cpm_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -183,7 +186,7 @@
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cpm_syscon0 1 21>;
++				clocks = <&cpm_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -193,7 +196,7 @@
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cpm_syscon0 1 21>;
++				clocks = <&cpm_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -201,7 +204,7 @@
+ 				compatible = "marvell,armada-8k-rng", "inside-secure,safexcel-eip76";
+ 				reg = <0x760000 0x7d>;
+ 				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cpm_syscon0 1 25>;
++				clocks = <&cpm_clk 1 25>;
+ 				status = "okay";
+ 			};
+ 
+@@ -210,7 +213,7 @@
+ 				reg = <0x780000 0x300>;
+ 				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 				clock-names = "core";
+-				clocks = <&cpm_syscon0 1 4>;
++				clocks = <&cpm_clk 1 4>;
+ 				dma-coherent;
+ 				status = "disabled";
+ 			};
+@@ -227,7 +230,7 @@
+ 					     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-names = "mem", "ring0", "ring1",
+ 				"ring2", "ring3", "eip";
+-				clocks = <&cpm_syscon0 1 26>;
++				clocks = <&cpm_clk 1 26>;
+ 				status = "disabled";
+ 			};
+ 		};
+@@ -254,7 +257,7 @@
+ 			interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 			num-lanes = <1>;
+-			clocks = <&cpm_syscon0 1 13>;
++			clocks = <&cpm_clk 1 13>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -281,7 +284,7 @@
+ 			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			num-lanes = <1>;
+-			clocks = <&cpm_syscon0 1 11>;
++			clocks = <&cpm_clk 1 11>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -308,7 +311,7 @@
+ 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			num-lanes = <1>;
+-			clocks = <&cpm_syscon0 1 12>;
++			clocks = <&cpm_clk 1 12>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+index 9584bc8d8b3f..48a658aa5b32 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+@@ -104,10 +104,13 @@
+ 			};
+ 
+ 			cps_syscon0: system-controller@440000 {
+-				compatible = "marvell,cp110-system-controller0",
+-					     "syscon";
++				compatible = "syscon", "simple-mfd";
+ 				reg = <0x440000 0x1000>;
+-				#clock-cells = <2>;
++
++				cps_clk: clock {
++					compatible = "marvell,cp110-clock";
++					#clock-cells = <2>;
++				};
+ 			};
+ 
+ 			cps_sata0: sata@540000 {
+@@ -115,7 +118,7 @@
+ 					     "generic-ahci";
+ 				reg = <0x540000 0x30000>;
+ 				interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cps_syscon0 1 15>;
++				clocks = <&cps_clk 1 15>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -125,7 +128,7 @@
+ 				reg = <0x500000 0x4000>;
+ 				dma-coherent;
+ 				interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cps_syscon0 1 22>;
++				clocks = <&cps_clk 1 22>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -135,7 +138,7 @@
+ 				reg = <0x510000 0x4000>;
+ 				dma-coherent;
+ 				interrupts = <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cps_syscon0 1 23>;
++				clocks = <&cps_clk 1 23>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -145,7 +148,7 @@
+ 				      <0x6b0000 0x1000>;
+ 				dma-coherent;
+ 				msi-parent = <&gic_v2m0>;
+-				clocks = <&cps_syscon0 1 8>;
++				clocks = <&cps_clk 1 8>;
+ 			};
+ 
+ 			cps_xor1: xor@6c0000 {
+@@ -154,7 +157,7 @@
+ 				      <0x6d0000 0x1000>;
+ 				dma-coherent;
+ 				msi-parent = <&gic_v2m0>;
+-				clocks = <&cps_syscon0 1 7>;
++				clocks = <&cps_clk 1 7>;
+ 			};
+ 
+ 			cps_spi0: spi@700600 {
+@@ -163,7 +166,7 @@
+ 				#address-cells = <0x1>;
+ 				#size-cells = <0x0>;
+ 				cell-index = <3>;
+-				clocks = <&cps_syscon0 1 21>;
++				clocks = <&cps_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -173,7 +176,7 @@
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				cell-index = <4>;
+-				clocks = <&cps_syscon0 1 21>;
++				clocks = <&cps_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -183,7 +186,7 @@
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				interrupts = <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cps_syscon0 1 21>;
++				clocks = <&cps_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -193,7 +196,7 @@
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				interrupts = <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cps_syscon0 1 21>;
++				clocks = <&cps_clk 1 21>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -201,7 +204,7 @@
+ 				compatible = "marvell,armada-8k-rng", "inside-secure,safexcel-eip76";
+ 				reg = <0x760000 0x7d>;
+ 				interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&cps_syscon0 1 25>;
++				clocks = <&cps_clk 1 25>;
+ 				status = "okay";
+ 			};
+ 
+@@ -244,7 +247,7 @@
+ 			interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
+ 			num-lanes = <1>;
+-			clocks = <&cps_syscon0 1 13>;
++			clocks = <&cps_clk 1 13>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -271,7 +274,7 @@
+ 			interrupts = <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			num-lanes = <1>;
+-			clocks = <&cps_syscon0 1 11>;
++			clocks = <&cps_clk 1 11>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -298,7 +301,7 @@
+ 			interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			num-lanes = <1>;
+-			clocks = <&cps_syscon0 1 12>;
++			clocks = <&cps_clk 1 12>;
+ 			status = "disabled";
+ 		};
+ 	};
+-- 
+git-series 0.9.1
