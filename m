@@ -1,74 +1,35 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:38444 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751047AbdFAHZs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2017 03:25:48 -0400
+Date: Thu, 1 Jun 2017 00:25:45 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org, stefan@agner.ch,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH v2] clk: imx7d: Fix the powerdown bit location of PLL DDR
+Message-ID: <20170601072545.GS20170@codeaurora.org>
+References: <1494849305-1405-1-git-send-email-festevam@gmail.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <50911172-8fa1-8341-0ed0-d40f00d9392c@de.bosch.com>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
- <CAMuHMdWRadUCZUycUW3dKJhS__aRRVbV1tXo0umUQ7KHOYQMoQ@mail.gmail.com> <50911172-8fa1-8341-0ed0-d40f00d9392c@de.bosch.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jun 2017 14:45:39 +0200
-Message-ID: <CAMuHMdXedexq_jGq+y3Hbmph1_1N_LjT7dhYJ=rC0Q2oK_Xjug@mail.gmail.com>
-Subject: Re: Clocks used by another OS/CPU
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@baylibre.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494849305-1405-1-git-send-email-festevam@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dirk,
+On 05/15, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> According to the MX7D Reference Manual the powerdown bit of
+> CCM_ANALOG_PLL_DDRn register is bit 20, so fix it accordingly.
+> 
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> Reviewed-by: Stefan Agner <stefan@agner.ch>
+> ---
 
-On Thu, Jun 29, 2017 at 2:07 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> On 29.06.2017 13:56, Geert Uytterhoeven wrote:
->> On Thu, Jun 29, 2017 at 11:27 AM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> CC clock, ARM, DT, PM people
->>>
->>> TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
->>> disables them as being unused.
->>
->>> Of course this is not limited to clocks, but also to e.g. PM domains.
->>
->> BTW, how do you prevent Linux from powering down the CR7 PM domain,
->> which contains the Cortex R7?
->
-> The idea is
->
-> --- a/drivers/soc/renesas/r8a7795-sysc.c
-> +++ b/drivers/soc/renesas/r8a7795-sysc.c
-> @@ -38,7 +38,8 @@ static const struct rcar_sysc_area r8a7795_areas[]
-> __initconst = {
->         { "ca53-cpu3",  0x200, 3, R8A7795_PD_CA53_CPU3, R8A7795_PD_CA53_SCU,
->           PD_CPU_NOCR },
->         { "a3vp",       0x340, 0, R8A7795_PD_A3VP,      R8A7795_PD_ALWAYS_ON
-> },
-> -       { "cr7",        0x240, 0, R8A7795_PD_CR7,       R8A7795_PD_ALWAYS_ON
-> },
-> +       { "cr7",        0x240, 0, R8A7795_PD_CR7,
-> R8A7795_PD_ALWAYS_ON,
-> +         PD_CPU_NOCR },
->         { "a3vc",       0x380, 0, R8A7795_PD_A3VC,      R8A7795_PD_ALWAYS_ON
-> },
->         { "a2vc0",      0x3c0, 0, R8A7795_PD_A2VC0,     R8A7795_PD_A3VC },
->         { "a2vc1",      0x3c0, 1, R8A7795_PD_A2VC1,     R8A7795_PD_A3VC },
->
->
-> Not finally tested, though.
+Applied to clk-next
 
-Pretending the CR7 PM Domain can only be controlled through WFI/APMU only should
-work.
-But IMHO it is a hack, just like your solution for the CANFD clock.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
