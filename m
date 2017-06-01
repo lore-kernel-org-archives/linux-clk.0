@@ -1,80 +1,45 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v3 4/9] dt-bindings: cp110: introduce a new binding
-Date: Thu,  1 Jun 2017 16:55:37 +0200
-Message-Id: <b27495e10fb4f4d8a7fd1a760d49402bbae83b58.1496328934.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v3 0/2] clk: bcm2835: PCM clock improvements
+Message-ID: <c6708407-597a-0b08-d992-3bc4852118ec@raspberrypi.org>
+Date: Thu, 1 Jun 2017 10:10:20 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the documentation according to the change made in the
-patch "pinctrl: dt-bindings: cp110: introduce a new binding".
+The switch to using the upstream bcm2835_cprman clock driver caused a
+few problems for users of PCM (I2S) peripherals. Audio applications
+require accurate, stable clocks, and the cprman driver wasn't
+conservative enough in its choice of clock sources.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+These patches restrict the clock sources for the PCM peripheral in two
+ways: the first causes all possible sources except OSC and PLLD_PER
+to be ignored, while the second allows clocks to be specified as
+"low_jitter", causing the effects of fractional divisors to be taken
+into account when comparing potential clocks for accuracy. In practice,
+the combined effect of the two patches is to choose OSC as a source if
+an integer divisor can be used, otherwise PLLD_PER is chosen.
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-index dbd0a38ca580..e97cc2d73e2e 100644
---- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-@@ -7,6 +7,13 @@ Controller 0 and System Controller 1. This Device Tree binding allows
- to describe the first system controller, which provides registers to
- configure various aspects of the SoC.
- 
-+For the top level node:
-+ - compatible: must be: "syscon", "simple-mfd";
-+ - reg: register area of the CP110 system controller 0
-+
-+Clocks:
-+-------
-+
- The Device Tree node representing this System Controller 0 provides a
- number of clocks:
- 
-@@ -56,14 +63,17 @@ The following clocks are available:
- Required properties:
- 
-  - compatible: must be:
--     "marvell,cp110-system-controller0", "syscon";
-- - reg: register area of the CP110 system controller 0
-+     "marvell,cp110-clock"
-  - #clock-cells: must be set to 2
- 
- Example:
- 
- 	cpm_syscon0: system-controller@440000 {
--		compatible = "marvell,cp110-system-controller0", "syscon";
-+		compatible = "syscon", "simple-mfd";
- 		reg = <0x440000 0x1000>;
--		#clock-cells = <2>;
-+
-+		cpm_clk: clock {
-+			compatible = "marvell,cp110-clock";
-+			#clock-cells = <2>;
-+		};
- 	};
+Changes in v3:
+* Elimination of temporary variable from patch 2.
+
+Changes in v2:
+* Extended bcm2835_pcm_per_parents to cover the pllh_aux slot, and gave
+  it a comment in patch 1.
+* Added a REGISTER_PCM_CLK analagous to REGISTER_PER_CLK in patch 1.
+* Renamed temporary variable idiv to int_div in patch 2.
+
+Phil Elwell (2):
+  clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+  clk: bcm2835: Minimise clock jitter for PCM clock
+
+ drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 5 deletions(-)
+
 -- 
-git-series 0.9.1
+1.9.1
