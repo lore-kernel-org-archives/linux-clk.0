@@ -1,129 +1,98 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	carlo@caione.org,
-	khilman@baylibre.com,
-	linux@armlinux.org.uk,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/3] clk: meson: meson8b: add compatibles for Meson8 and Meson8m2
-Date: Sun,  4 Jun 2017 20:33:39 +0200
-Message-Id: <20170604183341.21417-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
-References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH v2 00/11] Improve cp110 clk support on Marvell Armada 7K/8K
+References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+Date: Thu, 01 Jun 2017 15:34:13 +0200
+In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+	(Gregory CLEMENT's message of "Wed, 31 May 2017 15:41:44 +0200")
+Message-ID: <87lgpbsuga.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock controller on Meson8, Meson8b and Meson8m2 is very similar
-based on the code from the Amlogic GPL kernel sources. Add separate
-compatibles for each SoC to make sure that we can easily implement
-all the small differences for each SoC later on.
+Hi ,
 
-In general the Meson8 and Meson8m2 seem to be almost identical as they
-even share the same mach-meson8 directory in Amlogic's GPL kernel
-sources.
-The main clocks on Meson8, Meson8b and Meson8m2 are very similar,
-because they are all using the same PLL values, 90% of the clock gates
-are the same (the actual diffstat of the mach-meson8/clock.c and
-mach-meson8b/clock.c files is around 30 to 40 lines, when excluding
-all commented out code).
-The difference between the Meson8 and Meson8b clock gates seem to be:
-- Meson8 has AIU_PCLK, HDMI_RX, VCLK2_ENCT, VCLK2_ENCL, UART3,
-  CSI_DIG_CLKIN gates which don't seem to be available on Meson8b
-- the gate on Meson8 for bit 7 seems to be named "_1200XXX" instead
-  of "PERIPHS_TOP" (on Meson8b)
-- Meson8b has a SANA gate which doesn't seem to exist on Meson8 (or
-  on Meson8 the same bit is used by the UART3 gate in Amlogic's GPL
-  kernel sources)
-None of these gates is added for now, since it's unclear whether these
-definitions are actually correct (the VCLK2_ENCT gate for example is
-defined, but only used in some commented block).
+Please do not apply this version. I was just pointed that I misread the
+documentation and that the GOP clock are really also used by the
+SD/eMMC.
 
-The main difference between all three SoCs seem to be the video (VPU)
-clocks. Apart from different supported clock rates (according to vpu.c
-in mach-meson8 and mach-meson8b from Amlogic's GPL kernel sources) the
-most notable difference is that Meson8m2 has a GP_PLL clock and a mux
-(probably the same as on the Meson GX SoCs) to support glitch-free
-(clock rate) switching.
-None of these VPU clocks are not supported by our mainline meson8b
-clock driver yet though.
+So I am about sending a new version of the series removing the 2 first
+patchs and fixing the patch 5.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- .../devicetree/bindings/clock/amlogic,meson8b-clkc.txt        | 11 +++++++----
- drivers/clk/meson/Kconfig                                     |  6 +++---
- drivers/clk/meson/meson8b.c                                   |  5 ++++-
- 3 files changed, 14 insertions(+), 8 deletions(-)
+Gregory
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-index 2b7b3fa588d7..606da38c0959 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-@@ -1,11 +1,14 @@
--* Amlogic Meson8b Clock and Reset Unit
-+* Amlogic Meson8, Meson8b and Meson8m2 Clock and Reset Unit
- 
--The Amlogic Meson8b clock controller generates and supplies clock to various
--controllers within the SoC.
-+The Amlogic Meson8 / Meson8b / Meson8m2 clock controller generates and
-+supplies clock to various controllers within the SoC.
- 
- Required Properties:
- 
--- compatible: should be "amlogic,meson8b-clkc"
-+- compatible: must be one of:
-+	- "amlogic,meson8-clkc" for Meson8 (S802) SoCs
-+	- "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
-+	- "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
- - reg: it must be composed by two tuples:
- 	0) physical base address of the xtal register and length of memory
- 	   mapped region.
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 19480bcc7046..4a806203b73c 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -7,9 +7,9 @@ config COMMON_CLK_MESON8B
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	help
--	  Support for the clock controller on AmLogic S805 devices, aka
--	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
--	  work.
-+	  Support for the clock controller on AmLogic S802 (Meson8),
-+	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
-+	  want peripherals and CPU frequency scaling to work.
- 
- config COMMON_CLK_GXBB
- 	bool
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index bfd1690724de..94c55e79cdde 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1,5 +1,6 @@
- /*
-- * AmLogic S805 / Meson8b Clock Controller Driver
-+ * AmLogic S802 (Meson8) / S805 (Meson8b) / S812 (Meson8m2) Clock Controller
-+ * Driver
-  *
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-@@ -777,7 +778,9 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id meson8b_clkc_match_table[] = {
-+	{ .compatible = "amlogic,meson8-clkc" },
- 	{ .compatible = "amlogic,meson8b-clkc" },
-+	{ .compatible = "amlogic,meson8m2-clkc" },
- 	{ }
- };
- 
+ On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+
+> Hi,
+>
+> We got more information about the clock controllers and the clock tree
+> of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
+>
+> The main change in this second version is about the binding
+> documentation: all the documentation related changes are now move in
+> their own patches. It allows to provide a stable -dt branch for theses
+> changes. I also added the acked-by from Rob Herring.
+>
+> However the last two patches modifying the device tree _must_ be
+> merged through the mvebu tree to avoid future conflict (especially
+> with the recent ICU series sent by Thomas Petazzoni).
+>
+> For the record:
+>
+> The clock tree needs to be fixed, indeed the GOP clock is only the
+> clock for the GOIP and not for the SDIO, it is fixed in the first
+> patch.
+>
+> The third patch does a small improve of the code itself.
+>
+> The purpose of the fifth patch is to have an easier way to add new
+> clocks without breaking the backward compatibility. Indeed, we expect
+> to continue to have new update on the datasheet and this patch will
+> allow integrating this change easier and faster.
+>
+> The  patch 7 is needed to ease the integration of the pinctrl node
+> in the device tree.
+>
+> The patch 9 adds a new clock for the SDIO, it also fixes the clock
+> tree.
+>
+> In this series, even if there is some change in the device tree
+> binding, we paid attention to the backward compatibility, and the
+> driver can still work with the old device tree.
+>
+> Thanks,
+>
+> Gregory
+>
+> Gregory CLEMENT (10):
+>   dt-bindings: cp110: fix name of the GOP gate clock
+>   clk: mvebu: cp110 fix name of the GOP gate clock
+>   clk: mvebu: cp110: make failure labels more meaningful
+>   dt-bindings: cp110: do not depend anymore of the *-clock-output-names
+>   clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
+>   dt-bindings: cp110: introduce a new binding
+>   clk: mvebu: cp110: introduce a new binding
+>   dt-bindings: cp110: add sdio clock to cp-110 system controller
+>   arm64: dts: marvell: remove *-clock-output-names on cp110
+>   arm64: dts: marvell: use new binding for the system controller on cp110
+>
+> Konstantin Porotchkin (1):
+>   clk: mvebu: cp110: add sdio clock to cp-110 system controller
+>
+>  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  35 +++++-------
+>  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
+>  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
+>  drivers/clk/mvebu/cp110-system-controller.c                                | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
+>  4 files changed, 196 insertions(+), 143 deletions(-)
+>
+> base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
+> -- 
+> git-series 0.9.1
+
 -- 
-2.13.0
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
