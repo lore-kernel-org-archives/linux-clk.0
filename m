@@ -1,76 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:44679 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbdFFGbJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 02:31:09 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
-Cc: aisheng.dong@nxp.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
-        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
-        mark.rutland@arm.com, han.xu@nxp.com, fabio.estevam@freescale.com,
-        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v5 2/3] ARM: dts: imx7: add GPMI NAND and APBH DMA
-Date: Mon,  5 Jun 2017 23:30:49 -0700
-Message-Id: <151ddece1e1427d0b69c4ff11b86a69b6a035d0d.1496730576.git-series.stefan@agner.ch>
-In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v3 0/9] Improve cp110 clk support on Marvell Armada 7K/8K
+Date: Thu,  1 Jun 2017 16:55:33 +0200
+Message-Id: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add i.MX 7 APBH DMA and GPMI NAND modules.
+Hi,
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/imx7s.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+We got more information about the clock controllers and the clock tree
+of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
 
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index c4f12fd..d71acd8 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -995,5 +995,37 @@
- 				status = "disabled";
- 			};
- 		};
-+
-+		dma_apbh: dma-apbh@33000000 {
-+			compatible = "fsl,imx7d-dma-apbh", "fsl,imx28-dma-apbh";
-+			reg = <0x33000000 0x2000>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "gpmi0", "gpmi1", "gpmi2", "gpmi3";
-+			#dma-cells = <1>;
-+			dma-channels = <4>;
-+			clocks = <&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
-+			clock-names = "dma_apbh_bch", "dma_apbh_io";
-+		};
-+
-+		gpmi: gpmi-nand@33002000{
-+			compatible = "fsl,imx7d-gpmi-nand";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			reg = <0x33002000 0x2000>, <0x33004000 0x4000>;
-+			reg-names = "gpmi-nand", "bch";
-+			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "bch";
-+			clocks = <&clks IMX7D_NAND_RAWNAND_CLK>,
-+				<&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
-+			clock-names = "gpmi_io", "gpmi_bch_apb";
-+			dmas = <&dma_apbh 0>;
-+			dma-names = "rx-tx";
-+			status = "disabled";
-+			assigned-clocks = <&clks IMX7D_NAND_ROOT_SRC>;
-+			assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_500M_CLK>;
-+		};
- 	};
- };
+In this 3rd version I removed the GOP changes because the clock is
+actually shared between GOP and SD/eMMC.
+
+The last two patches modifying the device tree _must_ be merged
+through the mvebu tree to avoid future conflict (especially with the
+recent ICU series sent by Thomas Petazzoni).
+
+Changelog:
+v2 -> v3
+ - removed the GOP changed
+cover letter for v2:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509816.html
+
+v1 -> v2
+ - split the patch to have separate patch for the binding documentation
+ - added the acked-by from Rob Herring
+cover letter for v2:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507381.html
+
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (8):
+  clk: mvebu: cp110: make failure labels more meaningful
+  dt-bindings: cp110: do not depend anymore of the *-clock-output-names
+  clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
+  dt-bindings: cp110: introduce a new binding
+  clk: mvebu: cp110: introduce a new binding
+  dt-bindings: cp110: add sdio clock to cp-110 system controller
+  arm64: dts: marvell: remove *-clock-output-names on cp110
+  arm64: dts: marvell: use new binding for the system controller on cp110
+
+Konstantin Porotchkin (1):
+  clk: mvebu: cp110: add sdio clock to cp-110 system controller
+
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  33 +++++-------
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
+ drivers/clk/mvebu/cp110-system-controller.c                                | 200 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
+ 4 files changed, 194 insertions(+), 141 deletions(-)
+
+base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
 -- 
 git-series 0.9.1
