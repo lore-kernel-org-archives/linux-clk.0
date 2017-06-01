@@ -1,98 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:55689 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751293AbdFFHc0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 03:32:26 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v3 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
-Date: Tue,  6 Jun 2017 09:31:42 +0200
-Message-Id: <20170606073146.26882-3-o.rempel@pengutronix.de>
-In-Reply-To: <20170606073146.26882-1-o.rempel@pengutronix.de>
-References: <20170606073146.26882-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <arndbergmann@gmail.com>
+MIME-Version: 1.0
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20170601071750.GP20170@codeaurora.org>
+References: <20170522202951.2896280-1-arnd@arndb.de> <20170523005553.GH20170@codeaurora.org>
+ <20170523071940.xbnahikb4d5dge7v@wens.csie.org> <CAK8P3a37CT0tzdy4V8Hj=-Mu=JrdR08zv2fqVH5Y+hzT7OK4Vg@mail.gmail.com>
+ <20170601071750.GP20170@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 1 Jun 2017 11:07:46 +0200
+Message-ID: <CAK8P3a2-hoVKFOr455ZseM4UrmHGFXTE7VbXpSd2Jdp7rnrKyA@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tobias Regnery <tobias.regnery@gmail.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+On Thu, Jun 1, 2017 at 9:17 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 05/23, Arnd Bergmann wrote:
+>> On Tue, May 23, 2017 at 9:19 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+>> An alternative would be to remove all the dependencies as 'lib-y'
+>> in the Makefile and remove the individual Kconfig symbols. That
+>> way, we would always build all of them when CONFIG_SUNXI_CCU
+>> is enabled, but the linker would drop the ones that do not get
+>> referenced.
+>
+> In this case you're right, and we should change them to lib-y in
+> the Makefile and then let the linker figure this all out. No more
+> dependency patches. I think we only need to do this sort of
+> Kconfig stuff when we want to make a library .ko file that each
+> SoC specific driver depends on for common code.
+>
+> It would be cool if the build system could figure that all out
+> for us, and let us have something like modlib-y that makes it a
+> library (archive) if all objects depending on it are builtin and
+> we have CONFIG_MODULES=n, or makes it into an object file if
+> something is builtin that depends on it, or makes it into a
+> module if everything that depends on it is a module.
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+In this case, there are no loadable modules, the sunxi clk drivers
+can only be built-in, which should simplify the problem a lot.
 
-This patch implements step 4. of this sequence.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/mach-imx/pm-imx6.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index e61b1d1027e1..3a4f8f289f4d 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -27,6 +27,8 @@
- #include <asm/proc-fns.h>
- #include <asm/suspend.h>
- #include <asm/tlb.h>
-+#include <linux/kallsyms.h>
-+#include <linux/regulator/machine.h>
- 
- #include "common.h"
- #include "hardware.h"
-@@ -602,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	cpu_suspend(0, imx6q_suspend_finish);
-+
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_poweroff_probe(void)
-+{
-+	if (pm_power_off) {
-+		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
-+			__func__, pm_power_off, pm_power_off);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -618,6 +642,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
-+		imx6_pm_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
--- 
-2.11.0
-
+       Arnd
