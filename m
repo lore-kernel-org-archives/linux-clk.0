@@ -1,124 +1,89 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 06/10] clk: add clk_set_rate_protect
-Date: Mon, 12 Jun 2017 21:44:34 +0200
-Message-Id: <20170612194438.12298-7-jbrunet@baylibre.com>
-In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v3 8/9] arm64: dts: marvell: remove *-clock-output-names on cp110
+Date: Thu,  1 Jun 2017 16:55:41 +0200
+Message-Id: <99492ad5e3026e12a57623bdcf0cc33d4935eb66.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_set_rate_protect is a combination of clk_set_rate and clk_rate_protect
-within a critical section. In case where several protecting consumers
-compete to set the rate of the same provider, it provides a way to make
-sure that at least one of them will be satisfied before the resource is
-locked.
+The *-clock-output-names of the cp110-system-controller0 node are not
+used anymore, so remove them.
 
-This is to avoid the unlikely situation where several consumers protect a
-clock provider and none actually get a rate it can work with.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/clk/clk.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h | 14 ++++++++++++++
- 2 files changed, 59 insertions(+)
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 13 +-------------
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 13 +-------------
+ 2 files changed, 26 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d688b8f59a59..d91236e70a04 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1809,6 +1809,51 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
- EXPORT_SYMBOL_GPL(clk_set_rate);
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index ac8df5201cd6..a0f57a8e5dcb 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -101,19 +101,6 @@
+ 					     "syscon";
+ 				reg = <0x440000 0x1000>;
+ 				#clock-cells = <2>;
+-				core-clock-output-names =
+-					"cpm-apll", "cpm-ppv2-core", "cpm-eip",
+-					"cpm-core", "cpm-nand-core";
+-				gate-clock-output-names =
+-					"cpm-audio", "cpm-communit", "cpm-nand",
+-					"cpm-ppv2", "cpm-sdio", "cpm-mg-domain",
+-					"cpm-mg-core", "cpm-xor1", "cpm-xor0",
+-					"cpm-gop-dp", "none", "cpm-pcie_x10",
+-					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
+-					"cpm-sata", "cpm-sata-usb", "cpm-main",
+-					"cpm-sd-mmc-gop", "none", "none",
+-					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
+-					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 			};
  
- /**
-+ * clk_set_rate_protect - specify a new rate and protect it
-+ * @clk: the clk whose rate is being changed
-+ * @rate: the new rate for clk
-+ *
-+ * This is a combination of clk_set_rate and clk_rate_protect within
-+ * a critical section
-+ *
-+ * This can be used initially to ensure that at least 1 consumers is
-+ * statisfied when several protecting consummers are competing for the
-+ * same clock provider.
-+ *
-+ * The protection is not applied if setting the rate failed.
-+ *
-+ * Returns 0 on success, -EERROR otherwise.
-+ */
-+int clk_set_rate_protect(struct clk *clk, unsigned long rate)
-+{
-+	int ret;
-+
-+	if (!clk)
-+		return 0;
-+
-+	/* prevent racing with updates to the clock topology */
-+	clk_prepare_lock();
-+
-+	/*
-+	 * The temporary protection removal is not here, on purpose
-+	 * This function is meant to be used in instead of clk_rate_protect,
-+	 * so before the consumer code path protect the clock provider
-+	 */
-+
-+	ret = clk_core_set_rate_nolock(clk->core, rate);
-+
-+	if (!ret) {
-+		clk_core_rate_protect(clk->core);
-+		clk->protect_count++;
-+	}
-+
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(clk_set_rate_protect);
-+
-+/**
-  * clk_set_rate_range - set a rate range for a clock source
-  * @clk: clock source
-  * @min: desired minimum clock rate in Hz, inclusive
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index b60c36f2e6b0..7a01b32f7029 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -497,6 +497,15 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
- int clk_set_rate(struct clk *clk, unsigned long rate);
+ 			cpm_rtc: rtc@284000 {
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+index 7740a75a8230..9584bc8d8b3f 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+@@ -108,19 +108,6 @@
+ 					     "syscon";
+ 				reg = <0x440000 0x1000>;
+ 				#clock-cells = <2>;
+-				core-clock-output-names =
+-					"cps-apll", "cps-ppv2-core", "cps-eip",
+-					"cps-core", "cps-nand-core";
+-				gate-clock-output-names =
+-					"cps-audio", "cps-communit", "cps-nand",
+-					"cps-ppv2", "cps-sdio", "cps-mg-domain",
+-					"cps-mg-core", "cps-xor1", "cps-xor0",
+-					"cps-gop-dp", "none", "cps-pcie_x10",
+-					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
+-					"cps-sata", "cps-sata-usb", "cps-main",
+-					"cps-sd-mmc-gop", "none", "none",
+-					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
+-					"cps-usb3dev", "cps-eip150", "cps-eip197";
+ 			};
  
- /**
-+ * clk_set_rate_protect - set and protect the clock rate for a clock source
-+ * @clk: clock source
-+ * @rate: desired clock rate in Hz
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+int clk_set_rate_protect(struct clk *clk, unsigned long rate);
-+
-+/**
-  * clk_has_parent - check if a clock is a possible parent for another
-  * @clk: clock source
-  * @parent: parent clock source
-@@ -638,6 +647,11 @@ static inline int clk_set_rate(struct clk *clk, unsigned long rate)
- 	return 0;
- }
- 
-+static inline int clk_set_rate_protect(struct clk *clk, unsigned long rate)
-+{
-+	return 0;
-+}
-+
- static inline long clk_round_rate(struct clk *clk, unsigned long rate)
- {
- 	return 0;
+ 			cps_sata0: sata@540000 {
 -- 
-2.9.4
+git-series 0.9.1
