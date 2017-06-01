@@ -1,94 +1,114 @@
-Return-Path: <anup.patel@broadcom.com>
+Return-Path: <phil@raspberrypi.org>
+Subject: Re: [PATCH v2 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
+To: Eric Anholt <eric@anholt.net>,
+        Michael Turquette
+ <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <b9208d9b-c7bb-49a3-85d9-231c8b41eb8c@raspberrypi.org>
+ <a507a7e7-3c64-1dcb-98f1-a7f94364f26c@raspberrypi.org>
+ <87bmq8btfe.fsf@eliezer.anholt.net>
+From: Phil Elwell <phil@raspberrypi.org>
+Message-ID: <1c434318-eb0a-b669-9a0a-780993b1c03d@raspberrypi.org>
+Date: Thu, 1 Jun 2017 09:46:33 +0100
 MIME-Version: 1.0
-In-Reply-To: <c26e95e1-4bfa-0d24-33cc-8d5ae3102864@gmail.com>
-References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
- <4c15213f-4ac6-a0a7-f2b8-cde2b4cee891@gmail.com> <c26e95e1-4bfa-0d24-33cc-8d5ae3102864@gmail.com>
-From: Anup Patel <anup.patel@broadcom.com>
-Date: Tue, 6 Jun 2017 08:50:39 +0530
-Message-ID: <CAALAos_T4aWPQrug+9eYLM8z2pxvTiiieFnQ49zft4iXpGKA3A@mail.gmail.com>
-Subject: Re: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>, Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>, Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>, Device Tree <devicetree@vger.kernel.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>,
-	BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87bmq8btfe.fsf@eliezer.anholt.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 6, 2017 at 7:38 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->
->
-> On 06/05/2017 09:51 AM, Florian Fainelli wrote:
->> On 06/01/2017 11:34 PM, Anup Patel wrote:
->>> This patchset adds initial support of Broadcom Stingray SOC
->>> by reusing existing Broadcom iProc device drivers.
->>>
->>> Most of the patches in this patchset are DT patches except
->>> the Stingray clock tree support which just one patch.
->>>
->>> This patchset is based on Linux-4.12-rc3 and it is also available
->>> at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
->>>
->>> Changes since v5:
->>>  - Rebased patches for Linux-4.12-rc3
->>>  - Update DT node names to match register offset
->>>
->>> Changes since v4:
->>>  - Reduce number of include headers in Stingray clk driver
->>>
->>> Changes since v3:
->>>  - Rebased patches for Linux-4.12-rc1
->>>  - Updated PATCH3 to have all clocks except genpll3 to be
->>>    registered via platform driver probe
->>>
->>> Changes since v2:
->>>  - Remove default bootargs from chosen DT node
->>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
->>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
->>>
->>> Changes since v1:
->>>  - Rebased patches for Linux-4.12-rc1
->>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
->>>  - Use ranges DT property to clear view of memory-layout
->>>  - Make bcm-sr.h part of clock DT bindings patch
->>>
->>> Anup Patel (3):
->>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
->>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
->>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
->>>
->>> Oza Pawandeep (1):
->>>   arm64: dts: Add I2C DT nodes for Stingray SoC
->>>
->>> Pramod Kumar (3):
->>>   arm64: dts: Add NAND DT nodes for Stingray SOC
->>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
->>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
->>>
->>> Sandeep Tripathy (3):
->>>   dt-bindings: clk: Extend binding doc for Stingray SOC
->>>   clk: bcm: Add clocks for Stingray SOC
->>>   arm64: dts: Add clock DT nodes for Stingray SOC
->>>
->>> Srinath Mannam (1):
->>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+On 31/05/2017 22:36, Eric Anholt wrote:
+> Phil Elwell <phil@raspberrypi.org> writes:
+> 
+>> Fractional clock dividers generate accurate average frequencies but
+>> with jitter, particularly when the integer divisor is small.
 >>
->> Applied patches 1, 4-11 to devicetree-arm64/next, thanks!
->
-> Also took patch 2, to make sure everything builds properly, Stephen, let
-> me know if you want me to take patch #3 as well.
+>> Introduce a new metric of clock accuracy to penalise clocks with a good
+>> average but worse jitter compared to clocks with an average which is no
+>> better but with lower jitter. The metric is the ideal rate minus the
+>> worse deviation from that ideal using the nearest integer divisors.
+> 
+> "worst" the second time
 
-Thanks for patches 1-2 and patches 4-11.
+According to the rules of English grammar, you should only use the superlative
+("worst") when comparing something to a group. In this case we are only
+comparing two things - the distance to the nearest-neighbour integers - so the
+comparitive ("worse") is correct.
 
-Regarding PATCH3, please give us one day. We recently had
-minor comments from Stephen which we will address and
-send v7 of PATCH3.
+>> Use this metric for parent selection for clocks requiring low jitter
+>> (currently just PCM).
+>>
+>> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+>> ---
+>>  drivers/clk/bcm/clk-bcm2835.c | 40 +++++++++++++++++++++++++++++++++++-----
+>>  1 file changed, 35 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+>> index 81ecd4c..c7ee951 100644
+>> --- a/drivers/clk/bcm/clk-bcm2835.c
+>> +++ b/drivers/clk/bcm/clk-bcm2835.c
+>> @@ -530,6 +530,7 @@ struct bcm2835_clock_data {
+>>  
+>>  	bool is_vpu_clock;
+>>  	bool is_mash_clock;
+>> +	bool low_jitter;
+>>  
+>>  	u32 tcnt_mux;
+>>  };
+>> @@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+>>  							int parent_idx,
+>>  							unsigned long rate,
+>>  							u32 *div,
+>> -							unsigned long *prate)
+>> +							unsigned long *prate,
+>> +							unsigned long *avgrate)
+>>  {
+>>  	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+>>  	struct bcm2835_cprman *cprman = clock->cprman;
+>> @@ -1136,11 +1138,34 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+>>  	parent = clk_hw_get_parent_by_index(hw, parent_idx);
+>>  
+>>  	if (!(BIT(parent_idx) & data->set_rate_parent)) {
+>> +		unsigned long tmp_rate;
+>> +
+>>  		*prate = clk_hw_get_rate(parent);
+>>  		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
+>>  
+>> -		return bcm2835_clock_rate_from_divisor(clock, *prate,
+>> -						       *div);
+>> +		tmp_rate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
+>> +		*avgrate = tmp_rate;
+>> +
+>> +		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
+>> +			unsigned long high, low;
+>> +			u32 int_div = *div & ~CM_DIV_FRAC_MASK;
+>> +
+>> +			high = bcm2835_clock_rate_from_divisor(clock, *prate,
+>> +							       int_div);
+>> +			int_div += CM_DIV_FRAC_MASK + 1;
+>> +			low = bcm2835_clock_rate_from_divisor(clock, *prate,
+>> +							      int_div);
+>> +
+>> +			/*
+>> +			 * Return a value which is the maximum deviation
+>> +			 * below the ideal rate, for use as a metric.
+>> +			 */
+>> +			if ((tmp_rate - low) < (high - tmp_rate))
+>> +				tmp_rate = low;
+>> +			else
+>> +				tmp_rate -= high - tmp_rate;
+> 
+> Simplification suggestion: Remove tmp_rate variable, just assign to
+> rate_from_divisor result to *avgrate.  At the end of the low_jitter
+> block, just "return *avgrate - max(*avgrate - low, high - *avgrate)".
 
-Regards,,
-Anup
+Yes, I like that.
+
+> With that, feel free to add:
+> 
+> Reviewed-by: Eric Anholt <eric@anholt.net>
+
+Thanks - I will.
+
+Phil
