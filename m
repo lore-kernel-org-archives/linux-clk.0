@@ -1,107 +1,132 @@
 Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 From: Phil Elwell <phil@raspberrypi.org>
-Subject: Re: CLK_OF_DECLARE advice required
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        linux-clk@vger.kernel.org
-References: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
- <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
- <0794f430-9761-c855-9a89-13d9871c5831@i2se.com>
- <6765be64-9cf6-4663-4182-5b63f27bfb93@raspberrypi.org>
- <20170601063937.GN20170@codeaurora.org>
- <215eea3c-febe-5aa4-9dbb-e1f170bc0b0d@raspberrypi.org>
- <20170602223432.GU20170@codeaurora.org>
-Message-ID: <35742698-9f04-fa57-60b0-eecb3d790e03@raspberrypi.org>
-Date: Mon, 5 Jun 2017 17:24:08 +0100
+Subject: [PATCH v4 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
+Message-ID: <9989244b-ca4d-9081-95d9-b24f51099222@raspberrypi.org>
+Date: Thu, 1 Jun 2017 15:14:22 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170602223432.GU20170@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/06/2017 23:34, Stephen Boyd wrote:> On 06/01, Phil Elwell wrote:
->> On 01/06/2017 07:39, Stephen Boyd wrote:
->>> On 05/31, Phil Elwell wrote:
->>>> For my edification, can you pretend for a moment that the application was a valid one and
->>>> answer any of my original questions?:
->>>>
->>>> 1. Should all system clock drivers use OF_CLK_DECLARE? Doing so would probably
->>>> avoid this problem, but further initialisation order dependencies may
->>>> require more drivers to be initialised early.
->>>
->>> No. CLK_OF_DECLARE() is only there to register clks early for
->>> things that need them early, i.e. interrupts and timers.
->>> Otherwise they should be plain drivers (platform or some other
->>> bus). If the same node has both then we have
->>> CLK_OF_DECLARE for that.
->>
->> The problem with fixed-factor-clock is something like a Priority Inversion. CLK_OF_DECLARE
->> doesn't say that a driver can be probed early, it says that _must_ be probed early. There is
->> no fallback to platform device probing - setting the OF_POPULATED flag prevents that. In my
->> example the parent clock and the consumer are regular platform devices, but having this tiny
->> little gasket in between probed from of_clk_init breaks what ought to be a run-of-the-mill
->> device instantiation. It would be better if the intermediate driver could adapt to the
->> environment in which it finds itself, inheriting the "earlyness" of its consumer, but that
->> would require proper dependency information which Device Tree doesn't capture in a way which
->> is easy to make use of (phandles being integers that can be embedded in vectors in
->> subsystem-specific ways).
-> 
-> You sort of lost me here. The clk framework has support for
-> "orphans" which means that clks can be registered in any order,
-> i.e. the fixed factor clk could register first and be orphaned
-> until the parent platform device driver probes and registers that
-> clk at which point we'll fix up the tree. So nothing goes wrong
-> and really the orphan design helps us here and in other
-> situations.
+Fractional clock dividers generate accurate average frequencies but
+with jitter, particularly when the integer divisor is small.
 
-That sounds great, but it doesn't match my experience. Let me restate my
-observations with a bit more detail.
+Introduce a new metric of clock accuracy to penalise clocks with a good
+average but worse jitter compared to clocks with an average which is no
+better but with lower jitter. The metric is the ideal rate minus the
+worse deviation from that ideal using the nearest integer divisors.
 
-In this scenario there three devices in a dependency chain:
+Use this metric for parent selection for clocks requiring low jitter
+(currently just PCM).
 
-  clock -> fixed-factor->clock -> uart.
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 34 +++++++++++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 5 deletions(-)
 
-The Fixed Factor Clock is declared with OF_CLK_DECLARE, while the two platform
-drivers use normal probe functions.
-
-1) of_clk_init() calls encounter FFC in the list of clocks to initialise and
-calls parent_ready on the device node.
-
-2) The parent clock has not been initialised, so of_clk_get returns
--EPROBE_DEFER.
-
-3) Steps 1 and 2 repeat until no progress is made, at which point the force
-flag is set for one last iteration. This time the parent_ready check is skipped
-and the code calls indirectly into _of_fixed_factor_clk_setup().
-
-4) The FFC setup calls of_clk_get_parent_name, which returns a NULL that ends
-up referred to by the parent_names field of clk_init_data structure indirectly
-passed to clk_hw_register and clk_register.
-
-5) In clk_register, the parent name is copied with kstrdup, which returns NULL
-for a NULL input. clk_register sees this as an allocation failure and returns
--ENOMEM.
-
-6) _of_fixed_factor_clock_setup returns -ENOMEM, bypassing of_clk_add_provider,
-but the wrapper function registered with CLK_OF_DECLARE has a void return, so
-the failure is lost.
-
-7) Back in of_clk_init, which is ignorant of the failure, the OF_POPULATED flag
-of the FFC node has already been set, preventing the node from subsequently
-being probed in the usual way.
-
-8) When the downstream uart is probed, devm_clk_get returns -EPROBE_DEFER every
-time, resulting in a non-functioning UART.
-
-Is this behaviour as intended? I can see that the NULL parent name in steps 4
-and 5 could be handled more gracefully, but the end result would be the same.
-
-Where and how is the "orphan" clock concept supposed to help, and what needs to
-be fixed in this case?
-
-Thanks,
-
-Phil
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 49867d2..0bc56a0 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -530,6 +530,7 @@ struct bcm2835_clock_data {
+ 
+ 	bool is_vpu_clock;
+ 	bool is_mash_clock;
++	bool low_jitter;
+ 
+ 	u32 tcnt_mux;
+ };
+@@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ 							int parent_idx,
+ 							unsigned long rate,
+ 							u32 *div,
+-							unsigned long *prate)
++							unsigned long *prate,
++							unsigned long *avgrate)
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+@@ -1139,8 +1141,25 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ 		*prate = clk_hw_get_rate(parent);
+ 		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
+ 
+-		return bcm2835_clock_rate_from_divisor(clock, *prate,
+-						       *div);
++		*avgrate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
++
++		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
++			unsigned long high, low;
++			u32 int_div = *div & ~CM_DIV_FRAC_MASK;
++
++			high = bcm2835_clock_rate_from_divisor(clock, *prate,
++							       int_div);
++			int_div += CM_DIV_FRAC_MASK + 1;
++			low = bcm2835_clock_rate_from_divisor(clock, *prate,
++							      int_div);
++
++			/*
++			 * Return a value which is the maximum deviation
++			 * below the ideal rate, for use as a metric.
++			 */
++			return *avgrate - max(*avgrate - low, high - *avgrate);
++		}
++		return *avgrate;
+ 	}
+ 
+ 	if (data->frac_bits)
+@@ -1167,6 +1186,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ 
+ 	*div = curdiv << CM_DIV_FRAC_BITS;
+ 	*prate = curdiv * best_rate;
++	*avgrate = best_rate;
+ 
+ 	return best_rate;
+ }
+@@ -1178,6 +1198,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 	bool current_parent_is_pllc;
+ 	unsigned long rate, best_rate = 0;
+ 	unsigned long prate, best_prate = 0;
++	unsigned long avgrate, best_avgrate = 0;
+ 	size_t i;
+ 	u32 div;
+ 
+@@ -1202,11 +1223,13 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 			continue;
+ 
+ 		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
+-							  &div, &prate);
++							  &div, &prate,
++							  &avgrate);
+ 		if (rate > best_rate && rate <= req->rate) {
+ 			best_parent = parent;
+ 			best_prate = prate;
+ 			best_rate = rate;
++			best_avgrate = avgrate;
+ 		}
+ 	}
+ 
+@@ -1216,7 +1239,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 	req->best_parent_hw = best_parent;
+ 	req->best_parent_rate = best_prate;
+ 
+-	req->rate = best_rate;
++	req->rate = best_avgrate;
+ 
+ 	return 0;
+ }
+@@ -2025,6 +2048,7 @@ struct bcm2835_clk_desc {
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+ 		.is_mash_clock = true,
++		.low_jitter = true,
+ 		.tcnt_mux = 23),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+ 		.name = "pwm",
+-- 
+1.9.1
