@@ -1,53 +1,49 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Wed, 07 Jun 2017 22:21:02 +0800
-In-Reply-To: <20170607141957.akonr7hmuwpt7hlt@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io>
- <20170604160149.30230-5-icenowy@aosc.io> <3642057.oKT9kIlu8M@jernej-laptop>
- <493AC6F2-3CB3-48F5-9568-A34AA927238F@aosc.io>
- <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
- <52F9F9C7-9A9C-435D-A0AF-FDD4317DAD69@aosc.io>
- <20170607141957.akonr7hmuwpt7hlt@flea.lan>
+Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v4 0/2] clk: bcm2835: PCM clock improvements
+Message-ID: <687e8c33-4ee5-852c-6a9e-c00eebea798a@raspberrypi.org>
+Date: Thu, 1 Jun 2017 15:14:06 +0100
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <4CD8A3BB-965C-4C74-884C-ACE8AAF9989B@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org,
- =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
- linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Cgrkuo4gMjAxN+W5tDbmnIg35pelIEdNVCswODowMCDkuIvljYgxMDoxOTo1NywgTWF4aW1lIFJp
-cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFdlZCwg
-SnVuIDA3LCAyMDE3IGF0IDA1OjQ0OjU2UE0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
-IOS6jiAyMDE35bm0NuaciDfml6UgR01UKzA4OjAwIOS4i+WNiDU6NDM6NDMsIE1heGltZSBSaXBh
-cmQKPjxtYXhpbWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4g5YaZ5YiwOgo+PiA+T24gTW9u
-LCBKdW4gMDUsIDIwMTcgYXQgMDM6MDM6NDdBTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZToK
-Pj4gPj4gPllvdSBzaG91bGQgYWxzbyBleHBhbmQgZnVuY3Rpb24gc3VuNGlfZHJ2X25vZGVfaXNf
-dGNvbigpIGF0Cj4+ID5zdW40aV9kcnYuYwo+PiA+PiA+d2l0aCAKPj4gPj4gPm5ldyBlbnRyaWVz
-LCBidXQgSSdtIG5vdCBzdXJlIGlmIHRoaXMgZml0cyBpbiB0aGlzIHBhdGNoLgo+PiA+PiAKPj4g
-Pj4gSW5zdGVhZCBJIHRoaW5rIGl0IHNob3VsZCBiZSByZW5hbWVkIHRvIHNvbWV0aGluZyBsaWtl
-Cj4+ID4+ICJzdW40aV9kcnZfbm9kZV9pc190Y29uX3dpdGhfY2gwIi4KPj4gPgo+PiA+SSdtIG5v
-dCBzdXJlLCBvciBhdCBsZWFzdCwgaXQgc2hvdWxkbid0IG1ha2UgYW55IGRpZmZlcmVuY2UsIHNp
-bmNlCj4+ID5UQ09OIHdpdGhvdXQgYSBjaGFubmVsIDAgd2lsbCBub3QgaGF2ZSBhbiBlbmRwb2lu
-dCAwLCBzbyB0aGlzIHdpbGwKPmJlCj4+ID5kZWFsdCB3aXRoIGFscmVhZHkuCj4+IAo+PiBCdXQg
-dGhhdCB3aWxsIHByZXZlbnQgbmV3IGNvZGVycyBmcm9tIGFkZCBDSDEtbGVzcyBUQ09OCj4+IGNv
-bXBhdGlibGVzIHRvIHRoaXMgZnVuY3Rpb24uCj4KPldoeT8gV2UgYWxyZWFkeSBoYXZlIHN1Y2gg
-VENPTnMgKGxpa2UgdGhlIEEzMydzLCBvciBWM1MnKSBpbiB0aGF0Cj5mdW5jdGlvbi4KClNvcnJ5
-LCBDSDAtbGVzcy4KCj4KPk1heGltZQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
-cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
-YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+The switch to using the upstream bcm2835_cprman clock driver caused a
+few problems for users of PCM (I2S) peripherals. Audio applications
+require accurate, stable clocks, and the cprman driver wasn't
+conservative enough in its choice of clock sources.
+
+These patches restrict the clock sources for the PCM peripheral in two
+ways: the first causes all possible sources except OSC and PLLD_PER
+to be ignored, while the second allows clocks to be specified as
+"low_jitter", causing the effects of fractional divisors to be taken
+into account when comparing potential clocks for accuracy. In practice,
+the combined effect of the two patches is to choose OSC as a source if
+an integer divisor can be used, otherwise PLLD_PER is chosen.
+
+Changes in v4:
+* Correct variable name in REGISTER_PCM_CLK macro in patch 1.
+
+Changes in v3:
+* Elimination of temporary variable from patch 2.
+
+Changes in v2:
+* Extended bcm2835_pcm_per_parents to cover the pllh_aux slot, and gave
+  it a comment in patch 1.
+* Added a REGISTER_PCM_CLK analagous to REGISTER_PER_CLK in patch 1.
+* Renamed temporary variable idiv to int_div in patch 2.
+* Fix comment formatting in patch 2.
+
+Phil Elwell (2):
+  clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+  clk: bcm2835: Minimise clock jitter for PCM clock
+
+ drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 5 deletions(-)
+
+-- 
+1.9.1
