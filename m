@@ -1,150 +1,268 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/8] clk: vc5: Split clock input mux and predivider
-Date: Thu, 29 Jun 2017 12:18:48 +0200
-Message-Id: <20170629101851.23972-5-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v3 3/9] clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
+Date: Thu,  1 Jun 2017 16:55:36 +0200
+Message-Id: <9f5211cf77fa76e22cd8d94b833b7701f5072b42.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Using the *-clock-output-names property was a convenient way to have a
+unique name for each clock even when there are multiple cp110 blocks
+as we can find on Armada 8K.
 
-Split the VC5 clock input mux and the predivider to more accurately
-model the hardware and fix the previously incorrect assumption that
-both the OUT_SEL_I2CB and the PLL are fed from the predivider.
+However it has some drawbacks: the main one being a stronger link than
+necessary between the driver and the device tree. For example the clock
+name can't be changed, removed or moved. It is still the early stage of
+introduction of the Armada 7K/8K and the hardware is still not totally
+documented, especially for the clock part. By removing the use of
+*-clock-output-names it will be easier to add new clocks without breaking
+the compatibility.
 
-It is in fact the clock input mux output which is directly feeding
-the clock into the OUT_SEL_I2CB output, while the clock input mux
-output first passes through the predivider before it is fed into
-the PLL.
+The name of each clock is now created by using its physical address as a
+prefix (as it was done for the platform device names). Thanks to this we
+have an automatic way to compute a unique name.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/clk/clk-versaclock5.c | 46 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+ drivers/clk/mvebu/cp110-system-controller.c | 105 +++++++++++++--------
+ 1 file changed, 65 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index a5256f793627..fcde42393997 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -157,6 +157,7 @@ struct vc5_driver_data {
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
-+	struct clk_hw		clk_pfd;
- 	struct vc5_hw_data	clk_pll;
- 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
- 	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
-@@ -166,6 +167,10 @@ static const char * const vc5_mux_names[] = {
- 	"mux"
- };
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 3b27a6056c73..081f089d2656 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -84,6 +84,33 @@ enum {
+ #define CP110_GATE_EIP150		25
+ #define CP110_GATE_EIP197		26
  
-+static const char * const vc5_pfd_names[] = {
-+	"pfd"
++const char *gate_base_names[] = {
++	[CP110_GATE_AUDIO]	= "audio",
++	[CP110_GATE_COMM_UNIT]	= "communit",
++	[CP110_GATE_NAND]	= "nand",
++	[CP110_GATE_PPV2]	= "ppv2",
++	[CP110_GATE_SDIO]	= "sdio",
++	[CP110_GATE_MG]		= "mg-domain",
++	[CP110_GATE_MG_CORE]	= "mg-core",
++	[CP110_GATE_XOR1]	= "xor1",
++	[CP110_GATE_XOR0]	= "xor0",
++	[CP110_GATE_GOP_DP]	= "gop-dp",
++	[CP110_GATE_PCIE_X1_0]	= "pcie_x10",
++	[CP110_GATE_PCIE_X1_1]	= "pcie_x11",
++	[CP110_GATE_PCIE_X4]	= "pcie_x4",
++	[CP110_GATE_PCIE_XOR]	= "pcie-xor",
++	[CP110_GATE_SATA]	= "sata",
++	[CP110_GATE_SATA_USB]	= "sata-usb",
++	[CP110_GATE_MAIN]	= "main",
++	[CP110_GATE_SDMMC_GOP]	= "sd-mmc-gop",
++	[CP110_GATE_SLOW_IO]	= "slow-io",
++	[CP110_GATE_USB3H0]	= "usb3h0",
++	[CP110_GATE_USB3H1]	= "usb3h1",
++	[CP110_GATE_USB3DEV]	= "usb3dev",
++	[CP110_GATE_EIP150]	= "eip150",
++	[CP110_GATE_EIP197]	= "eip197"
 +};
 +
- static const char * const vc5_pll_names[] = {
- 	"pll"
- };
-@@ -254,11 +259,16 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
+ struct cp110_gate_clk {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -186,15 +213,33 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
+ 	return ERR_PTR(-EINVAL);
  }
  
--static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
-+static const struct clk_ops vc5_mux_ops = {
-+	.set_parent	= vc5_mux_set_parent,
-+	.get_parent	= vc5_mux_get_parent,
-+};
++static char *cp110_unique_name(struct device *dev, const char *name)
++{
++	struct device_node *np = dev->of_node;
++	const __be32 *reg;
++	u64 addr;
 +
-+static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
- 					 unsigned long parent_rate)
++	/* Do not create a name if there is no clock */
++	if (!name)
++		return NULL;
++
++	reg = of_get_property(np, "reg", NULL);
++	addr = of_translate_address(np, reg);
++	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
++			      (unsigned long long)addr, name);
++}
++
+ static int cp110_syscon_clk_probe(struct platform_device *pdev)
  {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned int prediv, div;
+ 	struct regmap *regmap;
+-	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
+ 	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
+ 	struct clk_hw_onecell_data *cp110_clk_data;
+ 	struct clk_hw *hw, **cp110_clks;
+ 	u32 nand_clk_ctrl;
+ 	int i, ret;
++	char *gate_name[ARRAY_SIZE(gate_base_names)];
  
- 	regmap_read(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV, &prediv);
-@@ -276,7 +286,7 @@ static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
- 		return parent_rate / VC5_REF_DIVIDER_REF_DIV(div);
- }
+ 	regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+@@ -205,7 +250,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
--static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
-+static long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long *parent_rate)
- {
- 	unsigned long idiv;
-@@ -296,11 +306,11 @@ static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return *parent_rate / idiv;
- }
+-	cp110_clk_data = devm_kzalloc(&pdev->dev, sizeof(*cp110_clk_data) +
++	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
+ 				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
+ 				      GFP_KERNEL);
+ 	if (!cp110_clk_data)
+@@ -215,8 +260,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	cp110_clk_data->num = CP110_CLK_NUM;
  
--static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-+static int vc5_pfd_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
- {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned long idiv;
- 	u8 div;
+ 	/* Register the APLL which is the root of the hw tree */
+-	of_property_read_string_index(np, "core-clock-output-names",
+-				      CP110_CORE_APLL, &apll_name);
++	apll_name = cp110_unique_name(dev, "apll");
+ 	hw = clk_hw_register_fixed_rate(NULL, apll_name, NULL, 0,
+ 					1000 * 1000 * 1000);
+ 	if (IS_ERR(hw)) {
+@@ -227,8 +271,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	cp110_clks[CP110_CORE_APLL] = hw;
  
-@@ -328,12 +338,10 @@ static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
+ 	/* PPv2 is APLL/3 */
+-	of_property_read_string_index(np, "core-clock-output-names",
+-				      CP110_CORE_PPV2, &ppv2_name);
++	ppv2_name = cp110_unique_name(dev, "ppv2-core");
+ 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+@@ -238,8 +281,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	cp110_clks[CP110_CORE_PPV2] = hw;
  
--static const struct clk_ops vc5_mux_ops = {
--	.set_parent	= vc5_mux_set_parent,
--	.get_parent	= vc5_mux_get_parent,
--	.recalc_rate	= vc5_mux_recalc_rate,
--	.round_rate	= vc5_mux_round_rate,
--	.set_rate	= vc5_mux_set_rate,
-+static const struct clk_ops vc5_pfd_ops = {
-+	.recalc_rate	= vc5_pfd_recalc_rate,
-+	.round_rate	= vc5_pfd_round_rate,
-+	.set_rate	= vc5_pfd_set_rate,
- };
+ 	/* EIP clock is APLL/2 */
+-	of_property_read_string_index(np, "core-clock-output-names",
+-				      CP110_CORE_EIP, &eip_name);
++	eip_name = cp110_unique_name(dev, "eip");
+ 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+@@ -249,8 +291,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 	cp110_clks[CP110_CORE_EIP] = hw;
  
- /*
-@@ -699,12 +707,26 @@ static int vc5_probe(struct i2c_client *client,
- 		goto err_clk;
+ 	/* Core clock is EIP/2 */
+-	of_property_read_string_index(np, "core-clock-output-names",
+-				      CP110_CORE_CORE, &core_name);
++	core_name = cp110_unique_name(dev, "core");
+ 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+@@ -258,10 +299,8 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
  	}
  
-+	/* Register PFD */
-+	memset(&init, 0, sizeof(init));
-+	init.name = vc5_pfd_names[0];
-+	init.ops = &vc5_pfd_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = vc5_mux_names;
-+	init.num_parents = 1;
-+	vc5->clk_pfd.init = &init;
-+	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
-+	if (ret) {
-+		dev_err(&client->dev, "unable to register %s\n", init.name);
-+		goto err_clk;
-+	}
+ 	cp110_clks[CP110_CORE_CORE] = hw;
+-
+ 	/* NAND can be either APLL/2.5 or core clock */
+-	of_property_read_string_index(np, "core-clock-output-names",
+-				      CP110_CORE_NAND, &nand_name);
++	nand_name = cp110_unique_name(dev, "nand-core");
+ 	if (nand_clk_ctrl & NF_CLOCK_SEL_400_MASK)
+ 		hw = clk_hw_register_fixed_factor(NULL, nand_name,
+ 						   apll_name, 0, 2, 5);
+@@ -275,18 +314,14 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 
+ 	cp110_clks[CP110_CORE_NAND] = hw;
+ 
+-	for (i = 0; i < CP110_MAX_GATABLE_CLOCKS; i++) {
+-		const char *parent, *name;
+-		int ret;
+-
+-		ret = of_property_read_string_index(np,
+-						    "gate-clock-output-names",
+-						    i, &name);
+-		/* Reached the end of the list? */
+-		if (ret < 0)
+-			break;
++	/* create the unique name for all the gate clocks */
++	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++)
++		gate_name[i] =	cp110_unique_name(dev, gate_base_names[i]);
 +
- 	/* Register PLL */
- 	memset(&init, 0, sizeof(init));
- 	init.name = vc5_pll_names[0];
- 	init.ops = &vc5_pll_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
--	init.parent_names = vc5_mux_names;
-+	init.parent_names = vc5_pfd_names;
- 	init.num_parents = 1;
- 	vc5->clk_pll.num = 0;
- 	vc5->clk_pll.vc5 = vc5;
++	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++) {
++		const char *parent;
+ 
+-		if (!strcmp(name, "none"))
++		if (gate_name[i] == NULL)
+ 			continue;
+ 
+ 		switch (i) {
+@@ -295,14 +330,10 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 		case CP110_GATE_EIP150:
+ 		case CP110_GATE_EIP197:
+ 		case CP110_GATE_SLOW_IO:
+-			of_property_read_string_index(np,
+-						      "gate-clock-output-names",
+-						      CP110_GATE_MAIN, &parent);
++			parent = gate_name[CP110_GATE_MAIN];
+ 			break;
+ 		case CP110_GATE_MG:
+-			of_property_read_string_index(np,
+-						      "gate-clock-output-names",
+-						      CP110_GATE_MG_CORE, &parent);
++			parent = gate_name[CP110_GATE_MG_CORE];
+ 			break;
+ 		case CP110_GATE_NAND:
+ 			parent = nand_name;
+@@ -312,33 +343,27 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 			break;
+ 		case CP110_GATE_SDIO:
+ 		case CP110_GATE_GOP_DP:
+-			of_property_read_string_index(np,
+-						      "gate-clock-output-names",
+-						      CP110_GATE_SDMMC_GOP, &parent);
++			parent = gate_name[CP110_GATE_SDMMC_GOP];
+ 			break;
+ 		case CP110_GATE_XOR1:
+ 		case CP110_GATE_XOR0:
+ 		case CP110_GATE_PCIE_X1_0:
+ 		case CP110_GATE_PCIE_X1_1:
+ 		case CP110_GATE_PCIE_X4:
+-			of_property_read_string_index(np,
+-						      "gate-clock-output-names",
+-						      CP110_GATE_PCIE_XOR, &parent);
++			parent = gate_name[CP110_GATE_PCIE_XOR];
+ 			break;
+ 		case CP110_GATE_SATA:
+ 		case CP110_GATE_USB3H0:
+ 		case CP110_GATE_USB3H1:
+ 		case CP110_GATE_USB3DEV:
+-			of_property_read_string_index(np,
+-						      "gate-clock-output-names",
+-						      CP110_GATE_SATA_USB, &parent);
++			parent = gate_name[CP110_GATE_SATA_USB];
+ 			break;
+ 		default:
+ 			parent = core_name;
+ 			break;
+ 		}
++		hw = cp110_register_gate(gate_name[i], parent, regmap, i);
+ 
+-		hw = cp110_register_gate(name, parent, regmap, i);
+ 		if (IS_ERR(hw)) {
+ 			ret = PTR_ERR(hw);
+ 			goto fail_gate;
 -- 
-2.11.0
+git-series 0.9.1
