@@ -1,43 +1,52 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1497943298.2386.4.camel@pengutronix.de>
-Subject: Re: [PATCH 3/3 v6] clk: Add Gemini SoC clock controller
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Janos Laube
- <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
- linux-arm-kernel@lists.infradead.org, Hans Ulli Kroll
- <ulli.kroll@googlemail.com>,  Florian Fainelli <f.fainelli@gmail.com>
-Date: Tue, 20 Jun 2017 09:21:38 +0200
-In-Reply-To: <20170618215550.29216-3-linus.walleij@linaro.org>
-References: <20170618215550.29216-1-linus.walleij@linaro.org>
-	 <20170618215550.29216-3-linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: [PATCH v3 6/9] dt-bindings: cp110: add sdio clock to cp-110 system controller
+Date: Thu,  1 Jun 2017 16:55:39 +0200
+Message-Id: <c4ebada50633c7a14cd2bcfa56ace329204982c8.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2017-06-18 at 23:55 +0200, Linus Walleij wrote:
-> The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
-> controller that derive all clocks from a single crystal, using some
-> documented and some undocumented PLLs, half dividers, counters and
-> gates. This is a best attempt to construct a clock driver for the
-> clocks so at least we can gate off unused hardware and driver the
-> PCI bus clock.
-> 
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Mike/Stephen: please merge this into the clk subsystem along
-> with the <dt-bindings> patch once you're happy with it.
-> 
-> ChangeLog v5->v6:
-> - Merge the Gemini reset controller code into the clock driver
->   so as to resolve the conflict about what device should be
->   probing from the system controller. The reset portions are
->   copy/pasted from the driver previously merged by Philipp
->   Zabel.
+This patch updates the documentation according to the change made in the
+patch "clk: mvebu: cp110: add sdio clock to cp-110 system controller"
 
-For the reset controller part,
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-regards
-Philipp
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+index e97cc2d73e2e..8caf913c2670 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -34,6 +34,7 @@ The following clocks are available:
+    - 0 2	EIP
+    - 0 3	Core
+    - 0 4	NAND core
++   - 0 5	SDIO core
+  - Gatable clocks
+    - 1 0	Audio
+    - 1 1	Comm Unit
+-- 
+git-series 0.9.1
