@@ -1,59 +1,73 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Jun 2017 15:56:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <zhang.chunyan@linaro.org>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, zhang.lyra@gmail.com
-Subject: Re: [PATCH] Documentation: clock: address more for clock-cells
- property
-Message-ID: <20170602225621.GE20170@codeaurora.org>
-References: <1496306801-19239-1-git-send-email-zhang.chunyan@linaro.org>
+Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v3 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+Message-ID: <85cb59e5-c233-c945-95dd-e8f872b35f5c@raspberrypi.org>
+Date: Thu, 1 Jun 2017 10:10:37 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1496306801-19239-1-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Chunyan Zhang wrote:
-> The value of property 'clock-cells' is not determined only by the number of
-> clock outputs in one clock node, it is actually determined by whether the
-> clock output in this node can be referenced directly without index.  If
-> the output clock has to be referenced by a index, the clock-cell of this
-> clock node can't be defined 0.
-> 
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/clock-bindings.txt | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+Restrict clock sources for the PCM peripheral to the oscillator and
+PLLD_PER because other source may have varying rates or be switched off.
+Prevent other sources from being selected by replacing their names in
+the list of potential parents with dummy entries (entry index is
+significant).
 
-I'm leaving this patch for Rob/DT maintainers to apply.
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> index 2ec489e..cef3db5 100644
-> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -15,8 +15,14 @@ value of a #clock-cells property in the clock provider node.
->  
->  Required properties:
->  #clock-cells:	   Number of cells in a clock specifier; Typically 0 for nodes
-> -		   with a single clock output and 1 for nodes with multiple
-> -		   clock outputs.
-> +		   with a single clock output and it must be able to be
-> +		   referenced without index, and 1 for nodes with single or
-> +		   multiple clock outputs which have to be referenced by index.
-> +
-> +		   Please note that if a node with a single clock output
-> +		   but it has "clock-indices" property (see bellow), it has
-> +		   to be referenced by index, its "#clock-cells" cannot be
-> +		   defined 0.
-
-Maybe this should be added to the clock-indices area of the
-document instead of here? It seems to me that you can't have
-clock-indices if you have #clock-cells=<0>, and that's sort of
-obvious because 0 cells means 1 output and >0 cells means
-potentially many outputs.
-
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 0258538..81ecd4c 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1516,6 +1516,31 @@ struct bcm2835_clk_desc {
+ 	.parents = bcm2835_clock_per_parents,				\
+ 	__VA_ARGS__)
+ 
++/*
++ * Restrict clock sources for the PCM peripheral to the oscillator and
++ * PLLD_PER because other source may have varying rates or be switched
++ * off.
++ *
++ * Prevent other sources from being selected by replacing their names in
++ * the list of potential parents with dummy entries (entry index is
++ * significant).
++ */
++static const char *const bcm2835_pcm_per_parents[] = {
++	"-",
++	"xosc",
++	"-",
++	"-",
++	"-",
++	"-",
++	"plld_per",
++	"-",
++};
++
++#define REGISTER_PCM_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_pcm_per_parents),	\
++	.parents = bcm2835_clock_pcm_per_parents,			\
++	__VA_ARGS__)
++
+ /* main vpu parent mux */
+ static const char *const bcm2835_clock_vpu_parents[] = {
+ 	"gnd",
+@@ -1993,7 +2018,7 @@ struct bcm2835_clk_desc {
+ 		.int_bits = 4,
+ 		.frac_bits = 8,
+ 		.tcnt_mux = 22),
+-	[BCM2835_CLOCK_PCM]	= REGISTER_PER_CLK(
++	[BCM2835_CLOCK_PCM]	= REGISTER_PCM_CLK(
+ 		.name = "pcm",
+ 		.ctl_reg = CM_PCMCTL,
+ 		.div_reg = CM_PCMDIV,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
