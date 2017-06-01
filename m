@@ -1,79 +1,74 @@
-Return-Path: <ore@pengutronix.de>
-Subject: Re: [PATCH v5 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-To: Leonard Crestez <leonard.crestez@nxp.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
- <20170619050245.2632-3-o.rempel@pengutronix.de>
- <1497872133.5380.11.camel@nxp.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
- Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
- Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-From: Oleksij Rempel <ore@pengutronix.de>
-Message-ID: <7f2db0a8-a316-5ecb-24bf-46bcb625e123@pengutronix.de>
-Date: Tue, 20 Jun 2017 06:55:24 +0200
+Return-Path: <phil@raspberrypi.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v4 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
+Message-ID: <8cc0ba82-d33e-127b-7b86-ac595ef416d1@raspberrypi.org>
+Date: Thu, 1 Jun 2017 15:14:16 +0100
 MIME-Version: 1.0
-In-Reply-To: <1497872133.5380.11.camel@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Leonard,
+Restrict clock sources for the PCM peripheral to the oscillator and
+PLLD_PER because other source may have varying rates or be switched off.
+Prevent other sources from being selected by replacing their names in
+the list of potential parents with dummy entries (entry index is
+significant).
 
-On 19.06.2017 13:35, Leonard Crestez wrote:
-> On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
->> One of the Freescale recommended sequences for power off with
->> external
->> PMIC is the following:
->> ...
->> 3.  SoC is programming PMIC for power off when standby is asserted.
->> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
->>
->> See:
->> https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww
->> .nxp.com%2Fassets%2Fdocuments%2Fdata%2Fen%2Freference-
->> manuals%2FIMX6DQRM.pdf&data=01%7C01%7Cleonard.crestez%40nxp.com%7C32c
->> df19d0ab44ed8e24d08d4b6d097f4%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0&
->> sdata=CWDpnEGikPGmSTM3dQH8IMxQCVzcIvHL69nu962d8M0%3D&reserved=0
->> page 5083
->>
->> This patch implements step 4. of this sequence.
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
->>  1 file changed, 25 insertions(+)
->>
->> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-
->> imx6.c
->> index e61b1d1027e1..cb76832935f0 100644
->> --- a/arch/arm/mach-imx/pm-imx6.c
->> +++ b/arch/arm/mach-imx/pm-imx6.c
->> @@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const
->> struct imx6_pm_socdata
->>  				   IMX6Q_GPR1_GINT);
->>  }
->>
->> +static void imx6_pm_poweroff(void)
->> +{
->> +	imx6_set_lpm(STOP_POWER_OFF);
->> +	cpu_suspend(0, imx6q_suspend_finish);
->
-> It's a bit strange that you're using parts of the suspend code for
-> this. Perhaps you could just write your bits to CLPCR and then execute
-> a WFI?
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-Well, every thing in this patch set, yell about using standby/suspend 
-path in HW for power off. Even iMX code use STOP_POWER_OFF for 
-configuring this regs. How can it be more strange? :) Should i really 
-duplicate code to hide this?
-
-> It would also be nice to rename this to something like
-> imx6_pm_stby_poweroff to make it clear that it's only for a certain
-> power off path.
-
-ok.
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 0258538..49867d2 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1516,6 +1516,31 @@ struct bcm2835_clk_desc {
+ 	.parents = bcm2835_clock_per_parents,				\
+ 	__VA_ARGS__)
+ 
++/*
++ * Restrict clock sources for the PCM peripheral to the oscillator and
++ * PLLD_PER because other source may have varying rates or be switched
++ * off.
++ *
++ * Prevent other sources from being selected by replacing their names in
++ * the list of potential parents with dummy entries (entry index is
++ * significant).
++ */
++static const char *const bcm2835_pcm_per_parents[] = {
++	"-",
++	"xosc",
++	"-",
++	"-",
++	"-",
++	"-",
++	"plld_per",
++	"-",
++};
++
++#define REGISTER_PCM_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_pcm_per_parents),		\
++	.parents = bcm2835_pcm_per_parents,				\
++	__VA_ARGS__)
++
+ /* main vpu parent mux */
+ static const char *const bcm2835_clock_vpu_parents[] = {
+ 	"gnd",
+@@ -1993,7 +2018,7 @@ struct bcm2835_clk_desc {
+ 		.int_bits = 4,
+ 		.frac_bits = 8,
+ 		.tcnt_mux = 22),
+-	[BCM2835_CLOCK_PCM]	= REGISTER_PER_CLK(
++	[BCM2835_CLOCK_PCM]	= REGISTER_PCM_CLK(
+ 		.name = "pcm",
+ 		.ctl_reg = CM_PCMCTL,
+ 		.div_reg = CM_PCMDIV,
+-- 
+1.9.1
