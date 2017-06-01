@@ -1,77 +1,71 @@
-Return-Path: <xuwei5@hisilicon.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: add sp804 timer node for Hi3660
-To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark
- Rutland" <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Zhangfei Gao
-	<zhangfei.gao@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Guodong Xu <guodong.xu@linaro.org>,
-        "Haojian
- Zhuang" <haojian.zhuang@linaro.org>
-References: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
- <1495428748-11153-3-git-send-email-leo.yan@linaro.org>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5942E77A.8080500@hisilicon.com>
-Date: Thu, 15 Jun 2017 21:00:58 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Jun 2017 00:38:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 1/5 v2] clk: qcom: Update DT bindings for the
+ MSM8660/APQ8060 RPMCC
+Message-ID: <20170601073858.GU20170@codeaurora.org>
+References: <20170419091326.11226-1-linus.walleij@linaro.org>
+ <CACRpkdbXEFeVkD8rETyrnuoAxUvnFt2BL07UsXuXfSnq3Qdyfw@mail.gmail.com>
+ <CACRpkdYvwwJcxKPtKUyZBLWsmjXji7pHDKNz9NRTETqj2P3drQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1495428748-11153-3-git-send-email-leo.yan@linaro.org>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CACRpkdYvwwJcxKPtKUyZBLWsmjXji7pHDKNz9NRTETqj2P3drQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Leo,
-
-On 2017/5/22 5:52, Leo Yan wrote:
-> The Hi3660 SoC comes with the sp804 timer in addition to the
-> architecture timers. These ones are shutdown when reaching a deep idle
-> states and a backup timer is needed. The sp804 belongs to another power
-> domain and can fulfill the purpose of replacing temporarily an
-> architecture timer when the CPU is idle.
+On 05/24, Linus Walleij wrote:
+> On Wed, May 17, 2017 at 9:23 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Wed, Apr 19, 2017 at 11:13 AM, Linus Walleij
+> > <linus.walleij@linaro.org> wrote:
+> >
+> >> These compatible strings need to be added to extend support
+> >> for the RPM CC to cover MSM8660/APQ8060. We also need to add
+> >> enumberators to the include file for a few clocks that were
+> >> missing.
+> >>
+> >> Cc: devicetree@vger.kernel.org
+> >> Acked-by: Rob Herring <robh@kernel.org>
+> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> >> ---
+> >> ChangeLog v1->v2:
+> >> - Collect Rob's ACK
+> >
+> > Ping on this patch set. It's been sitting for a month and was
+> > not changed from v1 either, if you want me to change something
+> > it'd be good to know.
 > 
-> Describe it in the device tree, so it can be enabled at boot time.
+> Ping on this again.
 > 
-> Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> I am sorry if you guys are swamped, I just don't know what to do,
+> clock drivers are starting to become the bottleneck for everything
+> I do. I bet the ARM SoC maintainers must be noticing it too.
 > 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index 138fcba..f75c792 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -173,6 +173,17 @@
->  			#clock-cells = <1>;
->  		};
->  
-> +		dual_timer0: timer@fff14000 {
-> +			compatible = "arm,sp804", "arm,primecell";
-> +			reg = <0x0 0xfff14000 0x0 0x1000>;
-> +			interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&crg_ctrl HI3660_OSC32K>,
-> +				 <&crg_ctrl HI3660_OSC32K>,
-> +				 <&crg_ctrl HI3660_OSC32K>;
-> +			clock-names = "timer1", "timer2", "apb_pclk";
-> +		};
-> +
->  		ufs: ufs@ff3b0000 {
->  			compatible = "jedec,ufs-1.1", "hisilicon,hi3660-ufs";
->  			reg = <0x0 0xff3b0000 0x0 0x1000>, /* 0: HCI standard */
+> Unfortunately I am already managing two subsystems and cannot
+> volunteer to help out with a third, I would blow a fuse.
 > 
+> But it seems the CLK subsystem could use some co-maintainers?
+> 
+> Peter de Schrijver is a big authority in all things clocking (I clearly
+> remember him discussing the subject a lot at conferences with lots
+> of good points) so I would ask him to help, but I don't know how busy
+> Peter may be with nVidia business etc these days...
 
-Since the dts part is not depended on the driver and Guodong has put this into another
-patch set[1], I will pick up that one.
-Thanks!
+Meh. Life happens and msm8660 is about a decade old now and not
+something that I can easily review without digging through old
+websites to find documentation on the code I worked on 7 years
+ago. So sorry, but these sorts of patches are basically
+approaching priority none for me and I have to steal time to
+review them.
 
-[1]: https://lkml.org/lkml/2017/6/14/1049
+I'm getting back up to speed though on my mails, so things should
+be good. Let me know if things seem broken next week please.
 
-BR,
-Wei
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
