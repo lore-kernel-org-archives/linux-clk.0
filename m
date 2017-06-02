@@ -1,65 +1,130 @@
-Return-Path: <zhang.lyra@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20170620012530.GG4493@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com> <20170620012530.GG4493@codeaurora.org>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 22 Jun 2017 18:07:52 +0800
-Message-ID: <CAAfSe-uTzgz0kyhQQzqpYKnYxDLv+3gG_9MfdrBTY-AUC549Gg@mail.gmail.com>
-Subject: Re: [PATCH V1 0/9] add clock driver for Spreadtrum platforms
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 00/19] drm/sun4i: hdmi: Support HDMI controller on A31
+Date: Fri,  2 Jun 2017 18:10:05 +0800
+Message-Id: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi everyone,
 
-On 20 June 2017 at 09:25, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/18, Chunyan Zhang wrote:
->> In the last cycle, the patches support Whale2 sc9860 mobile chip have been
->> merged. This patchset adds clock driver which is used on almost all
->> Spreadtrum SoCs.
->>
->> This is a rewrite of Spreadtrum's original clock driver[1] according to the
->> comments[2] from Stephen Boyd.
->>
->> This series also adds Spreadtrum clock binding documentation and devicetree
->> data.
->>
->> Any comments would be greatly appreciated.
->
-> Overall it seems to copy quite a bit of code from sunxi-ng, which
-> is OK, but if that's just copy/paste + replace some names then
-> perhaps we should consolidate the two implementations into one
-> that both SoCs can use.
->
+This series adds support for the HDMI controller found on Allwinner
+A31/A31s SoCs. It builds upon Maxime's work that added support for
+the HDMI controller on the Allwinner A10s SoC.
 
-OK, will try.
+The HDMI controllers in the older generation Allwinner SoCs is very
+similar. The A10/A10s/A20 all have the same hardware block, with the
+A10 having slightly different initial configuration values. The A31's
+variant splits out the DDC parent clock, has different formulas for
+the DDC and TMDS clocks, and a different register layout for the DDC
+block. Also, it does not expose the CEC pins outside of the SoC, which
+is unfortunate.
 
-> Also, is there any reason why we can't use a platform device
-> driver for this instead of the DT probing mechanism? That is more
-> preferred method of probing clk controllers.
+The first 2 patches allow the sun4i-drm driver to work correctly with
+2 display pipelines.
 
->From what I have known on ARM platforms, device drivers cannot
-recognize out which SoC the driver is running on, assume that the
-device on different SoC has some differences.  To make one only kernel
-Image can be used on all SoCs of Spreadtrum, we selected the way of
-loading different dtb for each SoC.
+Patch 3 adds support for the TCON demuxing feature on the A31. This is
+needed if the user wants to output through HDMI from the second display
+pipeline.
 
-Actually, I haven't understood the merits of moving more clk things to
-driver from DT, could you please introduce more about that?
+Patch 4 adds proper error path cleanup to the HDMI driver.
+
+Patch 5 allows the HDMI TMDS clock to use the second PLL as its parent,
+in case the first PLL is driving an incompatible dot clock.
+
+Patch 6 adds the A31 HDMI controller variant to the device tree binding.
+
+Patch 7 adds support for different variants of the TMDS clock, with the
+different being an offset value for the divider.
+
+Patch 8 adds support for the A31's TMDS clock variant.
+
+Patch 9 adds support for different variants of the DDC clock, with the
+differences being a different register offset, different divider offset,
+different pre-divider, and different clock parent.
+
+Patch 10 renames the HDMI block's DDC clock, so that it doesn't conflict
+with the A31's SoC level HDMI DDC clock.
+
+Patch 11 adds defines for the A31 specific DDC register offsets.
+
+Patch 12 adds support for the A31's DDC clock variant.
+
+Patch 13 adds support for different variants of the HDMI controller
+hardware, with the differences mentioned in the beginning of this
+letter.
+
+Patch 14 adds support for the A31's HDMI controller variant.
+
+Patch 15 exports the 2x outputs of the two video PLLs. These feed the
+TMDS clock directly.
+
+Patch 16 adds a device node for the HDMI controller on the A31.
+
+Patches 17~19 enable HDMI video output on three boards that I have.
 
 
-Many appreciated,
-Chunyan
+Patches 13 & 14 are somewhat complicated. If the DDC block were factored
+out into a proper I2C controller, it might be cleaner. Other than that
+this series should be quite straightforward.
 
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+I also had simultaneous output on both display pipelines on the SinA31s,
+one with an LCD panel and the other using HDMI. After boot, both screens
+showed a proper console. The HDMI screen had higher resolution, so the
+console was limited to the upper left corner.
+
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (19):
+  drm/sun4i: call drm_vblank_init with correct number of crtcs
+  drm/sun4i: add components in two passes with encoders added in second
+    pass
+  drm/sun4i: tcon: Add support for demuxing TCON output on A31
+  drm/sun4i: hdmi: Disable clks in bind function error path and unbind
+    function
+  drm/sun4i: hdmi: Allow using second PLL as TMDS clk parent
+  dt-bindings: display: sun4i: Add binding for A31 HDMI controller
+  drm/sun4i: hdmi: Support different variants of the TMDS clock
+  drm/sun4i: hdmi: Support the TMDS clock in the A31's HDMI controller
+  drm/sun4i: hdmi: Support different variants of the DDC clock
+  drm/sun4i: hdmi: Rename internal DDC clock to avoid name collision
+  drm/sun4i: hdmi: Add A31 specific DDC register definitions
+  drm/sun4i: hdmi: Support the DDC clock in the A31's HDMI controller
+  drm/sun4i: hdmi: Add support for controller hardware variants
+  drm/sun4i: hdmi: Add support for A31's HDMI controller
+  clk: sunxi-ng: sun6i: Export video PLLs
+  ARM: sun6i: a31: Add device node for HDMI controller
+  ARM: sun6i: a31: Enable HDMI support on the A31 Hummingbird
+  ARM: sun6i: a31s: Enable HDMI display output on the Sinlinx SinA31s
+  ARM: sun6i: a31s: Enable HDMI display output on the MSI Primo81 tablet
+
+ .../bindings/display/sunxi/sun4i-drm.txt           |   3 +
+ arch/arm/boot/dts/sun6i-a31-hummingbird.dts        |  21 ++
+ arch/arm/boot/dts/sun6i-a31.dtsi                   |  55 ++++
+ arch/arm/boot/dts/sun6i-a31s-primo81.dts           |  25 ++
+ arch/arm/boot/dts/sun6i-a31s-sina31s.dts           |  25 ++
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c               |   2 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.h               |   8 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |  34 ++-
+ drivers/gpu/drm/sun4i/sun4i_hdmi.h                 |  39 +++
+ drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c         |  55 +++-
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c             | 280 ++++++++++++++++++---
+ drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c        |  82 +++---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  61 +++++
+ include/dt-bindings/clock/sun6i-a31-ccu.h          |   4 +
+ 14 files changed, 613 insertions(+), 81 deletions(-)
+
+-- 
+2.11.0
