@@ -1,117 +1,56 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v8 1/3] clk: qcom: Add A53 PLL support
-To: Riku Voipio <riku.voipio@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, jassisinghbrar@gmail.com,
- Bjorn Andersson <bjorn.andersson@linaro.org>, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20170623161533.20449-1-georgi.djakov@linaro.org>
- <20170623161533.20449-2-georgi.djakov@linaro.org>
- <20170626194015.pejm43gl5khoqizy@rob-hp-laptop>
- <CAAqcGHm3R_P71szGq4Tf+B8sB9Mwd0RAi9RsssV5MwWcfuGdsw@mail.gmail.com>
-Message-ID: <c9ff9e8d-3214-6faf-484d-849f43be7a7d@linaro.org>
-Date: Tue, 27 Jun 2017 19:23:10 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAAqcGHm3R_P71szGq4Tf+B8sB9Mwd0RAi9RsssV5MwWcfuGdsw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] clk: meson-gxbb: Add const to some parent name arrays
+Date: Fri,  2 Jun 2017 10:58:31 -0700
+Message-Id: <20170602175831.29100-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/27/2017 12:48 PM, Riku Voipio wrote:
-> On 26 June 2017 at 22:40, Rob Herring <robh@kernel.org> wrote:
->> On Fri, Jun 23, 2017 at 07:15:31PM +0300, Georgi Djakov wrote:
->>> The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
->>> a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
->>> are connected to a mux and half-integer divider, which is feeding the
->>> CPU cores.
->>>
->>> This patch adds support for the primary CPU PLL which generates the
->>> higher range of frequencies above 1GHz.
->>>
->>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->>> ---
->>>  .../devicetree/bindings/clock/qcom,a53pll.txt      | 22 +++++
->>
->> It's preferred to split bindings to a separate patch. In any case,
->>
->> Acked-by: Rob Herring <robh@kernel.org>
->>
->> One kconfig comment though:
->>
->>>  drivers/clk/qcom/Kconfig                           |  9 +++
->>>  drivers/clk/qcom/Makefile                          |  1 +
->>>  drivers/clk/qcom/a53-pll.c                         | 94 ++++++++++++++++++++++
->>>  4 files changed, 126 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->>>  create mode 100644 drivers/clk/qcom/a53-pll.c
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->>> new file mode 100644
->>> index 000000000000..f4c2fddf6e7f
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->>> @@ -0,0 +1,22 @@
->>> +MSM8916 A53 PLL Binding
->>> +---------------
->>> +The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
->>> +above 1GHz.
->>> +
->>> +Required properties :
->>> +- compatible : Shall contain only one of the following:
->>> +
->>> +             "qcom,msm8916-a53pll"
->>> +
->>> +- reg : shall contain base register location and length
->>> +
->>> +- #clock-cells : must be set to <0>
->>> +
->>> +Example:
->>> +
->>> +     a53pll: clock@b016000 {
->>> +             compatible = "qcom,msm8916-a53pll";
->>> +             reg = <0xb016000 0x40>;
->>> +             #clock-cells = <0>;
->>> +     };
->>> +
->>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->>> index 9f6c278deead..057cf60ed037 100644
->>> --- a/drivers/clk/qcom/Kconfig
->>> +++ b/drivers/clk/qcom/Kconfig
->>> @@ -12,6 +12,15 @@ config COMMON_CLK_QCOM
->>>       select REGMAP_MMIO
->>>       select RESET_CONTROLLER
->>>
->>> +config QCOM_A53PLL
->>> +     bool "A53 PLL"
->>
->> Figuring out config options needed for a specific QC SoC is "fun". If
->> this is only for MSM8916, then add that to the config option or prompt
->> text at least.
-> 
->> And please update the arm64 defconfig with this option.
-> 
-> Maybe instead of updating defconfig set:
-> 
->         default ARCH_QCOM
-> 
-> I think the effect is roughly same but it makes the life of
-> distribution maintainers easier.>
+These can be marked as const * const.
 
-Thanks for the ideas, Riku and Rob. It looks like currently its only
-used in msm8916 (but i might be wrong), so i will add MSM8916 to the
-prompt and rename it to MSM_A53PLL_8916 to be more consistent with the
-rest of the options.
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/meson/gxbb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-If there are no objections, i can add:
-	default ARCH_QCOM && ARM64
-
-Thanks,
-Georgi
-
->>> +     depends on COMMON_CLK_QCOM
->>> +     help
->>> +       Support for the A53 PLL on Qualcomm MSM8916 devices. It provides
->>> +       support for CPU frequencies above 1GHz.
->>> +       Say Y if you want to support CPU frequency scaling on devices
->>> +       such as MSM8916.
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 2919a0e044a5..36c0e455437e 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -701,7 +701,7 @@ static struct clk_gate gxbb_sar_adc_clk = {
+  */
+ 
+ static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
+-static const char *gxbb_mali_0_1_parent_names[] = {
++static const char * const gxbb_mali_0_1_parent_names[] = {
+ 	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
+ 	"fclk_div4", "fclk_div3", "fclk_div5"
+ };
+@@ -801,7 +801,7 @@ static struct clk_gate gxbb_mali_1 = {
+ };
+ 
+ static u32 mux_table_mali[] = {0, 1};
+-static const char *gxbb_mali_parent_names[] = {
++static const char * const gxbb_mali_parent_names[] = {
+ 	"mali_0", "mali_1"
+ };
+ 
+@@ -953,7 +953,7 @@ static struct clk_gate gxbb_32k_clk = {
+ 	},
+ };
+ 
+-static const char *gxbb_32k_clk_parent_names[] = {
++static const char * const gxbb_32k_clk_parent_names[] = {
+ 	"xtal", "cts_slow_oscin", "fclk_div3", "fclk_div5"
+ };
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
