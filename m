@@ -1,271 +1,86 @@
-Return-Path: <zhang.lyra@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH v5 04/11] arm64: dts: Initial DTS files for Broadcom
+ Stingray SOC
+To: Anup Patel <anup.patel@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Oza Pawandeep
+ <oza.oza@broadcom.com>, Srinath Mannam <srinath.mannam@broadcom.com>,
+ Pramod Kumar <pramod.kumar@broadcom.com>,
+ Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com,
+ Scott Branden <scott.branden@broadcom.com>
+References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+ <1495790704-2438-5-git-send-email-anup.patel@broadcom.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <abeca9ac-487c-b6dc-1397-4134b0442909@gmail.com>
+Date: Thu, 1 Jun 2017 22:37:47 -0700
 MIME-Version: 1.0
-In-Reply-To: <20170620012910.GH4493@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-3-chunyan.zhang@spreadtrum.com> <20170620012910.GH4493@codeaurora.org>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 22 Jun 2017 18:12:09 +0800
-Message-ID: <CAAfSe-trR-pUaVqnK4=5M2hRrWr7B4WmdpXn3kytZgy_yXV88g@mail.gmail.com>
-Subject: Re: [PATCH V1 2/9] clk: sprd: Add common infrastructure
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1495790704-2438-5-git-send-email-anup.patel@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20 June 2017 at 09:29, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/18, Chunyan Zhang wrote:
->> Added Spreadtrum's clock driver common structure and registration code.
->>
->> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
->> ---
->>  drivers/clk/Makefile          |  1 +
->>  drivers/clk/sprd/Makefile     |  3 ++
->>  drivers/clk/sprd/ccu_common.c | 78 +++++++++++++++++++++++++++++++++++++
->>  drivers/clk/sprd/ccu_common.h | 90 +++++++++++++++++++++++++++++++++++++++++++
->>  4 files changed, 172 insertions(+)
->>  create mode 100644 drivers/clk/sprd/Makefile
->>  create mode 100644 drivers/clk/sprd/ccu_common.c
->>  create mode 100644 drivers/clk/sprd/ccu_common.h
->>
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index c19983a..1d62721 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -81,6 +81,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)    += samsung/
->>  obj-$(CONFIG_ARCH_SIRF)                      += sirf/
->>  obj-$(CONFIG_ARCH_SOCFPGA)           += socfpga/
->>  obj-$(CONFIG_PLAT_SPEAR)             += spear/
->> +obj-$(CONFIG_ARCH_SPRD)                      += sprd/
->>  obj-$(CONFIG_ARCH_STI)                       += st/
->>  obj-$(CONFIG_ARCH_SUNXI)             += sunxi/
->>  obj-$(CONFIG_ARCH_SUNXI)             += sunxi-ng/
->> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
->> new file mode 100644
->> index 0000000..8f802b2
->> --- /dev/null
->> +++ b/drivers/clk/sprd/Makefile
->> @@ -0,0 +1,3 @@
->> +ifneq ($(CONFIG_OF),)
->> +obj-y        += ccu_common.o
->> +endif
->
-> I'd prefer a Kconfig for SPRD clk drivers instead of this
-> CONFIG_OF check. Then we can compile test the sprd code in
-> configurations that don't have CONFIG_ARCH_SPRD set too.
 
-Ok, make sense, will address this in the next version.
 
->
->> diff --git a/drivers/clk/sprd/ccu_common.c b/drivers/clk/sprd/ccu_common.c
->> new file mode 100644
->> index 0000000..911f4ba
->> --- /dev/null
->> +++ b/drivers/clk/sprd/ccu_common.c
->> @@ -0,0 +1,78 @@
->> +/*
->> + * Spreadtrum clock infrastructure
->> + *
->> + * Copyright (C) 2017 Spreadtrum, Inc.
->> + *
->> + * SPDX-License-Identifier: GPL-2.0
->> + */
->> +
->> +#include "ccu_common.h"
->> +
->> +static inline void __iomem *ccu_find_base(struct ccu_addr_map *maps,
->> +                                       unsigned int num, unsigned int reg)
->> +{
->> +     int i;
->> +
->> +     for (i = 0; i < num; i++)
->> +             if ((reg & 0xffff0000) == maps[i].phy)
->
-> What is this?
+On 05/26/2017 02:24 AM, Anup Patel wrote:
+> The Broadcom Stingray SoC is a new member in Broadcom iProc
+> SoC family.
+> 
+> This patch adds initial DTS files for Broadcom Stingray SoC
+> and two of its reference boards (bcm958742k and bcm958742t).
+> 
+> We have lot of reference boards and large number of devices
+> in Broadcom Stingray SoC so eventually we will have quite
+> a few DTS files for Stingray. To tackle, we have added a
+> separate directory for Stingray DTS files.
 
-You can look at ccu-sc9860.c, different from sunxi-ng, we specify the
-whole register address rather than register offset when initializing
-Spreadtrum clocks, the high 16 bits is the base address which is
-configured in DT, and is mapped in the board clock files like
-ccu-sc9860.c, I will write more in commit message to explain this when
-cooking next version of the patchset.
+So I was going to apply this, but...
 
->
->> +                     return maps[i].virt;
->> +
->> +     return 0;
->> +}
->> +
->> +int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
->> +                unsigned int count, const struct sprd_ccu_desc *desc)
->> +{
->> +     int i, ret = 0;
->> +     struct ccu_common *cclk;
->> +     struct clk_hw *hw;
->> +
->> +     for (i = 0; i < desc->num_ccu_clks; i++) {
->> +             cclk = desc->ccu_clks[i];
->> +             if (!cclk)
->> +                     continue;
->> +
->> +             cclk->base = ccu_find_base(maps, count, cclk->reg);
->> +             if (!cclk->base) {
->> +                     pr_err("%s: No mapped address found for clock(0x%x)\n",
->> +                             __func__, cclk->reg);
->> +                     return -EINVAL;
->> +             }
->> +             cclk->reg = cclk->reg & 0xffff;
->> +     }
->> +
->> +     for (i = 0; i < desc->hw_clks->num; i++) {
->> +
->> +             hw = desc->hw_clks->hws[i];
->> +
->> +             if (!hw)
->> +                     continue;
->> +
->> +             ret = clk_hw_register(NULL, hw);
->> +             if (ret) {
->> +                     pr_err("Couldn't register clock %d - %s\n",
->> +                            i, hw->init->name);
->> +                     goto err_clk_unreg;
->> +             }
->> +     }
->> +
->> +     ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
->> +                                  desc->hw_clks);
->> +     if (ret) {
->> +             pr_err("Failed to add clock provider.\n");
->> +             goto err_clk_unreg;
->> +     }
->> +
->> +     return 0;
->> +
->> +err_clk_unreg:
->> +     while (--i >= 0) {
->> +             hw = desc->hw_clks->hws[i];
->> +             if (!hw)
->> +                     continue;
->> +
->> +             clk_hw_unregister(hw);
->> +     }
->> +
->> +     return ret;
->> +}
->> diff --git a/drivers/clk/sprd/ccu_common.h b/drivers/clk/sprd/ccu_common.h
->> new file mode 100644
->> index 0000000..ff07772
->> --- /dev/null
->> +++ b/drivers/clk/sprd/ccu_common.h
->> @@ -0,0 +1,90 @@
->> +/*
->> + * Spreadtrum clock infrastructure
->> + *
->> + * Copyright (C) 2017 Spreadtrum, Inc.
->> + *
->> + * SPDX-License-Identifier: GPL-2.0
->> + */
->> +
->> +#ifndef _CCU_COMMON_H_
->> +#define _CCU_COMMON_H_
->> +
->> +#include <linux/clk-provider.h>
->> +
->> +struct device_node;
->> +
->> +#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)   \
->> +     (&(struct clk_init_data) {                      \
->> +             .flags          = _flags,               \
->> +             .name           = _name,                \
->> +             .parent_names   = NULL,                 \
->> +             .num_parents    = 0,                    \
->> +             .ops            = _ops,                 \
->> +     })
->> +
->> +#define CLK_HW_INIT(_name, _parent, _ops, _flags)            \
->> +     (&(struct clk_init_data) {                              \
->> +             .flags          = _flags,                       \
->> +             .name           = _name,                        \
->> +             .parent_names   = (const char *[]) { _parent }, \
->> +             .num_parents    = 1,                            \
->> +             .ops            = _ops,                         \
->> +     })
->> +
->> +#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)   \
->> +     (&(struct clk_init_data) {                              \
->> +             .flags          = _flags,                       \
->> +             .name           = _name,                        \
->> +             .parent_names   = _parents,                     \
->> +             .num_parents    = ARRAY_SIZE(_parents),         \
->> +             .ops            = _ops,                         \
->> +     })
->> +
->> +#define CLK_FIXED_FACTOR(_struct, _name, _parent,                    \
->> +                     _div, _mult, _flags)                            \
->> +     struct clk_fixed_factor _struct = {                             \
->> +             .div            = _div,                                 \
->> +             .mult           = _mult,                                \
->> +             .hw.init        = CLK_HW_INIT(_name,                    \
->> +                                           _parent,                  \
->> +                                           &clk_fixed_factor_ops,    \
->> +                                           _flags),                  \
->> +     }
->> +
->> +struct ccu_common {
->> +     void __iomem    *base;
->> +     u32             reg;
->> +     spinlock_t      *lock;
->> +     struct clk_hw   hw;
->> +};
->> +
->> +struct ccu_addr_map {
->> +     phys_addr_t phy;
->> +     void __iomem *virt;
->> +};
->> +
->> +static inline u32 ccu_readl(struct ccu_common *common)
->> +{
->> +     return readl(common->base + common->reg);
->> +}
->> +
->> +static inline void ccu_writel(u32 val, struct ccu_common *common)
->> +{
->> +     writel(val, common->base + common->reg);
->> +}
->> +
->> +static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
->> +{
->> +     return container_of(hw, struct ccu_common, hw);
->> +}
->> +
->> +struct sprd_ccu_desc {
->> +     struct ccu_common               **ccu_clks;
->> +     unsigned long                   num_ccu_clks;
->> +     struct clk_hw_onecell_data      *hw_clks;
->> +};
->> +
->> +int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
->> +                unsigned int count, const struct sprd_ccu_desc *desc);
->> +
->> +#endif /* _CCU_COMMON_H_ */
->
-> Do you call them CCUs internally? I thought CCU was a sunxi
-> thing, so it may make more sense to call it whatever you call the
-> clock controller on your hardware.
 
-OK, will address that.
+> +	scr {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x0 0x61000000 0x05000000>;
 
-Thanks,
-Chunyan
+So you corrected the ranges property here...
 
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> +
+> +		gic: interrupt-controller@63c00000 {
+
+but you kept the original unit address here, which does not match the
+reg property, could you fix that through your entire submission?
+
+> +			compatible = "arm,gic-v3";
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +			interrupt-controller;
+> +			reg = <0x02c00000 0x010000>, /* GICD */
+> +			      <0x02e00000 0x600000>; /* GICR */
+
+> +	hsls {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x0 0x68900000 0x17700000>;
+
+Same here.
+
+> +
+> +		uart0: uart@68a00000 {
+> +			device_type = "serial";
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x00100000 0x1000>;
+
+and here and all other sub nodes
+-- 
+Florian
