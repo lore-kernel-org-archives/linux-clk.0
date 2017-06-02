@@ -1,53 +1,76 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: dinguyen@kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: socfpga: Fix the smplsel on Arria10 and Stratix10
-Date: Wed,  7 Jun 2017 10:01:30 -0500
-Message-Id: <1496847690-1883-1-git-send-email-dinguyen@kernel.org>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 15/19] clk: sunxi-ng: sun6i: Export video PLLs
+Date: Fri,  2 Jun 2017 18:10:20 +0800
+Message-Id: <20170602101024.18940-16-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The smplsel bits for the SDMMC clock on Arria10 and Stratix10 platforms are
-offset by 1 additional bit.
+The 2x outputs of the 2 video PLL clocks are directly used by the
+HDMI controller block.
 
-Add a new macro SYSMGR_SDMMC_CTRL_SET_AS10 for usage on the Arria10 and
-Stratix10 platforms.
+Export them so they can be referenced in the device tree.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/socfpga/clk-gate-a10.c | 2 +-
- drivers/clk/socfpga/clk.h          | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.h      | 8 ++++++--
+ include/dt-bindings/clock/sun6i-a31-ccu.h | 4 ++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index c2d5727..36376c5 100644
---- a/drivers/clk/socfpga/clk-gate-a10.c
-+++ b/drivers/clk/socfpga/clk-gate-a10.c
-@@ -86,7 +86,7 @@ static int socfpga_clk_prepare(struct clk_hw *hwclk)
- 			}
- 		}
- 
--		hs_timing = SYSMGR_SDMMC_CTRL_SET(clk_phase[0], clk_phase[1]);
-+		hs_timing = SYSMGR_SDMMC_CTRL_SET_AS10(clk_phase[0], clk_phase[1]);
- 		if (!IS_ERR(socfpgaclk->sys_mgr_base_addr))
- 			regmap_write(socfpgaclk->sys_mgr_base_addr,
- 				     SYSMGR_SDMMCGRP_CTRL_OFFSET, hs_timing);
-diff --git a/drivers/clk/socfpga/clk.h b/drivers/clk/socfpga/clk.h
-index 814c724..9cf1230 100644
---- a/drivers/clk/socfpga/clk.h
-+++ b/drivers/clk/socfpga/clk.h
-@@ -32,6 +32,9 @@
- #define SYSMGR_SDMMC_CTRL_SET(smplsel, drvsel) \
- 	((((smplsel) & 0x7) << 3) | (((drvsel) & 0x7) << 0))
- 
-+#define SYSMGR_SDMMC_CTRL_SET_AS10(smplsel, drvsel) \
-+	((((smplsel) & 0x7) << 4) | (((drvsel) & 0x7) << 0))
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.h b/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
+index 4e434011e9e7..27e6ad4133ab 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.h
+@@ -27,7 +27,9 @@
+ #define CLK_PLL_AUDIO_4X	4
+ #define CLK_PLL_AUDIO_8X	5
+ #define CLK_PLL_VIDEO0		6
+-#define CLK_PLL_VIDEO0_2X	7
 +
- extern void __iomem *clk_mgr_base_addr;
- extern void __iomem *clk_mgr_a10_base_addr;
++/* The PLL_VIDEO0_2X clock is exported */
++
+ #define CLK_PLL_VE		8
+ #define CLK_PLL_DDR		9
  
+@@ -35,7 +37,9 @@
+ 
+ #define CLK_PLL_PERIPH_2X	11
+ #define CLK_PLL_VIDEO1		12
+-#define CLK_PLL_VIDEO1_2X	13
++
++/* The PLL_VIDEO1_2X clock is exported */
++
+ #define CLK_PLL_GPU		14
+ #define CLK_PLL_MIPI		15
+ #define CLK_PLL9		16
+diff --git a/include/dt-bindings/clock/sun6i-a31-ccu.h b/include/dt-bindings/clock/sun6i-a31-ccu.h
+index 4482530fb6f5..c5d13340184a 100644
+--- a/include/dt-bindings/clock/sun6i-a31-ccu.h
++++ b/include/dt-bindings/clock/sun6i-a31-ccu.h
+@@ -43,8 +43,12 @@
+ #ifndef _DT_BINDINGS_CLK_SUN6I_A31_H_
+ #define _DT_BINDINGS_CLK_SUN6I_A31_H_
+ 
++#define CLK_PLL_VIDEO0_2X	7
++
+ #define CLK_PLL_PERIPH		10
+ 
++#define CLK_PLL_VIDEO1_2X	13
++
+ #define CLK_CPU			18
+ 
+ #define CLK_AHB1_MIPIDSI	23
 -- 
-2.7.4
+2.11.0
