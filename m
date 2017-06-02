@@ -1,90 +1,82 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 04/10] clk: use round rate to bail out early in set_rate
-Date: Mon, 12 Jun 2017 21:44:32 +0200
-Message-Id: <20170612194438.12298-5-jbrunet@baylibre.com>
-In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52132 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751297AbdFBKKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Jun 2017 06:10:40 -0400
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on the MSI Primo81 tablet
+Date: Fri,  2 Jun 2017 18:10:24 +0800
+Message-Id: <20170602101024.18940-20-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The current implementation of clk_core_set_rate_nolock bails out early if
-the requested rate is exactly the same as the one set. It should bail out
-if the request would not result in rate a change.  This important when
-rate is not exactly what is requested, which is fairly common with PLLs.
+The MSI Primo81 tablet has a micro HDMI connector at the bottom.
+This is connected to the SoCs HDMI output.
 
-Ex: provider able to give any rate with steps of 100Hz
- - 1st consumer request 48000Hz and gets it.
- - 2nd consumer request 48010Hz as well. If we were to perform the usual
-   mechanism, we would get 48000Hz as well. The clock would not change so
-   there is no point performing any checks to make sure the clock can
-   change, we know it won't.
+Enable the display pipeline and the HDMI output.
 
-This is important to prepare the addition of the clock protection
-mechanism
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8cc4672414be..163cb9832f10 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1570,15 +1570,34 @@ static void clk_change_rate(struct clk_core *core)
- 		clk_change_rate(core->new_child);
- }
+diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+index f3712753fa42..26154b2f87a3 100644
+--- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
++++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+@@ -52,17 +52,42 @@
+ / {
+ 	model = "MSI Primo81 tablet";
+ 	compatible = "msi,primo81", "allwinner,sun6i-a31s";
++
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "c";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
+ };
  
-+static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-+						     unsigned long req_rate)
-+{
-+	int ret;
-+	struct clk_rate_request req;
-+
-+	if (!core)
-+		return 0;
-+
-+	clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
-+	req.rate = req_rate;
-+
-+	ret = clk_core_round_rate_nolock(core, &req);
-+
-+	return ret ? 0 : req.rate;
-+}
-+
- static int clk_core_set_rate_nolock(struct clk_core *core,
- 				    unsigned long req_rate)
- {
- 	struct clk_core *top, *fail_clk;
--	unsigned long rate = req_rate;
-+	unsigned long rate;
+ &cpu0 {
+ 	cpu-supply = <&reg_dcdc3>;
+ };
  
- 	if (!core)
- 		return 0;
- 
-+	rate = clk_core_req_round_rate_nolock(core, req_rate);
++&de {
++	status = "okay";
++};
 +
- 	/* bail early if nothing to do */
- 	if (rate == clk_core_get_rate_nolock(core))
- 		return 0;
-@@ -1587,7 +1606,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 		return -EBUSY;
+ &ehci0 {
+ 	/* rtl8188etv wifi is connected here */
+ 	status = "okay";
+ };
  
- 	/* calculate new rates and get the topmost changed clock */
--	top = clk_calc_new_rates(core, rate);
-+	top = clk_calc_new_rates(core, req_rate);
- 	if (!top)
- 		return -EINVAL;
- 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	/* pull-ups and device VDDIO use AXP221 DLDO3 */
+ 	pinctrl-names = "default";
 -- 
-2.9.4
+2.11.0
+
