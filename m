@@ -1,114 +1,107 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  devicetree@vger.kernel.org,  Omri Itach <omrii@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Rob Herring <robh+dt@kernel.org>,  Neta Zur Hershkovits <neta@marvell.com>,  Shadi Ammouri <shadi@marvell.com>,  Marcin Wojtas <mw@semihalf.com>, Stephen Boyd <sboyd@codeaurora.org> ,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v2 7/7] arm64: dts: marvell: use new binding for the system controller on ap806
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-	<cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-	<e12e9b027462646e16cb51783d6e14660a019ba6.1496239589.git-series.gregory.clement@free-electrons.com>
-Date: Thu, 08 Jun 2017 19:09:15 +0200
-In-Reply-To: <e12e9b027462646e16cb51783d6e14660a019ba6.1496239589.git-series.gregory.clement@free-electrons.com>
-	(Gregory CLEMENT's message of "Wed, 31 May 2017 16:07:28 +0200")
-Message-ID: <87lgp2pft0.fsf@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Jun 2017 15:45:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Re-evaluate clock rate on min/max update
+Message-ID: <20170602224508.GA20170@codeaurora.org>
+References: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170412164605.GO7065@codeaurora.org>
+ <20170413074819.GS30730@tbergstrom-lnx.Nvidia.com>
+ <20170601091251.GF20170@codeaurora.org>
+ <20170602101520.GJ2885@tbergstrom-lnx.Nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170602101520.GJ2885@tbergstrom-lnx.Nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
- 
- On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+On 06/02, Peter De Schrijver wrote:
+> On Thu, Jun 01, 2017 at 02:12:51AM -0700, Stephen Boyd wrote:
+> > On 04/13, Peter De Schrijver wrote:
+> > > On Wed, Apr 12, 2017 at 09:46:05AM -0700, Stephen Boyd wrote:
+> > > > On 03/21, Peter De Schrijver wrote:
+> > > 
+> > > No. But I do rely on the rate setting op to be called when a new min or max
+> > > rate would cause the rate to be changed even when there is no new rate request.
+> > > 
+> > > Eg:
+> > > 
+> > > min = 100MHz, max = 500MHz, current rate request is 400MHz, then max changes to
+> > > 300MHz. Today the rate setting op will not be called, while I think it should
+> > > be called to lower the rate to 300MHz.
+> > 
+> > Ok. Can you please describe the sequence in more detail? What is
+> > core::req_rate when the clk is registered? What is the rate of
+> > the clk when the first rate is set?
+> > 
+> 
+> 1) req_rate at registration time is the current rate of the clk: 100MHz
+> 2) clk_set_rate sets req_rate to 400MHz, set_rate clk op is called to change
+>    the rate
+> 3) clk_set_min_rate is called with 100MHz, req_rate is 400MHz, no clock
+>    operations are called
+> 4) clk_set_max_rate is called with 500MHz, req_rate is 400Mhz, no clock
+>    operations are called
+> 5) clk_set_max_rate is called with 300MHz, req_rate is 400Mhz, no clock
+>    operations are called because req_rate didn't change. This however is
+>    wrong IMO. the set_rate op should be called to lower the clock rate
+>    to 300MHz.
 
-> The new binding for the system controller on ap806 moved the clock into a
-> subnode. This preliminary step will allow to add gpio and pinctrl
-> subnodes
->
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Thanks. Makes sense!
 
+> 
+> > Because I have a maintainer tag on commit 1c8e600440c of
+> > [sboyd@codeaurora.org: set req_rate in __clk_init] which may be a
+> > problem if the clk is orphaned when registered and thus req_rate
+> > is totally bogus because we can't calculate the rate[1].
+> > 
+> > We will need to only set req_rate when a clk is actually parented
+> > to something, urgh. But that definitely doesn't look to even be
+> 
+> The same happens for core::rate, however core::rate is updated by
+> __clk_recalc_rates when the parent appears. We should update req_rate
+> as well then. However this can't be done easily it seems because
+> __clk_recalc_rates is also called in other cases (eg when reparenting).
+> In theory updating req_rate when 'reparenting' from orphan to the real
+> parent would cause an existing req_rate to be discarded. However I don't
+> think we should allow any calls by consumers to orphaned clocks, because
+> this clearly is an inconsistent state. In practice all clocks are properly
+> parented by the time the consumers are starting to make calls to CCF. So
+> this should not cause any problem.
 
-Applied on mvebu/dt64
+Right. Reminds me. I need to merge that probe defer orphans patch
+now.
 
-Gregory
+> 
+> > the bug you're talking about. From what I can tell, the whole
+> > design is borked, because nobody has really used or tested this
+> > code! We should really be making sure that a clk range request
+> 
+> I'm trying to use it now :)
+> 
+> > doesn't become disjoint from other consumer requests. If it does,
+> > it will be unsatisfiable. Furthermore, we should remove the
+> > min/max constraints on failure out of set_rate() because it
+> > didn't work.
+> > 
+> > We have req_rate there to make sure we bring the clk rate back to
+> > within some range when a constraint goes away, but we should
+> > probably just evaluate the constraints before calling
+> > clk_core_set_rate_nolock() and then clamp the req_rate to within
+> > the min/max that we determine, leaning toward the lowest rate.
+> > That's sort of what you're doing here, but we lost the check to
+> > make sure we don't call the set_rate op with the same rate we
+> > already have. I'd prefer we maintain that part of the code even
+> > for rate constraints.
+> > 
+> 
+> 
+> Ok. I will rework the patch to avoid calling set_rate with the current rate.
+> 
 
-> ---
->  arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> index 0c25ec62a2a3..205037e3e7dc 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> @@ -193,7 +193,7 @@
->  				#size-cells = <0>;
->  				cell-index = <0>;
->  				interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&ap_syscon 3>;
-> +				clocks = <&ap_clk 3>;
->  				status = "disabled";
->  			};
->  
-> @@ -204,7 +204,7 @@
->  				#size-cells = <0>;
->  				interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
->  				timeout-ms = <1000>;
-> -				clocks = <&ap_syscon 3>;
-> +				clocks = <&ap_clk 3>;
->  				status = "disabled";
->  			};
->  
-> @@ -214,7 +214,7 @@
->  				reg-shift = <2>;
->  				interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
->  				reg-io-width = <1>;
-> -				clocks = <&ap_syscon 3>;
-> +				clocks = <&ap_clk 3>;
->  				status = "disabled";
->  			};
->  
-> @@ -224,7 +224,7 @@
->  				reg-shift = <2>;
->  				interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
->  				reg-io-width = <1>;
-> -				clocks = <&ap_syscon 3>;
-> +				clocks = <&ap_clk 3>;
->  				status = "disabled";
->  
->  			};
-> @@ -234,17 +234,20 @@
->  				reg = <0x6e0000 0x300>;
->  				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
->  				clock-names = "core";
-> -				clocks = <&ap_syscon 4>;
-> +				clocks = <&ap_clk 4>;
->  				dma-coherent;
->  				marvell,xenon-phy-slow-mode;
->  				status = "disabled";
->  			};
->  
->  			ap_syscon: system-controller@6f4000 {
-> -				compatible = "marvell,ap806-system-controller",
-> -					     "syscon";
-> -				#clock-cells = <1>;
-> +				compatible = "syscon", "simple-mfd";
->  				reg = <0x6f4000 0x1000>;
-> +
-> +				ap_clk: clock {
-> +					compatible = "marvell,ap806-clock";
-> +					#clock-cells = <1>;
-> +				};
->  			};
->  		};
->  	};
-> -- 
-> git-series 0.9.1
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks.
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
