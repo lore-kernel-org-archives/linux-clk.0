@@ -1,51 +1,127 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Jun 2017 09:09:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Danilo Krummrich <danilokrummrich@dk-develop.de>, rjui@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Eric Anholt <eric@anholt.net>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v3] clk: bcm2835: remove remains from stub clk driver
-Message-ID: <20170614160909.GA20170@codeaurora.org>
-References: <20170608222900.18039-1-danilokrummrich@dk-develop.de>
- <a6facd69-ca86-1527-52af-f097a905027e@i2se.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>
+CC: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@imgtec.com>,
+	Frank Rowand <frowand.list@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH v4 1/4] dt-bindings: Document img,boston-clock binding
+Date: Fri, 2 Jun 2017 11:20:00 -0700
+Message-ID: <20170602182003.16269-2-paul.burton@imgtec.com>
+In-Reply-To: <20170602182003.16269-1-paul.burton@imgtec.com>
+References: <20170602182003.16269-1-paul.burton@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <a6facd69-ca86-1527-52af-f097a905027e@i2se.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/13, Stefan Wahren wrote:
-> [add Michael, Eric and Florian]
-> 
-> Am 09.06.2017 um 00:29 schrieb Danilo Krummrich:
-> > This commit removes the fixed clocks introduced as a stub clock driver
-> > added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
-> > Originally they were used to drive the AMBA bus and PL011 uart driver.
-> > Now these clocks are derived by the CPRMAN clock driver and configured
-> > in DT.
-> >
-> > Additionally, get rid of init_machine function in bcm2835 board file
-> > as there's nothing to do any longer.
-> >
-> > Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
-> > ---
-> > v2: v2: added ACK from Eric Anholt
-> > v3: rebased onto: [PATCH] irqchip/bcm2836: Move SMP startup code to arch/arm
-> 
-> @Michael, @Stephen:
-> 
-> In case you are okay with this patch, can this go via bcm2835-tree?
+Add device tree binding documentation for the clocks provided by the
+MIPS Boston development board from Imagination Technologies, and a
+header file describing the available clocks for use by device trees &
+driver.
 
-There are some patches already in clk-next for
-drivers/clk/bcm/clk-bcm2835.c but overall the change looks ok to
-me. It looks like conflicts will be minimal to non-existent, so
-it should be fine to take outside clk tree.
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@linux-mips.org
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
+Changes in v4:
+- Move img,boston-clock node under platform register syscon node.
+- Add MAINTAINERS entry.
+
+Changes in v3: None
+
+Changes in v2:
+- Add BOSTON_CLK_INPUT to expose the input clock.
+
+ .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
+ MAINTAINERS                                        |  7 +++++
+ include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
+ 3 files changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
+ create mode 100644 include/dt-bindings/clock/boston-clock.h
+
+diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+new file mode 100644
+index 000000000000..7bc5e9ffb624
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+@@ -0,0 +1,31 @@
++Binding for Imagination Technologies MIPS Boston clock sources.
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The device node must be a child node of the syscon node corresponding to the
++Boston system's platform registers.
++
++Required properties:
++- compatible : Should be "img,boston-clock".
++- #clock-cells : Should be set to 1.
++  Values available for clock consumers can be found in the header file:
++    <dt-bindings/clock/boston-clock.h>
++
++Example:
++
++	system-controller@17ffd000 {
++		compatible = "img,boston-platform-regs", "syscon";
++		reg = <0x17ffd000 0x1000>;
++
++		clk_boston: clock {
++			compatible = "img,boston-clock";
++			#clock-cells = <1>;
++		};
++	};
++
++	uart0: uart@17ffe000 {
++		/* ... */
++		clocks = <&clk_boston BOSTON_CLK_SYS>;
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 053c3bdd1fe5..481fc6d54ca4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8499,6 +8499,13 @@ F:	arch/mips/include/asm/mach-loongson32/
+ F:	drivers/*/*loongson1*
+ F:	drivers/*/*/*loongson1*
+ 
++MIPS BOSTON DEVELOPMENT BOARD
++M:	Paul Burton <paul.burton@imgtec.com>
++L:	linux-mips@linux-mips.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/img,boston-clock.txt
++F:	include/dt-bindings/clock/boston-clock.h
++
+ MIROSOUND PCM20 FM RADIO RECEIVER DRIVER
+ M:	Hans Verkuil <hverkuil@xs4all.nl>
+ L:	linux-media@vger.kernel.org
+diff --git a/include/dt-bindings/clock/boston-clock.h b/include/dt-bindings/clock/boston-clock.h
+new file mode 100644
+index 000000000000..a6f009821137
+--- /dev/null
++++ b/include/dt-bindings/clock/boston-clock.h
+@@ -0,0 +1,14 @@
++/*
++ * Copyright (C) 2016 Imagination Technologies
++ *
++ * SPDX-License-Identifier:	GPL-2.0
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
++#define __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
++
++#define BOSTON_CLK_INPUT 0
++#define BOSTON_CLK_SYS 1
++#define BOSTON_CLK_CPU 2
++
++#endif /* __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__ */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.0
