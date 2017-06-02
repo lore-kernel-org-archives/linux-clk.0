@@ -1,96 +1,93 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [GIT PULL] Improve cp110 clk support on Marvell Armada 7K/8K
-References: <pull.28a1be390fb082d60e88c3234dd7d76fb61438b6.1497886602.git-series.gregory.clement@free-electrons.com>
-	<20170620001853.GT20170@codeaurora.org>
-Date: Tue, 20 Jun 2017 09:32:16 +0200
-In-Reply-To: <20170620001853.GT20170@codeaurora.org> (Stephen Boyd's message
-	of "Mon, 19 Jun 2017 17:18:53 -0700")
-Message-ID: <87shiv3yin.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Abhishek Shah <abhishek.shah@broadcom.com>
+Subject: [PATCH v6 06/11] arm64: dts: Add NAND DT nodes for Stingray SOC
+Date: Fri,  2 Jun 2017 12:04:30 +0530
+Message-Id: <1496385275-6899-7-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
- 
- On mar., juin 20 2017, Stephen Boyd <sboyd@codeaurora.org> wrote:
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-> On 06/19, Gregory CLEMENT wrote:
->> 
->> Hi Mike, Stephen,
->> 
->> This time I turned the series in a pull request so I removed the
->> device tree binding part which will be in an other series for Rob
->> Herring and I also removed the dt part that I will take care of once
->> you will have pulled this one.
->> 
->> I hope this will be easier for you to apply this way.
->> 
->
-> Ok. It wasn't clear what was going on and I forgot to ask in the
-> lastest patch series. Pulled into clk-next, but I had to apply
-> this patch on top:
+This patch adds NAND controller DT Node and NAND chip DT
+node for Stingray SOC and Stingray reference boards.
 
-Thanks for the pull and the fix patch!
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 15 +++++++++++++++
+ arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 13 +++++++++++++
+ 2 files changed, 28 insertions(+)
 
-Gregory
-
->
-> ---8<----
-> From: Stephen Boyd <sboyd@codeaurora.org>
-> Subject: [PATCH] clk: mvebu: cp110: Minor cleanups
->
-> Mark an array of strings static const and remove the dereference
-> of a function pointer when assigning to the platform driver probe
-> struct member.
->
-> drivers/clk/mvebu/cp110-system-controller.c:89:12:
-> warning: symbol 'gate_base_names' was not declared. Should it be static?
-> drivers/clk/mvebu/cp110-system-controller.c:447:18:
-> error: cannot dereference this type
->
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/mvebu/cp110-system-controller.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-> index b034b79345ec..ca9a0a536174 100644
-> --- a/drivers/clk/mvebu/cp110-system-controller.c
-> +++ b/drivers/clk/mvebu/cp110-system-controller.c
-> @@ -86,7 +86,7 @@ enum {
->  #define CP110_GATE_EIP150		25
->  #define CP110_GATE_EIP197		26
->  
-> -const char *gate_base_names[] = {
-> +static const char * const gate_base_names[] = {
->  	[CP110_GATE_AUDIO]	= "audio",
->  	[CP110_GATE_COMM_UNIT]	= "communit",
->  	[CP110_GATE_NAND]	= "nand",
-> @@ -437,14 +437,13 @@ static int cp110_clk_probe(struct platform_device *pdev)
->  	return cp110_syscon_common_probe(pdev, pdev->dev.of_node->parent);
->  }
->  
-> -
->  static const struct of_device_id cp110_syscon_legacy_of_match[] = {
->  	{ .compatible = "marvell,cp110-system-controller0", },
->  	{ }
->  };
->  
->  static struct platform_driver cp110_syscon_legacy_driver = {
-> -	.probe = *cp110_syscon_legacy_clk_probe,
-> +	.probe = cp110_syscon_legacy_clk_probe,
->  	.driver		= {
->  		.name	= "marvell-cp110-system-controller0",
->  		.of_match_table = cp110_syscon_legacy_of_match,
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+index 992944b..aad45a2 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -53,3 +53,18 @@
+ &uart1 {
+ 	status = "okay";
+ };
++
++&nand {
++	status = "ok";
++	nandcs@0 {
++		compatible = "brcm,nandcs";
++		reg = <0>;
++		nand-ecc-mode = "hw";
++		nand-ecc-strength = <8>;
++		nand-ecc-step-size = <512>;
++		nand-bus-width = <16>;
++		brcm,nand-oob-sector-size = <16>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 722e362..e8faa62 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -307,5 +307,18 @@
+ 			compatible = "brcm,iproc-rng200";
+ 			reg = <0x00220000 0x28>;
+ 		};
++
++		nand: nand@00360000 {
++			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
++			reg = <0x00360000 0x600>,
++			      <0x0050a408 0x600>,
++			      <0x00360f00 0x20>;
++			reg-names = "nand", "iproc-idm", "iproc-ext";
++			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			brcm,nand-has-wp;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.7.4
