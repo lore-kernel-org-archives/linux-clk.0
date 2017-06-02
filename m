@@ -1,39 +1,111 @@
-Return-Path: <stefan.wahren@i2se.com>
-Date: Thu, 1 Jun 2017 11:36:53 +0200 (CEST)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Phil Elwell <phil@raspberrypi.org>, linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
 	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-rpi-kernel@lists.infradead.org
-Message-ID: <215281225.100959.1496309813326@email.1und1.de>
-In-Reply-To: <c6708407-597a-0b08-d992-3bc4852118ec@raspberrypi.org>
-References: <c6708407-597a-0b08-d992-3bc4852118ec@raspberrypi.org>
-Subject: Re: [PATCH v3 0/2] clk: bcm2835: PCM clock improvements
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
+Date: Fri,  2 Jun 2017 12:04:24 +0530
+Message-Id: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-> Phil Elwell <phil@raspberrypi.org> hat am 1. Juni 2017 um 11:10 geschrieben:
-> 
-> 
-> The switch to using the upstream bcm2835_cprman clock driver caused a
-> few problems for users of PCM (I2S) peripherals. Audio applications
-> require accurate, stable clocks, and the cprman driver wasn't
-> conservative enough in its choice of clock sources.
-> 
-> These patches restrict the clock sources for the PCM peripheral in two
-> ways: the first causes all possible sources except OSC and PLLD_PER
-> to be ignored, while the second allows clocks to be specified as
-> "low_jitter", causing the effects of fractional divisors to be taken
-> into account when comparing potential clocks for accuracy. In practice,
-> the combined effect of the two patches is to choose OSC as a source if
-> an integer divisor can be used, otherwise PLLD_PER is chosen.
-> 
-> Changes in v3:
-> * Elimination of temporary variable from patch 2.
+This patchset adds initial support of Broadcom Stingray SOC
+by reusing existing Broadcom iProc device drivers.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Most of the patches in this patchset are DT patches except
+the Stingray clock tree support which just one patch.
 
-still applies to the complete series
+This patchset is based on Linux-4.12-rc3 and it is also available
+at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
+
+Changes since v5:
+ - Rebased patches for Linux-4.12-rc3
+ - Update DT node names to match register offset
+
+Changes since v4:
+ - Reduce number of include headers in Stingray clk driver
+
+Changes since v3:
+ - Rebased patches for Linux-4.12-rc1
+ - Updated PATCH3 to have all clocks except genpll3 to be
+   registered via platform driver probe
+
+Changes since v2:
+ - Remove default bootargs from chosen DT node
+ - Remove "linux" prefix from stdout DT attribute of chosen DT node
+ - Remove use of GIC_CPU_MASK_xxx() for PPIs
+
+Changes since v1:
+ - Rebased patches for Linux-4.12-rc1
+ - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+ - Use ranges DT property to clear view of memory-layout
+ - Make bcm-sr.h part of clock DT bindings patch
+
+Anup Patel (3):
+  dt-bindings: bcm: Add Broadcom Stingray bindings document
+  arm64: dts: Initial DTS files for Broadcom Stingray SOC
+  arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+
+Oza Pawandeep (1):
+  arm64: dts: Add I2C DT nodes for Stingray SoC
+
+Pramod Kumar (3):
+  arm64: dts: Add NAND DT nodes for Stingray SOC
+  arm64: dts: Add pinctrl DT nodes for Stingray SOC
+  arm64: dts: Add GPIO DT nodes for Stingray SOC
+
+Sandeep Tripathy (3):
+  dt-bindings: clk: Extend binding doc for Stingray SOC
+  clk: bcm: Add clocks for Stingray SOC
+  arm64: dts: Add clock DT nodes for Stingray SOC
+
+Srinath Mannam (1):
+  arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+
+ .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
+ .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
+ arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+ arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
+ .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
+ .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
+ drivers/clk/bcm/Kconfig                            |   8 +
+ drivers/clk/bcm/Makefile                           |   1 +
+ drivers/clk/bcm/clk-sr.c                           | 320 ++++++++++++++
+ include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
+ .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
+ 15 files changed, 1817 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+ create mode 100644 drivers/clk/bcm/clk-sr.c
+ create mode 100644 include/dt-bindings/clock/bcm-sr.h
+ create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+
+-- 
+2.7.4
