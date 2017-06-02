@@ -1,63 +1,110 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 17:47:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-clk@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: gcc-msm8996: Add missing lpass smmu clks
-Message-ID: <20170620004709.GD20170@codeaurora.org>
-References: <20170612094137.6821-1-srinivas.kandagatla@linaro.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  devicetree@vger.kernel.org,  Omri Itach <omrii@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Rob Herring <robh+dt@kernel.org>,  Neta Zur Hershkovits <neta@marvell.com>,  Shadi Ammouri <shadi@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  linux-arm-kernel@lists.infradead.org,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 0/7] Improve ap806 clk support on Marvell Armada 7K/8K
+References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+	<149631063623.33065.5881396919137461999@resonance>
+Date: Fri, 02 Jun 2017 15:52:48 +0200
+In-Reply-To: <149631063623.33065.5881396919137461999@resonance> (Michael
+	Turquette's message of "Thu, 01 Jun 2017 18:50:36 +0900")
+Message-ID: <87mv9qpkcv.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170612094137.6821-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12, Srinivas Kandagatla wrote:
-> This patch adds missing LPASS smmu clks which are required by the audio driver.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-msm8996.c               | 26 ++++++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-msm8996.h |  2 ++
->  2 files changed, 28 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-> index 56e0a295c74e..6290ce551505 100644
-> --- a/drivers/clk/qcom/gcc-msm8996.c
-> +++ b/drivers/clk/qcom/gcc-msm8996.c
-> @@ -2644,6 +2644,30 @@ static struct clk_fixed_factor ufs_rx_cfg_clk_src = {
->  	},
->  };
->  
-> +static struct clk_branch gcc_hlos1_vote_lpass_core_smmu_clk = {
-> +	.halt_reg = 0x7d010,
+Hi Michael,
+ 
+ On jeu., juin 01 2017, Michael Turquette <mturquette@baylibre.com> wrote:
 
-Don't we need .halt_check = BRANCH_HALT_VOTED for these?
+> Hi Gregory,
+>
+> Quoting Gregory CLEMENT (2017-05-31 23:07:21)
+>> Hi,
+>> 
+>> This series modifies the device tree binding of the clock of the AP806
+>> part that we find in the Marvell Armada 7K/8K SoCs.
+>> 
+>> As for the previsous series the only change in this second version is
+>> about the binding documentation: all the documentation related changes
+>> are now move in their own patches. It allows to provide a stable -dt
+>> branch for theses changes. I also added the acked-by from Rob Herring.
+>> 
+>> Here again the last two patches modifying the device tree _must_ be
+>> merged through the mvebu tree to avoid future conflict.
+>
+> The approach (and the patches) look good to me. I took the DT binding
+> description changes (patches 2 & 4) into clk-ap806-dt stable branch:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-ap806-dt
+>
+> Anyone can merge the above branch if they need it as a dep.
+>
+> The driver changes (patches 1, 3 & 5) are merged on into clk-ap806,
+> which is based on top of clk-ap806-dt:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-ap806
+>
+> Everything has been merged into clk-next. I did not touch the .dts files
+> at all.
+>
 
-> +	.clkr = {
-> +		.enable_reg = 0x7d010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "hlos1_vote_lpass_core_smmu_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_hlos1_vote_lpass_adsp_smmu_clk = {
-> +	.halt_reg = 0x7d014,
-> +	.clkr = {
-> +		.enable_reg = 0x7d014,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "hlos1_vote_lpass_adsp_smmu_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
+Perfect I will take care of the dts patch.
+
+What about the other series on cp110?
+a clk_cp110-dt branch will be needed too for the pinctrl series.
+
+Thanks,
+
+Gregory
+
+
+> Regards,
+> Mike
+>
+>> 
+>> For the record:
+>> As for the CP110, we want to be able to ease the integration of new
+>> clocks without breaking the backward compatibility. It is done in
+>> patch 3.
+>> 
+>> We also want to ease the integration of the pinctrl node in the device
+>> tree. It is the purpose of the patch 5.
+>> 
+>> In this series (as in the previous one for CP110), even if there is
+>> some change in the device tree binding we paid attention to the
+>> backward compatibility, and the driver can still work with the old
+>> device tree.
+>> 
+>> Thanks,
+>> 
+>> Gregory
+>> 
+>> Gregory CLEMENT (7):
+>>   clk: mvebu: ap806: cosmetic improvement
+>>   dt-bindings: ap806: do not depend anymore of the *-clock-output-names
+>>   clk: mvebu: ap806: do not depend anymore of the *-clock-output-names
+>>   dt-bindings: ap806: introduce a new binding
+>>   clk: mvebu: ap806: introduce a new binding
+>>   arm64: dts: marvell: remove clock-output-names on ap806
+>>   arm64: dts: marvell: use new binding for the system controller on ap806
+>> 
+>>  Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt |  24 ++++++++++------
+>>  arch/arm64/boot/dts/marvell/armada-ap806.dtsi                             |  23 +++++++--------
+>>  drivers/clk/mvebu/ap806-system-controller.c                               | 107 +++++++++++++++++++++++++++++++++++++++++++++++-------------------------
+>>  3 files changed, 97 insertions(+), 57 deletions(-)
+>> 
+>> base-commit: 4139fcd6c66df1c3d3fa0a0a7cf7f8a8c601a16c
+>> -- 
+>> git-series 0.9.1
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
