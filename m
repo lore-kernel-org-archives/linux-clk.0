@@ -1,83 +1,85 @@
-Return-Path: <plaes@plaes.org>
-From: Priit Laes <plaes@plaes.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>,
-	Priit Laes <plaes@plaes.org>
-Subject: [PATCH v4 1/6] clk: sunxi-ng: div: Add support for fixed post-divider
-Date: Sun, 25 Jun 2017 23:45:42 +0300
-Message-Id: <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
-In-Reply-To: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
-In-Reply-To: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52126 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751287AbdFBKKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Jun 2017 06:10:40 -0400
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH 18/19] ARM: sun6i: a31s: Enable HDMI display output on the Sinlinx SinA31s
+Date: Fri,  2 Jun 2017 18:10:23 +0800
+Message-Id: <20170602101024.18940-19-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-6 is fixed post-divider.
+The Sinlinx SinA31s has an HDMI connector wired to the HDMI pins
+from the SoC.
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
+Enable the display pipeline and the HDMI output.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++--
- drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sun6i-a31s-sina31s.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-index c0e5c10..de30e15 100644
---- a/drivers/clk/sunxi-ng/ccu_div.c
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -62,8 +62,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
- 	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
- 						  parent_rate);
+diff --git a/arch/arm/boot/dts/sun6i-a31s-sina31s.dts b/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
+index b3d98222bd81..298476485bb4 100644
+--- a/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
++++ b/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
+@@ -53,6 +53,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
--	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
--				   cd->div.flags);
-+	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-+				  cd->div.flags);
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		val /= cd->fixed_post_div;
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
 +
-+	return val;
- }
- 
- static int ccu_div_determine_rate(struct clk_hw *hw,
-@@ -89,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
- 			      cd->div.flags);
- 
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		val *= cd->fixed_post_div;
-+
- 	spin_lock_irqsave(cd->common.lock, flags);
- 
- 	reg = readl(cd->common.base + cd->common.reg);
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 08d0744..f3a5028 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -86,9 +86,10 @@ struct ccu_div_internal {
- struct ccu_div {
- 	u32			enable;
- 
--	struct ccu_div_internal		div;
-+	struct ccu_div_internal	div;
- 	struct ccu_mux_internal	mux;
- 	struct ccu_common	common;
-+	unsigned int		fixed_post_div;
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -90,6 +101,10 @@
+ 	status = "okay";
  };
  
- #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	/* USB 2.0 4 port hub IC */
+ 	status = "okay";
+@@ -112,6 +127,16 @@
+ 	};
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
 -- 
-git-series 0.9.1
+2.11.0
+
