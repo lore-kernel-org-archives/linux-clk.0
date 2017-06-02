@@ -1,38 +1,26 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 28 Jun 2017 21:32:02 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linus.walleij@linaro.org,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
-	sjaganat@codeaurora.org, sricharan@codeaurora.org
-Subject: Re: [PATCH v6 6/6] arm64: defconfig: Enable qcom ipq8074 clock and
- pinctrl
-Message-ID: <20170629043202.GT18666@tuxbook>
-References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
- <1497001319-30353-7-git-send-email-varada@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Jun 2017 16:27:22 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: versatile: delete old RealView clock implementation
+Message-ID: <20170602232722.GF20170@codeaurora.org>
+References: <20170512074049.15139-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1497001319-30353-7-git-send-email-varada@codeaurora.org>
+In-Reply-To: <20170512074049.15139-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 09 Jun 02:41 PDT 2017, Varadarajan Narayanan wrote:
-
-> From: Abhishek Sahu <absahu@codeaurora.org>
+On 05/12, Linus Walleij wrote:
+> The old RealView clock implementation is not used anymore
+> (nothing in the kernel calls realview_clk_init()) as we have
+> moved all clocks over to device tree. Delete it.
 > 
-> These configs are required for booting kernel in qcom
-> ipq8074 boards.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Applied to clk-next
 
-Regards,
-Bjorn
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
