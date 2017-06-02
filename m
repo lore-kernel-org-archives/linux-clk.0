@@ -1,56 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] clk: meson-gxbb: Add const to some parent name arrays
-Date: Fri,  2 Jun 2017 10:58:31 -0700
-Message-Id: <20170602175831.29100-1-sboyd@codeaurora.org>
+Return-Path: <anup.patel@broadcom.com>
+MIME-Version: 1.0
+In-Reply-To: <abeca9ac-487c-b6dc-1397-4134b0442909@gmail.com>
+References: <1495790704-2438-1-git-send-email-anup.patel@broadcom.com>
+ <1495790704-2438-5-git-send-email-anup.patel@broadcom.com> <abeca9ac-487c-b6dc-1397-4134b0442909@gmail.com>
+From: Anup Patel <anup.patel@broadcom.com>
+Date: Fri, 2 Jun 2017 12:02:25 +0530
+Message-ID: <CAALAos-YQdr3dwjMDj-upSQMQbE6EHO8aXjjwTdCuTEgM+CR0g@mail.gmail.com>
+Subject: Re: [PATCH v5 04/11] arm64: dts: Initial DTS files for Broadcom
+ Stingray SOC
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>, Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>, Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>, Device Tree <devicetree@vger.kernel.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>,
+	BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+	Scott Branden <scott.branden@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-These can be marked as const * const.
+On Fri, Jun 2, 2017 at 11:07 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+> On 05/26/2017 02:24 AM, Anup Patel wrote:
+>> The Broadcom Stingray SoC is a new member in Broadcom iProc
+>> SoC family.
+>>
+>> This patch adds initial DTS files for Broadcom Stingray SoC
+>> and two of its reference boards (bcm958742k and bcm958742t).
+>>
+>> We have lot of reference boards and large number of devices
+>> in Broadcom Stingray SoC so eventually we will have quite
+>> a few DTS files for Stingray. To tackle, we have added a
+>> separate directory for Stingray DTS files.
+>
+> So I was going to apply this, but...
+>
+>
+>> +     scr {
+>> +             compatible = "simple-bus";
+>> +             #address-cells = <1>;
+>> +             #size-cells = <1>;
+>> +             ranges = <0x0 0x0 0x61000000 0x05000000>;
+>
+> So you corrected the ranges property here...
+>
+>> +
+>> +             gic: interrupt-controller@63c00000 {
+>
+> but you kept the original unit address here, which does not match the
+> reg property, could you fix that through your entire submission?
 
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/meson/gxbb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks for catching. I quickly update this and send revised patchset.
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 2919a0e044a5..36c0e455437e 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -701,7 +701,7 @@ static struct clk_gate gxbb_sar_adc_clk = {
-  */
- 
- static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
--static const char *gxbb_mali_0_1_parent_names[] = {
-+static const char * const gxbb_mali_0_1_parent_names[] = {
- 	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
- 	"fclk_div4", "fclk_div3", "fclk_div5"
- };
-@@ -801,7 +801,7 @@ static struct clk_gate gxbb_mali_1 = {
- };
- 
- static u32 mux_table_mali[] = {0, 1};
--static const char *gxbb_mali_parent_names[] = {
-+static const char * const gxbb_mali_parent_names[] = {
- 	"mali_0", "mali_1"
- };
- 
-@@ -953,7 +953,7 @@ static struct clk_gate gxbb_32k_clk = {
- 	},
- };
- 
--static const char *gxbb_32k_clk_parent_names[] = {
-+static const char * const gxbb_32k_clk_parent_names[] = {
- 	"xtal", "cts_slow_oscin", "fclk_div3", "fclk_div5"
- };
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Anup
