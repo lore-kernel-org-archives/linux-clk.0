@@ -1,180 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52194 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751286AbdFBKKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Jun 2017 06:10:40 -0400
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 03/15] clk: ingenic: Add code to enable/disable PLLs
-Date: Wed,  7 Jun 2017 22:04:27 +0200
-Message-Id: <20170607200439.24450-4-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH 11/19] drm/sun4i: hdmi: Add A31 specific DDC register definitions
+Date: Fri,  2 Jun 2017 18:10:16 +0800
+Message-Id: <20170602101024.18940-12-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit permits the PLLs to be dynamically enabled and disabled when
-their children clocks are enabled and disabled.
+The DDC block for the HDMI controller is different on the A31.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+This patch adds the register definitions.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/ingenic/cgu.c | 89 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 74 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index 75b083ba294c..08613b803b14 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -107,9 +107,6 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	if (bypass)
- 		return parent_rate;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+index 3a4987ab8da8..08c514672fd3 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+@@ -124,6 +124,32 @@
  
--	if (!enable)
--		return 0;
--
- 	for (od = 0; od < pll_info->od_max; od++) {
- 		if (pll_info->od_encoding[od] == od_enc)
- 			break;
-@@ -153,17 +150,25 @@ ingenic_pll_calc(const struct ingenic_cgu_clk_info *clk_info,
- 	return div_u64((u64)parent_rate * m, n * od);
- }
+ #define SUN4I_HDMI_DDC_FIFO_SIZE	16
  
--static long
--ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
--		       unsigned long *prate)
-+static inline const struct ingenic_cgu_clk_info *to_clk_info(
-+		struct ingenic_clk *ingenic_clk)
- {
--	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info;
- 
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 	BUG_ON(clk_info->type != CGU_CLK_PLL);
- 
-+	return clk_info;
-+}
++/* A31 specific */
++#define SUN6I_HDMI_DDC_CTRL_REG		0x500
++#define SUN6I_HDMI_DDC_CTRL_RESET		BIT(31)
++#define SUN6I_HDMI_DDC_CTRL_START_CMD		BIT(27)
++#define SUN6I_HDMI_DDC_CTRL_SDA_ENABLE		BIT(6)
++#define SUN6I_HDMI_DDC_CTRL_SCL_ENABLE		BIT(4)
++#define SUN6I_HDMI_DDC_CTRL_ENABLE		BIT(0)
 +
-+static long
-+ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
-+		       unsigned long *prate)
-+{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++#define SUN6I_HDMI_DDC_CMD_REG		0x508
++#define SUN6I_HDMI_DDC_CMD_EXPLICIT_EDDC_READ	6
++#define SUN6I_HDMI_DDC_CMD_BYTE_COUNT(count)	((count) << 16)
 +
- 	return ingenic_pll_calc(clk_info, req_rate, *prate, NULL, NULL, NULL);
- }
- 
-@@ -171,19 +176,14 @@ static int
- ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 		     unsigned long parent_rate)
- {
--	const unsigned timeout = 100;
- 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
--	const struct ingenic_cgu_clk_info *clk_info;
--	const struct ingenic_cgu_pll_info *pll_info;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
- 	unsigned long rate, flags;
--	unsigned m, n, od, i;
-+	unsigned int m, n, od;
- 	u32 ctl;
- 
--	clk_info = &cgu->clock_info[ingenic_clk->idx];
--	BUG_ON(clk_info->type != CGU_CLK_PLL);
--	pll_info = &clk_info->pll;
--
- 	rate = ingenic_pll_calc(clk_info, req_rate, parent_rate,
- 			       &m, &n, &od);
- 	if (rate != req_rate)
-@@ -202,6 +202,26 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	ctl &= ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
- 	ctl |= pll_info->od_encoding[od - 1] << pll_info->od_shift;
- 
-+	writel(ctl, cgu->base + pll_info->reg);
-+	spin_unlock_irqrestore(&cgu->lock, flags);
++#define SUN6I_HDMI_DDC_ADDR_REG		0x50c
++#define SUN6I_HDMI_DDC_ADDR_SEGMENT(seg)	(((seg) & 0xff) << 24)
++#define SUN6I_HDMI_DDC_ADDR_EDDC(addr)		(((addr) & 0xff) << 16)
++#define SUN6I_HDMI_DDC_ADDR_OFFSET(off)		(((off) & 0xff) << 8)
++#define SUN6I_HDMI_DDC_ADDR_SLAVE(addr)		(((addr) & 0xff) << 1)
 +
-+	return 0;
-+}
++#define SUN6I_HDMI_DDC_FIFO_CTRL_REG	0x518
++#define SUN6I_HDMI_DDC_FIFO_CTRL_CLEAR		BIT(15)
 +
-+static int ingenic_pll_enable(struct clk_hw *hw)
-+{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
-+	const unsigned int timeout = 100;
-+	unsigned long flags;
-+	unsigned int i;
-+	u32 ctl;
++#define SUN6I_HDMI_DDC_CLK_REG		0x520
++/* DDC CLK bit fields are the same, but the formula is not */
 +
-+	spin_lock_irqsave(&cgu->lock, flags);
-+	ctl = readl(cgu->base + pll_info->reg);
++#define SUN6I_HDMI_DDC_FIFO_DATA_REG	0x580
 +
- 	ctl &= ~BIT(pll_info->bypass_bit);
- 	ctl |= BIT(pll_info->enable_bit);
- 
-@@ -223,10 +243,48 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	return 0;
- }
- 
-+static void ingenic_pll_disable(struct clk_hw *hw)
-+{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
-+	unsigned long flags;
-+	u32 ctl;
-+
-+	spin_lock_irqsave(&cgu->lock, flags);
-+	ctl = readl(cgu->base + pll_info->reg);
-+
-+	ctl &= ~BIT(pll_info->enable_bit);
-+
-+	writel(ctl, cgu->base + pll_info->reg);
-+	spin_unlock_irqrestore(&cgu->lock, flags);
-+}
-+
-+static int ingenic_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
-+	unsigned long flags;
-+	u32 ctl;
-+
-+	spin_lock_irqsave(&cgu->lock, flags);
-+	ctl = readl(cgu->base + pll_info->reg);
-+	spin_unlock_irqrestore(&cgu->lock, flags);
-+
-+	return !!(ctl & BIT(pll_info->enable_bit));
-+}
-+
- static const struct clk_ops ingenic_pll_ops = {
- 	.recalc_rate = ingenic_pll_recalc_rate,
- 	.round_rate = ingenic_pll_round_rate,
- 	.set_rate = ingenic_pll_set_rate,
-+
-+	.enable = ingenic_pll_enable,
-+	.disable = ingenic_pll_disable,
-+	.is_enabled = ingenic_pll_is_enabled,
- };
- 
- /*
-@@ -601,6 +659,7 @@ static int ingenic_register_clock(struct ingenic_cgu *cgu, unsigned idx)
- 		}
- 	} else if (caps & CGU_CLK_PLL) {
- 		clk_init.ops = &ingenic_pll_ops;
-+		clk_init.flags |= CLK_SET_RATE_GATE;
- 
- 		caps &= ~CGU_CLK_PLL;
- 
+ enum sun4i_hdmi_pkt_type {
+ 	SUN4I_HDMI_PKT_AVI = 2,
+ 	SUN4I_HDMI_PKT_END = 15,
 -- 
 2.11.0
+
