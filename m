@@ -1,66 +1,119 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 02/15] clk: ingenic: support PLLs with no bypass bit
-Date: Wed,  7 Jun 2017 22:04:26 +0200
-Message-Id: <20170607200439.24450-3-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 03/19] drm/sun4i: tcon: Add support for demuxing TCON output on A31
+Date: Fri,  2 Jun 2017 18:10:08 +0800
+Message-Id: <20170602101024.18940-4-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The second PLL of the JZ4770 does not have a bypass bit.
-This commit makes it possible to support it with the current common CGU
-code.
+On systems with 2 TCONs such as the A31, it is possible to demux the
+output of the TCONs to one encoder.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Add support for this for the A31.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/ingenic/cgu.c | 3 ++-
- drivers/clk/ingenic/cgu.h | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index eb9002ccf3fc..75b083ba294c 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -100,7 +100,8 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	n += pll_info->n_offset;
- 	od_enc = ctl >> pll_info->od_shift;
- 	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
--	bypass = !!(ctl & BIT(pll_info->bypass_bit));
-+	bypass = !pll_info->no_bypass_bit &&
-+		 !!(ctl & BIT(pll_info->bypass_bit));
- 	enable = !!(ctl & BIT(pll_info->enable_bit));
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index d9791292553e..21bd7fab7aaa 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -14,9 +14,12 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_encoder.h>
+ #include <drm/drm_modes.h>
+ #include <drm/drm_of.h>
  
- 	if (bypass)
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index 09700b2c555d..2e3d258c3ed2 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -48,6 +48,7 @@
-  * @bypass_bit: the index of the bypass bit in the PLL control register
-  * @enable_bit: the index of the enable bit in the PLL control register
-  * @stable_bit: the index of the stable bit in the PLL control register
-+ * @no_bypass_bit: if set, the PLL has no bypass functionality
-  */
- struct ingenic_cgu_pll_info {
- 	unsigned reg;
-@@ -58,6 +59,7 @@ struct ingenic_cgu_pll_info {
- 	u8 bypass_bit;
- 	u8 enable_bit;
- 	u8 stable_bit;
-+	bool no_bypass_bit;
- };
++#include <uapi/drm/drm_mode.h>
++
+ #include <linux/component.h>
+ #include <linux/ioport.h>
+ #include <linux/of_address.h>
+@@ -109,11 +112,69 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
+ }
+ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
  
- /**
++static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
++{
++	struct sun4i_drv *drv = drm->dev_private;
++	struct sun4i_tcon *tcon;
++
++	list_for_each_entry(tcon, &drv->tcon_list, list)
++		if (tcon->id == 0)
++			return tcon;
++
++	dev_warn(drm->dev,
++		 "TCON0 not found, display output muxing may not work\n");
++
++	return tcon;
++}
++
++static int _sun6i_tcon_set_mux(struct drm_encoder *encoder)
++{
++	struct sun4i_tcon *tcon = sun4i_get_first_tcon(encoder->dev);
++	int tcon_id = drm_crtc_to_sun4i_crtc(encoder->crtc)->tcon->id;
++	u32 shift;
++
++	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s (TCON %d)\n",
++			 encoder->name, encoder->crtc->name, tcon_id);
++
++	/* Only 2 TCONs */
++	if (tcon_id >= 2)
++		return -EINVAL;
++
++	switch (encoder->encoder_type) {
++	case DRM_MODE_ENCODER_TMDS:
++		/* HDMI */
++		shift = 8;
++		break;
++	case DRM_MODE_ENCODER_DSI:
++		/* No MIPI DSI on A31s */
++		if (of_device_is_compatible(tcon->dev->of_node,
++					    "allwinner,sun6i-a31s-tcon"))
++			return -EINVAL;
++		shift = 0;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	regmap_update_bits(tcon->regs, SUN4I_TCON_MUX_CTRL_REG,
++			   0x3 << shift, tcon_id << shift);
++
++	return 0;
++}
++
+ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+ 			struct drm_encoder *encoder)
+ {
++	/* Get the device node of the display engine */
++	struct device_node *node = encoder->dev->dev->of_node;
+ 	u32 val;
+ 
++	if (of_device_is_compatible(node, "allwinner,sun6i-a31-display-engine") ||
++	    of_device_is_compatible(node, "allwinner,sun6i-a31s-display-engine")) {
++		_sun6i_tcon_set_mux(encoder);
++		return;
++	}
++
+ 	if (!tcon->quirks->has_unknown_mux)
+ 		return;
+ 
 -- 
 2.11.0
