@@ -1,52 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Jun 2017 15:39:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com,
-	linux@armlinux.org.uk, geert@linux-m68k.org, f.fainelli@gmail.com,
-	dongas86@gmail.com, Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V3 1/3] clk: add clk_bulk_get accessories
-Message-ID: <20170602223946.GV20170@codeaurora.org>
-References: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
- <1495201746-31841-2-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1495201746-31841-2-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 12/19] drm/sun4i: hdmi: Support the DDC clock in the A31's HDMI controller
+Date: Fri,  2 Jun 2017 18:10:17 +0800
+Message-Id: <20170602101024.18940-13-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/19, Dong Aisheng wrote:
-> These helper function allows drivers to get several clk consumers in
-> one operation. If any of the clk cannot be acquired then any clks
-> that were got will be put before returning to the caller.
-> 
-> This can relieve the driver owners' life who needs to handle many clocks,
-> as well as each clock error reporting.
-> 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Anson Huang <anson.huang@nxp.com>
-> Cc: Robin Gong <yibin.gong@nxp.com>
-> Cc: Bai Ping <ping.bai@nxp.com>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: Octavian Purdila <octavian.purdila@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
+On the A31, the HDMI DDC block is different from the one in the
+other SoCs. As far as the DDC clock goes, it has no pre-divider,
+as it is clocked from a slower parent clock, not the TMDS clock.
+The divider offset from the register value is different. And the
+clock control register is at a different offset.
 
-Applied to clk-bulk-get and merged into clk-next
+This patch adds support for this variant.
 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_hdmi.h         |  1 +
+ drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+index 08c514672fd3..c39c2a245339 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+@@ -178,6 +178,7 @@ struct sun4i_hdmi {
+ };
+ 
+ int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
++int sun6i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
+ int sun4i_tmds_create(struct sun4i_hdmi *hdmi);
+ int sun6i_tmds_create(struct sun4i_hdmi *hdmi);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+index 9a6b6243e977..b1395e7b242c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+@@ -151,3 +151,14 @@ int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent)
+ {
+ 	return _sun4i_ddc_create(hdmi, parent, &sun4i_variant);
+ }
++
++static const struct sun4i_ddc_variant sun6i_variant = {
++	.reg_offset	= SUN6I_HDMI_DDC_CLK_REG,
++	.pre_divider	= 1,
++	.m_offset	= 2,
++};
++
++int sun6i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent)
++{
++	return _sun4i_ddc_create(hdmi, parent, &sun6i_variant);
++}
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
