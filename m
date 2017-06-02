@@ -1,75 +1,113 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
 	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v3 0/9] Improve cp110 clk support on Marvell Armada 7K/8K
-Date: Thu,  1 Jun 2017 16:55:33 +0200
-Message-Id: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 16/19] ARM: sun6i: a31: Add device node for HDMI controller
+Date: Fri,  2 Jun 2017 18:10:21 +0800
+Message-Id: <20170602101024.18940-17-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Now that we support the HDMI controller on the A31 SoC, we can add it
+to the device tree.
 
-We got more information about the clock controllers and the clock tree
-of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
+This adds a device node for the HDMI controller, and the of_graph nodes
+connecting it to the 2 TCONs.
 
-In this 3rd version I removed the GOP changes because the clock is
-actually shared between GOP and SD/eMMC.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun6i-a31.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-The last two patches modifying the device tree _must_ be merged
-through the mvebu tree to avoid future conflict (especially with the
-recent ICU series sent by Thomas Petazzoni).
-
-Changelog:
-v2 -> v3
- - removed the GOP changed
-cover letter for v2:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509816.html
-
-v1 -> v2
- - split the patch to have separate patch for the binding documentation
- - added the acked-by from Rob Herring
-cover letter for v2:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507381.html
-
-Thanks,
-
-Gregory
-
-Gregory CLEMENT (8):
-  clk: mvebu: cp110: make failure labels more meaningful
-  dt-bindings: cp110: do not depend anymore of the *-clock-output-names
-  clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
-  dt-bindings: cp110: introduce a new binding
-  clk: mvebu: cp110: introduce a new binding
-  dt-bindings: cp110: add sdio clock to cp-110 system controller
-  arm64: dts: marvell: remove *-clock-output-names on cp110
-  arm64: dts: marvell: use new binding for the system controller on cp110
-
-Konstantin Porotchkin (1):
-  clk: mvebu: cp110: add sdio clock to cp-110 system controller
-
- Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  33 +++++-------
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
- drivers/clk/mvebu/cp110-system-controller.c                                | 200 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
- 4 files changed, 194 insertions(+), 141 deletions(-)
-
-base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
+diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
+index d0cede5aaeb5..36bfb6ad6578 100644
+--- a/arch/arm/boot/dts/sun6i-a31.dtsi
++++ b/arch/arm/boot/dts/sun6i-a31.dtsi
+@@ -284,6 +284,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon0_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon0>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -321,6 +327,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -401,6 +413,49 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		hdmi: hdmi@01c16000 {
++			compatible = "allwinner,sun6i-a31-hdmi";
++			reg = <0x01c16000 0x1000>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_AHB1_HDMI>, <&ccu CLK_HDMI>,
++				 <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_PLL_VIDEO0_2X>,
++				 <&ccu CLK_PLL_VIDEO1_2X>;
++			clock-names = "ahb", "mod", "ddc", "pll-0", "pll-1";
++			resets = <&ccu RST_AHB1_HDMI>;
++			reset-names = "ahb";
++			dma-names = "ddc-tx", "ddc-rx", "audio-tx";
++			dmas = <&dma 13>, <&dma 13>, <&dma 14>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					hdmi_in_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_out_hdmi>;
++					};
++
++					hdmi_in_tcon1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
+ 		usb_otg: usb@01c19000 {
+ 			compatible = "allwinner,sun6i-a31-musb";
+ 			reg = <0x01c19000 0x0400>;
 -- 
-git-series 0.9.1
+2.11.0
