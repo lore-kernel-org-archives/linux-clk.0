@@ -1,31 +1,43 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 9 Jun 2017 09:24:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 14/15] devicetree/bindings: Add GCW vendor prefix
-Message-ID: <20170609142404.xmr5jcuq5vh2mwpp@rob-hp-laptop>
-References: <20170607200439.24450-1-paul@crapouillou.net>
- <20170607200439.24450-15-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170607200439.24450-15-paul@crapouillou.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de, xf@rock-chips.com
+Cc: linux-clk@vger.kernel.org, huangtao@rock-chips.com,
+        xxx@rock-chips.com, cl@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, zhengxing@rock-chips.com,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v4 0/3] clk: rockchip: support clk controller for RK3128 SoC
+Date: Fri,  2 Jun 2017 09:47:22 +0800
+Message-Id: <1496368045-17746-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 07, 2017 at 10:04:38PM +0200, Paul Cercueil wrote:
-> Games Consoles Worldwide, mostly known under the acronym GCW, is the
-> creator of the GCW Zero open-source video game system.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
+The driver and clk ID\SRST ID it's also applies to the RK3126 SoC.
 
-Acked-by: Rob Herring <robh@kernel.org>
+change in V4:
+remove the clk ID of usb480m_phy
+
+change in V3:
+export clk ID for usb480m and usb480m_phy
+
+change in V2:
+rename the rk312x to rk3128.
+
+Elaine Zhang (3):
+  clk: rockchip: add dt-binding header for rk3128
+  dt-bindings: add bindings for rk3128 clock controller
+  clk: rockchip: add clock controller for rk3128
+
+ .../bindings/clock/rockchip,rk3128-cru.txt         |  56 ++
+ drivers/clk/rockchip/Makefile                      |   1 +
+ drivers/clk/rockchip/clk-rk3128.c                  | 612 +++++++++++++++++++++
+ include/dt-bindings/clock/rk3128-cru.h             | 282 ++++++++++
+ 4 files changed, 951 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-rk3128.c
+ create mode 100644 include/dt-bindings/clock/rk3128-cru.h
+
+-- 
+1.9.1
