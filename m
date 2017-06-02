@@ -1,131 +1,166 @@
-Return-Path: <phil@raspberrypi.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH v3 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
-Message-ID: <c3ed0211-d402-3a0c-43fd-3a984045cc29@raspberrypi.org>
-Date: Thu, 1 Jun 2017 10:10:48 +0100
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1496058422-12058-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>
+References: <1496058422-12058-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <149637988818.33065.13255372545640819084@resonance>
+Subject: Re: [git pull] clk: renesas: Updates for v4.13
+Date: Fri, 02 Jun 2017 14:04:48 +0900
 List-ID: <linux-clk.vger.kernel.org>
 
-Fractional clock dividers generate accurate average frequencies but
-with jitter, particularly when the integer divisor is small.
+Quoting Geert Uytterhoeven (2017-05-29 20:47:02)
+>         Hi Mike, Stephen,
+> =
 
-Introduce a new metric of clock accuracy to penalise clocks with a good
-average but worse jitter compared to clocks with an average which is no
-better but with lower jitter. The metric is the ideal rate minus the
-worse deviation from that ideal using the nearest integer divisors.
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43=
+f6:
+> =
 
-Use this metric for parent selection for clocks requiring low jitter
-(currently just PCM).
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> =
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Reviewed-by: Eric Anholt <eric@anholt.net>
----
- drivers/clk/bcm/clk-bcm2835.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+> are available in the git repository at:
+> =
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 81ecd4c..5f4ce44 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -530,6 +530,7 @@ struct bcm2835_clock_data {
- 
- 	bool is_vpu_clock;
- 	bool is_mash_clock;
-+	bool low_jitter;
- 
- 	u32 tcnt_mux;
- };
-@@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 							int parent_idx,
- 							unsigned long rate,
- 							u32 *div,
--							unsigned long *prate)
-+							unsigned long *prate,
-+							unsigned long *avgrate)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
-@@ -1139,8 +1141,25 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 		*prate = clk_hw_get_rate(parent);
- 		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
- 
--		return bcm2835_clock_rate_from_divisor(clock, *prate,
--						       *div);
-+		*avgrate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
-+
-+		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
-+			unsigned long high, low;
-+			u32 int_div = *div & ~CM_DIV_FRAC_MASK;
-+
-+			high = bcm2835_clock_rate_from_divisor(clock, *prate,
-+							       int_div);
-+			int_div += CM_DIV_FRAC_MASK + 1;
-+			low = bcm2835_clock_rate_from_divisor(clock, *prate,
-+							      int_div);
-+
-+			/*
-+			 * Return a value which is the maximum deviation
-+			 * below the ideal rate, for use as a metric.
-+			 */
-+			return *avgrate - max(*avgrate - low, high - *avgrate);
-+		}
-+		return *avgrate;
- 	}
- 
- 	if (data->frac_bits)
-@@ -1167,6 +1186,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 
- 	*div = curdiv << CM_DIV_FRAC_BITS;
- 	*prate = curdiv * best_rate;
-+	*avgrate = best_rate;
- 
- 	return best_rate;
- }
-@@ -1178,6 +1198,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 	bool current_parent_is_pllc;
- 	unsigned long rate, best_rate = 0;
- 	unsigned long prate, best_prate = 0;
-+	unsigned long avgrate, best_avgrate = 0;
- 	size_t i;
- 	u32 div;
- 
-@@ -1202,11 +1223,13 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
--							  &div, &prate);
-+							  &div, &prate,
-+							  &avgrate);
- 		if (rate > best_rate && rate <= req->rate) {
- 			best_parent = parent;
- 			best_prate = prate;
- 			best_rate = rate;
-+			best_avgrate = avgrate;
- 		}
- 	}
- 
-@@ -1216,7 +1239,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 	req->best_parent_hw = best_parent;
- 	req->best_parent_rate = best_prate;
- 
--	req->rate = best_rate;
-+	req->rate = best_avgrate;
- 
- 	return 0;
- }
-@@ -2025,6 +2048,7 @@ struct bcm2835_clk_desc {
- 		.int_bits = 12,
- 		.frac_bits = 12,
- 		.is_mash_clock = true,
-+		.low_jitter = true,
- 		.tcnt_mux = 23),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
- 		.name = "pwm",
--- 
-1.9.1
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.13-tag1
+> =
+
+> for you to fetch changes up to 2d75588a28c6bbbb7a026087aa61be1492b3d6ac:
+> =
+
+>   clk: renesas: r8a7794: Add new CPG/MSSR driver (2017-05-24 10:20:03 +02=
+00)
+
+Pulled.
+
+Thanks,
+Mike
+
+> =
+
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.13
+> =
+
+>   - Add more module clocks for R-Car H3 ES2.0 and M3-W,
+>   - Add CPG/MSSR drivers for all supported R-Car Gen2 SoCs, enabling supp=
+ort
+>     for module resets, which are not supported by the existing driver,
+>   - Rework Kconfig and Makefile logic,
+>   - Small fixes and cleanups.
+> =
+
+> Thanks for pulling!
+> ----------------------------------------------------------------
+> Geert Uytterhoeven (18):
+>       clk: renesas: rcar-gen2: Fix PLL0 on R-Car V2H and E2
+>       clk: renesas: r8a7745: Remove nonexisting scu-src[0789] clocks
+>       clk: renesas: r8a7745: Remove PLL configs for MD19=3D0
+>       clk: renesas: Do not build clk-div6 for R8A7792
+>       clk: renesas: Use pm_clk_no_clocks() helper i.s.o. direct access
+>       clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent clocks on =
+ES2.0
+>       clk: renesas: cpg-mssr: Initialize error pointer using ERR_PTR()
+>       clk: renesas: Rework Kconfig and Makefile logic
+>       clk: renesas: cpg-mssr: Document R-Car Gen2 support
+>       clk: renesas: Add r8a7790 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7791 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7792 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7793 CPG Core Clock Definitions
+>       clk: renesas: Add r8a7794 CPG Core Clock Definitions
+>       clk: renesas: r8a7790: Add new CPG/MSSR driver
+>       clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
+>       clk: renesas: r8a7792: Add new CPG/MSSR driver
+>       clk: renesas: r8a7794: Add new CPG/MSSR driver
+> =
+
+> Harunobu Kurokawa (1):
+>       clk: renesas: r8a7796: Add PCIe clocks
+> =
+
+> Hiromitsu Yamasaki (2):
+>       clk: renesas: r8a7796: Add Audio-DMAC clocks
+>       clk: renesas: r8a7796: Add USB-DMAC clocks
+> =
+
+> Kazuya Mizuguchi (5):
+>       clk: renesas: r8a7796: Add EHCI/OHCI clocks
+>       clk: renesas: r8a7796: Add Sound SSI clock
+>       clk: renesas: r8a7796: Add Sound SRC clock
+>       clk: renesas: r8a7796: Add Sound DVC clocks
+>       clk: renesas: r8a7796: Add HS-USB clock
+> =
+
+> Koji Matsuoka (1):
+>       clk: renesas: r8a7796: Add HDMI clock
+> =
+
+> Ryo Kodama (1):
+>       clk: renesas: r8a7796: Add PWM clock
+> =
+
+> Takeshi Kihara (4):
+>       clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
+>       clk: renesas: r8a7795: Add USB-DMAC ch3 clock
+>       clk: renesas: r8a7795: Add HS-USB ch3 clock
+>       clk: renesas: r8a7796: Add INTC-EX clock
+> =
+
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
+>  drivers/clk/Makefile                               |   2 +-
+>  drivers/clk/renesas/Kconfig                        | 139 ++++++++--
+>  drivers/clk/renesas/Makefile                       |  41 +--
+>  drivers/clk/renesas/clk-mstp.c                     |   2 +-
+>  drivers/clk/renesas/clk-rcar-gen2.c                |  23 +-
+>  drivers/clk/renesas/r8a7745-cpg-mssr.c             |  17 +-
+>  drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 +++++++++++++++=
++++++
+>  drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++=
+++++++
+>  drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
+>  drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 +++++++++++++++=
++++
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c             |  43 +++-
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c             |  39 +++
+>  drivers/clk/renesas/renesas-cpg-mssr.c             |  41 ++-
+>  drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
+>  include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
+>  include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
+>  include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
+>  include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
+>  include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
+>  20 files changed, 1565 insertions(+), 74 deletions(-)
+>  create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
+>  create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
+>  create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
+>  create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
+>  create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
+> =
+
+> Gr{oetje,eeting}s,
+> =
+
+>                                                 Geert
+> =
+
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+> =
+
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                                             -- Linus Torv=
+alds
