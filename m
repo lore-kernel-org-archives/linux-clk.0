@@ -1,62 +1,49 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v64uxmxptf9VgHO8tT=AbPc+VtDhtG+rVd3Nwf9bEGr8pg@mail.gmail.com>
-References: <20170602101024.18940-1-wens@csie.org> <20170602101024.18940-20-wens@csie.org>
- <20170602194219.hiajr7dt2oikm52q@flea.lan> <20170607223625.aofk3cba3w4cvlys@rob-hp-laptop>
- <CAKb7UvgKhgCpeNzUX1ecFPuF6j+KvAWW3vprZ9nnVMBBJFi_zQ@mail.gmail.com> <CAGb2v64uxmxptf9VgHO8tT=AbPc+VtDhtG+rVd3Nwf9bEGr8pg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 9 Jun 2017 11:49:44 -0500
-Message-ID: <CAL_JsqKv_ko6NUL35kmDCyhiP_b7SMnMe-M2--X_GjJpLO1ECg@mail.gmail.com>
-Subject: Re: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on the
- MSI Primo81 tablet
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ilia Mirkin <imirkin@alum.mit.edu>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	devicetree <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52150 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751276AbdFBKKj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Jun 2017 06:10:39 -0400
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH 10/19] drm/sun4i: hdmi: Rename internal DDC clock to avoid name collision
+Date: Fri,  2 Jun 2017 18:10:15 +0800
+Message-Id: <20170602101024.18940-11-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 9, 2017 at 11:08 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Thu, Jun 8, 2017 at 6:47 AM, Ilia Mirkin <imirkin@alum.mit.edu> wrote:
->> On Wed, Jun 7, 2017 at 6:36 PM, Rob Herring <robh@kernel.org> wrote:
->>> On Fri, Jun 02, 2017 at 09:42:19PM +0200, Maxime Ripard wrote:
->>>> On Fri, Jun 02, 2017 at 06:10:24PM +0800, Chen-Yu Tsai wrote:
->>>> > The MSI Primo81 tablet has a micro HDMI connector at the bottom.
->>>> > This is connected to the SoCs HDMI output.
->>>> >
->>>> > Enable the display pipeline and the HDMI output.
->>>> >
->>>> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>>> > ---
->>>> >  arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
->>>> >  1 file changed, 25 insertions(+)
->>>> >
->>>> > diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->>>> > index f3712753fa42..26154b2f87a3 100644
->>>> > --- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->>>> > +++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->>>> > @@ -52,17 +52,42 @@
->>>> >  / {
->>>> >     model = "MSI Primo81 tablet";
->>>> >     compatible = "msi,primo81", "allwinner,sun6i-a31s";
->>>> > +
->>>> > +   hdmi-connector {
->>>> > +           compatible = "hdmi-connector";
->>>> > +           type = "c";
->>>>
->>>> Should we add a connector type for this one?
->>>
->>> c as in USB Type C? I'd prefer to see a new compatible string. Is type
->>> even documented?
->
-> Indeed it is:
->
-> http://elixir.free-electrons.com/linux/latest/source/Documentation/devicetree/bindings/display/connector/hdmi-connector.txt#L6
+The DDC parent clock on the A31 SoC is also conveniently named
+"hdmi-ddc", which results in a name collision when the hdmi driver
+registers its internal DDC divider clock.
 
--ETOOMANYBINDINGS
+Rename the internal clock to "hdmi-ddc-divider".
 
-I guess I don't understand the original question then. This looks fine to me.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+index e1071838f487..9a6b6243e977 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+@@ -125,7 +125,7 @@ static int _sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent,
+ 	if (!ddc)
+ 		return -ENOMEM;
+ 
+-	init.name = "hdmi-ddc";
++	init.name = "hdmi-ddc-divider";
+ 	init.ops = &sun4i_ddc_ops;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+-- 
+2.11.0
+
