@@ -1,88 +1,113 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 26 Jun 2017 10:56:00 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Cc: sboyd@codeaurora.org, kishon@ti.com, xuwei5@hisilicon.com,
-        catalin.marinas@arm.com, balbi@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, project-aspen-dev@linaro.org,
-        yanhaifeng@hisilicon.com
-Subject: Re: [PATCH 2/5] dt-bindings: phy-hisi-inno-usb2: add support for
- hisi-inno-usb2 phy
-Message-ID: <20170626155600.abksvlvxehksp2hp@rob-hp-laptop>
-References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
- <1498035645-22804-3-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Jun 2017 15:10:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Anup Patel <anup.patel@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v6 03/11] clk: bcm: Add clocks for Stingray SOC
+Message-ID: <20170602221052.GT20170@codeaurora.org>
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+ <1496385275-6899-4-git-send-email-anup.patel@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1498035645-22804-3-git-send-email-xuejiancheng@hisilicon.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1496385275-6899-4-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 21, 2017 at 05:00:42PM +0800, Jiancheng Xue wrote:
-> Add support for hisi-inno-usb2 phy.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> ---
->  .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt | 36 ++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+On 06/02, Anup Patel wrote:
+> diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
 > new file mode 100644
-> index 0000000..21f8208
+> index 0000000..342f702
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> @@ -0,0 +1,36 @@
-> +HiSilicon INNO USB2 PHY
-> +-----------------------
-> +Required properties:
-> +- compatible: Should be one of the following strings:
-> +		"hisilicon,inno-usb2-phy",
-> +		"hisilicon,hi3798cv200-usb2-phy",
-> +- #phy-cells: Must be 0
-> +- hisilicon,peripheral-syscon: Phandle of syscon used to control phy.
-> +- clocks: Phandle and clock specifier pair for reference clock utmi_refclk.
-> +- resets: List of phandle and reset specifier pairs for each reset signal in
-> +reset-names.
-> +- reset-names: Should be "por_rst" and "test_rst". The test_rst only
-> +exists in some of SOCs, so it is optional.
+> +++ b/drivers/clk/bcm/clk-sr.c
+> @@ -0,0 +1,320 @@
+> +
+> +static const struct iproc_clk_ctrl lcpll_pcie_clk[] = {
+> +	[BCM_SR_LCPLL_PCIE_PHY_REF_CLK] = {
+> +		.channel = BCM_SR_LCPLL_PCIE_PHY_REF_CLK,
+> +		.flags = IPROC_CLK_AON,
+> +		.enable = ENABLE_VAL(0x0, 7, 1, 13),
+> +		.mdiv = REG_VAL(0x14, 0, 9),
+> +	},
+> +};
+> +
+> +static void __init sr_lcpll_pcie_clk_init(struct device_node *node)
 
-_rst is redundant.
+Drop __init usage throughout this patch please.
+
+> +{
+> +	iproc_pll_clk_setup(node, &lcpll_pcie, NULL, 0, lcpll_pcie_clk,
+> +		ARRAY_SIZE(lcpll_pcie_clk));
+> +}
+> +
+> +static const struct of_device_id sr_clk_dt_ids[] = {
+> +{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init, },
+> +{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init, },
+> +{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init, },
+> +{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init, },
+> +{ .compatible = "brcm,sr-lcpll1", .data = sr_lcpll1_clk_init, },
+> +{ .compatible = "brcm,sr-lcpll-pcie", .data = sr_lcpll_pcie_clk_init, },
+> +{ /* sentinel */ }
+
+Please tab these out properly And also leave off the , after the
+init function.
+
+> +};
+> +
+> +static int sr_clk_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *device;
+> +	void (*init_func)(struct device_node *);
+
+Let's keep this taking the platform device pointer. That way in
+the future devm could be used as well as other platform device
+APIs without having to change all init signatures.
 
 > +
-> +Phy node can include up to four subnodes. Each subnode represents one port.
-> +The required properties of port node are as follows:
-> +- clocks: Phandle and clock specifier pair for utmi_clock.
-> +- resets: List of phandle and reset specifier pairs for port reset and utmi reset.
-> +- reset-names: List of reset signal names. Should be "port_rst" and "utmi_rst"
+> +	device = of_match_device(sr_clk_dt_ids, &pdev->dev);
+> +	if (!device)
+> +		return -ENODEV;
+> +	init_func = device->data;
+
+Can use of_device_get_match_data() instead
+
 > +
-> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
+> +	init_func(pdev->dev.of_node);
 > +
-> +Example:
-> +usb_phy: phy {
-> +		 compatible = "hisilicon,inno_usb2_phy";
+> +	return 0;
+> +}
 
-Doesn't match the above compatible.
+It would be pretty nice if we could have some platform driver
+common function for this where we want to call different probe
+functions for different compatible ids and put them all in the
+same driver file. Like platform_driver_of_probe() or something
+that then calls a int (*init_func)(struct platform_device *pdev)
+directly from the of match table for you.
 
-> +		 #phy-cells = <0>;
-> +		 hisilicon,peripheral-syscon = <&peri_ctrl>;
-> +		 clocks = <&crg USB2_REF_CLK>;
-> +		 resets = <&crg 0xb4 2>;
-> +		 reset-names = "por_rst";
-> +		 port0 {
+> +
+> +static struct platform_driver sr_clk_driver = {
 
-port@0 and provide a reg property.
+iproc_sr_* throughout this file?
 
-> +			 clocks = <&crg USB2_UTMI0_CLK>;
-> +			 resets = <&crg 0xb4 5>, <&crg 0xb4 1>;
-> +			 reset-names = "port_rst", "utmi_rst";
-> +		 };
-> +	 };
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	.driver = {
+> +		.name = "sr-clk",
+> +		.of_match_table = sr_clk_dt_ids,
+> +	},
+> +	.probe = sr_clk_probe,
+> +};
+> +builtin_platform_driver(sr_clk_driver);
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
