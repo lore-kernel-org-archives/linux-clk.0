@@ -1,71 +1,98 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 26 Jun 2017 15:44:07 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] Update binding documentation for cp110 and ap806
-Message-ID: <20170626224407.GP4493@codeaurora.org>
-References: <20170620083754.28053-1-gregory.clement@free-electrons.com>
- <87k2463c66.fsf@free-electrons.com>
- <20170622211456.rip2gveiprlfw3kj@rob-hp-laptop>
- <87shirytqa.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87shirytqa.fsf@free-electrons.com>
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	xf@rock-chips.com
+Cc: linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhengxing@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v4 2/3] dt-bindings: add bindings for rk3128 clock controller
+Date: Fri,  2 Jun 2017 09:47:24 +0800
+Message-Id: <1496368045-17746-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1496368045-17746-1-git-send-email-zhangqing@rock-chips.com>
+References: <1496368045-17746-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/23, Gregory CLEMENT wrote:
-> Hi Mike,
-> 
-> 
-> as you were not in CC of the thread here is the reference:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/514497.html
-> 
->  On jeu., juin 22 2017, Rob Herring <robh@kernel.org> wrote:
-> 
-> > On Tue, Jun 20, 2017 at 05:34:57PM +0200, Gregory CLEMENT wrote:
-> >> Hi Rob, 
-> >>  
-> >>  On mar., juin 20 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-> >> 
-> >> > Hi Rob,
-> >> >
-> >> > As you know there were dependencies issue about the binding between my
-> >> > different series and you proposed yourself to apply them though the
-> >> > device tree subsystem: [1]
-> >
-> > I did, but ...
-> >
-> >> >
-> >> > All the driver parts have been merged so it's time merging the
-> >> > documentation.
-> >> 
-> >> I forgot to mentioned that this series is based on the clk-ap806-dt
-> >> stable branch:
-> >> 
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-ap806-dt
-> >
-> > ... that was to avoid cross tree dependencies. Now you're creating one. 
-> > Either Mike should take everything or drop this branch and I'll take it 
-> > too.
-> 
-> Could you take them all? I can do a PR for this and I take this
-> opportunity to add the missing ack in pacth 6
-> 
-> 
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-I have no idea why we have dt doc updates as dependencies of clk
-driver code, but the branch is buried in clk-next now and I'd
-rather not go remove it. Please send the PR or the set of patches
-and I'll apply it to clk-next.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,rk3128-cru.txt         | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+new file mode 100644
+index 000000000000..455a9a00a623
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+@@ -0,0 +1,56 @@
++* Rockchip RK3128 Clock and Reset Unit
++
++The RK3128 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: should be "rockchip,rk3128-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/rk3128-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "ext_i2s" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++
++Example: Clock controller node:
++
++	cru: cru@20000000 {
++		compatible = "rockchip,rk3128-cru";
++		reg = <0x20000000 0x1000>;
++		rockchip,grf = <&grf>;
++
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart2: serial@20068000 {
++		compatible = "rockchip,serial";
++		reg = <0x20068000 0x100>;
++		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++		clock-frequency = <24000000>;
++		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
++		clock-names = "sclk_uart", "pclk_uart";
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
