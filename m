@@ -1,194 +1,148 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
-Subject: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
-Date: Mon,  5 Jun 2017 00:01:42 +0800
-Message-Id: <20170604160149.30230-5-icenowy@aosc.io>
-In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
-References: <20170604160149.30230-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 09/19] drm/sun4i: hdmi: Support different variants of the DDC clock
+Date: Fri,  2 Jun 2017 18:10:14 +0800
+Message-Id: <20170602101024.18940-10-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+On the A31, the HDMI DDC block is different from the one in the
+other SoCs. As far as the DDC clock goes, it has no pre-divider,
+as it is clocked from a slower parent clock, not the TMDS clock.
+The divider offset from the register value is different. And the
+clock control register is at a different offset.
 
-Allwinner H3 has two special TCONs, both come without channel0. And the
-TCON1 of H3 has no special clocks even for the channel1.
+This patch adds support for different variants of the DDC clock.
 
-Add support for these kinds of TCON.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-Changes in v2:
-- Merged TCON0 and TCON1 quirks and compatibles.
+ drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 42 ++++++++++++++++++++++++------
+ 1 file changed, 34 insertions(+), 8 deletions(-)
 
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 52 +++++++++++++++++++++++++-------------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
- 2 files changed, 36 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 568cea0e5f8f..62ba4fc19f18 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -59,6 +59,7 @@ void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+index 4692e8c345ed..e1071838f487 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+@@ -15,9 +15,16 @@
+ #include "sun4i_tcon.h"
+ #include "sun4i_hdmi.h"
  
- 	/* Disable the TCON's channel */
- 	if (channel == 0) {
-+		WARN_ON(!tcon->quirks->has_channel_0);
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE, 0);
- 		clk_disable_unprepare(tcon->dclk);
-@@ -78,6 +79,7 @@ void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
- 
- 	/* Enable the TCON's channel */
- 	if (channel == 0) {
-+		WARN_ON(!tcon->quirks->has_channel_0);
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE);
-@@ -159,6 +161,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
- 
- 	/* Configure the dot clock */
- 	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
-+	WARN_ON(!tcon->quirks->has_channel_0);
- 
- 	/* Adjust clock delay */
- 	clk_delay = sun4i_tcon_get_clk_delay(mode, 0);
-@@ -366,10 +369,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
- 	}
- 	clk_prepare_enable(tcon->clk);
- 
--	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
--	if (IS_ERR(tcon->sclk0)) {
--		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
--		return PTR_ERR(tcon->sclk0);
-+	if (tcon->quirks->has_channel_0) {
-+		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
-+		if (IS_ERR(tcon->sclk0)) {
-+			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
-+			return PTR_ERR(tcon->sclk0);
-+		}
- 	}
- 
- 	if (tcon->quirks->has_channel_1) {
-@@ -594,10 +599,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_clocks;
- 	}
- 
--	ret = sun4i_dclk_create(dev, tcon);
--	if (ret) {
--		dev_err(dev, "Couldn't create our TCON dot clock\n");
--		goto err_free_clocks;
-+	if (tcon->quirks->has_channel_0) {
-+		ret = sun4i_dclk_create(dev, tcon);
-+		if (ret) {
-+			dev_err(dev, "Couldn't create our TCON dot clock\n");
-+			goto err_free_clocks;
-+		}
- 	}
- 
- 	ret = sun4i_tcon_init_irq(dev, tcon);
-@@ -622,7 +629,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	return 0;
- 
- err_free_dotclock:
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- err_free_clocks:
- 	sun4i_tcon_free_clocks(tcon);
- err_assert_reset:
-@@ -636,7 +644,9 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
- 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
- 
- 	list_del(&tcon->list);
--	sun4i_dclk_free(tcon);
-+
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- 	sun4i_tcon_free_clocks(tcon);
- }
- 
-@@ -667,24 +677,32 @@ static int sun4i_tcon_remove(struct platform_device *pdev)
- }
- 
- static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
--	.has_unknown_mux = true,
--	.has_channel_1	= true,
-+	.has_unknown_mux	= true,
-+	.has_channel_0		= true,
-+	.has_channel_1		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
--	.has_channel_1	= true,
-+	.has_channel_0		= true,
-+	.has_channel_1		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
--	.has_channel_1	= true,
-+	.has_channel_0		= true,
-+	.has_channel_1		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
--	/* nothing is supported */
-+	.has_channel_0	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
--	/* nothing is supported */
-+	.has_channel_0	= true,
++struct sun4i_ddc_variant {
++	u32	reg_offset;
++	u8	pre_divider;
++	u8	m_offset;
 +};
 +
-+static const struct sun4i_tcon_quirks sun8i_h3_quirks = {
-+	.has_channel_1		= true,
-+	.swappable_input	= true,
+ struct sun4i_ddc {
+ 	struct clk_hw		hw;
+ 	struct sun4i_hdmi	*hdmi;
++	const struct sun4i_ddc_variant	*variant;
  };
  
- static const struct of_device_id sun4i_tcon_of_table[] = {
-@@ -693,7 +711,7 @@ static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
--	{ }
-+	{ .compatible = "allwinner,sun8i-h3-tcon", .data = &sun8i_h3_quirks },
+ static inline struct sun4i_ddc *hw_to_ddc(struct clk_hw *hw)
+@@ -27,6 +34,7 @@ static inline struct sun4i_ddc *hw_to_ddc(struct clk_hw *hw)
+ 
+ static unsigned long sun4i_ddc_calc_divider(unsigned long rate,
+ 					    unsigned long parent_rate,
++					    const struct sun4i_ddc_variant *variant,
+ 					    u8 *m, u8 *n)
+ {
+ 	unsigned long best_rate = 0;
+@@ -36,7 +44,8 @@ static unsigned long sun4i_ddc_calc_divider(unsigned long rate,
+ 		for (_n = 0; _n < 8; _n++) {
+ 			unsigned long tmp_rate;
+ 
+-			tmp_rate = (((parent_rate / 2) / 10) >> _n) / (_m + 1);
++			tmp_rate = (((parent_rate / variant->pre_divider) /
++				     10) >> _n) / (_m + variant->m_offset);
+ 
+ 			if (tmp_rate > rate)
+ 				continue;
+@@ -60,7 +69,9 @@ static unsigned long sun4i_ddc_calc_divider(unsigned long rate,
+ static long sun4i_ddc_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				 unsigned long *prate)
+ {
+-	return sun4i_ddc_calc_divider(rate, *prate, NULL, NULL);
++	struct sun4i_ddc *ddc = hw_to_ddc(hw);
++
++	return sun4i_ddc_calc_divider(rate, *prate, ddc->variant, NULL, NULL);
+ }
+ 
+ static unsigned long sun4i_ddc_recalc_rate(struct clk_hw *hw,
+@@ -70,11 +81,12 @@ static unsigned long sun4i_ddc_recalc_rate(struct clk_hw *hw,
+ 	u32 reg;
+ 	u8 m, n;
+ 
+-	reg = readl(ddc->hdmi->base + SUN4I_HDMI_DDC_CLK_REG);
+-	m = (reg >> 3) & 0x7;
++	reg = readl(ddc->hdmi->base + ddc->variant->reg_offset);
++	m = (reg >> 3) & 0xf;
+ 	n = reg & 0x7;
+ 
+-	return (((parent_rate / 2) / 10) >> n) / (m + 1);
++	return (((parent_rate / ddc->variant->pre_divider) / 10) >> n) /
++	       (m + ddc->variant->m_offset);
+ }
+ 
+ static int sun4i_ddc_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -83,10 +95,11 @@ static int sun4i_ddc_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct sun4i_ddc *ddc = hw_to_ddc(hw);
+ 	u8 div_m, div_n;
+ 
+-	sun4i_ddc_calc_divider(rate, parent_rate, &div_m, &div_n);
++	sun4i_ddc_calc_divider(rate, parent_rate, ddc->variant,
++			       &div_m, &div_n);
+ 
+ 	writel(SUN4I_HDMI_DDC_CLK_M(div_m) | SUN4I_HDMI_DDC_CLK_N(div_n),
+-	       ddc->hdmi->base + SUN4I_HDMI_DDC_CLK_REG);
++	       ddc->hdmi->base + ddc->variant->reg_offset);
+ 
+ 	return 0;
+ }
+@@ -97,7 +110,8 @@ static const struct clk_ops sun4i_ddc_ops = {
+ 	.set_rate	= sun4i_ddc_set_rate,
  };
- MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
  
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index c3e01c06e9a0..9c706a0bd478 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -145,6 +145,7 @@
+-int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent)
++static int _sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent,
++			     const struct sun4i_ddc_variant *variant)
+ {
+ 	struct clk_init_data init;
+ 	struct sun4i_ddc *ddc;
+@@ -117,6 +131,7 @@ int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent)
+ 	init.num_parents = 1;
  
- struct sun4i_tcon_quirks {
- 	bool	has_unknown_mux; /* sun5i has undocumented mux */
-+	bool	has_channel_0;	/* some A83T+ TCONs don't have channel 0*/
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
- 	/* Some DE2 can swap the mixer<->TCON connection */
- 	bool	swappable_input;
+ 	ddc->hdmi = hdmi;
++	ddc->variant = variant;
+ 	ddc->hw.init = &init;
+ 
+ 	hdmi->ddc_clk = devm_clk_register(hdmi->dev, &ddc->hw);
+@@ -125,3 +140,14 @@ int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent)
+ 
+ 	return 0;
+ }
++
++static const struct sun4i_ddc_variant sun4i_variant = {
++	.reg_offset	= SUN4I_HDMI_DDC_CLK_REG,
++	.pre_divider	= 2,
++	.m_offset	= 1,
++};
++
++int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent)
++{
++	return _sun4i_ddc_create(hdmi, parent, &sun4i_variant);
++}
 -- 
-2.12.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.11.0
