@@ -1,55 +1,59 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 2/4] dt: bindings: Add bindings for bcm2835-aux-intc
-To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
- Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <d097e5d9-0ee6-9ea4-184f-1dd997849892@raspberrypi.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <35172597-5b6f-852a-c598-f25eb1a46aec@gmail.com>
-Date: Mon, 12 Jun 2017 11:22:37 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Jun 2017 15:56:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, zhang.lyra@gmail.com
+Subject: Re: [PATCH] Documentation: clock: address more for clock-cells
+ property
+Message-ID: <20170602225621.GE20170@codeaurora.org>
+References: <1496306801-19239-1-git-send-email-zhang.chunyan@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <d097e5d9-0ee6-9ea4-184f-1dd997849892@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1496306801-19239-1-git-send-email-zhang.chunyan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12/2017 07:25 AM, Phil Elwell wrote:
-> Add bindings documentation for brcm,bcm2835-aux-intc and human-readable
-> declarations for the BCM2835 AUX IRQs.
+On 06/01, Chunyan Zhang wrote:
+> The value of property 'clock-cells' is not determined only by the number of
+> clock outputs in one clock node, it is actually determined by whether the
+> clock output in this node can be referenced directly without index.  If
+> the output clock has to be referenced by a index, the clock-cell of this
+> clock node can't be defined 0.
 > 
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 > ---
-};
-> diff --git a/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
-> new file mode 100644
-> index 0000000..8b9fc12
-> --- /dev/null
-> +++ b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
-> @@ -0,0 +1,20 @@
-> +/*
-> + * Copyright (C) 2017 Raspberry Pi (Trading) Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>  Documentation/devicetree/bindings/clock/clock-bindings.txt | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 
-Can we consider another license for this file? Most Device Tree files
-seems to be under the ISC license.
+I'm leaving this patch for Rob/DT maintainers to apply.
 
-Thanks!
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> index 2ec489e..cef3db5 100644
+> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> @@ -15,8 +15,14 @@ value of a #clock-cells property in the clock provider node.
+>  
+>  Required properties:
+>  #clock-cells:	   Number of cells in a clock specifier; Typically 0 for nodes
+> -		   with a single clock output and 1 for nodes with multiple
+> -		   clock outputs.
+> +		   with a single clock output and it must be able to be
+> +		   referenced without index, and 1 for nodes with single or
+> +		   multiple clock outputs which have to be referenced by index.
+> +
+> +		   Please note that if a node with a single clock output
+> +		   but it has "clock-indices" property (see bellow), it has
+> +		   to be referenced by index, its "#clock-cells" cannot be
+> +		   defined 0.
+
+Maybe this should be added to the clock-indices area of the
+document instead of here? It seems to me that you can't have
+clock-indices if you have #clock-cells=<0>, and that's sort of
+obvious because 0 cells means 1 output and >0 cells means
+potentially many outputs.
+
 -- 
-Florian
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
