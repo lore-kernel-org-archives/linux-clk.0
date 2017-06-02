@@ -1,279 +1,125 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 11/15] MIPS: ingenic: Initial JZ4770 support
-Date: Wed,  7 Jun 2017 22:04:35 +0200
-Message-Id: <20170607200439.24450-12-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 02/19] drm/sun4i: add components in two passes with encoders added in second pass
+Date: Fri,  2 Jun 2017 18:10:07 +0800
+Message-Id: <20170602101024.18940-3-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Provide just enough bits (clocks, clocksource, uart) to allow a kernel
-to boot on the JZ4770 SoC to a initramfs userspace.
+The encoder drivers use drm_of_find_possible_crtcs to get upstream
+crtcs from the device tree using of_graph. For the results to be
+correct, encoders must be probed/bound after _all_ crtcs have been
+created. The existing code uses a depth first recursive traversal
+of the of_graph, which means the encoders downstream of the TCON
+get add right after the first TCON. The second TCON or CRTC will
+never be properly associated with encoders connected to it.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Other platforms, such as Rockchip, deal with this by probing all
+crtcs first, then all subsequent components. This is easy to do
+since the crtcs correspond to just one device node, and are the
+first nodes in the pipeline.
+
+However with Allwinner SoCs, the function of the CRTC is split between
+the display backend (DE 1.0) or mixer (DE 2.0), which does scan-out
+and compositing, and the TCON, which generating the display timing
+signals. Further complicating the process, there may be a Dynamic Range
+Controller between the backend and the TCON. Also, the backend is
+preceded by the frontend, with a Display Enhancement Unit possibly
+in between.
+
+One solution would be, instead of a depth first traversal of the
+component of_graph, we do a breadth first traversal, so that components
+at the same depth are grouped together. This however requires us to
+implement extra code for a queue structure that is only used here.
+
+Instead, since we can identify TCON device nodes, and since the
+component system can gracefully deal with duplicate entries, we can add
+components in two passes, using the existing recursive depth code. The
+first pass stops right after the TCON is added. The second pass will
+re-add all components up to the TCON, but these will be skipped since
+they will have already been bound with the entries from the first pass.
+The encoders added in the second pass will be the last entries in the
+list.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/mips/boot/dts/ingenic/jz4770.dtsi | 210 +++++++++++++++++++++++++++++++++
- arch/mips/jz4740/Kconfig               |   6 +
- arch/mips/jz4740/time.c                |   2 +-
- 3 files changed, 217 insertions(+), 1 deletion(-)
- create mode 100644 arch/mips/boot/dts/ingenic/jz4770.dtsi
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-new file mode 100644
-index 000000000000..d8d0a741ff5d
---- /dev/null
-+++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-@@ -0,0 +1,210 @@
-+#include <dt-bindings/clock/jz4770-cgu.h>
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	compatible = "ingenic,jz4770";
-+
-+	cpuintc: interrupt-controller {
-+		#address-cells = <0>;
-+		#interrupt-cells = <1>;
-+		interrupt-controller;
-+		compatible = "mti,cpu-interrupt-controller";
-+	};
-+
-+	intc: interrupt-controller@10001000 {
-+		compatible = "ingenic,jz4770-intc";
-+		reg = <0x10001000 0x40>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+
-+		interrupt-parent = <&cpuintc>;
-+		interrupts = <2>;
-+	};
-+
-+	ext: ext {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+	};
-+
-+	osc32k: osc32k {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
-+
-+	cgu: jz4770-cgu@10000000 {
-+		compatible = "ingenic,jz4770-cgu";
-+		reg = <0x10000000 0x100>;
-+
-+		clocks = <&ext>, <&osc32k>;
-+		clock-names = "ext", "osc32k";
-+
-+		#clock-cells = <1>;
-+	};
-+
-+	pinctrl: pin-controller@10010000 {
-+		compatible = "ingenic,jz4770-pinctrl";
-+		reg = <0x10010000 0x600>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		gpa: gpio@0 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <0>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 0 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <17>;
-+		};
-+
-+		gpb: gpio@1 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <1>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 32 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <16>;
-+		};
-+
-+		gpc: gpio@2 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <2>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 64 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <15>;
-+		};
-+
-+		gpd: gpio@3 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <3>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 96 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <14>;
-+		};
-+
-+		gpe: gpio@4 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <4>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 128 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <13>;
-+		};
-+
-+		gpf: gpio@5 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <5>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 160 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <12>;
-+		};
-+	};
-+
-+	uart0: serial@10030000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10030000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART0>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <5>;
-+
-+		status = "disabled";
-+	};
-+
-+	uart1: serial@10031000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10031000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART1>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <4>;
-+
-+		status = "disabled";
-+	};
-+
-+	uart2: serial@10032000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10032000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART2>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <3>;
-+
-+		status = "disabled";
-+	};
-+
-+	uart3: serial@10033000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10033000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART3>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <2>;
-+
-+		status = "disabled";
-+	};
-+
-+	uhc: uhc@13430000 {
-+		compatible = "generic-ohci";
-+		reg = <0x13430000 0x1000>;
-+
-+		clocks = <&cgu JZ4770_CLK_UHC>, <&cgu JZ4770_CLK_UHC_PHY>;
-+		assigned-clocks = <&cgu JZ4770_CLK_UHC>;
-+		assigned-clock-rates = <48000000>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <20>;
-+
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
-index 36f82017695d..922850503271 100644
---- a/arch/mips/jz4740/Kconfig
-+++ b/arch/mips/jz4740/Kconfig
-@@ -17,6 +17,12 @@ config MACH_JZ4740
- 	bool
- 	select SYS_HAS_CPU_MIPS32_R1
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index ed75a779ae4b..bc13dcf06783 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -198,7 +198,8 @@ static int compare_of(struct device *dev, void *data)
  
-+config MACH_JZ4770
-+	bool
-+	select MIPS_CPU_SCACHE
-+	select SYS_HAS_CPU_MIPS32_R2
-+	select SYS_SUPPORTS_HIGHMEM
+ static int sun4i_drv_add_endpoints(struct device *dev,
+ 				   struct component_match **match,
+-				   struct device_node *node)
++				   struct device_node *node,
++				   bool add_encoders)
+ {
+ 	struct device_node *port, *ep, *remote;
+ 	int count = 0;
+@@ -227,13 +228,16 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 		count++;
+ 	}
+ 
++	/* Skip downstream encoders during the first pass */
++	if (sun4i_drv_node_is_tcon(node) && !add_encoders)
++		return count;
 +
- config MACH_JZ4780
- 	bool
- 	select MIPS_CPU_SCACHE
-diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
-index bb1ad5119da4..2ca9160f642a 100644
---- a/arch/mips/jz4740/time.c
-+++ b/arch/mips/jz4740/time.c
-@@ -113,7 +113,7 @@ static struct clock_event_device jz4740_clockevent = {
- #ifdef CONFIG_MACH_JZ4740
- 	.irq = JZ4740_IRQ_TCU0,
- #endif
--#ifdef CONFIG_MACH_JZ4780
-+#if defined(CONFIG_MACH_JZ4770) || defined(CONFIG_MACH_JZ4780)
- 	.irq = JZ4780_IRQ_TCU2,
- #endif
- };
+ 	/* Inputs are listed first, then outputs */
+ 	port = of_graph_get_port_by_id(node, 1);
+ 	if (!port) {
+ 		DRM_DEBUG_DRIVER("No output to bind\n");
+ 		return count;
+ 	}
+-
+ 	for_each_available_child_of_node(port, ep) {
+ 		remote = of_graph_get_remote_port_parent(ep);
+ 		if (!remote) {
+@@ -262,7 +266,8 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 		}
+ 
+ 		/* Walk down our tree */
+-		count += sun4i_drv_add_endpoints(dev, match, remote);
++		count += sun4i_drv_add_endpoints(dev, match, remote,
++						 add_encoders);
+ 
+ 		of_node_put(remote);
+ 	}
+@@ -283,8 +288,19 @@ static int sun4i_drv_probe(struct platform_device *pdev)
+ 		if (!pipeline)
+ 			break;
+ 
++		sun4i_drv_add_endpoints(&pdev->dev, &match, pipeline, false);
++		of_node_put(pipeline);
++	}
++
++	for (i = 0;; i++) {
++		struct device_node *pipeline = of_parse_phandle(np,
++								"allwinner,pipelines",
++								i);
++		if (!pipeline)
++			break;
++
+ 		count += sun4i_drv_add_endpoints(&pdev->dev, &match,
+-						pipeline);
++						 pipeline, true);
+ 		of_node_put(pipeline);
+ 
+ 		DRM_DEBUG_DRIVER("Queued %d outputs on pipeline %d\n",
 -- 
 2.11.0
