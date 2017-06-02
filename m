@@ -1,94 +1,125 @@
-Return-Path: <phil@raspberrypi.org>
-From: Phil Elwell <phil@raspberrypi.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Cc: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH v3 2/4] dt: bindings: Add bindings for bcm2835-aux-intc
-Date: Wed, 14 Jun 2017 17:29:08 +0100
-Message-Id: <1497457750-35585-3-git-send-email-phil@raspberrypi.org>
-In-Reply-To: <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
-References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
- <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 04/19] drm/sun4i: hdmi: Disable clks in bind function error path and unbind function
+Date: Fri,  2 Jun 2017 18:10:09 +0800
+Message-Id: <20170602101024.18940-5-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add bindings documentation for brcm,bcm2835-aux-intc and human-readable
-declarations for the BCM2835 AUX IRQs.
+The HDMI driver enables the bus and mod clocks in the bind function, but
+does not disable them if it then bails our due to any errors. Neither
+does it disable the clocks in the unbind function.
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Fix this by adding a proper error path to the bind function, and
+clk_disable_unprepare calls to the unbind function.
+
+Also rename the err_cleanup_connector label to err_cleanup_encoder,
+since it is the encoder that gets cleaned up.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../interrupt-controller/brcm,bcm2835-aux-intc.txt | 27 ++++++++++++++++++++++
- .../interrupt-controller/bcm2835-aux-intc.h        | 20 ++++++++++++++++
- 2 files changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
- create mode 100644 include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
-new file mode 100644
-index 0000000..9cbbab6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
-@@ -0,0 +1,27 @@
-+BCM2835 Auxiliary ("AUXIRQ") Interrupt Controller
-+
-+The BCM2835 family of SoCs multiplexes the interrupts for peripherals in
-+the AUX block into a single IRQ. The AUXIRQ register shows the IRQ status
-+of each of the peripherals. Note that there are no masking or clearing
-+facilities - interrupts must be enabled and acknowledged in the
-+individual peripherals.
-+
-+Required properties:
-+- compatible :	     Should be "brcm,bcm2835-aux-intc".
-+- reg :		     Specifies base physical address and size of the registers.
-+- interrupts :	     The interrupt number - see
-+		     bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
-+- interrupt-controller : Identifies the node as an interrupt controller
-+- #interrupt-cells : Specifies the number of cells needed to encode an
-+		     interrupt source. The value shall be 1.
-+
-+  The cell contains the interrupt specifier, as found in
-+  include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h.
-+
-+Example:
-+
-+	auxintc: interrupt-controller@7e215000 {
-+		compatible = "brcm,bcm2835-aux-intc";
-+		reg = <0x7e215000 0x4>;
-+		interrupts = <1 29>;
-+		interrupt-controller;
-diff --git a/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
-new file mode 100644
-index 0000000..8b9fc12
---- /dev/null
-+++ b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
-@@ -0,0 +1,20 @@
-+/*
-+ * Copyright (C) 2017 Raspberry Pi (Trading) Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#define BCM2835_AUX_IRQ_UART	0
-+#define BCM2835_AUX_IRQ_SPI1	1
-+#define BCM2835_AUX_IRQ_SPI2	2
-+#define BCM2835_AUX_IRQ_COUNT	3
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index d3398f6250ef..457614073501 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -350,26 +350,29 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	hdmi->mod_clk = devm_clk_get(dev, "mod");
+ 	if (IS_ERR(hdmi->mod_clk)) {
+ 		dev_err(dev, "Couldn't get the HDMI mod clock\n");
+-		return PTR_ERR(hdmi->mod_clk);
++		ret = PTR_ERR(hdmi->mod_clk);
++		goto err_disable_bus_clk;
+ 	}
+ 	clk_prepare_enable(hdmi->mod_clk);
+ 
+ 	hdmi->pll0_clk = devm_clk_get(dev, "pll-0");
+ 	if (IS_ERR(hdmi->pll0_clk)) {
+ 		dev_err(dev, "Couldn't get the HDMI PLL 0 clock\n");
+-		return PTR_ERR(hdmi->pll0_clk);
++		ret = PTR_ERR(hdmi->pll0_clk);
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	hdmi->pll1_clk = devm_clk_get(dev, "pll-1");
+ 	if (IS_ERR(hdmi->pll1_clk)) {
+ 		dev_err(dev, "Couldn't get the HDMI PLL 1 clock\n");
+-		return PTR_ERR(hdmi->pll1_clk);
++		ret = PTR_ERR(hdmi->pll1_clk);
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	ret = sun4i_tmds_create(hdmi);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't create the TMDS clock\n");
+-		return ret;
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	writel(SUN4I_HDMI_CTRL_ENABLE, hdmi->base + SUN4I_HDMI_CTRL_REG);
+@@ -410,7 +413,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	ret = sun4i_ddc_create(hdmi, hdmi->tmds_clk);
+ 	if (ret) {
+ 		dev_err(dev, "Couldn't create the DDC clock\n");
+-		return ret;
++		goto err_disable_mod_clk;
+ 	}
+ 
+ 	drm_encoder_helper_add(&hdmi->encoder,
+@@ -428,7 +431,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	hdmi->encoder.possible_crtcs = drm_of_find_possible_crtcs(drm,
+ 								  dev->of_node);
+ 	if (!hdmi->encoder.possible_crtcs)
+-		return -EPROBE_DEFER;
++		goto err_disable_mod_clk;
+ 
+ 	drm_connector_helper_add(&hdmi->connector,
+ 				 &sun4i_hdmi_connector_helper_funcs);
+@@ -438,7 +441,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 	if (ret) {
+ 		dev_err(dev,
+ 			"Couldn't initialise the HDMI connector\n");
+-		goto err_cleanup_connector;
++		goto err_cleanup_encoder;
+ 	}
+ 
+ 	/* There is no HPD interrupt, so we need to poll the controller */
+@@ -449,8 +452,12 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
+ 
+ 	return 0;
+ 
+-err_cleanup_connector:
++err_cleanup_encoder:
+ 	drm_encoder_cleanup(&hdmi->encoder);
++err_disable_mod_clk:
++	clk_disable_unprepare(hdmi->mod_clk);
++err_disable_bus_clk:
++	clk_disable_unprepare(hdmi->bus_clk);
+ 	return ret;
+ }
+ 
+@@ -461,6 +468,8 @@ static void sun4i_hdmi_unbind(struct device *dev, struct device *master,
+ 
+ 	drm_connector_cleanup(&hdmi->connector);
+ 	drm_encoder_cleanup(&hdmi->encoder);
++	clk_disable_unprepare(hdmi->mod_clk);
++	clk_disable_unprepare(hdmi->bus_clk);
+ }
+ 
+ static const struct component_ops sun4i_hdmi_ops = {
 -- 
-1.9.1
+2.11.0
