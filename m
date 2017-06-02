@@ -1,161 +1,99 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Jun 2017 12:22:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 2 Jun 2017 21:31:06 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
-Subject: Re: [PATCH V1 7/9] clk: sprd: add adjustable pll support
-Message-ID: <20170630192228.GO22780@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-8-chunyan.zhang@spreadtrum.com>
- <20170620013710.GJ4493@codeaurora.org>
- <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
- <20170630014452.GL22780@codeaurora.org>
- <CAAfSe-smKqgd42jDAGDA=NtYvRZExNanU7fHrRkT4W-WH-2=ug@mail.gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 12/19] drm/sun4i: hdmi: Support the DDC clock in the
+ A31's HDMI controller
+Message-ID: <20170602193106.c3yagwkglhg45h6y@flea.lan>
+References: <20170602101024.18940-1-wens@csie.org>
+ <20170602101024.18940-13-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAfSe-smKqgd42jDAGDA=NtYvRZExNanU7fHrRkT4W-WH-2=ug@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rjl2suipzdxwdmfe"
+In-Reply-To: <20170602101024.18940-13-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/30, Chunyan Zhang wrote:
-> Hi Stephen,
-> 
-> On 30 June 2017 at 09:44, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 06/22, Chunyan Zhang wrote:
-> >> On 20 June 2017 at 09:37, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> >> > On 06/18, Chunyan Zhang wrote:
-> >> >> +     pll->factors[member].width
-> >> >> +
-> >> >> +#define pmask(pll, member)                                   \
-> >> >> +     ((pwidth(pll, member)) ?                                \
-> >> >> +     GENMASK(pwidth(pll, member) + pshift(pll, member) - 1,  \
-> >> >> +     pshift(pll, member)) : 0)
-> >> >> +
-> >> >> +#define pinternal(pll, cfg, member)  \
-> >> >> +     (cfg[pindex(pll, member)] & pmask(pll, member))
-> >> >> +
-> >> >> +#define pinternal_val(pll, cfg, member)      \
-> >> >> +     (pinternal(pll, cfg, member) >> pshift(pll, member))
-> >> >> +
-> >> >> +static unsigned long pll_get_refin_rate(struct ccu_pll *pll)
-> >> >
-> >> > pll could be const?
-> >>
-> >> What this function returns is a factor used to calculate the pll rate
-> >> later, I will rename this function in the next iterator.
-> >>
-> >
-> > Rename is fine, but pll can still be marked const?
-> 
-> Oh, sorry I misunderstood :)
-> You mean mark the input parameter "pll" const, right?
 
-Yes.
+--rjl2suipzdxwdmfe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >> >> +
-> >> >> +static int ccu_pll_helper_set_rate(struct ccu_pll *pll,
-> >> >> +                                unsigned long rate,
-> >> >> +                                unsigned long parent_rate)
-> >> >> +{
-> >> >> +     u32 mask, shift, width, ibias_val, index, kint, nint;
-> >> >> +     u32 reg_num = pll->regs[0], i = 0;
-> >> >> +     unsigned long refin, fvco = rate;
-> >> >> +     struct reg_cfg *cfg;
-> >> >> +
-> >> >> +     cfg = kcalloc(reg_num, sizeof(*cfg), GFP_KERNEL);
-> >> >> +     if (!cfg)
-> >> >> +             return -ENOMEM;
-> >> >> +
-> >> >> +     refin = pll_get_refin_rate(pll);
-> >> >> +
-> >> >> +     mask = pmask(pll, PLL_PREDIV);
-> >> >> +     index = pindex(pll, PLL_PREDIV);
-> >> >> +     width = pwidth(pll, PLL_PREDIV);
-> >> >> +     if (width && (ccu_pll_readl(pll, index) & mask))
-> >> >> +             refin = refin * 2;
-> >> >> +
-> >> >> +     mask = pmask(pll, PLL_POSTDIV);
-> >> >> +     index = pindex(pll, PLL_POSTDIV);
-> >> >> +     width = pwidth(pll, PLL_POSTDIV);
-> >> >> +     cfg[index].msk = mask;
-> >> >> +     if (width && ((pll->fflag == 1 && fvco <= pll->fvco) ||
-> >> >> +                   (pll->fflag == 0 && fvco > pll->fvco)))
-> >> >> +             cfg[index].val |= mask;
-> >> >> +
-> >> >> +     if (width && fvco <= pll->fvco)
-> >> >> +             fvco = fvco * 2;
-> >> >> +
-> >> >> +     mask = pmask(pll, PLL_DIV_S);
-> >> >> +     index = pindex(pll, PLL_DIV_S);
-> >> >> +     cfg[index].val |= mask;
-> >> >> +     cfg[index].msk |= mask;
-> >> >> +
-> >> >> +     mask = pmask(pll, PLL_SDM_EN);
-> >> >> +     index = pindex(pll, PLL_SDM_EN);
-> >> >> +     cfg[index].val |= mask;
-> >> >> +     cfg[index].msk |= mask;
-> >> >> +
-> >> >> +     nint  = fvco/(refin * CCU_PLL_1M);
-> >> >> +
-> >> >> +     mask = pmask(pll, PLL_NINT);
-> >> >> +     index = pindex(pll, PLL_NINT);
-> >> >> +     shift = pshift(pll, PLL_NINT);
-> >> >> +     cfg[index].val |= (nint << shift) & mask;
-> >> >> +     cfg[index].msk |= mask;
-> >> >> +
-> >> >> +     mask = pmask(pll, PLL_KINT);
-> >> >> +     index = pindex(pll, PLL_KINT);
-> >> >> +     width = pwidth(pll, PLL_KINT);
-> >> >> +     shift = pshift(pll, PLL_KINT);
-> >> >> +#ifndef CONFIG_64BIT
-> >> >> +     i = width < 21 ? 0 : i - 21;
-> >> >> +#endif
-> >> >
-> >> > What's this? Why do we depend on CONFIG_64BIT?
-> >>
-> >> On 32-bit SoCs, the largest width we can support is limited due to the
-> >> limitation of calculation precision.
-> >
-> > Does the hardware width change? Still not clear to me what's
-> > going on here.
-> 
-> I heard from my colleague, that because the calculation precision on
-> Spreadtrum's 32-bit SoCs is different from on 64-bit SoCs,  when the
-> width of the value of PLL_KINT is larger than 21, the value is too
-> large to be multiplied on 32-bit Spreadtrum's SoCs.
+On Fri, Jun 02, 2017 at 06:10:17PM +0800, Chen-Yu Tsai wrote:
+> On the A31, the HDMI DDC block is different from the one in the
+> other SoCs. As far as the DDC clock goes, it has no pre-divider,
+> as it is clocked from a slower parent clock, not the TMDS clock.
+> The divider offset from the register value is different. And the
+> clock control register is at a different offset.
+>=20
+> This patch adds support for this variant.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_hdmi.h         |  1 +
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 11 +++++++++++
+>  2 files changed, 12 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/s=
+un4i_hdmi.h
+> index 08c514672fd3..c39c2a245339 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> @@ -178,6 +178,7 @@ struct sun4i_hdmi {
+>  };
+> =20
+>  int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
+> +int sun6i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
+>  int sun4i_tmds_create(struct sun4i_hdmi *hdmi);
+>  int sun6i_tmds_create(struct sun4i_hdmi *hdmi);
+> =20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm=
+/sun4i/sun4i_hdmi_ddc_clk.c
+> index 9a6b6243e977..b1395e7b242c 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+> @@ -151,3 +151,14 @@ int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct=
+ clk *parent)
+>  {
+>  	return _sun4i_ddc_create(hdmi, parent, &sun4i_variant);
+>  }
+> +
+> +static const struct sun4i_ddc_variant sun6i_variant =3D {
+> +	.reg_offset	=3D SUN6I_HDMI_DDC_CLK_REG,
 
-It sounds like you're saying that the clk hardware is not
-changing, but the sizeof(long) is different on 64-bit and 32-bit
-CPUs so you've added this ifndef here for that.
+This one should be handled through a regmap_field.
 
-> 
-> i = width < 21 ? 0 : i - 21;
-> 
-> Here ' i ' is used to adjust 'shift' rather than 'width'  like below (
-> wrote the code back for convenience of understanding)
-> 
-> +       kint = DIV_ROUND_CLOSEST(((fvco - refin * nint * CCU_PLL_1M)/10000) *
-> +       ((mask >> (shift + i)) + 1), refin * 100) << i;
-> 
+Maxime
 
-Having the types for all these variables would also be helpful.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-  u32 mask, shift, width, kint, nint;
-  unsigned long refin, fvco;
+--rjl2suipzdxwdmfe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Why don't we do 64-bit math here instead of 32-bit math? And use
-DIV_ROUND_CLOSEST_ULL?
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+iQIcBAEBAgAGBQJZMbz6AAoJEBx+YmzsjxAg2QEP/1FHFocbrrbyyxdb6Own0ieA
+gTKvSW7W7MG6Q5f78fJoJb3C2GJr85KwRtDezfJczRJzMxiHeQbqPFqdQJ0w1YTX
+OFA0JDYH+Nwqn9wbg4lUMztdJ0Us2sqjUnySCx65hgmS3dbJGwvrENGQuA/9g+C0
+PNx0jfe1Vr0Oq2yramU+OJdg6CbZUfix6GibEdE3JWosxx9KsTkkMq1rE9AENU6S
+I+eAIrfkc0ZQ+HStMNxeKn9NQ13fd7e6lMBMyJG5o0DvdpjV/IM2Vu5fg0cbdyhr
+W9hNY7SgvxDu9HzFepDN/o6jEUxdKOCpjTl1LSKUVsWz4Ox78K5ppQyWo7LhVzuf
+d6C/JkXyiinDqjABLqa1ud1hInU8VFyzchWtbt4RQlenRGG1zIlRGMzYIrjQPWaj
+UVEh+LfCwpzhjELgp4bW/YXQkaww6/5y//vy4OCNMYHZSBnYxfI0Tsx8xHZgjqe8
+n1NfJdvzAVc8SbfZGc7j5+APTmwUPktdTDXMHyCB7Dh6sUclpslhaUTfy22jG4uH
+xA8ViPpmPs+95ieViCHNSc3ko1W3Fq9UZFETJle2CzyVpTJbfRDF6+ii8AP3wKSx
+F4h4VWkjXnMeoPPpj29AdRXhpZnjT/hEhGdUVdLPjcYn0Oz1K3zKEaOM+TcvvXBH
+JXdNZwQN/281WXpBJ8Bq
+=Sbjn
+-----END PGP SIGNATURE-----
+
+--rjl2suipzdxwdmfe--
