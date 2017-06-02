@@ -1,46 +1,160 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: cpg-mssr: Use of_device_get_match_data() helper
-Date: Fri,  9 Jun 2017 14:49:43 +0200
-Message-Id: <1497012583-24328-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v6 10/11] arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+Date: Fri,  2 Jun 2017 12:04:34 +0530
+Message-Id: <1496385275-6899-11-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If CONFIG_OF=n:
+We have two instance of PL022 SPI controllers, one instance of
+DMA PL330, and one non-secure SP805 Watchdog on Stingray SOC.
 
-    drivers/clk/renesas/renesas-cpg-mssr.c: In function ‘cpg_mssr_probe’:
-    drivers/clk/renesas/renesas-cpg-mssr.c:702: warning: dereferencing ‘void *’ pointer
-    drivers/clk/renesas/renesas-cpg-mssr.c:702: error: request for member ‘data’ in something not a structure or union
+This patch adds DT nodes for the above mentioned devices in
+Stingray DT.
 
-To fix this, use the of_device_get_match_data() helper, for which a
-dummy version is provided if CONFIG_OF=n.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Pramod KUMAR <pramod.kumar@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
 ---
-Feel free to apply directly, as I currently don't have more material
-for clk-renesas-for-v4.13.
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      | 30 +++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 52 ++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
 
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f44a8125615bd75a..1f607c806f9b9ec3 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -699,7 +699,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	struct clk **clks;
- 	int error;
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+index c309cda..5671669 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+@@ -46,3 +46,33 @@
+ &uart3 {
+ 	status = "okay";
+ };
++
++&ssp0 {
++	pinctrl-0 = <&spi0_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 34 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
++
++&ssp1 {
++	pinctrl-0 = <&spi1_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio_hsls 96 0>;
++	status = "okay";
++
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 91ba61e..88a6176 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -279,6 +279,14 @@
+ 			status = "disabled";
+ 		};
  
--	info = of_match_node(cpg_mssr_match, np)->data;
-+	info = of_device_get_match_data(dev);
- 	if (info->init) {
- 		error = info->init(dev);
- 		if (error)
++		wdt0: watchdog@000c0000 {
++			compatible = "arm,sp805", "arm,primecell";
++			reg = <0x000c0000 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_25m_div2_clk>, <&hsls_div4_clk>;
++			clock-names = "wdogclk", "apb_pclk";
++		};
++
+ 		gpio_hsls: gpio@000d0000 {
+ 			compatible = "brcm,iproc-gpio";
+ 			reg = <0x000d0000 0x864>;
+@@ -359,11 +367,55 @@
+ 			status = "disabled";
+ 		};
+ 
++		ssp0: ssp@00180000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00180000 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		ssp1: ssp@00190000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x00190000 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&hsls_div2_clk>, <&hsls_div2_clk>;
++			clock-names = "spiclk", "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		hwrng: hwrng@00220000 {
+ 			compatible = "brcm,iproc-rng200";
+ 			reg = <0x00220000 0x28>;
+ 		};
+ 
++		dma0: dma@00310000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x00310000 0x1000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++			clocks = <&hsls_div2_clk>;
++			clock-names = "apb_pclk";
++			iommus = <&smmu 0x6000 0x0000>;
++		};
++
+ 		nand: nand@00360000 {
+ 			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
+ 			reg = <0x00360000 0x600>,
 -- 
 2.7.4
