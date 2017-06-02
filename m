@@ -1,67 +1,52 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Jun 2017 14:59:15 -0700
+Date: Fri, 2 Jun 2017 15:39:46 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"tony@atomide.com" <tony@atomide.com>
-Subject: Re: [GIT PULL] clk: ti: clkctrl support for 4.13 merge window
-Message-ID: <20170616215915.GO20170@codeaurora.org>
-References: <6d66f78a-5d39-6396-c492-b79a687ce58a@ti.com>
- <20170614173237.GB20170@codeaurora.org>
- <ee8f9ff4-831c-1999-175e-12608a954cfb@ti.com>
- <20170614174910.GD20170@codeaurora.org>
- <f8bff2f4-55ce-bee1-9362-28f4f90fad03@ti.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
+	viresh.kumar@linaro.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com,
+	linux@armlinux.org.uk, geert@linux-m68k.org, f.fainelli@gmail.com,
+	dongas86@gmail.com, Russell King <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V3 1/3] clk: add clk_bulk_get accessories
+Message-ID: <20170602223946.GV20170@codeaurora.org>
+References: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
+ <1495201746-31841-2-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f8bff2f4-55ce-bee1-9362-28f4f90fad03@ti.com>
+In-Reply-To: <1495201746-31841-2-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/15, Tero Kristo wrote:
-> On 14/06/17 20:49, Stephen Boyd wrote:
-> >On 06/14, Tero Kristo wrote:
-> >>On 14/06/17 20:32, Stephen Boyd wrote:
-> >>>On 06/08, Tero Kristo wrote:
-> >>>>Hi Stephen, Mike,
-> >>>>
-> >>>>This pull contains the v3 of the clkctrl base driver support posted
-> >>>>couple of weeks back, with Tony's acks added to patch #2 and #4.
-> >>>>
-> >>>>-Tero
-> >>>>
-> >>>
-> >>>drivers/clk/ti/clkctrl.c:252
-> >>>_ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
-> >>>drivers/clk/ti/clkctrl.c:264
-> >>>_ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
-> >>>drivers/clk/ti/clkctrl.c:466
-> >>>_ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
-> >>>drivers/clk/ti/clkctrl.c:473
-> >>>_ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
-> >>>
-> >>>Can these be silenced with some follow up patch? I'll hold off on
-> >>>the pull until you can take a look.
-> >>>
-> >>
-> >>What is the tool you use to get these?
-> >>
-> >>They seem like valid warnings though, some cleanup could be used for
-> >>the dynamic memory handling. I'll fix these tomorrow.
-> >>
-> >
-> >I use smatch[1] although I don't always have the most up to date
-> >version.
-> >
-> >[1] git://repo.or.cz/smatch.git
-> >
+On 05/19, Dong Aisheng wrote:
+> These helper function allows drivers to get several clk consumers in
+> one operation. If any of the clk cannot be acquired then any clks
+> that were got will be put before returning to the caller.
 > 
-> Ok thanks, fixed and posted a new version of patch #2 of the series.
-> Also force pushed this branch with the updated version in case you
-> want to use this.
+> This can relieve the driver owners' life who needs to handle many clocks,
+> as well as each clock error reporting.
 > 
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Anson Huang <anson.huang@nxp.com>
+> Cc: Robin Gong <yibin.gong@nxp.com>
+> Cc: Bai Ping <ping.bai@nxp.com>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: Octavian Purdila <octavian.purdila@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
 
-Thanks. Pulled into clk-next now.
+Applied to clk-bulk-get and merged into clk-next
+
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
