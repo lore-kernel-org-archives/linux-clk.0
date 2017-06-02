@@ -1,163 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51597 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751159AbdFDOTv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 4 Jun 2017 10:19:51 -0400
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 2 Jun 2017 14:15:32 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Tobias Regnery <tobias.regnery@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
+Message-ID: <20170602121532.glfjkxp333ynvcwm@flea.lan>
+References: <20170522202951.2896280-1-arnd@arndb.de>
+ <20170523005553.GH20170@codeaurora.org>
+ <20170523071940.xbnahikb4d5dge7v@wens.csie.org>
+ <CAK8P3a37CT0tzdy4V8Hj=-Mu=JrdR08zv2fqVH5Y+hzT7OK4Vg@mail.gmail.com>
+ <20170601071750.GP20170@codeaurora.org>
+ <CAK8P3a2-hoVKFOr455ZseM4UrmHGFXTE7VbXpSd2Jdp7rnrKyA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Sun, 04 Jun 2017 22:19:46 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [RFC PATCH 03/11] drm: sun4i: ignore swapped mixer<->tcon
- connection for DE2
-In-Reply-To: <20170524081440.cbtjvvmj5okrri6z@flea.home>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <20170517164354.16399-4-icenowy@aosc.io>
- <20170519175753.sygqnwopk7tuv35n@flea.home>
- <ECF29F56-DF18-4E3C-9C85-B29F89BD4228@aosc.io>
- <20170524081440.cbtjvvmj5okrri6z@flea.home>
-Message-ID: <e5602515955fd2e90196d48138191f77@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kzympabir2usixkv"
+In-Reply-To: <CAK8P3a2-hoVKFOr455ZseM4UrmHGFXTE7VbXpSd2Jdp7rnrKyA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-05-24 16:14，Maxime Ripard 写道：
-> On Sat, May 20, 2017 at 02:00:22AM +0800, Icenowy Zheng wrote:
->> 
->> 
->> 于 2017年5月20日 GMT+08:00 上午1:57:53, Maxime Ripard 
->> <maxime.ripard@free-electrons.com> 写到:
->> >On Thu, May 18, 2017 at 12:43:46AM +0800, Icenowy Zheng wrote:
->> >> Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
->> >> tcon0 and mixer1 is connected to tcon1; however by setting a bit
->> >> the connection can be swapped.
->> >>
->> >> As we now hardcode the default connection, ignore the bonus endpoint
->> >for
->> >> the mixer's output and the TCON's input, as they stands for the
->> >swapped
->> >> connection.
->> >>
->> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> >> ---
->> >>  drivers/gpu/drm/sun4i/sun4i_drv.c  | 27 ++++++++++++++++++++++++++
->> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 39
->> >+++++++++++++++++++++++++++++---------
->> >>  drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
->> >>  3 files changed, 59 insertions(+), 9 deletions(-)
->> >>
->> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c
->> >b/drivers/gpu/drm/sun4i/sun4i_drv.c
->> >> index 1dd1948025d2..29bf1325ded6 100644
->> >> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
->> >> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
->> >> @@ -173,6 +173,13 @@ static bool sun4i_drv_node_is_frontend(struct
->> >device_node *node)
->> >>  		of_device_is_compatible(node,
->> >"allwinner,sun8i-a33-display-frontend");
->> >>  }
->> >>
->> >> +static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node
->> >*node)
->> >> +{
->> >> +	/* The V3s has only one mixer-tcon pair, so it's not listed here.
->> >*/
->> >> +	return of_device_is_compatible(node,
->> >"allwinner,sun8i-h3-de2-mixer0") ||
->> >> +		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
->> >> +}
->> >> +
->> >>  static bool sun4i_drv_node_is_tcon(struct device_node *node)
->> >>  {
->> >>  	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
->> >> @@ -249,6 +256,26 @@ static int sun4i_drv_add_endpoints(struct device
->> >*dev,
->> >>  			}
->> >>  		}
->> >>
->> >> +		/*
->> >> +		 * The second endpoint of the output of a swappable DE2 mixer
->> >> +		 * is the TCON after connection swapping.
->> >> +		 * Ignore it now, as we now hardcode mixer0->tcon0,
->> >> +		 * mixer1->tcon1 connection.
->> >> +		 */
->> >> +		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
->> >> +			struct of_endpoint endpoint;
->> >> +
->> >> +			if (of_graph_parse_endpoint(ep, &endpoint)) {
->> >> +				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
->> >> +				continue;
->> >> +			}
->> >> +
->> >> +			if (endpoint.id) {
->> >> +				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2
->> >mixer... skipping\n");
->> >> +				continue;
->> >> +			}
->> >> +		}
->> >> +
->> >>  		/* Walk down our tree */
->> >>  		count += sun4i_drv_add_endpoints(dev, match, remote);
->> >>
->> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> >b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> >> index f44a37a5993d..89a215ff2370 100644
->> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> >> @@ -425,7 +425,8 @@ static int sun4i_tcon_init_regmap(struct device
->> >*dev,
->> >>   * requested via the get_id function of the engine.
->> >>   */
->> >>  static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv
->> >*drv,
->> >> -						   struct device_node *node)
->> >> +						   struct device_node *node,
->> >> +						   bool skip_bonus_ep)
->> >>  {
->> >>  	struct device_node *port, *ep, *remote;
->> >>  	struct sunxi_engine *engine;
->> >> @@ -439,6 +440,20 @@ static struct sunxi_engine
->> >*sun4i_tcon_find_engine(struct sun4i_drv *drv,
->> >>  		if (!remote)
->> >>  			continue;
->> >>
->> >> +		if (skip_bonus_ep) {
->> >> +			struct of_endpoint endpoint;
->> >> +
->> >> +			if (of_graph_parse_endpoint(ep, &endpoint)) {
->> >> +				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
->> >> +				continue;
->> >> +			}
->> >> +
->> >> +			if (endpoint.id) {
->> >> +				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when
->> >searching engine\n");
->> >> +				continue;
->> >> +			}
->> >> +		}
->> >> +
->> >
->> >You don't list the mixers in the tcon's output, why do you need that
->> >exactly?
->> 
->> Mixers are TCONs' input, not output...
-> 
-> Then why are they even parsed? The whole parsing logic in the driver
-> only searches for output nodes.
 
-Here it's really parsing the input node, for searching for a connected
-engine.
+--kzympabir2usixkv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In the situation of DE1 TCON has only one input endpoint and it must be
-the connected backend.
+On Thu, Jun 01, 2017 at 11:07:46AM +0200, Arnd Bergmann wrote:
+> On Thu, Jun 1, 2017 at 9:17 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 05/23, Arnd Bergmann wrote:
+> >> On Tue, May 23, 2017 at 9:19 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+> >> An alternative would be to remove all the dependencies as 'lib-y'
+> >> in the Makefile and remove the individual Kconfig symbols. That
+> >> way, we would always build all of them when CONFIG_SUNXI_CCU
+> >> is enabled, but the linker would drop the ones that do not get
+> >> referenced.
+> >
+> > In this case you're right, and we should change them to lib-y in
+> > the Makefile and then let the linker figure this all out. No more
+> > dependency patches. I think we only need to do this sort of
+> > Kconfig stuff when we want to make a library .ko file that each
+> > SoC specific driver depends on for common code.
+> >
+> > It would be cool if the build system could figure that all out
+> > for us, and let us have something like modlib-y that makes it a
+> > library (archive) if all objects depending on it are builtin and
+> > we have CONFIG_MODULES=3Dn, or makes it into an object file if
+> > something is builtin that depends on it, or makes it into a
+> > module if everything that depends on it is a module.
+>=20
+> In this case, there are no loadable modules, the sunxi clk drivers
+> can only be built-in, which should simplify the problem a lot.
 
-But in the situation of DE2 it has now two input endpoints, and it's
-now needed to figure out which connection is used.
+Using the linker to drop the useless stuff seems like a good idea. Do
+you want to send a patch for it?
 
-> 
-> Maxime
+Maxim
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--kzympabir2usixkv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZMVbkAAoJEBx+YmzsjxAg+cIP/32bc72xSYamHriQ/sjr0N0M
+U4QiE2ANaFw4lKsp9l15UEcB6C3r3OaAGbbnvqlM/UTsMy2pBDzI4mx88GcY/UEl
+PhMV95+tvcjbrxe9XmpXo3KHqgwzs8z+jVb4RjSIf1POFtFxx3IuSh7tjb92e889
+k3mryPSNMOJcCy3eZAwb/+eOilNnU84Er7stly/2w/b6u8F7QQREGg8VGg1qX/6S
+fqX76OQqfjqbHWBWxHcJ3rEXgAK9Pi6iXd3LJMV+wX9lAhv1rVMjQm31w/fa9l7V
+LRoADj4TjOrAhzKu2EzCz3M3M5B3AxnOZ3hTP2XmVPZDTk2H6qNgWWrvcIfwoegK
+uWfK+CATW6IHhcXjaJIw9ovGxrowExGAqz597DbWweicjt5X3pKYVAz67UHDa+ea
+5NqDvYOeNRDPUa1l+2TGiEJMpDnxMvaQRVMKS9QULjXI6bRf/fKDUDpjin/c1FWv
+WY+2cjKef1nS3ZdDGsAVTXZAkdRJD5ORXj6gwIplpRhSZEWqnY2UI3l5gTGDN75z
+jwFJo3AFpxu3K/OlMdf8mX0RrHvOMUplHiRQKuda8kBJi1fdPI8IGd8cc4lBURuC
+aLNbBTx3vMYM7XEDyHs9zje7C4owyO7Sz/fCeAuQkpEergh5YPrQPBw3wFhxtCGc
+N47IFW+Pc7fOSIAlKmd7
+=S4Aj
+-----END PGP SIGNATURE-----
+
+--kzympabir2usixkv--
