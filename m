@@ -1,144 +1,491 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1496606325.3552.16.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: meson8b: add compatibles for Meson8 and
- Meson8m2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, carlo@caione.org, khilman@baylibre.com,
-	linux@armlinux.org.uk, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Date: Sun, 04 Jun 2017 21:58:45 +0200
-In-Reply-To: <20170604183341.21417-2-martin.blumenstingl@googlemail.com>
-References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
-	 <20170604183341.21417-2-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v6 07/11] arm64: dts: Add pinctrl DT nodes for Stingray SOC
+Date: Fri,  2 Jun 2017 12:04:31 +0530
+Message-Id: <1496385275-6899-8-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2017-06-04 at 20:33 +0200, Martin Blumenstingl wrote:
-> The clock controller on Meson8, Meson8b and Meson8m2 is very similar
-> based on the code from the Amlogic GPL kernel sources. Add separate
-> compatibles for each SoC to make sure that we can easily implement
-> all the small differences for each SoC later on.
-> 
-> In general the Meson8 and Meson8m2 seem to be almost identical as they
-> even share the same mach-meson8 directory in Amlogic's GPL kernel
-> sources.
-> The main clocks on Meson8, Meson8b and Meson8m2 are very similar,
-> because they are all using the same PLL values, 90% of the clock gates
-> are the same (the actual diffstat of the mach-meson8/clock.c and
-> mach-meson8b/clock.c files is around 30 to 40 lines, when excluding
-> all commented out code).
-> The difference between the Meson8 and Meson8b clock gates seem to be:
-> - Meson8 has AIU_PCLK, HDMI_RX, VCLK2_ENCT, VCLK2_ENCL, UART3,
->   CSI_DIG_CLKIN gates which don't seem to be available on Meson8b
-> - the gate on Meson8 for bit 7 seems to be named "_1200XXX" instead
->   of "PERIPHS_TOP" (on Meson8b)
-> - Meson8b has a SANA gate which doesn't seem to exist on Meson8 (or
->   on Meson8 the same bit is used by the UART3 gate in Amlogic's GPL
->   kernel sources)
-> None of these gates is added for now, since it's unclear whether these
-> definitions are actually correct (the VCLK2_ENCT gate for example is
-> defined, but only used in some commented block).
-> 
-> The main difference between all three SoCs seem to be the video (VPU)
-> clocks. Apart from different supported clock rates (according to vpu.c
-> in mach-meson8 and mach-meson8b from Amlogic's GPL kernel sources) the
-> most notable difference is that Meson8m2 has a GP_PLL clock and a mux
-> (probably the same as on the Meson GX SoCs) to support glitch-free
-> (clock rate) switching.
-> None of these VPU clocks are not supported by our mainline meson8b
-> clock driver yet though.
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  .../devicetree/bindings/clock/amlogic,meson8b-clkc.txt        | 11 +++++++---
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-I think you should split the binding documentation and clk changes into separate
-patches.
+This patch adds pinctrl and pinmux related DT nodes for
+Stingray SOC.
 
-> -
->  drivers/clk/meson/Kconfig                                     |  6 +++---
->  drivers/clk/meson/meson8b.c                                   |  5 ++++-
+For manageability, pinctrl and pinmum DT nodes are added
+as separate DTSi file and included in main DTSi file.
 
-The change being more platform than clock related, I'd prefer if Kevin or Carlo
-ack it before we apply it.
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 +++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   2 +
+ .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 ++++
+ 3 files changed, 415 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+ create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
 
-Apart from this, the change looks good to me. Nice to see people taking interest
- in these SoCs. Would you mind telling us a bit more about the board you have
-used for this task and the tests you have done ? It would maybe allow other
-people to help you.
-
-Cheers
-Jerome
-
->  3 files changed, 14 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> index 2b7b3fa588d7..606da38c0959 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> @@ -1,11 +1,14 @@
-> -* Amlogic Meson8b Clock and Reset Unit
-> +* Amlogic Meson8, Meson8b and Meson8m2 Clock and Reset Unit
->  
-> -The Amlogic Meson8b clock controller generates and supplies clock to various
-> -controllers within the SoC.
-> +The Amlogic Meson8 / Meson8b / Meson8m2 clock controller generates and
-> +supplies clock to various controllers within the SoC.
->  
->  Required Properties:
->  
-> -- compatible: should be "amlogic,meson8b-clkc"
-> +- compatible: must be one of:
-> +	- "amlogic,meson8-clkc" for Meson8 (S802) SoCs
-> +	- "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
-> +	- "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
->  - reg: it must be composed by two tuples:
->  	0) physical base address of the xtal register and length of memory
->  	   mapped region.
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 19480bcc7046..4a806203b73c 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -7,9 +7,9 @@ config COMMON_CLK_MESON8B
->  	bool
->  	depends on COMMON_CLK_AMLOGIC
->  	help
-> -	  Support for the clock controller on AmLogic S805 devices, aka
-> -	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
-> -	  work.
-> +	  Support for the clock controller on AmLogic S802 (Meson8),
-> +	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
-> +	  want peripherals and CPU frequency scaling to work.
->  
->  config COMMON_CLK_GXBB
->  	bool
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index bfd1690724de..94c55e79cdde 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -1,5 +1,6 @@
->  /*
-> - * AmLogic S805 / Meson8b Clock Controller Driver
-> + * AmLogic S802 (Meson8) / S805 (Meson8b) / S812 (Meson8m2) Clock Controller
-> + * Driver
->   *
->   * Copyright (c) 2015 Endless Mobile, Inc.
->   * Author: Carlo Caione <carlo@endlessm.com>
-> @@ -777,7 +778,9 @@ static int meson8b_clkc_probe(struct platform_device
-> *pdev)
->  }
->  
->  static const struct of_device_id meson8b_clkc_match_table[] = {
-> +	{ .compatible = "amlogic,meson8-clkc" },
->  	{ .compatible = "amlogic,meson8b-clkc" },
-> +	{ .compatible = "amlogic,meson8m2-clkc" },
->  	{ }
->  };
->  
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+new file mode 100644
+index 0000000..15214d0
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
+@@ -0,0 +1,345 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include <dt-bindings/pinctrl/brcm,pinctrl-stingray.h>
++
++		pinconf: pinconf@00140000 {
++			compatible = "pinconf-single";
++			reg = <0x00140000 0x250>;
++			pinctrl-single,register-width = <32>;
++
++			/* pinconf functions */
++		};
++
++		pinmux: pinmux@0014029c {
++			compatible = "pinctrl-single";
++			reg = <0x0014029c 0x250>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			pinctrl-single,register-width = <32>;
++			pinctrl-single,function-mask = <0xf>;
++			pinctrl-single,gpio-range = <
++				&range 0 154 MODE_GPIO
++				>;
++			range: gpio-range {
++				#pinctrl-single,gpio-range-cells = <3>;
++			};
++
++			/* pinctrl functions */
++			tsio_pins: pinmux_gpio_14 {
++				pinctrl-single,pins = <
++					0x038 MODE_NITRO /* tsio_0 */
++					0x03c MODE_NITRO /* tsio_1 */
++				>;
++			};
++
++			nor_pins: pinmux_pnor_adv_n {
++				pinctrl-single,pins = <
++					0x0ac MODE_PNOR /* nand_ce1_n */
++					0x0b0 MODE_PNOR /* nand_ce0_n */
++					0x0b4 MODE_PNOR /* nand_we_n */
++					0x0b8 MODE_PNOR /* nand_wp_n */
++					0x0bc MODE_PNOR /* nand_re_n */
++					0x0c0 MODE_PNOR /* nand_rdy_bsy_n */
++					0x0c4 MODE_PNOR /* nand_io0_0 */
++					0x0c8 MODE_PNOR /* nand_io1_0 */
++					0x0cc MODE_PNOR /* nand_io2_0 */
++					0x0d0 MODE_PNOR /* nand_io3_0 */
++					0x0d4 MODE_PNOR /* nand_io4_0 */
++					0x0d8 MODE_PNOR /* nand_io5_0 */
++					0x0dc MODE_PNOR /* nand_io6_0 */
++					0x0e0 MODE_PNOR /* nand_io7_0 */
++					0x0e4 MODE_PNOR /* nand_io8_0 */
++					0x0e8 MODE_PNOR /* nand_io9_0 */
++					0x0ec MODE_PNOR /* nand_io10_0 */
++					0x0f0 MODE_PNOR /* nand_io11_0 */
++					0x0f4 MODE_PNOR /* nand_io12_0 */
++					0x0f8 MODE_PNOR /* nand_io13_0 */
++					0x0fc MODE_PNOR /* nand_io14_0 */
++					0x100 MODE_PNOR /* nand_io15_0 */
++					0x104 MODE_PNOR /* nand_ale_0 */
++					0x108 MODE_PNOR /* nand_cle_0 */
++					0x040 MODE_PNOR /* pnor_adv_n */
++					0x044 MODE_PNOR /* pnor_baa_n */
++					0x048 MODE_PNOR /* pnor_bls_0_n */
++					0x04c MODE_PNOR /* pnor_bls_1_n */
++					0x050 MODE_PNOR /* pnor_cre */
++					0x054 MODE_PNOR /* pnor_cs_2_n */
++					0x058 MODE_PNOR /* pnor_cs_1_n */
++					0x05c MODE_PNOR /* pnor_cs_0_n */
++					0x060 MODE_PNOR /* pnor_we_n */
++					0x064 MODE_PNOR /* pnor_oe_n */
++					0x068 MODE_PNOR /* pnor_intr */
++					0x06c MODE_PNOR /* pnor_dat_0 */
++					0x070 MODE_PNOR /* pnor_dat_1 */
++					0x074 MODE_PNOR /* pnor_dat_2 */
++					0x078 MODE_PNOR /* pnor_dat_3 */
++					0x07c MODE_PNOR /* pnor_dat_4 */
++					0x080 MODE_PNOR /* pnor_dat_5 */
++					0x084 MODE_PNOR /* pnor_dat_6 */
++					0x088 MODE_PNOR /* pnor_dat_7 */
++					0x08c MODE_PNOR /* pnor_dat_8 */
++					0x090 MODE_PNOR /* pnor_dat_9 */
++					0x094 MODE_PNOR /* pnor_dat_10 */
++					0x098 MODE_PNOR /* pnor_dat_11 */
++					0x09c MODE_PNOR /* pnor_dat_12 */
++					0x0a0 MODE_PNOR /* pnor_dat_13 */
++					0x0a4 MODE_PNOR /* pnor_dat_14 */
++					0x0a8 MODE_PNOR /* pnor_dat_15 */
++				>;
++			};
++
++			nand_pins: pinmux_nand_ce1_n {
++				pinctrl-single,pins = <
++					0x0ac MODE_NAND /* nand_ce1_n */
++					0x0b0 MODE_NAND /* nand_ce0_n */
++					0x0b4 MODE_NAND /* nand_we_n */
++					0x0b8 MODE_NAND /* nand_wp_n */
++					0x0bc MODE_NAND /* nand_re_n */
++					0x0c0 MODE_NAND /* nand_rdy_bsy_n */
++					0x0c4 MODE_NAND /* nand_io0_0 */
++					0x0c8 MODE_NAND /* nand_io1_0 */
++					0x0cc MODE_NAND /* nand_io2_0 */
++					0x0d0 MODE_NAND /* nand_io3_0 */
++					0x0d4 MODE_NAND /* nand_io4_0 */
++					0x0d8 MODE_NAND /* nand_io5_0 */
++					0x0dc MODE_NAND /* nand_io6_0 */
++					0x0e0 MODE_NAND /* nand_io7_0 */
++					0x0e4 MODE_NAND /* nand_io8_0 */
++					0x0e8 MODE_NAND /* nand_io9_0 */
++					0x0ec MODE_NAND /* nand_io10_0 */
++					0x0f0 MODE_NAND /* nand_io11_0 */
++					0x0f4 MODE_NAND /* nand_io12_0 */
++					0x0f8 MODE_NAND /* nand_io13_0 */
++					0x0fc MODE_NAND /* nand_io14_0 */
++					0x100 MODE_NAND /* nand_io15_0 */
++					0x104 MODE_NAND /* nand_ale_0 */
++					0x108 MODE_NAND /* nand_cle_0 */
++				>;
++			};
++
++			pwm0_pins: pinmux_pwm_0 {
++				pinctrl-single,pins = <
++					0x10c MODE_NITRO
++				>;
++			};
++
++			pwm1_pins: pinmux_pwm_1 {
++				pinctrl-single,pins = <
++					0x110 MODE_NITRO
++				>;
++			};
++
++			pwm2_pins: pinmux_pwm_2 {
++				pinctrl-single,pins = <
++					0x114 MODE_NITRO
++				>;
++			};
++
++			pwm3_pins: pinmux_pwm_3 {
++				pinctrl-single,pins = <
++					0x118 MODE_NITRO
++				>;
++			};
++
++			dbu_rxd_pins: pinmux_uart1_sin_nitro {
++				pinctrl-single,pins = <
++					0x11c MODE_NITRO /* dbu_rxd */
++					0x120 MODE_NITRO /* dbu_txd */
++				>;
++			};
++
++			uart1_pins: pinmux_uart1_sin_nand {
++				pinctrl-single,pins = <
++					0x11c MODE_NAND /* uart1_sin */
++					0x120 MODE_NAND /* uart1_out */
++				>;
++			};
++
++			uart2_pins: pinmux_uart2_sin {
++				pinctrl-single,pins = <
++					0x124 MODE_NITRO /* uart2_sin */
++					0x128 MODE_NITRO /* uart2_out */
++				>;
++			};
++
++			uart3_pins: pinmux_uart3_sin {
++				pinctrl-single,pins = <
++					0x12c MODE_NITRO /* uart3_sin */
++					0x130 MODE_NITRO /* uart3_out */
++				>;
++			};
++
++			i2s_pins: pinmux_i2s_bitclk {
++				pinctrl-single,pins = <
++					0x134 MODE_NITRO /* i2s_bitclk */
++					0x138 MODE_NITRO /* i2s_sdout */
++					0x13c MODE_NITRO /* i2s_sdin */
++					0x140 MODE_NITRO /* i2s_ws */
++					0x144 MODE_NITRO /* i2s_mclk */
++					0x148 MODE_NITRO /* i2s_spdif_out */
++				>;
++			};
++
++			qspi_pins: pinumx_qspi_hold_n {
++				pinctrl-single,pins = <
++					0x14c MODE_NAND /* qspi_hold_n */
++					0x150 MODE_NAND /* qspi_wp_n */
++					0x154 MODE_NAND /* qspi_sck */
++					0x158 MODE_NAND /* qspi_cs_n */
++					0x15c MODE_NAND /* qspi_mosi */
++					0x160 MODE_NAND /* qspi_miso */
++				>;
++			};
++
++			mdio_pins: pinumx_ext_mdio {
++				pinctrl-single,pins = <
++					0x164 MODE_NITRO /* ext_mdio */
++					0x168 MODE_NITRO /* ext_mdc */
++				>;
++			};
++
++			i2c0_pins: pinmux_i2c0_sda {
++				pinctrl-single,pins = <
++					0x16c MODE_NITRO /* i2c0_sda */
++					0x170 MODE_NITRO /* i2c0_scl */
++				>;
++			};
++
++			i2c1_pins: pinmux_i2c1_sda {
++				pinctrl-single,pins = <
++					0x174 MODE_NITRO /* i2c1_sda */
++					0x178 MODE_NITRO /* i2c1_scl */
++				>;
++			};
++
++			sdio0_pins: pinmux_sdio0_cd_l {
++				pinctrl-single,pins = <
++					0x17c MODE_NITRO /* sdio0_cd_l */
++					0x180 MODE_NITRO /* sdio0_clk_sdcard */
++					0x184 MODE_NITRO /* sdio0_data0 */
++					0x188 MODE_NITRO /* sdio0_data1 */
++					0x18c MODE_NITRO /* sdio0_data2 */
++					0x190 MODE_NITRO /* sdio0_data3 */
++					0x194 MODE_NITRO /* sdio0_data4 */
++					0x198 MODE_NITRO /* sdio0_data5 */
++					0x19c MODE_NITRO /* sdio0_data6 */
++					0x1a0 MODE_NITRO /* sdio0_data7 */
++					0x1a4 MODE_NITRO /* sdio0_cmd */
++					0x1a8 MODE_NITRO /* sdio0_emmc_rst_n */
++					0x1ac MODE_NITRO /* sdio0_led_on */
++					0x1b0 MODE_NITRO /* sdio0_wp */
++				>;
++			};
++
++			sdio1_pins: pinmux_sdio1_cd_l {
++				pinctrl-single,pins = <
++					0x1b4 MODE_NITRO /* sdio1_cd_l */
++					0x1b8 MODE_NITRO /* sdio1_clk_sdcard */
++					0x1bc MODE_NITRO /* sdio1_data0 */
++					0x1c0 MODE_NITRO /* sdio1_data1 */
++					0x1c4 MODE_NITRO /* sdio1_data2 */
++					0x1c8 MODE_NITRO /* sdio1_data3 */
++					0x1cc MODE_NITRO /* sdio1_data4 */
++					0x1d0 MODE_NITRO /* sdio1_data5 */
++					0x1d4 MODE_NITRO /* sdio1_data6 */
++					0x1d8 MODE_NITRO /* sdio1_data7 */
++					0x1dc MODE_NITRO /* sdio1_cmd */
++					0x1e0 MODE_NITRO /* sdio1_emmc_rst_n */
++					0x1e4 MODE_NITRO /* sdio1_led_on */
++					0x1e8 MODE_NITRO /* sdio1_wp */
++				>;
++			};
++
++			spi0_pins: pinmux_spi0_sck_nand {
++				pinctrl-single,pins = <
++					0x1ec MODE_NITRO /* spi0_sck */
++					0x1f0 MODE_NITRO /* spi0_rxd */
++					0x1f4 MODE_NITRO /* spi0_fss */
++					0x1f8 MODE_NITRO /* spi0_txd */
++				>;
++			};
++
++			spi1_pins: pinmux_spi1_sck_nand {
++				pinctrl-single,pins = <
++					0x1fc MODE_NITRO /* spi1_sck */
++					0x200 MODE_NITRO /* spi1_rxd */
++					0x204 MODE_NITRO /* spi1_fss */
++					0x208 MODE_NITRO /* spi1_txd */
++				>;
++			};
++
++			nuart_pins: pinmux_uart0_sin_nitro {
++				pinctrl-single,pins = <
++					0x20c MODE_NITRO /* nuart_rxd */
++					0x210 MODE_NITRO /* nuart_txd */
++				>;
++			};
++
++			uart0_pins: pinumux_uart0_sin_nand {
++				pinctrl-single,pins = <
++					0x20c MODE_NAND /* uart0_sin */
++					0x210 MODE_NAND /* uart0_out */
++					0x214 MODE_NAND /* uart0_rts */
++					0x218 MODE_NAND /* uart0_cts */
++					0x21c MODE_NAND /* uart0_dtr */
++					0x220 MODE_NAND /* uart0_dcd */
++					0x224 MODE_NAND /* uart0_dsr */
++					0x228 MODE_NAND /* uart0_ri */
++				>;
++			};
++
++			drdu2_pins: pinmux_drdu2_overcurrent {
++				pinctrl-single,pins = <
++					0x22c MODE_NITRO /* drdu2_overcurrent */
++					0x230 MODE_NITRO /* drdu2_vbus_ppc */
++					0x234 MODE_NITRO /* drdu2_vbus_present */
++					0x238 MODE_NITRO /* drdu2_id */
++				>;
++			};
++
++			drdu3_pins: pinmux_drdu3_overcurrent {
++				pinctrl-single,pins = <
++					0x23c MODE_NITRO /* drdu3_overcurrent */
++					0x240 MODE_NITRO /* drdu3_vbus_ppc */
++					0x244 MODE_NITRO /* drdu3_vbus_present */
++					0x248 MODE_NITRO /* drdu3_id */
++				>;
++			};
++
++			usb3h_pins: pinmux_usb3h_overcurrent {
++				pinctrl-single,pins = <
++					0x24c MODE_NITRO /* usb3h_overcurrent */
++					0x250 MODE_NITRO /* usb3h_vbus_ppc */
++				>;
++			};
++		};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index e8faa62..639c25d 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -259,6 +259,8 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x0 0x68900000 0x17700000>;
+ 
++		#include "stingray-pinctrl.dtsi"
++
+ 		uart0: uart@00100000 {
+ 			device_type = "serial";
+ 			compatible = "snps,dw-apb-uart";
+diff --git a/include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h b/include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+new file mode 100644
+index 0000000..caa6c66
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
+@@ -0,0 +1,68 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2017 Broadcom Corporation.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom Corporation nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef __DT_BINDINGS_PINCTRL_BRCM_STINGRAY_H__
++#define __DT_BINDINGS_PINCTRL_BRCM_STINGRAY_H__
++
++/* Alternate functions available in MUX controller */
++#define MODE_NITRO				0
++#define MODE_NAND				1
++#define MODE_PNOR				2
++#define MODE_GPIO				3
++
++/* Pad configuration attribute */
++#define PAD_SLEW_RATE_ENA			(1 << 0)
++#define PAD_SLEW_RATE_ENA_MASK			(1 << 0)
++
++#define PAD_DRIVE_STRENGTH_2_MA			(0 << 1)
++#define PAD_DRIVE_STRENGTH_4_MA			(1 << 1)
++#define PAD_DRIVE_STRENGTH_6_MA			(2 << 1)
++#define PAD_DRIVE_STRENGTH_8_MA			(3 << 1)
++#define PAD_DRIVE_STRENGTH_10_MA		(4 << 1)
++#define PAD_DRIVE_STRENGTH_12_MA		(5 << 1)
++#define PAD_DRIVE_STRENGTH_14_MA		(6 << 1)
++#define PAD_DRIVE_STRENGTH_16_MA		(7 << 1)
++#define PAD_DRIVE_STRENGTH_MASK			(7 << 1)
++
++#define PAD_PULL_UP_ENA				(1 << 4)
++#define PAD_PULL_UP_ENA_MASK			(1 << 4)
++
++#define PAD_PULL_DOWN_ENA			(1 << 5)
++#define PAD_PULL_DOWN_ENA_MASK			(1 << 5)
++
++#define PAD_INPUT_PATH_DIS			(1 << 6)
++#define PAD_INPUT_PATH_DIS_MASK			(1 << 6)
++
++#define PAD_HYSTERESIS_ENA			(1 << 7)
++#define PAD_HYSTERESIS_ENA_MASK			(1 << 7)
++
++#endif
+-- 
+2.7.4
