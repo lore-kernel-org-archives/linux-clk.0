@@ -1,170 +1,63 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1498726219.27840.2.camel@baylibre.com>
-Subject: Re: [PATCH] clk: scpi: error when clock fails to register
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
- Kevin Hilman <khilman@baylibre.com>
-Date: Thu, 29 Jun 2017 10:50:19 +0200
-In-Reply-To: <3e77fd3c-9807-10d4-3a8c-cab8b5562f6c@arm.com>
-References: <20170628135345.9337-1-jbrunet@baylibre.com>
-	 <c7123c06-b75b-5209-5817-230c63c1bf49@arm.com>
-	 <1498664332.2337.6.camel@baylibre.com>
-	 <76efd418-9fd5-6ac5-b4c9-c75c5df69df0@arm.com>
-	 <1498668381.2337.10.camel@baylibre.com>
-	 <3e77fd3c-9807-10d4-3a8c-cab8b5562f6c@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 01/19] drm/sun4i: call drm_vblank_init with correct number of crtcs
+Date: Fri,  2 Jun 2017 18:10:06 +0800
+Message-Id: <20170602101024.18940-2-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-06-28 at 18:07 +0100, Sudeep Holla wrote:
-> 
-> On 28/06/17 17:46, Jerome Brunet wrote:
-> > On Wed, 2017-06-28 at 16:52 +0100, Sudeep Holla wrote:
-> 
-> [..]
-> 
-> > > 
-> > > Thanks for this stack. I just worked out the same path now. I did come
-> > > up with the patch as below. That should work if my understanding is
-> > > correct.
-> > 
-> > I tried.
-> 
-> Thanks.
-> 
-> > It does not work unfortunately. Still crashes but somewhere else:
-> > [    2.301482] [<ffff00000849e67c>] scpi_of_clk_src_get+0x14/0x58
-> > [    2.307261] [<ffff000008495f40>] __of_clk_get_by_name+0x100/0x118
-> > [    2.313297] [<ffff000008495fac>] clk_get+0x2c/0x78
-> > [    2.318044] [<ffff00000856f4d0>] dev_pm_opp_get_opp_table+0xb0/0x118
-> > [    2.324338] [<ffff00000856fd00>] dev_pm_opp_add+0x20/0x68
-> > [    2.329687] [<ffff0000087a04f8>] scpi_init_opp_table+0xa8/0x188
-> > [    2.335550] [<ffff00000879fb20>]
-> > _get_cluster_clk_and_freq_table+0x80/0x180
-> > [    2.342450] [<ffff0000087a0010>] bL_cpufreq_init+0x3f0/0x480
-> > [    2.348056] [<ffff00000879e4a0>] cpufreq_online+0xc0/0x658
-> > [    2.353490] [<ffff00000879eac8>] cpufreq_add_dev+0x78/0x88
-> > [    2.358924] [<ffff00000855b684>] subsys_interface_register+0x84/0xc8
-> > [    2.365220] [<ffff00000879d8f8>] cpufreq_register_driver+0x138/0x1b8
-> > [    2.371516] [<ffff0000087a0114>] bL_cpufreq_register+0x74/0x120
-> > [    2.377381] [<ffff0000087a0600>] scpi_cpufreq_probe+0x28/0x38
-> > [    2.383076] [<ffff00000855efb0>] platform_drv_probe+0x50/0xb8
-> > [    2.388766] [<ffff00000855d144>] driver_probe_device+0x21c/0x2d8
-> > 
-> 
-> Looks like a different route and I know why. I have added an extra check
-> now which should work if I have not missed anything more.
-> 
-> > I have not looked at ALL the clock providers, but I have seen a few and I
-> > don't
-> > remember seeing any which fails, at some point, to register a clocks and
-> > still
-> > register successfully. 
-> > 
-> 
-> No problem, as I said I am fine with the patch you sent as a fix for now
-> but just curious to know what are the issues to be fixed to continue
-> supporting that feature. Please bear with me.
+If we want to have vblank on both pipelines at the same time, we need
+to call drm_vblank_init with num_crtcs = 2.
 
-I am :) and I understand what you are trying to do, having a degraded clock
-provider is better than nothing according to you, correct?
+Instead, since the crtc init calls correctly set mode_config.num_crtc,
+we can move the drm_vblank_init call to after the crtc init code is
+called, which is the component bind part. Then we can just pass
+mode_config.num_crtc in.
 
-I'm wondering whether this is correct or not, that why I'm challenging this a
-bit.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-If you failed to register an scpi clock it is probably because the communication
-with the FW is not working, or at least 'not that good', right ?
-
-If for some reason, you manage to register some other clocks from the same FW,
-how confident can you be that communication will be ok for them ? that the
-settings you request will be applied correctly ?
-
-Is it possible that you may be causing more harm/damage playing with a broken HW
-?
-
-> 
-> > It seems strange to continue with a broken controller.
-> > 
-> 
-> I would have agreed if it was single driver or h/w controlled by Linux.
-> Since it's in the firmware, we should allow the working clocks/opps to
-> work though few are broken. It's not good if we had to disable
-> everything if some piece of firmware is not yet ready or broken.
-> But again, we can get it working later, for now, I am fine with you patch.
-
-I tried your last version, and it does not Oops, at least not for me.
-
-The end result still looks odd to me:
-[    1.115219] scpi_clocks scpi:clocks: failed to register clock 'vcpu'
-[    1.159490] cpu cpu0: _get_cluster_clk_and_freq_table: Failed to get clk for
-cpu: 0, cluster: 0
-[    1.162986] cpu cpu0: _get_cluster_clk_and_freq_table: Failed to get data for
-cluster: 0
-[    1.170945] cpu cpu1: _get_cluster_clk_and_freq_table: Failed to get clk for
-cpu: 1, cluster: 0
-[    1.179634] cpu cpu1: _get_cluster_clk_and_freq_table: Failed to get data for
-cluster: 0
-[    1.187654] cpu cpu2: _get_cluster_clk_and_freq_table: Failed to get clk for
-cpu: 2, cluster: 0
-[    1.196284] cpu cpu2: _get_cluster_clk_and_freq_table: Failed to get data for
-cluster: 0
-[    1.204375] cpu cpu3: _get_cluster_clk_and_freq_table: Failed to get clk for
-cpu: 3, cluster: 0
-[    1.212911] cpu cpu3: _get_cluster_clk_and_freq_table: Failed to get data for
-cluster: 0
-[    1.220612] arm_big_little: bL_cpufreq_register: Registered platform driver:
-scpi
-
-So now, I have an scpi clock provider which registers successfully but fails to
-register its only clock. As a consequence, I also have a cpufreq driver which
-manages to register but has no clock cpu clock to drive ...
-
-> 
-> Regards,
-> Sudeep
-> 
-> ---
-> 
-> diff --git i/drivers/clk/clk-scpi.c w/drivers/clk/clk-scpi.c
-> index 96d37175d0ad..a0b9b4c84be3 100644
-> --- i/drivers/clk/clk-scpi.c
-> +++ w/drivers/clk/clk-scpi.c
-> @@ -192,7 +192,7 @@ scpi_of_clk_src_get(struct of_phandle_args *clkspec,
-> void *data)
-> 
->         for (count = 0; count < clk_data->clk_num; count++) {
->                 sclk = clk_data->clk[count];
-> -               if (idx == sclk->id)
-> +               if (sclk && idx == sclk->id)
->                         return &sclk->hw;
->         }
-> 
-> @@ -245,11 +245,14 @@ static int scpi_clk_add(struct device *dev, struct
-> device_node *np,
->                 sclk->id = val;
-> 
->                 err = scpi_clk_ops_init(dev, match, sclk, name);
-> -               if (err)
-> +               if (err) {
->                         dev_err(dev, "failed to register clock '%s'\n",
-> name);
-> -               else
-> +                       clk_data->clk[idx] = NULL;
-> +                       devm_kfree(dev, sclk);
-> +               } else {
->                         dev_dbg(dev, "Registered clock '%s'\n", name);
-> -               clk_data->clk[idx] = sclk;
-> +                       clk_data->clk[idx] = sclk;
-> +               }
->         }
-> 
->         return of_clk_add_hw_provider(np, scpi_of_clk_src_get, clk_data);
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index f19100c91c2b..ed75a779ae4b 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -100,11 +100,6 @@ static int sun4i_drv_bind(struct device *dev)
+ 		goto free_drm;
+ 	}
+ 
+-	/* drm_vblank_init calls kcalloc, which can fail */
+-	ret = drm_vblank_init(drm, 1);
+-	if (ret)
+-		goto free_mem_region;
+-
+ 	drm_mode_config_init(drm);
+ 
+ 	ret = component_bind_all(drm->dev, drm);
+@@ -113,6 +108,11 @@ static int sun4i_drv_bind(struct device *dev)
+ 		goto cleanup_mode_config;
+ 	}
+ 
++	/* drm_vblank_init calls kcalloc, which can fail */
++	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
++	if (ret)
++		goto free_mem_region;
++
+ 	drm->irq_enabled = true;
+ 
+ 	/* Remove early framebuffers (ie. simplefb) */
+-- 
+2.11.0
