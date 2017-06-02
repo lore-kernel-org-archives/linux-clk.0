@@ -1,105 +1,136 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:46076 "EHLO
-        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751561AbdFGMhz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2017 08:37:55 -0400
-Received: from pps.filterd (m0102629.ppops.net [127.0.0.1])
-        by mx08-00252a01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v57CXd6W015104
-        for <linux-clk@vger.kernel.org>; Wed, 7 Jun 2017 13:37:43 +0100
-Received: from mail-wr0-f199.google.com (mail-wr0-f199.google.com [209.85.128.199])
-        by mx08-00252a01.pphosted.com with ESMTP id 2auhket2sq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2017 13:37:43 +0100
-Received: by mail-wr0-f199.google.com with SMTP id u101so1433221wrc.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2017 05:37:43 -0700 (PDT)
-Subject: Re: [PATCH 1/2] clk: bcm2835: Add AUX interrupt controller
-To: Alexander Stein <alexanders83@web.de>, linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-References: <79d4534c-49fe-3af4-13d8-2aaf22120d43@raspberrypi.org>
- <3148562.tSrsoIclEp@ws-stein>
-From: Phil Elwell <phil@raspberrypi.org>
-Message-ID: <369bb235-77fb-60ad-61d8-3de039e0f838@raspberrypi.org>
-Date: Wed, 7 Jun 2017 13:37:41 +0100
-MIME-Version: 1.0
-In-Reply-To: <3148562.tSrsoIclEp@ws-stein>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 07/19] drm/sun4i: hdmi: Support different variants of the TMDS clock
+Date: Fri,  2 Jun 2017 18:10:12 +0800
+Message-Id: <20170602101024.18940-8-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06/2017 13:07, Alexander Stein wrote:
-> On Wednesday 07 June 2017 12:11:45, Phil Elwell wrote:
->> Devices in the AUX block share a common interrupt line, with a register
->> indicating which devices have active IRQs. Expose this as a nested
->> interrupt controller to avoid IRQ sharing problems (easily observed if
->> UART1 and SPI1/2 are enabled simultaneously).
->>
->> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
->> ---
->>  drivers/clk/bcm/clk-bcm2835-aux.c | 120
->> ++++++++++++++++++++++++++++++++++++++ 1 file changed, 120 insertions(+)
->>
->> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c
->> b/drivers/clk/bcm/clk-bcm2835-aux.c index bd750cf..41e0702 100644
->> --- a/drivers/clk/bcm/clk-bcm2835-aux.c
->> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
->> [...]
->> +struct auxirq_state {
->> +	void __iomem      *status;
->> +	u32                enables;
->> +	struct irq_domain *domain;
->> +	struct regmap     *local_regmap;
->> +};
->> +
->> +static struct auxirq_state auxirq __read_mostly;
->> +
->> +static irqreturn_t bcm2835_auxirq_handler(int irq, void *dev_id)
->> +{
->> +	u32 stat = readl_relaxed(auxirq.status);
->> +	u32 masked = stat & auxirq.enables;
-> 
-> Doesn't this hide any spurious interrupts? Is this acceptable? I mean getting 
-> informed about spurious interrupts seems nice to me, as it indicates a 
-> hardware/configuration problem.
+On the A31, the HDMI TMDS clock has a different value offset for the
+divider.
 
-Thanks for the reply. This interrupt handler is capable of dispatching multiple
-interrupts but must return a single value - IRQ_HANDLED or IRQ_NONE. I've assumed
-that returning IRQ_NONE repeatedly will trigger the spurious interrupt detection.
+This patch adds support for custom offsets to the TMDS clock.
 
-This implementation returns IRQ_HANDLED if any unmasked interrupts are raised,
-otherwise it returns IRQ_NONE. Therefore provided any spurious interrupt isn't
-always coincident with a real interrupt then it ought eventually to be identified
-as spurious. The alternative - returning IRQ_NONE if there are any spurious
-interrupts - seems prone to causing collateral damage.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
-What did you have in mind?
-
->> +	if (masked & BCM2835_AUXIRQ_UART_MASK)
->> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
->> +						     BCM2835_AUXIRQ_UART_IRQ));
->> +
->> +	if (masked & BCM2835_AUXIRQ_SPI1_MASK)
->> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
->> +						     BCM2835_AUXIRQ_SPI1_IRQ));
->> +
->> +	if (masked & BCM2835_AUXIRQ_SPI2_MASK)
->> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
->> +						     BCM2835_AUXIRQ_SPI2_IRQ));
->> +
->> +	return (masked & BCM2835_AUXIRQ_ALL_MASK) ? IRQ_HANDLED : IRQ_NONE;
->> +}
-> 
-> How does interrupt acknowledgement work in these 3 interrupts work?
-
-The interrupt "controller" is just combinatorial logic on the three level-sensitive
-interrupt lines from the devices. Interrupts must be acknowledged and cleared at
-source.
-
-Phil
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+index 5692e41833ae..3c304e1fbe3b 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+@@ -18,6 +18,8 @@
+ struct sun4i_tmds {
+ 	struct clk_hw		hw;
+ 	struct sun4i_hdmi	*hdmi;
++
++	u8			div_offset;
+ };
+ 
+ static inline struct sun4i_tmds *hw_to_tmds(struct clk_hw *hw)
+@@ -28,6 +30,7 @@ static inline struct sun4i_tmds *hw_to_tmds(struct clk_hw *hw)
+ 
+ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
+ 					     unsigned long parent_rate,
++					     u8 div_offset,
+ 					     u8 *div,
+ 					     bool *half)
+ {
+@@ -35,7 +38,7 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
+ 	u8 best_m = 0, m;
+ 	bool is_double;
+ 
+-	for (m = 1; m < 16; m++) {
++	for (m = div_offset ?: 1; m < (16 + div_offset); m++) {
+ 		u8 d;
+ 
+ 		for (d = 1; d < 3; d++) {
+@@ -67,7 +70,8 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
+ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
+ 				     struct clk_rate_request *req)
+ {
+-	struct clk_hw *parent;
++	struct sun4i_tmds *tmds = hw_to_tmds(hw);
++	struct clk_hw *parent = NULL;
+ 	unsigned long best_parent = 0;
+ 	unsigned long rate = req->rate;
+ 	int best_div = 1, best_half = 1;
+@@ -85,7 +89,8 @@ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
+ 			continue;
+ 
+ 		for (i = 1; i < 3; i++) {
+-			for (j = 1; j < 16; j++) {
++			for (j = tmds->div_offset ?: 1;
++			     j < (16 + tmds->div_offset); j++) {
+ 				unsigned long ideal = rate * i * j;
+ 				unsigned long rounded;
+ 
+@@ -129,7 +134,7 @@ static unsigned long sun4i_tmds_recalc_rate(struct clk_hw *hw,
+ 		parent_rate /= 2;
+ 
+ 	reg = readl(tmds->hdmi->base + SUN4I_HDMI_PLL_CTRL_REG);
+-	reg = (reg >> 4) & 0xf;
++	reg = ((reg >> 4) & 0xf) + tmds->div_offset;
+ 	if (!reg)
+ 		reg = 1;
+ 
+@@ -144,7 +149,8 @@ static int sun4i_tmds_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 	u8 div;
+ 
+-	sun4i_tmds_calc_divider(rate, parent_rate, &div, &half);
++	sun4i_tmds_calc_divider(rate, parent_rate, tmds->div_offset,
++				&div, &half);
+ 
+ 	reg = readl(tmds->hdmi->base + SUN4I_HDMI_PAD_CTRL1_REG);
+ 	reg &= ~SUN4I_HDMI_PAD_CTRL1_HALVE_CLK;
+@@ -154,7 +160,7 @@ static int sun4i_tmds_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	reg = readl(tmds->hdmi->base + SUN4I_HDMI_PLL_CTRL_REG);
+ 	reg &= ~SUN4I_HDMI_PLL_CTRL_DIV_MASK;
+-	writel(reg | SUN4I_HDMI_PLL_CTRL_DIV(div),
++	writel(reg | SUN4I_HDMI_PLL_CTRL_DIV(div - tmds->div_offset),
+ 	       tmds->hdmi->base + SUN4I_HDMI_PLL_CTRL_REG);
+ 
+ 	return 0;
+@@ -195,7 +201,7 @@ static const struct clk_ops sun4i_tmds_ops = {
+ 	.set_parent	= sun4i_tmds_set_parent,
+ };
+ 
+-int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
++static int _sun4i_tmds_create(struct sun4i_hdmi *hdmi, u8 div_offset)
+ {
+ 	struct clk_init_data init;
+ 	struct sun4i_tmds *tmds;
+@@ -221,6 +227,7 @@ int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
+ 
+ 	tmds->hdmi = hdmi;
+ 	tmds->hw.init = &init;
++	tmds->div_offset = div_offset;
+ 
+ 	hdmi->tmds_clk = devm_clk_register(hdmi->dev, &tmds->hw);
+ 	if (IS_ERR(hdmi->tmds_clk))
+@@ -228,3 +235,8 @@ int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
+ 
+ 	return 0;
+ }
++
++int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
++{
++	return _sun4i_tmds_create(hdmi, 0);
++}
+-- 
+2.11.0
