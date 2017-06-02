@@ -1,231 +1,554 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
-Subject: [PATCH v2 03/11] drm: sun4i: ignore swapped mixer<->tcon connection
- for DE2
-Date: Mon,  5 Jun 2017 00:01:41 +0800
-Message-Id: <20170604160149.30230-4-icenowy@aosc.io>
-In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
-References: <20170604160149.30230-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>,
+	Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH v6 04/11] arm64: dts: Initial DTS files for Broadcom Stingray SOC
+Date: Fri,  2 Jun 2017 12:04:28 +0530
+Message-Id: <1496385275-6899-5-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
-tcon0 and mixer1 is connected to tcon1; however by setting a bit
-the connection can be swapped.
+The Broadcom Stingray SoC is a new member in Broadcom iProc
+SoC family.
 
-As we now hardcode the default connection, ignore the bonus endpoint for
-the mixer's output and the TCON's input, as they stands for the swapped
-connection.
+This patch adds initial DTS files for Broadcom Stingray SoC
+and two of its reference boards (bcm958742k and bcm958742t).
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+We have lot of reference boards and large number of devices
+in Broadcom Stingray SoC so eventually we will have quite
+a few DTS files for Stingray. To tackle, we have added a
+separate directory for Stingray DTS files.
+
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
 ---
-Changes in v2:
-- Change to use new endpoint reg definition.
+ arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+ arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
+ .../boot/dts/broadcom/stingray/bcm958742-base.dtsi |  55 ++++
+ .../boot/dts/broadcom/stingray/bcm958742k.dts      |  48 ++++
+ .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 +++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 302 +++++++++++++++++++++
+ 6 files changed, 452 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
 
- drivers/gpu/drm/sun4i/sun4i_drv.c  | 45 ++++++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
- 3 files changed, 99 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index f19100c91c2b..775eee82d8a9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -178,6 +178,13 @@ static bool sun4i_drv_node_is_frontend(struct device_node *node)
- 		of_device_is_compatible(node, "allwinner,sun8i-a33-display-frontend");
- }
+diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
+index bfa8f8e..f11bdd6 100644
+--- a/arch/arm64/boot/dts/broadcom/Makefile
++++ b/arch/arm64/boot/dts/broadcom/Makefile
+@@ -1,6 +1,7 @@
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2837-rpi-3-b.dtb
+ dtb-$(CONFIG_ARCH_BCM_IPROC) += ns2-svk.dtb ns2-xmc.dtb
  
-+static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node *node)
-+{
-+	/* The V3s has only one mixer-tcon pair, so it's not listed here. */
-+	return of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer0") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
-+}
++dts-dirs	:= stingray
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+ clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/Makefile b/arch/arm64/boot/dts/broadcom/stingray/Makefile
+new file mode 100644
+index 0000000..f70028e
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/Makefile
+@@ -0,0 +1,6 @@
++dtb-$(CONFIG_ARCH_BCM_IPROC) += bcm958742k.dtb
++dtb-$(CONFIG_ARCH_BCM_IPROC) += bcm958742t.dtb
 +
- static bool sun4i_drv_node_is_tcon(struct device_node *node)
- {
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
-@@ -261,6 +268,44 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 			}
- 		}
- 
-+		/*
-+		 * The second endpoint of the output of a swappable DE2 mixer
-+		 * is the TCON after connection swapping.
-+		 * Ignore it now, as we now hardcode mixer0->tcon0,
-+		 * mixer1->tcon1 connection.
-+		 */
-+		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
-+			struct device_node *remote_ep_node;
-+			struct of_endpoint local_endpoint, remote_endpoint;
++always		:= $(dtb-y)
++subdir-y	:= $(dts-dirs)
++clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+new file mode 100644
+index 0000000..992944b
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
+@@ -0,0 +1,55 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
 +
-+			remote_ep_node = of_graph_get_remote_endpoint(ep);
-+			if (!remote_ep_node) {
-+				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
-+				continue;
-+			}
++#include "stingray.dtsi"
 +
-+			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
-+				of_node_put(remote_ep_node);
-+				continue;
-+			}
++/ {
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
-+			if (of_graph_parse_endpoint(remote_ep_node,
-+						    &remote_endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
-+				of_node_put(remote_ep_node);
-+				continue;
-+			}
++	aliases {
++		serial0 = &uart1;
++		serial1 = &uart0;
++		serial2 = &uart2;
++		serial3 = &uart3;
++	};
++};
 +
-+			if (local_endpoint.id != remote_endpoint.id) {
-+				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2 mixer... skipping\n");
-+				of_node_put(remote_ep_node);
-+				continue;
-+			}
++&memory { /* Default DRAM banks */
++	reg = <0x00000000 0x80000000 0x0 0x80000000>, /* 2G @ 2G */
++	      <0x00000008 0x80000000 0x1 0x80000000>; /* 6G @ 34G */
++};
 +
-+			of_node_put(remote_ep_node);
-+		}
++&uart1 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+new file mode 100644
+index 0000000..c309cda
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
+@@ -0,0 +1,48 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
 +
- 		/* Walk down our tree */
- 		count += sun4i_drv_add_endpoints(dev, match, remote);
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index d9791292553e..568cea0e5f8f 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -464,7 +464,8 @@ static int sun4i_tcon_init_regmap(struct device *dev,
-  * requested via the get_id function of the engine.
-  */
- static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
--						   struct device_node *node)
-+						   struct device_node *node,
-+						   bool skip_bonus_ep)
- {
- 	struct device_node *port, *ep, *remote;
- 	struct sunxi_engine *engine;
-@@ -478,6 +479,42 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
- 		if (!remote)
- 			continue;
- 
-+		if (skip_bonus_ep) {
-+			struct device_node *remote_ep_node;
-+			struct of_endpoint local_endpoint, remote_endpoint;
++/dts-v1/;
 +
-+			remote_ep_node = of_graph_get_remote_endpoint(ep);
-+			if (!remote_ep_node) {
-+				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
-+				of_node_put(remote);
-+				continue;
-+			}
++#include "bcm958742-base.dtsi"
 +
-+			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
-+				of_node_put(remote);
-+				of_node_put(remote_ep_node);
-+				continue;
-+			}
++/ {
++	compatible = "brcm,bcm958742k", "brcm,stingray";
++	model = "Stingray Combo SVK (BCM958742K)";
++};
 +
-+			if (of_graph_parse_endpoint(remote_ep_node,
-+						    &remote_endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
-+				of_node_put(remote);
-+				of_node_put(remote_ep_node);
-+				continue;
-+			}
++&uart2 {
++	status = "okay";
++};
 +
-+			if (local_endpoint.id != remote_endpoint.id) {
-+				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when searching engine\n");
-+				of_node_put(remote);
-+				of_node_put(remote_ep_node);
-+				continue;
-+			}
++&uart3 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+new file mode 100644
+index 0000000..6ebe399
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
+@@ -0,0 +1,40 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
 +
-+			of_node_put(remote_ep_node);
-+		}
++/dts-v1/;
 +
- 		/* does this node match any registered engines? */
- 		list_for_each_entry(engine, &drv->engine_list, list) {
- 			if (remote == engine->node) {
-@@ -488,7 +525,7 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
- 		}
- 
- 		/* keep looking through upstream ports */
--		engine = sun4i_tcon_find_engine(drv, remote);
-+		engine = sun4i_tcon_find_engine(drv, remote, skip_bonus_ep);
- 		if (!IS_ERR(engine)) {
- 			of_node_put(remote);
- 			of_node_put(port);
-@@ -508,21 +545,27 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	struct sun4i_tcon *tcon;
- 	int ret;
- 
--	engine = sun4i_tcon_find_engine(drv, dev->of_node);
--	if (IS_ERR(engine)) {
--		dev_err(dev, "Couldn't find matching engine\n");
--		return -EPROBE_DEFER;
--	}
--
- 	tcon = devm_kzalloc(dev, sizeof(*tcon), GFP_KERNEL);
- 	if (!tcon)
- 		return -ENOMEM;
- 	dev_set_drvdata(dev, tcon);
- 	tcon->drm = drm;
- 	tcon->dev = dev;
--	tcon->id = engine->id;
- 	tcon->quirks = of_device_get_match_data(dev);
- 
-+	/*
-+	 * As we keep the connection between DE2 mixer and TCON not swapped,
-+	 * skip the bonus endpoints (which stand for swapped connection)
-+	 * when finding the correspoing engine.
-+	 */
-+	engine = sun4i_tcon_find_engine(drv, dev->of_node,
-+					tcon->quirks->swappable_input);
-+	if (IS_ERR(engine)) {
-+		dev_err(dev, "Couldn't find matching engine\n");
-+		return -EPROBE_DEFER;
-+	}
-+	tcon->id = engine->id;
++#include "bcm958742-base.dtsi"
 +
- 	tcon->lcd_rst = devm_reset_control_get(dev, "lcd");
- 	if (IS_ERR(tcon->lcd_rst)) {
- 		dev_err(dev, "Couldn't get our reset line\n");
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index e3c50ecdcd04..c3e01c06e9a0 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -146,6 +146,8 @@
- struct sun4i_tcon_quirks {
- 	bool	has_unknown_mux; /* sun5i has undocumented mux */
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
-+	/* Some DE2 can swap the mixer<->TCON connection */
-+	bool	swappable_input;
- };
- 
- struct sun4i_tcon {
++/ {
++	compatible = "brcm,bcm958742t", "brcm,stingray";
++	model = "Stingray SST100 (BCM958742T)";
++};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+new file mode 100644
+index 0000000..61133b7
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -0,0 +1,302 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2015-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "brcm,stingray";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		cpu@000 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x0>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER0_L2>;
++		};
++
++		cpu@001 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x1>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER0_L2>;
++		};
++
++		cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x100>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER1_L2>;
++		};
++
++		cpu@101 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x101>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER1_L2>;
++		};
++
++		cpu@200 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x200>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER2_L2>;
++		};
++
++		cpu@201 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x201>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER2_L2>;
++		};
++
++		cpu@300 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x300>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER3_L2>;
++		};
++
++		cpu@301 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72", "arm,armv8";
++			reg = <0x0 0x301>;
++			enable-method = "psci";
++			next-level-cache = <&CLUSTER3_L2>;
++		};
++
++		CLUSTER0_L2: l2-cache@000 {
++			compatible = "cache";
++		};
++
++		CLUSTER1_L2: l2-cache@100 {
++			compatible = "cache";
++		};
++
++		CLUSTER2_L2: l2-cache@200 {
++			compatible = "cache";
++		};
++
++		CLUSTER3_L2: l2-cache@300 {
++			compatible = "cache";
++		};
++	};
++
++	memory: memory@80000000 {
++		device_type = "memory";
++		reg = <0x00000000 0x80000000 0 0x40000000>;
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++	};
++
++	scr {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x61000000 0x05000000>;
++
++		gic: interrupt-controller@02c00000 {
++			compatible = "arm,gic-v3";
++			#interrupt-cells = <3>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			interrupt-controller;
++			reg = <0x02c00000 0x010000>, /* GICD */
++			      <0x02e00000 0x600000>; /* GICR */
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++
++			gic_its: gic-its@63c20000 {
++				compatible = "arm,gic-v3-its";
++				msi-controller;
++				#msi-cells = <1>;
++				reg = <0x02c20000 0x10000>;
++			};
++		};
++
++		smmu: mmu@03000000 {
++			compatible = "arm,mmu-500";
++			reg = <0x03000000 0x80000>;
++			#global-interrupts = <1>;
++			interrupts = <GIC_SPI 704 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 711 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 712 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 713 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 715 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 716 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 717 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 718 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 719 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 720 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 721 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 722 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 723 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 724 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 725 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 726 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 727 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 728 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 729 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 730 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 731 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 732 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 733 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 734 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 735 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 736 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 737 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 738 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 739 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 740 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 741 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 742 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 743 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 744 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 745 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 746 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 747 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 748 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 749 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 750 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 751 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 753 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 754 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 756 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 757 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 758 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 760 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 761 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 763 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 767 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 771 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <2>;
++		};
++	};
++
++	hsls {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x68900000 0x17700000>;
++
++		uart0: uart@00100000 {
++			device_type = "serial";
++			compatible = "snps,dw-apb-uart";
++			reg = <0x00100000 0x1000>;
++			reg-shift = <2>;
++			clock-frequency = <25000000>;
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		uart1: uart@00110000 {
++			device_type = "serial";
++			compatible = "snps,dw-apb-uart";
++			reg = <0x00110000 0x1000>;
++			reg-shift = <2>;
++			clock-frequency = <25000000>;
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		uart2: uart@00120000 {
++			device_type = "serial";
++			compatible = "snps,dw-apb-uart";
++			reg = <0x00120000 0x1000>;
++			reg-shift = <2>;
++			clock-frequency = <25000000>;
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		uart3: uart@00130000 {
++			device_type = "serial";
++			compatible = "snps,dw-apb-uart";
++			reg = <0x00130000 0x1000>;
++			reg-shift = <2>;
++			clock-frequency = <25000000>;
++			interrupt-parent = <&gic>;
++			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		hwrng: hwrng@00220000 {
++			compatible = "brcm,iproc-rng200";
++			reg = <0x00220000 0x28>;
++		};
++	};
++};
 -- 
-2.12.2
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
