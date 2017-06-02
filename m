@@ -1,52 +1,34 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Jun 2017 15:41:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v4 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
-Date: Fri,  9 Jun 2017 16:07:34 +0200
-Message-Id: <20170609140739.15726-2-o.rempel@pengutronix.de>
-In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
-References: <20170609140739.15726-1-o.rempel@pengutronix.de>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+	Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH] clk: bcm2835: Correct the prediv logic
+Message-ID: <20170602224153.GZ20170@codeaurora.org>
+References: <20170515173504.11337-1-eric@anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170515173504.11337-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 05/15, Eric Anholt wrote:
+> From: Phil Elwell <phil@raspberrypi.org>
+> 
+> If a clock has the prediv flag set, both the integer and fractional
+> parts must be scaled when calculating the resulting frequency.
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-index 9252912a5b0e..8f93e1503e59 100644
---- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-@@ -6,6 +6,14 @@ Required properties:
- - interrupts: Should contain CCM interrupt
- - #clock-cells: Should be <1>
- 
-+Optional properties:
-+- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
-+  on power off.
-+  Use this property if the SoC should be powered off by external power
-+  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-+  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
-+  be using "syscon-poweroff" driver instead.
-+
- The clock consumer should specify the desired clock by having the clock
- ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
- for the full list of i.MX6 Quad and DualLite clock IDs.
+Applied to clk-next
+
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
