@@ -1,216 +1,73 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: bjorn.andersson@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v5 3/6] clk: qcom: Add DT bindings for ipq8074 gcc clock controller
-Date: Fri,  9 Jun 2017 15:03:00 +0530
-Message-Id: <1497000783-27916-4-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
-References: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Jun 2017 15:52:31 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	linus.walleij@linaro.org, andy.gross@linaro.org,
+	david.brown@linaro.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	absahu@codeaurora.org, sjaganat@codeaurora.org,
+	sricharan@codeaurora.org, mraghava@codeaurora.org
+Subject: Re: [PATCH v3 3/5] clk: qcom: ipq8074: Add Global Clock Controller
+ support
+Message-ID: <20170602225231.GD20170@codeaurora.org>
+References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
+ <1496316482-25468-4-git-send-email-varada@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1496316482-25468-4-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+On 06/01, Varadarajan Narayanan wrote:
+> From: Abhishek Sahu <absahu@codeaurora.org>
+> 
+> This patch adds support for the global clock controller found on
+> the IPQ8074 based devices. This includes UART, I2C, SPI etc.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+>  drivers/clk/qcom/Kconfig                           |    9 +
+>  drivers/clk/qcom/Makefile                          |    1 +
+>  drivers/clk/qcom/gcc-ipq8074.c                     | 1009 ++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
 
-Add the compatible strings and the include file for ipq8074 gcc
-clock controller.
+The new world order is to split these includes from the driver
+changes. Then someone (clk or arm-soc related maintainers) can
+merge that #define change somewhere stable and then apply the
+driver code on top or the dts file on top.
 
-Acked-by: Rob Herring <robh@kernel.org> (bindings)
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,gcc.txt         |   1 +
- include/dt-bindings/clock/qcom,gcc-ipq8074.h       | 152 +++++++++++++++++++++
- 2 files changed, 153 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+So can you please split the header file off into it's own patch
+before this one and resend?
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-index 5b4dfc1..551d03b 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-@@ -8,6 +8,7 @@ Required properties :
- 			"qcom,gcc-apq8084"
- 			"qcom,gcc-ipq8064"
- 			"qcom,gcc-ipq4019"
-+			"qcom,gcc-ipq8074"
- 			"qcom,gcc-msm8660"
- 			"qcom,gcc-msm8916"
- 			"qcom,gcc-msm8960"
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-new file mode 100644
-index 0000000..370c83c
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-@@ -0,0 +1,152 @@
-+/*
-+ * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_IPQ_GCC_8074_H
-+#define _DT_BINDINGS_CLOCK_IPQ_GCC_8074_H
-+
-+#define GPLL0					0
-+#define GPLL0_MAIN				1
-+#define GCC_SLEEP_CLK_SRC			2
-+#define BLSP1_QUP1_I2C_APPS_CLK_SRC		3
-+#define BLSP1_QUP1_SPI_APPS_CLK_SRC		4
-+#define BLSP1_QUP2_I2C_APPS_CLK_SRC		5
-+#define BLSP1_QUP2_SPI_APPS_CLK_SRC		6
-+#define BLSP1_QUP3_I2C_APPS_CLK_SRC		7
-+#define BLSP1_QUP3_SPI_APPS_CLK_SRC		8
-+#define BLSP1_QUP4_I2C_APPS_CLK_SRC		9
-+#define BLSP1_QUP4_SPI_APPS_CLK_SRC		10
-+#define BLSP1_QUP5_I2C_APPS_CLK_SRC		11
-+#define BLSP1_QUP5_SPI_APPS_CLK_SRC		12
-+#define BLSP1_QUP6_I2C_APPS_CLK_SRC		13
-+#define BLSP1_QUP6_SPI_APPS_CLK_SRC		14
-+#define BLSP1_UART1_APPS_CLK_SRC		15
-+#define BLSP1_UART2_APPS_CLK_SRC		16
-+#define BLSP1_UART3_APPS_CLK_SRC		17
-+#define BLSP1_UART4_APPS_CLK_SRC		18
-+#define BLSP1_UART5_APPS_CLK_SRC		19
-+#define BLSP1_UART6_APPS_CLK_SRC		20
-+#define GCC_BLSP1_AHB_CLK			21
-+#define GCC_BLSP1_QUP1_I2C_APPS_CLK		22
-+#define GCC_BLSP1_QUP1_SPI_APPS_CLK		23
-+#define GCC_BLSP1_QUP2_I2C_APPS_CLK		24
-+#define GCC_BLSP1_QUP2_SPI_APPS_CLK		25
-+#define GCC_BLSP1_QUP3_I2C_APPS_CLK		26
-+#define GCC_BLSP1_QUP3_SPI_APPS_CLK		27
-+#define GCC_BLSP1_QUP4_I2C_APPS_CLK		28
-+#define GCC_BLSP1_QUP4_SPI_APPS_CLK		29
-+#define GCC_BLSP1_QUP5_I2C_APPS_CLK		30
-+#define GCC_BLSP1_QUP5_SPI_APPS_CLK		31
-+#define GCC_BLSP1_QUP6_I2C_APPS_CLK		32
-+#define GCC_BLSP1_QUP6_SPI_APPS_CLK		33
-+#define GCC_BLSP1_UART1_APPS_CLK		34
-+#define GCC_BLSP1_UART2_APPS_CLK		35
-+#define GCC_BLSP1_UART3_APPS_CLK		36
-+#define GCC_BLSP1_UART4_APPS_CLK		37
-+#define GCC_BLSP1_UART5_APPS_CLK		38
-+#define GCC_BLSP1_UART6_APPS_CLK		39
-+#define GCC_PRNG_AHB_CLK			40
-+#define GCC_QPIC_AHB_CLK			41
-+#define GCC_QPIC_CLK				42
-+#define PCNOC_BFDCD_CLK_SRC			43
-+
-+#define GCC_BLSP1_BCR				0
-+#define GCC_BLSP1_QUP1_BCR			1
-+#define GCC_BLSP1_UART1_BCR			2
-+#define GCC_BLSP1_QUP2_BCR			3
-+#define GCC_BLSP1_UART2_BCR			4
-+#define GCC_BLSP1_QUP3_BCR			5
-+#define GCC_BLSP1_UART3_BCR			6
-+#define GCC_BLSP1_QUP4_BCR			7
-+#define GCC_BLSP1_UART4_BCR			8
-+#define GCC_BLSP1_QUP5_BCR			9
-+#define GCC_BLSP1_UART5_BCR			10
-+#define GCC_BLSP1_QUP6_BCR			11
-+#define GCC_BLSP1_UART6_BCR			12
-+#define GCC_IMEM_BCR				13
-+#define GCC_SMMU_BCR				14
-+#define GCC_APSS_TCU_BCR			15
-+#define GCC_SMMU_XPU_BCR			16
-+#define GCC_PCNOC_TBU_BCR			17
-+#define GCC_SMMU_CFG_BCR			18
-+#define GCC_PRNG_BCR				19
-+#define GCC_BOOT_ROM_BCR			20
-+#define GCC_CRYPTO_BCR				21
-+#define GCC_WCSS_BCR				22
-+#define GCC_WCSS_Q6_BCR				23
-+#define GCC_NSS_BCR				24
-+#define GCC_SEC_CTRL_BCR			25
-+#define GCC_ADSS_BCR				26
-+#define GCC_DDRSS_BCR				27
-+#define GCC_SYSTEM_NOC_BCR			28
-+#define GCC_PCNOC_BCR				29
-+#define GCC_TCSR_BCR				30
-+#define GCC_QDSS_BCR				31
-+#define GCC_DCD_BCR				32
-+#define GCC_MSG_RAM_BCR				33
-+#define GCC_MPM_BCR				34
-+#define GCC_SPMI_BCR				35
-+#define GCC_SPDM_BCR				36
-+#define GCC_RBCPR_BCR				37
-+#define GCC_RBCPR_MX_BCR			38
-+#define GCC_TLMM_BCR				39
-+#define GCC_RBCPR_WCSS_BCR			40
-+#define GCC_USB0_PHY_BCR			41
-+#define GCC_USB3PHY_0_PHY_BCR			42
-+#define GCC_USB0_BCR				43
-+#define GCC_USB1_PHY_BCR			44
-+#define GCC_USB3PHY_1_PHY_BCR			45
-+#define GCC_USB1_BCR				46
-+#define GCC_QUSB2_0_PHY_BCR			47
-+#define GCC_QUSB2_1_PHY_BCR			48
-+#define GCC_SDCC1_BCR				49
-+#define GCC_SDCC2_BCR				50
-+#define GCC_SNOC_BUS_TIMEOUT0_BCR		51
-+#define GCC_SNOC_BUS_TIMEOUT2_BCR		52
-+#define GCC_SNOC_BUS_TIMEOUT3_BCR		53
-+#define GCC_PCNOC_BUS_TIMEOUT0_BCR		54
-+#define GCC_PCNOC_BUS_TIMEOUT1_BCR		55
-+#define GCC_PCNOC_BUS_TIMEOUT2_BCR		56
-+#define GCC_PCNOC_BUS_TIMEOUT3_BCR		57
-+#define GCC_PCNOC_BUS_TIMEOUT4_BCR		58
-+#define GCC_PCNOC_BUS_TIMEOUT5_BCR		59
-+#define GCC_PCNOC_BUS_TIMEOUT6_BCR		60
-+#define GCC_PCNOC_BUS_TIMEOUT7_BCR		61
-+#define GCC_PCNOC_BUS_TIMEOUT8_BCR		62
-+#define GCC_PCNOC_BUS_TIMEOUT9_BCR		63
-+#define GCC_UNIPHY0_BCR				64
-+#define GCC_UNIPHY1_BCR				65
-+#define GCC_UNIPHY2_BCR				66
-+#define GCC_CMN_12GPLL_BCR			67
-+#define GCC_QPIC_BCR				68
-+#define GCC_MDIO_BCR				69
-+#define GCC_PCIE1_TBU_BCR			70
-+#define GCC_WCSS_CORE_TBU_BCR			71
-+#define GCC_WCSS_Q6_TBU_BCR			72
-+#define GCC_USB0_TBU_BCR			73
-+#define GCC_USB1_TBU_BCR			74
-+#define GCC_PCIE0_TBU_BCR			75
-+#define GCC_NSS_NOC_TBU_BCR			76
-+#define GCC_PCIE0_BCR				77
-+#define GCC_PCIE0_PHY_BCR			78
-+#define GCC_PCIE0PHY_PHY_BCR			79
-+#define GCC_PCIE0_LINK_DOWN_BCR			80
-+#define GCC_PCIE1_BCR				81
-+#define GCC_PCIE1_PHY_BCR			82
-+#define GCC_PCIE1PHY_PHY_BCR			83
-+#define GCC_PCIE1_LINK_DOWN_BCR			84
-+#define GCC_DCC_BCR				85
-+#define GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR	86
-+#define GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR	87
-+#define GCC_SMMU_CATS_BCR			88
-+
-+#endif
+> diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+> new file mode 100644
+> index 0000000..b62db77
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-ipq8074.c
+> +
+> +static int gcc_ipq8074_probe(struct platform_device *pdev)
+> +{
+> +	int ret, i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(gcc_ipq8074_hws); i++) {
+> +		ret = devm_clk_hw_register(&pdev->dev, gcc_ipq8074_hws[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = qcom_cc_probe(pdev, &gcc_ipq8074_desc);
+> +
+> +	return ret;
+
+Just return qcom_cc_probe() please.
+
+> +}
+> +
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
