@@ -1,85 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:44423 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbdFFGbK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 02:31:10 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
-Cc: aisheng.dong@nxp.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
-        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
-        mark.rutland@arm.com, han.xu@nxp.com, fabio.estevam@freescale.com,
-        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v5 1/3] clk: imx7d: create clocks behind rawnand clock gate
-Date: Mon,  5 Jun 2017 23:30:48 -0700
-Message-Id: <df22afd249abba1ee7c9d31be1c2c8dc1a68f69a.1496730576.git-series.stefan@agner.ch>
-In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 2 Jun 2017 21:42:19 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on
+ the MSI Primo81 tablet
+Message-ID: <20170602194219.hiajr7dt2oikm52q@flea.lan>
+References: <20170602101024.18940-1-wens@csie.org>
+ <20170602101024.18940-20-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tpb4lttli73lzwcx"
+In-Reply-To: <20170602101024.18940-20-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The rawnand clock gate gates two clocks, NAND_USDHC_BUS_CLK_ROOT
-and NAND_CLK_ROOT. However, the gate has been in the chain of the
-latter only. This does not allow to use the NAND_USDHC_BUS_CLK_ROOT
-only, e.g. as required by APBH-Bridge-DMA.
 
-Add new clocks which represent the clock after the gate, and use a
-shared clock gate to correctly model the hardware.
+--tpb4lttli73lzwcx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/clk/imx/clk-imx7d.c             | 6 ++++--
- include/dt-bindings/clock/imx7d-clock.h | 4 +++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
+On Fri, Jun 02, 2017 at 06:10:24PM +0800, Chen-Yu Tsai wrote:
+> The MSI Primo81 tablet has a micro HDMI connector at the bottom.
+> This is connected to the SoCs HDMI output.
+>=20
+> Enable the display pipeline and the HDMI output.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts=
+/sun6i-a31s-primo81.dts
+> index f3712753fa42..26154b2f87a3 100644
+> --- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+> +++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+> @@ -52,17 +52,42 @@
+>  / {
+>  	model =3D "MSI Primo81 tablet";
+>  	compatible =3D "msi,primo81", "allwinner,sun6i-a31s";
+> +
+> +	hdmi-connector {
+> +		compatible =3D "hdmi-connector";
+> +		type =3D "c";
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 93b0364..e364060 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -25,6 +25,7 @@
- static u32 share_count_sai1;
- static u32 share_count_sai2;
- static u32 share_count_sai3;
-+static u32 share_count_nand;
- 
- static struct clk_div_table test_div_table[] = {
- 	{ .val = 3, .div = 1, },
-@@ -748,7 +749,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_ENET2_TIME_ROOT_DIV] = imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base + 0xa880, 0, 6);
- 	clks[IMX7D_ENET_PHY_REF_ROOT_DIV] = imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base + 0xa900, 0, 6);
- 	clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div", "eim_pre_div", base + 0xa980, 0, 6);
--	clks[IMX7D_NAND_ROOT_DIV] = imx_clk_divider2("nand_post_div", "nand_pre_div", base + 0xaa00, 0, 6);
-+	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk", "nand_pre_div", base + 0xaa00, 0, 6);
- 	clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div", "qspi_pre_div", base + 0xaa80, 0, 6);
- 	clks[IMX7D_USDHC1_ROOT_DIV] = imx_clk_divider2("usdhc1_post_div", "usdhc1_pre_div", base + 0xab00, 0, 6);
- 	clks[IMX7D_USDHC2_ROOT_DIV] = imx_clk_divider2("usdhc2_post_div", "usdhc2_pre_div", base + 0xab80, 0, 6);
-@@ -825,7 +826,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510, 0);
- 	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] = imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base + 0x4520, 0);
- 	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk", "eim_post_div", base + 0x4160, 0);
--	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_gate4("nand_root_clk", "nand_post_div", base + 0x4140, 0);
-+	clks[IMX7D_NAND_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140, 0, &share_count_nand);
-+	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk", base + 0x4140, 0, &share_count_nand);
- 	clks[IMX7D_QSPI_ROOT_CLK] = imx_clk_gate4("qspi_root_clk", "qspi_post_div", base + 0x4150, 0);
- 	clks[IMX7D_USDHC1_ROOT_CLK] = imx_clk_gate4("usdhc1_root_clk", "usdhc1_post_div", base + 0x46c0, 0);
- 	clks[IMX7D_USDHC2_ROOT_CLK] = imx_clk_gate4("usdhc2_root_clk", "usdhc2_post_div", base + 0x46d0, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index a7a1a50..de62a83 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -450,5 +450,7 @@
- #define IMX7D_CLK_ARM			437
- #define IMX7D_CKIL			438
- #define IMX7D_OCOTP_CLK			439
--#define IMX7D_CLK_END			440
-+#define IMX7D_NAND_RAWNAND_CLK		440
-+#define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
-+#define IMX7D_CLK_END			442
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
--- 
-git-series 0.9.1
+Should we add a connector type for this one?
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--tpb4lttli73lzwcx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZMb+bAAoJEBx+YmzsjxAgecIP/iHqNWdDG3ImuYHcRBlCnO/1
+56ubtyQczLJK0/49C0gjoNv76lkjc6z35zJE+7k0eAfuvbYL2f4ip25ul+0hzcUd
+SYQcDsoid15Zd8M81ohp89w6Bi/PLtGuEVGSvqeQpCuOO5RPvtzDOukt4KaxHZQA
+8Ih6F6zNlsTYNbWoYBYe3Of/v3UZDM07BCaovw5bOhdGrLegplM+DcFdkqAxwFDR
+ozoaUgztE21liiPe1MWQMbMftdYcXS4oW82gtwSRpULyb9NB6ok5PQ8fjdVxVepy
+1nnSZtbL4ESwguzAnZOQic1u/K1t81yvX0j269O2osBI4PhCxywbFvTRmmT5jaaT
+XE47DRsxDr84UeLAeDL1B5L5R1hF0K5aQIRo21JCOkdPkRYmZyYmgdmNA6AMs+VY
+IZDzA99z1ZXbLRv/0B1eINyshBVOgC4Kw9jcdgE+UuUlf3BDhXxUF1ZdbITjO1ul
+nXSfbVpQl6mUJL/Qyrx7/Muy+wY34qJxCF88Jf6w6Gaz3HnHeIpMVNvQ+FXK167M
+VWSIbCmLAziqkNqeXSqrjnE0bfmuoFAyKxfpZK8q1pgRVihLxog0MGDxAgJdn9Pm
+/PA+76FQa9+TXTDfTcctsO2b8/7nOpdIaFh9ippFrFjM549MzHmsP7HbmZwS1qfd
+APC12Z17DTfIo8L5Egv9
+=t+yq
+-----END PGP SIGNATURE-----
+
+--tpb4lttli73lzwcx--
