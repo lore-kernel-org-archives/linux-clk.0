@@ -1,48 +1,108 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Jun 2017 17:36:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH 4/9] clk: imx: add pllv4 support
-Message-ID: <20170701003642.GS22780@codeaurora.org>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
- <20170620015917.GO4493@codeaurora.org>
- <20170620093143.GD6805@b29396-OptiPlex-7040>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170620093143.GD6805@b29396-OptiPlex-7040>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 05/19] drm/sun4i: hdmi: Allow using second PLL as TMDS clk parent
+Date: Fri,  2 Jun 2017 18:10:10 +0800
+Message-Id: <20170602101024.18940-6-wens@csie.org>
+In-Reply-To: <20170602101024.18940-1-wens@csie.org>
+References: <20170602101024.18940-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/20, Dong Aisheng wrote:
-> On Mon, Jun 19, 2017 at 06:59:17PM -0700, Stephen Boyd wrote:
-> > On 05/15, Dong Aisheng wrote:
-> > > +
-> > > +	if (clk_pllv4_is_enabled(hw)) {
-> > > +		WARN(1, "clk_pllv4: can't change rate when pll is enabled");
-> > > +		return -EINVAL;
-> > 
-> > Sad, CLK_SET_RATE_GATE isn't working for you I suppose?
-> > 
-> 
-> CLK_SET_RATE_GATE can't work in early stage before running clk_disable_unused.
-> At that point, the clock tree state is still not consistent with HW.
-> e.g. prepare/enable count is still zero but it's actually enabled due to
-> reset state or bootloader.
-> 
-> The code here is adding a double check in case user sets rate in early stage.
-> 
-> However, probably it could also be moved into clock core as it's not platform
-> dependant behavior?
-> 
+On SoCs with two display pipelines, it is possible that the two
+pipelines are active at the same time, with potentially incompatible
+dot clocks.
 
-Ok. It would be good to fix the core framework to synchronize the
-prepared/enabled state at registration time so we don't need this
-check in the driver.
+Let the HDMI encoder's TMDS clock go through all of its parents when
+calculating possible clock rates. This allows usage of the second video
+PLL as its parent.
 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 51 ++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+index 5cf2527bffc8..5692e41833ae 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+@@ -71,7 +71,7 @@ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
+ 	unsigned long best_parent = 0;
+ 	unsigned long rate = req->rate;
+ 	int best_div = 1, best_half = 1;
+-	int i, j;
++	int i, j, p;
+ 
+ 	/*
+ 	 * We only consider PLL3, since the TCON is very likely to be
+@@ -79,32 +79,37 @@ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
+ 	 * clock, so we should not need to do anything.
+ 	 */
+ 
+-	parent = clk_hw_get_parent_by_index(hw, 0);
+-	if (!parent)
+-		return -EINVAL;
+-
+-	for (i = 1; i < 3; i++) {
+-		for (j = 1; j < 16; j++) {
+-			unsigned long ideal = rate * i * j;
+-			unsigned long rounded;
+-
+-			rounded = clk_hw_round_rate(parent, ideal);
+-
+-			if (rounded == ideal) {
+-				best_parent = rounded;
+-				best_half = i;
+-				best_div = j;
+-				goto out;
+-			}
+-
+-			if (abs(rate - rounded / i) <
+-			    abs(rate - best_parent / best_div)) {
+-				best_parent = rounded;
+-				best_div = i;
++	for (p = 0; p < clk_hw_get_num_parents(hw); p++) {
++		parent = clk_hw_get_parent_by_index(hw, p);
++		if (!parent)
++			continue;
++
++		for (i = 1; i < 3; i++) {
++			for (j = 1; j < 16; j++) {
++				unsigned long ideal = rate * i * j;
++				unsigned long rounded;
++
++				rounded = clk_hw_round_rate(parent, ideal);
++
++				if (rounded == ideal) {
++					best_parent = rounded;
++					best_half = i;
++					best_div = j;
++					goto out;
++				}
++
++				if (abs(rate - rounded / i) <
++				    abs(rate - best_parent / best_div)) {
++					best_parent = rounded;
++					best_div = i;
++				}
+ 			}
+ 		}
+ 	}
+ 
++	if (!parent)
++		return -EINVAL;
++
+ out:
+ 	req->rate = best_parent / best_half / best_div;
+ 	req->best_parent_rate = best_parent;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
