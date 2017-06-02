@@ -1,93 +1,241 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v4 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
-Date: Fri,  9 Jun 2017 16:07:35 +0200
-Message-Id: <20170609140739.15726-3-o.rempel@pengutronix.de>
-In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
-References: <20170609140739.15726-1-o.rempel@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v6 05/11] arm64: dts: Add clock DT nodes for Stingray SOC
+Date: Fri,  2 Jun 2017 12:04:29 +0530
+Message-Id: <1496385275-6899-6-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+This patch describes Stingray SOC clock tree using
+DT nodes in Stingray DTS.
 
-This patch implements step 4. of this sequence.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- arch/arm/mach-imx/pm-imx6.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 +++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |   9 ++
+ 2 files changed, 179 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index e61b1d1027e1..3a4f8f289f4d 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -27,6 +27,8 @@
- #include <asm/proc-fns.h>
- #include <asm/suspend.h>
- #include <asm/tlb.h>
-+#include <linux/kallsyms.h>
-+#include <linux/regulator/machine.h>
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+new file mode 100644
+index 0000000..cbc4337
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+@@ -0,0 +1,170 @@
++/*
++ *  BSD LICENSE
++ *
++ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
++ *
++ *  Redistribution and use in source and binary forms, with or without
++ *  modification, are permitted provided that the following conditions
++ *  are met:
++ *
++ *    * Redistributions of source code must retain the above copyright
++ *      notice, this list of conditions and the following disclaimer.
++ *    * Redistributions in binary form must reproduce the above copyright
++ *      notice, this list of conditions and the following disclaimer in
++ *      the documentation and/or other materials provided with the
++ *      distribution.
++ *    * Neither the name of Broadcom nor the names of its
++ *      contributors may be used to endorse or promote products derived
++ *      from this software without specific prior written permission.
++ *
++ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include <dt-bindings/clock/bcm-sr.h>
++
++		osc: oscillator {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <50000000>;
++		};
++
++		crmu_ref25m: crmu_ref25m {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&osc>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		genpll0: genpll0@0001d104 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll0";
++			reg = <0x0001d104 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll0", "clk_125", "clk_scr",
++					     "clk_250", "clk_pcie_axi",
++					     "clk_paxc_axi_x2",
++					     "clk_paxc_axi";
++		};
++
++		genpll3: genpll3@0001d1e0 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll3";
++			reg = <0x0001d1e0 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll3", "clk_hsls",
++					     "clk_sdio";
++		};
++
++		genpll4: genpll4@0001d214 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll4";
++			reg = <0x0001d214 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll4", "clk_ccn",
++					     "clk_tpiu_pll", "noc_clk",
++					     "pll_chclk_fs4",
++					     "clk_bridge_fscpu";
++		};
++
++		genpll5: genpll5@0001d248 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll5";
++			reg = <0x0001d248 0x32>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll5", "fs4_hf_clk",
++					     "crypto_ae_clk", "raid_ae_clk";
++		};
++
++		lcpll0: lcpll0@0001d0c4 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-lcpll0";
++			reg = <0x0001d0c4 0x3c>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll0", "clk_sata_refp",
++					     "clk_sata_refn", "clk_sata_350",
++					     "clk_sata_500";
++		};
++
++		lcpll1: lcpll1@0001d138 {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-lcpll1";
++			reg = <0x0001d138 0x3c>,
++			      <0x0001c870 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll1", "clk_wanpn",
++					     "clk_usb_ref",
++					     "timesync_evt_clk";
++		};
++
++		hsls_clk: hsls_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 1>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		hsls_div2_clk: hsls_div2_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
++			clock-div = <2>;
++			clock-mult = <1>;
++
++		};
++
++		hsls_div4_clk: hsls_div4_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_HSLS_CLK>;
++			clock-div = <4>;
++			clock-mult = <1>;
++		};
++
++		hsls_25m_clk: hsls_25m_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&crmu_ref25m>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		hsls_25m_div2_clk: hsls_25m_div2_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&hsls_25m_clk>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		sdio0_clk: sdio0_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
++
++		sdio1_clk: sdio1_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll3 BCM_SR_GENPLL3_SDIO_CLK>;
++			clock-div = <1>;
++			clock-mult = <1>;
++		};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 61133b7..722e362 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -244,6 +244,15 @@
+ 		};
+ 	};
  
- #include "common.h"
- #include "hardware.h"
-@@ -602,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	cpu_suspend(0, imx6q_suspend_finish);
++	crmu: crmu {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x66400000 0x100000>;
 +
-+	mdelay(1000);
++		#include "stingray-clock.dtsi"
++	};
 +
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_poweroff_probe(void)
-+{
-+	if (pm_power_off) {
-+		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
-+			__func__, pm_power_off, pm_power_off);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -618,6 +642,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
-+		imx6_pm_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
+ 	hsls {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
-2.11.0
+2.7.4
