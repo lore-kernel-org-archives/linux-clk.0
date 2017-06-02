@@ -1,122 +1,195 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- Jerome Brunet <jbrunet@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- Kevin Hilman <khilman@baylibre.com>,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- Russell King <linux@armlinux.org.uk>, Adriana Reus <adi.reus@gmail.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
- <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
- <1497955822.7387.3.camel@baylibre.com>
- <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
- <1497961950.7387.7.camel@baylibre.com> <20170620144726.5c2f3213@bbrezillon>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-Message-ID: <8249fd2e-a0c0-6519-87f5-d93e5114faa0@free-electrons.com>
-Date: Thu, 22 Jun 2017 09:07:25 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 2 Jun 2017 21:38:27 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 13/19] drm/sun4i: hdmi: Add support for controller
+ hardware variants
+Message-ID: <20170602193827.rnjum6x5ra4x5wef@flea.lan>
+References: <20170602101024.18940-1-wens@csie.org>
+ <20170602101024.18940-14-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20170620144726.5c2f3213@bbrezillon>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3rlmyxdx2g2od3o6"
+In-Reply-To: <20170602101024.18940-14-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
 
-On 20/06/2017 14:47, Boris Brezillon wrote:
-> +Quentin
-> 
-> On Tue, 20 Jun 2017 14:32:30 +0200
-> Jerome Brunet <jbrunet@baylibre.com> wrote:
-> 
->> On Tue, 2017-06-20 at 13:54 +0200, Linus Walleij wrote:
->>> On Tue, Jun 20, 2017 at 12:50 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:  
->>>> On Tue, 2017-06-20 at 11:07 +0200, Linus Walleij wrote:
->>>> When the rate is critical to perform a particular task. My example is the
->>>> audio
->>>> and i2s output. You can't tolerate glitches during the playback, the end
->>>> user
->>>> would complain (longer description in the original RFC)  
->>>
->>> I see. Thanks for your detailed explanation!
->>>   
->>>> It also fixes the behavior of CLK_SET_RATE_GATE flag, which is why I put you
->>>> in
->>>> CC.
->>>>
->>>> ux500 uses this flag several time, I'd like make sure people are not relying
->>>> on
->>>> its broken implementation.  
->>>
->>> Ux500 audio is broken, but I'm fixing it a little at a time...  
->>
->> No problem with Ux500 audio, don't worry :)
->> Audio is just one application among others.
->>
->> The concern regarding ux500 is that the clock controller declares clocks using
->> the CLK_SET_RATE_GATE flag (like qcom, at91 and several other)
->>
->> here is the definition:
->> #define CLK_SET_RATE_GATE	BIT(0) /* must be gated across rate change */
->>
->> My interpretation it that, as long as clock is enabled, rate can't change.
->>
->> The implementation of this flag is currently broken:
->> * If you call set_rate on directly on the clock while it is enabled, you will
->> get -EBUSY, as expected
->> * If you call set_rate on its parent, rate will change, changing the rate of the
->> child clock as well ...
->>
->> With this patchset applied, calling set_rate on the parent would also return
->> -EBUSY, enforcing the "rate can't change while enabled" property.
->>
->> To build confidence that this won't be causing regression, I'd like to check
->> that platform using this flag are no relying on the broken behavior.
->>
->> I've included the clock maintainers of at91, qcom, and ux500 (you) in this
->> thread because they are the heaviest users of this flag, so the more likely to
->> report a problem.
-> 
-> This flag in at91 clk drivers really means that rate cannot be changed
-> while the clk is enabled. We have other clock where this is not a
-> problem (at least, nothing in mentioned in the datasheet).
-> 
->>
->> If you could apply this series and just do things as usual, It'd be awesome !
-> 
-> Actually, this is a feature I was pushing for a while back [1],
-> because I had the same problem (one user messing up with a PLL while
-> others were relying on its rate). I'm glad someone finally had time to
-> provide a solution for this problem.
-> 
-> Quentin tested the series, and I guess he'll soon add his Tested-by.
-> Note that this series does not address all problems. For example, when
-> several drivers are setting a rate on different clks that take the
-> same parent, the first one to set the rate and enable the clk wins.
-> 
-> He has an hack-ish solution for our audio-pll case preventing non audio
-> users to mess up with the audio PLL. It'd be great to have a generic
-> solution, though I don't know how this can be solved without advanced
-> description of the clk-rate setting policy.
-> 
-> [1]https://patchwork.kernel.org/patch/6204221/
-> 
+--3rlmyxdx2g2od3o6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've tested the patch series and it seems good to me.
+On Fri, Jun 02, 2017 at 06:10:18PM +0800, Chen-Yu Tsai wrote:
+> The HDMI controller found in earlier Allwinner SoCs have slight
+> differences:
+>=20
+>   - Need different initial values for the PLL related registers
+>=20
+>   - Different behavior of the DDC and TMDS clocks
+>=20
+>   - Different register layout for the DDC portion
+>=20
+>   - Separate DDC parent clock on the A31
+>=20
+>   - Explicit reset control
+>=20
+> The clock variants are supported within their implementations,
+> which only expose a create function for each variant.
+>=20
+> The different layout of the DDC registers necessitates a separate
+> version of struct drm_connector_helper_funcs.
+>=20
+> A new variant data structure is created to store pointers to the
+> above functions, structures, and the different initial values.
+> Another flag notates whether there is a separate DDC parent clock.
+> If not, the TMDS clock is passed to the DDC clock create function,
+> as before.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun6i-a31.c   |   2 +-
+>  drivers/gpu/drm/sun4i/sun4i_hdmi.h     |   8 +++
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 114 ++++++++++++++++++++++++++-=
+------
+>  3 files changed, 100 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/=
+ccu-sun6i-a31.c
+> index 4d6078fca9ac..e48186985a51 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+> @@ -610,7 +610,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", lc=
+d_ch1_parents,
+> =20
+>  static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(30)=
+, 0);
+> =20
+> -static SUNXI_CCU_GATE(ps_clk, "ps", "lcd1-ch1", 0x140, BIT(31), 0);
+> +static SUNXI_CCU_GATE(ps_clk, "ps", "lcd1-ch1", 0x154, BIT(31), 0);
 
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Unrelated change?
 
-Our hackish solution for the moment is to deny clock children to take
-the audio-pll clock as parent except if it's classd (the audio IP). That
-way, we take care of the driver probing "order" (i.e., the first driver
-to enable the clock will lock the rate, but maybe that rate isn't the
-one we want for a more critical driver) but it is definitely not a neat
-solution.
+> =20
+>  static const char * const mbus_parents[] =3D { "osc24M", "pll-periph",
+>  					     "pll-ddr" };
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/s=
+un4i_hdmi.h
+> index c39c2a245339..c63d0bd95963 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+> @@ -155,6 +155,8 @@ enum sun4i_hdmi_pkt_type {
+>  	SUN4I_HDMI_PKT_END =3D 15,
+>  };
+> =20
+> +struct sun4i_hdmi_variant;
+> +
+>  struct sun4i_hdmi {
+>  	struct drm_connector	connector;
+>  	struct drm_encoder	encoder;
+> @@ -162,9 +164,13 @@ struct sun4i_hdmi {
+> =20
+>  	void __iomem		*base;
+> =20
+> +	/* Reset control */
+> +	struct reset_control	*reset;
+> +
+>  	/* Parent clocks */
+>  	struct clk		*bus_clk;
+>  	struct clk		*mod_clk;
+> +	struct clk		*ddc_parent_clk;
+>  	struct clk		*pll0_clk;
+>  	struct clk		*pll1_clk;
+> =20
+> @@ -175,6 +181,8 @@ struct sun4i_hdmi {
+>  	struct sun4i_drv	*drv;
+> =20
+>  	bool			hdmi_monitor;
+> +
+> +	const struct sun4i_hdmi_variant	*variant;
+>  };
+> =20
+>  int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun=
+4i/sun4i_hdmi_enc.c
+> index 457614073501..9ded40aaed32 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> @@ -20,8 +20,10 @@
+>  #include <linux/clk.h>
+>  #include <linux/component.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+> =20
+>  #include "sun4i_backend.h"
+>  #include "sun4i_crtc.h"
+> @@ -315,6 +317,56 @@ static const struct drm_connector_funcs sun4i_hdmi_c=
+onnector_funcs =3D {
+>  	.atomic_destroy_state	=3D drm_atomic_helper_connector_destroy_state,
+>  };
+> =20
+> +struct sun4i_hdmi_variant {
+> +	const struct drm_connector_helper_funcs *connector_helpers;
+> +	int (*ddc_create)(struct sun4i_hdmi *hdmi, struct clk *clk);
+> +	int (*tmds_create)(struct sun4i_hdmi *hdmi);
+> +	bool has_ddc_parent_clk;
+> +	bool has_reset_control;
+> +
+> +	u32 pad_ctrl0_init_val;
+> +	u32 pad_ctrl1_init_val;
+> +	u32 pll_ctrl_init_val;
+> +};
+> +
+> +#define SUN4I_HDMI_PAD_CTRL1_MASK	(GENMASK(24, 7) | GENMASK(5, 0))
+> +#define SUN4I_HDMI_PLL_CTRL_MASK	(GENMASK(31, 8) | GENMASK(3, 0))
+> +
+> +static const struct sun4i_hdmi_variant sun5i_variant =3D {
+> +	.connector_helpers	=3D &sun4i_hdmi_connector_helper_funcs,
+> +	.ddc_create		=3D sun4i_ddc_create,
+> +	.tmds_create		=3D sun4i_tmds_create,
 
-Thanks,
-Quentin
+If we store the variants info for those clocks in that structure, we
+don't need those functions anymore. This would be cleaner imho.
 
--- 
-Quentin Schulz, Free Electrons
+> +	.has_ddc_parent_clk	=3D false,
+> +	.has_reset_control	=3D false,
+
+Those two are the default values
+
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
+
+--3rlmyxdx2g2od3o6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZMb6zAAoJEBx+YmzsjxAgqugP/A7tIKwiaDmMm7EDrd0pIbdX
+J7xjBXcWTxw2fjkkEJTBSyg+16wxtvrlWxhr/MjUq7Q27bzJDD6o/m35VeqL5XUF
+SiJ+Erq1n3DoiYcbdHsGOAAgoArIudaruczzgPPwkAF45ReLvVG9i8dJNgaUyuLV
+SCrngkzOfzMJ9uP3lVYAY6I11pUgp+l4aY5kX7iQaNnCvaady8+JxNRIxrXshC+t
+UfQAk2Ec+gqweWg8caUYuS67aoXR4XGvxgnOKmWtlSbE0qMVeHfrNEtTYm/00Ey0
+KzJ0yXGHCuDzGzYpAWwFiwTgJlzR06R+nemcb3vMzAiJaihnknWeyVAL+luVd3sw
+WQ/ayv7zcvuN0r/K3anxNKvLKSL4Bvki8Juz4Jyq7aFZcoCK45ZCeMtvg1Bimc0W
+bazS54p82kRBrBYCWY2yiyP3ZBhGjtFD1uH9WA3ANpSHppZoKX9ZcWyYLY9rCwY0
+sAPcYCCuzU91ExFLyZ57sPdgqcL3rW9e/BAzgRuUYc5/23kTE52u3vuVD4Bc183T
+TMk+7q64jwGgSmanzuwGAZl9C8BYv31BtxHEDOmmf5IEVuXvRoCYY5Rm8KpTOCLC
+XGd1sFsMUVlCIazlonFz+ujVGQWokgVMDX8/g71RqnqlXCUUM/hI9mAc6gDr4Csc
+oC/A4jkb1ucVCEkHMf3k
+=MPAs
+-----END PGP SIGNATURE-----
+
+--3rlmyxdx2g2od3o6--
