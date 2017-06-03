@@ -1,42 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:37452 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbdFIK6j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 06:58:39 -0400
-Date: Fri, 9 Jun 2017 12:58:35 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v2 1/3] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Message-ID: <20170609105835.GA9789@kozik-book>
-References: <CGME20170609103849epcas5p397e85db2388d4d91f5a775996cb9541d@epcas5p3.samsung.com>
- <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bjorn.andersson@linaro.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	varada@codeaurora.org,
+	mraghava@codeaurora.org
+Subject: [PATCH v4 2/6] dt-bindings: qcom: Add ipq8074 bindings
+Date: Sat,  3 Jun 2017 12:57:51 +0530
+Message-Id: <1496474875-7190-3-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1496474875-7190-1-git-send-email-varada@codeaurora.org>
+References: <1496474875-7190-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 09, 2017 at 12:38:29PM +0200, Sylwester Nawrocki wrote:
-> The existing enable/disable ops for PLL35XX are made more generic
-> and used also for PLL36XX. This fixes issues in the kernel with
-> PLL36XX PLLs when the PLL has not been already enabled by bootloader.
-> 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v1:
->  - none
-> 
->  drivers/clk/samsung/clk-pll.c | 87 +++++++++++++++++++++++++------------------
->  1 file changed, 50 insertions(+), 37 deletions(-)
-> 
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+---
+ Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
-
+diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
+index 028d16e..0ed4d39 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.txt
++++ b/Documentation/devicetree/bindings/arm/qcom.txt
+@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
+ 	msm8994
+ 	msm8996
+ 	mdm9615
++	ipq8074
+ 
+ The 'board' element must be one of the following strings:
+ 
+@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
+ 	dragonboard
+ 	mtp
+ 	sbc
++	hk01
+ 
+ The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
+ where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
