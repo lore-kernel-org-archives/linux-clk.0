@@ -1,124 +1,53 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Dong Aisheng <dongas86@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"Anson Huang" <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: RE: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
- support
-Date: Mon, 26 Jun 2017 03:07:44 +0000
-Message-ID: <AM3PR04MB3062C861BA230ADF68FA4B980DF0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
- <20170620014512.GL4493@codeaurora.org>
- <20170620090815.GA6805@b29396-OptiPlex-7040>
-In-Reply-To: <20170620090815.GA6805@b29396-OptiPlex-7040>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
+In-Reply-To: <20170602193012.xwuziggyx6evmusz@flea.lan>
+References: <20170602101024.18940-1-wens@csie.org> <20170602101024.18940-11-wens@csie.org>
+ <20170602193012.xwuziggyx6evmusz@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 3 Jun 2017 22:33:25 +0800
+Message-ID: <CAGb2v64Vgdjm1MAwn+L0PVc0CA0QOCn=0RONKoGDWLpzVBzvmQ@mail.gmail.com>
+Subject: Re: [PATCH 10/19] drm/sun4i: hdmi: Rename internal DDC clock to avoid
+ name collision
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On Sat, Jun 3, 2017 at 3:30 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Fri, Jun 02, 2017 at 06:10:15PM +0800, Chen-Yu Tsai wrote:
+>> The DDC parent clock on the A31 SoC is also conveniently named
+>> "hdmi-ddc", which results in a name collision when the hdmi driver
+>> registers its internal DDC divider clock.
+>>
+>> Rename the internal clock to "hdmi-ddc-divider".
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+>> index e1071838f487..9a6b6243e977 100644
+>> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+>> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+>> @@ -125,7 +125,7 @@ static int _sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent,
+>>       if (!ddc)
+>>               return -ENOMEM;
+>>
+>> -     init.name = "hdmi-ddc";
+>> +     init.name = "hdmi-ddc-divider";
+>
+> Can't we rename the CCU clock instead? Having the clock called
+> hdmi-ddc being the actual clock output on the DDC bus feels more
+> natural.
 
-> -----Original Message-----
-> From: Dong Aisheng [mailto:dongas86@gmail.com]
-> Sent: Tuesday, June 20, 2017 5:08 PM
-> To: Stephen Boyd
-> Cc: A.s. Dong; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
-> shawnguo@kernel.org; Anson Huang; Jacky Bai
-> Subject: Re: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
-> support
->=20
-> Hi Stephen,
->=20
-> On Mon, Jun 19, 2017 at 06:45:12PM -0700, Stephen Boyd wrote:
-> > On 05/15, Dong Aisheng wrote:
-> > > ---
-> > >  drivers/clk/clk-divider.c    | 2 ++
-> > >  include/linux/clk-provider.h | 4 ++++
-> > >  2 files changed, 6 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > > index 96386ff..f78ba7a 100644
-> > > --- a/drivers/clk/clk-divider.c
-> > > +++ b/drivers/clk/clk-divider.c
-> > > @@ -125,6 +125,8 @@ unsigned long divider_recalc_rate(struct clk_hw
-> > > *hw, unsigned long parent_rate,
-> > >
-> > >  	div =3D _get_div(table, val, flags, divider->width);
-> > >  	if (!div) {
-> > > +		if (flags & CLK_DIVIDER_ZERO_GATE)
-> > > +			return 0;
-> > >  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
-> >
-> > Why not use the CLK_DIVIDER_ALLOW_ZERO flag? A clk being off doesn't
-> > mean the rate is 0. The divider is just disabled, so we would consider
-> > the rate as whatever the parent is, which is what this code does
-> > before this patch. Similarly, we don't do anything about gate clocks
-> > and return a rate of 0 when they're disabled.
-> >
->=20
-> The semantic of CLK_DIVIDER_ALLOW_ZERO seems a bit different.
->=20
-> See below definition:
-> * CLK_DIVIDER_ALLOW_ZERO - Allow zero divisors.  For dividers which have
-> *      CLK_DIVIDER_ONE_BASED set, it is possible to end up with a zero
-> divisor.
-> *      Some hardware implementations gracefully handle this case and allo=
-w
-> a
-> *      zero divisor by not modifying their input clock
-> *      (divide by one / bypass).
->=20
-> zero divisor is simply as divide by one or bypass which is supported by
-> hardware.
->=20
-> But it's not true for this hardware.
->=20
-> If we consider the rate as whatever the parent is if divider is zero, we
-> may got an issue like below:
-> e.g.
-> Assuming spll_bus_clk divider is 0x0 and it may be enabled by users
-> directly without setting a rate first.
->=20
-> Then the clock tree looks like:
-> ...
-> spll_pfd0                    1            1   500210526          0 0
->   spll_pfd_sel              1            1   500210526          0 0
->     spll_sel               1            1   500210526          0 0
->       spll_bus_clk           1            1   500210526          0 0
->=20
-> But the spll_bus_clk clock rate actually is wrong and it's even not
-> enabled, not like CLK_DIVIDER_ALLOW_ZERO which zero divider means simply
-> bypass.
->=20
-> So for this case, we probably can't simply assume zero divider rate as it=
-s
-> parent, it is actually set to 0 in hw, although it's something like gate,
-> but a bit different from gate as the normal gate does not affect divider
-> where you can keep the rate.
->=20
-> How would you suggest for this?
->=20
+Do you have any suggestions? The manual labels the conflicting one
+in the CCU as "HDMI_DDC"...
 
-Any suggestions?
-
-Regards
-Dong Aisheng
-
-> Regards
-> Dong Aisheng
->=20
-> > >  			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
-> > >  			clk_hw_get_name(hw));
-> >
-> > --
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
-> > Linux Foundation Collaborative Project
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-clk"
-> > in the body of a message to majordomo@vger.kernel.org More majordomo
-> > info at  http://vger.kernel.org/majordomo-info.html
+ChenYu
