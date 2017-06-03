@@ -1,52 +1,55 @@
-Return-Path: <ralph.sennhauser@gmail.com>
-Return-Path: <ralph.sennhauser@gmail.com>
-Date: Thu, 1 Jun 2017 22:11:20 +0200
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Gregory CLEMENT
- <gregory.clement@free-electrons.com>, Michael Turquette
- <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk: mvebu: armada-38x: add support for 1866MHz
- variants
-Message-ID: <20170601221120.5f396b80@gmail.com>
-In-Reply-To: <20170601072511.GR20170@codeaurora.org>
-References: <20170524145852.9077-1-ralph.sennhauser@gmail.com>
-	<20170601072511.GR20170@codeaurora.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20170602194219.hiajr7dt2oikm52q@flea.lan>
+References: <20170602101024.18940-1-wens@csie.org> <20170602101024.18940-20-wens@csie.org>
+ <20170602194219.hiajr7dt2oikm52q@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 3 Jun 2017 23:31:11 +0800
+Message-ID: <CAGb2v66k-LjPnHPLV17JW-zL9m+zBeOoVZN_kwHnU19KS+gfHg@mail.gmail.com>
+Subject: Re: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on the
+ MSI Primo81 tablet
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 1 Jun 2017 00:25:11 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
+On Sat, Jun 3, 2017 at 3:42 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Fri, Jun 02, 2017 at 06:10:24PM +0800, Chen-Yu Tsai wrote:
+>> The MSI Primo81 tablet has a micro HDMI connector at the bottom.
+>> This is connected to the SoCs HDMI output.
+>>
+>> Enable the display pipeline and the HDMI output.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
+>>  1 file changed, 25 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+>> index f3712753fa42..26154b2f87a3 100644
+>> --- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+>> +++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+>> @@ -52,17 +52,42 @@
+>>  / {
+>>       model = "MSI Primo81 tablet";
+>>       compatible = "msi,primo81", "allwinner,sun6i-a31s";
+>> +
+>> +     hdmi-connector {
+>> +             compatible = "hdmi-connector";
+>> +             type = "c";
+>
+> Should we add a connector type for this one?
 
-> On 05/24, Ralph Sennhauser wrote:
-> > The Linksys WRT3200ACM CPU is clocked at 1866MHz. Add 1866MHz to the
-> > list of supported CPU frequencies. Also update multiplier and
-> > divisor for the l2clk and ddrclk.
-> > 
-> > Noticed by the following warning:
-> > [    0.000000] Selected CPU frequency (16) unsupported
-> > 
-> > Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> > Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> > ---
-> > 
-> > Hi everyone,
-> > 
-> > This patch was part of a series adding support for the Linksys
-> > WRT3200ACM which got merged already. This patch is the reminder and
-> > intended for 4.13.
-> > 
-> > Thanks
-> > Ralph
-> > ---
-> > 
-> > Changes since v2:
-> > 
-> >   - Add armada-38x tag to subject  
-> 
-> OK sure I'll do that manually.
-> 
+To be honest I don't know. DRM has HDMI-B to differentiate dual-link
+connections, but that is only used by Intel and AMD GPU drivers.
+AMD driver has "/* HDMI-B is basically DL-DVI; analog works fine */",
+which makes sense since actual HDMI B-type connectors only exist on
+paper. None of the other drivers seem to care.
 
-Thanks
-Ralph
+ChenYu
