@@ -1,63 +1,105 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [GIT PULL] clk: ti: clkctrl support for 4.13 merge window
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-omap@vger.kernel.org"
-	<linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>
-References: <6d66f78a-5d39-6396-c492-b79a687ce58a@ti.com>
- <20170614173237.GB20170@codeaurora.org>
- <ee8f9ff4-831c-1999-175e-12608a954cfb@ti.com>
- <20170614174910.GD20170@codeaurora.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <f8bff2f4-55ce-bee1-9362-28f4f90fad03@ti.com>
-Date: Thu, 15 Jun 2017 11:12:36 +0300
+Return-Path: <chunkeey@googlemail.com>
+Return-Path: <chunkeey@googlemail.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org, Ram Chandra Jangir <rjangir@codeaurora.org>
+Subject: Re: [PATCH v4 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
+Date: Sat, 03 Jun 2017 20:55:23 +0200
+Message-ID: <2668868.v3IoKk0Lz9@debian64>
+In-Reply-To: <1496474875-7190-2-git-send-email-varada@codeaurora.org>
+References: <1496474875-7190-1-git-send-email-varada@codeaurora.org> <1496474875-7190-2-git-send-email-varada@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170614174910.GD20170@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14/06/17 20:49, Stephen Boyd wrote:
-> On 06/14, Tero Kristo wrote:
->> On 14/06/17 20:32, Stephen Boyd wrote:
->>> On 06/08, Tero Kristo wrote:
->>>> Hi Stephen, Mike,
->>>>
->>>> This pull contains the v3 of the clkctrl base driver support posted
->>>> couple of weeks back, with Tony's acks added to patch #2 and #4.
->>>>
->>>> -Tero
->>>>
->>>
->>> drivers/clk/ti/clkctrl.c:252
->>> _ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
->>> drivers/clk/ti/clkctrl.c:264
->>> _ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
->>> drivers/clk/ti/clkctrl.c:466
->>> _ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
->>> drivers/clk/ti/clkctrl.c:473
->>> _ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
->>>
->>> Can these be silenced with some follow up patch? I'll hold off on
->>> the pull until you can take a look.
->>>
->>
->> What is the tool you use to get these?
->>
->> They seem like valid warnings though, some cleanup could be used for
->> the dynamic memory handling. I'll fix these tomorrow.
->>
+On Saturday, June 3, 2017 12:57:50 PM CEST Varadarajan Narayanan wrote:
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for ipq8074.
 > 
-> I use smatch[1] although I don't always have the most up to date
-> version.
-> 
-> [1] git://repo.or.cz/smatch.git
-> 
+> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> ---
+> +- bias-disable:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as no pull.
+> +
+> +- bias-pull-down:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull down.
+> +
+> +- bias-pull-up:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull up.
+> +
+> +#define REG_SIZE 0x1000
+> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
+> +	{					        \
+> +		.name = "gpio" #id,			\
+> +		.pins = gpio##id##_pins,		\
+> +		.npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),	\
+> +		.funcs = (int[]){			\
+> +			msm_mux_gpio, /* gpio mode */	\
+> +			msm_mux_##f1,			\
+> +			msm_mux_##f2,			\
+> +			msm_mux_##f3,			\
+> +			msm_mux_##f4,			\
+> +			msm_mux_##f5,			\
+> +			msm_mux_##f6,			\
+> +			msm_mux_##f7,			\
+> +			msm_mux_##f8,			\
+> +			msm_mux_##f9			\
+> +		},				        \
+> +		.nfuncs = 10,				\
+> +		.ctl_reg = REG_SIZE * id,		\
+> +		.io_reg = 0x4 + REG_SIZE * id,		\
+> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,		\
+> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
+> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
+> +		.mux_bit = 2,			\
+> +		.pull_bit = 0,			\
+> +		.drv_bit = 6,			\
+> +		.oe_bit = 9,			\
+> +		.in_bit = 0,			\
+> +		.out_bit = 1,			\
+> +		.intr_enable_bit = 0,		\
+> +		.intr_status_bit = 0,		\
+> +		.intr_target_bit = 5,		\
+> +		.intr_raw_status_bit = 4,	\
+> +		.intr_polarity_bit = 1,		\
+> +		.intr_detection_bit = 2,	\
+> +		.intr_detection_width = 2,	\
+> +	}
+> +
+Hello,
 
-Ok thanks, fixed and posted a new version of patch #2 of the series. 
-Also force pushed this branch with the updated version in case you want 
-to use this.
+Back in May, Ram Chandra Jangir posted a rather interesting patch on
+the LEDE Mailing-List:
+<https://www.mail-archive.com/lede-dev@lists.infradead.org/msg07691.html>
+|GPIO_PULL bits configurations in TLMM_GPIO_CFG register
+|differs for IPQ40xx from rest of the other qcom SoC's.
+|This change add support to configure the msm_gpio_pull
+|bits for ipq40xx, It is required to fix the proper
+|configurations of gpio-pull bits for nand pins mux.
+|
+|IPQ40xx SoC:
+|2'b10: Internal pull up enable.
+|2'b11: Unsupport
+|
+|For other SoC's:
+|2'b10: Keeper
+|2'b11: Pull-Up
 
--Tero
+This information wasn't mentioned anywhere. In fact, the special pull-up
+configuration was only discovered due to an issue with the qpic NAND on
+the Cisco Meraki MR33. So I wonder what does the gpio-pull look like for
+the IPQ8074? Is it the same as the IPQ40XX or does it follow the older 
+SoCs?
+
+I'm asking this because I'm preparing a modified version of this patch
+that will be posted once the IPQ8074 is ready.
+
+Regards,
+Christian
