@@ -1,63 +1,126 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux@armlinux.org.uk,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	varada@codeaurora.org,
-	mraghava@codeaurora.org
-Subject: [PATCH v3 5/5] arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
-Date: Thu,  1 Jun 2017 16:58:02 +0530
-Message-Id: <1496316482-25468-6-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
-References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 3/3] ARM: dts: meson8: add and use the real clock controller
+Date: Sun,  4 Jun 2017 20:33:41 +0200
+Message-Id: <20170604183341.21417-4-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
+References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+This removes the dummy clk81 gate and replaces it with the actual clock
+controller's CLKID_CLK81. This will also allow us to pass the real clock
+IDs to all devices where the clock is controlled by clkc in the future.
 
-These configs are required for booting kernel in QCOM
-IPQ8074 boards.
-
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/meson8.dtsi | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 65cdd87..c20328e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -267,6 +267,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SPIDEV=m
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -450,6 +451,7 @@ CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 6993077331c7..9b0b3ddbb17e 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -43,6 +43,7 @@
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#include <dt-bindings/clock/meson8b-clkc.h>
+ #include <dt-bindings/gpio/meson8-gpio.h>
+ /include/ "meson.dtsi"
+ 
+@@ -82,13 +83,6 @@
+ 			reg = <0x203>;
+ 		};
+ 	};
+-
+-	clk81: clk@0 {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		clock-frequency = <141666666>;
+-	};
+-
+ }; /* end of / */
+ 
+ &aobus {
+@@ -126,6 +120,12 @@
+ };
+ 
+ &cbus {
++	clkc: clock-controller@4000 {
++		#clock-cells = <1>;
++		compatible = "amlogic,meson8-clkc";
++		reg = <0x8000 0x4>, <0x4000 0x460>;
++	};
++
+ 	pinctrl_cbus: pinctrl@9880 {
+ 		compatible = "amlogic,meson8-cbus-pinctrl";
+ 		reg = <0x9880 0x10>;
+@@ -172,20 +172,20 @@
+ };
+ 
+ &ethmac {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ 	clock-names = "stmmaceth";
+ };
+ 
+ &i2c_AO {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
+ 
+ &i2c_A {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
+ 
+ &i2c_B {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
+ 
+ &L2 {
+@@ -195,21 +195,21 @@
+ };
+ 
+ &spifc {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
+ 
+ &uart_AO {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
+ 
+ &uart_A {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
+ 
+ &uart_B {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
+ 
+ &uart_C {
+-	clocks = <&clk81>;
++	clocks = <&clkc CLKID_CLK81>;
+ };
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.13.0
