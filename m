@@ -1,84 +1,142 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:56715 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750711AbdFTPaF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Jun 2017 11:30:05 -0400
-Date: Tue, 20 Jun 2017 17:29:59 +0200
-From: Oleksij Rempel <ore@pengutronix.de>
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v5 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20170620152959.n6cwarfvdtt6mhry@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
- <20170619050245.2632-4-o.rempel@pengutronix.de>
- <1497872109.5380.10.camel@nxp.com>
- <5023d338-f845-b8a6-c4a0-d414c75f841c@pengutronix.de>
- <1497969426.3177.14.camel@nxp.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Mon, 05 Jun 2017 03:03:47 +0800
+In-Reply-To: <3642057.oKT9kIlu8M@jernej-laptop>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-5-icenowy@aosc.io> <3642057.oKT9kIlu8M@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1497969426.3177.14.camel@nxp.com>
-Sender: linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <493AC6F2-3CB3-48F5-9568-A34AA927238F@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Icenowy Zheng <icenowy@aosc.xyz>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 20, 2017 at 05:37:06PM +0300, Leonard Crestez wrote:
-> On Tue, 2017-06-20 at 07:01 +0200, Oleksij Rempel wrote:
-> > 
-> > On 19.06.2017 13:35, Leonard Crestez wrote:
-> > > 
-> > > On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
-> > > > 
-> > > > Export pm_power_off_prepare. It is needed to implement power off on
-> > > > Freescale/NXP iMX6 based boards with external power management
-> > > > integrated circuit (PMIC).
-> > > > 
-> > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > > ---
-> > > >  kernel/reboot.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/kernel/reboot.c b/kernel/reboot.c
-> > > > index bd30a973fe94..a6903bf772c7 100644
-> > > > --- a/kernel/reboot.c
-> > > > +++ b/kernel/reboot.c
-> > > > @@ -49,6 +49,7 @@ int reboot_force;
-> > > >   */
-> > > > 
-> > > >  void (*pm_power_off_prepare)(void);
-> > > > +EXPORT_SYMBOL(pm_power_off_prepare);
-> > > > 
-> > > Could you register a reboot notifier in the pfuze driver instead? Right
-> > > now the only user of pm_power_off_prepare is ACPI so this alternative
-> > > seems less intrusive.
-> > hm... in this case i will need to make sure that reboot handler is not 
-> > executed on reboot. This will make code looks strange. Which is opposite 
-> > of your comment in other email about strange standby code for power off :)
-> > Should i really do this?
-> 
-> A reboot handler receives a parameter to differentiate between reboot
-> and shutdown so it would be easy. Isn't it preferable to use an
-> existing mechanism instead of exporting a new symbol?
-> 
-> But maybe somebody else will Ack this, I don't particularly insist on
-> changing this.
-
-I just need to make sure, nothing else will do some thing unexpected
-with PMIC. Don't forget we use same PMIC_STBY_REQ signal for stanby,
-suspend to RAM and for power off. Entering wrong state in wrong moment
-will be fatal. This is why I use last possible step before pm_power_off.
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Cgrkuo4gMjAxN+W5tDbmnIg15pelIEdNVCswODowMCDkuIrljYgyOjQ2OjI0LCAiSmVybmVqIMWg
+a3JhYmVjIiA8amVybmVqLnNrcmFiZWNAc2lvbC5uZXQ+IOWGmeWIsDoKPkhpLAo+Cj5EbmUgbmVk
+ZWxqYSwgMDQuIGp1bmlqIDIwMTcgb2IgMTg6MDE6NDIgQ0VTVCBqZSBJY2Vub3d5IFpoZW5nCj5u
+YXBpc2FsKGEpOgo+PiBGcm9tOiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6Pgo+PiAK
+Pj4gQWxsd2lubmVyIEgzIGhhcyB0d28gc3BlY2lhbCBUQ09OcywgYm90aCBjb21lIHdpdGhvdXQg
+Y2hhbm5lbDAuIEFuZAo+dGhlCj4+IFRDT04xIG9mIEgzIGhhcyBubyBzcGVjaWFsIGNsb2NrcyBl
+dmVuIGZvciB0aGUgY2hhbm5lbDEuCj4+IAo+PiBBZGQgc3VwcG9ydCBmb3IgdGhlc2Uga2luZHMg
+b2YgVENPTi4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9z
+Yy5pbz4KPj4gLS0tCj4+IENoYW5nZXMgaW4gdjI6Cj4+IC0gTWVyZ2VkIFRDT04wIGFuZCBUQ09O
+MSBxdWlya3MgYW5kIGNvbXBhdGlibGVzLgo+PiAKPj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9z
+dW40aV90Y29uLmMgfCA1Mgo+PiArKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+LQo+ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3Rjb24uaCB8Cj4+ICAxICsKPj4gIDIgZmls
+ZXMgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3Rjb24uYwo+PiBiL2RyaXZlcnMv
+Z3B1L2RybS9zdW40aS9zdW40aV90Y29uLmMgaW5kZXggNTY4Y2VhMGU1ZjhmLi42MmJhNGZjMTlm
+MTgKPj4gMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV90Y29uLmMK
+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3Rjb24uYwo+PiBAQCAtNTksNiAr
+NTksNyBAQCB2b2lkIHN1bjRpX3Rjb25fY2hhbm5lbF9kaXNhYmxlKHN0cnVjdCBzdW40aV90Y29u
+Cj4qdGNvbiwKPj4gaW50IGNoYW5uZWwpCj4+IAo+PiAgCS8qIERpc2FibGUgdGhlIFRDT04ncyBj
+aGFubmVsICovCj4+ICAJaWYgKGNoYW5uZWwgPT0gMCkgewo+PiArCQlXQVJOX09OKCF0Y29uLT5x
+dWlya3MtPmhhc19jaGFubmVsXzApOwo+PiAgCQlyZWdtYXBfdXBkYXRlX2JpdHModGNvbi0+cmVn
+cywgU1VONElfVENPTjBfQ1RMX1JFRywKPj4gIAkJCQkgICBTVU40SV9UQ09OMF9DVExfVENPTl9F
+TkFCTEUsIDApOwo+PiAgCQljbGtfZGlzYWJsZV91bnByZXBhcmUodGNvbi0+ZGNsayk7Cj4+IEBA
+IC03OCw2ICs3OSw3IEBAIHZvaWQgc3VuNGlfdGNvbl9jaGFubmVsX2VuYWJsZShzdHJ1Y3Qgc3Vu
+NGlfdGNvbgo+KnRjb24sCj4+IGludCBjaGFubmVsKQo+PiAKPj4gIAkvKiBFbmFibGUgdGhlIFRD
+T04ncyBjaGFubmVsICovCj4+ICAJaWYgKGNoYW5uZWwgPT0gMCkgewo+PiArCQlXQVJOX09OKCF0
+Y29uLT5xdWlya3MtPmhhc19jaGFubmVsXzApOwo+PiAgCQlyZWdtYXBfdXBkYXRlX2JpdHModGNv
+bi0+cmVncywgU1VONElfVENPTjBfQ1RMX1JFRywKPj4gIAkJCQkgICBTVU40SV9UQ09OMF9DVExf
+VENPTl9FTkFCTEUsCj4+ICAJCQkJICAgU1VONElfVENPTjBfQ1RMX1RDT05fRU5BQkxFKTsKPj4g
+QEAgLTE1OSw2ICsxNjEsNyBAQCB2b2lkIHN1bjRpX3Rjb24wX21vZGVfc2V0KHN0cnVjdCBzdW40
+aV90Y29uCj4qdGNvbiwKPj4gCj4+ICAJLyogQ29uZmlndXJlIHRoZSBkb3QgY2xvY2sgKi8KPj4g
+IAljbGtfc2V0X3JhdGUodGNvbi0+ZGNsaywgbW9kZS0+Y3J0Y19jbG9jayAqIDEwMDApOwo+PiAr
+CVdBUk5fT04oIXRjb24tPnF1aXJrcy0+aGFzX2NoYW5uZWxfMCk7Cj4+IAo+PiAgCS8qIEFkanVz
+dCBjbG9jayBkZWxheSAqLwo+PiAgCWNsa19kZWxheSA9IHN1bjRpX3Rjb25fZ2V0X2Nsa19kZWxh
+eShtb2RlLCAwKTsKPj4gQEAgLTM2NiwxMCArMzY5LDEyIEBAIHN0YXRpYyBpbnQgc3VuNGlfdGNv
+bl9pbml0X2Nsb2NrcyhzdHJ1Y3QgZGV2aWNlCj4qZGV2LAo+PiAgCX0KPj4gIAljbGtfcHJlcGFy
+ZV9lbmFibGUodGNvbi0+Y2xrKTsKPj4gCj4+IC0JdGNvbi0+c2NsazAgPSBkZXZtX2Nsa19nZXQo
+ZGV2LCAidGNvbi1jaDAiKTsKPj4gLQlpZiAoSVNfRVJSKHRjb24tPnNjbGswKSkgewo+PiAtCQlk
+ZXZfZXJyKGRldiwgIkNvdWxkbid0IGdldCB0aGUgVENPTiBjaGFubmVsIDAgY2xvY2tcbiIpOwo+
+PiAtCQlyZXR1cm4gUFRSX0VSUih0Y29uLT5zY2xrMCk7Cj4+ICsJaWYgKHRjb24tPnF1aXJrcy0+
+aGFzX2NoYW5uZWxfMCkgewo+PiArCQl0Y29uLT5zY2xrMCA9IGRldm1fY2xrX2dldChkZXYsICJ0
+Y29uLWNoMCIpOwo+PiArCQlpZiAoSVNfRVJSKHRjb24tPnNjbGswKSkgewo+PiArCQkJZGV2X2Vy
+cihkZXYsICJDb3VsZG4ndCBnZXQgdGhlIFRDT04gY2hhbm5lbCAwIGNsb2NrXG4iKTsKPj4gKwkJ
+CXJldHVybiBQVFJfRVJSKHRjb24tPnNjbGswKTsKPj4gKwkJfQo+PiAgCX0KPj4gCj4+ICAJaWYg
+KHRjb24tPnF1aXJrcy0+aGFzX2NoYW5uZWxfMSkgewo+PiBAQCAtNTk0LDEwICs1OTksMTIgQEAg
+c3RhdGljIGludCBzdW40aV90Y29uX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LAo+c3RydWN0Cj4+
+IGRldmljZSAqbWFzdGVyLCBnb3RvIGVycl9mcmVlX2Nsb2NrczsKPj4gIAl9Cj4+IAo+PiAtCXJl
+dCA9IHN1bjRpX2RjbGtfY3JlYXRlKGRldiwgdGNvbik7Cj4+IC0JaWYgKHJldCkgewo+PiAtCQlk
+ZXZfZXJyKGRldiwgIkNvdWxkbid0IGNyZWF0ZSBvdXIgVENPTiBkb3QgY2xvY2tcbiIpOwo+PiAt
+CQlnb3RvIGVycl9mcmVlX2Nsb2NrczsKPj4gKwlpZiAodGNvbi0+cXVpcmtzLT5oYXNfY2hhbm5l
+bF8wKSB7Cj4+ICsJCXJldCA9IHN1bjRpX2RjbGtfY3JlYXRlKGRldiwgdGNvbik7Cj4+ICsJCWlm
+IChyZXQpIHsKPj4gKwkJCWRldl9lcnIoZGV2LCAiQ291bGRuJ3QgY3JlYXRlIG91ciBUQ09OIGRv
+dCBjbG9ja1xuIik7Cj4+ICsJCQlnb3RvIGVycl9mcmVlX2Nsb2NrczsKPj4gKwkJfQo+PiAgCX0K
+Pj4gCj4+ICAJcmV0ID0gc3VuNGlfdGNvbl9pbml0X2lycShkZXYsIHRjb24pOwo+PiBAQCAtNjIy
+LDcgKzYyOSw4IEBAIHN0YXRpYyBpbnQgc3VuNGlfdGNvbl9iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
+diwKPnN0cnVjdAo+PiBkZXZpY2UgKm1hc3RlciwgcmV0dXJuIDA7Cj4+IAo+PiAgZXJyX2ZyZWVf
+ZG90Y2xvY2s6Cj4+IC0Jc3VuNGlfZGNsa19mcmVlKHRjb24pOwo+PiArCWlmICh0Y29uLT5xdWly
+a3MtPmhhc19jaGFubmVsXzApCj4+ICsJCXN1bjRpX2RjbGtfZnJlZSh0Y29uKTsKPj4gIGVycl9m
+cmVlX2Nsb2NrczoKPj4gIAlzdW40aV90Y29uX2ZyZWVfY2xvY2tzKHRjb24pOwo+PiAgZXJyX2Fz
+c2VydF9yZXNldDoKPj4gQEAgLTYzNiw3ICs2NDQsOSBAQCBzdGF0aWMgdm9pZCBzdW40aV90Y29u
+X3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsCj5zdHJ1Y3QKPj4gZGV2aWNlICptYXN0ZXIsIHN0
+cnVjdCBzdW40aV90Y29uICp0Y29uID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4+IAo+PiAgCWxp
+c3RfZGVsKCZ0Y29uLT5saXN0KTsKPj4gLQlzdW40aV9kY2xrX2ZyZWUodGNvbik7Cj4+ICsKPj4g
+KwlpZiAodGNvbi0+cXVpcmtzLT5oYXNfY2hhbm5lbF8wKQo+PiArCQlzdW40aV9kY2xrX2ZyZWUo
+dGNvbik7Cj4+ICAJc3VuNGlfdGNvbl9mcmVlX2Nsb2Nrcyh0Y29uKTsKPj4gIH0KPj4gCj4+IEBA
+IC02NjcsMjQgKzY3NywzMiBAQCBzdGF0aWMgaW50IHN1bjRpX3Rjb25fcmVtb3ZlKHN0cnVjdAo+
+cGxhdGZvcm1fZGV2aWNlCj4+ICpwZGV2KSB9Cj4+IAo+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBz
+dW40aV90Y29uX3F1aXJrcyBzdW41aV9hMTNfcXVpcmtzID0gewo+PiAtCS5oYXNfdW5rbm93bl9t
+dXggPSB0cnVlLAo+PiAtCS5oYXNfY2hhbm5lbF8xCT0gdHJ1ZSwKPj4gKwkuaGFzX3Vua25vd25f
+bXV4CT0gdHJ1ZSwKPj4gKwkuaGFzX2NoYW5uZWxfMAkJPSB0cnVlLAo+PiArCS5oYXNfY2hhbm5l
+bF8xCQk9IHRydWUsCj4+ICB9Owo+PiAKPj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3VuNGlfdGNv
+bl9xdWlya3Mgc3VuNmlfYTMxX3F1aXJrcyA9IHsKPj4gLQkuaGFzX2NoYW5uZWxfMQk9IHRydWUs
+Cj4+ICsJLmhhc19jaGFubmVsXzAJCT0gdHJ1ZSwKPj4gKwkuaGFzX2NoYW5uZWxfMQkJPSB0cnVl
+LAo+PiAgfTsKPj4gCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHN1bjRpX3Rjb25fcXVpcmtzIHN1
+bjZpX2EzMXNfcXVpcmtzID0gewo+PiAtCS5oYXNfY2hhbm5lbF8xCT0gdHJ1ZSwKPj4gKwkuaGFz
+X2NoYW5uZWxfMAkJPSB0cnVlLAo+PiArCS5oYXNfY2hhbm5lbF8xCQk9IHRydWUsCj4+ICB9Owo+
+PiAKPj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3VuNGlfdGNvbl9xdWlya3Mgc3VuOGlfYTMzX3F1
+aXJrcyA9IHsKPj4gLQkvKiBub3RoaW5nIGlzIHN1cHBvcnRlZCAqLwo+PiArCS5oYXNfY2hhbm5l
+bF8wCT0gdHJ1ZSwKPj4gIH07Cj4+IAo+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBzdW40aV90Y29u
+X3F1aXJrcyBzdW44aV92M3NfcXVpcmtzID0gewo+PiAtCS8qIG5vdGhpbmcgaXMgc3VwcG9ydGVk
+ICovCj4+ICsJLmhhc19jaGFubmVsXzAJPSB0cnVlLAo+PiArfTsKPj4gKwo+PiArc3RhdGljIGNv
+bnN0IHN0cnVjdCBzdW40aV90Y29uX3F1aXJrcyBzdW44aV9oM19xdWlya3MgPSB7Cj4+ICsJLmhh
+c19jaGFubmVsXzEJCT0gdHJ1ZSwKPj4gKwkuc3dhcHBhYmxlX2lucHV0CT0gdHJ1ZSwKPj4gIH07
+Cj4+IAo+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgc3VuNGlfdGNvbl9vZl90
+YWJsZVtdID0gewo+PiBAQCAtNjkzLDcgKzcxMSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2Zf
+ZGV2aWNlX2lkCj5zdW40aV90Y29uX29mX3RhYmxlW10gPQo+PiB7IHsgLmNvbXBhdGlibGUgPSAi
+YWxsd2lubmVyLHN1bjZpLWEzMXMtdGNvbiIsIC5kYXRhID0KPiZzdW42aV9hMzFzX3F1aXJrcwo+
+PiB9LCB7IC5jb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW44aS1hMzMtdGNvbiIsIC5kYXRhID0K
+PiZzdW44aV9hMzNfcXVpcmtzIH0sCj4+IHsgLmNvbXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjhp
+LXYzcy10Y29uIiwgLmRhdGEgPSAmc3VuOGlfdjNzX3F1aXJrcwo+fSwKPj4gLQl7IH0KPj4gKwl7
+IC5jb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW44aS1oMy10Y29uIiwgLmRhdGEgPSAmc3VuOGlf
+aDNfcXVpcmtzCj59LAo+Cj5JIHRoaW5rIHlvdSBuZWVkIHRvIGxlYXZlIGVtcHR5IGVudHJ5IGFz
+IGEgc2VudGluZWwuCgpTb3JyeS4KCj4KPj4gIH07Cj4+ICBNT0RVTEVfREVWSUNFX1RBQkxFKG9m
+LCBzdW40aV90Y29uX29mX3RhYmxlKTsKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vc3VuNGkvc3VuNGlfdGNvbi5oCj4+IGIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3Rj
+b24uaCBpbmRleCBjM2UwMWMwNmU5YTAuLjljNzA2YTBiZDQ3OAo+PiAxMDA2NDQKPj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3Rjb24uaAo+PiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vc3VuNGkvc3VuNGlfdGNvbi5oCj4+IEBAIC0xNDUsNiArMTQ1LDcgQEAKPj4gCj4+ICBzdHJ1
+Y3Qgc3VuNGlfdGNvbl9xdWlya3Mgewo+PiAgCWJvb2wJaGFzX3Vua25vd25fbXV4OyAvKiBzdW41
+aSBoYXMgdW5kb2N1bWVudGVkIG11eCAqLwo+PiArCWJvb2wJaGFzX2NoYW5uZWxfMDsJLyogc29t
+ZSBBODNUKyBUQ09OcyBkb24ndCBoYXZlIGNoYW5uZWwgMCovCj4+ICAJYm9vbAloYXNfY2hhbm5l
+bF8xOwkvKiBhMzMgZG9lcyBub3QgaGF2ZSBjaGFubmVsIDEgKi8KPj4gIAkvKiBTb21lIERFMiBj
+YW4gc3dhcCB0aGUgbWl4ZXI8LT5UQ09OIGNvbm5lY3Rpb24gKi8KPj4gIAlib29sCXN3YXBwYWJs
+ZV9pbnB1dDsKPj4gLS0KPj4gMi4xMi4yCj4KPllvdSBtaXNzZWQgc3VuNGlfcmdiX2luaXQoKSBm
+dW5jdGlvbiB3aGljaCBzaG91bGQgYWxzbyBiZSBndWFyZGVkIHdpdGgKPiJpZiAKPih0Y29uLT5x
+dWlya3MtPmhhc19jaGFubmVsXzApIi4KPgoKWWVzLi4uCgo+WW91IHNob3VsZCBhbHNvIGV4cGFu
+ZCBmdW5jdGlvbiBzdW40aV9kcnZfbm9kZV9pc190Y29uKCkgYXQgc3VuNGlfZHJ2LmMKPndpdGgg
+Cj5uZXcgZW50cmllcywgYnV0IEknbSBub3Qgc3VyZSBpZiB0aGlzIGZpdHMgaW4gdGhpcyBwYXRj
+aC4KCkluc3RlYWQgSSB0aGluayBpdCBzaG91bGQgYmUgcmVuYW1lZCB0byBzb21ldGhpbmcgbGlr
+ZQoic3VuNGlfZHJ2X25vZGVfaXNfdGNvbl93aXRoX2NoMCIuCgo+Cj5CZXN0IHJlZ2FyZHMsCj5K
+ZXJuZWoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
+bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
+LWFybS1rZXJuZWwK
