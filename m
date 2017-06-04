@@ -1,127 +1,71 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Fri, 30 Jun 2017 22:24:53 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk:
- renesas: cpg-mssr: Add interface for critical core clocks)
-Message-ID: <20170630202453.eh6vaehkap3as4np@pengutronix.de>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
- <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:54588 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751161AbdFDQCE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 4 Jun 2017 12:02:04 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 00/11] Support for H3 Composite Output support
+Date: Mon,  5 Jun 2017 00:01:38 +0800
+Message-Id: <20170604160149.30230-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Allwinner H3 SoC features a TV Encoder like the one in Allwinner A13,
+which can only output TV Composite signal.
 
-On Fri, Jun 30, 2017 at 10:58:26AM -0500, Rob Herring wrote:
-> > TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
-> > disables them as being unused.
+The display pipeline of H3 is also special -- it has two mixers and
+two TCONs, of which the connection can be swapped. The TCONs do not
+have channel 0 (as they are all connected to internal bridges, TVE
+and HDMI TX).
 
-not long ago I thought with a few colleagues about this. The scenario is
-to start a Linux kernel on a Cortex-M companion to a Cortex-A.
+Add support for the display pipeline and the TVE in H3, in order to
+make it possible to display something with mainline kernel with H3.
 
-> > On Mon, Jun 26, 2017 at 1:30 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> >> With commit 72f5df2c2bbb6 ("clk: renesas: cpg-mssr: Migrate to
-> >> CLK_IS_CRITICAL") we are able to handle critical module clocks.
-> >> Introduce the same logic for critical core clocks.
-> >>
-> >> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> >> ---
-> >> Commit
-> >>
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/clk/renesas?id=72f5df2c2bbb66d4a555cb51eb9f412abf1af77f
-> >>
-> >> is quite nice to avoid *module* clocks being disabled. Unfortunately,
-> >> there are *core* clocks, too. E.g. using an other OS on the Cortex R7
-> >> core of the r8a7795, the 'canfd' is a quite popular core clock which
-> >> shouldn't be disabled by Linux.
-> >>
-> >> Therefore, this patch is a proposal to use the same 'mark clocks as
-> >> critical' logic implemented for the module clocks for the core
-> >> clocks, too.
-> >>
-> >> Opinions?
-> >
-> > On r8a7795, there are several Cortex A cores running Linux, and a Cortex R7
-> > core which may run another OS.
-> > This is an interesting issue, and relevant to other SoCs, too.
-> >
-> > In this particular case, the "canfd" clock is a core clock used as an
-> > auxiliary clock for the CAN0, CAN1, and CANFD interfaces.  This can lead
-> > to three scenarios:
-> >   1. Linux controls all CAN interfaces
-> >      => no issue,
-> >   2. The OS on the RT CPU controls all CAN interfaces
-> >      => issue, Linux disables the clock
-> >   3. Mix of 1 and 2
-> >      => More issues.
-> > Of course this is not limited to clocks, but also to e.g. PM domains.
-> >
-> > How can this be handled?
-> > I believe just marking the "canfd" clock critical is not the right solution,
-> > as about any clock could be used by the RT CPU.
-> >
-> > Still, Linux needs to be made aware that devices (clocks and PM domains) are
-> > controlled by another CPU/OS.
-> >
-> > Should this be described in DT? It feels like software policy to me.
-> 
-> No, it shouldn't. It is Linux policy to disable all unused clocks, so
-> Linux gets to deal with the consequences.
+The image quality of TVE is bad, so HDMI is a better output -- this
+patchset also prepared the mixers and TCONs for HDMI output, and
+the HDMI controller driver is already done by Jernej Skrabec.
 
-The ideal solution I imagine is to make the other CPU's OS a consumer of
-the Linux clock driver. This would require a generic device driver on the
-companion CPU that forwards clk requests via inter-cpu communication to
-the Linux clk driver. It could be feed with the necessary information by
-the rproc glue. So when the companion cpu is supposed to care for the
-can0 device, the steps that should happen are:
+So if possible, please apply PATCH 1~5 and 8,9 as soon as possible,
+so that Jernej can submit his HDMI patches.
 
- - make sure can0 isn't occupied by the Linux Host
- - reroute the can irq to the companion cpu (if necessary)
- - create a dtb containing something like this for the companion CPU:
+Currently the jack detection feature of the TVE is still not so
+clear -- so it's not implemented in this version. Thus the TV
+output shouldn't be defaultly enabled now.
 
- 	clks: virtclk {
-		compatible = ???
-		#clock-cells = <1>;
-		...
-	};
+Icenowy Zheng (11):
+  dt-bindings: update the binding for Allwinner H3 TVE support
+  drm: sun4i: add support for H3 mixers
+  drm: sun4i: ignore swapped mixer<->tcon connection for DE2
+  drm: sun4i: add support for H3's TCON0/1
+  drm: sun4i: add compatible for H3 display engine
+  drm: sun4i: add color space correction support for DE2 mixer
+  drm: sun4i: add support for the TV encoder in H3 SoC
+  clk: sunxi-ng: allow CLK_DE to set CLK_PLL_DE for H3
+  clk: sunxi-ng: export CLK_PLL_DE for H3
+  ARM: sun8i: h3: add display engine pipeline for TVE
+  [DO NOT MERGE] ARM: sun8i: h3: enable TV output on Orange Pi PC
 
-	can@$address {
-		compatible = ...
-		regs = ...
-		clocks = <&clks 3>;
-		clock-names = ...
-		...
-	};
-
-   where the driver binding to the virtclk device just forwards clk
-   requests to the Linux host side which then knows that clk 3 is the
-   can clock and does the necessary stuff.
-
-This way the can clock doesn't need special handling in the host's dtb
-and no clock necessary for the companion is disabled as unused because
-it is requested and enabled.
-
-The only problem I see is that implementing such a driver/protocol
-probably is time consuming.
-
-Best regards
-Uwe
+ .../bindings/display/sunxi/sun4i-drm.txt           |  37 +++-
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  12 ++
+ arch/arm/boot/dts/sun8i-h3.dtsi                    | 186 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |  46 +++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 113 ++++++++++---
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   3 +
+ drivers/gpu/drm/sun4i/sun4i_tv.c                   |  35 +++-
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  53 ++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.h                |   6 +-
+ include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
+ 12 files changed, 463 insertions(+), 35 deletions(-)
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.12.2
+
