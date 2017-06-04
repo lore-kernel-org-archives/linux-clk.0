@@ -1,46 +1,47 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/8] clk: vc5: Fix trivial typo
-Date: Thu, 29 Jun 2017 12:18:45 +0200
-Message-Id: <20170629101851.23972-2-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux@armlinux.org.uk,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 2/3] arm: meson: select the clock controller for Meson8
+Date: Sun,  4 Jun 2017 20:33:40 +0200
+Message-Id: <20170604183341.21417-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
+References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Select COMMON_CLK_MESON8B also for MACH_MESON8 since the Meson8b clock
+controller driver can also be used on Meson8 SoCs now that we have a
+separate compatible for it.
 
-Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/clk-versaclock5.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-meson/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 60bf4afb51bd..d835d48cf14d 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -520,7 +520,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
- 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
- 	struct vc5_driver_data *vc5 = hwdata->vc5;
+diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
+index b6e3acc63e14..ee30511849ca 100644
+--- a/arch/arm/mach-meson/Kconfig
++++ b/arch/arm/mach-meson/Kconfig
+@@ -21,6 +21,7 @@ config MACH_MESON8
+ 	bool "Amlogic Meson8 SoCs support"
+ 	default ARCH_MESON
+ 	select MESON6_TIMER
++	select COMMON_CLK_MESON8B
  
--	/* Enable the clock buffer */
-+	/* Disable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
- 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
- }
+ config MACH_MESON8B
+ 	bool "Amlogic Meson8b SoCs support"
 -- 
-2.11.0
+2.13.0
