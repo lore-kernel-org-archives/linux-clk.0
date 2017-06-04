@@ -1,118 +1,163 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1498050903.7387.12.camel@baylibre.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, Kevin Hilman
- <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..."
- <linux-amlogic@lists.infradead.org>, Russell King <linux@armlinux.org.uk>,
- Boris Brezillon <boris.brezillon@free-electrons.com>, Adriana Reus
- <adi.reus@gmail.com>
-Date: Wed, 21 Jun 2017 15:15:03 +0200
-In-Reply-To: <1497961950.7387.7.camel@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
-	 <1497955822.7387.3.camel@baylibre.com>
-	 <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
-	 <1497961950.7387.7.camel@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51597 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751159AbdFDOTv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 4 Jun 2017 10:19:51 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sun, 04 Jun 2017 22:19:46 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [RFC PATCH 03/11] drm: sun4i: ignore swapped mixer<->tcon
+ connection for DE2
+In-Reply-To: <20170524081440.cbtjvvmj5okrri6z@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <20170517164354.16399-4-icenowy@aosc.io>
+ <20170519175753.sygqnwopk7tuv35n@flea.home>
+ <ECF29F56-DF18-4E3C-9C85-B29F89BD4228@aosc.io>
+ <20170524081440.cbtjvvmj5okrri6z@flea.home>
+Message-ID: <e5602515955fd2e90196d48138191f77@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-06-20 at 14:32 +0200, Jerome Brunet wrote:
-> On Tue, 2017-06-20 at 13:54 +0200, Linus Walleij wrote:
-> > On Tue, Jun 20, 2017 at 12:50 PM, Jerome Brunet <jbrunet@baylibre.com>
-> > wrote:
-> > > On Tue, 2017-06-20 at 11:07 +0200, Linus Walleij wrote:
-> > > When the rate is critical to perform a particular task. My example is the
-> > > audio
-> > > and i2s output. You can't tolerate glitches during the playback, the end
-> > > user
-> > > would complain (longer description in the original RFC)
-> > 
-> > I see. Thanks for your detailed explanation!
-> > 
-> > > It also fixes the behavior of CLK_SET_RATE_GATE flag, which is why I put
-> > > you
-> > > in
-> > > CC.
-> > > 
-> > > ux500 uses this flag several time, I'd like make sure people are not
-> > > relying
-> > > on
-> > > its broken implementation.
-> > 
-> > Ux500 audio is broken, but I'm fixing it a little at a time...
+在 2017-05-24 16:14，Maxime Ripard 写道：
+> On Sat, May 20, 2017 at 02:00:22AM +0800, Icenowy Zheng wrote:
+>> 
+>> 
+>> 于 2017年5月20日 GMT+08:00 上午1:57:53, Maxime Ripard 
+>> <maxime.ripard@free-electrons.com> 写到:
+>> >On Thu, May 18, 2017 at 12:43:46AM +0800, Icenowy Zheng wrote:
+>> >> Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
+>> >> tcon0 and mixer1 is connected to tcon1; however by setting a bit
+>> >> the connection can be swapped.
+>> >>
+>> >> As we now hardcode the default connection, ignore the bonus endpoint
+>> >for
+>> >> the mixer's output and the TCON's input, as they stands for the
+>> >swapped
+>> >> connection.
+>> >>
+>> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >> ---
+>> >>  drivers/gpu/drm/sun4i/sun4i_drv.c  | 27 ++++++++++++++++++++++++++
+>> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 39
+>> >+++++++++++++++++++++++++++++---------
+>> >>  drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
+>> >>  3 files changed, 59 insertions(+), 9 deletions(-)
+>> >>
+>> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c
+>> >b/drivers/gpu/drm/sun4i/sun4i_drv.c
+>> >> index 1dd1948025d2..29bf1325ded6 100644
+>> >> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+>> >> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+>> >> @@ -173,6 +173,13 @@ static bool sun4i_drv_node_is_frontend(struct
+>> >device_node *node)
+>> >>  		of_device_is_compatible(node,
+>> >"allwinner,sun8i-a33-display-frontend");
+>> >>  }
+>> >>
+>> >> +static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node
+>> >*node)
+>> >> +{
+>> >> +	/* The V3s has only one mixer-tcon pair, so it's not listed here.
+>> >*/
+>> >> +	return of_device_is_compatible(node,
+>> >"allwinner,sun8i-h3-de2-mixer0") ||
+>> >> +		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
+>> >> +}
+>> >> +
+>> >>  static bool sun4i_drv_node_is_tcon(struct device_node *node)
+>> >>  {
+>> >>  	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+>> >> @@ -249,6 +256,26 @@ static int sun4i_drv_add_endpoints(struct device
+>> >*dev,
+>> >>  			}
+>> >>  		}
+>> >>
+>> >> +		/*
+>> >> +		 * The second endpoint of the output of a swappable DE2 mixer
+>> >> +		 * is the TCON after connection swapping.
+>> >> +		 * Ignore it now, as we now hardcode mixer0->tcon0,
+>> >> +		 * mixer1->tcon1 connection.
+>> >> +		 */
+>> >> +		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
+>> >> +			struct of_endpoint endpoint;
+>> >> +
+>> >> +			if (of_graph_parse_endpoint(ep, &endpoint)) {
+>> >> +				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+>> >> +				continue;
+>> >> +			}
+>> >> +
+>> >> +			if (endpoint.id) {
+>> >> +				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2
+>> >mixer... skipping\n");
+>> >> +				continue;
+>> >> +			}
+>> >> +		}
+>> >> +
+>> >>  		/* Walk down our tree */
+>> >>  		count += sun4i_drv_add_endpoints(dev, match, remote);
+>> >>
+>> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> >b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> >> index f44a37a5993d..89a215ff2370 100644
+>> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> >> @@ -425,7 +425,8 @@ static int sun4i_tcon_init_regmap(struct device
+>> >*dev,
+>> >>   * requested via the get_id function of the engine.
+>> >>   */
+>> >>  static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv
+>> >*drv,
+>> >> -						   struct device_node *node)
+>> >> +						   struct device_node *node,
+>> >> +						   bool skip_bonus_ep)
+>> >>  {
+>> >>  	struct device_node *port, *ep, *remote;
+>> >>  	struct sunxi_engine *engine;
+>> >> @@ -439,6 +440,20 @@ static struct sunxi_engine
+>> >*sun4i_tcon_find_engine(struct sun4i_drv *drv,
+>> >>  		if (!remote)
+>> >>  			continue;
+>> >>
+>> >> +		if (skip_bonus_ep) {
+>> >> +			struct of_endpoint endpoint;
+>> >> +
+>> >> +			if (of_graph_parse_endpoint(ep, &endpoint)) {
+>> >> +				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+>> >> +				continue;
+>> >> +			}
+>> >> +
+>> >> +			if (endpoint.id) {
+>> >> +				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when
+>> >searching engine\n");
+>> >> +				continue;
+>> >> +			}
+>> >> +		}
+>> >> +
+>> >
+>> >You don't list the mixers in the tcon's output, why do you need that
+>> >exactly?
+>> 
+>> Mixers are TCONs' input, not output...
 > 
-> No problem with Ux500 audio, don't worry :)
-> Audio is just one application among others.
-> 
-> The concern regarding ux500 is that the clock controller declares clocks using
-> the CLK_SET_RATE_GATE flag (like qcom, at91 and several other)
-> 
-> here is the definition:
-> #define CLK_SET_RATE_GATE	BIT(0) /* must be gated across rate change */
-> 
-> My interpretation it that, as long as clock is enabled, rate can't change.
-> 
-> The implementation of this flag is currently broken:
-> * If you call set_rate on directly on the clock while it is enabled, you will
-> get -EBUSY, as expected
-> * If you call set_rate on its parent, rate will change, changing the rate of
-> the
-> child clock as well ...
-> 
-> With this patchset applied, calling set_rate on the parent would also return
-> -EBUSY, enforcing the "rate can't change while enabled" property.
-> 
-> To build confidence that this won't be causing regression, I'd like to check
-> that platform using this flag are no relying on the broken behavior.
-> 
-> I've included the clock maintainers of at91, qcom, and ux500 (you) in this
-> thread because they are the heaviest users of this flag, so the more likely to
-> report a problem.
-> 
-> If you could apply this series and just do things as usual, It'd be awesome !
-> 
-> I'll also seek the help of the kci guys, see if it is possible to give the
-> series spin on it.
-> 
+> Then why are they even parsed? The whole parsing logic in the driver
+> only searches for output nodes.
 
-I managed to have a run on kci - based on v4.12-rc6:
-https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-10-ge
-a373ddef830/
+Here it's really parsing the input node, for searching for a connected
+engine.
 
-There was no build regression but kci did find one boot regression on qcom
-platforms:
-* qcom-apq8064-cm-qs600
-* qcom-apq8064-ifc6410
+In the situation of DE1 TCON has only one input endpoint and it must be
+the connected backend.
 
-it seems the problem is coming from the clock used by the mmc driver
-(drivers/mmc/host/mmci.c)
+But in the situation of DE2 it has now two input endpoints, and it's
+now needed to figure out which connection is used.
 
-the driver does following sequence:
-* get_clk
-* prepare_enable
-* get_rate
-* set_rate
-* ...
-
-with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has CLK_SET_RATE_PARENT
-flag so it will transmit the request to its parent.
-The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
-
-This can't work with sequence above. The flag was clearly bypassed before, so I
-think it would be best to remove CLK_SET_RATE_GATE from the SDCx_src clocks
-
-Stephen, would you agree ?
-
-There was an issue with the chip board as well but this particular board has not
-been very reliable in this lab lately. It has failed on several other job.
-
-> > 
-> > Yours,
-> > Linus Walleij
 > 
-> 
+> Maxime
