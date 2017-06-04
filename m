@@ -1,82 +1,114 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 2 Jun 2017 21:42:19 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on
- the MSI Primo81 tablet
-Message-ID: <20170602194219.hiajr7dt2oikm52q@flea.lan>
-References: <20170602101024.18940-1-wens@csie.org>
- <20170602101024.18940-20-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tpb4lttli73lzwcx"
-In-Reply-To: <20170602101024.18940-20-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 06/11] drm: sun4i: add color space correction support for DE2 mixer
+Date: Mon,  5 Jun 2017 00:01:44 +0800
+Message-Id: <20170604160149.30230-7-icenowy@aosc.io>
+In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The DE2 mixer can do color space correction needed by TV Encoder with
+its DCSC sub-engine.
 
---tpb4lttli73lzwcx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add support for it.
 
-On Fri, Jun 02, 2017 at 06:10:24PM +0800, Chen-Yu Tsai wrote:
-> The MSI Primo81 tablet has a micro HDMI connector at the bottom.
-> This is connected to the SoCs HDMI output.
->=20
-> Enable the display pipeline and the HDMI output.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts=
-/sun6i-a31s-primo81.dts
-> index f3712753fa42..26154b2f87a3 100644
-> --- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
-> +++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
-> @@ -52,17 +52,42 @@
->  / {
->  	model =3D "MSI Primo81 tablet";
->  	compatible =3D "msi,primo81", "allwinner,sun6i-a31s";
-> +
-> +	hdmi-connector {
-> +		compatible =3D "hdmi-connector";
-> +		type =3D "c";
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 35 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.h |  6 +++++-
+ 2 files changed, 40 insertions(+), 1 deletion(-)
 
-Should we add a connector type for this one?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---tpb4lttli73lzwcx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZMb+bAAoJEBx+YmzsjxAgecIP/iHqNWdDG3ImuYHcRBlCnO/1
-56ubtyQczLJK0/49C0gjoNv76lkjc6z35zJE+7k0eAfuvbYL2f4ip25ul+0hzcUd
-SYQcDsoid15Zd8M81ohp89w6Bi/PLtGuEVGSvqeQpCuOO5RPvtzDOukt4KaxHZQA
-8Ih6F6zNlsTYNbWoYBYe3Of/v3UZDM07BCaovw5bOhdGrLegplM+DcFdkqAxwFDR
-ozoaUgztE21liiPe1MWQMbMftdYcXS4oW82gtwSRpULyb9NB6ok5PQ8fjdVxVepy
-1nnSZtbL4ESwguzAnZOQic1u/K1t81yvX0j269O2osBI4PhCxywbFvTRmmT5jaaT
-XE47DRsxDr84UeLAeDL1B5L5R1hF0K5aQIRo21JCOkdPkRYmZyYmgdmNA6AMs+VY
-IZDzA99z1ZXbLRv/0B1eINyshBVOgC4Kw9jcdgE+UuUlf3BDhXxUF1ZdbITjO1ul
-nXSfbVpQl6mUJL/Qyrx7/Muy+wY34qJxCF88Jf6w6Gaz3HnHeIpMVNvQ+FXK167M
-VWSIbCmLAziqkNqeXSqrjnE0bfmuoFAyKxfpZK8q1pgRVihLxog0MGDxAgJdn9Pm
-/PA+76FQa9+TXTDfTcctsO2b8/7nOpdIaFh9ippFrFjM549MzHmsP7HbmZwS1qfd
-APC12Z17DTfIo8L5Egv9
-=t+yq
------END PGP SIGNATURE-----
-
---tpb4lttli73lzwcx--
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index d658a3a8159a..65f86641eca3 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -29,6 +29,14 @@
+ #include "sun8i_layer.h"
+ #include "sunxi_engine.h"
+ 
++static const u32 sun8i_rgb2yuv_coef[12] = {
++	0x00000107, 0x00000204, 0x00000064, 0x00004200,
++	0x00001f68, 0x00001ed6, 0x000001c2, 0x00020200,
++	0x000001c2, 0x00001e87, 0x00001fb7, 0x00020200,
++};
++
++static const u32 sun8i_rgb2yuv_dcsc_alpha = 0x00020200;
++
+ static void sun8i_mixer_commit(struct sunxi_engine *engine)
+ {
+ 	DRM_DEBUG_DRIVER("Committing changes\n");
+@@ -37,6 +45,31 @@ static void sun8i_mixer_commit(struct sunxi_engine *engine)
+ 		     SUN8I_MIXER_GLOBAL_DBUFF_ENABLE);
+ }
+ 
++static void sun8i_mixer_apply_color_correction(struct sunxi_engine *engine)
++{
++	int i;
++
++	DRM_DEBUG_DRIVER("Applying RGB to YUV color correction\n");
++
++	/* Set color correction */
++	regmap_write(engine->regs, SUN8I_MIXER_DCSC_EN, 1);
++
++	for (i = 0; i < 12; i++)
++		regmap_write(engine->regs, SUN8I_MIXER_DCSC_COEF_REG(i),
++			     sun8i_rgb2yuv_coef[i]);
++
++	regmap_write(engine->regs, SUN8I_MIXER_DCSC_COEF_ALPHA,
++		     sun8i_rgb2yuv_dcsc_alpha);
++}
++
++static void sun8i_mixer_disable_color_correction(struct sunxi_engine *engine)
++{
++	DRM_DEBUG_DRIVER("Disabling color correction\n");
++
++	/* Disable color correction */
++	regmap_write(engine->regs, SUN8I_MIXER_DCSC_EN, 0);
++}
++
+ void sun8i_mixer_layer_enable(struct sun8i_mixer *mixer,
+ 				int layer, bool enable)
+ {
+@@ -229,6 +262,8 @@ int sun8i_mixer_update_layer_buffer(struct sun8i_mixer *mixer,
+ static const struct sunxi_engine_ops sun8i_engine_ops = {
+ 	.commit		= sun8i_mixer_commit,
+ 	.layers_init	= sun8i_layers_init,
++	.apply_color_correction		= sun8i_mixer_apply_color_correction,
++	.disable_color_correction	= sun8i_mixer_disable_color_correction,
+ };
+ 
+ static struct regmap_config sun8i_mixer_regmap_config = {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+index 4785ac090b8c..d7f7513898b6 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+@@ -88,6 +88,11 @@
+ #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_RGB888	(8 << 8)
+ #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_DEF	(0xff << 24)
+ 
++/* The DCSC sub-engine is used to do color space conversation */
++#define SUN8I_MIXER_DCSC_EN			0xb0000
++#define SUN8I_MIXER_DCSC_COEF_REG(x)		(0xb0010 + 0x4 * x)
++#define SUN8I_MIXER_DCSC_COEF_ALPHA		0xb0040
++
+ /*
+  * These sub-engines are still unknown now, the EN registers are here only to
+  * be used to disable these sub-engines.
+@@ -102,7 +107,6 @@
+ #define SUN8I_MIXER_PEAK_EN			0xa6000
+ #define SUN8I_MIXER_ASE_EN			0xa8000
+ #define SUN8I_MIXER_FCC_EN			0xaa000
+-#define SUN8I_MIXER_DCSC_EN			0xb0000
+ 
+ struct sun8i_mixer_cfg {
+ 	int		vi_num;
+-- 
+2.12.2
