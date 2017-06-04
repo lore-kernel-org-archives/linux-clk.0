@@ -1,140 +1,129 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v8 7/9] clk: Loongson: A descriptive spinlock name for Loongson1's clk driver
-Date: Tue, 20 Jun 2017 16:57:05 +0800
-Message-Id: <1497949027-10988-8-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
-References: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux@armlinux.org.uk,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/3] clk: meson: meson8b: add compatibles for Meson8 and Meson8m2
+Date: Sun,  4 Jun 2017 20:33:39 +0200
+Message-Id: <20170604183341.21417-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
+References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The spinlock name in clk-loongson1*.c is "_lock", that's not a very good
-name for something that may show up in lockdep debugging error messages.
+The clock controller on Meson8, Meson8b and Meson8m2 is very similar
+based on the code from the Amlogic GPL kernel sources. Add separate
+compatibles for each SoC to make sure that we can easily implement
+all the small differences for each SoC later on.
 
-Give it a bit more descriptive name--ls1x_clk_lock.
+In general the Meson8 and Meson8m2 seem to be almost identical as they
+even share the same mach-meson8 directory in Amlogic's GPL kernel
+sources.
+The main clocks on Meson8, Meson8b and Meson8m2 are very similar,
+because they are all using the same PLL values, 90% of the clock gates
+are the same (the actual diffstat of the mach-meson8/clock.c and
+mach-meson8b/clock.c files is around 30 to 40 lines, when excluding
+all commented out code).
+The difference between the Meson8 and Meson8b clock gates seem to be:
+- Meson8 has AIU_PCLK, HDMI_RX, VCLK2_ENCT, VCLK2_ENCL, UART3,
+  CSI_DIG_CLKIN gates which don't seem to be available on Meson8b
+- the gate on Meson8 for bit 7 seems to be named "_1200XXX" instead
+  of "PERIPHS_TOP" (on Meson8b)
+- Meson8b has a SANA gate which doesn't seem to exist on Meson8 (or
+  on Meson8 the same bit is used by the UART3 gate in Amlogic's GPL
+  kernel sources)
+None of these gates is added for now, since it's unclear whether these
+definitions are actually correct (the VCLK2_ENCT gate for example is
+defined, but only used in some commented block).
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
+The main difference between all three SoCs seem to be the video (VPU)
+clocks. Apart from different supported clock rates (according to vpu.c
+in mach-meson8 and mach-meson8b from Amlogic's GPL kernel sources) the
+most notable difference is that Meson8m2 has a GP_PLL clock and a mux
+(probably the same as on the Meson GX SoCs) to support glitch-free
+(clock rate) switching.
+None of these VPU clocks are not supported by our mainline meson8b
+clock driver yet though.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/loongson1/clk-loongson1b.c | 14 +++++++-------
- drivers/clk/loongson1/clk-loongson1c.c |  8 ++++----
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ .../devicetree/bindings/clock/amlogic,meson8b-clkc.txt        | 11 +++++++----
+ drivers/clk/meson/Kconfig                                     |  6 +++---
+ drivers/clk/meson/meson8b.c                                   |  5 ++++-
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/loongson1/clk-loongson1b.c b/drivers/clk/loongson1/clk-loongson1b.c
-index f36a97e..8d5be12 100644
---- a/drivers/clk/loongson1/clk-loongson1b.c
-+++ b/drivers/clk/loongson1/clk-loongson1b.c
-@@ -18,7 +18,7 @@
- #define OSC		(33 * 1000000)
- #define DIV_APB		2
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+index 2b7b3fa588d7..606da38c0959 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+@@ -1,11 +1,14 @@
+-* Amlogic Meson8b Clock and Reset Unit
++* Amlogic Meson8, Meson8b and Meson8m2 Clock and Reset Unit
  
--static DEFINE_SPINLOCK(_lock);
-+static DEFINE_SPINLOCK(ls1x_clk_lock);
+-The Amlogic Meson8b clock controller generates and supplies clock to various
+-controllers within the SoC.
++The Amlogic Meson8 / Meson8b / Meson8m2 clock controller generates and
++supplies clock to various controllers within the SoC.
  
- static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
- 					  unsigned long parent_rate)
-@@ -64,12 +64,12 @@ void __init ls1x_clk_init(void)
- 				   CLK_GET_RATE_NOCACHE, LS1X_CLK_PLL_DIV,
- 				   DIV_CPU_SHIFT, DIV_CPU_WIDTH,
- 				   CLK_DIVIDER_ONE_BASED |
--				   CLK_DIVIDER_ROUND_CLOSEST, &_lock);
-+				   CLK_DIVIDER_ROUND_CLOSEST, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "cpu_clk_div", NULL);
- 	hw = clk_hw_register_mux(NULL, "cpu_clk", cpu_parents,
- 			       ARRAY_SIZE(cpu_parents),
- 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
--			       BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0, &_lock);
-+			       BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "cpu_clk", NULL);
+ Required Properties:
  
- 	/*                                 _____
-@@ -80,12 +80,12 @@ void __init ls1x_clk_init(void)
- 	 */
- 	hw = clk_hw_register_divider(NULL, "dc_clk_div", "pll_clk",
- 				   0, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
--				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
-+				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "dc_clk_div", NULL);
- 	hw = clk_hw_register_mux(NULL, "dc_clk", dc_parents,
- 			       ARRAY_SIZE(dc_parents),
- 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
--			       BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0, &_lock);
-+			       BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "dc_clk", NULL);
+-- compatible: should be "amlogic,meson8b-clkc"
++- compatible: must be one of:
++	- "amlogic,meson8-clkc" for Meson8 (S802) SoCs
++	- "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
++	- "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
+ - reg: it must be composed by two tuples:
+ 	0) physical base address of the xtal register and length of memory
+ 	   mapped region.
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 19480bcc7046..4a806203b73c 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -7,9 +7,9 @@ config COMMON_CLK_MESON8B
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+ 	help
+-	  Support for the clock controller on AmLogic S805 devices, aka
+-	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
+-	  work.
++	  Support for the clock controller on AmLogic S802 (Meson8),
++	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
++	  want peripherals and CPU frequency scaling to work.
  
- 	/*                                 _____
-@@ -97,12 +97,12 @@ void __init ls1x_clk_init(void)
- 	hw = clk_hw_register_divider(NULL, "ahb_clk_div", "pll_clk",
- 				   0, LS1X_CLK_PLL_DIV, DIV_DDR_SHIFT,
- 				   DIV_DDR_WIDTH, CLK_DIVIDER_ONE_BASED,
--				   &_lock);
-+				   &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "ahb_clk_div", NULL);
- 	hw = clk_hw_register_mux(NULL, "ahb_clk", ahb_parents,
- 			       ARRAY_SIZE(ahb_parents),
- 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
--			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &_lock);
-+			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "ahb_clk", NULL);
- 	clk_hw_register_clkdev(hw, "ls1x-dma", NULL);
- 	clk_hw_register_clkdev(hw, "stmmaceth", NULL);
-diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
-index 3466f73..7635848 100644
---- a/drivers/clk/loongson1/clk-loongson1c.c
-+++ b/drivers/clk/loongson1/clk-loongson1c.c
-@@ -16,7 +16,7 @@
- #define OSC		(24 * 1000000)
- #define DIV_APB		1
+ config COMMON_CLK_GXBB
+ 	bool
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index bfd1690724de..94c55e79cdde 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -1,5 +1,6 @@
+ /*
+- * AmLogic S805 / Meson8b Clock Controller Driver
++ * AmLogic S802 (Meson8) / S805 (Meson8b) / S812 (Meson8m2) Clock Controller
++ * Driver
+  *
+  * Copyright (c) 2015 Endless Mobile, Inc.
+  * Author: Carlo Caione <carlo@endlessm.com>
+@@ -777,7 +778,9 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ }
  
--static DEFINE_SPINLOCK(_lock);
-+static DEFINE_SPINLOCK(ls1x_clk_lock);
+ static const struct of_device_id meson8b_clkc_match_table[] = {
++	{ .compatible = "amlogic,meson8-clkc" },
+ 	{ .compatible = "amlogic,meson8b-clkc" },
++	{ .compatible = "amlogic,meson8m2-clkc" },
+ 	{ }
+ };
  
- static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
- 					  unsigned long parent_rate)
-@@ -58,7 +58,7 @@ void __init ls1x_clk_init(void)
- 				   CLK_GET_RATE_NOCACHE, LS1X_CLK_PLL_DIV,
- 				   DIV_CPU_SHIFT, DIV_CPU_WIDTH,
- 				   CLK_DIVIDER_ONE_BASED |
--				   CLK_DIVIDER_ROUND_CLOSEST, &_lock);
-+				   CLK_DIVIDER_ROUND_CLOSEST, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "cpu_clk_div", NULL);
- 	hw = clk_hw_register_fixed_factor(NULL, "cpu_clk", "cpu_clk_div",
- 					0, 1, 1);
-@@ -66,7 +66,7 @@ void __init ls1x_clk_init(void)
- 
- 	hw = clk_hw_register_divider(NULL, "dc_clk_div", "pll_clk",
- 				   0, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
--				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
-+				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "dc_clk_div", NULL);
- 	hw = clk_hw_register_fixed_factor(NULL, "dc_clk", "dc_clk_div",
- 					0, 1, 1);
-@@ -75,7 +75,7 @@ void __init ls1x_clk_init(void)
- 	hw = clk_hw_register_divider_table(NULL, "ahb_clk_div", "cpu_clk_div",
- 				0, LS1X_CLK_PLL_FREQ, DIV_DDR_SHIFT,
- 				DIV_DDR_WIDTH, CLK_DIVIDER_ALLOW_ZERO,
--				ahb_div_table, &_lock);
-+				ahb_div_table, &ls1x_clk_lock);
- 	clk_hw_register_clkdev(hw, "ahb_clk_div", NULL);
- 	hw = clk_hw_register_fixed_factor(NULL, "ahb_clk", "ahb_clk_div",
- 					0, 1, 1);
 -- 
-2.9.4
+2.13.0
