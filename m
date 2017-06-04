@@ -1,132 +1,81 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 01/10] clk: take the prepare lock out of clk_core_set_parent
-Date: Mon, 12 Jun 2017 21:44:29 +0200
-Message-Id: <20170612194438.12298-2-jbrunet@baylibre.com>
-In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
+Subject: [PATCH v2 02/11] drm: sun4i: add support for H3 mixers
+Date: Mon,  5 Jun 2017 00:01:40 +0800
+Message-Id: <20170604160149.30230-3-icenowy@aosc.io>
+In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework set_parent core function so it can be called when the prepare lock
-is already held by the caller.
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-This rework is done to ease the integration of the "protected" clock
-functionality.
+Allwinner H3 SoC has two mixers, one has 1 VI channel and 3 UI channels,
+and the other has 1 VI and 1 UI.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Add support for these two variants.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/clk.c | 39 ++++++++++++++++++---------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fc58c52a26b4..f5c371532509 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1787,7 +1787,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_has_parent);
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index cb193c5f1686..d658a3a8159a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -390,11 +390,29 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.ui_num = 1,
+ };
  
--static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
-+static int clk_core_set_parent_nolock(struct clk_core *core,
-+				      struct clk_core *parent)
- {
- 	int ret = 0;
- 	int p_index = 0;
-@@ -1796,23 +1797,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 	if (!core)
- 		return 0;
- 
--	/* prevent racing with updates to the clock topology */
--	clk_prepare_lock();
--
- 	if (core->parent == parent)
--		goto out;
-+		return 0;
- 
- 	/* verify ops for for multi-parent clks */
--	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
--		ret = -ENOSYS;
--		goto out;
--	}
-+	if ((core->num_parents > 1) && (!core->ops->set_parent))
-+		return -ENOSYS;
- 
- 	/* check that we are allowed to re-parent if the clock is in use */
--	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
--		ret = -EBUSY;
--		goto out;
--	}
-+	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
-+		return -EBUSY;
- 
- 	/* try finding the new parent index */
- 	if (parent) {
-@@ -1820,8 +1814,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		if (p_index < 0) {
- 			pr_debug("%s: clk %s can not be parent of clk %s\n",
- 					__func__, parent->name, core->name);
--			ret = p_index;
--			goto out;
-+			return p_index;
- 		}
- 		p_rate = parent->rate;
- 	}
-@@ -1831,7 +1824,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto out;
-+		return ret;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -1844,9 +1837,6 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		__clk_recalc_accuracies(core);
- 	}
- 
--out:
--	clk_prepare_unlock();
--
- 	return ret;
- }
- 
-@@ -1869,10 +1859,17 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
-  */
- int clk_set_parent(struct clk *clk, struct clk *parent)
- {
-+	int ret;
++static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
++	.vi_num = 1,
++	.ui_num = 3,
++};
 +
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
-+	clk_prepare_lock();
-+	ret = clk_core_set_parent_nolock(clk->core,
-+					 parent ? parent->core : NULL);
-+	clk_prepare_unlock();
++static const struct sun8i_mixer_cfg sun8i_h3_mixer1_cfg = {
++	.vi_num = 1,
++	.ui_num = 1,
++};
 +
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
- 
-@@ -2753,7 +2750,7 @@ void clk_unregister(struct clk *clk)
- 		/* Reparent all children to the orphan list. */
- 		hlist_for_each_entry_safe(child, t, &clk->core->children,
- 					  child_node)
--			clk_core_set_parent(child, NULL);
-+			clk_core_set_parent_nolock(child, NULL);
- 	}
- 
- 	hlist_del_init(&clk->core->child_node);
+ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun8i-h3-de2-mixer0",
++		.data = &sun8i_h3_mixer0_cfg
++	},
++	{
++		.compatible = "allwinner,sun8i-h3-de2-mixer1",
++		.data = &sun8i_h3_mixer1_cfg
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
 -- 
-2.9.4
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
