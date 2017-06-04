@@ -1,187 +1,137 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: Clocks used by another OS/CPU
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J.
- Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@baylibre.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
- <b2328038-64ac-f7e0-d8a9-434f2f0b0300@de.bosch.com>
- <CAMuHMdVD3i0YhGCf-HSS+y+4SHvXi9sW3V4-ScQX=7R+DX=kEQ@mail.gmail.com>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <b42a6818-4bc1-6556-5adf-c74a205b745b@de.bosch.com>
-Date: Thu, 29 Jun 2017 15:18:11 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51940 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751159AbdFDO3b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 4 Jun 2017 10:29:31 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVD3i0YhGCf-HSS+y+4SHvXi9sW3V4-ScQX=7R+DX=kEQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sun, 04 Jun 2017 22:29:29 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: devicetree <devicetree@vger.kernel.org>,
+        =?UTF-8?Q?Jernej_=C5=A0krabe?= =?UTF-8?Q?c?=
+        <jernej.skrabec@siol.net>, linux-sunxi@googlegroups.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, wens@csie.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [linux-sunxi] Re: [RFC PATCH 07/11] drm: sun4i: add support for
+ the TV encoder in H3 SoC
+In-Reply-To: <20170524073019.bl6rojc2srrigalp@flea.home>
+References: <20170517164354.16399-1-icenowy@aosc.io>
+ <1958057.WDKm0nQKgW@jernej-laptop>
+ <CAGb2v66aD=G+V75N-_nYo=dGqhxpKhadM84h9G-B34=dnDwCbg@mail.gmail.com>
+ <3164416.5xR36OcyjH@jernej-laptop>
+ <20170523125321.t7y7yfrrfokpkzgd@flea.home>
+ <98c3572beee0a81755994b4bdc508b18@aosc.io>
+ <20170524073019.bl6rojc2srrigalp@flea.home>
+Message-ID: <861ead704cc7d1bc0983d0f01138f190@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29.06.2017 13:18, Geert Uytterhoeven wrote:
-> Hi Dirk,
+在 2017-05-24 15:30，Maxime Ripard 写道：
+> On Tue, May 23, 2017 at 09:00:59PM +0800, icenowy@aosc.io wrote:
+>> 在 2017-05-23 20:53，Maxime Ripard 写道：
+>> > On Mon, May 22, 2017 at 07:55:56PM +0200, Jernej Škrabec wrote:
+>> > > Hi,
+>> > >
+>> > > Dne sobota, 20. maj 2017 ob 03:37:53 CEST je Chen-Yu Tsai napisal(a):
+>> > > > On Sat, May 20, 2017 at 2:23 AM, Jernej Škrabec <jernej.skrabec@siol.net>
+>> > > wrote:
+>> > > > > Hi,
+>> > > > >
+>> > > > > Dne petek, 19. maj 2017 ob 20:08:18 CEST je Icenowy Zheng napisal(a):
+>> > > > >> 于 2017年5月20日 GMT+08:00 上午2:03:30, Maxime Ripard <maxime.ripard@free-
+>> > > > >
+>> > > > > electrons.com> 写到:
+>> > > > >> >On Thu, May 18, 2017 at 12:43:50AM +0800, Icenowy Zheng wrote:
+>> > > > >> >> Allwinner H3 features a TV encoder similar to the one in earlier
+>> > > > >> >
+>> > > > >> >SoCs,
+>> > > > >> >
+>> > > > >> >> but with some different points about clocks:
+>> > > > >> >> - It has a mod clock and a bus clock.
+>> > > > >> >> - The mod clock must be at a fixed rate to generate signal.
+>> > > > >> >
+>> > > > >> >Why?
+>> > > > >>
+>> > > > >> It's experiment result by Jernej.
+>> > > > >>
+>> > > > >> The clock rates in BSP kernel is also specially designed
+>> > > > >> (PLL_DE at 432MHz) in order to be able to feed the TVE.
+>> > > > >
+>> > > > > My experiments and search through BSP code showed that TVE seems to have
+>> > > > > additional fixed predivider 8. So if you want to generate 27 MHz clock,
+>> > > > > unit has to be feed with 216 MHz.
+>> > > > >
+>> > > > > TVE has only one PLL source PLL_DE. And since 216 MHz is a bit low for
+>> > > > > DE2,
+>> > > > > BSP defaults to 432 MHz for PLL_DE and use divider 2 to generate 216 MHz.
+>> > > > > This clock is then divided by 8 internaly to get final 27 MHz.
+>> > > > >
+>> > > > > Please note that I don't have any hard evidence to support that, only
+>> > > > > experimental data. However, only that explanation make sense to me.
+>> > > > >
+>> > > > > BTW, BSP H3/H5 TV driver supports only PAL and NTSC which both use 27 MHz
+>> > > > > base clock. Further experiments are needed to check if there is any
+>> > > > > possibility to have other resolutions by manipulating clocks and give
+>> > > > > other proper settings. I plan to do that, but not in very near future.
+>> > > >
+>> > > > You only have composite video output, and those are the only 2 standard
+>> > > > resolutions that make any sense.
+>> > >
+>> > > Right, other resolutions are for VGA.
+>> > >
+>> > > Anyway, I did some more digging in A10 and R40 datasheets. I think
+>> > > that H3 TVE
+>> > > unit is something in between. R40 TVE has a setting to select "up
+>> > > sample".
+>> >
+>> > That might be just another translation of oversampling :)
+>> >
+>> > I didn't know it could be applied to composite signals though, but I
+>> > guess this is just another analog signal after all.
+>> >
+>> > > Possible settings are 27 MHz, 54 MHz, 108 MHz and 216 MHz. BSP
+>> > > driver on R40
+>> > > has this setting enabled only for PAL and NTSC and it is always 216
+>> > > MHz. I
+>> > > think that H3 may have this hardwired to 216 MHz and this would be
+>> > > the reason
+>> > > why 216 MHz is needed.
+>> > >
+>> > > Has anyone else any better explanation?
+>> >
+>> > That's already a pretty good one.
+>> >
+>> > Either way, wether this is upsampling, oversampling or just a
+>> > pre-divider, this can and should be dealt with in the mode_set
+>> > callback, and not in the probe.
+>> 
+>> I got a better idea -- let TVE driver have the CLK_TVE as an
+>> input and create a subclock output with divider 16, and feed this
+>> subclock to TCON lcd-ch1.
+>> 
+>> This is a model of the real hardware -- the clock divider is in
+>> TVE, not TCON.
 > 
-> On Thu, Jun 29, 2017 at 12:28 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
->> On 29.06.2017 11:27, Geert Uytterhoeven wrote:
->>> CC clock, ARM, DT, PM people
->>>
->>> TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
->>> disables them as being unused.
->>>
->>> On Mon, Jun 26, 2017 at 1:30 PM, Dirk Behme <dirk.behme@de.bosch.com>
->>> wrote:
->>>> With commit 72f5df2c2bbb6 ("clk: renesas: cpg-mssr: Migrate to
->>>> CLK_IS_CRITICAL") we are able to handle critical module clocks.
->>>> Introduce the same logic for critical core clocks.
->>>>
->>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
->>>> ---
->>>> Commit
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/clk/renesas?id=72f5df2c2bbb66d4a555cb51eb9f412abf1af77f
->>>>
->>>> is quite nice to avoid *module* clocks being disabled. Unfortunately,
->>>> there are *core* clocks, too. E.g. using an other OS on the Cortex R7
->>>> core of the r8a7795, the 'canfd' is a quite popular core clock which
->>>> shouldn't be disabled by Linux.
->>>>
->>>> Therefore, this patch is a proposal to use the same 'mark clocks as
->>>> critical' logic implemented for the module clocks for the core
->>>> clocks, too.
->>>>
->>>> Opinions?
->>>
->>> On r8a7795, there are several Cortex A cores running Linux, and a Cortex
->>> R7
->>> core which may run another OS.
->>> This is an interesting issue, and relevant to other SoCs, too.
->>>
->>> In this particular case, the "canfd" clock is a core clock used as an
->>> auxiliary clock for the CAN0, CAN1, and CANFD interfaces.  This can lead
->>> to three scenarios:
->>>     1. Linux controls all CAN interfaces
->>>        => no issue,
->>>     2. The OS on the RT CPU controls all CAN interfaces
->>>        => issue, Linux disables the clock
->>>     3. Mix of 1 and 2
->>>        => More issues.
->>> Of course this is not limited to clocks, but also to e.g. PM domains.
->>>
->>> How can this be handled?
->>> I believe just marking the "canfd" clock critical is not the right
->>> solution,
->>> as about any clock could be used by the RT CPU.
->>>
->>> Still, Linux needs to be made aware that devices (clocks and PM domains)
->>> are
->>> controlled by another CPU/OS.
->>>
->>> Should this be described in DT? It feels like software policy to me.
->>>
->>> Note that we (mainline) currently don't describe the Cortex R7 core in DT.
->>> Dirk: do you describe it?
->>
->> No, we don't describe anything R7 related in DT, too.
->>
->>> Summary:
->>>     1. Core/module clocks are described in the clock driver (not in DT),
->>>     2. Unused clocks are disabled by CCF,
->>>     3. Clocks may be in use by the Real-Time CPU core, running another OS,
->>>     4. How to communicate to Linux which clocks are under control of the RT
->>> CPU?
->>
->>> Thanks for your comments!
->>
->> While I appreciated that the overall issue is discussed, I'm not sure if
->> there is anything really special we don't support generally, yet.
->>
->> We have an infrastructure to mark clocks enabled anywhere else to be not
->> disabled by Linux kernel (CLK_IS_CRITICAL). From my point of view, for this
->> infrastructure, it doesn't matter, where this 'anywhere else' is. To take
->> some concrete Renesas RCar3 examples, from my point of view it doesn't
->> matter if its a GIC-400 clock enabled in the boot loader (U-Boot) or a CAN
->> clock enabled by the R7. In both cases marking them as critical on Linux
->> side does the trick.
+> That's definitely not a good representation of the hardware. There's
+> one clock, it goes to the TCON, period.
 > 
-> Yes, it does the trick. But is it the proper solution?
-> 
->> The issue I just want to address (discuss) with this RFC patch is that for
->> Renesas RCar3 we have CLK_IS_CRITICAL support for module clocks, but not for
->> core clocks. From my point of view, this is a completely Renesas
->> implementation specific discussion.
-> 
-> Correct. How the Renesas CPG/MSSR driver decides which clocks are marked
-> critical is a Renesas-specific implementation issue.
-> And indeed, currently the driver only handles critical module clocks
-> (more specifically, the GIC module clock, due to the lack of runtime PM
-> support in the GIC driver).
-> It does not handle critical core clocks, as so far no use case required
-> such support.
-> 
->> So I would rephrase the initial sentence above
->>
->> "Clocks may be in use by another CPU not running Linux, while Linux disables
->> them as being unused."
->>
->> to anything like
->>
->> "Clocks may be enabled (used) by others (U-Boot/CPUs/Hypervisors), while
->> Linux disables them as being unused"
-> 
-> If a clock is used by Linux, Linux must make sure it is enabled when
-> needed.
-> If a clock is needed to run Linux, without driver support, Linux must still
-> make sure it is enabled. This is were critical clocks enter the game.
-> The above includes CPU clocks.
-> 
-> If a clock is used by U-Boot, U-Boot must make sure it is enabled when
-> needed.  Once U-Boot has transferred control to Linux, this no longer
-> matters.
-> 
-> if a clock is used by a HV, the HV must make sure it is enabled when
-> needed. I believe this is handled in secure mode? R-Car Gen3 SoCs already
-> have several module clocks that cannot be disabled (i.e. MSTPSRx != OR of
-> all yMSTPCRx).
-> 
-> If a clock is used by the RT CPU, the RT CPU must make sure it is enabled
-> when needed.
-> There are several options to do that:
->    - Secure mode,
->    - Communicating the clock requirements to Linux, either statically or
->      dynamically,
->    - DT? (but this is software policy?)
->    - ???
-> 
->> And I think this is completely addressed by CLK_IS_CRITICAL, as far as I can
->> see :)
-> 
-> While this is a solution that works (for your use case), IMHO it's not the
-> right thing to do.
-> However, if we decide to go this route, which other clocks should be marked
-> critical? Almost (all?) peripherals can be used by the RT CPU. Hence all
-> clocks should be enabled and marked critical, unconditionally?
+> However, the TV encoder has a constraint on that clock rate. This can
+> be easily implemented using a custom encoder state where you'd set the
+> multiplier to set on that clock, and the TCON will use it.
 
+P.S. how to do such a custom state?
 
-First of all, just the clocks we know (*) are used by the R7 side *and* 
-are disabled by the kernel (for a practical demo this are e.g. ~7 clocks).
+Should I do the multiplying in sun4i_tv_mode_to_drm_mode?
 
-(*) Yes, this is board (and R7 software) related. And yes, this might 
-result in board specific r8a7795_crit_mod_clks/r8a7795_crit_core_clks[] 
-tables. So yes, most probably device tree would be an option. While there is
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c#n3402
-
-unfortunately
-
-a) its marked as "Do not use this function"
-
-and
-
-b) even if we would ignore (a) we couldn't figure how to use this for 
-the RCar3 clocks (being no clock expert)
-
-Best regards
-
-Dirk
+> 
+> Maxime
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
