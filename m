@@ -1,316 +1,231 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: [PATCH v7 3/4] arm64: dts: Add ipq8074 SoC and HK01 board support
-Date: Thu, 29 Jun 2017 11:48:33 +0530
-Message-Id: <1498717114-338-4-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1498717114-338-1-git-send-email-varada@codeaurora.org>
-References: <1498717114-338-1-git-send-email-varada@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
+Subject: [PATCH v2 03/11] drm: sun4i: ignore swapped mixer<->tcon connection
+ for DE2
+Date: Mon,  5 Jun 2017 00:01:41 +0800
+Message-Id: <20170604160149.30230-4-icenowy@aosc.io>
+In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add initial device tree support for the Qualcomm IPQ8074 SoC and
-HK01 evaluation board.
+Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
+tcon0 and mixer1 is connected to tcon1; however by setting a bit
+the connection can be swapped.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+As we now hardcode the default connection, ignore the bonus endpoint for
+the mixer's output and the TCON's input, as they stands for the swapped
+connection.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm64/boot/dts/qcom/Makefile         |   1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  52 ++++++++
- arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 194 ++++++++++++++++++++++++++++++
- 3 files changed, 247 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+Changes in v2:
+- Change to use new endpoint reg definition.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index cc0f02d..ff81d7e 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -1,5 +1,6 @@
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-new file mode 100644
-index 0000000..6a838b5
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-@@ -0,0 +1,52 @@
-+/dts-v1/;
-+/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#include "ipq8074.dtsi"
+ drivers/gpu/drm/sun4i/sun4i_drv.c  | 45 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
+ 3 files changed, 99 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index f19100c91c2b..775eee82d8a9 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -178,6 +178,13 @@ static bool sun4i_drv_node_is_frontend(struct device_node *node)
+ 		of_device_is_compatible(node, "allwinner,sun8i-a33-display-frontend");
+ }
+ 
++static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node *node)
++{
++	/* The V3s has only one mixer-tcon pair, so it's not listed here. */
++	return of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer0") ||
++		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
++}
 +
-+/ {
-+	#address-cells = <0x2>;
-+	#size-cells = <0x2>;
-+	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
-+	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
-+	interrupt-parent = <&intc>;
+ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ {
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+@@ -261,6 +268,44 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 			}
+ 		}
+ 
++		/*
++		 * The second endpoint of the output of a swappable DE2 mixer
++		 * is the TCON after connection swapping.
++		 * Ignore it now, as we now hardcode mixer0->tcon0,
++		 * mixer1->tcon1 connection.
++		 */
++		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
++			struct device_node *remote_ep_node;
++			struct of_endpoint local_endpoint, remote_endpoint;
 +
-+	aliases {
-+		serial0 = &blsp1_uart5;
-+	};
++			remote_ep_node = of_graph_get_remote_endpoint(ep);
++			if (!remote_ep_node) {
++				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
++				continue;
++			}
 +
-+	chosen {
-+		stdout-path = "serial0";
-+	};
++			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
++				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
++				of_node_put(remote_ep_node);
++				continue;
++			}
 +
-+	memory {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x0 0x20000000>;
-+	};
++			if (of_graph_parse_endpoint(remote_ep_node,
++						    &remote_endpoint)) {
++				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
++				of_node_put(remote_ep_node);
++				continue;
++			}
 +
-+	soc {
-+		pinctrl@1000000 {
-+			serial_4_pins: serial4_pinmux {
-+				mux {
-+					pins = "gpio23", "gpio24";
-+					function = "blsp4_uart1";
-+					bias-disable;
-+				};
-+			};
-+		};
++			if (local_endpoint.id != remote_endpoint.id) {
++				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2 mixer... skipping\n");
++				of_node_put(remote_ep_node);
++				continue;
++			}
 +
-+		serial@78b3000 {
-+			pinctrl-0 = <&serial_4_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-new file mode 100644
-index 0000000..2bc5dec
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -0,0 +1,194 @@
-+/*
-+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++			of_node_put(remote_ep_node);
++		}
 +
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
+ 		/* Walk down our tree */
+ 		count += sun4i_drv_add_endpoints(dev, match, remote);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index d9791292553e..568cea0e5f8f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -464,7 +464,8 @@ static int sun4i_tcon_init_regmap(struct device *dev,
+  * requested via the get_id function of the engine.
+  */
+ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+-						   struct device_node *node)
++						   struct device_node *node,
++						   bool skip_bonus_ep)
+ {
+ 	struct device_node *port, *ep, *remote;
+ 	struct sunxi_engine *engine;
+@@ -478,6 +479,42 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+ 		if (!remote)
+ 			continue;
+ 
++		if (skip_bonus_ep) {
++			struct device_node *remote_ep_node;
++			struct of_endpoint local_endpoint, remote_endpoint;
 +
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ8074";
-+	compatible = "qcom,ipq8074";
++			remote_ep_node = of_graph_get_remote_endpoint(ep);
++			if (!remote_ep_node) {
++				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
++				of_node_put(remote);
++				continue;
++			}
 +
-+	soc: soc {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+		ranges = <0 0 0 0xffffffff>;
-+		compatible = "simple-bus";
++			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
++				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
++				of_node_put(remote);
++				of_node_put(remote_ep_node);
++				continue;
++			}
 +
-+		pinctrl@1000000 {
-+			compatible = "qcom,ipq8074-pinctrl";
-+			reg = <0x1000000 0x300000>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <0x2>;
-+			interrupt-controller;
-+			#interrupt-cells = <0x2>;
-+		};
++			if (of_graph_parse_endpoint(remote_ep_node,
++						    &remote_endpoint)) {
++				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
++				of_node_put(remote);
++				of_node_put(remote_ep_node);
++				continue;
++			}
 +
-+		intc: interrupt-controller@b000000 {
-+			compatible = "qcom,msm-qgic2";
-+			interrupt-controller;
-+			#interrupt-cells = <0x3>;
-+			reg = <0xb000000 0x1000>, <0xb002000 0x1000>;
-+		};
++			if (local_endpoint.id != remote_endpoint.id) {
++				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when searching engine\n");
++				of_node_put(remote);
++				of_node_put(remote_ep_node);
++				continue;
++			}
 +
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		};
++			of_node_put(remote_ep_node);
++		}
 +
-+		timer@b120000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0xb120000 0x1000>;
-+			clock-frequency = <19200000>;
+ 		/* does this node match any registered engines? */
+ 		list_for_each_entry(engine, &drv->engine_list, list) {
+ 			if (remote == engine->node) {
+@@ -488,7 +525,7 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+ 		}
+ 
+ 		/* keep looking through upstream ports */
+-		engine = sun4i_tcon_find_engine(drv, remote);
++		engine = sun4i_tcon_find_engine(drv, remote, skip_bonus_ep);
+ 		if (!IS_ERR(engine)) {
+ 			of_node_put(remote);
+ 			of_node_put(port);
+@@ -508,21 +545,27 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon;
+ 	int ret;
+ 
+-	engine = sun4i_tcon_find_engine(drv, dev->of_node);
+-	if (IS_ERR(engine)) {
+-		dev_err(dev, "Couldn't find matching engine\n");
+-		return -EPROBE_DEFER;
+-	}
+-
+ 	tcon = devm_kzalloc(dev, sizeof(*tcon), GFP_KERNEL);
+ 	if (!tcon)
+ 		return -ENOMEM;
+ 	dev_set_drvdata(dev, tcon);
+ 	tcon->drm = drm;
+ 	tcon->dev = dev;
+-	tcon->id = engine->id;
+ 	tcon->quirks = of_device_get_match_data(dev);
+ 
++	/*
++	 * As we keep the connection between DE2 mixer and TCON not swapped,
++	 * skip the bonus endpoints (which stand for swapped connection)
++	 * when finding the correspoing engine.
++	 */
++	engine = sun4i_tcon_find_engine(drv, dev->of_node,
++					tcon->quirks->swappable_input);
++	if (IS_ERR(engine)) {
++		dev_err(dev, "Couldn't find matching engine\n");
++		return -EPROBE_DEFER;
++	}
++	tcon->id = engine->id;
 +
-+			frame@b120000 {
-+				frame-number = <0>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb121000 0x1000>,
-+				      <0xb122000 0x1000>;
-+			};
-+
-+			frame@b123000 {
-+				frame-number = <1>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb123000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b124000 {
-+				frame-number = <2>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb124000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b125000 {
-+				frame-number = <3>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb125000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b126000 {
-+				frame-number = <4>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb126000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b127000 {
-+				frame-number = <5>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb127000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b128000 {
-+				frame-number = <6>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb128000 0x1000>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		gcc: gcc@1800000 {
-+			compatible = "qcom,gcc-ipq8074";
-+			reg = <0x1800000 0x80000>;
-+			#clock-cells = <0x1>;
-+			#reset-cells = <0x1>;
-+		};
-+
-+		blsp1_uart5: serial@78b3000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78b3000 0x200>;
-+			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0>;
-+			next-level-cache = <&L2_0>;
-+			enable-method = "psci";
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x1>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x2>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x3>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		L2_0: l2-cache {
-+			compatible = "cache";
-+			cache-level = <0x2>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 7 GIC_CPU_MASK_SIMPLE(4)>;
-+	};
-+
-+	clocks {
-+		sleep_clk: sleep_clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <32000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		xo: xo {
-+			compatible = "fixed-clock";
-+			clock-frequency = <19200000>;
-+			#clock-cells = <0>;
-+		};
-+	};
-+};
+ 	tcon->lcd_rst = devm_reset_control_get(dev, "lcd");
+ 	if (IS_ERR(tcon->lcd_rst)) {
+ 		dev_err(dev, "Couldn't get our reset line\n");
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index e3c50ecdcd04..c3e01c06e9a0 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -146,6 +146,8 @@
+ struct sun4i_tcon_quirks {
+ 	bool	has_unknown_mux; /* sun5i has undocumented mux */
+ 	bool	has_channel_1;	/* a33 does not have channel 1 */
++	/* Some DE2 can swap the mixer<->TCON connection */
++	bool	swappable_input;
+ };
+ 
+ struct sun4i_tcon {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
