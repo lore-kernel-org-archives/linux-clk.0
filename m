@@ -1,69 +1,216 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Dong Aisheng <dongas86@gmail.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"Anson Huang" <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: RE: [PATCH 9/9] clk: imx: add imx7ulp clk driver
-Date: Wed, 21 Jun 2017 07:13:55 +0000
-Message-ID: <AM3PR04MB3068D246A722A3EAA6652C280DA0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-10-git-send-email-aisheng.dong@nxp.com>
- <20170620020119.GQ4493@codeaurora.org>
- <20170620094256.GF6805@b29396-OptiPlex-7040>
- <20170620204152.GS4493@codeaurora.org>
-In-Reply-To: <20170620204152.GS4493@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
+Date: Sun, 04 Jun 2017 20:46:24 +0200
+Message-ID: <3642057.oKT9kIlu8M@jernej-laptop>
+In-Reply-To: <20170604160149.30230-5-icenowy@aosc.io>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-5-icenowy@aosc.io>
 MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Icenowy Zheng <icenowy@aosc.xyz>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
-> Sent: Wednesday, June 21, 2017 4:42 AM
-> To: Dong Aisheng
-> Cc: A.s. Dong; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
-> shawnguo@kernel.org; Anson Huang; Jacky Bai
-> Subject: Re: [PATCH 9/9] clk: imx: add imx7ulp clk driver
->=20
-> On 06/20, Dong Aisheng wrote:
-> > On Mon, Jun 19, 2017 at 07:01:19PM -0700, Stephen Boyd wrote:
-> > >
-> > > Any reason why it can't be a platform driver? If not, please add
-> > > some comment explaining why.
-> > >
-> >
-> > Timer is using it at early stage. GIC seems not although standard
-> > binding claim possible clock requirement.
-> > Others still not sure.
-> >
-> > What your suggestion?
-> > Convert timer to platform driver and make clock as platform driver as
-> well?
-> >
->=20
-> The timer can't be a platform driver because it would be too late. The
-> clock driver could register whatever clks are required for the timer/GIC
-> in a CLK_OF_DECLARE_DRIVER hook, and then leave the rest to a platform
-> driver. This way we get some of the device driver framework in this code.
->=20
+Hi,
 
-Okay, I could try it. Thanks.
+Dne nedelja, 04. junij 2017 ob 18:01:42 CEST je Icenowy Zheng napisal(a):
+> From: Icenowy Zheng <icenowy@aosc.xyz>
+> 
+> Allwinner H3 has two special TCONs, both come without channel0. And the
+> TCON1 of H3 has no special clocks even for the channel1.
+> 
+> Add support for these kinds of TCON.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v2:
+> - Merged TCON0 and TCON1 quirks and compatibles.
+> 
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 52
+> +++++++++++++++++++++++++------------- drivers/gpu/drm/sun4i/sun4i_tcon.h |
+>  1 +
+>  2 files changed, 36 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 568cea0e5f8f..62ba4fc19f18
+> 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -59,6 +59,7 @@ void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon,
+> int channel)
+> 
+>  	/* Disable the TCON's channel */
+>  	if (channel == 0) {
+> +		WARN_ON(!tcon->quirks->has_channel_0);
+>  		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+>  				   SUN4I_TCON0_CTL_TCON_ENABLE, 0);
+>  		clk_disable_unprepare(tcon->dclk);
+> @@ -78,6 +79,7 @@ void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon,
+> int channel)
+> 
+>  	/* Enable the TCON's channel */
+>  	if (channel == 0) {
+> +		WARN_ON(!tcon->quirks->has_channel_0);
+>  		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+>  				   SUN4I_TCON0_CTL_TCON_ENABLE,
+>  				   SUN4I_TCON0_CTL_TCON_ENABLE);
+> @@ -159,6 +161,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+> 
+>  	/* Configure the dot clock */
+>  	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
+> +	WARN_ON(!tcon->quirks->has_channel_0);
+> 
+>  	/* Adjust clock delay */
+>  	clk_delay = sun4i_tcon_get_clk_delay(mode, 0);
+> @@ -366,10 +369,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+>  	}
+>  	clk_prepare_enable(tcon->clk);
+> 
+> -	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
+> -	if (IS_ERR(tcon->sclk0)) {
+> -		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
+> -		return PTR_ERR(tcon->sclk0);
+> +	if (tcon->quirks->has_channel_0) {
+> +		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
+> +		if (IS_ERR(tcon->sclk0)) {
+> +			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
+> +			return PTR_ERR(tcon->sclk0);
+> +		}
+>  	}
+> 
+>  	if (tcon->quirks->has_channel_1) {
+> @@ -594,10 +599,12 @@ static int sun4i_tcon_bind(struct device *dev, struct
+> device *master, goto err_free_clocks;
+>  	}
+> 
+> -	ret = sun4i_dclk_create(dev, tcon);
+> -	if (ret) {
+> -		dev_err(dev, "Couldn't create our TCON dot clock\n");
+> -		goto err_free_clocks;
+> +	if (tcon->quirks->has_channel_0) {
+> +		ret = sun4i_dclk_create(dev, tcon);
+> +		if (ret) {
+> +			dev_err(dev, "Couldn't create our TCON dot clock\n");
+> +			goto err_free_clocks;
+> +		}
+>  	}
+> 
+>  	ret = sun4i_tcon_init_irq(dev, tcon);
+> @@ -622,7 +629,8 @@ static int sun4i_tcon_bind(struct device *dev, struct
+> device *master, return 0;
+> 
+>  err_free_dotclock:
+> -	sun4i_dclk_free(tcon);
+> +	if (tcon->quirks->has_channel_0)
+> +		sun4i_dclk_free(tcon);
+>  err_free_clocks:
+>  	sun4i_tcon_free_clocks(tcon);
+>  err_assert_reset:
+> @@ -636,7 +644,9 @@ static void sun4i_tcon_unbind(struct device *dev, struct
+> device *master, struct sun4i_tcon *tcon = dev_get_drvdata(dev);
+> 
+>  	list_del(&tcon->list);
+> -	sun4i_dclk_free(tcon);
+> +
+> +	if (tcon->quirks->has_channel_0)
+> +		sun4i_dclk_free(tcon);
+>  	sun4i_tcon_free_clocks(tcon);
+>  }
+> 
+> @@ -667,24 +677,32 @@ static int sun4i_tcon_remove(struct platform_device
+> *pdev) }
+> 
+>  static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
+> -	.has_unknown_mux = true,
+> -	.has_channel_1	= true,
+> +	.has_unknown_mux	= true,
+> +	.has_channel_0		= true,
+> +	.has_channel_1		= true,
+>  };
+> 
+>  static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
+> -	.has_channel_1	= true,
+> +	.has_channel_0		= true,
+> +	.has_channel_1		= true,
+>  };
+> 
+>  static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
+> -	.has_channel_1	= true,
+> +	.has_channel_0		= true,
+> +	.has_channel_1		= true,
+>  };
+> 
+>  static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+> -	/* nothing is supported */
+> +	.has_channel_0	= true,
+>  };
+> 
+>  static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+> -	/* nothing is supported */
+> +	.has_channel_0	= true,
+> +};
+> +
+> +static const struct sun4i_tcon_quirks sun8i_h3_quirks = {
+> +	.has_channel_1		= true,
+> +	.swappable_input	= true,
+>  };
+> 
+>  static const struct of_device_id sun4i_tcon_of_table[] = {
+> @@ -693,7 +711,7 @@ static const struct of_device_id sun4i_tcon_of_table[] =
+> { { .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks
+> }, { .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+> { .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+> -	{ }
+> +	{ .compatible = "allwinner,sun8i-h3-tcon", .data = &sun8i_h3_quirks },
 
-One thing is that TPM clock has a lot parents and parents having parents,
-as well as PIT timer. So I may need enable more than half clocks in
-CLK_OF_DECLARE_DRIVER hook.
+I think you need to leave empty entry as a sentinel.
 
-BTW, What's benefit to convert into two parts of probe?
-I'm not quite if I already get it all, can you help clarify it?
-
-Regards
-Dong Aisheng
-
+>  };
+>  MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> b/drivers/gpu/drm/sun4i/sun4i_tcon.h index c3e01c06e9a0..9c706a0bd478
+> 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+> @@ -145,6 +145,7 @@
+> 
+>  struct sun4i_tcon_quirks {
+>  	bool	has_unknown_mux; /* sun5i has undocumented mux */
+> +	bool	has_channel_0;	/* some A83T+ TCONs don't have channel 0*/
+>  	bool	has_channel_1;	/* a33 does not have channel 1 */
+>  	/* Some DE2 can swap the mixer<->TCON connection */
+>  	bool	swappable_input;
 > --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linu=
-x
-> Foundation Collaborative Project
+> 2.12.2
+
+You missed sun4i_rgb_init() function which should also be guarded with "if 
+(tcon->quirks->has_channel_0)".
+
+You should also expand function sun4i_drv_node_is_tcon() at sun4i_drv.c with 
+new entries, but I'm not sure if this fits in this patch.
+
+Best regards,
+Jernej
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
