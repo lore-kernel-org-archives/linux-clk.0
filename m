@@ -1,74 +1,74 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 0/4] Add bcm2835aux interrupt controller
-To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
- Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <687bd44a-8b6c-edf9-7dff-c9a5356b20ed@gmail.com>
-Date: Mon, 12 Jun 2017 11:23:05 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
+Subject: [PATCH v2 09/11] clk: sunxi-ng: export CLK_PLL_DE for H3
+Date: Mon,  5 Jun 2017 00:01:47 +0800
+Message-Id: <20170604160149.30230-10-icenowy@aosc.io>
+In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12/2017 07:25 AM, Phil Elwell wrote:
-> Devices in the BCM2835 AUX block share a common interrupt line, with a
-> register indicating which devices have active IRQs. Expose this as a
-> nested interrupt controller to avoid IRQ sharing problems (easily
-> observed if UART1 and SPI1/2 are enabled simultaneously).
-> 
-> This patch set is complicated by the fact that the DT node for the AUX
-> clock controller includes the AUXIRQ register needed by this driver.
-> Patch 1 lays the groundwork by allowing this overlap and preparing for
-> a future DT change that removes it.
+The CLK_PLL_DE is needed to be referenced in device tree for H3, for
+both forcing the parent of PLL_DE.
 
-Nit: there seems to be something wrong with your git send-email options,
-the threading should be:
+So export it to the device tree binding header.
 
-[PATCH 0]
-   [PATCH 1]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 3 +--
+ include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-instead, patches 1-4 don't appear as replies to patch 0 anyhow, with the
-minor nits here and there, this looks good, thanks!
-
-> 
-> Changes in v2:
-> * Add DT bindings and header file for bcm2835-aux-intc.
-> * Split the interrupt-controller functionality into a dedicated irqchip
->   driver with a dedicated DT node.
-> * Remove mask tracking from the intc driver, so that all interrupts
->   (including spurious ones) are submitted to the IRQ framework.
-> * Replace hard-coded masks with BIT macro in the intc driver.
-> * Prepare the AUX clock driver for a time when its DT node may only be
->   a single word register, but until then ioremap its region without
->   reserving it to permit sharing.
-> 
-> Phil Elwell (4):
->   clk: bcm2835: More flexible IO register remapping
->   dt: bindings: Add bindings for bcm2835-aux-intc
->   irqchip: Add BCM2835 AUX interrupt controller
->   ARM: dts: bcm283x: Add and use bcm2835-aux-intc
-> 
->  .../interrupt-controller/brcm,bcm2835-aux-intc.txt |  28 ++++
->  arch/arm/boot/dts/bcm283x.dtsi                     |  27 +++-
->  drivers/clk/bcm/clk-bcm2835-aux.c                  |  20 ++-
->  drivers/irqchip/Makefile                           |   2 +-
->  drivers/irqchip/irq-bcm2835-aux.c                  | 155 +++++++++++++++++++++
->  .../interrupt-controller/bcm2835-aux-intc.h        |  20 +++
->  6 files changed, 243 insertions(+), 9 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
->  create mode 100644 drivers/irqchip/irq-bcm2835-aux.c
->  create mode 100644 include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
-> 
-
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+index 1b4baea37d81..add3a7c18212 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+@@ -35,9 +35,8 @@
+ #define CLK_PLL_PERIPH0_2X	10
+ #define CLK_PLL_GPU		11
+ #define CLK_PLL_PERIPH1		12
+-#define CLK_PLL_DE		13
+ 
+-/* The CPUX clock is exported */
++/* The PLL_DE and CPUX clocks is exported */
+ 
+ #define CLK_AXI			15
+ #define CLK_AHB1		16
+diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
+index e139fe5c62ec..5345957a8c2e 100644
+--- a/include/dt-bindings/clock/sun8i-h3-ccu.h
++++ b/include/dt-bindings/clock/sun8i-h3-ccu.h
+@@ -45,6 +45,8 @@
+ 
+ #define CLK_PLL_PERIPH0		9
+ 
++#define CLK_PLL_DE		13
++
+ #define CLK_CPUX		14
+ 
+ #define CLK_BUS_CE		20
 -- 
-Florian
+2.12.2
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
