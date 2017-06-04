@@ -1,207 +1,47 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org,
-	robh+dt@kernel.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock controller
-Date: Fri, 23 Jun 2017 19:15:33 +0300
-Message-Id: <20170623161533.20449-4-georgi.djakov@linaro.org>
-In-Reply-To: <20170623161533.20449-1-georgi.djakov@linaro.org>
-References: <20170623161533.20449-1-georgi.djakov@linaro.org>
+Return-Path: <chunkeey@googlemail.com>
+Return-Path: <chunkeey@googlemail.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org
+Subject: Re: [PATCH v4 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
+Date: Sun, 04 Jun 2017 02:33:50 +0200
+Message-ID: <3316949.YG4fliAlpW@debian64>
+In-Reply-To: <1496474875-7190-2-git-send-email-varada@codeaurora.org>
+References: <1496474875-7190-1-git-send-email-varada@codeaurora.org> <1496474875-7190-2-git-send-email-varada@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver for the APCS clock controller. It is part of the APCS
-hardware block, which among other things implements also a combined
-mux and half integer divider functionality. It can choose between a
-fixed-rate clock or the dedicated APCS (A53) PLL. The source and the
-divider can be set both at the same time.
+On Saturday, June 3, 2017 12:57:50 PM CEST Varadarajan Narayanan wrote:
+> +- function:
+> +       Usage: required
+> +       Value type: <string>
+> +       Definition: Specify the alternative function to be configured for the
+> +                   specified pins. Functions are only valid for gpio pins.
+> +                   Valid values are:
+> +                   atest_char, atest_char0, atest_char1, atest_char2,
+> +                   atest_char3, audio_rxbclk, audio_rxd, audio_rxfsync,
+> +                   audio_rxmclk, audio_txbclk, audio_txd, audio_txfsync,
+> +                   audio_txmclk, blsp0_i2c, blsp0_spi, blsp0_uart, blsp1_i2c,
+> +                   blsp1_spi, blsp1_uart, blsp2_i2c, blsp2_spi, blsp2_uart,
+> +                   blsp3_i2c, blsp3_spi, blsp3_spi0, blsp3_spi1, blsp3_spi2,
+> +                   blsp3_spi3, blsp3_uart, blsp4_i2c0, blsp4_i2c1, blsp4_spi0,
+> +                   blsp4_spi1, blsp4_uart0, blsp4_uart1, blsp5_i2c, blsp5_spi,
+> +                   blsp5_uart, burn0, burn1, cri_trng, cri_trng0, cri_trng1,
+> +                   cxc0, cxc1, dbg_out, gcc_plltest, gcc_tlmm, gpio, ldo_en,
+> +                   ldo_update, led0, led1, led2, mac0_sa0, mac0_sa1, mac1_sa0,
+> +                   mac1_sa1, mac1_sa2, mac1_sa3, mac2_sa0, mac2_sa1, mdc,
+> +                   mdio, NA, pcie0_clk, pcie0_rst, pcie0_wake, pcie1_clk,
+> +                   pcie1_rst, pcie1_wake, pcm_drx, pcm_dtx, pcm_fsync,
+> +                   pcm_pclk, pcm_zsi0, pcm_zsi1, prng_rosc, pta1_0, pta1_1,
+> +                   pta1_2, pta2_0, pta2_1, pta2_2, pwm0, pwm1, pwm2, pwm3,
+> +                   qdss_cti_trig_in_a0, qdss_cti_trig_in_a1,
+> +                   qdss_cti_trig_in_b0, qdss_cti_trig_in_b1,
+> +                   qdss_cti_trig_out_a0, qdss_cti_trig_out_a1,
+> +                   qdss_cti_trig_out_b0, qdss_cti_trig_out_b1,
+> +                   qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a,
+> +                   qdss_tracectl_b, qdss_tracedata_a, qdss_tracedata_b,
+> +                   qpic, rx0, rx1, rx2, sd_card, sd_write, tsens_max, wci2a,
+> +                   wci2b, wci2c, wci2d, NA
 
-This is required for enabling CPU frequency scaling on MSM8916-based
-platforms.
-
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   5 +
- drivers/mailbox/qcom-apcs-ipc-mailbox.c            | 122 +++++++++++++++++++++
- 2 files changed, 127 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-index fb961c310f44..2432be307083 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-@@ -21,6 +21,11 @@ platforms.
- 	Value type: <u32>
- 	Definition: as described in mailbox.txt, must be 1
- 
-+- #clock-cells:
-+	Usage: required for msm8916 platforms
-+	Value type: <u32>
-+	Definition: as described in clock-bindings.txt, must be 0
-+
- 
- = EXAMPLE
- The following example describes the APCS HMSS found in MSM8996 and part of the
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 9924c6d7f05d..da363c6580da 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -11,6 +11,8 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/io.h>
-@@ -19,6 +21,34 @@
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/mailbox_controller.h>
-+#include <linux/regmap.h>
-+
-+#include "../clk/qcom/clk-regmap.h"
-+#include "../clk/qcom/clk-regmap-mux-div.h"
-+
-+enum {
-+	P_GPLL0,
-+	P_A53PLL,
-+};
-+
-+static const struct parent_map gpll0_a53cc_map[] = {
-+	{ P_GPLL0, 4 },
-+	{ P_A53PLL, 5 },
-+};
-+
-+static const char * const gpll0_a53cc[] = {
-+	"gpll0_vote",
-+	"a53pll",
-+};
-+
-+static const struct regmap_config a53cc_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x1000,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
- 
- #define QCOM_APCS_IPC_BITS	32
- 
-@@ -45,8 +75,93 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
- 	.send_data = qcom_apcs_ipc_send_data,
- };
- 
-+/*
-+ * We use the notifier function for switching to a temporary safe configuration
-+ * (mux and divider), while the A53 PLL is reconfigured.
-+ */
-+static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			     void *data)
-+{
-+	int ret = 0;
-+	struct clk_regmap_mux_div *md = container_of(nb,
-+						     struct clk_regmap_mux_div,
-+						     clk_nb);
-+	if (event == PRE_RATE_CHANGE)
-+		/* set the mux and divider to safe frequency (400mhz) */
-+		ret = __mux_div_set_src_div(md, 4, 3);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static int msm8916_register_clk(struct device *dev, void __iomem *base)
-+{
-+	struct clk_regmap_mux_div *a53cc;
-+	struct clk *pclk;
-+	struct regmap *regmap;
-+	struct clk_init_data init = { };
-+	int ret;
-+
-+	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
-+	if (!a53cc)
-+		return -ENOMEM;
-+
-+	a53cc->reg_offset = 0x50;
-+	a53cc->hid_width = 5;
-+	a53cc->hid_shift = 0;
-+	a53cc->src_width = 3;
-+	a53cc->src_shift = 8;
-+	a53cc->parent_map = gpll0_a53cc_map;
-+
-+	init.name = "a53mux";
-+	init.parent_names = gpll0_a53cc;
-+	init.num_parents = 2;
-+	init.ops = &clk_regmap_mux_div_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	a53cc->clkr.hw.init = &init;
-+
-+	pclk = __clk_lookup(gpll0_a53cc[1]);
-+	if (!pclk)
-+		return -EPROBE_DEFER;
-+
-+	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
-+	ret = clk_notifier_register(pclk, &a53cc->clk_nb);
-+	if (ret) {
-+		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-+		return ret;
-+	}
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
-+		goto err;
-+	}
-+
-+	a53cc->clkr.regmap = regmap;
-+
-+	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
-+	if (ret) {
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-+				     &a53cc->clkr.hw);
-+	if (ret) {
-+		dev_err(dev, "failed to add clock provider: %d\n", ret);
-+		goto err;
-+	}
-+
-+	return 0;
-+
-+err:
-+	clk_notifier_unregister(pclk, &a53cc->clk_nb);
-+	return ret;
-+}
-+
- static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- {
-+	struct device_node *np = pdev->dev.of_node;
- 	struct qcom_apcs_ipc *apcs;
- 	struct resource *res;
- 	unsigned long offset;
-@@ -63,6 +178,13 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-+	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
-+		/* register the APCS mux and divider clock */
-+		ret = msm8916_register_clk(&pdev->dev, base);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
- 
- 	apcs->reg = base + offset;
+The "NA" function is listed twice. It should be there at all.
