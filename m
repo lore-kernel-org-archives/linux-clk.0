@@ -1,49 +1,45 @@
-Return-Path: <phil@raspberrypi.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH v4 0/2] clk: bcm2835: PCM clock improvements
-Message-ID: <687e8c33-4ee5-852c-6a9e-c00eebea798a@raspberrypi.org>
-Date: Thu, 1 Jun 2017 15:14:06 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1496606532.3552.18.camel@baylibre.com>
+Subject: Re: [PATCH 2/3] arm: meson: select the clock controller for Meson8
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, carlo@caione.org, khilman@baylibre.com,
+	linux@armlinux.org.uk, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Date: Sun, 04 Jun 2017 22:02:12 +0200
+In-Reply-To: <20170604183341.21417-3-martin.blumenstingl@googlemail.com>
+References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
+	 <20170604183341.21417-3-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The switch to using the upstream bcm2835_cprman clock driver caused a
-few problems for users of PCM (I2S) peripherals. Audio applications
-require accurate, stable clocks, and the cprman driver wasn't
-conservative enough in its choice of clock sources.
+On Sun, 2017-06-04 at 20:33 +0200, Martin Blumenstingl wrote:
+> Select COMMON_CLK_MESON8B also for MACH_MESON8 since the Meson8b clock
+> controller driver can also be used on Meson8 SoCs now that we have a
+> separate compatible for it.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-These patches restrict the clock sources for the PCM peripheral in two
-ways: the first causes all possible sources except OSC and PLLD_PER
-to be ignored, while the second allows clocks to be specified as
-"low_jitter", causing the effects of fractional divisors to be taken
-into account when comparing potential clocks for accuracy. In practice,
-the combined effect of the two patches is to choose OSC as a source if
-an integer divisor can be used, otherwise PLLD_PER is chosen.
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Changes in v4:
-* Correct variable name in REGISTER_PCM_CLK macro in patch 1.
-
-Changes in v3:
-* Elimination of temporary variable from patch 2.
-
-Changes in v2:
-* Extended bcm2835_pcm_per_parents to cover the pllh_aux slot, and gave
-  it a comment in patch 1.
-* Added a REGISTER_PCM_CLK analagous to REGISTER_PER_CLK in patch 1.
-* Renamed temporary variable idiv to int_div in patch 2.
-* Fix comment formatting in patch 2.
-
-Phil Elwell (2):
-  clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
-  clk: bcm2835: Minimise clock jitter for PCM clock
-
- drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 45 insertions(+), 5 deletions(-)
-
--- 
-1.9.1
+> ---
+>  arch/arm/mach-meson/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
+> index b6e3acc63e14..ee30511849ca 100644
+> --- a/arch/arm/mach-meson/Kconfig
+> +++ b/arch/arm/mach-meson/Kconfig
+> @@ -21,6 +21,7 @@ config MACH_MESON8
+>  	bool "Amlogic Meson8 SoCs support"
+>  	default ARCH_MESON
+>  	select MESON6_TIMER
+> +	select COMMON_CLK_MESON8B
+>  
+>  config MACH_MESON8B
+>  	bool "Amlogic Meson8b SoCs support"
