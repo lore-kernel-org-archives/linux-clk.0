@@ -1,130 +1,194 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 13 Jun 2017 17:51:42 +0800
-In-Reply-To: <20170613074432.btwgc4e7pndtsvbf@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io> <20170604160149.30230-8-icenowy@aosc.io> <20170607093845.cu5kk55nj72roysf@flea.lan> <362bb72d74cd7181ae02dbf73b0e724e@aosc.io> <20170613074432.btwgc4e7pndtsvbf@flea.lan>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v2 07/11] drm: sun4i: add support for the TV encoder in H3 SoC
-To: linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: devicetree@vger.kernel.org,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <5A2149A9-CC7B-4946-9219-A4FE3228B402@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
+Subject: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
+Date: Mon,  5 Jun 2017 00:01:42 +0800
+Message-Id: <20170604160149.30230-5-icenowy@aosc.io>
+In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Icenowy Zheng <icenowy@aosc.xyz>
+
+Allwinner H3 has two special TCONs, both come without channel0. And the
+TCON1 of H3 has no special clocks even for the channel1.
+
+Add support for these kinds of TCON.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Merged TCON0 and TCON1 quirks and compatibles.
+
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 52 +++++++++++++++++++++++++-------------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
+ 2 files changed, 36 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 568cea0e5f8f..62ba4fc19f18 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -59,6 +59,7 @@ void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
+ 
+ 	/* Disable the TCON's channel */
+ 	if (channel == 0) {
++		WARN_ON(!tcon->quirks->has_channel_0);
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE, 0);
+ 		clk_disable_unprepare(tcon->dclk);
+@@ -78,6 +79,7 @@ void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
+ 
+ 	/* Enable the TCON's channel */
+ 	if (channel == 0) {
++		WARN_ON(!tcon->quirks->has_channel_0);
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE);
+@@ -159,6 +161,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+ 
+ 	/* Configure the dot clock */
+ 	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
++	WARN_ON(!tcon->quirks->has_channel_0);
+ 
+ 	/* Adjust clock delay */
+ 	clk_delay = sun4i_tcon_get_clk_delay(mode, 0);
+@@ -366,10 +369,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+ 	}
+ 	clk_prepare_enable(tcon->clk);
+ 
+-	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
+-	if (IS_ERR(tcon->sclk0)) {
+-		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
+-		return PTR_ERR(tcon->sclk0);
++	if (tcon->quirks->has_channel_0) {
++		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
++		if (IS_ERR(tcon->sclk0)) {
++			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
++			return PTR_ERR(tcon->sclk0);
++		}
+ 	}
+ 
+ 	if (tcon->quirks->has_channel_1) {
+@@ -594,10 +599,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 		goto err_free_clocks;
+ 	}
+ 
+-	ret = sun4i_dclk_create(dev, tcon);
+-	if (ret) {
+-		dev_err(dev, "Couldn't create our TCON dot clock\n");
+-		goto err_free_clocks;
++	if (tcon->quirks->has_channel_0) {
++		ret = sun4i_dclk_create(dev, tcon);
++		if (ret) {
++			dev_err(dev, "Couldn't create our TCON dot clock\n");
++			goto err_free_clocks;
++		}
+ 	}
+ 
+ 	ret = sun4i_tcon_init_irq(dev, tcon);
+@@ -622,7 +629,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 	return 0;
+ 
+ err_free_dotclock:
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ err_free_clocks:
+ 	sun4i_tcon_free_clocks(tcon);
+ err_assert_reset:
+@@ -636,7 +644,9 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
+ 
+ 	list_del(&tcon->list);
+-	sun4i_dclk_free(tcon);
++
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ 	sun4i_tcon_free_clocks(tcon);
+ }
+ 
+@@ -667,24 +677,32 @@ static int sun4i_tcon_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
+-	.has_unknown_mux = true,
+-	.has_channel_1	= true,
++	.has_unknown_mux	= true,
++	.has_channel_0		= true,
++	.has_channel_1		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
+-	.has_channel_1	= true,
++	.has_channel_0		= true,
++	.has_channel_1		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
+-	.has_channel_1	= true,
++	.has_channel_0		= true,
++	.has_channel_1		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+-	/* nothing is supported */
++	.has_channel_0	= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+-	/* nothing is supported */
++	.has_channel_0	= true,
++};
++
++static const struct sun4i_tcon_quirks sun8i_h3_quirks = {
++	.has_channel_1		= true,
++	.swappable_input	= true,
+ };
+ 
+ static const struct of_device_id sun4i_tcon_of_table[] = {
+@@ -693,7 +711,7 @@ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+ 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+-	{ }
++	{ .compatible = "allwinner,sun8i-h3-tcon", .data = &sun8i_h3_quirks },
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index c3e01c06e9a0..9c706a0bd478 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -145,6 +145,7 @@
+ 
+ struct sun4i_tcon_quirks {
+ 	bool	has_unknown_mux; /* sun5i has undocumented mux */
++	bool	has_channel_0;	/* some A83T+ TCONs don't have channel 0*/
+ 	bool	has_channel_1;	/* a33 does not have channel 1 */
+ 	/* Some DE2 can swap the mixer<->TCON connection */
+ 	bool	swappable_input;
+-- 
+2.12.2
 
 
-于 2017年6月13日 GMT+08:00 下午3:44:32, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->On Sun, Jun 11, 2017 at 02:43:42PM +0800, icenowy@aosc.io wrote:
->> 在 2017-06-07 17:38，Maxime Ripard 写道：
->> > On Mon, Jun 05, 2017 at 12:01:45AM +0800, Icenowy Zheng wrote:
->> > > Allwinner H3 features a TV encoder similar to the one in earlier
->SoCs,
->> > > but has a internal fixed clock divider that divides the TCON1
->clock
->> > > (called TVE clock in datasheet) by 11.
->> > > 
->> > > Add support for it.
->> > > 
->> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> > > ---
->> > > Changes in v2:
->> > > - Quirk part rewritten.
->> > > 
->> > >  drivers/gpu/drm/sun4i/sun4i_tv.c | 35
->> > > ++++++++++++++++++++++++++++++++++-
->> > >  1 file changed, 34 insertions(+), 1 deletion(-)
->> > > 
->> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c
->> > > b/drivers/gpu/drm/sun4i/sun4i_tv.c
->> > > index 338b9e5bb2a3..b9ff6d5ea67a 100644
->> > > --- a/drivers/gpu/drm/sun4i/sun4i_tv.c
->> > > +++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
->> > > @@ -13,6 +13,7 @@
->> > >  #include <linux/clk.h>
->> > >  #include <linux/component.h>
->> > >  #include <linux/of_address.h>
->> > > +#include <linux/of_device.h>
->> > >  #include <linux/regmap.h>
->> > >  #include <linux/reset.h>
->> > > 
->> > > @@ -169,14 +170,21 @@ struct tv_mode {
->> > >  	const struct resync_parameters	*resync_params;
->> > >  };
->> > > 
->> > > +struct sun4i_tv_quirks {
->> > > +	int fixed_divider;
->> > > +};
->> > > +
->> > >  struct sun4i_tv {
->> > >  	struct drm_connector	connector;
->> > >  	struct drm_encoder	encoder;
->> > > 
->> > >  	struct clk		*clk;
->> > > +	struct clk		*mod_clk;
->> > >  	struct regmap		*regs;
->> > >  	struct reset_control	*reset;
->> > > 
->> > > +	const struct sun4i_tv_quirks *quirks;
->> > > +
->> > >  	struct sun4i_drv	*drv;
->> > >  };
->> > > 
->> > > @@ -391,6 +399,12 @@ static void sun4i_tv_mode_set(struct
->> > > drm_encoder *encoder,
->> > >  	struct sun4i_tcon *tcon = crtc->tcon;
->> > >  	const struct tv_mode *tv_mode = sun4i_tv_find_tv_by_mode(mode);
->> > > 
->> > > +	if (tv->quirks->fixed_divider) {
->> > > +		DRM_DEBUG_DRIVER("Applying fixed divider %d on TVE clock\n",
->> > > +				 tv->quirks->fixed_divider);
->> > > +		mode->crtc_clock *= tv->quirks->fixed_divider;
->> > > +	}
->> > > +
->> > 
->> > You're not allowed to change the mode in mode_set, and you
->shouldn't
->> > even change it. The output pixel clock is still 27MHz.
->> > 
->> > You should implement that using the states, as we discussed
->already.
->> 
->> After reading the comments at
->include/drm/drm_modeset_helper_vtables.h,
->> I think the atomic_check function is allowed to directly change
->> the adjust_mode of crtc_state.
->> 
->> And according to other comments at include/drm/drm_modes.h, the
->> crtc_clock in adjust_mode should be the clock to be really feed
->> to the hardware.
->> 
->> So I think I can just change this in atomic_check.
->> 
->> However, the mode_set function of sun4i_tv seems to be not
->> regarding adjusted_mode and still use original mode.
->> 
->> So my current design is:
->> - Multiply adjusted_mode in atomic_check.
->> - Feed adjust_mode to TCON code in mode_set function.
->> 
->> Is this proper?
->> 
->> (From my own understanding to the comments I think so.)
->
->No, it's not. The pixel clock in the mode is the pixel clock output
->physically by the connector. You want to use it for an intermediate
->clock in your pipeline.
->
->This is not the same clock, and not the same frequency.
-
-So should a multiplier parameter be passed via
-tcon1_mode_set function?
-
->
->Maxime
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
