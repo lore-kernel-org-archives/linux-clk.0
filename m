@@ -1,254 +1,126 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:29:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V1 2/9] clk: sprd: Add common infrastructure
-Message-ID: <20170620012910.GH4493@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-3-chunyan.zhang@spreadtrum.com>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v4 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
+To: Christian Lamparter <chunkeey@googlemail.com>,
+ Varadarajan Narayanan <varada@codeaurora.org>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mturquette@baylibre.com,
+ will.deacon@arm.com, bjorn.andersson@linaro.org, david.brown@linaro.org,
+ linux-clk@vger.kernel.org, mraghava@codeaurora.org, andy.gross@linaro.org,
+ linus.walleij@linaro.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, sjaganat@codeaurora.org,
+ linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org, Ram Chandra Jangir <rjangir@codeaurora.org>,
+ absahu@codeaurora.org
+References: <1496474875-7190-1-git-send-email-varada@codeaurora.org>
+ <1496474875-7190-2-git-send-email-varada@codeaurora.org>
+ <2668868.v3IoKk0Lz9@debian64>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <35ae1e44-1397-db2c-cbfc-6b72136bb230@codeaurora.org>
+Date: Mon, 5 Jun 2017 11:53:56 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170618015855.27738-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <2668868.v3IoKk0Lz9@debian64>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/18, Chunyan Zhang wrote:
-> Added Spreadtrum's clock driver common structure and registration code.
+Hi,
+
+On 6/4/2017 12:25 AM, Christian Lamparter wrote:
+> On Saturday, June 3, 2017 12:57:50 PM CEST Varadarajan Narayanan wrote:
+>> Add initial pinctrl driver to support pin configuration with
+>> pinctrl framework for ipq8074.
+>>
+>> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+>> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+>> ---
+>> +- bias-disable:
+>> +	Usage: optional
+>> +	Value type: <none>
+>> +	Definition: The specified pins should be configued as no pull.
+>> +
+>> +- bias-pull-down:
+>> +	Usage: optional
+>> +	Value type: <none>
+>> +	Definition: The specified pins should be configued as pull down.
+>> +
+>> +- bias-pull-up:
+>> +	Usage: optional
+>> +	Value type: <none>
+>> +	Definition: The specified pins should be configued as pull up.
+>> +
+>> +#define REG_SIZE 0x1000
+>> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
+>> +	{					        \
+>> +		.name = "gpio" #id,			\
+>> +		.pins = gpio##id##_pins,		\
+>> +		.npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),	\
+>> +		.funcs = (int[]){			\
+>> +			msm_mux_gpio, /* gpio mode */	\
+>> +			msm_mux_##f1,			\
+>> +			msm_mux_##f2,			\
+>> +			msm_mux_##f3,			\
+>> +			msm_mux_##f4,			\
+>> +			msm_mux_##f5,			\
+>> +			msm_mux_##f6,			\
+>> +			msm_mux_##f7,			\
+>> +			msm_mux_##f8,			\
+>> +			msm_mux_##f9			\
+>> +		},				        \
+>> +		.nfuncs = 10,				\
+>> +		.ctl_reg = REG_SIZE * id,		\
+>> +		.io_reg = 0x4 + REG_SIZE * id,		\
+>> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,		\
+>> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
+>> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
+>> +		.mux_bit = 2,			\
+>> +		.pull_bit = 0,			\
+>> +		.drv_bit = 6,			\
+>> +		.oe_bit = 9,			\
+>> +		.in_bit = 0,			\
+>> +		.out_bit = 1,			\
+>> +		.intr_enable_bit = 0,		\
+>> +		.intr_status_bit = 0,		\
+>> +		.intr_target_bit = 5,		\
+>> +		.intr_raw_status_bit = 4,	\
+>> +		.intr_polarity_bit = 1,		\
+>> +		.intr_detection_bit = 2,	\
+>> +		.intr_detection_width = 2,	\
+>> +	}
+>> +
+> Hello,
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  drivers/clk/Makefile          |  1 +
->  drivers/clk/sprd/Makefile     |  3 ++
->  drivers/clk/sprd/ccu_common.c | 78 +++++++++++++++++++++++++++++++++++++
->  drivers/clk/sprd/ccu_common.h | 90 +++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 172 insertions(+)
->  create mode 100644 drivers/clk/sprd/Makefile
->  create mode 100644 drivers/clk/sprd/ccu_common.c
->  create mode 100644 drivers/clk/sprd/ccu_common.h
+> Back in May, Ram Chandra Jangir posted a rather interesting patch on
+> the LEDE Mailing-List:
+> <https://www.mail-archive.com/lede-dev@lists.infradead.org/msg07691.html>
+> |GPIO_PULL bits configurations in TLMM_GPIO_CFG register
+> |differs for IPQ40xx from rest of the other qcom SoC's.
+> |This change add support to configure the msm_gpio_pull
+> |bits for ipq40xx, It is required to fix the proper
+> |configurations of gpio-pull bits for nand pins mux.
+> |
+> |IPQ40xx SoC:
+> |2'b10: Internal pull up enable.
+> |2'b11: Unsupport
+> |
+> |For other SoC's:
+> |2'b10: Keeper
+> |2'b11: Pull-Up
 > 
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index c19983a..1d62721 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -81,6 +81,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
->  obj-$(CONFIG_ARCH_SIRF)			+= sirf/
->  obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
->  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-> +obj-$(CONFIG_ARCH_SPRD)			+= sprd/
->  obj-$(CONFIG_ARCH_STI)			+= st/
->  obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
->  obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
-> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-> new file mode 100644
-> index 0000000..8f802b2
-> --- /dev/null
-> +++ b/drivers/clk/sprd/Makefile
-> @@ -0,0 +1,3 @@
-> +ifneq ($(CONFIG_OF),)
-> +obj-y	+= ccu_common.o
-> +endif
+> This information wasn't mentioned anywhere. In fact, the special pull-up
+> configuration was only discovered due to an issue with the qpic NAND on
+> the Cisco Meraki MR33. So I wonder what does the gpio-pull look like for
+> the IPQ8074? Is it the same as the IPQ40XX or does it follow the older 
+> SoCs?
+> 
+> I'm asking this because I'm preparing a modified version of this patch
+> that will be posted once the IPQ8074 is ready.
+> 
 
-I'd prefer a Kconfig for SPRD clk drivers instead of this
-CONFIG_OF check. Then we can compile test the sprd code in
-configurations that don't have CONFIG_ARCH_SPRD set too.
+IPQ8074 pull configuration bits are same as the older Socs. So IPQ40XX looks to
+be the only exception. Having said that, the patch that you pointed out should
+be posted on the lists for the kernel then.
 
-> diff --git a/drivers/clk/sprd/ccu_common.c b/drivers/clk/sprd/ccu_common.c
-> new file mode 100644
-> index 0000000..911f4ba
-> --- /dev/null
-> +++ b/drivers/clk/sprd/ccu_common.c
-> @@ -0,0 +1,78 @@
-> +/*
-> + * Spreadtrum clock infrastructure
-> + *
-> + * Copyright (C) 2017 Spreadtrum, Inc.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-> +
-> +#include "ccu_common.h"
-> +
-> +static inline void __iomem *ccu_find_base(struct ccu_addr_map *maps,
-> +					  unsigned int num, unsigned int reg)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < num; i++)
-> +		if ((reg & 0xffff0000) == maps[i].phy)
-
-What is this?
-
-> +			return maps[i].virt;
-> +
-> +	return 0;
-> +}
-> +
-> +int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
-> +		   unsigned int count, const struct sprd_ccu_desc *desc)
-> +{
-> +	int i, ret = 0;
-> +	struct ccu_common *cclk;
-> +	struct clk_hw *hw;
-> +
-> +	for (i = 0; i < desc->num_ccu_clks; i++) {
-> +		cclk = desc->ccu_clks[i];
-> +		if (!cclk)
-> +			continue;
-> +
-> +		cclk->base = ccu_find_base(maps, count, cclk->reg);
-> +		if (!cclk->base) {
-> +			pr_err("%s: No mapped address found for clock(0x%x)\n",
-> +				__func__, cclk->reg);
-> +			return -EINVAL;
-> +		}
-> +		cclk->reg = cclk->reg & 0xffff;
-> +	}
-> +
-> +	for (i = 0; i < desc->hw_clks->num; i++) {
-> +
-> +		hw = desc->hw_clks->hws[i];
-> +
-> +		if (!hw)
-> +			continue;
-> +
-> +		ret = clk_hw_register(NULL, hw);
-> +		if (ret) {
-> +			pr_err("Couldn't register clock %d - %s\n",
-> +			       i, hw->init->name);
-> +			goto err_clk_unreg;
-> +		}
-> +	}
-> +
-> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-> +				     desc->hw_clks);
-> +	if (ret) {
-> +		pr_err("Failed to add clock provider.\n");
-> +		goto err_clk_unreg;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_clk_unreg:
-> +	while (--i >= 0) {
-> +		hw = desc->hw_clks->hws[i];
-> +		if (!hw)
-> +			continue;
-> +
-> +		clk_hw_unregister(hw);
-> +	}
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/clk/sprd/ccu_common.h b/drivers/clk/sprd/ccu_common.h
-> new file mode 100644
-> index 0000000..ff07772
-> --- /dev/null
-> +++ b/drivers/clk/sprd/ccu_common.h
-> @@ -0,0 +1,90 @@
-> +/*
-> + * Spreadtrum clock infrastructure
-> + *
-> + * Copyright (C) 2017 Spreadtrum, Inc.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-> +
-> +#ifndef _CCU_COMMON_H_
-> +#define _CCU_COMMON_H_
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +struct device_node;
-> +
-> +#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
-> +	(&(struct clk_init_data) {			\
-> +		.flags		= _flags,		\
-> +		.name		= _name,		\
-> +		.parent_names	= NULL,			\
-> +		.num_parents	= 0,			\
-> +		.ops		= _ops,			\
-> +	})
-> +
-> +#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
-> +	(&(struct clk_init_data) {				\
-> +		.flags		= _flags,			\
-> +		.name		= _name,			\
-> +		.parent_names	= (const char *[]) { _parent },	\
-> +		.num_parents	= 1,				\
-> +		.ops		= _ops,				\
-> +	})
-> +
-> +#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
-> +	(&(struct clk_init_data) {				\
-> +		.flags		= _flags,			\
-> +		.name		= _name,			\
-> +		.parent_names	= _parents,			\
-> +		.num_parents	= ARRAY_SIZE(_parents),		\
-> +		.ops		= _ops,				\
-> +	})
-> +
-> +#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
-> +			_div, _mult, _flags)				\
-> +	struct clk_fixed_factor _struct = {				\
-> +		.div		= _div,					\
-> +		.mult		= _mult,				\
-> +		.hw.init	= CLK_HW_INIT(_name,			\
-> +					      _parent,			\
-> +					      &clk_fixed_factor_ops,	\
-> +					      _flags),			\
-> +	}
-> +
-> +struct ccu_common {
-> +	void __iomem	*base;
-> +	u32		reg;
-> +	spinlock_t	*lock;
-> +	struct clk_hw	hw;
-> +};
-> +
-> +struct ccu_addr_map {
-> +	phys_addr_t phy;
-> +	void __iomem *virt;
-> +};
-> +
-> +static inline u32 ccu_readl(struct ccu_common *common)
-> +{
-> +	return readl(common->base + common->reg);
-> +}
-> +
-> +static inline void ccu_writel(u32 val, struct ccu_common *common)
-> +{
-> +	writel(val, common->base + common->reg);
-> +}
-> +
-> +static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct ccu_common, hw);
-> +}
-> +
-> +struct sprd_ccu_desc {
-> +	struct ccu_common		**ccu_clks;
-> +	unsigned long			num_ccu_clks;
-> +	struct clk_hw_onecell_data	*hw_clks;
-> +};
-> +
-> +int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
-> +		   unsigned int count, const struct sprd_ccu_desc *desc);
-> +
-> +#endif /* _CCU_COMMON_H_ */
-
-Do you call them CCUs internally? I thought CCU was a sunxi
-thing, so it may make more sense to call it whatever you call the
-clock controller on your hardware.
+Regards,
+ Sricharan
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
