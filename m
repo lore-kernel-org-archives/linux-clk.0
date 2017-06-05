@@ -1,27 +1,27 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:02:58 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49916 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbdFET4v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2017 15:56:51 -0400
+Date: Mon, 5 Jun 2017 12:56:49 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Baoyou Xie <xie.baoyou@sanechips.com.cn>,
-	Xin Zhou <zhou.xin8@sanechips.com.cn>, Jun Nie <jun.nie@linaro.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] clk: zx296718: export I2S mux clocks
-Message-ID: <20170620010258.GJ20170@codeaurora.org>
-References: <1497709265-22944-1-git-send-email-shawnguo@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: at91: fix clk-generated compilation
+Message-ID: <20170605195649.GG20170@codeaurora.org>
+References: <20170604220257.21098-1-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1497709265-22944-1-git-send-email-shawnguo@kernel.org>
+In-Reply-To: <20170604220257.21098-1-alexandre.belloni@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/17, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@linaro.org>
+On 06/05, Alexandre Belloni wrote:
+> Fix missing }
 > 
-> Export I2S mux clocks, so that device tree can refer to them for setting
-> a better parent clock for I2S work clock.
-> 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 > ---
 
 Applied to clk-next
