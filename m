@@ -1,1266 +1,378 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 5 Jun 2017 16:45:46 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, kbuild-all@01.org,
+	Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	varada@codeaurora.org,
-	mraghava@codeaurora.org
-Subject: [PATCH v3 3/5] clk: qcom: ipq8074: Add Global Clock Controller support
-Date: Thu,  1 Jun 2017 16:58:00 +0530
-Message-Id: <1496316482-25468-4-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
-References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
+Message-ID: <20170605144546.b6oh5sygrza22hbe@flea.lan>
+References: <20170602223006.1653-1-sboyd@codeaurora.org>
+ <201706031243.qNvuUbQX%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hnoybsnj5wdx6i4l"
+In-Reply-To: <201706031243.qNvuUbQX%fengguang.wu@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
 
-This patch adds support for the global clock controller found on
-the IPQ8074 based devices. This includes UART, I2C, SPI etc.
+--hnoybsnj5wdx6i4l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-ipq8074.c                     | 1009 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
- 5 files changed, 1172 insertions(+)
- create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-index 5b4dfc1..551d03b 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-@@ -8,6 +8,7 @@ Required properties :
- 			"qcom,gcc-apq8084"
- 			"qcom,gcc-ipq8064"
- 			"qcom,gcc-ipq4019"
-+			"qcom,gcc-ipq8074"
- 			"qcom,gcc-msm8660"
- 			"qcom,gcc-msm8916"
- 			"qcom,gcc-msm8960"
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 5fb8d74..9f6c278 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -82,6 +82,15 @@ config IPQ_LCC_806X
- 	  Say Y if you want to use audio devices such as i2s, pcm,
- 	  S/PDIF, etc.
- 
-+config IPQ_GCC_8074
-+	tristate "IPQ8074 Global Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for global clock controller on ipq8074 devices.
-+	  Say Y if you want to use peripheral devices such as UART, SPI,
-+	  i2c, USB, SD/eMMC, etc. Select this for the root clock
-+	  of ipq8074.
-+
- config MSM_GCC_8660
- 	tristate "MSM8660 Global Clock Controller"
- 	depends on COMMON_CLK_QCOM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 1c3e222..3f3aff2 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
- obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
- obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
- obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
-+obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
- obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
- obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
- obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-new file mode 100644
-index 0000000..b62db77
---- /dev/null
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -0,0 +1,1009 @@
-+/*
-+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
-+
-+#include "common.h"
-+#include "clk-regmap.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-branch.h"
-+#include "clk-alpha-pll.h"
-+#include "reset.h"
-+
-+#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-+
-+enum {
-+	P_XO,
-+	P_GPLL0,
-+	P_GPLL0_DIV2,
-+};
-+
-+static const char * const gcc_xo_gpll0_gpll0_out_main_div2[] = {
-+	"xo",
-+	"gpll0",
-+	"gpll0_out_main_div2",
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_gpll0_out_main_div2_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 },
-+	{ P_GPLL0_DIV2, 4 },
-+};
-+
-+static struct clk_alpha_pll gpll0_main = {
-+	.offset = 0x21000,
-+	.clkr = {
-+		.enable_reg = 0x0b000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gpll0_main",
-+			.parent_names = (const char *[]){
-+				"xo"
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_fixed_factor gpll0_out_main_div2 = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "gpll0_out_main_div2",
-+		.parent_names = (const char *[]){
-+			"gpll0_main"
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_fixed_factor_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_alpha_pll_postdiv gpll0 = {
-+	.offset = 0x21000,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gpll0",
-+		.parent_names = (const char *[]){
-+			"gpll0_main"
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_postdiv_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_pcnoc_bfdcd_clk_src[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(50000000, P_GPLL0, 16, 0, 0),
-+	F(100000000, P_GPLL0, 8, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
-+	.cmd_rcgr = 0x27000,
-+	.freq_tbl = ftbl_pcnoc_bfdcd_clk_src,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pcnoc_bfdcd_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+		.flags = CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static struct clk_fixed_factor pcnoc_clk_src = {
-+	.mult = 1,
-+	.div = 1,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pcnoc_clk_src",
-+		.parent_names = (const char *[]){
-+			"pcnoc_bfdcd_clk_src"
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_fixed_factor_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_branch gcc_sleep_clk_src = {
-+	.halt_reg = 0x30000,
-+	.clkr = {
-+		.enable_reg = 0x30000,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_sleep_clk_src",
-+			.parent_names = (const char *[]){
-+				"sleep_clk"
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_blsp1_qup_i2c_apps_clk_src[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(25000000, P_GPLL0_DIV2, 16, 0, 0),
-+	F(50000000, P_GPLL0, 16, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
-+	.cmd_rcgr = 0x0200c,
-+	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup1_i2c_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_blsp1_qup_spi_apps_clk_src[] = {
-+	F(960000, P_XO, 10, 1, 2),
-+	F(4800000, P_XO, 4, 0, 0),
-+	F(9600000, P_XO, 2, 0, 0),
-+	F(12500000, P_GPLL0_DIV2, 16, 1, 2),
-+	F(16000000, P_GPLL0, 10, 1, 5),
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(25000000, P_GPLL0, 16, 1, 2),
-+	F(50000000, P_GPLL0, 16, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 blsp1_qup1_spi_apps_clk_src = {
-+	.cmd_rcgr = 0x02024,
-+	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup1_spi_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup2_i2c_apps_clk_src = {
-+	.cmd_rcgr = 0x03000,
-+	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup2_i2c_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup2_spi_apps_clk_src = {
-+	.cmd_rcgr = 0x03014,
-+	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup2_spi_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup3_i2c_apps_clk_src = {
-+	.cmd_rcgr = 0x04000,
-+	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup3_i2c_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup3_spi_apps_clk_src = {
-+	.cmd_rcgr = 0x04014,
-+	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup3_spi_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup4_i2c_apps_clk_src = {
-+	.cmd_rcgr = 0x05000,
-+	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup4_i2c_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup4_spi_apps_clk_src = {
-+	.cmd_rcgr = 0x05014,
-+	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup4_spi_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup5_i2c_apps_clk_src = {
-+	.cmd_rcgr = 0x06000,
-+	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup5_i2c_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup5_spi_apps_clk_src = {
-+	.cmd_rcgr = 0x06014,
-+	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup5_spi_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup6_i2c_apps_clk_src = {
-+	.cmd_rcgr = 0x07000,
-+	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup6_i2c_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_qup6_spi_apps_clk_src = {
-+	.cmd_rcgr = 0x07014,
-+	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_qup6_spi_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_blsp1_uart_apps_clk_src[] = {
-+	F(3686400, P_GPLL0_DIV2, 1, 144, 15625),
-+	F(7372800, P_GPLL0_DIV2, 1, 288, 15625),
-+	F(14745600, P_GPLL0_DIV2, 1, 576, 15625),
-+	F(16000000, P_GPLL0_DIV2, 5, 1, 5),
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(24000000, P_GPLL0, 1, 3, 100),
-+	F(25000000, P_GPLL0, 16, 1, 2),
-+	F(32000000, P_GPLL0, 1, 1, 25),
-+	F(40000000, P_GPLL0, 1, 1, 20),
-+	F(46400000, P_GPLL0, 1, 29, 500),
-+	F(48000000, P_GPLL0, 1, 3, 50),
-+	F(51200000, P_GPLL0, 1, 8, 125),
-+	F(56000000, P_GPLL0, 1, 7, 100),
-+	F(58982400, P_GPLL0, 1, 1152, 15625),
-+	F(60000000, P_GPLL0, 1, 3, 40),
-+	F(64000000, P_GPLL0, 12.5, 1, 1),
-+	{ }
-+};
-+
-+static struct clk_rcg2 blsp1_uart1_apps_clk_src = {
-+	.cmd_rcgr = 0x02044,
-+	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_uart1_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_uart2_apps_clk_src = {
-+	.cmd_rcgr = 0x03034,
-+	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_uart2_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_uart3_apps_clk_src = {
-+	.cmd_rcgr = 0x04034,
-+	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_uart3_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_uart4_apps_clk_src = {
-+	.cmd_rcgr = 0x05034,
-+	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_uart4_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_uart5_apps_clk_src = {
-+	.cmd_rcgr = 0x06034,
-+	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_uart5_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 blsp1_uart6_apps_clk_src = {
-+	.cmd_rcgr = 0x07034,
-+	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "blsp1_uart6_apps_clk_src",
-+		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_ahb_clk = {
-+	.halt_reg = 0x01008,
-+	.clkr = {
-+		.enable_reg = 0x01008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_ahb_clk",
-+			.parent_names = (const char *[]){
-+				"pcnoc_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup1_i2c_apps_clk = {
-+	.halt_reg = 0x02008,
-+	.clkr = {
-+		.enable_reg = 0x02008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup1_i2c_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup1_i2c_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup1_spi_apps_clk = {
-+	.halt_reg = 0x02004,
-+	.clkr = {
-+		.enable_reg = 0x02004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup1_spi_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup1_spi_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup2_i2c_apps_clk = {
-+	.halt_reg = 0x03010,
-+	.clkr = {
-+		.enable_reg = 0x03010,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup2_i2c_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup2_i2c_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup2_spi_apps_clk = {
-+	.halt_reg = 0x0300c,
-+	.clkr = {
-+		.enable_reg = 0x0300c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup2_spi_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup2_spi_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup3_i2c_apps_clk = {
-+	.halt_reg = 0x04010,
-+	.clkr = {
-+		.enable_reg = 0x04010,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup3_i2c_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup3_i2c_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup3_spi_apps_clk = {
-+	.halt_reg = 0x0400c,
-+	.clkr = {
-+		.enable_reg = 0x0400c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup3_spi_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup3_spi_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup4_i2c_apps_clk = {
-+	.halt_reg = 0x05010,
-+	.clkr = {
-+		.enable_reg = 0x05010,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup4_i2c_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup4_i2c_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup4_spi_apps_clk = {
-+	.halt_reg = 0x0500c,
-+	.clkr = {
-+		.enable_reg = 0x0500c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup4_spi_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup4_spi_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup5_i2c_apps_clk = {
-+	.halt_reg = 0x06010,
-+	.clkr = {
-+		.enable_reg = 0x06010,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup5_i2c_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup5_i2c_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup5_spi_apps_clk = {
-+	.halt_reg = 0x0600c,
-+	.clkr = {
-+		.enable_reg = 0x0600c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup5_spi_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup5_spi_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup6_i2c_apps_clk = {
-+	.halt_reg = 0x07010,
-+	.clkr = {
-+		.enable_reg = 0x07010,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup6_i2c_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup6_i2c_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_qup6_spi_apps_clk = {
-+	.halt_reg = 0x0700c,
-+	.clkr = {
-+		.enable_reg = 0x0700c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_qup6_spi_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_qup6_spi_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_uart1_apps_clk = {
-+	.halt_reg = 0x0203c,
-+	.clkr = {
-+		.enable_reg = 0x0203c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_uart1_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_uart1_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_uart2_apps_clk = {
-+	.halt_reg = 0x0302c,
-+	.clkr = {
-+		.enable_reg = 0x0302c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_uart2_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_uart2_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_uart3_apps_clk = {
-+	.halt_reg = 0x0402c,
-+	.clkr = {
-+		.enable_reg = 0x0402c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_uart3_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_uart3_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_uart4_apps_clk = {
-+	.halt_reg = 0x0502c,
-+	.clkr = {
-+		.enable_reg = 0x0502c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_uart4_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_uart4_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_uart5_apps_clk = {
-+	.halt_reg = 0x0602c,
-+	.clkr = {
-+		.enable_reg = 0x0602c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_uart5_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_uart5_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_blsp1_uart6_apps_clk = {
-+	.halt_reg = 0x0702c,
-+	.clkr = {
-+		.enable_reg = 0x0702c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_blsp1_uart6_apps_clk",
-+			.parent_names = (const char *[]){
-+				"blsp1_uart6_apps_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_prng_ahb_clk = {
-+	.halt_reg = 0x13004,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x0b004,
-+		.enable_mask = BIT(8),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_prng_ahb_clk",
-+			.parent_names = (const char *[]){
-+				"pcnoc_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_qpic_ahb_clk = {
-+	.halt_reg = 0x57024,
-+	.clkr = {
-+		.enable_reg = 0x57024,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qpic_ahb_clk",
-+			.parent_names = (const char *[]){
-+				"pcnoc_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_qpic_clk = {
-+	.halt_reg = 0x57020,
-+	.clkr = {
-+		.enable_reg = 0x57020,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qpic_clk",
-+			.parent_names = (const char *[]){
-+				"pcnoc_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_hw *gcc_ipq8074_hws[] = {
-+	&gpll0_out_main_div2.hw,
-+	&pcnoc_clk_src.hw,
-+};
-+
-+static struct clk_regmap *gcc_ipq8074_clks[] = {
-+	[GPLL0_MAIN] = &gpll0_main.clkr,
-+	[GPLL0] = &gpll0.clkr,
-+	[PCNOC_BFDCD_CLK_SRC] = &pcnoc_bfdcd_clk_src.clkr,
-+	[GCC_SLEEP_CLK_SRC] = &gcc_sleep_clk_src.clkr,
-+	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP1_SPI_APPS_CLK_SRC] = &blsp1_qup1_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP2_I2C_APPS_CLK_SRC] = &blsp1_qup2_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP2_SPI_APPS_CLK_SRC] = &blsp1_qup2_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP3_I2C_APPS_CLK_SRC] = &blsp1_qup3_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP3_SPI_APPS_CLK_SRC] = &blsp1_qup3_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP4_I2C_APPS_CLK_SRC] = &blsp1_qup4_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP4_SPI_APPS_CLK_SRC] = &blsp1_qup4_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP5_I2C_APPS_CLK_SRC] = &blsp1_qup5_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP5_SPI_APPS_CLK_SRC] = &blsp1_qup5_spi_apps_clk_src.clkr,
-+	[BLSP1_QUP6_I2C_APPS_CLK_SRC] = &blsp1_qup6_i2c_apps_clk_src.clkr,
-+	[BLSP1_QUP6_SPI_APPS_CLK_SRC] = &blsp1_qup6_spi_apps_clk_src.clkr,
-+	[BLSP1_UART1_APPS_CLK_SRC] = &blsp1_uart1_apps_clk_src.clkr,
-+	[BLSP1_UART2_APPS_CLK_SRC] = &blsp1_uart2_apps_clk_src.clkr,
-+	[BLSP1_UART3_APPS_CLK_SRC] = &blsp1_uart3_apps_clk_src.clkr,
-+	[BLSP1_UART4_APPS_CLK_SRC] = &blsp1_uart4_apps_clk_src.clkr,
-+	[BLSP1_UART5_APPS_CLK_SRC] = &blsp1_uart5_apps_clk_src.clkr,
-+	[BLSP1_UART6_APPS_CLK_SRC] = &blsp1_uart6_apps_clk_src.clkr,
-+	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
-+	[GCC_BLSP1_QUP1_I2C_APPS_CLK] = &gcc_blsp1_qup1_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP1_SPI_APPS_CLK] = &gcc_blsp1_qup1_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP2_I2C_APPS_CLK] = &gcc_blsp1_qup2_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP2_SPI_APPS_CLK] = &gcc_blsp1_qup2_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP3_I2C_APPS_CLK] = &gcc_blsp1_qup3_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP3_SPI_APPS_CLK] = &gcc_blsp1_qup3_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP4_I2C_APPS_CLK] = &gcc_blsp1_qup4_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP4_SPI_APPS_CLK] = &gcc_blsp1_qup4_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP5_I2C_APPS_CLK] = &gcc_blsp1_qup5_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP5_SPI_APPS_CLK] = &gcc_blsp1_qup5_spi_apps_clk.clkr,
-+	[GCC_BLSP1_QUP6_I2C_APPS_CLK] = &gcc_blsp1_qup6_i2c_apps_clk.clkr,
-+	[GCC_BLSP1_QUP6_SPI_APPS_CLK] = &gcc_blsp1_qup6_spi_apps_clk.clkr,
-+	[GCC_BLSP1_UART1_APPS_CLK] = &gcc_blsp1_uart1_apps_clk.clkr,
-+	[GCC_BLSP1_UART2_APPS_CLK] = &gcc_blsp1_uart2_apps_clk.clkr,
-+	[GCC_BLSP1_UART3_APPS_CLK] = &gcc_blsp1_uart3_apps_clk.clkr,
-+	[GCC_BLSP1_UART4_APPS_CLK] = &gcc_blsp1_uart4_apps_clk.clkr,
-+	[GCC_BLSP1_UART5_APPS_CLK] = &gcc_blsp1_uart5_apps_clk.clkr,
-+	[GCC_BLSP1_UART6_APPS_CLK] = &gcc_blsp1_uart6_apps_clk.clkr,
-+	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
-+	[GCC_QPIC_AHB_CLK] = &gcc_qpic_ahb_clk.clkr,
-+	[GCC_QPIC_CLK] = &gcc_qpic_clk.clkr,
-+};
-+
-+static const struct qcom_reset_map gcc_ipq8074_resets[] = {
-+	[GCC_BLSP1_BCR] = { 0x01000, 0 },
-+	[GCC_BLSP1_QUP1_BCR] = { 0x02000, 0 },
-+	[GCC_BLSP1_UART1_BCR] = { 0x02038, 0 },
-+	[GCC_BLSP1_QUP2_BCR] = { 0x03008, 0 },
-+	[GCC_BLSP1_UART2_BCR] = { 0x03028, 0 },
-+	[GCC_BLSP1_QUP3_BCR] = { 0x04008, 0 },
-+	[GCC_BLSP1_UART3_BCR] = { 0x04028, 0 },
-+	[GCC_BLSP1_QUP4_BCR] = { 0x05008, 0 },
-+	[GCC_BLSP1_UART4_BCR] = { 0x05028, 0 },
-+	[GCC_BLSP1_QUP5_BCR] = { 0x06008, 0 },
-+	[GCC_BLSP1_UART5_BCR] = { 0x06028, 0 },
-+	[GCC_BLSP1_QUP6_BCR] = { 0x07008, 0 },
-+	[GCC_BLSP1_UART6_BCR] = { 0x07028, 0 },
-+	[GCC_IMEM_BCR] = { 0x0e000, 0 },
-+	[GCC_SMMU_BCR] = { 0x12000, 0 },
-+	[GCC_APSS_TCU_BCR] = { 0x12050, 0 },
-+	[GCC_SMMU_XPU_BCR] = { 0x12054, 0 },
-+	[GCC_PCNOC_TBU_BCR] = { 0x12058, 0 },
-+	[GCC_SMMU_CFG_BCR] = { 0x1208c, 0 },
-+	[GCC_PRNG_BCR] = { 0x13000, 0 },
-+	[GCC_BOOT_ROM_BCR] = { 0x13008, 0 },
-+	[GCC_CRYPTO_BCR] = { 0x16000, 0 },
-+	[GCC_WCSS_BCR] = { 0x18000, 0 },
-+	[GCC_WCSS_Q6_BCR] = { 0x18100, 0 },
-+	[GCC_NSS_BCR] = { 0x19000, 0 },
-+	[GCC_SEC_CTRL_BCR] = { 0x1a000, 0 },
-+	[GCC_ADSS_BCR] = { 0x1c000, 0 },
-+	[GCC_DDRSS_BCR] = { 0x1e000, 0 },
-+	[GCC_SYSTEM_NOC_BCR] = { 0x26000, 0 },
-+	[GCC_PCNOC_BCR] = { 0x27018, 0 },
-+	[GCC_TCSR_BCR] = { 0x28000, 0 },
-+	[GCC_QDSS_BCR] = { 0x29000, 0 },
-+	[GCC_DCD_BCR] = { 0x2a000, 0 },
-+	[GCC_MSG_RAM_BCR] = { 0x2b000, 0 },
-+	[GCC_MPM_BCR] = { 0x2c000, 0 },
-+	[GCC_SPMI_BCR] = { 0x2e000, 0 },
-+	[GCC_SPDM_BCR] = { 0x2f000, 0 },
-+	[GCC_RBCPR_BCR] = { 0x33000, 0 },
-+	[GCC_RBCPR_MX_BCR] = { 0x33014, 0 },
-+	[GCC_TLMM_BCR] = { 0x34000, 0 },
-+	[GCC_RBCPR_WCSS_BCR] = { 0x3a000, 0 },
-+	[GCC_USB0_PHY_BCR] = { 0x3e034, 0 },
-+	[GCC_USB3PHY_0_PHY_BCR] = { 0x3e03c, 0 },
-+	[GCC_USB0_BCR] = { 0x3e070, 0 },
-+	[GCC_USB1_PHY_BCR] = { 0x3f034, 0 },
-+	[GCC_USB3PHY_1_PHY_BCR] = { 0x3f03c, 0 },
-+	[GCC_USB1_BCR] = { 0x3f070, 0 },
-+	[GCC_QUSB2_0_PHY_BCR] = { 0x4103c, 0 },
-+	[GCC_QUSB2_1_PHY_BCR] = { 0x41040, 0 },
-+	[GCC_SDCC1_BCR] = { 0x42000, 0 },
-+	[GCC_SDCC2_BCR] = { 0x43000, 0 },
-+	[GCC_SNOC_BUS_TIMEOUT0_BCR] = { 0x47000, 0 },
-+	[GCC_SNOC_BUS_TIMEOUT2_BCR] = { 0x47008, 0 },
-+	[GCC_SNOC_BUS_TIMEOUT3_BCR] = { 0x47010, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT0_BCR] = { 0x48000, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT1_BCR] = { 0x48008, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT2_BCR] = { 0x48010, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT3_BCR] = { 0x48018, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT4_BCR] = { 0x48020, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT5_BCR] = { 0x48028, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT6_BCR] = { 0x48030, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT7_BCR] = { 0x48038, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT8_BCR] = { 0x48040, 0 },
-+	[GCC_PCNOC_BUS_TIMEOUT9_BCR] = { 0x48048, 0 },
-+	[GCC_UNIPHY0_BCR] = { 0x56000, 0 },
-+	[GCC_UNIPHY1_BCR] = { 0x56100, 0 },
-+	[GCC_UNIPHY2_BCR] = { 0x56200, 0 },
-+	[GCC_CMN_12GPLL_BCR] = { 0x56300, 0 },
-+	[GCC_QPIC_BCR] = { 0x57018, 0 },
-+	[GCC_MDIO_BCR] = { 0x58000, 0 },
-+	[GCC_PCIE1_TBU_BCR] = { 0x65000, 0 },
-+	[GCC_WCSS_CORE_TBU_BCR] = { 0x66000, 0 },
-+	[GCC_WCSS_Q6_TBU_BCR] = { 0x67000, 0 },
-+	[GCC_USB0_TBU_BCR] = { 0x6a000, 0 },
-+	[GCC_USB1_TBU_BCR] = { 0x6a004, 0 },
-+	[GCC_PCIE0_TBU_BCR] = { 0x6b000, 0 },
-+	[GCC_NSS_NOC_TBU_BCR] = { 0x6e000, 0 },
-+	[GCC_PCIE0_BCR] = { 0x75004, 0 },
-+	[GCC_PCIE0_PHY_BCR] = { 0x75038, 0 },
-+	[GCC_PCIE0PHY_PHY_BCR] = { 0x7503c, 0 },
-+	[GCC_PCIE0_LINK_DOWN_BCR] = { 0x75044, 0 },
-+	[GCC_PCIE1_BCR] = { 0x76004, 0 },
-+	[GCC_PCIE1_PHY_BCR] = { 0x76038, 0 },
-+	[GCC_PCIE1PHY_PHY_BCR] = { 0x7603c, 0 },
-+	[GCC_PCIE1_LINK_DOWN_BCR] = { 0x76044, 0 },
-+	[GCC_DCC_BCR] = { 0x77000, 0 },
-+	[GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x78000, 0 },
-+	[GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x79000, 0 },
-+	[GCC_SMMU_CATS_BCR] = { 0x7c000, 0 },
-+};
-+
-+static const struct of_device_id gcc_ipq8074_match_table[] = {
-+	{ .compatible = "qcom,gcc-ipq8074" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, gcc_ipq8074_match_table);
-+
-+static const struct regmap_config gcc_ipq8074_regmap_config = {
-+	.reg_bits       = 32,
-+	.reg_stride     = 4,
-+	.val_bits       = 32,
-+	.max_register   = 0x7fffc,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc gcc_ipq8074_desc = {
-+	.config = &gcc_ipq8074_regmap_config,
-+	.clks = gcc_ipq8074_clks,
-+	.num_clks = ARRAY_SIZE(gcc_ipq8074_clks),
-+	.resets = gcc_ipq8074_resets,
-+	.num_resets = ARRAY_SIZE(gcc_ipq8074_resets),
-+};
-+
-+static int gcc_ipq8074_probe(struct platform_device *pdev)
-+{
-+	int ret, i;
-+
-+	for (i = 0; i < ARRAY_SIZE(gcc_ipq8074_hws); i++) {
-+		ret = devm_clk_hw_register(&pdev->dev, gcc_ipq8074_hws[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = qcom_cc_probe(pdev, &gcc_ipq8074_desc);
-+
-+	return ret;
-+}
-+
-+static struct platform_driver gcc_ipq8074_driver = {
-+	.probe = gcc_ipq8074_probe,
-+	.driver = {
-+		.name   = "qcom,gcc-ipq8074",
-+		.of_match_table = gcc_ipq8074_match_table,
-+	},
-+};
-+
-+static int __init gcc_ipq8074_init(void)
-+{
-+	return platform_driver_register(&gcc_ipq8074_driver);
-+}
-+core_initcall(gcc_ipq8074_init);
-+
-+static void __exit gcc_ipq8074_exit(void)
-+{
-+	platform_driver_unregister(&gcc_ipq8074_driver);
-+}
-+module_exit(gcc_ipq8074_exit);
-+
-+MODULE_DESCRIPTION("QCOM GCC IPQ8074 Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:gcc-ipq8074");
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-new file mode 100644
-index 0000000..370c83c
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-@@ -0,0 +1,152 @@
-+/*
-+ * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_IPQ_GCC_8074_H
-+#define _DT_BINDINGS_CLOCK_IPQ_GCC_8074_H
-+
-+#define GPLL0					0
-+#define GPLL0_MAIN				1
-+#define GCC_SLEEP_CLK_SRC			2
-+#define BLSP1_QUP1_I2C_APPS_CLK_SRC		3
-+#define BLSP1_QUP1_SPI_APPS_CLK_SRC		4
-+#define BLSP1_QUP2_I2C_APPS_CLK_SRC		5
-+#define BLSP1_QUP2_SPI_APPS_CLK_SRC		6
-+#define BLSP1_QUP3_I2C_APPS_CLK_SRC		7
-+#define BLSP1_QUP3_SPI_APPS_CLK_SRC		8
-+#define BLSP1_QUP4_I2C_APPS_CLK_SRC		9
-+#define BLSP1_QUP4_SPI_APPS_CLK_SRC		10
-+#define BLSP1_QUP5_I2C_APPS_CLK_SRC		11
-+#define BLSP1_QUP5_SPI_APPS_CLK_SRC		12
-+#define BLSP1_QUP6_I2C_APPS_CLK_SRC		13
-+#define BLSP1_QUP6_SPI_APPS_CLK_SRC		14
-+#define BLSP1_UART1_APPS_CLK_SRC		15
-+#define BLSP1_UART2_APPS_CLK_SRC		16
-+#define BLSP1_UART3_APPS_CLK_SRC		17
-+#define BLSP1_UART4_APPS_CLK_SRC		18
-+#define BLSP1_UART5_APPS_CLK_SRC		19
-+#define BLSP1_UART6_APPS_CLK_SRC		20
-+#define GCC_BLSP1_AHB_CLK			21
-+#define GCC_BLSP1_QUP1_I2C_APPS_CLK		22
-+#define GCC_BLSP1_QUP1_SPI_APPS_CLK		23
-+#define GCC_BLSP1_QUP2_I2C_APPS_CLK		24
-+#define GCC_BLSP1_QUP2_SPI_APPS_CLK		25
-+#define GCC_BLSP1_QUP3_I2C_APPS_CLK		26
-+#define GCC_BLSP1_QUP3_SPI_APPS_CLK		27
-+#define GCC_BLSP1_QUP4_I2C_APPS_CLK		28
-+#define GCC_BLSP1_QUP4_SPI_APPS_CLK		29
-+#define GCC_BLSP1_QUP5_I2C_APPS_CLK		30
-+#define GCC_BLSP1_QUP5_SPI_APPS_CLK		31
-+#define GCC_BLSP1_QUP6_I2C_APPS_CLK		32
-+#define GCC_BLSP1_QUP6_SPI_APPS_CLK		33
-+#define GCC_BLSP1_UART1_APPS_CLK		34
-+#define GCC_BLSP1_UART2_APPS_CLK		35
-+#define GCC_BLSP1_UART3_APPS_CLK		36
-+#define GCC_BLSP1_UART4_APPS_CLK		37
-+#define GCC_BLSP1_UART5_APPS_CLK		38
-+#define GCC_BLSP1_UART6_APPS_CLK		39
-+#define GCC_PRNG_AHB_CLK			40
-+#define GCC_QPIC_AHB_CLK			41
-+#define GCC_QPIC_CLK				42
-+#define PCNOC_BFDCD_CLK_SRC			43
-+
-+#define GCC_BLSP1_BCR				0
-+#define GCC_BLSP1_QUP1_BCR			1
-+#define GCC_BLSP1_UART1_BCR			2
-+#define GCC_BLSP1_QUP2_BCR			3
-+#define GCC_BLSP1_UART2_BCR			4
-+#define GCC_BLSP1_QUP3_BCR			5
-+#define GCC_BLSP1_UART3_BCR			6
-+#define GCC_BLSP1_QUP4_BCR			7
-+#define GCC_BLSP1_UART4_BCR			8
-+#define GCC_BLSP1_QUP5_BCR			9
-+#define GCC_BLSP1_UART5_BCR			10
-+#define GCC_BLSP1_QUP6_BCR			11
-+#define GCC_BLSP1_UART6_BCR			12
-+#define GCC_IMEM_BCR				13
-+#define GCC_SMMU_BCR				14
-+#define GCC_APSS_TCU_BCR			15
-+#define GCC_SMMU_XPU_BCR			16
-+#define GCC_PCNOC_TBU_BCR			17
-+#define GCC_SMMU_CFG_BCR			18
-+#define GCC_PRNG_BCR				19
-+#define GCC_BOOT_ROM_BCR			20
-+#define GCC_CRYPTO_BCR				21
-+#define GCC_WCSS_BCR				22
-+#define GCC_WCSS_Q6_BCR				23
-+#define GCC_NSS_BCR				24
-+#define GCC_SEC_CTRL_BCR			25
-+#define GCC_ADSS_BCR				26
-+#define GCC_DDRSS_BCR				27
-+#define GCC_SYSTEM_NOC_BCR			28
-+#define GCC_PCNOC_BCR				29
-+#define GCC_TCSR_BCR				30
-+#define GCC_QDSS_BCR				31
-+#define GCC_DCD_BCR				32
-+#define GCC_MSG_RAM_BCR				33
-+#define GCC_MPM_BCR				34
-+#define GCC_SPMI_BCR				35
-+#define GCC_SPDM_BCR				36
-+#define GCC_RBCPR_BCR				37
-+#define GCC_RBCPR_MX_BCR			38
-+#define GCC_TLMM_BCR				39
-+#define GCC_RBCPR_WCSS_BCR			40
-+#define GCC_USB0_PHY_BCR			41
-+#define GCC_USB3PHY_0_PHY_BCR			42
-+#define GCC_USB0_BCR				43
-+#define GCC_USB1_PHY_BCR			44
-+#define GCC_USB3PHY_1_PHY_BCR			45
-+#define GCC_USB1_BCR				46
-+#define GCC_QUSB2_0_PHY_BCR			47
-+#define GCC_QUSB2_1_PHY_BCR			48
-+#define GCC_SDCC1_BCR				49
-+#define GCC_SDCC2_BCR				50
-+#define GCC_SNOC_BUS_TIMEOUT0_BCR		51
-+#define GCC_SNOC_BUS_TIMEOUT2_BCR		52
-+#define GCC_SNOC_BUS_TIMEOUT3_BCR		53
-+#define GCC_PCNOC_BUS_TIMEOUT0_BCR		54
-+#define GCC_PCNOC_BUS_TIMEOUT1_BCR		55
-+#define GCC_PCNOC_BUS_TIMEOUT2_BCR		56
-+#define GCC_PCNOC_BUS_TIMEOUT3_BCR		57
-+#define GCC_PCNOC_BUS_TIMEOUT4_BCR		58
-+#define GCC_PCNOC_BUS_TIMEOUT5_BCR		59
-+#define GCC_PCNOC_BUS_TIMEOUT6_BCR		60
-+#define GCC_PCNOC_BUS_TIMEOUT7_BCR		61
-+#define GCC_PCNOC_BUS_TIMEOUT8_BCR		62
-+#define GCC_PCNOC_BUS_TIMEOUT9_BCR		63
-+#define GCC_UNIPHY0_BCR				64
-+#define GCC_UNIPHY1_BCR				65
-+#define GCC_UNIPHY2_BCR				66
-+#define GCC_CMN_12GPLL_BCR			67
-+#define GCC_QPIC_BCR				68
-+#define GCC_MDIO_BCR				69
-+#define GCC_PCIE1_TBU_BCR			70
-+#define GCC_WCSS_CORE_TBU_BCR			71
-+#define GCC_WCSS_Q6_TBU_BCR			72
-+#define GCC_USB0_TBU_BCR			73
-+#define GCC_USB1_TBU_BCR			74
-+#define GCC_PCIE0_TBU_BCR			75
-+#define GCC_NSS_NOC_TBU_BCR			76
-+#define GCC_PCIE0_BCR				77
-+#define GCC_PCIE0_PHY_BCR			78
-+#define GCC_PCIE0PHY_PHY_BCR			79
-+#define GCC_PCIE0_LINK_DOWN_BCR			80
-+#define GCC_PCIE1_BCR				81
-+#define GCC_PCIE1_PHY_BCR			82
-+#define GCC_PCIE1PHY_PHY_BCR			83
-+#define GCC_PCIE1_LINK_DOWN_BCR			84
-+#define GCC_DCC_BCR				85
-+#define GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR	86
-+#define GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR	87
-+#define GCC_SMMU_CATS_BCR			88
-+
-+#endif
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+On Sat, Jun 03, 2017 at 12:22:32PM +0800, kbuild test robot wrote:
+> Hi Stephen,
+>=20
+> [auto build test ERROR on sunxi/sunxi/for-next]
+> [also build test ERROR on next-20170602]
+> [cannot apply to clk/clk-next v4.12-rc3]
+> [if your patch is applied to the wrong git tree, please drop us a note to=
+ help improve the system]
+>=20
+> url:    https://github.com/0day-ci/linux/commits/Stephen-Boyd/clk-sunxi-n=
+g-Move-all-clock-types-to-a-library/20170603-090538
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git s=
+unxi/for-next
+> config: arm-sunxi_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
+> reproduce:
+>         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbi=
+n/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=3Darm=20
+>=20
+> All errors (new ones prefixed by >>):
+>=20
+>    drivers/built-in.o: In function `sun8i_a83t_ccu_probe':
+> >> sunxi_sid.c:(.text+0x2dc74): undefined reference to `sunxi_ccu_probe'
+>    drivers/built-in.o: In function `sun9i_a80_ccu_probe':
+>    sunxi_sid.c:(.text+0x2dd14): undefined reference to `sunxi_ccu_probe'
+>    drivers/built-in.o: In function `sun9i_a80_de_clk_probe':
+>    sunxi_sid.c:(.text+0x2de20): undefined reference to `sunxi_ccu_probe'
+>    drivers/built-in.o: In function `sun9i_a80_usb_clk_probe':
+>    sunxi_sid.c:(.text+0x2df34): undefined reference to `sunxi_ccu_probe'
+>    drivers/built-in.o: In function `sun5i_ccu_init':
+> >> sunxi_sid.c:(.init.text+0x3f9c): undefined reference to `sunxi_ccu_pro=
+be'
+>    drivers/built-in.o:sunxi_sid.c:(.init.text+0x4070): more undefined ref=
+erences to `sunxi_ccu_probe' follow
+>    drivers/built-in.o: In function `sun6i_a31_ccu_setup':
+> >> sunxi_sid.c:(.init.text+0x4084): undefined reference to `ccu_mux_notif=
+ier_register'
+>    drivers/built-in.o: In function `sun8i_a23_ccu_setup':
+>    sunxi_sid.c:(.init.text+0x411c): undefined reference to `sunxi_ccu_pro=
+be'
+>    drivers/built-in.o: In function `sun8i_a33_ccu_setup':
+>    sunxi_sid.c:(.init.text+0x41b8): undefined reference to `sunxi_ccu_pro=
+be'
+> >> sunxi_sid.c:(.init.text+0x41c0): undefined reference to `ccu_pll_notif=
+ier_register'
+>    sunxi_sid.c:(.init.text+0x41d0): undefined reference to `ccu_mux_notif=
+ier_register'
+>    drivers/built-in.o: In function `sunxi_h3_h5_ccu_init':
+>    sunxi_sid.c:(.init.text+0x425c): undefined reference to `sunxi_ccu_pro=
+be'
+>    sunxi_sid.c:(.init.text+0x4270): undefined reference to `ccu_mux_notif=
+ier_register'
+>    drivers/built-in.o: In function `sun8i_v3s_ccu_setup':
+>    sunxi_sid.c:(.init.text+0x4308): undefined reference to `sunxi_ccu_pro=
+be'
+>    drivers/built-in.o: In function `sunxi_r_ccu_init':
+>    sunxi_sid.c:(.init.text+0x4368): undefined reference to `sunxi_ccu_pro=
+be'
+>    drivers/built-in.o: In function `.LANCHOR0':
+> >> sunxi_sid.c:(.data+0x157c4): undefined reference to `ccu_gate_ops'
+> >> sunxi_sid.c:(.data+0x15840): undefined reference to `ccu_mp_ops'
+> >> sunxi_sid.c:(.data+0x158a4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x15908): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x15940): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1597c): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x159b8): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15a20): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x15a84): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x15aec): undefined reference to `ccu_div_ops'
+> >> sunxi_sid.c:(.data+0x15b40): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x15ba4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x15c08): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x15c40): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15c7c): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15cb8): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15cf4): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15d30): undefined reference to `ccu_gate_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x15d6c): more undefined referen=
+ces to `ccu_gate_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR0':
+>    sunxi_sid.c:(.data+0x15e4c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x15e84): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15ec0): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15efc): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x15f78): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x15fcc): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x16020): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x16098): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x16110): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x16188): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x16200): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x16278): undefined reference to `ccu_mp_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x162f0): more undefined referen=
+ces to `ccu_mp_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR0':
+>    sunxi_sid.c:(.data+0x16508): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x16544): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x16580): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x165bc): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x165f8): undefined reference to `ccu_gate_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x16634): more undefined referen=
+ces to `ccu_gate_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR0':
+>    sunxi_sid.c:(.data+0x16ee4): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x16f48): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x16fd8): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1703c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x17094): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x170cc): undefined reference to `ccu_gate_ops'
+> >> sunxi_sid.c:(.data+0x1713c): undefined reference to `ccu_mult_ops'
+> >> sunxi_sid.c:(.data+0x17190): undefined reference to `ccu_nk_ops'
+>    sunxi_sid.c:(.data+0x171f8): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x17260): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x172b4): undefined reference to `ccu_nk_ops'
+> >> sunxi_sid.c:(.data+0x17328): undefined reference to `ccu_nkmp_ops'
+>    sunxi_sid.c:(.data+0x17398): undefined reference to `ccu_mult_ops'
+> >> sunxi_sid.c:(.data+0x17404): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x17478): undefined reference to `ccu_nkmp_ops'
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x17d40): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x17db8): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x17e30): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x17e94): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x17ef8): undefined reference to `ccu_div_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x17f5c): more undefined referen=
+ces to `ccu_div_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x18358): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x183d0): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x18408): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18444): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x184ac): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x184e4): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18520): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1855c): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x185c4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1862c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x18690): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x186f4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x18758): undefined reference to `ccu_div_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x187bc): more undefined referen=
+ces to `ccu_div_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x18810): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x18864): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x188c8): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1892c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x18990): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x189f4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x18a58): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x18a90): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18acc): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18b08): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18b44): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18b80): undefined reference to `ccu_gate_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x18bbc): more undefined referen=
+ces to `ccu_gate_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x18d8c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x18df0): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x18e68): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x18ea0): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18edc): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18f18): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18f54): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x18f90): undefined reference to `ccu_gate_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x18fcc): more undefined referen=
+ces to `ccu_gate_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x19024): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x19078): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x190cc): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x19144): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x191bc): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x19234): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x192ac): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x19324): undefined reference to `ccu_mp_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x1939c): more undefined referen=
+ces to `ccu_mp_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+> >> sunxi_sid.c:(.data+0x193d4): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x19410): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1948c): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x194c4): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x19500): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1957c): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x195b4): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x195f0): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1966c): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x196a4): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x196e0): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1975c): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x197d4): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1984c): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x19884): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x198c0): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x198fc): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x19938): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x19974): undefined reference to `ccu_gate_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x199b0): more undefined referen=
+ces to `ccu_gate_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x1a56c): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1a5d0): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1a660): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1a6c4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1a764): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1a7cc): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1a838): undefined reference to `ccu_nm_ops'
+> >> sunxi_sid.c:(.data+0x1a8b0): undefined reference to `ccu_nkm_ops'
+>    sunxi_sid.c:(.data+0x1a918): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1a984): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1a9d8): undefined reference to `ccu_nk_ops'
+>    sunxi_sid.c:(.data+0x1aa50): undefined reference to `ccu_nkm_ops'
+>    sunxi_sid.c:(.data+0x1aabc): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1ab28): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1ab94): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1abac): undefined reference to `ccu_nkm_ops'
+>    sunxi_sid.c:(.data+0x1b154): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b1b8): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b220): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b284): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b2e8): undefined reference to `ccu_div_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x1b34c): more undefined referen=
+ces to `ccu_div_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x1b384): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1b3c0): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1b428): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b490): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b4f4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b558): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b5ac): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1b610): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b674): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1b6ac): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1b6e8): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1b724): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1b760): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1b79c): undefined reference to `ccu_gate_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x1b7d8): more undefined referen=
+ces to `ccu_gate_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x1b920): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1b974): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1b9ec): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1ba64): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1ba9c): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1bad8): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1bb54): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1bb8c): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1bbc8): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1bc44): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1bc7c): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1bcb8): undefined reference to `ccu_phase_ops'
+>    sunxi_sid.c:(.data+0x1bd34): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1bdac): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1bde4): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1be20): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1be5c): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1be98): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1bed4): undefined reference to `ccu_gate_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x1bf10): more undefined referen=
+ces to `ccu_gate_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x1c61c): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1c680): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1c710): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1c774): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1c7cc): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1c834): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1c8a0): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1c918): undefined reference to `ccu_nkm_ops'
+>    sunxi_sid.c:(.data+0x1c984): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1c9d8): undefined reference to `ccu_nk_ops'
+>    sunxi_sid.c:(.data+0x1ca50): undefined reference to `ccu_nkm_ops'
+>    sunxi_sid.c:(.data+0x1cabc): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1cb28): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1cb94): undefined reference to `ccu_nm_ops'
+>    sunxi_sid.c:(.data+0x1cc08): undefined reference to `ccu_nkmp_ops'
+>    sunxi_sid.c:(.data+0x1d25c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d2c0): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d328): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d38c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d3f0): undefined reference to `ccu_div_ops'
+>    drivers/built-in.o:sunxi_sid.c:(.data+0x1d454): more undefined referen=
+ces to `ccu_div_ops' follow
+>    drivers/built-in.o: In function `.LANCHOR1':
+>    sunxi_sid.c:(.data+0x1d48c): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d4c8): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d504): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d56c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d5d4): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d638): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d69c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d6f0): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1d754): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d7b8): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d7f0): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d82c): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d868): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d8a4): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d8e0): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1d938): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1d99c): undefined reference to `ccu_div_ops'
+>    sunxi_sid.c:(.data+0x1d9d8): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1da14): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1da50): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1da8c): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1dac8): undefined reference to `ccu_gate_ops'
+>    sunxi_sid.c:(.data+0x1db20): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1db74): undefined reference to `ccu_mux_ops'
+>    sunxi_sid.c:(.data+0x1dbec): undefined reference to `ccu_mp_ops'
+>    sunxi_sid.c:(.data+0x1dc64): undefined reference to `ccu_mp_ops'
+
+It seems like even though the lib.a file is compiled properly, it is
+never linked in. It looks like we would be supposed to add
+drivers/clk/sunxi-ng/ to libs-y, but that doesn't seem to work for
+Makefiles in drivers/*
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--hnoybsnj5wdx6i4l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZNW6aAAoJEBx+YmzsjxAgf3wP/i+Wgh5ki01xgIgSFGSq04Qr
+KydDEfUsuWgdiIv4T/JyCa7Ufs9r38Z9hA6O38ZtbU491o7u3b2lvmOwaLtnxMSo
+ZEwUhrEc1n0q48vcRDcHvbTMIrMoSFkAZlZupPVBX8JSk0pJ2TGArGBaQPQtfLDn
+RqmX1OhR5w63uyTQ6E+rRqXlMSSvXTxONolHOh9eCDb5RL1RyE/cqznrR2J38oyx
+/+OV10E/dI3fDU3O+F56VD/evA+s4QQ5+IGf7x5a5nMnRH4qmoUHm6gFHApieRtL
+eItEHpfb/iwSfzTSdlGdn9gDHK3OukZAMW8eruh4nNAPXnHTmGIKY7UeA4QBT1iQ
+XDfu/jVWuaBSQjdLxKP1tDZRlneauwTl3hcpmV3eDkIOT06j7ItRDnINkD5rIOFf
+jWGg1zek+0+cuTxcSRERZpmpxvHyMUJPPuXGbdUJ5KppYj0Adsn5w5BQCPmjsHFL
+7nTdiAerFiDLXWx7+28lZ/ZDMAJ46tLsrkRLJI/b3/6/cs26TxLMCir3CxXiv4uI
+mP22b6vWS5f/3fnkUWhr18uaV1HnFEM2apJtxekMDZpV+0UDtGwuuuz1DA32sZPr
+YfnX/gzxTtWpMYJeJwJfO1uE51B3ztsm4k8B/sgWVeWkcttirYh8BhpSj3kkCi7U
+dB/SqgzLF3Jw+vnYNHaY
+=CBKs
+-----END PGP SIGNATURE-----
+
+--hnoybsnj5wdx6i4l--
