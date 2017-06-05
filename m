@@ -1,136 +1,29 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 01/11] dt-bindings: update the binding for Allwinner H3 TVE support
-Date: Mon,  5 Jun 2017 00:01:39 +0800
-Message-Id: <20170604160149.30230-2-icenowy@aosc.io>
-In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
-References: <20170604160149.30230-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170601070208.GO20170@codeaurora.org>
+References: <20170524082044.8473-1-linus.walleij@linaro.org> <20170601070208.GO20170@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 5 Jun 2017 15:34:14 +0200
+Message-ID: <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H3 features a "DE2.0" and a TV Encoder.
+On Thu, Jun 1, 2017 at 9:02 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Add device tree bindings for the following parts:
-- H3 TCONs
-- H3 Mixers
-- The connection between H3 TCONs and H3 Mixers
-- H3 TV Encoder
-- H3 Display engine
+>> +CLK_OF_DECLARE_DRIVER(gemini_cc, "cortina,gemini-syscon", gemini_cc_init);
+>
+> Is there a reason why this isn't a platform driver?
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Changed endpoint reg definition on TCONs and Mixers. Now the endpoint
-  id is just the component id.
-- Changed TVE and TCON1 binding -- now CLK_TVE is passed as TCON1 lcd-ch1.
+I can't get the platform to boot if I try, I guess because the console
+UART needs the clock like super-early.
 
- .../bindings/display/sunxi/sun4i-drm.txt           | 37 +++++++++++++++++++---
- 1 file changed, 33 insertions(+), 4 deletions(-)
+I fixed all the other issues, resending soon.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index b83e6018041d..7ad164cb7dcb 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -49,7 +49,9 @@ The TV Encoder supports the composite and VGA output. It is one end of
- the pipeline.
- 
- Required properties:
-- - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
-+ - compatible: value must be either:
-+    * allwinner,sun4i-a10-tv-encoder
-+    * allwinner,sun8i-h3-tv-encoder
-  - reg: base address and size of memory-mapped region
-  - clocks: the clocks driving the TV encoder
-  - resets: phandle to the reset controller driving the encoder
-@@ -69,23 +71,27 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-h3-tcon
-    * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON. Three are needed:
-    - 'ahb': the interface clocks
--   - 'tcon-ch0': The clock driving the TCON channel 0
-  - resets: phandles to the reset controllers driving the encoder
-    - "lcd": the reset line for the TCON channel 0
- 
-  - clock-names: the clock names mentioned above
-  - reset-names: the reset names mentioned above
-- - clock-output-names: Name of the pixel clock created
- 
- - ports: A ports node with endpoint definitions as defined in
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint, the second one the output
- 
-+  In the situation of Display Engine 2.0 that the connection between
-+  the mixer and the TCON can be swapped, the input should have two
-+  endpoints. The first input endpoint should be connected to mixer0
-+  and the second should be connected to mixer1.
-+
-   The output may have multiple endpoints. The TCON has two channels,
-   usually with the first channel being used for the panels interfaces
-   (RGB, LVDS, etc.), and the second being used for the outputs that
-@@ -94,7 +100,23 @@ Required properties:
-   channel the endpoint is associated to. If that property is not
-   present, the endpoint number will be used as the channel number.
- 
--On SoCs other than the A33 and V3s, there is one more clock required:
-+For the following compatibles:
-+   * allwinner,sun5i-a13-tcon
-+   * allwinner,sun6i-a31-tcon
-+   * allwinner,sun6i-a31s-tcon
-+   * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-v3s-tcon
-+there is one more clock and one more property required:
-+ - clocks:
-+   - 'tcon-ch0': The clock driving the TCON channel 0
-+ - clock-output-names: Name of the pixel clock created
-+
-+For the following compatibles:
-+   * allwinner,sun5i-a13-tcon
-+   * allwinner,sun6i-a31-tcon
-+   * allwinner,sun6i-a31s-tcon
-+   * allwinner,sun8i-h3-tcon
-+there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
- 
- DRC
-@@ -189,6 +211,8 @@ supported.
- Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-v3s-de2-mixer
-+    * allwinner,sun8i-h3-de2-mixer0
-+    * allwinner,sun8i-h3-de2-mixer1
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-     * bus: the mixer interface clock
-@@ -200,6 +224,10 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoints, the second one the output
- 
-+  In the situation of Display Engine 2.0 that the connection between
-+  the mixer and the TCON can be swapped, the output should have two
-+  endpoints. The first should be connected to TCON0 and the second
-+  should be connected to TCON1.
- 
- Display Engine Pipeline
- -----------------------
-@@ -215,6 +243,7 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-h3-display-engine
-     * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--- 
-2.12.2
+Yours,
+Linus Walleij
