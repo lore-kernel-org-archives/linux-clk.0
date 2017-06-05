@@ -1,208 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 7 Jun 2017 11:35:12 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 5 Jun 2017 16:00:12 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 03/11] drm: sun4i: ignore swapped mixer<->tcon
- connection for DE2
-Message-ID: <20170607093512.rfvpefmyskgjw3ik@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io>
- <20170604160149.30230-4-icenowy@aosc.io>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 10/19] drm/sun4i: hdmi: Rename internal DDC clock to
+ avoid name collision
+Message-ID: <20170605140012.rlx7rm7xhriwqaza@flea.lan>
+References: <20170602101024.18940-1-wens@csie.org>
+ <20170602101024.18940-11-wens@csie.org>
+ <20170602193012.xwuziggyx6evmusz@flea.lan>
+ <CAGb2v64Vgdjm1MAwn+L0PVc0CA0QOCn=0RONKoGDWLpzVBzvmQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ibbxel3q6tzagnbt"
-In-Reply-To: <20170604160149.30230-4-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+	protocol="application/pgp-signature"; boundary="rglkvp77czxqdczo"
+In-Reply-To: <CAGb2v64Vgdjm1MAwn+L0PVc0CA0QOCn=0RONKoGDWLpzVBzvmQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---ibbxel3q6tzagnbt
+--rglkvp77czxqdczo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 05, 2017 at 12:01:41AM +0800, Icenowy Zheng wrote:
-> Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
-> tcon0 and mixer1 is connected to tcon1; however by setting a bit
-> the connection can be swapped.
+On Sat, Jun 03, 2017 at 10:33:25PM +0800, Chen-Yu Tsai wrote:
+> On Sat, Jun 3, 2017 at 3:30 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Fri, Jun 02, 2017 at 06:10:15PM +0800, Chen-Yu Tsai wrote:
+> >> The DDC parent clock on the A31 SoC is also conveniently named
+> >> "hdmi-ddc", which results in a name collision when the hdmi driver
+> >> registers its internal DDC divider clock.
+> >>
+> >> Rename the internal clock to "hdmi-ddc-divider".
+> >>
+> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >> ---
+> >>  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/=
+drm/sun4i/sun4i_hdmi_ddc_clk.c
+> >> index e1071838f487..9a6b6243e977 100644
+> >> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+> >> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
+> >> @@ -125,7 +125,7 @@ static int _sun4i_ddc_create(struct sun4i_hdmi *hd=
+mi, struct clk *parent,
+> >>       if (!ddc)
+> >>               return -ENOMEM;
+> >>
+> >> -     init.name =3D "hdmi-ddc";
+> >> +     init.name =3D "hdmi-ddc-divider";
+> >
+> > Can't we rename the CCU clock instead? Having the clock called
+> > hdmi-ddc being the actual clock output on the DDC bus feels more
+> > natural.
 >=20
-> As we now hardcode the default connection, ignore the bonus endpoint for
-> the mixer's output and the TCON's input, as they stands for the swapped
-> connection.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Do you have any suggestions? The manual labels the conflicting one
+> in the CCU as "HDMI_DDC"...
 
-So, I'm still not quite sure what this patch exactly is supposed to be
-doing.
-
-You mention that the routing between the mixers and tcons can be
-changed, and that we need to ignore the TCON input...
-
-> ---
-> Changes in v2:
-> - Change to use new endpoint reg definition.
->=20
->  drivers/gpu/drm/sun4i/sun4i_drv.c  | 45 ++++++++++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++=
-------
->  drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
->  3 files changed, 99 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/su=
-n4i_drv.c
-> index f19100c91c2b..775eee82d8a9 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> @@ -178,6 +178,13 @@ static bool sun4i_drv_node_is_frontend(struct device=
-_node *node)
->  		of_device_is_compatible(node, "allwinner,sun8i-a33-display-frontend");
->  }
-> =20
-> +static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node *no=
-de)
-> +{
-> +	/* The V3s has only one mixer-tcon pair, so it's not listed here. */
-> +	return of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer0") ||
-> +		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
-> +}
-> +
->  static bool sun4i_drv_node_is_tcon(struct device_node *node)
->  {
->  	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
-> @@ -261,6 +268,44 @@ static int sun4i_drv_add_endpoints(struct device *de=
-v,
->  			}
->  		}
-> =20
-> +		/*
-> +		 * The second endpoint of the output of a swappable DE2 mixer
-> +		 * is the TCON after connection swapping.
-> +		 * Ignore it now, as we now hardcode mixer0->tcon0,
-> +		 * mixer1->tcon1 connection.
-> +		 */
-> +		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
-> +			struct device_node *remote_ep_node;
-> +			struct of_endpoint local_endpoint, remote_endpoint;
-> +
-> +			remote_ep_node =3D of_graph_get_remote_endpoint(ep);
-> +			if (!remote_ep_node) {
-> +				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
-> +				continue;
-> +			}
-> +
-> +			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
-> +				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
-> +				of_node_put(remote_ep_node);
-> +				continue;
-> +			}
-> +
-> +			if (of_graph_parse_endpoint(remote_ep_node,
-> +						    &remote_endpoint)) {
-> +				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
-> +				of_node_put(remote_ep_node);
-> +				continue;
-> +			}
-> +
-> +			if (local_endpoint.id !=3D remote_endpoint.id) {
-> +				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2 mixer... =
-skipping\n");
-> +				of_node_put(remote_ep_node);
-> +				continue;
-> +			}
-> +
-> +			of_node_put(remote_ep_node);
-> +		}
-> +
->  		/* Walk down our tree */
->  		count +=3D sun4i_drv_add_endpoints(dev, match, remote);
-
-=2E.. yet this is not parsing the input at all, but only the output nodes.
-
-
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
-un4i_tcon.c
-> index d9791292553e..568cea0e5f8f 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -464,7 +464,8 @@ static int sun4i_tcon_init_regmap(struct device *dev,
->   * requested via the get_id function of the engine.
->   */
->  static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
-> -						   struct device_node *node)
-> +						   struct device_node *node,
-> +						   bool skip_bonus_ep)
->  {
->  	struct device_node *port, *ep, *remote;
->  	struct sunxi_engine *engine;
-> @@ -478,6 +479,42 @@ static struct sunxi_engine *sun4i_tcon_find_engine(s=
-truct sun4i_drv *drv,
->  		if (!remote)
->  			continue;
-> =20
-> +		if (skip_bonus_ep) {
-> +			struct device_node *remote_ep_node;
-> +			struct of_endpoint local_endpoint, remote_endpoint;
-> +
-> +			remote_ep_node =3D of_graph_get_remote_endpoint(ep);
-> +			if (!remote_ep_node) {
-> +				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
-> +				of_node_put(remote);
-> +				continue;
-> +			}
-> +
-> +			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
-> +				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
-> +				of_node_put(remote);
-> +				of_node_put(remote_ep_node);
-> +				continue;
-> +			}
-> +
-> +			if (of_graph_parse_endpoint(remote_ep_node,
-> +						    &remote_endpoint)) {
-> +				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
-> +				of_node_put(remote);
-> +				of_node_put(remote_ep_node);
-> +				continue;
-> +			}
-> +
-> +			if (local_endpoint.id !=3D remote_endpoint.id) {
-> +				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when searchi=
-ng engine\n");
-> +				of_node_put(remote);
-> +				of_node_put(remote_ep_node);
-> +				continue;
-> +			}
-> +
-> +			of_node_put(remote_ep_node);
-> +		}
-> +
-
-I have no idea what this is supposed to be doing either.
-
-I might be wrong, but I really feel like there's a big mismatch
-between your commit log, and what you actually implement.
-
-In your commit log, you should state:
-
-A) What is the current behaviour
-B) Why that is a problem
-C) How do you address it
-
-And you don't.
-
-However, after discussing it with Chen-Yu, it seems like you're trying
-to have all the mixers probed before the TCONs. If that is so, there's
-nothing specific to the H3 here, and we also have the same issue on
-dual-pipeline DE1 (A10, A20, A31). Chen-Yu worked on that a bit, but
-the easiest solution would be to move from a DFS algorithm to walk
-down the graph to a BFS one.
-
-That way, we would add all mixers first, then the TCONs, then the
-encoders, and the component framework will probe them in order.
+DDC as the main CCU clock, and hdmi-ddc as the one actually generated
+by the HDMI controller?
 
 Maxime
 
@@ -211,24 +74,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---ibbxel3q6tzagnbt
+--rglkvp77czxqdczo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZN8jQAAoJEBx+YmzsjxAg97oQAKB8UJuyLxiJclFF5F7HafQv
-fpBw4D0iap4HuC8md9SKy9AnoR20Ov0GHRyj9GEizDCnZuIJNTBu1Jt8ClCUcgWY
-VCj0hyi/NhnFlr9ehkEae9ZlOikljO681abk728QZgxWYt9X1ALai/ucDTjYQG00
-CrUrgNXwFl7idvz4ANAF3mKj8VWnbeEg75JrfaiQUdENpEFUN4KhB9tXKYNmFFnJ
-/YdUryL5JHMlRTxqfPHkW9rav1PoZVFSWrNXACO53c2ZYGLBqRbU7i5ZfNHLcafE
-mMl5deg5WsxQ7K3cbGH6LTaGqS2WfM7inNKNW0ykdPmsb9PiU1WyOR4hglrGW1e4
-vbevq5pb6oNIwosGqaKQFLYIUYLqsAZ4WkNS4685RmoYMA2MCF/Hx+JjKBJ6QoQP
-eW7vCLtRTaK6Td9ESFapWdCTOIlv5EKZEd5lP2yRJjjaysmYIgwwGBmzj/qmxhDn
-3S41tybd547rskMJVUT9aqYA5aKXXhfu/L/T6umL+MlG38ZdvRwMLd8beoAY9KoP
-YGlHZAnGcnajrEKo9HmOuO6Xn9DylRAyJDyd+hhs0nQfG+xk3XizHpoeG6f1VJs0
-VknixIxLuAih/D53bDXiZ+mmSXF7uBh3EWSC2lHwmvuuO1dAdiKW8TcRkicSGIFE
-gA+5VXwD9hVmLB/YMtup
-=owa/
+iQIcBAEBAgAGBQJZNWPsAAoJEBx+YmzsjxAgrsMP/jaUDyu//o5b4n7fWZ0A8tCL
+Kmkgp14n1DhMpepd7sx/9+hFRMyS2BPiiLUPgc5BCRYQLRo3ty84sSufaax/rAoe
+oT6EwqyTOl6jKNG+Vtu7d/dxwgwxgbv991nYvuqmRkkY739ECvvmEG25SdFkwuXt
+JA9YON/7bPxbVpYxxV37lhxg/Gx9S3O6qgvOobI+OVBxRz+h4nXdVZk9HZ5Ofz5X
+6ZRcEbrD96NLR40boeikDRmuf+IJZ0CKzp5a7GLf9Pt7M0Rg5ZOoFl8SqofInBAa
+vLDnx6JNDy942NK85IbK6O7iuP60c057tyTjEXv79Np31/+2+adMNP5PNPLr2fx7
+CQACyLWqD6nQDb51utwEU3nTHaMsN+u0YcyoBc2dNO1A+jb9ph0Nsbcoudll5KaI
+hJmLkdbaQVffqHLxz+KOQnmolacfzXYpWVP3fJm+r2erFb4LoWoQOTWKv0RNxOHx
+eGvYZgsiweytM+DiiTy/zDzXZhG/5teLmQojCNYmrf9IHz0nsU7d9npW2ezNY48e
+FLvV8CAP9qnFCYXyyY8xdUS6Az+t5BkZGdT3ocgkF3VERFcCy5hx37tVVN2lqQt7
+BK4z8u41hbTB1EPXsrIHjK6s/x9b5PXlxi/i7lzDSDof1Tg/eqoXEJvUrgXwx+Vd
+eDJ12KrtmxKH2fbhQ3ub
+=qseh
 -----END PGP SIGNATURE-----
 
---ibbxel3q6tzagnbt--
+--rglkvp77czxqdczo--
