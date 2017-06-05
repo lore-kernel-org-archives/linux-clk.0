@@ -1,42 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Jun 2017 11:17:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andy Tang <andy.tang@nxp.com>
-Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Scott Wood <oss@buserror.net>
-Subject: Re: [PATCH 2/2 v2] clk: qoriq: Separate root input clock for core
- PLLs on ls1012a
-Message-ID: <20170601181712.GI20170@codeaurora.org>
-References: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
- <1489977443-33582-2-git-send-email-andy.tang@nxp.com>
- <20170601082804.GE20170@codeaurora.org>
- <HE1PR0402MB282824858F29C431E97DBF07F3F60@HE1PR0402MB2828.eurprd04.prod.outlook.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:49278 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751203AbdFERe7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 5 Jun 2017 13:34:59 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Danilo Krummrich <danilokrummrich@dk-develop.de>,
+        rjui@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        stefan.wahren@i2se.com, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org
+Subject: Re: [PATCH] clk: bcm2835: remove remains from stub clk driver
+In-Reply-To: <20170605121933.25288-1-danilokrummrich@dk-develop.de>
+References: <20170605121933.25288-1-danilokrummrich@dk-develop.de>
+Date: Mon, 05 Jun 2017 10:34:56 -0700
+Message-ID: <87y3t6xrr3.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <HE1PR0402MB282824858F29C431E97DBF07F3F60@HE1PR0402MB2828.eurprd04.prod.outlook.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01, Andy Tang wrote:
-> Hi Stephen,
-> 
-> Thanks for your applying.
-> 
-> There are other two patches sent on April 6, 2017:
-> https://patchwork.kernel.org/patch/9665973/
-> https://patchwork.kernel.org/patch/9665977/
-> 
-> Hope they are in your review queue. Please give it a review.
-> 
+--=-=-=
+Content-Type: text/plain
 
-Yep they're there. I need to go update patchwork so the queue can
-be known outside my local inbox.
+Danilo Krummrich <danilokrummrich@dk-develop.de> writes:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> This commit removes the fixed clocks introduced as a stub clock driver
+> added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
+> Originally they were used to drive the AMBA bus and PL011 uart driver.
+> Now these clocks are derived by the CPRMAN clock driver and configured
+> in DT.
+>
+> Additionally, get rid of init_machine function in bcm2835 board file
+> as there's nothing to do any longer.
+>
+> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+
+This technically breaks loading a new kernel with an ancient DT.
+However, in the Raspberry Pi world, the DT and kernel are always shipped
+together, because the DT (even in the downstream firmware package) is
+built out of the linux kernel tree and shipped alongside the kernel.
+
+If the clock maintainers are OK with picking this, it's:
+
+Acked-by: Eric Anholt <eric@anholt.net>
+
+and I'm pretty sure it won't conflict with anything we've got going on
+in arm/.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlk1lkAACgkQtdYpNtH8
+nuifTg/9H0ohLL1AN3vm00zgZLqU36DuMnUdR541WtXvonk82BsqHTFRqi6B59c+
+gNVXVHn0Vau0fBxQT00DiN8rqitv+zYhWadGnMpDomZlwLw9zSnaS2lF9g16pCgh
+DNXvRW4ieHLo2k3U06fe78L/rseEamqEcpg6DgoLwVp68FDKx+5eYNHVyjPkh8uv
+8qq6r1y8ZBE9mxav2u6gf8tuVFnVJfhJQThUBkwRvpGOmjYvD15d+uQJt9jqcvT7
+TWerHV+49igLDQfee4GVicIV+F0nE9leCQcZfAsK+LxVvd13HwiRFMq8ah6OBbiy
+7pWzpT3zsK8u8+1fmId365hTiTMye83i1ZjDwjakT5uX4SYmwdR+LWiIUdKAG2Wa
+0FZLu64019t/ngsC9jLD1BE7u0oZqPRNEmNpDM4RKqBDogxGQAhGYZdUSdm6AwKB
+YeJ16I7EYHFPTODJGGciZynE+ilu3lJFvS15aPjQ0Dn7P9r36ngKY4z3FZ9DrEf4
+tijpCdEoxvvqOm7QduMsdIodI4svoEVC19mZCsbMZbWrcmzo43f9oZDSlwhtt4b8
+6UC4BxEPqi7b1rHNu8oixL7jYmM95lXfLDBpabetT2nX6v8eL/RbcHkciwiVWDgH
+QEOdS6NQ0RyNE9JduujLIfUlXTt+ASUl5hfDPLliWCduWqLsHqg=
+=vRxt
+-----END PGP SIGNATURE-----
+--=-=-=--
