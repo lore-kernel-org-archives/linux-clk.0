@@ -1,63 +1,58 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: bjorn.andersson@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v5 6/6] arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-Date: Fri,  9 Jun 2017 15:03:03 +0530
-Message-Id: <1497000783-27916-7-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
-References: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:38567 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751272AbdFEOZ7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2017 10:25:59 -0400
+Date: Mon, 5 Jun 2017 16:25:58 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] clk: at91: Add sama5d2 suspend/resume
+Message-ID: <20170605142558.7x2eip4o66uj6eby@piout.net>
+References: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
+ <20170512142531.11274-2-alexandre.belloni@free-electrons.com>
+ <20170601074644.GW20170@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170601074644.GW20170@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+Hi,
 
-These configs are required for booting kernel in qcom
-ipq8074 boards.
+On 01/06/2017 at 00:46:44 -0700, Stephen Boyd wrote:
+> > +
+> > +static u8 registered_ids[PMC_MAX_IDS];
+> > +
+> > +void pmc_register_id(u8 id)
+> > +{
+> 
+> Shouldn't this also be inside CONFIG_PM? And then
+> pmc_register_id() is a nop function when CONFIG_PM=n?
+> 
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+I'll do that. I'll rebase on top of clk-next once you fix my silly
+mistake.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 65cdd87..c20328e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -267,6 +267,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SPIDEV=m
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -450,6 +451,7 @@ CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
+> > +	int i;
+> > +
+> > +	for (i = 0; i < PMC_MAX_IDS; i++) {
+> > +		if (registered_ids[i] == 0) {
+> > +			registered_ids[i] = id;
+> > +			break;
+> > +		}
+> > +		if (registered_ids[i] == id)
+> > +			break;
+> > +	}
+> > +}
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
