@@ -1,59 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 23 Jun 2017 08:47:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-clk@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: gcc-msm8996: Add missing lpass smmu clks
-Message-ID: <20170623154736.GO4493@codeaurora.org>
-References: <20170612094137.6821-1-srinivas.kandagatla@linaro.org>
- <20170620004709.GD20170@codeaurora.org>
- <9449e968-bddb-2b34-3ede-b786238b6421@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9449e968-bddb-2b34-3ede-b786238b6421@linaro.org>
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v3 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
+Date: Tue,  6 Jun 2017 09:31:44 +0200
+Message-Id: <20170606073146.26882-5-o.rempel@pengutronix.de>
+In-Reply-To: <20170606073146.26882-1-o.rempel@pengutronix.de>
+References: <20170606073146.26882-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/23, Srinivas Kandagatla wrote:
-> 
-> 
-> On 20/06/17 01:47, Stephen Boyd wrote:
-> >On 06/12, Srinivas Kandagatla wrote:
-> >>This patch adds missing LPASS smmu clks which are required by the audio driver.
-> >>
-> >>Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >>---
-> >>  drivers/clk/qcom/gcc-msm8996.c               | 26 ++++++++++++++++++++++++++
-> >>  include/dt-bindings/clock/qcom,gcc-msm8996.h |  2 ++
-> >>  2 files changed, 28 insertions(+)
-> >>
-> >>diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-> >>index 56e0a295c74e..6290ce551505 100644
-> >>--- a/drivers/clk/qcom/gcc-msm8996.c
-> >>+++ b/drivers/clk/qcom/gcc-msm8996.c
-> >>@@ -2644,6 +2644,30 @@ static struct clk_fixed_factor ufs_rx_cfg_clk_src = {
-> >>  	},
-> >>  };
-> >>+static struct clk_branch gcc_hlos1_vote_lpass_core_smmu_clk = {
-> >>+	.halt_reg = 0x7d010,
-> >
-> >Don't we need .halt_check = BRANCH_HALT_VOTED for these?
-> >
-> I don't think we need it for these clks, Downstream driver has
-> no_halt_check_on_disable = true for both these clks.
-> 
-> 
+Document the new optional "fsl,pmic_stby_poweroff" property.
 
-Right, no_halt_check_on_disable means we don't check the halt bit
-when disabling the clk, but we _do_ check the halt bit when
-enabling. In upstream clk driver that would be indicated with
-BRANCH_HALT_VOTED, where we check the halt bit when enabling and
-it's voted and do a small udelay() if we're disabling and it's
-voted. I suppose that small udelay() could be removed because it
-doesn't really matter that it turns off or not when we're
-disabling a voted clk.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ Documentation/devicetree/bindings/regulator/pfuze100.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+index 444c47831a40..197f1a52e960 100644
+--- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
++++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+@@ -4,6 +4,13 @@ Required properties:
+ - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000"
+ - reg: I2C slave address
+ 
++Optional properties:
++- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
++  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
++  Use this option if the SoC should be powered off by external power
++  management IC (PMIC) on PMIC_STBY_REQ signal.
++  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
++
+ Required child node:
+ - regulators: This is the list of child nodes that specify the regulator
+   initialization data for defined regulators. Please refer to below doc
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
