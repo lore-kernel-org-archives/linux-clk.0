@@ -1,50 +1,111 @@
-Return-Path: <plaes@plaes.org>
-From: Priit Laes <plaes@plaes.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>,
-	Priit Laes <plaes@plaes.org>
-Subject: [PATCH v4 4/6] dt-bindings: List devicetree binding for the CCU of Allwinner A10
-Date: Sun, 25 Jun 2017 23:45:45 +0300
-Message-Id: <cc55dca83509fe2d2f7f97686de7a9d58653b45b.1498422562.git-series.plaes@plaes.org>
-In-Reply-To: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
-In-Reply-To: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+Return-Path: <phil@raspberrypi.org>
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: Re: CLK_OF_DECLARE advice required
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        linux-clk@vger.kernel.org
+References: <ae427c15-330f-6f8d-e2ac-62a8deacbdc5@raspberrypi.org>
+ <8b65e551-e6dd-cf5c-1b22-e1f1a5996d73@wwwdotorg.org>
+ <0794f430-9761-c855-9a89-13d9871c5831@i2se.com>
+ <6765be64-9cf6-4663-4182-5b63f27bfb93@raspberrypi.org>
+ <20170601063937.GN20170@codeaurora.org>
+ <215eea3c-febe-5aa4-9dbb-e1f170bc0b0d@raspberrypi.org>
+ <20170602223432.GU20170@codeaurora.org>
+ <35742698-9f04-fa57-60b0-eecb3d790e03@raspberrypi.org>
+ <20170605201314.GI20170@codeaurora.org>
+Message-ID: <4847126c-d2a9-d7f8-a074-92e4e2435fce@raspberrypi.org>
+Date: Tue, 6 Jun 2017 09:49:44 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170605201314.GI20170@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A10 is now driven by sunxi-ng CCU driver.
+On 05/06/2017 21:13, Stephen Boyd wrote:
+> On 06/05, Phil Elwell wrote:
+>> That sounds great, but it doesn't match my experience. Let me restate my
+>> observations with a bit more detail.
+>>
+>> In this scenario there three devices in a dependency chain:
+>>
+>>   clock -> fixed-factor->clock -> uart.
+>>
+>> The Fixed Factor Clock is declared with OF_CLK_DECLARE, while the two platform
+>> drivers use normal probe functions.
+>>
+>> 1) of_clk_init() calls encounter FFC in the list of clocks to initialise and
+>> calls parent_ready on the device node.
+>>
+>> 2) The parent clock has not been initialised, so of_clk_get returns
+>> -EPROBE_DEFER.
+>>
+>> 3) Steps 1 and 2 repeat until no progress is made, at which point the force
+>> flag is set for one last iteration. This time the parent_ready check is skipped
+>> and the code calls indirectly into _of_fixed_factor_clk_setup().
+>>
+>> 4) The FFC setup calls of_clk_get_parent_name, which returns a NULL that ends
+>> up referred to by the parent_names field of clk_init_data structure indirectly
+>> passed to clk_hw_register and clk_register.
+>
+> That's bad. Does "clock" in this scenario have a
+> clock-output-names property so we can find the name of the parent
+> of the fixed factor clock? That way we can describe the fixed
+> factor to "clock" linkage. Without that, things won't ever work.
 
-Add devicetree binding for it.
+No - the clock provider is bcm2835-aux-clk, as declared by bcm283x.dts:
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
- 1 file changed, 1 insertion(+)
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next/+/master/arch/arm/boot/dts/bcm283x.dtsi#462
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index 81d0fa4..429168d 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
- 
- Required properties :
- - compatible: must contain one of the following compatibles:
-+		- "allwinner,sun4i-a10-ccu"
- 		- "allwinner,sun6i-a31-ccu"
- 		- "allwinner,sun7i-a20-ccu"
- 		- "allwinner,sun8i-a23-ccu"
--- 
-git-series 0.9.1
+If I patch it to include a "clock-output-names" property with "aux-uart" as the
+first entry then the FFC registers correctly, even though the source clock hasn't
+been initialised yet.
+
+>> 5) In clk_register, the parent name is copied with kstrdup, which returns NULL
+>> for a NULL input. clk_register sees this as an allocation failure and returns
+>> -ENOMEM.
+>>
+>> 6) _of_fixed_factor_clock_setup returns -ENOMEM, bypassing of_clk_add_provider,
+>> but the wrapper function registered with CLK_OF_DECLARE has a void return, so
+>> the failure is lost.
+>
+> Yep. We've already failed earlier.
+>
+>>
+>> 7) Back in of_clk_init, which is ignorant of the failure, the OF_POPULATED flag
+>> of the FFC node has already been set, preventing the node from subsequently
+>> being probed in the usual way.
+>>
+>> 8) When the downstream uart is probed, devm_clk_get returns -EPROBE_DEFER every
+>> time, resulting in a non-functioning UART.
+>>
+>> Is this behaviour as intended? I can see that the NULL parent name in steps 4
+>> and 5 could be handled more gracefully, but the end result would be the same.
+>>
+>> Where and how is the "orphan" clock concept supposed to help, and what needs to
+>> be fixed in this case?
+>>
+>
+> The orphan concept helps here because of_clk_init() eventually
+> forces the registration of the fixed factor clock even though the
+> fixed factor's parent has not been registered yet. As you've
+> determined though, that isn't working properly because the fixed
+> factor code is failing to get a name for the parent. Using the
+> clock-output-names property would fix that though.
+
+> Also, it may be appropriate to move the fixed factor clock
+> registration into the UART driver. It would depend on where the
+> fixed factor is situated inside the SoC, but it could be argued
+> that if the factor is near or embedded inside the UART hardware
+> then the UART driver should register the fixed factor clock as
+> well as the UART clock.
+
+I take your point, but I'm trying to use a standard UART and a standard
+fixed-factor clock to get non-standard results in what has become a learning
+exercise.
+
+Thanks again - this has been very useful.
+
+Phil
