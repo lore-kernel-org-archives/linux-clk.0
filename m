@@ -1,166 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Jun 2017 09:01:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] clk: boston: Add a driver for MIPS Boston board
- clocks
-Message-ID: <20170614160106.GY20170@codeaurora.org>
-References: <20170602182003.16269-1-paul.burton@imgtec.com>
- <20170602182003.16269-3-paul.burton@imgtec.com>
+Return-Path: <anup.patel@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170602182003.16269-3-paul.burton@imgtec.com>
+In-Reply-To: <c26e95e1-4bfa-0d24-33cc-8d5ae3102864@gmail.com>
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+ <4c15213f-4ac6-a0a7-f2b8-cde2b4cee891@gmail.com> <c26e95e1-4bfa-0d24-33cc-8d5ae3102864@gmail.com>
+From: Anup Patel <anup.patel@broadcom.com>
+Date: Tue, 6 Jun 2017 08:50:39 +0530
+Message-ID: <CAALAos_T4aWPQrug+9eYLM8z2pxvTiiieFnQ49zft4iXpGKA3A@mail.gmail.com>
+Subject: Re: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>, Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>, Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>, Device Tree <devicetree@vger.kernel.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>,
+	BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02, Paul Burton wrote:
-> diff --git a/drivers/clk/imgtec/Kconfig b/drivers/clk/imgtec/Kconfig
-> new file mode 100644
-> index 000000000000..c2ea745928e4
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/Kconfig
-> @@ -0,0 +1,10 @@
-> +config COMMON_CLK_BOSTON
-> +	bool "Clock driver for MIPS Boston boards"
-> +	depends on MIPS || COMPILE_TEST
-> +	depends on OF
+On Tue, Jun 6, 2017 at 7:38 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+> On 06/05/2017 09:51 AM, Florian Fainelli wrote:
+>> On 06/01/2017 11:34 PM, Anup Patel wrote:
+>>> This patchset adds initial support of Broadcom Stingray SOC
+>>> by reusing existing Broadcom iProc device drivers.
+>>>
+>>> Most of the patches in this patchset are DT patches except
+>>> the Stingray clock tree support which just one patch.
+>>>
+>>> This patchset is based on Linux-4.12-rc3 and it is also available
+>>> at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
+>>>
+>>> Changes since v5:
+>>>  - Rebased patches for Linux-4.12-rc3
+>>>  - Update DT node names to match register offset
+>>>
+>>> Changes since v4:
+>>>  - Reduce number of include headers in Stingray clk driver
+>>>
+>>> Changes since v3:
+>>>  - Rebased patches for Linux-4.12-rc1
+>>>  - Updated PATCH3 to have all clocks except genpll3 to be
+>>>    registered via platform driver probe
+>>>
+>>> Changes since v2:
+>>>  - Remove default bootargs from chosen DT node
+>>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
+>>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
+>>>
+>>> Changes since v1:
+>>>  - Rebased patches for Linux-4.12-rc1
+>>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+>>>  - Use ranges DT property to clear view of memory-layout
+>>>  - Make bcm-sr.h part of clock DT bindings patch
+>>>
+>>> Anup Patel (3):
+>>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
+>>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
+>>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+>>>
+>>> Oza Pawandeep (1):
+>>>   arm64: dts: Add I2C DT nodes for Stingray SoC
+>>>
+>>> Pramod Kumar (3):
+>>>   arm64: dts: Add NAND DT nodes for Stingray SOC
+>>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
+>>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
+>>>
+>>> Sandeep Tripathy (3):
+>>>   dt-bindings: clk: Extend binding doc for Stingray SOC
+>>>   clk: bcm: Add clocks for Stingray SOC
+>>>   arm64: dts: Add clock DT nodes for Stingray SOC
+>>>
+>>> Srinath Mannam (1):
+>>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+>>
+>> Applied patches 1, 4-11 to devicetree-arm64/next, thanks!
+>
+> Also took patch 2, to make sure everything builds properly, Stephen, let
+> me know if you want me to take patch #3 as well.
 
-What's the OF build dependency?
+Thanks for patches 1-2 and patches 4-11.
 
-> +	select MFD_SYSCON
-> +	---help---
-> +	  Enable this to support the system & CPU clocks on the MIPS Boston
-> +	  development board from Imagination Technologies. These are simple
-> +	  fixed rate clocks whose rate is determined by reading a platform
-> +	  provided register.
-> diff --git a/drivers/clk/imgtec/Makefile b/drivers/clk/imgtec/Makefile
-> new file mode 100644
-> index 000000000000..ac779b8c22f2
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_COMMON_CLK_BOSTON)		+= clk-boston.o
-> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-> new file mode 100644
-> index 000000000000..98bb0b764d15
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/clk-boston.c
-> @@ -0,0 +1,101 @@
-> +/*
-> + * Copyright (C) 2016-2017 Imagination Technologies
-> + * Author: Paul Burton <paul.burton@imgtec.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms of the GNU General Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/syscon.h>
-> +
-> +#include <dt-bindings/clock/boston-clock.h>
-> +
-> +#define BOSTON_PLAT_MMCMDIV		0x30
-> +# define BOSTON_PLAT_MMCMDIV_CLK0DIV	(0xff << 0)
-> +# define BOSTON_PLAT_MMCMDIV_INPUT	(0xff << 8)
-> +# define BOSTON_PLAT_MMCMDIV_MUL	(0xff << 16)
-> +# define BOSTON_PLAT_MMCMDIV_CLK1DIV	(0xff << 24)
-> +
-> +#define BOSTON_CLK_COUNT 3
-> +
-> +struct clk_boston_state {
-> +	struct clk *clks[BOSTON_CLK_COUNT];
-> +	struct clk_onecell_data onecell_data;
-> +};
-> +
-> +static u32 ext_field(u32 val, u32 mask)
-> +{
-> +	return (val & mask) >> (ffs(mask) - 1);
-> +}
-> +
-> +static void __init clk_boston_setup(struct device_node *np)
-> +{
-> +	unsigned long in_freq, cpu_freq, sys_freq;
-> +	uint mmcmdiv, mul, cpu_div, sys_div;
-> +	struct clk_boston_state *state;
-> +	struct regmap *regmap;
-> +	struct clk *clk;
-> +	int err;
-> +
-> +	regmap = syscon_node_to_regmap(np->parent);
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("failed to find regmap\n");
-> +		return;
-> +	}
-> +
-> +	err = regmap_read(regmap, BOSTON_PLAT_MMCMDIV, &mmcmdiv);
-> +	if (err) {
-> +		pr_err("failed to read mmcm_div register: %d\n", err);
-> +		return;
-> +	}
-> +
-> +	in_freq = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_INPUT) * 1000000;
-> +	mul = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_MUL);
-> +
-> +	sys_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK0DIV);
-> +	sys_freq = mult_frac(in_freq, mul, sys_div);
-> +
-> +	cpu_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
-> +	cpu_freq = mult_frac(in_freq, mul, cpu_div);
-> +
-> +	state = kzalloc(sizeof(*state), GFP_KERNEL);
-> +	if (!state)
-> +		return;
-> +
-> +	clk = clk_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+Regarding PATCH3, please give us one day. We recently had
+minor comments from Stephen which we will address and
+send v7 of PATCH3.
 
-Please use the clk_hw_register_*() APIs instead so that this
-driver only deals in clk_hw pointers.
-
-> +	if (IS_ERR(clk)) {
-> +		pr_err("failed to register input clock: %ld\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +	state->clks[BOSTON_CLK_INPUT] = clk;
-> +
-> +	clk = clk_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("failed to register sys clock: %ld\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +	state->clks[BOSTON_CLK_SYS] = clk;
-> +
-> +	clk = clk_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +	state->clks[BOSTON_CLK_CPU] = clk;
-> +
-> +	state->onecell_data.clks = state->clks;
-> +	state->onecell_data.clk_num = BOSTON_CLK_COUNT;
-> +
-> +	err = of_clk_add_provider(np, of_clk_src_onecell_get,
-> +				  &state->onecell_data);
-
-Same for here, of_clk_add_hw_provider()
-
-> +	if (err)
-> +		pr_err("failed to add DT provider: %d\n", err);
-> +}
-> +CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
-
-Can this be a platform driver? The syscon mfd can populate child
-nodes and this could be a driver that binds to the clock child
-node.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,,
+Anup
