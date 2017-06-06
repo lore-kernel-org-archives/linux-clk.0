@@ -1,35 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:54888 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbdFGAmw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 20:42:52 -0400
-Date: Tue, 6 Jun 2017 17:42:49 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, stefan@agner.ch,
-        linux-clk@vger.kernel.org, leonard.crestez@nxp.com,
-        festevam@gmail.com
-Subject: Re: [PATCH] clk: imx7d: Fix the DDR PLL enable bit
-Message-ID: <20170607004249.GM20170@codeaurora.org>
-References: <1496763954-10981-1-git-send-email-fabio.estevam@nxp.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1496763954-10981-1-git-send-email-fabio.estevam@nxp.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <151ddece1e1427d0b69c4ff11b86a69b6a035d0d.1496730576.git-series.stefan@agner.ch>
+References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
+ <151ddece1e1427d0b69c4ff11b86a69b6a035d0d.1496730576.git-series.stefan@agner.ch>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 6 Jun 2017 13:34:52 -0300
+Message-ID: <CAOMZO5Ai-_5j3gQviaq19y7MJmirRgBtUp59UYmuGaN3Fd5Sag@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] ARM: dts: imx7: add GPMI NAND and APBH DMA
+To: Stefan Agner <stefan@agner.ch>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, han.xu@nxp.com,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/06, Fabio Estevam wrote:
-> Commit ad14972422899b6 ("clk: imx7d: Fix the powerdown bit location
-> of PLL DDR") used the incorrect bit for the IMX_PLLV3_DDR_IMX7 case.
-> 
-> Fix it accordingly to avoid a kernel hang.
-> 
-> Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
+On Tue, Jun 6, 2017 at 3:30 AM, Stefan Agner <stefan@agner.ch> wrote:
+> Add i.MX 7 APBH DMA and GPMI NAND modules.
+>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Applied to clk-next
+Tested on a imx7d-sdb:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+[    1.303543] nand: device found, Manufacturer ID: 0xec, Chip ID: 0xd5
+[    1.309999] nand: Samsung NAND 2GiB 3,3V 8-bit
+[    1.314467] nand: 2048 MiB, MLC, erase size: 256 KiB, page size:
+2048, OOB size: 64
+[    1.346007] gpmi-nand 33002000.gpmi-nand: driver registered.
+
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
