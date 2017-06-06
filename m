@@ -1,45 +1,87 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Wed, 07 Jun 2017 18:00:52 +0800
-In-Reply-To: <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io>
- <20170604160149.30230-5-icenowy@aosc.io> <3642057.oKT9kIlu8M@jernej-laptop>
- <493AC6F2-3CB3-48F5-9568-A34AA927238F@aosc.io>
- <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20170605144546.b6oh5sygrza22hbe@flea.lan>
+References: <20170602223006.1653-1-sboyd@codeaurora.org> <201706031243.qNvuUbQX%fengguang.wu@intel.com>
+ <20170605144546.b6oh5sygrza22hbe@flea.lan>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 6 Jun 2017 12:04:47 +0200
+Message-ID: <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <78252AF1-51FB-4B09-80C2-2597990680CE@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org,
- =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
- linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Cc: kbuild test robot <lkp@intel.com>, Stephen Boyd <sboyd@codeaurora.org>, kbuild-all@01.org,
+	Chen-Yu Tsai <wens@csie.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Cgrkuo4gMjAxN+W5tDbmnIg35pelIEdNVCswODowMCDkuIvljYg1OjQzOjQzLCBNYXhpbWUgUmlw
-YXJkIDxtYXhpbWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4g5YaZ5YiwOgo+T24gTW9uLCBK
-dW4gMDUsIDIwMTcgYXQgMDM6MDM6NDdBTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4g
-PllvdSBzaG91bGQgYWxzbyBleHBhbmQgZnVuY3Rpb24gc3VuNGlfZHJ2X25vZGVfaXNfdGNvbigp
-IGF0Cj5zdW40aV9kcnYuYwo+PiA+d2l0aCAKPj4gPm5ldyBlbnRyaWVzLCBidXQgSSdtIG5vdCBz
-dXJlIGlmIHRoaXMgZml0cyBpbiB0aGlzIHBhdGNoLgo+PiAKPj4gSW5zdGVhZCBJIHRoaW5rIGl0
-IHNob3VsZCBiZSByZW5hbWVkIHRvIHNvbWV0aGluZyBsaWtlCj4+ICJzdW40aV9kcnZfbm9kZV9p
-c190Y29uX3dpdGhfY2gwIi4KPgo+SSdtIG5vdCBzdXJlLCBvciBhdCBsZWFzdCwgaXQgc2hvdWxk
-bid0IG1ha2UgYW55IGRpZmZlcmVuY2UsIHNpbmNlCj5UQ09OIHdpdGhvdXQgYSBjaGFubmVsIDAg
-d2lsbCBub3QgaGF2ZSBhbiBlbmRwb2ludCAwLCBzbyB0aGlzIHdpbGwgYmUKPmRlYWx0IHdpdGgg
-YWxyZWFkeS4KCkJ1dCB0aGF0IHdpbGwgcHJldmVudCBuZXcgY29kZXJzIGZyb20gYWRkIENIMS1s
-ZXNzIFRDT04KY29tcGF0aWJsZXMgdG8gdGhpcyBmdW5jdGlvbi4KCj4KPk1heGltZQoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5l
-bCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
-Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+On Mon, Jun 5, 2017 at 4:45 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Sat, Jun 03, 2017 at 12:22:32PM +0800, kbuild test robot wrote:
+>> Hi Stephen,
+>>
+>> [auto build test ERROR on sunxi/sunxi/for-next]
+>> [also build test ERROR on next-20170602]
+>> [cannot apply to clk/clk-next v4.12-rc3]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>>
+>>    sunxi_sid.c:(.data+0x1da8c): undefined reference to `ccu_gate_ops'
+>>    sunxi_sid.c:(.data+0x1dac8): undefined reference to `ccu_gate_ops'
+>>    sunxi_sid.c:(.data+0x1db20): undefined reference to `ccu_mux_ops'
+>>    sunxi_sid.c:(.data+0x1db74): undefined reference to `ccu_mux_ops'
+>>    sunxi_sid.c:(.data+0x1dbec): undefined reference to `ccu_mp_ops'
+>>    sunxi_sid.c:(.data+0x1dc64): undefined reference to `ccu_mp_ops'
+>
+> It seems like even though the lib.a file is compiled properly, it is
+> never linked in. It looks like we would be supposed to add
+> drivers/clk/sunxi-ng/ to libs-y, but that doesn't seem to work for
+> Makefiles in drivers/*
+
+Ah, too bad. I see that only one directory under drivers/ uses something
+with lib.a, in drivers/firmware/efi/libstub/Makefile, but that seems to
+rely on being special-cased as well.
+
+However, this patch seems to fix it:
+
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index cbc8cb4f70e3..321d3da7cc6a 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -18,16 +18,16 @@ lib-$(CONFIG_SUNXI_CCU) += ccu_nm.o
+ lib-$(CONFIG_SUNXI_CCU) += ccu_mp.o
+
+ # SoC support
+-obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o
+-obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o
+-obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o
+-obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o
+-obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o
+-obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o
+-obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o
+-obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o
+-obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o
+-obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o
+-obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o
+-obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o
+-obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o
++obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o lib.a
++obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o lib.a
++obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o lib.a
++obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o lib.a
++obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o lib.a
++obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o lib.a
++obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o lib.a
++obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o lib.a
++obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o lib.a
++obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o lib.a
++obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o lib.a
++obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o lib.a
++obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o lib.a
+
+It's not documented behavior, but I think it's still good enough,
+and improves the current version, unless there is another bug
+after we add this to your patch.
+
+        Arnd
