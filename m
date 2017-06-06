@@ -1,590 +1,85 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>, <tony@atomide.com>
-CC: <linux-omap@vger.kernel.org>
-Subject: [PATCHv4 2/4] clk: ti: add support for clkctrl clocks
-Date: Thu, 15 Jun 2017 11:10:26 +0300
-Message-ID: <1497514226-15992-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:44423 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751266AbdFFGbK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 02:31:10 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
+Cc: aisheng.dong@nxp.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
+        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
+        mark.rutland@arm.com, han.xu@nxp.com, fabio.estevam@freescale.com,
+        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v5 1/3] clk: imx7d: create clocks behind rawnand clock gate
+Date: Mon,  5 Jun 2017 23:30:48 -0700
+Message-Id: <df22afd249abba1ee7c9d31be1c2c8dc1a68f69a.1496730576.git-series.stefan@agner.ch>
+In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
+References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
+In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
+References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously, hwmod core has been used for controlling the hwmod level
-clocks directly. This has certain drawbacks, like being unable to share
-the clocks for multiple users, missing usecounting and generally being
-totally incompatible with the common clock framework.
+The rawnand clock gate gates two clocks, NAND_USDHC_BUS_CLK_ROOT
+and NAND_CLK_ROOT. However, the gate has been in the chain of the
+latter only. This does not allow to use the NAND_USDHC_BUS_CLK_ROOT
+only, e.g. as required by APBH-Bridge-DMA.
 
-This patch adds support for clkctrl clocks for addressing the above
-issues. These support the modulemode handling, which will replace the
-direct hwmod clkctrl linkage. Any optional clocks are also supported,
-gate, mux and divider.
+Add new clocks which represent the clock after the gate, and use a
+shared clock gate to correctly model the hardware.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
-Only reposted this patch, rest of the series has no changes.
+ drivers/clk/imx/clk-imx7d.c             | 6 ++++--
+ include/dt-bindings/clock/imx7d-clock.h | 4 +++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-Changes in v4:
- * fixed the memory leak issues reported by Stephen
-
- drivers/clk/ti/Makefile  |   3 +-
- drivers/clk/ti/clkctrl.c | 492 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/ti/clock.h   |  29 +++
- 3 files changed, 523 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/ti/clkctrl.c
-
-diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
-index 0deac98..edb9f47 100644
---- a/drivers/clk/ti/Makefile
-+++ b/drivers/clk/ti/Makefile
-@@ -3,7 +3,8 @@ ifeq ($(CONFIG_ARCH_OMAP2PLUS), y)
- obj-y					+= clk.o autoidle.o clockdomain.o
- clk-common				= dpll.o composite.o divider.o gate.o \
- 					  fixed-factor.o mux.o apll.o \
--					  clkt_dpll.o clkt_iclk.o clkt_dflt.o
-+					  clkt_dpll.o clkt_iclk.o clkt_dflt.o \
-+					  clkctrl.o
- obj-$(CONFIG_SOC_AM33XX)		+= $(clk-common) clk-33xx.o dpll3xxx.o
- obj-$(CONFIG_SOC_TI81XX)		+= $(clk-common) fapll.o clk-814x.o clk-816x.o
- obj-$(CONFIG_ARCH_OMAP2)		+= $(clk-common) interface.o clk-2xxx.o
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-new file mode 100644
-index 0000000..bc39958
---- /dev/null
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -0,0 +1,492 @@
-+/*
-+ * OMAP clkctrl clock support
-+ *
-+ * Copyright (C) 2017 Texas Instruments, Inc.
-+ *
-+ * Tero Kristo <t-kristo@ti.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/clk/ti.h>
-+#include <linux/delay.h>
-+#include "clock.h"
-+
-+#define NO_IDLEST			0x1
-+
-+#define OMAP4_MODULEMODE_MASK		0x3
-+
-+#define MODULEMODE_HWCTRL		0x1
-+#define MODULEMODE_SWCTRL		0x2
-+
-+#define OMAP4_IDLEST_MASK		(0x3 << 16)
-+#define OMAP4_IDLEST_SHIFT		16
-+
-+#define CLKCTRL_IDLEST_FUNCTIONAL	0x0
-+#define CLKCTRL_IDLEST_INTERFACE_IDLE	0x2
-+#define CLKCTRL_IDLEST_DISABLED		0x3
-+
-+/* These timeouts are in us */
-+#define OMAP4_MAX_MODULE_READY_TIME	2000
-+#define OMAP4_MAX_MODULE_DISABLE_TIME	5000
-+
-+static bool _early_timeout = true;
-+
-+struct omap_clkctrl_provider {
-+	void __iomem *base;
-+	struct list_head clocks;
-+};
-+
-+struct omap_clkctrl_clk {
-+	struct clk_hw *clk;
-+	u16 reg_offset;
-+	int bit_offset;
-+	struct list_head node;
-+};
-+
-+union omap4_timeout {
-+	u32 cycles;
-+	ktime_t start;
-+};
-+
-+static const struct omap_clkctrl_data default_clkctrl_data[] __initconst = {
-+	{ 0 },
-+};
-+
-+static u32 _omap4_idlest(u32 val)
-+{
-+	val &= OMAP4_IDLEST_MASK;
-+	val >>= OMAP4_IDLEST_SHIFT;
-+
-+	return val;
-+}
-+
-+static bool _omap4_is_idle(u32 val)
-+{
-+	val = _omap4_idlest(val);
-+
-+	return val == CLKCTRL_IDLEST_DISABLED;
-+}
-+
-+static bool _omap4_is_ready(u32 val)
-+{
-+	val = _omap4_idlest(val);
-+
-+	return val == CLKCTRL_IDLEST_FUNCTIONAL ||
-+	       val == CLKCTRL_IDLEST_INTERFACE_IDLE;
-+}
-+
-+static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
-+{
-+	if (unlikely(_early_timeout)) {
-+		if (time->cycles++ < timeout) {
-+			udelay(1);
-+			return false;
-+		}
-+	} else {
-+		if (!ktime_to_ns(time->start)) {
-+			time->start = ktime_get();
-+			return false;
-+		}
-+
-+		if (ktime_us_delta(ktime_get(), time->start) < timeout) {
-+			cpu_relax();
-+			return false;
-+		}
-+	}
-+
-+	return true;
-+}
-+
-+static int __init _omap4_disable_early_timeout(void)
-+{
-+	_early_timeout = false;
-+
-+	return 0;
-+}
-+arch_initcall(_omap4_disable_early_timeout);
-+
-+static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	u32 val;
-+	int ret;
-+	union omap4_timeout timeout = { 0 };
-+
-+	if (!clk->enable_bit)
-+		return 0;
-+
-+	if (clk->clkdm) {
-+		ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
-+		if (ret) {
-+			WARN(1,
-+			     "%s: could not enable %s's clockdomain %s: %d\n",
-+			     __func__, clk_hw_get_name(hw),
-+			     clk->clkdm_name, ret);
-+			return ret;
-+		}
-+	}
-+
-+	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
-+
-+	val &= ~OMAP4_MODULEMODE_MASK;
-+	val |= clk->enable_bit;
-+
-+	ti_clk_ll_ops->clk_writel(val, &clk->enable_reg);
-+
-+	if (clk->flags & NO_IDLEST)
-+		return 0;
-+
-+	/* Wait until module is enabled */
-+	while (!_omap4_is_ready(ti_clk_ll_ops->clk_readl(&clk->enable_reg))) {
-+		if (_omap4_is_timeout(&timeout, OMAP4_MAX_MODULE_READY_TIME)) {
-+			pr_err("%s: failed to enable\n", clk_hw_get_name(hw));
-+			return -EBUSY;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void _omap4_clkctrl_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	u32 val;
-+	union omap4_timeout timeout = { 0 };
-+
-+	if (!clk->enable_bit)
-+		return;
-+
-+	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
-+
-+	val &= ~OMAP4_MODULEMODE_MASK;
-+
-+	ti_clk_ll_ops->clk_writel(val, &clk->enable_reg);
-+
-+	if (clk->flags & NO_IDLEST)
-+		goto exit;
-+
-+	/* Wait until module is disabled */
-+	while (!_omap4_is_idle(ti_clk_ll_ops->clk_readl(&clk->enable_reg))) {
-+		if (_omap4_is_timeout(&timeout,
-+				      OMAP4_MAX_MODULE_DISABLE_TIME)) {
-+			pr_err("%s: failed to disable\n", clk_hw_get_name(hw));
-+			break;
-+		}
-+	}
-+
-+exit:
-+	if (clk->clkdm)
-+		ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
-+}
-+
-+static int _omap4_clkctrl_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
-+
-+	if (val & clk->enable_bit)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops omap4_clkctrl_clk_ops = {
-+	.enable		= _omap4_clkctrl_clk_enable,
-+	.disable	= _omap4_clkctrl_clk_disable,
-+	.is_enabled	= _omap4_clkctrl_clk_is_enabled,
-+};
-+
-+static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
-+					      void *data)
-+{
-+	struct omap_clkctrl_provider *provider = data;
-+	struct omap_clkctrl_clk *entry;
-+
-+	if (clkspec->args_count != 2)
-+		return ERR_PTR(-EINVAL);
-+
-+	pr_debug("%s: looking for %x:%x\n", __func__,
-+		 clkspec->args[0], clkspec->args[1]);
-+
-+	list_for_each_entry(entry, &provider->clocks, node) {
-+		if (entry->reg_offset == clkspec->args[0] &&
-+		    entry->bit_offset == clkspec->args[1])
-+			break;
-+	}
-+
-+	if (!entry)
-+		return ERR_PTR(-EINVAL);
-+
-+	return entry->clk;
-+}
-+
-+static int __init
-+_ti_clkctrl_clk_register(struct omap_clkctrl_provider *provider,
-+			 struct device_node *node, struct clk_hw *clk_hw,
-+			 u16 offset, u8 bit, const char * const *parents,
-+			 int num_parents, const struct clk_ops *ops)
-+{
-+	struct clk_init_data init = { NULL };
-+	struct clk *clk;
-+	struct omap_clkctrl_clk *clkctrl_clk;
-+	int ret = 0;
-+
-+	init.name = kasprintf(GFP_KERNEL, "%s:%s:%04x:%d", node->parent->name,
-+			      node->name, offset, bit);
-+	clkctrl_clk = kzalloc(sizeof(*clkctrl_clk), GFP_KERNEL);
-+	if (!init.name || !clkctrl_clk) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
-+
-+	clk_hw->init = &init;
-+	init.parent_names = parents;
-+	init.num_parents = num_parents;
-+	init.ops = ops;
-+	init.flags = CLK_IS_BASIC;
-+
-+	clk = ti_clk_register(NULL, clk_hw, init.name);
-+	if (IS_ERR_OR_NULL(clk)) {
-+		ret = -EINVAL;
-+		goto cleanup;
-+	}
-+
-+	clkctrl_clk->reg_offset = offset;
-+	clkctrl_clk->bit_offset = bit;
-+	clkctrl_clk->clk = clk_hw;
-+
-+	list_add(&clkctrl_clk->node, &provider->clocks);
-+
-+	return 0;
-+
-+cleanup:
-+	kfree(init.name);
-+	kfree(clkctrl_clk);
-+	return ret;
-+}
-+
-+static void __init
-+_ti_clkctrl_setup_gate(struct omap_clkctrl_provider *provider,
-+		       struct device_node *node, u16 offset,
-+		       const struct omap_clkctrl_bit_data *data,
-+		       void __iomem *reg)
-+{
-+	struct clk_hw_omap *clk_hw;
-+
-+	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
-+	if (!clk_hw)
-+		return;
-+
-+	clk_hw->enable_bit = data->bit;
-+	clk_hw->enable_reg.ptr = reg;
-+
-+	if (_ti_clkctrl_clk_register(provider, node, &clk_hw->hw, offset,
-+				     data->bit, data->parents, 1,
-+				     &omap_gate_clk_ops))
-+		kfree(clk_hw);
-+}
-+
-+static void __init
-+_ti_clkctrl_setup_mux(struct omap_clkctrl_provider *provider,
-+		      struct device_node *node, u16 offset,
-+		      const struct omap_clkctrl_bit_data *data,
-+		      void __iomem *reg)
-+{
-+	struct clk_omap_mux *mux;
-+	int num_parents = 0;
-+	const char * const *pname;
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return;
-+
-+	pname = data->parents;
-+	while (*pname) {
-+		num_parents++;
-+		pname++;
-+	}
-+
-+	mux->mask = num_parents;
-+	mux->mask = (1 << fls(mux->mask)) - 1;
-+
-+	mux->shift = data->bit;
-+	mux->reg.ptr = reg;
-+
-+	if (_ti_clkctrl_clk_register(provider, node, &mux->hw, offset,
-+				     data->bit, data->parents, num_parents,
-+				     &ti_clk_mux_ops))
-+		kfree(mux);
-+}
-+
-+static void __init
-+_ti_clkctrl_setup_div(struct omap_clkctrl_provider *provider,
-+		      struct device_node *node, u16 offset,
-+		      const struct omap_clkctrl_bit_data *data,
-+		      void __iomem *reg)
-+{
-+	struct clk_omap_divider *div;
-+	const struct omap_clkctrl_div_data *div_data = data->data;
-+
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return;
-+
-+	div->reg.ptr = reg;
-+	div->shift = data->bit;
-+
-+	if (ti_clk_parse_divider_data((int *)div_data->dividers,
-+				      div_data->max_div, 0, 0,
-+				      &div->width, &div->table)) {
-+		pr_err("%s: Data parsing for %s:%04x:%d failed\n", __func__,
-+		       node->name, offset, data->bit);
-+		kfree(div);
-+		return;
-+	}
-+
-+	if (_ti_clkctrl_clk_register(provider, node, &div->hw, offset,
-+				     data->bit, data->parents, 1,
-+				     &ti_clk_divider_ops))
-+		kfree(div);
-+}
-+
-+static void __init
-+_ti_clkctrl_setup_subclks(struct omap_clkctrl_provider *provider,
-+			  struct device_node *node,
-+			  const struct omap_clkctrl_reg_data *data,
-+			  void __iomem *reg)
-+{
-+	const struct omap_clkctrl_bit_data *bits = data->bit_data;
-+
-+	if (!bits)
-+		return;
-+
-+	while (bits->bit) {
-+		switch (bits->type) {
-+		case TI_CLK_GATE:
-+			_ti_clkctrl_setup_gate(provider, node, data->offset,
-+					       bits, reg);
-+			break;
-+
-+		case TI_CLK_DIVIDER:
-+			_ti_clkctrl_setup_div(provider, node, data->offset,
-+					      bits, reg);
-+			break;
-+
-+		case TI_CLK_MUX:
-+			_ti_clkctrl_setup_mux(provider, node, data->offset,
-+					      bits, reg);
-+			break;
-+
-+		default:
-+			pr_err("%s: bad subclk type: %d\n", __func__,
-+			       bits->type);
-+			return;
-+		}
-+		bits++;
-+	}
-+}
-+
-+static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
-+{
-+	struct omap_clkctrl_provider *provider;
-+	const struct omap_clkctrl_data *data = default_clkctrl_data;
-+	const struct omap_clkctrl_reg_data *reg_data;
-+	struct clk_init_data init = { NULL };
-+	struct clk_hw_omap *hw;
-+	struct clk *clk;
-+	struct omap_clkctrl_clk *clkctrl_clk;
-+	const __be32 *addrp;
-+	u32 addr;
-+
-+	addrp = of_get_address(node, 0, NULL, NULL);
-+	addr = (u32)of_translate_address(node, addrp);
-+
-+	while (data->addr) {
-+		if (addr == data->addr)
-+			break;
-+
-+		data++;
-+	}
-+
-+	if (!data->addr) {
-+		pr_err("%s not found from clkctrl data.\n", node->name);
-+		return;
-+	}
-+
-+	provider = kzalloc(sizeof(*provider), GFP_KERNEL);
-+	if (!provider)
-+		return;
-+
-+	provider->base = of_iomap(node, 0);
-+
-+	INIT_LIST_HEAD(&provider->clocks);
-+
-+	/* Generate clocks */
-+	reg_data = data->regs;
-+
-+	while (reg_data->parent) {
-+		hw = kzalloc(sizeof(*hw), GFP_KERNEL);
-+		if (!hw)
-+			return;
-+
-+		hw->enable_reg.ptr = provider->base + reg_data->offset;
-+
-+		_ti_clkctrl_setup_subclks(provider, node, reg_data,
-+					  hw->enable_reg.ptr);
-+
-+		if (reg_data->flags & CLKF_SW_SUP)
-+			hw->enable_bit = MODULEMODE_SWCTRL;
-+		if (reg_data->flags & CLKF_HW_SUP)
-+			hw->enable_bit = MODULEMODE_HWCTRL;
-+		if (reg_data->flags & CLKF_NO_IDLEST)
-+			hw->flags |= NO_IDLEST;
-+
-+		init.parent_names = &reg_data->parent;
-+		init.num_parents = 1;
-+		init.flags = 0;
-+		init.name = kasprintf(GFP_KERNEL, "%s:%s:%04x:%d",
-+				      node->parent->name, node->name,
-+				      reg_data->offset, 0);
-+		clkctrl_clk = kzalloc(sizeof(*clkctrl_clk), GFP_KERNEL);
-+		if (!init.name || !clkctrl_clk)
-+			goto cleanup;
-+
-+		init.ops = &omap4_clkctrl_clk_ops;
-+		hw->hw.init = &init;
-+
-+		clk = ti_clk_register(NULL, &hw->hw, init.name);
-+		if (IS_ERR_OR_NULL(clk))
-+			goto cleanup;
-+
-+		clkctrl_clk->reg_offset = reg_data->offset;
-+		clkctrl_clk->clk = &hw->hw;
-+
-+		list_add(&clkctrl_clk->node, &provider->clocks);
-+
-+		reg_data++;
-+	}
-+
-+	of_clk_add_hw_provider(node, _ti_omap4_clkctrl_xlate, provider);
-+	return;
-+
-+cleanup:
-+	kfree(hw);
-+	kfree(init.name);
-+	kfree(clkctrl_clk);
-+}
-+CLK_OF_DECLARE(ti_omap4_clkctrl_clock, "ti,clkctrl",
-+	       _ti_omap4_clkctrl_setup);
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 3f7b265..1aa8d57 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -203,6 +203,35 @@ struct ti_dt_clk {
- 		.node_name = name,	\
- 	}
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 93b0364..e364060 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -25,6 +25,7 @@
+ static u32 share_count_sai1;
+ static u32 share_count_sai2;
+ static u32 share_count_sai3;
++static u32 share_count_nand;
  
-+/* CLKCTRL type definitions */
-+struct omap_clkctrl_div_data {
-+	const int *dividers;
-+	int max_div;
-+};
-+
-+struct omap_clkctrl_bit_data {
-+	u8 bit;
-+	u8 type;
-+	const char * const *parents;
-+	const void *data;
-+};
-+
-+struct omap_clkctrl_reg_data {
-+	u16 offset;
-+	const struct omap_clkctrl_bit_data *bit_data;
-+	u16 flags;
-+	const char *parent;
-+};
-+
-+struct omap_clkctrl_data {
-+	u32 addr;
-+	const struct omap_clkctrl_reg_data *regs;
-+};
-+
-+#define CLKF_SW_SUP	BIT(0)
-+#define CLKF_HW_SUP	BIT(1)
-+#define CLKF_NO_IDLEST	BIT(2)
-+
- typedef void (*ti_of_clk_init_cb_t)(struct clk_hw *, struct device_node *);
- 
- struct clk *ti_clk_register_gate(struct ti_clk *setup);
+ static struct clk_div_table test_div_table[] = {
+ 	{ .val = 3, .div = 1, },
+@@ -748,7 +749,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_ENET2_TIME_ROOT_DIV] = imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base + 0xa880, 0, 6);
+ 	clks[IMX7D_ENET_PHY_REF_ROOT_DIV] = imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base + 0xa900, 0, 6);
+ 	clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div", "eim_pre_div", base + 0xa980, 0, 6);
+-	clks[IMX7D_NAND_ROOT_DIV] = imx_clk_divider2("nand_post_div", "nand_pre_div", base + 0xaa00, 0, 6);
++	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk", "nand_pre_div", base + 0xaa00, 0, 6);
+ 	clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div", "qspi_pre_div", base + 0xaa80, 0, 6);
+ 	clks[IMX7D_USDHC1_ROOT_DIV] = imx_clk_divider2("usdhc1_post_div", "usdhc1_pre_div", base + 0xab00, 0, 6);
+ 	clks[IMX7D_USDHC2_ROOT_DIV] = imx_clk_divider2("usdhc2_post_div", "usdhc2_pre_div", base + 0xab80, 0, 6);
+@@ -825,7 +826,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510, 0);
+ 	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] = imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base + 0x4520, 0);
+ 	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk", "eim_post_div", base + 0x4160, 0);
+-	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_gate4("nand_root_clk", "nand_post_div", base + 0x4140, 0);
++	clks[IMX7D_NAND_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140, 0, &share_count_nand);
++	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk", base + 0x4140, 0, &share_count_nand);
+ 	clks[IMX7D_QSPI_ROOT_CLK] = imx_clk_gate4("qspi_root_clk", "qspi_post_div", base + 0x4150, 0);
+ 	clks[IMX7D_USDHC1_ROOT_CLK] = imx_clk_gate4("usdhc1_root_clk", "usdhc1_post_div", base + 0x46c0, 0);
+ 	clks[IMX7D_USDHC2_ROOT_CLK] = imx_clk_gate4("usdhc2_root_clk", "usdhc2_post_div", base + 0x46d0, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index a7a1a50..de62a83 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -450,5 +450,7 @@
+ #define IMX7D_CLK_ARM			437
+ #define IMX7D_CKIL			438
+ #define IMX7D_OCOTP_CLK			439
+-#define IMX7D_CLK_END			440
++#define IMX7D_NAND_RAWNAND_CLK		440
++#define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
++#define IMX7D_CLK_END			442
+ #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
 -- 
-1.9.1
+git-series 0.9.1
