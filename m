@@ -1,126 +1,407 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 3/4] irqchip: Add BCM2835 AUX interrupt controller
-To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
- Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Florian Fainelli
- <f.fainelli@gmail.com>, Stefan Wahren <stefan.wahren@i2se.com>,
- Eric Anholt <eric@anholt.net>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
- <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
- <1497457750-35585-4-git-send-email-phil@raspberrypi.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <cc8f00e4-c8af-1d51-e020-32991f91210d@arm.com>
-Date: Thu, 22 Jun 2017 14:55:08 +0100
-MIME-Version: 1.0
-In-Reply-To: <1497457750-35585-4-git-send-email-phil@raspberrypi.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <anup.patel@broadcom.com>
+Return-Path: <anup.patel@broadcom.com>
+From: Anup Patel <anup.patel@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Oza Pawandeep <oza.oza@broadcom.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Anup Patel <anup.patel@broadcom.com>
+Subject: [PATCH v7 1/1] clk: bcm: Add clocks for Stingray SOC
+Date: Tue,  6 Jun 2017 09:53:58 +0530
+Message-Id: <1496723038-4693-2-git-send-email-anup.patel@broadcom.com>
+In-Reply-To: <1496723038-4693-1-git-send-email-anup.patel@broadcom.com>
+References: <1496723038-4693-1-git-send-email-anup.patel@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14/06/17 17:29, Phil Elwell wrote:
-> Devices in the BCM2835 AUX block share a common interrupt line, with a
-> register indicating which devices have active IRQs. Expose this as a
-> nested interrupt controller to avoid IRQ sharing problems (easily
-> observed if UART1 and SPI1/2 are enabled simultaneously).
-> 
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-> ---
->  drivers/irqchip/Makefile          |   2 +-
->  drivers/irqchip/irq-bcm2835-aux.c | 153 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 154 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/irqchip/irq-bcm2835-aux.c
-> 
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index b64c59b..cf01920 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -3,7 +3,7 @@ obj-$(CONFIG_IRQCHIP)			+= irqchip.o
->  obj-$(CONFIG_ALPINE_MSI)		+= irq-alpine-msi.o
->  obj-$(CONFIG_ATH79)			+= irq-ath79-cpu.o
->  obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
-> -obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
-> +obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o irq-bcm2835-aux.o
->  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
->  obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
->  obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
-> diff --git a/drivers/irqchip/irq-bcm2835-aux.c b/drivers/irqchip/irq-bcm2835-aux.c
-> new file mode 100644
-> index 0000000..2151d51
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-bcm2835-aux.c
-> @@ -0,0 +1,153 @@
-> +/*
-> + * Copyright (C) 2017 Raspberry Pi (Trading) Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/interrupt.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/module.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/interrupt-controller/bcm2835-aux-intc.h>
-> +
-> +#define BCM2835_AUXIRQ		0x00
-> +
-> +#define BCM2835_AUX_IRQ_UART_MASK BIT(BCM2835_AUX_IRQ_UART)
-> +#define BCM2835_AUX_IRQ_SPI1_MASK BIT(BCM2835_AUX_IRQ_SPI1)
-> +#define BCM2835_AUX_IRQ_SPI2_MASK BIT(BCM2835_AUX_IRQ_SPI2)
-> +
-> +#define BCM2835_AUX_IRQ_ALL_MASK \
-> +	(BCM2835_AUX_IRQ_UART_MASK | \
-> +	 BCM2835_AUX_IRQ_SPI1_MASK | \
-> +	 BCM2835_AUX_IRQ_SPI2_MASK)
-> +
-> +struct aux_irq_state {
-> +	void __iomem      *status;
-> +	struct irq_domain *domain;
-> +};
-> +
-> +static struct aux_irq_state aux_irq __read_mostly;
-> +
-> +static irqreturn_t bcm2835_aux_irq_handler(int irq, void *dev_id)
-> +{
-> +	u32 stat = readl_relaxed(aux_irq.status);
-> +
-> +	if (stat & BCM2835_AUX_IRQ_UART_MASK)
-> +		generic_handle_irq(irq_linear_revmap(aux_irq.domain,
-> +						     BCM2835_AUX_IRQ_UART));
-> +
-> +	if (stat & BCM2835_AUX_IRQ_SPI1_MASK)
-> +		generic_handle_irq(irq_linear_revmap(aux_irq.domain,
-> +						     BCM2835_AUX_IRQ_SPI1));
-> +
-> +	if (stat & BCM2835_AUX_IRQ_SPI2_MASK)
-> +		generic_handle_irq(irq_linear_revmap(aux_irq.domain,
-> +						     BCM2835_AUX_IRQ_SPI2));
-> +
-> +	return (stat & BCM2835_AUX_IRQ_ALL_MASK) ? IRQ_HANDLED : IRQ_NONE;
+From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 
-That feels like the wrong conditions to return IRQ_HANDLED. Only the
-last level handler actually knows whether this has been handled or not.
+This patch adds support for Stingray clocks in iproc
+ccf. The Stingray SOC has various plls based on iproc
+pll architecture.
 
-A vaguely better approach would be to reread the HW status and only
-return IRQ_HANDLED if everything is clear. Yes, this is racy (another
-interrupt could have come in the meantime). But I doubt you can do much
-better given the quality of the HW...
+Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ drivers/clk/bcm/Kconfig  |   8 ++
+ drivers/clk/bcm/Makefile |   1 +
+ drivers/clk/bcm/clk-sr.c | 327 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 336 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-sr.c
 
-Thanks,
-
-	M.
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index b5ae531..1d9187d 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -46,3 +46,11 @@ config CLK_BCM_NS2
+ 	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
++
++config CLK_BCM_SR
++	bool "Broadcom Stingray clock support"
++	depends on ARCH_BCM_IPROC || COMPILE_TEST
++	select COMMON_CLK_IPROC
++	default ARCH_BCM_IPROC
++	help
++	  Enable common clock framework support for the Broadcom Stingray SoC
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index d9dc848..a0c14fa 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_ARCH_BCM_53573)	+= clk-bcm53573-ilp.o
+ obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
+ obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
+ obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
++obj-$(CONFIG_CLK_BCM_SR)	+= clk-sr.o
+diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
+new file mode 100644
+index 0000000..adc74f4
+--- /dev/null
++++ b/drivers/clk/bcm/clk-sr.c
+@@ -0,0 +1,327 @@
++/*
++ * Copyright 2017 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License, version 2, as
++ * published by the Free Software Foundation (the "GPL").
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License version 2 (GPLv2) for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * version 2 (GPLv2) along with this source code.
++ */
++
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++
++#include <dt-bindings/clock/bcm-sr.h>
++#include "clk-iproc.h"
++
++#define REG_VAL(o, s, w) { .offset = o, .shift = s, .width = w, }
++
++#define AON_VAL(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
++	.pwr_shift = ps, .iso_shift = is }
++
++#define SW_CTRL_VAL(o, s) { .offset = o, .shift = s, }
++
++#define RESET_VAL(o, rs, prs) { .offset = o, .reset_shift = rs, \
++	.p_reset_shift = prs }
++
++#define DF_VAL(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
++	.ki_shift = kis, .ki_width = kiw, .kp_shift = kps, .kp_width = kpw, \
++	.ka_shift = kas, .ka_width = kaw }
++
++#define VCO_CTRL_VAL(uo, lo) { .u_offset = uo, .l_offset = lo }
++
++#define ENABLE_VAL(o, es, hs, bs) { .offset = o, .enable_shift = es, \
++	.hold_shift = hs, .bypass_shift = bs }
++
++
++static const struct iproc_pll_ctrl sr_genpll0 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 5, 1, 0),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_genpll0_clk[] = {
++	[BCM_SR_GENPLL0_SATA_CLK] = {
++		.channel = BCM_SR_GENPLL0_SATA_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL0_SCR_CLK] = {
++		.channel = BCM_SR_GENPLL0_SCR_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++	[BCM_SR_GENPLL0_250M_CLK] = {
++		.channel = BCM_SR_GENPLL0_250M_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
++	[BCM_SR_GENPLL0_PCIE_AXI_CLK] = {
++		.channel = BCM_SR_GENPLL0_PCIE_AXI_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x1c, 0, 9),
++	},
++	[BCM_SR_GENPLL0_PAXC_AXI_X2_CLK] = {
++		.channel = BCM_SR_GENPLL0_PAXC_AXI_X2_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x1c, 10, 9),
++	},
++	[BCM_SR_GENPLL0_PAXC_AXI_CLK] = {
++		.channel = BCM_SR_GENPLL0_PAXC_AXI_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 11, 5, 17),
++		.mdiv = REG_VAL(0x1c, 20, 9),
++	},
++};
++
++static int sr_genpll0_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_genpll0, NULL, 0, sr_genpll0_clk,
++			    ARRAY_SIZE(sr_genpll0_clk));
++	return 0;
++}
++
++static const struct iproc_pll_ctrl sr_genpll3 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 19, 18),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_genpll3_clk[] = {
++	[BCM_SR_GENPLL3_HSLS_CLK] = {
++		.channel = BCM_SR_GENPLL3_HSLS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL3_SDIO_CLK] = {
++		.channel = BCM_SR_GENPLL3_SDIO_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++};
++
++static void sr_genpll3_clk_init(struct device_node *node)
++{
++	iproc_pll_clk_setup(node, &sr_genpll3, NULL, 0, sr_genpll3_clk,
++			    ARRAY_SIZE(sr_genpll3_clk));
++}
++CLK_OF_DECLARE(sr_genpll3_clk, "brcm,sr-genpll3", sr_genpll3_clk_init);
++
++static const struct iproc_pll_ctrl sr_genpll4 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 25, 24),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_genpll4_clk[] = {
++	[BCM_SR_GENPLL4_CCN_CLK] = {
++		.channel = BCM_SR_GENPLL4_CCN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++};
++
++static int sr_genpll4_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_genpll4, NULL, 0, sr_genpll4_clk,
++			    ARRAY_SIZE(sr_genpll4_clk));
++	return 0;
++}
++
++static const struct iproc_pll_ctrl sr_genpll5 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 1, 0),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_genpll5_clk[] = {
++	[BCM_SR_GENPLL5_FS_CLK] = {
++		.channel = BCM_SR_GENPLL5_FS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL5_SPU_CLK] = {
++		.channel = BCM_SR_GENPLL5_SPU_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++};
++
++static int sr_genpll5_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_genpll5, NULL, 0, sr_genpll5_clk,
++			    ARRAY_SIZE(sr_genpll5_clk));
++	return 0;
++}
++
++static const struct iproc_pll_ctrl sr_lcpll0 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 19, 18),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_lcpll0_clk[] = {
++	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++	[BCM_SR_LCPLL0_USB_REF_CLK] = {
++		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 8, 2, 14),
++		.mdiv = REG_VAL(0x14, 10, 9),
++	},
++	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 9, 3, 15),
++		.mdiv = REG_VAL(0x14, 20, 9),
++	},
++};
++
++static int sr_lcpll0_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_lcpll0, NULL, 0, sr_lcpll0_clk,
++			    ARRAY_SIZE(sr_lcpll0_clk));
++	return 0;
++}
++
++static const struct iproc_pll_ctrl sr_lcpll1 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 22, 21),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_lcpll1_clk[] = {
++	[BCM_SR_LCPLL1_WAN_CLK] = {
++		.channel = BCM_SR_LCPLL1_WAN_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++};
++
++static int sr_lcpll1_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_lcpll1, NULL, 0, sr_lcpll1_clk,
++			    ARRAY_SIZE(sr_lcpll1_clk));
++	return 0;
++}
++
++static const struct iproc_pll_ctrl sr_lcpll_pcie = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 2, 25, 24),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.status = REG_VAL(0x38, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_lcpll_pcie_clk[] = {
++	[BCM_SR_LCPLL_PCIE_PHY_REF_CLK] = {
++		.channel = BCM_SR_LCPLL_PCIE_PHY_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x14, 0, 9),
++	},
++};
++
++static int sr_lcpll_pcie_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_lcpll_pcie, NULL, 0, sr_lcpll_pcie_clk,
++			    ARRAY_SIZE(sr_lcpll_pcie_clk));
++	return 0;
++}
++
++static const struct of_device_id sr_clk_dt_ids[] = {
++	{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init },
++	{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init },
++	{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init },
++	{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init },
++	{ .compatible = "brcm,sr-lcpll1", .data = sr_lcpll1_clk_init },
++	{ .compatible = "brcm,sr-lcpll-pcie", .data = sr_lcpll_pcie_clk_init },
++	{ /* sentinel */ }
++};
++
++static int sr_clk_probe(struct platform_device *pdev)
++{
++	int (*probe_func)(struct platform_device *);
++
++	probe_func = of_device_get_match_data(&pdev->dev);
++	if (!probe_func)
++		return -ENODEV;
++
++	return probe_func(pdev);
++}
++
++static struct platform_driver sr_clk_driver = {
++	.driver = {
++		.name = "sr-clk",
++		.of_match_table = sr_clk_dt_ids,
++	},
++	.probe = sr_clk_probe,
++};
++builtin_platform_driver(sr_clk_driver);
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
