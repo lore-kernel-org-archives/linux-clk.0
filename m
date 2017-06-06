@@ -1,230 +1,37 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:34076 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751049AbdFHAgv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2017 20:36:51 -0400
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v5] clk: at91: Add sama5d2 suspend/resume
-Date: Thu,  8 Jun 2017 02:36:47 +0200
-Message-Id: <20170608003647.15721-1-alexandre.belloni@free-electrons.com>
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:34939 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751281AbdFFPq4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 11:46:56 -0400
+Received: by mail-ot0-f178.google.com with SMTP id a2so17910265oth.2
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jun 2017 08:46:56 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1496763146.28352.39.camel@nxp.com>
+References: <1494849305-1405-1-git-send-email-festevam@gmail.com> <1496763146.28352.39.camel@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 6 Jun 2017 12:46:54 -0300
+Message-ID: <CAOMZO5DysAoczSpn7eNzC=2W+f-8_Jgj9W3OhJfzdR=sivOOMg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx7d: Fix the powerdown bit location of PLL DDR
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On sama5d2, VDD core maybe be cut while in suspend. This means registers
-will be lost. Ensure they are saved and restored properly.
+Hi Leonard,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
-Changes in v5:
- - rebased on clk-next
- - moved pmc_register_id under CONFIG_PM
+On Tue, Jun 6, 2017 at 12:32 PM, Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
 
+> Maybe you mean IMX7_DDR_PLL_POWER here?
+>
+> This patch made it way into next-20170606 and broke boot on imx7d-sdb.
+> There is no console output but bisection points to this patch.
+>
+> Changing power_bit to IMX7_DDR_PLL_POWER seems to make it work.
 
- drivers/clk/at91/clk-generated.c  |   2 +
- drivers/clk/at91/clk-peripheral.c |   4 +-
- drivers/clk/at91/pmc.c            | 129 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/at91/pmc.h            |   6 ++
- 4 files changed, 140 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 07c8f701e51c..f0b7ae904ce2 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -266,6 +266,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
- 	if (ret) {
- 		kfree(gck);
- 		hw = ERR_PTR(ret);
-+	} else {
-+		pmc_register_id(id);
- 	}
- 
- 	return hw;
-diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-index dc29fd979d3f..770118369230 100644
---- a/drivers/clk/at91/clk-peripheral.c
-+++ b/drivers/clk/at91/clk-peripheral.c
-@@ -367,8 +367,10 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
- 	if (ret) {
- 		kfree(periph);
- 		hw = ERR_PTR(ret);
--	} else
-+	} else {
- 		clk_sam9x5_peripheral_autodiv(periph);
-+		pmc_register_id(id);
-+	}
- 
- 	return hw;
- }
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 526df5ba042d..775af473fe11 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -13,12 +13,16 @@
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/syscore_ops.h>
- 
- #include <asm/proc-fns.h>
- 
- #include "pmc.h"
- 
-+#define PMC_MAX_IDS 128
-+
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
- {
-@@ -41,3 +45,128 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
-+
-+#ifdef CONFIG_PM
-+static struct regmap *pmcreg;
-+
-+static u8 registered_ids[PMC_MAX_IDS];
-+
-+static struct
-+{
-+	u32 scsr;
-+	u32 pcsr0;
-+	u32 uckr;
-+	u32 mor;
-+	u32 mcfr;
-+	u32 pllar;
-+	u32 mckr;
-+	u32 usb;
-+	u32 imr;
-+	u32 pcsr1;
-+	u32 pcr[PMC_MAX_IDS];
-+	u32 audio_pll0;
-+	u32 audio_pll1;
-+} pmc_cache;
-+
-+void pmc_register_id(u8 id)
-+{
-+	int i;
-+
-+	for (i = 0; i < PMC_MAX_IDS; i++) {
-+		if (registered_ids[i] == 0) {
-+			registered_ids[i] = id;
-+			break;
-+		}
-+		if (registered_ids[i] == id)
-+			break;
-+	}
-+}
-+
-+static int pmc_suspend(void)
-+{
-+	int i;
-+
-+	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-+	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
-+	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
-+	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-+	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
-+	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
-+	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
-+	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
-+	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
-+	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
-+
-+	for (i = 0; registered_ids[i]; i++) {
-+		regmap_write(pmcreg, AT91_PMC_PCR,
-+			     (registered_ids[i] & AT91_PMC_PCR_PID_MASK));
-+		regmap_read(pmcreg, AT91_PMC_PCR,
-+			    &pmc_cache.pcr[registered_ids[i]]);
-+	}
-+
-+	return 0;
-+}
-+
-+static void pmc_resume(void)
-+{
-+	int i, ret = 0;
-+	u32 tmp;
-+
-+	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
-+	if (pmc_cache.mckr != tmp)
-+		pr_warn("MCKR was not configured properly by the firmware\n");
-+	regmap_read(pmcreg, AT91_CKGR_PLLAR, &tmp);
-+	if (pmc_cache.pllar != tmp)
-+		pr_warn("PLLAR was not configured properly by the firmware\n");
-+
-+	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-+	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
-+	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
-+	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
-+	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
-+	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
-+	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
-+	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
-+
-+	for (i = 0; registered_ids[i]; i++) {
-+		regmap_write(pmcreg, AT91_PMC_PCR,
-+			     pmc_cache.pcr[registered_ids[i]] |
-+			     AT91_PMC_PCR_CMD);
-+	}
-+
-+	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
-+		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
-+					       !(tmp & AT91_PMC_LOCKU),
-+					       10, 5000);
-+		if (ret)
-+			pr_crit("USB PLL didn't lock when resuming\n");
-+	}
-+}
-+
-+static struct syscore_ops pmc_syscore_ops = {
-+	.suspend = pmc_suspend,
-+	.resume = pmc_resume,
-+};
-+
-+static const struct of_device_id sama5d2_pmc_dt_ids[] = {
-+	{ .compatible = "atmel,sama5d2-pmc" },
-+	{ /* sentinel */ }
-+};
-+
-+static int __init pmc_register_ops(void)
-+{
-+	struct device_node *np;
-+
-+	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
-+
-+	pmcreg = syscon_node_to_regmap(np);
-+	if (IS_ERR(pmcreg))
-+		return PTR_ERR(pmcreg);
-+
-+	register_syscore_ops(&pmc_syscore_ops);
-+
-+	return 0;
-+}
-+/* This has to happen before arch_initcall because of the tcb_clksrc driver */
-+postcore_initcall(pmc_register_ops);
-+#endif
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 5771fff0ee3f..858e8ef7e8db 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -29,4 +29,10 @@ struct clk_range {
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range);
- 
-+#ifdef CONFIG_PM
-+void pmc_register_id(u8 id);
-+#else
-+static inline void pmc_register_id(u8 id) {}
-+#endif
-+
- #endif /* __PMC_H_ */
--- 
-2.11.0
-
+Ops, sorry about that! Just sent a fix. Thanks for reporting.
