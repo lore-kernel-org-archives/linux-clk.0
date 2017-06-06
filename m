@@ -1,110 +1,98 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-Cc: "Jason Cooper" <jason@lakedaemon.net>, "Andrew Lunn" <andrew@lunn.ch>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Gregory CLEMENT" <gregory.clement@free-electrons.com>,
- "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
- linux-arm-kernel@lists.infradead.org, "Rob Herring" <robh+dt@kernel.org>,
- devicetree@vger.kernel.org, "Nadav Haklai" <nadavh@marvell.com>,
- "Kostya Porotchkin" <kostap@marvell.com>,
- "Neta Zur Hershkovits" <neta@marvell.com>, "Marcin Wojtas" <mw@semihalf.com>,
- "Omri Itach" <omrii@marvell.com>, "Shadi Ammouri" <shadi@marvell.com>
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-Message-ID: <149631063623.33065.5881396919137461999@resonance>
-Subject: Re: [PATCH v2 0/7] Improve ap806 clk support on Marvell Armada 7K/8K
-Date: Thu, 01 Jun 2017 18:50:36 +0900
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:55689 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751293AbdFFHc0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 03:32:26 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v3 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
+Date: Tue,  6 Jun 2017 09:31:42 +0200
+Message-Id: <20170606073146.26882-3-o.rempel@pengutronix.de>
+In-Reply-To: <20170606073146.26882-1-o.rempel@pengutronix.de>
+References: <20170606073146.26882-1-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gregory,
+One of the Freescale recommended sequences for power off with external
+PMIC is the following:
+...
+3.  SoC is programming PMIC for power off when standby is asserted.
+4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 
-Quoting Gregory CLEMENT (2017-05-31 23:07:21)
-> Hi,
-> =
+See:
+http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+page 5083
 
-> This series modifies the device tree binding of the clock of the AP806
-> part that we find in the Marvell Armada 7K/8K SoCs.
-> =
+This patch implements step 4. of this sequence.
 
-> As for the previsous series the only change in this second version is
-> about the binding documentation: all the documentation related changes
-> are now move in their own patches. It allows to provide a stable -dt
-> branch for theses changes. I also added the acked-by from Rob Herring.
-> =
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/mach-imx/pm-imx6.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-> Here again the last two patches modifying the device tree _must_ be
-> merged through the mvebu tree to avoid future conflict.
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index e61b1d1027e1..3a4f8f289f4d 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -27,6 +27,8 @@
+ #include <asm/proc-fns.h>
+ #include <asm/suspend.h>
+ #include <asm/tlb.h>
++#include <linux/kallsyms.h>
++#include <linux/regulator/machine.h>
+ 
+ #include "common.h"
+ #include "hardware.h"
+@@ -602,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+ 				   IMX6Q_GPR1_GINT);
+ }
+ 
++static void imx6_pm_poweroff(void)
++{
++	imx6_set_lpm(STOP_POWER_OFF);
++	cpu_suspend(0, imx6q_suspend_finish);
++
++	mdelay(1000);
++
++	pr_emerg("Unable to poweroff system\n");
++}
++
++static int imx6_pm_poweroff_probe(void)
++{
++	if (pm_power_off) {
++		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
++			__func__, pm_power_off, pm_power_off);
++		return -EBUSY;
++	}
++
++	pm_power_off = imx6_pm_poweroff;
++	return 0;
++}
++
+ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ {
+ 	struct device_node *np;
+@@ -618,6 +642,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ 	val = readl_relaxed(ccm_base + CLPCR);
+ 	val &= ~BM_CLPCR_LPM;
+ 	writel_relaxed(val, ccm_base + CLPCR);
++
++	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
++		imx6_pm_poweroff_probe();
+ }
+ 
+ void __init imx6q_pm_init(void)
+-- 
+2.11.0
 
-The approach (and the patches) look good to me. I took the DT binding
-description changes (patches 2 & 4) into clk-ap806-dt stable branch:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=3Dclk-=
-ap806-dt
-
-Anyone can merge the above branch if they need it as a dep.
-
-The driver changes (patches 1, 3 & 5) are merged on into clk-ap806,
-which is based on top of clk-ap806-dt:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=3Dclk-=
-ap806
-
-Everything has been merged into clk-next. I did not touch the .dts files
-at all.
-
-Regards,
-Mike
-
-> =
-
-> For the record:
-> As for the CP110, we want to be able to ease the integration of new
-> clocks without breaking the backward compatibility. It is done in
-> patch 3.
-> =
-
-> We also want to ease the integration of the pinctrl node in the device
-> tree. It is the purpose of the patch 5.
-> =
-
-> In this series (as in the previous one for CP110), even if there is
-> some change in the device tree binding we paid attention to the
-> backward compatibility, and the driver can still work with the old
-> device tree.
-> =
-
-> Thanks,
-> =
-
-> Gregory
-> =
-
-> Gregory CLEMENT (7):
->   clk: mvebu: ap806: cosmetic improvement
->   dt-bindings: ap806: do not depend anymore of the *-clock-output-names
->   clk: mvebu: ap806: do not depend anymore of the *-clock-output-names
->   dt-bindings: ap806: introduce a new binding
->   clk: mvebu: ap806: introduce a new binding
->   arm64: dts: marvell: remove clock-output-names on ap806
->   arm64: dts: marvell: use new binding for the system controller on ap806
-> =
-
->  Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.tx=
-t |  24 ++++++++++------
->  arch/arm64/boot/dts/marvell/armada-ap806.dtsi                           =
-  |  23 +++++++--------
->  drivers/clk/mvebu/ap806-system-controller.c                             =
-  | 107 +++++++++++++++++++++++++++++++++++++++++++++++--------------------=
------
->  3 files changed, 97 insertions(+), 57 deletions(-)
-> =
-
-> base-commit: 4139fcd6c66df1c3d3fa0a0a7cf7f8a8c601a16c
-> -- =
-
-> git-series 0.9.1
