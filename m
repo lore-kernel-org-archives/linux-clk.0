@@ -1,59 +1,189 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 26 Jun 2017 15:49:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/15] clk: Add Ingenic jz4770 CGU driver
-Message-ID: <20170626224946.GR4493@codeaurora.org>
-References: <20170607200439.24450-1-paul@crapouillou.net>
- <20170607200439.24450-5-paul@crapouillou.net>
- <20170607205943.GO20170@codeaurora.org>
- <639b492cc57200bab14572ac591ef8af@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <639b492cc57200bab14572ac591ef8af@crapouillou.net>
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v3 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+Date: Tue,  6 Jun 2017 09:31:45 +0200
+Message-Id: <20170606073146.26882-6-o.rempel@pengutronix.de>
+In-Reply-To: <20170606073146.26882-1-o.rempel@pengutronix.de>
+References: <20170606073146.26882-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/26, Paul Cercueil wrote:
-> Hi,
-> 
-> Le 2017-06-07 22:59, Stephen Boyd a écrit :
-> >On 06/07, Paul Cercueil wrote:
-> >>Add support for the clocks provided by the CGU in the Ingenic JZ4770
-> >>SoC.
-> >>
-> >>Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-> 
-> [...]
-> 
-> >>diff --git a/include/dt-bindings/clock/jz4770-cgu.h
-> >>b/include/dt-bindings/clock/jz4770-cgu.h
-> >>new file mode 100644
-> >>index 000000000000..54b8b2ae4a73
-> >>--- /dev/null
-> >>+++ b/include/dt-bindings/clock/jz4770-cgu.h
-> >
-> >Can you split this file off into a different patch? That way clk
-> >tree can apply clk patches on top of a stable branch where this
-> >file lives by itself.
-> 
-> Oops, I forgot that in the v2.
-> 
-> The jz4770-cgu.c file includes and uses
-> <dt-bindings/clock/jz4770-cgu.h>, so I don't think
-> it would make sense to split it, since it wouldn't compile without it.
+On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
+about state changes. In this case internal state of PMIC must be
+preconfigured for upcomming state change.
+It works fine with the current regulator framework, except with the
+power-off case.
 
-I was suggesting this header file be a patch before the driver C
-file patch, so that it would still compile. Does that change
-anything?
+This patch is providing an optional pm_power_off_prepare handler
+which will configure standby state of the PMIC to disable all power lines.
 
+In my power consumption test on RIoTBoard, I got the following results:
+power off without this patch:	320 mA
+power off with this patch:	2   mA
+suspend to ram:			40  mA
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
+
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 63922a2167e5..f6c276ed91d8 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -28,6 +28,7 @@
+ #include <linux/regulator/pfuze100.h>
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
++#include <linux/kallsyms.h>
+ #include <linux/regmap.h>
+ 
+ #define PFUZE_NUMREGS		128
+@@ -42,11 +43,17 @@
+ 
+ #define PFUZE100_COINVOL	0x1a
+ #define PFUZE100_SW1ABVOL	0x20
++#define PFUZE100_SW1ABMODE	0x23
+ #define PFUZE100_SW1CVOL	0x2e
++#define PFUZE100_SW1CMODE	0x31
+ #define PFUZE100_SW2VOL		0x35
++#define PFUZE100_SW2MODE	0x38
+ #define PFUZE100_SW3AVOL	0x3c
++#define PFUZE100_SW3AMODE	0x3f
+ #define PFUZE100_SW3BVOL	0x43
++#define PFUZE100_SW3BMODE	0x46
+ #define PFUZE100_SW4VOL		0x4a
++#define PFUZE100_SW4MODE	0x4d
+ #define PFUZE100_SWBSTCON1	0x66
+ #define PFUZE100_VREFDDRCON	0x6a
+ #define PFUZE100_VSNVSVOL	0x6b
+@@ -57,6 +64,13 @@
+ #define PFUZE100_VGEN5VOL	0x70
+ #define PFUZE100_VGEN6VOL	0x71
+ 
++#define PFUZE100_SWxMODE_MASK	0xf
++#define PFUZE100_SWxMODE_APS_APS	0x8
++#define PFUZE100_SWxMODE_APS_OFF	0x4
++
++#define PFUZE100_VGENxLPWR	BIT(6)
++#define PFUZE100_VGENxSTBY	BIT(5)
++
+ enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
+ 
+ struct pfuze_regulator {
+@@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(int index)
+ }
+ #endif
+ 
++static struct pfuze_chip *syspm_pfuze_chip;
++
++static void pfuze_power_off_prepare(void)
++{
++	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
++
++	/* Switch from default mode: APS/APS to APS/Off */
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++}
++
++static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
++{
++	if (pfuze_chip->chip_id != PFUZE100) {
++		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
++		return -ENODEV;
++	}
++
++	if (pm_power_off_prepare) {
++		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
++		return -EBUSY;
++	}
++
++	if (syspm_pfuze_chip) {
++		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
++		return -EBUSY;
++	}
++
++	syspm_pfuze_chip = pfuze_chip;
++	pm_power_off_prepare = pfuze_power_off_prepare;
++
++	return 0;
++}
++
+ static int pfuze_identify(struct pfuze_chip *pfuze_chip)
+ {
+ 	unsigned int value;
+@@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 		}
+ 	}
+ 
++	if (of_property_read_bool(client->dev.of_node,
++				  "fsl,pmic-stby-poweroff"))
++		return pfuze_power_off_prepare_init(pfuze_chip);
++
++	return 0;
++}
++
++static int pfuze100_regulator_remove(struct i2c_client *client)
++{
++	if (syspm_pfuze_chip) {
++		syspm_pfuze_chip = NULL;
++		pm_power_off_prepare = NULL;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver = {
+ 		.of_match_table = pfuze_dt_ids,
+ 	},
+ 	.probe = pfuze100_regulator_probe,
++	.remove = pfuze100_regulator_remove,
+ };
+ module_i2c_driver(pfuze_driver);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
