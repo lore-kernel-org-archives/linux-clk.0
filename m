@@ -1,38 +1,98 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:07:42 -0700
+Date: Tue, 6 Jun 2017 15:08:19 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, robh+dt@kernel.org,
-	matthias.bgg@gmail.com, mark.rutland@arm.com,
-	mturquette@baylibre.com, jamesjj.liao@mediatek.com,
-	p.zabel@pengutronix.de, shunli.wang@mediatek.com,
-	erin.lo@mediatek.com, jdelvare@suse.de, devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Subject: Re: [PATCH 3/6] clk: mediatek: export cpu multiplexer clock for
- MT8173 SoCs
-Message-ID: <20170620010742.GD4493@codeaurora.org>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
- <1493997974-17699-4-git-send-email-sean.wang@mediatek.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
+Message-ID: <20170606220819.GK20170@codeaurora.org>
+References: <20170602223006.1653-1-sboyd@codeaurora.org>
+ <201706031243.qNvuUbQX%fengguang.wu@intel.com>
+ <20170605144546.b6oh5sygrza22hbe@flea.lan>
+ <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493997974-17699-4-git-send-email-sean.wang@mediatek.com>
+In-Reply-To: <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/05, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On 06/06, Arnd Bergmann wrote:
+> On Mon, Jun 5, 2017 at 4:45 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Hi,
+> >
+> > On Sat, Jun 03, 2017 at 12:22:32PM +0800, kbuild test robot wrote:
+> >> Hi Stephen,
+> >>
+> >> [auto build test ERROR on sunxi/sunxi/for-next]
+> >> [also build test ERROR on next-20170602]
+> >> [cannot apply to clk/clk-next v4.12-rc3]
+> >> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> >>
+> >>    sunxi_sid.c:(.data+0x1da8c): undefined reference to `ccu_gate_ops'
+> >>    sunxi_sid.c:(.data+0x1dac8): undefined reference to `ccu_gate_ops'
+> >>    sunxi_sid.c:(.data+0x1db20): undefined reference to `ccu_mux_ops'
+> >>    sunxi_sid.c:(.data+0x1db74): undefined reference to `ccu_mux_ops'
+> >>    sunxi_sid.c:(.data+0x1dbec): undefined reference to `ccu_mp_ops'
+> >>    sunxi_sid.c:(.data+0x1dc64): undefined reference to `ccu_mp_ops'
+> >
+> > It seems like even though the lib.a file is compiled properly, it is
+> > never linked in. It looks like we would be supposed to add
+> > drivers/clk/sunxi-ng/ to libs-y, but that doesn't seem to work for
+> > Makefiles in drivers/*
 > 
-> The patch enables CPU multiplexer clock on MT8173 SoC which fixes up
-> cpufreq driver fails at acquiring intermediate clock source when driver
-> probe is called.
+> Ah, too bad. I see that only one directory under drivers/ uses something
+> with lib.a, in drivers/firmware/efi/libstub/Makefile, but that seems to
+> rely on being special-cased as well.
 > 
-> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
+> However, this patch seems to fix it:
+> 
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index cbc8cb4f70e3..321d3da7cc6a 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -18,16 +18,16 @@ lib-$(CONFIG_SUNXI_CCU) += ccu_nm.o
+>  lib-$(CONFIG_SUNXI_CCU) += ccu_mp.o
+> 
+>  # SoC support
+> -obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o
+> -obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o
+> -obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o
+> -obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o
+> -obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o
+> -obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o
+> -obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o
+> -obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o
+> -obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o
+> -obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o
+> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o
+> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o
+> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o
+> +obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o lib.a
+> +obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o lib.a
+> +obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o lib.a
+> +obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o lib.a
+> +obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o lib.a
+> +obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o lib.a
+> +obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o lib.a
+> +obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o lib.a
+> +obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o lib.a
+> +obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o lib.a
+> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o lib.a
+> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o lib.a
+> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o lib.a
+> 
+> It's not documented behavior, but I think it's still good enough,
+> and improves the current version, unless there is another bug
+> after we add this to your patch.
 
-Applied to clk-next
+We should add a comment above this so we know what the lib.a is
+all about. As you say, it's not documented.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
