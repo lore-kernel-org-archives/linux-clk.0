@@ -1,37 +1,92 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 22 Jun 2017 17:39:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: keystone: TI_SCI_PROTOCOL is needed for clk driver
-Message-ID: <20170623003934.GN4493@codeaurora.org>
-References: <20170620201249.145468-1-arnd@arndb.de>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
+To: Anup Patel <anup.patel@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+ Oza Pawandeep <oza.oza@broadcom.com>,
+ Srinath Mannam <srinath.mannam@broadcom.com>,
+ Pramod Kumar <pramod.kumar@broadcom.com>,
+ Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+ <4c15213f-4ac6-a0a7-f2b8-cde2b4cee891@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <c26e95e1-4bfa-0d24-33cc-8d5ae3102864@gmail.com>
+Date: Mon, 5 Jun 2017 19:08:03 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170620201249.145468-1-arnd@arndb.de>
+In-Reply-To: <4c15213f-4ac6-a0a7-f2b8-cde2b4cee891@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/20, Arnd Bergmann wrote:
-> CONFIG_COMPILE_TEST allows building a configuration without
-> TI_SCI_PROTOCOL, which then fails to link:
-> 
-> drivers/clk/keystone/sci-clk.o: In function `ti_sci_clk_probe':
-> sci-clk.c:(.text.ti_sci_clk_probe+0x4c): undefined reference to `devm_ti_sci_get_handle'
-> 
-> This makes it a hard dependency. Right now, that means we can't
-> actually compile-test the driver unless ARCH_KEYSTONE is set as
-> well, but we can fix that by allowing TI_MESSAGE_MANAGER to
-> be selected for COMPILE_TEST as well.
-> 
-> Fixes: b745c0794e2f ("clk: keystone: Add sci-clk driver support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
 
-Applied to clk-next
 
+On 06/05/2017 09:51 AM, Florian Fainelli wrote:
+> On 06/01/2017 11:34 PM, Anup Patel wrote:
+>> This patchset adds initial support of Broadcom Stingray SOC
+>> by reusing existing Broadcom iProc device drivers.
+>>
+>> Most of the patches in this patchset are DT patches except
+>> the Stingray clock tree support which just one patch.
+>>
+>> This patchset is based on Linux-4.12-rc3 and it is also available
+>> at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
+>>
+>> Changes since v5:
+>>  - Rebased patches for Linux-4.12-rc3
+>>  - Update DT node names to match register offset
+>>
+>> Changes since v4:
+>>  - Reduce number of include headers in Stingray clk driver
+>>
+>> Changes since v3:
+>>  - Rebased patches for Linux-4.12-rc1
+>>  - Updated PATCH3 to have all clocks except genpll3 to be
+>>    registered via platform driver probe
+>>
+>> Changes since v2:
+>>  - Remove default bootargs from chosen DT node
+>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
+>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
+>>
+>> Changes since v1:
+>>  - Rebased patches for Linux-4.12-rc1
+>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+>>  - Use ranges DT property to clear view of memory-layout
+>>  - Make bcm-sr.h part of clock DT bindings patch
+>>
+>> Anup Patel (3):
+>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
+>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
+>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+>>
+>> Oza Pawandeep (1):
+>>   arm64: dts: Add I2C DT nodes for Stingray SoC
+>>
+>> Pramod Kumar (3):
+>>   arm64: dts: Add NAND DT nodes for Stingray SOC
+>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
+>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
+>>
+>> Sandeep Tripathy (3):
+>>   dt-bindings: clk: Extend binding doc for Stingray SOC
+>>   clk: bcm: Add clocks for Stingray SOC
+>>   arm64: dts: Add clock DT nodes for Stingray SOC
+>>
+>> Srinath Mannam (1):
+>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+> 
+> Applied patches 1, 4-11 to devicetree-arm64/next, thanks!
+
+Also took patch 2, to make sure everything builds properly, Stephen, let
+me know if you want me to take patch #3 as well.
+
+Thanks!
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Florian
