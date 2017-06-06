@@ -1,28 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Jun 2017 10:36:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] rockchip clock changes for 4.13 part1
-Message-ID: <20170614173612.GC20170@codeaurora.org>
-References: <4709927.KhRz8573a2@phil>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34625 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751200AbdFFQdn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 12:33:43 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4709927.KhRz8573a2@phil>
+In-Reply-To: <df22afd249abba1ee7c9d31be1c2c8dc1a68f69a.1496730576.git-series.stefan@agner.ch>
+References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
+ <df22afd249abba1ee7c9d31be1c2c8dc1a68f69a.1496730576.git-series.stefan@agner.ch>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 6 Jun 2017 13:33:41 -0300
+Message-ID: <CAOMZO5D=M2i0SAyrtmO5s4UMY8E8Yun-QgJCfrxvEa+1Jb3Xqg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] clk: imx7d: create clocks behind rawnand clock gate
+To: Stefan Agner <stefan@agner.ch>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, han.xu@nxp.com,
+        Fabio Estevam <fabio.estevam@freescale.com>,
+        =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/09, Heiko Stuebner wrote:
-> Hi Mike, Stephen,
-> 
-> please find below the core rockchip clock changes for 4.13.
-> As stated, one new clock controller and some misc changes as always.
-> There may be some more changes later on, but most likely nothing big.
-> 
-> So please pull.
+On Tue, Jun 6, 2017 at 3:30 AM, Stefan Agner <stefan@agner.ch> wrote:
+> The rawnand clock gate gates two clocks, NAND_USDHC_BUS_CLK_ROOT
+> and NAND_CLK_ROOT. However, the gate has been in the chain of the
+> latter only. This does not allow to use the NAND_USDHC_BUS_CLK_ROOT
+> only, e.g. as required by APBH-Bridge-DMA.
+>
+> Add new clocks which represent the clock after the gate, and use a
+> shared clock gate to correctly model the hardware.
+>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Thanks. Pulled into clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
