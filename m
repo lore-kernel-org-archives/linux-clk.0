@@ -1,76 +1,35 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 06/15] serial: 8250_ingenic: Parse earlycon options
-Date: Wed,  7 Jun 2017 22:04:30 +0200
-Message-Id: <20170607200439.24450-7-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:54888 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbdFGAmw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 20:42:52 -0400
+Date: Tue, 6 Jun 2017 17:42:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, stefan@agner.ch,
+        linux-clk@vger.kernel.org, leonard.crestez@nxp.com,
+        festevam@gmail.com
+Subject: Re: [PATCH] clk: imx7d: Fix the DDR PLL enable bit
+Message-ID: <20170607004249.GM20170@codeaurora.org>
+References: <1496763954-10981-1-git-send-email-fabio.estevam@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1496763954-10981-1-git-send-email-fabio.estevam@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In the devicetree, it is possible to specify the baudrate, parity,
-bits, flow of the early console, by passing a configuration string like
-this:
+On 06/06, Fabio Estevam wrote:
+> Commit ad14972422899b6 ("clk: imx7d: Fix the powerdown bit location
+> of PLL DDR") used the incorrect bit for the IMX_PLLV3_DDR_IMX7 case.
+> 
+> Fix it accordingly to avoid a kernel hang.
+> 
+> Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
 
-aliases {
-	serial0 = &uart0;
-};
+Applied to clk-next
 
-chosen {
-	stdout-path = "serial0:57600n8";
-};
-
-This, for instance, will configure the early console for a baudrate of
-57600 bps, no parity, and 8 bits per baud.
-
-This patches implements parsing of this configuration string in the
-8250_ingenic driver, which previously just ignored it.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/tty/serial/8250/8250_ingenic.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-index b31b2ca552d1..59f3e632df49 100644
---- a/drivers/tty/serial/8250/8250_ingenic.c
-+++ b/drivers/tty/serial/8250/8250_ingenic.c
-@@ -99,14 +99,24 @@ static int __init ingenic_early_console_setup(struct earlycon_device *dev,
- 					      const char *opt)
- {
- 	struct uart_port *port = &dev->port;
--	unsigned int baud, divisor;
-+	unsigned int divisor;
-+	int baud = 115200;
- 
- 	if (!dev->port.membase)
- 		return -ENODEV;
- 
-+	if (opt) {
-+		char options[256];
-+		unsigned int parity, bits, flow; /* unused for now */
-+
-+		strlcpy(options, opt, sizeof(options));
-+		uart_parse_options(options, &baud, &parity, &bits, &flow);
-+	}
-+
- 	ingenic_early_console_setup_clock(dev);
- 
--	baud = dev->baud ?: 115200;
-+	if (dev->baud)
-+		baud = dev->baud;
- 	divisor = DIV_ROUND_CLOSEST(port->uartclk, 16 * baud);
- 
- 	early_out(port, UART_IER, 0);
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
