@@ -1,132 +1,78 @@
-Return-Path: <phil@raspberrypi.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH v4 2/2] clk: bcm2835: Minimise clock jitter for PCM clock
-Message-ID: <9989244b-ca4d-9081-95d9-b24f51099222@raspberrypi.org>
-Date: Thu, 1 Jun 2017 15:14:22 +0100
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 07 Jun 2017 08:26:01 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Jernej_?= =?UTF-8?Q?=C5=A0krabec?=
+        <jernej.skrabec@siol.net>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 00/11] Support for H3 Composite Output support
+In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+Message-ID: <35fbf653e1c1d4638059913901216245@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Fractional clock dividers generate accurate average frequencies but
-with jitter, particularly when the integer divisor is small.
+在 2017-06-05 00:01，Icenowy Zheng 写道：
+> Allwinner H3 SoC features a TV Encoder like the one in Allwinner A13,
+> which can only output TV Composite signal.
+> 
+> The display pipeline of H3 is also special -- it has two mixers and
+> two TCONs, of which the connection can be swapped. The TCONs do not
+> have channel 0 (as they are all connected to internal bridges, TVE
+> and HDMI TX).
+> 
+> Add support for the display pipeline and the TVE in H3, in order to
+> make it possible to display something with mainline kernel with H3.
+> 
+> The image quality of TVE is bad, so HDMI is a better output -- this
+> patchset also prepared the mixers and TCONs for HDMI output, and
+> the HDMI controller driver is already done by Jernej Skrabec.
+> 
+> So if possible, please apply PATCH 1~5 and 8,9 as soon as possible,
+> so that Jernej can submit his HDMI patches.
+> 
+> Currently the jack detection feature of the TVE is still not so
+> clear -- so it's not implemented in this version. Thus the TV
+> output shouldn't be defaultly enabled now.
+> 
+> Icenowy Zheng (11):
+>   dt-bindings: update the binding for Allwinner H3 TVE support
+>   drm: sun4i: add support for H3 mixers
+>   drm: sun4i: ignore swapped mixer<->tcon connection for DE2
+>   drm: sun4i: add support for H3's TCON0/1
+>   drm: sun4i: add compatible for H3 display engine
+>   drm: sun4i: add color space correction support for DE2 mixer
+>   drm: sun4i: add support for the TV encoder in H3 SoC
+>   clk: sunxi-ng: allow CLK_DE to set CLK_PLL_DE for H3
+>   clk: sunxi-ng: export CLK_PLL_DE for H3
+>   ARM: sun8i: h3: add display engine pipeline for TVE
+>   [DO NOT MERGE] ARM: sun8i: h3: enable TV output on Orange Pi PC
 
-Introduce a new metric of clock accuracy to penalise clocks with a good
-average but worse jitter compared to clocks with an average which is no
-better but with lower jitter. The metric is the ideal rate minus the
-worse deviation from that ideal using the nearest integer divisors.
+Maxime, could you pick some patches that you think appliable in this
+series? (especially PATCH 1, the binding patch)
 
-Use this metric for parent selection for clocks requiring low jitter
-(currently just PCM).
+I think they can be useful.
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/clk/bcm/clk-bcm2835.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+Thanks!
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 49867d2..0bc56a0 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -530,6 +530,7 @@ struct bcm2835_clock_data {
- 
- 	bool is_vpu_clock;
- 	bool is_mash_clock;
-+	bool low_jitter;
- 
- 	u32 tcnt_mux;
- };
-@@ -1124,7 +1125,8 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 							int parent_idx,
- 							unsigned long rate,
- 							u32 *div,
--							unsigned long *prate)
-+							unsigned long *prate,
-+							unsigned long *avgrate)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
-@@ -1139,8 +1141,25 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 		*prate = clk_hw_get_rate(parent);
- 		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
- 
--		return bcm2835_clock_rate_from_divisor(clock, *prate,
--						       *div);
-+		*avgrate = bcm2835_clock_rate_from_divisor(clock, *prate, *div);
-+
-+		if (data->low_jitter && (*div & CM_DIV_FRAC_MASK)) {
-+			unsigned long high, low;
-+			u32 int_div = *div & ~CM_DIV_FRAC_MASK;
-+
-+			high = bcm2835_clock_rate_from_divisor(clock, *prate,
-+							       int_div);
-+			int_div += CM_DIV_FRAC_MASK + 1;
-+			low = bcm2835_clock_rate_from_divisor(clock, *prate,
-+							      int_div);
-+
-+			/*
-+			 * Return a value which is the maximum deviation
-+			 * below the ideal rate, for use as a metric.
-+			 */
-+			return *avgrate - max(*avgrate - low, high - *avgrate);
-+		}
-+		return *avgrate;
- 	}
- 
- 	if (data->frac_bits)
-@@ -1167,6 +1186,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 
- 	*div = curdiv << CM_DIV_FRAC_BITS;
- 	*prate = curdiv * best_rate;
-+	*avgrate = best_rate;
- 
- 	return best_rate;
- }
-@@ -1178,6 +1198,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 	bool current_parent_is_pllc;
- 	unsigned long rate, best_rate = 0;
- 	unsigned long prate, best_prate = 0;
-+	unsigned long avgrate, best_avgrate = 0;
- 	size_t i;
- 	u32 div;
- 
-@@ -1202,11 +1223,13 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
--							  &div, &prate);
-+							  &div, &prate,
-+							  &avgrate);
- 		if (rate > best_rate && rate <= req->rate) {
- 			best_parent = parent;
- 			best_prate = prate;
- 			best_rate = rate;
-+			best_avgrate = avgrate;
- 		}
- 	}
- 
-@@ -1216,7 +1239,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 	req->best_parent_hw = best_parent;
- 	req->best_parent_rate = best_prate;
- 
--	req->rate = best_rate;
-+	req->rate = best_avgrate;
- 
- 	return 0;
- }
-@@ -2025,6 +2048,7 @@ struct bcm2835_clk_desc {
- 		.int_bits = 12,
- 		.frac_bits = 12,
- 		.is_mash_clock = true,
-+		.low_jitter = true,
- 		.tcnt_mux = 23),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
- 		.name = "pwm",
--- 
-1.9.1
+> 
+>  .../bindings/display/sunxi/sun4i-drm.txt           |  37 +++-
+>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  12 ++
+>  arch/arm/boot/dts/sun8i-h3.dtsi                    | 186 
+> +++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   2 +-
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   3 +-
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                  |  46 +++++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 113 ++++++++++---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   3 +
+>  drivers/gpu/drm/sun4i/sun4i_tv.c                   |  35 +++-
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c                |  53 ++++++
+>  drivers/gpu/drm/sun4i/sun8i_mixer.h                |   6 +-
+>  include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
+>  12 files changed, 463 insertions(+), 35 deletions(-)
