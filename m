@@ -1,82 +1,63 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 13 Jun 2017 14:42:11 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH 0/9] clk: add imx7ulp clk support
-Message-ID: <20170613064211.GC15770@b29396-OptiPlex-7040>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35924 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751574AbdFGU63 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2017 16:58:29 -0400
+Subject: Re: [PATCH 0/2] Add bcm2835aux interrupt controller
+To: Phil Elwell <phil@raspberrypi.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <6dc301c8-e5a2-1334-c476-1ce7e303787f@raspberrypi.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <b3d5b3c1-a9ab-99bf-a1b2-3a1e4579c0ff@gmail.com>
+Date: Wed, 7 Jun 2017 13:58:25 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <6dc301c8-e5a2-1334-c476-1ce7e303787f@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 15, 2017 at 09:59:14PM +0800, Dong Aisheng wrote:
-> This patch series intends to add imx7ulp clk support.
+On 06/07/2017 04:11 AM, Phil Elwell wrote:
+> Devices in the AUX block share a common interrupt line, with a register
+> indicating which devices have active IRQs. Expose this as a nested
+> interrupt controller to avoid IRQ sharing problems (easily observed if
+> UART1 and SPI1/2 are enabled simultaneously).
 > 
-> i.MX7ULP Clock functions are under joint control of the System
-> Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-> modules, and Core Mode Controller (CMC)1 blocks
+> The interrupt functionality could arguably be forked off as a separate
+> irqchip driver, but the clock driver has already claimed the AUX_IRQ
+> register so some driver and DT surgery would still be required.
+> Eric Anholt thought that including it here is reasonable, but I'm
+> prepared to split it out if this is considered too hacky.
+
+You probably remember your fix to the irqchip drive being flamed because
+the irqchip driver was re-purposed as an ARM SMP secondary core bringup
+method, maybe we can avoid doing the same mistake and having this a
+separate interrupt controller be under drivers/irqchip/*?
+
+Even if the clock driver already claims the AUX_IRQ register space, we
+can still have an irqchip ioremap() the two register offsets that it
+cares about (AUXIRQ, AUXENB) and just manage that 8 bytes worth of
+register space. We just need to make sure that the clock driver really
+does not touch those (why would it) and that there won't be any
+conflicting request_mem_region() against the same register range.
+
+Thanks!
+
 > 
-> The clocking scheme provides clear separation between M4 domain
-> and A7 domain. Except for a few clock sources shared between two
-> domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-> and and the Fast IRC clock (FIRCLK), clock sources and clock
-> management are separated and contained within each domain.
+> Phil Elwell (2):
+>   clk: bcm2835: Add AUX interrupt controller
+>   ARM: dts: bcm283x: Enable AUX interrupt controller
 > 
-> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-> 
-> Note: this series only adds A7 clock domain support as M4 clock
-> domain will be handled by M4 seperately.
-> 
-> Dong Aisheng (9):
->   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
->   clk: reparent orphans after critical clocks enabled
->   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
->   clk: imx: add pllv4 support
->   clk: imx: add pfdv2 support
->   clk: imx: add composite clk support
->   dt-bindings: clock: add imx7ulp clock binding doc
->   clk: imx: make mux parent strings const
->   clk: imx: add imx7ulp clk driver
+>  arch/arm/boot/dts/bcm283x.dtsi    |  12 +++-
+>  drivers/clk/bcm/clk-bcm2835-aux.c | 120 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 129 insertions(+), 3 deletions(-)
 > 
 
-Ping.
 
-Regards
-Dong Aisheng
-
->  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 +++++++
->  drivers/clk/clk-divider.c                          |   2 +
->  drivers/clk/clk-fractional-divider.c               |  10 ++
->  drivers/clk/clk.c                                  |  39 ++--
->  drivers/clk/imx/Makefile                           |   6 +-
->  drivers/clk/imx/clk-busy.c                         |   2 +-
->  drivers/clk/imx/clk-composite.c                    |  93 ++++++++++
->  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
->  drivers/clk/imx/clk-imx7ulp.c                      | 171 ++++++++++++++++++
->  drivers/clk/imx/clk-pfdv2.c                        | 199 +++++++++++++++++++++
->  drivers/clk/imx/clk-pllv4.c                        | 196 ++++++++++++++++++++
->  drivers/clk/imx/clk.h                              |  31 +++-
->  include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++++
->  include/linux/clk-provider.h                       |  11 ++
->  14 files changed, 902 insertions(+), 30 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
->  create mode 100644 drivers/clk/imx/clk-composite.c
->  create mode 100644 drivers/clk/imx/clk-imx7ulp.c
->  create mode 100644 drivers/clk/imx/clk-pfdv2.c
->  create mode 100644 drivers/clk/imx/clk-pllv4.c
->  create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
-> 
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Florian
