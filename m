@@ -1,171 +1,241 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:41:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V1 8/9] clk: sprd: add clocks support for SC9860
-Message-ID: <20170620014137.GK4493@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-9-chunyan.zhang@spreadtrum.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:56376 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751203AbdFGMMt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Jun 2017 08:12:49 -0400
+Date: Wed, 07 Jun 2017 17:44:02 +0800
+In-Reply-To: <20170607093512.rfvpefmyskgjw3ik@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io> <20170604160149.30230-4-icenowy@aosc.io> <20170607093512.rfvpefmyskgjw3ik@flea.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170618015855.27738-9-chunyan.zhang@spreadtrum.com>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v2 03/11] drm: sun4i: ignore swapped mixer<->tcon connection for DE2
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <3DD71A0D-E21D-4523-AB7C-D5AACAEAD538@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/18, Chunyan Zhang wrote:
-> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-> index c593a93..0d90b40 100644
-> --- a/drivers/clk/sprd/Makefile
-> +++ b/drivers/clk/sprd/Makefile
-> @@ -1,3 +1,4 @@
->  ifneq ($(CONFIG_OF),)
->  obj-y	+= ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o ccu_composite.o ccu_pll.o
-> +obj-y	+= ccu-sc9860.o
 
-And a Kconfig for this SoC specific driver.
 
->  endif
-> diff --git a/drivers/clk/sprd/ccu-sc9860.c b/drivers/clk/sprd/ccu-sc9860.c
-> new file mode 100644
-> index 0000000..6cd4dc5
-> --- /dev/null
-> +++ b/drivers/clk/sprd/ccu-sc9860.c
-> +
-> +static CLK_FIXED_FACTOR(fac_4m,		"fac-4m",	"ext-26m",
-> +			6, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_2m,		"fac-2m",	"ext-26m",
-> +			13, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_1m,		"fac-1m",	"ext-26m",
-> +			26, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_250k,	"fac-250k",	"ext-26m",
-> +			104, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_rpll0_26m,	"rpll0-26m",	"ext-26m",
-> +			1, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_rpll1_26m,	"rpll1-26m",	"ext-26m",
-> +			1, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_rco_25m,	"rco-25m",	"ext-rc0-100m",
-> +			4, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_rco_4m,	"rco-4m",	"ext-rc0-100m",
-> +			25, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_rco_2m,	"rco-2m",	"ext-rc0-100m",
-> +			50, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_3k2,	"fac-3k2",	"ext-32k",
-> +			10, 1, CLK_IS_BASIC);
-> +static CLK_FIXED_FACTOR(fac_1k,		"fac-1k",	"ext-32k",
-> +			32, 1, CLK_IS_BASIC);
-> +
-> +#define SC9860_GATE_FLAGS (CLK_IGNORE_UNUSED | CLK_IS_BASIC)
+于 2017年6月7日 GMT+08:00 下午5:35:12, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>On Mon, Jun 05, 2017 at 12:01:41AM +0800, Icenowy Zheng wrote:
+>> Some SoC's DE2 has two mixers. Defaultly the mixer0 is connected to
+>> tcon0 and mixer1 is connected to tcon1; however by setting a bit
+>> the connection can be swapped.
+>> 
+>> As we now hardcode the default connection, ignore the bonus endpoint
+>for
+>> the mixer's output and the TCON's input, as they stands for the
+>swapped
+>> connection.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>
+>So, I'm still not quite sure what this patch exactly is supposed to be
+>doing.
+>
+>You mention that the routing between the mixers and tcons can be
+>changed, and that we need to ignore the TCON input...
 
-No CLK_IS_BASIC. Why is everything marked as CLK_IGNORE_UNUSED?
+Yes, from the TCON perspective, the connection from
+mixer0 to TCON1 and from mixer 1 to TCON0 should be
+ignored. And from the mixer perspective, the connections should
+also be omitted when binding in sun4i_drv.c.
 
-> +static SPRD_CCU_GATE(rpll0_gate,	"rpll0-gate",	"ext-26m", 0x402b016c,
-> +		     0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(rpll1_gate,	"rpll1-gate",	"ext-26m", 0x402b016c,
-> +		     0x1000, BIT(18), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(mpll0_gate,	"mpll0-gate",	"ext-26m", 0x402b00b0,
-> +		     0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(mpll1_gate,	"mpll1-gate",	"ext-26m", 0x402b00b0,
-> +		     0x1000, BIT(18), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(dpll0_gate,	"dpll0-gate",	"ext-26m", 0x402b00b4,
-> +		     0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(dpll1_gate,	"dpll1-gate",	"ext-26m", 0x402b00b4,
-> +		     0x1000, BIT(18), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(gpll_gate,		"gpll-gate",	"ext-26m", 0x402b032c,
-> +		     0x1000, BIT(0), SC9860_GATE_FLAGS,
-> +		     CLK_GATE_SET_TO_DISABLE);
-> +static SPRD_CCU_GATE(cppll_gate,	"cppll-gate",	"ext-26m", 0x402b02b4,
-> +		     0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(ltepll0_gate,	"ltepll0-gate",	"ext-26m", 0x402b00b8,
-> +		     0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(ltepll1_gate,	"ltepll1-gate",	"ext-26m", 0x402b010c,
-> +		     0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE(twpll_gate,	"twpll-gate",	"ext-26m", 0x402b00bc,
-> +		     0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(sdio0_2x_en,	"sdio0-2x-en",	0x402e013c,
-> +			       0x1000, BIT(2), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(sdio0_1x_en,	"sdio0-1x-en",	0x402e013c,
-> +			       0x1000, BIT(3), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(sdio1_2x_en,	"sdio1-2x-en",	0x402e013c,
-> +			       0x1000, BIT(4), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(sdio1_1x_en,	"sdio1-1x-en",	0x402e013c,
-> +			       0x1000, BIT(5), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(sdio2_2x_en,	"sdio2-2x-en",	0x402e013c,
-> +			       0x1000, BIT(6), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(sdio2_1x_en,	"sdio2-1x-en",	0x402e013c,
-> +			       0x1000, BIT(7), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(emmc_1x_en,	"emmc-1x-en",	0x402e013c,
-> +			       0x1000, BIT(8), SC9860_GATE_FLAGS, 0);
-> +static SPRD_CCU_GATE_NO_PARENT(emmc_2x_en,	"emmc-2x-en",	0x402e013c,
-> +			       0x1000, BIT(9), SC9860_GATE_FLAGS, 0);
-> +
-> +/* GPLL/LPLL/DPLL/RPLL/CPLL */
-> +static const u64 const itable1[4] = {3, 780000000, 988000000, 1196000000};
-> +
-> +/* TWPLL/MPLL0/MPLL1 */
-> +static const u64 itable2[4] = {3, 1638000000, 2080000000, 2600000000UL};
-> +
-> +static const struct ccu_bit_field const f_rpll[PLL_FACT_MAX] = {
-> +	{ .shift = 0,	.width = 1 },	/* lock_done	*/
-> +	{ .shift = 3,	.width = 1 },	/* div_s	*/
-> +	{ .shift = 80,	.width = 1 },	/* mod_en	*/
+>
+>> ---
+>> Changes in v2:
+>> - Change to use new endpoint reg definition.
+>> 
+>>  drivers/gpu/drm/sun4i/sun4i_drv.c  | 45 ++++++++++++++++++++++++++++
+>>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 61
+>++++++++++++++++++++++++++++++++------
+>>  drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
+>>  3 files changed, 99 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c
+>b/drivers/gpu/drm/sun4i/sun4i_drv.c
+>> index f19100c91c2b..775eee82d8a9 100644
+>> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+>> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+>> @@ -178,6 +178,13 @@ static bool sun4i_drv_node_is_frontend(struct
+>device_node *node)
+>>  		of_device_is_compatible(node,
+>"allwinner,sun8i-a33-display-frontend");
+>>  }
+>>  
+>> +static bool sun4i_drv_node_is_swappable_de2_mixer(struct device_node
+>*node)
+>> +{
+>> +	/* The V3s has only one mixer-tcon pair, so it's not listed here.
+>*/
+>> +	return of_device_is_compatible(node,
+>"allwinner,sun8i-h3-de2-mixer0") ||
+>> +		of_device_is_compatible(node, "allwinner,sun8i-h3-de2-mixer1");
+>> +}
+>> +
+>>  static bool sun4i_drv_node_is_tcon(struct device_node *node)
+>>  {
+>>  	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+>> @@ -261,6 +268,44 @@ static int sun4i_drv_add_endpoints(struct device
+>*dev,
+>>  			}
+>>  		}
+>>  
+>> +		/*
+>> +		 * The second endpoint of the output of a swappable DE2 mixer
+>> +		 * is the TCON after connection swapping.
+>> +		 * Ignore it now, as we now hardcode mixer0->tcon0,
+>> +		 * mixer1->tcon1 connection.
+>> +		 */
+>> +		if (sun4i_drv_node_is_swappable_de2_mixer(node)) {
+>> +			struct device_node *remote_ep_node;
+>> +			struct of_endpoint local_endpoint, remote_endpoint;
+>> +
+>> +			remote_ep_node = of_graph_get_remote_endpoint(ep);
+>> +			if (!remote_ep_node) {
+>> +				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
+>> +				continue;
+>> +			}
+>> +
+>> +			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
+>> +				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
+>> +				of_node_put(remote_ep_node);
+>> +				continue;
+>> +			}
+>> +
+>> +			if (of_graph_parse_endpoint(remote_ep_node,
+>> +						    &remote_endpoint)) {
+>> +				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
+>> +				of_node_put(remote_ep_node);
+>> +				continue;
+>> +			}
+>> +
+>> +			if (local_endpoint.id != remote_endpoint.id) {
+>> +				DRM_DEBUG_DRIVER("Endpoint is an unused connection for DE2
+>mixer... skipping\n");
+>> +				of_node_put(remote_ep_node);
+>> +				continue;
+>> +			}
+>> +
+>> +			of_node_put(remote_ep_node);
+>> +		}
+>> +
+>>  		/* Walk down our tree */
+>>  		count += sun4i_drv_add_endpoints(dev, match, remote);
+>
+>... yet this is not parsing the input at all, but only the output
+>nodes.
 
-Are they even shifts? Or offsets from some base? I have to go
-back and read the other patch.
+Yes.
 
-> +	{ .shift = 81,	.width = 1 },	/* sdm_en	*/
-> +	{ .shift = 0,	.width = 0 },	/* refin	*/
-> +	{ .shift = 14,	.width = 2 },	/* ibias	*/
-> +	{ .shift = 16,	.width = 7 },	/* n		*/
-> +	{ .shift = 4,	.width = 7 },	/* nint		*/
-> +	{ .shift = 32,	.width = 23},	/* kint		*/
-> +	{ .shift = 0,	.width = 0 },	/* prediv	*/
-> +	{ .shift = 0,	.width = 0 },	/* postdiv	*/
-> +};
-> +static const u32 const regs_rpll0[4] = { 3, 0x44, 0x48, 0x4c };
-> +static SPRD_CCU_PLL_WITH_ITABLE(rpll0_clk, "rpll0", "rpll0-gate", 0x40400044,
-> +				regs_rpll0, itable1, 200, f_rpll);
-> +
-> +static const u32 const regs_rpll1[4] = { 3, 0x50, 0x54, 0x58 };
-> +static SPRD_CCU_PLL_WITH_ITABLE(rpll1_clk, "rpll1", "rpll1-gate", 0x40400050,
-> +				regs_rpll1, itable1, 200, f_rpll);
-> +
-> +static const struct ccu_bit_field const f_mpll0[PLL_FACT_MAX] = {
-[...]
-> diff --git a/include/dt-bindings/clock/sc9860-ccu.h b/include/dt-bindings/clock/sc9860-ccu.h
-> new file mode 100644
-> index 0000000..dd7ccf9
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sc9860-ccu.h
-> @@ -0,0 +1,19 @@
-> +/*
-> + * Spreadtrum SC9860 platform clocks
-> + *
-> + * Copyright (C) 2017, Spreadtrum Communications Inc.
-> + *
-> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_SC9860_CCU_H_
-> +#define _DT_BINDINGS_CLK_SC9860_CCU_H_
-> +
-> +#define CLK_FAC_1M	2
-> +#define CLK_EMMC_2X_EN	29
-> +#define CLK_L0_409M6	60
-> +#define CLK_EMMC_2X	88
-> +#define CLK_EMMC_EB	158
+Mixers will have two output endpoints, but we will only use
+the same id one and ignore the swapped one.
 
-Why are only a handful exposed in the header file? Not exposing
-everything is mostly a maintenance nightmare right now.
+So does the situation of TCON input.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+>
+>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> index d9791292553e..568cea0e5f8f 100644
+>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> @@ -464,7 +464,8 @@ static int sun4i_tcon_init_regmap(struct device
+>*dev,
+>>   * requested via the get_id function of the engine.
+>>   */
+>>  static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv
+>*drv,
+>> -						   struct device_node *node)
+>> +						   struct device_node *node,
+>> +						   bool skip_bonus_ep)
+>>  {
+>>  	struct device_node *port, *ep, *remote;
+>>  	struct sunxi_engine *engine;
+>> @@ -478,6 +479,42 @@ static struct sunxi_engine
+>*sun4i_tcon_find_engine(struct sun4i_drv *drv,
+>>  		if (!remote)
+>>  			continue;
+>>  
+>> +		if (skip_bonus_ep) {
+>> +			struct device_node *remote_ep_node;
+>> +			struct of_endpoint local_endpoint, remote_endpoint;
+>> +
+>> +			remote_ep_node = of_graph_get_remote_endpoint(ep);
+>> +			if (!remote_ep_node) {
+>> +				DRM_DEBUG_DRIVER("Couldn't get remote endpoint\n");
+>> +				of_node_put(remote);
+>> +				continue;
+>> +			}
+>> +
+>> +			if (of_graph_parse_endpoint(ep, &local_endpoint)) {
+>> +				DRM_DEBUG_DRIVER("Couldn't parse local endpoint\n");
+>> +				of_node_put(remote);
+>> +				of_node_put(remote_ep_node);
+>> +				continue;
+>> +			}
+>> +
+>> +			if (of_graph_parse_endpoint(remote_ep_node,
+>> +						    &remote_endpoint)) {
+>> +				DRM_DEBUG_DRIVER("Couldn't parse remote endpoint\n");
+>> +				of_node_put(remote);
+>> +				of_node_put(remote_ep_node);
+>> +				continue;
+>> +			}
+>> +
+>> +			if (local_endpoint.id != remote_endpoint.id) {
+>> +				DRM_DEBUG_DRIVER("Skipping bonus mixer->TCON connection when
+>searching engine\n");
+>> +				of_node_put(remote);
+>> +				of_node_put(remote_ep_node);
+>> +				continue;
+>> +			}
+>> +
+>> +			of_node_put(remote_ep_node);
+>> +		}
+>> +
+>
+>I have no idea what this is supposed to be doing either.
+>
+>I might be wrong, but I really feel like there's a big mismatch
+>between your commit log, and what you actually implement.
+>
+>In your commit log, you should state:
+>
+>A) What is the current behaviour
+>B) Why that is a problem
+>C) How do you address it
+>
+>And you don't.
+>
+>However, after discussing it with Chen-Yu, it seems like you're trying
+>to have all the mixers probed before the TCONs. If that is so, there's
+>nothing specific to the H3 here, and we also have the same issue on
+>dual-pipeline DE1 (A10, A20, A31). Chen-Yu worked on that a bit, but
+>the easiest solution would be to move from a DFS algorithm to walk
+>down the graph to a BFS one.
+>
+>That way, we would add all mixers first, then the TCONs, then the
+>encoders, and the component framework will probe them in order.
+
+No. I said that they're swappable, however, I don't
+want to implement the swap now, but hardcode 0-0 1-1
+connection. However, as you and Chen-Yu said, device tree
+should reflect the real hardware, there will be bonus endpoints
+for the swapped connection.
+
+What I want to do is to ignore the bonus connection, in order to
+prevent them from confusing the code.
+
+If you just change the bind sequence, I think it cannot be
+prevented that wrong connections will be bound.
+
+>
+>Maxime
