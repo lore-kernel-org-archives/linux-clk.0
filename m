@@ -1,73 +1,80 @@
-Return-Path: <phil@raspberrypi.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.15.4]:52180 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751694AbdFGMIv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Jun 2017 08:08:51 -0400
+From: Alexander Stein <alexanders83@web.de>
+To: linux-kernel@vger.kernel.org
+Cc: Phil Elwell <phil@raspberrypi.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH v3 1/2] clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
-Message-ID: <85cb59e5-c233-c945-95dd-e8f872b35f5c@raspberrypi.org>
-Date: Thu, 1 Jun 2017 10:10:37 +0100
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: bcm2835: Add AUX interrupt controller
+Date: Wed, 07 Jun 2017 14:07:32 +0200
+Message-ID: <3148562.tSrsoIclEp@ws-stein>
+In-Reply-To: <79d4534c-49fe-3af4-13d8-2aaf22120d43@raspberrypi.org>
+References: <79d4534c-49fe-3af4-13d8-2aaf22120d43@raspberrypi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Restrict clock sources for the PCM peripheral to the oscillator and
-PLLD_PER because other source may have varying rates or be switched off.
-Prevent other sources from being selected by replacing their names in
-the list of potential parents with dummy entries (entry index is
-significant).
+On Wednesday 07 June 2017 12:11:45, Phil Elwell wrote:
+> Devices in the AUX block share a common interrupt line, with a register
+> indicating which devices have active IRQs. Expose this as a nested
+> interrupt controller to avoid IRQ sharing problems (easily observed if
+> UART1 and SPI1/2 are enabled simultaneously).
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> ---
+>  drivers/clk/bcm/clk-bcm2835-aux.c | 120
+> ++++++++++++++++++++++++++++++++++++++ 1 file changed, 120 insertions(+)
+> 
+> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c
+> b/drivers/clk/bcm/clk-bcm2835-aux.c index bd750cf..41e0702 100644
+> --- a/drivers/clk/bcm/clk-bcm2835-aux.c
+> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+> [...]
+> +struct auxirq_state {
+> +	void __iomem      *status;
+> +	u32                enables;
+> +	struct irq_domain *domain;
+> +	struct regmap     *local_regmap;
+> +};
+> +
+> +static struct auxirq_state auxirq __read_mostly;
+> +
+> +static irqreturn_t bcm2835_auxirq_handler(int irq, void *dev_id)
+> +{
+> +	u32 stat = readl_relaxed(auxirq.status);
+> +	u32 masked = stat & auxirq.enables;
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Reviewed-by: Eric Anholt <eric@anholt.net>
----
- drivers/clk/bcm/clk-bcm2835.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+Doesn't this hide any spurious interrupts? Is this acceptable? I mean getting 
+informed about spurious interrupts seems nice to me, as it indicates a 
+hardware/configuration problem.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 0258538..81ecd4c 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1516,6 +1516,31 @@ struct bcm2835_clk_desc {
- 	.parents = bcm2835_clock_per_parents,				\
- 	__VA_ARGS__)
- 
-+/*
-+ * Restrict clock sources for the PCM peripheral to the oscillator and
-+ * PLLD_PER because other source may have varying rates or be switched
-+ * off.
-+ *
-+ * Prevent other sources from being selected by replacing their names in
-+ * the list of potential parents with dummy entries (entry index is
-+ * significant).
-+ */
-+static const char *const bcm2835_pcm_per_parents[] = {
-+	"-",
-+	"xosc",
-+	"-",
-+	"-",
-+	"-",
-+	"-",
-+	"plld_per",
-+	"-",
-+};
-+
-+#define REGISTER_PCM_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_pcm_per_parents),	\
-+	.parents = bcm2835_clock_pcm_per_parents,			\
-+	__VA_ARGS__)
-+
- /* main vpu parent mux */
- static const char *const bcm2835_clock_vpu_parents[] = {
- 	"gnd",
-@@ -1993,7 +2018,7 @@ struct bcm2835_clk_desc {
- 		.int_bits = 4,
- 		.frac_bits = 8,
- 		.tcnt_mux = 22),
--	[BCM2835_CLOCK_PCM]	= REGISTER_PER_CLK(
-+	[BCM2835_CLOCK_PCM]	= REGISTER_PCM_CLK(
- 		.name = "pcm",
- 		.ctl_reg = CM_PCMCTL,
- 		.div_reg = CM_PCMDIV,
--- 
-1.9.1
+> +	if (masked & BCM2835_AUXIRQ_UART_MASK)
+> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> +						     BCM2835_AUXIRQ_UART_IRQ));
+> +
+> +	if (masked & BCM2835_AUXIRQ_SPI1_MASK)
+> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> +						     BCM2835_AUXIRQ_SPI1_IRQ));
+> +
+> +	if (masked & BCM2835_AUXIRQ_SPI2_MASK)
+> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> +						     BCM2835_AUXIRQ_SPI2_IRQ));
+> +
+> +	return (masked & BCM2835_AUXIRQ_ALL_MASK) ? IRQ_HANDLED : IRQ_NONE;
+> +}
+
+How does interrupt acknowledgement work in these 3 interrupts work?
+
+Best regards,
+Alexander
+
