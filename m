@@ -1,54 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:33937 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751682AbdFIOHs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 10:07:48 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v4 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
-Date: Fri,  9 Jun 2017 16:07:37 +0200
-Message-Id: <20170609140739.15726-5-o.rempel@pengutronix.de>
-In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
-References: <20170609140739.15726-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 7 Jun 2017 17:36:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on
+ the MSI Primo81 tablet
+Message-ID: <20170607223625.aofk3cba3w4cvlys@rob-hp-laptop>
+References: <20170602101024.18940-1-wens@csie.org>
+ <20170602101024.18940-20-wens@csie.org>
+ <20170602194219.hiajr7dt2oikm52q@flea.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170602194219.hiajr7dt2oikm52q@flea.lan>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the new optional "fsl,pmic-stby-poweroff" property.
+On Fri, Jun 02, 2017 at 09:42:19PM +0200, Maxime Ripard wrote:
+> On Fri, Jun 02, 2017 at 06:10:24PM +0800, Chen-Yu Tsai wrote:
+> > The MSI Primo81 tablet has a micro HDMI connector at the bottom.
+> > This is connected to the SoCs HDMI output.
+> > 
+> > Enable the display pipeline and the HDMI output.
+> > 
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >  arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+> > index f3712753fa42..26154b2f87a3 100644
+> > --- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+> > +++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
+> > @@ -52,17 +52,42 @@
+> >  / {
+> >  	model = "MSI Primo81 tablet";
+> >  	compatible = "msi,primo81", "allwinner,sun6i-a31s";
+> > +
+> > +	hdmi-connector {
+> > +		compatible = "hdmi-connector";
+> > +		type = "c";
+> 
+> Should we add a connector type for this one?
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- Documentation/devicetree/bindings/regulator/pfuze100.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+c as in USB Type C? I'd prefer to see a new compatible string. Is type 
+even documented?
 
-diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-index 444c47831a40..197f1a52e960 100644
---- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
-+++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-@@ -4,6 +4,13 @@ Required properties:
- - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000"
- - reg: I2C slave address
- 
-+Optional properties:
-+- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
-+  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
-+  Use this option if the SoC should be powered off by external power
-+  management IC (PMIC) on PMIC_STBY_REQ signal.
-+  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
-+
- Required child node:
- - regulators: This is the list of child nodes that specify the regulator
-   initialization data for defined regulators. Please refer to below doc
--- 
-2.11.0
-
+Rob
