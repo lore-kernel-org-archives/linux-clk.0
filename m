@@ -1,115 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:44014 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbdFAHqq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2017 03:46:46 -0400
-Date: Thu, 1 Jun 2017 00:46:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] clk: at91: Add sama5d2 suspend/resume
-Message-ID: <20170601074644.GW20170@codeaurora.org>
-References: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
- <20170512142531.11274-2-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Wed, 07 Jun 2017 17:44:56 +0800
+In-Reply-To: <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-5-icenowy@aosc.io> <3642057.oKT9kIlu8M@jernej-laptop>
+ <493AC6F2-3CB3-48F5-9568-A34AA927238F@aosc.io>
+ <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170512142531.11274-2-alexandre.belloni@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <52F9F9C7-9A9C-435D-A0AF-FDD4317DAD69@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org,
+ =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+ linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/12, Alexandre Belloni wrote:
-> On sama5d2, VDD core maybe be cut while in suspend. This means registers
-> will be lost. Ensure they are saved and restored properly.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
-> Changes in v4:
->  - only save and restore PCR for used ids
-> 
->  drivers/clk/at91/clk-generated.c  |   3 +
->  drivers/clk/at91/clk-peripheral.c |   4 +-
->  drivers/clk/at91/pmc.c            | 129 ++++++++++++++++++++++++++++++++++++++
->  drivers/clk/at91/pmc.h            |   2 +
->  4 files changed, 137 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index 70474bd97a10..f0b7ae904ce2 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -266,6 +266,9 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
->  	if (ret) {
->  		kfree(gck);
->  		hw = ERR_PTR(ret);
-> +	} else {
-> +		pmc_register_id(id);
-> +	}
->  
->  	return hw;
->  }
-> diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-> index dc29fd979d3f..770118369230 100644
-> --- a/drivers/clk/at91/clk-peripheral.c
-> +++ b/drivers/clk/at91/clk-peripheral.c
-> @@ -367,8 +367,10 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
->  	if (ret) {
->  		kfree(periph);
->  		hw = ERR_PTR(ret);
-> -	} else
-> +	} else {
->  		clk_sam9x5_peripheral_autodiv(periph);
-> +		pmc_register_id(id);
-> +	}
->  
->  	return hw;
->  }
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 526df5ba042d..a4cd9f35160e 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -13,12 +13,16 @@
->  #include <linux/clk/at91_pmc.h>
->  #include <linux/of.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/syscore_ops.h>
->  
->  #include <asm/proc-fns.h>
->  
->  #include "pmc.h"
->  
-> +#define PMC_MAX_IDS 128
-> +
->  int of_at91_get_clk_range(struct device_node *np, const char *propname,
->  			  struct clk_range *range)
->  {
-> @@ -41,3 +45,128 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
-> +
-> +static u8 registered_ids[PMC_MAX_IDS];
-> +
-> +void pmc_register_id(u8 id)
-> +{
-
-Shouldn't this also be inside CONFIG_PM? And then
-pmc_register_id() is a nop function when CONFIG_PM=n?
-
-> +	int i;
-> +
-> +	for (i = 0; i < PMC_MAX_IDS; i++) {
-> +		if (registered_ids[i] == 0) {
-> +			registered_ids[i] = id;
-> +			break;
-> +		}
-> +		if (registered_ids[i] == id)
-> +			break;
-> +	}
-> +}
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Cgrkuo4gMjAxN+W5tDbmnIg35pelIEdNVCswODowMCDkuIvljYg1OjQzOjQzLCBNYXhpbWUgUmlw
+YXJkIDxtYXhpbWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4g5YaZ5YiwOgo+T24gTW9uLCBK
+dW4gMDUsIDIwMTcgYXQgMDM6MDM6NDdBTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4g
+PllvdSBzaG91bGQgYWxzbyBleHBhbmQgZnVuY3Rpb24gc3VuNGlfZHJ2X25vZGVfaXNfdGNvbigp
+IGF0Cj5zdW40aV9kcnYuYwo+PiA+d2l0aCAKPj4gPm5ldyBlbnRyaWVzLCBidXQgSSdtIG5vdCBz
+dXJlIGlmIHRoaXMgZml0cyBpbiB0aGlzIHBhdGNoLgo+PiAKPj4gSW5zdGVhZCBJIHRoaW5rIGl0
+IHNob3VsZCBiZSByZW5hbWVkIHRvIHNvbWV0aGluZyBsaWtlCj4+ICJzdW40aV9kcnZfbm9kZV9p
+c190Y29uX3dpdGhfY2gwIi4KPgo+SSdtIG5vdCBzdXJlLCBvciBhdCBsZWFzdCwgaXQgc2hvdWxk
+bid0IG1ha2UgYW55IGRpZmZlcmVuY2UsIHNpbmNlCj5UQ09OIHdpdGhvdXQgYSBjaGFubmVsIDAg
+d2lsbCBub3QgaGF2ZSBhbiBlbmRwb2ludCAwLCBzbyB0aGlzIHdpbGwgYmUKPmRlYWx0IHdpdGgg
+YWxyZWFkeS4KCkJ1dCB0aGF0IHdpbGwgcHJldmVudCBuZXcgY29kZXJzIGZyb20gYWRkIENIMS1s
+ZXNzIFRDT04KY29tcGF0aWJsZXMgdG8gdGhpcyBmdW5jdGlvbi4KCj4KPk1heGltZQoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5l
+bCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
