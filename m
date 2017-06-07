@@ -1,125 +1,157 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 04/19] drm/sun4i: hdmi: Disable clks in bind function error path and unbind function
-Date: Fri,  2 Jun 2017 18:10:09 +0800
-Message-Id: <20170602101024.18940-5-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:50917 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751675AbdFGItd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Jun 2017 04:49:33 -0400
+Date: Wed, 07 Jun 2017 16:48:50 +0800
+In-Reply-To: <20170607084544.kgclybyxxttfk3ko@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io> <20170604160149.30230-2-icenowy@aosc.io> <20170607084544.kgclybyxxttfk3ko@flea.lan>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v2 01/11] dt-bindings: update the binding for Allwinner H3 TVE support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <092D4797-0034-4C39-A30A-92CFAB23AAF8@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The HDMI driver enables the bus and mod clocks in the bind function, but
-does not disable them if it then bails our due to any errors. Neither
-does it disable the clocks in the unbind function.
 
-Fix this by adding a proper error path to the bind function, and
-clk_disable_unprepare calls to the unbind function.
 
-Also rename the err_cleanup_connector label to err_cleanup_encoder,
-since it is the encoder that gets cleaned up.
+于 2017年6月7日 GMT+08:00 下午4:45:44, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>On Mon, Jun 05, 2017 at 12:01:39AM +0800, Icenowy Zheng wrote:
+>> Allwinner H3 features a "DE2.0" and a TV Encoder.
+>> 
+>> Add device tree bindings for the following parts:
+>> - H3 TCONs
+>> - H3 Mixers
+>> - The connection between H3 TCONs and H3 Mixers
+>> - H3 TV Encoder
+>> - H3 Display engine
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>> Changes in v2:
+>> - Changed endpoint reg definition on TCONs and Mixers. Now the
+>endpoint
+>>   id is just the component id.
+>> - Changed TVE and TCON1 binding -- now CLK_TVE is passed as TCON1
+>lcd-ch1.
+>> 
+>>  .../bindings/display/sunxi/sun4i-drm.txt           | 37
+>+++++++++++++++++++---
+>>  1 file changed, 33 insertions(+), 4 deletions(-)
+>> 
+>> diff --git
+>a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> index b83e6018041d..7ad164cb7dcb 100644
+>> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> @@ -49,7 +49,9 @@ The TV Encoder supports the composite and VGA
+>output. It is one end of
+>>  the pipeline.
+>>  
+>>  Required properties:
+>> - - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
+>> + - compatible: value must be either:
+>> +    * allwinner,sun4i-a10-tv-encoder
+>> +    * allwinner,sun8i-h3-tv-encoder
+>>   - reg: base address and size of memory-mapped region
+>>   - clocks: the clocks driving the TV encoder
+>>   - resets: phandle to the reset controller driving the encoder
+>> @@ -69,23 +71,27 @@ Required properties:
+>>     * allwinner,sun6i-a31-tcon
+>>     * allwinner,sun6i-a31s-tcon
+>>     * allwinner,sun8i-a33-tcon
+>> +   * allwinner,sun8i-h3-tcon
+>>     * allwinner,sun8i-v3s-tcon
+>>   - reg: base address and size of memory-mapped region
+>>   - interrupts: interrupt associated to this IP
+>>   - clocks: phandles to the clocks feeding the TCON. Three are
+>needed:
+>>     - 'ahb': the interface clocks
+>> -   - 'tcon-ch0': The clock driving the TCON channel 0
+>>   - resets: phandles to the reset controllers driving the encoder
+>>     - "lcd": the reset line for the TCON channel 0
+>>  
+>>   - clock-names: the clock names mentioned above
+>>   - reset-names: the reset names mentioned above
+>> - - clock-output-names: Name of the pixel clock created
+>>  
+>>  - ports: A ports node with endpoint definitions as defined in
+>>    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+>>    first port should be the input endpoint, the second one the output
+>>  
+>> +  In the situation of Display Engine 2.0 that the connection between
+>> +  the mixer and the TCON can be swapped, the input should have two
+>> +  endpoints. The first input endpoint should be connected to mixer0
+>> +  and the second should be connected to mixer1.
+>> +
+>
+>AFAIK, this is also the case for dual-pipelines on DE1 (for example on
+>the A31). And this is already covered by:
+>
+>"
+>For the input port of all components up to the TCON in the display
+>pipeline, if there are multiple components, the local endpoint IDs
+>must correspond to the index of the upstream block. For example, if
+>the remote endpoint is Frontend 1, then the local endpoint ID must
+>be 1.
+>"
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+If you think it can fully cover this situation, I'm glad to remove
+this paragraph, although I think overall paragraphs are easy
+to be ignored.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index d3398f6250ef..457614073501 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -350,26 +350,29 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 	hdmi->mod_clk = devm_clk_get(dev, "mod");
- 	if (IS_ERR(hdmi->mod_clk)) {
- 		dev_err(dev, "Couldn't get the HDMI mod clock\n");
--		return PTR_ERR(hdmi->mod_clk);
-+		ret = PTR_ERR(hdmi->mod_clk);
-+		goto err_disable_bus_clk;
- 	}
- 	clk_prepare_enable(hdmi->mod_clk);
- 
- 	hdmi->pll0_clk = devm_clk_get(dev, "pll-0");
- 	if (IS_ERR(hdmi->pll0_clk)) {
- 		dev_err(dev, "Couldn't get the HDMI PLL 0 clock\n");
--		return PTR_ERR(hdmi->pll0_clk);
-+		ret = PTR_ERR(hdmi->pll0_clk);
-+		goto err_disable_mod_clk;
- 	}
- 
- 	hdmi->pll1_clk = devm_clk_get(dev, "pll-1");
- 	if (IS_ERR(hdmi->pll1_clk)) {
- 		dev_err(dev, "Couldn't get the HDMI PLL 1 clock\n");
--		return PTR_ERR(hdmi->pll1_clk);
-+		ret = PTR_ERR(hdmi->pll1_clk);
-+		goto err_disable_mod_clk;
- 	}
- 
- 	ret = sun4i_tmds_create(hdmi);
- 	if (ret) {
- 		dev_err(dev, "Couldn't create the TMDS clock\n");
--		return ret;
-+		goto err_disable_mod_clk;
- 	}
- 
- 	writel(SUN4I_HDMI_CTRL_ENABLE, hdmi->base + SUN4I_HDMI_CTRL_REG);
-@@ -410,7 +413,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 	ret = sun4i_ddc_create(hdmi, hdmi->tmds_clk);
- 	if (ret) {
- 		dev_err(dev, "Couldn't create the DDC clock\n");
--		return ret;
-+		goto err_disable_mod_clk;
- 	}
- 
- 	drm_encoder_helper_add(&hdmi->encoder,
-@@ -428,7 +431,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 	hdmi->encoder.possible_crtcs = drm_of_find_possible_crtcs(drm,
- 								  dev->of_node);
- 	if (!hdmi->encoder.possible_crtcs)
--		return -EPROBE_DEFER;
-+		goto err_disable_mod_clk;
- 
- 	drm_connector_helper_add(&hdmi->connector,
- 				 &sun4i_hdmi_connector_helper_funcs);
-@@ -438,7 +441,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 	if (ret) {
- 		dev_err(dev,
- 			"Couldn't initialise the HDMI connector\n");
--		goto err_cleanup_connector;
-+		goto err_cleanup_encoder;
- 	}
- 
- 	/* There is no HPD interrupt, so we need to poll the controller */
-@@ -449,8 +452,12 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 
- 	return 0;
- 
--err_cleanup_connector:
-+err_cleanup_encoder:
- 	drm_encoder_cleanup(&hdmi->encoder);
-+err_disable_mod_clk:
-+	clk_disable_unprepare(hdmi->mod_clk);
-+err_disable_bus_clk:
-+	clk_disable_unprepare(hdmi->bus_clk);
- 	return ret;
- }
- 
-@@ -461,6 +468,8 @@ static void sun4i_hdmi_unbind(struct device *dev, struct device *master,
- 
- 	drm_connector_cleanup(&hdmi->connector);
- 	drm_encoder_cleanup(&hdmi->encoder);
-+	clk_disable_unprepare(hdmi->mod_clk);
-+	clk_disable_unprepare(hdmi->bus_clk);
- }
- 
- static const struct component_ops sun4i_hdmi_ops = {
--- 
-2.11.0
+>
+>>    The output may have multiple endpoints. The TCON has two channels,
+>>    usually with the first channel being used for the panels
+>interfaces
+>>    (RGB, LVDS, etc.), and the second being used for the outputs that
+>> @@ -94,7 +100,23 @@ Required properties:
+>>    channel the endpoint is associated to. If that property is not
+>>    present, the endpoint number will be used as the channel number.
+>>  
+>> -On SoCs other than the A33 and V3s, there is one more clock
+>required:
+>> +For the following compatibles:
+>> +   * allwinner,sun5i-a13-tcon
+>> +   * allwinner,sun6i-a31-tcon
+>> +   * allwinner,sun6i-a31s-tcon
+>> +   * allwinner,sun8i-a33-tcon
+>> +   * allwinner,sun8i-v3s-tcon
+>> +there is one more clock and one more property required:
+>> + - clocks:
+>> +   - 'tcon-ch0': The clock driving the TCON channel 0
+>> + - clock-output-names: Name of the pixel clock created
+>> +
+>> +For the following compatibles:
+>> +   * allwinner,sun5i-a13-tcon
+>> +   * allwinner,sun6i-a31-tcon
+>> +   * allwinner,sun6i-a31s-tcon
+>> +   * allwinner,sun8i-h3-tcon
+>> +there is one more clock required:
+>>     - 'tcon-ch1': The clock driving the TCON channel 1
+>>  
+>>  DRC
+>> @@ -189,6 +211,8 @@ supported.
+>>  Required properties:
+>>    - compatible: value must be one of:
+>>      * allwinner,sun8i-v3s-de2-mixer
+>> +    * allwinner,sun8i-h3-de2-mixer0
+>> +    * allwinner,sun8i-h3-de2-mixer1
+>
+>Again, please explain why we need to have different compatibles
+>here. If it's only about the number of planes, this should be dealt
+>with a property, not a compatible.
+
+Only mixer0 has "VEP" and write-back support, at least on H3.
+
+>
+>Maxime
