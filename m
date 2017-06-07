@@ -1,107 +1,180 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Jun 2017 15:45:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: Re-evaluate clock rate on min/max update
-Message-ID: <20170602224508.GA20170@codeaurora.org>
-References: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
- <20170412164605.GO7065@codeaurora.org>
- <20170413074819.GS30730@tbergstrom-lnx.Nvidia.com>
- <20170601091251.GF20170@codeaurora.org>
- <20170602101520.GJ2885@tbergstrom-lnx.Nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170602101520.GJ2885@tbergstrom-lnx.Nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 03/15] clk: ingenic: Add code to enable/disable PLLs
+Date: Wed,  7 Jun 2017 22:04:27 +0200
+Message-Id: <20170607200439.24450-4-paul@crapouillou.net>
+In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
+References: <20170607200439.24450-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02, Peter De Schrijver wrote:
-> On Thu, Jun 01, 2017 at 02:12:51AM -0700, Stephen Boyd wrote:
-> > On 04/13, Peter De Schrijver wrote:
-> > > On Wed, Apr 12, 2017 at 09:46:05AM -0700, Stephen Boyd wrote:
-> > > > On 03/21, Peter De Schrijver wrote:
-> > > 
-> > > No. But I do rely on the rate setting op to be called when a new min or max
-> > > rate would cause the rate to be changed even when there is no new rate request.
-> > > 
-> > > Eg:
-> > > 
-> > > min = 100MHz, max = 500MHz, current rate request is 400MHz, then max changes to
-> > > 300MHz. Today the rate setting op will not be called, while I think it should
-> > > be called to lower the rate to 300MHz.
-> > 
-> > Ok. Can you please describe the sequence in more detail? What is
-> > core::req_rate when the clk is registered? What is the rate of
-> > the clk when the first rate is set?
-> > 
-> 
-> 1) req_rate at registration time is the current rate of the clk: 100MHz
-> 2) clk_set_rate sets req_rate to 400MHz, set_rate clk op is called to change
->    the rate
-> 3) clk_set_min_rate is called with 100MHz, req_rate is 400MHz, no clock
->    operations are called
-> 4) clk_set_max_rate is called with 500MHz, req_rate is 400Mhz, no clock
->    operations are called
-> 5) clk_set_max_rate is called with 300MHz, req_rate is 400Mhz, no clock
->    operations are called because req_rate didn't change. This however is
->    wrong IMO. the set_rate op should be called to lower the clock rate
->    to 300MHz.
+This commit permits the PLLs to be dynamically enabled and disabled when
+their children clocks are enabled and disabled.
 
-Thanks. Makes sense!
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/cgu.c | 89 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 74 insertions(+), 15 deletions(-)
 
-> 
-> > Because I have a maintainer tag on commit 1c8e600440c of
-> > [sboyd@codeaurora.org: set req_rate in __clk_init] which may be a
-> > problem if the clk is orphaned when registered and thus req_rate
-> > is totally bogus because we can't calculate the rate[1].
-> > 
-> > We will need to only set req_rate when a clk is actually parented
-> > to something, urgh. But that definitely doesn't look to even be
-> 
-> The same happens for core::rate, however core::rate is updated by
-> __clk_recalc_rates when the parent appears. We should update req_rate
-> as well then. However this can't be done easily it seems because
-> __clk_recalc_rates is also called in other cases (eg when reparenting).
-> In theory updating req_rate when 'reparenting' from orphan to the real
-> parent would cause an existing req_rate to be discarded. However I don't
-> think we should allow any calls by consumers to orphaned clocks, because
-> this clearly is an inconsistent state. In practice all clocks are properly
-> parented by the time the consumers are starting to make calls to CCF. So
-> this should not cause any problem.
-
-Right. Reminds me. I need to merge that probe defer orphans patch
-now.
-
-> 
-> > the bug you're talking about. From what I can tell, the whole
-> > design is borked, because nobody has really used or tested this
-> > code! We should really be making sure that a clk range request
-> 
-> I'm trying to use it now :)
-> 
-> > doesn't become disjoint from other consumer requests. If it does,
-> > it will be unsatisfiable. Furthermore, we should remove the
-> > min/max constraints on failure out of set_rate() because it
-> > didn't work.
-> > 
-> > We have req_rate there to make sure we bring the clk rate back to
-> > within some range when a constraint goes away, but we should
-> > probably just evaluate the constraints before calling
-> > clk_core_set_rate_nolock() and then clamp the req_rate to within
-> > the min/max that we determine, leaning toward the lowest rate.
-> > That's sort of what you're doing here, but we lost the check to
-> > make sure we don't call the set_rate op with the same rate we
-> > already have. I'd prefer we maintain that part of the code even
-> > for rate constraints.
-> > 
-> 
-> 
-> Ok. I will rework the patch to avoid calling set_rate with the current rate.
-> 
-
-Thanks.
-
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index 75b083ba294c..08613b803b14 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -107,9 +107,6 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	if (bypass)
+ 		return parent_rate;
+ 
+-	if (!enable)
+-		return 0;
+-
+ 	for (od = 0; od < pll_info->od_max; od++) {
+ 		if (pll_info->od_encoding[od] == od_enc)
+ 			break;
+@@ -153,17 +150,25 @@ ingenic_pll_calc(const struct ingenic_cgu_clk_info *clk_info,
+ 	return div_u64((u64)parent_rate * m, n * od);
+ }
+ 
+-static long
+-ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
+-		       unsigned long *prate)
++static inline const struct ingenic_cgu_clk_info *to_clk_info(
++		struct ingenic_clk *ingenic_clk)
+ {
+-	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+ 	const struct ingenic_cgu_clk_info *clk_info;
+ 
+ 	clk_info = &cgu->clock_info[ingenic_clk->idx];
+ 	BUG_ON(clk_info->type != CGU_CLK_PLL);
+ 
++	return clk_info;
++}
++
++static long
++ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
++		       unsigned long *prate)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++
+ 	return ingenic_pll_calc(clk_info, req_rate, *prate, NULL, NULL, NULL);
+ }
+ 
+@@ -171,19 +176,14 @@ static int
+ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 		     unsigned long parent_rate)
+ {
+-	const unsigned timeout = 100;
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+-	const struct ingenic_cgu_pll_info *pll_info;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
+ 	unsigned long rate, flags;
+-	unsigned m, n, od, i;
++	unsigned int m, n, od;
+ 	u32 ctl;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-	BUG_ON(clk_info->type != CGU_CLK_PLL);
+-	pll_info = &clk_info->pll;
+-
+ 	rate = ingenic_pll_calc(clk_info, req_rate, parent_rate,
+ 			       &m, &n, &od);
+ 	if (rate != req_rate)
+@@ -202,6 +202,26 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	ctl &= ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+ 	ctl |= pll_info->od_encoding[od - 1] << pll_info->od_shift;
+ 
++	writel(ctl, cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++
++	return 0;
++}
++
++static int ingenic_pll_enable(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	const unsigned int timeout = 100;
++	unsigned long flags;
++	unsigned int i;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++
+ 	ctl &= ~BIT(pll_info->bypass_bit);
+ 	ctl |= BIT(pll_info->enable_bit);
+ 
+@@ -223,10 +243,48 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	return 0;
+ }
+ 
++static void ingenic_pll_disable(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	unsigned long flags;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++
++	ctl &= ~BIT(pll_info->enable_bit);
++
++	writel(ctl, cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++}
++
++static int ingenic_pll_is_enabled(struct clk_hw *hw)
++{
++	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	struct ingenic_cgu *cgu = ingenic_clk->cgu;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
++	unsigned long flags;
++	u32 ctl;
++
++	spin_lock_irqsave(&cgu->lock, flags);
++	ctl = readl(cgu->base + pll_info->reg);
++	spin_unlock_irqrestore(&cgu->lock, flags);
++
++	return !!(ctl & BIT(pll_info->enable_bit));
++}
++
+ static const struct clk_ops ingenic_pll_ops = {
+ 	.recalc_rate = ingenic_pll_recalc_rate,
+ 	.round_rate = ingenic_pll_round_rate,
+ 	.set_rate = ingenic_pll_set_rate,
++
++	.enable = ingenic_pll_enable,
++	.disable = ingenic_pll_disable,
++	.is_enabled = ingenic_pll_is_enabled,
+ };
+ 
+ /*
+@@ -601,6 +659,7 @@ static int ingenic_register_clock(struct ingenic_cgu *cgu, unsigned idx)
+ 		}
+ 	} else if (caps & CGU_CLK_PLL) {
+ 		clk_init.ops = &ingenic_pll_ops;
++		clk_init.flags |= CLK_SET_RATE_GATE;
+ 
+ 		caps &= ~CGU_CLK_PLL;
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
