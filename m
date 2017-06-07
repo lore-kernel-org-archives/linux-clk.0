@@ -1,32 +1,39 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Jun 2017 15:40:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com,
-	linux@armlinux.org.uk, geert@linux-m68k.org, f.fainelli@gmail.com,
-	dongas86@gmail.com
-Subject: Re: [PATCH V3 0/3] clk: introduce clk_bulk_get accessories
-Message-ID: <20170602224034.GX20170@codeaurora.org>
-References: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH 0/2] Add bcm2835aux interrupt controller
+Message-ID: <6dc301c8-e5a2-1334-c476-1ce7e303787f@raspberrypi.org>
+Date: Wed, 7 Jun 2017 12:11:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/19, Dong Aisheng wrote:
-> These helper function allows drivers to get several clk consumers in
-> one operation.  If any of the clk cannot be acquired then any clks
-> that were got will be put before returning to the caller.
-> 
+Devices in the AUX block share a common interrupt line, with a register
+indicating which devices have active IRQs. Expose this as a nested
+interrupt controller to avoid IRQ sharing problems (easily observed if
+UART1 and SPI1/2 are enabled simultaneously).
 
-I've merged the first two into a stable branch and merged to
-clk-next. The third one can go via cpufreq.
+The interrupt functionality could arguably be forked off as a separate
+irqchip driver, but the clock driver has already claimed the AUX_IRQ
+register so some driver and DT surgery would still be required.
+Eric Anholt thought that including it here is reasonable, but I'm
+prepared to split it out if this is considered too hacky.
+
+Phil Elwell (2):
+  clk: bcm2835: Add AUX interrupt controller
+  ARM: dts: bcm283x: Enable AUX interrupt controller
+
+ arch/arm/boot/dts/bcm283x.dtsi    |  12 +++-
+ drivers/clk/bcm/clk-bcm2835-aux.c | 120 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 129 insertions(+), 3 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
