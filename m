@@ -1,90 +1,152 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Jun 2017 01:05:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/5 v2] clk: qcom: Implement RPM clocks for
- MSM8660/APQ8060
-Message-ID: <20170601080540.GA20170@codeaurora.org>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-3-linus.walleij@linaro.org>
- <20170527200008.GM12920@tuxbook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170527200008.GM12920@tuxbook>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 10/15] MIPS: ingenic: Add machine info for supported boards
+Date: Wed,  7 Jun 2017 22:04:34 +0200
+Message-Id: <20170607200439.24450-11-paul@crapouillou.net>
+In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
+References: <20170607200439.24450-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/27, Bjorn Andersson wrote:
-> On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
-> 
-> > The RPM clocks were missing for MSM8660/APQ8060. For this to be
-> > completed we need to add a special fixed rate RPM clock that is used
-> > for the PLL4 on these SoCs. The rest of the clocks are pretty
-> > similar to the other supported platforms.
-> > 
-> > The "active" clock pattern is mirrored in all the clocks. I guess
-> > that the PLL4 that clocks the LPASS is actually never used as
-> > "active only" since the low-power audio subsystem should be left
-> > on when the system suspends, so it can be used as a stand-alone
-> > MP3 player type of device.
-> > 
-> > As we do not have firmware for the LPASS we will probably only use
-> > this clock when the system is up and running (not suspended) for now,
-> > so that will be using the "active" clock.
-> > 
-> 
-> Note that "active" vs "sleep" is not related to the Linux suspend state,
-> but rather the CPU idle state; at the bottom of the CPU idle path the
-> RPM will react and reconfigure resources to their sleep state (if one is
-> configured) and then reconfigured based on the active state before
-> returning from the idle.
-> 
-> The PLL4 seems to be enabled only on behalf of the booting LPASS Hexagon
-> - which will cast its own vote once its booted - and as such we only
-> configure the active state (meaning both states will have same
-> configuration).  The result is that PLL4 will be on from prepare() to
-> unprepare() regardless of what the application CPU does.
-> 
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> > ChangeLog v1->v2:
-> > - Add the small hunk to the clk_rpm_handoff() function that just
-> >   skip over this for the fixed PLL4 clock. This accidentally
-> >   ended up in another patch.
-> > ---
-> >  drivers/clk/qcom/clk-rpm.c | 106 +++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 106 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-> > index df3e5fe8442a..61c67e93bea3 100644
-> > --- a/drivers/clk/qcom/clk-rpm.c
-> > +++ b/drivers/clk/qcom/clk-rpm.c
-> > @@ -56,6 +56,30 @@
-> >  		},							      \
-> >  	}
-> >  
-> > +#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
-> 
-> Is there a reason why you don't use DEFINE_CLK_RPM_PXO_BRANCH() for
-> PLL4?
-> 
-> Looking at the downstream code PLL4 is explicitly handled differently
-> and is only exposing one state. So if you're seeing issues with reusing
-> the PXO_BRANCH() I think you should slim this down further and only
-> register a single clk_rpm from this.
+This makes sure that 'mips_machtype' will be initialized to the SoC
+version used on the board.
 
-True. Except we would need a slight variant on PXO_BRANCH,
-because PXO_BRANCH would be better if it returned the parent rate
-from recalc_rate(), by just not having a recalc rate op set. The
-parent is pxo_board/cxo_board and that will have the correct rate
-for the board we're running on. In the PLL4 case, we want to
-return the magic frequency that we know the PLL is running at
-because that was the only configuration supported. So we would
-need a special recalc op for that one clk here. But otherwise yes
-it should be able to use most of the other code.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/Kconfig         |  1 +
+ arch/mips/jz4740/Makefile |  2 +-
+ arch/mips/jz4740/boards.c | 16 ++++++++++++++++
+ arch/mips/jz4740/setup.c  | 34 +++++++++++++++++++++++++++++-----
+ 4 files changed, 47 insertions(+), 6 deletions(-)
+ create mode 100644 arch/mips/jz4740/boards.c
 
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 2828ecde133d..f36ffb93efd9 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -370,6 +370,7 @@ config MACH_INGENIC
+ 	select BUILTIN_DTB
+ 	select USE_OF
+ 	select LIBFDT
++	select MIPS_MACHINE
+ 
+ config LANTIQ
+ 	bool "Lantiq based platforms"
+diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
+index 39d70bde8cfe..87feb246fafe 100644
+--- a/arch/mips/jz4740/Makefile
++++ b/arch/mips/jz4740/Makefile
+@@ -5,7 +5,7 @@
+ # Object file lists.
+ 
+ obj-y += prom.o time.o reset.o setup.o \
+-	platform.o timer.o
++	platform.o timer.o boards.o
+ 
+ obj-$(CONFIG_MACH_JZ4740) += gpio.o
+ 
+diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
+new file mode 100644
+index 000000000000..a3cf64cf004a
+--- /dev/null
++++ b/arch/mips/jz4740/boards.c
+@@ -0,0 +1,16 @@
++/*
++ * Ingenic boards support
++ *
++ * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 or later
++ * as published by the Free Software Foundation.
++ */
++
++#include <asm/bootinfo.h>
++#include <asm/mips_machine.h>
++
++MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
++MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
++			"Imagination Technologies CI20", NULL);
+diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
+index 6d0152321819..afd84ee966e8 100644
+--- a/arch/mips/jz4740/setup.c
++++ b/arch/mips/jz4740/setup.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_fdt.h>
+ 
+ #include <asm/bootinfo.h>
++#include <asm/mips_machine.h>
+ #include <asm/prom.h>
+ 
+ #include <asm/mach-jz4740/base.h>
+@@ -53,16 +54,34 @@ static void __init jz4740_detect_mem(void)
+ 	add_memory_region(0, size, BOOT_MEM_RAM);
+ }
+ 
++static unsigned long __init get_board_mach_type(const void *fdt)
++{
++	const struct mips_machine *mach;
++
++	for (mach = (struct mips_machine *)&__mips_machines_start;
++			mach < (struct mips_machine *)&__mips_machines_end;
++			mach++) {
++		if (!fdt_node_check_compatible(fdt, 0, mach->mach_id))
++			return mach->mach_type;
++	}
++
++	return MACH_INGENIC_JZ4740;
++}
++
+ void __init plat_mem_setup(void)
+ {
+ 	int offset;
+ 
++	if (!early_init_dt_scan(__dtb_start))
++		return;
++
+ 	jz4740_reset_init();
+-	__dt_setup_arch(__dtb_start);
+ 
+ 	offset = fdt_path_offset(__dtb_start, "/memory");
+ 	if (offset < 0)
+ 		jz4740_detect_mem();
++
++	mips_machtype = get_board_mach_type(__dtb_start);
+ }
+ 
+ void __init device_tree_init(void)
+@@ -75,13 +94,18 @@ void __init device_tree_init(void)
+ 
+ const char *get_system_type(void)
+ {
+-	if (IS_ENABLED(CONFIG_MACH_JZ4780))
+-		return "JZ4780";
+-
+-	return "JZ4740";
++	return mips_get_machine_name();
+ }
+ 
+ void __init arch_init_irq(void)
+ {
+ 	irqchip_init();
+ }
++
++static int __init jz4740_machine_setup(void)
++{
++	mips_machine_setup();
++
++	return 0;
++}
++arch_initcall(jz4740_machine_setup);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
