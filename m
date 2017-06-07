@@ -1,136 +1,45 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 07/19] drm/sun4i: hdmi: Support different variants of the TMDS clock
-Date: Fri,  2 Jun 2017 18:10:12 +0800
-Message-Id: <20170602101024.18940-8-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Wed, 07 Jun 2017 18:00:52 +0800
+In-Reply-To: <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-5-icenowy@aosc.io> <3642057.oKT9kIlu8M@jernej-laptop>
+ <493AC6F2-3CB3-48F5-9568-A34AA927238F@aosc.io>
+ <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
+MIME-Version: 1.0
+Subject: Re: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <78252AF1-51FB-4B09-80C2-2597990680CE@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org,
+ =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+ linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On the A31, the HDMI TMDS clock has a different value offset for the
-divider.
-
-This patch adds support for custom offsets to the TMDS clock.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-index 5692e41833ae..3c304e1fbe3b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-@@ -18,6 +18,8 @@
- struct sun4i_tmds {
- 	struct clk_hw		hw;
- 	struct sun4i_hdmi	*hdmi;
-+
-+	u8			div_offset;
- };
- 
- static inline struct sun4i_tmds *hw_to_tmds(struct clk_hw *hw)
-@@ -28,6 +30,7 @@ static inline struct sun4i_tmds *hw_to_tmds(struct clk_hw *hw)
- 
- static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
- 					     unsigned long parent_rate,
-+					     u8 div_offset,
- 					     u8 *div,
- 					     bool *half)
- {
-@@ -35,7 +38,7 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
- 	u8 best_m = 0, m;
- 	bool is_double;
- 
--	for (m = 1; m < 16; m++) {
-+	for (m = div_offset ?: 1; m < (16 + div_offset); m++) {
- 		u8 d;
- 
- 		for (d = 1; d < 3; d++) {
-@@ -67,7 +70,8 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
- static int sun4i_tmds_determine_rate(struct clk_hw *hw,
- 				     struct clk_rate_request *req)
- {
--	struct clk_hw *parent;
-+	struct sun4i_tmds *tmds = hw_to_tmds(hw);
-+	struct clk_hw *parent = NULL;
- 	unsigned long best_parent = 0;
- 	unsigned long rate = req->rate;
- 	int best_div = 1, best_half = 1;
-@@ -85,7 +89,8 @@ static int sun4i_tmds_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		for (i = 1; i < 3; i++) {
--			for (j = 1; j < 16; j++) {
-+			for (j = tmds->div_offset ?: 1;
-+			     j < (16 + tmds->div_offset); j++) {
- 				unsigned long ideal = rate * i * j;
- 				unsigned long rounded;
- 
-@@ -129,7 +134,7 @@ static unsigned long sun4i_tmds_recalc_rate(struct clk_hw *hw,
- 		parent_rate /= 2;
- 
- 	reg = readl(tmds->hdmi->base + SUN4I_HDMI_PLL_CTRL_REG);
--	reg = (reg >> 4) & 0xf;
-+	reg = ((reg >> 4) & 0xf) + tmds->div_offset;
- 	if (!reg)
- 		reg = 1;
- 
-@@ -144,7 +149,8 @@ static int sun4i_tmds_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 reg;
- 	u8 div;
- 
--	sun4i_tmds_calc_divider(rate, parent_rate, &div, &half);
-+	sun4i_tmds_calc_divider(rate, parent_rate, tmds->div_offset,
-+				&div, &half);
- 
- 	reg = readl(tmds->hdmi->base + SUN4I_HDMI_PAD_CTRL1_REG);
- 	reg &= ~SUN4I_HDMI_PAD_CTRL1_HALVE_CLK;
-@@ -154,7 +160,7 @@ static int sun4i_tmds_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	reg = readl(tmds->hdmi->base + SUN4I_HDMI_PLL_CTRL_REG);
- 	reg &= ~SUN4I_HDMI_PLL_CTRL_DIV_MASK;
--	writel(reg | SUN4I_HDMI_PLL_CTRL_DIV(div),
-+	writel(reg | SUN4I_HDMI_PLL_CTRL_DIV(div - tmds->div_offset),
- 	       tmds->hdmi->base + SUN4I_HDMI_PLL_CTRL_REG);
- 
- 	return 0;
-@@ -195,7 +201,7 @@ static const struct clk_ops sun4i_tmds_ops = {
- 	.set_parent	= sun4i_tmds_set_parent,
- };
- 
--int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
-+static int _sun4i_tmds_create(struct sun4i_hdmi *hdmi, u8 div_offset)
- {
- 	struct clk_init_data init;
- 	struct sun4i_tmds *tmds;
-@@ -221,6 +227,7 @@ int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
- 
- 	tmds->hdmi = hdmi;
- 	tmds->hw.init = &init;
-+	tmds->div_offset = div_offset;
- 
- 	hdmi->tmds_clk = devm_clk_register(hdmi->dev, &tmds->hw);
- 	if (IS_ERR(hdmi->tmds_clk))
-@@ -228,3 +235,8 @@ int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
- 
- 	return 0;
- }
-+
-+int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
-+{
-+	return _sun4i_tmds_create(hdmi, 0);
-+}
--- 
-2.11.0
+Cgrkuo4gMjAxN+W5tDbmnIg35pelIEdNVCswODowMCDkuIvljYg1OjQzOjQzLCBNYXhpbWUgUmlw
+YXJkIDxtYXhpbWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4g5YaZ5YiwOgo+T24gTW9uLCBK
+dW4gMDUsIDIwMTcgYXQgMDM6MDM6NDdBTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4g
+PllvdSBzaG91bGQgYWxzbyBleHBhbmQgZnVuY3Rpb24gc3VuNGlfZHJ2X25vZGVfaXNfdGNvbigp
+IGF0Cj5zdW40aV9kcnYuYwo+PiA+d2l0aCAKPj4gPm5ldyBlbnRyaWVzLCBidXQgSSdtIG5vdCBz
+dXJlIGlmIHRoaXMgZml0cyBpbiB0aGlzIHBhdGNoLgo+PiAKPj4gSW5zdGVhZCBJIHRoaW5rIGl0
+IHNob3VsZCBiZSByZW5hbWVkIHRvIHNvbWV0aGluZyBsaWtlCj4+ICJzdW40aV9kcnZfbm9kZV9p
+c190Y29uX3dpdGhfY2gwIi4KPgo+SSdtIG5vdCBzdXJlLCBvciBhdCBsZWFzdCwgaXQgc2hvdWxk
+bid0IG1ha2UgYW55IGRpZmZlcmVuY2UsIHNpbmNlCj5UQ09OIHdpdGhvdXQgYSBjaGFubmVsIDAg
+d2lsbCBub3QgaGF2ZSBhbiBlbmRwb2ludCAwLCBzbyB0aGlzIHdpbGwgYmUKPmRlYWx0IHdpdGgg
+YWxyZWFkeS4KCkJ1dCB0aGF0IHdpbGwgcHJldmVudCBuZXcgY29kZXJzIGZyb20gYWRkIENIMS1s
+ZXNzIFRDT04KY29tcGF0aWJsZXMgdG8gdGhpcyBmdW5jdGlvbi4KCj4KPk1heGltZQoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5l
+bCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
