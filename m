@@ -1,119 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 29 Jun 2017 18:41:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
-Subject: Re: [PATCH V1 8/9] clk: sprd: add clocks support for SC9860
-Message-ID: <20170630014117.GJ22780@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-9-chunyan.zhang@spreadtrum.com>
- <20170620014137.GK4493@codeaurora.org>
- <CAAfSe-s5oPB_G=sSAqVpYkgxhD=AE3nxv-V7-t0v+qw_AtxH3g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAfSe-s5oPB_G=sSAqVpYkgxhD=AE3nxv-V7-t0v+qw_AtxH3g@mail.gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 05/15] serial: 8250_ingenic: Add support for the JZ4770 SoC
+Date: Wed,  7 Jun 2017 22:04:29 +0200
+Message-Id: <20170607200439.24450-6-paul@crapouillou.net>
+In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
+References: <20170607200439.24450-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22, Chunyan Zhang wrote:
-> Hi Stephen,
-> 
-> On 20 June 2017 at 09:41, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 06/18, Chunyan Zhang wrote:
-> >> +++ b/include/dt-bindings/clock/sc9860-ccu.h
-> >> @@ -0,0 +1,19 @@
-> >> +/*
-> >> + * Spreadtrum SC9860 platform clocks
-> >> + *
-> >> + * Copyright (C) 2017, Spreadtrum Communications Inc.
-> >> + *
-> >> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> + */
-> >> +
-> >> +#ifndef _DT_BINDINGS_CLK_SC9860_CCU_H_
-> >> +#define _DT_BINDINGS_CLK_SC9860_CCU_H_
-> >> +
-> >> +#define CLK_FAC_1M   2
-> >> +#define CLK_EMMC_2X_EN       29
-> >> +#define CLK_L0_409M6 60
-> >> +#define CLK_EMMC_2X  88
-> >> +#define CLK_EMMC_EB  158
-> >
-> > Why are only a handful exposed in the header file? Not exposing
-> > everything is mostly a maintenance nightmare right now.
-> 
-> No special reason here, my thought simply was that there's no much
-> Spreadtrum's device driver in mainline at present, so most of the
-> clocks wouldn't be needed for now, I planned to expose only those when
-> the device driver they provide clock to, that's saying when we add a
-> new device driver we'll expose the clocks this device needs.
+The JZ4770 SoC's UART is no different from the other JZ SoCs, so this
+commit simply adds the ingenic,jz4770-uart compatible string.
 
-Please no. I don't want to get the one-off patch in my inbox to
-add more and more ids here "just because" nobody was using the
-numbers before. I really don't care that someone has added the
-driver for some random device on their SoC now and so they need
-to expose the number into a header file. I know some people are
-doing this, and it's really not meaningful. I'm much happier if
-we're exposing every single clk number to DT and reducing churn
-in the include/dt-bindings/ directory. And really, the raw number
-could be used in dt, so the enforcement of any sort of ABI needs
-to be in the clk driver anyway.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ Documentation/devicetree/bindings/serial/ingenic,uart.txt | 3 ++-
+ drivers/tty/serial/8250/8250_ingenic.c                    | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Now if a clk was left out of the clk driver implementation, then
-the number could be left out of the header file, but even then it
-doesn't really need to be. The clk driver could be implemented in
-a way to return an error if the number doesn't map to a clk_hw
-structure in the driver. In the future, the clk could be added to
-the driver, and then DT wouldn't need to change and consumer
-drivers would start to work when various branches are merged
-together.
-
-Also, sometimes clk driver authors don't know about all the clks
-that they have on their hardware (I doubt this includes you
-because you work at the company making the SoC here). In this
-case, it's OK to leave out the ids that aren't known to the
-binding author because we can't expect more from these people.
-And if you know for a fact that a certain clk will never need to
-be exposed in the binding, like some random internal clk that
-nobody will care to use, then it's also OK to leave that out from
-the binding.
-
-> 
-> Another reason is, I'm not sure if there are still some clocks I
-> haven't listed for SC9860 , so if we need to add a clock in the
-> feature, the value of these macros defined in
-> "include/dt-bindings/clock/sc9860-ccu.h" may be changed, that means I
-> need to change the index of all clocks following the clock inserted
-> into.
-
-When modifying a dt-bindings header file to add more clk ids you
-should _never_ modify existing numbers. That would be a backwards
-incompatible change of the DT binding. If anything, just keep
-adding more numbers to the end of the number space. If something
-needs to be removed, make that number map to an error or some
-no-op clk_hw structure in the clk driver.
-
-> 
-> But why will not exposing everything bring trouble to maintenance? :)
-> 
-
-Mostly it's because I spend too much time worrying about these
-include/dt-bindings files and how they're going to land in Linus'
-tree and not enough time reviewing driver and core framework
-patches. I'm trying to reduce the time spent worrying about these
-header files to a manageable amount.
-
-Hopefully that's helpful. Sorry for the long email.
-
+diff --git a/Documentation/devicetree/bindings/serial/ingenic,uart.txt b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+index 02cb7fe59cb7..75fd8b314af9 100644
+--- a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
++++ b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+@@ -2,7 +2,8 @@
+ 
+ Required properties:
+ - compatible : "ingenic,jz4740-uart", "ingenic,jz4760-uart",
+-	"ingenic,jz4775-uart" or "ingenic,jz4780-uart"
++	"ingenic,jz4770-uart", "ingenic,jz4775-uart" or
++	"ingenic,jz4780-uart"
+ - reg : offset and length of the register set for the device.
+ - interrupts : should contain uart interrupt.
+ - clocks : phandles to the module & baud clocks.
+diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
+index 4d9dc10e265c..b31b2ca552d1 100644
+--- a/drivers/tty/serial/8250/8250_ingenic.c
++++ b/drivers/tty/serial/8250/8250_ingenic.c
+@@ -133,6 +133,10 @@ EARLYCON_DECLARE(jz4740_uart, ingenic_early_console_setup);
+ OF_EARLYCON_DECLARE(jz4740_uart, "ingenic,jz4740-uart",
+ 		    ingenic_early_console_setup);
+ 
++EARLYCON_DECLARE(jz4770_uart, ingenic_early_console_setup);
++OF_EARLYCON_DECLARE(jz4770_uart, "ingenic,jz4770-uart",
++		    ingenic_early_console_setup);
++
+ EARLYCON_DECLARE(jz4775_uart, ingenic_early_console_setup);
+ OF_EARLYCON_DECLARE(jz4775_uart, "ingenic,jz4775-uart",
+ 		    ingenic_early_console_setup);
+@@ -327,6 +331,7 @@ static const struct ingenic_uart_config jz4780_uart_config = {
+ static const struct of_device_id of_match[] = {
+ 	{ .compatible = "ingenic,jz4740-uart", .data = &jz4740_uart_config },
+ 	{ .compatible = "ingenic,jz4760-uart", .data = &jz4760_uart_config },
++	{ .compatible = "ingenic,jz4770-uart", .data = &jz4760_uart_config },
+ 	{ .compatible = "ingenic,jz4775-uart", .data = &jz4760_uart_config },
+ 	{ .compatible = "ingenic,jz4780-uart", .data = &jz4780_uart_config },
+ 	{ /* sentinel */ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
