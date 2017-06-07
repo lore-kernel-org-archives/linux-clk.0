@@ -1,50 +1,201 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 19:00:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
-Subject: Re: [PATCH 6/9] clk: imx: add composite clk support
-Message-ID: <20170620020013.GP4493@codeaurora.org>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-7-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:58541 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751425AbdFGU5y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2017 16:57:54 -0400
+Date: Wed, 7 Jun 2017 22:57:11 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Phil Elwell <phil@raspberrypi.org>
+Cc: alexanders83@web.de, Eric Anholt <eric@anholt.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <1668075368.219772.1496869031097@email.1und1.de>
+In-Reply-To: <79d4534c-49fe-3af4-13d8-2aaf22120d43@raspberrypi.org>
+References: <79d4534c-49fe-3af4-13d8-2aaf22120d43@raspberrypi.org>
+Subject: Re: [PATCH 1/2] clk: bcm2835: Add AUX interrupt controller
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494856763-6543-7-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/15, Dong Aisheng wrote:
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index 51b84e4..665777e 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -69,6 +69,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
->  			     u8 width, void __iomem *busy_reg, u8 busy_shift,
->  			     const char **parent_names, int num_parents);
->  
-> +struct clk *imx_clk_composite(const char *name,
-> +			      const char * const *parent_names,
-> +			      int num_parents, bool mux_present,
-> +			      bool rate_present, bool gate_present,
-> +			      void __iomem *reg);
-> +
->  struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
->  				  void __iomem *reg, u8 shift, u8 width,
->  				  void (*fixup)(u32 *val));
-> @@ -209,5 +215,4 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
->  struct clk *imx_clk_cpu(const char *name, const char *parent_name,
->  		struct clk *div, struct clk *mux, struct clk *pll,
->  		struct clk *step);
-> -
-
-Noise?
-
->  #endif
-> -- 
-> 2.7.4
+> Phil Elwell <phil@raspberrypi.org> hat am 7. Juni 2017 um 13:11 geschrieben:
 > 
+> 
+> Devices in the AUX block share a common interrupt line, with a register
+> indicating which devices have active IRQs. Expose this as a nested
+> interrupt controller to avoid IRQ sharing problems (easily observed if
+> UART1 and SPI1/2 are enabled simultaneously).
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> ---
+>  drivers/clk/bcm/clk-bcm2835-aux.c | 120 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 120 insertions(+)
+> 
+> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
+> index bd750cf..41e0702 100644
+> --- a/drivers/clk/bcm/clk-bcm2835-aux.c
+> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+> @@ -17,17 +17,107 @@
+>  #include <linux/clk/bcm2835.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/of_irq.h>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Please try to keep alphabetical order.
+
+>  #include <dt-bindings/clock/bcm2835-aux.h>
+>  
+>  #define BCM2835_AUXIRQ		0x00
+>  #define BCM2835_AUXENB		0x04
+>  
+> +#define BCM2835_AUXIRQ_NUM_IRQS  3
+> +
+> +#define BCM2835_AUXIRQ_UART_IRQ  0
+> +#define BCM2835_AUXIRQ_SPI1_IRQ  1
+> +#define BCM2835_AUXIRQ_SPI2_IRQ  2
+> +
+> +#define BCM2835_AUXIRQ_UART_MASK 0x01
+> +#define BCM2835_AUXIRQ_SPI1_MASK 0x02
+> +#define BCM2835_AUXIRQ_SPI2_MASK 0x04
+
+I think these are candidates for the BIT macro.
+
+> +
+> +#define BCM2835_AUXIRQ_ALL_MASK \
+> +	(BCM2835_AUXIRQ_UART_MASK | \
+> +	 BCM2835_AUXIRQ_SPI1_MASK | \
+> +	 BCM2835_AUXIRQ_SPI2_MASK)
+> +
+> +struct auxirq_state {
+> +	void __iomem      *status;
+> +	u32                enables;
+> +	struct irq_domain *domain;
+> +	struct regmap     *local_regmap;
+
+This member isn't used, can it be dropped?
+
+> +};
+> +
+> +static struct auxirq_state auxirq __read_mostly;
+> +
+> +static irqreturn_t bcm2835_auxirq_handler(int irq, void *dev_id)
+> +{
+> +	u32 stat = readl_relaxed(auxirq.status);
+> +	u32 masked = stat & auxirq.enables;
+> +
+> +	if (masked & BCM2835_AUXIRQ_UART_MASK)
+> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> +						     BCM2835_AUXIRQ_UART_IRQ));
+> +
+> +	if (masked & BCM2835_AUXIRQ_SPI1_MASK)
+> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> +						     BCM2835_AUXIRQ_SPI1_IRQ));
+> +
+> +	if (masked & BCM2835_AUXIRQ_SPI2_MASK)
+> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> +						     BCM2835_AUXIRQ_SPI2_IRQ));
+> +
+> +	return (masked & BCM2835_AUXIRQ_ALL_MASK) ? IRQ_HANDLED : IRQ_NONE;
+> +}
+> +
+> +static int bcm2835_auxirq_xlate(struct irq_domain *d,
+> +				 struct device_node *ctrlr,
+> +				 const u32 *intspec, unsigned int intsize,
+> +				 unsigned long *out_hwirq,
+> +				 unsigned int *out_type)
+> +{
+> +	if (WARN_ON(intsize != 1))
+> +		return -EINVAL;
+> +
+> +	if (WARN_ON(intspec[0] >= BCM2835_AUXIRQ_NUM_IRQS))
+> +		return -EINVAL;
+> +
+> +	*out_hwirq = intspec[0];
+> +	*out_type = IRQ_TYPE_NONE;
+> +	return 0;
+> +}
+> +
+> +static void bcm2835_auxirq_mask(struct irq_data *data)
+> +{
+> +	irq_hw_number_t hwirq = irqd_to_hwirq(data);
+> +
+> +	auxirq.enables &= ~(1 << hwirq);
+> +}
+> +
+> +static void bcm2835_auxirq_unmask(struct irq_data *data)
+> +{
+> +	irq_hw_number_t hwirq = irqd_to_hwirq(data);
+> +
+> +	auxirq.enables |= (1 << hwirq);
+> +}
+> +
+> +static struct irq_chip bcm2835_auxirq_chip = {
+> +	.name = "bcm2835-auxirq",
+> +	.irq_mask = bcm2835_auxirq_mask,
+> +	.irq_unmask = bcm2835_auxirq_unmask,
+> +};
+> +
+> +static const struct irq_domain_ops bcm2835_auxirq_ops = {
+> +	.xlate = bcm2835_auxirq_xlate//irq_domain_xlate_onecell
+
+The C++ comment looks like an artifact
+
+> +};
+> +
+>  static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+>  	struct clk_hw_onecell_data *onecell;
+>  	const char *parent;
+>  	struct clk *parent_clk;
+> +	int parent_irq;
+>  	struct resource *res;
+>  	void __iomem *reg, *gate;
+>  
+> @@ -41,6 +131,36 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+>  	if (IS_ERR(reg))
+>  		return PTR_ERR(reg);
+>  
+> +	parent_irq = irq_of_parse_and_map(node, 0);
+> +	if (parent_irq) {
+> +		int ret;
+> +		int i;
+> +
+> +		/* Manage the AUX irq as well */
+> +		auxirq.status = reg + BCM2835_AUXIRQ;
+> +		auxirq.domain = irq_domain_add_linear(node,
+> +						      BCM2835_AUXIRQ_NUM_IRQS,
+> +						      &bcm2835_auxirq_ops,
+> +						      NULL);
+> +		if (!auxirq.domain)
+> +			return -ENXIO;
+> +
+> +		for (i = 0; i < BCM2835_AUXIRQ_NUM_IRQS; i++) {
+> +			unsigned int irq = irq_create_mapping(auxirq.domain, i);
+> +
+> +			if (irq == 0)
+> +				return -ENXIO;
+> +
+> +			irq_set_chip_and_handler(irq, &bcm2835_auxirq_chip,
+> +						 handle_level_irq);
+> +		}
+> +
+> +		ret = devm_request_irq(dev, parent_irq, bcm2835_auxirq_handler,
+> +				       0, "bcm2835-auxirq", NULL);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	onecell = devm_kmalloc(dev, sizeof(*onecell) + sizeof(*onecell->hws) *
+>  			       BCM2835_AUX_CLOCK_COUNT, GFP_KERNEL);
+>  	if (!onecell)
+> -- 
+> 1.9.1
+>
