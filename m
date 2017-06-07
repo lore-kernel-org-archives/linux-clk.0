@@ -1,44 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Jun 2017 00:39:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/5 v2] clk: qcom: Elaborate on "active" clocks in the
- RPM clock bindings
-Message-ID: <20170601073944.GV20170@codeaurora.org>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-2-linus.walleij@linaro.org>
- <20170428133553.pcyireh6atw7rlrw@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170428133553.pcyireh6atw7rlrw@rob-hp-laptop>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 14/15] devicetree/bindings: Add GCW vendor prefix
+Date: Wed,  7 Jun 2017 22:04:38 +0200
+Message-Id: <20170607200439.24450-15-paul@crapouillou.net>
+In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
+References: <20170607200439.24450-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/28, Rob Herring wrote:
-> On Wed, Apr 19, 2017 at 11:13:23AM +0200, Linus Walleij wrote:
-> > The concept of "active" clocks is just explained in a bried comment in the
-> > device driver, let's explain it a bit more in the device tree bindings
-> > so everyone understands this.
-> > 
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> > ChangeLog v1->v2:
-> > - Reword slighty in accordance with Stephens feedback.
-> > ---
-> >  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> 
-> Despite my objections, you're just documenting what is already there.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
+Games Consoles Worldwide, mostly known under the acronym GCW, is the
+creator of the GCW Zero open-source video game system.
 
-Perhaps this can be put into the clk driver instead? Is that the
-concern?
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index c03d20140366..abe0b72b05b6 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -114,6 +114,7 @@ focaltech	FocalTech Systems Co.,Ltd
+ friendlyarm	Guangzhou FriendlyARM Computer Tech Co., Ltd
+ fsl	Freescale Semiconductor
+ fujitsu	Fujitsu Ltd.
++gcw Games Consoles Worldwide
+ ge	General Electric Company
+ geekbuying	GeekBuying
+ gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
