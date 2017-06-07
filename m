@@ -1,32 +1,94 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 5 Jun 2017 11:54:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linus.walleij@linaro.org, andy.gross@linaro.org,
-	david.brown@linaro.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	absahu@codeaurora.org, sjaganat@codeaurora.org,
-	sricharan@codeaurora.org, mraghava@codeaurora.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: qcom: Add IPQ8074 bindings
-Message-ID: <20170605165414.zbcwbvto77awdk45@rob-hp-laptop>
-References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
- <1496316482-25468-3-git-send-email-varada@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1496316482-25468-3-git-send-email-varada@codeaurora.org>
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 13/15] MIPS: JZ4770: Workaround for corrupted DMA transfers
+Date: Wed,  7 Jun 2017 22:04:37 +0200
+Message-Id: <20170607200439.24450-14-paul@crapouillou.net>
+In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
+References: <20170607200439.24450-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 01, 2017 at 04:57:59PM +0530, Varadarajan Narayanan wrote:
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
->  1 file changed, 2 insertions(+)
+From: Maarten ter Huurne <maarten@treewalker.org>
 
-I acked v2. Please add acks when posting new versions.
+We have seen MMC DMA transfers read corrupted data from SDRAM when
+a burst interval ends at physical address 0x10000000. To avoid this
+problem, we remove the final page of low memory from the memory map.
 
-Rob
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+---
+ arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
+ arch/mips/kernel/setup.c |  8 ++++++++
+ 2 files changed, 32 insertions(+)
+
+diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
+index afd84ee966e8..6948b133a15d 100644
+--- a/arch/mips/jz4740/setup.c
++++ b/arch/mips/jz4740/setup.c
+@@ -23,6 +23,7 @@
+ 
+ #include <asm/bootinfo.h>
+ #include <asm/mips_machine.h>
++#include <asm/page.h>
+ #include <asm/prom.h>
+ 
+ #include <asm/mach-jz4740/base.h>
+@@ -102,6 +103,29 @@ void __init arch_init_irq(void)
+ 	irqchip_init();
+ }
+ 
++/*
++ * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
++ * interval ends at physical address 0x10000000. To avoid this problem, we
++ * remove the final page of low memory from the memory map.
++ */
++void __init jz4770_reserve_unsafe_for_dma(void)
++{
++	int i;
++
++	for (i = 0; i < boot_mem_map.nr_map; i++) {
++		struct boot_mem_map_entry *entry = boot_mem_map.map + i;
++
++		if (entry->type != BOOT_MEM_RAM)
++			continue;
++
++		if (entry->addr + entry->size != 0x10000000)
++			continue;
++
++		entry->size -= PAGE_SIZE;
++		break;
++	}
++}
++
+ static int __init jz4740_machine_setup(void)
+ {
+ 	mips_machine_setup();
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 89785600fde4..cccfd7ba89fe 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -838,6 +838,14 @@ static void __init arch_mem_init(char **cmdline_p)
+ 
+ 	parse_early_param();
+ 
++#ifdef CONFIG_MACH_JZ4770
++	if (current_cpu_type() == CPU_JZRISC &&
++				mips_machtype == MACH_INGENIC_JZ4770) {
++		extern void __init jz4770_reserve_unsafe_for_dma(void);
++		jz4770_reserve_unsafe_for_dma();
++	}
++#endif
++
+ 	if (usermem) {
+ 		pr_info("User-defined physical RAM map:\n");
+ 		print_memory_map();
+-- 
+2.11.0
