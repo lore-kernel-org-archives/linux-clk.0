@@ -1,63 +1,28 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v7 4/4] arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-Date: Thu, 29 Jun 2017 11:48:34 +0530
-Message-Id: <1498717114-338-5-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1498717114-338-1-git-send-email-varada@codeaurora.org>
-References: <1498717114-338-1-git-send-email-varada@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 7 Jun 2017 10:45:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: socfpga: Fix the smplsel on Arria10 and Stratix10
+Message-ID: <20170607174516.GN20170@codeaurora.org>
+References: <1496847690-1883-1-git-send-email-dinguyen@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1496847690-1883-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+On 06/07, Dinh Nguyen wrote:
+> The smplsel bits for the SDMMC clock on Arria10 and Stratix10 platforms are
+> offset by 1 additional bit.
+> 
+> Add a new macro SYSMGR_SDMMC_CTRL_SET_AS10 for usage on the Arria10 and
+> Stratix10 platforms.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 
-These configs are required for booting kernel in qcom
-ipq8074 boards.
+Some sort of Fixes: tag as well?
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 97c123e..0e1369e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -271,6 +271,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SPIDEV=m
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -457,6 +458,7 @@ CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
