@@ -1,83 +1,110 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 28 Jun 2017 15:29:29 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jassi Brar <jaswinder.singh@linaro.org>
-Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Satoru OKAMOTO <okamoto.satoru@socionext.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Andy Green <andy.green@linaro.org>,
-	Vincent Yang <vincent.yang@socionext.com>,
-	Tetsuya Nuriya <nuriya.tetsuya@socionext.com>
-Subject: Re: [PATCH 1/5] clk: mb86s7x: Suppress build
-Message-ID: <20170628222929.GC5316@codeaurora.org>
-References: <20170625170020.11791-1-afaerber@suse.de>
- <20170625170020.11791-2-afaerber@suse.de>
- <20170628161354.GB5316@codeaurora.org>
- <CAJe_ZhdkfK1wB88hrMP=kmMNBfqxGtHDxseuyUXHToq77bzQ+g@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.web.de ([217.72.192.78]:51798 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751397AbdFGRZy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Jun 2017 13:25:54 -0400
+From: Alexander Stein <alexanders83@web.de>
+To: Phil Elwell <phil@raspberrypi.org>
+Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: bcm2835: Add AUX interrupt controller
+Date: Wed, 07 Jun 2017 19:25:07 +0200
+Message-ID: <2599573.4PsWGx6B1X@localhost>
+In-Reply-To: <369bb235-77fb-60ad-61d8-3de039e0f838@raspberrypi.org>
+References: <79d4534c-49fe-3af4-13d8-2aaf22120d43@raspberrypi.org> <3148562.tSrsoIclEp@ws-stein> <369bb235-77fb-60ad-61d8-3de039e0f838@raspberrypi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <CAJe_ZhdkfK1wB88hrMP=kmMNBfqxGtHDxseuyUXHToq77bzQ+g@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28, Jassi Brar wrote:
-> On 28 June 2017 at 21:43, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 06/25, Andreas Färber wrote:
-> >> It fails to build once we introduce the ARCH_MB86S7X Kconfig symbol:
-> >>
-> >>   drivers/clk/clk-mb86s7x.c:27:10: fatal error: soc/mb86s7x/scb_mhu.h: No such file or directory
-> >>    #include <soc/mb86s7x/scb_mhu.h>
-> >>             ^~~~~~~~~~~~~~~~~~~~~~~
-> >>   compilation terminated.
-> >>
-> >> And when commenting out that line, we get:
-> >>
-> >>   drivers/clk/clk-mb86s7x.c: In function 'crg_gate_control':
-> >>   drivers/clk/clk-mb86s7x.c:72:8: error: implicit declaration of function 'mb86s7x_send_packet' [-Werror=implicit-function-declaration]
-> >>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
-> >>           ^~~~~~~~~~~~~~~~~~~
-> >>   drivers/clk/clk-mb86s7x.c:72:28: error: 'CMD_PERI_CLOCK_GATE_SET_REQ' undeclared (first use in this function)
-> >>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
-> >>                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>   drivers/clk/clk-mb86s7x.c:72:28: note: each undeclared identifier is reported only once for each function it appears in
-> >>   drivers/clk/clk-mb86s7x.c: In function 'crg_rate_control':
-> >>   drivers/clk/clk-mb86s7x.c:116:10: error: 'CMD_PERI_CLOCK_RATE_SET_REQ' undeclared (first use in this function)
-> >>      code = CMD_PERI_CLOCK_RATE_SET_REQ;
-> >>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>   drivers/clk/clk-mb86s7x.c:121:10: error: 'CMD_PERI_CLOCK_RATE_GET_REQ' undeclared (first use in this function); did you mean 'CMD_PERI_CLOCK_RATE_SET_REQ'?
-> >>      code = CMD_PERI_CLOCK_RATE_GET_REQ;
-> >>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>             CMD_PERI_CLOCK_RATE_SET_REQ
-> >>   drivers/clk/clk-mb86s7x.c: In function 'mhu_cluster_rate':
-> >>   drivers/clk/clk-mb86s7x.c:276:10: error: 'CMD_CPU_CLOCK_RATE_GET_REQ' undeclared (first use in this function)
-> >>      code = CMD_CPU_CLOCK_RATE_GET_REQ;
-> >>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>   drivers/clk/clk-mb86s7x.c:278:10: error: 'CMD_CPU_CLOCK_RATE_SET_REQ' undeclared (first use in this function); did you mean 'CMD_CPU_CLOCK_RATE_GET_REQ'?
-> >>      code = CMD_CPU_CLOCK_RATE_SET_REQ;
-> >>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>             CMD_CPU_CLOCK_RATE_GET_REQ
-> >>   cc1: some warnings being treated as errors
-> >>   scripts/Makefile.build:302: recipe for target
-> >>   'drivers/clk/clk-mb86s7x.o' failed
-> >>   make[2]: *** [drivers/clk/clk-mb86s7x.o] Error 1
-> >>
-> >> Comment it out in the Makefile for now.
-> >>
-> >
-> > Why not delete the whole driver instead? It's been two years and
-> > the driver has never compiled.
-> >
-> I won't complain. The interest of moving powers evaporated in the
-> midst of upstreaming. Though some next platform is supposed to reuse
-> the IPs, but I can't say when will that be upstreamed and by whom.
+ On Wednesday, June 7, 2017, 2:37:41 PM CEST Phil Elwell wrote:
+> On 07/06/2017 13:07, Alexander Stein wrote:
+> > On Wednesday 07 June 2017 12:11:45, Phil Elwell wrote:
+> >> Devices in the AUX block share a common interrupt line, with a register
+> >> indicating which devices have active IRQs. Expose this as a nested
+> >> interrupt controller to avoid IRQ sharing problems (easily observed if
+> >> UART1 and SPI1/2 are enabled simultaneously).
+> >> 
+> >> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> >> ---
+> >> 
+> >>  drivers/clk/bcm/clk-bcm2835-aux.c | 120
+> >> 
+> >> ++++++++++++++++++++++++++++++++++++++ 1 file changed, 120 insertions(+)
+> >> 
+> >> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c
+> >> b/drivers/clk/bcm/clk-bcm2835-aux.c index bd750cf..41e0702 100644
+> >> --- a/drivers/clk/bcm/clk-bcm2835-aux.c
+> >> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+> >> [...]
+> >> +struct auxirq_state {
+> >> +	void __iomem      *status;
+> >> +	u32                enables;
+> >> +	struct irq_domain *domain;
+> >> +	struct regmap     *local_regmap;
+> >> +};
+> >> +
+> >> +static struct auxirq_state auxirq __read_mostly;
+> >> +
+> >> +static irqreturn_t bcm2835_auxirq_handler(int irq, void *dev_id)
+> >> +{
+> >> +	u32 stat = readl_relaxed(auxirq.status);
+> >> +	u32 masked = stat & auxirq.enables;
+> > 
+> > Doesn't this hide any spurious interrupts? Is this acceptable? I mean
+> > getting informed about spurious interrupts seems nice to me, as it
+> > indicates a hardware/configuration problem.
 > 
+> Thanks for the reply. This interrupt handler is capable of dispatching
+> multiple interrupts but must return a single value - IRQ_HANDLED or
+> IRQ_NONE. I've assumed that returning IRQ_NONE repeatedly will trigger the
+> spurious interrupt detection.
+> 
+> This implementation returns IRQ_HANDLED if any unmasked interrupts are
+> raised, otherwise it returns IRQ_NONE. Therefore provided any spurious
+> interrupt isn't always coincident with a real interrupt then it ought
+> eventually to be identified as spurious. The alternative - returning
+> IRQ_NONE if there are any spurious interrupts - seems prone to causing
+> collateral damage.
+> 
+> What did you have in mind?
+
+I was wondering about "stat & auxirq.enables". With that you wouldn't forward 
+any spurious interrupts to e.g. SPI1. I don't know which way is better, 
+returning IRQ_NONE is a masked interrupt happens, or pass it further down. I 
+guess this also raises a warning if the SPI driver also returns IRQ_NONE.
+BTW: Is it even allowed to call generic_handle_irq on a masked irq?
+
+> >> +	if (masked & BCM2835_AUXIRQ_UART_MASK)
+> >> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> >> +						     BCM2835_AUXIRQ_UART_IRQ));
+> >> +
+> >> +	if (masked & BCM2835_AUXIRQ_SPI1_MASK)
+> >> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> >> +						     BCM2835_AUXIRQ_SPI1_IRQ));
+> >> +
+> >> +	if (masked & BCM2835_AUXIRQ_SPI2_MASK)
+> >> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
+> >> +						     BCM2835_AUXIRQ_SPI2_IRQ));
+> >> +
+> >> +	return (masked & BCM2835_AUXIRQ_ALL_MASK) ? IRQ_HANDLED : IRQ_NONE;
+> >> +}
+> > 
+> > How does interrupt acknowledgement work in these 3 interrupts work?
+> 
+> The interrupt "controller" is just combinatorial logic on the three
+> level-sensitive interrupt lines from the devices. Interrupts must be
+> acknowledged and cleared at source.
 
 Thanks for the info.
 
-Andreas, can you send a deletion patch instead?
+Best regards,
+Alexander
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
