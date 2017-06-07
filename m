@@ -1,98 +1,53 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	sboyd@codeaurora.org
-Subject: [PATCH v6 1/3] clk: imx7d: create clocks behind rawnand clock gate
-Date: Thu,  8 Jun 2017 15:34:47 -0700
-Message-Id: <8b9edf13938e3166081e72ba8fa4ac822035079c.1496961128.git-series.stefan@agner.ch>
-In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
-References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
-In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
-References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: aisheng.dong@nxp.com, boris.brezillon@free-electrons.com,
- fabio.estevam@freescale.com, devicetree@vger.kernel.org, richard@nod.at,
- linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
- marek.vasut@gmail.com, robh+dt@kernel.org, linux-mtd@lists.infradead.org,
- han.xu@nxp.com, mark.rutland@arm.com, computersforpeace@gmail.com,
- dwmw2@infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, LW@KARO-electronics.de
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: dinguyen@kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: socfpga: Fix the smplsel on Arria10 and Stratix10
+Date: Wed,  7 Jun 2017 10:01:30 -0500
+Message-Id: <1496847690-1883-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The rawnand clock gate gates two clocks, NAND_USDHC_BUS_CLK_ROOT
-and NAND_CLK_ROOT. However, the gate has been in the chain of the
-latter only. This does not allow to use the NAND_USDHC_BUS_CLK_ROOT
-only, e.g. as required by APBH-Bridge-DMA.
+The smplsel bits for the SDMMC clock on Arria10 and Stratix10 platforms are
+offset by 1 additional bit.
 
-Add new clocks which represent the clock after the gate, and use a
-shared clock gate to correctly model the hardware.
+Add a new macro SYSMGR_SDMMC_CTRL_SET_AS10 for usage on the Arria10 and
+Stratix10 platforms.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
- drivers/clk/imx/clk-imx7d.c             | 6 ++++--
- include/dt-bindings/clock/imx7d-clock.h | 4 +++-
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/clk/socfpga/clk-gate-a10.c | 2 +-
+ drivers/clk/socfpga/clk.h          | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 93b0364..e364060 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -25,6 +25,7 @@
- static u32 share_count_sai1;
- static u32 share_count_sai2;
- static u32 share_count_sai3;
-+static u32 share_count_nand;
+diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
+index c2d5727..36376c5 100644
+--- a/drivers/clk/socfpga/clk-gate-a10.c
++++ b/drivers/clk/socfpga/clk-gate-a10.c
+@@ -86,7 +86,7 @@ static int socfpga_clk_prepare(struct clk_hw *hwclk)
+ 			}
+ 		}
  
- static struct clk_div_table test_div_table[] = {
- 	{ .val = 3, .div = 1, },
-@@ -748,7 +749,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_ENET2_TIME_ROOT_DIV] = imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base + 0xa880, 0, 6);
- 	clks[IMX7D_ENET_PHY_REF_ROOT_DIV] = imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base + 0xa900, 0, 6);
- 	clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div", "eim_pre_div", base + 0xa980, 0, 6);
--	clks[IMX7D_NAND_ROOT_DIV] = imx_clk_divider2("nand_post_div", "nand_pre_div", base + 0xaa00, 0, 6);
-+	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk", "nand_pre_div", base + 0xaa00, 0, 6);
- 	clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div", "qspi_pre_div", base + 0xaa80, 0, 6);
- 	clks[IMX7D_USDHC1_ROOT_DIV] = imx_clk_divider2("usdhc1_post_div", "usdhc1_pre_div", base + 0xab00, 0, 6);
- 	clks[IMX7D_USDHC2_ROOT_DIV] = imx_clk_divider2("usdhc2_post_div", "usdhc2_pre_div", base + 0xab80, 0, 6);
-@@ -825,7 +826,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510, 0);
- 	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] = imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base + 0x4520, 0);
- 	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk", "eim_post_div", base + 0x4160, 0);
--	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_gate4("nand_root_clk", "nand_post_div", base + 0x4140, 0);
-+	clks[IMX7D_NAND_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140, 0, &share_count_nand);
-+	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk", base + 0x4140, 0, &share_count_nand);
- 	clks[IMX7D_QSPI_ROOT_CLK] = imx_clk_gate4("qspi_root_clk", "qspi_post_div", base + 0x4150, 0);
- 	clks[IMX7D_USDHC1_ROOT_CLK] = imx_clk_gate4("usdhc1_root_clk", "usdhc1_post_div", base + 0x46c0, 0);
- 	clks[IMX7D_USDHC2_ROOT_CLK] = imx_clk_gate4("usdhc2_root_clk", "usdhc2_post_div", base + 0x46d0, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index a7a1a50..de62a83 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -450,5 +450,7 @@
- #define IMX7D_CLK_ARM			437
- #define IMX7D_CKIL			438
- #define IMX7D_OCOTP_CLK			439
--#define IMX7D_CLK_END			440
-+#define IMX7D_NAND_RAWNAND_CLK		440
-+#define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
-+#define IMX7D_CLK_END			442
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+-		hs_timing = SYSMGR_SDMMC_CTRL_SET(clk_phase[0], clk_phase[1]);
++		hs_timing = SYSMGR_SDMMC_CTRL_SET_AS10(clk_phase[0], clk_phase[1]);
+ 		if (!IS_ERR(socfpgaclk->sys_mgr_base_addr))
+ 			regmap_write(socfpgaclk->sys_mgr_base_addr,
+ 				     SYSMGR_SDMMCGRP_CTRL_OFFSET, hs_timing);
+diff --git a/drivers/clk/socfpga/clk.h b/drivers/clk/socfpga/clk.h
+index 814c724..9cf1230 100644
+--- a/drivers/clk/socfpga/clk.h
++++ b/drivers/clk/socfpga/clk.h
+@@ -32,6 +32,9 @@
+ #define SYSMGR_SDMMC_CTRL_SET(smplsel, drvsel) \
+ 	((((smplsel) & 0x7) << 3) | (((drvsel) & 0x7) << 0))
+ 
++#define SYSMGR_SDMMC_CTRL_SET_AS10(smplsel, drvsel) \
++	((((smplsel) & 0x7) << 4) | (((drvsel) & 0x7) << 0))
++
+ extern void __iomem *clk_mgr_base_addr;
+ extern void __iomem *clk_mgr_a10_base_addr;
+ 
 -- 
-git-series 0.9.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
