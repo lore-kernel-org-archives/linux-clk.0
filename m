@@ -1,78 +1,99 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
- <20170629101851.23972-7-marek.vasut@gmail.com>
- <CAMuHMdXaEDtKwZYDaZ0qUvUk_0WuZwf6ky+nfeahQuU7q4qiyQ@mail.gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- Alexey Firago <alexey_firago@mentor.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <1a65c823-d39f-1824-886d-d32fddcee4f0@gmail.com>
-Date: Thu, 29 Jun 2017 17:49:21 +0200
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXaEDtKwZYDaZ0qUvUk_0WuZwf6ky+nfeahQuU7q4qiyQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
+References: <20170602223006.1653-1-sboyd@codeaurora.org> <201706031243.qNvuUbQX%fengguang.wu@intel.com>
+ <20170605144546.b6oh5sygrza22hbe@flea.lan> <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 7 Jun 2017 13:45:45 +0800
+Message-ID: <CAGb2v66QvLdojDe4+uG9Opa7fApA-GH9pW4v0En5j6QSPf1yZw@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, kbuild test robot <lkp@intel.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, kbuild-all@01.org, Chen-Yu Tsai <wens@csie.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/29/2017 01:38 PM, Geert Uytterhoeven wrote:
-> Hi Marek,
-> 
-> On Thu, Jun 29, 2017 at 12:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+On Tue, Jun 6, 2017 at 6:04 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Jun 5, 2017 at 4:45 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>> Hi,
 >>
->> IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
->> Input clock source can be taken from either external crystal or from
->> external reference clock.
+>> On Sat, Jun 03, 2017 at 12:22:32PM +0800, kbuild test robot wrote:
+>>> Hi Stephen,
+>>>
+>>> [auto build test ERROR on sunxi/sunxi/for-next]
+>>> [also build test ERROR on next-20170602]
+>>> [cannot apply to clk/clk-next v4.12-rc3]
+>>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>>>
+>>>    sunxi_sid.c:(.data+0x1da8c): undefined reference to `ccu_gate_ops'
+>>>    sunxi_sid.c:(.data+0x1dac8): undefined reference to `ccu_gate_ops'
+>>>    sunxi_sid.c:(.data+0x1db20): undefined reference to `ccu_mux_ops'
+>>>    sunxi_sid.c:(.data+0x1db74): undefined reference to `ccu_mux_ops'
+>>>    sunxi_sid.c:(.data+0x1dbec): undefined reference to `ccu_mp_ops'
+>>>    sunxi_sid.c:(.data+0x1dc64): undefined reference to `ccu_mp_ops'
 >>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Alexey Firago <alexey_firago@mentor.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> Cc: linux-renesas-soc@vger.kernel.org
->> Cc: devicetree@vger.kernel.org
->> ---
->>  .../devicetree/bindings/clock/idt,versaclock5.txt         | 15 ++++++++++++---
->>  1 file changed, 12 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
->> index 53d7e50ed875..a3d4260039a8 100644
->> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
->> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> 
-> Probably you want to sprinkle the first few lines of the document with
-> a few "VersaClock 6" references?
+>> It seems like even though the lib.a file is compiled properly, it is
+>> never linked in. It looks like we would be supposed to add
+>> drivers/clk/sunxi-ng/ to libs-y, but that doesn't seem to work for
+>> Makefiles in drivers/*
+>
+> Ah, too bad. I see that only one directory under drivers/ uses something
+> with lib.a, in drivers/firmware/efi/libstub/Makefile, but that seems to
+> rely on being special-cased as well.
+>
+> However, this patch seems to fix it:
+>
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index cbc8cb4f70e3..321d3da7cc6a 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -18,16 +18,16 @@ lib-$(CONFIG_SUNXI_CCU) += ccu_nm.o
+>  lib-$(CONFIG_SUNXI_CCU) += ccu_mp.o
+>
+>  # SoC support
+> -obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o
+> -obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o
+> -obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o
+> -obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o
+> -obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o
+> -obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o
+> -obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o
+> -obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o
+> -obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o
+> -obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o
+> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o
+> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o
+> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o
+> +obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o lib.a
+> +obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o lib.a
+> +obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o lib.a
+> +obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o lib.a
+> +obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o lib.a
+> +obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o lib.a
+> +obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o lib.a
+> +obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o lib.a
+> +obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o lib.a
+> +obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o lib.a
+> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o lib.a
+> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o lib.a
+> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o lib.a
+>
+> It's not documented behavior, but I think it's still good enough,
+> and improves the current version, unless there is another bug
+> after we add this to your patch.
 
-Something like this?
+I think having just
 
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -1,7 +1,7 @@
--Binding for IDT VersaClock5 programmable i2c clock generator.
-+Binding for IDT VersaClock 5,6 programmable i2c clock generators.
+obj-$(CONFIG_SUNXI_CCU) += lib.a
 
--The IDT VersaClock5 are programmable i2c clock generators providing
--from 3 to 12 output clocks.
-+The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
-+generators providing from 3 to 12 output clocks.
+at the bottom (with a comment) would be cleaner, and
+we wouldn't need to modify all the existing lines.
+AFAIK about Makefiles, that should work?
 
- ==I2C device node==
+ChenYu
 
->> @@ -7,18 +7,20 @@ from 3 to 12 output clocks.
-> 
-> The rest looks OK to me, so
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Thanks
-
--- 
-Best regards,
-Marek Vasut
+>
+>         Arnd
