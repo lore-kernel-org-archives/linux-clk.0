@@ -1,53 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:44691 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751340AbdFFHcU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 03:32:20 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v3 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
-Date: Tue,  6 Jun 2017 09:31:41 +0200
-Message-Id: <20170606073146.26882-2-o.rempel@pengutronix.de>
-In-Reply-To: <20170606073146.26882-1-o.rempel@pengutronix.de>
-References: <20170606073146.26882-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: gxbb: add all clk81 parents
+Date: Thu,  8 Jun 2017 15:55:45 +0200
+Message-Id: <20170608135545.31499-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Remove the FIXME on clk81 mux and add all the documented parents
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/meson/gxbb.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-index 9252912a5b0e..8f93e1503e59 100644
---- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-@@ -6,6 +6,14 @@ Required properties:
- - interrupts: Should contain CCM interrupt
- - #clock-cells: Should be <1>
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 36c0e455437e..a897ea45327c 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -603,7 +603,11 @@ static struct meson_clk_mpll gxbb_mpll2 = {
+  * coordinated clock rates feature
+  */
  
-+Optional properties:
-+- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
-+  on power off.
-+  Use this property if the SoC should be powered off by external power
-+  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-+  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
-+  be using "syscon-poweroff" driver instead.
-+
- The clock consumer should specify the desired clock by having the clock
- ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
- for the full list of i.MX6 Quad and DualLite clock IDs.
+-static u32 mux_table_clk81[]	= { 6, 5, 7 };
++static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
++static const char * const clk81_parent_names[] = {
++	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
++	"fclk_div3", "fclk_div5"
++};
+ 
+ static struct clk_mux gxbb_mpeg_clk_sel = {
+ 	.reg = (void *)HHI_MPEG_CLK_CNTL,
+@@ -616,13 +620,12 @@ static struct clk_mux gxbb_mpeg_clk_sel = {
+ 		.name = "mpeg_clk_sel",
+ 		.ops = &clk_mux_ro_ops,
+ 		/*
+-		 * FIXME bits 14:12 selects from 8 possible parents:
++		 * bits 14:12 selects from 8 possible parents:
+ 		 * xtal, 1'b0 (wtf), fclk_div7, mpll_clkout1, mpll_clkout2,
+ 		 * fclk_div4, fclk_div3, fclk_div5
+ 		 */
+-		.parent_names = (const char *[]){ "fclk_div3", "fclk_div4",
+-			"fclk_div5" },
+-		.num_parents = 3,
++		.parent_names = clk81_parent_names,
++		.num_parents = ARRAY_SIZE(clk81_parent_names),
+ 		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
+ 	},
+ };
 -- 
-2.11.0
-
+2.9.4
