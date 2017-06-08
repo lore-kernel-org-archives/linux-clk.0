@@ -1,106 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from plaes.org ([188.166.43.21]:55347 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751515AbdF1R7t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 28 Jun 2017 13:59:49 -0400
-Date: Wed, 28 Jun 2017 17:59:49 +0000
-From: Priit Laes <plaes@plaes.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>
-Subject: Re: [PATCH v4 1/6] clk: sunxi-ng: div: Add support for fixed
- post-divider
-Message-ID: <20170628175949.GA3706@plaes.org>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
- <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
- <20170627094607.2hkgzkycclboemvu@flea.lan>
+Return-Path: <paul@outils.crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170627094607.2hkgzkycclboemvu@flea.lan>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Thu, 08 Jun 2017 23:10:06 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
+ <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Paul Burton
+ <paul.burton@imgtec.com>, Maarten ter Huurne <maarten@treewalker.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/15] clk: Add Ingenic jz4770 CGU driver
+In-Reply-To: <20170607205943.GO20170@codeaurora.org>
+References: <20170607200439.24450-1-paul@crapouillou.net>
+ <20170607200439.24450-5-paul@crapouillou.net>
+ <20170607205943.GO20170@codeaurora.org>
+Message-ID: <f2ef2abdef9054e9916e10f588e8fec4@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 27, 2017 at 11:46:07AM +0200, Maxime Ripard wrote:
-> Hi!
+Hi,
+
+>> +	register_syscore_ops(&jz4770_cgu_pm_ops);
+>> +#endif
+>> +}
+>> +CLK_OF_DECLARE(jz4770_cgu, "ingenic,jz4770-cgu", jz4770_cgu_init);
 > 
-> On Sun, Jun 25, 2017 at 11:45:42PM +0300, Priit Laes wrote:
-> > SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-> > 6 is fixed post-divider.
-> > 
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++--
-> >  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
-> >  2 files changed, 12 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-> > index c0e5c10..de30e15 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_div.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> > @@ -62,8 +62,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
-> >  	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
-> >  						  parent_rate);
-> >  
-> > -	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> > -				   cd->div.flags);
-> > +	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> > +				  cd->div.flags);
-> > +
-> > +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> > +		val /= cd->fixed_post_div;
-> > +
-> > +	return val;
-> >  }
-> >  
-> >  static int ccu_div_determine_rate(struct clk_hw *hw,
-> > @@ -89,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> >  	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
-> >  			      cd->div.flags);
-> >  
-> > +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> > +		val *= cd->fixed_post_div;
-> > +
-> >  	spin_lock_irqsave(cd->common.lock, flags);
-> >  
-> >  	reg = readl(cd->common.base + cd->common.reg);
+> Any reason this can't be a platform driver? Please add a comment
+> above CLK_OF_DECLARE describing what is preventing that.
+
+It would probably be possible, if we cared about having a platform 
+driver.
+But we will only ever probe it from devicetree, just like with the
+already existing jz4740-cgu and jz4780-cgu drivers.
+
+>> diff --git a/include/dt-bindings/clock/jz4770-cgu.h 
+>> b/include/dt-bindings/clock/jz4770-cgu.h
+>> new file mode 100644
+>> index 000000000000..54b8b2ae4a73
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/jz4770-cgu.h
 > 
-> You also need to adjust the round rate call back to take into account
-> the post divider before calling divider_round_rate_parent, and after
-> since that function can modify the parent_rate.
+> Can you split this file off into a different patch? That way clk
+> tree can apply clk patches on top of a stable branch where this
+> file lives by itself.
 
-Is there a way to trigger this function? I don't see it getting called.
+Sure.
 
-> > diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-> > index 08d0744..f3a5028 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_div.h
-> > +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> > @@ -86,9 +86,10 @@ struct ccu_div_internal {
-> >  struct ccu_div {
-> >  	u32			enable;
-> >  
-> > -	struct ccu_div_internal		div;
-> > +	struct ccu_div_internal	div;
-> 
-> Spurious change?
-
-Nope, it was not indented the same way as other variables.
-Should I send it as separate patch?
-
-> 
-> Thanks!
-> Maxime
-> 
-> -- 
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
-
-
+Thanks,
+- Paul
