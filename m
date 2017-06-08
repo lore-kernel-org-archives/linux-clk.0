@@ -1,79 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:12064 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbdFIKjA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 06:39:00 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 3/3] clk: samsung: exynos542x: Add EPLL rate table
-Date: Fri, 09 Jun 2017 12:38:31 +0200
-Message-id: <1497004711-24052-3-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
-References: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170609103856epcas5p32a847b79d540f4b2105990f499b3f59e@epcas5p3.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170607081708.ycruditlhebizzt2@flea.lan>
+References: <20170602223006.1653-1-sboyd@codeaurora.org> <201706031243.qNvuUbQX%fengguang.wu@intel.com>
+ <20170605144546.b6oh5sygrza22hbe@flea.lan> <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
+ <CAGb2v66QvLdojDe4+uG9Opa7fApA-GH9pW4v0En5j6QSPf1yZw@mail.gmail.com>
+ <CAK8P3a38TyiHXBgB0DQka=0iASuyJO_zMrczXqYBiJj6LEnNWg@mail.gmail.com> <20170607081708.ycruditlhebizzt2@flea.lan>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 8 Jun 2017 10:46:28 +0900
+Message-ID: <CAK7LNAQUTiM3DoD3_NCOA-95_LQ0P2m-CXDSQAKJ+eON5fAuYQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Chen-Yu Tsai <wens@csie.org>,
+        kbuild test robot <lkp@intel.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, kbuild-all@01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-A specific clock rate table is added for EPLL so it is possible
-to set frequency of the EPLL output clock as multiple of various
-audio sampling rates.
+2017-06-07 17:17 GMT+09:00 Maxime Ripard <maxime.ripard@free-electrons.com>:
+> On Wed, Jun 07, 2017 at 09:36:34AM +0200, Arnd Bergmann wrote:
+>> On Wed, Jun 7, 2017 at 7:45 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+>> > at the bottom (with a comment) would be cleaner, and
+>> > we wouldn't need to modify all the existing lines.
+>> > AFAIK about Makefiles, that should work?
+>>
+>> Ah, yes. That's much better.
+>>
+>>       Arnd
+>
+> I just applied the original patch, with that addition, and a comment
+> as suggested by Stephen.
+>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v1:
- - fixed coefficient for 400 MHZ rate
- - dropped 45158400 Hz rate entry
----
- drivers/clk/samsung/clk-exynos5420.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 6f1d6c0..0748a0b 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1280,6 +1280,21 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	PLL_35XX_RATE(200000000,  200, 3, 3),
- };
- 
-+static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
-+	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
-+	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
-+	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
-+	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
-+	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
-+	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
-+	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
-+	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
-+	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-+	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
-+	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
-+	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
-+};
-+
- static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
- 	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
-@@ -1287,7 +1302,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 		CPLL_CON0, NULL),
- 	[dpll] = PLL(pll_2550, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
- 		DPLL_CON0, NULL),
--	[epll] = PLL(pll_2650, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
-+	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
- 		EPLL_CON0, NULL),
- 	[rpll] = PLL(pll_2650, CLK_FOUT_RPLL, "fout_rpll", "fin_pll", RPLL_LOCK,
- 		RPLL_CON0, NULL),
-@@ -1402,7 +1417,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 
- 	if (_get_rate("fin_pll") == 24 * MHZ) {
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
--		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 	}
+Hmm, I think Kbuild expects lib.a only for the final link
+(at least in official level)
+Is it a problem to compile common files all the time?
+
+# Common objects
+obj-y += ccu_common.o
+obj-y += ccu_reset.o
+
+
+We may end up with some unused functions in vmlinux,
+but it will not be a big impact on the image size in this case.
+
+CONFIG_LD_DEAD_CODE_DATA_ELIMINATION may
+take care of unused symbols.  I have not tested this CONFIG, though.
+
+
+
 -- 
-1.9.1
-
+Best Regards
+Masahiro Yamada
