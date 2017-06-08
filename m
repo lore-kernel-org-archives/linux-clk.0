@@ -1,32 +1,54 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  narmstrong@baylibre.com,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  mturquette@baylibre.com,  sboyd@codeaurora.org,  robh+dt@kernel.org,  mark.rutland@arm.com,  carlo@caione.org,  linux@armlinux.org.uk,  devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] arm: meson: select the clock controller for Meson8
-References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
-	<20170604183341.21417-3-martin.blumenstingl@googlemail.com>
-	<1496606532.3552.18.camel@baylibre.com>
-Date: Fri, 09 Jun 2017 11:21:45 -0700
-In-Reply-To: <1496606532.3552.18.camel@baylibre.com> (Jerome Brunet's message
-	of "Sun, 04 Jun 2017 22:02:12 +0200")
-Message-ID: <m2h8zp9g3q.fsf@baylibre.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 8 Jun 2017 17:20:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: Document img,boston-clock binding
+Message-ID: <20170608222047.c27en4hqbqkqybin@rob-hp-laptop>
+References: <20170602182003.16269-1-paul.burton@imgtec.com>
+ <20170602182003.16269-2-paul.burton@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170602182003.16269-2-paul.burton@imgtec.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On Fri, Jun 02, 2017 at 11:20:00AM -0700, Paul Burton wrote:
+> Add device tree binding documentation for the clocks provided by the
+> MIPS Boston development board from Imagination Technologies, and a
+> header file describing the available clocks for use by device trees &
+> driver.
+> 
+> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-mips@linux-mips.org
+> 
+> ---
+> 
+> Changes in v4:
+> - Move img,boston-clock node under platform register syscon node.
+> - Add MAINTAINERS entry.
+> 
+> Changes in v3: None
+> 
+> Changes in v2:
+> - Add BOSTON_CLK_INPUT to expose the input clock.
+> 
+>  .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  7 +++++
+>  include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
+>  3 files changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>  create mode 100644 include/dt-bindings/clock/boston-clock.h
 
-> On Sun, 2017-06-04 at 20:33 +0200, Martin Blumenstingl wrote:
->> Select COMMON_CLK_MESON8B also for MACH_MESON8 since the Meson8b clock
->> controller driver can also be used on Meson8 SoCs now that we have a
->> separate compatible for it.
->> 
->> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->
-> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
->
-
-Applied to v4.13/soc with Jerome's ack.
-
-Kevin
+Reviewed-by: Rob Herring <robh@kernel.org>
