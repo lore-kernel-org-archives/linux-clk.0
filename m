@@ -1,63 +1,83 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20170605140012.rlx7rm7xhriwqaza@flea.lan>
-References: <20170602101024.18940-1-wens@csie.org> <20170602101024.18940-11-wens@csie.org>
- <20170602193012.xwuziggyx6evmusz@flea.lan> <CAGb2v64Vgdjm1MAwn+L0PVc0CA0QOCn=0RONKoGDWLpzVBzvmQ@mail.gmail.com>
- <20170605140012.rlx7rm7xhriwqaza@flea.lan>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 23 Jun 2017 17:37:13 +0800
-Message-ID: <CAGb2v67KnHjBmOwCCfrbYXC8r2fH_s5deJYecJgAzPCfuTKiMw@mail.gmail.com>
-Subject: Re: [PATCH 10/19] drm/sun4i: hdmi: Rename internal DDC clock to avoid
- name collision
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 08 Jun 2017 15:23:05 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Han Xu <han.xu@nxp.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
+        "A.S. Dong" <aisheng.dong@nxp.com>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
+        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
+        mark.rutland@arm.com, fabio.estevam@freescale.com,
+        "LW@KARO-electronics.de" <LW@karo-electronics.de>,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] ARM: dts: imx7: add GPMI NAND and APBH DMA
+In-Reply-To: <9d66efda-d7c1-89a2-e163-c86056e08fb1@nxp.com>
+References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
+ <151ddece1e1427d0b69c4ff11b86a69b6a035d0d.1496730576.git-series.stefan@agner.ch>
+ <9d66efda-d7c1-89a2-e163-c86056e08fb1@nxp.com>
+Message-ID: <956085c409415e76adcf4b429d8dc0b5@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 5, 2017 at 10:00 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Sat, Jun 03, 2017 at 10:33:25PM +0800, Chen-Yu Tsai wrote:
->> On Sat, Jun 3, 2017 at 3:30 AM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > On Fri, Jun 02, 2017 at 06:10:15PM +0800, Chen-Yu Tsai wrote:
->> >> The DDC parent clock on the A31 SoC is also conveniently named
->> >> "hdmi-ddc", which results in a name collision when the hdmi driver
->> >> registers its internal DDC divider clock.
->> >>
->> >> Rename the internal clock to "hdmi-ddc-divider".
->> >>
->> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> >> ---
->> >>  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 2 +-
->> >>  1 file changed, 1 insertion(+), 1 deletion(-)
->> >>
->> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
->> >> index e1071838f487..9a6b6243e977 100644
->> >> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
->> >> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
->> >> @@ -125,7 +125,7 @@ static int _sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent,
->> >>       if (!ddc)
->> >>               return -ENOMEM;
->> >>
->> >> -     init.name = "hdmi-ddc";
->> >> +     init.name = "hdmi-ddc-divider";
->> >
->> > Can't we rename the CCU clock instead? Having the clock called
->> > hdmi-ddc being the actual clock output on the DDC bus feels more
->> > natural.
+On 2017-06-07 08:33, Han Xu wrote:
+> On 06/06/2017 01:30 AM, Stefan Agner wrote:
+>> Add i.MX 7 APBH DMA and GPMI NAND modules.
 >>
->> Do you have any suggestions? The manual labels the conflicting one
->> in the CCU as "HDMI_DDC"...
->
-> DDC as the main CCU clock, and hdmi-ddc as the one actually generated
-> by the HDMI controller?
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>   arch/arm/boot/dts/imx7s.dtsi | 32 ++++++++++++++++++++++++++++++++
+>>   1 file changed, 32 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+>> index c4f12fd..d71acd8 100644
+>> --- a/arch/arm/boot/dts/imx7s.dtsi
+>> +++ b/arch/arm/boot/dts/imx7s.dtsi
+>> @@ -995,5 +995,37 @@
+>>   				status = "disabled";
+>>   			};
+>>   		};
+>> +
+>> +		dma_apbh: dma-apbh@33000000 {
+>> +			compatible = "fsl,imx7d-dma-apbh", "fsl,imx28-dma-apbh";
+>> +			reg = <0x33000000 0x2000>;
+>> +			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "gpmi0", "gpmi1", "gpmi2", "gpmi3";
+>> +			#dma-cells = <1>;
+>> +			dma-channels = <4>;
+>> +			clocks = <&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
+>> +			clock-names = "dma_apbh_bch", "dma_apbh_io";
+> 
+> please remove the clock names, I am good with all other changes.
 
-I think I'll just name it hdmi-ddc-parent. Who knows if some other module
-comes in and has a clock named ddc.
+Oh missed that, will do and send v6.
 
-ChenYu
+--
+Stefan
+
+>> +		};
+>> +
+>> +		gpmi: gpmi-nand@33002000{
+>> +			compatible = "fsl,imx7d-gpmi-nand";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +			reg = <0x33002000 0x2000>, <0x33004000 0x4000>;
+>> +			reg-names = "gpmi-nand", "bch";
+>> +			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "bch";
+>> +			clocks = <&clks IMX7D_NAND_RAWNAND_CLK>,
+>> +				<&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
+>> +			clock-names = "gpmi_io", "gpmi_bch_apb";
+>> +			dmas = <&dma_apbh 0>;
+>> +			dma-names = "rx-tx";
+>> +			status = "disabled";
+>> +			assigned-clocks = <&clks IMX7D_NAND_ROOT_SRC>;
+>> +			assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_500M_CLK>;
+>> +		};
+>>   	};
+>>   };
