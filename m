@@ -1,63 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 16:34:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Binbin Zhou <zhoubb@lemote.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>,
-	John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?utf-8?B?6LCi6Ie06YKm?= <Yeking@Red54.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: Re: [PATCH v7 7/8] clk: Loongson: Add Loongson-1A clock support
-Message-ID: <20170619233434.GQ20170@codeaurora.org>
-References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
- <1497581573-17258-8-git-send-email-zhoubb@lemote.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33815 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751445AbdFHRFy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2017 13:05:54 -0400
+Date: Thu, 8 Jun 2017 19:05:40 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com
+Subject: Re: [PATCH 2/3] clk: samsung: Add missing exynos5420 audio related
+ clocks
+Message-ID: <20170608170540.dniqcjqyzal52zt5@kozik-lap>
+References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20170608141726epcas1p1ab3faf22e9f398ae4cf23f84f487d123@epcas1p1.samsung.com>
+ <1496931433-5712-2-git-send-email-s.nawrocki@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1497581573-17258-8-git-send-email-zhoubb@lemote.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1496931433-5712-2-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/16, Binbin Zhou wrote:
-> diff --git a/drivers/clk/loongson1/clk-loongson1a.c b/drivers/clk/loongson1/clk-loongson1a.c
-> new file mode 100644
-> index 0000000..263a82c
-> --- /dev/null
-> +++ b/drivers/clk/loongson1/clk-loongson1a.c
-> @@ -0,0 +1,75 @@
-> +/*
-> + * Copyright (c) 2012-2016 Binbin Zhou <zhoubb@lemote.com>
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#include <linux/clkdev.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/err.h>
-> +
-> +#include <loongson1.h>
-> +#include "clk.h"
-> +
-> +#define OSC		(33 * 1000000)
-> +#define DIV_APB		2
-> +
-> +static DEFINE_SPINLOCK(_lock);
+On Thu, Jun 08, 2017 at 04:17:12PM +0200, Sylwester Nawrocki wrote:
+> This patch adds missing definitions of mux clocks required for using
+> EPLL as the audio subsystem root clock on exynos5420/exynos5422 SoCs.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes since RFC version:
+>   - dropped one clean up chunk
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c   | 10 +++++++---
+>  include/dt-bindings/clock/exynos5420.h |  3 +++
+>  2 files changed, 10 insertions(+), 3 deletions(-)
+> 
 
-I know the other loongson1*.c files also call it "_lock", but
-that's not a very good name for something that may show up in
-lockdep debugging error messages. How about something a bit more
-descriptive, loongson1x_clk_lock?
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
+
