@@ -1,36 +1,59 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 23 Jun 2017 15:05:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V1 1/9] dt-bindings: Add Spreadtrum CCU binding
- documentation
-Message-ID: <20170623200504.k5pigr32uva7ef3p@rob-hp-laptop>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-2-chunyan.zhang@spreadtrum.com>
+Return-Path: <paul@outils.crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170618015855.27738-2-chunyan.zhang@spreadtrum.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Thu, 08 Jun 2017 23:12:12 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+To: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+ <robh+dt@kernel.org>, Paul Burton <paul.burton@imgtec.com>, Maarten ter
+ Huurne <maarten@treewalker.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 06/15] serial: 8250_ingenic: Parse earlycon options
+In-Reply-To: <939febde-f962-6e2b-3657-a9b6c719dac1@imgtec.com>
+References: <20170607200439.24450-1-paul@crapouillou.net>
+ <20170607200439.24450-7-paul@crapouillou.net>
+ <939febde-f962-6e2b-3657-a9b6c719dac1@imgtec.com>
+Message-ID: <1a2b9e1fcf0f9fbf76bd0d25e8904beb@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 18, 2017 at 09:58:47AM +0800, Chunyan Zhang wrote:
-> Introduce a new binding with its documentation for Spreadtrum clock
-> sub-framework.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  .../devicetree/bindings/clock/sprd-ccu.txt         | 46 ++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd-ccu.txt
+Hi,
 
-Acked-by: Rob Herring <robh@kernel.org>
+[...]
+>> diff --git a/drivers/tty/serial/8250/8250_ingenic.c 
+>> b/drivers/tty/serial/8250/8250_ingenic.c
+>> index b31b2ca552d1..59f3e632df49 100644
+>> --- a/drivers/tty/serial/8250/8250_ingenic.c
+>> +++ b/drivers/tty/serial/8250/8250_ingenic.c
+>> @@ -99,14 +99,24 @@ static int __init 
+>> ingenic_early_console_setup(struct earlycon_device *dev,
+>>   					      const char *opt)
+>>   {
+>>   	struct uart_port *port = &dev->port;
+>> -	unsigned int baud, divisor;
+>> +	unsigned int divisor;
+>> +	int baud = 115200;
+>>     	if (!dev->port.membase)
+>>   		return -ENODEV;
+>>   +	if (opt) {
+>> +		char options[256];
+>> +		unsigned int parity, bits, flow; /* unused for now */
+>> +
+>> +		strlcpy(options, opt, sizeof(options));
+> 
+> Rather than adding this extra local copy maybe you could instead:
+> 
+> -void uart_parse_options(char *options, int *baud, int *parity, int 
+> *bits,
+> +void uart_parse_options(const char *options, int *baud, int *parity, 
+> int *bits,
+> 
+> I cannot see any reason why uart_parse_options shouldn't take 'const
+> char *options' as an argument.
+
+Sure, good remark. I'll send a patch to change the prototype.
+
+Thanks,
+- Paul
