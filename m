@@ -1,45 +1,81 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1496606532.3552.18.camel@baylibre.com>
-Subject: Re: [PATCH 2/3] arm: meson: select the clock controller for Meson8
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, carlo@caione.org, khilman@baylibre.com,
-	linux@armlinux.org.uk, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Date: Sun, 04 Jun 2017 22:02:12 +0200
-In-Reply-To: <20170604183341.21417-3-martin.blumenstingl@googlemail.com>
-References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
-	 <20170604183341.21417-3-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:51019 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751428AbdFHWfA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2017 18:35:00 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
+Cc: aisheng.dong@nxp.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
+        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
+        mark.rutland@arm.com, han.xu@nxp.com, fabio.estevam@freescale.com,
+        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v6 0/3] ARM: dts: imx7: add NAND support
+Date: Thu,  8 Jun 2017 15:34:46 -0700
+Message-Id: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2017-06-04 at 20:33 +0200, Martin Blumenstingl wrote:
-> Select COMMON_CLK_MESON8B also for MACH_MESON8 since the Meson8b clock
-> controller driver can also be used on Meson8 SoCs now that we have a
-> separate compatible for it.
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+This revision alters the clock tree such that the clock required by
+the APBH DMA (NAND_USDHC_BUS_CLK_ROOT _after_ gate CCGR20) is available
+as an independent clock.
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+So far the gate CCGR20 was used by the NAND_ROOT_CLK only. A previous
+patch added the NAND_ROOT_CLK to the APBH DMA which lead the clock
+gate CCGR20 getting enabled:
+https://patchwork.ozlabs.org/patch/551967/
 
-> ---
->  arch/arm/mach-meson/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-> index b6e3acc63e14..ee30511849ca 100644
-> --- a/arch/arm/mach-meson/Kconfig
-> +++ b/arch/arm/mach-meson/Kconfig
-> @@ -21,6 +21,7 @@ config MACH_MESON8
->  	bool "Amlogic Meson8 SoCs support"
->  	default ARCH_MESON
->  	select MESON6_TIMER
-> +	select COMMON_CLK_MESON8B
->  
->  config MACH_MESON8B
->  	bool "Amlogic Meson8b SoCs support"
+The data sheet seems to indicate that the APBH DMA only uses hclk which
+is connected to NAND_USDHC_BUS_CLK_ROOT, but also through gate CCGR20.
+Tests seem to confirm this wiring.
+
+By adding a new clock IMX7D_NAND_USDHC_BUS_RAWNAND_CLK we can assign
+a clock which also enables the shared CCGR20 gate without changing the
+DMA driver. This better reflects the true wiring and encapsulates the
+SoC specific clock wiring in the clock tree instead leaking it into
+the driver code.
+
+The wording "rawnand" has been taken from Table 5-12, Module APBHDMA
+in the i.MX 7 Reference Manual.
+
+Versions 2 and earlier also included NAND driver changes, which are
+already merged.
+
+--
+Stefan
+
+Changes since v5:
+- Remove clock-names from dma-apbh node
+
+Changes since v4:
+- Introduce *_RAWNAND_CLK which represent clocks after CCGR20
+- Use *_RAWNAND_CLK for APBH DMA and GPMI NAND
+- Use assigned-clocks to set a reasonable parent for NAND_ROOT_SRC
+
+Changes since v3:
+- Only specify IMX7D_NAND_USDHC_BUS_ROOT_CLK which seems to be sufficent
+
+Changes since v2:
+- Dropped driver changes, alreay merged
+
+Changes since v1:
+- Make clks_count const
+- Introduce IS_IMX7D for i.MX 7 SoC's and make it part of GPMI_IS_MX6
+
+Stefan Agner (3):
+  clk: imx7d: create clocks behind rawnand clock gate
+  ARM: dts: imx7: add GPMI NAND and APBH DMA
+  ARM: dts: imx7-colibri: add NAND support
+
+ arch/arm/boot/dts/imx7-colibri.dtsi     |  9 ++++++++-
+ arch/arm/boot/dts/imx7s.dtsi            | 31 ++++++++++++++++++++++++++-
+ drivers/clk/imx/clk-imx7d.c             |  6 +++--
+ include/dt-bindings/clock/imx7d-clock.h |  4 ++-
+ 4 files changed, 47 insertions(+), 3 deletions(-)
+
+base-commit: e2bb3be2c6c623ff0bad975dc9435531f450f0c5
+-- 
+git-series 0.9.1
