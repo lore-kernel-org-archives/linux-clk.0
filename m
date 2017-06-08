@@ -1,56 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Jun 2017 10:49:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"tony@atomide.com" <tony@atomide.com>
-Subject: Re: [GIT PULL] clk: ti: clkctrl support for 4.13 merge window
-Message-ID: <20170614174910.GD20170@codeaurora.org>
-References: <6d66f78a-5d39-6396-c492-b79a687ce58a@ti.com>
- <20170614173237.GB20170@codeaurora.org>
- <ee8f9ff4-831c-1999-175e-12608a954cfb@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <ee8f9ff4-831c-1999-175e-12608a954cfb@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:57121 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751549AbdFHKBL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2017 06:01:11 -0400
+Subject: Re: [PATCH RFC 2/7] clk: samsung: Add definitions of some audio
+ related clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        cw00.choi@samsung.com, jy0922.shim@samsung.com,
+        b.zolnierkie@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <8c6685fb-e9a2-5c69-722e-8ef1a2e800ff@samsung.com>
+Date: Thu, 08 Jun 2017 12:00:58 +0200
+MIME-version: 1.0
+In-reply-to: <20170422152705.mvnycub4unjlseeq@kozik-lap>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+        <CGME20170421172023epcas1p3dd7397c8c61daa548ffac88a76e53113@epcas1p3.samsung.com>
+        <1492795191-31298-3-git-send-email-s.nawrocki@samsung.com>
+        <20170422152705.mvnycub4unjlseeq@kozik-lap>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/14, Tero Kristo wrote:
-> On 14/06/17 20:32, Stephen Boyd wrote:
-> >On 06/08, Tero Kristo wrote:
-> >>Hi Stephen, Mike,
-> >>
-> >>This pull contains the v3 of the clkctrl base driver support posted
-> >>couple of weeks back, with Tony's acks added to patch #2 and #4.
-> >>
-> >>-Tero
-> >>
-> >
-> >drivers/clk/ti/clkctrl.c:252
-> >_ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
-> >drivers/clk/ti/clkctrl.c:264
-> >_ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
-> >drivers/clk/ti/clkctrl.c:466
-> >_ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
-> >drivers/clk/ti/clkctrl.c:473
-> >_ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
-> >
-> >Can these be silenced with some follow up patch? I'll hold off on
-> >the pull until you can take a look.
-> >
-> 
-> What is the tool you use to get these?
-> 
-> They seem like valid warnings though, some cleanup could be used for
-> the dynamic memory handling. I'll fix these tomorrow.
-> 
+On 04/22/2017 05:27 PM, Krzysztof Kozlowski wrote:
+>>   	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+>>   			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
+>> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
+>> -			20, 2),
+>> +	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
+>> +							SRC_TOP7, 20, 2),
+ >
+> How about not changing the indention level of new line? On the other
+> hand, if you want to change it so maybe align it with opening
+> parenthesis?
 
-I use smatch[1] although I don't always have the most up to date
-version.
-
-[1] git://repo.or.cz/smatch.git
+Thanks for your review.  I wrote it this way to keep it consistent with 
+remaining entries of the exynos5800_mux_clks[] array.  I think it's less
+mess this way, otherwise we would need to make more dubious whitespace
+changes to keep the indentation consistent.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Sylwester
