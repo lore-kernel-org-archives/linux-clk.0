@@ -1,73 +1,29 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <maarten@treewalker.org>
+From: Maarten ter Huurne <maarten@treewalker.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Paul Cercueil <paul@crapouillou.net>, Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Paul Burton <paul.burton@imgtec.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/15] clk: Add Ingenic jz4770 CGU driver
+Date: Thu, 08 Jun 2017 10:40:05 +0200
+Message-ID: <1614689.ggC5Fptfnb@hyperion>
+In-Reply-To: <20170607205943.GO20170@codeaurora.org>
+References: <20170607200439.24450-1-paul@crapouillou.net> <20170607200439.24450-5-paul@crapouillou.net> <20170607205943.GO20170@codeaurora.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1497432104-22609-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1497432104-22609-1-git-send-email-zhang.chunyan@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Jun 2017 11:42:35 +0200
-Message-ID: <CAMuHMdU6ZsqbRhG7=dYE=B_7To=ioWrwWwdoRYGdEQJwB4wW6A@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation: clock: address more for clock-cells property
-To: Chunyan Zhang <zhang.chunyan@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, zhang.lyra@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chunyan,
+On Wednesday 07 June 2017 13:59:43 Stephen Boyd wrote:
+> On 06/07, Paul Cercueil wrote:
+> > Add support for the clocks provided by the CGU in the Ingenic JZ4770
+> > SoC.
+> > 
+> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> > Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+> 
+> Signed-off chain looks odd. Sender should be last in the chain
+> and first is typically author.
 
-On Wed, Jun 14, 2017 at 11:21 AM, Chunyan Zhang
-<zhang.chunyan@linaro.org> wrote:
-> The value of property 'clock-cells' is not determined only by the number
-> of clock outputs in one clock node, it is determined by whether the clock
-> output in this node can be referenced directly without index. If the
-> output clock has to be referenced by a index, the clock-cell of this
-> clock node can't be defined 0.
->
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/clock-bindings.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> index 2ec489e..e2b76b4 100644
-> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -18,6 +18,9 @@ Required properties:
->                    with a single clock output and 1 for nodes with multiple
->                    clock outputs.
->
-> +                  There's one exception, please see the description for
-> +                  clock-indices below.
-> +
->  Optional properties:
->  clock-output-names: Recommended to be a list of strings of clock output signal
->                     names indexed by the first cell in the clock specifier.
-> @@ -48,6 +51,13 @@ clock-indices:          If the identifying number for the clocks in the node
->                    is not linear from zero, then this allows the mapping of
->                    identifiers into the clock-output-names array.
->
-> +                  This property not only servers for clocks with multiple
+Paul is the main author, but one or more commits I made were squashed 
+into the patch during its development.
 
-serves
-
-> +                  clock outputs, but also for clocks with a single clock
-> +                  output whose identifying number is not zero.
-
-Why would you want a single clock and a non-zero identifying number?
-
-> +                  So long as clock-indices is set, clock-cells cannot be
-> +                  set zero.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bye,
+		Maarten
