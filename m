@@ -1,87 +1,98 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 23 Jun 2017 10:45:28 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh+dt@kernel.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock
- controller
-Message-ID: <20170623174528.GC18666@tuxbook>
-References: <20170623161533.20449-1-georgi.djakov@linaro.org>
- <20170623161533.20449-4-georgi.djakov@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	sboyd@codeaurora.org
+Subject: [PATCH v6 1/3] clk: imx7d: create clocks behind rawnand clock gate
+Date: Thu,  8 Jun 2017 15:34:47 -0700
+Message-Id: <8b9edf13938e3166081e72ba8fa4ac822035079c.1496961128.git-series.stefan@agner.ch>
+In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: aisheng.dong@nxp.com, boris.brezillon@free-electrons.com,
+ fabio.estevam@freescale.com, devicetree@vger.kernel.org, richard@nod.at,
+ linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+ marek.vasut@gmail.com, robh+dt@kernel.org, linux-mtd@lists.infradead.org,
+ han.xu@nxp.com, mark.rutland@arm.com, computersforpeace@gmail.com,
+ dwmw2@infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, LW@KARO-electronics.de
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170623161533.20449-4-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 23 Jun 09:15 PDT 2017, Georgi Djakov wrote:
+The rawnand clock gate gates two clocks, NAND_USDHC_BUS_CLK_ROOT
+and NAND_CLK_ROOT. However, the gate has been in the chain of the
+latter only. This does not allow to use the NAND_USDHC_BUS_CLK_ROOT
+only, e.g. as required by APBH-Bridge-DMA.
 
-> +static int msm8916_register_clk(struct device *dev, void __iomem *base)
-> +{
-[..]
-> +	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		ret = PTR_ERR(regmap);
-> +		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
-> +		goto err;
-> +	}
+Add new clocks which represent the clock after the gate, and use a
+shared clock gate to correctly model the hardware.
 
-I think it would be cleaner if you create the regmap in probe() and we
-use that throughout the driver - rather than using two different access
-mechanism.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c             | 6 ++++--
+ include/dt-bindings/clock/imx7d-clock.h | 4 +++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-> +
-> +	a53cc->clkr.regmap = regmap;
-> +
-> +	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
-> +	if (ret) {
-> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-> +				     &a53cc->clkr.hw);
-> +	if (ret) {
-> +		dev_err(dev, "failed to add clock provider: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	clk_notifier_unregister(pclk, &a53cc->clk_nb);
-> +	return ret;
-> +}
-> +
->  static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->  {
-> +	struct device_node *np = pdev->dev.of_node;
->  	struct qcom_apcs_ipc *apcs;
->  	struct resource *res;
->  	unsigned long offset;
-> @@ -63,6 +178,13 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
-> +		/* register the APCS mux and divider clock */
-> +		ret = msm8916_register_clk(&pdev->dev, base);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 93b0364..e364060 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -25,6 +25,7 @@
+ static u32 share_count_sai1;
+ static u32 share_count_sai2;
+ static u32 share_count_sai3;
++static u32 share_count_nand;
+ 
+ static struct clk_div_table test_div_table[] = {
+ 	{ .val = 3, .div = 1, },
+@@ -748,7 +749,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_ENET2_TIME_ROOT_DIV] = imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base + 0xa880, 0, 6);
+ 	clks[IMX7D_ENET_PHY_REF_ROOT_DIV] = imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base + 0xa900, 0, 6);
+ 	clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div", "eim_pre_div", base + 0xa980, 0, 6);
+-	clks[IMX7D_NAND_ROOT_DIV] = imx_clk_divider2("nand_post_div", "nand_pre_div", base + 0xaa00, 0, 6);
++	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk", "nand_pre_div", base + 0xaa00, 0, 6);
+ 	clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div", "qspi_pre_div", base + 0xaa80, 0, 6);
+ 	clks[IMX7D_USDHC1_ROOT_DIV] = imx_clk_divider2("usdhc1_post_div", "usdhc1_pre_div", base + 0xab00, 0, 6);
+ 	clks[IMX7D_USDHC2_ROOT_DIV] = imx_clk_divider2("usdhc2_post_div", "usdhc2_pre_div", base + 0xab80, 0, 6);
+@@ -825,7 +826,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510, 0);
+ 	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] = imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base + 0x4520, 0);
+ 	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk", "eim_post_div", base + 0x4160, 0);
+-	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_gate4("nand_root_clk", "nand_post_div", base + 0x4140, 0);
++	clks[IMX7D_NAND_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140, 0, &share_count_nand);
++	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk", base + 0x4140, 0, &share_count_nand);
+ 	clks[IMX7D_QSPI_ROOT_CLK] = imx_clk_gate4("qspi_root_clk", "qspi_post_div", base + 0x4150, 0);
+ 	clks[IMX7D_USDHC1_ROOT_CLK] = imx_clk_gate4("usdhc1_root_clk", "usdhc1_post_div", base + 0x46c0, 0);
+ 	clks[IMX7D_USDHC2_ROOT_CLK] = imx_clk_gate4("usdhc2_root_clk", "usdhc2_post_div", base + 0x46d0, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index a7a1a50..de62a83 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -450,5 +450,7 @@
+ #define IMX7D_CLK_ARM			437
+ #define IMX7D_CKIL			438
+ #define IMX7D_OCOTP_CLK			439
+-#define IMX7D_CLK_END			440
++#define IMX7D_NAND_RAWNAND_CLK		440
++#define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
++#define IMX7D_CLK_END			442
+ #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+-- 
+git-series 0.9.1
 
-Don't you need to clean up anything in the below error path and in
-remove()?
-
->  	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
->  
->  	apcs->reg = base + offset;
-
-Other than that I think this looks reasonable.
-
-Regards,
-Bjorn
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
