@@ -1,62 +1,100 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 1/4] clk: bcm2835: More flexible IO register remapping
-To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
- Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <28279803-78d2-4231-939b-89a8c895aba9@raspberrypi.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <0643c2ba-9cd3-b985-99d4-af02715aab85@gmail.com>
-Date: Mon, 12 Jun 2017 11:19:38 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52858 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751035AbdFHFB4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Jun 2017 01:01:56 -0400
 MIME-Version: 1.0
-In-Reply-To: <28279803-78d2-4231-939b-89a8c895aba9@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Thu, 08 Jun 2017 13:01:53 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: devicetree@vger.kernel.org,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 03/11] drm: sun4i: ignore swapped mixer<->tcon
+ connection for DE2
+In-Reply-To: <20170607143827.4ng5gedvzn3f5pyx@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-4-icenowy@aosc.io>
+ <20170607093512.rfvpefmyskgjw3ik@flea.lan>
+ <01A7F22E-C4FF-4B4B-A9BC-FF0C96B996B9@aosc.io>
+ <20170607143827.4ng5gedvzn3f5pyx@flea.lan>
+Message-ID: <66881eac1dd06d918692482bdb1ea9e6@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12/2017 07:25 AM, Phil Elwell wrote:
-> The BCM2835 AUX block contains two registers - AUXIRQ and AUXENB.
-> The addition of an irqchip driver using AUXIRQ is hampered by
-> the current DT node reserving both registers with a compatible string
-> claimed by this bcm2835-aux-clk driver.
+在 2017-06-07 22:38，Maxime Ripard 写道：
+> On Wed, Jun 07, 2017 at 06:01:02PM +0800, Icenowy Zheng wrote:
+>> >I have no idea what this is supposed to be doing either.
+>> >
+>> >I might be wrong, but I really feel like there's a big mismatch
+>> >between your commit log, and what you actually implement.
+>> >
+>> >In your commit log, you should state:
+>> >
+>> >A) What is the current behaviour
+>> >B) Why that is a problem
+>> >C) How do you address it
+>> >
+>> >And you don't.
+>> >
+>> >However, after discussing it with Chen-Yu, it seems like you're trying
+>> >to have all the mixers probed before the TCONs. If that is so, there's
+>> >nothing specific to the H3 here, and we also have the same issue on
+>> >dual-pipeline DE1 (A10, A20, A31). Chen-Yu worked on that a bit, but
+>> >the easiest solution would be to move from a DFS algorithm to walk
+>> >down the graph to a BFS one.
+>> >
+>> >That way, we would add all mixers first, then the TCONs, then the
+>> >encoders, and the component framework will probe them in order.
+>> 
+>> No. I said that they're swappable, however, I don't want to
+>> implement the swap now, but hardcode 0-0 1-1 connection.
 > 
-> Ease the transition to separate DT nodes by detecting and handling
-> the case where this driver's MEM resource has been reduced to include
-> only the AUXENB register. Otherwise, use devm_ioremap to remap the
-> region without reserving it.
+> We're on the same page, it's definitely not what I was mentionning
+> here. This would require a significant rework, and the usecase is
+> still unclear for now.
 > 
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-> ---
->  drivers/clk/bcm/clk-bcm2835-aux.c | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
+>> However, as you and Chen-Yu said, device tree should reflect the
+>> real hardware, there will be bonus endpoints for the swapped
+>> connection.
 > 
-> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-> index bd750cf..70d389e 100644
-> --- a/drivers/clk/bcm/clk-bcm2835-aux.c
-> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-> @@ -37,9 +37,22 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
->  	parent = __clk_get_name(parent_clk);
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(reg))
-> -		return PTR_ERR(reg);
-> +	/*
-> +	 * If the MEM resource is only 4 bytes long it covers just the
-> +	 * AUXENB register, otherwise it is the entire AUX block.
-> +	 */
+> If by bonus you mean connections from mixer 0 to tcon 1 and mixer 1 to
+> tcon 0, then yes, we're going to need it.
+> 
+>> What I want to do is to ignore the bonus connection, in order to
+>> prevent them from confusing the code.
+>> 
+>> If you just change the bind sequence, I think it cannot be
+>> prevented that wrong connections will be bound.
+> 
+> This is where I don't follow you anymore. The component framework
+> doesn't list connections but devices. The swapped connections do not
+> matter here, we have the same set of devices: mixer0, mixer1, tcon0
+> and tcon1.
+> 
+> The thing that does change with your patch is that before, the binding
+> sequence would have been mixer0, tcon0, tcon1, mixer1. With your
+> patch, it's mixer0, tcon0, mixer1, tcon1.
+> 
+> So, again, stating what issue you were seeing before making this patch
+> would be very helpful to see what you're trying to do / fix.
 
-Would be worth commenting why devm_ioremap_resource() is used here (to
-avoid the implicit request mem_region) and not in the other case. Might
-also be worth adding a comment that explains that this is temporary and
-this kludge should be removed in the future in favor of the new bindings
-only.
+So maybe I can drop the forward search (searching output) code, and keep
+only the backward search (search input) code in TCON?
 
-Thanks!
--- 
-Florian
+Forward search code is only used when binding, but backward search is 
+used
+for TCON to find connected mixer.
+
+> 
+> Maxime
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
