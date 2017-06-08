@@ -1,45 +1,46 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/2] clk: ARM: dts: exynos: Fix hang on Odroid U3
-Date: Wed, 21 Jun 2017 21:08:05 +0200
-Message-Id: <20170621190807.14850-1-krzk@kernel.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 8 Jun 2017 17:44:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, mark.rutland@arm.com, carlo@caione.org,
+	khilman@baylibre.com, linux@armlinux.org.uk,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] clk: meson: meson8b: add compatibles for Meson8 and
+ Meson8m2
+Message-ID: <20170608224413.fdv4xlvnjld4bgtz@rob-hp-laptop>
+References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
+ <20170604183341.21417-2-martin.blumenstingl@googlemail.com>
+ <1496606325.3552.16.camel@baylibre.com>
+ <CAFBinCCLL5ZqiZzWi-RsfZ-5_h20O5LRRY3+K7dt=U4qrveQ_w@mail.gmail.com>
+ <1496651008.3552.24.camel@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1496651008.3552.24.camel@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Recent linux-next fails to boot on Odroid U3 (Exynos4412) because
-of commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation
-for PLL36XX clocks").
+On Mon, Jun 05, 2017 at 10:23:28AM +0200, Jerome Brunet wrote:
+> On Mon, 2017-06-05 at 00:27 +0200, Martin Blumenstingl wrote:
+> > > I think you should split the binding documentation and clk changes into
+> > > separate
+> > > patches.
+> > 
+> > OK, from what I know is that for "trivial" changes the driver and
+> > dt-binding changes can go through one patch.
+> > this patch started as a four-line patch which added two lines of
+> > documentation and two lines of driver code.
+> 
+> I'm not aware of such tolerance but if you've have seen that the DT maintainers
+> are OK with it, feel free to point me to it.
+> 
+> Last time I heard about it, DT guys were using filter-branch on the kernel tree
+> to create a separate tree, so I was thinking that this "documentation as a
+> separate patch" was a hard rule ... but I may be wrong
 
-Patchset fixes it. Patches are independent although both are required
-to fix the issue.
+That is one of the reasons, but there is no hard rule. It's not worth a 
+respin just for that either.
 
-I will be taking DTS change.
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (2):
-  clk: samsung: audss: Fix silent hang on Exynos4412 due to disabled
-    EPLL
-  ARM: dts: exynos: Add clocks to audss block to fix silent hang on
-    Exynos4412
-
- arch/arm/boot/dts/exynos4.dtsi         | 3 +++
- drivers/clk/samsung/clk-exynos-audss.c | 1 +
- 2 files changed, 4 insertions(+)
-
--- 
-2.9.3
+Acked-by: Rob Herring <robh@kernel.org>
