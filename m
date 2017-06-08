@@ -1,80 +1,52 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v8 1/9] MIPS: Loongson: Merge PRID macro for Loongson-1A/1B/1C
-Date: Tue, 20 Jun 2017 16:56:59 +0800
-Message-Id: <1497949027-10988-2-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
-References: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
+Cc: aisheng.dong@nxp.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
+        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
+        mark.rutland@arm.com, han.xu@nxp.com, fabio.estevam@freescale.com,
+        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v6 3/3] ARM: dts: imx7-colibri: add NAND support
+Date: Thu,  8 Jun 2017 15:34:49 -0700
+Message-Id: <eed2e4bdf1823ac6548b2a21fb7c49fb123f467c.1496961128.git-series.stefan@agner.ch>
+In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Loongson-1 series CPUs(1A/1B/1C) share the same PRID macro.
+The Colibri iMX7 modules come with 512MB on-module SLC NAND flash
+populated. Make use of it by enabling the GPMI controller.
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
- arch/mips/include/asm/cpu.h         | 3 +--
- arch/mips/kernel/cpu-probe.c        | 4 +++-
- arch/mips/loongson32/common/setup.c | 2 +-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/imx7-colibri.dtsi |  9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
-index 3069359..71c624d 100644
---- a/arch/mips/include/asm/cpu.h
-+++ b/arch/mips/include/asm/cpu.h
-@@ -240,8 +240,7 @@
- #define PRID_REV_VR4181A	0x0070	/* Same as VR4122 */
- #define PRID_REV_VR4130		0x0080
- #define PRID_REV_34K_V1_0_2	0x0022
--#define PRID_REV_LOONGSON1B	0x0020
--#define PRID_REV_LOONGSON1C	0x0020	/* Same as Loongson-1B */
-+#define PRID_REV_LOONGSON1ABC	0x0020
- #define PRID_REV_LOONGSON2E	0x0002
- #define PRID_REV_LOONGSON2F	0x0003
- #define PRID_REV_LOONGSON3A_R1	0x0005
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index 353ade2..25f729c 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1513,8 +1513,10 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
- 		c->cputype = CPU_LOONGSON1;
+diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
+index 2d87489..ad4ce19 100644
+--- a/arch/arm/boot/dts/imx7-colibri.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri.dtsi
+@@ -106,6 +106,15 @@
+ 	fsl,magic-packet;
+ };
  
- 		switch (c->processor_id & PRID_REV_MASK) {
--		case PRID_REV_LOONGSON1B:
-+		case PRID_REV_LOONGSON1ABC:
-+#ifdef CONFIG_CPU_LOONGSON1B
- 			__cpu_name[cpu] = "Loongson 1B";
-+#endif
- 			break;
- 		}
- 
-diff --git a/arch/mips/loongson32/common/setup.c b/arch/mips/loongson32/common/setup.c
-index 1640744..c8e8b3e 100644
---- a/arch/mips/loongson32/common/setup.c
-+++ b/arch/mips/loongson32/common/setup.c
-@@ -21,7 +21,7 @@ const char *get_system_type(void)
- 	unsigned int processor_id = (&current_cpu_data)->processor_id;
- 
- 	switch (processor_id & PRID_REV_MASK) {
--	case PRID_REV_LOONGSON1B:
-+	case PRID_REV_LOONGSON1ABC:
- #if defined(CONFIG_LOONGSON1_LS1B)
- 		return "LOONGSON LS1B";
- #elif defined(CONFIG_LOONGSON1_LS1C)
++&gpmi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_gpmi_nand>;
++	fsl,use-minimum-ecc;
++	nand-on-flash-bbt;
++	nand-ecc-mode = "hw";
++	status = "okay";
++};
++
+ &i2c1 {
+ 	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
 -- 
-2.9.4
+git-series 0.9.1
