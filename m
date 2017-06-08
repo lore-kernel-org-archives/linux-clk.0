@@ -1,83 +1,62 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  devicetree@vger.kernel.org,  Omri Itach <omrii@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Rob Herring <robh+dt@kernel.org>,  Neta Zur Hershkovits <neta@marvell.com>,  Shadi Ammouri <shadi@marvell.com>,  Marcin Wojtas <mw@semihalf.com>, Stephen Boyd <sboyd@codeaurora.org>,   Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 6/7] arm64: dts: marvell: remove clock-output-names on ap806
+References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+	<cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+	<4626d359351df74e4e327a2235ecf6ed2a7b11e8.1496239589.git-series.gregory.clement@free-electrons.com>
+Date: Thu, 08 Jun 2017 19:08:30 +0200
+In-Reply-To: <4626d359351df74e4e327a2235ecf6ed2a7b11e8.1496239589.git-series.gregory.clement@free-electrons.com>
+	(Gregory CLEMENT's message of "Wed, 31 May 2017 16:07:27 +0200")
+Message-ID: <87poeepfu9.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 08 Jun 2017 15:23:05 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Han Xu <han.xu@nxp.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
-        "A.S. Dong" <aisheng.dong@nxp.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
-        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
-        mark.rutland@arm.com, fabio.estevam@freescale.com,
-        "LW@KARO-electronics.de" <LW@karo-electronics.de>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] ARM: dts: imx7: add GPMI NAND and APBH DMA
-In-Reply-To: <9d66efda-d7c1-89a2-e163-c86056e08fb1@nxp.com>
-References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
- <151ddece1e1427d0b69c4ff11b86a69b6a035d0d.1496730576.git-series.stefan@agner.ch>
- <9d66efda-d7c1-89a2-e163-c86056e08fb1@nxp.com>
-Message-ID: <956085c409415e76adcf4b429d8dc0b5@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-06-07 08:33, Han Xu wrote:
-> On 06/06/2017 01:30 AM, Stefan Agner wrote:
->> Add i.MX 7 APBH DMA and GPMI NAND modules.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>   arch/arm/boot/dts/imx7s.dtsi | 32 ++++++++++++++++++++++++++++++++
->>   1 file changed, 32 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
->> index c4f12fd..d71acd8 100644
->> --- a/arch/arm/boot/dts/imx7s.dtsi
->> +++ b/arch/arm/boot/dts/imx7s.dtsi
->> @@ -995,5 +995,37 @@
->>   				status = "disabled";
->>   			};
->>   		};
->> +
->> +		dma_apbh: dma-apbh@33000000 {
->> +			compatible = "fsl,imx7d-dma-apbh", "fsl,imx28-dma-apbh";
->> +			reg = <0x33000000 0x2000>;
->> +			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "gpmi0", "gpmi1", "gpmi2", "gpmi3";
->> +			#dma-cells = <1>;
->> +			dma-channels = <4>;
->> +			clocks = <&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
->> +			clock-names = "dma_apbh_bch", "dma_apbh_io";
-> 
-> please remove the clock names, I am good with all other changes.
+Hi,
+ 
+ On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
 
-Oh missed that, will do and send v6.
+> The clock-output-names of the ap806-system-controller node are not used
+> anymore, so remove them.
+>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
---
-Stefan
+Applied on mvebu/dt64
 
->> +		};
->> +
->> +		gpmi: gpmi-nand@33002000{
->> +			compatible = "fsl,imx7d-gpmi-nand";
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			reg = <0x33002000 0x2000>, <0x33004000 0x4000>;
->> +			reg-names = "gpmi-nand", "bch";
->> +			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "bch";
->> +			clocks = <&clks IMX7D_NAND_RAWNAND_CLK>,
->> +				<&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
->> +			clock-names = "gpmi_io", "gpmi_bch_apb";
->> +			dmas = <&dma_apbh 0>;
->> +			dma-names = "rx-tx";
->> +			status = "disabled";
->> +			assigned-clocks = <&clks IMX7D_NAND_ROOT_SRC>;
->> +			assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_500M_CLK>;
->> +		};
->>   	};
->>   };
+Gregory
+
+> ---
+>  arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> index fe41bf9c301e..0c25ec62a2a3 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> @@ -244,10 +244,6 @@
+>  				compatible = "marvell,ap806-system-controller",
+>  					     "syscon";
+>  				#clock-cells = <1>;
+> -				clock-output-names = "ap-cpu-cluster-0",
+> -						     "ap-cpu-cluster-1",
+> -						     "ap-fixed", "ap-mss",
+> -						     "ap-emmc";
+>  				reg = <0x6f4000 0x1000>;
+>  			};
+>  		};
+> -- 
+> git-series 0.9.1
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
