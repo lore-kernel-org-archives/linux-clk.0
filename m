@@ -1,49 +1,114 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 20 Jun 2017 13:44:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: zhoubb <zhoubb@lemote.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>,
-	John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?utf-8?B?6LCi6Ie06YKm?= <Yeking@red54.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: Re: [PATCH v7 7/8] clk: Loongson: Add Loongson-1A clock support
-Message-ID: <20170620204444.GT4493@codeaurora.org>
-References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
- <1497581573-17258-8-git-send-email-zhoubb@lemote.com>
- <20170619233434.GQ20170@codeaurora.org>
- <CAMpQs4L1_VvWxk_mkbRgvVb3o23m+RdVosgzxFLMRX7fjKa+6w@mail.gmail.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  devicetree@vger.kernel.org,  Omri Itach <omrii@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Rob Herring <robh+dt@kernel.org>,  Neta Zur Hershkovits <neta@marvell.com>,  Shadi Ammouri <shadi@marvell.com>,  Marcin Wojtas <mw@semihalf.com>, Stephen Boyd <sboyd@codeaurora.org> ,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 7/7] arm64: dts: marvell: use new binding for the system controller on ap806
+References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+	<cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
+	<e12e9b027462646e16cb51783d6e14660a019ba6.1496239589.git-series.gregory.clement@free-electrons.com>
+Date: Thu, 08 Jun 2017 19:09:15 +0200
+In-Reply-To: <e12e9b027462646e16cb51783d6e14660a019ba6.1496239589.git-series.gregory.clement@free-electrons.com>
+	(Gregory CLEMENT's message of "Wed, 31 May 2017 16:07:28 +0200")
+Message-ID: <87lgp2pft0.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAMpQs4L1_VvWxk_mkbRgvVb3o23m+RdVosgzxFLMRX7fjKa+6w@mail.gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/20, zhoubb wrote:
-> On Tue, Jun 20, 2017 at 7:34 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 06/16, Binbin Zhou wrote:
-> >> +
-> >> +static DEFINE_SPINLOCK(_lock);
-> >
-> > I know the other loongson1*.c files also call it "_lock", but
-> > that's not a very good name for something that may show up in
-> > lockdep debugging error messages. How about something a bit more
-> > descriptive, loongson1x_clk_lock?
-> >
-> It's a good idea！
-> Actually, the variable is not be used in this file.
-> If I rename it in another new patch will be better.
-> Do you think so ?
+Hi,
+ 
+ On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
 
-Ok sure.
+> The new binding for the system controller on ap806 moved the clock into a
+> subnode. This preliminary step will allow to add gpio and pinctrl
+> subnodes
+>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+
+
+Applied on mvebu/dt64
+
+Gregory
+
+> ---
+>  arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> index 0c25ec62a2a3..205037e3e7dc 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> @@ -193,7 +193,7 @@
+>  				#size-cells = <0>;
+>  				cell-index = <0>;
+>  				interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&ap_syscon 3>;
+> +				clocks = <&ap_clk 3>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -204,7 +204,7 @@
+>  				#size-cells = <0>;
+>  				interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+>  				timeout-ms = <1000>;
+> -				clocks = <&ap_syscon 3>;
+> +				clocks = <&ap_clk 3>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -214,7 +214,7 @@
+>  				reg-shift = <2>;
+>  				interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+>  				reg-io-width = <1>;
+> -				clocks = <&ap_syscon 3>;
+> +				clocks = <&ap_clk 3>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -224,7 +224,7 @@
+>  				reg-shift = <2>;
+>  				interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+>  				reg-io-width = <1>;
+> -				clocks = <&ap_syscon 3>;
+> +				clocks = <&ap_clk 3>;
+>  				status = "disabled";
+>  
+>  			};
+> @@ -234,17 +234,20 @@
+>  				reg = <0x6e0000 0x300>;
+>  				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+>  				clock-names = "core";
+> -				clocks = <&ap_syscon 4>;
+> +				clocks = <&ap_clk 4>;
+>  				dma-coherent;
+>  				marvell,xenon-phy-slow-mode;
+>  				status = "disabled";
+>  			};
+>  
+>  			ap_syscon: system-controller@6f4000 {
+> -				compatible = "marvell,ap806-system-controller",
+> -					     "syscon";
+> -				#clock-cells = <1>;
+> +				compatible = "syscon", "simple-mfd";
+>  				reg = <0x6f4000 0x1000>;
+> +
+> +				ap_clk: clock {
+> +					compatible = "marvell,ap806-clock";
+> +					#clock-cells = <1>;
+> +				};
+>  			};
+>  		};
+>  	};
+> -- 
+> git-series 0.9.1
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
