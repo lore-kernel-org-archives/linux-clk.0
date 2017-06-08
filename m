@@ -1,33 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 28 Jun 2017 15:33:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH] clk: scpi: error when clock fails to register
-Message-ID: <20170628223334.GD5316@codeaurora.org>
-References: <20170628135345.9337-1-jbrunet@baylibre.com>
- <c7123c06-b75b-5209-5817-230c63c1bf49@arm.com>
- <1498664332.2337.6.camel@baylibre.com>
- <76efd418-9fd5-6ac5-b4c9-c75c5df69df0@arm.com>
- <1498668381.2337.10.camel@baylibre.com>
- <3e77fd3c-9807-10d4-3a8c-cab8b5562f6c@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3e77fd3c-9807-10d4-3a8c-cab8b5562f6c@arm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:51514 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751663AbdFHWfJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2017 18:35:09 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
+Cc: aisheng.dong@nxp.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
+        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
+        mark.rutland@arm.com, han.xu@nxp.com, fabio.estevam@freescale.com,
+        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v6 2/3] ARM: dts: imx7: add GPMI NAND and APBH DMA
+Date: Thu,  8 Jun 2017 15:34:48 -0700
+Message-Id: <d4aaef68978524bb46eee79d639dde2b83e8bb5f.1496961128.git-series.stefan@agner.ch>
+In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+In-Reply-To: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28, Sudeep Holla wrote:
-> everything if some piece of firmware is not yet ready or broken.
-> But again, we can get it working later, for now, I am fine with you patch.
-> 
+Add i.MX 7 APBH DMA and GPMI NAND modules.
 
-So that's an acked-by, reviewed-by tag for the original patch?
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ arch/arm/boot/dts/imx7s.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index c4f12fd..4902f62 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -995,5 +995,36 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		dma_apbh: dma-apbh@33000000 {
++			compatible = "fsl,imx7d-dma-apbh", "fsl,imx28-dma-apbh";
++			reg = <0x33000000 0x2000>;
++			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "gpmi0", "gpmi1", "gpmi2", "gpmi3";
++			#dma-cells = <1>;
++			dma-channels = <4>;
++			clocks = <&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
++		};
++
++		gpmi: gpmi-nand@33002000{
++			compatible = "fsl,imx7d-gpmi-nand";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x33002000 0x2000>, <0x33004000 0x4000>;
++			reg-names = "gpmi-nand", "bch";
++			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "bch";
++			clocks = <&clks IMX7D_NAND_RAWNAND_CLK>,
++				<&clks IMX7D_NAND_USDHC_BUS_RAWNAND_CLK>;
++			clock-names = "gpmi_io", "gpmi_bch_apb";
++			dmas = <&dma_apbh 0>;
++			dma-names = "rx-tx";
++			status = "disabled";
++			assigned-clocks = <&clks IMX7D_NAND_ROOT_SRC>;
++			assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_500M_CLK>;
++		};
+ 	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
