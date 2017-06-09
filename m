@@ -1,52 +1,36 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 20 Jun 2017 17:32:21 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH 6/9] clk: imx: add composite clk support
-Message-ID: <20170620093221.GE6805@b29396-OptiPlex-7040>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-7-git-send-email-aisheng.dong@nxp.com>
- <20170620020013.GP4493@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170620020013.GP4493@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:34232 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751734AbdFIKUP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 06:20:15 -0400
+Subject: Re: [PATCH 1/3] clk: samsung: Add enable/disable operation for
+ PLL36XX clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <5f07dd96-e1fb-0789-22fc-a38e20d50e47@samsung.com>
+Date: Fri, 09 Jun 2017 12:19:53 +0200
+MIME-version: 1.0
+In-reply-to: <20170608170411.cfqvqmgzgi6qs7hz@kozik-lap>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20170608141722epcas5p2310095ad549f30841430f5cc3e364908@epcas5p2.samsung.com>
+        <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
+        <20170608170411.cfqvqmgzgi6qs7hz@kozik-lap>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 19, 2017 at 07:00:13PM -0700, Stephen Boyd wrote:
-> On 05/15, Dong Aisheng wrote:
-> > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> > index 51b84e4..665777e 100644
-> > --- a/drivers/clk/imx/clk.h
-> > +++ b/drivers/clk/imx/clk.h
-> > @@ -69,6 +69,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
-> >  			     u8 width, void __iomem *busy_reg, u8 busy_shift,
-> >  			     const char **parent_names, int num_parents);
-> >  
-> > +struct clk *imx_clk_composite(const char *name,
-> > +			      const char * const *parent_names,
-> > +			      int num_parents, bool mux_present,
-> > +			      bool rate_present, bool gate_present,
-> > +			      void __iomem *reg);
-> > +
-> >  struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
-> >  				  void __iomem *reg, u8 shift, u8 width,
-> >  				  void (*fixup)(u32 *val));
-> > @@ -209,5 +215,4 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
-> >  struct clk *imx_clk_cpu(const char *name, const char *parent_name,
-> >  		struct clk *div, struct clk *mux, struct clk *pll,
-> >  		struct clk *step);
-> > -
-> 
-> Noise?
-> 
+On 06/08/2017 07:04 PM, Krzysztof Kozlowski wrote:
+> Everything looks good... but you are aware that lock_stat and enable
+> offsets are equal to PLL35XX so the disable/enable ops could be re-used
+> directly?
 
-Yes, got by mistake.
-Will remove.
+I planned to add enable/disable ops for all PLLs and there are different
+bit offsets used for some PLLs than 29 and 31, e.g. PLL2650XX.
+I just reworked the $subject patch to reuse the pll35xx callback functions
+for pll36xx but I think it's better to leave this patch as is, so it is
+easier to handle differences across the PLLs.
 
-Regards
-Dong Aisheng
+-- 
+Thanks,
+Sylwester
