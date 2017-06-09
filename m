@@ -1,69 +1,49 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexey Firago <alexey_firago@mentor.com>, Michael Turquette <mturquette@baylibre.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/8] clk: vc5: Prevent division by zero on unconfigured outputs
-Date: Thu, 29 Jun 2017 13:26:09 +0300
-Message-ID: <6045977.UVitDAHN3D@avalon>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170601073858.GU20170@codeaurora.org>
+References: <20170419091326.11226-1-linus.walleij@linaro.org>
+ <CACRpkdbXEFeVkD8rETyrnuoAxUvnFt2BL07UsXuXfSnq3Qdyfw@mail.gmail.com>
+ <CACRpkdYvwwJcxKPtKUyZBLWsmjXji7pHDKNz9NRTETqj2P3drQ@mail.gmail.com> <20170601073858.GU20170@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 9 Jun 2017 10:48:57 +0200
+Message-ID: <CACRpkdbW24L2kLL9buPRAawXOuQ1ypCLf58gCq5=BWP5ex4zuA@mail.gmail.com>
+Subject: Re: [PATCH 1/5 v2] clk: qcom: Update DT bindings for the
+ MSM8660/APQ8060 RPMCC
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+On Thu, Jun 1, 2017 at 9:38 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 05/24, Linus Walleij wrote:
 
-Thank you for the patches.
+>> I am sorry if you guys are swamped, I just don't know what to do,
+>> clock drivers are starting to become the bottleneck for everything
+>> I do. I bet the ARM SoC maintainers must be noticing it too.
+(...)
+> Meh. Life happens and msm8660 is about a decade old now and not
+> something that I can easily review without digging through old
+> websites to find documentation on the code I worked on 7 years
+> ago. So sorry, but these sorts of patches are basically
+> approaching priority none for me and I have to steal time to
+> review them.
 
-On Thursday 29 Jun 2017 12:18:44 Marek Vasut wrote:
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> 
-> In case the initial values of the FOD registers are not configured in
-> the OTP or by the bootloader, it is possible that the FOD registers
-> will contain zeroes. The code in vc5_fod_recalc_rate() immediately
-> feeds the FOD divider value obtained from the FOD registers into the
-> div64_u64() and if the FOD divider value is zero, triggers division
-> by zero exception.
-> 
-> Check if the FOD divider value is zero and return the frequency of
-> the FOD output as 0 Hz if it is so. This prevents the division by
-> zero exception.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
+Sorry the reference above was mainly to the Gemini SoC clock driver
+which was blocking ARM consolidation, the fact that this MSM8660
+thing was stalled too just got me to think it was related.
 
-For the whole series,
+I understand the MSM8660 is low prio, but the first DragonBoard
+was pushed to developers en masse in 2012 (yours truly included),
+which was just half a decade ago, and started
+the community boards effort from Qualcomm, and yeah, community
+moves slower than markets usually, the board is still supported by
+the BSquare company that managed the board release for Qualcomm,
+I can still login and check schematics and support forums,
+cool isn't it :D
 
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-on Salvator-XS with the display LVDS output.
-
-> ---
->  drivers/clk/clk-versaclock5.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index ea7d552a2f2b..60bf4afb51bd 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw
-> *hw, div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
->  		  (od_frc[2] << 6) | (od_frc[3] >> 2);
-> 
-> +	/* Avoid division by zero if the output is not configured. */
-> +	if ((div_int == 0) && (div_frc == 0))
-> +		return 0;
-> +
->  	/* The PLL divider has 12 integer bits and 30 fractional bits */
->  	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + 
-div_frc);
->  }
-
--- 
-Regards,
-
-Laurent Pinchart
+Yours,
+Linus Walleij
