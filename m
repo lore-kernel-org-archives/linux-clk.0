@@ -1,228 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52200 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751290AbdFBKKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Jun 2017 06:10:40 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH 14/19] drm/sun4i: hdmi: Add support for A31's HDMI controller
-Date: Fri,  2 Jun 2017 18:10:19 +0800
-Message-Id: <20170602101024.18940-15-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
-Sender: linux-clk-owner@vger.kernel.org
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v4 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
+Date: Fri,  9 Jun 2017 16:07:35 +0200
+Message-Id: <20170609140739.15726-3-o.rempel@pengutronix.de>
+In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
+References: <20170609140739.15726-1-o.rempel@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The HDMI controller found in the A31 SoCs is slightly different
-from the one already supported, which is found in the A10s:
+One of the Freescale recommended sequences for power off with external
+PMIC is the following:
+...
+3.  SoC is programming PMIC for power off when standby is asserted.
+4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 
-  - Need different initial values for the PLL related registers
+See:
+http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+page 5083
 
-  - Different behavior of the DDC and TMDS clocks
+This patch implements step 4. of this sequence.
 
-  - Different register layout for the DDC portion
-
-  - Separate DDC parent clock
-
-This patch adds support for it.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi.h     |   3 +
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 141 +++++++++++++++++++++++++++++++++
- 2 files changed, 144 insertions(+)
+ arch/arm/mach-imx/pm-imx6.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index c63d0bd95963..2589bc92be59 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -56,10 +56,13 @@
- #define SUN4I_HDMI_PAD_CTRL0_TXEN		BIT(23)
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index e61b1d1027e1..3a4f8f289f4d 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -27,6 +27,8 @@
+ #include <asm/proc-fns.h>
+ #include <asm/suspend.h>
+ #include <asm/tlb.h>
++#include <linux/kallsyms.h>
++#include <linux/regulator/machine.h>
  
- #define SUN4I_HDMI_PAD_CTRL1_REG	0x204
-+#define SUN4I_HDMI_PAD_CTRL1_UNKNOWN		BIT(24)	/* set on A31 */
- #define SUN4I_HDMI_PAD_CTRL1_AMP_OPT		BIT(23)
- #define SUN4I_HDMI_PAD_CTRL1_AMPCK_OPT		BIT(22)
- #define SUN4I_HDMI_PAD_CTRL1_EMP_OPT		BIT(20)
- #define SUN4I_HDMI_PAD_CTRL1_EMPCK_OPT		BIT(19)
-+#define SUN4I_HDMI_PAD_CTRL1_PWSCK		BIT(18)
-+#define SUN4I_HDMI_PAD_CTRL1_PWSDT		BIT(17)
- #define SUN4I_HDMI_PAD_CTRL1_REG_DEN		BIT(15)
- #define SUN4I_HDMI_PAD_CTRL1_REG_DENCK		BIT(14)
- #define SUN4I_HDMI_PAD_CTRL1_REG_EMP(n)		(((n) & 7) << 10)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 9ded40aaed32..e9abf93eb41c 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -293,6 +293,109 @@ static const struct drm_connector_helper_funcs sun4i_hdmi_connector_helper_funcs
- 	.get_modes	= sun4i_hdmi_get_modes,
- };
+ #include "common.h"
+ #include "hardware.h"
+@@ -602,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+ 				   IMX6Q_GPR1_GINT);
+ }
  
-+static int sun6i_hdmi_read_sub_block(struct sun4i_hdmi *hdmi,
-+				     unsigned int blk, unsigned int offset,
-+				     u8 *buf, unsigned int count)
++static void imx6_pm_poweroff(void)
 +{
-+	unsigned long reg;
-+	int i;
++	imx6_set_lpm(STOP_POWER_OFF);
++	cpu_suspend(0, imx6q_suspend_finish);
 +
-+	reg = readl(hdmi->base + SUN6I_HDMI_DDC_FIFO_CTRL_REG);
-+	writel(reg | SUN6I_HDMI_DDC_FIFO_CTRL_CLEAR,
-+	       hdmi->base + SUN6I_HDMI_DDC_FIFO_CTRL_REG);
-+	writel(SUN6I_HDMI_DDC_ADDR_SEGMENT(offset >> 8) |
-+	       SUN6I_HDMI_DDC_ADDR_EDDC(DDC_SEGMENT_ADDR << 1) |
-+	       SUN6I_HDMI_DDC_ADDR_OFFSET(offset) |
-+	       SUN6I_HDMI_DDC_ADDR_SLAVE(DDC_ADDR),
-+	       hdmi->base + SUN6I_HDMI_DDC_ADDR_REG);
++	mdelay(1000);
 +
-+	writel(SUN6I_HDMI_DDC_CMD_EXPLICIT_EDDC_READ |
-+	       SUN6I_HDMI_DDC_CMD_BYTE_COUNT(count),
-+	       hdmi->base + SUN6I_HDMI_DDC_CMD_REG);
-+
-+	reg = readl(hdmi->base + SUN6I_HDMI_DDC_CTRL_REG);
-+	writel(reg | SUN6I_HDMI_DDC_CTRL_START_CMD,
-+	       hdmi->base + SUN6I_HDMI_DDC_CTRL_REG);
-+
-+	if (readl_poll_timeout(hdmi->base + SUN6I_HDMI_DDC_CTRL_REG, reg,
-+			       !(reg & SUN6I_HDMI_DDC_CTRL_START_CMD),
-+			       100, 100000))
-+		return -EIO;
-+
-+	for (i = 0; i < count; i++)
-+		buf[i] = readb(hdmi->base + SUN6I_HDMI_DDC_FIFO_DATA_REG);
-+
-+	return 0;
++	pr_emerg("Unable to poweroff system\n");
 +}
 +
-+static int sun6i_hdmi_read_edid_block(void *data, u8 *buf, unsigned int blk,
-+				      size_t length)
++static int imx6_pm_poweroff_probe(void)
 +{
-+	struct sun4i_hdmi *hdmi = data;
-+	int retry = 2, i;
-+
-+	do {
-+		for (i = 0; i < length; i += SUN4I_HDMI_DDC_FIFO_SIZE) {
-+			unsigned char offset = blk * EDID_LENGTH + i;
-+			unsigned int count = min((unsigned int)SUN4I_HDMI_DDC_FIFO_SIZE,
-+						 length - i);
-+			int ret;
-+
-+			ret = sun6i_hdmi_read_sub_block(hdmi, blk, offset,
-+							buf + i, count);
-+			if (ret)
-+				return ret;
-+		}
-+	} while (!drm_edid_block_valid(buf, blk, true, NULL) && (retry--));
-+
-+	return 0;
-+}
-+
-+static int sun6i_hdmi_get_modes(struct drm_connector *connector)
-+{
-+	struct sun4i_hdmi *hdmi = drm_connector_to_sun4i_hdmi(connector);
-+	u32 reg;
-+	struct edid *edid;
-+	int ret;
-+
-+	clk_set_rate(hdmi->ddc_clk, 100000);
-+	clk_prepare_enable(hdmi->ddc_clk);
-+
-+	/* Reset i2c controller */
-+	writel(SUN6I_HDMI_DDC_CTRL_ENABLE | SUN6I_HDMI_DDC_CTRL_RESET |
-+	       SUN6I_HDMI_DDC_CTRL_SDA_ENABLE |
-+	       SUN6I_HDMI_DDC_CTRL_SCL_ENABLE,
-+	       hdmi->base + SUN6I_HDMI_DDC_CTRL_REG);
-+	if (readl_poll_timeout(hdmi->base + SUN6I_HDMI_DDC_CTRL_REG, reg,
-+			       !(reg & SUN6I_HDMI_DDC_CTRL_RESET),
-+			       100, 2000)) {
-+		dev_err(hdmi->dev, "DDC reset timeout: %08x\n", reg);
-+		clk_disable_unprepare(hdmi->ddc_clk);
-+		return -EIO;
++	if (pm_power_off) {
++		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
++			__func__, pm_power_off, pm_power_off);
++		return -EBUSY;
 +	}
 +
-+	edid = drm_do_get_edid(connector, sun6i_hdmi_read_edid_block, hdmi);
-+
-+	clk_disable_unprepare(hdmi->ddc_clk);
-+
-+	if (!edid)
-+		return 0;
-+
-+	hdmi->hdmi_monitor = drm_detect_hdmi_monitor(edid);
-+	DRM_DEBUG_DRIVER("Monitor is %s monitor\n",
-+			 hdmi->hdmi_monitor ? "an HDMI" : "a DVI");
-+
-+	drm_mode_connector_update_edid_property(connector, edid);
-+	ret = drm_add_edid_modes(connector, edid);
-+	kfree(edid);
-+
-+	return ret;
++	pm_power_off = imx6_pm_poweroff;
++	return 0;
 +}
 +
-+static const struct drm_connector_helper_funcs sun6i_hdmi_connector_helper_funcs = {
-+	.get_modes	= sun6i_hdmi_get_modes,
-+};
-+
- static enum drm_connector_status
- sun4i_hdmi_connector_detect(struct drm_connector *connector, bool force)
+ void __init imx6_pm_ccm_init(const char *ccm_compat)
  {
-@@ -367,6 +470,43 @@ static const struct sun4i_hdmi_variant sun5i_variant = {
- 				  SUN4I_HDMI_PLL_CTRL_PLL_EN,
- };
- 
-+static const struct sun4i_hdmi_variant sun6i_variant = {
-+	.connector_helpers	= &sun6i_hdmi_connector_helper_funcs,
-+	.ddc_create		= sun6i_ddc_create,
-+	.tmds_create		= sun6i_tmds_create,
-+	.has_ddc_parent_clk	= true,
-+	.has_reset_control	= true,
-+	.pad_ctrl0_init_val	= 0xff |
-+				  SUN4I_HDMI_PAD_CTRL0_TXEN |
-+				  SUN4I_HDMI_PAD_CTRL0_CKEN |
-+				  SUN4I_HDMI_PAD_CTRL0_PWENG |
-+				  SUN4I_HDMI_PAD_CTRL0_PWEND |
-+				  SUN4I_HDMI_PAD_CTRL0_PWENC |
-+				  SUN4I_HDMI_PAD_CTRL0_LDODEN |
-+				  SUN4I_HDMI_PAD_CTRL0_LDOCEN,
-+	.pad_ctrl1_init_val	= SUN4I_HDMI_PAD_CTRL1_REG_AMP(6) |
-+				  SUN4I_HDMI_PAD_CTRL1_REG_EMP(4) |
-+				  SUN4I_HDMI_PAD_CTRL1_REG_DENCK |
-+				  SUN4I_HDMI_PAD_CTRL1_REG_DEN |
-+				  SUN4I_HDMI_PAD_CTRL1_EMPCK_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_EMP_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_PWSDT |
-+				  SUN4I_HDMI_PAD_CTRL1_PWSCK |
-+				  SUN4I_HDMI_PAD_CTRL1_AMPCK_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_AMP_OPT |
-+				  SUN4I_HDMI_PAD_CTRL1_UNKNOWN,
-+	.pll_ctrl_init_val	= SUN4I_HDMI_PLL_CTRL_VCO_S(8) |
-+				  SUN4I_HDMI_PLL_CTRL_CS(3) |
-+				  SUN4I_HDMI_PLL_CTRL_CP_S(10) |
-+				  SUN4I_HDMI_PLL_CTRL_S(4) |
-+				  SUN4I_HDMI_PLL_CTRL_VCO_GAIN(4) |
-+				  SUN4I_HDMI_PLL_CTRL_SDIV2 |
-+				  SUN4I_HDMI_PLL_CTRL_LDO2_EN |
-+				  SUN4I_HDMI_PLL_CTRL_LDO1_EN |
-+				  SUN4I_HDMI_PLL_CTRL_HV_IS_33 |
-+				  SUN4I_HDMI_PLL_CTRL_PLL_EN,
-+};
+ 	struct device_node *np;
+@@ -618,6 +642,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ 	val = readl_relaxed(ccm_base + CLPCR);
+ 	val &= ~BM_CLPCR_LPM;
+ 	writel_relaxed(val, ccm_base + CLPCR);
 +
- static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 			   void *data)
- {
-@@ -559,6 +699,7 @@ static int sun4i_hdmi_remove(struct platform_device *pdev)
++	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
++		imx6_pm_poweroff_probe();
+ }
  
- static const struct of_device_id sun4i_hdmi_of_table[] = {
- 	{ .compatible = "allwinner,sun5i-a10s-hdmi", .data = &sun5i_variant, },
-+	{ .compatible = "allwinner,sun6i-a31-hdmi", .data = &sun6i_variant, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_hdmi_of_table);
+ void __init imx6q_pm_init(void)
 -- 
 2.11.0
-
