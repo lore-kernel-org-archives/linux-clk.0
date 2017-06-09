@@ -1,57 +1,74 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	varada@codeaurora.org,
-	mraghava@codeaurora.org
-Subject: [PATCH v3 2/5] dt-bindings: qcom: Add IPQ8074 bindings
-Date: Thu,  1 Jun 2017 16:57:59 +0530
-Message-Id: <1496316482-25468-3-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
-References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] rockchip clock changes for 4.13 part1
+Date: Fri, 09 Jun 2017 12:00:04 +0200
+Message-ID: <4709927.KhRz8573a2@phil>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Mike, Stephen,
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
-index 028d16e..0ed4d39 100644
---- a/Documentation/devicetree/bindings/arm/qcom.txt
-+++ b/Documentation/devicetree/bindings/arm/qcom.txt
-@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
- 	msm8994
- 	msm8996
- 	mdm9615
-+	ipq8074
- 
- The 'board' element must be one of the following strings:
- 
-@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
- 	dragonboard
- 	mtp
- 	sbc
-+	hk01
- 
- The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
- where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+please find below the core rockchip clock changes for 4.13.
+As stated, one new clock controller and some misc changes as always.
+There may be some more changes later on, but most likely nothing big.
+
+So please pull.
+Thanks
+Heiko
+
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.13-rockchip-clk1
+
+for you to fetch changes up to 223c24be740d293519ef8e03f5c075fab5512fd2:
+
+  clk: rockchip: mark some special clk as critical on rk3368 (2017-06-02 15:57:32 +0200)
+
+----------------------------------------------------------------
+One new clock controller for the rk3128 soc, a fixup for the rk3228 cpuclk
+table and the usual bunch of some new clock-ids and some clocks marked as
+critical.
+
+----------------------------------------------------------------
+Eddie Cai (2):
+      clk: rockchip: add ids for camera on rk3399
+      clk: rockchip: add ids for rk3399 testclks used for camera handling
+
+Elaine Zhang (10):
+      clk: rockchip: add clock-ids for more rk3228 clocks
+      clk: rockchip: fix up the RK3228 clk cpu setting table
+      clk: rockchip: add dt-binding header for rk3128
+      clk: rockchip: export more rk3228 clocks ids
+      dt-bindings: add bindings for rk3128 clock controller
+      clk: rockchip: add clock controller for rk3128
+      clk: rockchip: mark pclk_ddrupctl as critical_clock on rk3036
+      clk: rockchip: mark noc and some special clk as critical on rk3228
+      clk: rockchip: mark noc and some special clk as critical on rk3288
+      clk: rockchip: mark some special clk as critical on rk3368
+
+Heiko Stuebner (1):
+      Merge branch 'v4.13-shared/clkids' into v4.13-clk/next
+
+ .../bindings/clock/rockchip,rk3128-cru.txt         |  56 ++
+ drivers/clk/rockchip/Makefile                      |   1 +
+ drivers/clk/rockchip/clk-rk3036.c                  |   1 +
+ drivers/clk/rockchip/clk-rk3128.c                  | 612 +++++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3228.c                  | 164 ++++--
+ drivers/clk/rockchip/clk-rk3288.c                  |  14 +-
+ drivers/clk/rockchip/clk-rk3368.c                  |   5 +-
+ drivers/clk/rockchip/clk-rk3399.c                  |   4 +-
+ include/dt-bindings/clock/rk3128-cru.h             | 282 ++++++++++
+ include/dt-bindings/clock/rk3228-cru.h             |  47 ++
+ include/dt-bindings/clock/rk3399-cru.h             |   2 +
+ 11 files changed, 1122 insertions(+), 66 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-rk3128.c
+ create mode 100644 include/dt-bindings/clock/rk3128-cru.h
