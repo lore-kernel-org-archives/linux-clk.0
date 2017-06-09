@@ -1,77 +1,52 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 08/17] serial: 8250_ingenic: Parse earlycon options
-Date: Tue, 20 Jun 2017 17:18:46 +0200
-Message-Id: <20170620151855.19399-8-paul@crapouillou.net>
-In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170620151855.19399-1-paul@crapouillou.net>
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v4 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
+Date: Fri,  9 Jun 2017 16:07:34 +0200
+Message-Id: <20170609140739.15726-2-o.rempel@pengutronix.de>
+In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
+References: <20170609140739.15726-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-In the devicetree, it is possible to specify the baudrate, parity,
-bits, flow of the early console, by passing a configuration string like
-this:
-
-aliases {
-	serial0 = &uart0;
-};
-
-chosen {
-	stdout-path = "serial0:57600n8";
-};
-
-This, for instance, will configure the early console for a baudrate of
-57600 bps, no parity, and 8 bits per baud.
-
-This patches implements parsing of this configuration string in the
-8250_ingenic driver, which previously just ignored it.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/tty/serial/8250/8250_ingenic.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- v2: Don't create temp. buffer, now that uart_parse_options takes a const char*
-
-diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-index b31b2ca552d1..be4a07a24342 100644
---- a/drivers/tty/serial/8250/8250_ingenic.c
-+++ b/drivers/tty/serial/8250/8250_ingenic.c
-@@ -99,14 +99,22 @@ static int __init ingenic_early_console_setup(struct earlycon_device *dev,
- 					      const char *opt)
- {
- 	struct uart_port *port = &dev->port;
--	unsigned int baud, divisor;
-+	unsigned int divisor;
-+	int baud = 115200;
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+index 9252912a5b0e..8f93e1503e59 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+@@ -6,6 +6,14 @@ Required properties:
+ - interrupts: Should contain CCM interrupt
+ - #clock-cells: Should be <1>
  
- 	if (!dev->port.membase)
- 		return -ENODEV;
- 
-+	if (opt) {
-+		unsigned int parity, bits, flow; /* unused for now */
++Optional properties:
++- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
++  on power off.
++  Use this property if the SoC should be powered off by external power
++  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
++  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
++  be using "syscon-poweroff" driver instead.
 +
-+		uart_parse_options(opt, &baud, &parity, &bits, &flow);
-+	}
-+
- 	ingenic_early_console_setup_clock(dev);
- 
--	baud = dev->baud ?: 115200;
-+	if (dev->baud)
-+		baud = dev->baud;
- 	divisor = DIV_ROUND_CLOSEST(port->uartclk, 16 * baud);
- 
- 	early_out(port, UART_IER, 0);
+ The clock consumer should specify the desired clock by having the clock
+ ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+ for the full list of i.MX6 Quad and DualLite clock IDs.
 -- 
 2.11.0
