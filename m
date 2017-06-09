@@ -1,173 +1,137 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 2/5] clk: renesas: cpg-mssr: Add support to restore core clocks during resume
-Date: Thu, 29 Jun 2017 15:25:17 +0200
-Message-Id: <1498742720-2713-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
-References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 9 Jun 2017 16:46:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: icenowy@aosc.io
+Cc: devicetree@vger.kernel.org,
+        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 03/11] drm: sun4i: ignore swapped mixer<->tcon
+ connection for DE2
+Message-ID: <20170609144649.67i3zscq26jt5hhe@flea.home>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-4-icenowy@aosc.io>
+ <20170607093512.rfvpefmyskgjw3ik@flea.lan>
+ <01A7F22E-C4FF-4B4B-A9BC-FF0C96B996B9@aosc.io>
+ <20170607143827.4ng5gedvzn3f5pyx@flea.lan>
+ <66881eac1dd06d918692482bdb1ea9e6@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="35hmrjg7ko7l5c5v"
+In-Reply-To: <66881eac1dd06d918692482bdb1ea9e6@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On R-Car Gen3 systems, PSCI system suspend powers down the SoC, possibly
-losing clock configuration.  Hence add a notifier chain that can be used
-by core clocks to save/restore clock state during system suspend/resume.
 
-The implementation of the actual clock state save/restore operations is
-clock-specific, and to be registered with the notifier chain in the SoC
-or family-specific cpg_mssr_info.cpg_clk_register() callback.
+--35hmrjg7ko7l5c5v
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/clk/renesas/rcar-gen2-cpg.c    |  7 +++----
- drivers/clk/renesas/rcar-gen2-cpg.h    |  6 +++---
- drivers/clk/renesas/rcar-gen3-cpg.c    |  3 ++-
- drivers/clk/renesas/rcar-gen3-cpg.h    |  3 ++-
- drivers/clk/renesas/renesas-cpg-mssr.c | 12 +++++++++++-
- drivers/clk/renesas/renesas-cpg-mssr.h |  3 ++-
- 6 files changed, 23 insertions(+), 11 deletions(-)
+On Thu, Jun 08, 2017 at 01:01:53PM +0800, icenowy@aosc.io wrote:
+> =E5=9C=A8 2017-06-07 22:38=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
+=9A
+> > On Wed, Jun 07, 2017 at 06:01:02PM +0800, Icenowy Zheng wrote:
+> > > >I have no idea what this is supposed to be doing either.
+> > > >
+> > > >I might be wrong, but I really feel like there's a big mismatch
+> > > >between your commit log, and what you actually implement.
+> > > >
+> > > >In your commit log, you should state:
+> > > >
+> > > >A) What is the current behaviour
+> > > >B) Why that is a problem
+> > > >C) How do you address it
+> > > >
+> > > >And you don't.
+> > > >
+> > > >However, after discussing it with Chen-Yu, it seems like you're tryi=
+ng
+> > > >to have all the mixers probed before the TCONs. If that is so, there=
+'s
+> > > >nothing specific to the H3 here, and we also have the same issue on
+> > > >dual-pipeline DE1 (A10, A20, A31). Chen-Yu worked on that a bit, but
+> > > >the easiest solution would be to move from a DFS algorithm to walk
+> > > >down the graph to a BFS one.
+> > > >
+> > > >That way, we would add all mixers first, then the TCONs, then the
+> > > >encoders, and the component framework will probe them in order.
+> > >=20
+> > > No. I said that they're swappable, however, I don't want to
+> > > implement the swap now, but hardcode 0-0 1-1 connection.
+> >=20
+> > We're on the same page, it's definitely not what I was mentionning
+> > here. This would require a significant rework, and the usecase is
+> > still unclear for now.
+> >=20
+> > > However, as you and Chen-Yu said, device tree should reflect the
+> > > real hardware, there will be bonus endpoints for the swapped
+> > > connection.
+> >=20
+> > If by bonus you mean connections from mixer 0 to tcon 1 and mixer 1 to
+> > tcon 0, then yes, we're going to need it.
+> >=20
+> > > What I want to do is to ignore the bonus connection, in order to
+> > > prevent them from confusing the code.
+> > >=20
+> > > If you just change the bind sequence, I think it cannot be
+> > > prevented that wrong connections will be bound.
+> >=20
+> > This is where I don't follow you anymore. The component framework
+> > doesn't list connections but devices. The swapped connections do not
+> > matter here, we have the same set of devices: mixer0, mixer1, tcon0
+> > and tcon1.
+> >=20
+> > The thing that does change with your patch is that before, the binding
+> > sequence would have been mixer0, tcon0, tcon1, mixer1. With your
+> > patch, it's mixer0, tcon0, mixer1, tcon1.
+> >=20
+> > So, again, stating what issue you were seeing before making this patch
+> > would be very helpful to see what you're trying to do / fix.
+>=20
+> So maybe I can drop the forward search (searching output) code, and keep
+> only the backward search (search input) code in TCON?
+>=20
+> Forward search code is only used when binding, but backward search is used
+> for TCON to find connected mixer.
 
-diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
-index 123b1e622179308e..feb14579a71b3bf4 100644
---- a/drivers/clk/renesas/rcar-gen2-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen2-cpg.c
-@@ -262,10 +262,9 @@ static unsigned int cpg_pll0_div __initdata;
- static u32 cpg_mode __initdata;
- 
- struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
--					       const struct cpg_core_clk *core,
--					       const struct cpg_mssr_info *info,
--					       struct clk **clks,
--					       void __iomem *base)
-+	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-+	struct clk **clks, void __iomem *base,
-+	struct raw_notifier_head *notifiers)
- {
- 	const struct clk_div_table *table = NULL;
- 	const struct clk *parent;
-diff --git a/drivers/clk/renesas/rcar-gen2-cpg.h b/drivers/clk/renesas/rcar-gen2-cpg.h
-index 9eba07ff8b11e20e..020a3baad0154231 100644
---- a/drivers/clk/renesas/rcar-gen2-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen2-cpg.h
-@@ -34,9 +34,9 @@ struct rcar_gen2_cpg_pll_config {
- };
- 
- struct clk *rcar_gen2_cpg_clk_register(struct device *dev,
--				       const struct cpg_core_clk *core,
--				       const struct cpg_mssr_info *info,
--				       struct clk **clks, void __iomem *base);
-+	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-+	struct clk **clks, void __iomem *base,
-+	struct raw_notifier_head *notifiers);
- int rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
- 		       unsigned int pll0_div, u32 mode);
- 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 3dee900522b703bd..5367944c4ab8491d 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -272,7 +272,8 @@ static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
- 
- struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base)
-+	struct clk **clks, void __iomem *base,
-+	struct raw_notifier_head *notifiers)
- {
- 	const struct clk *parent;
- 	unsigned int mult = 1;
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 073be54b5d038ae3..f4ecadaf41f226b4 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -35,7 +35,8 @@ struct rcar_gen3_cpg_pll_config {
- 
- struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
--	struct clk **clks, void __iomem *base);
-+	struct clk **clks, void __iomem *base,
-+	struct raw_notifier_head *notifiers);
- int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
- 		       unsigned int clk_extalr, u32 mode);
- 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index d27738521dc9a8bb..ab12b2ec61a3c041 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -106,6 +106,7 @@ static const u16 srcr[] = {
-  * @num_core_clks: Number of Core Clocks in clks[]
-  * @num_mod_clks: Number of Module Clocks in clks[]
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-+ * @notifiers: Notifier chain to save/restore clock state for system resume
-  * @smstpcr_saved[].mask: Mask of SMSTPCR[] bits under our control
-  * @smstpcr_saved[].val: Saved values of SMSTPCR[]
-  */
-@@ -122,6 +123,7 @@ struct cpg_mssr_priv {
- 	unsigned int num_mod_clks;
- 	unsigned int last_dt_core_clk;
- 
-+	struct raw_notifier_head notifiers;
- 	struct {
- 		u32 mask;
- 		u32 val;
-@@ -311,7 +313,8 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 	default:
- 		if (info->cpg_clk_register)
- 			clk = info->cpg_clk_register(dev, core, info,
--						     priv->clks, priv->base);
-+						     priv->clks, priv->base,
-+						     &priv->notifiers);
- 		else
- 			dev_err(dev, "%s has unsupported core clock type %u\n",
- 				core->name, core->type);
-@@ -736,6 +739,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	priv->num_core_clks = info->num_total_core_clks;
- 	priv->num_mod_clks = info->num_hw_mod_clks;
- 	priv->last_dt_core_clk = info->last_dt_core_clk;
-+	RAW_INIT_NOTIFIER_HEAD(&priv->notifiers);
- 
- 	for (i = 0; i < nclks; i++)
- 		clks[i] = ERR_PTR(-ENOENT);
-@@ -779,6 +783,9 @@ static int cpg_mssr_suspend_noirq(struct device *dev)
- 			priv->smstpcr_saved[reg].val =
- 				readl(priv->base + SMSTPCR(reg));
- 	}
-+
-+	/* Save core clocks */
-+	raw_notifier_call_chain(&priv->notifiers, PM_EVENT_SUSPEND, NULL);
- 	return 0;
- }
- 
-@@ -788,6 +795,9 @@ static __maybe_unused int cpg_mssr_resume_noirq(struct device *dev)
- 	unsigned int reg, i;
- 	u32 mask, oldval, newval;
- 
-+	/* Restore core clocks */
-+	raw_notifier_call_chain(&priv->notifiers, PM_EVENT_RESUME, NULL);
-+
- 	/* Restore module clocks */
- 	for (reg = 0; reg < ARRAY_SIZE(priv->smstpcr_saved); reg++) {
- 		mask = priv->smstpcr_saved[reg].mask;
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 43d7c7f6832df0b2..c86dc91b0a0facde 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -127,7 +127,8 @@ struct cpg_mssr_info {
- 	struct clk *(*cpg_clk_register)(struct device *dev,
- 					const struct cpg_core_clk *core,
- 					const struct cpg_mssr_info *info,
--					struct clk **clks, void __iomem *base);
-+					struct clk **clks, void __iomem *base,
-+					struct raw_notifier_head *notifiers);
- };
- 
- extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
--- 
-2.7.4
+It is hard to talk about a solution, when it's not clear what the
+issue is.
+
+So please state=20
+> > > >A) What is the current behaviour
+> > > >B) Why that is a problem
+> > > >C) How do you address it
+
+We'll talk about a solution once this is done.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--35hmrjg7ko7l5c5v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZOrTZAAoJEBx+YmzsjxAge1kP/ir/KB6PzJXupxsu/zx2crOT
+ovELSJVD/peATXWCpGDLvawT4CsH4d+dIIXbcP7Z4fyc6L04eMk3G34CKY5ZQf3J
+0/L6KdujncFO0U/CUUbw5ZxKwlVgeoqZKm1aaWbc+bjDBrknqyc/z72xEaNYv4ma
+q05r7SLjHdxDEYODjkaYKAT9HJ8AYELZYm4tJbxL8fjZijnQj+iwcxX7aiSmBYr7
+lAST6HAXR9hHtzsMZGtfQzgdoeMyM8YaSwdLi2uFc8SB9397MSTcCmEk8KfaXE1L
+7w6NThfPC9XT311jwUc+G9HdDIUmG2niNYTgKEFLuPVuzwlMarmLVi529ee8Ol5H
+PWlnPhW5b0Vs6oHI7dtW6Ek1qhJY4kBNhnSvbwsnLGKlxUdOTI5cBkwSKJ4hPcTG
+DurO4PpGKNvYsgRLAnkKufwq8mTC01kXlLdHyxpkxCyDE84TKgXLty8aBJNwqo9w
+y/C0ZnPL6rKYJhdjgzy6LvuPaSNwjQ6fYmVaBGEkNJvDgO5T0Z2wOBrb9i88wrOL
+x2nvfj6stytT4WAMIw2qiwovfg8vw3xcLWEgJTWzPm7RZkgh1SuKERr84anU0NWw
+fh9DdGpLvqW9fotwvC9N3xxXMwKe1eF/DeQ9TNMo/uGZqLhpPv2n3i1B3lNYmIre
+l6KjKpALxgUSMrNmXeix
+=o/oI
+-----END PGP SIGNATURE-----
+
+--35hmrjg7ko7l5c5v--
