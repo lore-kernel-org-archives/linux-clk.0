@@ -1,91 +1,67 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Arnd
- Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang
-	<xiaolong.zhang@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Geng
- Ren <geng.ren@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan
- Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V1 1/9] dt-bindings: Add Spreadtrum CCU binding documentation
-Date: Sun, 18 Jun 2017 09:58:47 +0800
-Message-ID: <20170618015855.27738-2-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <s.nawrocki@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette
+	<mturquette@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, linux-samsung-soc
+	<linux-samsung-soc@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for 4.13
+Message-id: <9a88fc9f-dcf0-806d-dfa8-25767c11a5d7@samsung.com>
+Date: Fri, 09 Jun 2017 17:34:19 +0200
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+References: <CGME20170609153423epcas1p1ed185ee02db60f56deccdc271ecbc927@epcas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce a new binding with its documentation for Spreadtrum clock
-sub-framework.
+Hi Mike, Stephen,
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- .../devicetree/bindings/clock/sprd-ccu.txt         | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sprd-ccu.txt
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
 
-diff --git a/Documentation/devicetree/bindings/clock/sprd-ccu.txt b/Documentation/devicetree/bindings/clock/sprd-ccu.txt
-new file mode 100644
-index 0000000..7a1aa4c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd-ccu.txt
-@@ -0,0 +1,46 @@
-+Spreadtrum Clock Control Unit Binding
-+------------------------------------
-+
-+This binding uses the common clock binding[1].
-+
-+Required properties:
-+- compatible: must contain the following compatible:
-+                - "sprd,sc9860-ccu" (only support SC9860 for the time being)
-+
-+- reg:	Must contain the registers base address and length.
-+	Clocks on most of Spreadtrum's SoCs were designed to locate in a few
-+	different address areas, so there would be more than one items under
-+	this property.
-+
-+- clock-names:	Must contain the following clock names:
-+		- "ext-26m", "ext-rco-100m", "ext-32k"
-+- #clock-cells: must be 1
-+
-+Example:
-+
-+ccu: clk {
-+	compatible = "sprd,sc9860-ccu";
-+	#clock-cells = <1>;
-+	reg = <0 0x20000000 0 0x400>,
-+	      <0 0x20210000 0 0x3000>,
-+	      <0 0x402b0000 0 0x4000>,
-+	      <0 0x402d0000 0 0x400>,
-+	      <0 0x402e0000 0 0x4000>,
-+	      <0 0x40400000 0 0x400>,
-+	      <0 0x40880000 0 0x400>,
-+	      <0 0x415e0000 0 0x400>,
-+	      <0 0x60200000 0 0x400>,
-+	      <0 0x61000000 0 0x400>,
-+	      <0 0x61100000 0 0x3000>,
-+	      <0 0x62000000 0 0x4000>,
-+	      <0 0x62100000 0 0x4000>,
-+	      <0 0x63000000 0 0x400>,
-+	      <0 0x63100000 0 0x3000>,
-+	      <0 0x70b00000 0 0x3000>;
-+	clocks = <&ext_26m>, <&ext_rco_100m>, <&ext_32k>;
-+	clock-names = "ext-26m", "ext-rco-100m", "ext-32k";
-+};
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.13-samsung
+
+for you to fetch changes up to 9842452acd3dae661f4430c4460edd1fc188377f:
+
+  clk: samsung: exynos542x: Add EPLL rate table (2017-06-09 13:12:55 +0200)
+
+----------------------------------------------------------------
+clk/samsung updates for 4.13
+
+ - conversion to the clk_hw API
+ - definitions and fixes of exynos5420 SoC audio subsystem
+   related clocks
+
+----------------------------------------------------------------
+Marek Szyprowski (6):
+      clk: samsung: Remove dead code
+      clk: samsung: Add local variable to match its purpose
+      clk: samsung: Convert common drivers to the new clk_hw API
+      clk: samsung: exynos-audss: Convert to the new clk_hw API
+      clk: samsung: exynos-clkout: Convert to the new clk_hw API
+      clk: samsung: s5pv210-audss: Convert to the new clk_hw API
+
+Sylwester Nawrocki (3):
+      clk: samsung: Add enable/disable operation for PLL36XX clocks
+      clk: samsung: Add missing exynos5420 audio related clocks
+      clk: samsung: exynos542x: Add EPLL rate table
+
+ drivers/clk/samsung/clk-cpu.c           |  17 ++-
+ drivers/clk/samsung/clk-exynos-audss.c  |  57 +++++-----
+ drivers/clk/samsung/clk-exynos-clkout.c |  18 ++--
+ drivers/clk/samsung/clk-exynos5420.c    |  27 ++++-
+ drivers/clk/samsung/clk-pll.c           | 101 ++++++++++--------
+ drivers/clk/samsung/clk-pll.h           |   4 -
+ drivers/clk/samsung/clk-s3c2410-dclk.c  |  75 +++++++------
+ drivers/clk/samsung/clk-s5pv210-audss.c |  52 ++++-----
+ drivers/clk/samsung/clk.c               |  91 +++++++---------
+ drivers/clk/samsung/clk.h               |   9 +-
+ include/dt-bindings/clock/exynos5420.h  |   3 +
+ 11 files changed, 238 insertions(+), 216 deletions(-)
+
 -- 
-2.7.4
+Thanks,
+Sylwester
