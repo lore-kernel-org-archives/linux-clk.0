@@ -1,111 +1,238 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	Huacai Chen <chenhc@lemote.com>
-Subject: [PATCH v8 0/9] MIPS: Loongson: Add the Loongson-1A processor support
-Date: Tue, 20 Jun 2017 16:56:58 +0800
-Message-Id: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5939FB00.3070709@samsung.com>
+Date: Fri, 09 Jun 2017 10:33:52 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v3 4/6] clk: samsung: exynos-audss: Convert to the new
+ clk_hw API
+In-reply-to: <1494831047-10235-1-git-send-email-m.szyprowski@samsung.com>
+References: <1493016143-21569-5-git-send-email-m.szyprowski@samsung.com>
+	<CGME20170515065111eucas1p2127c41dc0fa0d069d5f09bc222f5bd55@eucas1p2.samsung.com>
+	<1494831047-10235-1-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Loongson-1A CPU is similar with Loongson-1B/1C, which is a 32-bit SoC.
+Dear Marek,
 
-It is a cost-effective single chip system based on LS232 processor core,
-and is applicable to fields such as industrial control, and security applications.
-It implements the MIPS32 release 2 instruction set.
+I tested this patch[1] which was applied on Sylwester's git repo. 
+[1] https://git.linuxtv.org/snawrocki/samsung.git/commit/?h=for-v4.13/clk/next&id=6622c52f47372186c17548ca7398c229c45e6215
 
-They share the same PRID, so we rewrite them into PRID_REV_LOONGSON1ABC,
-and use their CPU macros to distinguish.
+When I tested it on XU3, I can't get the kernel booting.
 
-Due to historic reasons, devicetree is not supported on Loongson1 platform now.
-Maybe it will have change in the future.
+[Following log]
+U-Boot 2016.03-gc2deb3a51-TIZEN.org (Oct 28 2016 - 18:00:23 +0000) for ODROID-XU3
 
-Changes since v1:
+CPU:   Exynos5422 @ 800 MHz
+Model: Odroid XU3 based on EXYNOS5422
+Board: Odroid XU3 based on EXYNOS5422
+Type:  xu3
+DRAM:  2 GiB
+MMC:   EXYNOS DWMMC: 0, EXYNOS DWMMC: 1
+In:    serial
+Out:   serial
+Err:   serial
+Net:   No ethernet found.
+Hit any key to stop autoboot:  0 
+reading exynos5422-odroidxu3.dtb
+56532 bytes read in 16 ms (3.4 MiB/s)
+reading uInitrd
+** Unable to read file uInitrd **
+reading zImage
+7676176 bytes read in 208 ms (35.2 MiB/s)
+Kernel image @ 0x40007fc0 [ 0x000000 - 0x752110 ]
+## Flattened Device Tree blob at 40800000
+   Booting using the fdt blob at 0x40800000
+   Loading Device Tree to 4ffef000, end 4ffffcd3 ... OK
 
-1. According commit c908656a7531771ae7642990a7c5f3c7307bd612
-   (MIPS: Loongson: Naming style cleanup and rework) to fix the naming style.
+Starting kernel ...
 
-Changes since v2:
 
-1. Remove __irq_set_handler_locked().
-2. Rebases on top of v4.5-rc5.
 
-Changes since v3:
 
-1. Rename the Loongson-1 series's PRID name.
-2. Rewite Loongson-1A's clk driver.
-3. Rebases on top of v4.10-rc2.
+On 2017년 05월 15일 15:50, Marek Szyprowski wrote:
+> Clock providers should use the new struct clk_hw based API, so convert
+> Exynos Audio Subsystem clock provider to the new approach.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+> Sylwester, if possible, please replace v2 with this fixed version in your tree,
+> as it has not been merged yet to clk-next nor to linux-next.
+> 
+> Changelog
+> v3:
+> - fixed clock data parameter passed to of_clk_add_hw_provider() - after conversion
+>   clk_data is a pointer, so passing it as &clk_data is wrong and causes serious issues
+> 
+> ---
+>  drivers/clk/samsung/clk-exynos-audss.c | 57 +++++++++++++++++-----------------
+>  1 file changed, 29 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+> index cb7df358a27d..85edeb738853 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -22,9 +22,8 @@
+>  #include <dt-bindings/clock/exynos-audss-clk.h>
+>  
+>  static DEFINE_SPINLOCK(lock);
+> -static struct clk **clk_table;
+>  static void __iomem *reg_base;
+> -static struct clk_onecell_data clk_data;
+> +static struct clk_hw_onecell_data *clk_data;
+>  /*
+>   * On Exynos5420 this will be a clock which has to be enabled before any
+>   * access to audss registers. Typically a child of EPLL.
+> @@ -110,18 +109,18 @@ static void exynos_audss_clk_teardown(void)
+>  	int i;
+>  
+>  	for (i = EXYNOS_MOUT_AUDSS; i < EXYNOS_DOUT_SRP; i++) {
+> -		if (!IS_ERR(clk_table[i]))
+> -			clk_unregister_mux(clk_table[i]);
+> +		if (!IS_ERR(clk_data->hws[i]))
+> +			clk_hw_unregister_mux(clk_data->hws[i]);
+>  	}
+>  
+>  	for (; i < EXYNOS_SRP_CLK; i++) {
+> -		if (!IS_ERR(clk_table[i]))
+> -			clk_unregister_divider(clk_table[i]);
+> +		if (!IS_ERR(clk_data->hws[i]))
+> +			clk_hw_unregister_divider(clk_data->hws[i]);
+>  	}
+>  
+> -	for (; i < clk_data.clk_num; i++) {
+> -		if (!IS_ERR(clk_table[i]))
+> -			clk_unregister_gate(clk_table[i]);
+> +	for (; i < clk_data->num; i++) {
+> +		if (!IS_ERR(clk_data->hws[i]))
+> +			clk_hw_unregister_gate(clk_data->hws[i]);
+>  	}
+>  }
+>  
+> @@ -133,6 +132,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  	const char *sclk_pcm_p = "sclk_pcm0";
+>  	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
+>  	const struct exynos_audss_clk_drvdata *variant;
+> +	struct clk_hw **clk_table;
+>  	struct resource *res;
+>  	int i, ret = 0;
+>  
+> @@ -149,14 +149,15 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  
+>  	epll = ERR_PTR(-ENODEV);
+>  
+> -	clk_table = devm_kzalloc(&pdev->dev,
+> -				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
+> +	clk_data = devm_kzalloc(&pdev->dev,
+> +				sizeof(*clk_data) +
+> +				sizeof(*clk_data->hws) * EXYNOS_AUDSS_MAX_CLKS,
+>  				GFP_KERNEL);
+> -	if (!clk_table)
+> +	if (!clk_data)
+>  		return -ENOMEM;
+>  
+> -	clk_data.clks = clk_table;
+> -	clk_data.clk_num = variant->num_clks;
+> +	clk_data->num = variant->num_clks;
+> +	clk_table = clk_data->hws;
+>  
+>  	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
+>  	pll_in = devm_clk_get(&pdev->dev, "pll_in");
+> @@ -176,7 +177,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  			}
+>  		}
+>  	}
+> -	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
+> +	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
+>  				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+>  				CLK_SET_RATE_NO_REPARENT,
+>  				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
+> @@ -187,53 +188,53 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		mout_i2s_p[1] = __clk_get_name(cdclk);
+>  	if (!IS_ERR(sclk_audio))
+>  		mout_i2s_p[2] = __clk_get_name(sclk_audio);
+> -	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
+> +	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(NULL, "mout_i2s",
+>  				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
+>  				CLK_SET_RATE_NO_REPARENT,
+>  				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
+>  
+> -	clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
+> +	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(NULL, "dout_srp",
+>  				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
+>  				0, &lock);
+>  
+> -	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
+> +	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
+>  				"dout_aud_bus", "dout_srp", 0,
+>  				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
+>  
+> -	clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
+> +	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(NULL, "dout_i2s",
+>  				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
+>  				&lock);
+>  
+> -	clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
+> +	clk_table[EXYNOS_SRP_CLK] = clk_hw_register_gate(NULL, "srp_clk",
+>  				"dout_srp", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 0, 0, &lock);
+>  
+> -	clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
+> +	clk_table[EXYNOS_I2S_BUS] = clk_hw_register_gate(NULL, "i2s_bus",
+>  				"dout_aud_bus", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 2, 0, &lock);
+>  
+> -	clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
+> +	clk_table[EXYNOS_SCLK_I2S] = clk_hw_register_gate(NULL, "sclk_i2s",
+>  				"dout_i2s", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 3, 0, &lock);
+>  
+> -	clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
+> +	clk_table[EXYNOS_PCM_BUS] = clk_hw_register_gate(NULL, "pcm_bus",
+>  				 "sclk_pcm", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 4, 0, &lock);
+>  
+>  	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
+>  	if (!IS_ERR(sclk_pcm_in))
+>  		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
+> -	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
+> +	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
+>  				sclk_pcm_p, CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+>  
+>  	if (variant->has_adma_clk) {
+> -		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
+> +		clk_table[EXYNOS_ADMA] = clk_hw_register_gate(NULL, "adma",
+>  				"dout_srp", CLK_SET_RATE_PARENT,
+>  				reg_base + ASS_CLK_GATE, 9, 0, &lock);
+>  	}
+>  
+> -	for (i = 0; i < clk_data.clk_num; i++) {
+> +	for (i = 0; i < clk_data->num; i++) {
+>  		if (IS_ERR(clk_table[i])) {
+>  			dev_err(&pdev->dev, "failed to register clock %d\n", i);
+>  			ret = PTR_ERR(clk_table[i]);
+> @@ -241,8 +242,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
+> -					&clk_data);
+> +	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
+> +				     clk_data);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "failed to add clock provider\n");
+>  		goto unregister;
+> 
 
-Changes since v4:
 
-1. Fix comment's spelling error.
-
-Changes since v5:
-
-1. Rebases on top of v4.11-rc3.
-
-Changes since v6:
-
-1. Improve comment readability.
-2. Rebases on top of v4.12-rc4.
-
-Changes since v7:
-1. Rename Loongson1 clk driver's spinlock name.
-
-Binbin Zhou(9):
- MIPS: Loongson: Merge PRID macro for Loongson-1A/1B/1C
- MIPS: Loongson: Expand Loongson-1's register definition
- MIPS: Loongson: Add basic Loongson-1A CPU support
- MIPS: Loongson: Add Loongson-1A Kconfig options
- MIPS: Loongson: Add platform devices for Loongson-1A
- MIPS: Loongson: Add Loongson-1A board support
- clk: Loongson: A descriptive spinlock name for Loongson1's clk driver
- clk: Loongson: Add Loongson-1A clock support
- MIPS: Loongson: Add Loongson-1A default config file
-
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
 -- 
- arch/mips/Kconfig                                 |  12 +++++++++
- arch/mips/configs/loongson1a_defconfig            | 130 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/mips/include/asm/cpu-type.h                  |   3 ++-
- arch/mips/include/asm/cpu.h                       |   3 +--
- arch/mips/include/asm/mach-loongson32/irq.h       |  16 ++++++++----
- arch/mips/include/asm/mach-loongson32/loongson1.h | 172 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------
- arch/mips/include/asm/mach-loongson32/platform.h  |   2 ++
- arch/mips/include/asm/mach-loongson32/regs-clk.h  |  30 ++++++++++++++++++++-
- arch/mips/include/asm/mach-loongson32/regs-mux.h  |  36 ++++++++++++++++++++++++-
- arch/mips/kernel/cpu-probe.c                      |   6 ++++-
- arch/mips/loongson32/Kconfig                      |  20 ++++++++++++++
- arch/mips/loongson32/Makefile                     |   6 +++++
- arch/mips/loongson32/Platform                     |   1 +
- arch/mips/loongson32/common/irq.c                 |   2 +-
- arch/mips/loongson32/common/platform.c            |  83 ++++++++++++++++++++++++++++++++++++++++++++++++----------
- arch/mips/loongson32/common/setup.c               |   6 +++--
- arch/mips/loongson32/ls1a/Makefile                |   5 ++++
- arch/mips/loongson32/ls1a/board.c                 |  31 ++++++++++++++++++++++
- arch/mips/mm/c-r4k.c                              |  10 +++++++
- drivers/clk/loongson1/Makefile                    |   1 +
- drivers/clk/loongson1/clk-loongson1a.c            |  73 +++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/loongson1/clk-loongson1b.c            |  14 +++++-----
- drivers/clk/loongson1/clk-loongson1c.c            |   8 +++---
- 23 files changed, 601 insertions(+), 69 deletions(-)
- create mode 100644 arch/mips/configs/loongson1a_defconfig
- create mode 100644 arch/mips/loongson32/ls1a/Makefile
- create mode 100644 arch/mips/loongson32/ls1a/board.c
- create mode 100644 drivers/clk/loongson1/clk-loongson1a.c
---
-1.9.0
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
