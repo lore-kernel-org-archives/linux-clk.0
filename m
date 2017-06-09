@@ -1,42 +1,39 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 14/15] devicetree/bindings: Add GCW vendor prefix
-Date: Wed,  7 Jun 2017 22:04:38 +0200
-Message-Id: <20170607200439.24450-15-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1496316482-25468-2-git-send-email-varada@codeaurora.org>
+References: <1496316482-25468-1-git-send-email-varada@codeaurora.org> <1496316482-25468-2-git-send-email-varada@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 9 Jun 2017 10:56:36 +0200
+Message-ID: <CACRpkdaLhD+ONwDTebT7q+M-CHDVPKUE4eKfusmyWkitQC1ZPQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+To: Varadarajan Narayanan <varada@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, absahu@codeaurora.org,
+	sjaganat@codeaurora.org, Sricharan R <sricharan@codeaurora.org>,
+	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Games Consoles Worldwide, mostly known under the acronym GCW, is the
-creator of the GCW Zero open-source video game system.
+On Thu, Jun 1, 2017 at 1:27 PM, Varadarajan Narayanan
+<varada@codeaurora.org> wrote:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for ipq8074.
+>
+> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index c03d20140366..abe0b72b05b6 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -114,6 +114,7 @@ focaltech	FocalTech Systems Co.,Ltd
- friendlyarm	Guangzhou FriendlyARM Computer Tech Co., Ltd
- fsl	Freescale Semiconductor
- fujitsu	Fujitsu Ltd.
-+gcw Games Consoles Worldwide
- ge	General Electric Company
- geekbuying	GeekBuying
- gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
--- 
-2.11.0
+It's a good idea that you include the maintainer, Bjorn Andersson
+<bjorn.andersson@linaro.org>
+on these pin control patches. I'll wait for his review.
+
+Yours,
+Linus Walleij
