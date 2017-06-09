@@ -1,49 +1,58 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: bjorn.andersson@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
 	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v5 3/6] kernel/reboot.c: export pm_power_off_prepare
-Date: Mon, 19 Jun 2017 07:02:42 +0200
-Message-Id: <20170619050245.2632-4-o.rempel@pengutronix.de>
-In-Reply-To: <20170619050245.2632-1-o.rempel@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH v6 2/6] dt-bindings: qcom: Add ipq8074 bindings
+Date: Fri,  9 Jun 2017 15:11:55 +0530
+Message-Id: <1497001319-30353-3-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export pm_power_off_prepare. It is needed to implement power off on
-Freescale/NXP iMX6 based boards with external power management
-integrated circuit (PMIC).
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 ---
- kernel/reboot.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index bd30a973fe94..a6903bf772c7 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -49,6 +49,7 @@ int reboot_force;
-  */
+diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
+index 028d16e..0ed4d39 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.txt
++++ b/Documentation/devicetree/bindings/arm/qcom.txt
+@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
+ 	msm8994
+ 	msm8996
+ 	mdm9615
++	ipq8074
  
- void (*pm_power_off_prepare)(void);
-+EXPORT_SYMBOL(pm_power_off_prepare);
+ The 'board' element must be one of the following strings:
  
- /**
-  *	emergency_restart - reboot the system
+@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
+ 	dragonboard
+ 	mtp
+ 	sbc
++	hk01
+ 
+ The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
+ where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
