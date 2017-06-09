@@ -1,152 +1,63 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: bjorn.andersson@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 10/15] MIPS: ingenic: Add machine info for supported boards
-Date: Wed,  7 Jun 2017 22:04:34 +0200
-Message-Id: <20170607200439.24450-11-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH v5 6/6] arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
+Date: Fri,  9 Jun 2017 15:03:03 +0530
+Message-Id: <1497000783-27916-7-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
+References: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This makes sure that 'mips_machtype' will be initialized to the SoC
-version used on the board.
+From: Abhishek Sahu <absahu@codeaurora.org>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+These configs are required for booting kernel in qcom
+ipq8074 boards.
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 ---
- arch/mips/Kconfig         |  1 +
- arch/mips/jz4740/Makefile |  2 +-
- arch/mips/jz4740/boards.c | 16 ++++++++++++++++
- arch/mips/jz4740/setup.c  | 34 +++++++++++++++++++++++++++++-----
- 4 files changed, 47 insertions(+), 6 deletions(-)
- create mode 100644 arch/mips/jz4740/boards.c
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 2828ecde133d..f36ffb93efd9 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -370,6 +370,7 @@ config MACH_INGENIC
- 	select BUILTIN_DTB
- 	select USE_OF
- 	select LIBFDT
-+	select MIPS_MACHINE
- 
- config LANTIQ
- 	bool "Lantiq based platforms"
-diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
-index 39d70bde8cfe..87feb246fafe 100644
---- a/arch/mips/jz4740/Makefile
-+++ b/arch/mips/jz4740/Makefile
-@@ -5,7 +5,7 @@
- # Object file lists.
- 
- obj-y += prom.o time.o reset.o setup.o \
--	platform.o timer.o
-+	platform.o timer.o boards.o
- 
- obj-$(CONFIG_MACH_JZ4740) += gpio.o
- 
-diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-new file mode 100644
-index 000000000000..a3cf64cf004a
---- /dev/null
-+++ b/arch/mips/jz4740/boards.c
-@@ -0,0 +1,16 @@
-+/*
-+ * Ingenic boards support
-+ *
-+ * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 or later
-+ * as published by the Free Software Foundation.
-+ */
-+
-+#include <asm/bootinfo.h>
-+#include <asm/mips_machine.h>
-+
-+MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-+MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
-+			"Imagination Technologies CI20", NULL);
-diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-index 6d0152321819..afd84ee966e8 100644
---- a/arch/mips/jz4740/setup.c
-+++ b/arch/mips/jz4740/setup.c
-@@ -22,6 +22,7 @@
- #include <linux/of_fdt.h>
- 
- #include <asm/bootinfo.h>
-+#include <asm/mips_machine.h>
- #include <asm/prom.h>
- 
- #include <asm/mach-jz4740/base.h>
-@@ -53,16 +54,34 @@ static void __init jz4740_detect_mem(void)
- 	add_memory_region(0, size, BOOT_MEM_RAM);
- }
- 
-+static unsigned long __init get_board_mach_type(const void *fdt)
-+{
-+	const struct mips_machine *mach;
-+
-+	for (mach = (struct mips_machine *)&__mips_machines_start;
-+			mach < (struct mips_machine *)&__mips_machines_end;
-+			mach++) {
-+		if (!fdt_node_check_compatible(fdt, 0, mach->mach_id))
-+			return mach->mach_type;
-+	}
-+
-+	return MACH_INGENIC_JZ4740;
-+}
-+
- void __init plat_mem_setup(void)
- {
- 	int offset;
- 
-+	if (!early_init_dt_scan(__dtb_start))
-+		return;
-+
- 	jz4740_reset_init();
--	__dt_setup_arch(__dtb_start);
- 
- 	offset = fdt_path_offset(__dtb_start, "/memory");
- 	if (offset < 0)
- 		jz4740_detect_mem();
-+
-+	mips_machtype = get_board_mach_type(__dtb_start);
- }
- 
- void __init device_tree_init(void)
-@@ -75,13 +94,18 @@ void __init device_tree_init(void)
- 
- const char *get_system_type(void)
- {
--	if (IS_ENABLED(CONFIG_MACH_JZ4780))
--		return "JZ4780";
--
--	return "JZ4740";
-+	return mips_get_machine_name();
- }
- 
- void __init arch_init_irq(void)
- {
- 	irqchip_init();
- }
-+
-+static int __init jz4740_machine_setup(void)
-+{
-+	mips_machine_setup();
-+
-+	return 0;
-+}
-+arch_initcall(jz4740_machine_setup);
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 65cdd87..c20328e 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -267,6 +267,7 @@ CONFIG_SPI_S3C64XX=y
+ CONFIG_SPI_SPIDEV=m
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_SINGLE=y
++CONFIG_PINCTRL_IPQ8074=y
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_MSM8916=y
+ CONFIG_PINCTRL_MSM8994=y
+@@ -450,6 +451,7 @@ CONFIG_CLK_QORIQ=y
+ CONFIG_COMMON_CLK_PWM=y
+ CONFIG_COMMON_CLK_QCOM=y
+ CONFIG_QCOM_CLK_SMD_RPM=y
++CONFIG_IPQ_GCC_8074=y
+ CONFIG_MSM_GCC_8916=y
+ CONFIG_MSM_GCC_8994=y
+ CONFIG_MSM_MMCC_8996=y
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
