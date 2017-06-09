@@ -1,165 +1,123 @@
-Return-Path: <danilokrummrich@dk-develop.de>
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
-To: rjui@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	stefan.wahren@i2se.com,
-	eric@anholt.net,
-	mturquette@baylibre.com,
-	f.fainelli@gmail.com,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org
-Subject: [PATCH v4] clk: bcm2835: remove remains from stub clk driver
-Date: Wed, 14 Jun 2017 21:40:57 +0200
-Message-Id: <20170614194057.28722-1-danilokrummrich@dk-develop.de>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Fri, 9 Jun 2017 16:48:25 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v2 04/11] drm: sun4i: add support for H3's TCON0/1
+Message-ID: <20170609144825.jdalt2xakhcenhk5@flea.home>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-5-icenowy@aosc.io>
+ <3642057.oKT9kIlu8M@jernej-laptop>
+ <493AC6F2-3CB3-48F5-9568-A34AA927238F@aosc.io>
+ <20170607094343.qqiwnu2mhmoi6jn7@flea.lan>
+ <52F9F9C7-9A9C-435D-A0AF-FDD4317DAD69@aosc.io>
+ <20170607141957.akonr7hmuwpt7hlt@flea.lan>
+ <4CD8A3BB-965C-4C74-884C-ACE8AAF9989B@aosc.io>
+MIME-Version: 1.0
+In-Reply-To: <4CD8A3BB-965C-4C74-884C-ACE8AAF9989B@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org,
+ Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+ linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============8489540148942966932=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit removes the fixed clocks introduced as a stub clock driver
-added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
-Originally they were used to drive the AMBA bus and PL011 uart driver.
-Now these clocks are derived by the CPRMAN clock driver and configured
-in DT.
 
-Additionally, get rid of init_machine function in bcm2835 board file
-as there's nothing to do any longer.
+--===============8489540148942966932==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zgw3qpblkivtsmek"
+Content-Disposition: inline
 
-Acked-by: Eric Anholt <eric@anholt.net>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
----
-v2: added ACK from Eric Anholt
-v3: rebased onto: [PATCH] irqchip/bcm2836: Move SMP startup code to arch/arm
-v4: added ACK from Stephen Boyd
----
- arch/arm/mach-bcm/board_bcm2835.c |  8 --------
- drivers/clk/bcm/clk-bcm2835-aux.c |  1 -
- drivers/clk/bcm/clk-bcm2835.c     | 30 ------------------------------
- include/linux/clk/bcm2835.h       | 24 ------------------------
- 4 files changed, 63 deletions(-)
- delete mode 100644 include/linux/clk/bcm2835.h
 
-diff --git a/arch/arm/mach-bcm/board_bcm2835.c b/arch/arm/mach-bcm/board_bcm2835.c
-index 1e7c6aa..82f2d08 100644
---- a/arch/arm/mach-bcm/board_bcm2835.c
-+++ b/arch/arm/mach-bcm/board_bcm2835.c
-@@ -15,7 +15,6 @@
- #include <linux/init.h>
- #include <linux/irqchip.h>
- #include <linux/of_address.h>
--#include <linux/clk/bcm2835.h>
- #include <linux/irqchip/irq-bcm2836.h>
- 
- #include <asm/mach/arch.h>
-@@ -52,12 +51,6 @@ static const struct smp_operations bcm2836_smp_ops = {
- 	.smp_boot_secondary	= bcm2836_smp_boot_secondary,
- };
- #endif
--
--static void __init bcm2835_init(void)
--{
--	bcm2835_init_clocks();
--}
--
- static const char * const bcm2835_compat[] = {
- #ifdef CONFIG_ARCH_MULTI_V6
- 	"brcm,bcm2835",
-@@ -69,7 +62,6 @@ static const char * const bcm2835_compat[] = {
- };
- 
- DT_MACHINE_START(BCM2835, "BCM2835")
--	.init_machine = bcm2835_init,
- 	.dt_compat = bcm2835_compat,
- 	.smp = smp_ops(bcm2836_smp_ops),
- MACHINE_END
-diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-index bd750cf..77e276d 100644
---- a/drivers/clk/bcm/clk-bcm2835-aux.c
-+++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-@@ -14,7 +14,6 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
--#include <linux/clk/bcm2835.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <dt-bindings/clock/bcm2835-aux.h>
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 0258538..e8f37f7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -37,7 +37,6 @@
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/clk.h>
--#include <linux/clk/bcm2835.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/module.h>
-@@ -416,35 +415,6 @@ static int bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
- 	return regdump ? 0 : -ENOMEM;
- }
- 
--/*
-- * These are fixed clocks. They're probably not all root clocks and it may
-- * be possible to turn them on and off but until this is mapped out better
-- * it's the only way they can be used.
-- */
--void __init bcm2835_init_clocks(void)
--{
--	struct clk_hw *hw;
--	int ret;
--
--	hw = clk_hw_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 126000000);
--	if (IS_ERR(hw))
--		pr_err("apb_pclk not registered\n");
--
--	hw = clk_hw_register_fixed_rate(NULL, "uart0_pclk", NULL, 0, 3000000);
--	if (IS_ERR(hw))
--		pr_err("uart0_pclk not registered\n");
--	ret = clk_hw_register_clkdev(hw, NULL, "20201000.uart");
--	if (ret)
--		pr_err("uart0_pclk alias not registered\n");
--
--	hw = clk_hw_register_fixed_rate(NULL, "uart1_pclk", NULL, 0, 125000000);
--	if (IS_ERR(hw))
--		pr_err("uart1_pclk not registered\n");
--	ret = clk_hw_register_clkdev(hw, NULL, "20215000.uart");
--	if (ret)
--		pr_err("uart1_pclk alias not registered\n");
--}
--
- struct bcm2835_pll_data {
- 	const char *name;
- 	u32 cm_ctrl_reg;
-diff --git a/include/linux/clk/bcm2835.h b/include/linux/clk/bcm2835.h
-deleted file mode 100644
-index aa937f6..0000000
---- a/include/linux/clk/bcm2835.h
-+++ /dev/null
-@@ -1,24 +0,0 @@
--/*
-- * Copyright (C) 2010 Broadcom
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
--
--#ifndef __LINUX_CLK_BCM2835_H_
--#define __LINUX_CLK_BCM2835_H_
--
--void __init bcm2835_init_clocks(void);
--
--#endif
--- 
-2.9.3
+--zgw3qpblkivtsmek
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 07, 2017 at 10:21:02PM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2017=E5=B9=B46=E6=9C=887=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=881=
+0:19:57, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
+=B0:
+> >On Wed, Jun 07, 2017 at 05:44:56PM +0800, Icenowy Zheng wrote:
+> >> =E4=BA=8E 2017=E5=B9=B46=E6=9C=887=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
+=885:43:43, Maxime Ripard
+> ><maxime.ripard@free-electrons.com> =E5=86=99=E5=88=B0:
+> >> >On Mon, Jun 05, 2017 at 03:03:47AM +0800, Icenowy Zheng wrote:
+> >> >> >You should also expand function sun4i_drv_node_is_tcon() at
+> >> >sun4i_drv.c
+> >> >> >with=20
+> >> >> >new entries, but I'm not sure if this fits in this patch.
+> >> >>=20
+> >> >> Instead I think it should be renamed to something like
+> >> >> "sun4i_drv_node_is_tcon_with_ch0".
+> >> >
+> >> >I'm not sure, or at least, it shouldn't make any difference, since
+> >> >TCON without a channel 0 will not have an endpoint 0, so this will
+> >be
+> >> >dealt with already.
+> >>=20
+> >> But that will prevent new coders from add CH1-less TCON
+> >> compatibles to this function.
+> >
+> >Why? We already have such TCONs (like the A33's, or V3S') in that
+> >function.
+>=20
+> Sorry, CH0-less.
+
+That's not really an issue I think, since the endpoint 0 will not be
+there on those TCONs, the code will bail out.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--zgw3qpblkivtsmek
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZOrU5AAoJEBx+YmzsjxAg39cQALEd+/Hwu2uw7R025Kjt2MxO
+RqedJCkG4kwcAfig4DatB9k/7f9b3XRN3oY35UHKPeCw41dwAx2z2feiLNHqkIEz
+yBzW647C6UXaxWb7S+4oAPG5th+vtw9cWShN7eiSPMyMCC0IyvMiKuUARAgiIulK
+UgMvCRYkp/YJ4NDMmWeUF1bGEgatblKCYhtIbLUekyZoMw9VYSlTw3FMyTg4NZiF
+TnrBc29ZRrK7KAK/FpQRacvS3C6Np1vYSPInFi4fHYJfrMxwEJgC9ytlw0gwy20R
+debt8hOch4+iAYhvbA7pKpkfddq6jTa0AoeCKnTmSmYLsE/in1ntwj1xDPlpvWhL
+nacweUSn55+1O5vUUYfqXbK1EHl1NJ1a6aBJbK0/h3iJJ13Ani0VTHouq3yNdVLN
+DZecANHbRKmCe2mz60wdnm9O1X9baipIXn7ulnrf3rUx844EA+IrXhr5V1S4UoQ/
+RTyN3u/gIH4H0HZ7j0LlN2J1Wu6CvHcAGMGygyRy7YT/GMAw5XuZk5sSWYyovzsc
+GDEZ8Snmt5LvM34YKjdsqu1/6iSqw9VXjuiQ4RLVPexQa6TVehT1a4qSttLrel/5
+HwDQy6zGeK5OzqI/mpIj8+ocC9nPt0M7oNnAVnHfy3zRaHZ10kuSfipzxJKKyvhb
+qqrWbHlL9TsPBmjhTPW/
+=sfxH
+-----END PGP SIGNATURE-----
+
+--zgw3qpblkivtsmek--
+
+
+--===============8489540148942966932==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8489540148942966932==--
