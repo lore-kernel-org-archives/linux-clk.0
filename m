@@ -1,49 +1,121 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH 3/5] clk: qcom: gdsc: Add support to control associated
- clks
-To: Rajendra Nayak <rnayak@codeaurora.org>,
- Stanimir Varbanov <stanimir.varbanov@linaro.org>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
- <1490076923-20194-4-git-send-email-rnayak@codeaurora.org>
- <95d69901-fad5-9a2d-138e-ed5eb9dbc4e2@linaro.org>
- <cd47a256-ce8d-92be-b5f6-e57c0613f222@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <fce92649-04c6-bdc2-ff28-7b682c9cd573@linaro.org>
-Date: Wed, 21 Jun 2017 11:37:59 +0300
-MIME-Version: 1.0
-In-Reply-To: <cd47a256-ce8d-92be-b5f6-e57c0613f222@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:60495 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751479AbdFID71 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2017 23:59:27 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <593A1D1B.6000808@samsung.com>
+Date: Fri, 09 Jun 2017 12:59:23 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: krzk@kernel.org, b.zolnierkie@samsung.com
+Subject: Re: [PATCH 3/3] clk: samsung: exynos542x: Add EPLL rate table
+In-reply-to: <1496931433-5712-3-git-send-email-s.nawrocki@samsung.com>
+References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
+        <CGME20170608141730epcas1p19ca02cb0fd55506f88fcd68414fde70d@epcas1p1.samsung.com>
+        <1496931433-5712-3-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rajendra,
+Hi Sylwester,
 
-On 06/21/2017 09:11 AM, Rajendra Nayak wrote:
-> Hey Stan,
+On 2017년 06월 08일 23:17, Sylwester Nawrocki wrote:
+> A specific clock rate table is added for EPLL so it is possible
+> to set frequency of the EPLL output clock as a multiple of various
+> audio sampling rates.
 > 
-> On 06/14/2017 05:10 PM, Stanimir Varbanov wrote:
->> Hi Rajendra,
->>
->> Thanks for the patches!
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
 > 
-> thanks for the review, do you plan to use this series to get rid of the mmagic
-> clock handling for vidc, or something else?
-
-yes, I have used those patches in the linaro integration branch based on
-4.11. So far those patches are working as expected.
-
-> Is this a dependency to get your Video driver patches to work?
-> These patches have been on the list for a while and I had asked Stephen to leave
-> these out for now till we find someone using them.
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 6f1d6c0..0ba71bf 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1280,2 +1280,2 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  	PLL_35XX_RATE(200000000,  200, 3, 3),
+>  };
 > 
-> I will fixup based on your review and repost in case its useful for something
-> else on the way upstream.
 
-yes, please do.
+I got a following frequency(Recalc rate) value.
+I think there are two much different value for 400000000U and 45158400U.
+
+fin_pll	        Recalc rate	mdiv	pdiv	sdiv	kdiv
+24000000	600000000	100	2	1	0
+24000000	400000000	200	3	2	0
+24000000	394784008.5	197	3	2	25690
+24000000	361267219	301	5	2	3671
+24000000	200000000	200	3	3	0
+24000000	196607995.7	197	3	3	-25690
+24000000	180633609.5	301	5	3	3671
+24000000	131072007.3	131	3	3	4719
+24000000	100000000	200	3	4	0
+24000000	65536003.66	131	3	4	4719
+24000000	49348001.07	197	3	5	25690
+24000000	180633609.5	301	5	3	3671
+24000000	32768001.83	131	3	5	4719
+
+
+> +static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+> +	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
+> +	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
+
+For 400MHz, pdiv is 3 instead of 2 as following:
+	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
+
+> +	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
+> +	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
+> +	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
+> +	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
+> +	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
+> +	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
+> +	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
+> +	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
+> +	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
+> +	PLL_36XX_RATE(45158400U, 301, 5, 3, 3671),
+
+I got the fout value (180633609) instead of 45158400U
+when I used the M(301) P(5) S(3) K(3671).
+fin_pll	        Recalc rate	mdiv	pdiv	sdiv	kdiv
+24000000	180633609	301	5	3	3671
+
+> +	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
+> +};
+
+> +
+>  static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+>  	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+>  		APLL_CON0, NULL),
+> @@ -1287,7 +1303,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  		CPLL_CON0, NULL),
+>  	[dpll] = PLL(pll_2550, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
+>  		DPLL_CON0, NULL),
+> -	[epll] = PLL(pll_2650, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
+> +	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
+>  		EPLL_CON0, NULL),
+>  	[rpll] = PLL(pll_2650, CLK_FOUT_RPLL, "fout_rpll", "fin_pll", RPLL_LOCK,
+>  		RPLL_CON0, NULL),
+> @@ -1402,7 +1418,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+> 
+>  	if (_get_rate("fin_pll") == 24 * MHZ) {
+>  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> -		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> +		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  	}
+> --
+> 1.9.1
+> 
+> 
+> 
+
 
 -- 
-regards,
-Stan
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
