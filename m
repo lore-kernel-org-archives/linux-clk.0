@@ -1,117 +1,54 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Florian Fainelli <f.fainelli@gmail.com>
-Cc: Anup Patel <anup.patel@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
- Oza Pawandeep <oza.oza@broadcom.com>,
- Srinath Mannam <srinath.mannam@broadcom.com>,
- Pramod Kumar <pramod.kumar@broadcom.com>,
- Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- bcm-kernel-feedback-list@broadcom.com
-References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
- <4c15213f-4ac6-a0a7-f2b8-cde2b4cee891@gmail.com>
- <c26e95e1-4bfa-0d24-33cc-8d5ae3102864@gmail.com>
- <20170606223027.GL20170@codeaurora.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <0e321ac9-37ce-6c52-e76a-250183ca299c@gmail.com>
-Date: Mon, 19 Jun 2017 17:28:45 -0700
-MIME-Version: 1.0
-In-Reply-To: <20170606223027.GL20170@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:33937 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751682AbdFIOHs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 10:07:48 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v4 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
+Date: Fri,  9 Jun 2017 16:07:37 +0200
+Message-Id: <20170609140739.15726-5-o.rempel@pengutronix.de>
+In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
+References: <20170609140739.15726-1-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/06/2017 03:30 PM, Stephen Boyd wrote:
-> On 06/05, Florian Fainelli wrote:
->>
->>
->> On 06/05/2017 09:51 AM, Florian Fainelli wrote:
->>> On 06/01/2017 11:34 PM, Anup Patel wrote:
->>>> This patchset adds initial support of Broadcom Stingray SOC
->>>> by reusing existing Broadcom iProc device drivers.
->>>>
->>>> Most of the patches in this patchset are DT patches except
->>>> the Stingray clock tree support which just one patch.
->>>>
->>>> This patchset is based on Linux-4.12-rc3 and it is also available
->>>> at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
->>>>
->>>> Changes since v5:
->>>>  - Rebased patches for Linux-4.12-rc3
->>>>  - Update DT node names to match register offset
->>>>
->>>> Changes since v4:
->>>>  - Reduce number of include headers in Stingray clk driver
->>>>
->>>> Changes since v3:
->>>>  - Rebased patches for Linux-4.12-rc1
->>>>  - Updated PATCH3 to have all clocks except genpll3 to be
->>>>    registered via platform driver probe
->>>>
->>>> Changes since v2:
->>>>  - Remove default bootargs from chosen DT node
->>>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
->>>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
->>>>
->>>> Changes since v1:
->>>>  - Rebased patches for Linux-4.12-rc1
->>>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
->>>>  - Use ranges DT property to clear view of memory-layout
->>>>  - Make bcm-sr.h part of clock DT bindings patch
->>>>
->>>> Anup Patel (3):
->>>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
->>>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
->>>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
->>>>
->>>> Oza Pawandeep (1):
->>>>   arm64: dts: Add I2C DT nodes for Stingray SoC
->>>>
->>>> Pramod Kumar (3):
->>>>   arm64: dts: Add NAND DT nodes for Stingray SOC
->>>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
->>>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
->>>>
->>>> Sandeep Tripathy (3):
->>>>   dt-bindings: clk: Extend binding doc for Stingray SOC
->>>>   clk: bcm: Add clocks for Stingray SOC
->>>>   arm64: dts: Add clock DT nodes for Stingray SOC
->>>>
->>>> Srinath Mannam (1):
->>>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
->>>
->>> Applied patches 1, 4-11 to devicetree-arm64/next, thanks!
->>
->> Also took patch 2, to make sure everything builds properly, Stephen, let
->> me know if you want me to take patch #3 as well.
->>
-> 
-> Usually clk tree takes includes and hosts that in a stable branch
-> for arm-soc maintainers to take. It seems that now arm-soc
-> maintainers are asking that dts files use plain numbers and then
-> switch to defines later after -rc1.
-> 
-> Should I go apply patch 2 myself so I can apply patch 3 to the
-> clk tree? Personally, I think this is fine because git doesn't
-> care about duplicate commits anyway and this is just #defines
-> we're talking about. Alternatively, you can host patch 2 in a
-> stable branch on v4.12-rc1 that I can pull into clk tree and then
-> apply patch 3 on top of and merge up into clk-next. Or you can
-> send me a PR for this clk driver and I can merge it into clk-next
-> where patch 2 is the parent of the clk driver change.
+Document the new optional "fsl,pmic-stby-poweroff" property.
 
-Yes, please apply patch 2 and 3 in your tree, we should be fine. You
-would also find patch 2 in a stable branch:
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ Documentation/devicetree/bindings/regulator/pfuze100.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-https://github.com/Broadcom/stblinux/refs/heads/arm64-stingray-for-4.13
-
-Thanks!
+diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+index 444c47831a40..197f1a52e960 100644
+--- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
++++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+@@ -4,6 +4,13 @@ Required properties:
+ - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000"
+ - reg: I2C slave address
+ 
++Optional properties:
++- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
++  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
++  Use this option if the SoC should be powered off by external power
++  management IC (PMIC) on PMIC_STBY_REQ signal.
++  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
++
+ Required child node:
+ - regulators: This is the list of child nodes that specify the regulator
+   initialization data for defined regulators. Please refer to below doc
 -- 
-Florian
+2.11.0
+
