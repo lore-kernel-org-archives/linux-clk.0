@@ -1,69 +1,198 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from anholt.net ([50.246.234.109]:49278 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751203AbdFERe7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 5 Jun 2017 13:34:59 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Danilo Krummrich <danilokrummrich@dk-develop.de>,
-        rjui@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        stefan.wahren@i2se.com, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org
-Subject: Re: [PATCH] clk: bcm2835: remove remains from stub clk driver
-In-Reply-To: <20170605121933.25288-1-danilokrummrich@dk-develop.de>
-References: <20170605121933.25288-1-danilokrummrich@dk-develop.de>
-Date: Mon, 05 Jun 2017 10:34:56 -0700
-Message-ID: <87y3t6xrr3.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Received: from mailout3.samsung.com ([203.254.224.33]:33788 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751540AbdFIKiv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 06:38:51 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 1/3] clk: samsung: Add enable/disable operation for
+ PLL36XX clocks
+Date: Fri, 09 Jun 2017 12:38:29 +0200
+Message-id: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170609103849epcas5p397e85db2388d4d91f5a775996cb9541d@epcas5p3.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+The existing enable/disable ops for PLL35XX are made more generic
+and used also for PLL36XX. This fixes issues in the kernel with
+PLL36XX PLLs when the PLL has not been already enabled by bootloader.
 
-Danilo Krummrich <danilokrummrich@dk-develop.de> writes:
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v1:
+ - none
 
-> This commit removes the fixed clocks introduced as a stub clock driver
-> added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
-> Originally they were used to drive the AMBA bus and PL011 uart driver.
-> Now these clocks are derived by the CPRMAN clock driver and configured
-> in DT.
->
-> Additionally, get rid of init_machine function in bcm2835 board file
-> as there's nothing to do any longer.
->
-> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+ drivers/clk/samsung/clk-pll.c | 87 +++++++++++++++++++++++++------------------
+ 1 file changed, 50 insertions(+), 37 deletions(-)
 
-This technically breaks loading a new kernel with an ancient DT.
-However, in the Raspberry Pi world, the DT and kernel are always shipped
-together, because the DT (even in the downstream firmware package) is
-built out of the linux kernel tree and shipped alongside the kernel.
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index db68057..037c614 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -23,6 +23,10 @@ struct samsung_clk_pll {
+ 	struct clk_hw		hw;
+ 	void __iomem		*lock_reg;
+ 	void __iomem		*con_reg;
++	/* PLL enable control bit offset in @con_reg register */
++	unsigned short		enable_offs;
++	/* PLL lock status bit offset in @con_reg register */
++	unsigned short		lock_offs;
+ 	enum samsung_pll_type	type;
+ 	unsigned int		rate_count;
+ 	const struct samsung_pll_rate_table *rate_table;
+@@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
+ 	return rate_table[i - 1].rate;
+ }
 
-If the clock maintainers are OK with picking this, it's:
++static int samsung_pll3xxx_enable(struct clk_hw *hw)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u32 tmp;
++
++	tmp = readl_relaxed(pll->con_reg);
++	tmp |= BIT(pll->enable_offs);
++	writel_relaxed(tmp, pll->con_reg);
++
++	/* wait lock time */
++	do {
++		cpu_relax();
++		tmp = readl_relaxed(pll->con_reg);
++	} while (!(tmp & BIT(pll->lock_offs)));
++
++	return 0;
++}
++
++static void samsung_pll3xxx_disable(struct clk_hw *hw)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	u32 tmp;
++
++	tmp = readl_relaxed(pll->con_reg);
++	tmp &= ~BIT(pll->enable_offs);
++	writel_relaxed(tmp, pll->con_reg);
++}
++
+ /*
+  * PLL2126 Clock Type
+  */
+@@ -142,34 +174,6 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
+ #define PLL35XX_LOCK_STAT_SHIFT	(29)
+ #define PLL35XX_ENABLE_SHIFT	(31)
 
-Acked-by: Eric Anholt <eric@anholt.net>
+-static int samsung_pll35xx_enable(struct clk_hw *hw)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 tmp;
+-
+-	tmp = readl_relaxed(pll->con_reg);
+-	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
+-	writel_relaxed(tmp, pll->con_reg);
+-
+-	/* wait_lock_time */
+-	do {
+-		cpu_relax();
+-		tmp = readl_relaxed(pll->con_reg);
+-	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
+-
+-	return 0;
+-}
+-
+-static void samsung_pll35xx_disable(struct clk_hw *hw)
+-{
+-	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 tmp;
+-
+-	tmp = readl_relaxed(pll->con_reg);
+-	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
+-	writel_relaxed(tmp, pll->con_reg);
+-}
+-
+ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+ {
+@@ -238,12 +242,12 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 			(rate->sdiv << PLL35XX_SDIV_SHIFT);
+ 	writel_relaxed(tmp, pll->con_reg);
 
-and I'm pretty sure it won't conflict with anything we've got going on
-in arm/.
+-	/* wait_lock_time if enabled */
+-	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
++	/* Wait until the PLL is locked if it is enabled. */
++	if (tmp & BIT(pll->enable_offs)) {
+ 		do {
+ 			cpu_relax();
+ 			tmp = readl_relaxed(pll->con_reg);
+-		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
++		} while (!(tmp & BIT(pll->lock_offs)));
+ 	}
+ 	return 0;
+ }
+@@ -252,8 +256,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	.recalc_rate = samsung_pll35xx_recalc_rate,
+ 	.round_rate = samsung_pll_round_rate,
+ 	.set_rate = samsung_pll35xx_set_rate,
+-	.enable = samsung_pll35xx_enable,
+-	.disable = samsung_pll35xx_disable,
++	.enable = samsung_pll3xxx_enable,
++	.disable = samsung_pll3xxx_disable,
+ };
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+ static const struct clk_ops samsung_pll35xx_clk_min_ops = {
+@@ -275,6 +279,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ #define PLL36XX_SDIV_SHIFT	(0)
+ #define PLL36XX_KDIV_SHIFT	(0)
+ #define PLL36XX_LOCK_STAT_SHIFT	(29)
++#define PLL36XX_ENABLE_SHIFT	(31)
 
------BEGIN PGP SIGNATURE-----
+ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+@@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	writel_relaxed(pll_con1, pll->con_reg + 4);
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlk1lkAACgkQtdYpNtH8
-nuifTg/9H0ohLL1AN3vm00zgZLqU36DuMnUdR541WtXvonk82BsqHTFRqi6B59c+
-gNVXVHn0Vau0fBxQT00DiN8rqitv+zYhWadGnMpDomZlwLw9zSnaS2lF9g16pCgh
-DNXvRW4ieHLo2k3U06fe78L/rseEamqEcpg6DgoLwVp68FDKx+5eYNHVyjPkh8uv
-8qq6r1y8ZBE9mxav2u6gf8tuVFnVJfhJQThUBkwRvpGOmjYvD15d+uQJt9jqcvT7
-TWerHV+49igLDQfee4GVicIV+F0nE9leCQcZfAsK+LxVvd13HwiRFMq8ah6OBbiy
-7pWzpT3zsK8u8+1fmId365hTiTMye83i1ZjDwjakT5uX4SYmwdR+LWiIUdKAG2Wa
-0FZLu64019t/ngsC9jLD1BE7u0oZqPRNEmNpDM4RKqBDogxGQAhGYZdUSdm6AwKB
-YeJ16I7EYHFPTODJGGciZynE+ilu3lJFvS15aPjQ0Dn7P9r36ngKY4z3FZ9DrEf4
-tijpCdEoxvvqOm7QduMsdIodI4svoEVC19mZCsbMZbWrcmzo43f9oZDSlwhtt4b8
-6UC4BxEPqi7b1rHNu8oixL7jYmM95lXfLDBpabetT2nX6v8eL/RbcHkciwiVWDgH
-QEOdS6NQ0RyNE9JduujLIfUlXTt+ASUl5hfDPLliWCduWqLsHqg=
-=vRxt
------END PGP SIGNATURE-----
---=-=-=--
+ 	/* wait_lock_time */
+-	do {
+-		cpu_relax();
+-		tmp = readl_relaxed(pll->con_reg);
+-	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
++	if (pll_con0 & BIT(pll->enable_offs)) {
++		do {
++			cpu_relax();
++			tmp = readl_relaxed(pll->con_reg);
++		} while (!(tmp & BIT(pll->lock_offs)));
++	}
+
+ 	return 0;
+ }
+@@ -366,6 +373,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	.recalc_rate = samsung_pll36xx_recalc_rate,
+ 	.set_rate = samsung_pll36xx_set_rate,
+ 	.round_rate = samsung_pll_round_rate,
++	.enable = samsung_pll3xxx_enable,
++	.disable = samsung_pll3xxx_disable,
+ };
+
+ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+@@ -1287,6 +1296,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	case pll_1450x:
+ 	case pll_1451x:
+ 	case pll_1452x:
++		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
++		pll->lock_offs = PLL35XX_LOCK_STAT_SHIFT;
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll35xx_clk_min_ops;
+ 		else
+@@ -1305,6 +1316,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	/* clk_ops for 36xx and 2650 are similar */
+ 	case pll_36xx:
+ 	case pll_2650:
++		pll->enable_offs = PLL36XX_ENABLE_SHIFT;
++		pll->lock_offs = PLL36XX_LOCK_STAT_SHIFT;
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll36xx_clk_min_ops;
+ 		else
+--
+1.9.1
+
