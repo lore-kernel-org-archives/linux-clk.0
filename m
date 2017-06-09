@@ -1,58 +1,31 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Jun 2017 10:45:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v8] clk: Add Gemini SoC clock controller
-Message-ID: <20170621174540.GB4493@codeaurora.org>
-References: <20170621075952.26387-1-linus.walleij@linaro.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 9 Jun 2017 09:24:04 -0500
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 14/15] devicetree/bindings: Add GCW vendor prefix
+Message-ID: <20170609142404.xmr5jcuq5vh2mwpp@rob-hp-laptop>
+References: <20170607200439.24450-1-paul@crapouillou.net>
+ <20170607200439.24450-15-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170621075952.26387-1-linus.walleij@linaro.org>
+In-Reply-To: <20170607200439.24450-15-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/21, Linus Walleij wrote:
-> The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
-> controller that derive all clocks from a single crystal, using some
-> documented and some undocumented PLLs, half dividers, counters and
-> gates. This is a best attempt to construct a clock driver for the
-> clocks so at least we can gate off unused hardware and driver the
-> PCI bus clock.
+On Wed, Jun 07, 2017 at 10:04:38PM +0200, Paul Cercueil wrote:
+> Games Consoles Worldwide, mostly known under the acronym GCW, is the
+> creator of the GCW Zero open-source video game system.
 > 
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Applied to clk-next + this fixup
-
----8<---
-diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
-index 3ddd2faec674..b82db96ce0c7 100644
---- a/drivers/clk/clk-gemini.c
-+++ b/drivers/clk/clk-gemini.c
-@@ -279,13 +279,9 @@ static int gemini_clk_probe(struct platform_device *pdev)
- 
- 	/* Remap the system controller for the exclusive register */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
- 	base = devm_ioremap_resource(dev, res);
--	if (!base) {
--		dev_err(dev, "no memory base\n");
--		return -ENODEV;
--	}
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
- 	map = syscon_node_to_regmap(np);
- 	if (IS_ERR(map)) {
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>
