@@ -1,31 +1,58 @@
-Return-Path: <zhangfei.gao@linaro.org>
-Return-Path: <zhangfei.gao@linaro.org>
-Subject: Re: [PATCH v2 1/3] clk: hi3660: fix wrong parent name of
- clk_mux_sysbus
-To: Guodong Xu <guodong.xu@linaro.org>, mturquette@baylibre.com,
- sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: chenjun14@huawei.com, zhongkaihua@huawei.com, leo.yan@linaro.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- John Stultz <john.stultz@linaro.org>
-References: <20170526073821.25971-1-guodong.xu@linaro.org>
- <20170526073821.25971-2-guodong.xu@linaro.org>
-From: zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <404d8df2-9a12-1735-6676-097812000178@linaro.org>
-Date: Wed, 14 Jun 2017 11:23:38 +0800
-MIME-Version: 1.0
-In-Reply-To: <20170526073821.25971-2-guodong.xu@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: bjorn.andersson@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH v5 2/6] dt-bindings: qcom: Add ipq8074 bindings
+Date: Fri,  9 Jun 2017 15:02:59 +0530
+Message-Id: <1497000783-27916-3-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
+References: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+---
+ Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-On 2017年05月26日 15:38, Guodong Xu wrote:
-> From: Chen Jun <chenjun14@huawei.com>
->
-> Parent name of clk_mux_sysbus is not correct. This patch fixes it.
->
-> Signed-off-by: Chen Jun <chenjun14@huawei.com>
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
-Acked-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
+index 028d16e..0ed4d39 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.txt
++++ b/Documentation/devicetree/bindings/arm/qcom.txt
+@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
+ 	msm8994
+ 	msm8996
+ 	mdm9615
++	ipq8074
+ 
+ The 'board' element must be one of the following strings:
+ 
+@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
+ 	dragonboard
+ 	mtp
+ 	sbc
++	hk01
+ 
+ The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
+ where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
