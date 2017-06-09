@@ -1,103 +1,79 @@
-Return-Path: <phil@raspberrypi.org>
-From: Phil Elwell <phil@raspberrypi.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Cc: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH v3 4/4] ARM: dts: bcm283x: Add and use bcm2835-aux-intc
-Date: Wed, 14 Jun 2017 17:29:10 +0100
-Message-Id: <1497457750-35585-5-git-send-email-phil@raspberrypi.org>
-In-Reply-To: <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
-References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
- <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:12064 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751598AbdFIKjA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 06:39:00 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 3/3] clk: samsung: exynos542x: Add EPLL rate table
+Date: Fri, 09 Jun 2017 12:38:31 +0200
+Message-id: <1497004711-24052-3-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
+References: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
+        <CGME20170609103856epcas5p32a847b79d540f4b2105990f499b3f59e@epcas5p3.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a DT node for the AUX interrupt controller, updating the AUX
-peripheral nodes to make use of it.
+A specific clock rate table is added for EPLL so it is possible
+to set frequency of the EPLL output clock as multiple of various
+audio sampling rates.
 
-Note that the IO region overlaps that of the AUX clock driver, but by
-the time the irqchip driver appears in the tree the clock driver should
-have been updated to ioremap the region without reserving it, along
-with preparing for a point in the future where the clock node may be
-shrunk to the single word it actually needs.
-
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- arch/arm/boot/dts/bcm283x.dtsi | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+Changes since v1:
+ - fixed coefficient for 400 MHZ rate
+ - dropped 45158400 Hz rate entry
+---
+ drivers/clk/samsung/clk-exynos5420.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index 431dcfc..b304221 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -1,6 +1,7 @@
- #include <dt-bindings/pinctrl/bcm2835.h>
- #include <dt-bindings/clock/bcm2835.h>
- #include <dt-bindings/clock/bcm2835-aux.h>
-+#include <dt-bindings/interrupt-controller/bcm2835-aux-intc.h>
- #include <dt-bindings/gpio/gpio.h>
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 6f1d6c0..0748a0b 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1280,6 +1280,21 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	PLL_35XX_RATE(200000000,  200, 3, 3),
+ };
  
- /* firmware-provided startup stubs live here, where the secondary CPUs are
-@@ -459,7 +460,22 @@
- 			status = "disabled";
- 		};
- 
--		aux: aux@0x7e215000 {
-+		auxintc: interrupt-controller@7e215000 {
-+			compatible = "brcm,bcm2835-aux-intc";
-+			reg = <0x7e215000 0x4>;
-+			interrupts = <1 29>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+		};
++static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
++	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
++	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
++	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
++	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
++	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
++	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
++	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
++	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
++	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
++	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
++	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
++	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
++};
 +
-+		/*
-+		 * N.B. This node overlaps with the previous node,
-+		 * but the updated driver remaps the region without
-+		 * reserving it. After a suitable period this
-+		 * node can be reduced to cover only the single word
-+		 * at 7e215004.
-+		 */
-+		aux: aux@7e215000 {
- 			compatible = "brcm,bcm2835-aux";
- 			#clock-cells = <1>;
- 			reg = <0x7e215000 0x8>;
-@@ -469,7 +485,8 @@
- 		uart1: serial@7e215040 {
- 			compatible = "brcm,bcm2835-aux-uart";
- 			reg = <0x7e215040 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&auxintc>;
-+			interrupts = <BCM2835_AUX_IRQ_UART>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_UART>;
- 			status = "disabled";
- 		};
-@@ -477,7 +494,8 @@
- 		spi1: spi@7e215080 {
- 			compatible = "brcm,bcm2835-aux-spi";
- 			reg = <0x7e215080 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&auxintc>;
-+			interrupts = <BCM2835_AUX_IRQ_SPI1>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_SPI1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -487,7 +505,8 @@
- 		spi2: spi@7e2150c0 {
- 			compatible = "brcm,bcm2835-aux-spi";
- 			reg = <0x7e2150c0 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&auxintc>;
-+			interrupts = <BCM2835_AUX_IRQ_SPI2>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_SPI2>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+@@ -1287,7 +1302,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 		CPLL_CON0, NULL),
+ 	[dpll] = PLL(pll_2550, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
+ 		DPLL_CON0, NULL),
+-	[epll] = PLL(pll_2650, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
++	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
+ 		EPLL_CON0, NULL),
+ 	[rpll] = PLL(pll_2650, CLK_FOUT_RPLL, "fout_rpll", "fin_pll", RPLL_LOCK,
+ 		RPLL_CON0, NULL),
+@@ -1402,7 +1417,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 
+ 	if (_get_rate("fin_pll") == 24 * MHZ) {
+ 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+-		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
++		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+ 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 	}
 -- 
 1.9.1
+
