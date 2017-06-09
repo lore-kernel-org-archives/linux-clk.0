@@ -1,88 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:12823 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751534AbdFIQyC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 12:54:02 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 5/7] ASoC: Add Odroid sound DT bindings
- documentation
-To: Rob Herring <robh@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, cw00.choi@samsung.com, krzk@kernel.org,
-        jy0922.shim@samsung.com, broonie@kernel.org,
-        b.zolnierkie@samsung.com
-Message-id: <82c62742-679a-0d36-a6de-f94eb5e7eac0@samsung.com>
-Date: Fri, 09 Jun 2017 18:53:52 +0200
-MIME-version: 1.0
-In-reply-to: <20170428170335.7zoovrcs6v22x3lz@rob-hp-laptop>
-Content-type: text/plain; charset="windows-1252"; format="flowed"
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170421172040epcas5p2ee7191a899c52ea3f077837dc2e865ca@epcas5p2.samsung.com>
-        <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
-        <20170428170335.7zoovrcs6v22x3lz@rob-hp-laptop>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH] clk: meson: gxbb: add all clk81 parents
+To: Jerome Brunet <jbrunet@baylibre.com>
+References: <20170608135545.31499-1-jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <0fde1897-966f-45b0-91ef-0f8f0df62c5b@baylibre.com>
+Date: Fri, 9 Jun 2017 11:55:32 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170608135545.31499-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/28/2017 07:03 PM, Rob Herring wrote:
-> On Fri, Apr 21, 2017 at 07:19:49PM +0200, Sylwester Nawrocki wrote:
+On 06/08/2017 03:55 PM, Jerome Brunet wrote:
+> Remove the FIXME on clk81 mux and add all the documented parents
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/gxbb.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 36c0e455437e..a897ea45327c 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -603,7 +603,11 @@ static struct meson_clk_mpll gxbb_mpll2 = {
+>   * coordinated clock rates feature
+>   */
+>  
+> -static u32 mux_table_clk81[]	= { 6, 5, 7 };
+> +static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
+> +static const char * const clk81_parent_names[] = {
+> +	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
+> +	"fclk_div3", "fclk_div5"
+> +};
+>  
+>  static struct clk_mux gxbb_mpeg_clk_sel = {
+>  	.reg = (void *)HHI_MPEG_CLK_CNTL,
+> @@ -616,13 +620,12 @@ static struct clk_mux gxbb_mpeg_clk_sel = {
+>  		.name = "mpeg_clk_sel",
+>  		.ops = &clk_mux_ro_ops,
+>  		/*
+> -		 * FIXME bits 14:12 selects from 8 possible parents:
+> +		 * bits 14:12 selects from 8 possible parents:
+>  		 * xtal, 1'b0 (wtf), fclk_div7, mpll_clkout1, mpll_clkout2,
+>  		 * fclk_div4, fclk_div3, fclk_div5
+>  		 */
+> -		.parent_names = (const char *[]){ "fclk_div3", "fclk_div4",
+> -			"fclk_div5" },
+> -		.num_parents = 3,
+> +		.parent_names = clk81_parent_names,
+> +		.num_parents = ARRAY_SIZE(clk81_parent_names),
+>  		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
+>  	},
+>  };
+> 
 
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
->> @@ -0,0 +1,57 @@
->> +Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
->> +
->> +Required properties:
->> +
->> + - compatible - "samsung,odroidxu3-audio" - for Odroid XU3 board,
->> +		"samsung,odroidxu4-audio" - for Odroid XU4 board
->> + - model - the user-visible name of this sound complex
->
-> ASoC will support "label" soon (see graph support). Use that instead.
+Should not harm.
 
-I could change that but it now might be too late since the patch has been
-merged in v4.12-rc1. Sorry, I couldn't get back to this earlier.
-
->> + - clocks - should contain entries matching clock names in the clock-names
->> +    property
->> + - clock-names - should contain following entries:
->> +    - "epll" - indicating the EPLL output clock
->> +    - "i2s_rclk" - indicating the RCLK (root) clock of the I2S0 controller
->
-> At least the 2nd one should be in the i2s node. This node isn't really a
-> h/w block, so it shouldn't have clocks IMO.
-
-"i2s_rclk" is a clock exposed by the I2S controller.
-
-The RCLK clock has already assigned clock parent in DT:
-
-&i2s0 {
-	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
-};
-
-In fact the sound card is not a consumer of this clock, the clock is used
-only internally in the I2S device.  I could try to drop it and use ASoC
-internal API for CPU DAI clock setting.
-
-But I have no idea what else could be done with the PLL, it belongs to
-the audio card and the card driver must somehow get hold of that clock
-to configure its frequency depending on audio sampling rate.
-
->> +Example:
->> +
->> +sound {
->> +	compatible = "samsung,odroidxu3-audio";
->
->> +	samsung,cpu-dai = <&i2s0>;
->> +	samsung,codec-dai = <&max98090>;
->
-> Not documented. Nor needed?
-
-Yes, I will remove these, that's a leftover from initial versions
-of the binding.
-
---
-Thanks,
-Sylwester
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
