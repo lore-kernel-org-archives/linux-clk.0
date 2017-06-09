@@ -1,127 +1,91 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>
-CC: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@imgtec.com>,
-	Frank Rowand <frowand.list@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH v4 1/4] dt-bindings: Document img,boston-clock binding
-Date: Fri, 2 Jun 2017 11:20:00 -0700
-Message-ID: <20170602182003.16269-2-paul.burton@imgtec.com>
-In-Reply-To: <20170602182003.16269-1-paul.burton@imgtec.com>
-References: <20170602182003.16269-1-paul.burton@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: bjorn.andersson@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH v5 0/6] Add minimal boot support for IPQ8074
+Date: Fri,  9 Jun 2017 15:02:57 +0530
+Message-Id: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding documentation for the clocks provided by the
-MIPS Boston development board from Imagination Technologies, and a
-header file describing the available clocks for use by device trees &
-driver.
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
+v5:
+  * Removed the 'NA' binding from documentation
 
----
+v4:
+  * Split the clock patch and addressed a minor comment
+    in the clock driver as per stephen's feedback.
 
-Changes in v4:
-- Move img,boston-clock node under platform register syscon node.
-- Add MAINTAINERS entry.
+v3:
+  * Addressed review feedback from Bjorn for pinctrl
+     - Unified the names for qpic pads.
+     - Corrected the names for pwm pins.
+  * Updated pinctrl documentation.
+  * Updated the default bootargs in ipq8074-hk01.dts.
+  * Updated the gcc clocks driver for removing the
+    unused halt_bit in few places.
 
-Changes in v3: None
+v2:
+  * Addressed review feedback from Stephen
+    - Removed cpu-map entries
+    - Added mmio-timer nodes
+  * Fix sparse warnings in the gcc-ipq8074.c
+  * Updated pinctrl documentation
 
-Changes in v2:
-- Add BOSTON_CLK_INPUT to expose the input clock.
+v1:
+  https://www.spinics.net/lists/kernel/msg2498734.html
+  This series adds minimal board boot support for ipq8074-hk01
+  board.
 
- .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
- MAINTAINERS                                        |  7 +++++
- include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
- 3 files changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
- create mode 100644 include/dt-bindings/clock/boston-clock.h
+Abhishek Sahu (3):
+  clk: qcom: Add DT bindings for ipq8074 gcc clock controller
+  clk: qcom: Add ipq8074 Global Clock Controller support
+  arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
 
-diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-new file mode 100644
-index 000000000000..7bc5e9ffb624
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-@@ -0,0 +1,31 @@
-+Binding for Imagination Technologies MIPS Boston clock sources.
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+The device node must be a child node of the syscon node corresponding to the
-+Boston system's platform registers.
-+
-+Required properties:
-+- compatible : Should be "img,boston-clock".
-+- #clock-cells : Should be set to 1.
-+  Values available for clock consumers can be found in the header file:
-+    <dt-bindings/clock/boston-clock.h>
-+
-+Example:
-+
-+	system-controller@17ffd000 {
-+		compatible = "img,boston-platform-regs", "syscon";
-+		reg = <0x17ffd000 0x1000>;
-+
-+		clk_boston: clock {
-+			compatible = "img,boston-clock";
-+			#clock-cells = <1>;
-+		};
-+	};
-+
-+	uart0: uart@17ffe000 {
-+		/* ... */
-+		clocks = <&clk_boston BOSTON_CLK_SYS>;
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 053c3bdd1fe5..481fc6d54ca4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8499,6 +8499,13 @@ F:	arch/mips/include/asm/mach-loongson32/
- F:	drivers/*/*loongson1*
- F:	drivers/*/*/*loongson1*
- 
-+MIPS BOSTON DEVELOPMENT BOARD
-+M:	Paul Burton <paul.burton@imgtec.com>
-+L:	linux-mips@linux-mips.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/img,boston-clock.txt
-+F:	include/dt-bindings/clock/boston-clock.h
-+
- MIROSOUND PCM20 FM RADIO RECEIVER DRIVER
- M:	Hans Verkuil <hverkuil@xs4all.nl>
- L:	linux-media@vger.kernel.org
-diff --git a/include/dt-bindings/clock/boston-clock.h b/include/dt-bindings/clock/boston-clock.h
-new file mode 100644
-index 000000000000..a6f009821137
---- /dev/null
-+++ b/include/dt-bindings/clock/boston-clock.h
-@@ -0,0 +1,14 @@
-+/*
-+ * Copyright (C) 2016 Imagination Technologies
-+ *
-+ * SPDX-License-Identifier:	GPL-2.0
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
-+#define __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
-+
-+#define BOSTON_CLK_INPUT 0
-+#define BOSTON_CLK_SYS 1
-+#define BOSTON_CLK_CPU 2
-+
-+#endif /* __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__ */
+Varadarajan Narayanan (3):
+  pinctrl: qcom: Add ipq8074 pinctrl driver
+  dt-bindings: qcom: Add ipq8074 bindings
+  arm64: dts: Add ipq8074 SoC and HK01 board support
+
+ Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  172 ++++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   53 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq8074.c                     | 1007 ++++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                       |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1076 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
+ 14 files changed, 2681 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+
 -- 
-2.13.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
