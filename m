@@ -1,228 +1,94 @@
-Return-Path: <ralf@linux-mips.org>
-Date: Wed, 14 Jun 2017 13:17:54 +0200
-From: Ralf Baechle <ralf@linux-mips.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] clk: boston: Add a driver for MIPS Boston board
- clocks
-Message-ID: <20170614111754.GD31492@linux-mips.org>
-References: <20170602182003.16269-1-paul.burton@imgtec.com>
- <20170602182003.16269-3-paul.burton@imgtec.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:34434 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752004AbdFJP0u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 10 Jun 2017 11:26:50 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170602182003.16269-3-paul.burton@imgtec.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sat, 10 Jun 2017 23:26:47 +0800
+From: icenowy@aosc.io
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: linux-sunxi@googlegroups.com, maxime.ripard@free-electrons.com,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH v2 01/11] dt-bindings: update the
+ binding for Allwinner H3 TVE support
+In-Reply-To: <7305754.diZEu7DK25@jernej-laptop>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170609164915.enap3epreg5vr2gy@flea.home>
+ <53E8FC74-8AC0-461A-B875-812EE4A3267E@aosc.io>
+ <7305754.diZEu7DK25@jernej-laptop>
+Message-ID: <34f5ad92200d09a854d4b62ef7d60a4f@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Ping?
+在 2017-06-10 05:24，Jernej Škrabec 写道：
+> Hi!
+> 
+> Dne petek, 09. junij 2017 ob 18:51:02 CEST je Icenowy Zheng napisal(a):
+>> 于 2017年6月10日 GMT+08:00 上午12:49:15, Maxime Ripard <maxime.ripard@free-
+> electrons.com> 写到:
+>> >On Wed, Jun 07, 2017 at 04:48:50PM +0800, Icenowy Zheng wrote:
+>> >> >> @@ -189,6 +211,8 @@ supported.
+>> >> >>
+>> >> >>  Required properties:
+>> >> >>    - compatible: value must be one of:
+>> >> >>      * allwinner,sun8i-v3s-de2-mixer
+>> >> >>
+>> >> >> +    * allwinner,sun8i-h3-de2-mixer0
+>> >> >> +    * allwinner,sun8i-h3-de2-mixer1
+>> >> >
+>> >> >Again, please explain why we need to have different compatibles
+>> >> >here. If it's only about the number of planes, this should be dealt
+>> >> >with a property, not a compatible.
+>> >>
+>> >> Only mixer0 has "VEP" and write-back support, at least on H3.
+>> >
+>> >What is that VEP? writeback support can also be expressed by a
+>> >property.
+>> 
+>> I don't know what VEP is...
+> 
+> VEP is probably Video Enhancement Processor (?). Although I'm not sure 
+> if that
+> is really mixer specific. Icenowy, can you explain where did you get 
+> this info?
 
-   Ralf
+In 
+lichee/linux-3.4/drivers/video/sunxi/disp2/disp/de/lowlevel_sun8iw7/de_feat.c:
 
-On Fri, Jun 02, 2017 at 11:20:01AM -0700, Paul Burton wrote:
+static const int de_is_support_vep[] = {
+	/* DISP0 CH0 */
+	1,
+	/* DISP0 CH1 */
+	0,
+	/* DISP0 CH2 */
+	0,
+	/* DISP0 CH3 */
+	0,
+	/* DISP1 CH0 */
+	0,
+	/* DISP1 CH1 */
+	0,
+};
 
-> Add a driver for the clocks provided by the MIPS Boston board from
-> Imagination Technologies. 2 clocks are provided - the system clock & the
-> CPU clock - and each is a simple fixed rate clock whose frequency can be
-> determined by reading a register provided by the board.
 > 
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
+> Best regards,
+> Jernej
 > 
-> ---
-> 
-> Changes in v4:
-> - Adjust to expect the parent node to be the syscon.
-> - Update MAINTAINERS entry.
-> 
-> Changes in v3: None
-> 
-> Changes in v2:
-> - Support BOSTON_CLK_INPUT.
-> - Register clocks with clk_register_fixed_rate during boot, removing need for clk_ops.
-> - s/uint32_t/u32/.
-> - Move driver to a vendor directory.
-> 
->  MAINTAINERS                     |   1 +
->  drivers/clk/Kconfig             |   1 +
->  drivers/clk/Makefile            |   1 +
->  drivers/clk/imgtec/Kconfig      |  10 ++++
->  drivers/clk/imgtec/Makefile     |   1 +
->  drivers/clk/imgtec/clk-boston.c | 101 ++++++++++++++++++++++++++++++++++++++++
->  6 files changed, 115 insertions(+)
->  create mode 100644 drivers/clk/imgtec/Kconfig
->  create mode 100644 drivers/clk/imgtec/Makefile
->  create mode 100644 drivers/clk/imgtec/clk-boston.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 481fc6d54ca4..75284ef8d06c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8504,6 +8504,7 @@ M:	Paul Burton <paul.burton@imgtec.com>
->  L:	linux-mips@linux-mips.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> +F:	drivers/clk/imgtec/clk-boston.c
->  F:	include/dt-bindings/clock/boston-clock.h
->  
->  MIROSOUND PCM20 FM RADIO RECEIVER DRIVER
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 36cfea38135f..251a22139e73 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -219,6 +219,7 @@ config COMMON_CLK_VC5
->  
->  source "drivers/clk/bcm/Kconfig"
->  source "drivers/clk/hisilicon/Kconfig"
-> +source "drivers/clk/imgtec/Kconfig"
->  source "drivers/clk/mediatek/Kconfig"
->  source "drivers/clk/meson/Kconfig"
->  source "drivers/clk/mvebu/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index c19983afcb81..a4a7c5df8b93 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -59,6 +59,7 @@ obj-y					+= bcm/
->  obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
->  obj-$(CONFIG_H8300)			+= h8300/
->  obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
-> +obj-y					+= imgtec/
->  obj-$(CONFIG_ARCH_MXC)			+= imx/
->  obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
->  obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+= keystone/
-> diff --git a/drivers/clk/imgtec/Kconfig b/drivers/clk/imgtec/Kconfig
-> new file mode 100644
-> index 000000000000..c2ea745928e4
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/Kconfig
-> @@ -0,0 +1,10 @@
-> +config COMMON_CLK_BOSTON
-> +	bool "Clock driver for MIPS Boston boards"
-> +	depends on MIPS || COMPILE_TEST
-> +	depends on OF
-> +	select MFD_SYSCON
-> +	---help---
-> +	  Enable this to support the system & CPU clocks on the MIPS Boston
-> +	  development board from Imagination Technologies. These are simple
-> +	  fixed rate clocks whose rate is determined by reading a platform
-> +	  provided register.
-> diff --git a/drivers/clk/imgtec/Makefile b/drivers/clk/imgtec/Makefile
-> new file mode 100644
-> index 000000000000..ac779b8c22f2
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_COMMON_CLK_BOSTON)		+= clk-boston.o
-> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-> new file mode 100644
-> index 000000000000..98bb0b764d15
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/clk-boston.c
-> @@ -0,0 +1,101 @@
-> +/*
-> + * Copyright (C) 2016-2017 Imagination Technologies
-> + * Author: Paul Burton <paul.burton@imgtec.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms of the GNU General Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/syscon.h>
-> +
-> +#include <dt-bindings/clock/boston-clock.h>
-> +
-> +#define BOSTON_PLAT_MMCMDIV		0x30
-> +# define BOSTON_PLAT_MMCMDIV_CLK0DIV	(0xff << 0)
-> +# define BOSTON_PLAT_MMCMDIV_INPUT	(0xff << 8)
-> +# define BOSTON_PLAT_MMCMDIV_MUL	(0xff << 16)
-> +# define BOSTON_PLAT_MMCMDIV_CLK1DIV	(0xff << 24)
-> +
-> +#define BOSTON_CLK_COUNT 3
-> +
-> +struct clk_boston_state {
-> +	struct clk *clks[BOSTON_CLK_COUNT];
-> +	struct clk_onecell_data onecell_data;
-> +};
-> +
-> +static u32 ext_field(u32 val, u32 mask)
-> +{
-> +	return (val & mask) >> (ffs(mask) - 1);
-> +}
-> +
-> +static void __init clk_boston_setup(struct device_node *np)
-> +{
-> +	unsigned long in_freq, cpu_freq, sys_freq;
-> +	uint mmcmdiv, mul, cpu_div, sys_div;
-> +	struct clk_boston_state *state;
-> +	struct regmap *regmap;
-> +	struct clk *clk;
-> +	int err;
-> +
-> +	regmap = syscon_node_to_regmap(np->parent);
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("failed to find regmap\n");
-> +		return;
-> +	}
-> +
-> +	err = regmap_read(regmap, BOSTON_PLAT_MMCMDIV, &mmcmdiv);
-> +	if (err) {
-> +		pr_err("failed to read mmcm_div register: %d\n", err);
-> +		return;
-> +	}
-> +
-> +	in_freq = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_INPUT) * 1000000;
-> +	mul = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_MUL);
-> +
-> +	sys_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK0DIV);
-> +	sys_freq = mult_frac(in_freq, mul, sys_div);
-> +
-> +	cpu_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
-> +	cpu_freq = mult_frac(in_freq, mul, cpu_div);
-> +
-> +	state = kzalloc(sizeof(*state), GFP_KERNEL);
-> +	if (!state)
-> +		return;
-> +
-> +	clk = clk_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("failed to register input clock: %ld\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +	state->clks[BOSTON_CLK_INPUT] = clk;
-> +
-> +	clk = clk_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("failed to register sys clock: %ld\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +	state->clks[BOSTON_CLK_SYS] = clk;
-> +
-> +	clk = clk_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +	state->clks[BOSTON_CLK_CPU] = clk;
-> +
-> +	state->onecell_data.clks = state->clks;
-> +	state->onecell_data.clk_num = BOSTON_CLK_COUNT;
-> +
-> +	err = of_clk_add_provider(np, of_clk_src_onecell_get,
-> +				  &state->onecell_data);
-> +	if (err)
-> +		pr_err("failed to add DT provider: %d\n", err);
-> +}
-> +CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
-> -- 
-> 2.13.0
+>> 
+>> But we are really facing different cores, like sun50i-a64-mmc
+>> and sun50i-a64-emmc.
+>> 
+>> >Maxime
+>> 
+>> --
+>> You received this message because you are subscribed to the Google 
+>> Groups
+>> "linux-sunxi" group. To unsubscribe from this group and stop receiving
+>> emails from it, send an email to 
+>> linux-sunxi+unsubscribe@googlegroups.com.
+>> For more options, visit https://groups.google.com/d/optout.
