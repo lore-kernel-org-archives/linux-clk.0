@@ -1,158 +1,55 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 03/10] clk: rework calls to round and determine rate callbacks
-Date: Mon, 12 Jun 2017 21:44:31 +0200
-Message-Id: <20170612194438.12298-4-jbrunet@baylibre.com>
-In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH v2 2/4] dt: bindings: Add bindings for bcm2835-aux-intc
+To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+ Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <d097e5d9-0ee6-9ea4-184f-1dd997849892@raspberrypi.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <35172597-5b6f-852a-c598-f25eb1a46aec@gmail.com>
+Date: Mon, 12 Jun 2017 11:22:37 -0700
+MIME-Version: 1.0
+In-Reply-To: <d097e5d9-0ee6-9ea4-184f-1dd997849892@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework the way the callbacks round_rate and determine_rate are called. The
-goal is to do this at a single point and make it easier to add conditions
-before calling them.
+On 06/12/2017 07:25 AM, Phil Elwell wrote:
+> Add bindings documentation for brcm,bcm2835-aux-intc and human-readable
+> declarations for the BCM2835 AUX IRQs.
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> ---
+};
+> diff --git a/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+> new file mode 100644
+> index 0000000..8b9fc12
+> --- /dev/null
+> +++ b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+> @@ -0,0 +1,20 @@
+> +/*
+> + * Copyright (C) 2017 Raspberry Pi (Trading) Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-This rework is done to ease the integration of "protected" clock
-functionality.
+Can we consider another license for this file? Most Device Tree files
+seems to be under the ISC license.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 78 +++++++++++++++++++++++++++++++------------------------
- 1 file changed, 44 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index dceaf0ff23db..8cc4672414be 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -833,16 +833,34 @@ static int clk_disable_unused(void)
- }
- late_initcall_sync(clk_disable_unused);
- 
--static int clk_core_round_rate_nolock(struct clk_core *core,
--				      struct clk_rate_request *req)
-+static int clk_core_determine_round(struct clk_core *core,
-+				    struct clk_rate_request *req)
- {
--	struct clk_core *parent;
- 	long rate;
- 
--	lockdep_assert_held(&prepare_lock);
-+	if (core->ops->determine_rate) {
-+		return core->ops->determine_rate(core->hw, req);
-+	} else if (core->ops->round_rate) {
-+		rate = core->ops->round_rate(core->hw, req->rate,
-+					     &req->best_parent_rate);
-+		if (rate < 0)
-+			return rate;
- 
--	if (!core)
--		return 0;
-+		req->rate = rate;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static void clk_core_init_rate_req(struct clk_core *core,
-+				   struct clk_rate_request *req)
-+{
-+	struct clk_core *parent;
-+
-+	if (WARN_ON(!core || !req))
-+		return;
- 
- 	parent = core->parent;
- 	if (parent) {
-@@ -852,22 +870,24 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 		req->best_parent_hw = NULL;
- 		req->best_parent_rate = 0;
- 	}
-+}
- 
--	if (core->ops->determine_rate) {
--		return core->ops->determine_rate(core->hw, req);
--	} else if (core->ops->round_rate) {
--		rate = core->ops->round_rate(core->hw, req->rate,
--					     &req->best_parent_rate);
--		if (rate < 0)
--			return rate;
-+static int clk_core_round_rate_nolock(struct clk_core *core,
-+				      struct clk_rate_request *req)
-+{
-+	lockdep_assert_held(&prepare_lock);
- 
--		req->rate = rate;
--	} else if (core->flags & CLK_SET_RATE_PARENT) {
--		return clk_core_round_rate_nolock(parent, req);
--	} else {
--		req->rate = core->rate;
--	}
-+	if (!core)
-+		return 0;
-+
-+	clk_core_init_rate_req(core, req);
-+
-+	if (core->ops->determine_rate || core->ops->round_rate)
-+		return clk_core_determine_round(core, req);
-+	else if (core->flags & CLK_SET_RATE_PARENT)
-+		return clk_core_round_rate_nolock(core->parent, req);
- 
-+	req->rate = core->rate;
- 	return 0;
- }
- 
-@@ -1356,36 +1376,26 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 	clk_core_get_boundaries(core, &min_rate, &max_rate);
- 
- 	/* find the closest rate and parent clk/rate */
--	if (core->ops->determine_rate) {
-+	if (core->ops->determine_rate || core->ops->round_rate) {
- 		struct clk_rate_request req;
- 
- 		req.rate = rate;
- 		req.min_rate = min_rate;
- 		req.max_rate = max_rate;
--		if (parent) {
--			req.best_parent_hw = parent->hw;
--			req.best_parent_rate = parent->rate;
--		} else {
--			req.best_parent_hw = NULL;
--			req.best_parent_rate = 0;
--		}
- 
--		ret = core->ops->determine_rate(core->hw, &req);
-+		clk_core_init_rate_req(core, &req);
-+
-+		ret = clk_core_determine_round(core, &req);
- 		if (ret < 0)
- 			return NULL;
- 
- 		best_parent_rate = req.best_parent_rate;
- 		new_rate = req.rate;
- 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
--	} else if (core->ops->round_rate) {
--		ret = core->ops->round_rate(core->hw, rate,
--					    &best_parent_rate);
--		if (ret < 0)
--			return NULL;
- 
--		new_rate = ret;
- 		if (new_rate < min_rate || new_rate > max_rate)
- 			return NULL;
-+
- 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
- 		/* pass-through clock without adjustable parent */
- 		core->new_rate = core->rate;
+Thanks!
 -- 
-2.9.4
+Florian
