@@ -1,59 +1,86 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 12/15] MIPS: JZ4770: Work around config2 misreporting associativity
-Date: Wed,  7 Jun 2017 22:04:36 +0200
-Message-Id: <20170607200439.24450-13-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH v3 0/9] Improve cp110 clk support on Marvell Armada 7K/8K
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+Date: Mon, 12 Jun 2017 17:43:59 +0200
+In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+	(Gregory CLEMENT's message of "Thu, 1 Jun 2017 16:55:33 +0200")
+Message-ID: <87k24h9pog.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Maarten ter Huurne <maarten@treewalker.org>
-
-According to config2, the associativity would be 5-ways, but the
-documentation states 4-ways, which also matches the documented
-L2 cache size of 256 kB.
-
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
----
- arch/mips/mm/sc-mips.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/mips/mm/sc-mips.c b/arch/mips/mm/sc-mips.c
-index c909c3342729..67a3b4d88580 100644
---- a/arch/mips/mm/sc-mips.c
-+++ b/arch/mips/mm/sc-mips.c
-@@ -15,6 +15,7 @@
- #include <asm/mmu_context.h>
- #include <asm/r4kcache.h>
- #include <asm/mips-cm.h>
-+#include <asm/bootinfo.h>
+Hi Stephen and Mike,
  
- /*
-  * MIPS32/MIPS64 L2 cache handling
-@@ -228,6 +229,14 @@ static inline int __init mips_sc_probe(void)
- 	else
- 		return 0;
- 
-+	/*
-+	 * According to config2 it would be 5-ways, but that is contradicted
-+	 * by all documentation.
-+	 */
-+	if (current_cpu_type() == CPU_JZRISC &&
-+				mips_machtype == MACH_INGENIC_JZ4770)
-+		c->scache.ways = 4;
-+
- 	c->scache.waysize = c->scache.sets * c->scache.linesz;
- 	c->scache.waybit = __ffs(c->scache.waysize);
- 
+ On jeu., juin 01 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+
+> Hi,
+>
+> We got more information about the clock controllers and the clock tree
+> of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
+>
+> In this 3rd version I removed the GOP changes because the clock is
+> actually shared between GOP and SD/eMMC.
+>
+> The last two patches modifying the device tree _must_ be merged
+> through the mvebu tree to avoid future conflict (especially with the
+> recent ICU series sent by Thomas Petazzoni).
+>
+
+I would like to know the status of this series.
+
+I am about to send a binding documentation series to ease the merging of
+the pinctrl part and I also plan adding the patch 2, 4 and 6 from this
+series. So if you have not yet applied them you can skip them else I
+will need the reference to your stable branch.
+
+Thanks,
+
+Gregory
+
+> Changelog:
+> v2 -> v3
+>  - removed the GOP changed
+> cover letter for v2:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509816.html
+>
+> v1 -> v2
+>  - split the patch to have separate patch for the binding documentation
+>  - added the acked-by from Rob Herring
+> cover letter for v2:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507381.html
+>
+> Thanks,
+>
+> Gregory
+>
+> Gregory CLEMENT (8):
+>   clk: mvebu: cp110: make failure labels more meaningful
+>   dt-bindings: cp110: do not depend anymore of the *-clock-output-names
+>   clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
+>   dt-bindings: cp110: introduce a new binding
+>   clk: mvebu: cp110: introduce a new binding
+>   dt-bindings: cp110: add sdio clock to cp-110 system controller
+>   arm64: dts: marvell: remove *-clock-output-names on cp110
+>   arm64: dts: marvell: use new binding for the system controller on cp110
+>
+> Konstantin Porotchkin (1):
+>   clk: mvebu: cp110: add sdio clock to cp-110 system controller
+>
+>  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  33 +++++-------
+>  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
+>  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
+>  drivers/clk/mvebu/cp110-system-controller.c                                | 200 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
+>  4 files changed, 194 insertions(+), 141 deletions(-)
+>
+> base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
+> -- 
+> git-series 0.9.1
+
 -- 
-2.11.0
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
