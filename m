@@ -1,55 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:44932 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbdFFGbT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 02:31:19 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
-Cc: aisheng.dong@nxp.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@free-electrons.com,
-        marek.vasut@gmail.com, richard@nod.at, robh+dt@kernel.org,
-        mark.rutland@arm.com, han.xu@nxp.com, fabio.estevam@freescale.com,
-        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v5 3/3] ARM: dts: imx7-colibri: add NAND support
-Date: Mon,  5 Jun 2017 23:30:50 -0700
-Message-Id: <c740386a55dc28db37f250eccc11687c1b111554.1496730576.git-series.stefan@agner.ch>
-In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-In-Reply-To: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-References: <cover.b62c3a17bd60de48d8fb2ade6dde4f2bc60aaf3c.1496730576.git-series.stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <phil@raspberrypi.org>
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v2 2/4] dt: bindings: Add bindings for bcm2835-aux-intc
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
+ <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Message-ID: <d097e5d9-0ee6-9ea4-184f-1dd997849892@raspberrypi.org>
+Date: Mon, 12 Jun 2017 15:25:16 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Colibri iMX7 modules come with 512MB on-module SLC NAND flash
-populated. Make use of it by enabling the GPMI controller.
+Add bindings documentation for brcm,bcm2835-aux-intc and human-readable
+declarations for the BCM2835 AUX IRQs.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 ---
- arch/arm/boot/dts/imx7-colibri.dtsi |  9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../interrupt-controller/brcm,bcm2835-aux-intc.txt | 28 ++++++++++++++++++++++
+ .../interrupt-controller/bcm2835-aux-intc.h        | 20 ++++++++++++++++
+ 2 files changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+ create mode 100644 include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
 
-diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
-index 2d87489..ad4ce19 100644
---- a/arch/arm/boot/dts/imx7-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-@@ -106,6 +106,15 @@
- 	fsl,magic-packet;
- };
- 
-+&gpmi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpmi_nand>;
-+	fsl,use-minimum-ecc;
-+	nand-on-flash-bbt;
-+	nand-ecc-mode = "hw";
-+	status = "okay";
-+};
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+new file mode 100644
+index 0000000..f3f895c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+@@ -0,0 +1,28 @@
++BCM2835 Auxiliary ("AUXIRQ") Interrupt Controller
 +
- &i2c1 {
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
++The BCM2835 family of SoCs multiplexes the interrupts for peripherals in
++the AUX block into a single IRQ. The AUXIRQ register shows the IRQ status
++of each of the peripherals. Note that there are no masking or clearing
++facilities - interrupts must be enabled and acknowledged in the
++individual peripherals.
++
++Required properties:
++- compatible :	     Should be "brcm,bcm2835-aux-intc".
++- reg :		     Specifies base physical address and size of the registers.
++- interrupts :	     The interrupt number - see
++		     bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++		     interrupt source. The value shall be 1.
++
++  The cell contains the interrupt specifier, as found in
++  include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h. Valid values
++  are 0..2.
++
++Example:
++
++	auxintc: interrupt-controller@7e215000 {
++		compatible = "brcm,bcm2835-aux-intc";
++		reg = <0x7e215000 0x4>;
++		interrupts = <1 29>;
++		interrupt-controller;
++		#interrupt-cells = <1>;
++	};
+diff --git a/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+new file mode 100644
+index 0000000..8b9fc12
+--- /dev/null
++++ b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+@@ -0,0 +1,20 @@
++/*
++ * Copyright (C) 2017 Raspberry Pi (Trading) Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#define BCM2835_AUX_IRQ_UART	0
++#define BCM2835_AUX_IRQ_SPI1	1
++#define BCM2835_AUX_IRQ_SPI2	2
++#define BCM2835_AUX_IRQ_COUNT	3
 -- 
-git-series 0.9.1
+1.9.1
