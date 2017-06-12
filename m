@@ -1,90 +1,59 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v5 0/6] Add minimal boot support for IPQ8074
-Date: Thu,  8 Jun 2017 11:13:55 +0530
-Message-Id: <1496900641-27755-1-git-send-email-varada@codeaurora.org>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
+References: <20170524082044.8473-1-linus.walleij@linaro.org>
+ <20170601070208.GO20170@codeaurora.org> <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
+ <20170605195812.GH20170@codeaurora.org> <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 12 Jun 2017 08:21:20 +0200
+Message-ID: <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
+Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Jun 8, 2017 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-v5:
-  * Removed the 'NA' binding from documentation
+> I think the timer may be more of an issue...
+>
+> It is using CLOCKSOURCE_OF_DECLARE(), at least last time
+> I checked there was no such thing as clocksources retrying their
+> calls, and that cannot be regular probes because of, yeah device
+> core is using the timer, I think.
+>
+> Yeah I looked in:
+> drivers/clocksource/clksrc-probe.c
+>
+> It will just fail if it can't initialize the clocksource.
+>
+> I don't understand what platforms can actually get their timers
+> up at all without the clock framework? Those hardcoding the
+> clock frequency in the device tree, or things like the ARM
+> TWD which has it encoded in hardware perhaps?
 
-v4:
-  * Split the clock patch and addressed a minor comment
-    in the clock driver as per stephen's feedback.
+I just confirmed this to be the problem using a scratch patch for
+a platform device init and some earlydebug prints:
 
-v3:
-  * Addressed review feedback from Bjorn for pinctrl
-     - Unified the names for qpic pads.
-     - Corrected the names for pwm pins.
-  * Updated pinctrl documentation.
-  * Updated the default bootargs in ipq8074-hk01.dts.
-  * Updated the gcc clocks driver for removing the
-    unused halt_bit in few places.
+Uncompressing Linux... done, booting the kernel.
+ Booting Linux on physical CPU 0x0
+start_kernel
+(...)
+ NR_IRQS:16 nr_irqs:16 16
+ could not get PCLK
+Failed to initialize '/soc/timer@43000000': -517
+ clocksource_probe: no matching clocksources found
+ sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every
+21474836475000000ns
+ Console: colour dummy device 80x30
+ Calibrating delay loop...
 
-v2:
-  * Addressed review feedback from Stephen
-    - Removed cpu-map entries
-    - Added mmio-timer nodes
-  * Fix sparse warnings in the gcc-ipq8074.c
-  * Updated pinctrl documentation
+So the deferred clock makes the whole platform hang because the timer
+needs it. Without a clocksource, the delay loop cannot be calibrated, so
+it hangs there.
 
-v1:
-  https://www.spinics.net/lists/kernel/msg2498734.html
-  This series adds minimal board boot support for ipq8074-hk01
-  board.
-
-Abhishek Sahu (3):
-  clk: qcom: Add DT bindings for ipq8074 gcc clock controller
-  clk: qcom: Add ipq8074 Global Clock Controller support
-  arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-
-Varadarajan Narayanan (3):
-  pinctrl: qcom: Add ipq8074 pinctrl driver
-  dt-bindings: qcom: Add ipq8074 bindings
-  arm64: dts: Add ipq8074 SoC and HK01 board support
-
- Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  172 ++++
- arch/arm64/boot/dts/qcom/Makefile                  |    1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   53 +
- arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
- arch/arm64/configs/defconfig                       |    2 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-ipq8074.c                     | 1007 ++++++++++++++++++
- drivers/pinctrl/qcom/Kconfig                       |   10 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1076 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
- 14 files changed, 2681 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
- create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Yours,
+Linus Walleij
