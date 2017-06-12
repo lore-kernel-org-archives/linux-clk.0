@@ -1,85 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:28897 "EHLO
-        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751585AbdFGLL4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2017 07:11:56 -0400
-Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
-        by mx07-00252a01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v57BBT0I005243
-        for <linux-clk@vger.kernel.org>; Wed, 7 Jun 2017 12:11:54 +0100
-Received: from mail-wr0-f200.google.com (mail-wr0-f200.google.com [209.85.128.200])
-        by mx07-00252a01.pphosted.com with ESMTP id 2aujgyt1b3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2017 12:11:54 +0100
-Received: by mail-wr0-f200.google.com with SMTP id 56so1207629wrx.5
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2017 04:11:54 -0700 (PDT)
-To: Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <phil@raspberrypi.org>
 From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH 2/2] ARM: dts: bcm283x: Enable AUX interrupt controller
-Message-ID: <59e986d6-8529-4f62-6782-230ced6dc71b@raspberrypi.org>
-Date: Wed, 7 Jun 2017 12:11:53 +0100
+Subject: [PATCH v2 0/4] Add bcm2835aux interrupt controller
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
+ <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Message-ID: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
+Date: Mon, 12 Jun 2017 15:25:02 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that the AUX block has a dedicated interrupt controller, declare it
-in the Device Tree and update the bcm283x uart1 and spi1/spi2 nodes to
-use it.
+Devices in the BCM2835 AUX block share a common interrupt line, with a
+register indicating which devices have active IRQs. Expose this as a
+nested interrupt controller to avoid IRQ sharing problems (easily
+observed if UART1 and SPI1/2 are enabled simultaneously).
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
----
- arch/arm/boot/dts/bcm283x.dtsi | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+This patch set is complicated by the fact that the DT node for the AUX
+clock controller includes the AUXIRQ register needed by this driver.
+Patch 1 lays the groundwork by allowing this overlap and preparing for
+a future DT change that removes it.
 
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index cc721a4..88df7aa 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -464,12 +464,16 @@
- 			#clock-cells = <1>;
- 			reg = <0x7e215000 0x8>;
- 			clocks = <&clocks BCM2835_CLOCK_VPU>;
-+			interrupts = <1 29>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
- 		};
- 
- 		uart1: serial@7e215040 {
- 			compatible = "brcm,bcm2835-aux-uart";
- 			reg = <0x7e215040 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&aux>;
-+			interrupts = <0>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_UART>;
- 			status = "disabled";
- 		};
-@@ -477,7 +481,8 @@
- 		spi1: spi@7e215080 {
- 			compatible = "brcm,bcm2835-aux-spi";
- 			reg = <0x7e215080 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&aux>;
-+			interrupts = <1>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_SPI1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -487,7 +492,8 @@
- 		spi2: spi@7e2150c0 {
- 			compatible = "brcm,bcm2835-aux-spi";
- 			reg = <0x7e2150c0 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&aux>;
-+			interrupts = <2>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_SPI2>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+Changes in v2:
+* Add DT bindings and header file for bcm2835-aux-intc.
+* Split the interrupt-controller functionality into a dedicated irqchip
+  driver with a dedicated DT node.
+* Remove mask tracking from the intc driver, so that all interrupts
+  (including spurious ones) are submitted to the IRQ framework.
+* Replace hard-coded masks with BIT macro in the intc driver.
+* Prepare the AUX clock driver for a time when its DT node may only be
+  a single word register, but until then ioremap its region without
+  reserving it to permit sharing.
+
+Phil Elwell (4):
+  clk: bcm2835: More flexible IO register remapping
+  dt: bindings: Add bindings for bcm2835-aux-intc
+  irqchip: Add BCM2835 AUX interrupt controller
+  ARM: dts: bcm283x: Add and use bcm2835-aux-intc
+
+ .../interrupt-controller/brcm,bcm2835-aux-intc.txt |  28 ++++
+ arch/arm/boot/dts/bcm283x.dtsi                     |  27 +++-
+ drivers/clk/bcm/clk-bcm2835-aux.c                  |  20 ++-
+ drivers/irqchip/Makefile                           |   2 +-
+ drivers/irqchip/irq-bcm2835-aux.c                  | 155 +++++++++++++++++++++
+ .../interrupt-controller/bcm2835-aux-intc.h        |  20 +++
+ 6 files changed, 243 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+ create mode 100644 drivers/irqchip/irq-bcm2835-aux.c
+ create mode 100644 include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+
 -- 
 1.9.1
-
