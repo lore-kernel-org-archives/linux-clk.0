@@ -1,64 +1,55 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 29 Jun 2017 17:20:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
 	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre TORGUE <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	"daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-	"andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-	"radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Ludovic BARRE <ludovic.barre@st.com>,
-	Olivier BIDEAU <olivier.bideau@st.com>,
-	Amelie DELAUNAY <amelie.delaunay@st.com>,
-	"gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
-Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
-Message-ID: <20170630002008.GD22780@codeaurora.org>
-References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
- <20170621220703.GI4493@codeaurora.org>
- <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
- <20170628155956.GA5316@codeaurora.org>
- <7c0c3861-cf61-a9e2-cd5d-2ae30b8f32fa@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7c0c3861-cf61-a9e2-cd5d-2ae30b8f32fa@st.com>
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 08/10] clk: cosmetic changes to clk_summary debugfs entry
+Date: Mon, 12 Jun 2017 21:44:36 +0200
+Message-Id: <20170612194438.12298-9-jbrunet@baylibre.com>
+In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/29, Gabriel FERNANDEZ wrote:
-> 
-> 
-> On 06/28/2017 05:59 PM, Stephen Boyd wrote:
-> > On 06/27, Gabriel FERNANDEZ wrote:
-> >>
-> >> On 06/22/2017 12:07 AM, Stephen Boyd wrote:
-> >>> readl_poll_timeout?
-> >>>
-> >> if i use readl_poll_timeout (wich use 'ktime_get()') it can be
-> >> operational only after the selection of clocksource ? (device_initcall).
-> >> And then if a driver turn on a clock before, it could blocked the linux
-> >> console ?
-> >>
-> > Ok. I wonder if we could add some sort of starting check to
-> > readl_poll_timeout() that tests system_state for booting vs.
-> > scheduling? That should be sufficient to handle this case?
-> >
-> Oops i think i understood my problem...
-> i used readl_poll_timeout in atomic context.
-> I have to move my code in the .prepare ops.
-> 
-> If you are ok with that i will send a v5
-> 
+clk_summary debugfs entry was already well over the traditional 80
+characters per line limit but it grew even larger with the addition of
+clock protection.
 
-There's readl_poll_timeout_atomic() for those modes.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 253f1d3f0971..8d57e130c4e0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2262,7 +2262,7 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	if (!c)
+ 		return;
+ 
+-	seq_printf(s, "%*s%-*s %11d %12d %12d %11lu %10lu %-3d\n",
++	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %-3d\n",
+ 		   level * 3 + 1, "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+@@ -2289,8 +2289,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = (struct hlist_head **)s->private;
+ 
+-	seq_puts(s, "   clock                         enable_cnt  prepare_cnt  protect_cnt        rate   accuracy   phase\n");
+-	seq_puts(s, "----------------------------------------------------------------------------------------------------\n");
++	seq_puts(s, "                                 enable  prepare  protect                               \n");
++	seq_puts(s, "   clock                          count    count    count        rate   accuracy   phase\n");
++	seq_puts(s, "----------------------------------------------------------------------------------------\n");
+ 
+ 	clk_prepare_lock();
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.4
