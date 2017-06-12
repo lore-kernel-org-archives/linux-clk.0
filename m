@@ -1,28 +1,73 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Jun 2017 10:58:48 -0700
+Date: Mon, 12 Jun 2017 14:02:48 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
-Subject: Re: [GIT PULL] Amlogic clock driver updates for 4.13
-Message-ID: <20170602175848.GM20170@codeaurora.org>
-References: <1496416942.3552.8.camel@baylibre.com>
+	linux-clk <linux-clk@vger.kernel.org>,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
+Message-ID: <20170612210248.GP20170@codeaurora.org>
+References: <20170524082044.8473-1-linus.walleij@linaro.org>
+ <20170601070208.GO20170@codeaurora.org>
+ <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
+ <20170605195812.GH20170@codeaurora.org>
+ <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
+ <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1496416942.3552.8.camel@baylibre.com>
+In-Reply-To: <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02, Jerome Brunet wrote:
-> Dear clock maintainers,
+On 06/12, Linus Walleij wrote:
+> On Thu, Jun 8, 2017 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 > 
-> Below is a request to pull the Amlogic clock driver updates for this cycle.
+> > I think the timer may be more of an issue...
+> >
+> > It is using CLOCKSOURCE_OF_DECLARE(), at least last time
+> > I checked there was no such thing as clocksources retrying their
+> > calls, and that cannot be regular probes because of, yeah device
+> > core is using the timer, I think.
+> >
+> > Yeah I looked in:
+> > drivers/clocksource/clksrc-probe.c
+> >
+> > It will just fail if it can't initialize the clocksource.
+> >
+> > I don't understand what platforms can actually get their timers
+> > up at all without the clock framework? Those hardcoding the
+> > clock frequency in the device tree, or things like the ARM
+> > TWD which has it encoded in hardware perhaps?
 > 
-> Cheers
+> I just confirmed this to be the problem using a scratch patch for
+> a platform device init and some earlydebug prints:
+> 
+> Uncompressing Linux... done, booting the kernel.
+>  Booting Linux on physical CPU 0x0
+> start_kernel
+> (...)
+>  NR_IRQS:16 nr_irqs:16 16
+>  could not get PCLK
+> Failed to initialize '/soc/timer@43000000': -517
+>  clocksource_probe: no matching clocksources found
+>  sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every
+> 21474836475000000ns
+>  Console: colour dummy device 80x30
+>  Calibrating delay loop...
+> 
+> So the deferred clock makes the whole platform hang because the timer
+> needs it. Without a clocksource, the delay loop cannot be calibrated, so
+> it hangs there.
+> 
 
-Thanks. Pulled into clk-next.
+Ok. So can the certain clks that are required to get the timer
+going be put into CLK_OF_DECLARE_DRIVER() and then have a regular
+platform driver for the rest of the clks that aren't required for
+early boot? We've been doing this sort of hybrid design lately,
+so hopefully that works here too.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
