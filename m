@@ -1,174 +1,75 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <phil@raspberrypi.org>
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v2 1/4] clk: bcm2835: More flexible IO register remapping
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
+ <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Russell King <linux@armlinux.org.uk>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 17/17] MIPS: ingenic: Initial GCW Zero support
-Date: Tue, 20 Jun 2017 17:18:55 +0200
-Message-Id: <20170620151855.19399-17-paul@crapouillou.net>
-In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170620151855.19399-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Message-ID: <28279803-78d2-4231-939b-89a8c895aba9@raspberrypi.org>
+Date: Mon, 12 Jun 2017 15:25:09 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
-handheld game console, successfully kickstarted in ~2012, running Linux.
+The BCM2835 AUX block contains two registers - AUXIRQ and AUXENB.
+The addition of an irqchip driver using AUXIRQ is hampered by
+the current DT node reserving both registers with a compatible string
+claimed by this bcm2835-aux-clk driver.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Ease the transition to separate DT nodes by detecting and handling
+the case where this driver's MEM resource has been reduced to include
+only the AUXENB register. Otherwise, use devm_ioremap to remap the
+region without reserving it.
+
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 ---
- arch/mips/boot/dts/ingenic/Makefile |  1 +
- arch/mips/boot/dts/ingenic/gcw0.dts | 60 +++++++++++++++++++++++++++++++++++++
- arch/mips/configs/gcw0_defconfig    | 28 +++++++++++++++++
- arch/mips/jz4740/Kconfig            |  4 +++
- arch/mips/jz4740/boards.c           |  1 +
- 5 files changed, 94 insertions(+)
- create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
- create mode 100644 arch/mips/configs/gcw0_defconfig
+ drivers/clk/bcm/clk-bcm2835-aux.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
- v2: No change
-
-diff --git a/arch/mips/boot/dts/ingenic/Makefile b/arch/mips/boot/dts/ingenic/Makefile
-index f2b864f07850..f64ad1c27a28 100644
---- a/arch/mips/boot/dts/ingenic/Makefile
-+++ b/arch/mips/boot/dts/ingenic/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_JZ4740_QI_LB60)	+= qi_lb60.dtb
-+dtb-$(CONFIG_JZ4770_GCW0)	+= gcw0.dtb
- dtb-$(CONFIG_JZ4780_CI20)	+= ci20.dtb
+diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
+index bd750cf..70d389e 100644
+--- a/drivers/clk/bcm/clk-bcm2835-aux.c
++++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+@@ -37,9 +37,22 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+ 	parent = __clk_get_name(parent_clk);
  
- obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
-new file mode 100644
-index 000000000000..9c9a0137ccdf
---- /dev/null
-+++ b/arch/mips/boot/dts/ingenic/gcw0.dts
-@@ -0,0 +1,60 @@
-+/dts-v1/;
-+
-+#include "jz4770.dtsi"
-+
-+/ {
-+	compatible = "gcw,zero", "ingenic,jz4770";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:57600n8";
-+	};
-+
-+	board {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		ranges = <>;
-+
-+		otg_phy: otg-phy {
-+			compatible = "usb-nop-xceiv";
-+			clocks = <&cgu JZ4770_CLK_OTG_PHY>;
-+			clock-names = "main_clk";
-+		};
-+	};
-+};
-+
-+&ext {
-+	clock-frequency = <12000000>;
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&cgu {
-+	/* Put high-speed peripherals under PLL1, such that we can change the
-+	 * PLL0 frequency on demand without having to suspend peripherals.
-+	 * We use a rate of 432 MHz, which is the least common multiple of
-+	 * 27 MHz (required by TV encoder) and 48 MHz (required by USB host).
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(reg))
+-		return PTR_ERR(reg);
++	/*
++	 * If the MEM resource is only 4 bytes long it covers just the
++	 * AUXENB register, otherwise it is the entire AUX block.
 +	 */
-+	assigned-clocks =
-+		<&cgu JZ4770_CLK_PLL1>,
-+		<&cgu JZ4770_CLK_UHC>;
-+	assigned-clock-parents =
-+		<0>,
-+		<&cgu JZ4770_CLK_PLL1>;
-+	assigned-clock-rates =
-+		<432000000>;
-+};
++	if (resource_size(res) == 4) {
++		reg = devm_ioremap_resource(dev, res);
++		if (IS_ERR(reg))
++			return PTR_ERR(reg);
++		gate = reg;
++	} else {
++		reg = devm_ioremap(dev, res->start, resource_size(res));
++		if (IS_ERR(reg))
++			return PTR_ERR(reg);
++		gate = reg + BCM2835_AUXENB;
++	}
 +
-+&uhc {
-+	/* The WiFi module is connected to the UHC. */
-+	status = "okay";
-+};
-diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
-new file mode 100644
-index 000000000000..471497033855
---- /dev/null
-+++ b/arch/mips/configs/gcw0_defconfig
-@@ -0,0 +1,28 @@
-+CONFIG_MACH_INGENIC=y
-+CONFIG_JZ4770_GCW0=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_BOUNCE is not set
-+CONFIG_PREEMPT_VOLUNTARY=y
-+# CONFIG_SECCOMP is not set
-+CONFIG_CROSS_COMPILE="mipsel-gcw0-linux-uclibc-"
-+CONFIG_NO_HZ_IDLE=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_EMBEDDED=y
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_SUSPEND is not set
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_NETDEVICES=y
-+CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_INGENIC=y
-+CONFIG_USB=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_OHCI_HCD_PLATFORM=y
-+CONFIG_NOP_USB_XCEIV=y
-+CONFIG_TMPFS=y
-diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
-index 922850503271..db270653fe8c 100644
---- a/arch/mips/jz4740/Kconfig
-+++ b/arch/mips/jz4740/Kconfig
-@@ -7,6 +7,10 @@ config JZ4740_QI_LB60
- 	bool "Qi Hardware Ben NanoNote"
- 	select MACH_JZ4740
  
-+config JZ4770_GCW0
-+	bool "Game Consoles Worldwide GCW Zero"
-+	select MACH_JZ4770
-+
- config JZ4780_CI20
- 	bool "MIPS Creator CI20"
- 	select MACH_JZ4780
-diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-index a3cf64cf004a..98a4d8e68cf0 100644
---- a/arch/mips/jz4740/boards.c
-+++ b/arch/mips/jz4740/boards.c
-@@ -12,5 +12,6 @@
- #include <asm/mips_machine.h>
+ 	onecell = devm_kmalloc(dev, sizeof(*onecell) + sizeof(*onecell->hws) *
+ 			       BCM2835_AUX_CLOCK_COUNT, GFP_KERNEL);
+@@ -47,7 +60,6 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	onecell->num = BCM2835_AUX_CLOCK_COUNT;
  
- MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-+MIPS_MACHINE(MACH_INGENIC_JZ4770, "gcw,zero", "GCW Zero", NULL);
- MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
- 			"Imagination Technologies CI20", NULL);
+-	gate = reg + BCM2835_AUXENB;
+ 	onecell->hws[BCM2835_AUX_CLOCK_UART] =
+ 		clk_hw_register_gate(dev, "aux_uart", parent, 0, gate, 0, 0, NULL);
+ 
 -- 
-2.11.0
+1.9.1
