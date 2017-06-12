@@ -1,81 +1,158 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Rob Herring <robh@kernel.org>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-Date: Thu, 29 Jun 2017 12:18:50 +0200
-Message-Id: <20170629101851.23972-7-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 03/10] clk: rework calls to round and determine rate callbacks
+Date: Mon, 12 Jun 2017 21:44:31 +0200
+Message-Id: <20170612194438.12298-4-jbrunet@baylibre.com>
+In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Rework the way the callbacks round_rate and determine_rate are called. The
+goal is to do this at a single point and make it easier to add conditions
+before calling them.
 
-IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
-Input clock source can be taken from either external crystal or from
-external reference clock.
+This rework is done to ease the integration of "protected" clock
+functionality.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../devicetree/bindings/clock/idt,versaclock5.txt         | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/clk/clk.c | 78 +++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 44 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 53d7e50ed875..a3d4260039a8 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -7,18 +7,20 @@ from 3 to 12 output clocks.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index dceaf0ff23db..8cc4672414be 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -833,16 +833,34 @@ static int clk_disable_unused(void)
+ }
+ late_initcall_sync(clk_disable_unused);
  
- Required properties:
- - compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
--		"idt,5p49v5935".
-+		"idt,5p49v5935" , "idt,5p49v6901".
- - reg:		i2c device address, shall be 0x68 or 0x6a.
- - #clock-cells:	from common clock binding; shall be set to 1.
- - clocks:	from common clock binding; list of parent clock handles,
--		- 5p49v5923: (required) either or both of XTAL or CLKIN
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of XTAL or CLKIN
- 					reference clock.
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present (internal
- 					Xtal used) or CLKIN reference
- 					clock.
- - clock-names:	from common clock binding; clock input names, can be
--		- 5p49v5923: (required) either or both of "xin", "clkin".
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of "xin", "clkin".
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present or "clkin".
+-static int clk_core_round_rate_nolock(struct clk_core *core,
+-				      struct clk_rate_request *req)
++static int clk_core_determine_round(struct clk_core *core,
++				    struct clk_rate_request *req)
+ {
+-	struct clk_core *parent;
+ 	long rate;
  
-@@ -44,6 +46,13 @@ clock specifier, the following mapping applies:
- 	3 -- OUT3
- 	4 -- OUT4
+-	lockdep_assert_held(&prepare_lock);
++	if (core->ops->determine_rate) {
++		return core->ops->determine_rate(core->hw, req);
++	} else if (core->ops->round_rate) {
++		rate = core->ops->round_rate(core->hw, req->rate,
++					     &req->best_parent_rate);
++		if (rate < 0)
++			return rate;
  
-+5P49V6901:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+	3 -- OUT3
-+	4 -- OUT4
+-	if (!core)
+-		return 0;
++		req->rate = rate;
++	} else {
++		return -EINVAL;
++	}
 +
- ==Example==
++	return 0;
++}
++
++static void clk_core_init_rate_req(struct clk_core *core,
++				   struct clk_rate_request *req)
++{
++	struct clk_core *parent;
++
++	if (WARN_ON(!core || !req))
++		return;
  
- /* 25MHz reference crystal */
+ 	parent = core->parent;
+ 	if (parent) {
+@@ -852,22 +870,24 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 		req->best_parent_hw = NULL;
+ 		req->best_parent_rate = 0;
+ 	}
++}
+ 
+-	if (core->ops->determine_rate) {
+-		return core->ops->determine_rate(core->hw, req);
+-	} else if (core->ops->round_rate) {
+-		rate = core->ops->round_rate(core->hw, req->rate,
+-					     &req->best_parent_rate);
+-		if (rate < 0)
+-			return rate;
++static int clk_core_round_rate_nolock(struct clk_core *core,
++				      struct clk_rate_request *req)
++{
++	lockdep_assert_held(&prepare_lock);
+ 
+-		req->rate = rate;
+-	} else if (core->flags & CLK_SET_RATE_PARENT) {
+-		return clk_core_round_rate_nolock(parent, req);
+-	} else {
+-		req->rate = core->rate;
+-	}
++	if (!core)
++		return 0;
++
++	clk_core_init_rate_req(core, req);
++
++	if (core->ops->determine_rate || core->ops->round_rate)
++		return clk_core_determine_round(core, req);
++	else if (core->flags & CLK_SET_RATE_PARENT)
++		return clk_core_round_rate_nolock(core->parent, req);
+ 
++	req->rate = core->rate;
+ 	return 0;
+ }
+ 
+@@ -1356,36 +1376,26 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 	clk_core_get_boundaries(core, &min_rate, &max_rate);
+ 
+ 	/* find the closest rate and parent clk/rate */
+-	if (core->ops->determine_rate) {
++	if (core->ops->determine_rate || core->ops->round_rate) {
+ 		struct clk_rate_request req;
+ 
+ 		req.rate = rate;
+ 		req.min_rate = min_rate;
+ 		req.max_rate = max_rate;
+-		if (parent) {
+-			req.best_parent_hw = parent->hw;
+-			req.best_parent_rate = parent->rate;
+-		} else {
+-			req.best_parent_hw = NULL;
+-			req.best_parent_rate = 0;
+-		}
+ 
+-		ret = core->ops->determine_rate(core->hw, &req);
++		clk_core_init_rate_req(core, &req);
++
++		ret = clk_core_determine_round(core, &req);
+ 		if (ret < 0)
+ 			return NULL;
+ 
+ 		best_parent_rate = req.best_parent_rate;
+ 		new_rate = req.rate;
+ 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
+-	} else if (core->ops->round_rate) {
+-		ret = core->ops->round_rate(core->hw, rate,
+-					    &best_parent_rate);
+-		if (ret < 0)
+-			return NULL;
+ 
+-		new_rate = ret;
+ 		if (new_rate < min_rate || new_rate > max_rate)
+ 			return NULL;
++
+ 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
+ 		/* pass-through clock without adjustable parent */
+ 		core->new_rate = core->rate;
 -- 
-2.11.0
+2.9.4
