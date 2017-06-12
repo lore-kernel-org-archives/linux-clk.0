@@ -1,182 +1,132 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:59:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
-Subject: Re: [PATCH 4/9] clk: imx: add pllv4 support
-Message-ID: <20170620015917.GO4493@codeaurora.org>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 01/10] clk: take the prepare lock out of clk_core_set_parent
+Date: Mon, 12 Jun 2017 21:44:29 +0200
+Message-Id: <20170612194438.12298-2-jbrunet@baylibre.com>
+In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/15, Dong Aisheng wrote:
->  obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
-> diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
-> new file mode 100644
-> index 0000000..502da64
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-pllv4.c
-> @@ -0,0 +1,196 @@
-> +/*
-> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> + * Copyright 2017 NXP
-> + *
-> + * Author: Dong Aisheng <aisheng.dong@nxp.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; either version 2
-> + * of the License, or (at your option) any later version.
-> + *
-> + * http://www.opensource.org/licenses/gpl-license.html
-> + * http://www.gnu.org/copyleft/gpl.html
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
+Rework set_parent core function so it can be called when the prepare lock
+is already held by the caller.
 
-Is this include used?
+This rework is done to ease the integration of the "protected" clock
+functionality.
 
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/slab.h>
-> +
-> +/* PLL Control Status Register (xPLLCSR) */
-> +#define PLL_CSR_OFFSET		0x0
-> +#define PLL_VLD			BIT(24)
-> +#define PLL_EN			BIT(0)
-> +
-> +/* PLL Configuration Register (xPLLCFG) */
-> +#define PLL_CFG_OFFSET		0x08
-> +#define BP_PLL_MULT		16
-> +#define BM_PLL_MULT		(0x7f << 16)
-> +
-> +/* PLL Numerator Register (xPLLNUM) */
-> +#define PLL_NUM_OFFSET		0x10
-> +
-> +/* PLL Denominator Register (xPLLDENOM) */
-> +#define PLL_DENOM_OFFSET	0x14
-> +
-> +struct clk_pllv4 {
-> +	struct clk_hw	hw;
-> +	void __iomem	*base;
-> +};
-> +
-> +/* Valid PLL MULT Table */
-> +static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
-> +
-> +#define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
-> +
-> +static int clk_pllv4_wait_lock(struct clk_pllv4 *pll)
-> +{
-> +	unsigned long timeout = jiffies + msecs_to_jiffies(5);
-> +
-> +	/* Wait for PLL to lock */
-> +	do {
-> +		if (readl_relaxed(pll->base  + PLL_CSR_OFFSET) & PLL_VLD)
-> +			break;
-> +		if (time_after(jiffies, timeout))
-> +			break;
-> +			usleep_range(50, 500);
-> +	} while (1);
-> +
-> +	return readl_relaxed(pll->base + PLL_CSR_OFFSET) & PLL_VLD ?
-> +	       0 : -ETIMEDOUT;
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 39 ++++++++++++++++++---------------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
 
-Use readl_poll_timeout() instead?
-
-> +}
-> +
-> +static int clk_pllv4_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-> +
-> +	if (readl_relaxed(pll->base) & PLL_EN)
-> +		return 1;
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
-> +					   unsigned long parent_rate)
-> +{
-> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-> +	u32 div;
-> +
-> +	div = (readl_relaxed(pll->base + PLL_CFG_OFFSET)
-> +	       & BM_PLL_MULT) >> BP_PLL_MULT;
-
-Put that on multiple lines please:
-
-	div = readl_relaxed(pll->base + PLL_CFG_OFFSET);
-	div &= BM_PLL_MULT;
-	div >>= BP_PLL_MULT; /* Why BP this time? */
-
-> +
-> +	return parent_rate * div;
-> +}
-> +
-> +static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				 unsigned long *prate)
-> +{
-> +	unsigned long parent_rate = *prate;
-> +	unsigned long round_rate, i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> +		round_rate = parent_rate * pllv4_mult_table[i];
-> +		if (rate >= round_rate)
-> +			return round_rate;
-> +	}
-> +
-> +	return round_rate;
-> +}
-> +
-> +static bool clk_pllv4_is_valid_mult(unsigned int mult)
-> +{
-> +	int i;
-> +
-> +	/* check if mult is in valid MULT table */
-> +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> +		if (pllv4_mult_table[i] == mult)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			      unsigned long parent_rate)
-> +{
-> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-> +	u32 val, mult;
-> +
-> +	if (clk_pllv4_is_enabled(hw)) {
-> +		WARN(1, "clk_pllv4: can't change rate when pll is enabled");
-> +		return -EINVAL;
-
-Sad, CLK_SET_RATE_GATE isn't working for you I suppose?
-
-> +	}
-> +
-> +	mult = rate / parent_rate;
-> +
-> +	if (clk_pllv4_is_valid_mult(mult))
-> +		return -EINVAL;
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG_OFFSET);
-> +	val &= ~BM_PLL_MULT;
-> +	val |= mult << BP_PLL_MULT;
-> +	writel_relaxed(val, pll->base + PLL_CFG_OFFSET);
-> +
-> +	return 0;
-> +}
-> +
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fc58c52a26b4..f5c371532509 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1787,7 +1787,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
+ }
+ EXPORT_SYMBOL_GPL(clk_has_parent);
+ 
+-static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
++static int clk_core_set_parent_nolock(struct clk_core *core,
++				      struct clk_core *parent)
+ {
+ 	int ret = 0;
+ 	int p_index = 0;
+@@ -1796,23 +1797,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 	if (!core)
+ 		return 0;
+ 
+-	/* prevent racing with updates to the clock topology */
+-	clk_prepare_lock();
+-
+ 	if (core->parent == parent)
+-		goto out;
++		return 0;
+ 
+ 	/* verify ops for for multi-parent clks */
+-	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+-		ret = -ENOSYS;
+-		goto out;
+-	}
++	if ((core->num_parents > 1) && (!core->ops->set_parent))
++		return -ENOSYS;
+ 
+ 	/* check that we are allowed to re-parent if the clock is in use */
+-	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
+-		ret = -EBUSY;
+-		goto out;
+-	}
++	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
++		return -EBUSY;
+ 
+ 	/* try finding the new parent index */
+ 	if (parent) {
+@@ -1820,8 +1814,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		if (p_index < 0) {
+ 			pr_debug("%s: clk %s can not be parent of clk %s\n",
+ 					__func__, parent->name, core->name);
+-			ret = p_index;
+-			goto out;
++			return p_index;
+ 		}
+ 		p_rate = parent->rate;
+ 	}
+@@ -1831,7 +1824,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 
+ 	/* abort if a driver objects */
+ 	if (ret & NOTIFY_STOP_MASK)
+-		goto out;
++		return ret;
+ 
+ 	/* do the re-parent */
+ 	ret = __clk_set_parent(core, parent, p_index);
+@@ -1844,9 +1837,6 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+ 		__clk_recalc_accuracies(core);
+ 	}
+ 
+-out:
+-	clk_prepare_unlock();
+-
+ 	return ret;
+ }
+ 
+@@ -1869,10 +1859,17 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+  */
+ int clk_set_parent(struct clk *clk, struct clk *parent)
+ {
++	int ret;
++
+ 	if (!clk)
+ 		return 0;
+ 
+-	return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
++	clk_prepare_lock();
++	ret = clk_core_set_parent_nolock(clk->core,
++					 parent ? parent->core : NULL);
++	clk_prepare_unlock();
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_set_parent);
+ 
+@@ -2753,7 +2750,7 @@ void clk_unregister(struct clk *clk)
+ 		/* Reparent all children to the orphan list. */
+ 		hlist_for_each_entry_safe(child, t, &clk->core->children,
+ 					  child_node)
+-			clk_core_set_parent(child, NULL);
++			clk_core_set_parent_nolock(child, NULL);
+ 	}
+ 
+ 	hlist_del_init(&clk->core->child_node);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.4
