@@ -1,239 +1,44 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 10/11] ARM: sun8i: h3: add display engine pipeline for TVE
-Date: Mon,  5 Jun 2017 00:01:48 +0800
-Message-Id: <20170604160149.30230-11-icenowy@aosc.io>
-In-Reply-To: <20170604160149.30230-1-icenowy@aosc.io>
-References: <20170604160149.30230-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 09/10] clk: fix incorrect usage of ENOSYS
+Date: Mon, 12 Jun 2017 21:44:37 +0200
+Message-Id: <20170612194438.12298-10-jbrunet@baylibre.com>
+In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As we have already the support for the TV encoder on Allwinner H3, add
-the display engine pipeline device tree nodes to its DTSI file.
+ENOSYS is special and should only be used for incorrect syscall number.
+It does not seem to be the case here.
 
-The H5 pipeline has some differences and will be enabled later.
+Reported by checkpatch.pl while working on clock protection.
 
-The currently-unused mixer0 and tcon0 are also needed, for the
-completement of the pipeline.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-Changes in v2:
-- Changes according to new dt bindings.
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/sun8i-h3.dtsi | 186 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 186 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index b36f9f423c39..d5f2f43c3fb4 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -41,6 +41,8 @@
-  */
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8d57e130c4e0..5d545954c48f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2032,7 +2032,7 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
  
- #include "sunxi-h3-h5.dtsi"
-+#include <dt-bindings/clock/sun8i-de2.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
+ 	/* verify ops for for multi-parent clks */
+ 	if ((core->num_parents > 1) && (!core->ops->set_parent))
+-		return -ENOSYS;
++		return -EPERM;
  
- / {
- 	cpus {
-@@ -72,6 +74,190 @@
- 		};
- 	};
- 
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-h3-display-engine";
-+		allwinner,pipelines = <&mixer0>,
-+				      <&mixer1>;
-+		status = "disabled";
-+	};
-+
-+	soc {
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun8i-a83t-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_BUS_DE>,
-+				 <&ccu CLK_DE>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			assigned-clocks = <&ccu CLK_DE>;
-+			assigned-clock-parents = <&ccu CLK_PLL_DE>;
-+			assigned-clock-rates = <432000000>;
-+		};
-+
-+		mixer0: mixer@1100000 {
-+			compatible = "allwinner,sun8i-h3-de2-mixer0";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER0>,
-+				 <&display_clocks CLK_MIXER0>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_MIXER0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+
-+					mixer0_out_tcon1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&tcon1_in_mixer0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun8i-h3-de2-mixer1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer1_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer1>;
-+					};
-+
-+					mixer1_out_tcon1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun8i-h3-tcon";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>,
-+				 <&ccu CLK_TCON0>;
-+			clock-names = "ahb",
-+				      "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON0>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+
-+					tcon0_in_mixer1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&mixer1_out_tcon0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun8i-h3-tcon";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>,
-+				 <&ccu CLK_TVE>;
-+			clock-names = "ahb",
-+				      "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon1_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon1>;
-+					};
-+
-+					tcon1_in_mixer1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_tve0: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&tve0_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tve0: tv-encoder@1e00000 {
-+			compatible = "allwinner,sun8i-h3-tv-encoder";
-+			reg = <0x01e00000 0x1000>;
-+			clocks = <&ccu CLK_BUS_TVE>;
-+			resets = <&ccu RST_BUS_TVE>;
-+			status = "disabled";
-+
-+			port {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tve0_in_tcon1: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&tcon1_out_tve0>;
-+				};
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+ 	/* check that we are allowed to re-parent if the clock is in use */
+ 	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
 -- 
-2.12.2
+2.9.4
