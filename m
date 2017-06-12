@@ -1,61 +1,68 @@
-Return-Path: <arndbergmann@gmail.com>
-MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-8-chunyan.zhang@spreadtrum.com> <20170620013710.GJ4493@codeaurora.org>
- <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 22 Jun 2017 13:15:24 +0200
-Message-ID: <CAK8P3a1ELg1XcY-QOZn-f6kR9yt-Q6LNLUYEY-BNW-2BaBy6EQ@mail.gmail.com>
-Subject: Re: [PATCH V1 7/9] clk: sprd: add adjustable pll support
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 10/10] clk: fix CLK_SET_RATE_GATE with clock rate protection
+Date: Mon, 12 Jun 2017 21:44:38 +0200
+Message-Id: <20170612194438.12298-11-jbrunet@baylibre.com>
+In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 22, 2017 at 12:17 PM, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> On 20 June 2017 at 09:37, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> On 06/18, Chunyan Zhang wrote:
+Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
+clock tree
 
->>> +     kint = DIV_ROUND_CLOSEST(((fvco - refin * nint * CCU_PLL_1M)/10000) *
->>> +     ((mask >> (shift + i)) + 1), refin * 100) << i;
->>> +     cfg[index].val |= (kint << shift) & mask;
->>> +     cfg[index].msk |= mask;
->>> +
->>> +     ibias_val = pll_get_ibias(fvco, pll->itable);
->>> +
->>> +     mask = pmask(pll, PLL_IBIAS);
->>> +     index = pindex(pll, PLL_IBIAS);
->>> +     shift = pshift(pll, PLL_IBIAS);
->>> +     cfg[index].val |= ibias_val << shift & mask;
->>> +     cfg[index].msk |= mask;
->>> +
->>> +     for (i = 0; i < reg_num; i++) {
->>> +             if (cfg[i].msk)
->>> +                     ccu_pll_writel(pll, i, cfg[i].val, cfg[i].msk);
->>> +     }
->>> +
->>
->> Are we waiting for the writel() to go through above? If so we
->> need a readl() of the same register to make sure the write has
->> completed before delaying.
->
-> After writing these configuration registers, we have to wait a certain
-> time to make sure the pll has worked as we configured.  This depends
-> on other circuit part, so we use udelay rather than reading the same
-> register.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-I think you have to do both: normally the writel() is not guaranteed
-to arrive at the device until you read back from an address in the
-same device, so the delay must happen after the readl(), or you won't
-know how long to wait for.
-
-       Arnd
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 5d545954c48f..971f39d4e879 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -587,6 +587,9 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
+ 		return;
+ 
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_unprotect(core);
++
+ 	if (--core->prepare_count > 0)
+ 		return;
+ 
+@@ -657,6 +660,14 @@ static int clk_core_prepare(struct clk_core *core)
+ 
+ 	core->prepare_count++;
+ 
++	/*
++	 * CLK_SET_RATE_GATE is a special case of clock protection
++	 * Instead of a consumer protection, the provider is protecting
++	 * itself when prepared
++	 */
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_protect(core);
++
+ 	return 0;
+ }
+ 
+@@ -1738,9 +1749,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (clk_core_rate_is_protected(core))
+ 		return -EBUSY;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+-		return -EBUSY;
+-
+ 	/* calculate new rates and get the topmost changed clock */
+ 	top = clk_calc_new_rates(core, req_rate);
+ 	if (!top)
+-- 
+2.9.4
