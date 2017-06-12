@@ -1,57 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:52402 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751200AbdFFQar (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 12:30:47 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 06 Jun 2017 09:29:40 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: sboyd@codeaurora.org, shawnguo@kernel.org, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org, leonard.crestez@nxp.com,
-        festevam@gmail.com
-Subject: Re: [PATCH] clk: imx7d: Fix the DDR PLL enable bit
-In-Reply-To: <1496763954-10981-1-git-send-email-fabio.estevam@nxp.com>
-References: <1496763954-10981-1-git-send-email-fabio.estevam@nxp.com>
-Message-ID: <14dcf8601d35d32124df7fbbd0ccc3d5@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 04/10] clk: use round rate to bail out early in set_rate
+Date: Mon, 12 Jun 2017 21:44:32 +0200
+Message-Id: <20170612194438.12298-5-jbrunet@baylibre.com>
+In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-06-06 08:45, Fabio Estevam wrote:
-> Commit ad14972422899b6 ("clk: imx7d: Fix the powerdown bit location
-> of PLL DDR") used the incorrect bit for the IMX_PLLV3_DDR_IMX7 case.
-> 
-> Fix it accordingly to avoid a kernel hang.
+The current implementation of clk_core_set_rate_nolock bails out early if
+the requested rate is exactly the same as the one set. It should bail out
+if the request would not result in rate a change.  This important when
+rate is not exactly what is requested, which is fairly common with PLLs.
 
-Yeah that sneaked in with the rename of the define between v1 -> v2,
-didn't saw that sorry.
+Ex: provider able to give any rate with steps of 100Hz
+ - 1st consumer request 48000Hz and gets it.
+ - 2nd consumer request 48010Hz as well. If we were to perform the usual
+   mechanism, we would get 48000Hz as well. The clock would not change so
+   there is no point performing any checks to make sure the clock can
+   change, we know it won't.
 
-FWIW,
+This is important to prepare the addition of the clock protection
+mechanism
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
---
-Stefan
-
-> 
-> Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
->  drivers/clk/imx/clk-pllv3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> index 0039b16..9af62ee 100644
-> --- a/drivers/clk/imx/clk-pllv3.c
-> +++ b/drivers/clk/imx/clk-pllv3.c
-> @@ -453,7 +453,7 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type
-> type, const char *name,
->  		ops = &clk_pllv3_enet_ops;
->  		break;
->  	case IMX_PLLV3_DDR_IMX7:
-> -		pll->power_bit = IMX7_ENET_PLL_POWER;
-> +		pll->power_bit = IMX7_DDR_PLL_POWER;
->  		ops = &clk_pllv3_av_ops;
->  		break;
->  	default:
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8cc4672414be..163cb9832f10 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1570,15 +1570,34 @@ static void clk_change_rate(struct clk_core *core)
+ 		clk_change_rate(core->new_child);
+ }
+ 
++static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
++						     unsigned long req_rate)
++{
++	int ret;
++	struct clk_rate_request req;
++
++	if (!core)
++		return 0;
++
++	clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
++	req.rate = req_rate;
++
++	ret = clk_core_round_rate_nolock(core, &req);
++
++	return ret ? 0 : req.rate;
++}
++
+ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 				    unsigned long req_rate)
+ {
+ 	struct clk_core *top, *fail_clk;
+-	unsigned long rate = req_rate;
++	unsigned long rate;
+ 
+ 	if (!core)
+ 		return 0;
+ 
++	rate = clk_core_req_round_rate_nolock(core, req_rate);
++
+ 	/* bail early if nothing to do */
+ 	if (rate == clk_core_get_rate_nolock(core))
+ 		return 0;
+@@ -1587,7 +1606,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 		return -EBUSY;
+ 
+ 	/* calculate new rates and get the topmost changed clock */
+-	top = clk_calc_new_rates(core, rate);
++	top = clk_calc_new_rates(core, req_rate);
+ 	if (!top)
+ 		return -EINVAL;
+ 
+-- 
+2.9.4
