@@ -1,44 +1,88 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 5 Jun 2017 11:55:11 -0500
-From: Rob Herring <robh@kernel.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linus.walleij@linaro.org, andy.gross@linaro.org,
-	david.brown@linaro.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	absahu@codeaurora.org, sjaganat@codeaurora.org,
-	sricharan@codeaurora.org, mraghava@codeaurora.org
-Subject: Re: [PATCH v3 3/5] clk: qcom: ipq8074: Add Global Clock Controller
- support
-Message-ID: <20170605165511.quegmmwuvuexudz4@rob-hp-laptop>
-References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
- <1496316482-25468-4-git-send-email-varada@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1496316482-25468-4-git-send-email-varada@codeaurora.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 02/10] clk: add clk_core_set_phase_nolock function
+Date: Mon, 12 Jun 2017 21:44:30 +0200
+Message-Id: <20170612194438.12298-3-jbrunet@baylibre.com>
+In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 01, 2017 at 04:58:00PM +0530, Varadarajan Narayanan wrote:
-> From: Abhishek Sahu <absahu@codeaurora.org>
-> 
-> This patch adds support for the global clock controller found on
-> the IPQ8074 based devices. This includes UART, I2C, SPI etc.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+Create a core function for set_phase, as it is done for set_rate and
+set_parent.
 
-I acked v2. Please add acks when posting new versions.
+This rework is done to ease the integration of "protected" clock
+functionality.
 
->  drivers/clk/qcom/Kconfig                           |    9 +
->  drivers/clk/qcom/Makefile                          |    1 +
->  drivers/clk/qcom/gcc-ipq8074.c                     | 1009 ++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
->  5 files changed, 1172 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f5c371532509..dceaf0ff23db 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_parent);
+ 
++static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
++{
++	int ret = -EINVAL;
++
++	if (!core)
++		return 0;
++
++	trace_clk_set_phase(core, degrees);
++
++	if (core->ops->set_phase)
++		ret = core->ops->set_phase(core->hw, degrees);
++
++	trace_clk_set_phase_complete(core, degrees);
++
++	return ret;
++}
++
+ /**
+  * clk_set_phase - adjust the phase shift of a clock signal
+  * @clk: clock signal source
+@@ -1895,7 +1912,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+  */
+ int clk_set_phase(struct clk *clk, int degrees)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (!clk)
+ 		return 0;
+@@ -1906,17 +1923,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+ 		degrees += 360;
+ 
+ 	clk_prepare_lock();
+-
+-	trace_clk_set_phase(clk->core, degrees);
+-
+-	if (clk->core->ops->set_phase)
+-		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
+-
+-	trace_clk_set_phase_complete(clk->core, degrees);
+-
+-	if (!ret)
+-		clk->core->phase = degrees;
+-
++	ret = clk_core_set_phase_nolock(clk->core, degrees);
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
+-- 
+2.9.4
