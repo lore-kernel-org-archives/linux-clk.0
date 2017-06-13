@@ -1,97 +1,82 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 07/15] MIPS: Setup boot_command_line before plat_mem_setup
-Date: Wed,  7 Jun 2017 22:04:31 +0200
-Message-Id: <20170607200439.24450-8-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 13 Jun 2017 14:42:11 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH 0/9] clk: add imx7ulp clk support
+Message-ID: <20170613064211.GC15770@b29396-OptiPlex-7040>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Burton <paul.burton@imgtec.com>
+On Mon, May 15, 2017 at 09:59:14PM +0800, Dong Aisheng wrote:
+> This patch series intends to add imx7ulp clk support.
+> 
+> i.MX7ULP Clock functions are under joint control of the System
+> Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+> modules, and Core Mode Controller (CMC)1 blocks
+> 
+> The clocking scheme provides clear separation between M4 domain
+> and A7 domain. Except for a few clock sources shared between two
+> domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+> and and the Fast IRC clock (FIRCLK), clock sources and clock
+> management are separated and contained within each domain.
+> 
+> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+> 
+> Note: this series only adds A7 clock domain support as M4 clock
+> domain will be handled by M4 seperately.
+> 
+> Dong Aisheng (9):
+>   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+>   clk: reparent orphans after critical clocks enabled
+>   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+>   clk: imx: add pllv4 support
+>   clk: imx: add pfdv2 support
+>   clk: imx: add composite clk support
+>   dt-bindings: clock: add imx7ulp clock binding doc
+>   clk: imx: make mux parent strings const
+>   clk: imx: add imx7ulp clk driver
+> 
 
-Platforms using DT will typically call __dt_setup_arch from
-plat_mem_setup. This in turn calls early_init_dt_scan. When
-CONFIG_CMDLINE is set, this leads to its value being copied into
-boot_command_line by early_init_dt_scan_chosen. If this happens before
-the code setting up boot_command_line in arch_mem_init runs, that code
-will go on to append CONFIG_CMDLINE (via builtin_cmdline) to
-boot_command_line again, duplicating it. For some command line
-parameters (eg. earlycon) this can be a problem. Set up
-boot_command_line before early_init_dt_scan_chosen gets called such that
-it will not write CONFIG_CMDLINE in this scenario & the arguments aren't
-duplicated.
+Ping.
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
----
- arch/mips/kernel/setup.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+Regards
+Dong Aisheng
 
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 01d1dbde5fbf..89785600fde4 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -785,25 +785,6 @@ static void __init arch_mem_init(char **cmdline_p)
- 	struct memblock_region *reg;
- 	extern void plat_mem_setup(void);
- 
--	/* call board setup routine */
--	plat_mem_setup();
--
--	/*
--	 * Make sure all kernel memory is in the maps.  The "UP" and
--	 * "DOWN" are opposite for initdata since if it crosses over
--	 * into another memory section you don't want that to be
--	 * freed when the initdata is freed.
--	 */
--	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
--			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
--			 BOOT_MEM_RAM);
--	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
--			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
--			 BOOT_MEM_INIT_RAM);
--
--	pr_info("Determined physical RAM map:\n");
--	print_memory_map();
--
- #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
- 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
- #else
-@@ -831,6 +812,26 @@ static void __init arch_mem_init(char **cmdline_p)
- 	}
- #endif
- #endif
-+
-+	/* call board setup routine */
-+	plat_mem_setup();
-+
-+	/*
-+	 * Make sure all kernel memory is in the maps.  The "UP" and
-+	 * "DOWN" are opposite for initdata since if it crosses over
-+	 * into another memory section you don't want that to be
-+	 * freed when the initdata is freed.
-+	 */
-+	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
-+			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
-+			 BOOT_MEM_RAM);
-+	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
-+			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
-+			 BOOT_MEM_INIT_RAM);
-+
-+	pr_info("Determined physical RAM map:\n");
-+	print_memory_map();
-+
- 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
- 
- 	*cmdline_p = command_line;
--- 
-2.11.0
+>  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 +++++++
+>  drivers/clk/clk-divider.c                          |   2 +
+>  drivers/clk/clk-fractional-divider.c               |  10 ++
+>  drivers/clk/clk.c                                  |  39 ++--
+>  drivers/clk/imx/Makefile                           |   6 +-
+>  drivers/clk/imx/clk-busy.c                         |   2 +-
+>  drivers/clk/imx/clk-composite.c                    |  93 ++++++++++
+>  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+>  drivers/clk/imx/clk-imx7ulp.c                      | 171 ++++++++++++++++++
+>  drivers/clk/imx/clk-pfdv2.c                        | 199 +++++++++++++++++++++
+>  drivers/clk/imx/clk-pllv4.c                        | 196 ++++++++++++++++++++
+>  drivers/clk/imx/clk.h                              |  31 +++-
+>  include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++++
+>  include/linux/clk-provider.h                       |  11 ++
+>  14 files changed, 902 insertions(+), 30 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+>  create mode 100644 drivers/clk/imx/clk-composite.c
+>  create mode 100644 drivers/clk/imx/clk-imx7ulp.c
+>  create mode 100644 drivers/clk/imx/clk-pfdv2.c
+>  create mode 100644 drivers/clk/imx/clk-pllv4.c
+>  create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
+> 
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
