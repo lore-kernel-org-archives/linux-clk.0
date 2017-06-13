@@ -1,172 +1,167 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 15/15] MIPS: ingenic: Initial GCW Zero support
-Date: Wed,  7 Jun 2017 22:04:39 +0200
-Message-Id: <20170607200439.24450-16-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 13 Jun 2017 11:46:18 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: icenowy@aosc.io
+Cc: devicetree@vger.kernel.org,
+        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 03/11] drm: sun4i: ignore swapped mixer<->tcon
+ connection for DE2
+Message-ID: <20170613094618.hxjuc5yx7udypbxh@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-4-icenowy@aosc.io>
+ <20170607093512.rfvpefmyskgjw3ik@flea.lan>
+ <01A7F22E-C4FF-4B4B-A9BC-FF0C96B996B9@aosc.io>
+ <20170607143827.4ng5gedvzn3f5pyx@flea.lan>
+ <66881eac1dd06d918692482bdb1ea9e6@aosc.io>
+ <20170609144649.67i3zscq26jt5hhe@flea.home>
+ <03e5cb4ada3e19ed3476e1d562450f6f@aosc.io>
+ <0b7d3cc334929ab2464477bbccc37e31@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="42uig743fx76vuiw"
+In-Reply-To: <0b7d3cc334929ab2464477bbccc37e31@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
-handheld game console, successfully kickstarted in ~2012, running Linux.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/Makefile |  1 +
- arch/mips/boot/dts/ingenic/gcw0.dts | 60 +++++++++++++++++++++++++++++++++++++
- arch/mips/configs/gcw0_defconfig    | 28 +++++++++++++++++
- arch/mips/jz4740/Kconfig            |  4 +++
- arch/mips/jz4740/boards.c           |  1 +
- 5 files changed, 94 insertions(+)
- create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
- create mode 100644 arch/mips/configs/gcw0_defconfig
+--42uig743fx76vuiw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/mips/boot/dts/ingenic/Makefile b/arch/mips/boot/dts/ingenic/Makefile
-index f2b864f07850..f64ad1c27a28 100644
---- a/arch/mips/boot/dts/ingenic/Makefile
-+++ b/arch/mips/boot/dts/ingenic/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_JZ4740_QI_LB60)	+= qi_lb60.dtb
-+dtb-$(CONFIG_JZ4770_GCW0)	+= gcw0.dtb
- dtb-$(CONFIG_JZ4780_CI20)	+= ci20.dtb
- 
- obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
-new file mode 100644
-index 000000000000..9c9a0137ccdf
---- /dev/null
-+++ b/arch/mips/boot/dts/ingenic/gcw0.dts
-@@ -0,0 +1,60 @@
-+/dts-v1/;
-+
-+#include "jz4770.dtsi"
-+
-+/ {
-+	compatible = "gcw,zero", "ingenic,jz4770";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:57600n8";
-+	};
-+
-+	board {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		ranges = <>;
-+
-+		otg_phy: otg-phy {
-+			compatible = "usb-nop-xceiv";
-+			clocks = <&cgu JZ4770_CLK_OTG_PHY>;
-+			clock-names = "main_clk";
-+		};
-+	};
-+};
-+
-+&ext {
-+	clock-frequency = <12000000>;
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&cgu {
-+	/* Put high-speed peripherals under PLL1, such that we can change the
-+	 * PLL0 frequency on demand without having to suspend peripherals.
-+	 * We use a rate of 432 MHz, which is the least common multiple of
-+	 * 27 MHz (required by TV encoder) and 48 MHz (required by USB host).
-+	 */
-+	assigned-clocks =
-+		<&cgu JZ4770_CLK_PLL1>,
-+		<&cgu JZ4770_CLK_UHC>;
-+	assigned-clock-parents =
-+		<0>,
-+		<&cgu JZ4770_CLK_PLL1>;
-+	assigned-clock-rates =
-+		<432000000>;
-+};
-+
-+&uhc {
-+	/* The WiFi module is connected to the UHC. */
-+	status = "okay";
-+};
-diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
-new file mode 100644
-index 000000000000..471497033855
---- /dev/null
-+++ b/arch/mips/configs/gcw0_defconfig
-@@ -0,0 +1,28 @@
-+CONFIG_MACH_INGENIC=y
-+CONFIG_JZ4770_GCW0=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_BOUNCE is not set
-+CONFIG_PREEMPT_VOLUNTARY=y
-+# CONFIG_SECCOMP is not set
-+CONFIG_CROSS_COMPILE="mipsel-gcw0-linux-uclibc-"
-+CONFIG_NO_HZ_IDLE=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_EMBEDDED=y
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_SUSPEND is not set
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_NETDEVICES=y
-+CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_INGENIC=y
-+CONFIG_USB=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_OHCI_HCD_PLATFORM=y
-+CONFIG_NOP_USB_XCEIV=y
-+CONFIG_TMPFS=y
-diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
-index 922850503271..db270653fe8c 100644
---- a/arch/mips/jz4740/Kconfig
-+++ b/arch/mips/jz4740/Kconfig
-@@ -7,6 +7,10 @@ config JZ4740_QI_LB60
- 	bool "Qi Hardware Ben NanoNote"
- 	select MACH_JZ4740
- 
-+config JZ4770_GCW0
-+	bool "Game Consoles Worldwide GCW Zero"
-+	select MACH_JZ4770
-+
- config JZ4780_CI20
- 	bool "MIPS Creator CI20"
- 	select MACH_JZ4780
-diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-index a3cf64cf004a..98a4d8e68cf0 100644
---- a/arch/mips/jz4740/boards.c
-+++ b/arch/mips/jz4740/boards.c
-@@ -12,5 +12,6 @@
- #include <asm/mips_machine.h>
- 
- MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-+MIPS_MACHINE(MACH_INGENIC_JZ4770, "gcw,zero", "GCW Zero", NULL);
- MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
- 			"Imagination Technologies CI20", NULL);
--- 
-2.11.0
+On Sat, Jun 10, 2017 at 11:16:35PM +0800, icenowy@aosc.io wrote:
+> =E5=9C=A8 2017-06-10 22:57=EF=BC=8Cicenowy@aosc.io =E5=86=99=E9=81=93=EF=
+=BC=9A
+> > =E5=9C=A8 2017-06-09 22:46=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=
+=BC=9A
+> > > On Thu, Jun 08, 2017 at 01:01:53PM +0800, icenowy@aosc.io wrote:
+> > > > =E5=9C=A8 2017-06-07 22:38=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=
+=EF=BC=9A
+> > > > > On Wed, Jun 07, 2017 at 06:01:02PM +0800, Icenowy Zheng wrote:
+> > > > > > >I have no idea what this is supposed to be doing either.
+> > > > > > >
+> > > > > > >I might be wrong, but I really feel like there's a big mismatch
+> > > > > > >between your commit log, and what you actually implement.
+> > > > > > >
+> > > > > > >In your commit log, you should state:
+> > > > > > >
+> > > > > > >A) What is the current behaviour
+> > > > > > >B) Why that is a problem
+> > > > > > >C) How do you address it
+> > > > > > >
+> > > > > > >And you don't.
+> > > > > > >
+> > > > > > >However, after discussing it with Chen-Yu, it seems like you'r=
+e trying
+> > > > > > >to have all the mixers probed before the TCONs. If that is so,=
+ there's
+> > > > > > >nothing specific to the H3 here, and we also have the same iss=
+ue on
+> > > > > > >dual-pipeline DE1 (A10, A20, A31). Chen-Yu worked on that a bi=
+t, but
+> > > > > > >the easiest solution would be to move from a DFS algorithm to =
+walk
+> > > > > > >down the graph to a BFS one.
+> > > > > > >
+> > > > > > >That way, we would add all mixers first, then the TCONs, then =
+the
+> > > > > > >encoders, and the component framework will probe them in order.
+> > > > > >
+> > > > > > No. I said that they're swappable, however, I don't want to
+> > > > > > implement the swap now, but hardcode 0-0 1-1 connection.
+> > > > >
+> > > > > We're on the same page, it's definitely not what I was mentionning
+> > > > > here. This would require a significant rework, and the usecase is
+> > > > > still unclear for now.
+> > > > >
+> > > > > > However, as you and Chen-Yu said, device tree should reflect the
+> > > > > > real hardware, there will be bonus endpoints for the swapped
+> > > > > > connection.
+> > > > >
+> > > > > If by bonus you mean connections from mixer 0 to tcon 1 and mixer=
+ 1 to
+> > > > > tcon 0, then yes, we're going to need it.
+> > > > >
+> > > > > > What I want to do is to ignore the bonus connection, in order to
+> > > > > > prevent them from confusing the code.
+> > > > > >
+> > > > > > If you just change the bind sequence, I think it cannot be
+> > > > > > prevented that wrong connections will be bound.
+> > > > >
+> > > > > This is where I don't follow you anymore. The component framework
+> > > > > doesn't list connections but devices. The swapped connections do =
+not
+> > > > > matter here, we have the same set of devices: mixer0, mixer1, tco=
+n0
+> > > > > and tcon1.
+> > > > >
+> > > > > The thing that does change with your patch is that before, the bi=
+nding
+> > > > > sequence would have been mixer0, tcon0, tcon1, mixer1. With your
+> > > > > patch, it's mixer0, tcon0, mixer1, tcon1.
+> > > > >
+> > > > > So, again, stating what issue you were seeing before making this =
+patch
+> > > > > would be very helpful to see what you're trying to do / fix.
+> > > >=20
+> > > > So maybe I can drop the forward search (searching output) code,
+> > > > and keep
+> > > > only the backward search (search input) code in TCON?
+> > > >=20
+> > > > Forward search code is only used when binding, but backward
+> > > > search is used
+> > > > for TCON to find connected mixer.
+> > >=20
+> > > It is hard to talk about a solution, when it's not clear what the
+> > > issue is.
+> > >=20
+> > > So please state
+> > > > > > >A) What is the current behaviour
+> > > > > > >B) Why that is a problem
+> > > > > > >C) How do you address it
+> > >=20
+> > > We'll talk about a solution once this is done.
+> >=20
+> > (All those things are based on the assumption that mixer0, mixer1, tcon0
+> > and tcon1 are all enabled in DT. If one group of mixer-tcon pair is
+> > fully
+> > disabled in DT it will behave properly.)
+>=20
+> So there's a temporary workaround -- only enable one pipeline and disable
+> the unused mixer and tcon totally.
+
+As a short-term workaround, while we rework the code to enable both
+pipelines, it definitely works for me.
+
+Maxim
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--42uig743fx76vuiw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZP7RqAAoJEBx+YmzsjxAgc1gP+QEur+Yq1XfbJxcXnAPP0k5H
+YOU7F95LCoBi/rnEp5upfNlvJ9h3gf9FCQXzmpJlDeyoaLnj6vfg8hxPiC9lQNXL
+7n+gtnjmx1a1C/PcCmaMr+G8UUJUfGxe4xgKiKYvgOozyFBBdm0IGGzs1FCUdNwf
+ABtZ4bIVTNx65S8KT8nNDL5I34EMP5u0xXjyrsMnFXv0jMvqy6Tk5kLNx54IErI6
+abMZGNohc0O6pRczVpvRE+w1115RJZ4o12x3kNJuvVo2edY0mkfCroRDvuksAhKk
+bK8UzMGUWWuGp9YWJYEyXQnfzq+A5KTKDp1b4TXCSx7VMFWCnxCD+mivEkZtGR/N
+IFmCImun5KYLuStB/6cch3jTmQcLgfkgky/pjRqzkY9edLln8iDjB6ec8BIbhDqE
+VhWVrdLFMCNWAjv8n6GpFFGFCfNAPj7pemvhsDYhXQgXDdN997FXvy09RrBQqjxn
+42JYYnGbi7rVCgJB7xfnKhIUscQd4Qx6vmvMK5Lper5k90t8ZfLz9vEyF59Lf3rV
+TGARbSvuXH03hrjCl2c78g3eDrw526yQehCBnmPu3/v/zbapqsUnV0p7ObtZSJzP
+vlJDocjDnKagK1YWgt70JMQx5PCPaTGPh7h3tpjHEUW2uPQQ6FntwPmwdSvhozRL
+0Z+KSUSfmm7WPFmNJTIY
+=pYPE
+-----END PGP SIGNATURE-----
+
+--42uig743fx76vuiw--
