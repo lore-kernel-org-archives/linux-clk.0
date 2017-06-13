@@ -1,111 +1,102 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
-Date: Fri,  2 Jun 2017 12:04:24 +0530
-Message-Id: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 13 Jun 2017 10:02:01 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: icenowy@aosc.io
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] Re: [PATCH v2 10/11] ARM: sun8i: h3: add display
+ engine pipeline for TVE
+Message-ID: <20170613080201.pezlmcggfnfziiat@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-11-icenowy@aosc.io>
+ <20170607094241.65dcm42aacrn4eev@flea.lan>
+ <87bf6e8c54286fd0630bd876ec0c6c56@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2ogm3vqxmzj5xyg7"
+In-Reply-To: <87bf6e8c54286fd0630bd876ec0c6c56@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support of Broadcom Stingray SOC
-by reusing existing Broadcom iProc device drivers.
 
-Most of the patches in this patchset are DT patches except
-the Stingray clock tree support which just one patch.
+--2ogm3vqxmzj5xyg7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patchset is based on Linux-4.12-rc3 and it is also available
-at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
+On Sun, Jun 11, 2017 at 02:58:47PM +0800, icenowy@aosc.io wrote:
+> =E5=9C=A8 2017-06-07 17:42=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
+=9A
+> > On Mon, Jun 05, 2017 at 12:01:48AM +0800, Icenowy Zheng wrote:
+> > > +	soc {
+> > > +		display_clocks: clock@1000000 {
+> > > +			compatible =3D "allwinner,sun8i-a83t-de2-clk";
+> > > +			reg =3D <0x01000000 0x100000>;
+> > > +			clocks =3D <&ccu CLK_BUS_DE>,
+> > > +				 <&ccu CLK_DE>;
+> > > +			clock-names =3D "bus",
+> > > +				      "mod";
+> > > +			resets =3D <&ccu RST_BUS_DE>;
+> > > +			#clock-cells =3D <1>;
+> > > +			#reset-cells =3D <1>;
+> > > +			assigned-clocks =3D <&ccu CLK_DE>;
+> > > +			assigned-clock-parents =3D <&ccu CLK_PLL_DE>;
+> > > +			assigned-clock-rates =3D <432000000>;
+> > > +		};
+> >=20
+> > We discussed that already a few times, but there's no reason to do
+> > so. If you need a downstream clock at a particular rate, call
+> > clk_set_rate on it, period.
+> >=20
+> > Whether its parent will be coming from PLL_DE or some other more
+> > appriopriate clock is not relevant and doesn't make any difference.
+>=20
+> The clock framework is not so smart to deal with these infomations:
+> - CLK_PLL_PERIPH should always be 600MHz
+> - CLK_TVE should always be 216MHz
+> - CLK_DE (in fact CLK_MIXER{0,1}) should be larger than 300MHz (for 4K)
 
-Changes since v5:
- - Rebased patches for Linux-4.12-rc3
- - Update DT node names to match register offset
+None of what you're doing guarantees what you state above, so I'm not
+really sure what your point is.
 
-Changes since v4:
- - Reduce number of include headers in Stingray clk driver
+> So we have to specify CLK_DE to be 432MHz, and then it will set
+> CLK_PLL_DE to this value, then the CLK_TVE can be set to 216MHz with
+> divider 2.
 
-Changes since v3:
- - Rebased patches for Linux-4.12-rc1
- - Updated PATCH3 to have all clocks except genpll3 to be
-   registered via platform driver probe
+Yes, but it works by accident. Any clock change somewhere in the same
+clock-tree might break whatever you have set in the DT.
 
-Changes since v2:
- - Remove default bootargs from chosen DT node
- - Remove "linux" prefix from stdout DT attribute of chosen DT node
- - Remove use of GIC_CPU_MASK_xxx() for PPIs
+Hence why you want to do it within the clock framework and your
+driver, not here.
 
-Changes since v1:
- - Rebased patches for Linux-4.12-rc1
- - Removed unwanted /memreserve/ from bcm958742-base.dtsi
- - Use ranges DT property to clear view of memory-layout
- - Make bcm-sr.h part of clock DT bindings patch
+Maxime
 
-Anup Patel (3):
-  dt-bindings: bcm: Add Broadcom Stingray bindings document
-  arm64: dts: Initial DTS files for Broadcom Stingray SOC
-  arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Oza Pawandeep (1):
-  arm64: dts: Add I2C DT nodes for Stingray SoC
+--2ogm3vqxmzj5xyg7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Pramod Kumar (3):
-  arm64: dts: Add NAND DT nodes for Stingray SOC
-  arm64: dts: Add pinctrl DT nodes for Stingray SOC
-  arm64: dts: Add GPIO DT nodes for Stingray SOC
+-----BEGIN PGP SIGNATURE-----
 
-Sandeep Tripathy (3):
-  dt-bindings: clk: Extend binding doc for Stingray SOC
-  clk: bcm: Add clocks for Stingray SOC
-  arm64: dts: Add clock DT nodes for Stingray SOC
+iQIcBAEBAgAGBQJZP5v5AAoJEBx+YmzsjxAg75QP/RKLgPYijMm70E3Fs+UJA7dM
+fGzWPQSAKGbdWm4xcNm7wrNej2hqN4vYqSKYuLAZsG4n7qEsBCIsoJ0mNNGVt0LI
+PXQ8XhCSgKdETQR5J83c7l7xrleLSDRZpWLrgoP1RZais49ZupOGFMWKLnYmh8sI
+2OAL4dOnhrNOzZI32q+M8XU9Nv6k3at1zBUtoJpvTsfl6T2zs55i5911X9ZiptS+
+9Mt/jZD22K7wpABLBt14vus3VL9DVyfQMBaPzMzYhYbbG2qNZRw0KEO16aIJM3MW
+dCNvmpMCIIJws1hIr2Vgo3gemeM9ollFFFHni5qxxM/jvceM7RE4V54P1wLas57e
+N5woOnG9r2fmSl1ga6/T1mS6PlswIuS5oWpFw2Z1qu8mP2PO+vybSRAOe9ypdB8V
+CcwvDqeLsXXd6lzUNK0vc2NCWqhmuLCb3Bi+D6TT6rTU0uAF9L6wCLdTGmAkNMak
+3WtlGZZejG6GHeM9GFg7Fm3nvug9KmMVT4tFUI+VYEwXW8ZUFkQoIiv81J5UdGbQ
+QmoagK22eCIfPJDEKWipTp6o31l3rLcMEVe0gYF7uhvRHz127WggPrcu5Ae7Q0+I
+nEtloWX2hfSdUqtlsR1eAZXxKr7xBkyOzI1a5CgcDhKb5Fqii7xWbr2SdlDNbzNy
+QYfTMnfSSLWmkGiFRGO3
+=aKgJ
+-----END PGP SIGNATURE-----
 
-Srinath Mannam (1):
-  arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
-
- .../devicetree/bindings/arm/bcm/brcm,stingray.txt  |  12 +
- .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++
- arch/arm64/boot/dts/broadcom/Makefile              |   1 +
- arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 131 ++++++
- .../boot/dts/broadcom/stingray/bcm958742k.dts      |  78 ++++
- .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 ++
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 170 ++++++++
- .../dts/broadcom/stingray/stingray-pinctrl.dtsi    | 345 ++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 460 +++++++++++++++++++++
- drivers/clk/bcm/Kconfig                            |   8 +
- drivers/clk/bcm/Makefile                           |   1 +
- drivers/clk/bcm/clk-sr.c                           | 320 ++++++++++++++
- include/dt-bindings/clock/bcm-sr.h                 | 101 +++++
- .../dt-bindings/pinctrl/brcm,pinctrl-stingray.h    |  68 +++
- 15 files changed, 1817 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,stingray.txt
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
- create mode 100644 drivers/clk/bcm/clk-sr.c
- create mode 100644 include/dt-bindings/clock/bcm-sr.h
- create mode 100644 include/dt-bindings/pinctrl/brcm,pinctrl-stingray.h
-
--- 
-2.7.4
+--2ogm3vqxmzj5xyg7--
