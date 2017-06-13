@@ -1,38 +1,53 @@
-Return-Path: <stefan.wahren@i2se.com>
-Date: Wed, 14 Jun 2017 22:01:39 +0200 (CEST)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Danilo Krummrich <danilokrummrich@dk-develop.de>
-Cc: rjui@broadcom.com, linux-clk@vger.kernel.org, eric@anholt.net,
-	bcm-kernel-feedback-list@broadcom.com, mturquette@baylibre.com,
-	f.fainelli@gmail.com, sboyd@codeaurora.org,
-	linux-rpi-kernel@lists.infradead.org
-Message-ID: <1934417554.81732.1497470499708@email.1und1.de>
-In-Reply-To: <20170614194057.28722-1-danilokrummrich@dk-develop.de>
-References: <20170614194057.28722-1-danilokrummrich@dk-develop.de>
-Subject: Re: [PATCH v4] clk: bcm2835: remove remains from stub clk driver
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 12 Jun 2017 19:04:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, ssantosh@kernel.org, mturquette@baylibre.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 2/2] clk: keystone: Add sci-clk driver support
+Message-ID: <20170613020455.GQ20170@codeaurora.org>
+References: <1495458113-7366-1-git-send-email-t-kristo@ti.com>
+ <1495458113-7366-3-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1495458113-7366-3-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Danilo,
+On 05/22, Tero Kristo wrote:
+> +
+> +/**
+> + * ti_sci_clk_probe - Probe function for the TI SCI clock driver
+> + * @pdev: platform device pointer to be probed
+> + *
+> + * Probes the TI SCI clock device. Allocates a new clock provider
+> + * and registers this to the common clock framework. Also applies
+> + * any required flags to the identified clocks via clock lists
+> + * supplied from DT. Returns 0 for success, negative error value
+> + * for failure.
+> + */
+> +static int ti_sci_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct sci_clk_provider *provider;
+> +	const struct ti_sci_handle *handle;
+> +	struct sci_clk_data *data;
+> +	int ret;
+> +
+> +	data = (struct sci_clk_data *)of_device_get_match_data(dev);
 
-> Danilo Krummrich <danilokrummrich@dk-develop.de> hat am 14. Juni 2017 um 21:40 geschrieben:
-> 
-> 
-> This commit removes the fixed clocks introduced as a stub clock driver
-> added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
-> Originally they were used to drive the AMBA bus and PL011 uart driver.
-> Now these clocks are derived by the CPRMAN clock driver and configured
-> in DT.
-> 
-> Additionally, get rid of init_machine function in bcm2835 board file
-> as there's nothing to do any longer.
-> 
-> Acked-by: Eric Anholt <eric@anholt.net>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+It would be nice to avoid this cast, and also check for NULL
+here. I tried to do it in a few minutes but then that caused a
+problem with throwing away const on sci_clk_data. Can this be
+resolved? We probably shouldn't be assigning the
+sci_clk_data::clocks member anyway if the structure is const
+assuming it goes into the read-only section. It may cause some
+restructuring of the code though.
 
-please stop resending this patch only to add someones Ack. This doesn't make our job easier.
-
-Thanks
-Stefan
+> +
+> +	handle = devm_ti_sci_get_handle(dev);
+> +	if (IS_ERR(handle))
+> +		return PTR_ERR(handle);
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
