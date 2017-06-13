@@ -1,98 +1,131 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 27 Jun 2017 11:46:07 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 13 Jun 2017 09:44:32 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Priit Laes <plaes@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>
-Subject: Re: [PATCH v4 1/6] clk: sunxi-ng: div: Add support for fixed
- post-divider
-Message-ID: <20170627094607.2hkgzkycclboemvu@flea.lan>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
- <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
+To: icenowy@aosc.io
+Cc: devicetree@vger.kernel.org,
+        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 07/11] drm: sun4i: add support for the TV encoder in
+ H3 SoC
+Message-ID: <20170613074432.btwgc4e7pndtsvbf@flea.lan>
+References: <20170604160149.30230-1-icenowy@aosc.io>
+ <20170604160149.30230-8-icenowy@aosc.io>
+ <20170607093845.cu5kk55nj72roysf@flea.lan>
+ <362bb72d74cd7181ae02dbf73b0e724e@aosc.io>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5tptchyg3tgiuxg4"
-In-Reply-To: <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
+        protocol="application/pgp-signature"; boundary="jujgstq4zz4ccqii"
+In-Reply-To: <362bb72d74cd7181ae02dbf73b0e724e@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---5tptchyg3tgiuxg4
-Content-Type: text/plain; charset=us-ascii
+--jujgstq4zz4ccqii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-On Sun, Jun 25, 2017 at 11:45:42PM +0300, Priit Laes wrote:
-> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-> 6 is fixed post-divider.
+On Sun, Jun 11, 2017 at 02:43:42PM +0800, icenowy@aosc.io wrote:
+> =E5=9C=A8 2017-06-07 17:38=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
+=9A
+> > On Mon, Jun 05, 2017 at 12:01:45AM +0800, Icenowy Zheng wrote:
+> > > Allwinner H3 features a TV encoder similar to the one in earlier SoCs,
+> > > but has a internal fixed clock divider that divides the TCON1 clock
+> > > (called TVE clock in datasheet) by 11.
+> > >=20
+> > > Add support for it.
+> > >=20
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > ---
+> > > Changes in v2:
+> > > - Quirk part rewritten.
+> > >=20
+> > >  drivers/gpu/drm/sun4i/sun4i_tv.c | 35
+> > > ++++++++++++++++++++++++++++++++++-
+> > >  1 file changed, 34 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c
+> > > b/drivers/gpu/drm/sun4i/sun4i_tv.c
+> > > index 338b9e5bb2a3..b9ff6d5ea67a 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun4i_tv.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+> > > @@ -13,6 +13,7 @@
+> > >  #include <linux/clk.h>
+> > >  #include <linux/component.h>
+> > >  #include <linux/of_address.h>
+> > > +#include <linux/of_device.h>
+> > >  #include <linux/regmap.h>
+> > >  #include <linux/reset.h>
+> > >=20
+> > > @@ -169,14 +170,21 @@ struct tv_mode {
+> > >  	const struct resync_parameters	*resync_params;
+> > >  };
+> > >=20
+> > > +struct sun4i_tv_quirks {
+> > > +	int fixed_divider;
+> > > +};
+> > > +
+> > >  struct sun4i_tv {
+> > >  	struct drm_connector	connector;
+> > >  	struct drm_encoder	encoder;
+> > >=20
+> > >  	struct clk		*clk;
+> > > +	struct clk		*mod_clk;
+> > >  	struct regmap		*regs;
+> > >  	struct reset_control	*reset;
+> > >=20
+> > > +	const struct sun4i_tv_quirks *quirks;
+> > > +
+> > >  	struct sun4i_drv	*drv;
+> > >  };
+> > >=20
+> > > @@ -391,6 +399,12 @@ static void sun4i_tv_mode_set(struct
+> > > drm_encoder *encoder,
+> > >  	struct sun4i_tcon *tcon =3D crtc->tcon;
+> > >  	const struct tv_mode *tv_mode =3D sun4i_tv_find_tv_by_mode(mode);
+> > >=20
+> > > +	if (tv->quirks->fixed_divider) {
+> > > +		DRM_DEBUG_DRIVER("Applying fixed divider %d on TVE clock\n",
+> > > +				 tv->quirks->fixed_divider);
+> > > +		mode->crtc_clock *=3D tv->quirks->fixed_divider;
+> > > +	}
+> > > +
+> >=20
+> > You're not allowed to change the mode in mode_set, and you shouldn't
+> > even change it. The output pixel clock is still 27MHz.
+> >=20
+> > You should implement that using the states, as we discussed already.
 >=20
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++--
->  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
->  2 files changed, 12 insertions(+), 3 deletions(-)
+> After reading the comments at include/drm/drm_modeset_helper_vtables.h,
+> I think the atomic_check function is allowed to directly change
+> the adjust_mode of crtc_state.
 >=20
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_di=
-v.c
-> index c0e5c10..de30e15 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.c
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> @@ -62,8 +62,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw=
- *hw,
->  	parent_rate =3D ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
->  						  parent_rate);
-> =20
-> -	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> -				   cd->div.flags);
-> +	val =3D divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> +				  cd->div.flags);
-> +
-> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		val /=3D cd->fixed_post_div;
-> +
-> +	return val;
->  }
-> =20
->  static int ccu_div_determine_rate(struct clk_hw *hw,
-> @@ -89,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned=
- long rate,
->  	val =3D divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
->  			      cd->div.flags);
-> =20
-> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		val *=3D cd->fixed_post_div;
-> +
->  	spin_lock_irqsave(cd->common.lock, flags);
-> =20
->  	reg =3D readl(cd->common.base + cd->common.reg);
+> And according to other comments at include/drm/drm_modes.h, the
+> crtc_clock in adjust_mode should be the clock to be really feed
+> to the hardware.
+>=20
+> So I think I can just change this in atomic_check.
+>=20
+> However, the mode_set function of sun4i_tv seems to be not
+> regarding adjusted_mode and still use original mode.
+>=20
+> So my current design is:
+> - Multiply adjusted_mode in atomic_check.
+> - Feed adjust_mode to TCON code in mode_set function.
+>=20
+> Is this proper?
+>=20
+> (From my own understanding to the comments I think so.)
 
-You also need to adjust the round rate call back to take into account
-the post divider before calling divider_round_rate_parent, and after
-since that function can modify the parent_rate.
+No, it's not. The pixel clock in the mode is the pixel clock output
+physically by the connector. You want to use it for an intermediate
+clock in your pipeline.
 
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_di=
-v.h
-> index 08d0744..f3a5028 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.h
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -86,9 +86,10 @@ struct ccu_div_internal {
->  struct ccu_div {
->  	u32			enable;
-> =20
-> -	struct ccu_div_internal		div;
-> +	struct ccu_div_internal	div;
+This is not the same clock, and not the same frequency.
 
-Spurious change?
-
-Thanks!
 Maxime
 
 --=20
@@ -100,24 +133,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---5tptchyg3tgiuxg4
+--jujgstq4zz4ccqii
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZUilfAAoJEBx+YmzsjxAgJP4P/3IwD6pTvz8i/jOiK0UT0mpN
-dS69dc52yN579jXF6XPamvTGo5YmlLOggEANE3+XJWe+WLyqE/jO/TZL0Oz9jopN
-VMGhiFfOFO/rvcCa0KmT+0BPbkbUVoatMPiSjpneMTfl05C2IEbgE2fTxWM8Yx1f
-ZELhrebG/7zb+5q3mPTtYbXgvs6tQ1VJ2cKZxd6CKKdRseeDRcZzkkcujjOxEMrI
-yJy8b4ZrgGNsI4oLXeampQuCHp3SSIMANTMhsQSK+soBYFxUVlkm/UrrEnWVD8N8
-AyVJxMlda7wo9L+cyes7I4HZsAMsQDtG6QQQ84jio9EDYCslDaO4FH7ZGKr/sVIp
-W6Ie8PFobb8zh6YC+nIwNNchc5BOgLV9VAReNlGudstn17FNT/K32NY6WkPyGIL+
-G97FpEDMSmGgn/n6vxek51YNwAZRlFKGHRWrC0yo7PPWa6X1Dk16fmDThzPloCrw
-Z9gUNC7X5bkGqghpyF12us9KHM9t2dsU+CtkrjPHtt4bf7UXb/ktRvJ2ml+UXFYu
-bsL91//B8cb9fzd1df3jxLo1L2nW5rZaUwPnwZ8ASg9DDzaZORyHWhBsxJe/KObY
-hU9R76wxzVgMAfOLCtlAdRfFIRid/8csTzOxrFGuprVFTblaSfwAsv0dF8ktMYVV
-wh/oLeZr7HhI+UgPuZPt
-=ZGBX
+iQIcBAEBAgAGBQJZP5fgAAoJEBx+YmzsjxAgYdEQAIGDtjVeVkMnmq+T0Tu8e+JP
+do/cLThLwGEljNqGMX1mYGsXBoiQOtO/AlTcH34I4+tCcUNuUksqGmmabvBEPJuw
+PrBA1lkxQJtviT3f2bYsLjM5euu5/PD9dbad4TcwOT8MkyHplodN2sBa4EmzNpNo
+K1TOGVJgqfPFfQXcEkvtrlTXuZRChA88n4Y53ZCPYKKywE5G2F/5L/MMrYUKKHcM
+1UJhhQuMUtg7KWyrNTJOvnEbhd+jw0uEfe/ib5NqjNIoBKI8qP7ZB0dGen72ltR1
+a/vQa7Iq2hvFUKQcprhqDo1JlDYWGXMxBMMRAZBe2IF+taYvOWHFSDA7KtAPbVMG
++BMHqOQlXXEQb7DbJx/DYZaXNBhmOEHauoAIPOw5vth6P1+2iEal5O4sW1JArlaQ
+sKUr+zRqHdhl+ed+Pgx+tY7/aRnkyuBm0SXeZ4I+gyXF1YXlOcmyKbb5QXGMlhAK
+357qj9F+FcpCMTXfKhUwn2Qi8v78aJakassUEVgdCe1BicidVestIvwO6V7XIzyB
+u0pWWxoXqKF2ooX6c70LVwGFzT/D9M+7K8IZnmmCJDHLkgwajvCujVPM55IH045+
+DvY2E0+FkBxaABggqH5/8O7ZHNMsKtdaPEVqy0iXp0dmJuFPNwMdvmI5DI5D7K+n
+agOVd2Ntreiv5XjaQwhp
+=yZSm
 -----END PGP SIGNATURE-----
 
---5tptchyg3tgiuxg4--
+--jujgstq4zz4ccqii--
