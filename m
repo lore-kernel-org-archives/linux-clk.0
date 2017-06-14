@@ -1,37 +1,31 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Andy Gross <andy.gross@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] clk: gcc-msm8916: add support to 9.6MHz codec clk
-Date: Mon, 12 Jun 2017 10:41:22 +0100
-Message-Id: <20170612094122.6770-1-srinivas.kandagatla@linaro.org>
+Return-Path: <zhangfei.gao@linaro.org>
+Return-Path: <zhangfei.gao@linaro.org>
+Subject: Re: [PATCH v2 1/3] clk: hi3660: fix wrong parent name of
+ clk_mux_sysbus
+To: Guodong Xu <guodong.xu@linaro.org>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: chenjun14@huawei.com, zhongkaihua@huawei.com, leo.yan@linaro.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ John Stultz <john.stultz@linaro.org>
+References: <20170526073821.25971-1-guodong.xu@linaro.org>
+ <20170526073821.25971-2-guodong.xu@linaro.org>
+From: zhangfei <zhangfei.gao@linaro.org>
+Message-ID: <404d8df2-9a12-1735-6676-097812000178@linaro.org>
+Date: Wed, 14 Jun 2017 11:23:38 +0800
+MIME-Version: 1.0
+In-Reply-To: <20170526073821.25971-2-guodong.xu@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-MCLK for internal audio codec is expected to be at 9.6MHz by default.
-This patch adds support to 9.6MHz to make the default case possible.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 628e6ca276ec..2cfe7000fc60 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1430,6 +1430,7 @@ static struct clk_branch gcc_ultaudio_stc_xo_clk = {
- };
- 
- static const struct freq_tbl ftbl_codec_clk[] = {
-+	F(9600000, P_XO, 2, 0, 0),
- 	F(19200000, P_XO, 1, 0, 0),
- 	F(11289600, P_EXT_MCLK, 1, 0, 0),
- 	{ }
--- 
-2.11.0
+On 2017年05月26日 15:38, Guodong Xu wrote:
+> From: Chen Jun <chenjun14@huawei.com>
+>
+> Parent name of clk_mux_sysbus is not correct. This patch fixes it.
+>
+> Signed-off-by: Chen Jun <chenjun14@huawei.com>
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+Acked-by: Zhangfei Gao <zhangfei.gao@linaro.org>
