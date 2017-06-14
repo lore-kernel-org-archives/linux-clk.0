@@ -1,104 +1,57 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
+Return-Path: <zhang.chunyan@linaro.org>
+Return-Path: <zhang.chunyan@linaro.org>
+From: Chunyan Zhang <zhang.chunyan@linaro.org>
+To: robh+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: mark.rutland@arm.com,
 	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v7 6/8] MIPS: Loongson: Add Loongson-1A board support
-Date: Fri, 16 Jun 2017 10:52:51 +0800
-Message-Id: <1497581573-17258-7-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
-References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhang.lyra@gmail.com
+Subject: [PATCH v2] Documentation: clock: address more for clock-cells property
+Date: Wed, 14 Jun 2017 17:21:44 +0800
+Message-Id: <1497432104-22609-1-git-send-email-zhang.chunyan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Register basic devices for Loongson-1A, and setup clk for UART.
+The value of property 'clock-cells' is not determined only by the number
+of clock outputs in one clock node, it is determined by whether the clock
+output in this node can be referenced directly without index. If the
+output clock has to be referenced by a index, the clock-cell of this
+clock node can't be defined 0.
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 ---
- arch/mips/loongson32/Makefile      |  6 ++++++
- arch/mips/loongson32/ls1a/Makefile |  5 +++++
- arch/mips/loongson32/ls1a/board.c  | 31 +++++++++++++++++++++++++++++++
- 3 files changed, 42 insertions(+)
- create mode 100644 arch/mips/loongson32/ls1a/Makefile
- create mode 100644 arch/mips/loongson32/ls1a/board.c
+ Documentation/devicetree/bindings/clock/clock-bindings.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/mips/loongson32/Makefile b/arch/mips/loongson32/Makefile
-index 1ab2c5b..cd1f597 100644
---- a/arch/mips/loongson32/Makefile
-+++ b/arch/mips/loongson32/Makefile
-@@ -5,6 +5,12 @@
- obj-$(CONFIG_MACH_LOONGSON32) += common/
+diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+index 2ec489e..e2b76b4 100644
+--- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
++++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -18,6 +18,9 @@ Required properties:
+ 		   with a single clock output and 1 for nodes with multiple
+ 		   clock outputs.
  
- #
-+# Loongson LS1A board
-+#
++		   There's one exception, please see the description for
++		   clock-indices below.
 +
-+obj-$(CONFIG_LOONGSON1_LS1A)  += ls1a/
-+
-+#
- # Loongson LS1B board
- #
+ Optional properties:
+ clock-output-names: Recommended to be a list of strings of clock output signal
+ 		    names indexed by the first cell in the clock specifier.
+@@ -48,6 +51,13 @@ clock-indices:	   If the identifying number for the clocks in the node
+ 		   is not linear from zero, then this allows the mapping of
+ 		   identifiers into the clock-output-names array.
  
-diff --git a/arch/mips/loongson32/ls1a/Makefile b/arch/mips/loongson32/ls1a/Makefile
-new file mode 100644
-index 0000000..dc23a9a
---- /dev/null
-+++ b/arch/mips/loongson32/ls1a/Makefile
-@@ -0,0 +1,5 @@
-+#
-+# Makefile for loongson1A based machines.
-+#
++		   This property not only servers for clocks with multiple
++		   clock outputs, but also for clocks with a single clock
++		   output whose identifying number is not zero.
 +
-+obj-y += board.o
-diff --git a/arch/mips/loongson32/ls1a/board.c b/arch/mips/loongson32/ls1a/board.c
-new file mode 100644
-index 0000000..7993f6c
---- /dev/null
-+++ b/arch/mips/loongson32/ls1a/board.c
-@@ -0,0 +1,31 @@
-+/*
-+ * Copyright (c) 2016 Binbin Zhou <zhoubb@lemote.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation; either version 2 of the License, or (at your
-+ * option) any later version.
-+ */
++		   So long as clock-indices is set, clock-cells cannot be
++		   set zero.
 +
-+#include <platform.h>
-+
-+static struct platform_device *ls1a_platform_devices[] __initdata = {
-+	&ls1x_uart_pdev,
-+	&ls1x_eth0_pdev,
-+	&ls1x_eth1_pdev,
-+	&ls1x_rtc_pdev,
-+	&ls1x_wdt_pdev,
-+	&ls1x_ahci_pdev,
-+	&ls1x_ohci_pdev,
-+};
-+
-+static int __init ls1a_platform_init(void)
-+{
-+	ls1x_serial_set_uartclk(&ls1x_uart_pdev);
-+	ls1x_rtc_set_extclk(&ls1x_rtc_pdev);
-+
-+	return platform_add_devices(ls1a_platform_devices,
-+				   ARRAY_SIZE(ls1a_platform_devices));
-+}
-+
-+arch_initcall(ls1a_platform_init);
+ For example, if we have two clocks <&oscillator 1> and <&oscillator 3>:
+ 
+ 	oscillator {
 -- 
-2.9.3
+2.7.4
