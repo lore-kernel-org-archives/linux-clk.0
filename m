@@ -1,63 +1,83 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: bjorn.andersson@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v6 6/6] arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-Date: Fri,  9 Jun 2017 15:11:59 +0530
-Message-Id: <1497001319-30353-7-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
-References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+Return-Path: <phil@raspberrypi.org>
+From: Phil Elwell <phil@raspberrypi.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Cc: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v3 1/4] clk: bcm2835: More flexible IO register remapping
+Date: Wed, 14 Jun 2017 17:29:07 +0100
+Message-Id: <1497457750-35585-2-git-send-email-phil@raspberrypi.org>
+In-Reply-To: <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
+ <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+The BCM2835 AUX block contains two registers - AUXIRQ and AUXENB.
+The addition of an irqchip driver using AUXIRQ is hampered by
+the current DT node reserving both registers with a compatible string
+claimed by this bcm2835-aux-clk driver.
 
-These configs are required for booting kernel in qcom
-ipq8074 boards.
+Ease the transition to separate DT nodes by detecting and handling
+the case where this driver's MEM resource has been reduced to include
+only the AUXENB register. Otherwise, use devm_ioremap to remap the
+region without reserving it.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/bcm/clk-bcm2835-aux.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 65cdd87..c20328e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -267,6 +267,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SPIDEV=m
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -450,6 +451,7 @@ CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
+diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
+index bd750cf..7b99395 100644
+--- a/drivers/clk/bcm/clk-bcm2835-aux.c
++++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+@@ -37,9 +37,29 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+ 	parent = __clk_get_name(parent_clk);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(reg))
+-		return PTR_ERR(reg);
++
++	/*
++	 * If the MEM resource is only 4 bytes long it covers just the
++	 * AUXENB register, otherwise it is the entire AUX block.
++	 *
++	 * If remapping the entire block, use devm_ioremap rather than
++	 * devm_ioremap_resource to avoid requesting the mem_region.
++	 *
++	 * N.B. This if/else can be replaced with the if body once the
++	 * new DT bindings are in use.
++	 */
++	if (resource_size(res) == 4) {
++		reg = devm_ioremap_resource(dev, res);
++		if (IS_ERR(reg))
++			return PTR_ERR(reg);
++		gate = reg;
++	} else {
++		reg = devm_ioremap(dev, res->start, resource_size(res));
++		if (IS_ERR(reg))
++			return PTR_ERR(reg);
++		gate = reg + BCM2835_AUXENB;
++	}
++
+ 
+ 	onecell = devm_kmalloc(dev, sizeof(*onecell) + sizeof(*onecell->hws) *
+ 			       BCM2835_AUX_CLOCK_COUNT, GFP_KERNEL);
+@@ -47,7 +67,6 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	onecell->num = BCM2835_AUX_CLOCK_COUNT;
+ 
+-	gate = reg + BCM2835_AUXENB;
+ 	onecell->hws[BCM2835_AUX_CLOCK_UART] =
+ 		clk_hw_register_gate(dev, "aux_uart", parent, 0, gate, 0, 0, NULL);
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
