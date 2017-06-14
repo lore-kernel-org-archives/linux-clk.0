@@ -1,53 +1,94 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v5 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
-Date: Mon, 19 Jun 2017 07:02:40 +0200
-Message-Id: <20170619050245.2632-2-o.rempel@pengutronix.de>
-In-Reply-To: <20170619050245.2632-1-o.rempel@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
+Return-Path: <phil@raspberrypi.org>
+From: Phil Elwell <phil@raspberrypi.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Cc: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v3 2/4] dt: bindings: Add bindings for bcm2835-aux-intc
+Date: Wed, 14 Jun 2017 17:29:08 +0100
+Message-Id: <1497457750-35585-3-git-send-email-phil@raspberrypi.org>
+In-Reply-To: <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
+ <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Add bindings documentation for brcm,bcm2835-aux-intc and human-readable
+declarations for the BCM2835 AUX IRQs.
 
-diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-index 9252912a5b0e..8f93e1503e59 100644
---- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-@@ -6,6 +6,14 @@ Required properties:
- - interrupts: Should contain CCM interrupt
- - #clock-cells: Should be <1>
- 
-+Optional properties:
-+- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
-+  on power off.
-+  Use this property if the SoC should be powered off by external power
-+  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-+  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
-+  be using "syscon-poweroff" driver instead.
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ .../interrupt-controller/brcm,bcm2835-aux-intc.txt | 27 ++++++++++++++++++++++
+ .../interrupt-controller/bcm2835-aux-intc.h        | 20 ++++++++++++++++
+ 2 files changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+ create mode 100644 include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+new file mode 100644
+index 0000000..9cbbab6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+@@ -0,0 +1,27 @@
++BCM2835 Auxiliary ("AUXIRQ") Interrupt Controller
 +
- The clock consumer should specify the desired clock by having the clock
- ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
- for the full list of i.MX6 Quad and DualLite clock IDs.
++The BCM2835 family of SoCs multiplexes the interrupts for peripherals in
++the AUX block into a single IRQ. The AUXIRQ register shows the IRQ status
++of each of the peripherals. Note that there are no masking or clearing
++facilities - interrupts must be enabled and acknowledged in the
++individual peripherals.
++
++Required properties:
++- compatible :	     Should be "brcm,bcm2835-aux-intc".
++- reg :		     Specifies base physical address and size of the registers.
++- interrupts :	     The interrupt number - see
++		     bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++		     interrupt source. The value shall be 1.
++
++  The cell contains the interrupt specifier, as found in
++  include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h.
++
++Example:
++
++	auxintc: interrupt-controller@7e215000 {
++		compatible = "brcm,bcm2835-aux-intc";
++		reg = <0x7e215000 0x4>;
++		interrupts = <1 29>;
++		interrupt-controller;
+diff --git a/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+new file mode 100644
+index 0000000..8b9fc12
+--- /dev/null
++++ b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+@@ -0,0 +1,20 @@
++/*
++ * Copyright (C) 2017 Raspberry Pi (Trading) Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#define BCM2835_AUX_IRQ_UART	0
++#define BCM2835_AUX_IRQ_SPI1	1
++#define BCM2835_AUX_IRQ_SPI2	2
++#define BCM2835_AUX_IRQ_COUNT	3
 -- 
-2.11.0
+1.9.1
