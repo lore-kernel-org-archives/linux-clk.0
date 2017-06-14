@@ -1,58 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:38567 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751272AbdFEOZ7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2017 10:25:59 -0400
-Date: Mon, 5 Jun 2017 16:25:58 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] clk: at91: Add sama5d2 suspend/resume
-Message-ID: <20170605142558.7x2eip4o66uj6eby@piout.net>
-References: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
- <20170512142531.11274-2-alexandre.belloni@free-electrons.com>
- <20170601074644.GW20170@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Jun 2017 09:09:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Danilo Krummrich <danilokrummrich@dk-develop.de>, rjui@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Eric Anholt <eric@anholt.net>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v3] clk: bcm2835: remove remains from stub clk driver
+Message-ID: <20170614160909.GA20170@codeaurora.org>
+References: <20170608222900.18039-1-danilokrummrich@dk-develop.de>
+ <a6facd69-ca86-1527-52af-f097a905027e@i2se.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170601074644.GW20170@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <a6facd69-ca86-1527-52af-f097a905027e@i2se.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 01/06/2017 at 00:46:44 -0700, Stephen Boyd wrote:
-> > +
-> > +static u8 registered_ids[PMC_MAX_IDS];
-> > +
-> > +void pmc_register_id(u8 id)
-> > +{
+On 06/13, Stefan Wahren wrote:
+> [add Michael, Eric and Florian]
 > 
-> Shouldn't this also be inside CONFIG_PM? And then
-> pmc_register_id() is a nop function when CONFIG_PM=n?
+> Am 09.06.2017 um 00:29 schrieb Danilo Krummrich:
+> > This commit removes the fixed clocks introduced as a stub clock driver
+> > added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
+> > Originally they were used to drive the AMBA bus and PL011 uart driver.
+> > Now these clocks are derived by the CPRMAN clock driver and configured
+> > in DT.
+> >
+> > Additionally, get rid of init_machine function in bcm2835 board file
+> > as there's nothing to do any longer.
+> >
+> > Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
+> > ---
+> > v2: v2: added ACK from Eric Anholt
+> > v3: rebased onto: [PATCH] irqchip/bcm2836: Move SMP startup code to arch/arm
 > 
-
-I'll do that. I'll rebase on top of clk-next once you fix my silly
-mistake.
-
-> > +	int i;
-> > +
-> > +	for (i = 0; i < PMC_MAX_IDS; i++) {
-> > +		if (registered_ids[i] == 0) {
-> > +			registered_ids[i] = id;
-> > +			break;
-> > +		}
-> > +		if (registered_ids[i] == id)
-> > +			break;
-> > +	}
-> > +}
+> @Michael, @Stephen:
 > 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> In case you are okay with this patch, can this go via bcm2835-tree?
+
+There are some patches already in clk-next for
+drivers/clk/bcm/clk-bcm2835.c but overall the change looks ok to
+me. It looks like conflicts will be minimal to non-existent, so
+it should be fine to take outside clk tree.
+
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
