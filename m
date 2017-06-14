@@ -1,63 +1,38 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAKb7UvgKhgCpeNzUX1ecFPuF6j+KvAWW3vprZ9nnVMBBJFi_zQ@mail.gmail.com>
-References: <20170602101024.18940-1-wens@csie.org> <20170602101024.18940-20-wens@csie.org>
- <20170602194219.hiajr7dt2oikm52q@flea.lan> <20170607223625.aofk3cba3w4cvlys@rob-hp-laptop>
- <CAKb7UvgKhgCpeNzUX1ecFPuF6j+KvAWW3vprZ9nnVMBBJFi_zQ@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 10 Jun 2017 00:08:31 +0800
-Message-ID: <CAGb2v64uxmxptf9VgHO8tT=AbPc+VtDhtG+rVd3Nwf9bEGr8pg@mail.gmail.com>
-Subject: Re: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on the
- MSI Primo81 tablet
-To: Rob Herring <robh@kernel.org>
-Cc: Ilia Mirkin <imirkin@alum.mit.edu>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	devicetree <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20170612210248.GP20170@codeaurora.org>
+References: <20170524082044.8473-1-linus.walleij@linaro.org>
+ <20170601070208.GO20170@codeaurora.org> <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
+ <20170605195812.GH20170@codeaurora.org> <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
+ <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com> <20170612210248.GP20170@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 14 Jun 2017 13:31:55 +0200
+Message-ID: <CACRpkdbF4syppZsFv2hbB1JxHvnndbS53yY8Pkbz2zoq5Jjzjw@mail.gmail.com>
+Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 8, 2017 at 6:47 AM, Ilia Mirkin <imirkin@alum.mit.edu> wrote:
-> On Wed, Jun 7, 2017 at 6:36 PM, Rob Herring <robh@kernel.org> wrote:
->> On Fri, Jun 02, 2017 at 09:42:19PM +0200, Maxime Ripard wrote:
->>> On Fri, Jun 02, 2017 at 06:10:24PM +0800, Chen-Yu Tsai wrote:
->>> > The MSI Primo81 tablet has a micro HDMI connector at the bottom.
->>> > This is connected to the SoCs HDMI output.
->>> >
->>> > Enable the display pipeline and the HDMI output.
->>> >
->>> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>> > ---
->>> >  arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
->>> >  1 file changed, 25 insertions(+)
->>> >
->>> > diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->>> > index f3712753fa42..26154b2f87a3 100644
->>> > --- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->>> > +++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->>> > @@ -52,17 +52,42 @@
->>> >  / {
->>> >     model = "MSI Primo81 tablet";
->>> >     compatible = "msi,primo81", "allwinner,sun6i-a31s";
->>> > +
->>> > +   hdmi-connector {
->>> > +           compatible = "hdmi-connector";
->>> > +           type = "c";
->>>
->>> Should we add a connector type for this one?
->>
->> c as in USB Type C? I'd prefer to see a new compatible string. Is type
->> even documented?
+On Mon, Jun 12, 2017 at 11:02 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/12, Linus Walleij wrote:
 
-Indeed it is:
+>> So the deferred clock makes the whole platform hang because the timer
+>> needs it. Without a clocksource, the delay loop cannot be calibrated, so
+>> it hangs there.
+>
+> Ok. So can the certain clks that are required to get the timer
+> going be put into CLK_OF_DECLARE_DRIVER() and then have a regular
+> platform driver for the rest of the clks that aren't required for
+> early boot? We've been doing this sort of hybrid design lately,
+> so hopefully that works here too.
 
-http://elixir.free-electrons.com/linux/latest/source/Documentation/devicetree/bindings/display/connector/hdmi-connector.txt#L6
+Sure I will give it a spin!
 
-> Probably as in HDMI Type C (there are Type A, C, and D connectors, aka
-> "regular", "mini", and "micro").
+Is there a best-in-class driver doing this I can use as inspiration?
 
-Correct.
-
-ChenYu
+Yours,
+Linus Walleij
