@@ -1,231 +1,97 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sat, 3 Jun 2017 00:21:38 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 14 Jun 2017 21:21:19 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: icenowy@aosc.io
-Cc: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, wens@csie.org,
-        Rob Herring <robh+dt@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [linux-sunxi] Re: [RFC PATCH 07/11] drm: sun4i: add support for
- the TV encoder in H3 SoC
-Message-ID: <20170602222138.2sra42yjkbwms53d@flea.lan>
-References: <20170517164354.16399-1-icenowy@aosc.io>
- <1958057.WDKm0nQKgW@jernej-laptop>
- <CAGb2v66aD=G+V75N-_nYo=dGqhxpKhadM84h9G-B34=dnDwCbg@mail.gmail.com>
- <3164416.5xR36OcyjH@jernej-laptop>
- <20170523125321.t7y7yfrrfokpkzgd@flea.home>
- <98c3572beee0a81755994b4bdc508b18@aosc.io>
- <20170524073019.bl6rojc2srrigalp@flea.home>
- <98558BA2-BC99-4D0A-A045-571C643875C5@aosc.io>
- <20170531184306.hzu2em35vr4qi4un@flea.lan>
- <715e6ab52d8aa0032c9759393ace20dc@aosc.io>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock fixes for 4.12
+Message-ID: <20170614192119.xktlt4o5puje2pdu@flea.home>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cuas4phllyrebc2e"
-In-Reply-To: <715e6ab52d8aa0032c9759393ace20dc@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+	protocol="application/pgp-signature"; boundary="njkjuo6jn7iu6dzg"
 List-ID: <linux-clk.vger.kernel.org>
 
 
---cuas4phllyrebc2e
-Content-Type: text/plain; charset=utf-8
+--njkjuo6jn7iu6dzg
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 01, 2017 at 10:11:14PM +0800, icenowy@aosc.io wrote:
-> =E5=9C=A8 2017-06-01 02:43=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
-=9A
-> > On Wed, May 24, 2017 at 04:25:46PM +0800, Icenowy Zheng wrote:
-> > >=20
-> > >=20
-> > > =E4=BA=8E 2017=E5=B9=B45=E6=9C=8824=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=
-=8D=883:30:19, Maxime Ripard
-> > > <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=B0:
-> > > >On Tue, May 23, 2017 at 09:00:59PM +0800, icenowy@aosc.io wrote:
-> > > >> =E5=9C=A8 2017-05-23 20:53=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=
-=93=EF=BC=9A
-> > > >> > On Mon, May 22, 2017 at 07:55:56PM +0200, Jernej =C5=A0krabec wr=
-ote:
-> > > >> > > Hi,
-> > > >> > >
-> > > >> > > Dne sobota, 20. maj 2017 ob 03:37:53 CEST je Chen-Yu Tsai
-> > > >napisal(a):
-> > > >> > > > On Sat, May 20, 2017 at 2:23 AM, Jernej =C5=A0krabec
-> > > ><jernej.skrabec@siol.net>
-> > > >> > > wrote:
-> > > >> > > > > Hi,
-> > > >> > > > >
-> > > >> > > > > Dne petek, 19. maj 2017 ob 20:08:18 CEST je Icenowy Zheng
-> > > >napisal(a):
-> > > >> > > > >> =E4=BA=8E 2017=E5=B9=B45=E6=9C=8820=E6=97=A5 GMT+08:00 =
-=E4=B8=8A=E5=8D=882:03:30, Maxime Ripard
-> > > ><maxime.ripard@free-
-> > > >> > > > >
-> > > >> > > > > electrons.com> =E5=86=99=E5=88=B0:
-> > > >> > > > >> >On Thu, May 18, 2017 at 12:43:50AM +0800, Icenowy Zheng
-> > > >wrote:
-> > > >> > > > >> >> Allwinner H3 features a TV encoder similar to the one =
-in
-> > > >earlier
-> > > >> > > > >> >
-> > > >> > > > >> >SoCs,
-> > > >> > > > >> >
-> > > >> > > > >> >> but with some different points about clocks:
-> > > >> > > > >> >> - It has a mod clock and a bus clock.
-> > > >> > > > >> >> - The mod clock must be at a fixed rate to generate
-> > > >signal.
-> > > >> > > > >> >
-> > > >> > > > >> >Why?
-> > > >> > > > >>
-> > > >> > > > >> It's experiment result by Jernej.
-> > > >> > > > >>
-> > > >> > > > >> The clock rates in BSP kernel is also specially designed
-> > > >> > > > >> (PLL_DE at 432MHz) in order to be able to feed the TVE.
-> > > >> > > > >
-> > > >> > > > > My experiments and search through BSP code showed that TVE
-> > > >seems to have
-> > > >> > > > > additional fixed predivider 8. So if you want to generate =
-27
-> > > >MHz clock,
-> > > >> > > > > unit has to be feed with 216 MHz.
-> > > >> > > > >
-> > > >> > > > > TVE has only one PLL source PLL_DE. And since 216 MHz is a
-> > > >bit low for
-> > > >> > > > > DE2,
-> > > >> > > > > BSP defaults to 432 MHz for PLL_DE and use divider 2 to
-> > > >generate 216 MHz.
-> > > >> > > > > This clock is then divided by 8 internaly to get final 27
-> > > >MHz.
-> > > >> > > > >
-> > > >> > > > > Please note that I don't have any hard evidence to support
-> > > >that, only
-> > > >> > > > > experimental data. However, only that explanation make sen=
-se
-> > > >to me.
-> > > >> > > > >
-> > > >> > > > > BTW, BSP H3/H5 TV driver supports only PAL and NTSC which
-> > > >both use 27 MHz
-> > > >> > > > > base clock. Further experiments are needed to check if the=
-re
-> > > >is any
-> > > >> > > > > possibility to have other resolutions by manipulating cloc=
-ks
-> > > >and give
-> > > >> > > > > other proper settings. I plan to do that, but not in very
-> > > >near future.
-> > > >> > > >
-> > > >> > > > You only have composite video output, and those are the only=
- 2
-> > > >standard
-> > > >> > > > resolutions that make any sense.
-> > > >> > >
-> > > >> > > Right, other resolutions are for VGA.
-> > > >> > >
-> > > >> > > Anyway, I did some more digging in A10 and R40 datasheets. I
-> > > >think
-> > > >> > > that H3 TVE
-> > > >> > > unit is something in between. R40 TVE has a setting to select =
-"up
-> > > >> > > sample".
-> > > >> >
-> > > >> > That might be just another translation of oversampling :)
-> > > >> >
-> > > >> > I didn't know it could be applied to composite signals though, b=
-ut
-> > > >I
-> > > >> > guess this is just another analog signal after all.
-> > > >> >
-> > > >> > > Possible settings are 27 MHz, 54 MHz, 108 MHz and 216 MHz. BSP
-> > > >> > > driver on R40
-> > > >> > > has this setting enabled only for PAL and NTSC and it is always
-> > > >216
-> > > >> > > MHz. I
-> > > >> > > think that H3 may have this hardwired to 216 MHz and this would
-> > > >be
-> > > >> > > the reason
-> > > >> > > why 216 MHz is needed.
-> > > >> > >
-> > > >> > > Has anyone else any better explanation?
-> > > >> >
-> > > >> > That's already a pretty good one.
-> > > >> >
-> > > >> > Either way, wether this is upsampling, oversampling or just a
-> > > >> > pre-divider, this can and should be dealt with in the mode_set
-> > > >> > callback, and not in the probe.
-> > > >>
-> > > >> I got a better idea -- let TVE driver have the CLK_TVE as an
-> > > >> input and create a subclock output with divider 16, and feed this
-> > > >> subclock to TCON lcd-ch1.
-> > > >>
-> > > >> This is a model of the real hardware -- the clock divider is in
-> > > >> TVE, not TCON.
-> > > >
-> > > >That's definitely not a good representation of the hardware. There's
-> > > >one clock, it goes to the TCON, period.
-> > >=20
-> > > No, I still think it goes to the TVE as:
-> > >=20
-> > > 1. it's named TVE in datasheet.
-> >=20
-> > Feel free to come up with a better, more sensible explanation?
-> >=20
-> > > 2. Generating signal with such a low resolution but such
-> > > a high dotclock is not a good situation.
-> >=20
-> > What? What do you mean? The pixel clock is 27MHz, I'm pretty sure we
-> > agree on that.
->=20
-> Yes, so I don't think the TCON code should set the clock to any value
-> rather than 27MHz.
+Hi Mike, Stephen,
 
-The pixel clock that matters is what is output on the TV
-connector. The intermediate pixel clock don't matter, and in this
-case, it seems to be clearly the case that the TCON needs a higher
-clock, then let's give it a higher clock.
+Please pull the following patches for 4.12
 
-> So we should create a clock with divider in TVE, and feed it to TCON.
-
-I'm sorry, but this still doesn't make much sense. The clock is
-provided by the TCON, and there's a divider in the TVE, it's as simple
-as that, unless you can provide some other meaningful explanation.
-
-That the TV encoder feeds a clock that would drive the TCON is already
-suspicious, and all the precedent designs indicate that this is not
-what is going on. Both the explanation and the design is much simpler
-that way.
-
-Sometimes the Occam's razor is a better justification than a label on
-a datasheet.
-
+Thanks!
 Maxime
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
+i-clk-fixes-for-4.12
+
+for you to fetch changes up to d85da227c3ae43d9ca513d60f244213cb4e55485:
+
+  clk: sunxi-ng: a64: Export PLL_PERIPH0 clock for the PRCM (2017-05-31 21:=
+57:30 +0200)
+
+----------------------------------------------------------------
+Allwinner clock fixes for 4.12
+
+Some fixes that fix some bindings that went in 4.12, fix a few reset and
+clock offsets and a build error fix
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      clk: sunxi-ng: enable SUNXI_CCU_MP for PRCM
+
+Chen-Yu Tsai (4):
+      clk: sunxi-ng: a31: Correct lcd1-ch1 clock register offset
+      dt-bindings: clock: sunxi-ccu: Add pll-periph to PRCM's needed clocks
+      clk: sunxi-ng: h3: Export PLL_PERIPH0 clock for the PRCM
+      clk: sunxi-ng: a64: Export PLL_PERIPH0 clock for the PRCM
+
+Yong Deng (1):
+      clk: sunxi-ng: v3s: Fix usb otg device reset bit
+
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 7 ++++---
+ drivers/clk/sunxi-ng/Kconfig                          | 1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 | 4 +++-
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c                  | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h                   | 4 +++-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c                  | 2 +-
+ include/dt-bindings/clock/sun50i-a64-ccu.h            | 2 ++
+ include/dt-bindings/clock/sun8i-h3-ccu.h              | 2 ++
+ 8 files changed, 17 insertions(+), 7 deletions(-)
 
 --=20
 Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---cuas4phllyrebc2e
+--njkjuo6jn7iu6dzg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZMeTyAAoJEBx+YmzsjxAgKt4P/jCf8xltjs7sYgm3q+XPqQyy
-eBLKo4UQIkwCaL90MaE2055VfMfHXIbfAPumMJm0mcz44UNUCKQgk/DhEshYSP7t
-GgwXXWEroAz2R7jEqThF9DimQCSrcrzWYmw849r5EPnoM0AM28PdVDGvLvLUOcWG
-LnPSrxLG9YV/jmKv84fn3SC+uo3J30Fg8MvLnuu9AMMhoRIziHceeI798jDnvYcX
-5bRdYQG6e7p4e7n4UL2UO7faxmUVry7hUdQHs6AxIGdOynYkyVBUT3T0BLgBcHt/
-J8kYdoMK8xtqtBT1av09WLy+XgO+J4n7rwneTXLGN3O4hm1Wb1MsElLhyeGlV8R4
-dVWcQ1KNWm+o311/FAsxXN5nYRR7W12LmwuFUKgF7O5CmgtYqGjSemeOtOQ5yqBO
-SipSFx/+P+9jm/Ck9/EITMFFgomDco7tX5NoUrqgp5Z3f6KTon07GrMZdMVasXYU
-UyyzgYqlON1EDo/OOorbES70ViK7LEbLMTeQzy3WZR3mWfsI46/C89OeUu18s2Xi
-rqMp5vfEbcY2dEE/B1NLyeglFoipkU5edYGUYlUNehbmVLMQJYu3QOq+oIKkwT7F
-vHjSUQBaugtnFzyhWq7TgLHShqdPREMKHwNSXJ+oJ7FCNEUwROtWSvzji5JJaSBf
-NDgxLi1hwBdzsqq4OXxq
-=9Y44
+iQIcBAEBAgAGBQJZQYyvAAoJEBx+YmzsjxAgRIIP/24k+HRPDGk62mUB0CBSrAQZ
+8zcOQmn4ej5tHj18AZigJuw+nsVqhcm9VmloTzIcBPkaTh1qx8N7ZriUMrV8+9Pk
+8qd6uwTX3zuWi2DXn0vkPkEmIqn8YoE71RF70E85bKe9hbqyKAAY14StQl3JT5np
+aEdJFF8ZKWN6B3f9q669Vo2WJaRcA0qZeso141YpSra9QYWvDvRxU8329nfgO+3v
+HKWag+XB3Du61BnhKj4eIHR28Hw/UD1sSIdWm8pWNAgPYO/EWtkSFHVMeNgQVm2m
+l9eVgR3vT0Km8LgsxzvwrzEhAkAVBBUS5Nffa0Mp49DJG+Lw3FfEtLc1aupgJ+K4
+a3KCAS5MLtU20yFpRo6EOphx4u24qM6kbd6cCDmGPD6yThlF8rFvHWbNbsnmdlRN
+8UIZ9tapseH2m6eeIN4PgHm7/LsRjxuA+odJSEZmVd6N6hMjYjFui1E+YZsrb1Ph
+cG60g8o2UNoVHIvfF3zo7rVIJ9/877yLSgpJQkdqPRMo86FDwScXrC382fgKFFIR
++nH05nzvVKt0+/ezrFBlITXPqhtjkGRYWIEkIyfHbP7z3J4D7ZZUibcXdOUyeOvK
+Gssmz/hcYAgv4ACZKyHau5zQ/oGJUHko/e9zf9aIXWDVybJQQFKCIZiwMf69WbbD
+HCq1tPnoQ32wdQKhribK
+=0j6t
 -----END PGP SIGNATURE-----
 
---cuas4phllyrebc2e--
+--njkjuo6jn7iu6dzg--
