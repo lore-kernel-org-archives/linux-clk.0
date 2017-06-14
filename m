@@ -1,38 +1,32 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:07:40 -0700
+Date: Wed, 14 Jun 2017 09:05:34 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, robh+dt@kernel.org,
-	matthias.bgg@gmail.com, mark.rutland@arm.com,
-	mturquette@baylibre.com, jamesjj.liao@mediatek.com,
-	p.zabel@pengutronix.de, shunli.wang@mediatek.com,
-	erin.lo@mediatek.com, jdelvare@suse.de, devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Subject: Re: [PATCH 2/6] clk: mediatek: export cpu multiplexer clock for
- MT2701/MT7623 SoCs
-Message-ID: <20170620010740.GC4493@codeaurora.org>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
- <1493997974-17699-3-git-send-email-sean.wang@mediatek.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, ssantosh@kernel.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv5 2/2] clk: keystone: Add sci-clk driver support
+Message-ID: <20170614160534.GZ20170@codeaurora.org>
+References: <1497337767-10218-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493997974-17699-3-git-send-email-sean.wang@mediatek.com>
+In-Reply-To: <1497337767-10218-1-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/05, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On 06/13, Tero Kristo wrote:
+> In K2G, the clock handling is done through firmware executing on a
+> separate core. Linux kernel needs to communicate to the firmware
+> through TI system control interface to access any power management
+> related resources, including clocks.
 > 
-> The patch enables CPU multiplexer clock on MT2701/MT7623 SoC which fixes
-> up cpufreq driver fails at acquiring intermediate clock source when driver
-> probe is called.
+> The keystone sci-clk driver does this, by communicating to the
+> firmware through the TI SCI driver. The driver adds support for
+> registering clocks through DT, and basic required clock operations
+> like prepare/get_rate, etc.
 > 
-> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
 > ---
 
-Applied to clk-next
+Applied to clk-next + made ti_sci_init_clocks() static
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
