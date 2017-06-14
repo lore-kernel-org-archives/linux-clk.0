@@ -1,99 +1,159 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 6 Jun 2017 15:08:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
-Message-ID: <20170606220819.GK20170@codeaurora.org>
-References: <20170602223006.1653-1-sboyd@codeaurora.org>
- <201706031243.qNvuUbQX%fengguang.wu@intel.com>
- <20170605144546.b6oh5sygrza22hbe@flea.lan>
- <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+Subject: Re: [PATCH 3/5] clk: qcom: gdsc: Add support to control associated
+ clks
+To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@codeaurora.org,
+ mturquette@baylibre.com
+References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
+ <1490076923-20194-4-git-send-email-rnayak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <95d69901-fad5-9a2d-138e-ed5eb9dbc4e2@linaro.org>
+Date: Wed, 14 Jun 2017 14:40:36 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
+In-Reply-To: <1490076923-20194-4-git-send-email-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/06, Arnd Bergmann wrote:
-> On Mon, Jun 5, 2017 at 4:45 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Hi,
-> >
-> > On Sat, Jun 03, 2017 at 12:22:32PM +0800, kbuild test robot wrote:
-> >> Hi Stephen,
-> >>
-> >> [auto build test ERROR on sunxi/sunxi/for-next]
-> >> [also build test ERROR on next-20170602]
-> >> [cannot apply to clk/clk-next v4.12-rc3]
-> >> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> >>
-> >>    sunxi_sid.c:(.data+0x1da8c): undefined reference to `ccu_gate_ops'
-> >>    sunxi_sid.c:(.data+0x1dac8): undefined reference to `ccu_gate_ops'
-> >>    sunxi_sid.c:(.data+0x1db20): undefined reference to `ccu_mux_ops'
-> >>    sunxi_sid.c:(.data+0x1db74): undefined reference to `ccu_mux_ops'
-> >>    sunxi_sid.c:(.data+0x1dbec): undefined reference to `ccu_mp_ops'
-> >>    sunxi_sid.c:(.data+0x1dc64): undefined reference to `ccu_mp_ops'
-> >
-> > It seems like even though the lib.a file is compiled properly, it is
-> > never linked in. It looks like we would be supposed to add
-> > drivers/clk/sunxi-ng/ to libs-y, but that doesn't seem to work for
-> > Makefiles in drivers/*
-> 
-> Ah, too bad. I see that only one directory under drivers/ uses something
-> with lib.a, in drivers/firmware/efi/libstub/Makefile, but that seems to
-> rely on being special-cased as well.
-> 
-> However, this patch seems to fix it:
-> 
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index cbc8cb4f70e3..321d3da7cc6a 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -18,16 +18,16 @@ lib-$(CONFIG_SUNXI_CCU) += ccu_nm.o
->  lib-$(CONFIG_SUNXI_CCU) += ccu_mp.o
-> 
->  # SoC support
-> -obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o
-> -obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o
-> -obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o
-> -obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o
-> -obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o
-> -obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o
-> -obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o
-> -obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o
-> -obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o
-> -obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o
-> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o
-> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o
-> -obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o
-> +obj-$(CONFIG_SUN50I_A64_CCU) += ccu-sun50i-a64.o lib.a
-> +obj-$(CONFIG_SUN5I_CCU) += ccu-sun5i.o lib.a
-> +obj-$(CONFIG_SUN6I_A31_CCU) += ccu-sun6i-a31.o lib.a
-> +obj-$(CONFIG_SUN8I_A23_CCU) += ccu-sun8i-a23.o lib.a
-> +obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o lib.a
-> +obj-$(CONFIG_SUN8I_A83T_CCU) += ccu-sun8i-a83t.o lib.a
-> +obj-$(CONFIG_SUN8I_H3_CCU) += ccu-sun8i-h3.o lib.a
-> +obj-$(CONFIG_SUN8I_V3S_CCU) += ccu-sun8i-v3s.o lib.a
-> +obj-$(CONFIG_SUN8I_DE2_CCU) += ccu-sun8i-de2.o lib.a
-> +obj-$(CONFIG_SUN8I_R_CCU) += ccu-sun8i-r.o lib.a
-> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80.o lib.a
-> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-de.o lib.a
-> +obj-$(CONFIG_SUN9I_A80_CCU) += ccu-sun9i-a80-usb.o lib.a
-> 
-> It's not documented behavior, but I think it's still good enough,
-> and improves the current version, unless there is another bug
-> after we add this to your patch.
+Hi Rajendra,
 
-We should add a comment above this so we know what the lib.a is
-all about. As you say, it's not documented.
+Thanks for the patches!
+
+On 03/21/2017 08:15 AM, Rajendra Nayak wrote:
+> The devices within a gdsc power domain, quite often have additional
+> clocks to be turned on/off along with the power domain itself.
+> Add support for this by specifying a list of clk_hw pointers
+> per gdsc which would be the clocks turned on/off along with the
+> powerdomain on/off callbacks.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++--
+>  drivers/clk/qcom/gdsc.h |  8 ++++++++
+>  2 files changed, 54 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index a4f3580..e9e7442 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -12,15 +12,19 @@
+>   */
+>  
+>  #include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/kernel.h>
+>  #include <linux/ktime.h>
+> +#include <linux/pm_clock.h>
+
+this is not needed
+
+>  #include <linux/pm_domain.h>
+>  #include <linux/regmap.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+> +#include "common.h"
+>  #include "gdsc.h"
+>  
+>  #define PWR_ON_MASK		BIT(31)
+> @@ -166,6 +170,27 @@ static inline void gdsc_assert_clamp_io(struct gdsc *sc)
+>  			   GMEM_CLAMP_IO_MASK, 1);
+>  }
+>  
+> +static int gdsc_clk_enable(struct gdsc *sc)
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < sc->clk_count; i++) {
+> +		ret = clk_prepare_enable(sc->clks[i]);
+> +		if (ret)
+> +			pr_err("Failed to enable clock: %s\n",
+> +			       __clk_get_name(sc->clks[i]));
+		
+I think the error message can be removed. And the already enabled clocks
+should be disabled on error.
+
+> +	}
+> +	return ret;
+> +}
+> +
+> +static void gdsc_clk_disable(struct gdsc *sc)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < sc->clk_count; i++)
+> +		clk_disable_unprepare(sc->clks[i]);
+> +}
+> +
+>  static int gdsc_enable(struct generic_pm_domain *domain)
+>  {
+>  	struct gdsc *sc = domain_to_gdsc(domain);
+> @@ -193,6 +218,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>  	 */
+>  	udelay(1);
+>  
+> +	if (sc->clk_count)
+> +		gdsc_clk_enable(sc);
+
+could you add error handling.
+
+> +
+>  	/* Turn on HW trigger mode if supported */
+>  	if (sc->flags & HW_CTRL) {
+>  		ret = gdsc_hwctrl(sc, true);
+> @@ -241,6 +269,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  			return ret;
+>  	}
+>  
+> +	if (sc->clk_count)
+> +		gdsc_clk_disable(sc);
+
+IMO sc->clk_count check could be moved in gdsc_clk_disable. This is also
+valid for all clk_count checks.
+
+> +
+>  	if (sc->pwrsts & PWRSTS_OFF)
+>  		gdsc_clear_mem_on(sc);
+>  
+> @@ -254,7 +285,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> -static int gdsc_init(struct gdsc *sc)
+> +static int gdsc_init(struct device *dev, struct gdsc *sc)
+>  {
+>  	u32 mask, val;
+>  	int on, ret;
+> @@ -284,6 +315,19 @@ static int gdsc_init(struct gdsc *sc)
+>  	if (on < 0)
+>  		return on;
+>  
+> +	if (sc->clk_count) {
+> +		int i;
+> +
+> +		sc->clks = devm_kcalloc(dev, sc->clk_count, sizeof(*sc->clks),
+> +					GFP_KERNEL);
+> +		if (!sc->clks)
+> +			return -ENOMEM;
+> +
+> +		for (i = 0; i < sc->clk_count; i++)
+> +			sc->clks[i] = devm_clk_hw_get_clk(dev, sc->clk_hws[i],
+> +							  NULL);
+
+error handling?
+
+Also I think it will be more readable if you above chunk in separate
+function like gdsc_clk_get and call it unconditionally?
+
+> +	}
+> +
+
+<snip>
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards,
+Stan
