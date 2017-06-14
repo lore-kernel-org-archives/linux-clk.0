@@ -1,104 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:44676 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751753AbdFMHlk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2017 03:41:40 -0400
-Date: Tue, 13 Jun 2017 09:41:28 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] Re: [PATCH v2 01/11] dt-bindings: update the
- binding for Allwinner H3 TVE support
-Message-ID: <20170613074128.q4mhf46gogn6jhvl@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io>
- <20170604160149.30230-2-icenowy@aosc.io>
- <20170607084544.kgclybyxxttfk3ko@flea.lan>
- <092D4797-0034-4C39-A30A-92CFAB23AAF8@aosc.io>
- <20170609164915.enap3epreg5vr2gy@flea.home>
- <53E8FC74-8AC0-461A-B875-812EE4A3267E@aosc.io>
+Return-Path: <zhang.chunyan@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="w5ohdwsyzrw47olh"
-In-Reply-To: <53E8FC74-8AC0-461A-B875-812EE4A3267E@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdU6ZsqbRhG7=dYE=B_7To=ioWrwWwdoRYGdEQJwB4wW6A@mail.gmail.com>
+References: <1497432104-22609-1-git-send-email-zhang.chunyan@linaro.org> <CAMuHMdU6ZsqbRhG7=dYE=B_7To=ioWrwWwdoRYGdEQJwB4wW6A@mail.gmail.com>
+From: Chunyan Zhang <zhang.chunyan@linaro.org>
+Date: Wed, 14 Jun 2017 18:11:37 +0800
+Message-ID: <CAG2=9p-8YtSt50HnXs2xeS53RTEjHdLw9Z09HPSZ9oEOgCi4uQ@mail.gmail.com>
+Subject: Re: [PATCH v2] Documentation: clock: address more for clock-cells property
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lyra Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Geert,
 
---w5ohdwsyzrw47olh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 14 June 2017 at 17:42, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Chunyan,
+>
+> On Wed, Jun 14, 2017 at 11:21 AM, Chunyan Zhang
+> <zhang.chunyan@linaro.org> wrote:
+>> The value of property 'clock-cells' is not determined only by the number
+>> of clock outputs in one clock node, it is determined by whether the clock
+>> output in this node can be referenced directly without index. If the
+>> output clock has to be referenced by a index, the clock-cell of this
+>> clock node can't be defined 0.
+>>
+>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>> ---
+>>  Documentation/devicetree/bindings/clock/clock-bindings.txt | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> index 2ec489e..e2b76b4 100644
+>> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> @@ -18,6 +18,9 @@ Required properties:
+>>                    with a single clock output and 1 for nodes with multiple
+>>                    clock outputs.
+>>
+>> +                  There's one exception, please see the description for
+>> +                  clock-indices below.
+>> +
+>>  Optional properties:
+>>  clock-output-names: Recommended to be a list of strings of clock output signal
+>>                     names indexed by the first cell in the clock specifier.
+>> @@ -48,6 +51,13 @@ clock-indices:          If the identifying number for the clocks in the node
+>>                    is not linear from zero, then this allows the mapping of
+>>                    identifiers into the clock-output-names array.
+>>
+>> +                  This property not only servers for clocks with multiple
+>
+> serves
 
-On Sat, Jun 10, 2017 at 12:51:02AM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2017=E5=B9=B46=E6=9C=8810=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
-12:49:15, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
-=B0:
-> >On Wed, Jun 07, 2017 at 04:48:50PM +0800, Icenowy Zheng wrote:
-> >> >> @@ -189,6 +211,8 @@ supported.
-> >> >>  Required properties:
-> >> >>    - compatible: value must be one of:
-> >> >>      * allwinner,sun8i-v3s-de2-mixer
-> >> >> +    * allwinner,sun8i-h3-de2-mixer0
-> >> >> +    * allwinner,sun8i-h3-de2-mixer1
-> >> >
-> >> >Again, please explain why we need to have different compatibles
-> >> >here. If it's only about the number of planes, this should be dealt
-> >> >with a property, not a compatible.
-> >>=20
-> >> Only mixer0 has "VEP" and write-back support, at least on H3.
-> >
-> >What is that VEP? writeback support can also be expressed by a
-> >property.
->=20
-> I don't know what VEP is...
+Thanks, I will fix that.
 
-Ok. Let's forget about it at the moment then, especially if it's
-optional, we can add support for it later.
+>
+>> +                  clock outputs, but also for clocks with a single clock
+>> +                  output whose identifying number is not zero.
+>
+> Why would you want a single clock and a non-zero identifying number?
 
-> But we are really facing different cores, like sun50i-a64-mmc
-> and sun50i-a64-emmc.
+Because of the probably weird hardwire design :)
+There indeed some clocks like that on the platform I'm working on.
 
-Not really. The eMMC and MMC controllers are *very* different. They
-behave (slightly) differently, the eMMC controller has more signals
-(8-bit bus, data strobe), can run at a higher frequency. You cannot
-have exactly the same driver (or rather code path) to handle
-both. Therefore the need for some other compatible.
+>
+>> +                  So long as clock-indices is set, clock-cells cannot be
+>> +                  set zero.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
-This is not the case for the mixer here. The thing that differs
-between instances is not behaviour but data. And we provide most of
-the data through DT.
+Thanks for your review,
+Chunyan
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---w5ohdwsyzrw47olh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZP5coAAoJEBx+YmzsjxAg/PUQAIq24iosJhBWfqs/Wpe0q/cS
-+Fvx2UK4lPd3NzfbM0JWBS+lhkz8W7aNmVIhIBh0Cf2/gAnDnIRYzHB0p3GeVfLQ
-JLwyfmdXRysr3mZ6p2N6MtAuUpHDA6CIaByxFVGGO5plzjk73ZoORlJtMfawqyyU
-Iu6vfQ6gXoThDrVoFJyYcRXk7HnYB2X4oZzaBn3MgYL8+pk9mGPyqboKoHgBCTag
-pl4QetGGDm025Xh3iP1ojCwI0dQrIY91qUh/pFYwZrhCzS0zYRlVRhSKy/BQKG9/
-hPt0ARnB0O8nV39OQyPvLu7QLSiBMqtPXtBD7q9w9/QrWXs4EVAberpxopcg1VCH
-kPZiP22oOVIMYhVgG+MJv2IyHdOZ2LyjF+xezLDSgOZk/sOiY+0sA8b7E06ph7xQ
-zo/RTXCBLyah9QKoxdhMhHCcBapx341HrLD8U/6JMZcdaWhwCUXVnElVKgpmwhNF
-Kx4Ais9lPCiWxURRNrPItkPaerEZzEa9Pn8BeyWefXDIAno3k1yFykc9VmM79j0f
-6XaibWk30p3n6J/nXQJnYyUgi8r/KrLecVEfAWXJatGwzX0a3YJp5Q7H79YFvSlI
-V6mC+iCLVkjHTgD3qwvlYySVi7tXdIcoqN68VBpGmIvuX9L8AB8Hv3qXeX0MJ4sx
-CXIPFBBqPGN7LwcUeGE+
-=8PjL
------END PGP SIGNATURE-----
-
---w5ohdwsyzrw47olh--
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
