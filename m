@@ -1,166 +1,38 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <stefan.wahren@i2se.com>
+Date: Wed, 14 Jun 2017 22:01:39 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Danilo Krummrich <danilokrummrich@dk-develop.de>
+Cc: rjui@broadcom.com, linux-clk@vger.kernel.org, eric@anholt.net,
+	bcm-kernel-feedback-list@broadcom.com, mturquette@baylibre.com,
+	f.fainelli@gmail.com, sboyd@codeaurora.org,
+	linux-rpi-kernel@lists.infradead.org
+Message-ID: <1934417554.81732.1497470499708@email.1und1.de>
+In-Reply-To: <20170614194057.28722-1-danilokrummrich@dk-develop.de>
+References: <20170614194057.28722-1-danilokrummrich@dk-develop.de>
+Subject: Re: [PATCH v4] clk: bcm2835: remove remains from stub clk driver
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1496058422-12058-1-git-send-email-geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- "Geert Uytterhoeven" <geert+renesas@glider.be>
-References: <1496058422-12058-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <149637988818.33065.13255372545640819084@resonance>
-Subject: Re: [git pull] clk: renesas: Updates for v4.13
-Date: Fri, 02 Jun 2017 14:04:48 +0900
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2017-05-29 20:47:02)
->         Hi Mike, Stephen,
-> =
+Hi Danilo,
 
-> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43=
-f6:
-> =
+> Danilo Krummrich <danilokrummrich@dk-develop.de> hat am 14. Juni 2017 um 21:40 geschrieben:
+> 
+> 
+> This commit removes the fixed clocks introduced as a stub clock driver
+> added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
+> Originally they were used to drive the AMBA bus and PL011 uart driver.
+> Now these clocks are derived by the CPRMAN clock driver and configured
+> in DT.
+> 
+> Additionally, get rid of init_machine function in bcm2835 board file
+> as there's nothing to do any longer.
+> 
+> Acked-by: Eric Anholt <eric@anholt.net>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
 
->   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
-> =
+please stop resending this patch only to add someones Ack. This doesn't make our job easier.
 
-> are available in the git repository at:
-> =
-
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/clk-renesas-for-v4.13-tag1
-> =
-
-> for you to fetch changes up to 2d75588a28c6bbbb7a026087aa61be1492b3d6ac:
-> =
-
->   clk: renesas: r8a7794: Add new CPG/MSSR driver (2017-05-24 10:20:03 +02=
-00)
-
-Pulled.
-
-Thanks,
-Mike
-
-> =
-
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.13
-> =
-
->   - Add more module clocks for R-Car H3 ES2.0 and M3-W,
->   - Add CPG/MSSR drivers for all supported R-Car Gen2 SoCs, enabling supp=
-ort
->     for module resets, which are not supported by the existing driver,
->   - Rework Kconfig and Makefile logic,
->   - Small fixes and cleanups.
-> =
-
-> Thanks for pulling!
-> ----------------------------------------------------------------
-> Geert Uytterhoeven (18):
->       clk: renesas: rcar-gen2: Fix PLL0 on R-Car V2H and E2
->       clk: renesas: r8a7745: Remove nonexisting scu-src[0789] clocks
->       clk: renesas: r8a7745: Remove PLL configs for MD19=3D0
->       clk: renesas: Do not build clk-div6 for R8A7792
->       clk: renesas: Use pm_clk_no_clocks() helper i.s.o. direct access
->       clk: renesas: r8a7795: Correct pwm, gpio, and i2c parent clocks on =
-ES2.0
->       clk: renesas: cpg-mssr: Initialize error pointer using ERR_PTR()
->       clk: renesas: Rework Kconfig and Makefile logic
->       clk: renesas: cpg-mssr: Document R-Car Gen2 support
->       clk: renesas: Add r8a7790 CPG Core Clock Definitions
->       clk: renesas: Add r8a7791 CPG Core Clock Definitions
->       clk: renesas: Add r8a7792 CPG Core Clock Definitions
->       clk: renesas: Add r8a7793 CPG Core Clock Definitions
->       clk: renesas: Add r8a7794 CPG Core Clock Definitions
->       clk: renesas: r8a7790: Add new CPG/MSSR driver
->       clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
->       clk: renesas: r8a7792: Add new CPG/MSSR driver
->       clk: renesas: r8a7794: Add new CPG/MSSR driver
-> =
-
-> Harunobu Kurokawa (1):
->       clk: renesas: r8a7796: Add PCIe clocks
-> =
-
-> Hiromitsu Yamasaki (2):
->       clk: renesas: r8a7796: Add Audio-DMAC clocks
->       clk: renesas: r8a7796: Add USB-DMAC clocks
-> =
-
-> Kazuya Mizuguchi (5):
->       clk: renesas: r8a7796: Add EHCI/OHCI clocks
->       clk: renesas: r8a7796: Add Sound SSI clock
->       clk: renesas: r8a7796: Add Sound SRC clock
->       clk: renesas: r8a7796: Add Sound DVC clocks
->       clk: renesas: r8a7796: Add HS-USB clock
-> =
-
-> Koji Matsuoka (1):
->       clk: renesas: r8a7796: Add HDMI clock
-> =
-
-> Ryo Kodama (1):
->       clk: renesas: r8a7796: Add PWM clock
-> =
-
-> Takeshi Kihara (4):
->       clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
->       clk: renesas: r8a7795: Add USB-DMAC ch3 clock
->       clk: renesas: r8a7795: Add HS-USB ch3 clock
->       clk: renesas: r8a7796: Add INTC-EX clock
-> =
-
->  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
->  drivers/clk/Makefile                               |   2 +-
->  drivers/clk/renesas/Kconfig                        | 139 ++++++++--
->  drivers/clk/renesas/Makefile                       |  41 +--
->  drivers/clk/renesas/clk-mstp.c                     |   2 +-
->  drivers/clk/renesas/clk-rcar-gen2.c                |  23 +-
->  drivers/clk/renesas/r8a7745-cpg-mssr.c             |  17 +-
->  drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 +++++++++++++++=
-+++++
->  drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++=
-++++++
->  drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
->  drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 +++++++++++++++=
-+++
->  drivers/clk/renesas/r8a7795-cpg-mssr.c             |  43 +++-
->  drivers/clk/renesas/r8a7796-cpg-mssr.c             |  39 +++
->  drivers/clk/renesas/renesas-cpg-mssr.c             |  41 ++-
->  drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
->  include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
->  include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
->  include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
->  include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
->  include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
->  20 files changed, 1565 insertions(+), 74 deletions(-)
->  create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
->  create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
->  create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
->  create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
->  create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
->  create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
->  create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
->  create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
->  create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
-> =
-
-> Gr{oetje,eeting}s,
-> =
-
->                                                 Geert
-> =
-
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
-> =
-
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                                             -- Linus Torv=
-alds
+Thanks
+Stefan
