@@ -1,75 +1,50 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Jun 2017 11:54:03 -0700
+Date: Wed, 14 Jun 2017 08:55:23 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre TORGUE <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	"daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-	"andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-	"radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
 	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Ludovic BARRE <ludovic.barre@st.com>,
-	Olivier BIDEAU <olivier.bideau@st.com>,
-	Amelie DELAUNAY <amelie.delaunay@st.com>,
-	"gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
-Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
-Message-ID: <20170630185403.GN22780@codeaurora.org>
-References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
- <20170621220703.GI4493@codeaurora.org>
- <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
- <20170628155956.GA5316@codeaurora.org>
- <7c0c3861-cf61-a9e2-cd5d-2ae30b8f32fa@st.com>
- <20170630002008.GD22780@codeaurora.org>
- <d325071a-5da5-4ff1-89b9-fc1bbe10e223@st.com>
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
+Message-ID: <20170614155523.GX20170@codeaurora.org>
+References: <20170524082044.8473-1-linus.walleij@linaro.org>
+ <20170601070208.GO20170@codeaurora.org>
+ <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
+ <20170605195812.GH20170@codeaurora.org>
+ <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
+ <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
+ <20170612210248.GP20170@codeaurora.org>
+ <CACRpkdbF4syppZsFv2hbB1JxHvnndbS53yY8Pkbz2zoq5Jjzjw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <d325071a-5da5-4ff1-89b9-fc1bbe10e223@st.com>
+In-Reply-To: <CACRpkdbF4syppZsFv2hbB1JxHvnndbS53yY8Pkbz2zoq5Jjzjw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/30, Gabriel FERNANDEZ wrote:
+On 06/14, Linus Walleij wrote:
+> On Mon, Jun 12, 2017 at 11:02 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 06/12, Linus Walleij wrote:
 > 
-> 
-> On 06/30/2017 02:20 AM, Stephen Boyd wrote:
-> > On 06/29, Gabriel FERNANDEZ wrote:
-> >>
-> >> On 06/28/2017 05:59 PM, Stephen Boyd wrote:
-> >>> On 06/27, Gabriel FERNANDEZ wrote:
-> >>>> On 06/22/2017 12:07 AM, Stephen Boyd wrote:
-> >>>>> readl_poll_timeout?
-> >>>>>
-> >>>> if i use readl_poll_timeout (wich use 'ktime_get()') it can be
-> >>>> operational only after the selection of clocksource ? (device_initcall).
-> >>>> And then if a driver turn on a clock before, it could blocked the linux
-> >>>> console ?
-> >>>>
-> >>> Ok. I wonder if we could add some sort of starting check to
-> >>> readl_poll_timeout() that tests system_state for booting vs.
-> >>> scheduling? That should be sufficient to handle this case?
-> >>>
-> >> Oops i think i understood my problem...
-> >> i used readl_poll_timeout in atomic context.
-> >> I have to move my code in the .prepare ops.
-> >>
-> >> If you are ok with that i will send a v5
-> >>
-> > There's readl_poll_timeout_atomic() for those modes.
+> >> So the deferred clock makes the whole platform hang because the timer
+> >> needs it. Without a clocksource, the delay loop cannot be calibrated, so
+> >> it hangs there.
 > >
-> yes it's exactly the test i made (use 'readl_poll_timeout()_atomic' in 
-> .enable ops) but i'm blocked.
+> > Ok. So can the certain clks that are required to get the timer
+> > going be put into CLK_OF_DECLARE_DRIVER() and then have a regular
+> > platform driver for the rest of the clks that aren't required for
+> > early boot? We've been doing this sort of hybrid design lately,
+> > so hopefully that works here too.
 > 
-> if i do the same in .prepare ops with 'readl_poll_timeout()' it's ok.
+> Sure I will give it a spin!
+> 
+> Is there a best-in-class driver doing this I can use as inspiration?
+> 
 
-I'm still confused. readl_poll_timeout_atomic() uses ktime_get(),
-and so does readl_poll_timeout(), so how does moving to the
-prepare op fix the problem? What's the actual problem?
+Great. I suppose drivers/clk/nxp/clk-lpc18xx-creg.c or
+drivers/clk/axis/clk-artpec6.c would be good examples.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
