@@ -1,57 +1,71 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 22 Jun 2017 15:56:55 -0500
-From: Rob Herring <robh@kernel.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-	Frank Rowand <frowand.list@gmail.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 15 Jun 2017 14:00:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lee Jones <lee.jones@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] dt-bindings: Document img,boston-clock binding
-Message-ID: <20170622205655.2sp2v3hva3jtsuay@rob-hp-laptop>
-References: <20170617205249.1391-1-paul.burton@imgtec.com>
- <20170617205249.1391-2-paul.burton@imgtec.com>
+	linux-clk <linux-clk@vger.kernel.org>,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
+Message-ID: <20170615210020.GG20170@codeaurora.org>
+References: <20170524082044.8473-1-linus.walleij@linaro.org>
+ <20170601070208.GO20170@codeaurora.org>
+ <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
+ <20170605195812.GH20170@codeaurora.org>
+ <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
+ <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
+ <20170612210248.GP20170@codeaurora.org>
+ <CACRpkdaZJbzC0-xg_go=-o+0cQ-JOY3mUe27HUnwQ+DnZYbyMA@mail.gmail.com>
+ <CAMuHMdXdYNTLCUfQ9rdj8Fffff5G6fGREcHs5-E5LbwPU9yyLw@mail.gmail.com>
+ <CACRpkdY+aSyec9PZaoXErzsRefWg2zzw1xihQt_whmote-jBBw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170617205249.1391-2-paul.burton@imgtec.com>
+In-Reply-To: <CACRpkdY+aSyec9PZaoXErzsRefWg2zzw1xihQt_whmote-jBBw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jun 17, 2017 at 01:52:46PM -0700, Paul Burton wrote:
-> Add device tree binding documentation for the clocks provided by the
-> MIPS Boston development board from Imagination Technologies, and a
-> header file describing the available clocks for use by device trees &
-> driver.
+On 06/15, Linus Walleij wrote:
+> On Thu, Jun 15, 2017 at 10:55 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
 > 
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
+> > If clocks and resets are provided by the same hardware module, you can
+> > have a single (platform) driver registering both the clock and reset
+> > controllers.
+> > Cfr. drivers/clk/renesas/renesas-cpg-mssr.c.
 > 
-> ---
+> That is indeed an option.
 > 
-> Changes in v5: None
+> So I would say, clk & reset maintainers: would you prefer that I merge the
+> reset control into the clock driver as well, ask Philipp to drop the pending
+> reset control patches from his subsystem tree and have you manage the
+> combined driver and bindings?
+> 
+> It seems to me as very ugly from a divide & conquer subsystem and file
+> split point of view.
+> 
+> I seems elegant from the "make clocks a platform device" point of view.
+> 
+> I am happy with either approach as long as it works.
+> 
+> I guess it is up to the taste of the subsystem maintainers, especially
+> clk.
+> 
+> If I get some time I might just hack this up and send the patches so
+> it is on the table as an alternative to the current v5 patch. Certainly it is
+> better than going back and augmenting the DT bindings.
+> 
 
-I reviewed v4. Please add acks/reviewed-by when posting new versions.
+We have quite a few clock and reset controllers that put their
+drivers into the clk directory. I don't see any problem with that
+approach.
 
-> 
-> Changes in v4:
-> - Move img,boston-clock node under platform register syscon node.
-> - Add MAINTAINERS entry.
-> 
-> Changes in v3: None
-> 
-> Changes in v2:
-> - Add BOSTON_CLK_INPUT to expose the input clock.
-> 
->  .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
->  MAINTAINERS                                        |  7 +++++
->  include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
->  3 files changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
->  create mode 100644 include/dt-bindings/clock/boston-clock.h
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
