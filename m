@@ -1,77 +1,39 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	alsa-devel@alsa-project.org,
-	thomas.petazzoni@free-electrons.com,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH 6/6] ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
-Date: Fri, 23 Jun 2017 11:00:59 +0200
-Message-Id: <20170623090059.8371-7-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
-References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Fri, 16 Jun 2017 07:59:32 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: Re: [PATCH v3 2/2] arm64: dts: add sp804 timer node for Hi3660
+Message-ID: <20170615235932.GP28496@leoy-ThinkPad-T440>
+References: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
+ <1495428748-11153-3-git-send-email-leo.yan@linaro.org>
+ <5942E77A.8080500@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5942E77A.8080500@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+On Thu, Jun 15, 2017 at 09:00:58PM +0100, Wei Xu wrote:
 
-This patch adds the pin muxing for classd and enables it.
+[...]
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
----
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> Since the dts part is not depended on the driver and Guodong has put this into another
+> patch set[1], I will pick up that one.
+> Thanks!
+> 
+> [1]: https://lkml.org/lkml/2017/6/14/1049
 
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index 2e2c3d1a1fa2..e92b030ca45a 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -355,6 +355,14 @@
- 					bias-pull-up;
- 				};
- 
-+				pinctrl_classd_default: classd_default {
-+					pinmux = <PIN_PB1__CLASSD_R0>,
-+						 <PIN_PB2__CLASSD_R1>,
-+						 <PIN_PB3__CLASSD_R2>,
-+						 <PIN_PB4__CLASSD_R3>;
-+					bias-pull-up;
-+				};
-+
- 				pinctrl_flx0_default: flx0_default {
- 					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
- 						 <PIN_PB29__FLEXCOM0_IO1>;
-@@ -488,6 +496,14 @@
- 
- 			};
- 
-+			classd: classd@fc048000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_classd_default>;
-+				atmel,pwm-type = "diff";
-+				atmel,non-overlap-time = <10>;
-+				status = "okay";
-+			};
-+
- 			can1: can@fc050000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can1_default>;
--- 
-2.11.0
+Yeah, thanks for picking up from Guodong's patch set.
+
+Thanks,
+Leo Yan
