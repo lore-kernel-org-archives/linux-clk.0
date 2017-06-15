@@ -1,46 +1,77 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 11/17] MIPS: platform: add machtype IDs for more Ingenic SoCs
-Date: Tue, 20 Jun 2017 17:18:49 +0200
-Message-Id: <20170620151855.19399-11-paul@crapouillou.net>
-In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170620151855.19399-1-paul@crapouillou.net>
+Return-Path: <xuwei5@hisilicon.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: add sp804 timer node for Hi3660
+To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Zhangfei Gao
+	<zhangfei.gao@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        "Haojian
+ Zhuang" <haojian.zhuang@linaro.org>
+References: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
+ <1495428748-11153-3-git-send-email-leo.yan@linaro.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5942E77A.8080500@hisilicon.com>
+Date: Thu, 15 Jun 2017 21:00:58 +0100
+MIME-Version: 1.0
+In-Reply-To: <1495428748-11153-3-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a machtype ID for the JZ4780 SoC, which was missing, and one for the
-newly supported JZ4770 SoC.
+Hi Leo,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/include/asm/bootinfo.h | 2 ++
- 1 file changed, 2 insertions(+)
+On 2017/5/22 5:52, Leo Yan wrote:
+> The Hi3660 SoC comes with the sp804 timer in addition to the
+> architecture timers. These ones are shutdown when reaching a deep idle
+> states and a backup timer is needed. The sp804 belongs to another power
+> domain and can fulfill the purpose of replacing temporarily an
+> architecture timer when the CPU is idle.
+> 
+> Describe it in the device tree, so it can be enabled at boot time.
+> 
+> Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> index 138fcba..f75c792 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> @@ -173,6 +173,17 @@
+>  			#clock-cells = <1>;
+>  		};
+>  
+> +		dual_timer0: timer@fff14000 {
+> +			compatible = "arm,sp804", "arm,primecell";
+> +			reg = <0x0 0xfff14000 0x0 0x1000>;
+> +			interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&crg_ctrl HI3660_OSC32K>,
+> +				 <&crg_ctrl HI3660_OSC32K>,
+> +				 <&crg_ctrl HI3660_OSC32K>;
+> +			clock-names = "timer1", "timer2", "apb_pclk";
+> +		};
+> +
+>  		ufs: ufs@ff3b0000 {
+>  			compatible = "jedec,ufs-1.1", "hisilicon,hi3660-ufs";
+>  			reg = <0x0 0xff3b0000 0x0 0x1000>, /* 0: HCI standard */
+> 
 
- v2: No change
+Since the dts part is not depended on the driver and Guodong has put this into another
+patch set[1], I will pick up that one.
+Thanks!
 
-diff --git a/arch/mips/include/asm/bootinfo.h b/arch/mips/include/asm/bootinfo.h
-index e26a093bb17a..a301a8f4bc66 100644
---- a/arch/mips/include/asm/bootinfo.h
-+++ b/arch/mips/include/asm/bootinfo.h
-@@ -79,6 +79,8 @@ enum loongson_machine_type {
-  */
- #define  MACH_INGENIC_JZ4730	0	/* JZ4730 SOC		*/
- #define  MACH_INGENIC_JZ4740	1	/* JZ4740 SOC		*/
-+#define  MACH_INGENIC_JZ4770	2	/* JZ4770 SOC		*/
-+#define  MACH_INGENIC_JZ4780	3	/* JZ4780 SOC		*/
- 
- extern char *system_type;
- const char *get_system_type(void);
--- 
-2.11.0
+[1]: https://lkml.org/lkml/2017/6/14/1049
+
+BR,
+Wei
