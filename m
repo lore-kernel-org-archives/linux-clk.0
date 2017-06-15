@@ -1,37 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f178.google.com ([74.125.82.178]:34939 "EHLO
-        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751281AbdFFPq4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 11:46:56 -0400
-Received: by mail-ot0-f178.google.com with SMTP id a2so17910265oth.2
-        for <linux-clk@vger.kernel.org>; Tue, 06 Jun 2017 08:46:56 -0700 (PDT)
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [GIT PULL] clk: ti: clkctrl support for 4.13 merge window
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org"
+	<linux-omap@vger.kernel.org>,
+        "tony@atomide.com" <tony@atomide.com>
+References: <6d66f78a-5d39-6396-c492-b79a687ce58a@ti.com>
+ <20170614173237.GB20170@codeaurora.org>
+ <ee8f9ff4-831c-1999-175e-12608a954cfb@ti.com>
+ <20170614174910.GD20170@codeaurora.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <f8bff2f4-55ce-bee1-9362-28f4f90fad03@ti.com>
+Date: Thu, 15 Jun 2017 11:12:36 +0300
 MIME-Version: 1.0
-In-Reply-To: <1496763146.28352.39.camel@nxp.com>
-References: <1494849305-1405-1-git-send-email-festevam@gmail.com> <1496763146.28352.39.camel@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 6 Jun 2017 12:46:54 -0300
-Message-ID: <CAOMZO5DysAoczSpn7eNzC=2W+f-8_Jgj9W3OhJfzdR=sivOOMg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx7d: Fix the powerdown bit location of PLL DDR
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-clk@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170614174910.GD20170@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Leonard,
+On 14/06/17 20:49, Stephen Boyd wrote:
+> On 06/14, Tero Kristo wrote:
+>> On 14/06/17 20:32, Stephen Boyd wrote:
+>>> On 06/08, Tero Kristo wrote:
+>>>> Hi Stephen, Mike,
+>>>>
+>>>> This pull contains the v3 of the clkctrl base driver support posted
+>>>> couple of weeks back, with Tony's acks added to patch #2 and #4.
+>>>>
+>>>> -Tero
+>>>>
+>>>
+>>> drivers/clk/ti/clkctrl.c:252
+>>> _ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
+>>> drivers/clk/ti/clkctrl.c:264
+>>> _ti_clkctrl_clk_register() warn: possible memory leak of 'clkctrl_clk'
+>>> drivers/clk/ti/clkctrl.c:466
+>>> _ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
+>>> drivers/clk/ti/clkctrl.c:473
+>>> _ti_omap4_clkctrl_setup() warn: possible memory leak of 'clkctrl_clk'
+>>>
+>>> Can these be silenced with some follow up patch? I'll hold off on
+>>> the pull until you can take a look.
+>>>
+>>
+>> What is the tool you use to get these?
+>>
+>> They seem like valid warnings though, some cleanup could be used for
+>> the dynamic memory handling. I'll fix these tomorrow.
+>>
+> 
+> I use smatch[1] although I don't always have the most up to date
+> version.
+> 
+> [1] git://repo.or.cz/smatch.git
+> 
 
-On Tue, Jun 6, 2017 at 12:32 PM, Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
+Ok thanks, fixed and posted a new version of patch #2 of the series. 
+Also force pushed this branch with the updated version in case you want 
+to use this.
 
-> Maybe you mean IMX7_DDR_PLL_POWER here?
->
-> This patch made it way into next-20170606 and broke boot on imx7d-sdb.
-> There is no console output but bisection points to this patch.
->
-> Changing power_bit to IMX7_DDR_PLL_POWER seems to make it work.
-
-Ops, sorry about that! Just sent a fix. Thanks for reporting.
+-Tero
