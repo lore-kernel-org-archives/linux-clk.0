@@ -1,102 +1,175 @@
-Return-Path: <phil@raspberrypi.org>
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH v2 4/4] ARM: dts: bcm283x: Add and use bcm2835-aux-intc
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper
- <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Message-ID: <248bb555-6dff-daf5-ca63-7d55c2992fce@raspberrypi.org>
-Date: Mon, 12 Jun 2017 15:25:33 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v7 7/8] clk: Loongson: Add Loongson-1A clock support
+Date: Fri, 16 Jun 2017 10:52:52 +0800
+Message-Id: <1497581573-17258-8-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a DT node for the AUX interrupt controller, updating the AUX
-peripheral nodes to make use of it.
+This patch adds clock support to Loongson-1A SoC.
 
-Note that the IO region overlaps that of the AUX clock driver, but by
-the time the intc driver appears in the tree the clock driver should
-have been updated to ioremap the region without reserving it, along
-with preparing for a point in the future where the clock node MEM
-resource may be shrunk to the single word it actually needs.
+Unfortunately, The Loongson-1A's PLL register is written only,
+so we just set it with a fixed value.
 
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
 ---
- arch/arm/boot/dts/bcm283x.dtsi | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+ arch/mips/include/asm/mach-loongson32/regs-clk.h | 30 +++++++++-
+ drivers/clk/loongson1/Makefile                   |  1 +
+ drivers/clk/loongson1/clk-loongson1a.c           | 75 ++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/loongson1/clk-loongson1a.c
 
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index cc721a4..1febb6e 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -1,6 +1,7 @@
- #include <dt-bindings/pinctrl/bcm2835.h>
- #include <dt-bindings/clock/bcm2835.h>
- #include <dt-bindings/clock/bcm2835-aux.h>
-+#include <dt-bindings/interrupt-controller/bcm2835-aux-intc.h>
- #include <dt-bindings/gpio/gpio.h>
+diff --git a/arch/mips/include/asm/mach-loongson32/regs-clk.h b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+index e5e8f11..d8278a4 100644
+--- a/arch/mips/include/asm/mach-loongson32/regs-clk.h
++++ b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+@@ -18,7 +18,35 @@
+ #define LS1X_CLK_PLL_FREQ		LS1X_CLK_REG(0x0)
+ #define LS1X_CLK_PLL_DIV		LS1X_CLK_REG(0x4)
  
- /* firmware-provided startup stubs live here, where the secondary CPUs are
-@@ -459,7 +460,22 @@
- 			status = "disabled";
- 		};
- 
--		aux: aux@0x7e215000 {
-+		auxintc: interrupt-controller@7e215000 {
-+			compatible = "brcm,bcm2835-aux-intc";
-+			reg = <0x7e215000 0x4>;
-+			interrupts = <1 29>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+		};
+-#if defined(CONFIG_LOONGSON1_LS1B)
++#if defined(CONFIG_LOONGSON1_LS1A)
++/* write only */
++#define CORE_PLL_CFG		0x1fe78030
++#define CPU_MUL			GENMASK(2, 0)
++#define CPU_CFG_EN		BIT(3)
++#define DDR_MUL			GENMASK(6, 4)
++#define DDR_CFG_EN		BIT(7)
++#define CPU_CFG_W_EN		BIT(11)
++#define DDR_CFG_W_EN		BIT(15)
 +
-+		/*
-+		 * N.B. This node overlaps with the previous node,
-+		 * but the updated driver remaps the region without
-+		 * reserving it. After a suitable period this
-+		 * node can be reduced to cover only the single word
-+		 * at 7e215004.
-+		 */
-+		aux: aux@7e215000 {
- 			compatible = "brcm,bcm2835-aux";
- 			#clock-cells = <1>;
- 			reg = <0x7e215000 0x8>;
-@@ -469,7 +485,8 @@
- 		uart1: serial@7e215040 {
- 			compatible = "brcm,bcm2835-aux-uart";
- 			reg = <0x7e215040 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&auxintc>;
-+			interrupts = <BCM2835_AUX_IRQ_UART>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_UART>;
- 			status = "disabled";
- 		};
-@@ -477,7 +494,8 @@
- 		spi1: spi@7e215080 {
- 			compatible = "brcm,bcm2835-aux-spi";
- 			reg = <0x7e215080 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&auxintc>;
-+			interrupts = <BCM2835_AUX_IRQ_SPI1>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_SPI1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -487,7 +505,8 @@
- 		spi2: spi@7e2150c0 {
- 			compatible = "brcm,bcm2835-aux-spi";
- 			reg = <0x7e2150c0 0x40>;
--			interrupts = <1 29>;
-+			interrupt-parent = <&auxintc>;
-+			interrupts = <BCM2835_AUX_IRQ_SPI2>;
- 			clocks = <&aux BCM2835_AUX_CLOCK_SPI2>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
++#define VGA_PLL_CFG		0x1fd00410
++#define VGA_M			GENMASK(7, 0)
++#define VGA_N			GENMASK(11, 8)
++#define VGA_OD			GENMASK(13, 12)
++#define VGA_FRAC		GENMASK(31, 14)
++
++#define LCD_PLL_CFG		0x1fd00410
++#define LCD_M			GENMASK(7, 0)
++#define LCD_N			GENMASK(11, 8)
++#define LCD_OD			GENMASK(13, 12)
++#define LCD_FRAC		GENMASK(31, 14)
++
++#define GPU_PLL_CFG		0x1fd00414
++#define GPU_M			GENMASK(7, 0)
++#define GPU_N			GENMASK(11, 8)
++#define GPU_OD			GENMASK(13, 12)
++#define GPU_FRAC		GENMASK(31, 14)
++
++#elif defined(CONFIG_LOONGSON1_LS1B)
+ /* Clock PLL Divisor Register Bits */
+ #define DIV_DC_EN			BIT(31)
+ #define DIV_DC_RST			BIT(30)
+diff --git a/drivers/clk/loongson1/Makefile b/drivers/clk/loongson1/Makefile
+index b7f6a16..da7b2dd 100644
+--- a/drivers/clk/loongson1/Makefile
++++ b/drivers/clk/loongson1/Makefile
+@@ -1,3 +1,4 @@
+ obj-y				+= clk.o
++obj-$(CONFIG_LOONGSON1_LS1A)	+= clk-loongson1a.o
+ obj-$(CONFIG_LOONGSON1_LS1B)	+= clk-loongson1b.o
+ obj-$(CONFIG_LOONGSON1_LS1C)	+= clk-loongson1c.o
+diff --git a/drivers/clk/loongson1/clk-loongson1a.c b/drivers/clk/loongson1/clk-loongson1a.c
+new file mode 100644
+index 0000000..263a82c
+--- /dev/null
++++ b/drivers/clk/loongson1/clk-loongson1a.c
+@@ -0,0 +1,75 @@
++/*
++ * Copyright (c) 2012-2016 Binbin Zhou <zhoubb@lemote.com>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/err.h>
++
++#include <loongson1.h>
++#include "clk.h"
++
++#define OSC		(33 * 1000000)
++#define DIV_APB		2
++
++static DEFINE_SPINLOCK(_lock);
++
++static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	/* Workaround, loongson-1A pll register is written only */
++	return OSC * 8;
++}
++
++static const struct clk_ops ls1x_pll_clk_ops = {
++	.recalc_rate = ls1x_pll_recalc_rate,
++};
++
++void __init ls1x_clk_init(void)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
++	clk_hw_register_clkdev(hw, "osc_clk", NULL);
++
++	/* clock from 33 MHz OSC clk */
++	hw = clk_hw_register_pll(NULL, "pll_clk", "osc_clk",
++				&ls1x_pll_clk_ops, 0);
++	clk_hw_register_clkdev(hw, "pll_clk", NULL);
++
++	/* cpu clk */
++	hw = clk_hw_register_fixed_factor(NULL, "cpu_clk", "pll_clk",
++					0, 1, 1);
++	clk_hw_register_clkdev(hw, "cpu_clk", NULL);
++
++	/* dc clk */
++	hw = clk_hw_register_fixed_factor(NULL, "ddr_clk", "pll_clk",
++					0, 1, 1);
++	clk_hw_register_clkdev(hw, "ddr_clk", NULL);
++
++	/* ahb clk */
++	hw = clk_hw_register_fixed_factor(NULL, "ahb_clk", "pll_clk",
++					0, 1, 2);
++	clk_hw_register_clkdev(hw, "ahb_clk", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-dma", NULL);
++	clk_hw_register_clkdev(hw, "stmmaceth", NULL);
++
++	/* clock derived from AHB clk */
++	/* APB clk is always half of the AHB clk */
++	hw = clk_hw_register_fixed_factor(NULL, "apb_clk", "ahb_clk",
++					0, 1, DIV_APB);
++	clk_hw_register_clkdev(hw, "apb_clk", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-ac97", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-i2c", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-nand", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-pwmtimer", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-spi", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-wdt", NULL);
++	clk_hw_register_clkdev(hw, "serial8250", NULL);
++}
 -- 
-1.9.1
+2.9.3
