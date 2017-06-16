@@ -1,190 +1,119 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v5 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-Date: Mon, 19 Jun 2017 07:02:44 +0200
-Message-Id: <20170619050245.2632-6-o.rempel@pengutronix.de>
-In-Reply-To: <20170619050245.2632-1-o.rempel@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v7 3/8] MIPS: Loongson: Add basic Loongson-1A CPU support
+Date: Fri, 16 Jun 2017 10:52:48 +0800
+Message-Id: <1497581573-17258-4-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
-about state changes. In this case internal state of PMIC must be
-preconfigured for upcomming state change.
-It works fine with the current regulator framework, except with the
-power-off case.
+The Loongson-1A CPU is similar with Loongson-1B/1C, which is a 32-bit SoC.
+It implements the MIPS32 release 2 instruction set.
 
-This patch is providing an optional pm_power_off_prepare handler
-which will configure standby state of the PMIC to disable all power lines.
+It's a cost-effective single chip system based on LS232 processor core, and
+is applicable to fields such as industrial control.
 
-In my power consumption test on RIoTBoard, I got the following results:
-power off without this patch:	320 mA
-power off with this patch:	2   mA
-suspend to ram:			40  mA
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
 ---
- drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+ arch/mips/include/asm/cpu-type.h    |  3 ++-
+ arch/mips/kernel/cpu-probe.c        |  4 +++-
+ arch/mips/loongson32/Platform       |  1 +
+ arch/mips/loongson32/common/setup.c |  4 +++-
+ arch/mips/mm/c-r4k.c                | 10 ++++++++++
+ 5 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 63922a2167e5..f6c276ed91d8 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -28,6 +28,7 @@
- #include <linux/regulator/pfuze100.h>
- #include <linux/i2c.h>
- #include <linux/slab.h>
-+#include <linux/kallsyms.h>
- #include <linux/regmap.h>
- 
- #define PFUZE_NUMREGS		128
-@@ -42,11 +43,17 @@
- 
- #define PFUZE100_COINVOL	0x1a
- #define PFUZE100_SW1ABVOL	0x20
-+#define PFUZE100_SW1ABMODE	0x23
- #define PFUZE100_SW1CVOL	0x2e
-+#define PFUZE100_SW1CMODE	0x31
- #define PFUZE100_SW2VOL		0x35
-+#define PFUZE100_SW2MODE	0x38
- #define PFUZE100_SW3AVOL	0x3c
-+#define PFUZE100_SW3AMODE	0x3f
- #define PFUZE100_SW3BVOL	0x43
-+#define PFUZE100_SW3BMODE	0x46
- #define PFUZE100_SW4VOL		0x4a
-+#define PFUZE100_SW4MODE	0x4d
- #define PFUZE100_SWBSTCON1	0x66
- #define PFUZE100_VREFDDRCON	0x6a
- #define PFUZE100_VSNVSVOL	0x6b
-@@ -57,6 +64,13 @@
- #define PFUZE100_VGEN5VOL	0x70
- #define PFUZE100_VGEN6VOL	0x71
- 
-+#define PFUZE100_SWxMODE_MASK	0xf
-+#define PFUZE100_SWxMODE_APS_APS	0x8
-+#define PFUZE100_SWxMODE_APS_OFF	0x4
-+
-+#define PFUZE100_VGENxLPWR	BIT(6)
-+#define PFUZE100_VGENxSTBY	BIT(5)
-+
- enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
- 
- struct pfuze_regulator {
-@@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(int index)
- }
+diff --git a/arch/mips/include/asm/cpu-type.h b/arch/mips/include/asm/cpu-type.h
+index bdd6dc1..13ea1ea5 100644
+--- a/arch/mips/include/asm/cpu-type.h
++++ b/arch/mips/include/asm/cpu-type.h
+@@ -24,7 +24,8 @@ static inline int __pure __get_cpu_type(const int cpu_type)
+ 	case CPU_LOONGSON3:
  #endif
  
-+static struct pfuze_chip *syspm_pfuze_chip;
-+
-+static void pfuze_power_off_prepare(void)
-+{
-+	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
-+
-+	/* Switch from default mode: APS/APS to APS/Off */
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+}
-+
-+static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
-+{
-+	if (pfuze_chip->chip_id != PFUZE100) {
-+		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
-+		return -ENODEV;
-+	}
-+
-+	if (pm_power_off_prepare) {
-+		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
-+		return -EBUSY;
-+	}
-+
-+	if (syspm_pfuze_chip) {
-+		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
-+		return -EBUSY;
-+	}
-+
-+	syspm_pfuze_chip = pfuze_chip;
-+	pm_power_off_prepare = pfuze_power_off_prepare;
-+
-+	return 0;
-+}
-+
- static int pfuze_identify(struct pfuze_chip *pfuze_chip)
- {
- 	unsigned int value;
-@@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
- 		}
- 	}
+-#if defined(CONFIG_SYS_HAS_CPU_LOONGSON1B) || \
++#if defined(CONFIG_SYS_HAS_CPU_LOONGSON1A) || \
++    defined(CONFIG_SYS_HAS_CPU_LOONGSON1B) || \
+     defined(CONFIG_SYS_HAS_CPU_LOONGSON1C)
+ 	case CPU_LOONGSON1:
+ #endif
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index 657d65d..59ad3b7 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1503,7 +1503,9 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
  
-+	if (of_property_read_bool(client->dev.of_node,
-+				  "fsl,pmic-stby-poweroff"))
-+		return pfuze_power_off_prepare_init(pfuze_chip);
-+
-+	return 0;
-+}
-+
-+static int pfuze100_regulator_remove(struct i2c_client *client)
-+{
-+	if (syspm_pfuze_chip) {
-+		syspm_pfuze_chip = NULL;
-+		pm_power_off_prepare = NULL;
-+	}
-+
- 	return 0;
- }
+ 		switch (c->processor_id & PRID_REV_MASK) {
+ 		case PRID_REV_LOONGSON1ABC:
+-#ifdef CONFIG_CPU_LOONGSON1B
++#if defined(CONFIG_LOONGSON1_LS1A)
++			__cpu_name[cpu] = "Loongson 1A";
++#elif defined(CONFIG_CPU_LOONGSON1B)
+ 			__cpu_name[cpu] = "Loongson 1B";
+ #endif
+ 			break;
+diff --git a/arch/mips/loongson32/Platform b/arch/mips/loongson32/Platform
+index ffe01c6..a9e0fa7 100644
+--- a/arch/mips/loongson32/Platform
++++ b/arch/mips/loongson32/Platform
+@@ -4,5 +4,6 @@ cflags-$(CONFIG_CPU_LOONGSON1)	+= \
  
-@@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver = {
- 		.of_match_table = pfuze_dt_ids,
- 	},
- 	.probe = pfuze100_regulator_probe,
-+	.remove = pfuze100_regulator_remove,
- };
- module_i2c_driver(pfuze_driver);
+ platform-$(CONFIG_MACH_LOONGSON32)	+= loongson32/
+ cflags-$(CONFIG_MACH_LOONGSON32)	+= -I$(srctree)/arch/mips/include/asm/mach-loongson32
++load-$(CONFIG_LOONGSON1_LS1A)		+= 0xffffffff80200000
+ load-$(CONFIG_LOONGSON1_LS1B)		+= 0xffffffff80100000
+ load-$(CONFIG_LOONGSON1_LS1C)		+= 0xffffffff80100000
+diff --git a/arch/mips/loongson32/common/setup.c b/arch/mips/loongson32/common/setup.c
+index c8e8b3e..1c3324a 100644
+--- a/arch/mips/loongson32/common/setup.c
++++ b/arch/mips/loongson32/common/setup.c
+@@ -22,7 +22,9 @@ const char *get_system_type(void)
  
+ 	switch (processor_id & PRID_REV_MASK) {
+ 	case PRID_REV_LOONGSON1ABC:
+-#if defined(CONFIG_LOONGSON1_LS1B)
++#if defined(CONFIG_LOONGSON1_LS1A)
++		return "LOONGSON LS1A";
++#elif defined(CONFIG_LOONGSON1_LS1B)
+ 		return "LOONGSON LS1B";
+ #elif defined(CONFIG_LOONGSON1_LS1C)
+ 		return "LOONGSON LS1C";
+diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+index e7f798d..44c4088 100644
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -1366,6 +1366,16 @@ static void probe_pcache(void)
+ 		c->options |= MIPS_CPU_PREFETCH;
+ 		break;
+ 
++	case CPU_LOONGSON1:
++		if (read_c0_config7() & MIPS_CONF7_AR) {
++			/*
++			 * effectively physically indexed dcache,
++			 * thus no virtual aliases.
++			 */
++			c->dcache.flags |= MIPS_CACHE_PINDEX;
++			break;
++		}
++
+ 	default:
+ 		if (!(config & MIPS_CONF_M))
+ 			panic("Don't know how to probe P-caches on this cpu.");
 -- 
-2.11.0
+2.9.3
