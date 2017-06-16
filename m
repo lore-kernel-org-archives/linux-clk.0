@@ -1,88 +1,105 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 02/10] clk: add clk_core_set_phase_nolock function
-Date: Mon, 12 Jun 2017 21:44:30 +0200
-Message-Id: <20170612194438.12298-3-jbrunet@baylibre.com>
-In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Binbin Zhou <zhoubb@lemote.com>,
+	Huacai Chen <chenhc@lemote.com>
+Subject: [PATCH v7 0/8] MIPS: Loongson: Add the Loongson-1A processor support
+Date: Fri, 16 Jun 2017 10:52:45 +0800
+Message-Id: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Create a core function for set_phase, as it is done for set_rate and
-set_parent.
+The Loongson-1A CPU is similar with Loongson-1B/1C, which is a 32-bit SoC.
 
-This rework is done to ease the integration of "protected" clock
-functionality.
+It is a cost-effective single chip system based on LS232 processor core,
+and is applicable to fields such as industrial control, and security applications.
+It implements the MIPS32 release 2 instruction set.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+They share the same PRID, so we rewrite them into PRID_REV_LOONGSON1ABC,
+and use their CPU macros to distinguish.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f5c371532509..dceaf0ff23db 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
- 
-+static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
-+{
-+	int ret = -EINVAL;
-+
-+	if (!core)
-+		return 0;
-+
-+	trace_clk_set_phase(core, degrees);
-+
-+	if (core->ops->set_phase)
-+		ret = core->ops->set_phase(core->hw, degrees);
-+
-+	trace_clk_set_phase_complete(core, degrees);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_set_phase - adjust the phase shift of a clock signal
-  * @clk: clock signal source
-@@ -1895,7 +1912,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
-  */
- int clk_set_phase(struct clk *clk, int degrees)
- {
--	int ret = -EINVAL;
-+	int ret;
- 
- 	if (!clk)
- 		return 0;
-@@ -1906,17 +1923,7 @@ int clk_set_phase(struct clk *clk, int degrees)
- 		degrees += 360;
- 
- 	clk_prepare_lock();
--
--	trace_clk_set_phase(clk->core, degrees);
--
--	if (clk->core->ops->set_phase)
--		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
--
--	trace_clk_set_phase_complete(clk->core, degrees);
--
--	if (!ret)
--		clk->core->phase = degrees;
--
-+	ret = clk_core_set_phase_nolock(clk->core, degrees);
- 	clk_prepare_unlock();
- 
- 	return ret;
+Due to historic reasons, devicetree is not supported on Loongson1 platform now.
+Maybe it will have change in the future.
+
+Changes since v1:
+
+1. According commit c908656a7531771ae7642990a7c5f3c7307bd612
+   (MIPS: Loongson: Naming style cleanup and rework) to fix the naming style.
+
+Changes since v2:
+
+1. Remove __irq_set_handler_locked().
+2. Rebases on top of v4.5-rc5.
+
+Changes since v3:
+
+1. Rename the Loongson-1 series's PRID name.
+2. Rewite Loongson-1A's clk driver.
+3. Rebases on top of v4.10-rc2.
+
+Changes since v4:
+
+1. Fix comment's spelling error.
+
+Changes since v5:
+
+1. Rebases on top of v4.11-rc3.
+
+Changes since v6:
+
+1. Improve comment readability.
+2. Rebases on top of v4.12-rc4.
+
+Binbin Zhou(8):
+ MIPS: Loongson: Merge PRID macro for Loongson-1A/1B/1C
+ MIPS: Loongson: Expand Loongson-1's register definition
+ MIPS: Loongson: Add basic Loongson-1A CPU support
+ MIPS: Loongson: Add Loongson-1A Kconfig options
+ MIPS: Loongson: Add platform devices for Loongson-1A
+ MIPS: Loongson: Add Loongson-1A board support
+ clk: Loongson: Add Loongson-1A clock support
+ MIPS: Loongson: Add Loongson-1A default config file
+
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
 -- 
-2.9.4
+ arch/mips/Kconfig                                 |  12 +++++++++
+ arch/mips/configs/loongson1a_defconfig            | 131 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/mips/include/asm/cpu-type.h                  |   3 ++-
+ arch/mips/include/asm/cpu.h                       |   3 +--
+ arch/mips/include/asm/mach-loongson32/irq.h       |  16 ++++++++----
+ arch/mips/include/asm/mach-loongson32/loongson1.h | 172 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------
+ arch/mips/include/asm/mach-loongson32/platform.h  |   2 ++
+ arch/mips/include/asm/mach-loongson32/regs-clk.h  |  30 ++++++++++++++++++++-
+ arch/mips/include/asm/mach-loongson32/regs-mux.h  |  36 ++++++++++++++++++++++++-
+ arch/mips/kernel/cpu-probe.c                      |   6 ++++-
+ arch/mips/loongson32/Kconfig                      |  20 ++++++++++++++
+ arch/mips/loongson32/Makefile                     |   6 +++++
+ arch/mips/loongson32/Platform                     |   1 +
+ arch/mips/loongson32/common/irq.c                 |   2 +-
+ arch/mips/loongson32/common/platform.c            |  83 ++++++++++++++++++++++++++++++++++++++++++++++++----------
+ arch/mips/loongson32/common/setup.c               |   6 +++--
+ arch/mips/loongson32/ls1a/Makefile                |   5 ++++
+ arch/mips/loongson32/ls1a/board.c                 |  31 ++++++++++++++++++++++
+ arch/mips/mm/c-r4k.c                              |  10 +++++++
+ drivers/clk/loongson1/Makefile                    |   1 +
+ drivers/clk/loongson1/clk-loongson1a.c            |  75 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 21 files changed, 593 insertions(+), 58 deletions(-)
+ create mode 100644 arch/mips/configs/loongson1a_defconfig
+ create mode 100644 arch/mips/loongson32/ls1a/Makefile
+ create mode 100644 arch/mips/loongson32/ls1a/board.c
+ create mode 100644 drivers/clk/loongson1/clk-loongson1a.c
+--
+1.9.0
