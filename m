@@ -1,93 +1,80 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: bjorn.andersson@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v6 0/6] Add minimal boot support for IPQ8074
-Date: Fri,  9 Jun 2017 15:11:53 +0530
-Message-Id: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v7 1/8] MIPS: Loongson: Merge PRID macro for Loongson-1A/1B/1C
+Date: Fri, 16 Jun 2017 10:52:46 +0800
+Message-Id: <1497581573-17258-2-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-v6:
-  * Include Rob's Ack to the first patch.
+The Loongson-1 series CPUs(1A/1B/1C) share the same PRID macro.
 
-v5:
-  * Removed the 'NA' binding from documentation
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+---
+ arch/mips/include/asm/cpu.h         | 3 +--
+ arch/mips/kernel/cpu-probe.c        | 4 +++-
+ arch/mips/loongson32/common/setup.c | 2 +-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-v4:
-  * Split the clock patch and addressed a minor comment
-    in the clock driver as per stephen's feedback.
-
-v3:
-  * Addressed review feedback from Bjorn for pinctrl
-     - Unified the names for qpic pads.
-     - Corrected the names for pwm pins.
-  * Updated pinctrl documentation.
-  * Updated the default bootargs in ipq8074-hk01.dts.
-  * Updated the gcc clocks driver for removing the
-    unused halt_bit in few places.
-
-v2:
-  * Addressed review feedback from Stephen
-    - Removed cpu-map entries
-    - Added mmio-timer nodes
-  * Fix sparse warnings in the gcc-ipq8074.c
-  * Updated pinctrl documentation
-
-v1:
-  https://www.spinics.net/lists/kernel/msg2498734.html
-  This series adds minimal board boot support for ipq8074-hk01
-  board.
-
-Abhishek Sahu (3):
-  clk: qcom: Add DT bindings for ipq8074 gcc clock controller
-  clk: qcom: Add ipq8074 Global Clock Controller support
-  arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-
-Varadarajan Narayanan (3):
-  pinctrl: qcom: Add ipq8074 pinctrl driver
-  dt-bindings: qcom: Add ipq8074 bindings
-  arm64: dts: Add ipq8074 SoC and HK01 board support
-
- Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  172 ++++
- arch/arm64/boot/dts/qcom/Makefile                  |    1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   53 +
- arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
- arch/arm64/configs/defconfig                       |    2 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-ipq8074.c                     | 1007 ++++++++++++++++++
- drivers/pinctrl/qcom/Kconfig                       |   10 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1076 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
- 14 files changed, 2681 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
- create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
-
+diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
+index 9a83724..76c0b56c3 100644
+--- a/arch/mips/include/asm/cpu.h
++++ b/arch/mips/include/asm/cpu.h
+@@ -239,8 +239,7 @@
+ #define PRID_REV_VR4181A	0x0070	/* Same as VR4122 */
+ #define PRID_REV_VR4130		0x0080
+ #define PRID_REV_34K_V1_0_2	0x0022
+-#define PRID_REV_LOONGSON1B	0x0020
+-#define PRID_REV_LOONGSON1C	0x0020	/* Same as Loongson-1B */
++#define PRID_REV_LOONGSON1ABC	0x0020
+ #define PRID_REV_LOONGSON2E	0x0002
+ #define PRID_REV_LOONGSON2F	0x0003
+ #define PRID_REV_LOONGSON3A_R1	0x0005
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index 07718bb..657d65d 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1502,8 +1502,10 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
+ 		c->cputype = CPU_LOONGSON1;
+ 
+ 		switch (c->processor_id & PRID_REV_MASK) {
+-		case PRID_REV_LOONGSON1B:
++		case PRID_REV_LOONGSON1ABC:
++#ifdef CONFIG_CPU_LOONGSON1B
+ 			__cpu_name[cpu] = "Loongson 1B";
++#endif
+ 			break;
+ 		}
+ 
+diff --git a/arch/mips/loongson32/common/setup.c b/arch/mips/loongson32/common/setup.c
+index 1640744..c8e8b3e 100644
+--- a/arch/mips/loongson32/common/setup.c
++++ b/arch/mips/loongson32/common/setup.c
+@@ -21,7 +21,7 @@ const char *get_system_type(void)
+ 	unsigned int processor_id = (&current_cpu_data)->processor_id;
+ 
+ 	switch (processor_id & PRID_REV_MASK) {
+-	case PRID_REV_LOONGSON1B:
++	case PRID_REV_LOONGSON1ABC:
+ #if defined(CONFIG_LOONGSON1_LS1B)
+ 		return "LOONGSON LS1B";
+ #elif defined(CONFIG_LOONGSON1_LS1C)
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.9.3
