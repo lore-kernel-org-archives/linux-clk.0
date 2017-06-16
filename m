@@ -1,234 +1,175 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Arnd
- Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang
-	<xiaolong.zhang@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Geng
- Ren <geng.ren@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan
- Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V1 5/9] clk: sprd: add divider clock support
-Date: Sun, 18 Jun 2017 09:58:51 +0800
-Message-ID: <20170618015855.27738-6-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from SMTPBG19.QQ.COM ([183.60.61.236]:51145 "EHLO smtpbg320.qq.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750792AbdFPCxX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Jun 2017 22:53:23 -0400
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+        "Steven J . Hill" <Steven.Hill@imgtec.com>,
+        Aurelien Jarno <aurelien@aurel32.net>,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Kelvin Cheung <keguang.zhang@gmail.com>,
+        Yang Ling <gnaygnil@gmail.com>,
+        =?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Binbin Zhou <zhoubb@lemote.com>,
+        HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v7 8/8] MIPS: Loongson: Add Loongson-1A default config file
+Date: Fri, 16 Jun 2017 10:52:53 +0800
+Message-Id: <1497581573-17258-9-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a feature that can also be found in sprd composite clocks,
-provide a bunch of helpers that can be reused later on.
-
-Original-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
 ---
- drivers/clk/sprd/Makefile  |  2 +-
- drivers/clk/sprd/ccu_div.c | 93 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/ccu_div.h | 77 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 171 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/sprd/ccu_div.c
- create mode 100644 drivers/clk/sprd/ccu_div.h
+ arch/mips/configs/loongson1a_defconfig | 130 +++++++++++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
+ create mode 100644 arch/mips/configs/loongson1a_defconfig
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index dc89790..d129c0a8 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -1,3 +1,3 @@
- ifneq ($(CONFIG_OF),)
--obj-y	+= ccu_common.o ccu_gate.o ccu_mux.o
-+obj-y	+= ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o
- endif
-diff --git a/drivers/clk/sprd/ccu_div.c b/drivers/clk/sprd/ccu_div.c
+diff --git a/arch/mips/configs/loongson1a_defconfig b/arch/mips/configs/loongson1a_defconfig
 new file mode 100644
-index 0000000..0d0f1e9
+index 0000000..1a8545e
 --- /dev/null
-+++ b/drivers/clk/sprd/ccu_div.c
-@@ -0,0 +1,93 @@
-+/*
-+ * Spreadtrum divider clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "ccu_div.h"
-+
-+DEFINE_SPINLOCK(div_lock);
-+
-+long ccu_div_helper_round_rate(struct ccu_common *common,
-+			       struct ccu_div_internal *div,
-+			       unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	return divider_round_rate(&common->hw, rate, parent_rate,
-+				  NULL, div->width, 0);
-+}
-+
-+static long ccu_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_div_helper_round_rate(&cd->common, &cd->div,
-+					 rate, parent_rate);
-+}
-+
-+unsigned long ccu_div_helper_recalc_rate(struct ccu_common *common,
-+					 struct ccu_div_internal *div,
-+					 unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	u32 reg;
-+
-+	reg = ccu_readl(common);
-+	val = reg >> div->shift;
-+	val &= (1 << div->width) - 1;
-+
-+	return divider_recalc_rate(&common->hw, parent_rate, val, NULL, 0);
-+}
-+
-+static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_div_helper_recalc_rate(&cd->common, &cd->div, parent_rate);
-+}
-+
-+int ccu_div_helper_set_rate(struct ccu_common *common,
-+			    struct ccu_div_internal *div,
-+			    unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	unsigned long flags;
-+	unsigned long val;
-+	u32 reg;
-+
-+	val = divider_get_val(rate, parent_rate, NULL,
-+				div->width, 0);
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	reg = ccu_readl(common);
-+	reg &= ~GENMASK(div->width + div->shift - 1, div->shift);
-+
-+	ccu_writel(reg | (val << div->shift), common);
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+
-+	return 0;
-+
-+}
-+
-+static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct ccu_div *cd = hw_to_ccu_div(hw);
-+
-+	return ccu_div_helper_set_rate(&cd->common, &cd->div,
-+				       rate, parent_rate);
-+}
-+
-+const struct clk_ops ccu_div_ops = {
-+	.recalc_rate = ccu_div_recalc_rate,
-+	.round_rate = ccu_div_round_rate,
-+	.set_rate = ccu_div_set_rate,
-+};
-diff --git a/drivers/clk/sprd/ccu_div.h b/drivers/clk/sprd/ccu_div.h
-new file mode 100644
-index 0000000..cb13ed7
---- /dev/null
-+++ b/drivers/clk/sprd/ccu_div.h
-@@ -0,0 +1,77 @@
-+/*
-+ * Spreadtrum divider clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _CCU_DIV_H_
-+#define _CCU_DIV_H_
-+
-+#include "ccu_common.h"
-+
-+/**
-+ * struct ccu_div_internal - Internal divider description
-+ * @shift: Bit offset of the divider in its register
-+ * @width: Width of the divider field in its register
-+ *
-+ * That structure represents a single divider, and is meant to be
-+ * embedded in other structures representing the various clock
-+ * classes.
-+ */
-+struct ccu_div_internal {
-+	u8	shift;
-+	u8	width;
-+};
-+
-+#define _SPRD_CCU_DIV(_shift, _width)	\
-+	{				\
-+		.shift	= _shift,	\
-+		.width	= _width,	\
-+	}
-+
-+struct ccu_div {
-+	struct ccu_div_internal	div;
-+	struct ccu_common	common;
-+};
-+
-+#define SPRD_CCU_DIV(_struct, _name, _parent, _reg,			\
-+			_shift, _width, _flags)				\
-+	struct ccu_div _struct = {					\
-+		.div	= _SPRD_CCU_DIV(_shift, _width),		\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.lock		= &div_lock,			\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_div_ops,	\
-+						      _flags),		\
-+		}							\
-+	}
-+
-+static inline struct ccu_div *hw_to_ccu_div(struct clk_hw *hw)
-+{
-+	struct ccu_common *common = hw_to_ccu_common(hw);
-+
-+	return container_of(common, struct ccu_div, common);
-+}
-+
-+long ccu_div_helper_round_rate(struct ccu_common *common,
-+			       struct ccu_div_internal *div,
-+			       unsigned long rate,
-+			       unsigned long *parent_rate);
-+
-+unsigned long ccu_div_helper_recalc_rate(struct ccu_common *common,
-+					 struct ccu_div_internal *div,
-+					 unsigned long parent_rate);
-+
-+int ccu_div_helper_set_rate(struct ccu_common *common,
-+			    struct ccu_div_internal *div,
-+			    unsigned long rate,
-+			    unsigned long parent_rate);
-+
-+extern const struct clk_ops ccu_div_ops;
-+extern spinlock_t div_lock;
-+
-+#endif /* _CCU_DIV_H_ */
++++ b/arch/mips/configs/loongson1a_defconfig
+@@ -0,0 +1,130 @@
++CONFIG_MACH_LOONGSON32=y
++CONFIG_ZONE_DMA=y
++CONFIG_PAGE_SIZE_16KB=y
++CONFIG_HIGHMEM=y
++CONFIG_HZ_1000=y
++CONFIG_PREEMPT_VOLUNTARY=y
++# CONFIG_SECCOMP is not set
++# CONFIG_LOCALVERSION_AUTO is not set
++CONFIG_SYSVIPC=y
++CONFIG_POSIX_MQUEUE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BSD_PROCESS_ACCT=y
++CONFIG_BSD_PROCESS_ACCT_V3=y
++CONFIG_IKCONFIG=y
++CONFIG_IKCONFIG_PROC=y
++CONFIG_LOG_BUF_SHIFT=16
++CONFIG_CGROUPS=y
++CONFIG_BLK_CGROUP=y
++CONFIG_CGROUP_SCHED=y
++CONFIG_CGROUP_FREEZER=y
++CONFIG_CPUSETS=y
++CONFIG_CGROUP_DEVICE=y
++CONFIG_EXPERT=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_MODVERSIONS=y
++# CONFIG_BLK_DEV_BSG is not set
++# CONFIG_IOSCHED_DEADLINE is not set
++# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
++# CONFIG_SUSPEND is not set
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_IP_PNP=y
++CONFIG_IP_PNP_DHCP=y
++CONFIG_SYN_COOKIES=y
++# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
++# CONFIG_INET_XFRM_MODE_TUNNEL is not set
++# CONFIG_INET_XFRM_MODE_BEET is not set
++# CONFIG_INET_DIAG is not set
++# CONFIG_IPV6 is not set
++CONFIG_BRIDGE=y
++# CONFIG_BRIDGE_IGMP_SNOOPING is not set
++# CONFIG_WIRELESS is not set
++CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++# CONFIG_STANDALONE is not set
++CONFIG_MTD=y
++CONFIG_MTD_CMDLINE_PARTS=y
++CONFIG_MTD_BLOCK=y
++CONFIG_NFTL=y
++CONFIG_NFTL_RW=y
++CONFIG_MTD_NAND=y
++CONFIG_MTD_SPI_NOR=y
++CONFIG_BLK_DEV_LOOP=y
++CONFIG_BLK_DEV_RAM=y
++# CONFIG_SCSI_PROC_FS is not set
++CONFIG_BLK_DEV_SD=y
++# CONFIG_SCSI_LOWLEVEL is not set
++CONFIG_ATA=y
++# CONFIG_SATA_PMP is not set
++CONFIG_SATA_AHCI_PLATFORM=y
++# CONFIG_ATA_SFF is not set
++CONFIG_NETDEVICES=y
++CONFIG_NETCONSOLE=y
++# CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_BROADCOM is not set
++# CONFIG_NET_VENDOR_INTEL is not set
++# CONFIG_NET_VENDOR_MARVELL is not set
++# CONFIG_NET_VENDOR_MICREL is not set
++# CONFIG_NET_VENDOR_NATSEMI is not set
++# CONFIG_NET_VENDOR_SAMSUNG is not set
++# CONFIG_NET_VENDOR_SEEQ is not set
++# CONFIG_NET_VENDOR_SMSC is not set
++CONFIG_STMMAC_ETH=y
++# CONFIG_NET_VENDOR_VIA is not set
++# CONFIG_NET_VENDOR_WIZNET is not set
++CONFIG_REALTEK_PHY=y
++# CONFIG_USB_NET_DRIVERS is not set
++# CONFIG_WLAN is not set
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++# CONFIG_SERIO is not set
++CONFIG_VT_HW_CONSOLE_BINDING=y
++CONFIG_LEGACY_PTY_COUNT=8
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++# CONFIG_HW_RANDOM is not set
++CONFIG_I2C=y
++CONFIG_SPI=y
++# CONFIG_HWMON is not set
++CONFIG_WATCHDOG=y
++# CONFIG_VGA_CONSOLE is not set
++CONFIG_USB=y
++CONFIG_USB_MON=y
++CONFIG_USB_XHCI_HCD=m
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_EHCI_HCD_PLATFORM=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_OHCI_HCD_PLATFORM=y
++CONFIG_USB_STORAGE=m
++CONFIG_USB_GADGET=y
++CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_PCF8563=y
++# CONFIG_IOMMU_SUPPORT is not set
++CONFIG_EXT2_FS=y
++CONFIG_EXT2_FS_XATTR=y
++CONFIG_EXT2_FS_POSIX_ACL=y
++CONFIG_EXT2_FS_SECURITY=y
++CONFIG_EXT3_FS=y
++CONFIG_EXT3_FS_POSIX_ACL=y
++CONFIG_EXT3_FS_SECURITY=y
++# CONFIG_DNOTIFY is not set
++CONFIG_VFAT_FS=y
++CONFIG_PROC_KCORE=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++# CONFIG_MISC_FILESYSTEMS is not set
++# CONFIG_NETWORK_FILESYSTEMS is not set
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_NLS_ISO8859_1=y
++CONFIG_PRINTK_TIME=y
++# CONFIG_ENABLE_WARN_DEPRECATED is not set
++# CONFIG_ENABLE_MUST_CHECK is not set
++CONFIG_MAGIC_SYSRQ=y
++# CONFIG_SCHED_DEBUG is not set
++# CONFIG_FTRACE is not set
++CONFIG_XZ_DEC=y
 -- 
-2.7.4
+2.9.3
+
