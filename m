@@ -1,50 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:36229 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751338AbdFFHcW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2017 03:32:22 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v3 3/6] kernel/reboot.c: export pm_power_off_prepare
-Date: Tue,  6 Jun 2017 09:31:43 +0200
-Message-Id: <20170606073146.26882-4-o.rempel@pengutronix.de>
-In-Reply-To: <20170606073146.26882-1-o.rempel@pengutronix.de>
-References: <20170606073146.26882-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1497642590.3086.55.camel@baylibre.com>
+Subject: [GIT PULL] Amlogic clock driver updates for 4.13 - 2nd batch
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	 <mturquette@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "open
+ list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin
+ Hilman <khilman@baylibre.com>
+Date: Fri, 16 Jun 2017 21:49:50 +0200
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Export pm_power_off_prepare. It is needed to implement power off on
-Freescale/NXP iMX6 based boards with external power management
-integrated circuit (PMIC).
+Dear clock maintainers,
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- kernel/reboot.c | 1 +
- 1 file changed, 1 insertion(+)
+Below is a request to pull a 2nd batch of Amlogic clock driver updates for this
+cycle. It is based on our previous PR. Stephen, I checked with the "const" patch
+you have applied directly to clk-next and It should merge nicely with it.
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index bd30a973fe94..a6903bf772c7 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -49,6 +49,7 @@ int reboot_force;
-  */
- 
- void (*pm_power_off_prepare)(void);
-+EXPORT_SYMBOL(pm_power_off_prepare);
- 
- /**
-  *	emergency_restart - reboot the system
--- 
-2.11.0
+Cheers
 
+The following changes since commit 14c735c8e3082714e3d5fa91843692a9c871cebe:
+
+  clk: meson-gxbb: Add EE 32K Clock for CEC (2017-05-29 12:34:23 +0000)
+
+are available in the git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/meson-clk-for-4.13-2
+
+for you to fetch changes up to 215c80a7d65312911ca7b08d42b05652e27eed5f:
+
+  clk: meson: gxbb: add all clk81 parents (2017-06-16 18:51:42 +0000)
+
+----------------------------------------------------------------
+* Expose more clock gate on meson8 (SAR ADC, RNG, USB, SDIO, ETH)
+* Add new compatible to the meson8 clock controller for meson8b
+* Add missing parents to gxbb clk81
+
+----------------------------------------------------------------
+Jerome Brunet (2):
+      Merge branch 'next/headers' into next/drivers
+      clk: meson: gxbb: add all clk81 parents
+
+Martin Blumenstingl (6):
+      clk: meson8b: export the SAR ADC clocks
+      clk: meson8b: export the SDIO clock
+      clk: meson8b: export the gate clock for the HW random number generator
+      clk: meson8b: export the USB clocks
+      clk: meson8b: export the ethernet gate clock
+      clk: meson: meson8b: add compatibles for Meson8 and Meson8m2
+
+ .../bindings/clock/amlogic,meson8b-clkc.txt          | 11 +++++++----
+ drivers/clk/meson/Kconfig                            |  6 +++---
+ drivers/clk/meson/gxbb.c                             | 13 ++++++++-----
+ drivers/clk/meson/meson8b.c                          |  5 ++++-
+ drivers/clk/meson/meson8b.h                          | 20 ++++++++++----------
+ include/dt-bindings/clock/meson8b-clkc.h             | 10 ++++++++++
+ 6 files changed, 42 insertions(+), 23 deletions(-)
