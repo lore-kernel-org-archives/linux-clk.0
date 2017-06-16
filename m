@@ -1,237 +1,266 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v6 02/11] dt-bindings: clk: Extend binding doc for Stingray SOC
-Date: Fri,  2 Jun 2017 12:04:26 +0530
-Message-Id: <1496385275-6899-3-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
-References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v7 2/8] MIPS: Loongson: Expand Loongson-1's register definition
+Date: Fri, 16 Jun 2017 10:52:47 +0800
+Message-Id: <1497581573-17258-3-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+To improve the code readability, expand the register definition.
+Because most registers are generic in Loongson-1 series CPU.
 
-Update iproc clock dt-binding documentation with
-Stingray pll and clock details.
-
-Signed-off-by: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
 ---
- .../bindings/clock/brcm,iproc-clocks.txt           |  76 ++++++++++++++++
- include/dt-bindings/clock/bcm-sr.h                 | 101 +++++++++++++++++++++
- 2 files changed, 177 insertions(+)
- create mode 100644 include/dt-bindings/clock/bcm-sr.h
+ arch/mips/include/asm/mach-loongson32/loongson1.h | 170 ++++++++++++++++++----
+ arch/mips/loongson32/common/platform.c            |  16 +-
+ 2 files changed, 149 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index 6f66e9a..f2c5f0e4a 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -219,3 +219,79 @@ BCM63138
- --------
- PLL and leaf clock compatible strings for BCM63138 are:
-     "brcm,bcm63138-armpll"
+diff --git a/arch/mips/include/asm/mach-loongson32/loongson1.h b/arch/mips/include/asm/mach-loongson32/loongson1.h
+index 84c28a8..8cfd4ba 100644
+--- a/arch/mips/include/asm/mach-loongson32/loongson1.h
++++ b/arch/mips/include/asm/mach-loongson32/loongson1.h
+@@ -19,35 +19,147 @@
+ #endif
+ 
+ /* Loongson 1 Register Bases */
+-#define LS1X_MUX_BASE			0x1fd00420
+-#define LS1X_INTC_BASE			0x1fd01040
+-#define LS1X_GPIO0_BASE			0x1fd010c0
+-#define LS1X_GPIO1_BASE			0x1fd010c4
+-#define LS1X_DMAC_BASE			0x1fd01160
+-#define LS1X_CBUS_BASE			0x1fd011c0
+-#define LS1X_EHCI_BASE			0x1fe00000
+-#define LS1X_OHCI_BASE			0x1fe08000
+-#define LS1X_GMAC0_BASE			0x1fe10000
+-#define LS1X_GMAC1_BASE			0x1fe20000
+-
+-#define LS1X_UART0_BASE			0x1fe40000
+-#define LS1X_UART1_BASE			0x1fe44000
+-#define LS1X_UART2_BASE			0x1fe48000
+-#define LS1X_UART3_BASE			0x1fe4c000
+-#define LS1X_CAN0_BASE			0x1fe50000
+-#define LS1X_CAN1_BASE			0x1fe54000
+-#define LS1X_I2C0_BASE			0x1fe58000
+-#define LS1X_I2C1_BASE			0x1fe68000
+-#define LS1X_I2C2_BASE			0x1fe70000
+-#define LS1X_PWM0_BASE			0x1fe5c000
+-#define LS1X_PWM1_BASE			0x1fe5c010
+-#define LS1X_PWM2_BASE			0x1fe5c020
+-#define LS1X_PWM3_BASE			0x1fe5c030
+-#define LS1X_WDT_BASE			0x1fe5c060
+-#define LS1X_RTC_BASE			0x1fe64000
+-#define LS1X_AC97_BASE			0x1fe74000
+-#define LS1X_NAND_BASE			0x1fe78000
+-#define LS1X_CLK_BASE			0x1fe78030
++#define LS1X_DC_REG_BASE		0x1c200000
++#define LS1X_MUX_REG_BASE		0x1f000000
 +
-+Stingray
-+-----------
-+PLL and leaf clock compatible strings for Stingray are:
-+    "brcm,sr-genpll0"
-+    "brcm,sr-genpll1"
-+    "brcm,sr-genpll2"
-+    "brcm,sr-genpll3"
-+    "brcm,sr-genpll4"
-+    "brcm,sr-genpll5"
-+    "brcm,sr-genpll6"
++#define LS1X_CFG_REG_BASE		(LS1X_MUX_REG_BASE + 0x00d00000)
 +
-+    "brcm,sr-lcpll0"
-+    "brcm,sr-lcpll1"
-+    "brcm,sr-lcpll-pcie"
++#define LS1X_INTC_BASE			(LS1X_CFG_REG_BASE + 0x1040)
 +
++/* GPIO regs */
++#define LS1X_GPIO_REG_BASE		(LS1X_CFG_REG_BASE + 0x1000)
++#define LS1X_GPIO_CFG0_REG		(LS1X_GPIO_REG_BASE + 0xc0)
++#define LS1X_GPIO_CFG1_REG		(LS1X_GPIO_REG_BASE + 0xc4)
++#define LS1X_GPIO_CFG2_REG		(LS1X_GPIO_REG_BASE + 0xc8)
++#define LS1X_GPIO_OE0_REG		(LS1X_GPIO_REG_BASE + 0xd0)
++#define LS1X_GPIO_OE1_REG		(LS1X_GPIO_REG_BASE + 0xd4)
++#define LS1X_GPIO_OE2_REG		(LS1X_GPIO_REG_BASE + 0xd8)
++#define LS1X_GPIO_IN0_REG		(LS1X_GPIO_REG_BASE + 0xe0)
++#define LS1X_GPIO_IN1_REG		(LS1X_GPIO_REG_BASE + 0xe4)
++#define LS1X_GPIO_IN2_REG		(LS1X_GPIO_REG_BASE + 0xe8)
++#define LS1X_GPIO_OUT0_REG		(LS1X_GPIO_REG_BASE + 0xf0)
++#define LS1X_GPIO_OUT1_REG		(LS1X_GPIO_REG_BASE + 0xf4)
++#define LS1X_GPIO_OUT2_REG		(LS1X_GPIO_REG_BASE + 0xf8)
 +
-+The following table defines the set of PLL/clock index and ID for Stingray.
-+These clock IDs are defined in:
-+    "include/dt-bindings/clock/bcm-sr.h"
++#define LS1X_DMA_ORDER_REG		(LS1X_CFG_REG_BASE + 0x1160)
 +
-+    Clock		Source		Index	ID
-+    ---			-----		-----	---------
-+    crystal		N/A		N/A	N/A
-+    crmu_ref25m		crystal		N/A	N/A
++#define LS1X_MUX_BASE			(LS1X_CFG_REG_BASE + 0x0420)
 +
-+    genpll0		crystal		0	BCM_SR_GENPLL0
-+    clk_125m		genpll0		1	BCM_SR_GENPLL0_125M_CLK
-+    clk_scr		genpll0		2	BCM_SR_GENPLL0_SCR_CLK
-+    clk_250		genpll0		3	BCM_SR_GENPLL0_250M_CLK
-+    clk_pcie_axi	genpll0		4	BCM_SR_GENPLL0_PCIE_AXI_CLK
-+    clk_paxc_axi_x2	genpll0		5	BCM_SR_GENPLL0_PAXC_AXI_X2_CLK
-+    clk_paxc_axi	genpll0		6	BCM_SR_GENPLL0_PAXC_AXI_CLK
++/* USB regs */
++#define LS1X_EHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e00000)
++#define LS1X_OHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e08000)
 +
-+    genpll1		crystal		0	BCM_SR_GENPLL1
-+    clk_pcie_tl		genpll1		1	BCM_SR_GENPLL1_PCIE_TL_CLK
-+    clk_mhb_apb		genpll1		2	BCM_SR_GENPLL1_MHB_APB_CLK
++/* GMAC regs */
++#define LS1X_GMAC0_BASE			(LS1X_MUX_REG_BASE + 0x00e10000)
++#define LS1X_GMAC0_DMA_REG		(LS1X_GMAC0_BASE + 0x1000)
++#define LS1X_GMAC1_BASE			(LS1X_MUX_REG_BASE + 0x00e20000)
++#define LS1X_GMAC1_DMA_REG		(LS1X_GMAC1_BASE + 0x1000)
 +
-+    genpll2		crystal		0	BCM_SR_GENPLL2
-+    clk_nic		genpll2		1	BCM_SR_GENPLL2_NIC_CLK
-+    clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
-+    clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
-+    clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
-+    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
++/* SATA regs */
++#define LS1X_AHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e30000)
 +
-+    genpll3		crystal		0	BCM_SR_GENPLL3
-+    clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
-+    clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
++/* APB regs */
++#define LS1X_APB_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e40000)
 +
-+    genpll4		crystal		0	BCM_SR_GENPLL4
-+    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-+    clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
-+    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-+    clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
-+    clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
++/* UART regs */
++#define LS1X_UART0_BASE			(LS1X_APB_REG_BASE + 0x0000)
++#define LS1X_UART1_BASE			(LS1X_APB_REG_BASE + 0x4000)
++#define LS1X_UART2_BASE			(LS1X_APB_REG_BASE + 0x8000)
++#define LS1X_UART3_BASE			(LS1X_APB_REG_BASE + 0xc000)
 +
++/* CAN regs */
++#define LS1X_CAN0_BASE			(LS1X_APB_REG_BASE + 0x10000)
++#define LS1X_CAN1_BASE			(LS1X_APB_REG_BASE + 0x14000)
 +
-+    genpll5		crystal		0	BCM_SR_GENPLL5
-+    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
-+    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
-+    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
++#define LS1X_I2C0_BASE			(LS1X_APB_REG_BASE + 0x18000)
++#define LS1X_I2C0_PRER_LO_REG		(LS1X_I2C0_BASE + 0x0)
++#define LS1X_I2C0_PRER_HI_REG		(LS1X_I2C0_BASE + 0x1)
++#define LS1X_I2C0_CTR_REG		(LS1X_I2C0_BASE + 0x2)
++#define LS1X_I2C0_TXR_REG		(LS1X_I2C0_BASE + 0x3)
++#define LS1X_I2C0_RXR_REG		(LS1X_I2C0_BASE + 0x3)
++#define LS1X_I2C0_CR_REG		(LS1X_I2C0_BASE + 0x4)
++#define LS1X_I2C0_SR_REG		(LS1X_I2C0_BASE + 0x4)
 +
-+    genpll6		crystal		0	BCM_SR_GENPLL6
-+    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
++#define LS1X_I2C1_BASE			(LS1X_APB_REG_BASE + 0x28000)
++#define LS1X_I2C1_PRER_LO_REG		(LS1X_I2C1_BASE + 0x0)
++#define LS1X_I2C1_PRER_HI_REG		(LS1X_I2C1_BASE + 0x1)
++#define LS1X_I2C1_CTR_REG		(LS1X_I2C1_BASE + 0x2)
++#define LS1X_I2C1_TXR_REG		(LS1X_I2C1_BASE + 0x3)
++#define LS1X_I2C1_RXR_REG		(LS1X_I2C1_BASE + 0x3)
++#define LS1X_I2C1_CR_REG		(LS1X_I2C1_BASE + 0x4)
++#define LS1X_I2C1_SR_REG		(LS1X_I2C1_BASE + 0x4)
 +
-+    lcpll0		crystal		0	BCM_SR_LCPLL0
-+    clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
-+    clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
-+    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
-+    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
++#define LS1X_I2C2_BASE			(LS1X_APB_REG_BASE + 0x30000)
++#define LS1X_I2C2_PRER_LO_REG		(LS1X_I2C2_BASE + 0x0)
++#define LS1X_I2C2_PRER_HI_REG		(LS1X_I2C2_BASE + 0x1)
++#define LS1X_I2C2_CTR_REG		(LS1X_I2C2_BASE + 0x2)
++#define LS1X_I2C2_TXR_REG		(LS1X_I2C2_BASE + 0x3)
++#define LS1X_I2C2_RXR_REG		(LS1X_I2C2_BASE + 0x3)
++#define LS1X_I2C2_CR_REG		(LS1X_I2C2_BASE + 0x4)
++#define LS1X_I2C2_SR_REG		(LS1X_I2C2_BASE + 0x4)
 +
-+    lcpll1		crystal		0	BCM_SR_LCPLL1
-+    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
++#define LS1X_PWM_REG_BASE		(LS1X_APB_REG_BASE + 0x1c000)
++#define LS1X_PWM0_BASE			(LS1X_PWM_REG_BASE + 0x00)
++#define LS1X_PWM1_BASE			(LS1X_PWM_REG_BASE + 0x10)
++#define LS1X_PWM2_BASE			(LS1X_PWM_REG_BASE + 0x20)
++#define LS1X_PWM3_BASE			(LS1X_PWM_REG_BASE + 0x30)
 +
-+    lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
-+    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-new file mode 100644
-index 0000000..cff6c6f
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -0,0 +1,101 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2017 Broadcom. All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom Corporation nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
++/* RTC regs */
++#define LS1X_RTC_BASE			(LS1X_APB_REG_BASE + 0x24000)
 +
-+#ifndef _CLOCK_BCM_SR_H
-+#define _CLOCK_BCM_SR_H
++/* AC97 regs */
++#define LS1X_AC97_BASE			(LS1X_APB_REG_BASE + 0x34000)
 +
-+/* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
-+#define BCM_SR_GENPLL0			0
-+#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_SCR_CLK		2
-+#define BCM_SR_GENPLL0_250M_CLK		3
-+#define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-+#define BCM_SR_GENPLL0_PAXC_AXI_X2_CLK	5
-+#define BCM_SR_GENPLL0_PAXC_AXI_CLK	6
++/* Watchdog regs */
++#ifdef CONFIG_CPU_LOONGSON1A
++#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e7c060)
++#else
++#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e5c060)
++#endif
 +
-+/* GENPLL 1 clock channel ID MHB PCIE NITRO */
-+#define BCM_SR_GENPLL1			0
-+#define BCM_SR_GENPLL1_PCIE_TL_CLK	1
-+#define BCM_SR_GENPLL1_MHB_APB_CLK	2
++/* CLK regs */
++#define LS1X_CLK_BASE			(LS1X_MUX_REG_BASE + 0x00e78030)
 +
-+/* GENPLL 2 clock channel ID NITRO MHB*/
-+#define BCM_SR_GENPLL2			0
-+#define BCM_SR_GENPLL2_NIC_CLK		1
-+#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_125_NITRO_CLK	3
-+#define BCM_SR_GENPLL2_CHIMP_CLK	4
++/* NAND regs */
++#define LS1X_NAND_REG_BASE		(LS1X_APB_REG_BASE + 0x38000)
++#define LS1X_NAND_CMD_REG		(LS1X_NAND_REG_BASE + 0x0000)
++#define LS1X_NAND_ADDR_C_REG		(LS1X_NAND_REG_BASE + 0x0004)
++#define LS1X_NAND_ADDR_R_REG		(LS1X_NAND_REG_BASE + 0x0008)
++#define LS1X_NAND_TIMING_REG		(LS1X_NAND_REG_BASE + 0x000c)
++#define LS1X_NAND_IDL_REG		(LS1X_NAND_REG_BASE + 0x0010)
++#define LS1X_NAND_STA_IDH_REG		(LS1X_NAND_REG_BASE + 0x0014)
++#define LS1X_NAND_PARAM_REG		(LS1X_NAND_REG_BASE + 0x0018)
++#define LS1X_NAND_OP_NUM_REG		(LS1X_NAND_REG_BASE + 0x001c)
++#define LS1X_NAND_CSRDY_MAP_REG		(LS1X_NAND_REG_BASE + 0x0020)
++#define LS1X_NAND_DMA_ACC_REG		(LS1X_NAND_REG_BASE + 0x0040)
 +
-+/* GENPLL 3 HSLS clock channel ID */
-+#define BCM_SR_GENPLL3			0
-+#define BCM_SR_GENPLL3_HSLS_CLK		1
-+#define BCM_SR_GENPLL3_SDIO_CLK		2
++/* ACPI regs for ls1a */
++#define LS1X_ACPI_REG_BASE		(LS1X_APB_REG_BASE + 0x3c000)
++#define LS1X_PM1_STS_REG		(LS1X_ACPI_REG_BASE + 0x0000)
++#define LS1X_PM1_EN_REG			(LS1X_ACPI_REG_BASE + 0x0004)
++#define LS1X_PM1_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0008)
++#define LS1X_PM1_TMR_REG		(LS1X_ACPI_REG_BASE + 0x000c)
++#define LS1X_P_CNT_REG			(LS1X_ACPI_REG_BASE + 0x0010)
++#define LS1X_P_LVL2_REG			(LS1X_ACPI_REG_BASE + 0x0014)
++#define LS1X_P_LVL3_REG			(LS1X_ACPI_REG_BASE + 0x0018)
++#define LS1X_GPE0_STS_REG		(LS1X_ACPI_REG_BASE + 0x0020)
++#define LS1X_GPE0_EN_REG		(LS1X_ACPI_REG_BASE + 0x0024)
++#define LS1X_PM_CONF1_REG		(LS1X_ACPI_REG_BASE + 0x0030)
++#define LS1X_PM_CONF2_REG		(LS1X_ACPI_REG_BASE + 0x0034)
++#define LS1X_PM_CONF3_REG		(LS1X_ACPI_REG_BASE + 0x0038)
++#define LS1X_RST_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0044)
++#define LS1X_CPU_INIT_REG		(LS1X_ACPI_REG_BASE + 0x0050)
 +
-+/* GENPLL 4 SCR clock channel ID */
-+#define BCM_SR_GENPLL4			0
-+#define BCM_SR_GENPLL4_CCN_CLK		1
++#define LS1X_SPI0_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e80000)
++#define LS1X_SPI1_REG_BASE		(LS1X_MUX_REG_BASE + 0x00ec0000)
 +
-+/* GENPLL 5 FS4 clock channel ID */
-+#define BCM_SR_GENPLL5			0
-+#define BCM_SR_GENPLL5_FS_CLK		1
-+#define BCM_SR_GENPLL5_SPU_CLK		2
-+
-+/* GENPLL 6 NITRO clock channel ID */
-+#define BCM_SR_GENPLL6			0
-+#define BCM_SR_GENPLL6_48_USB_CLK	1
-+
-+/* LCPLL0  clock channel ID */
-+#define BCM_SR_LCPLL0			0
-+#define BCM_SR_LCPLL0_SATA_REF_CLK	1
-+#define BCM_SR_LCPLL0_USB_REF_CLK	2
-+#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+
-+/* LCPLL1  clock channel ID */
-+#define BCM_SR_LCPLL1			0
-+#define BCM_SR_LCPLL1_WAN_CLK		1
-+
-+/* LCPLL PCIE  clock channel ID */
-+#define BCM_SR_LCPLL_PCIE		0
-+#define BCM_SR_LCPLL_PCIE_PHY_REF_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL0			0
-+#define BCM_SR_EMEMPLL0_EMEM_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL1			0
-+#define BCM_SR_EMEMPLL1_EMEM_CLK	1
-+
-+/* GENPLL EMEM0 clock channel ID */
-+#define BCM_SR_EMEMPLL2			0
-+#define BCM_SR_EMEMPLL2_EMEM_CLK	1
-+
-+#endif /* _CLOCK_BCM_SR_H */
++/* LPC regs */
++#define LS1X_LPC_IO_BASE		(LS1X_MUX_REG_BASE + 0x00f00000)
++#define LS1X_LPC_REG_BASE		(LS1X_MUX_REG_BASE + 0x00f10200)
++#define LS1X_LPC_CFG0_REG		(LS1X_LPC_REG_BASE + 0x0)
++#define LS1X_LPC_CFG1_REG		(LS1X_LPC_REG_BASE + 0x4)
++#define LS1X_LPC_CFG2_REG		(LS1X_LPC_REG_BASE + 0x8)
++#define LS1X_LPC_CFG3_REG		(LS1X_LPC_REG_BASE + 0xc)
+ 
+ #include <regs-clk.h>
+ #include <regs-mux.h>
+diff --git a/arch/mips/loongson32/common/platform.c b/arch/mips/loongson32/common/platform.c
+index 100f23d..f71392f 100644
+--- a/arch/mips/loongson32/common/platform.c
++++ b/arch/mips/loongson32/common/platform.c
+@@ -84,8 +84,8 @@ struct platform_device ls1x_cpufreq_pdev = {
+ /* DMA */
+ static struct resource ls1x_dma_resources[] = {
+ 	[0] = {
+-		.start = LS1X_DMAC_BASE,
+-		.end = LS1X_DMAC_BASE + SZ_4 - 1,
++		.start = LS1X_DMA_ORDER_REG,
++		.end = LS1X_DMA_ORDER_REG + SZ_4 - 1,
+ 		.flags = IORESOURCE_MEM,
+ 	},
+ 	[1] = {
+@@ -259,8 +259,8 @@ struct platform_device ls1x_eth1_pdev = {
+ /* GPIO */
+ static struct resource ls1x_gpio0_resources[] = {
+ 	[0] = {
+-		.start	= LS1X_GPIO0_BASE,
+-		.end	= LS1X_GPIO0_BASE + SZ_4 - 1,
++		.start	= LS1X_GPIO_CFG0_REG,
++		.end	= LS1X_GPIO_CFG0_REG + SZ_4 - 1,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ };
+@@ -274,8 +274,8 @@ struct platform_device ls1x_gpio0_pdev = {
+ 
+ static struct resource ls1x_gpio1_resources[] = {
+ 	[0] = {
+-		.start	= LS1X_GPIO1_BASE,
+-		.end	= LS1X_GPIO1_BASE + SZ_4 - 1,
++		.start	= LS1X_GPIO_CFG1_REG,
++		.end	= LS1X_GPIO_CFG1_REG + SZ_4 - 1,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ };
+@@ -290,8 +290,8 @@ struct platform_device ls1x_gpio1_pdev = {
+ /* NAND Flash */
+ static struct resource ls1x_nand_resources[] = {
+ 	[0] = {
+-		.start	= LS1X_NAND_BASE,
+-		.end	= LS1X_NAND_BASE + SZ_32 - 1,
++		.start	= LS1X_NAND_REG_BASE,
++		.end	= LS1X_NAND_REG_BASE + SZ_32 - 1,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ 	[1] = {
 -- 
-2.7.4
+2.9.3
