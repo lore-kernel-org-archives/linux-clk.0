@@ -1,159 +1,64 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH 3/5] clk: qcom: gdsc: Add support to control associated
- clks
-To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
- <1490076923-20194-4-git-send-email-rnayak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <95d69901-fad5-9a2d-138e-ed5eb9dbc4e2@linaro.org>
-Date: Wed, 14 Jun 2017 14:40:36 +0300
-MIME-Version: 1.0
-In-Reply-To: <1490076923-20194-4-git-send-email-rnayak@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <shawnguo@kernel.org>
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Baoyou Xie <xie.baoyou@sanechips.com.cn>,
+	Xin Zhou <zhou.xin8@sanechips.com.cn>,
+	Jun Nie <jun.nie@linaro.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH] clk: zx296718: export I2S mux clocks
+Date: Sat, 17 Jun 2017 22:21:05 +0800
+Message-Id: <1497709265-22944-1-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rajendra,
+From: Shawn Guo <shawn.guo@linaro.org>
 
-Thanks for the patches!
+Export I2S mux clocks, so that device tree can refer to them for setting
+a better parent clock for I2S work clock.
 
-On 03/21/2017 08:15 AM, Rajendra Nayak wrote:
-> The devices within a gdsc power domain, quite often have additional
-> clocks to be turned on/off along with the power domain itself.
-> Add support for this by specifying a list of clk_hw pointers
-> per gdsc which would be the clocks turned on/off along with the
-> powerdomain on/off callbacks.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/qcom/gdsc.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++--
->  drivers/clk/qcom/gdsc.h |  8 ++++++++
->  2 files changed, 54 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index a4f3580..e9e7442 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -12,15 +12,19 @@
->   */
->  
->  #include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/jiffies.h>
->  #include <linux/kernel.h>
->  #include <linux/ktime.h>
-> +#include <linux/pm_clock.h>
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+ drivers/clk/zte/clk-zx296718.c             | 8 ++++----
+ include/dt-bindings/clock/zx296718-clock.h | 6 +++++-
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-this is not needed
-
->  #include <linux/pm_domain.h>
->  #include <linux/regmap.h>
->  #include <linux/reset-controller.h>
->  #include <linux/slab.h>
-> +#include "common.h"
->  #include "gdsc.h"
->  
->  #define PWR_ON_MASK		BIT(31)
-> @@ -166,6 +170,27 @@ static inline void gdsc_assert_clamp_io(struct gdsc *sc)
->  			   GMEM_CLAMP_IO_MASK, 1);
->  }
->  
-> +static int gdsc_clk_enable(struct gdsc *sc)
-> +{
-> +	int i, ret;
-> +
-> +	for (i = 0; i < sc->clk_count; i++) {
-> +		ret = clk_prepare_enable(sc->clks[i]);
-> +		if (ret)
-> +			pr_err("Failed to enable clock: %s\n",
-> +			       __clk_get_name(sc->clks[i]));
-		
-I think the error message can be removed. And the already enabled clocks
-should be disabled on error.
-
-> +	}
-> +	return ret;
-> +}
-> +
-> +static void gdsc_clk_disable(struct gdsc *sc)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < sc->clk_count; i++)
-> +		clk_disable_unprepare(sc->clks[i]);
-> +}
-> +
->  static int gdsc_enable(struct generic_pm_domain *domain)
->  {
->  	struct gdsc *sc = domain_to_gdsc(domain);
-> @@ -193,6 +218,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
->  	 */
->  	udelay(1);
->  
-> +	if (sc->clk_count)
-> +		gdsc_clk_enable(sc);
-
-could you add error handling.
-
-> +
->  	/* Turn on HW trigger mode if supported */
->  	if (sc->flags & HW_CTRL) {
->  		ret = gdsc_hwctrl(sc, true);
-> @@ -241,6 +269,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->  			return ret;
->  	}
->  
-> +	if (sc->clk_count)
-> +		gdsc_clk_disable(sc);
-
-IMO sc->clk_count check could be moved in gdsc_clk_disable. This is also
-valid for all clk_count checks.
-
-> +
->  	if (sc->pwrsts & PWRSTS_OFF)
->  		gdsc_clear_mem_on(sc);
->  
-> @@ -254,7 +285,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->  	return 0;
->  }
->  
-> -static int gdsc_init(struct gdsc *sc)
-> +static int gdsc_init(struct device *dev, struct gdsc *sc)
->  {
->  	u32 mask, val;
->  	int on, ret;
-> @@ -284,6 +315,19 @@ static int gdsc_init(struct gdsc *sc)
->  	if (on < 0)
->  		return on;
->  
-> +	if (sc->clk_count) {
-> +		int i;
-> +
-> +		sc->clks = devm_kcalloc(dev, sc->clk_count, sizeof(*sc->clks),
-> +					GFP_KERNEL);
-> +		if (!sc->clks)
-> +			return -ENOMEM;
-> +
-> +		for (i = 0; i < sc->clk_count; i++)
-> +			sc->clks[i] = devm_clk_hw_get_clk(dev, sc->clk_hws[i],
-> +							  NULL);
-
-error handling?
-
-Also I think it will be more readable if you above chunk in separate
-function like gdsc_clk_get and call it unconditionally?
-
-> +	}
-> +
-
-<snip>
-
+diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+index a10962988ba8..27f853d4c76b 100644
+--- a/drivers/clk/zte/clk-zx296718.c
++++ b/drivers/clk/zte/clk-zx296718.c
+@@ -932,10 +932,10 @@ static int __init lsp1_clocks_init(struct device_node *np)
+ };
+ 
+ static struct zx_clk_mux audio_mux_clk[] = {
+-	MUX(0, "i2s0_wclk_mux", audio_wclk_common_p, AUDIO_I2S0_CLK, 0, 1),
+-	MUX(0, "i2s1_wclk_mux", audio_wclk_common_p, AUDIO_I2S1_CLK, 0, 1),
+-	MUX(0, "i2s2_wclk_mux", audio_wclk_common_p, AUDIO_I2S2_CLK, 0, 1),
+-	MUX(0, "i2s3_wclk_mux", audio_wclk_common_p, AUDIO_I2S3_CLK, 0, 1),
++	MUX(I2S0_WCLK_MUX, "i2s0_wclk_mux", audio_wclk_common_p, AUDIO_I2S0_CLK, 0, 1),
++	MUX(I2S1_WCLK_MUX, "i2s1_wclk_mux", audio_wclk_common_p, AUDIO_I2S1_CLK, 0, 1),
++	MUX(I2S2_WCLK_MUX, "i2s2_wclk_mux", audio_wclk_common_p, AUDIO_I2S2_CLK, 0, 1),
++	MUX(I2S3_WCLK_MUX, "i2s3_wclk_mux", audio_wclk_common_p, AUDIO_I2S3_CLK, 0, 1),
+ 	MUX(0, "i2c0_wclk_mux", audio_wclk_common_p, AUDIO_I2C0_CLK, 0, 1),
+ 	MUX(0, "spdif0_wclk_mux", audio_wclk_common_p, AUDIO_SPDIF0_CLK, 0, 1),
+ 	MUX(0, "spdif1_wclk_mux", audio_wclk_common_p, AUDIO_SPDIF1_CLK, 0, 1),
+diff --git a/include/dt-bindings/clock/zx296718-clock.h b/include/dt-bindings/clock/zx296718-clock.h
+index 822d52385080..092c9751a697 100644
+--- a/include/dt-bindings/clock/zx296718-clock.h
++++ b/include/dt-bindings/clock/zx296718-clock.h
+@@ -157,7 +157,11 @@
+ #define AUDIO_TDM_WCLK		17
+ #define AUDIO_TDM_PCLK		18
+ #define AUDIO_TS_PCLK		19
++#define I2S0_WCLK_MUX		20
++#define I2S1_WCLK_MUX		21
++#define I2S2_WCLK_MUX		22
++#define I2S3_WCLK_MUX		23
+ 
+-#define AUDIO_NR_CLKS		20
++#define AUDIO_NR_CLKS		24
+ 
+ #endif
 -- 
-regards,
-Stan
+1.9.1
