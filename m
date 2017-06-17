@@ -1,52 +1,129 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52247 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752150AbdFUJBR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 05:01:17 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a7796: Add HDMI clocks
-Date: Wed, 21 Jun 2017 12:01:50 +0300
-Message-Id: <20170621090150.3868-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>
+CC: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@imgtec.com>,
+	Frank Rowand <frowand.list@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH v5 1/4] dt-bindings: Document img,boston-clock binding
+Date: Sat, 17 Jun 2017 13:52:46 -0700
+Message-ID: <20170617205249.1391-2-paul.burton@imgtec.com>
+In-Reply-To: <20170617205249.1391-1-paul.burton@imgtec.com>
+References: <20170617205249.1391-1-paul.burton@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the HDMI and HDMI0 clocks to the R8A7796 CPG/MSSR driver.
+Add device tree binding documentation for the clocks provided by the
+MIPS Boston development board from Imagination Technologies, and a
+header file describing the available clocks for use by device trees &
+driver.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+
 ---
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-Hi Geert,
+Changes in v5: None
 
-I'd like to upstream HDMI output support on M3-W in v4.14. To ease dependency
-handling, it would be great if this patch could already make it to v4.13.
+Changes in v4:
+- Move img,boston-clock node under platform register syscon node.
+- Add MAINTAINERS entry.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 9d114b31b073..1d8c5c2b6174 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -106,6 +106,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_DIV6P1("canfd",     R8A7796_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- 	DEF_DIV6P1("csi0",      R8A7796_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
- 	DEF_DIV6P1("mso",       R8A7796_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
-+	DEF_DIV6P1("hdmi",      R8A7796_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
+Changes in v3: None
+
+Changes in v2:
+- Add BOSTON_CLK_INPUT to expose the input clock.
+
+ .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
+ MAINTAINERS                                        |  7 +++++
+ include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
+ 3 files changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
+ create mode 100644 include/dt-bindings/clock/boston-clock.h
+
+diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+new file mode 100644
+index 000000000000..7bc5e9ffb624
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+@@ -0,0 +1,31 @@
++Binding for Imagination Technologies MIPS Boston clock sources.
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The device node must be a child node of the syscon node corresponding to the
++Boston system's platform registers.
++
++Required properties:
++- compatible : Should be "img,boston-clock".
++- #clock-cells : Should be set to 1.
++  Values available for clock consumers can be found in the header file:
++    <dt-bindings/clock/boston-clock.h>
++
++Example:
++
++	system-controller@17ffd000 {
++		compatible = "img,boston-platform-regs", "syscon";
++		reg = <0x17ffd000 0x1000>;
++
++		clk_boston: clock {
++			compatible = "img,boston-clock";
++			#clock-cells = <1>;
++		};
++	};
++
++	uart0: uart@17ffe000 {
++		/* ... */
++		clocks = <&clk_boston BOSTON_CLK_SYS>;
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 09b5ab6a8a5c..6a341862f5d6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8498,6 +8498,13 @@ F:	arch/mips/include/asm/mach-loongson32/
+ F:	drivers/*/*loongson1*
+ F:	drivers/*/*/*loongson1*
  
- 	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
- 	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
-@@ -170,6 +171,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("du1",			 723,	R8A7796_CLK_S2D1),
- 	DEF_MOD("du0",			 724,	R8A7796_CLK_S2D1),
- 	DEF_MOD("lvds",			 727,	R8A7796_CLK_S2D1),
-+	DEF_MOD("hdmi0",		 729,	R8A7796_CLK_HDMI),
- 	DEF_MOD("vin7",			 804,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vin6",			 805,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vin5",			 806,	R8A7796_CLK_S0D2),
++MIPS BOSTON DEVELOPMENT BOARD
++M:	Paul Burton <paul.burton@imgtec.com>
++L:	linux-mips@linux-mips.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/img,boston-clock.txt
++F:	include/dt-bindings/clock/boston-clock.h
++
+ MIROSOUND PCM20 FM RADIO RECEIVER DRIVER
+ M:	Hans Verkuil <hverkuil@xs4all.nl>
+ L:	linux-media@vger.kernel.org
+diff --git a/include/dt-bindings/clock/boston-clock.h b/include/dt-bindings/clock/boston-clock.h
+new file mode 100644
+index 000000000000..a6f009821137
+--- /dev/null
++++ b/include/dt-bindings/clock/boston-clock.h
+@@ -0,0 +1,14 @@
++/*
++ * Copyright (C) 2016 Imagination Technologies
++ *
++ * SPDX-License-Identifier:	GPL-2.0
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
++#define __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
++
++#define BOSTON_CLK_INPUT 0
++#define BOSTON_CLK_SYS 1
++#define BOSTON_CLK_CPU 2
++
++#endif /* __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__ */
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.13.1
