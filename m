@@ -1,112 +1,79 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org
+Cc: Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v3 1/9] clk: mvebu: cp110: make failure labels more meaningful
-Date: Thu,  1 Jun 2017 16:55:34 +0200
-Message-Id: <29e6beb5a55fe79c94e0f746d0de7bd851cd3618.1496328934.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 2/3 v6] clk: add DT bindings header for Gemini clock controller
+Date: Sun, 18 Jun 2017 23:55:49 +0200
+Message-Id: <20170618215550.29216-2-linus.walleij@linaro.org>
+In-Reply-To: <20170618215550.29216-1-linus.walleij@linaro.org>
+References: <20170618215550.29216-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-In preparation to the addition of a new clock, rename the goto labels
-used to handle the failure cases using a name related to the failure
-cause. This will allow to insert additional failing cases without
-renaming all the labels.
+This adds the DT binding macros used by the clock controller.
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/clk/mvebu/cp110-system-controller.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Mike/Stephen: please merge this into the clock subsystem once
+you're happy with it.
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 6b11d7b3e0e0..3b27a6056c73 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -221,7 +221,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 					1000 * 1000 * 1000);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail0;
-+		goto fail_apll;
- 	}
- 
- 	cp110_clks[CP110_CORE_APLL] = hw;
-@@ -232,7 +232,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail1;
-+		goto fail_ppv2;
- 	}
- 
- 	cp110_clks[CP110_CORE_PPV2] = hw;
-@@ -243,7 +243,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail2;
-+		goto fail_eip;
- 	}
- 
- 	cp110_clks[CP110_CORE_EIP] = hw;
-@@ -254,7 +254,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	hw = clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail3;
-+		goto fail_core;
- 	}
- 
- 	cp110_clks[CP110_CORE_CORE] = hw;
-@@ -270,7 +270,7 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 						   core_name, 0, 1, 1);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
--		goto fail4;
-+		goto fail_nand;
- 	}
- 
- 	cp110_clks[CP110_CORE_NAND] = hw;
-@@ -365,15 +365,15 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
--fail4:
-+fail_nand:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
--fail3:
-+fail_core:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
--fail2:
-+fail_eip:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
--fail1:
-+fail_ppv2:
- 	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
--fail0:
-+fail_apll:
- 	return ret;
- }
- 
+ChangeLog v5->v6:
+- No changes, resending to keep the series together.
+ChangeLog v4->v5:
+- No changes, resending to keep the series together.
+ChangeLog v1->v4:
+- New file to merge the macros in isolation from the
+  DT bindings and implementation.
+
+The bindings themselves are merged through the ARM SoC tree.
+---
+ include/dt-bindings/clock/cortina,gemini-clock.h | 29 ++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
+
+diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h b/include/dt-bindings/clock/cortina,gemini-clock.h
+new file mode 100644
+index 000000000000..acf5cd550b0c
+--- /dev/null
++++ b/include/dt-bindings/clock/cortina,gemini-clock.h
+@@ -0,0 +1,29 @@
++#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++
++/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
++#define GEMINI_NUM_CLKS 20
++
++#define GEMINI_CLK_RTC 0
++#define GEMINI_CLK_AHB 1
++#define GEMINI_CLK_APB 2
++#define GEMINI_CLK_CPU 3
++#define GEMINI_CLK_PCI 4
++#define GEMINI_CLK_TVC 5
++#define GEMINI_CLK_UART 6
++#define GEMINI_CLK_GATES 7
++#define GEMINI_CLK_GATE_SECURITY 7
++#define GEMINI_CLK_GATE_GMAC0 8
++#define GEMINI_CLK_GATE_GMAC1 9
++#define GEMINI_CLK_GATE_SATA0 10
++#define GEMINI_CLK_GATE_SATA1 11
++#define GEMINI_CLK_GATE_USB0 12
++#define GEMINI_CLK_GATE_USB1 13
++#define GEMINI_CLK_GATE_IDE 14
++#define GEMINI_CLK_GATE_PCI 15
++#define GEMINI_CLK_GATE_DDR 16
++#define GEMINI_CLK_GATE_FLASH 17
++#define GEMINI_CLK_GATE_TVC 18
++#define GEMINI_CLK_GATE_BOOT 19
++
++#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
 -- 
-git-series 0.9.1
+2.9.4
