@@ -1,97 +1,241 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36495 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751585AbdFHOR3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2017 10:17:29 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/3] clk: samsung: Add missing exynos5420 audio related
- clocks
-Date: Thu, 08 Jun 2017 16:17:12 +0200
-Message-id: <1496931433-5712-2-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170608141726epcas1p1ab3faf22e9f398ae4cf23f84f487d123@epcas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang
+	<xiaolong.zhang@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Geng
+ Ren <geng.ren@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan
+ Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V1 3/9] clk: sprd: add gate clock support
+Date: Sun, 18 Jun 2017 09:58:49 +0800
+Message-ID: <20170618015855.27738-4-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds missing definitions of mux clocks required for using
-EPLL as the audio subsystem root clock on exynos5420/exynos5422 SoCs.
+Some clocks on the Spreadtrum's SoCs are just simple gates. Add
+support for those clocks.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Also, some gate clocks are orphan, so this patch also added
+registration code for those.
+
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
-Changes since RFC version:
-  - dropped one clean up chunk
----
- drivers/clk/samsung/clk-exynos5420.c   | 10 +++++++---
- include/dt-bindings/clock/exynos5420.h |  3 +++
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/clk/sprd/Makefile   |   2 +-
+ drivers/clk/sprd/ccu_gate.c | 102 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/ccu_gate.h |  73 +++++++++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/sprd/ccu_gate.c
+ create mode 100644 drivers/clk/sprd/ccu_gate.h
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index cdc092a..6f1d6c0 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -487,6 +487,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
- PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
- PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
-+PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
-
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock
-@@ -536,8 +537,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
-
- 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
- 			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
--	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
--			20, 2),
-+	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
-+							SRC_TOP7, 20, 2),
- 	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
- 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
-
-@@ -546,6 +547,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_aclk432_cam", mout_group6_5800_p, SRC_TOP8, 24, 2),
- 	MUX(0, "mout_aclk432_scaler", mout_group6_5800_p, SRC_TOP8, 28, 2),
-
-+	MUX(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
-+							SRC_TOP9, 8, 1),
- 	MUX(0, "mout_user_aclk550_cam", mout_group15_5800_p,
- 							SRC_TOP9, 16, 1),
- 	MUX(0, "mout_user_aclkfl1_550_cam", mout_group13_5800_p,
-@@ -703,7 +706,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
- 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
- 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
--	MUX(0, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
-+	MUX(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
- 	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
- 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
-
-@@ -1399,6 +1402,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
-
- 	if (_get_rate("fin_pll") == 24 * MHZ) {
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 	}
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 6fd21c2..2740ae0 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -217,6 +217,9 @@
- #define CLK_MOUT_MCLK_CDREX	654
- #define CLK_MOUT_BPLL		655
- #define CLK_MOUT_MX_MSPLL_CCORE	656
-+#define CLK_MOUT_EPLL		657
-+#define CLK_MOUT_MAU_EPLL	658
-+#define CLK_MOUT_USER_MAU_EPLL	659
-
- /* divider clocks */
- #define CLK_DOUT_PIXEL		768
---
-1.9.1
-
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 8f802b2..333e2b2 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -1,3 +1,3 @@
+ ifneq ($(CONFIG_OF),)
+-obj-y	+= ccu_common.o
++obj-y	+= ccu_common.o ccu_gate.o
+ endif
+diff --git a/drivers/clk/sprd/ccu_gate.c b/drivers/clk/sprd/ccu_gate.c
+new file mode 100644
+index 0000000..3d27615
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_gate.c
+@@ -0,0 +1,102 @@
++/*
++ * Spreadtrum gate clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_gate.h"
++
++DEFINE_SPINLOCK(gate_lock);
++
++static void ccu_gate_endisable(struct ccu_gate *cg, u32 en)
++{
++	struct ccu_common *common = &cg->common;
++	unsigned long flags = 0;
++	u32 reg;
++	int set = cg->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++
++	set ^= en;
++
++	spin_lock_irqsave(common->lock, flags);
++
++	reg = ccu_readl(common);
++
++	if (set)
++		reg |= cg->op_bit;
++	else
++		reg &= ~cg->op_bit;
++
++	ccu_writel(reg, common);
++
++	spin_unlock_irqrestore(common->lock, flags);
++}
++
++static void ccu_sc_gate_endisable(struct ccu_gate *cg, u32 en)
++{
++	struct ccu_common *common = &cg->common;
++	unsigned long flags = 0;
++	int set = cg->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++	u32 offset;
++
++	set ^= en;
++
++	/*
++	 * Each set/clear gate clock has three registers:
++	 * common->reg			- base register
++	 * common->reg + offset		- set register
++	 * common->reg + 2 * offset	- clear register
++	 */
++	offset = set ? cg->sc_offset : cg->sc_offset * 2;
++
++	spin_lock_irqsave(common->lock, flags);
++	ccu_writel_offset(cg->op_bit, common, offset);
++	spin_unlock_irqrestore(common->lock, flags);
++}
++
++static void ccu_gate_disable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	if (cg->sc_offset)
++		ccu_sc_gate_endisable(cg, 0);
++	else
++		ccu_gate_endisable(cg, 0);
++}
++
++static int ccu_gate_enable(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++
++	if (cg->sc_offset)
++		ccu_sc_gate_endisable(cg, 1);
++	else
++		ccu_gate_endisable(cg, 1);
++
++	return 0;
++}
++
++static int ccu_gate_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_gate *cg = hw_to_ccu_gate(hw);
++	struct ccu_common *common = &cg->common;
++	u32 reg;
++
++	reg = ccu_readl(common);
++
++	if (cg->flags & CLK_GATE_SET_TO_DISABLE)
++		reg ^= cg->op_bit;
++
++	reg &= cg->op_bit;
++
++	return reg ? 1 : 0;
++}
++
++const struct clk_ops ccu_gate_ops = {
++	.disable	= ccu_gate_disable,
++	.enable		= ccu_gate_enable,
++	.is_enabled	= ccu_gate_is_enabled,
++};
+diff --git a/drivers/clk/sprd/ccu_gate.h b/drivers/clk/sprd/ccu_gate.h
+new file mode 100644
+index 0000000..bc40169
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_gate.h
+@@ -0,0 +1,73 @@
++/*
++ * Spreadtrum gate clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _CCU_GATE_H_
++#define _CCU_GATE_H_
++
++#include "ccu_common.h"
++
++struct ccu_gate {
++	u32			op_bit;
++	u16			flags;
++	u16			sc_offset;
++
++	struct ccu_common	common;
++};
++
++#define SPRD_CCU_GATE(_struct, _name, _parent, _reg, _sc_offset,	\
++		      _op_bit, _flags, _gate_flags)			\
++	struct ccu_gate _struct = {					\
++		.op_bit		= _op_bit,				\
++		.sc_offset	= _sc_offset,				\
++		.flags		= _gate_flags,				\
++		.common	= {						\
++			.reg		= _reg,				\
++			.lock		= &gate_lock,			\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_gate_ops,	\
++						      _flags),		\
++		}							\
++	}
++
++#define SPRD_CCU_GATE_NO_PARENT(_struct, _name, _reg, _sc_offset,	\
++				_op_bit, _flags, _gate_flags)		\
++	struct ccu_gate _struct = {					\
++		.op_bit		= _op_bit,				\
++		.sc_offset	= _sc_offset,				\
++		.flags		= _gate_flags,				\
++		.common	= {						\
++			.reg	= _reg,					\
++			.lock	= &gate_lock,				\
++			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
++							 &ccu_gate_ops,	\
++							 _flags),	\
++		}							\
++	}
++
++static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_gate, common);
++}
++
++static inline void ccu_writel_offset(u32 val,
++	struct ccu_common *common, u32 offset)
++{
++	writel(val, common->base + common->reg + offset);
++}
++
++void ccu_gate_helper_disable(struct ccu_common *common, u32 gate);
++int ccu_gate_helper_enable(struct ccu_common *common, u32 gate);
++int ccu_gate_helper_is_enabled(struct ccu_common *common, u32 gate);
++
++extern const struct clk_ops ccu_gate_ops;
++extern spinlock_t gate_lock;
++
++#endif /* _CCU_GATE_H_ */
+-- 
+2.7.4
