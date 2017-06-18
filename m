@@ -1,62 +1,244 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v4 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
-Date: Fri,  9 Jun 2017 16:07:39 +0200
-Message-Id: <20170609140739.15726-7-o.rempel@pengutronix.de>
-In-Reply-To: <20170609140739.15726-1-o.rempel@pengutronix.de>
-References: <20170609140739.15726-1-o.rempel@pengutronix.de>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang
+	<xiaolong.zhang@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Geng
+ Ren <geng.ren@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan
+ Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V1 2/9] clk: sprd: Add common infrastructure
+Date: Sun, 18 Jun 2017 09:58:48 +0800
+Message-ID: <20170618015855.27738-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This board, as well as some other boards with i.MX6 and a PMIC, uses a
-"MPIC_STBY_REQ" line to notify the PMIC about a state change.
-The PMIC is programmed for a specific state change before triggering the
-line.
-In this case, PMIC_STBY_REQ can be used for stand by, sleep
-and power off modes.
+Added Spreadtrum's clock driver common structure and registration code.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/Makefile          |  1 +
+ drivers/clk/sprd/Makefile     |  3 ++
+ drivers/clk/sprd/ccu_common.c | 78 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/ccu_common.h | 90 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 172 insertions(+)
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/ccu_common.c
+ create mode 100644 drivers/clk/sprd/ccu_common.h
 
-diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
-index 2cb72824e800..da9d0c102a31 100644
---- a/arch/arm/boot/dts/imx6dl-riotboard.dts
-+++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
-@@ -90,6 +90,10 @@
- 	status = "okay";
- };
- 
-+&clks {
-+	fsl,pmic-stby-poweroff;
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index c19983a..1d62721 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -81,6 +81,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
++obj-$(CONFIG_ARCH_SPRD)			+= sprd/
+ obj-$(CONFIG_ARCH_STI)			+= st/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+new file mode 100644
+index 0000000..8f802b2
+--- /dev/null
++++ b/drivers/clk/sprd/Makefile
+@@ -0,0 +1,3 @@
++ifneq ($(CONFIG_OF),)
++obj-y	+= ccu_common.o
++endif
+diff --git a/drivers/clk/sprd/ccu_common.c b/drivers/clk/sprd/ccu_common.c
+new file mode 100644
+index 0000000..911f4ba
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_common.c
+@@ -0,0 +1,78 @@
++/*
++ * Spreadtrum clock infrastructure
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include "ccu_common.h"
++
++static inline void __iomem *ccu_find_base(struct ccu_addr_map *maps,
++					  unsigned int num, unsigned int reg)
++{
++	int i;
++
++	for (i = 0; i < num; i++)
++		if ((reg & 0xffff0000) == maps[i].phy)
++			return maps[i].virt;
++
++	return 0;
++}
++
++int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
++		   unsigned int count, const struct sprd_ccu_desc *desc)
++{
++	int i, ret = 0;
++	struct ccu_common *cclk;
++	struct clk_hw *hw;
++
++	for (i = 0; i < desc->num_ccu_clks; i++) {
++		cclk = desc->ccu_clks[i];
++		if (!cclk)
++			continue;
++
++		cclk->base = ccu_find_base(maps, count, cclk->reg);
++		if (!cclk->base) {
++			pr_err("%s: No mapped address found for clock(0x%x)\n",
++				__func__, cclk->reg);
++			return -EINVAL;
++		}
++		cclk->reg = cclk->reg & 0xffff;
++	}
++
++	for (i = 0; i < desc->hw_clks->num; i++) {
++
++		hw = desc->hw_clks->hws[i];
++
++		if (!hw)
++			continue;
++
++		ret = clk_hw_register(NULL, hw);
++		if (ret) {
++			pr_err("Couldn't register clock %d - %s\n",
++			       i, hw->init->name);
++			goto err_clk_unreg;
++		}
++	}
++
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
++				     desc->hw_clks);
++	if (ret) {
++		pr_err("Failed to add clock provider.\n");
++		goto err_clk_unreg;
++	}
++
++	return 0;
++
++err_clk_unreg:
++	while (--i >= 0) {
++		hw = desc->hw_clks->hws[i];
++		if (!hw)
++			continue;
++
++		clk_hw_unregister(hw);
++	}
++
++	return ret;
++}
+diff --git a/drivers/clk/sprd/ccu_common.h b/drivers/clk/sprd/ccu_common.h
+new file mode 100644
+index 0000000..ff07772
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_common.h
+@@ -0,0 +1,90 @@
++/*
++ * Spreadtrum clock infrastructure
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _CCU_COMMON_H_
++#define _CCU_COMMON_H_
++
++#include <linux/clk-provider.h>
++
++struct device_node;
++
++#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)	\
++	(&(struct clk_init_data) {			\
++		.flags		= _flags,		\
++		.name		= _name,		\
++		.parent_names	= NULL,			\
++		.num_parents	= 0,			\
++		.ops		= _ops,			\
++	})
++
++#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= (const char *[]) { _parent },	\
++		.num_parents	= 1,				\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= _parents,			\
++		.num_parents	= ARRAY_SIZE(_parents),		\
++		.ops		= _ops,				\
++	})
++
++#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
++			_div, _mult, _flags)				\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT(_name,			\
++					      _parent,			\
++					      &clk_fixed_factor_ops,	\
++					      _flags),			\
++	}
++
++struct ccu_common {
++	void __iomem	*base;
++	u32		reg;
++	spinlock_t	*lock;
++	struct clk_hw	hw;
 +};
 +
- &fec {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
-@@ -125,6 +129,7 @@
- 		reg = <0x08>;
- 		interrupt-parent = <&gpio5>;
- 		interrupts = <16 8>;
-+		fsl,pmic-stby-poweroff;
- 
- 		regulators {
- 			reg_vddcore: sw1ab {				/* VDDARM_IN */
++struct ccu_addr_map {
++	phys_addr_t phy;
++	void __iomem *virt;
++};
++
++static inline u32 ccu_readl(struct ccu_common *common)
++{
++	return readl(common->base + common->reg);
++}
++
++static inline void ccu_writel(u32 val, struct ccu_common *common)
++{
++	writel(val, common->base + common->reg);
++}
++
++static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
++{
++	return container_of(hw, struct ccu_common, hw);
++}
++
++struct sprd_ccu_desc {
++	struct ccu_common		**ccu_clks;
++	unsigned long			num_ccu_clks;
++	struct clk_hw_onecell_data	*hw_clks;
++};
++
++int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
++		   unsigned int count, const struct sprd_ccu_desc *desc);
++
++#endif /* _CCU_COMMON_H_ */
 -- 
-2.11.0
+2.7.4
