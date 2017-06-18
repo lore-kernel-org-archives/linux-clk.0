@@ -1,99 +1,147 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock
- controller
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh+dt@kernel.org,
- mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20170623161533.20449-1-georgi.djakov@linaro.org>
- <20170623161533.20449-4-georgi.djakov@linaro.org>
- <20170623174528.GC18666@tuxbook>
-Message-ID: <fca63479-8d47-1d89-eff8-179c13ef32fd@linaro.org>
-Date: Tue, 27 Jun 2017 19:21:20 +0300
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang
+	<xiaolong.zhang@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Geng
+ Ren <geng.ren@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan
+ Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V1 9/9] arm64: dts: add ccu for SC9860
+Date: Sun, 18 Jun 2017 09:58:55 +0800
+Message-ID: <20170618015855.27738-10-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <20170623174528.GC18666@tuxbook>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bjorn,
+Now we have clock driver, so add clock dt for SC9860 platform.
+This patch also removed "ext-26m" from whale2.dtsi since it
+is described in sc9860-ccu.dtsi.
 
-On 06/23/2017 08:45 PM, Bjorn Andersson wrote:
-> On Fri 23 Jun 09:15 PDT 2017, Georgi Djakov wrote:
-> 
->> +static int msm8916_register_clk(struct device *dev, void __iomem *base)
->> +{
-> [..]
->> +	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
->> +	if (IS_ERR(regmap)) {
->> +		ret = PTR_ERR(regmap);
->> +		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
->> +		goto err;
->> +	}
-> 
-> I think it would be cleaner if you create the regmap in probe() and we
-> use that throughout the driver - rather than using two different access
-> mechanism.
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi | 67 ++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/sc9860.dtsi     |  2 +
+ arch/arm64/boot/dts/sprd/whale2.dtsi     |  8 ----
+ 3 files changed, 69 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
 
-Ok agree, will make sure its consistent.
-
-> 
->> +
->> +	a53cc->clkr.regmap = regmap;
->> +
->> +	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
->> +	if (ret) {
->> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
->> +		goto err;
->> +	}
->> +
->> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
->> +				     &a53cc->clkr.hw);
->> +	if (ret) {
->> +		dev_err(dev, "failed to add clock provider: %d\n", ret);
->> +		goto err;
->> +	}
->> +
->> +	return 0;
->> +
->> +err:
->> +	clk_notifier_unregister(pclk, &a53cc->clk_nb);
->> +	return ret;
->> +}
->> +
->>  static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->>  {
->> +	struct device_node *np = pdev->dev.of_node;
->>  	struct qcom_apcs_ipc *apcs;
->>  	struct resource *res;
->>  	unsigned long offset;
->> @@ -63,6 +178,13 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->>  	if (IS_ERR(base))
->>  		return PTR_ERR(base);
->>  
->> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
->> +		/* register the APCS mux and divider clock */
->> +		ret = msm8916_register_clk(&pdev->dev, base);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
-> 
-> Don't you need to clean up anything in the below error path and in
-> remove()?
-
-Right, will take care of it.
-
-> 
->>  	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
->>  
->>  	apcs->reg = base + offset;
-> 
-> Other than that I think this looks reasonable.
-
-Thanks for your time!
-
-BR,
-Georgi
+diff --git a/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
+new file mode 100644
+index 0000000..e15bf2d
+--- /dev/null
++++ b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
+@@ -0,0 +1,67 @@
++/*
++ * Spreadtrum SC9860 SoC CCU
++ *
++ * Copyright (C) 2017, Spreadtrum Communications Inc.
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++&soc {
++	ext_26m: ext-26m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "ext-26m";
++	};
++
++	ext_32m_sine0: ext-32m-sine0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000000>;
++		clock-output-names = "ext-32m-sine0";
++	};
++
++	ext_32m_sine1: ext-32m-sine1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000000>;
++		clock-output-names = "ext-32m-sine1";
++	};
++
++	ext_rco_100m: ext-rco-100m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "ext-rco-100m";
++	};
++
++	ext_32k: ext-32k {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "ext-32k";
++	};
++
++	ccu: clk {
++		compatible = "sprd,sc9860-ccu";
++		#clock-cells = <1>;
++		reg = <0 0x20000000 0 0x400>,
++		      <0 0x20210000 0 0x3000>,
++		      <0 0x402b0000 0 0x4000>,
++		      <0 0x402d0000 0 0x400>,
++		      <0 0x402e0000 0 0x4000>,
++		      <0 0x40400000 0 0x400>,
++		      <0 0x40880000 0 0x400>,
++		      <0 0x415e0000 0 0x400>,
++		      <0 0x60200000 0 0x400>,
++		      <0 0x61000000 0 0x400>,
++		      <0 0x61100000 0 0x3000>,
++		      <0 0x62000000 0 0x4000>,
++		      <0 0x62100000 0 0x4000>,
++		      <0 0x63000000 0 0x400>,
++		      <0 0x63100000 0 0x3000>,
++		      <0 0x70b00000 0 0x3000>;
++		clocks = <&ext_26m>, <&ext_rco_100m>, <&ext_32k>;
++		clock-names = "ext-26m", "ext-rco-100m", "ext-32k";
++	};
++};
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..10ff7c6 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -7,7 +7,9 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sc9860-ccu.h>
+ #include "whale2.dtsi"
++#include "sc9860-ccu.dtsi"
+ 
+ / {
+ 	cpus {
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 7c217c5..9d69b84 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -59,13 +59,5 @@
+ 				status = "disabled";
+ 			};
+ 		};
+-
+-	};
+-
+-	ext_26m: ext-26m {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
+ 	};
+ };
+-- 
+2.7.4
