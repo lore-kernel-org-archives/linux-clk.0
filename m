@@ -1,71 +1,427 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:34194 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752469AbdFPIiQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2017 04:38:16 -0400
-Received: by mail-io0-f178.google.com with SMTP id i7so26381300ioe.1
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jun 2017 01:38:16 -0700 (PDT)
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang
+	<xiaolong.zhang@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Geng
+ Ren <geng.ren@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan
+ Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V1 7/9] clk: sprd: add adjustable pll support
+Date: Sun, 18 Jun 2017 09:58:53 +0800
+Message-ID: <20170618015855.27738-8-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <20170615215550.z4ypeh345gopd2pg@pengutronix.de>
-References: <20170524082044.8473-1-linus.walleij@linaro.org>
- <20170601070208.GO20170@codeaurora.org> <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
- <20170605195812.GH20170@codeaurora.org> <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
- <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
- <20170612210248.GP20170@codeaurora.org> <CACRpkdaZJbzC0-xg_go=-o+0cQ-JOY3mUe27HUnwQ+DnZYbyMA@mail.gmail.com>
- <CAMuHMdXdYNTLCUfQ9rdj8Fffff5G6fGREcHs5-E5LbwPU9yyLw@mail.gmail.com>
- <CACRpkdY+aSyec9PZaoXErzsRefWg2zzw1xihQt_whmote-jBBw@mail.gmail.com> <20170615215550.z4ypeh345gopd2pg@pengutronix.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 16 Jun 2017 10:38:14 +0200
-Message-ID: <CACRpkdbBOnzw5Ww-2TesvDzSV6eiV2y0WyJW-wtLeAszZE-2HQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
-To: Philipp Zabel <pza@pengutronix.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Janos Laube <janos.dev@gmail.com>,
-        Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 15, 2017 at 11:55 PM, Philipp Zabel <pza@pengutronix.de> wrote:
-> On Thu, Jun 15, 2017 at 02:57:53PM +0200, Linus Walleij wrote:
+Introduced a common adjustable pll clock driver for Spreadtrum SoCs.
 
->> So I would say, clk & reset maintainers: would you prefer that I merge the
->> reset control into the clock driver as well, ask Philipp to drop the pending
->> reset control patches from his subsystem tree and have you manage the
->> combined driver and bindings?
->
-> The reset/next pull requests are not merged into the arm-soc tree yet.
-> I suppose I could retract the pull requests and drop the Gemini reset
-> patches,
+Original-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+---
+ drivers/clk/sprd/Makefile  |   2 +-
+ drivers/clk/sprd/ccu_pll.c | 241 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/ccu_pll.h | 123 +++++++++++++++++++++++
+ 3 files changed, 365 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/sprd/ccu_pll.c
+ create mode 100644 drivers/clk/sprd/ccu_pll.h
 
-There is no need. You can simply revert the patches, it's OK that the
-drivers bounce in and out of the kernel.
-
-The clock driver will just probe instead of the reset driver (due to being
-earlier in the link order... OK fragile but it works), so there
-will not even be a runtime conflict.
-
-> if the patches in arm-soc/gemeni/dts are also dropped from
-> arm-soc/for-next.
-
-There is no need for that, the bindings do not change with this approach.
-
-> I have a slight preference for keeping the DT bindings simple, even if
-> that means merging the reset controller into the clock driver.
-
-OK then that is what we're gonna do.
-
-I'm onto it!
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 83232e5..c593a93 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -1,3 +1,3 @@
+ ifneq ($(CONFIG_OF),)
+-obj-y	+= ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o ccu_composite.o
++obj-y	+= ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o ccu_composite.o ccu_pll.o
+ endif
+diff --git a/drivers/clk/sprd/ccu_pll.c b/drivers/clk/sprd/ccu_pll.c
+new file mode 100644
+index 0000000..6c908e4
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_pll.c
+@@ -0,0 +1,241 @@
++/*
++ * Spreadtrum pll clock driver
++ *
++ * Copyright (C) 2015~2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/delay.h>
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/slab.h>
++
++#include "ccu_pll.h"
++
++#define CCU_PLL_1M	1000000
++#define CCU_PLL_10M	(CCU_PLL_1M * 10)
++
++#define pindex(pll, member)		\
++	(pll->factors[member].shift / (8 * sizeof(pll->regs[0])))
++
++#define pshift(pll, member)		\
++	(pll->factors[member].shift % (8 * sizeof(pll->regs[0])))
++
++#define pwidth(pll, member)		\
++	pll->factors[member].width
++
++#define pmask(pll, member)					\
++	((pwidth(pll, member)) ?				\
++	GENMASK(pwidth(pll, member) + pshift(pll, member) - 1,	\
++	pshift(pll, member)) : 0)
++
++#define pinternal(pll, cfg, member)	\
++	(cfg[pindex(pll, member)] & pmask(pll, member))
++
++#define pinternal_val(pll, cfg, member)	\
++	(pinternal(pll, cfg, member) >> pshift(pll, member))
++
++static unsigned long pll_get_refin_rate(struct ccu_pll *pll)
++{
++	u8 shift, index, refin_id = 3;
++	u32 mask;
++	const unsigned long refin[4] = { 2, 4, 13, 26 };
++
++	if (pwidth(pll, PLL_REFIN)) {
++		index = pindex(pll, PLL_REFIN);
++		shift = pshift(pll, PLL_REFIN);
++		mask = pmask(pll, PLL_REFIN);
++		refin_id = (ccu_pll_readl(pll, index) & mask) >> shift;
++		if (refin_id > 3)
++			refin_id = 3;
++	}
++
++	return refin[refin_id];
++}
++
++static u8 pll_get_ibias(unsigned long rate, const u64 *table)
++{
++	u64 i;
++	u8 num = table[0];
++
++	for (i = 0; i < num; i++)
++		if (rate <= table[i + 1])
++			break;
++
++	return i == num ? num - 1 : i;
++}
++
++static unsigned long ccu_pll_helper_recalc_rate(struct ccu_pll *pll,
++						unsigned long parent_rate)
++{
++	unsigned long rate, refin, k1, k2;
++	unsigned long kint = 0, nint;
++	u32 reg_num = pll->regs[0];
++	u32 *cfg;
++	u32 i;
++	u32 mask;
++
++	cfg = kcalloc(reg_num, sizeof(*cfg), GFP_KERNEL);
++	if (!cfg)
++		return -ENOMEM;
++
++	for (i = 0; i < reg_num; i++)
++		cfg[i] = ccu_pll_readl(pll, i);
++
++	refin = pll_get_refin_rate(pll);
++
++	if (pinternal(pll, cfg, PLL_PREDIV))
++		refin = refin * 2;
++
++	if (pwidth(pll, PLL_POSTDIV) &&
++	    ((pll->fflag == 1 && pinternal(pll, cfg, PLL_POSTDIV)) ||
++	     (!pll->fflag && !pinternal(pll, cfg, PLL_POSTDIV))))
++		refin = refin / 2;
++
++	if (!pinternal(pll, cfg, PLL_DIV_S))
++		rate = refin * pinternal_val(pll, cfg, PLL_N) * CCU_PLL_10M;
++	else {
++		nint = pinternal_val(pll, cfg, PLL_NINT);
++		if (pinternal(pll, cfg, PLL_SDM_EN))
++			kint = pinternal_val(pll, cfg, PLL_KINT);
++
++		mask = pmask(pll, PLL_KINT);
++#ifdef CONFIG_64BIT
++		k1 = 1000;
++		k2 = 1000;
++		rate = DIV_ROUND_CLOSEST(refin * kint * k1,
++					 ((mask >> __ffs(mask)) + 1)) *
++					 k2 + refin * nint * CCU_PLL_1M;
++#else
++		k1 = 100;
++		k2 = 10000;
++		i = pwidth(pll, PLL_KINT);
++		i = i < 21 ? 0 : i - 21;
++		rate = DIV_ROUND_CLOSEST(refin * (kint >> i) * k1,
++					 ((mask >> (__ffs(mask) + i)) + 1)) *
++					 k2 + refin * nint * CCU_PLL_1M;
++#endif
++	}
++
++	return rate;
++}
++
++static int ccu_pll_helper_set_rate(struct ccu_pll *pll,
++				   unsigned long rate,
++				   unsigned long parent_rate)
++{
++	u32 mask, shift, width, ibias_val, index, kint, nint;
++	u32 reg_num = pll->regs[0], i = 0;
++	unsigned long refin, fvco = rate;
++	struct reg_cfg *cfg;
++
++	cfg = kcalloc(reg_num, sizeof(*cfg), GFP_KERNEL);
++	if (!cfg)
++		return -ENOMEM;
++
++	refin = pll_get_refin_rate(pll);
++
++	mask = pmask(pll, PLL_PREDIV);
++	index = pindex(pll, PLL_PREDIV);
++	width = pwidth(pll, PLL_PREDIV);
++	if (width && (ccu_pll_readl(pll, index) & mask))
++		refin = refin * 2;
++
++	mask = pmask(pll, PLL_POSTDIV);
++	index = pindex(pll, PLL_POSTDIV);
++	width = pwidth(pll, PLL_POSTDIV);
++	cfg[index].msk = mask;
++	if (width && ((pll->fflag == 1 && fvco <= pll->fvco) ||
++		      (pll->fflag == 0 && fvco > pll->fvco)))
++		cfg[index].val |= mask;
++
++	if (width && fvco <= pll->fvco)
++		fvco = fvco * 2;
++
++	mask = pmask(pll, PLL_DIV_S);
++	index = pindex(pll, PLL_DIV_S);
++	cfg[index].val |= mask;
++	cfg[index].msk |= mask;
++
++	mask = pmask(pll, PLL_SDM_EN);
++	index = pindex(pll, PLL_SDM_EN);
++	cfg[index].val |= mask;
++	cfg[index].msk |= mask;
++
++	nint  = fvco/(refin * CCU_PLL_1M);
++
++	mask = pmask(pll, PLL_NINT);
++	index = pindex(pll, PLL_NINT);
++	shift = pshift(pll, PLL_NINT);
++	cfg[index].val |= (nint << shift) & mask;
++	cfg[index].msk |= mask;
++
++	mask = pmask(pll, PLL_KINT);
++	index = pindex(pll, PLL_KINT);
++	width = pwidth(pll, PLL_KINT);
++	shift = pshift(pll, PLL_KINT);
++#ifndef CONFIG_64BIT
++	i = width < 21 ? 0 : i - 21;
++#endif
++	kint = DIV_ROUND_CLOSEST(((fvco - refin * nint * CCU_PLL_1M)/10000) *
++	((mask >> (shift + i)) + 1), refin * 100) << i;
++	cfg[index].val |= (kint << shift) & mask;
++	cfg[index].msk |= mask;
++
++	ibias_val = pll_get_ibias(fvco, pll->itable);
++
++	mask = pmask(pll, PLL_IBIAS);
++	index = pindex(pll, PLL_IBIAS);
++	shift = pshift(pll, PLL_IBIAS);
++	cfg[index].val |= ibias_val << shift & mask;
++	cfg[index].msk |= mask;
++
++	for (i = 0; i < reg_num; i++) {
++		if (cfg[i].msk)
++			ccu_pll_writel(pll, i, cfg[i].val, cfg[i].msk);
++	}
++
++	udelay(pll->udelay);
++
++	return 0;
++}
++
++static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++
++	return ccu_pll_helper_recalc_rate(pll, parent_rate);
++}
++
++static int ccu_pll_set_rate(struct clk_hw *hw,
++			    unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++
++	return ccu_pll_helper_set_rate(pll, rate, parent_rate);
++}
++
++static int ccu_pll_clk_prepare(struct clk_hw *hw)
++{
++	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++
++	udelay(pll->udelay);
++
++	return 0;
++}
++
++static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	return rate;
++}
++
++const struct clk_ops ccu_pll_ops = {
++	.prepare = ccu_pll_clk_prepare,
++	.recalc_rate = ccu_pll_recalc_rate,
++	.round_rate = ccu_pll_round_rate,
++	.set_rate = ccu_pll_set_rate,
++};
+diff --git a/drivers/clk/sprd/ccu_pll.h b/drivers/clk/sprd/ccu_pll.h
+new file mode 100644
+index 0000000..66fe5d1
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_pll.h
+@@ -0,0 +1,123 @@
++/*
++ * Spreadtrum clock pll configurations
++ *
++ * Copyright (C) 2015~2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _CCU_PLL_H_
++#define _CCU_PLL_H_
++
++#include "ccu_common.h"
++
++struct reg_cfg {
++	u32 val;
++	u32 msk;
++};
++
++struct ccu_bit_field {
++	u8 shift;
++	u8 width;
++};
++
++enum {
++	PLL_LOCK_DONE = 0,
++	PLL_DIV_S,
++	PLL_MOD_EN,
++	PLL_SDM_EN,
++	PLL_REFIN,
++	PLL_IBIAS,
++	PLL_N,
++	PLL_NINT,
++	PLL_KINT,
++	PLL_PREDIV,
++	PLL_POSTDIV,
++
++	PLL_FACT_MAX
++};
++
++/*
++ * struct ccu_pll - defination of adjustable pll clock
++ *
++ * @reg:	registers used to set the configuration of pll clock,
++ *		reg[0] shows how many registers this pll clock uses.
++ * @itable:	pll ibias table, itable[0] means how many items this
++ *		table includes
++ * @udelay	delay time after setting rate
++ * @factors	used to calculate the pll clock rate
++ * @fvco:	fvco threshold rate
++ * @fflag:	fvco flag
++ */
++struct ccu_pll {
++	const u32 *regs;
++	const u64 *itable;
++	u16 udelay;
++	const struct ccu_bit_field *factors;
++	u64 fvco;
++	u16 fflag;
++
++	struct ccu_common	common;
++};
++
++#define SPRD_CCU_PLL_WITH_ITABLE_FVCO(_struct, _name, _parent, _reg,	\
++				      _regs, _itable, _udelay,		\
++				      _factors,	_fvco, _fflag)		\
++	struct ccu_pll _struct = {					\
++		.regs		= _regs,				\
++		.itable		= _itable,				\
++		.udelay		= _udelay,				\
++		.factors	= _factors,				\
++		.fvco		= _fvco,				\
++		.fflag		= _fflag,				\
++		.common		= {					\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_pll_ops,	\
++						CLK_IGNORE_UNUSED),	\
++		},							\
++	}
++
++#define SPRD_CCU_PLL_WITH_ITABLE(_struct, _name, _parent, _reg,		\
++				 _regs, _itable, _udelay,		\
++				 _factors)				\
++	SPRD_CCU_PLL_WITH_ITABLE_FVCO(_struct, _name, _parent, _reg,	\
++				      _regs, _itable, _udelay,		\
++				      _factors, 0, 0)
++
++static inline struct ccu_pll *hw_to_ccu_pll(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_pll, common);
++}
++
++static inline u32 ccu_pll_readl(struct ccu_pll *pll, u8 index)
++{
++	struct ccu_common *common = &pll->common;
++
++	if (WARN_ON(index >= pll->regs[0]))
++		return 0;
++
++	return readl(common->base + pll->regs[index + 1]);
++}
++
++static inline void ccu_pll_writel(struct ccu_pll *pll, u8 index,
++				  u32 val, u32 msk)
++{
++	struct ccu_common *common = &pll->common;
++	void __iomem *addr;
++	u32 reg;
++
++	if (WARN_ON(index >= pll->regs[0]))
++		return;
++
++	addr = common->base + pll->regs[index + 1];
++	reg = readl(addr);
++	writel((reg & ~msk) | val, addr);
++}
++
++extern const struct clk_ops ccu_pll_ops;
++
++#endif /* _CCU_PLL_H_ */
+-- 
+2.7.4
