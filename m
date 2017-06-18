@@ -1,135 +1,96 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([45.249.212.188]:8369 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752668AbdFUJYS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 05:24:18 -0400
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-To: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <kishon@ti.com>,
-        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
-        <balbi@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <project-aspen-dev@linaro.org>, <yanhaifeng@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>
-Subject: [PATCH 4/5] arm64: dts: hisilicon: add usb2 controller and phy nodes for poplar board.
-Date: Wed, 21 Jun 2017 17:00:44 +0800
-Message-ID: <1498035645-22804-5-git-send-email-xuejiancheng@hisilicon.com>
-In-Reply-To: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
-References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        "Arnd
+ Bergmann" <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang
+	<xiaolong.zhang@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        "Geng Ren" <geng.ren@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        "Chunyan Zhang" <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V1 0/9] add clock driver for Spreadtrum platforms
+Date: Sun, 18 Jun 2017 09:58:46 +0800
+Message-ID: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add usb2 controller and phy nodes for poplar board.
+In the last cycle, the patches support Whale2 sc9860 mobile chip have been
+merged. This patchset adds clock driver which is used on almost all
+Spreadtrum SoCs.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
----
- .../boot/dts/hisilicon/hi3798cv200-poplar.dts      | 13 ++++++
- arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi     | 47 ++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
+This is a rewrite of Spreadtrum's original clock driver[1] according to the
+comments[2] from Stephen Boyd.
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
-index 684fa09..40db803 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
-@@ -64,6 +64,10 @@
- 	};
- };
- 
-+&ehci {
-+	status = "okay";
-+};
-+
- &gmac1 {
- 	status = "okay";
- 	#address-cells = <1>;
-@@ -147,6 +151,10 @@
- 	status = "okay";
- };
- 
-+&ohci {
-+	status = "okay";
-+};
-+
- &spi0 {
- 	status = "okay";
- 	label = "LS-SPI0";
-@@ -161,3 +169,8 @@
- 	label = "LS-UART0";
- };
- /* No optional LS-UART1 on Low Speed Expansion Connector. */
-+
-+&usb2_phy1 {
-+	status = "okay";
-+};
-+
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi b/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
-index 75865f8a..422aeaf 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
-@@ -106,6 +106,11 @@
- 			#reset-cells = <2>;
- 		};
- 
-+		peri_ctrl: system-controller@8a20000 {
-+			compatible = "syscon";
-+			reg = <0x8a20000 0x1000>;
-+		};
-+
- 		uart0: serial@8b00000 {
- 			compatible = "arm,pl011", "arm,primecell";
- 			reg = <0x8b00000 0x1000>;
-@@ -407,5 +412,47 @@
- 			clocks = <&sysctrl HISTB_IR_CLK>;
- 			status = "disabled";
- 		};
-+
-+		ehci: ehci@0x9890000 {
-+			compatible = "generic-ehci";
-+			reg = <0x9890000 0x10000>;
-+			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HISTB_USB2_BUS_CLK>,
-+				 <&crg HISTB_USB2_PHY_CLK>;
-+			clock-names = "ehci_system", "phy";
-+			resets = <&crg 0xb8 12>,
-+				 <&crg 0xb8 16>;
-+			reset-names = "bus", "phy";
-+			status = "disabled";
-+		};
-+
-+		ohci: ohci@0x9880000 {
-+			compatible = "generic-ohci";
-+			reg = <0x9880000 0x10000>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HISTB_USB2_BUS_CLK>,
-+				 <&crg HISTB_USB2_12M_CLK>,
-+				 <&crg HISTB_USB2_48M_CLK>;
-+			clock-names = "ahb_biu", "clk12", "clk48";
-+			resets = <&crg 0xb8 12>;
-+			reset-names = "bus";
-+			status = "disabled";
-+		};
-+
-+		usb2_phy1: usb-phy@1 {
-+			compatible = "hisilicon,hi3798cv200-usb2-phy";
-+			#phy-cells = <0>;
-+			hisilicon,peripheral-syscon = <&peri_ctrl>;
-+			clocks = <&crg HISTB_USB2_PHY1_REF_CLK>;
-+			resets = <&crg 0xbc 4>;
-+			reset-names = "por_rst";
-+			status = "disabled";
-+
-+			usb2_port1: port@1 {
-+				clocks = <&crg HISTB_USB2_UTMI_CLK>;
-+				resets = <&crg 0xbc 9>, <&crg 0xb8 13>;
-+				reset-names = "port_rst", "utmi_rst";
-+			};
-+		};
- 	};
- };
+This series also adds Spreadtrum clock binding documentation and devicetree
+data.
+
+Any comments would be greatly appreciated.
+
+Thanks,
+Chunyan
+
+[1] https://lwn.net/Articles/722739/
+[2] https://www.spinics.net/lists/arm-kernel/msg582017.html
+
+Chunyan Zhang (9):
+  dt-bindings: Add Spreadtrum CCU binding documentation
+  clk: sprd: Add common infrastructure
+  clk: sprd: add gate clock support
+  clk: sprd: add mux clock support
+  clk: sprd: add divider clock support
+  clk: sprd: add composite clock support
+  clk: sprd: add adjustable pll support
+  clk: sprd: add clock support for SC9860
+  arm64: dts: add ccu for SC9860
+
+ .../devicetree/bindings/clock/sprd-ccu.txt         |   46 +
+ arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi           |   67 +
+ arch/arm64/boot/dts/sprd/sc9860.dtsi               |    2 +
+ arch/arm64/boot/dts/sprd/whale2.dtsi               |    8 -
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/sprd/Makefile                          |    4 +
+ drivers/clk/sprd/ccu-sc9860.c                      | 1742 ++++++++++++++++++++
+ drivers/clk/sprd/ccu-sc9860.h                      |  379 +++++
+ drivers/clk/sprd/ccu_common.c                      |   78 +
+ drivers/clk/sprd/ccu_common.h                      |   90 +
+ drivers/clk/sprd/ccu_composite.c                   |   62 +
+ drivers/clk/sprd/ccu_composite.h                   |   47 +
+ drivers/clk/sprd/ccu_div.c                         |   93 ++
+ drivers/clk/sprd/ccu_div.h                         |   77 +
+ drivers/clk/sprd/ccu_gate.c                        |  102 ++
+ drivers/clk/sprd/ccu_gate.h                        |   73 +
+ drivers/clk/sprd/ccu_mux.c                         |   82 +
+ drivers/clk/sprd/ccu_mux.h                         |   63 +
+ drivers/clk/sprd/ccu_pll.c                         |  241 +++
+ drivers/clk/sprd/ccu_pll.h                         |  123 ++
+ include/dt-bindings/clock/sc9860-ccu.h             |   19 +
+ 21 files changed, 3391 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd-ccu.txt
+ create mode 100644 arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/ccu-sc9860.c
+ create mode 100644 drivers/clk/sprd/ccu-sc9860.h
+ create mode 100644 drivers/clk/sprd/ccu_common.c
+ create mode 100644 drivers/clk/sprd/ccu_common.h
+ create mode 100644 drivers/clk/sprd/ccu_composite.c
+ create mode 100644 drivers/clk/sprd/ccu_composite.h
+ create mode 100644 drivers/clk/sprd/ccu_div.c
+ create mode 100644 drivers/clk/sprd/ccu_div.h
+ create mode 100644 drivers/clk/sprd/ccu_gate.c
+ create mode 100644 drivers/clk/sprd/ccu_gate.h
+ create mode 100644 drivers/clk/sprd/ccu_mux.c
+ create mode 100644 drivers/clk/sprd/ccu_mux.h
+ create mode 100644 drivers/clk/sprd/ccu_pll.c
+ create mode 100644 drivers/clk/sprd/ccu_pll.h
+ create mode 100644 include/dt-bindings/clock/sc9860-ccu.h
+
 -- 
-1.9.1
-
+2.7.4
