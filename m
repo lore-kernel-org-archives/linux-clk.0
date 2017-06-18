@@ -1,58 +1,173 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: bjorn.andersson@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v5 2/6] dt-bindings: qcom: Add ipq8074 bindings
-Date: Fri,  9 Jun 2017 15:02:59 +0530
-Message-Id: <1497000783-27916-3-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
-References: <1497000783-27916-1-git-send-email-varada@codeaurora.org>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang
+	<xiaolong.zhang@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Geng
+ Ren <geng.ren@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan
+ Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V1 6/9] clk: sprd: add composite clock support
+Date: Sun, 18 Jun 2017 09:58:52 +0800
+Message-ID: <20170618015855.27738-7-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
- 1 file changed, 2 insertions(+)
+This patch introduced composite driver whose functions are simply
+consisted of divider and mux clocks.
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
-index 028d16e..0ed4d39 100644
---- a/Documentation/devicetree/bindings/arm/qcom.txt
-+++ b/Documentation/devicetree/bindings/arm/qcom.txt
-@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
- 	msm8994
- 	msm8996
- 	mdm9615
-+	ipq8074
- 
- The 'board' element must be one of the following strings:
- 
-@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
- 	dragonboard
- 	mtp
- 	sbc
-+	hk01
- 
- The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
- where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
+Original-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/sprd/Makefile        |  2 +-
+ drivers/clk/sprd/ccu_composite.c | 62 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/ccu_composite.h | 47 ++++++++++++++++++++++++++++++
+ 3 files changed, 110 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/sprd/ccu_composite.c
+ create mode 100644 drivers/clk/sprd/ccu_composite.h
+
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index d129c0a8..83232e5 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -1,3 +1,3 @@
+ ifneq ($(CONFIG_OF),)
+-obj-y	+= ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o
++obj-y	+= ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o ccu_composite.o
+ endif
+diff --git a/drivers/clk/sprd/ccu_composite.c b/drivers/clk/sprd/ccu_composite.c
+new file mode 100644
+index 0000000..6a64fb1
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_composite.c
+@@ -0,0 +1,62 @@
++/*
++ * Spreadtrum composite clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/clk-provider.h>
++
++#include "ccu_composite.h"
++
++DEFINE_SPINLOCK(comp_lock);
++
++static long ccu_comp_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct ccu_comp *cc = hw_to_ccu_comp(hw);
++
++	return ccu_div_helper_round_rate(&cc->common, &cc->div,
++					 rate, parent_rate);
++}
++
++static unsigned long ccu_comp_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct ccu_comp *cc = hw_to_ccu_comp(hw);
++
++	return ccu_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
++}
++
++static int ccu_comp_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct ccu_comp *cc = hw_to_ccu_comp(hw);
++
++	return ccu_div_helper_set_rate(&cc->common, &cc->div,
++				       rate, parent_rate);
++}
++
++static u8 ccu_comp_get_parent(struct clk_hw *hw)
++{
++	struct ccu_comp *cc = hw_to_ccu_comp(hw);
++
++	return ccu_mux_helper_get_parent(&cc->common, &cc->mux);
++}
++
++static int ccu_comp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct ccu_comp *cc = hw_to_ccu_comp(hw);
++
++	return ccu_mux_helper_set_parent(&cc->common, &cc->mux, index);
++}
++
++const struct clk_ops ccu_comp_ops = {
++	.get_parent	= ccu_comp_get_parent,
++	.set_parent	= ccu_comp_set_parent,
++
++	.round_rate	= ccu_comp_round_rate,
++	.recalc_rate	= ccu_comp_recalc_rate,
++	.set_rate	= ccu_comp_set_rate,
++};
+diff --git a/drivers/clk/sprd/ccu_composite.h b/drivers/clk/sprd/ccu_composite.h
+new file mode 100644
+index 0000000..c99c919
+--- /dev/null
++++ b/drivers/clk/sprd/ccu_composite.h
+@@ -0,0 +1,47 @@
++/*
++ * Spreadtrum composite clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _CCU_COMPOSITE_H_
++#define _CCU_COMPOSITE_H_
++
++#include "ccu_common.h"
++#include "ccu_mux.h"
++#include "ccu_div.h"
++
++struct ccu_comp {
++	struct ccu_mux_internal	mux;
++	struct ccu_div_internal	div;
++	struct ccu_common	common;
++};
++
++#define SPRD_CCU_COMP(_struct, _name, _parent, _reg, _table,		\
++			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
++	struct ccu_comp _struct = {					\
++		.mux	= _SPRD_CCU_MUX(_mshift, _mwidth, _table),	\
++		.div	= _SPRD_CCU_DIV(_dshift, _dwidth),		\
++		.common = {						\
++			 .reg		= _reg,				\
++			 .lock		= &comp_lock,			\
++			 .hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++							      _parent,	\
++							&ccu_comp_ops,	\
++							      _flags),	\
++			 }						\
++	}
++
++static inline struct ccu_comp *hw_to_ccu_comp(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return container_of(common, struct ccu_comp, common);
++}
++
++extern const struct clk_ops ccu_comp_ops;
++extern spinlock_t comp_lock;
++
++#endif /* _CCU_COMPOSITE_H_ */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
