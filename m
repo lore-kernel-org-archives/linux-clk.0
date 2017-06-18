@@ -1,73 +1,80 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH] clk: gcc-msm8996: Add missing lpass smmu clks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20170612094137.6821-1-srinivas.kandagatla@linaro.org>
- <20170620004709.GD20170@codeaurora.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <9449e968-bddb-2b34-3ede-b786238b6421@linaro.org>
-Date: Fri, 23 Jun 2017 12:03:50 +0100
+Return-Path: <stefan.wahren@i2se.com>
+Date: Sun, 18 Jun 2017 18:48:24 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Phil Elwell <phil@raspberrypi.org>
+Cc: linux-clk@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+	Eric Anholt <eric@anholt.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	linux-rpi-kernel@lists.infradead.org
+Message-ID: <1541919875.136051.1497804504643@email.1und1.de>
+In-Reply-To: <1497457750-35585-3-git-send-email-phil@raspberrypi.org>
+References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
+ <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+ <1497457750-35585-3-git-send-email-phil@raspberrypi.org>
+Subject: Re: [PATCH v3 2/4] dt: bindings: Add bindings for bcm2835-aux-intc
 MIME-Version: 1.0
-In-Reply-To: <20170620004709.GD20170@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Phil,
 
-
-On 20/06/17 01:47, Stephen Boyd wrote:
-> On 06/12, Srinivas Kandagatla wrote:
->> This patch adds missing LPASS smmu clks which are required by the audio driver.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   drivers/clk/qcom/gcc-msm8996.c               | 26 ++++++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,gcc-msm8996.h |  2 ++
->>   2 files changed, 28 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
->> index 56e0a295c74e..6290ce551505 100644
->> --- a/drivers/clk/qcom/gcc-msm8996.c
->> +++ b/drivers/clk/qcom/gcc-msm8996.c
->> @@ -2644,6 +2644,30 @@ static struct clk_fixed_factor ufs_rx_cfg_clk_src = {
->>   	},
->>   };
->>   
->> +static struct clk_branch gcc_hlos1_vote_lpass_core_smmu_clk = {
->> +	.halt_reg = 0x7d010,
+> Phil Elwell <phil@raspberrypi.org> hat am 14. Juni 2017 um 18:29 geschrieben:
 > 
-> Don't we need .halt_check = BRANCH_HALT_VOTED for these?
 > 
-I don't think we need it for these clks, Downstream driver has 
-no_halt_check_on_disable = true for both these clks.
-
-
-
-thanks,
-srini
-
->> +	.clkr = {
->> +		.enable_reg = 0x7d010,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(struct clk_init_data){
->> +			.name = "hlos1_vote_lpass_core_smmu_clk",
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
->> +static struct clk_branch gcc_hlos1_vote_lpass_adsp_smmu_clk = {
->> +	.halt_reg = 0x7d014,
->> +	.clkr = {
->> +		.enable_reg = 0x7d014,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(struct clk_init_data){
->> +			.name = "hlos1_vote_lpass_adsp_smmu_clk",
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
+> Add bindings documentation for brcm,bcm2835-aux-intc and human-readable
+> declarations for the BCM2835 AUX IRQs.
 > 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  .../interrupt-controller/brcm,bcm2835-aux-intc.txt | 27 ++++++++++++++++++++++
+>  .../interrupt-controller/bcm2835-aux-intc.h        | 20 ++++++++++++++++
+>  2 files changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+>  create mode 100644 include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+> new file mode 100644
+> index 0000000..9cbbab6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
+> @@ -0,0 +1,27 @@
+> +BCM2835 Auxiliary ("AUXIRQ") Interrupt Controller
+> +
+> +The BCM2835 family of SoCs multiplexes the interrupts for peripherals in
+> +the AUX block into a single IRQ. The AUXIRQ register shows the IRQ status
+> +of each of the peripherals. Note that there are no masking or clearing
+> +facilities - interrupts must be enabled and acknowledged in the
+> +individual peripherals.
+> +
+> +Required properties:
+> +- compatible :	     Should be "brcm,bcm2835-aux-intc".
+> +- reg :		     Specifies base physical address and size of the registers.
+> +- interrupts :	     The interrupt number - see
+> +		     bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
+> +- interrupt-controller : Identifies the node as an interrupt controller
+> +- #interrupt-cells : Specifies the number of cells needed to encode an
+> +		     interrupt source. The value shall be 1.
+> +
+> +  The cell contains the interrupt specifier, as found in
+> +  include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h.
+> +
+> +Example:
+> +
+> +	auxintc: interrupt-controller@7e215000 {
+> +		compatible = "brcm,bcm2835-aux-intc";
+> +		reg = <0x7e215000 0x4>;
+> +		interrupts = <1 29>;
+> +		interrupt-controller;
+
+looks like the end of the file has been truncated and example misses some lines.
+
+> diff --git a/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h b/include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
+> new file mode 100644
+> index 0000000..8b9fc12
