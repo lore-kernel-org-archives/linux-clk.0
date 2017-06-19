@@ -1,59 +1,51 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 01/17] clk: ingenic: Use const pointer to clk_ops in struct
-Date: Tue, 20 Jun 2017 17:18:39 +0200
-Message-Id: <20170620151855.19399-1-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-2-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH v3 3/4] irqchip: Add BCM2835 AUX interrupt controller
+To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+ Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
+ <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+ <1497457750-35585-4-git-send-email-phil@raspberrypi.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <f68eed56-35b8-737e-008d-a8e993c7f6f1@gmail.com>
+Date: Mon, 19 Jun 2017 14:13:52 -0700
+MIME-Version: 1.0
+In-Reply-To: <1497457750-35585-4-git-send-email-phil@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The CGU common code does not modify the pointed clk_ops structure, so it
-should be marked as const.
+On 06/14/2017 09:29 AM, Phil Elwell wrote:
+> Devices in the BCM2835 AUX block share a common interrupt line, with a
+> register indicating which devices have active IRQs. Expose this as a
+> nested interrupt controller to avoid IRQ sharing problems (easily
+> observed if UART1 and SPI1/2 are enabled simultaneously).
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> ---
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/clk/ingenic/cgu.h        | 2 +-
- drivers/clk/ingenic/jz4780-cgu.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> +/*
+> + * The irq_mask and irq_unmask function pointers are used without
+> + * validity checks, so they must not be NULL. Create a dummy function
+> + * with the expected type for use as a no-op.
+> + */
+> +static void bcm2835_aux_irq_dummy(struct irq_data *data)
+> +{
+> +}
+> +
+> +static struct irq_chip bcm2835_aux_irq_chip = {
+> +	.name = "bcm2835-aux_irq",
+> +	.irq_mask = bcm2835_aux_irq_dummy,
+> +	.irq_unmask = bcm2835_aux_irq_dummy,
+> +};
 
- v2: New patch in this series
-
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index 09700b2c555d..da448b0cac18 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -120,7 +120,7 @@ struct ingenic_cgu_gate_info {
-  * @clk_ops: custom clock operation callbacks
-  */
- struct ingenic_cgu_custom_info {
--	struct clk_ops *clk_ops;
-+	const struct clk_ops *clk_ops;
- };
- 
- /**
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index b35d6d9dd5aa..a21698fb202c 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -203,7 +203,7 @@ static int jz4780_otg_phy_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	return 0;
- }
- 
--static struct clk_ops jz4780_otg_phy_ops = {
-+static const struct clk_ops jz4780_otg_phy_ops = {
- 	.get_parent = jz4780_otg_phy_get_parent,
- 	.set_parent = jz4780_otg_phy_set_parent,
- 
+So how are the interrupt enabled/disabled if this interrupt controller
+just returns their pending state?
 -- 
-2.11.0
+Florian
