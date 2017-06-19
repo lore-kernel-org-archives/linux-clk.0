@@ -1,38 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 17:19:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <leonard.crestez@nxp.com>
+Message-ID: <1497872109.5380.10.camel@nxp.com>
+Subject: Re: [PATCH v5 3/6] kernel/reboot.c: export pm_power_off_prepare
+From: Leonard Crestez <leonard.crestez@nxp.com>
 To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH v5 6/6] ARM: dts: imx6: RIoTboard provide standby on
- power off option
-Message-ID: <20170620001936.GU20170@codeaurora.org>
+CC: Andrew Morton <akpm@linux-foundation.org>, <devicetree@vger.kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, <kernel@pengutronix.de>, Liam Girdwood
+	<lgirdwood@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mark Brown
+	<broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 14:35:09 +0300
+In-Reply-To: <20170619050245.2632-4-o.rempel@pengutronix.de>
 References: <20170619050245.2632-1-o.rempel@pengutronix.de>
- <20170619050245.2632-7-o.rempel@pengutronix.de>
+	 <20170619050245.2632-4-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170619050245.2632-7-o.rempel@pengutronix.de>
+Return-Path: leonard.crestez@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/19, Oleksij Rempel wrote:
-> This board, as well as some other boards with i.MX6 and a PMIC, uses a
-> "MPIC_STBY_REQ" line to notify the PMIC about a state change.
+On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
+> Export pm_power_off_prepare. It is needed to implement power off on
+> Freescale/NXP iMX6 based boards with external power management
+> integrated circuit (PMIC).
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  kernel/reboot.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> index bd30a973fe94..a6903bf772c7 100644
+> --- a/kernel/reboot.c
+> +++ b/kernel/reboot.c
+> @@ -49,6 +49,7 @@ int reboot_force;
+>   */
+>  
+>  void (*pm_power_off_prepare)(void);
+> +EXPORT_SYMBOL(pm_power_off_prepare);
+>  
+Could you register a reboot notifier in the pfuze driver instead? Right
+now the only user of pm_power_off_prepare is ACPI so this alternative
+seems less intrusive.
 
-PMIC_STBY_REQ?
-
-> The PMIC is programmed for a specific state change before triggering the
-> line.
-> In this case, PMIC_STBY_REQ can be used for stand by, sleep
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--
+Regards,
+Leonard
