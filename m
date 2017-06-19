@@ -1,85 +1,88 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Jun 2017 00:17:50 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Tobias Regnery <tobias.regnery@gmail.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun8i-a83t
-Message-ID: <20170601071750.GP20170@codeaurora.org>
-References: <20170522202951.2896280-1-arnd@arndb.de>
- <20170523005553.GH20170@codeaurora.org>
- <20170523071940.xbnahikb4d5dge7v@wens.csie.org>
- <CAK8P3a37CT0tzdy4V8Hj=-Mu=JrdR08zv2fqVH5Y+hzT7OK4Vg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK8P3a37CT0tzdy4V8Hj=-Mu=JrdR08zv2fqVH5Y+hzT7OK4Vg@mail.gmail.com>
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v5 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
+Date: Mon, 19 Jun 2017 07:02:41 +0200
+Message-Id: <20170619050245.2632-3-o.rempel@pengutronix.de>
+In-Reply-To: <20170619050245.2632-1-o.rempel@pengutronix.de>
+References: <20170619050245.2632-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/23, Arnd Bergmann wrote:
-> On Tue, May 23, 2017 at 9:19 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> > On Mon, May 22, 2017 at 05:55:53PM -0700, Stephen Boyd wrote:
-> >> On 05/22, Arnd Bergmann wrote:
-> >> > We get a link error when CCU_MULT is not set with the
-> >> > newly added driver:
-> >> >
-> >> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_mult_ops'
-> >> > drivers/clk/sunxi-ng/ccu-sun8i-a83t.o:(.data.__compound_literal.3+0x4): undefined reference to `ccu_mult_ops'
-> >> >
-> >> > Fixes: 46b492116666 ("clk: sunxi-ng: Add driver for A83T CCU")
-> >> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > Acked-by: Chen-Yu Tsai <wens@csie.org>
-> >
-> >> Is there any way we can automate finding these build errors and
-> >> prevent them from creeping into the tree? It may be asking too
-> >> much, but it seems like we should be able to find these
-> >> particular problems with some script that greps for ccu_*_ops and
-> >> checks that any file's Kconfig symbol also has that selected.
-> >>
-> >> Anyway, I'm just tired of seeing these sorts of things in my
-> >> inbox.
-> 
-> Definitely, I'm also tired of writing the patches ;-)
-> 
-> > The (ugly) script below does the trick, though it does give results
-> > for some symbols that are indirectly selected:
-> >
-> > SUN5I_CCU uses SUNXI_CCU_GATE but does not select it
-> > SUN5I_CCU uses SUNXI_CCU_MUX but does not select it
-> 
-> I think they are all caught implicitly, otherwise I would have run
-> into them.
-> 
-> > SUN5I_CCU uses SUNXI_CCU_NKMP but does not select it
-> 
-> I sent a patch for this on Feb 14 and again March 13, but haven't
-> gotten around to resubmit again.
-> 
-> An alternative would be to remove all the dependencies as 'lib-y'
-> in the Makefile and remove the individual Kconfig symbols. That
-> way, we would always build all of them when CONFIG_SUNXI_CCU
-> is enabled, but the linker would drop the ones that do not get
-> referenced.
+One of the Freescale recommended sequences for power off with external
+PMIC is the following:
+...
+3.  SoC is programming PMIC for power off when standby is asserted.
+4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 
-In this case you're right, and we should change them to lib-y in
-the Makefile and then let the linker figure this all out. No more
-dependency patches. I think we only need to do this sort of
-Kconfig stuff when we want to make a library .ko file that each
-SoC specific driver depends on for common code.
+See:
+http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+page 5083
 
-It would be cool if the build system could figure that all out
-for us, and let us have something like modlib-y that makes it a
-library (archive) if all objects depending on it are builtin and
-we have CONFIG_MODULES=n, or makes it into an object file if
-something is builtin that depends on it, or makes it into a
-module if everything that depends on it is a module.
+This patch implements step 4. of this sequence.
 
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index e61b1d1027e1..cb76832935f0 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+ 				   IMX6Q_GPR1_GINT);
+ }
+ 
++static void imx6_pm_poweroff(void)
++{
++	imx6_set_lpm(STOP_POWER_OFF);
++	cpu_suspend(0, imx6q_suspend_finish);
++
++	mdelay(1000);
++
++	pr_emerg("Unable to poweroff system\n");
++}
++
++static int imx6_pm_poweroff_probe(void)
++{
++	if (pm_power_off) {
++		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
++			__func__, pm_power_off, pm_power_off);
++		return -EBUSY;
++	}
++
++	pm_power_off = imx6_pm_poweroff;
++	return 0;
++}
++
+ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ {
+ 	struct device_node *np;
+@@ -618,6 +640,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ 	val = readl_relaxed(ccm_base + CLPCR);
+ 	val &= ~BM_CLPCR_LPM;
+ 	writel_relaxed(val, ccm_base + CLPCR);
++
++	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
++		imx6_pm_poweroff_probe();
+ }
+ 
+ void __init imx6q_pm_init(void)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
