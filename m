@@ -1,37 +1,68 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 26 Jun 2017 14:40:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock
- controller
-Message-ID: <20170626194058.43fttjvs23vxtuuu@rob-hp-laptop>
-References: <20170623161533.20449-1-georgi.djakov@linaro.org>
- <20170623161533.20449-4-georgi.djakov@linaro.org>
+Return-Path: <leonard.crestez@nxp.com>
+Message-ID: <1497872133.5380.11.camel@nxp.com>
+Subject: Re: [PATCH v5 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+CC: Andrew Morton <akpm@linux-foundation.org>, <devicetree@vger.kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, <kernel@pengutronix.de>, Liam Girdwood
+	<lgirdwood@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mark Brown
+	<broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 14:35:33 +0300
+In-Reply-To: <20170619050245.2632-3-o.rempel@pengutronix.de>
+References: <20170619050245.2632-1-o.rempel@pengutronix.de>
+	 <20170619050245.2632-3-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170623161533.20449-4-georgi.djakov@linaro.org>
+Return-Path: leonard.crestez@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 23, 2017 at 07:15:33PM +0300, Georgi Djakov wrote:
-> Add a driver for the APCS clock controller. It is part of the APCS
-> hardware block, which among other things implements also a combined
-> mux and half integer divider functionality. It can choose between a
-> fixed-rate clock or the dedicated APCS (A53) PLL. The source and the
-> divider can be set both at the same time.
+On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
+> One of the Freescale recommended sequences for power off with
+> external
+> PMIC is the following:
+> ...
+> 3.  SoC is programming PMIC for power off when standby is asserted.
+> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 > 
-> This is required for enabling CPU frequency scaling on MSM8916-based
-> platforms.
+> See:
+> https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww
+> .nxp.com%2Fassets%2Fdocuments%2Fdata%2Fen%2Freference-
+> manuals%2FIMX6DQRM.pdf&data=01%7C01%7Cleonard.crestez%40nxp.com%7C32c
+> df19d0ab44ed8e24d08d4b6d097f4%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0&
+> sdata=CWDpnEGikPGmSTM3dQH8IMxQCVzcIvHL69nu962d8M0%3D&reserved=0
+> page 5083
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> This patch implements step 4. of this sequence.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->  .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   5 +
+>  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-
+> imx6.c
+> index e61b1d1027e1..cb76832935f0 100644
+> --- a/arch/arm/mach-imx/pm-imx6.c
+> +++ b/arch/arm/mach-imx/pm-imx6.c
+> @@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const
+> struct imx6_pm_socdata
+>  				   IMX6Q_GPR1_GINT);
+>  }
+>  
+> +static void imx6_pm_poweroff(void)
+> +{
+> +	imx6_set_lpm(STOP_POWER_OFF);
+> +	cpu_suspend(0, imx6q_suspend_finish);
 
-Acked-by: Rob Herring <robh@kernel.org>
+It's a bit strange that you're using parts of the suspend code for
+this. Perhaps you could just write your bits to CLPCR and then execute
+a WFI?
 
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c            | 122 +++++++++++++++++++++
->  2 files changed, 127 insertions(+)
+It would also be nice to rename this to something like
+imx6_pm_stby_poweroff to make it clear that it's only for a certain
+power off path.
