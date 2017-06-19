@@ -1,72 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 7 Jun 2017 10:17:08 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chen-Yu Tsai <wens@csie.org>, kbuild test robot <lkp@intel.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, kbuild-all@01.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
-Message-ID: <20170607081708.ycruditlhebizzt2@flea.lan>
-References: <20170602223006.1653-1-sboyd@codeaurora.org>
- <201706031243.qNvuUbQX%fengguang.wu@intel.com>
- <20170605144546.b6oh5sygrza22hbe@flea.lan>
- <CAK8P3a1Qvt4nvM5HeK-n87tsi2D5GBOmZo0rZv_Lp==CC=34Uw@mail.gmail.com>
- <CAGb2v66QvLdojDe4+uG9Opa7fApA-GH9pW4v0En5j6QSPf1yZw@mail.gmail.com>
- <CAK8P3a38TyiHXBgB0DQka=0iASuyJO_zMrczXqYBiJj6LEnNWg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="auy7r3na45ar66fu"
-In-Reply-To: <CAK8P3a38TyiHXBgB0DQka=0iASuyJO_zMrczXqYBiJj6LEnNWg@mail.gmail.com>
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v5 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
+Date: Mon, 19 Jun 2017 07:02:43 +0200
+Message-Id: <20170619050245.2632-5-o.rempel@pengutronix.de>
+In-Reply-To: <20170619050245.2632-1-o.rempel@pengutronix.de>
+References: <20170619050245.2632-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+Document the new optional "fsl,pmic-stby-poweroff" property.
 
---auy7r3na45ar66fu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/regulator/pfuze100.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On Wed, Jun 07, 2017 at 09:36:34AM +0200, Arnd Bergmann wrote:
-> On Wed, Jun 7, 2017 at 7:45 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> > at the bottom (with a comment) would be cleaner, and
-> > we wouldn't need to modify all the existing lines.
-> > AFAIK about Makefiles, that should work?
->=20
-> Ah, yes. That's much better.
->=20
->       Arnd
-
-I just applied the original patch, with that addition, and a comment
-as suggested by Stephen.
-
-thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---auy7r3na45ar66fu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZN7aEAAoJEBx+YmzsjxAgO88QAIqqNjdqWD3dOAVeEWPoCwSj
-yNkHs2O7it0F4VeDyZ99YXmRnBcQ4QlhffvdNxIKIwc9nnV/n8CNtAbZClCiiCIH
-zKZfeFMD/KPL0r5zF2ECB/SA7yeVNG2z/ob03XCDRRBo7BF4vHdtn171vtp2gqZc
-BfYesyu/ybKWextEH+Lnr8GVC7YgnRA0LAcnPUbuUfZJ6f7wdOAWZ/+OuLotNrB7
-nc7yapngZPF/WYSk2A4nbQolfUfu6/pbwy5jjfJ30C3VrmMo99uSFV9CLtl47AbB
-YMm8k1roJjbVyy6CVsJDN3krr7/F1z7IzjEErvKaGFMdSRcdYdyqVEZr3t1AliAW
-ANgO2x9mmo+h09Go9dFbIrseYV8shlF7wtJ2QWemR+k55kqln/kXlUqyyD2GDnib
-2W9g/yFzqExt0HWeEbLqfIcZZL1d4ENxW0dxGkYqTheb2uRQvgjuemYKqAhlap2P
-5aRxDMGyD0yCbZQWkc2cGnFqh0iX6Is68XPJMyW6o9C2sRW4RYdvJjET9uH4b6q2
-OsQwfSsV2oQCvIgMYCmNC6embF/z1b3KpNhzr/ANvcs5dJ5Hpzo1i1yDsmbvQVBC
-VtHhXjnnDDWOJ4HTL+fbKGc1OJnoJzBo3LpKwM5NtQRz4xhR0ZfVCPE4TMXW8v3n
-FkDzkfVtQGZC5dSP/b8b
-=f1Mb
------END PGP SIGNATURE-----
-
---auy7r3na45ar66fu--
+diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+index 444c47831a40..197f1a52e960 100644
+--- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
++++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+@@ -4,6 +4,13 @@ Required properties:
+ - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000"
+ - reg: I2C slave address
+ 
++Optional properties:
++- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
++  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
++  Use this option if the SoC should be powered off by external power
++  management IC (PMIC) on PMIC_STBY_REQ signal.
++  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
++
+ Required child node:
+ - regulators: This is the list of child nodes that specify the regulator
+   initialization data for defined regulators. Please refer to below doc
+-- 
+2.11.0
