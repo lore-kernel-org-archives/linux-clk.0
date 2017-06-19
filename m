@@ -1,100 +1,49 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v7 4/8] MIPS: Loongson: Add Loongson-1A Kconfig options
-Date: Fri, 16 Jun 2017 10:52:49 +0800
-Message-Id: <1497581573-17258-5-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
-References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v5 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Mon, 19 Jun 2017 07:02:42 +0200
+Message-Id: <20170619050245.2632-4-o.rempel@pengutronix.de>
+In-Reply-To: <20170619050245.2632-1-o.rempel@pengutronix.de>
+References: <20170619050245.2632-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Added Kconfig options include: Loongson-1A CPU and machine definition,
-CPU cache features, 32-bit kernel and early printk support.
+Export pm_power_off_prepare. It is needed to implement power off on
+Freescale/NXP iMX6 based boards with external power management
+integrated circuit (PMIC).
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/mips/Kconfig            | 12 ++++++++++++
- arch/mips/loongson32/Kconfig | 20 ++++++++++++++++++++
- 2 files changed, 32 insertions(+)
+ kernel/reboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index b969522..b4f59c5 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -1420,6 +1420,15 @@ config CPU_LOONGSON2F
- 	  have a similar programming interface with FPGA northbridge used in
- 	  Loongson2E.
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index bd30a973fe94..a6903bf772c7 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -49,6 +49,7 @@ int reboot_force;
+  */
  
-+config CPU_LOONGSON1A
-+	bool "Loongson 1A"
-+	depends on SYS_HAS_CPU_LOONGSON1A
-+	select CPU_LOONGSON1
-+	select LEDS_GPIO_REGISTER
-+	help
-+	  The Loongson 1A is a 32-bit SoC, which implements the MIPS32
-+	  release 2 instruction set.
-+
- config CPU_LOONGSON1B
- 	bool "Loongson 1B"
- 	depends on SYS_HAS_CPU_LOONGSON1B
-@@ -1884,6 +1893,9 @@ config SYS_HAS_CPU_LOONGSON2F
- 	select CPU_SUPPORTS_ADDRWINCFG if 64BIT
- 	select CPU_SUPPORTS_UNCACHED_ACCELERATED
+ void (*pm_power_off_prepare)(void);
++EXPORT_SYMBOL(pm_power_off_prepare);
  
-+config SYS_HAS_CPU_LOONGSON1A
-+	bool
-+
- config SYS_HAS_CPU_LOONGSON1B
- 	bool
- 
-diff --git a/arch/mips/loongson32/Kconfig b/arch/mips/loongson32/Kconfig
-index 3c0c2f2..6e0f6ec 100644
---- a/arch/mips/loongson32/Kconfig
-+++ b/arch/mips/loongson32/Kconfig
-@@ -1,8 +1,28 @@
- if MACH_LOONGSON32
- 
-+config ZONE_DMA
-+	prompt "Zone DMA"
-+	bool
-+
- choice
- 	prompt "Machine Type"
- 
-+config LOONGSON1_LS1A
-+	bool "Loongson LS1A board"
-+	select CEVT_R4K if !MIPS_EXTERNAL_TIMER
-+	select CSRC_R4K if !MIPS_EXTERNAL_TIMER
-+	select SYS_HAS_CPU_LOONGSON1A
-+	select DMA_NONCOHERENT
-+	select BOOT_ELF32
-+	select IRQ_MIPS_CPU
-+	select SYS_SUPPORTS_32BIT_KERNEL
-+	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select SYS_SUPPORTS_HIGHMEM
-+	select SYS_SUPPORTS_MIPS16
-+	select SYS_HAS_EARLY_PRINTK
-+	select USE_GENERIC_EARLY_PRINTK_8250
-+	select COMMON_CLK
-+
- config LOONGSON1_LS1B
- 	bool "Loongson LS1B board"
- 	select CEVT_R4K if !MIPS_EXTERNAL_TIMER
+ /**
+  *	emergency_restart - reboot the system
 -- 
-2.9.3
+2.11.0
