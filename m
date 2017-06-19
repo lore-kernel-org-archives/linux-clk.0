@@ -1,64 +1,58 @@
-Return-Path: <varada@codeaurora.org>
-Subject: Re: [PATCH v3 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-To: Linus Walleij <linus.walleij@linaro.org>,
- Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Manoharan Vijaya Raghavan <mraghava@codeaurora.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, sjaganat@codeaurora.org,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>,
- absahu@codeaurora.org, Rob Herring <robh+dt@kernel.org>,
- "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
- Andy Gross <andy.gross@linaro.org>, Sricharan R <sricharan@codeaurora.org>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
- <1496316482-25468-2-git-send-email-varada@codeaurora.org>
- <CACRpkdaLhD+ONwDTebT7q+M-CHDVPKUE4eKfusmyWkitQC1ZPQ@mail.gmail.com>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-Message-ID: <fe5f588c-6cc1-6fcb-f7fe-c9e452f89916@codeaurora.org>
-Date: Fri, 9 Jun 2017 15:17:52 +0530
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 16:36:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: Re: [PATCH v3 1/2] clk: Hi3660: register fixed_rate_clks with
+ CLK_OF_DECLARE_DRIVER
+Message-ID: <20170619233655.GR20170@codeaurora.org>
+References: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
+ <1495428748-11153-2-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaLhD+ONwDTebT7q+M-CHDVPKUE4eKfusmyWkitQC1ZPQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1495428748-11153-2-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Linus,
+On 05/22, Leo Yan wrote:
+> The timer will register into system at very early phase at kernel boot;
+> if timer needs to use clock, the clock should be get ready in function
+> of_clk_init() so later the timer driver probe can retrieve clock
+> successfully. This is finished in below flow on arm64:
+> 
+>   start_kernel()
+>     `-> time_init()
+>           `-> of_clk_init(NULL)    => register timer's clock
+>           `-> clocksource_probe()  => register timer
+> 
+> On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
+> as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
+> sp804 timer probe returns failure due if cannot bind clock properly.
+> 
+> To fix the failure, this patch is to split crgctrl clocks into two
+> subsets. One part is for fixed_rate_clks which includes pre-defined
+> fixed rate clocks, and "osc32k" clock is in this category; So we change
+> their registration to CLK_OF_DECLARE_DRIVER method, as result the clocks
+> can be registered ahead with function of_clk_init() and timer driver can
+> bind timer clock successfully; the rest of the crgctrl clocks are still
+> registered by the probe of the platform driver.
+> 
+> This patch also adds checking for all crgctrl clocks registration and
+> print out log if any clock has failure.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
 
-On 6/9/2017 2:26 PM, Linus Walleij wrote:
-> On Thu, Jun 1, 2017 at 1:27 PM, Varadarajan Narayanan
-> <varada@codeaurora.org> wrote:
-> 
->> Add initial pinctrl driver to support pin configuration with
->> pinctrl framework for ipq8074.
->>
->> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
->> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> 
-> It's a good idea that you include the maintainer, Bjorn Andersson
-> <bjorn.andersson@linaro.org>
-> on these pin control patches. I'll wait for his review.
-
-Sorry for missing him. Have sent v6 patches with Bjorn included.
-
-Thanks
-Varada
-
-> 
-> Yours,
-> Linus Walleij
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Applied to clk-next
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum, a Linux Foundation Collaborative Project
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
