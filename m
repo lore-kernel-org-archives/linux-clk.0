@@ -1,59 +1,38 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] clk: samsung: audss: Fix silent hang on Exynos4412 due to disabled EPLL
-Date: Wed, 21 Jun 2017 21:08:06 +0200
-Message-Id: <20170621190807.14850-2-krzk@kernel.org>
-In-Reply-To: <20170621190807.14850-1-krzk@kernel.org>
-References: <20170621190807.14850-1-krzk@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 17:43:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, linus.walleij@linaro.org,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
+	sjaganat@codeaurora.org, sricharan@codeaurora.org
+Subject: Re: [PATCH v6 4/6] clk: qcom: Add ipq8074 Global Clock Controller
+ support
+Message-ID: <20170620004327.GB20170@codeaurora.org>
+References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+ <1497001319-30353-5-git-send-email-varada@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1497001319-30353-5-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Similarly to commit f1e9203e2366 ("clk: samsung: Fix Exynos 5420 pinctrl
-setup and clock disable failure due to domain being gated") for
-Exynos5420, the Exynos4412 also requires that EPLL is not disabled.
-Otherwise any access to MAUDIO block will silently halt.
+On 06/09, Varadarajan Narayanan wrote:
+> From: Abhishek Sahu <absahu@codeaurora.org>
+> 
+> This patch adds support for the global clock controller found on
+> the ipq8074 based devices. This includes UART, I2C, SPI etc.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> ---
 
-This was not visible before because EPLL on Exynos4 could not be
-disabled before commit 6edfa11cb396 ("clk: samsung:
-Add enable/disable operation for PLL36XX clocks").  After this commit,
-on Odroid U3 board one can see silent hang, usually with last (but
-unrelated) messages:
+Applied to clk-next
 
-	[    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
-	[    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
-	[    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
-
-Mark Exynos4 variant as also needed EPLL to be enabled all the time.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos-audss.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 85edeb738853..1fab56f396d4 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -73,6 +73,7 @@ struct exynos_audss_clk_drvdata {
- 
- static const struct exynos_audss_clk_drvdata exynos4210_drvdata = {
- 	.num_clks	= EXYNOS_AUDSS_MAX_CLKS - 1,
-+	.enable_epll	= 1,
- };
- 
- static const struct exynos_audss_clk_drvdata exynos5410_drvdata = {
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
