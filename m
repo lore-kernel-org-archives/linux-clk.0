@@ -1,51 +1,43 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 29 Jun 2017 18:43:05 -0700
+Date: Mon, 19 Jun 2017 19:01:33 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
-Subject: Re: [PATCH V1 3/9] clk: sprd: add gate clock support
-Message-ID: <20170630014305.GK22780@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-4-chunyan.zhang@spreadtrum.com>
- <20170620013130.GI4493@codeaurora.org>
- <CAAfSe-sbJxEA0OdC9u3A4p5Q7hrfqkiHscvsuT_irOHp98G+aQ@mail.gmail.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
+Subject: Re: [PATCH 8/9] clk: imx: make mux parent strings const
+Message-ID: <20170620020133.GR4493@codeaurora.org>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-9-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAfSe-sbJxEA0OdC9u3A4p5Q7hrfqkiHscvsuT_irOHp98G+aQ@mail.gmail.com>
+In-Reply-To: <1494856763-6543-9-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22, Chunyan Zhang wrote:
-> On 20 June 2017 at 09:31, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 06/18, Chunyan Zhang wrote:
-> >> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-> >> index 8f802b2..333e2b2 100644
-> >> --- a/drivers/clk/sprd/Makefile
-> >> +++ b/drivers/clk/sprd/Makefile
-> >> @@ -1,3 +1,3 @@
-> >>  ifneq ($(CONFIG_OF),)
-> >> -obj-y        += ccu_common.o
-> >> +obj-y        += ccu_common.o ccu_gate.o
-> >
-> > Can this be built as a module?
+On 05/15, Dong Aisheng wrote:
+> As the commit 2893c379461a ("clk: make strings in parent name arrays
+> const"), let's make the parent strings const, otherwise we may meet
+> the following warning when compiling:
 > 
-> Since most of all Spreadtrum device drivers would depend on if clocks
-> have been initialized, so we'd prefer to build this into the kernel
-> image.
+> drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+> drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+> 	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+> 
+>   clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+> 	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+>                                    ^
+> In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+> drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+>  of type 'const char * const*'
+> ...
+> 
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
 
-This isn't really a good reason, but OK. Hopefully nobody wants
-to make a module for every driver on the system and jam the ones
-needed to access the rootfs into a ramdisk. Don't worry, you
-don't need to support modules here.
+Looks good.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
