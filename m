@@ -1,36 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:07:37 -0700
+Date: Mon, 19 Jun 2017 17:25:36 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, robh+dt@kernel.org,
-	matthias.bgg@gmail.com, mark.rutland@arm.com,
-	mturquette@baylibre.com, jamesjj.liao@mediatek.com,
-	p.zabel@pengutronix.de, shunli.wang@mediatek.com,
-	erin.lo@mediatek.com, jdelvare@suse.de, devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Subject: Re: [PATCH 1/6] clk: mediatek: add missing cpu mux causing Mediatek
- cpufreq can't work
-Message-ID: <20170620010737.GB4493@codeaurora.org>
-References: <1493997974-17699-1-git-send-email-sean.wang@mediatek.com>
- <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 1/3 v6] reset: add DT bindings header for Gemini reset
+ controller
+Message-ID: <20170620002536.GW20170@codeaurora.org>
+References: <20170618215550.29216-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493997974-17699-2-git-send-email-sean.wang@mediatek.com>
+In-Reply-To: <20170618215550.29216-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/05, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On 06/18, Linus Walleij wrote:
+> This adds the DT binding macros used by the reset controller.
 > 
-> This patch adds CPU multiplexer clocks which are essential for Mediatek
-> cpufreq driver. It would use the CPU clock multiplexer to switch to the
-> intermediate clock source temporarily and then wait for the primary clock
-> changing getting stable.
-> 
-> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 
 Applied to clk-next
