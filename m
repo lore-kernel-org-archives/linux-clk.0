@@ -1,62 +1,46 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  devicetree@vger.kernel.org,  Omri Itach <omrii@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Rob Herring <robh+dt@kernel.org>,  Neta Zur Hershkovits <neta@marvell.com>,  Shadi Ammouri <shadi@marvell.com>,  Marcin Wojtas <mw@semihalf.com>, Stephen Boyd <sboyd@codeaurora.org>,   Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v2 6/7] arm64: dts: marvell: remove clock-output-names on ap806
-References: <cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-	<cover.21754b3184e2122d1c83a664477ed26ec562b3e9.1496239589.git-series.gregory.clement@free-electrons.com>
-	<4626d359351df74e4e327a2235ecf6ed2a7b11e8.1496239589.git-series.gregory.clement@free-electrons.com>
-Date: Thu, 08 Jun 2017 19:08:30 +0200
-In-Reply-To: <4626d359351df74e4e327a2235ecf6ed2a7b11e8.1496239589.git-series.gregory.clement@free-electrons.com>
-	(Gregory CLEMENT's message of "Wed, 31 May 2017 16:07:27 +0200")
-Message-ID: <87poeepfu9.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 11/17] MIPS: platform: add machtype IDs for more Ingenic SoCs
+Date: Tue, 20 Jun 2017 17:18:49 +0200
+Message-Id: <20170620151855.19399-11-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Add a machtype ID for the JZ4780 SoC, which was missing, and one for the
+newly supported JZ4770 SoC.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/include/asm/bootinfo.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+ v2: No change
+
+diff --git a/arch/mips/include/asm/bootinfo.h b/arch/mips/include/asm/bootinfo.h
+index e26a093bb17a..a301a8f4bc66 100644
+--- a/arch/mips/include/asm/bootinfo.h
++++ b/arch/mips/include/asm/bootinfo.h
+@@ -79,6 +79,8 @@ enum loongson_machine_type {
+  */
+ #define  MACH_INGENIC_JZ4730	0	/* JZ4730 SOC		*/
+ #define  MACH_INGENIC_JZ4740	1	/* JZ4740 SOC		*/
++#define  MACH_INGENIC_JZ4770	2	/* JZ4770 SOC		*/
++#define  MACH_INGENIC_JZ4780	3	/* JZ4780 SOC		*/
  
- On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-
-> The clock-output-names of the ap806-system-controller node are not used
-> anymore, so remove them.
->
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-Applied on mvebu/dt64
-
-Gregory
-
-> ---
->  arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> index fe41bf9c301e..0c25ec62a2a3 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> @@ -244,10 +244,6 @@
->  				compatible = "marvell,ap806-system-controller",
->  					     "syscon";
->  				#clock-cells = <1>;
-> -				clock-output-names = "ap-cpu-cluster-0",
-> -						     "ap-cpu-cluster-1",
-> -						     "ap-fixed", "ap-mss",
-> -						     "ap-emmc";
->  				reg = <0x6f4000 0x1000>;
->  			};
->  		};
-> -- 
-> git-series 0.9.1
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+ extern char *system_type;
+ const char *get_system_type(void);
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.11.0
