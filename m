@@ -1,67 +1,47 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,  Rob Herring <robh@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] Update binding documentation for cp110 and ap806
-References: <20170620083754.28053-1-gregory.clement@free-electrons.com>
-	<87k2463c66.fsf@free-electrons.com>
-	<20170622211456.rip2gveiprlfw3kj@rob-hp-laptop>
-Date: Fri, 23 Jun 2017 10:49:01 +0200
-In-Reply-To: <20170622211456.rip2gveiprlfw3kj@rob-hp-laptop> (Rob Herring's
-	message of "Thu, 22 Jun 2017 16:14:56 -0500")
-Message-ID: <87shirytqa.fsf@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 18:45:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
+Subject: Re: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
+ support
+Message-ID: <20170620014512.GL4493@codeaurora.org>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+On 05/15, Dong Aisheng wrote:
+> ---
+>  drivers/clk/clk-divider.c    | 2 ++
+>  include/linux/clk-provider.h | 4 ++++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 96386ff..f78ba7a 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -125,6 +125,8 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+>  
+>  	div = _get_div(table, val, flags, divider->width);
+>  	if (!div) {
+> +		if (flags & CLK_DIVIDER_ZERO_GATE)
+> +			return 0;
+>  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
 
+Why not use the CLK_DIVIDER_ALLOW_ZERO flag? A clk being off
+doesn't mean the rate is 0. The divider is just disabled, so we
+would consider the rate as whatever the parent is, which is what
+this code does before this patch. Similarly, we don't do anything
+about gate clocks and return a rate of 0 when they're disabled.
 
-as you were not in CC of the thread here is the reference:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/514497.html
-
- On jeu., juin 22 2017, Rob Herring <robh@kernel.org> wrote:
-
-> On Tue, Jun 20, 2017 at 05:34:57PM +0200, Gregory CLEMENT wrote:
->> Hi Rob, 
->>  
->>  On mar., juin 20 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
->> 
->> > Hi Rob,
->> >
->> > As you know there were dependencies issue about the binding between my
->> > different series and you proposed yourself to apply them though the
->> > device tree subsystem: [1]
->
-> I did, but ...
->
->> >
->> > All the driver parts have been merged so it's time merging the
->> > documentation.
->> 
->> I forgot to mentioned that this series is based on the clk-ap806-dt
->> stable branch:
->> 
->> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-ap806-dt
->
-> ... that was to avoid cross tree dependencies. Now you're creating one. 
-> Either Mike should take everything or drop this branch and I'll take it 
-> too.
-
-Could you take them all? I can do a PR for this and I take this
-opportunity to add the missing ack in pacth 6
-
-
-Thanks,
-
-Gregory
->
-> And you missed my ack on patch 6.
->
-> Rob
+>  			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+>  			clk_hw_get_name(hw));
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
