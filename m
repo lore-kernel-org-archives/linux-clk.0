@@ -1,117 +1,266 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170612210248.GP20170@codeaurora.org>
-References: <20170524082044.8473-1-linus.walleij@linaro.org>
- <20170601070208.GO20170@codeaurora.org> <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
- <20170605195812.GH20170@codeaurora.org> <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
- <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com> <20170612210248.GP20170@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 15 Jun 2017 09:16:14 +0200
-Message-ID: <CACRpkdaZJbzC0-xg_go=-o+0cQ-JOY3mUe27HUnwQ+DnZYbyMA@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
-To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v8 2/9] MIPS: Loongson: Expand Loongson-1's register definition
+Date: Tue, 20 Jun 2017 16:57:00 +0800
+Message-Id: <1497949027-10988-3-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+References: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 12, 2017 at 11:02 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+To improve the code readability, expand the register definition.
+Because most registers are generic in Loongson-1 series CPU.
 
-> So can the certain clks that are required to get the timer
-> going be put into CLK_OF_DECLARE_DRIVER() and then have a regular
-> platform driver for the rest of the clks that aren't required for
-> early boot? We've been doing this sort of hybrid design lately,
-> so hopefully that works here too.
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+---
+ arch/mips/include/asm/mach-loongson32/loongson1.h | 170 ++++++++++++++++++----
+ arch/mips/loongson32/common/platform.c            |  16 +-
+ 2 files changed, 149 insertions(+), 37 deletions(-)
 
-So I tried this hybrid approach.
-
-It works and it doesn't work, it is very annoying actually... we get
-a conflict of interest between the clock driver, the reset driver and
-the device tree bindings and how Linux uses device tree.
-
-The reason is that no less than three devices probe from the same
-device tree node, essentially this is the problem:
-
-syscon: syscon@40000000 {
-      compatible = "cortina,gemini-syscon", "syscon";
-      reg = <0x40000000 0x1000>;
-      #clock-cells = <1>;
-      #reset-cells = <1>;
-};
-
-This has already a driver in drivers/reset/reset-gemini.c
-binding and probing from "cortina,gemini-syscon".
-
-That works fine, because CLK_OF_DECLARE_DRIVER() does not
-bind to the device using the device core, and syscon will always probe
-itself when the first user tries to access it.
-
-If we make the clocks bind to the platform device, the reset
-controller will not probe, regressing the boot in another way, because
-some drivers need their reset lines.
-
-The natural suggestion is then to make a subnode (and thus
-subdevices) in the syscon, like in my original suggestion:
-http://marc.info/?l=linux-arm-kernel&m=149306019417796&w=2
-
-> +syscon: syscon@40000000 {
-> +     compatible = "cortina,gemini-syscon", "syscon", "simple-mfd";
-> +     reg = <0x40000000 0x1000>;
-> +
-> +     clock-controller {
-> +         compatible = "cortina,gemini-clock-controller";
-> +         #clock-cells = <1>;
-> +     };
-> + };
-
-But to that design Rob said:
-http://marc.info/?l=linux-arm-kernel&m=149340388608747&w=2
-
->> +syscon: syscon@40000000 {
->> +     compatible = "cortina,gemini-syscon", "syscon", "simple-mfd";
->> +     reg = <0x40000000 0x1000>;
->> +
->> +     clock-controller {
->> +         compatible = "cortina,gemini-clock-controller";
->> +         #clock-cells = <1>;
->
-> There's not really much reason to have a child node here. The parent can
-> be the clock provider.
-
-And this approach worked as long as we were using
-CLK_OF_DECLARE_DRIVER() to probe the clocks.
-
-So that is why it looks as it looks.
-
-I'm stuck between a rock and a hard place here.
-
-Ways forward:
-
-- We can go back to the older device tree bindings. These are
-  ACKed and merged but we have patched worse things
-  after the fact. We add back the subnode (also for the
-  reset controller then, so it looks coherent). But I don't know how
-  the DT maintainers would feel about that. It's not DT's fault that
-  Linux can't bind more than one driver to a single DT node.
-
-- We can stay with CLK_OF_DECLARE_DRIVER() and things
-  JustWork(TM). I.e. just apply the v5 patch and be happy,
-  concluding that Linux as a whole can't do anything better
-  right now.
-
-- I can vaguely think about ways of working around the Linux
-  device driver model to spawn the child nodes from the system
-  controller inside the kernel without subnodes. That would
-  essentially duplicate the work that "simple-mfd" is doing on
-  the system controller if we kept the device nodes, and
-  introduce a new MFD driver to do just this.
-
-Ideas? Stehen, Rob, Philipp? We need to work together to find the
-best way out of this...
-
-Yours,
-Linus Walleij
+diff --git a/arch/mips/include/asm/mach-loongson32/loongson1.h b/arch/mips/include/asm/mach-loongson32/loongson1.h
+index 84c28a8..8cfd4ba 100644
+--- a/arch/mips/include/asm/mach-loongson32/loongson1.h
++++ b/arch/mips/include/asm/mach-loongson32/loongson1.h
+@@ -19,35 +19,147 @@
+ #endif
+ 
+ /* Loongson 1 Register Bases */
+-#define LS1X_MUX_BASE			0x1fd00420
+-#define LS1X_INTC_BASE			0x1fd01040
+-#define LS1X_GPIO0_BASE			0x1fd010c0
+-#define LS1X_GPIO1_BASE			0x1fd010c4
+-#define LS1X_DMAC_BASE			0x1fd01160
+-#define LS1X_CBUS_BASE			0x1fd011c0
+-#define LS1X_EHCI_BASE			0x1fe00000
+-#define LS1X_OHCI_BASE			0x1fe08000
+-#define LS1X_GMAC0_BASE			0x1fe10000
+-#define LS1X_GMAC1_BASE			0x1fe20000
+-
+-#define LS1X_UART0_BASE			0x1fe40000
+-#define LS1X_UART1_BASE			0x1fe44000
+-#define LS1X_UART2_BASE			0x1fe48000
+-#define LS1X_UART3_BASE			0x1fe4c000
+-#define LS1X_CAN0_BASE			0x1fe50000
+-#define LS1X_CAN1_BASE			0x1fe54000
+-#define LS1X_I2C0_BASE			0x1fe58000
+-#define LS1X_I2C1_BASE			0x1fe68000
+-#define LS1X_I2C2_BASE			0x1fe70000
+-#define LS1X_PWM0_BASE			0x1fe5c000
+-#define LS1X_PWM1_BASE			0x1fe5c010
+-#define LS1X_PWM2_BASE			0x1fe5c020
+-#define LS1X_PWM3_BASE			0x1fe5c030
+-#define LS1X_WDT_BASE			0x1fe5c060
+-#define LS1X_RTC_BASE			0x1fe64000
+-#define LS1X_AC97_BASE			0x1fe74000
+-#define LS1X_NAND_BASE			0x1fe78000
+-#define LS1X_CLK_BASE			0x1fe78030
++#define LS1X_DC_REG_BASE		0x1c200000
++#define LS1X_MUX_REG_BASE		0x1f000000
++
++#define LS1X_CFG_REG_BASE		(LS1X_MUX_REG_BASE + 0x00d00000)
++
++#define LS1X_INTC_BASE			(LS1X_CFG_REG_BASE + 0x1040)
++
++/* GPIO regs */
++#define LS1X_GPIO_REG_BASE		(LS1X_CFG_REG_BASE + 0x1000)
++#define LS1X_GPIO_CFG0_REG		(LS1X_GPIO_REG_BASE + 0xc0)
++#define LS1X_GPIO_CFG1_REG		(LS1X_GPIO_REG_BASE + 0xc4)
++#define LS1X_GPIO_CFG2_REG		(LS1X_GPIO_REG_BASE + 0xc8)
++#define LS1X_GPIO_OE0_REG		(LS1X_GPIO_REG_BASE + 0xd0)
++#define LS1X_GPIO_OE1_REG		(LS1X_GPIO_REG_BASE + 0xd4)
++#define LS1X_GPIO_OE2_REG		(LS1X_GPIO_REG_BASE + 0xd8)
++#define LS1X_GPIO_IN0_REG		(LS1X_GPIO_REG_BASE + 0xe0)
++#define LS1X_GPIO_IN1_REG		(LS1X_GPIO_REG_BASE + 0xe4)
++#define LS1X_GPIO_IN2_REG		(LS1X_GPIO_REG_BASE + 0xe8)
++#define LS1X_GPIO_OUT0_REG		(LS1X_GPIO_REG_BASE + 0xf0)
++#define LS1X_GPIO_OUT1_REG		(LS1X_GPIO_REG_BASE + 0xf4)
++#define LS1X_GPIO_OUT2_REG		(LS1X_GPIO_REG_BASE + 0xf8)
++
++#define LS1X_DMA_ORDER_REG		(LS1X_CFG_REG_BASE + 0x1160)
++
++#define LS1X_MUX_BASE			(LS1X_CFG_REG_BASE + 0x0420)
++
++/* USB regs */
++#define LS1X_EHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e00000)
++#define LS1X_OHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e08000)
++
++/* GMAC regs */
++#define LS1X_GMAC0_BASE			(LS1X_MUX_REG_BASE + 0x00e10000)
++#define LS1X_GMAC0_DMA_REG		(LS1X_GMAC0_BASE + 0x1000)
++#define LS1X_GMAC1_BASE			(LS1X_MUX_REG_BASE + 0x00e20000)
++#define LS1X_GMAC1_DMA_REG		(LS1X_GMAC1_BASE + 0x1000)
++
++/* SATA regs */
++#define LS1X_AHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e30000)
++
++/* APB regs */
++#define LS1X_APB_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e40000)
++
++/* UART regs */
++#define LS1X_UART0_BASE			(LS1X_APB_REG_BASE + 0x0000)
++#define LS1X_UART1_BASE			(LS1X_APB_REG_BASE + 0x4000)
++#define LS1X_UART2_BASE			(LS1X_APB_REG_BASE + 0x8000)
++#define LS1X_UART3_BASE			(LS1X_APB_REG_BASE + 0xc000)
++
++/* CAN regs */
++#define LS1X_CAN0_BASE			(LS1X_APB_REG_BASE + 0x10000)
++#define LS1X_CAN1_BASE			(LS1X_APB_REG_BASE + 0x14000)
++
++#define LS1X_I2C0_BASE			(LS1X_APB_REG_BASE + 0x18000)
++#define LS1X_I2C0_PRER_LO_REG		(LS1X_I2C0_BASE + 0x0)
++#define LS1X_I2C0_PRER_HI_REG		(LS1X_I2C0_BASE + 0x1)
++#define LS1X_I2C0_CTR_REG		(LS1X_I2C0_BASE + 0x2)
++#define LS1X_I2C0_TXR_REG		(LS1X_I2C0_BASE + 0x3)
++#define LS1X_I2C0_RXR_REG		(LS1X_I2C0_BASE + 0x3)
++#define LS1X_I2C0_CR_REG		(LS1X_I2C0_BASE + 0x4)
++#define LS1X_I2C0_SR_REG		(LS1X_I2C0_BASE + 0x4)
++
++#define LS1X_I2C1_BASE			(LS1X_APB_REG_BASE + 0x28000)
++#define LS1X_I2C1_PRER_LO_REG		(LS1X_I2C1_BASE + 0x0)
++#define LS1X_I2C1_PRER_HI_REG		(LS1X_I2C1_BASE + 0x1)
++#define LS1X_I2C1_CTR_REG		(LS1X_I2C1_BASE + 0x2)
++#define LS1X_I2C1_TXR_REG		(LS1X_I2C1_BASE + 0x3)
++#define LS1X_I2C1_RXR_REG		(LS1X_I2C1_BASE + 0x3)
++#define LS1X_I2C1_CR_REG		(LS1X_I2C1_BASE + 0x4)
++#define LS1X_I2C1_SR_REG		(LS1X_I2C1_BASE + 0x4)
++
++#define LS1X_I2C2_BASE			(LS1X_APB_REG_BASE + 0x30000)
++#define LS1X_I2C2_PRER_LO_REG		(LS1X_I2C2_BASE + 0x0)
++#define LS1X_I2C2_PRER_HI_REG		(LS1X_I2C2_BASE + 0x1)
++#define LS1X_I2C2_CTR_REG		(LS1X_I2C2_BASE + 0x2)
++#define LS1X_I2C2_TXR_REG		(LS1X_I2C2_BASE + 0x3)
++#define LS1X_I2C2_RXR_REG		(LS1X_I2C2_BASE + 0x3)
++#define LS1X_I2C2_CR_REG		(LS1X_I2C2_BASE + 0x4)
++#define LS1X_I2C2_SR_REG		(LS1X_I2C2_BASE + 0x4)
++
++#define LS1X_PWM_REG_BASE		(LS1X_APB_REG_BASE + 0x1c000)
++#define LS1X_PWM0_BASE			(LS1X_PWM_REG_BASE + 0x00)
++#define LS1X_PWM1_BASE			(LS1X_PWM_REG_BASE + 0x10)
++#define LS1X_PWM2_BASE			(LS1X_PWM_REG_BASE + 0x20)
++#define LS1X_PWM3_BASE			(LS1X_PWM_REG_BASE + 0x30)
++
++/* RTC regs */
++#define LS1X_RTC_BASE			(LS1X_APB_REG_BASE + 0x24000)
++
++/* AC97 regs */
++#define LS1X_AC97_BASE			(LS1X_APB_REG_BASE + 0x34000)
++
++/* Watchdog regs */
++#ifdef CONFIG_CPU_LOONGSON1A
++#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e7c060)
++#else
++#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e5c060)
++#endif
++
++/* CLK regs */
++#define LS1X_CLK_BASE			(LS1X_MUX_REG_BASE + 0x00e78030)
++
++/* NAND regs */
++#define LS1X_NAND_REG_BASE		(LS1X_APB_REG_BASE + 0x38000)
++#define LS1X_NAND_CMD_REG		(LS1X_NAND_REG_BASE + 0x0000)
++#define LS1X_NAND_ADDR_C_REG		(LS1X_NAND_REG_BASE + 0x0004)
++#define LS1X_NAND_ADDR_R_REG		(LS1X_NAND_REG_BASE + 0x0008)
++#define LS1X_NAND_TIMING_REG		(LS1X_NAND_REG_BASE + 0x000c)
++#define LS1X_NAND_IDL_REG		(LS1X_NAND_REG_BASE + 0x0010)
++#define LS1X_NAND_STA_IDH_REG		(LS1X_NAND_REG_BASE + 0x0014)
++#define LS1X_NAND_PARAM_REG		(LS1X_NAND_REG_BASE + 0x0018)
++#define LS1X_NAND_OP_NUM_REG		(LS1X_NAND_REG_BASE + 0x001c)
++#define LS1X_NAND_CSRDY_MAP_REG		(LS1X_NAND_REG_BASE + 0x0020)
++#define LS1X_NAND_DMA_ACC_REG		(LS1X_NAND_REG_BASE + 0x0040)
++
++/* ACPI regs for ls1a */
++#define LS1X_ACPI_REG_BASE		(LS1X_APB_REG_BASE + 0x3c000)
++#define LS1X_PM1_STS_REG		(LS1X_ACPI_REG_BASE + 0x0000)
++#define LS1X_PM1_EN_REG			(LS1X_ACPI_REG_BASE + 0x0004)
++#define LS1X_PM1_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0008)
++#define LS1X_PM1_TMR_REG		(LS1X_ACPI_REG_BASE + 0x000c)
++#define LS1X_P_CNT_REG			(LS1X_ACPI_REG_BASE + 0x0010)
++#define LS1X_P_LVL2_REG			(LS1X_ACPI_REG_BASE + 0x0014)
++#define LS1X_P_LVL3_REG			(LS1X_ACPI_REG_BASE + 0x0018)
++#define LS1X_GPE0_STS_REG		(LS1X_ACPI_REG_BASE + 0x0020)
++#define LS1X_GPE0_EN_REG		(LS1X_ACPI_REG_BASE + 0x0024)
++#define LS1X_PM_CONF1_REG		(LS1X_ACPI_REG_BASE + 0x0030)
++#define LS1X_PM_CONF2_REG		(LS1X_ACPI_REG_BASE + 0x0034)
++#define LS1X_PM_CONF3_REG		(LS1X_ACPI_REG_BASE + 0x0038)
++#define LS1X_RST_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0044)
++#define LS1X_CPU_INIT_REG		(LS1X_ACPI_REG_BASE + 0x0050)
++
++#define LS1X_SPI0_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e80000)
++#define LS1X_SPI1_REG_BASE		(LS1X_MUX_REG_BASE + 0x00ec0000)
++
++/* LPC regs */
++#define LS1X_LPC_IO_BASE		(LS1X_MUX_REG_BASE + 0x00f00000)
++#define LS1X_LPC_REG_BASE		(LS1X_MUX_REG_BASE + 0x00f10200)
++#define LS1X_LPC_CFG0_REG		(LS1X_LPC_REG_BASE + 0x0)
++#define LS1X_LPC_CFG1_REG		(LS1X_LPC_REG_BASE + 0x4)
++#define LS1X_LPC_CFG2_REG		(LS1X_LPC_REG_BASE + 0x8)
++#define LS1X_LPC_CFG3_REG		(LS1X_LPC_REG_BASE + 0xc)
+ 
+ #include <regs-clk.h>
+ #include <regs-mux.h>
+diff --git a/arch/mips/loongson32/common/platform.c b/arch/mips/loongson32/common/platform.c
+index 100f23d..f71392f 100644
+--- a/arch/mips/loongson32/common/platform.c
++++ b/arch/mips/loongson32/common/platform.c
+@@ -84,8 +84,8 @@ struct platform_device ls1x_cpufreq_pdev = {
+ /* DMA */
+ static struct resource ls1x_dma_resources[] = {
+ 	[0] = {
+-		.start = LS1X_DMAC_BASE,
+-		.end = LS1X_DMAC_BASE + SZ_4 - 1,
++		.start = LS1X_DMA_ORDER_REG,
++		.end = LS1X_DMA_ORDER_REG + SZ_4 - 1,
+ 		.flags = IORESOURCE_MEM,
+ 	},
+ 	[1] = {
+@@ -259,8 +259,8 @@ struct platform_device ls1x_eth1_pdev = {
+ /* GPIO */
+ static struct resource ls1x_gpio0_resources[] = {
+ 	[0] = {
+-		.start	= LS1X_GPIO0_BASE,
+-		.end	= LS1X_GPIO0_BASE + SZ_4 - 1,
++		.start	= LS1X_GPIO_CFG0_REG,
++		.end	= LS1X_GPIO_CFG0_REG + SZ_4 - 1,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ };
+@@ -274,8 +274,8 @@ struct platform_device ls1x_gpio0_pdev = {
+ 
+ static struct resource ls1x_gpio1_resources[] = {
+ 	[0] = {
+-		.start	= LS1X_GPIO1_BASE,
+-		.end	= LS1X_GPIO1_BASE + SZ_4 - 1,
++		.start	= LS1X_GPIO_CFG1_REG,
++		.end	= LS1X_GPIO_CFG1_REG + SZ_4 - 1,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ };
+@@ -290,8 +290,8 @@ struct platform_device ls1x_gpio1_pdev = {
+ /* NAND Flash */
+ static struct resource ls1x_nand_resources[] = {
+ 	[0] = {
+-		.start	= LS1X_NAND_BASE,
+-		.end	= LS1X_NAND_BASE + SZ_32 - 1,
++		.start	= LS1X_NAND_REG_BASE,
++		.end	= LS1X_NAND_REG_BASE + SZ_32 - 1,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ 	[1] = {
+-- 
+2.9.4
