@@ -1,85 +1,46 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org
-Cc: Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/3 v6] reset: add DT bindings header for Gemini reset controller
-Date: Sun, 18 Jun 2017 23:55:48 +0200
-Message-Id: <20170618215550.29216-1-linus.walleij@linaro.org>
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 16/17] devicetree/bindings: Add GCW vendor prefix
+Date: Tue, 20 Jun 2017 17:18:54 +0200
+Message-Id: <20170620151855.19399-16-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the DT binding macros used by the reset controller.
+Game Consoles Worldwide, mostly known under the acronym GCW, is the
+creator of the GCW Zero open-source video game system.
 
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Please merge this into the clk tree with the rest of the
-patches when ready. The same patch might come in from the
-reset tree but that is harmless and a necessary evil in
-this case.
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-ChangeLog v4->v6:
-- No changes just including with the clock driver series.
-ChangeLog v1->v4:
-- New file to merge the macros in isolation from the
-  DT bindings and implementation.
+ v2: It's 'Game Consoles Worldwide', not 'Games Consoles Worldwide'
 
-The bindings themselves will be merged as part of the DTS updates
-through the ARM SoC tree.
----
- include/dt-bindings/reset/cortina,gemini-reset.h | 36 ++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 include/dt-bindings/reset/cortina,gemini-reset.h
-
-diff --git a/include/dt-bindings/reset/cortina,gemini-reset.h b/include/dt-bindings/reset/cortina,gemini-reset.h
-new file mode 100644
-index 000000000000..0b886aee65e3
---- /dev/null
-+++ b/include/dt-bindings/reset/cortina,gemini-reset.h
-@@ -0,0 +1,36 @@
-+#ifndef _DT_BINDINGS_RESET_CORTINA_GEMINI_H
-+#define _DT_BINDINGS_RESET_CORTINA_GEMINI_H
-+
-+#define GEMINI_RESET_DRAM	0
-+#define GEMINI_RESET_FLASH	1
-+#define GEMINI_RESET_IDE	2
-+#define GEMINI_RESET_RAID	3
-+#define GEMINI_RESET_SECURITY	4
-+#define GEMINI_RESET_GMAC0	5
-+#define GEMINI_RESET_GMAC1	6
-+#define GEMINI_RESET_PCI	7
-+#define GEMINI_RESET_USB0	8
-+#define GEMINI_RESET_USB1	9
-+#define GEMINI_RESET_DMAC	10
-+#define GEMINI_RESET_APB	11
-+#define GEMINI_RESET_LPC	12
-+#define GEMINI_RESET_LCD	13
-+#define GEMINI_RESET_INTCON0	14
-+#define GEMINI_RESET_INTCON1	15
-+#define GEMINI_RESET_RTC	16
-+#define GEMINI_RESET_TIMER	17
-+#define GEMINI_RESET_UART	18
-+#define GEMINI_RESET_SSP	19
-+#define GEMINI_RESET_GPIO0	20
-+#define GEMINI_RESET_GPIO1	21
-+#define GEMINI_RESET_GPIO2	22
-+#define GEMINI_RESET_WDOG	23
-+#define GEMINI_RESET_EXTERN	24
-+#define GEMINI_RESET_CIR	25
-+#define GEMINI_RESET_SATA0	26
-+#define GEMINI_RESET_SATA1	27
-+#define GEMINI_RESET_TVC	28
-+#define GEMINI_RESET_CPU1	30
-+#define GEMINI_RESET_GLOBAL	31
-+
-+#endif
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index c03d20140366..5921aa1248fb 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -114,6 +114,7 @@ focaltech	FocalTech Systems Co.,Ltd
+ friendlyarm	Guangzhou FriendlyARM Computer Tech Co., Ltd
+ fsl	Freescale Semiconductor
+ fujitsu	Fujitsu Ltd.
++gcw Game Consoles Worldwide
+ ge	General Electric Company
+ geekbuying	GeekBuying
+ gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
 -- 
-2.9.4
+2.11.0
