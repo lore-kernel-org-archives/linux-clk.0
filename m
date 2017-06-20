@@ -1,132 +1,77 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 29 Jun 2017 13:49:05 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: plaes@plaes.org, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v4 5/6] ARM: sun7i: Convert to CCU
-Message-ID: <20170629114905.hr6icycjcn2fekfd@flea>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
- <ac9cc7f0a67d3e9e5edd0d5eb21cc60820c2b457.1498422562.git-series.plaes@plaes.org>
- <a08cbe0d-dad4-7d0c-9845-452e0d6e3f03@arm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ggpms2er24kjfgoa"
-In-Reply-To: <a08cbe0d-dad4-7d0c-9845-452e0d6e3f03@arm.com>
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 07/17] serial: 8250_ingenic: Add support for the JZ4770 SoC
+Date: Tue, 20 Jun 2017 17:18:45 +0200
+Message-Id: <20170620151855.19399-7-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+The JZ4770 SoC's UART is no different from the other JZ SoCs, so this
+commit simply adds the ingenic,jz4770-uart compatible string.
 
---ggpms2er24kjfgoa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/serial/ingenic,uart.txt | 8 ++++++--
+ drivers/tty/serial/8250/8250_ingenic.c                    | 5 +++++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-On Thu, Jun 29, 2017 at 11:57:05AM +0100, Andre Przywara wrote:
-> Hi,
->=20
-> On 25/06/17 21:45, Priit Laes wrote:
-> > Convert sun7i-a20.dtsi to new CCU driver.
->=20
-> I know that some people hat^Wget annoyed by me asking this, but anyway:
->=20
-> Why do we actually need this?
->=20
-> This ultimately makes the DT incompatible with older kernels (as
-> actually shipped by distros today).
->
-> So if we for instance use UEFI boot or otherwise just use "one golden
-> DT" to drive all kernels (like using the DT from U-Boot), we now don't
-> have one good DT that fits all.
+ v2: List one compatible entry per line
 
-What is broken exactly?
-
-> This is really a showstopper for boards which ship a DT in firmware
-> (in SPI flash, for instance, or on some eMMC).
->
-> So:
-> - Do we actually need to change the .dtsi? The old .dtsi should still wor=
-k.
-
-It does.
-
-> - Is there anything that the new and fancy clocks gives us over the
-> existing clocks? If yes, that should be a  stated in the commit message
-> or cover letter.
-
-Yes, support for all the clocks used in the SoC, and not a single
-fraction of them (which will reduce the number of additions of new
-bindings and drivers, which will in turn make the DT have less
-changes, which will make it far more easier for distros and / or
-firmwares to ship an immutable DT).
-
-> - Why do we change the clocks for those older SoCs in the first place?
-> Can't we just keep on using what worked for years?
-
-Please tell me where the displays clocks, CSI or HDMI clocks are in
-the old code.
-
-> I think we really can't remove the old code anyway.
-
-We don't.
-
-> The new clock driver moves information from the DT into the kernel. That
-> means it is no longer available for a DT consumer and the SoC details
-> (which clocks is located where, for instance), have to be replicated to
-> other DT users (U-Boot, *BSD, you-name-it). We already came across this
-> issue when looking at converting U-Boot over to use DT clocks.
-> Also it ultimately requires kernel changes for each new SoC, even if it
-> only differs in some detail which could be perfectly modelled in DT
-> (think of H3 vs. H5).
-
-Doing otherwise would also assume that you have a perfect
-understanding of all the clocks interactions, relationship and
-computations from day one, which is something the old code proved that
-it was unreasonable.
-
-The new binding also makes it easier to add SCPI that you're
-interested in iirc, where you basically just have to change the CCU
-compatible, and be done with it as long as you use the same IDs.
-
-It also lowers the barrier of entry for people that would want to
-write new drivers, since the first thing you'd need to do otherwise
-would be to create a clock driver for that, which is yet another thing
-to learn.
-
-The reduced duplication is also neat and reduces the number of similar
-bugs in each and every clock, even though it's not related to clocks.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---ggpms2er24kjfgoa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZVOkxAAoJEBx+YmzsjxAgG3gP/ii4+t+51WQCK/0FLH3Sk5I8
-GHgei9WjlPcKYG2XLx7sHwlCe9zXQsaySnKbgnmjDu+OYhqEYxsyYLygjVBt5/Ji
-+aM8OPT+LiNndib1ZvTa0ogF1gpJxd0oUA/s/lHQPaKsS3UjTnnf6lt1O1nKeFU/
-O9ykl/OF8Sq2sUSmONwh1K/YHZZAASBbKlZKrjR/AbDNhVZmeUubwYoKg/6v8usM
-sTZJgxLbg0iViTxbLK5tn7R4/uGEOl/X3ttQtTKJVBu5uuSfRuWSvGr9jtzRh5j9
-BZoe8C0d6HSWwkHaDHInGW6Wphw61hy4tC3ZircFWo7F+SUVEK1EM6dHVEbsK9nP
-17Kf1ejMbJLR02FeZW2Vy28AmtEj5UHMVLi8shfNFGJwnV7073Kydq+HTBgmC1X9
-Dzx1lEcVb3EiZ8v0Mp5ER7Y7QWUmRu1AAuGyUwL3kQvKvMFgiS3JsvsFOsYuvZwr
-TkCKCM6ySYix0dp2W3CVU6sz7WOUfBHEZgNDKs7iLJJ2vGtjp0Bw3gm+OMz+vx26
-5YrOn9t76iLyBVfKZ/NgbqIsREsN8egpqtAgg14YKWJFDCtS7T/E0VTE8zRDKxSl
-Ry26pv1onaBRJb17lSCPdZobY91UtcZnEzFwT/fZQL9j2FcuMaKRTkSzwT4P1Jak
-hqaEZu4wbnrdgJFSJWsm
-=yqPY
------END PGP SIGNATURE-----
-
---ggpms2er24kjfgoa--
+diff --git a/Documentation/devicetree/bindings/serial/ingenic,uart.txt b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+index 02cb7fe59cb7..c3c6406d5cfe 100644
+--- a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
++++ b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+@@ -1,8 +1,12 @@
+ * Ingenic SoC UART
+ 
+ Required properties:
+-- compatible : "ingenic,jz4740-uart", "ingenic,jz4760-uart",
+-	"ingenic,jz4775-uart" or "ingenic,jz4780-uart"
++- compatible : One of:
++  - "ingenic,jz4740-uart",
++  - "ingenic,jz4760-uart",
++  - "ingenic,jz4770-uart",
++  - "ingenic,jz4775-uart",
++  - "ingenic,jz4780-uart".
+ - reg : offset and length of the register set for the device.
+ - interrupts : should contain uart interrupt.
+ - clocks : phandles to the module & baud clocks.
+diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
+index 4d9dc10e265c..b31b2ca552d1 100644
+--- a/drivers/tty/serial/8250/8250_ingenic.c
++++ b/drivers/tty/serial/8250/8250_ingenic.c
+@@ -133,6 +133,10 @@ EARLYCON_DECLARE(jz4740_uart, ingenic_early_console_setup);
+ OF_EARLYCON_DECLARE(jz4740_uart, "ingenic,jz4740-uart",
+ 		    ingenic_early_console_setup);
+ 
++EARLYCON_DECLARE(jz4770_uart, ingenic_early_console_setup);
++OF_EARLYCON_DECLARE(jz4770_uart, "ingenic,jz4770-uart",
++		    ingenic_early_console_setup);
++
+ EARLYCON_DECLARE(jz4775_uart, ingenic_early_console_setup);
+ OF_EARLYCON_DECLARE(jz4775_uart, "ingenic,jz4775-uart",
+ 		    ingenic_early_console_setup);
+@@ -327,6 +331,7 @@ static const struct ingenic_uart_config jz4780_uart_config = {
+ static const struct of_device_id of_match[] = {
+ 	{ .compatible = "ingenic,jz4740-uart", .data = &jz4740_uart_config },
+ 	{ .compatible = "ingenic,jz4760-uart", .data = &jz4760_uart_config },
++	{ .compatible = "ingenic,jz4770-uart", .data = &jz4760_uart_config },
+ 	{ .compatible = "ingenic,jz4775-uart", .data = &jz4760_uart_config },
+ 	{ .compatible = "ingenic,jz4780-uart", .data = &jz4780_uart_config },
+ 	{ /* sentinel */ }
+-- 
+2.11.0
