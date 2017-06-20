@@ -1,45 +1,27 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57083 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751308AbdFZS0O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2017 14:26:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add PWM clock
-Date: Mon, 26 Jun 2017 21:26:14 +0300
-Message-ID: <1669418.PM0r6WOmIk@avalon>
-In-Reply-To: <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
-References: <20170626172652.28018-1-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 17:47:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-clk@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: gcc-msm8916: add support to 9.6MHz codec clk
+Message-ID: <20170620004727.GE20170@codeaurora.org>
+References: <20170612094122.6770-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170612094122.6770-1-srinivas.kandagatla@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
-
-On Monday 26 Jun 2017 19:38:58 Geert Uytterhoeven wrote:
-> On Mon, Jun 26, 2017 at 7:26 PM, Laurent Pinchart wrote:
-> > --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> > @@ -152,6 +152,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[]
-> > __initconst = {> 
-> >         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
-> >         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
-> >         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
-> > 
-> > +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S0D12),
+On 06/12, Srinivas Kandagatla wrote:
+> MCLK for internal audio codec is expected to be at 9.6MHz by default.
+> This patch adds support to 9.6MHz to make the default case possible.
 > 
-> Cfr. commit a0b381fafffaf07c ("clk: renesas: r8a7796: Add PWM clock")
-> in clk-next.
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
 
-Same mistake twice... I wonder why I failed to find that one :-/ Sorry about 
-the noise.
+Applied to clk-next
 
 -- 
-Regards,
-
-Laurent Pinchart
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
