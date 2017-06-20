@@ -1,92 +1,97 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v7 0/4] Add minimal boot support for IPQ8074
-Date: Thu, 29 Jun 2017 11:48:30 +0530
-Message-Id: <1498717114-338-1-git-send-email-varada@codeaurora.org>
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 15/17] MIPS: JZ4770: Workaround for corrupted DMA transfers
+Date: Tue, 20 Jun 2017 17:18:53 +0200
+Message-Id: <20170620151855.19399-15-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-v7:
-    Remove the following clk related patches (Stephen Boyd has picked them)
+From: Maarten ter Huurne <maarten@treewalker.org>
 
-    Incorporate Bjorn's comment in
-	arm64: dts: Add ipq8074 SoC and HK01 board support
+We have seen MMC DMA transfers read corrupted data from SDRAM when
+a burst interval ends at physical address 0x10000000. To avoid this
+problem, we remove the final page of low memory from the memory map.
 
-    Included Bjorn's and Rob's Ack for rest of the patches.
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+---
+ arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
+ arch/mips/kernel/setup.c |  8 ++++++++
+ 2 files changed, 32 insertions(+)
 
-v6:
-  * Include Rob's Ack to the first patch.
+ v2: No change
 
-v5:
-  * Removed the 'NA' binding from documentation
-
-v4:
-  * Split the clock patch and addressed a minor comment
-    in the clock driver as per stephen's feedback.
-
-v3:
-  * Addressed review feedback from Bjorn for pinctrl
-     - Unified the names for qpic pads.
-     - Corrected the names for pwm pins.
-  * Updated pinctrl documentation.
-  * Updated the default bootargs in ipq8074-hk01.dts.
-  * Updated the gcc clocks driver for removing the
-    unused halt_bit in few places.
-
-v2:
-  * Addressed review feedback from Stephen
-    - Removed cpu-map entries
-    - Added mmio-timer nodes
-  * Fix sparse warnings in the gcc-ipq8074.c
-  * Updated pinctrl documentation
-
-v1:
-  https://www.spinics.net/lists/kernel/msg2498734.html
-  This series adds minimal board boot support for ipq8074-hk01
-  board.
-
-
-Abhishek Sahu (1):
-  arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-
-Varadarajan Narayanan (3):
-  pinctrl: qcom: Add ipq8074 pinctrl driver
-  dt-bindings: qcom: Add ipq8074 bindings
-  arm64: dts: Add ipq8074 SoC and HK01 board support
-
- Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
- .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  172 ++++
- arch/arm64/boot/dts/qcom/Makefile                  |    1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   52 +
- arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
- arch/arm64/configs/defconfig                       |    2 +
- drivers/pinctrl/qcom/Kconfig                       |   10 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1076 ++++++++++++++++++++
- 9 files changed, 1510 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
-
+diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
+index afd84ee966e8..6948b133a15d 100644
+--- a/arch/mips/jz4740/setup.c
++++ b/arch/mips/jz4740/setup.c
+@@ -23,6 +23,7 @@
+ 
+ #include <asm/bootinfo.h>
+ #include <asm/mips_machine.h>
++#include <asm/page.h>
+ #include <asm/prom.h>
+ 
+ #include <asm/mach-jz4740/base.h>
+@@ -102,6 +103,29 @@ void __init arch_init_irq(void)
+ 	irqchip_init();
+ }
+ 
++/*
++ * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
++ * interval ends at physical address 0x10000000. To avoid this problem, we
++ * remove the final page of low memory from the memory map.
++ */
++void __init jz4770_reserve_unsafe_for_dma(void)
++{
++	int i;
++
++	for (i = 0; i < boot_mem_map.nr_map; i++) {
++		struct boot_mem_map_entry *entry = boot_mem_map.map + i;
++
++		if (entry->type != BOOT_MEM_RAM)
++			continue;
++
++		if (entry->addr + entry->size != 0x10000000)
++			continue;
++
++		entry->size -= PAGE_SIZE;
++		break;
++	}
++}
++
+ static int __init jz4740_machine_setup(void)
+ {
+ 	mips_machine_setup();
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 89785600fde4..cccfd7ba89fe 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -838,6 +838,14 @@ static void __init arch_mem_init(char **cmdline_p)
+ 
+ 	parse_early_param();
+ 
++#ifdef CONFIG_MACH_JZ4770
++	if (current_cpu_type() == CPU_JZRISC &&
++				mips_machtype == MACH_INGENIC_JZ4770) {
++		extern void __init jz4770_reserve_unsafe_for_dma(void);
++		jz4770_reserve_unsafe_for_dma();
++	}
++#endif
++
+ 	if (usermem) {
+ 		pr_info("User-defined physical RAM map:\n");
+ 		print_memory_map();
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
