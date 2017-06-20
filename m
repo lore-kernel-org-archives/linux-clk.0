@@ -1,35 +1,174 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:38444 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbdFAHZs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2017 03:25:48 -0400
-Date: Thu, 1 Jun 2017 00:25:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org, stefan@agner.ch,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH v2] clk: imx7d: Fix the powerdown bit location of PLL DDR
-Message-ID: <20170601072545.GS20170@codeaurora.org>
-References: <1494849305-1405-1-git-send-email-festevam@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494849305-1405-1-git-send-email-festevam@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 17/17] MIPS: ingenic: Initial GCW Zero support
+Date: Tue, 20 Jun 2017 17:18:55 +0200
+Message-Id: <20170620151855.19399-17-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/15, Fabio Estevam wrote:
-> From: Fabio Estevam <fabio.estevam@nxp.com>
-> 
-> According to the MX7D Reference Manual the powerdown bit of
-> CCM_ANALOG_PLL_DDRn register is bit 20, so fix it accordingly.
-> 
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> Reviewed-by: Stefan Agner <stefan@agner.ch>
-> ---
+The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
+handheld game console, successfully kickstarted in ~2012, running Linux.
 
-Applied to clk-next
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/boot/dts/ingenic/Makefile |  1 +
+ arch/mips/boot/dts/ingenic/gcw0.dts | 60 +++++++++++++++++++++++++++++++++++++
+ arch/mips/configs/gcw0_defconfig    | 28 +++++++++++++++++
+ arch/mips/jz4740/Kconfig            |  4 +++
+ arch/mips/jz4740/boards.c           |  1 +
+ 5 files changed, 94 insertions(+)
+ create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
+ create mode 100644 arch/mips/configs/gcw0_defconfig
 
+ v2: No change
+
+diff --git a/arch/mips/boot/dts/ingenic/Makefile b/arch/mips/boot/dts/ingenic/Makefile
+index f2b864f07850..f64ad1c27a28 100644
+--- a/arch/mips/boot/dts/ingenic/Makefile
++++ b/arch/mips/boot/dts/ingenic/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_JZ4740_QI_LB60)	+= qi_lb60.dtb
++dtb-$(CONFIG_JZ4770_GCW0)	+= gcw0.dtb
+ dtb-$(CONFIG_JZ4780_CI20)	+= ci20.dtb
+ 
+ obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
+new file mode 100644
+index 000000000000..9c9a0137ccdf
+--- /dev/null
++++ b/arch/mips/boot/dts/ingenic/gcw0.dts
+@@ -0,0 +1,60 @@
++/dts-v1/;
++
++#include "jz4770.dtsi"
++
++/ {
++	compatible = "gcw,zero", "ingenic,jz4770";
++
++	aliases {
++		serial0 = &uart0;
++		serial1 = &uart1;
++		serial2 = &uart2;
++		serial3 = &uart3;
++	};
++
++	chosen {
++		stdout-path = "serial2:57600n8";
++	};
++
++	board {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		ranges = <>;
++
++		otg_phy: otg-phy {
++			compatible = "usb-nop-xceiv";
++			clocks = <&cgu JZ4770_CLK_OTG_PHY>;
++			clock-names = "main_clk";
++		};
++	};
++};
++
++&ext {
++	clock-frequency = <12000000>;
++};
++
++&uart2 {
++	status = "okay";
++};
++
++&cgu {
++	/* Put high-speed peripherals under PLL1, such that we can change the
++	 * PLL0 frequency on demand without having to suspend peripherals.
++	 * We use a rate of 432 MHz, which is the least common multiple of
++	 * 27 MHz (required by TV encoder) and 48 MHz (required by USB host).
++	 */
++	assigned-clocks =
++		<&cgu JZ4770_CLK_PLL1>,
++		<&cgu JZ4770_CLK_UHC>;
++	assigned-clock-parents =
++		<0>,
++		<&cgu JZ4770_CLK_PLL1>;
++	assigned-clock-rates =
++		<432000000>;
++};
++
++&uhc {
++	/* The WiFi module is connected to the UHC. */
++	status = "okay";
++};
+diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
+new file mode 100644
+index 000000000000..471497033855
+--- /dev/null
++++ b/arch/mips/configs/gcw0_defconfig
+@@ -0,0 +1,28 @@
++CONFIG_MACH_INGENIC=y
++CONFIG_JZ4770_GCW0=y
++CONFIG_HIGHMEM=y
++# CONFIG_BOUNCE is not set
++CONFIG_PREEMPT_VOLUNTARY=y
++# CONFIG_SECCOMP is not set
++CONFIG_CROSS_COMPILE="mipsel-gcw0-linux-uclibc-"
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_EMBEDDED=y
++# CONFIG_BLK_DEV_BSG is not set
++# CONFIG_SUSPEND is not set
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_NETDEVICES=y
++CONFIG_SERIAL_8250=y
++# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_INGENIC=y
++CONFIG_USB=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_OHCI_HCD_PLATFORM=y
++CONFIG_NOP_USB_XCEIV=y
++CONFIG_TMPFS=y
+diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
+index 922850503271..db270653fe8c 100644
+--- a/arch/mips/jz4740/Kconfig
++++ b/arch/mips/jz4740/Kconfig
+@@ -7,6 +7,10 @@ config JZ4740_QI_LB60
+ 	bool "Qi Hardware Ben NanoNote"
+ 	select MACH_JZ4740
+ 
++config JZ4770_GCW0
++	bool "Game Consoles Worldwide GCW Zero"
++	select MACH_JZ4770
++
+ config JZ4780_CI20
+ 	bool "MIPS Creator CI20"
+ 	select MACH_JZ4780
+diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
+index a3cf64cf004a..98a4d8e68cf0 100644
+--- a/arch/mips/jz4740/boards.c
++++ b/arch/mips/jz4740/boards.c
+@@ -12,5 +12,6 @@
+ #include <asm/mips_machine.h>
+ 
+ MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
++MIPS_MACHINE(MACH_INGENIC_JZ4770, "gcw,zero", "GCW Zero", NULL);
+ MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
+ 			"Imagination Technologies CI20", NULL);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
