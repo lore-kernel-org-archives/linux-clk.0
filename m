@@ -1,82 +1,50 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>
-Subject: [PATCH v7 0/1] Broadcom Stingray SOC Initial Support
-Date: Tue,  6 Jun 2017 09:53:57 +0530
-Message-Id: <1496723038-4693-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 19:00:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
+Subject: Re: [PATCH 6/9] clk: imx: add composite clk support
+Message-ID: <20170620020013.GP4493@codeaurora.org>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-7-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494856763-6543-7-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support of Broadcom Stingray SOC
-by reusing existing Broadcom iProc device drivers.
+On 05/15, Dong Aisheng wrote:
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 51b84e4..665777e 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -69,6 +69,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+>  			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+>  			     const char **parent_names, int num_parents);
+>  
+> +struct clk *imx_clk_composite(const char *name,
+> +			      const char * const *parent_names,
+> +			      int num_parents, bool mux_present,
+> +			      bool rate_present, bool gate_present,
+> +			      void __iomem *reg);
+> +
+>  struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+>  				  void __iomem *reg, u8 shift, u8 width,
+>  				  void (*fixup)(u32 *val));
+> @@ -209,5 +215,4 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
+>  struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+>  		struct clk *div, struct clk *mux, struct clk *pll,
+>  		struct clk *step);
+> -
 
-Most of the patches in this patchset are DT patches except
-the Stingray clock tree support which just one patch.
+Noise?
 
-This patchset is based on Linux-4.12-rc4 and it is also available
-at stingray-v7 branch of https://github.com/Broadcom/arm64-linux.git
-
-Changes since v6:
- - Rebased patches for Linux-4.12-rc3
- - Dropped all patches except PATCH3 because these are
-   already applied in Broadcom tree
- - Dropped __init usage in clk-sr driver
- - Add tab indentation for sr_clk_dt_ids in clk-sr driver
- - Made various clk init functions similar to platform probe function
-   in clk-sr driver
- - Use of_device_get_match_data() instead of of_match_device()
-   in clk-sr driver
-
-Changes since v5:
- - Rebased patches for Linux-4.12-rc3
- - Update DT node names to match register offset
-
-Changes since v4:
- - Reduce number of include headers in Stingray clk driver
-
-Changes since v3:
- - Rebased patches for Linux-4.12-rc1
- - Updated PATCH3 to have all clocks except genpll3 to be
-   registered via platform driver probe
-
-Changes since v2:
- - Remove default bootargs from chosen DT node
- - Remove "linux" prefix from stdout DT attribute of chosen DT node
- - Remove use of GIC_CPU_MASK_xxx() for PPIs
-
-Changes since v1:
- - Rebased patches for Linux-4.12-rc1
- - Removed unwanted /memreserve/ from bcm958742-base.dtsi
- - Use ranges DT property to clear view of memory-layout
- - Make bcm-sr.h part of clock DT bindings patch
-
-Sandeep Tripathy (1):
-  clk: bcm: Add clocks for Stingray SOC
-
- drivers/clk/bcm/Kconfig  |   8 ++
- drivers/clk/bcm/Makefile |   1 +
- drivers/clk/bcm/clk-sr.c | 327 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 336 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-sr.c
+>  #endif
+> -- 
+> 2.7.4
+> 
 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
