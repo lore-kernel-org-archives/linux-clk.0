@@ -1,79 +1,100 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org
-Cc: Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/3 v6] clk: add DT bindings header for Gemini clock controller
-Date: Sun, 18 Jun 2017 23:55:49 +0200
-Message-Id: <20170618215550.29216-2-linus.walleij@linaro.org>
-In-Reply-To: <20170618215550.29216-1-linus.walleij@linaro.org>
-References: <20170618215550.29216-1-linus.walleij@linaro.org>
+Subject: [PATCH v2 09/17] MIPS: Setup boot_command_line before plat_mem_setup
+Date: Tue, 20 Jun 2017 17:18:47 +0200
+Message-Id: <20170620151855.19399-9-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the DT binding macros used by the clock controller.
+From: Paul Burton <paul.burton@imgtec.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Platforms using DT will typically call __dt_setup_arch from
+plat_mem_setup. This in turn calls early_init_dt_scan. When
+CONFIG_CMDLINE is set, this leads to its value being copied into
+boot_command_line by early_init_dt_scan_chosen. If this happens before
+the code setting up boot_command_line in arch_mem_init runs, that code
+will go on to append CONFIG_CMDLINE (via builtin_cmdline) to
+boot_command_line again, duplicating it. For some command line
+parameters (eg. earlycon) this can be a problem. Set up
+boot_command_line before early_init_dt_scan_chosen gets called such that
+it will not write CONFIG_CMDLINE in this scenario & the arguments aren't
+duplicated.
+
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
 ---
-Mike/Stephen: please merge this into the clock subsystem once
-you're happy with it.
+ arch/mips/kernel/setup.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
-ChangeLog v5->v6:
-- No changes, resending to keep the series together.
-ChangeLog v4->v5:
-- No changes, resending to keep the series together.
-ChangeLog v1->v4:
-- New file to merge the macros in isolation from the
-  DT bindings and implementation.
+ v2: No change
 
-The bindings themselves are merged through the ARM SoC tree.
----
- include/dt-bindings/clock/cortina,gemini-clock.h | 29 ++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
-
-diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h b/include/dt-bindings/clock/cortina,gemini-clock.h
-new file mode 100644
-index 000000000000..acf5cd550b0c
---- /dev/null
-+++ b/include/dt-bindings/clock/cortina,gemini-clock.h
-@@ -0,0 +1,29 @@
-+#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
-+#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 01d1dbde5fbf..89785600fde4 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -785,25 +785,6 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	struct memblock_region *reg;
+ 	extern void plat_mem_setup(void);
+ 
+-	/* call board setup routine */
+-	plat_mem_setup();
+-
+-	/*
+-	 * Make sure all kernel memory is in the maps.  The "UP" and
+-	 * "DOWN" are opposite for initdata since if it crosses over
+-	 * into another memory section you don't want that to be
+-	 * freed when the initdata is freed.
+-	 */
+-	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
+-			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
+-			 BOOT_MEM_RAM);
+-	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
+-			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
+-			 BOOT_MEM_INIT_RAM);
+-
+-	pr_info("Determined physical RAM map:\n");
+-	print_memory_map();
+-
+ #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
+ 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
+ #else
+@@ -831,6 +812,26 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	}
+ #endif
+ #endif
 +
-+/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
-+#define GEMINI_NUM_CLKS 20
++	/* call board setup routine */
++	plat_mem_setup();
 +
-+#define GEMINI_CLK_RTC 0
-+#define GEMINI_CLK_AHB 1
-+#define GEMINI_CLK_APB 2
-+#define GEMINI_CLK_CPU 3
-+#define GEMINI_CLK_PCI 4
-+#define GEMINI_CLK_TVC 5
-+#define GEMINI_CLK_UART 6
-+#define GEMINI_CLK_GATES 7
-+#define GEMINI_CLK_GATE_SECURITY 7
-+#define GEMINI_CLK_GATE_GMAC0 8
-+#define GEMINI_CLK_GATE_GMAC1 9
-+#define GEMINI_CLK_GATE_SATA0 10
-+#define GEMINI_CLK_GATE_SATA1 11
-+#define GEMINI_CLK_GATE_USB0 12
-+#define GEMINI_CLK_GATE_USB1 13
-+#define GEMINI_CLK_GATE_IDE 14
-+#define GEMINI_CLK_GATE_PCI 15
-+#define GEMINI_CLK_GATE_DDR 16
-+#define GEMINI_CLK_GATE_FLASH 17
-+#define GEMINI_CLK_GATE_TVC 18
-+#define GEMINI_CLK_GATE_BOOT 19
++	/*
++	 * Make sure all kernel memory is in the maps.  The "UP" and
++	 * "DOWN" are opposite for initdata since if it crosses over
++	 * into another memory section you don't want that to be
++	 * freed when the initdata is freed.
++	 */
++	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
++			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
++			 BOOT_MEM_RAM);
++	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
++			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
++			 BOOT_MEM_INIT_RAM);
 +
-+#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
++	pr_info("Determined physical RAM map:\n");
++	print_memory_map();
++
+ 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+ 
+ 	*cmdline_p = command_line;
 -- 
-2.9.4
+2.11.0
