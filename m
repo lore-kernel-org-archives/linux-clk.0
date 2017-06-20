@@ -1,63 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:35924 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751574AbdFGU63 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2017 16:58:29 -0400
-Subject: Re: [PATCH 0/2] Add bcm2835aux interrupt controller
-To: Phil Elwell <phil@raspberrypi.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <6dc301c8-e5a2-1334-c476-1ce7e303787f@raspberrypi.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <b3d5b3c1-a9ab-99bf-a1b2-3a1e4579c0ff@gmail.com>
-Date: Wed, 7 Jun 2017 13:58:25 -0700
+Return-Path: <zhoubb@lemote.com>
 MIME-Version: 1.0
-In-Reply-To: <6dc301c8-e5a2-1334-c476-1ce7e303787f@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170619233434.GQ20170@codeaurora.org>
+References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+ <1497581573-17258-8-git-send-email-zhoubb@lemote.com> <20170619233434.GQ20170@codeaurora.org>
+From: zhoubb <zhoubb@lemote.com>
+Date: Tue, 20 Jun 2017 12:51:14 +0800
+Message-ID: <CAMpQs4L1_VvWxk_mkbRgvVb3o23m+RdVosgzxFLMRX7fjKa+6w@mail.gmail.com>
+Subject: Re: [PATCH v7 7/8] clk: Loongson: Add Loongson-1A clock support
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>,
+	John Crispin <john@phrozen.org>, "Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>, Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>, Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>, =?UTF-8?B?6LCi6Ie06YKm?= <Yeking@red54.com>,
+	Michael Turquette <mturquette@baylibre.com>, linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org, HuaCai Chen <chenhc@lemote.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07/2017 04:11 AM, Phil Elwell wrote:
-> Devices in the AUX block share a common interrupt line, with a register
-> indicating which devices have active IRQs. Expose this as a nested
-> interrupt controller to avoid IRQ sharing problems (easily observed if
-> UART1 and SPI1/2 are enabled simultaneously).
-> 
-> The interrupt functionality could arguably be forked off as a separate
-> irqchip driver, but the clock driver has already claimed the AUX_IRQ
-> register so some driver and DT surgery would still be required.
-> Eric Anholt thought that including it here is reasonable, but I'm
-> prepared to split it out if this is considered too hacky.
+On Tue, Jun 20, 2017 at 7:34 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/16, Binbin Zhou wrote:
+>> diff --git a/drivers/clk/loongson1/clk-loongson1a.c b/drivers/clk/loongs=
+on1/clk-loongson1a.c
+>> new file mode 100644
+>> index 0000000..263a82c
+>> --- /dev/null
+>> +++ b/drivers/clk/loongson1/clk-loongson1a.c
+>> @@ -0,0 +1,75 @@
+>> +/*
+>> + * Copyright (c) 2012-2016 Binbin Zhou <zhoubb@lemote.com>
+>> + *
+>> + * This program is free software; you can redistribute  it and/or modif=
+y it
+>> + * under  the terms of  the GNU General  Public License as published by=
+ the
+>> + * Free Software Foundation;  either version 2 of the  License, or (at =
+your
+>> + * option) any later version.
+>> + */
+>> +
+>> +#include <linux/clkdev.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/io.h>
+>> +#include <linux/err.h>
+>> +
+>> +#include <loongson1.h>
+>> +#include "clk.h"
+>> +
+>> +#define OSC          (33 * 1000000)
+>> +#define DIV_APB              2
+>> +
+>> +static DEFINE_SPINLOCK(_lock);
+>
+> I know the other loongson1*.c files also call it "_lock", but
+> that's not a very good name for something that may show up in
+> lockdep debugging error messages. How about something a bit more
+> descriptive, loongson1x_clk_lock?
+>
+It's a good idea=EF=BC=81
+Actually, the variable is not be used in this file.
+If I rename it in another new patch will be better.
+Do you think so ?
 
-You probably remember your fix to the irqchip drive being flamed because
-the irqchip driver was re-purposed as an ARM SMP secondary core bringup
-method, maybe we can avoid doing the same mistake and having this a
-separate interrupt controller be under drivers/irqchip/*?
+Best wishes!
 
-Even if the clock driver already claims the AUX_IRQ register space, we
-can still have an irqchip ioremap() the two register offsets that it
-cares about (AUXIRQ, AUXENB) and just manage that 8 bytes worth of
-register space. We just need to make sure that the clock driver really
-does not touch those (why would it) and that there won't be any
-conflicting request_mem_region() against the same register range.
+Binbin Zhou
 
-Thanks!
-
-> 
-> Phil Elwell (2):
->   clk: bcm2835: Add AUX interrupt controller
->   ARM: dts: bcm283x: Enable AUX interrupt controller
-> 
->  arch/arm/boot/dts/bcm283x.dtsi    |  12 +++-
->  drivers/clk/bcm/clk-bcm2835-aux.c | 120 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 129 insertions(+), 3 deletions(-)
-> 
-
-
--- 
-Florian
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
