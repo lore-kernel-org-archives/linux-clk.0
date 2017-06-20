@@ -1,78 +1,77 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1497961950.7387.7.camel@baylibre.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, Kevin Hilman
- <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..."
- <linux-amlogic@lists.infradead.org>, Russell King <linux@armlinux.org.uk>,
- Boris Brezillon <boris.brezillon@free-electrons.com>, Adriana Reus
- <adi.reus@gmail.com>
-Date: Tue, 20 Jun 2017 14:32:30 +0200
-In-Reply-To: <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
-	 <1497955822.7387.3.camel@baylibre.com>
-	 <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 10/17] MIPS: ingenic: Use common cmdline handling code
+Date: Tue, 20 Jun 2017 17:18:48 +0200
+Message-Id: <20170620151855.19399-10-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-06-20 at 13:54 +0200, Linus Walleij wrote:
-> On Tue, Jun 20, 2017 at 12:50 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > On Tue, 2017-06-20 at 11:07 +0200, Linus Walleij wrote:
-> > When the rate is critical to perform a particular task. My example is the
-> > audio
-> > and i2s output. You can't tolerate glitches during the playback, the end
-> > user
-> > would complain (longer description in the original RFC)
-> 
-> I see. Thanks for your detailed explanation!
-> 
-> > It also fixes the behavior of CLK_SET_RATE_GATE flag, which is why I put you
-> > in
-> > CC.
-> > 
-> > ux500 uses this flag several time, I'd like make sure people are not relying
-> > on
-> > its broken implementation.
-> 
-> Ux500 audio is broken, but I'm fixing it a little at a time...
+From: Paul Burton <paul.burton@imgtec.com>
 
-No problem with Ux500 audio, don't worry :)
-Audio is just one application among others.
+jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
+arcs_cmdline, up to argc (in fw_arg0). The common code in
+fw_init_cmdline will do the exact same thing when run on a system where
+fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
+use it). Remove the custom implementation & use the generic code.
 
-The concern regarding ux500 is that the clock controller declares clocks using
-the CLK_SET_RATE_GATE flag (like qcom, at91 and several other)
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+---
+ arch/mips/jz4740/prom.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-here is the definition:
-#define CLK_SET_RATE_GATE	BIT(0) /* must be gated across rate change */
+ v2: No change
 
-My interpretation it that, as long as clock is enabled, rate can't change.
-
-The implementation of this flag is currently broken:
-* If you call set_rate on directly on the clock while it is enabled, you will
-get -EBUSY, as expected
-* If you call set_rate on its parent, rate will change, changing the rate of the
-child clock as well ...
-
-With this patchset applied, calling set_rate on the parent would also return
--EBUSY, enforcing the "rate can't change while enabled" property.
-
-To build confidence that this won't be causing regression, I'd like to check
-that platform using this flag are no relying on the broken behavior.
-
-I've included the clock maintainers of at91, qcom, and ux500 (you) in this
-thread because they are the heaviest users of this flag, so the more likely to
-report a problem.
-
-If you could apply this series and just do things as usual, It'd be awesome !
-
-I'll also seek the help of the kci guys, see if it is possible to give the
-series spin on it.
-
-> 
-> Yours,
-> Linus Walleij
+diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
+index 47e857194ce6..a62dd8e6ecf9 100644
+--- a/arch/mips/jz4740/prom.c
++++ b/arch/mips/jz4740/prom.c
+@@ -20,33 +20,13 @@
+ #include <linux/serial_reg.h>
+ 
+ #include <asm/bootinfo.h>
++#include <asm/fw/fw.h>
+ #include <asm/mach-jz4740/base.h>
+ 
+-static __init void jz4740_init_cmdline(int argc, char *argv[])
+-{
+-	unsigned int count = COMMAND_LINE_SIZE - 1;
+-	int i;
+-	char *dst = &(arcs_cmdline[0]);
+-	char *src;
+-
+-	for (i = 1; i < argc && count; ++i) {
+-		src = argv[i];
+-		while (*src && count) {
+-			*dst++ = *src++;
+-			--count;
+-		}
+-		*dst++ = ' ';
+-	}
+-	if (i > 1)
+-		--dst;
+-
+-	*dst = 0;
+-}
+-
+ void __init prom_init(void)
+ {
+-	jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
+ 	mips_machtype = MACH_INGENIC_JZ4740;
++	fw_init_cmdline();
+ }
+ 
+ void __init prom_free_prom_memory(void)
+-- 
+2.11.0
