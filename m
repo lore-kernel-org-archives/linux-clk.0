@@ -1,266 +1,96 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v8 2/9] MIPS: Loongson: Expand Loongson-1's register definition
-Date: Tue, 20 Jun 2017 16:57:00 +0800
-Message-Id: <1497949027-10988-3-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
-References: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [GIT PULL] Improve cp110 clk support on Marvell Armada 7K/8K
+References: <pull.28a1be390fb082d60e88c3234dd7d76fb61438b6.1497886602.git-series.gregory.clement@free-electrons.com>
+	<20170620001853.GT20170@codeaurora.org>
+Date: Tue, 20 Jun 2017 09:32:16 +0200
+In-Reply-To: <20170620001853.GT20170@codeaurora.org> (Stephen Boyd's message
+	of "Mon, 19 Jun 2017 17:18:53 -0700")
+Message-ID: <87shiv3yin.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-To improve the code readability, expand the register definition.
-Because most registers are generic in Loongson-1 series CPU.
+Hi Stephen,
+ 
+ On mar., juin 20 2017, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
----
- arch/mips/include/asm/mach-loongson32/loongson1.h | 170 ++++++++++++++++++----
- arch/mips/loongson32/common/platform.c            |  16 +-
- 2 files changed, 149 insertions(+), 37 deletions(-)
+> On 06/19, Gregory CLEMENT wrote:
+>> 
+>> Hi Mike, Stephen,
+>> 
+>> This time I turned the series in a pull request so I removed the
+>> device tree binding part which will be in an other series for Rob
+>> Herring and I also removed the dt part that I will take care of once
+>> you will have pulled this one.
+>> 
+>> I hope this will be easier for you to apply this way.
+>> 
+>
+> Ok. It wasn't clear what was going on and I forgot to ask in the
+> lastest patch series. Pulled into clk-next, but I had to apply
+> this patch on top:
 
-diff --git a/arch/mips/include/asm/mach-loongson32/loongson1.h b/arch/mips/include/asm/mach-loongson32/loongson1.h
-index 84c28a8..8cfd4ba 100644
---- a/arch/mips/include/asm/mach-loongson32/loongson1.h
-+++ b/arch/mips/include/asm/mach-loongson32/loongson1.h
-@@ -19,35 +19,147 @@
- #endif
- 
- /* Loongson 1 Register Bases */
--#define LS1X_MUX_BASE			0x1fd00420
--#define LS1X_INTC_BASE			0x1fd01040
--#define LS1X_GPIO0_BASE			0x1fd010c0
--#define LS1X_GPIO1_BASE			0x1fd010c4
--#define LS1X_DMAC_BASE			0x1fd01160
--#define LS1X_CBUS_BASE			0x1fd011c0
--#define LS1X_EHCI_BASE			0x1fe00000
--#define LS1X_OHCI_BASE			0x1fe08000
--#define LS1X_GMAC0_BASE			0x1fe10000
--#define LS1X_GMAC1_BASE			0x1fe20000
--
--#define LS1X_UART0_BASE			0x1fe40000
--#define LS1X_UART1_BASE			0x1fe44000
--#define LS1X_UART2_BASE			0x1fe48000
--#define LS1X_UART3_BASE			0x1fe4c000
--#define LS1X_CAN0_BASE			0x1fe50000
--#define LS1X_CAN1_BASE			0x1fe54000
--#define LS1X_I2C0_BASE			0x1fe58000
--#define LS1X_I2C1_BASE			0x1fe68000
--#define LS1X_I2C2_BASE			0x1fe70000
--#define LS1X_PWM0_BASE			0x1fe5c000
--#define LS1X_PWM1_BASE			0x1fe5c010
--#define LS1X_PWM2_BASE			0x1fe5c020
--#define LS1X_PWM3_BASE			0x1fe5c030
--#define LS1X_WDT_BASE			0x1fe5c060
--#define LS1X_RTC_BASE			0x1fe64000
--#define LS1X_AC97_BASE			0x1fe74000
--#define LS1X_NAND_BASE			0x1fe78000
--#define LS1X_CLK_BASE			0x1fe78030
-+#define LS1X_DC_REG_BASE		0x1c200000
-+#define LS1X_MUX_REG_BASE		0x1f000000
-+
-+#define LS1X_CFG_REG_BASE		(LS1X_MUX_REG_BASE + 0x00d00000)
-+
-+#define LS1X_INTC_BASE			(LS1X_CFG_REG_BASE + 0x1040)
-+
-+/* GPIO regs */
-+#define LS1X_GPIO_REG_BASE		(LS1X_CFG_REG_BASE + 0x1000)
-+#define LS1X_GPIO_CFG0_REG		(LS1X_GPIO_REG_BASE + 0xc0)
-+#define LS1X_GPIO_CFG1_REG		(LS1X_GPIO_REG_BASE + 0xc4)
-+#define LS1X_GPIO_CFG2_REG		(LS1X_GPIO_REG_BASE + 0xc8)
-+#define LS1X_GPIO_OE0_REG		(LS1X_GPIO_REG_BASE + 0xd0)
-+#define LS1X_GPIO_OE1_REG		(LS1X_GPIO_REG_BASE + 0xd4)
-+#define LS1X_GPIO_OE2_REG		(LS1X_GPIO_REG_BASE + 0xd8)
-+#define LS1X_GPIO_IN0_REG		(LS1X_GPIO_REG_BASE + 0xe0)
-+#define LS1X_GPIO_IN1_REG		(LS1X_GPIO_REG_BASE + 0xe4)
-+#define LS1X_GPIO_IN2_REG		(LS1X_GPIO_REG_BASE + 0xe8)
-+#define LS1X_GPIO_OUT0_REG		(LS1X_GPIO_REG_BASE + 0xf0)
-+#define LS1X_GPIO_OUT1_REG		(LS1X_GPIO_REG_BASE + 0xf4)
-+#define LS1X_GPIO_OUT2_REG		(LS1X_GPIO_REG_BASE + 0xf8)
-+
-+#define LS1X_DMA_ORDER_REG		(LS1X_CFG_REG_BASE + 0x1160)
-+
-+#define LS1X_MUX_BASE			(LS1X_CFG_REG_BASE + 0x0420)
-+
-+/* USB regs */
-+#define LS1X_EHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e00000)
-+#define LS1X_OHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e08000)
-+
-+/* GMAC regs */
-+#define LS1X_GMAC0_BASE			(LS1X_MUX_REG_BASE + 0x00e10000)
-+#define LS1X_GMAC0_DMA_REG		(LS1X_GMAC0_BASE + 0x1000)
-+#define LS1X_GMAC1_BASE			(LS1X_MUX_REG_BASE + 0x00e20000)
-+#define LS1X_GMAC1_DMA_REG		(LS1X_GMAC1_BASE + 0x1000)
-+
-+/* SATA regs */
-+#define LS1X_AHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e30000)
-+
-+/* APB regs */
-+#define LS1X_APB_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e40000)
-+
-+/* UART regs */
-+#define LS1X_UART0_BASE			(LS1X_APB_REG_BASE + 0x0000)
-+#define LS1X_UART1_BASE			(LS1X_APB_REG_BASE + 0x4000)
-+#define LS1X_UART2_BASE			(LS1X_APB_REG_BASE + 0x8000)
-+#define LS1X_UART3_BASE			(LS1X_APB_REG_BASE + 0xc000)
-+
-+/* CAN regs */
-+#define LS1X_CAN0_BASE			(LS1X_APB_REG_BASE + 0x10000)
-+#define LS1X_CAN1_BASE			(LS1X_APB_REG_BASE + 0x14000)
-+
-+#define LS1X_I2C0_BASE			(LS1X_APB_REG_BASE + 0x18000)
-+#define LS1X_I2C0_PRER_LO_REG		(LS1X_I2C0_BASE + 0x0)
-+#define LS1X_I2C0_PRER_HI_REG		(LS1X_I2C0_BASE + 0x1)
-+#define LS1X_I2C0_CTR_REG		(LS1X_I2C0_BASE + 0x2)
-+#define LS1X_I2C0_TXR_REG		(LS1X_I2C0_BASE + 0x3)
-+#define LS1X_I2C0_RXR_REG		(LS1X_I2C0_BASE + 0x3)
-+#define LS1X_I2C0_CR_REG		(LS1X_I2C0_BASE + 0x4)
-+#define LS1X_I2C0_SR_REG		(LS1X_I2C0_BASE + 0x4)
-+
-+#define LS1X_I2C1_BASE			(LS1X_APB_REG_BASE + 0x28000)
-+#define LS1X_I2C1_PRER_LO_REG		(LS1X_I2C1_BASE + 0x0)
-+#define LS1X_I2C1_PRER_HI_REG		(LS1X_I2C1_BASE + 0x1)
-+#define LS1X_I2C1_CTR_REG		(LS1X_I2C1_BASE + 0x2)
-+#define LS1X_I2C1_TXR_REG		(LS1X_I2C1_BASE + 0x3)
-+#define LS1X_I2C1_RXR_REG		(LS1X_I2C1_BASE + 0x3)
-+#define LS1X_I2C1_CR_REG		(LS1X_I2C1_BASE + 0x4)
-+#define LS1X_I2C1_SR_REG		(LS1X_I2C1_BASE + 0x4)
-+
-+#define LS1X_I2C2_BASE			(LS1X_APB_REG_BASE + 0x30000)
-+#define LS1X_I2C2_PRER_LO_REG		(LS1X_I2C2_BASE + 0x0)
-+#define LS1X_I2C2_PRER_HI_REG		(LS1X_I2C2_BASE + 0x1)
-+#define LS1X_I2C2_CTR_REG		(LS1X_I2C2_BASE + 0x2)
-+#define LS1X_I2C2_TXR_REG		(LS1X_I2C2_BASE + 0x3)
-+#define LS1X_I2C2_RXR_REG		(LS1X_I2C2_BASE + 0x3)
-+#define LS1X_I2C2_CR_REG		(LS1X_I2C2_BASE + 0x4)
-+#define LS1X_I2C2_SR_REG		(LS1X_I2C2_BASE + 0x4)
-+
-+#define LS1X_PWM_REG_BASE		(LS1X_APB_REG_BASE + 0x1c000)
-+#define LS1X_PWM0_BASE			(LS1X_PWM_REG_BASE + 0x00)
-+#define LS1X_PWM1_BASE			(LS1X_PWM_REG_BASE + 0x10)
-+#define LS1X_PWM2_BASE			(LS1X_PWM_REG_BASE + 0x20)
-+#define LS1X_PWM3_BASE			(LS1X_PWM_REG_BASE + 0x30)
-+
-+/* RTC regs */
-+#define LS1X_RTC_BASE			(LS1X_APB_REG_BASE + 0x24000)
-+
-+/* AC97 regs */
-+#define LS1X_AC97_BASE			(LS1X_APB_REG_BASE + 0x34000)
-+
-+/* Watchdog regs */
-+#ifdef CONFIG_CPU_LOONGSON1A
-+#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e7c060)
-+#else
-+#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e5c060)
-+#endif
-+
-+/* CLK regs */
-+#define LS1X_CLK_BASE			(LS1X_MUX_REG_BASE + 0x00e78030)
-+
-+/* NAND regs */
-+#define LS1X_NAND_REG_BASE		(LS1X_APB_REG_BASE + 0x38000)
-+#define LS1X_NAND_CMD_REG		(LS1X_NAND_REG_BASE + 0x0000)
-+#define LS1X_NAND_ADDR_C_REG		(LS1X_NAND_REG_BASE + 0x0004)
-+#define LS1X_NAND_ADDR_R_REG		(LS1X_NAND_REG_BASE + 0x0008)
-+#define LS1X_NAND_TIMING_REG		(LS1X_NAND_REG_BASE + 0x000c)
-+#define LS1X_NAND_IDL_REG		(LS1X_NAND_REG_BASE + 0x0010)
-+#define LS1X_NAND_STA_IDH_REG		(LS1X_NAND_REG_BASE + 0x0014)
-+#define LS1X_NAND_PARAM_REG		(LS1X_NAND_REG_BASE + 0x0018)
-+#define LS1X_NAND_OP_NUM_REG		(LS1X_NAND_REG_BASE + 0x001c)
-+#define LS1X_NAND_CSRDY_MAP_REG		(LS1X_NAND_REG_BASE + 0x0020)
-+#define LS1X_NAND_DMA_ACC_REG		(LS1X_NAND_REG_BASE + 0x0040)
-+
-+/* ACPI regs for ls1a */
-+#define LS1X_ACPI_REG_BASE		(LS1X_APB_REG_BASE + 0x3c000)
-+#define LS1X_PM1_STS_REG		(LS1X_ACPI_REG_BASE + 0x0000)
-+#define LS1X_PM1_EN_REG			(LS1X_ACPI_REG_BASE + 0x0004)
-+#define LS1X_PM1_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0008)
-+#define LS1X_PM1_TMR_REG		(LS1X_ACPI_REG_BASE + 0x000c)
-+#define LS1X_P_CNT_REG			(LS1X_ACPI_REG_BASE + 0x0010)
-+#define LS1X_P_LVL2_REG			(LS1X_ACPI_REG_BASE + 0x0014)
-+#define LS1X_P_LVL3_REG			(LS1X_ACPI_REG_BASE + 0x0018)
-+#define LS1X_GPE0_STS_REG		(LS1X_ACPI_REG_BASE + 0x0020)
-+#define LS1X_GPE0_EN_REG		(LS1X_ACPI_REG_BASE + 0x0024)
-+#define LS1X_PM_CONF1_REG		(LS1X_ACPI_REG_BASE + 0x0030)
-+#define LS1X_PM_CONF2_REG		(LS1X_ACPI_REG_BASE + 0x0034)
-+#define LS1X_PM_CONF3_REG		(LS1X_ACPI_REG_BASE + 0x0038)
-+#define LS1X_RST_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0044)
-+#define LS1X_CPU_INIT_REG		(LS1X_ACPI_REG_BASE + 0x0050)
-+
-+#define LS1X_SPI0_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e80000)
-+#define LS1X_SPI1_REG_BASE		(LS1X_MUX_REG_BASE + 0x00ec0000)
-+
-+/* LPC regs */
-+#define LS1X_LPC_IO_BASE		(LS1X_MUX_REG_BASE + 0x00f00000)
-+#define LS1X_LPC_REG_BASE		(LS1X_MUX_REG_BASE + 0x00f10200)
-+#define LS1X_LPC_CFG0_REG		(LS1X_LPC_REG_BASE + 0x0)
-+#define LS1X_LPC_CFG1_REG		(LS1X_LPC_REG_BASE + 0x4)
-+#define LS1X_LPC_CFG2_REG		(LS1X_LPC_REG_BASE + 0x8)
-+#define LS1X_LPC_CFG3_REG		(LS1X_LPC_REG_BASE + 0xc)
- 
- #include <regs-clk.h>
- #include <regs-mux.h>
-diff --git a/arch/mips/loongson32/common/platform.c b/arch/mips/loongson32/common/platform.c
-index 100f23d..f71392f 100644
---- a/arch/mips/loongson32/common/platform.c
-+++ b/arch/mips/loongson32/common/platform.c
-@@ -84,8 +84,8 @@ struct platform_device ls1x_cpufreq_pdev = {
- /* DMA */
- static struct resource ls1x_dma_resources[] = {
- 	[0] = {
--		.start = LS1X_DMAC_BASE,
--		.end = LS1X_DMAC_BASE + SZ_4 - 1,
-+		.start = LS1X_DMA_ORDER_REG,
-+		.end = LS1X_DMA_ORDER_REG + SZ_4 - 1,
- 		.flags = IORESOURCE_MEM,
- 	},
- 	[1] = {
-@@ -259,8 +259,8 @@ struct platform_device ls1x_eth1_pdev = {
- /* GPIO */
- static struct resource ls1x_gpio0_resources[] = {
- 	[0] = {
--		.start	= LS1X_GPIO0_BASE,
--		.end	= LS1X_GPIO0_BASE + SZ_4 - 1,
-+		.start	= LS1X_GPIO_CFG0_REG,
-+		.end	= LS1X_GPIO_CFG0_REG + SZ_4 - 1,
- 		.flags	= IORESOURCE_MEM,
- 	},
- };
-@@ -274,8 +274,8 @@ struct platform_device ls1x_gpio0_pdev = {
- 
- static struct resource ls1x_gpio1_resources[] = {
- 	[0] = {
--		.start	= LS1X_GPIO1_BASE,
--		.end	= LS1X_GPIO1_BASE + SZ_4 - 1,
-+		.start	= LS1X_GPIO_CFG1_REG,
-+		.end	= LS1X_GPIO_CFG1_REG + SZ_4 - 1,
- 		.flags	= IORESOURCE_MEM,
- 	},
- };
-@@ -290,8 +290,8 @@ struct platform_device ls1x_gpio1_pdev = {
- /* NAND Flash */
- static struct resource ls1x_nand_resources[] = {
- 	[0] = {
--		.start	= LS1X_NAND_BASE,
--		.end	= LS1X_NAND_BASE + SZ_32 - 1,
-+		.start	= LS1X_NAND_REG_BASE,
-+		.end	= LS1X_NAND_REG_BASE + SZ_32 - 1,
- 		.flags	= IORESOURCE_MEM,
- 	},
- 	[1] = {
+Thanks for the pull and the fix patch!
+
+Gregory
+
+>
+> ---8<----
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> Subject: [PATCH] clk: mvebu: cp110: Minor cleanups
+>
+> Mark an array of strings static const and remove the dereference
+> of a function pointer when assigning to the platform driver probe
+> struct member.
+>
+> drivers/clk/mvebu/cp110-system-controller.c:89:12:
+> warning: symbol 'gate_base_names' was not declared. Should it be static?
+> drivers/clk/mvebu/cp110-system-controller.c:447:18:
+> error: cannot dereference this type
+>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/mvebu/cp110-system-controller.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+> index b034b79345ec..ca9a0a536174 100644
+> --- a/drivers/clk/mvebu/cp110-system-controller.c
+> +++ b/drivers/clk/mvebu/cp110-system-controller.c
+> @@ -86,7 +86,7 @@ enum {
+>  #define CP110_GATE_EIP150		25
+>  #define CP110_GATE_EIP197		26
+>  
+> -const char *gate_base_names[] = {
+> +static const char * const gate_base_names[] = {
+>  	[CP110_GATE_AUDIO]	= "audio",
+>  	[CP110_GATE_COMM_UNIT]	= "communit",
+>  	[CP110_GATE_NAND]	= "nand",
+> @@ -437,14 +437,13 @@ static int cp110_clk_probe(struct platform_device *pdev)
+>  	return cp110_syscon_common_probe(pdev, pdev->dev.of_node->parent);
+>  }
+>  
+> -
+>  static const struct of_device_id cp110_syscon_legacy_of_match[] = {
+>  	{ .compatible = "marvell,cp110-system-controller0", },
+>  	{ }
+>  };
+>  
+>  static struct platform_driver cp110_syscon_legacy_driver = {
+> -	.probe = *cp110_syscon_legacy_clk_probe,
+> +	.probe = cp110_syscon_legacy_clk_probe,
+>  	.driver		= {
+>  		.name	= "marvell-cp110-system-controller0",
+>  		.of_match_table = cp110_syscon_legacy_of_match,
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
 -- 
-2.9.4
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
