@@ -1,99 +1,140 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 2 Jun 2017 21:31:06 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 12/19] drm/sun4i: hdmi: Support the DDC clock in the
- A31's HDMI controller
-Message-ID: <20170602193106.c3yagwkglhg45h6y@flea.lan>
-References: <20170602101024.18940-1-wens@csie.org>
- <20170602101024.18940-13-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rjl2suipzdxwdmfe"
-In-Reply-To: <20170602101024.18940-13-wens@csie.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v8 7/9] clk: Loongson: A descriptive spinlock name for Loongson1's clk driver
+Date: Tue, 20 Jun 2017 16:57:05 +0800
+Message-Id: <1497949027-10988-8-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+References: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The spinlock name in clk-loongson1*.c is "_lock", that's not a very good
+name for something that may show up in lockdep debugging error messages.
 
---rjl2suipzdxwdmfe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Give it a bit more descriptive name--ls1x_clk_lock.
 
-On Fri, Jun 02, 2017 at 06:10:17PM +0800, Chen-Yu Tsai wrote:
-> On the A31, the HDMI DDC block is different from the one in the
-> other SoCs. As far as the DDC clock goes, it has no pre-divider,
-> as it is clocked from a slower parent clock, not the TMDS clock.
-> The divider offset from the register value is different. And the
-> clock control register is at a different offset.
->=20
-> This patch adds support for this variant.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_hdmi.h         |  1 +
->  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c | 11 +++++++++++
->  2 files changed, 12 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/s=
-un4i_hdmi.h
-> index 08c514672fd3..c39c2a245339 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> @@ -178,6 +178,7 @@ struct sun4i_hdmi {
->  };
-> =20
->  int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
-> +int sun6i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *clk);
->  int sun4i_tmds_create(struct sun4i_hdmi *hdmi);
->  int sun6i_tmds_create(struct sun4i_hdmi *hdmi);
-> =20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c b/drivers/gpu/drm=
-/sun4i/sun4i_hdmi_ddc_clk.c
-> index 9a6b6243e977..b1395e7b242c 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
-> @@ -151,3 +151,14 @@ int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct=
- clk *parent)
->  {
->  	return _sun4i_ddc_create(hdmi, parent, &sun4i_variant);
->  }
-> +
-> +static const struct sun4i_ddc_variant sun6i_variant =3D {
-> +	.reg_offset	=3D SUN6I_HDMI_DDC_CLK_REG,
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/loongson1/clk-loongson1b.c | 14 +++++++-------
+ drivers/clk/loongson1/clk-loongson1c.c |  8 ++++----
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-This one should be handled through a regmap_field.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---rjl2suipzdxwdmfe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZMbz6AAoJEBx+YmzsjxAg2QEP/1FHFocbrrbyyxdb6Own0ieA
-gTKvSW7W7MG6Q5f78fJoJb3C2GJr85KwRtDezfJczRJzMxiHeQbqPFqdQJ0w1YTX
-OFA0JDYH+Nwqn9wbg4lUMztdJ0Us2sqjUnySCx65hgmS3dbJGwvrENGQuA/9g+C0
-PNx0jfe1Vr0Oq2yramU+OJdg6CbZUfix6GibEdE3JWosxx9KsTkkMq1rE9AENU6S
-I+eAIrfkc0ZQ+HStMNxeKn9NQ13fd7e6lMBMyJG5o0DvdpjV/IM2Vu5fg0cbdyhr
-W9hNY7SgvxDu9HzFepDN/o6jEUxdKOCpjTl1LSKUVsWz4Ox78K5ppQyWo7LhVzuf
-d6C/JkXyiinDqjABLqa1ud1hInU8VFyzchWtbt4RQlenRGG1zIlRGMzYIrjQPWaj
-UVEh+LfCwpzhjELgp4bW/YXQkaww6/5y//vy4OCNMYHZSBnYxfI0Tsx8xHZgjqe8
-n1NfJdvzAVc8SbfZGc7j5+APTmwUPktdTDXMHyCB7Dh6sUclpslhaUTfy22jG4uH
-xA8ViPpmPs+95ieViCHNSc3ko1W3Fq9UZFETJle2CzyVpTJbfRDF6+ii8AP3wKSx
-F4h4VWkjXnMeoPPpj29AdRXhpZnjT/hEhGdUVdLPjcYn0Oz1K3zKEaOM+TcvvXBH
-JXdNZwQN/281WXpBJ8Bq
-=Sbjn
------END PGP SIGNATURE-----
-
---rjl2suipzdxwdmfe--
+diff --git a/drivers/clk/loongson1/clk-loongson1b.c b/drivers/clk/loongson1/clk-loongson1b.c
+index f36a97e..8d5be12 100644
+--- a/drivers/clk/loongson1/clk-loongson1b.c
++++ b/drivers/clk/loongson1/clk-loongson1b.c
+@@ -18,7 +18,7 @@
+ #define OSC		(33 * 1000000)
+ #define DIV_APB		2
+ 
+-static DEFINE_SPINLOCK(_lock);
++static DEFINE_SPINLOCK(ls1x_clk_lock);
+ 
+ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+@@ -64,12 +64,12 @@ void __init ls1x_clk_init(void)
+ 				   CLK_GET_RATE_NOCACHE, LS1X_CLK_PLL_DIV,
+ 				   DIV_CPU_SHIFT, DIV_CPU_WIDTH,
+ 				   CLK_DIVIDER_ONE_BASED |
+-				   CLK_DIVIDER_ROUND_CLOSEST, &_lock);
++				   CLK_DIVIDER_ROUND_CLOSEST, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "cpu_clk_div", NULL);
+ 	hw = clk_hw_register_mux(NULL, "cpu_clk", cpu_parents,
+ 			       ARRAY_SIZE(cpu_parents),
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+-			       BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0, &_lock);
++			       BYPASS_CPU_SHIFT, BYPASS_CPU_WIDTH, 0, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "cpu_clk", NULL);
+ 
+ 	/*                                 _____
+@@ -80,12 +80,12 @@ void __init ls1x_clk_init(void)
+ 	 */
+ 	hw = clk_hw_register_divider(NULL, "dc_clk_div", "pll_clk",
+ 				   0, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
+-				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
++				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "dc_clk_div", NULL);
+ 	hw = clk_hw_register_mux(NULL, "dc_clk", dc_parents,
+ 			       ARRAY_SIZE(dc_parents),
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+-			       BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0, &_lock);
++			       BYPASS_DC_SHIFT, BYPASS_DC_WIDTH, 0, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "dc_clk", NULL);
+ 
+ 	/*                                 _____
+@@ -97,12 +97,12 @@ void __init ls1x_clk_init(void)
+ 	hw = clk_hw_register_divider(NULL, "ahb_clk_div", "pll_clk",
+ 				   0, LS1X_CLK_PLL_DIV, DIV_DDR_SHIFT,
+ 				   DIV_DDR_WIDTH, CLK_DIVIDER_ONE_BASED,
+-				   &_lock);
++				   &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "ahb_clk_div", NULL);
+ 	hw = clk_hw_register_mux(NULL, "ahb_clk", ahb_parents,
+ 			       ARRAY_SIZE(ahb_parents),
+ 			       CLK_SET_RATE_NO_REPARENT, LS1X_CLK_PLL_DIV,
+-			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &_lock);
++			       BYPASS_DDR_SHIFT, BYPASS_DDR_WIDTH, 0, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "ahb_clk", NULL);
+ 	clk_hw_register_clkdev(hw, "ls1x-dma", NULL);
+ 	clk_hw_register_clkdev(hw, "stmmaceth", NULL);
+diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
+index 3466f73..7635848 100644
+--- a/drivers/clk/loongson1/clk-loongson1c.c
++++ b/drivers/clk/loongson1/clk-loongson1c.c
+@@ -16,7 +16,7 @@
+ #define OSC		(24 * 1000000)
+ #define DIV_APB		1
+ 
+-static DEFINE_SPINLOCK(_lock);
++static DEFINE_SPINLOCK(ls1x_clk_lock);
+ 
+ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+@@ -58,7 +58,7 @@ void __init ls1x_clk_init(void)
+ 				   CLK_GET_RATE_NOCACHE, LS1X_CLK_PLL_DIV,
+ 				   DIV_CPU_SHIFT, DIV_CPU_WIDTH,
+ 				   CLK_DIVIDER_ONE_BASED |
+-				   CLK_DIVIDER_ROUND_CLOSEST, &_lock);
++				   CLK_DIVIDER_ROUND_CLOSEST, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "cpu_clk_div", NULL);
+ 	hw = clk_hw_register_fixed_factor(NULL, "cpu_clk", "cpu_clk_div",
+ 					0, 1, 1);
+@@ -66,7 +66,7 @@ void __init ls1x_clk_init(void)
+ 
+ 	hw = clk_hw_register_divider(NULL, "dc_clk_div", "pll_clk",
+ 				   0, LS1X_CLK_PLL_DIV, DIV_DC_SHIFT,
+-				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &_lock);
++				   DIV_DC_WIDTH, CLK_DIVIDER_ONE_BASED, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "dc_clk_div", NULL);
+ 	hw = clk_hw_register_fixed_factor(NULL, "dc_clk", "dc_clk_div",
+ 					0, 1, 1);
+@@ -75,7 +75,7 @@ void __init ls1x_clk_init(void)
+ 	hw = clk_hw_register_divider_table(NULL, "ahb_clk_div", "cpu_clk_div",
+ 				0, LS1X_CLK_PLL_FREQ, DIV_DDR_SHIFT,
+ 				DIV_DDR_WIDTH, CLK_DIVIDER_ALLOW_ZERO,
+-				ahb_div_table, &_lock);
++				ahb_div_table, &ls1x_clk_lock);
+ 	clk_hw_register_clkdev(hw, "ahb_clk_div", NULL);
+ 	hw = clk_hw_register_fixed_factor(NULL, "ahb_clk", "ahb_clk_div",
+ 					0, 1, 1);
+-- 
+2.9.4
