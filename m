@@ -1,90 +1,49 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 17:18:53 -0700
+Date: Tue, 20 Jun 2017 13:44:44 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [GIT PULL] Improve cp110 clk support on Marvell Armada 7K/8K
-Message-ID: <20170620001853.GT20170@codeaurora.org>
-References: <pull.28a1be390fb082d60e88c3234dd7d76fb61438b6.1497886602.git-series.gregory.clement@free-electrons.com>
+To: zhoubb <zhoubb@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>,
+	John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?utf-8?B?6LCi6Ie06YKm?= <Yeking@red54.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: Re: [PATCH v7 7/8] clk: Loongson: Add Loongson-1A clock support
+Message-ID: <20170620204444.GT4493@codeaurora.org>
+References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+ <1497581573-17258-8-git-send-email-zhoubb@lemote.com>
+ <20170619233434.GQ20170@codeaurora.org>
+ <CAMpQs4L1_VvWxk_mkbRgvVb3o23m+RdVosgzxFLMRX7fjKa+6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <pull.28a1be390fb082d60e88c3234dd7d76fb61438b6.1497886602.git-series.gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMpQs4L1_VvWxk_mkbRgvVb3o23m+RdVosgzxFLMRX7fjKa+6w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/19, Gregory CLEMENT wrote:
-> 
-> Hi Mike, Stephen,
-> 
-> This time I turned the series in a pull request so I removed the
-> device tree binding part which will be in an other series for Rob
-> Herring and I also removed the dt part that I will take care of once
-> you will have pulled this one.
-> 
-> I hope this will be easier for you to apply this way.
-> 
+On 06/20, zhoubb wrote:
+> On Tue, Jun 20, 2017 at 7:34 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 06/16, Binbin Zhou wrote:
+> >> +
+> >> +static DEFINE_SPINLOCK(_lock);
+> >
+> > I know the other loongson1*.c files also call it "_lock", but
+> > that's not a very good name for something that may show up in
+> > lockdep debugging error messages. How about something a bit more
+> > descriptive, loongson1x_clk_lock?
+> >
+> It's a good idea！
+> Actually, the variable is not be used in this file.
+> If I rename it in another new patch will be better.
+> Do you think so ?
 
-Ok. It wasn't clear what was going on and I forgot to ask in the
-lastest patch series. Pulled into clk-next, but I had to apply
-this patch on top:
+Ok sure.
 
----8<----
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] clk: mvebu: cp110: Minor cleanups
-
-Mark an array of strings static const and remove the dereference
-of a function pointer when assigning to the platform driver probe
-struct member.
-
-drivers/clk/mvebu/cp110-system-controller.c:89:12:
-warning: symbol 'gate_base_names' was not declared. Should it be static?
-drivers/clk/mvebu/cp110-system-controller.c:447:18:
-error: cannot dereference this type
-
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/mvebu/cp110-system-controller.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index b034b79345ec..ca9a0a536174 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -86,7 +86,7 @@ enum {
- #define CP110_GATE_EIP150		25
- #define CP110_GATE_EIP197		26
- 
--const char *gate_base_names[] = {
-+static const char * const gate_base_names[] = {
- 	[CP110_GATE_AUDIO]	= "audio",
- 	[CP110_GATE_COMM_UNIT]	= "communit",
- 	[CP110_GATE_NAND]	= "nand",
-@@ -437,14 +437,13 @@ static int cp110_clk_probe(struct platform_device *pdev)
- 	return cp110_syscon_common_probe(pdev, pdev->dev.of_node->parent);
- }
- 
--
- static const struct of_device_id cp110_syscon_legacy_of_match[] = {
- 	{ .compatible = "marvell,cp110-system-controller0", },
- 	{ }
- };
- 
- static struct platform_driver cp110_syscon_legacy_driver = {
--	.probe = *cp110_syscon_legacy_clk_probe,
-+	.probe = cp110_syscon_legacy_clk_probe,
- 	.driver		= {
- 		.name	= "marvell-cp110-system-controller0",
- 		.of_match_table = cp110_syscon_legacy_of_match,
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
