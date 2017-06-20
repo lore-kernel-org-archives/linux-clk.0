@@ -1,347 +1,59 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org,
-	robh+dt@kernel.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
 	devicetree@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v8 2/3] clk: qcom: Add regmap mux-div clocks support
-Date: Fri, 23 Jun 2017 19:15:32 +0300
-Message-Id: <20170623161533.20449-3-georgi.djakov@linaro.org>
-In-Reply-To: <20170623161533.20449-1-georgi.djakov@linaro.org>
-References: <20170623161533.20449-1-georgi.djakov@linaro.org>
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 01/17] clk: ingenic: Use const pointer to clk_ops in struct
+Date: Tue, 20 Jun 2017 17:18:39 +0200
+Message-Id: <20170620151855.19399-1-paul@crapouillou.net>
+In-Reply-To: <20170607200439.24450-2-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for hardware that can switch both parent clock and divider
-at the same time. This avoids generating intermediate frequencies from
-either the old parent clock and new divider or new parent clock and
-old divider combinations.
+The CGU common code does not modify the pointed clk_ops structure, so it
+should be marked as const.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/qcom/Makefile             |   1 +
- drivers/clk/qcom/clk-regmap-mux-div.c | 237 ++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.h |  52 ++++++++
- 3 files changed, 290 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
+ drivers/clk/ingenic/cgu.h        | 2 +-
+ drivers/clk/ingenic/jz4780-cgu.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 19ae884b5166..ac38c2b21847 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -9,6 +9,7 @@ clk-qcom-y += clk-rcg2.o
- clk-qcom-y += clk-branch.o
- clk-qcom-y += clk-regmap-divider.o
- clk-qcom-y += clk-regmap-mux.o
-+clk-qcom-y += clk-regmap-mux-div.o
- clk-qcom-y += reset.o
- clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+ v2: New patch in this series
+
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index 09700b2c555d..da448b0cac18 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -120,7 +120,7 @@ struct ingenic_cgu_gate_info {
+  * @clk_ops: custom clock operation callbacks
+  */
+ struct ingenic_cgu_custom_info {
+-	struct clk_ops *clk_ops;
++	const struct clk_ops *clk_ops;
+ };
  
-diff --git a/drivers/clk/qcom/clk-regmap-mux-div.c b/drivers/clk/qcom/clk-regmap-mux-div.c
-new file mode 100644
-index 000000000000..5ec31ec3efa7
---- /dev/null
-+++ b/drivers/clk/qcom/clk-regmap-mux-div.c
-@@ -0,0 +1,237 @@
-+/*
-+ * Copyright (c) 2017, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/delay.h>
-+#include <linux/kernel.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-regmap-mux-div.h"
-+
-+#define CMD_RCGR			0x0
-+#define CMD_RCGR_UPDATE			BIT(0)
-+#define CMD_RCGR_DIRTY_CFG		BIT(4)
-+#define CMD_RCGR_ROOT_OFF		BIT(31)
-+#define CFG_RCGR			0x4
-+
-+#define to_clk_regmap_mux_div(_hw) \
-+	container_of(to_clk_regmap(_hw), struct clk_regmap_mux_div, clkr)
-+
-+int __mux_div_set_src_div(struct clk_regmap_mux_div *md, u32 src, u32 div)
-+{
-+	int ret, count;
-+	u32 val, mask;
-+	const char *name = clk_hw_get_name(&md->clkr.hw);
-+
-+	val = (div << md->hid_shift) | (src << md->src_shift);
-+	mask = ((BIT(md->hid_width) - 1) << md->hid_shift) |
-+	       ((BIT(md->src_width) - 1) << md->src_shift);
-+
-+	ret = regmap_update_bits(md->clkr.regmap, CFG_RCGR + md->reg_offset,
-+				 mask, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(md->clkr.regmap, CMD_RCGR + md->reg_offset,
-+				 CMD_RCGR_UPDATE, CMD_RCGR_UPDATE);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for update to take effect */
-+	for (count = 500; count > 0; count--) {
-+		ret = regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset,
-+				  &val);
-+		if (ret)
-+			return ret;
-+		if (!(val & CMD_RCGR_UPDATE))
-+			return 0;
-+		udelay(1);
-+	}
-+
-+	pr_err("%s: RCG did not update its configuration", name);
-+	return -EBUSY;
-+}
-+
-+static void __mux_div_get_src_div(struct clk_regmap_mux_div *md, u32 *src,
-+				  u32 *div)
-+{
-+	u32 val, d, s;
-+	const char *name = clk_hw_get_name(&md->clkr.hw);
-+
-+	regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset, &val);
-+
-+	if (val & CMD_RCGR_DIRTY_CFG) {
-+		pr_err("%s: RCG configuration is pending\n", name);
-+		return;
-+	}
-+
-+	regmap_read(md->clkr.regmap, CFG_RCGR + md->reg_offset, &val);
-+	s = (val >> md->src_shift);
-+	s &= BIT(md->src_width) - 1;
-+	*src = s;
-+
-+	d = (val >> md->hid_shift);
-+	d &= BIT(md->hid_width) - 1;
-+	*div = d;
-+}
-+
-+static inline bool is_better_rate(unsigned long req, unsigned long best,
-+				  unsigned long new)
-+{
-+	return (req <= new && new < best) || (best < req && best < new);
-+}
-+
-+static int mux_div_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
-+{
-+	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
-+	unsigned int i, div, max_div;
-+	unsigned long actual_rate, best_rate = 0;
-+	unsigned long req_rate = req->rate;
-+
-+	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-+		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
-+		unsigned long parent_rate = clk_hw_get_rate(parent);
-+
-+		max_div = BIT(md->hid_width) - 1;
-+		for (div = 1; div < max_div; div++) {
-+			parent_rate = mult_frac(req_rate, div, 2);
-+			parent_rate = clk_hw_round_rate(parent, parent_rate);
-+			actual_rate = mult_frac(parent_rate, 2, div);
-+
-+			if (is_better_rate(req_rate, best_rate, actual_rate)) {
-+				best_rate = actual_rate;
-+				req->rate = best_rate;
-+				req->best_parent_rate = parent_rate;
-+				req->best_parent_hw = parent;
-+			}
-+
-+			if (actual_rate < req_rate || best_rate <= req_rate)
-+				break;
-+		}
-+	}
-+
-+	if (!best_rate)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int __mux_div_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
-+					 unsigned long prate, u32 src)
-+{
-+	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
-+	int ret;
-+	u32 div, max_div, best_src = 0, best_div = 0;
-+	unsigned int i;
-+	unsigned long actual_rate, best_rate = 0;
-+
-+	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-+		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
-+		unsigned long parent_rate = clk_hw_get_rate(parent);
-+
-+		max_div = BIT(md->hid_width) - 1;
-+		for (div = 1; div < max_div; div++) {
-+			parent_rate = mult_frac(rate, div, 2);
-+			parent_rate = clk_hw_round_rate(parent, parent_rate);
-+			actual_rate = mult_frac(parent_rate, 2, div);
-+
-+			if (is_better_rate(rate, best_rate, actual_rate)) {
-+				best_rate = actual_rate;
-+				best_src = md->parent_map[i].cfg;
-+				best_div = div - 1;
-+			}
-+
-+			if (actual_rate < rate || best_rate <= rate)
-+				break;
-+		}
-+	}
-+
-+	ret = __mux_div_set_src_div(md, best_src, best_div);
-+	if (!ret) {
-+		md->div = best_div;
-+		md->src = best_src;
-+	}
-+
-+	return ret;
-+}
-+
-+static u8 mux_div_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
-+	const char *name = clk_hw_get_name(hw);
-+	u32 i, div, src = 0;
-+
-+	__mux_div_get_src_div(md, &src, &div);
-+
-+	for (i = 0; i < clk_hw_get_num_parents(hw); i++)
-+		if (src == md->parent_map[i].cfg)
-+			return i;
-+
-+	pr_err("%s: Can't find parent with src %d\n", name, src);
-+	return 0;
-+}
-+
-+static int mux_div_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
-+
-+	return __mux_div_set_src_div(md, md->parent_map[index].cfg, md->div);
-+}
-+
-+static int mux_div_set_rate(struct clk_hw *hw,
-+			    unsigned long rate, unsigned long prate)
-+{
-+	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
-+
-+	return __mux_div_set_rate_and_parent(hw, rate, prate, md->src);
-+}
-+
-+static int mux_div_set_rate_and_parent(struct clk_hw *hw,  unsigned long rate,
-+				       unsigned long prate, u8 index)
-+{
-+	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
-+
-+	return __mux_div_set_rate_and_parent(hw, rate, prate,
-+					     md->parent_map[index].cfg);
-+}
-+
-+static unsigned long mux_div_recalc_rate(struct clk_hw *hw, unsigned long prate)
-+{
-+	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
-+	u32 div, src;
-+	int i, num_parents = clk_hw_get_num_parents(hw);
-+	const char *name = clk_hw_get_name(hw);
-+
-+	__mux_div_get_src_div(md, &src, &div);
-+	for (i = 0; i < num_parents; i++)
-+		if (src == md->parent_map[i].cfg) {
-+			struct clk_hw *p = clk_hw_get_parent_by_index(hw, i);
-+			unsigned long parent_rate = clk_hw_get_rate(p);
-+
-+			return mult_frac(parent_rate, 2, div + 1);
-+		}
-+
-+	pr_err("%s: Can't find parent %d\n", name, src);
-+	return 0;
-+}
-+
-+const struct clk_ops clk_regmap_mux_div_ops = {
-+	.get_parent = mux_div_get_parent,
-+	.set_parent = mux_div_set_parent,
-+	.set_rate = mux_div_set_rate,
-+	.set_rate_and_parent = mux_div_set_rate_and_parent,
-+	.determine_rate = mux_div_determine_rate,
-+	.recalc_rate = mux_div_recalc_rate,
-+};
-diff --git a/drivers/clk/qcom/clk-regmap-mux-div.h b/drivers/clk/qcom/clk-regmap-mux-div.h
-new file mode 100644
-index 000000000000..3380e8f6e8a1
---- /dev/null
-+++ b/drivers/clk/qcom/clk-regmap-mux-div.h
-@@ -0,0 +1,52 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __QCOM_CLK_REGMAP_MUX_DIV_H__
-+#define __QCOM_CLK_REGMAP_MUX_DIV_H__
-+
-+#include <linux/clk-provider.h>
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+
-+/**
-+ * struct mux_div_clk - combined mux/divider clock
-+ * @reg_offset: offset of the mux/divider register
-+ * @hid_width:	number of bits in half integer divider
-+ * @hid_shift:	lowest bit of hid value field
-+ * @src_width:	number of bits in source select
-+ * @src_shift:	lowest bit of source select field
-+ * @div:	the divider raw configuration value
-+ * @src:	the mux index which will be used if the clock is enabled
-+ * @parent_map:	pointer to parent_map struct
-+ * @clkr:	handle between common and hardware-specific interfaces
-+ * @clk_nb:	clock notifier registered for clock rate changes of the A53 PLL
-+ */
-+
-+struct clk_regmap_mux_div {
-+	u32				reg_offset;
-+	u32				hid_width;
-+	u32				hid_shift;
-+	u32				src_width;
-+	u32				src_shift;
-+	u32				div;
-+	u32				src;
-+	const struct parent_map		*parent_map;
-+	struct clk_regmap		clkr;
-+	struct notifier_block		clk_nb;
-+};
-+
-+extern const struct clk_ops clk_regmap_mux_div_ops;
-+int __mux_div_set_src_div(struct clk_regmap_mux_div *md, u32 src, u32 div);
-+
-+#endif
+ /**
+diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
+index b35d6d9dd5aa..a21698fb202c 100644
+--- a/drivers/clk/ingenic/jz4780-cgu.c
++++ b/drivers/clk/ingenic/jz4780-cgu.c
+@@ -203,7 +203,7 @@ static int jz4780_otg_phy_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	return 0;
+ }
+ 
+-static struct clk_ops jz4780_otg_phy_ops = {
++static const struct clk_ops jz4780_otg_phy_ops = {
+ 	.get_parent = jz4780_otg_phy_get_parent,
+ 	.set_parent = jz4780_otg_phy_set_parent,
+ 
+-- 
+2.11.0
