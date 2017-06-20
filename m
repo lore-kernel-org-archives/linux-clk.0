@@ -1,63 +1,36 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 01/19] drm/sun4i: call drm_vblank_init with correct number of crtcs
-Date: Fri,  2 Jun 2017 18:10:06 +0800
-Message-Id: <20170602101024.18940-2-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1497955822.7387.3.camel@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com> <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
+ <1497955822.7387.3.camel@baylibre.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 20 Jun 2017 13:54:51 +0200
+Message-ID: <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Russell King <linux@armlinux.org.uk>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Adriana Reus <adi.reus@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-If we want to have vblank on both pipelines at the same time, we need
-to call drm_vblank_init with num_crtcs = 2.
+On Tue, Jun 20, 2017 at 12:50 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> On Tue, 2017-06-20 at 11:07 +0200, Linus Walleij wrote:
 
-Instead, since the crtc init calls correctly set mode_config.num_crtc,
-we can move the drm_vblank_init call to after the crtc init code is
-called, which is the component bind part. Then we can just pass
-mode_config.num_crtc in.
+> When the rate is critical to perform a particular task. My example is the audio
+> and i2s output. You can't tolerate glitches during the playback, the end user
+> would complain (longer description in the original RFC)
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+I see. Thanks for your detailed explanation!
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index f19100c91c2b..ed75a779ae4b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -100,11 +100,6 @@ static int sun4i_drv_bind(struct device *dev)
- 		goto free_drm;
- 	}
- 
--	/* drm_vblank_init calls kcalloc, which can fail */
--	ret = drm_vblank_init(drm, 1);
--	if (ret)
--		goto free_mem_region;
--
- 	drm_mode_config_init(drm);
- 
- 	ret = component_bind_all(drm->dev, drm);
-@@ -113,6 +108,11 @@ static int sun4i_drv_bind(struct device *dev)
- 		goto cleanup_mode_config;
- 	}
- 
-+	/* drm_vblank_init calls kcalloc, which can fail */
-+	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
-+	if (ret)
-+		goto free_mem_region;
-+
- 	drm->irq_enabled = true;
- 
- 	/* Remove early framebuffers (ie. simplefb) */
--- 
-2.11.0
+> It also fixes the behavior of CLK_SET_RATE_GATE flag, which is why I put you in
+> CC.
+>
+> ux500 uses this flag several time, I'd like make sure people are not relying on
+> its broken implementation.
+
+Ux500 audio is broken, but I'm fixing it a little at a time...
+
+Yours,
+Linus Walleij
