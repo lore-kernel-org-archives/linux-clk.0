@@ -1,96 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:34432 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753220AbdF2NZY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2017 09:25:24 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 0/5] clk: renesas: rcar-gen3: Restore clocks during resume
-Date: Thu, 29 Jun 2017 15:25:15 +0200
-Message-Id: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <leonard.crestez@nxp.com>
+Message-ID: <1497969426.3177.14.camel@nxp.com>
+Subject: Re: [PATCH v5 3/6] kernel/reboot.c: export pm_power_off_prepare
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+CC: Andrew Morton <akpm@linux-foundation.org>, <devicetree@vger.kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, <kernel@pengutronix.de>, Liam Girdwood
+	<lgirdwood@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mark Brown
+	<broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 20 Jun 2017 17:37:06 +0300
+In-Reply-To: <5023d338-f845-b8a6-c4a0-d414c75f841c@pengutronix.de>
+References: <20170619050245.2632-1-o.rempel@pengutronix.de>
+	 <20170619050245.2632-4-o.rempel@pengutronix.de>
+	 <1497872109.5380.10.camel@nxp.com>
+	 <5023d338-f845-b8a6-c4a0-d414c75f841c@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: leonard.crestez@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi all,
+On Tue, 2017-06-20 at 07:01 +0200, Oleksij Rempel wrote:
+> 
+> On 19.06.2017 13:35, Leonard Crestez wrote:
+> > 
+> > On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
+> > > 
+> > > Export pm_power_off_prepare. It is needed to implement power off on
+> > > Freescale/NXP iMX6 based boards with external power management
+> > > integrated circuit (PMIC).
+> > > 
+> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > ---
+> > >  kernel/reboot.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/kernel/reboot.c b/kernel/reboot.c
+> > > index bd30a973fe94..a6903bf772c7 100644
+> > > --- a/kernel/reboot.c
+> > > +++ b/kernel/reboot.c
+> > > @@ -49,6 +49,7 @@ int reboot_force;
+> > >   */
+> > > 
+> > >  void (*pm_power_off_prepare)(void);
+> > > +EXPORT_SYMBOL(pm_power_off_prepare);
+> > > 
+> > Could you register a reboot notifier in the pfuze driver instead? Right
+> > now the only user of pm_power_off_prepare is ACPI so this alternative
+> > seems less intrusive.
+> hm... in this case i will need to make sure that reboot handler is not 
+> executed on reboot. This will make code looks strange. Which is opposite 
+> of your comment in other email about strange standby code for power off :)
+> Should i really do this?
 
-During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
-clock register state is lost.  Note that as the boot loader skips most
-initialization after resume, clock register state differs from the state
-encountered during normal system boot, too.
+A reboot handler receives a parameter to differentiate between reboot
+and shutdown so it would be easy. Isn't it preferable to use an
+existing mechanism instead of exporting a new symbol?
 
-Hence after s2ram, some operations may fail because module clocks are
-disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
-fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
-
-    ravb e6800000.ethernet eth0: failed to switch device to config mode
-    ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
-    ravb e6800000.ethernet eth0: failed to switch device to config
-    PM: Device e6800000.ethernet failed to resume: error -110
-
-In addition, some clocks that were disabled by clk_disable_unused() may
-have been re-enabled, wasting power.
-
-This RFC is a second attempt to fix this issue by restoring clock registers
-during system resume.
-
-Note that while this fixes EtherAVB operation after resume from s2ram,
-EtherAVB cannot be used as an actual wake-up source from s2ram, only
-from s2idle, due to PSCI limitations.
-
-Changes compared to v1 (more details in the individual patches):
-  - Save module clock registers in suspend_noirq instead of constantly
-    updating shadow registers,
-  - Restore all module clocks under our control, not just the ones we ever
-    changed,
-  - Also restore DIV6, SDHI, and R clocks, thus covering all supported
-    programmable core clocks on R-Car Gen3.
-
-As clock register restore is only needed on R-Car Gen3 with PSCI, although
-harmless on other systems, perhaps the save/restore code should be
-protected by #ifdef CONFIG_ARM_PSCI_FW?
-
-This series is against clk-next, with "clk: renesas: div6: Document fields
-used for parent selection" applied on top.
-
-This has been tested on Salvator-X with R-Car H3 ES1.0 and M3-W ES1.0.
-On Salvator-XS with R-Car H3 ES2.0, EtherAVB restarts after system resume,
-but NFS fails with "server not responding", probably not due to a clock
-issue.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (5):
-  [RFC] clk: renesas: cpg-mssr: Restore module clocks during resume
-  [RFC] clk: renesas: cpg-mssr: Add support to restore core clocks
-    during resume
-  [RFC] clk: renesas: div6: Restore clock state during resume
-  [RFC] clk: renesas: rcar-gen3: Restore SDHI clocks during resume
-  [RFC] clk: renesas: rcar-gen3: Restore R clock during resume
-
- drivers/clk/renesas/clk-div6.c         | 38 ++++++++++++++-
- drivers/clk/renesas/clk-div6.h         |  3 +-
- drivers/clk/renesas/rcar-gen2-cpg.c    |  7 ++-
- drivers/clk/renesas/rcar-gen2-cpg.h    |  6 +--
- drivers/clk/renesas/rcar-gen3-cpg.c    | 79 +++++++++++++++++++++++++-------
- drivers/clk/renesas/rcar-gen3-cpg.h    |  3 +-
- drivers/clk/renesas/renesas-cpg-mssr.c | 84 +++++++++++++++++++++++++++++++++-
- drivers/clk/renesas/renesas-cpg-mssr.h |  3 +-
- 8 files changed, 193 insertions(+), 30 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
+But maybe somebody else will Ack this, I don't particularly insist on
+changing this.
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Regards,
+Leonard
