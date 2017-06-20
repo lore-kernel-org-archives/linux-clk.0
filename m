@@ -1,168 +1,182 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: [PATCH v3] clk: bcm2835: remove remains from stub clk driver
-To: Danilo Krummrich <danilokrummrich@dk-develop.de>, rjui@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, sboyd@codeaurora.org,
- Michael Turquette <mturquette@baylibre.com>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>
-References: <20170608222900.18039-1-danilokrummrich@dk-develop.de>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <a6facd69-ca86-1527-52af-f097a905027e@i2se.com>
-Date: Tue, 13 Jun 2017 17:35:17 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 18:59:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
+Subject: Re: [PATCH 4/9] clk: imx: add pllv4 support
+Message-ID: <20170620015917.GO4493@codeaurora.org>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20170608222900.18039-1-danilokrummrich@dk-develop.de>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-[add Michael, Eric and Florian]
+On 05/15, Dong Aisheng wrote:
+>  obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+> diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
+> new file mode 100644
+> index 0000000..502da64
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-pllv4.c
+> @@ -0,0 +1,196 @@
+> +/*
+> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> + * Copyright 2017 NXP
+> + *
+> + * Author: Dong Aisheng <aisheng.dong@nxp.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version 2
+> + * of the License, or (at your option) any later version.
+> + *
+> + * http://www.opensource.org/licenses/gpl-license.html
+> + * http://www.gnu.org/copyleft/gpl.html
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
 
-Am 09.06.2017 um 00:29 schrieb Danilo Krummrich:
-> This commit removes the fixed clocks introduced as a stub clock driver
-> added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
-> Originally they were used to drive the AMBA bus and PL011 uart driver.
-> Now these clocks are derived by the CPRMAN clock driver and configured
-> in DT.
->
-> Additionally, get rid of init_machine function in bcm2835 board file
-> as there's nothing to do any longer.
->
-> Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
-> ---
-> v2: v2: added ACK from Eric Anholt
-> v3: rebased onto: [PATCH] irqchip/bcm2836: Move SMP startup code to arch/arm
+Is this include used?
 
-@Michael, @Stephen:
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/slab.h>
+> +
+> +/* PLL Control Status Register (xPLLCSR) */
+> +#define PLL_CSR_OFFSET		0x0
+> +#define PLL_VLD			BIT(24)
+> +#define PLL_EN			BIT(0)
+> +
+> +/* PLL Configuration Register (xPLLCFG) */
+> +#define PLL_CFG_OFFSET		0x08
+> +#define BP_PLL_MULT		16
+> +#define BM_PLL_MULT		(0x7f << 16)
+> +
+> +/* PLL Numerator Register (xPLLNUM) */
+> +#define PLL_NUM_OFFSET		0x10
+> +
+> +/* PLL Denominator Register (xPLLDENOM) */
+> +#define PLL_DENOM_OFFSET	0x14
+> +
+> +struct clk_pllv4 {
+> +	struct clk_hw	hw;
+> +	void __iomem	*base;
+> +};
+> +
+> +/* Valid PLL MULT Table */
+> +static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
+> +
+> +#define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
+> +
+> +static int clk_pllv4_wait_lock(struct clk_pllv4 *pll)
+> +{
+> +	unsigned long timeout = jiffies + msecs_to_jiffies(5);
+> +
+> +	/* Wait for PLL to lock */
+> +	do {
+> +		if (readl_relaxed(pll->base  + PLL_CSR_OFFSET) & PLL_VLD)
+> +			break;
+> +		if (time_after(jiffies, timeout))
+> +			break;
+> +			usleep_range(50, 500);
+> +	} while (1);
+> +
+> +	return readl_relaxed(pll->base + PLL_CSR_OFFSET) & PLL_VLD ?
+> +	       0 : -ETIMEDOUT;
 
-In case you are okay with this patch, can this go via bcm2835-tree?
+Use readl_poll_timeout() instead?
 
-> ---
->  arch/arm/mach-bcm/board_bcm2835.c |  8 --------
->  drivers/clk/bcm/clk-bcm2835-aux.c |  1 -
->  drivers/clk/bcm/clk-bcm2835.c     | 30 ------------------------------
->  include/linux/clk/bcm2835.h       | 24 ------------------------
->  4 files changed, 63 deletions(-)
->  delete mode 100644 include/linux/clk/bcm2835.h
->
-> diff --git a/arch/arm/mach-bcm/board_bcm2835.c b/arch/arm/mach-bcm/board_bcm2835.c
-> index 1e7c6aa..82f2d08 100644
-> --- a/arch/arm/mach-bcm/board_bcm2835.c
-> +++ b/arch/arm/mach-bcm/board_bcm2835.c
-> @@ -15,7 +15,6 @@
->  #include <linux/init.h>
->  #include <linux/irqchip.h>
->  #include <linux/of_address.h>
-> -#include <linux/clk/bcm2835.h>
->  #include <linux/irqchip/irq-bcm2836.h>
->  
->  #include <asm/mach/arch.h>
-> @@ -52,12 +51,6 @@ static const struct smp_operations bcm2836_smp_ops = {
->  	.smp_boot_secondary	= bcm2836_smp_boot_secondary,
->  };
->  #endif
-> -
-> -static void __init bcm2835_init(void)
-> -{
-> -	bcm2835_init_clocks();
-> -}
-> -
->  static const char * const bcm2835_compat[] = {
->  #ifdef CONFIG_ARCH_MULTI_V6
->  	"brcm,bcm2835",
-> @@ -69,7 +62,6 @@ static const char * const bcm2835_compat[] = {
->  };
->  
->  DT_MACHINE_START(BCM2835, "BCM2835")
-> -	.init_machine = bcm2835_init,
->  	.dt_compat = bcm2835_compat,
->  	.smp = smp_ops(bcm2836_smp_ops),
->  MACHINE_END
-> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-> index bd750cf..77e276d 100644
-> --- a/drivers/clk/bcm/clk-bcm2835-aux.c
-> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-> @@ -14,7 +14,6 @@
->  
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> -#include <linux/clk/bcm2835.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <dt-bindings/clock/bcm2835-aux.h>
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 0258538..e8f37f7 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -37,7 +37,6 @@
->  #include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
->  #include <linux/clk.h>
-> -#include <linux/clk/bcm2835.h>
->  #include <linux/debugfs.h>
->  #include <linux/delay.h>
->  #include <linux/module.h>
-> @@ -416,35 +415,6 @@ static int bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
->  	return regdump ? 0 : -ENOMEM;
->  }
->  
-> -/*
-> - * These are fixed clocks. They're probably not all root clocks and it may
-> - * be possible to turn them on and off but until this is mapped out better
-> - * it's the only way they can be used.
-> - */
-> -void __init bcm2835_init_clocks(void)
-> -{
-> -	struct clk_hw *hw;
-> -	int ret;
-> -
-> -	hw = clk_hw_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 126000000);
-> -	if (IS_ERR(hw))
-> -		pr_err("apb_pclk not registered\n");
-> -
-> -	hw = clk_hw_register_fixed_rate(NULL, "uart0_pclk", NULL, 0, 3000000);
-> -	if (IS_ERR(hw))
-> -		pr_err("uart0_pclk not registered\n");
-> -	ret = clk_hw_register_clkdev(hw, NULL, "20201000.uart");
-> -	if (ret)
-> -		pr_err("uart0_pclk alias not registered\n");
-> -
-> -	hw = clk_hw_register_fixed_rate(NULL, "uart1_pclk", NULL, 0, 125000000);
-> -	if (IS_ERR(hw))
-> -		pr_err("uart1_pclk not registered\n");
-> -	ret = clk_hw_register_clkdev(hw, NULL, "20215000.uart");
-> -	if (ret)
-> -		pr_err("uart1_pclk alias not registered\n");
-> -}
-> -
->  struct bcm2835_pll_data {
->  	const char *name;
->  	u32 cm_ctrl_reg;
-> diff --git a/include/linux/clk/bcm2835.h b/include/linux/clk/bcm2835.h
-> deleted file mode 100644
-> index aa937f6..0000000
-> --- a/include/linux/clk/bcm2835.h
-> +++ /dev/null
-> @@ -1,24 +0,0 @@
-> -/*
-> - * Copyright (C) 2010 Broadcom
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-> - */
-> -
-> -#ifndef __LINUX_CLK_BCM2835_H_
-> -#define __LINUX_CLK_BCM2835_H_
-> -
-> -void __init bcm2835_init_clocks(void);
-> -
-> -#endif
+> +}
+> +
+> +static int clk_pllv4_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+> +
+> +	if (readl_relaxed(pll->base) & PLL_EN)
+> +		return 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
+> +					   unsigned long parent_rate)
+> +{
+> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+> +	u32 div;
+> +
+> +	div = (readl_relaxed(pll->base + PLL_CFG_OFFSET)
+> +	       & BM_PLL_MULT) >> BP_PLL_MULT;
+
+Put that on multiple lines please:
+
+	div = readl_relaxed(pll->base + PLL_CFG_OFFSET);
+	div &= BM_PLL_MULT;
+	div >>= BP_PLL_MULT; /* Why BP this time? */
+
+> +
+> +	return parent_rate * div;
+> +}
+> +
+> +static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long *prate)
+> +{
+> +	unsigned long parent_rate = *prate;
+> +	unsigned long round_rate, i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> +		round_rate = parent_rate * pllv4_mult_table[i];
+> +		if (rate >= round_rate)
+> +			return round_rate;
+> +	}
+> +
+> +	return round_rate;
+> +}
+> +
+> +static bool clk_pllv4_is_valid_mult(unsigned int mult)
+> +{
+> +	int i;
+> +
+> +	/* check if mult is in valid MULT table */
+> +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> +		if (pllv4_mult_table[i] == mult)
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			      unsigned long parent_rate)
+> +{
+> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+> +	u32 val, mult;
+> +
+> +	if (clk_pllv4_is_enabled(hw)) {
+> +		WARN(1, "clk_pllv4: can't change rate when pll is enabled");
+> +		return -EINVAL;
+
+Sad, CLK_SET_RATE_GATE isn't working for you I suppose?
+
+> +	}
+> +
+> +	mult = rate / parent_rate;
+> +
+> +	if (clk_pllv4_is_valid_mult(mult))
+> +		return -EINVAL;
+> +
+> +	val = readl_relaxed(pll->base + PLL_CFG_OFFSET);
+> +	val &= ~BM_PLL_MULT;
+> +	val |= mult << BP_PLL_MULT;
+> +	writel_relaxed(val, pll->base + PLL_CFG_OFFSET);
+> +
+> +	return 0;
+> +}
+> +
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
