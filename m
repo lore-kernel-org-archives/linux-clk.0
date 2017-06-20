@@ -1,30 +1,90 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 17:03:12 -0700
+Date: Mon, 19 Jun 2017 17:18:53 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] clk: socfpga: Fix the smplsel on Arria10 and Stratix10
-Message-ID: <20170620000312.GS20170@codeaurora.org>
-References: <1496931519-9685-1-git-send-email-dinguyen@kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
+	Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [GIT PULL] Improve cp110 clk support on Marvell Armada 7K/8K
+Message-ID: <20170620001853.GT20170@codeaurora.org>
+References: <pull.28a1be390fb082d60e88c3234dd7d76fb61438b6.1497886602.git-series.gregory.clement@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1496931519-9685-1-git-send-email-dinguyen@kernel.org>
+In-Reply-To: <pull.28a1be390fb082d60e88c3234dd7d76fb61438b6.1497886602.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/08, Dinh Nguyen wrote:
-> The smplsel bits for the SDMMC clock on Arria10 and Stratix10 platforms are
-> offset by 1 additional bit.
+On 06/19, Gregory CLEMENT wrote:
 > 
-> Add a new macro SYSMGR_SDMMC_CTRL_SET_AS10 for usage on the Arria10 and
-> Stratix10 platforms.
+> Hi Mike, Stephen,
 > 
-> Fixes: 5611a5ba8e54 ("clk: socfpga: update clk.h so for Arria10 platform to use")
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
+> This time I turned the series in a pull request so I removed the
+> device tree binding part which will be in an other series for Rob
+> Herring and I also removed the dt part that I will take care of once
+> you will have pulled this one.
+> 
+> I hope this will be easier for you to apply this way.
+> 
 
-Applied to clk-next
+Ok. It wasn't clear what was going on and I forgot to ask in the
+lastest patch series. Pulled into clk-next, but I had to apply
+this patch on top:
 
+---8<----
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] clk: mvebu: cp110: Minor cleanups
+
+Mark an array of strings static const and remove the dereference
+of a function pointer when assigning to the platform driver probe
+struct member.
+
+drivers/clk/mvebu/cp110-system-controller.c:89:12:
+warning: symbol 'gate_base_names' was not declared. Should it be static?
+drivers/clk/mvebu/cp110-system-controller.c:447:18:
+error: cannot dereference this type
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/mvebu/cp110-system-controller.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index b034b79345ec..ca9a0a536174 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -86,7 +86,7 @@ enum {
+ #define CP110_GATE_EIP150		25
+ #define CP110_GATE_EIP197		26
+ 
+-const char *gate_base_names[] = {
++static const char * const gate_base_names[] = {
+ 	[CP110_GATE_AUDIO]	= "audio",
+ 	[CP110_GATE_COMM_UNIT]	= "communit",
+ 	[CP110_GATE_NAND]	= "nand",
+@@ -437,14 +437,13 @@ static int cp110_clk_probe(struct platform_device *pdev)
+ 	return cp110_syscon_common_probe(pdev, pdev->dev.of_node->parent);
+ }
+ 
+-
+ static const struct of_device_id cp110_syscon_legacy_of_match[] = {
+ 	{ .compatible = "marvell,cp110-system-controller0", },
+ 	{ }
+ };
+ 
+ static struct platform_driver cp110_syscon_legacy_driver = {
+-	.probe = *cp110_syscon_legacy_clk_probe,
++	.probe = cp110_syscon_legacy_clk_probe,
+ 	.driver		= {
+ 		.name	= "marvell-cp110-system-controller0",
+ 		.of_match_table = cp110_syscon_legacy_of_match,
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
