@@ -1,70 +1,77 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <b42a6818-4bc1-6556-5adf-c74a205b745b@de.bosch.com>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
- <b2328038-64ac-f7e0-d8a9-434f2f0b0300@de.bosch.com> <CAMuHMdVD3i0YhGCf-HSS+y+4SHvXi9sW3V4-ScQX=7R+DX=kEQ@mail.gmail.com>
- <b42a6818-4bc1-6556-5adf-c74a205b745b@de.bosch.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jun 2017 15:22:51 +0200
-Message-ID: <CAMuHMdV7onyF3o0POVh0v0O-Zp_bmGK3zyadg1SHa4r6k-P_2g@mail.gmail.com>
-Subject: Re: Clocks used by another OS/CPU
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@baylibre.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 08/17] serial: 8250_ingenic: Parse earlycon options
+Date: Tue, 20 Jun 2017 17:18:46 +0200
+Message-Id: <20170620151855.19399-8-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dirk,
+In the devicetree, it is possible to specify the baudrate, parity,
+bits, flow of the early console, by passing a configuration string like
+this:
 
-On Thu, Jun 29, 2017 at 3:18 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> On 29.06.2017 13:18, Geert Uytterhoeven wrote:
->> On Thu, Jun 29, 2017 at 12:28 PM, Dirk Behme <dirk.behme@de.bosch.com>
->> wrote:
->>> On 29.06.2017 11:27, Geert Uytterhoeven wrote:
->>>> TL;DR: Clocks may be in use by another CPU not running Linux, while
->>>> Linux
->>>> disables them as being unused.
+aliases {
+	serial0 = &uart0;
+};
 
->>>> On r8a7795, there are several Cortex A cores running Linux, and a Cortex
->>>> R7
->>>> core which may run another OS.
->>>> This is an interesting issue, and relevant to other SoCs, too.
+chosen {
+	stdout-path = "serial0:57600n8";
+};
 
-> First of all, just the clocks we know (*) are used by the R7 side *and* are
-> disabled by the kernel (for a practical demo this are e.g. ~7 clocks).
->
-> (*) Yes, this is board (and R7 software) related. And yes, this might result
-> in board specific r8a7795_crit_mod_clks/r8a7795_crit_core_clks[] tables. So
-> yes, most probably device tree would be an option. While there is
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c#n3402
->
-> unfortunately
->
-> a) its marked as "Do not use this function"
->
-> and
->
-> b) even if we would ignore (a) we couldn't figure how to use this for the
-> RCar3 clocks (being no clock expert)
+This, for instance, will configure the early console for a baudrate of
+57600 bps, no parity, and 8 bits per baud.
 
-You cannot, as it only supports the legacy one-clock-per-node style.
-You can use it on e.g. sd2_clk in arch/arm/boot/dts/r8a7791.dtsi, until R-Car
-Gen2 is switched to the new CPG/MSSR driver.
+This patches implements parsing of this configuration string in the
+8250_ingenic driver, which previously just ignored it.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/tty/serial/8250/8250_ingenic.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-                        Geert
+ v2: Don't create temp. buffer, now that uart_parse_options takes a const char*
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
+index b31b2ca552d1..be4a07a24342 100644
+--- a/drivers/tty/serial/8250/8250_ingenic.c
++++ b/drivers/tty/serial/8250/8250_ingenic.c
+@@ -99,14 +99,22 @@ static int __init ingenic_early_console_setup(struct earlycon_device *dev,
+ 					      const char *opt)
+ {
+ 	struct uart_port *port = &dev->port;
+-	unsigned int baud, divisor;
++	unsigned int divisor;
++	int baud = 115200;
+ 
+ 	if (!dev->port.membase)
+ 		return -ENODEV;
+ 
++	if (opt) {
++		unsigned int parity, bits, flow; /* unused for now */
++
++		uart_parse_options(opt, &baud, &parity, &bits, &flow);
++	}
++
+ 	ingenic_early_console_setup_clock(dev);
+ 
+-	baud = dev->baud ?: 115200;
++	if (dev->baud)
++		baud = dev->baud;
+ 	divisor = DIV_ROUND_CLOSEST(port->uartclk, 16 * baud);
+ 
+ 	early_out(port, UART_IER, 0);
+-- 
+2.11.0
