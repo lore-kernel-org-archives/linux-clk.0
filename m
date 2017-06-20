@@ -1,85 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52126 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751287AbdFBKKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Jun 2017 06:10:40 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH 18/19] ARM: sun6i: a31s: Enable HDMI display output on the Sinlinx SinA31s
-Date: Fri,  2 Jun 2017 18:10:23 +0800
-Message-Id: <20170602101024.18940-19-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <leonard.crestez@nxp.com>
+Message-ID: <1497969136.3177.10.camel@nxp.com>
+Subject: Re: [PATCH v5 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+CC: Andrew Morton <akpm@linux-foundation.org>, <devicetree@vger.kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, <kernel@pengutronix.de>, Liam Girdwood
+	<lgirdwood@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mark Brown
+	<broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Date: Tue, 20 Jun 2017 17:32:16 +0300
+In-Reply-To: <7f2db0a8-a316-5ecb-24bf-46bcb625e123@pengutronix.de>
+References: <20170619050245.2632-1-o.rempel@pengutronix.de>
+	 <20170619050245.2632-3-o.rempel@pengutronix.de>
+	 <1497872133.5380.11.camel@nxp.com>
+	 <7f2db0a8-a316-5ecb-24bf-46bcb625e123@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: leonard.crestez@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The Sinlinx SinA31s has an HDMI connector wired to the HDMI pins
-from the SoC.
+On Tue, 2017-06-20 at 06:55 +0200, Oleksij Rempel wrote:
+> On 19.06.2017 13:35, Leonard Crestez wrote:
+> > On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
+> > > 
+> > > One of the Freescale recommended sequences for power off with
+> > > external
+> > > PMIC is the following:
+> > > ...
+> > > 3.  SoC is programming PMIC for power off when standby is asserted.
+> > > 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+> > > 
+> > > This patch implements step 4. of this sequence.
+> > > 
+> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > ---
+> > >  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+> > >  1 file changed, 25 insertions(+)
+> > > 
+> > > diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-
+> > > imx6.c
+> > > index e61b1d1027e1..cb76832935f0 100644
+> > > --- a/arch/arm/mach-imx/pm-imx6.c
+> > > +++ b/arch/arm/mach-imx/pm-imx6.c
+> > > @@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const
+> > > struct imx6_pm_socdata
+> > >  				   IMX6Q_GPR1_GINT);
+> > >  }
+> > > 
+> > > +static void imx6_pm_poweroff(void)
+> > > +{
+> > > +	imx6_set_lpm(STOP_POWER_OFF);
+> > > +	cpu_suspend(0, imx6q_suspend_finish);
+> > It's a bit strange that you're using parts of the suspend code for
+> > this. Perhaps you could just write your bits to CLPCR and then execute
+> > a WFI?
+> Well, every thing in this patch set, yell about using standby/suspend 
+> path in HW for power off. Even iMX code use STOP_POWER_OFF for 
+> configuring this regs. How can it be more strange? :) Should i really 
+> duplicate code to hide this?
+> 
+This code is used to set the power state the soc enters on WFI. These
+function try to ensure that it is possible to come back up when woken
+by an interrupt later. That part you don't want, right?
 
-Enable the display pipeline and the HDMI output.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun6i-a31s-sina31s.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun6i-a31s-sina31s.dts b/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
-index b3d98222bd81..298476485bb4 100644
---- a/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
-+++ b/arch/arm/boot/dts/sun6i-a31s-sina31s.dts
-@@ -53,6 +53,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -90,6 +101,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	/* USB 2.0 4 port hub IC */
- 	status = "okay";
-@@ -112,6 +127,16 @@
- 	};
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
--- 
-2.11.0
-
+However I can't think of any obvious way this could misbehave so I
+guess it's fine.
