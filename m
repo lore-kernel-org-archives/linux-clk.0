@@ -1,36 +1,43 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 7 Jun 2017 17:37:17 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 06/19] dt-bindings: display: sun4i: Add binding for A31
- HDMI controller
-Message-ID: <20170607223717.uoh45hhcqugakdk6@rob-hp-laptop>
-References: <20170602101024.18940-1-wens@csie.org>
- <20170602101024.18940-7-wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 20 Jun 2017 13:41:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH 9/9] clk: imx: add imx7ulp clk driver
+Message-ID: <20170620204152.GS4493@codeaurora.org>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-10-git-send-email-aisheng.dong@nxp.com>
+ <20170620020119.GQ4493@codeaurora.org>
+ <20170620094256.GF6805@b29396-OptiPlex-7040>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170602101024.18940-7-wens@csie.org>
+In-Reply-To: <20170620094256.GF6805@b29396-OptiPlex-7040>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 02, 2017 at 06:10:11PM +0800, Chen-Yu Tsai wrote:
-> The HDMI controller in the A31 SoC is slightly different from the
-> earlier version. In addition to the TMDS clock and DDC controls,
-> this version now takes a second DDC clock input.
+On 06/20, Dong Aisheng wrote:
+> On Mon, Jun 19, 2017 at 07:01:19PM -0700, Stephen Boyd wrote:
+> > 
+> > Any reason why it can't be a platform driver? If not, please add
+> > some comment explaining why.
+> > 
 > 
-> Add a compatible string for it, and add the DDC clock input to the
-> list of clocks required.
+> Timer is using it at early stage. GIC seems not although standard
+> binding claim possible clock requirement.
+> Others still not sure.
 > 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
->  1 file changed, 3 insertions(+)
+> What your suggestion?
+> Convert timer to platform driver and make clock as platform driver as well?
+> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+The timer can't be a platform driver because it would be too
+late. The clock driver could register whatever clks are required
+for the timer/GIC in a CLK_OF_DECLARE_DRIVER hook, and then leave
+the rest to a platform driver. This way we get some of the device
+driver framework in this code.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
