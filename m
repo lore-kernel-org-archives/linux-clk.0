@@ -1,71 +1,119 @@
-Return-Path: <leonard.crestez@nxp.com>
-Message-ID: <1497969136.3177.10.camel@nxp.com>
-Subject: Re: [PATCH v5 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-From: Leonard Crestez <leonard.crestez@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-CC: Andrew Morton <akpm@linux-foundation.org>, <devicetree@vger.kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, <kernel@pengutronix.de>, Liam Girdwood
-	<lgirdwood@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mark Brown
-	<broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 20 Jun 2017 17:32:16 +0300
-In-Reply-To: <7f2db0a8-a316-5ecb-24bf-46bcb625e123@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
-	 <20170619050245.2632-3-o.rempel@pengutronix.de>
-	 <1497872133.5380.11.camel@nxp.com>
-	 <7f2db0a8-a316-5ecb-24bf-46bcb625e123@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: leonard.crestez@nxp.com
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH v8 3/9] MIPS: Loongson: Add basic Loongson-1A CPU support
+Date: Tue, 20 Jun 2017 16:57:01 +0800
+Message-Id: <1497949027-10988-4-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+References: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-06-20 at 06:55 +0200, Oleksij Rempel wrote:
-> On 19.06.2017 13:35, Leonard Crestez wrote:
-> > On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
-> > > 
-> > > One of the Freescale recommended sequences for power off with
-> > > external
-> > > PMIC is the following:
-> > > ...
-> > > 3.  SoC is programming PMIC for power off when standby is asserted.
-> > > 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
-> > > 
-> > > This patch implements step 4. of this sequence.
-> > > 
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > ---
-> > >  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
-> > >  1 file changed, 25 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-
-> > > imx6.c
-> > > index e61b1d1027e1..cb76832935f0 100644
-> > > --- a/arch/arm/mach-imx/pm-imx6.c
-> > > +++ b/arch/arm/mach-imx/pm-imx6.c
-> > > @@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const
-> > > struct imx6_pm_socdata
-> > >  				   IMX6Q_GPR1_GINT);
-> > >  }
-> > > 
-> > > +static void imx6_pm_poweroff(void)
-> > > +{
-> > > +	imx6_set_lpm(STOP_POWER_OFF);
-> > > +	cpu_suspend(0, imx6q_suspend_finish);
-> > It's a bit strange that you're using parts of the suspend code for
-> > this. Perhaps you could just write your bits to CLPCR and then execute
-> > a WFI?
-> Well, every thing in this patch set, yell about using standby/suspend 
-> path in HW for power off. Even iMX code use STOP_POWER_OFF for 
-> configuring this regs. How can it be more strange? :) Should i really 
-> duplicate code to hide this?
-> 
-This code is used to set the power state the soc enters on WFI. These
-function try to ensure that it is possible to come back up when woken
-by an interrupt later. That part you don't want, right?
+The Loongson-1A CPU is similar with Loongson-1B/1C, which is a 32-bit SoC.
+It implements the MIPS32 release 2 instruction set.
 
-However I can't think of any obvious way this could misbehave so I
-guess it's fine.
+It's a cost-effective single chip system based on LS232 processor core, and
+is applicable to fields such as industrial control.
+
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+---
+ arch/mips/include/asm/cpu-type.h    |  3 ++-
+ arch/mips/kernel/cpu-probe.c        |  4 +++-
+ arch/mips/loongson32/Platform       |  1 +
+ arch/mips/loongson32/common/setup.c |  4 +++-
+ arch/mips/mm/c-r4k.c                | 10 ++++++++++
+ 5 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/arch/mips/include/asm/cpu-type.h b/arch/mips/include/asm/cpu-type.h
+index 175fe56..2202be8 100644
+--- a/arch/mips/include/asm/cpu-type.h
++++ b/arch/mips/include/asm/cpu-type.h
+@@ -24,7 +24,8 @@ static inline int __pure __get_cpu_type(const int cpu_type)
+ 	case CPU_LOONGSON3:
+ #endif
+ 
+-#if defined(CONFIG_SYS_HAS_CPU_LOONGSON1B) || \
++#if defined(CONFIG_SYS_HAS_CPU_LOONGSON1A) || \
++    defined(CONFIG_SYS_HAS_CPU_LOONGSON1B) || \
+     defined(CONFIG_SYS_HAS_CPU_LOONGSON1C)
+ 	case CPU_LOONGSON1:
+ #endif
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index 25f729c..c23fa20 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1514,7 +1514,9 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
+ 
+ 		switch (c->processor_id & PRID_REV_MASK) {
+ 		case PRID_REV_LOONGSON1ABC:
+-#ifdef CONFIG_CPU_LOONGSON1B
++#if defined(CONFIG_LOONGSON1_LS1A)
++			__cpu_name[cpu] = "Loongson 1A";
++#elif defined(CONFIG_CPU_LOONGSON1B)
+ 			__cpu_name[cpu] = "Loongson 1B";
+ #endif
+ 			break;
+diff --git a/arch/mips/loongson32/Platform b/arch/mips/loongson32/Platform
+index ffe01c6..a9e0fa7 100644
+--- a/arch/mips/loongson32/Platform
++++ b/arch/mips/loongson32/Platform
+@@ -4,5 +4,6 @@ cflags-$(CONFIG_CPU_LOONGSON1)	+= \
+ 
+ platform-$(CONFIG_MACH_LOONGSON32)	+= loongson32/
+ cflags-$(CONFIG_MACH_LOONGSON32)	+= -I$(srctree)/arch/mips/include/asm/mach-loongson32
++load-$(CONFIG_LOONGSON1_LS1A)		+= 0xffffffff80200000
+ load-$(CONFIG_LOONGSON1_LS1B)		+= 0xffffffff80100000
+ load-$(CONFIG_LOONGSON1_LS1C)		+= 0xffffffff80100000
+diff --git a/arch/mips/loongson32/common/setup.c b/arch/mips/loongson32/common/setup.c
+index c8e8b3e..1c3324a 100644
+--- a/arch/mips/loongson32/common/setup.c
++++ b/arch/mips/loongson32/common/setup.c
+@@ -22,7 +22,9 @@ const char *get_system_type(void)
+ 
+ 	switch (processor_id & PRID_REV_MASK) {
+ 	case PRID_REV_LOONGSON1ABC:
+-#if defined(CONFIG_LOONGSON1_LS1B)
++#if defined(CONFIG_LOONGSON1_LS1A)
++		return "LOONGSON LS1A";
++#elif defined(CONFIG_LOONGSON1_LS1B)
+ 		return "LOONGSON LS1B";
+ #elif defined(CONFIG_LOONGSON1_LS1C)
+ 		return "LOONGSON LS1C";
+diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+index 81d6a15..567beef 100644
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -1366,6 +1366,16 @@ static void probe_pcache(void)
+ 		c->options |= MIPS_CPU_PREFETCH;
+ 		break;
+ 
++	case CPU_LOONGSON1:
++		if (read_c0_config7() & MIPS_CONF7_AR) {
++			/*
++			 * effectively physically indexed dcache,
++			 * thus no virtual aliases.
++			 */
++			c->dcache.flags |= MIPS_CACHE_PINDEX;
++			break;
++		}
++
+ 	default:
+ 		if (!(config & MIPS_CONF_M))
+ 			panic("Don't know how to probe P-caches on this cpu.");
+-- 
+2.9.4
