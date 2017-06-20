@@ -1,100 +1,88 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v8 4/9] MIPS: Loongson: Add Loongson-1A Kconfig options
-Date: Tue, 20 Jun 2017 16:57:02 +0800
-Message-Id: <1497949027-10988-5-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
-References: <1497949027-10988-1-git-send-email-zhoubb@lemote.com>
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
+Date: Tue, 20 Jun 2017 16:09:06 +0200
+Message-Id: <20170620140910.7568-3-o.rempel@pengutronix.de>
+In-Reply-To: <20170620140910.7568-1-o.rempel@pengutronix.de>
+References: <20170620140910.7568-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Added Kconfig options include: Loongson-1A CPU and machine definition,
-CPU cache features, 32-bit kernel and early printk support.
+One of the Freescale recommended sequences for power off with external
+PMIC is the following:
+...
+3.  SoC is programming PMIC for power off when standby is asserted.
+4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+See:
+http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+page 5083
+
+This patch implements step 4. of this sequence.
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/mips/Kconfig            | 12 ++++++++++++
- arch/mips/loongson32/Kconfig | 20 ++++++++++++++++++++
- 2 files changed, 32 insertions(+)
+ arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 9891a12..6a4373a8 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -1424,6 +1424,15 @@ config CPU_LOONGSON2F
- 	  have a similar programming interface with FPGA northbridge used in
- 	  Loongson2E.
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index e61b1d1027e1..0f141caa71f6 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+ 				   IMX6Q_GPR1_GINT);
+ }
  
-+config CPU_LOONGSON1A
-+	bool "Loongson 1A"
-+	depends on SYS_HAS_CPU_LOONGSON1A
-+	select CPU_LOONGSON1
-+	select LEDS_GPIO_REGISTER
-+	help
-+	  The Loongson 1A is a 32-bit SoC, which implements the MIPS32
-+	  release 2 instruction set.
++static void imx6_pm_stby_poweroff(void)
++{
++	imx6_set_lpm(STOP_POWER_OFF);
++	cpu_suspend(0, imx6q_suspend_finish);
 +
- config CPU_LOONGSON1B
- 	bool "Loongson 1B"
- 	depends on SYS_HAS_CPU_LOONGSON1B
-@@ -1891,6 +1900,9 @@ config SYS_HAS_CPU_LOONGSON2F
- 	select CPU_SUPPORTS_ADDRWINCFG if 64BIT
- 	select CPU_SUPPORTS_UNCACHED_ACCELERATED
- 
-+config SYS_HAS_CPU_LOONGSON1A
-+	bool
++	mdelay(1000);
 +
- config SYS_HAS_CPU_LOONGSON1B
- 	bool
- 
-diff --git a/arch/mips/loongson32/Kconfig b/arch/mips/loongson32/Kconfig
-index 3c0c2f2..6e0f6ec 100644
---- a/arch/mips/loongson32/Kconfig
-+++ b/arch/mips/loongson32/Kconfig
-@@ -1,8 +1,28 @@
- if MACH_LOONGSON32
- 
-+config ZONE_DMA
-+	prompt "Zone DMA"
-+	bool
++	pr_emerg("Unable to poweroff system\n");
++}
 +
- choice
- 	prompt "Machine Type"
- 
-+config LOONGSON1_LS1A
-+	bool "Loongson LS1A board"
-+	select CEVT_R4K if !MIPS_EXTERNAL_TIMER
-+	select CSRC_R4K if !MIPS_EXTERNAL_TIMER
-+	select SYS_HAS_CPU_LOONGSON1A
-+	select DMA_NONCOHERENT
-+	select BOOT_ELF32
-+	select IRQ_MIPS_CPU
-+	select SYS_SUPPORTS_32BIT_KERNEL
-+	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select SYS_SUPPORTS_HIGHMEM
-+	select SYS_SUPPORTS_MIPS16
-+	select SYS_HAS_EARLY_PRINTK
-+	select USE_GENERIC_EARLY_PRINTK_8250
-+	select COMMON_CLK
++static int imx6_pm_stby_poweroff_probe(void)
++{
++	if (pm_power_off) {
++		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
++			__func__, pm_power_off, pm_power_off);
++		return -EBUSY;
++	}
 +
- config LOONGSON1_LS1B
- 	bool "Loongson LS1B board"
- 	select CEVT_R4K if !MIPS_EXTERNAL_TIMER
++	pm_power_off = imx6_pm_stby_poweroff;
++	return 0;
++}
++
+ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ {
+ 	struct device_node *np;
+@@ -618,6 +640,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ 	val = readl_relaxed(ccm_base + CLPCR);
+ 	val &= ~BM_CLPCR_LPM;
+ 	writel_relaxed(val, ccm_base + CLPCR);
++
++	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
++		imx6_pm_stby_poweroff_probe();
+ }
+ 
+ void __init imx6q_pm_init(void)
 -- 
-2.9.4
+2.11.0
