@@ -1,56 +1,84 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
+Return-Path: <ore@pengutronix.de>
+Date: Tue, 20 Jun 2017 17:25:31 +0200
+From: Oleksij Rempel <ore@pengutronix.de>
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: exynos: Add clocks to audss block to fix silent hang on Exynos4412
-Date: Wed, 21 Jun 2017 21:08:07 +0200
-Message-Id: <20170621190807.14850-3-krzk@kernel.org>
-In-Reply-To: <20170621190807.14850-1-krzk@kernel.org>
-References: <20170621190807.14850-1-krzk@kernel.org>
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+Message-ID: <20170620152531.efdlbcrblil6oj64@pengutronix.de>
+References: <20170619050245.2632-1-o.rempel@pengutronix.de>
+ <20170619050245.2632-3-o.rempel@pengutronix.de>
+ <1497872133.5380.11.camel@nxp.com>
+ <7f2db0a8-a316-5ecb-24bf-46bcb625e123@pengutronix.de>
+ <1497969136.3177.10.camel@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1497969136.3177.10.camel@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add necessary parent clocks for audss (Audio SubSystem, MAUDIO) clock
-controller block.
+On Tue, Jun 20, 2017 at 05:32:16PM +0300, Leonard Crestez wrote:
+> On Tue, 2017-06-20 at 06:55 +0200, Oleksij Rempel wrote:
+> > On 19.06.2017 13:35, Leonard Crestez wrote:
+> > > On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
+> > > > 
+> > > > One of the Freescale recommended sequences for power off with
+> > > > external
+> > > > PMIC is the following:
+> > > > ...
+> > > > 3.  SoC is programming PMIC for power off when standby is asserted.
+> > > > 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+> > > > 
+> > > > This patch implements step 4. of this sequence.
+> > > > 
+> > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > > ---
+> > > >  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+> > > >  1 file changed, 25 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-
+> > > > imx6.c
+> > > > index e61b1d1027e1..cb76832935f0 100644
+> > > > --- a/arch/arm/mach-imx/pm-imx6.c
+> > > > +++ b/arch/arm/mach-imx/pm-imx6.c
+> > > > @@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const
+> > > > struct imx6_pm_socdata
+> > > >  				   IMX6Q_GPR1_GINT);
+> > > >  }
+> > > > 
+> > > > +static void imx6_pm_poweroff(void)
+> > > > +{
+> > > > +	imx6_set_lpm(STOP_POWER_OFF);
+> > > > +	cpu_suspend(0, imx6q_suspend_finish);
+> > > It's a bit strange that you're using parts of the suspend code for
+> > > this. Perhaps you could just write your bits to CLPCR and then execute
+> > > a WFI?
+> > Well, every thing in this patch set, yell about using standby/suspend 
+> > path in HW for power off. Even iMX code use STOP_POWER_OFF for 
+> > configuring this regs. How can it be more strange? :) Should i really 
+> > duplicate code to hide this?
+> > 
+> This code is used to set the power state the soc enters on WFI. These
+> function try to ensure that it is possible to come back up when woken
+> by an interrupt later. That part you don't want, right?
+> 
+> However I can't think of any obvious way this could misbehave so I
+> guess it's fine.
 
-This allows driver to keep EPLL enabled before accessing any MAUDIO
-registers thus fixing silent hang.  This silent hang appeard with commit
-6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX
-clocks"), e.g. on Odroid U3 usually with last (but unrelated) messages:
+ok, thx.
 
-	[    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
-	[    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
-	[    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos4.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 497a9470c888..5739389f5bb8 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -59,6 +59,9 @@
- 		compatible = "samsung,exynos4210-audss-clock";
- 		reg = <0x03810000 0x0C>;
- 		#clock-cells = <1>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
-+			 <&clock CLK_SCLK_AUDIO0>, <&clock CLK_SCLK_AUDIO0>;
-+		clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
- 	};
- 
- 	i2s0: i2s@03830000 {
 -- 
-2.9.3
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
