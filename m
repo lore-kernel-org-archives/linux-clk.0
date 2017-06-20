@@ -1,54 +1,348 @@
-Return-Path: <ore@pengutronix.de>
-Subject: Re: [PATCH v5 3/6] kernel/reboot.c: export pm_power_off_prepare
-To: Leonard Crestez <leonard.crestez@nxp.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
- <20170619050245.2632-4-o.rempel@pengutronix.de>
- <1497872109.5380.10.camel@nxp.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
- Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
- Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-From: Oleksij Rempel <ore@pengutronix.de>
-Message-ID: <5023d338-f845-b8a6-c4a0-d414c75f841c@pengutronix.de>
-Date: Tue, 20 Jun 2017 07:01:32 +0200
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
+Subject: Re: [PATCH v3 9/9] arm64: dts: marvell: use new binding for the system controller on cp110
+References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+	<cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+	<9c5807cafb03413f4318f6c95a2e093bd9cdcdcf.1496328934.git-series.gregory.clement@free-electrons.com>
+Date: Tue, 20 Jun 2017 16:23:58 +0200
+In-Reply-To: <9c5807cafb03413f4318f6c95a2e093bd9cdcdcf.1496328934.git-series.gregory.clement@free-electrons.com>
+	(Gregory CLEMENT's message of "Thu, 1 Jun 2017 16:55:42 +0200")
+Message-ID: <87a8524u0x.fsf@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1497872109.5380.10.camel@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
+ 
+ On jeu., juin 01 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
 
+> The new binding for the system controller on cp110 moved the clock
+> controller into a subnode. This preliminary step will allow to add gpio
+> and pinctrl subnodes.
+>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-On 19.06.2017 13:35, Leonard Crestez wrote:
-> On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
->> Export pm_power_off_prepare. It is needed to implement power off on
->> Freescale/NXP iMX6 based boards with external power management
->> integrated circuit (PMIC).
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>  kernel/reboot.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/kernel/reboot.c b/kernel/reboot.c
->> index bd30a973fe94..a6903bf772c7 100644
->> --- a/kernel/reboot.c
->> +++ b/kernel/reboot.c
->> @@ -49,6 +49,7 @@ int reboot_force;
->>   */
->>
->>  void (*pm_power_off_prepare)(void);
->> +EXPORT_SYMBOL(pm_power_off_prepare);
->>
-> Could you register a reboot notifier in the pfuze driver instead? Right
-> now the only user of pm_power_off_prepare is ACPI so this alternative
-> seems less intrusive.
+Applied on mvebu/dt64 and while doing it, fixed the clock introduced in
+the patches merged since the first version of this patch.
 
-hm... in this case i will need to make sure that reboot handler is not 
-executed on reboot. This will make code looks strange. Which is opposite 
-of your comment in other email about strange standby code for power off :)
-Should i really do this?
+Gregory
+
+> ---
+>  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 41 ++++++-------
+>  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 35 +++++------
+>  2 files changed, 41 insertions(+), 35 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+> index a0f57a8e5dcb..96a4ff75b3b0 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+> @@ -62,7 +62,7 @@
+>  			cpm_ethernet: ethernet@0 {
+>  				compatible = "marvell,armada-7k-pp22";
+>  				reg = <0x0 0x100000>, <0x129000 0xb000>;
+> -				clocks = <&cpm_syscon0 1 3>, <&cpm_syscon0 1 9>, <&cpm_syscon0 1 5>;
+> +				clocks = <&cpm_clk 1 3>, <&cpm_clk 1 9>, <&cpm_clk 1 5>;
+>  				clock-names = "pp_clk", "gop_clk", "mg_clk";
+>  				status = "disabled";
+>  				dma-coherent;
+> @@ -97,10 +97,13 @@
+>  			};
+>  
+>  			cpm_syscon0: system-controller@440000 {
+> -				compatible = "marvell,cp110-system-controller0",
+> -					     "syscon";
+> +				compatible = "syscon", "simple-mfd";
+>  				reg = <0x440000 0x1000>;
+> -				#clock-cells = <2>;
+> +
+> +				cpm_clk: clock {
+> +					compatible = "marvell,cp110-clock";
+> +					#clock-cells = <2>;
+> +				};
+>  			};
+>  
+>  			cpm_rtc: rtc@284000 {
+> @@ -115,7 +118,7 @@
+>  					     "generic-ahci";
+>  				reg = <0x540000 0x30000>;
+>  				interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cpm_syscon0 1 15>;
+> +				clocks = <&cpm_clk 1 15>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -125,7 +128,7 @@
+>  				reg = <0x500000 0x4000>;
+>  				dma-coherent;
+>  				interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cpm_syscon0 1 22>;
+> +				clocks = <&cpm_clk 1 22>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -135,7 +138,7 @@
+>  				reg = <0x510000 0x4000>;
+>  				dma-coherent;
+>  				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cpm_syscon0 1 23>;
+> +				clocks = <&cpm_clk 1 23>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -145,7 +148,7 @@
+>  				      <0x6b0000 0x1000>;
+>  				dma-coherent;
+>  				msi-parent = <&gic_v2m0>;
+> -				clocks = <&cpm_syscon0 1 8>;
+> +				clocks = <&cpm_clk 1 8>;
+>  			};
+>  
+>  			cpm_xor1: xor@6c0000 {
+> @@ -154,7 +157,7 @@
+>  				      <0x6d0000 0x1000>;
+>  				dma-coherent;
+>  				msi-parent = <&gic_v2m0>;
+> -				clocks = <&cpm_syscon0 1 7>;
+> +				clocks = <&cpm_clk 1 7>;
+>  			};
+>  
+>  			cpm_spi0: spi@700600 {
+> @@ -163,7 +166,7 @@
+>  				#address-cells = <0x1>;
+>  				#size-cells = <0x0>;
+>  				cell-index = <1>;
+> -				clocks = <&cpm_syscon0 1 21>;
+> +				clocks = <&cpm_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -173,7 +176,7 @@
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+>  				cell-index = <2>;
+> -				clocks = <&cpm_syscon0 1 21>;
+> +				clocks = <&cpm_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -183,7 +186,7 @@
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+>  				interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cpm_syscon0 1 21>;
+> +				clocks = <&cpm_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -193,7 +196,7 @@
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+>  				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cpm_syscon0 1 21>;
+> +				clocks = <&cpm_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -201,7 +204,7 @@
+>  				compatible = "marvell,armada-8k-rng", "inside-secure,safexcel-eip76";
+>  				reg = <0x760000 0x7d>;
+>  				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cpm_syscon0 1 25>;
+> +				clocks = <&cpm_clk 1 25>;
+>  				status = "okay";
+>  			};
+>  
+> @@ -210,7 +213,7 @@
+>  				reg = <0x780000 0x300>;
+>  				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>  				clock-names = "core";
+> -				clocks = <&cpm_syscon0 1 4>;
+> +				clocks = <&cpm_clk 1 4>;
+>  				dma-coherent;
+>  				status = "disabled";
+>  			};
+> @@ -227,7 +230,7 @@
+>  					     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+>  				interrupt-names = "mem", "ring0", "ring1",
+>  				"ring2", "ring3", "eip";
+> -				clocks = <&cpm_syscon0 1 26>;
+> +				clocks = <&cpm_clk 1 26>;
+>  				status = "disabled";
+>  			};
+>  		};
+> @@ -254,7 +257,7 @@
+>  			interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+>  			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+>  			num-lanes = <1>;
+> -			clocks = <&cpm_syscon0 1 13>;
+> +			clocks = <&cpm_clk 1 13>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -281,7 +284,7 @@
+>  			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>  			num-lanes = <1>;
+> -			clocks = <&cpm_syscon0 1 11>;
+> +			clocks = <&cpm_clk 1 11>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -308,7 +311,7 @@
+>  			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>  			num-lanes = <1>;
+> -			clocks = <&cpm_syscon0 1 12>;
+> +			clocks = <&cpm_clk 1 12>;
+>  			status = "disabled";
+>  		};
+>  	};
+> diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+> index 9584bc8d8b3f..48a658aa5b32 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+> @@ -104,10 +104,13 @@
+>  			};
+>  
+>  			cps_syscon0: system-controller@440000 {
+> -				compatible = "marvell,cp110-system-controller0",
+> -					     "syscon";
+> +				compatible = "syscon", "simple-mfd";
+>  				reg = <0x440000 0x1000>;
+> -				#clock-cells = <2>;
+> +
+> +				cps_clk: clock {
+> +					compatible = "marvell,cp110-clock";
+> +					#clock-cells = <2>;
+> +				};
+>  			};
+>  
+>  			cps_sata0: sata@540000 {
+> @@ -115,7 +118,7 @@
+>  					     "generic-ahci";
+>  				reg = <0x540000 0x30000>;
+>  				interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cps_syscon0 1 15>;
+> +				clocks = <&cps_clk 1 15>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -125,7 +128,7 @@
+>  				reg = <0x500000 0x4000>;
+>  				dma-coherent;
+>  				interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cps_syscon0 1 22>;
+> +				clocks = <&cps_clk 1 22>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -135,7 +138,7 @@
+>  				reg = <0x510000 0x4000>;
+>  				dma-coherent;
+>  				interrupts = <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cps_syscon0 1 23>;
+> +				clocks = <&cps_clk 1 23>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -145,7 +148,7 @@
+>  				      <0x6b0000 0x1000>;
+>  				dma-coherent;
+>  				msi-parent = <&gic_v2m0>;
+> -				clocks = <&cps_syscon0 1 8>;
+> +				clocks = <&cps_clk 1 8>;
+>  			};
+>  
+>  			cps_xor1: xor@6c0000 {
+> @@ -154,7 +157,7 @@
+>  				      <0x6d0000 0x1000>;
+>  				dma-coherent;
+>  				msi-parent = <&gic_v2m0>;
+> -				clocks = <&cps_syscon0 1 7>;
+> +				clocks = <&cps_clk 1 7>;
+>  			};
+>  
+>  			cps_spi0: spi@700600 {
+> @@ -163,7 +166,7 @@
+>  				#address-cells = <0x1>;
+>  				#size-cells = <0x0>;
+>  				cell-index = <3>;
+> -				clocks = <&cps_syscon0 1 21>;
+> +				clocks = <&cps_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -173,7 +176,7 @@
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+>  				cell-index = <4>;
+> -				clocks = <&cps_syscon0 1 21>;
+> +				clocks = <&cps_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -183,7 +186,7 @@
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+>  				interrupts = <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cps_syscon0 1 21>;
+> +				clocks = <&cps_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -193,7 +196,7 @@
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+>  				interrupts = <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cps_syscon0 1 21>;
+> +				clocks = <&cps_clk 1 21>;
+>  				status = "disabled";
+>  			};
+>  
+> @@ -201,7 +204,7 @@
+>  				compatible = "marvell,armada-8k-rng", "inside-secure,safexcel-eip76";
+>  				reg = <0x760000 0x7d>;
+>  				interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&cps_syscon0 1 25>;
+> +				clocks = <&cps_clk 1 25>;
+>  				status = "okay";
+>  			};
+>  
+> @@ -244,7 +247,7 @@
+>  			interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
+>  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
+>  			num-lanes = <1>;
+> -			clocks = <&cps_syscon0 1 13>;
+> +			clocks = <&cps_clk 1 13>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -271,7 +274,7 @@
+>  			interrupts = <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>  			num-lanes = <1>;
+> -			clocks = <&cps_syscon0 1 11>;
+> +			clocks = <&cps_clk 1 11>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -298,7 +301,7 @@
+>  			interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>  			num-lanes = <1>;
+> -			clocks = <&cps_syscon0 1 12>;
+> +			clocks = <&cps_clk 1 12>;
+>  			status = "disabled";
+>  		};
+>  	};
+> -- 
+> git-series 0.9.1
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
