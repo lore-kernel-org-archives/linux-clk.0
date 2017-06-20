@@ -1,55 +1,62 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 07/10] clk: rollback set_rate_range changes on failure
-Date: Mon, 12 Jun 2017 21:44:35 +0200
-Message-Id: <20170612194438.12298-8-jbrunet@baylibre.com>
-In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 18:31:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
+	Geng Ren <geng.ren@spreadtrum.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH V1 3/9] clk: sprd: add gate clock support
+Message-ID: <20170620013130.GI4493@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-4-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170618015855.27738-4-chunyan.zhang@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 06/18, Chunyan Zhang wrote:
+> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+> index 8f802b2..333e2b2 100644
+> --- a/drivers/clk/sprd/Makefile
+> +++ b/drivers/clk/sprd/Makefile
+> @@ -1,3 +1,3 @@
+>  ifneq ($(CONFIG_OF),)
+> -obj-y	+= ccu_common.o
+> +obj-y	+= ccu_common.o ccu_gate.o
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d91236e70a04..253f1d3f0971 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1864,6 +1864,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate_protect);
- int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- {
- 	int ret = 0;
-+	unsigned int old_min, old_max;
- 
- 	if (!clk)
- 		return 0;
-@@ -1881,9 +1882,16 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 		clk_core_rate_unprotect(clk->core);
- 
- 	if (min != clk->min_rate || max != clk->max_rate) {
-+		old_min = clk->min_rate;
-+		old_max = clk->max_rate;
- 		clk->min_rate = min;
- 		clk->max_rate = max;
- 		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+		if (ret) {
-+			/* undo changes */
-+			clk->min_rate = old_min;
-+			clk->max_rate = old_max;
-+		}
- 	}
- 
- 	if (clk->protect_count)
+Can this be built as a module?
+
+>  endif
+> diff --git a/drivers/clk/sprd/ccu_gate.c b/drivers/clk/sprd/ccu_gate.c
+> new file mode 100644
+> index 0000000..3d27615
+> --- /dev/null
+> +++ b/drivers/clk/sprd/ccu_gate.c
+> @@ -0,0 +1,102 @@
+> +/*
+> + * Spreadtrum gate clock driver
+> + *
+> + * Copyright (C) 2017 Spreadtrum, Inc.
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "ccu_gate.h"
+> +
+> +DEFINE_SPINLOCK(gate_lock);
+
+This variable name is not very unique for debugging lockdep
+reports. Probably needs 'sprd' in the name.
+
 -- 
-2.9.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
