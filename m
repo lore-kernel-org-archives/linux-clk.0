@@ -1,84 +1,52 @@
-Return-Path: <ore@pengutronix.de>
-Date: Tue, 20 Jun 2017 17:25:31 +0200
-From: Oleksij Rempel <ore@pengutronix.de>
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-Message-ID: <20170620152531.efdlbcrblil6oj64@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
- <20170619050245.2632-3-o.rempel@pengutronix.de>
- <1497872133.5380.11.camel@nxp.com>
- <7f2db0a8-a316-5ecb-24bf-46bcb625e123@pengutronix.de>
- <1497969136.3177.10.camel@nxp.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 19:01:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
+Subject: Re: [PATCH 9/9] clk: imx: add imx7ulp clk driver
+Message-ID: <20170620020119.GQ4493@codeaurora.org>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-10-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1497969136.3177.10.camel@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1494856763-6543-10-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 20, 2017 at 05:32:16PM +0300, Leonard Crestez wrote:
-> On Tue, 2017-06-20 at 06:55 +0200, Oleksij Rempel wrote:
-> > On 19.06.2017 13:35, Leonard Crestez wrote:
-> > > On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
-> > > > 
-> > > > One of the Freescale recommended sequences for power off with
-> > > > external
-> > > > PMIC is the following:
-> > > > ...
-> > > > 3.  SoC is programming PMIC for power off when standby is asserted.
-> > > > 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
-> > > > 
-> > > > This patch implements step 4. of this sequence.
-> > > > 
-> > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > > ---
-> > > >  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
-> > > >  1 file changed, 25 insertions(+)
-> > > > 
-> > > > diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-
-> > > > imx6.c
-> > > > index e61b1d1027e1..cb76832935f0 100644
-> > > > --- a/arch/arm/mach-imx/pm-imx6.c
-> > > > +++ b/arch/arm/mach-imx/pm-imx6.c
-> > > > @@ -602,6 +602,28 @@ static void __init imx6_pm_common_init(const
-> > > > struct imx6_pm_socdata
-> > > >  				   IMX6Q_GPR1_GINT);
-> > > >  }
-> > > > 
-> > > > +static void imx6_pm_poweroff(void)
-> > > > +{
-> > > > +	imx6_set_lpm(STOP_POWER_OFF);
-> > > > +	cpu_suspend(0, imx6q_suspend_finish);
-> > > It's a bit strange that you're using parts of the suspend code for
-> > > this. Perhaps you could just write your bits to CLPCR and then execute
-> > > a WFI?
-> > Well, every thing in this patch set, yell about using standby/suspend 
-> > path in HW for power off. Even iMX code use STOP_POWER_OFF for 
-> > configuring this regs. How can it be more strange? :) Should i really 
-> > duplicate code to hide this?
-> > 
-> This code is used to set the power state the soc enters on WFI. These
-> function try to ensure that it is possible to come back up when woken
-> by an interrupt later. That part you don't want, right?
-> 
-> However I can't think of any obvious way this could misbehave so I
-> guess it's fine.
+On 05/15, Dong Aisheng wrote:
+> +
+> +	clks[IMX7ULP_CLK_VIU]		= imx_clk_gate("viu",	"nic1_clk",	base + 0xA0, 30);
+> +	clks[IMX7ULP_CLK_PCTLC]		= imx_clk_gate("pctlc", "nic1_bus_clk", base + 0xB8, 30);
+> +	clks[IMX7ULP_CLK_PCTLD]		= imx_clk_gate("pctld", "nic1_bus_clk", base + 0xBC, 30);
+> +	clks[IMX7ULP_CLK_PCTLE]		= imx_clk_gate("pctle", "nic1_bus_clk", base + 0xc0, 30);
+> +	clks[IMX7ULP_CLK_PCTLF]		= imx_clk_gate("pctlf", "nic1_bus_clk", base + 0xc4, 30);
+> +
+> +	clks[IMX7ULP_CLK_GPU3D]		= imx_clk_composite("gpu3d",   periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x140);
+> +	clks[IMX7ULP_CLK_GPU2D]		= imx_clk_composite("gpu2d",   periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x144);
+> +
+> +	imx_check_clocks(clks, ARRAY_SIZE(clks));
+> +
+> +	clk_data.clks = clks;
+> +	clk_data.clk_num = ARRAY_SIZE(clks);
+> +	of_clk_add_provider(scg_node, of_clk_src_onecell_get, &clk_data);
 
-ok, thx.
+Please use of_clk_add_hw_provider() instead, and the associated
+clk_hw registration APIs.
+
+> +
+> +	pr_info("i.MX7ULP clock tree init done.\n");
+
+pr_debug?
+
+> +}
+> +
+> +CLK_OF_DECLARE(imx7ulp, "fsl,imx7ulp-clock", imx7ulp_clocks_init);
+> 
+
+Any reason why it can't be a platform driver? If not, please add
+some comment explaining why.
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
