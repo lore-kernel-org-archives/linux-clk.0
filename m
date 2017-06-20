@@ -1,35 +1,58 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <phil@raspberrypi.org>
+Subject: Re: [PATCH v3 3/4] irqchip: Add BCM2835 AUX interrupt controller
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
+ <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+ <1497457750-35585-4-git-send-email-phil@raspberrypi.org>
+ <f68eed56-35b8-737e-008d-a8e993c7f6f1@gmail.com>
+From: Phil Elwell <phil@raspberrypi.org>
+Message-ID: <9e8dcada-2000-e899-2a2c-ab54ae19e3db@raspberrypi.org>
+Date: Tue, 20 Jun 2017 10:19:06 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170615210020.GG20170@codeaurora.org>
-References: <20170524082044.8473-1-linus.walleij@linaro.org>
- <20170601070208.GO20170@codeaurora.org> <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
- <20170605195812.GH20170@codeaurora.org> <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
- <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
- <20170612210248.GP20170@codeaurora.org> <CACRpkdaZJbzC0-xg_go=-o+0cQ-JOY3mUe27HUnwQ+DnZYbyMA@mail.gmail.com>
- <CAMuHMdXdYNTLCUfQ9rdj8Fffff5G6fGREcHs5-E5LbwPU9yyLw@mail.gmail.com>
- <CACRpkdY+aSyec9PZaoXErzsRefWg2zzw1xihQt_whmote-jBBw@mail.gmail.com> <20170615210020.GG20170@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 16 Jun 2017 10:35:00 +0200
-Message-ID: <CACRpkdbKzsQvo-GHkSc6YpQzLMmFy_z10p=_02_zmUj7XDpicA@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f68eed56-35b8-737e-008d-a8e993c7f6f1@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 15, 2017 at 11:00 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+On 19/06/2017 22:13, Florian Fainelli wrote:
+> On 06/14/2017 09:29 AM, Phil Elwell wrote:
+>> Devices in the BCM2835 AUX block share a common interrupt line, with a
+>> register indicating which devices have active IRQs. Expose this as a
+>> nested interrupt controller to avoid IRQ sharing problems (easily
+>> observed if UART1 and SPI1/2 are enabled simultaneously).
+>>
+>> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+>> ---
+> 
+>> +/*
+>> + * The irq_mask and irq_unmask function pointers are used without
+>> + * validity checks, so they must not be NULL. Create a dummy function
+>> + * with the expected type for use as a no-op.
+>> + */
+>> +static void bcm2835_aux_irq_dummy(struct irq_data *data)
+>> +{
+>> +}
+>> +
+>> +static struct irq_chip bcm2835_aux_irq_chip = {
+>> +	.name = "bcm2835-aux_irq",
+>> +	.irq_mask = bcm2835_aux_irq_dummy,
+>> +	.irq_unmask = bcm2835_aux_irq_dummy,
+>> +};
+> 
+> So how are the interrupt enabled/disabled if this interrupt controller
+> just returns their pending state?
 
-> We have quite a few clock and reset controllers that put their
-> drivers into the clk directory. I don't see any problem with that
-> approach.
+Interrupts must be enabled, disabled and acknowledged on the blocks in the
+AUX domain - UART1, SPI1 and SPI2. There is no additional masking -
+AUXIRQ is essentially an interrupt sharing accelerator.
 
-OK I'll proceed like this!
-
-Thanks,
-Linus Walleij
+Phil
