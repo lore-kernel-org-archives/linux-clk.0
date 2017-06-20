@@ -1,115 +1,50 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <paul@outils.crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH v6 09/11] arm64: dts: Add I2C DT nodes for Stingray SoC
-Date: Fri,  2 Jun 2017 12:04:33 +0530
-Message-Id: <1496385275-6899-10-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
-References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 02/17] clk: ingenic: Fix recalc_rate for clocks with fixed divider
+Date: Tue, 20 Jun 2017 17:18:40 +0200
+Message-Id: <20170620151855.19399-2-paul@crapouillou.net>
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Oza Pawandeep <oza.oza@broadcom.com>
+Previously, the clocks with a fixed divider would report their rate
+as being the same as the one of their parent, independently of the
+divider in use. This commit fixes this behaviour.
 
-This patch adds I2C DT nodes on Stingray SoC.
+This went unnoticed as neither the jz4740 nor the jz4780 CGU code
+have clocks with fixed dividers yet.
 
-Signed-off-by: Oza Pawandeep <oza.oza@broadcom.com>
-Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi | 22 ++++++++++++++++++++++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 20 ++++++++++++++++++++
- 2 files changed, 42 insertions(+)
+ drivers/clk/ingenic/cgu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index aad45a2..ff59a26 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -54,6 +54,28 @@
- 	status = "okay";
- };
+ v2: No changes
+
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index e8248f9185f7..eb9002ccf3fc 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -328,6 +328,8 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 		div *= clk_info->div.div;
  
-+&i2c0 {
-+	status = "okay";
-+
-+	pca9505: pca9505@20 {
-+		compatible = "nxp,pca9505";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		reg = <0x20>;
-+	};
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	pcf8574: pcf8574@20 {
-+		compatible = "nxp,pcf8574a";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		reg = <0x27>;
-+	};
-+};
-+
- &nand {
- 	status = "ok";
- 	nandcs@0 {
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index e91debe..91ba61e 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -269,6 +269,16 @@
+ 		rate /= div;
++	} else if (clk_info->type & CGU_CLK_FIXDIV) {
++		rate /= clk_info->fixdiv.div;
+ 	}
  
- 		#include "stingray-pinctrl.dtsi"
- 
-+		i2c0: i2c@000b0000 {
-+			compatible = "brcm,iproc-i2c";
-+			reg = <0x000b0000 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 177 IRQ_TYPE_NONE>;
-+			clock-frequency = <100000>;
-+			status = "disabled";
-+		};
-+
- 		gpio_hsls: gpio@000d0000 {
- 			compatible = "brcm,iproc-gpio";
- 			reg = <0x000d0000 0x864>;
-@@ -295,6 +305,16 @@
- 					<&pinmux 151 91 4>;
- 		};
- 
-+		i2c1: i2c@000e0000 {
-+			compatible = "brcm,iproc-i2c";
-+			reg = <0x000e0000 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 178 IRQ_TYPE_NONE>;
-+			clock-frequency = <100000>;
-+			status = "disabled";
-+		};
-+
- 		uart0: uart@00100000 {
- 			device_type = "serial";
- 			compatible = "snps,dw-apb-uart";
+ 	return rate;
 -- 
-2.7.4
+2.11.0
