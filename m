@@ -1,108 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:33079 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751640AbdFUKxB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 06:53:01 -0400
-Received: by mail-wr0-f170.google.com with SMTP id r103so129541803wrb.0
-        for <linux-clk@vger.kernel.org>; Wed, 21 Jun 2017 03:53:00 -0700 (PDT)
-Subject: Re: [project-aspen-dev] [PATCH 3/5] phy: add inno-usb2-phy driver for
- hi3798cv200 SoC
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>, sboyd@codeaurora.org,
-        robh+dt@kernel.org, kishon@ti.com, xuwei5@hisilicon.com,
-        catalin.marinas@arm.com, balbi@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, project-aspen-dev@linaro.org,
-        yanhaifeng@hisilicon.com, Pengcheng Li <lpc.li@hisilicon.com>
-References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
- <1498035645-22804-4-git-send-email-xuejiancheng@hisilicon.com>
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <53b0ac0f-91b8-1ad3-91a4-a776b028fc8f@linaro.org>
-Date: Wed, 21 Jun 2017 11:52:56 +0100
-MIME-Version: 1.0
-In-Reply-To: <1498035645-22804-4-git-send-email-xuejiancheng@hisilicon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1497955822.7387.3.camel@baylibre.com>
+Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, Kevin Hilman
+ <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..."
+ <linux-amlogic@lists.infradead.org>, Russell King <linux@armlinux.org.uk>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>, Adriana Reus
+ <adi.reus@gmail.com>
+Date: Tue, 20 Jun 2017 12:50:22 +0200
+In-Reply-To: <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 21/06/17 10:00, Jiancheng Xue wrote:
-> From: Pengcheng Li <lpc.li@hisilicon.com>
+On Tue, 2017-06-20 at 11:07 +0200, Linus Walleij wrote:
+> On Mon, Jun 12, 2017 at 9:44 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 > 
-> Add inno-usb2-phy driver for hi3798cv200 SoC.
+> > The goal of this patchset is to provide a way for consumers to inform the
+> > system that they depend on the rate of the clock source and can't tolerate
+> > other consumers changing the rate or causing glitches.
 > 
-> Signed-off-by: Pengcheng Li <lpc.li@hisilicon.com>
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> ---
->   drivers/phy/Kconfig              |  10 ++
->   drivers/phy/Makefile             |   1 +
->   drivers/phy/phy-hisi-inno-usb2.c | 287 +++++++++++++++++++++++++++++++++++++++
->   3 files changed, 298 insertions(+)
->   create mode 100644 drivers/phy/phy-hisi-inno-usb2.c
+> Just for context: chat kind of consumers are these?
+
+When the rate is critical to perform a particular task. My example is the audio
+and i2s output. You can't tolerate glitches during the playback, the end user
+would complain (longer description in the original RFC)
+
 > 
-> ...
-> diff --git a/drivers/phy/phy-hisi-inno-usb2.c b/drivers/phy/phy-hisi-inno-usb2.c
-> new file mode 100644
-> index 0000000..582c500
-> --- /dev/null
-> +++ b/drivers/phy/phy-hisi-inno-usb2.c
-> @@ -0,0 +1,287 @@
- > ...> +static int hisi_inno_phy_of_get_ports(struct device *dev,
-> +					struct  hisi_inno_phy_priv *priv)
-> +{
-> +	struct device_node *node = dev->of_node;
-> +	struct device_node *child;
-> +	int port = 0;
-> +	int ret;
-> +
-> +	priv->port_num = of_get_child_count(node);
-> +	if (priv->port_num > MAX_PORTS) {
-> +		dev_err(dev, "too many ports : %d (max = %d)\n",
-> +				priv->port_num, MAX_PORTS);
-> +		return -EINVAL;
-> +	}
-> +
-> +	priv->ports = devm_kcalloc(dev, priv->port_num,
-> +				sizeof(struct hisi_inno_phy_port), GFP_KERNEL);
-> +	if (!priv->ports)
-> +		return -ENOMEM;
-> +
-> +	for_each_child_of_node(node, child) {
-> +		struct hisi_inno_phy_port *phy_port = &priv->ports[port];
-> +
-> +		phy_port->utmi_clk = devm_get_clk_from_child(dev, child, NULL);
-> +		if (IS_ERR(phy_port->utmi_clk)) {
-> +			ret = PTR_ERR(phy_port->utmi_clk);
-> +			goto fail;
-> +		}
-> +
-> +		phy_port->port_rst = of_reset_control_get_exclusive(child, "port_rst"); > +		if (IS_ERR(phy_port->port_rst)) {
-> +			ret = PTR_ERR(phy_port->port_rst);
-> +			goto fail;
-> +		}
-> +
-> +		phy_port->utmi_rst = of_reset_control_get_exclusive(child, "utmi_rst");
-> +		if (IS_ERR(phy_port->utmi_rst)) {
-> +			ret = PTR_ERR(phy_port->utmi_rst);
-> +			reset_control_put(phy_port->port_rst);
-> +			goto fail;
-> +		}
-> +		port++;
-> +	}
-> +
-> +	return 0;
-> +
-> +fail:
-> +	while (--port >= 0) {
-> +		struct hisi_inno_phy_port *phy_port = &priv->ports[port];
-> +
-> +		reset_control_put(phy_port->utmi_rst);
-> +		reset_control_put(phy_port->port_rst) > +		clk_put(phy_port->utmi_clk);
+> i.e. the consumers that can't tolerate a clock rate change?
+> 
+> I understand it if it is a hardware limitation (like the block would
+> crash if it glitches or changes rate).
+> 
+> On the other hand, in the kernel we have things like in
+> arch/arm/kernel/smp_twd.c we use a notifier to deal
+> with a changing clock rate.
+> 
+> Just want to be sure that you're not working around something that
+> can be dealt with using rate change notifiers.
 
-clk_put() should not be needed here.
+As far as I can tell, there was no way to enforce this along the tree.
+You could "block" a clock, but one could simply change the rate of the parent
+which change the rate of your blocked clock ... game over.
 
-> +	}
+With notifiers you can block a rate change. but this is happening too late. 
 
-Do we also need clean up code like this in a remove callback?
+Here, it is expressed as constraint along the clock tree which is used in the
+determine_rate callback. If you have a ip block which can be fed by multiple
+parent clock, this will allow the determine_rate to favor another parent
+depending on the rate requested
 
+It also fixes the behavior of CLK_SET_RATE_GATE flag, which is why I put you in
+CC.
 
-Daniel.
+ux500 uses this flag several time, I'd like make sure people are not relying on
+its broken implementation.
+
+> 
+> (OK maybe a stupid question, I assume this is not the case, but anyways,
+> had to ask.)
+
+Not at all :)
+Happy to answer your question. Not sure this was clear though. Feel free to tell
+me if it is not.
+
+> 
+> Yours,
+> Linus Walleij
