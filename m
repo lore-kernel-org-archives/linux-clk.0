@@ -1,76 +1,190 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11353 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751585AbdFHORf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2017 10:17:35 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/3] clk: samsung: exynos542x: Add EPLL rate table
-Date: Thu, 08 Jun 2017 16:17:13 +0200
-Message-id: <1496931433-5712-3-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-References: <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170608141730epcas1p19ca02cb0fd55506f88fcd68414fde70d@epcas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v6 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+Date: Tue, 20 Jun 2017 16:09:09 +0200
+Message-Id: <20170620140910.7568-6-o.rempel@pengutronix.de>
+In-Reply-To: <20170620140910.7568-1-o.rempel@pengutronix.de>
+References: <20170620140910.7568-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-A specific clock rate table is added for EPLL so it is possible
-to set frequency of the EPLL output clock as a multiple of various
-audio sampling rates.
+On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
+about state changes. In this case internal state of PMIC must be
+preconfigured for upcomming state change.
+It works fine with the current regulator framework, except with the
+power-off case.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This patch is providing an optional pm_power_off_prepare handler
+which will configure standby state of the PMIC to disable all power lines.
+
+In my power consumption test on RIoTBoard, I got the following results:
+power off without this patch:	320 mA
+power off with this patch:	2   mA
+suspend to ram:			40  mA
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 6f1d6c0..0ba71bf 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1280,2 +1280,2 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	PLL_35XX_RATE(200000000,  200, 3, 3),
- };
-
-+static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
-+	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
-+	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
-+	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
-+	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
-+	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
-+	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
-+	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
-+	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
-+	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-+	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
-+	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
-+	PLL_36XX_RATE(45158400U, 301, 5, 3, 3671),
-+	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
-+};
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 63922a2167e5..f6c276ed91d8 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -28,6 +28,7 @@
+ #include <linux/regulator/pfuze100.h>
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
++#include <linux/kallsyms.h>
+ #include <linux/regmap.h>
+ 
+ #define PFUZE_NUMREGS		128
+@@ -42,11 +43,17 @@
+ 
+ #define PFUZE100_COINVOL	0x1a
+ #define PFUZE100_SW1ABVOL	0x20
++#define PFUZE100_SW1ABMODE	0x23
+ #define PFUZE100_SW1CVOL	0x2e
++#define PFUZE100_SW1CMODE	0x31
+ #define PFUZE100_SW2VOL		0x35
++#define PFUZE100_SW2MODE	0x38
+ #define PFUZE100_SW3AVOL	0x3c
++#define PFUZE100_SW3AMODE	0x3f
+ #define PFUZE100_SW3BVOL	0x43
++#define PFUZE100_SW3BMODE	0x46
+ #define PFUZE100_SW4VOL		0x4a
++#define PFUZE100_SW4MODE	0x4d
+ #define PFUZE100_SWBSTCON1	0x66
+ #define PFUZE100_VREFDDRCON	0x6a
+ #define PFUZE100_VSNVSVOL	0x6b
+@@ -57,6 +64,13 @@
+ #define PFUZE100_VGEN5VOL	0x70
+ #define PFUZE100_VGEN6VOL	0x71
+ 
++#define PFUZE100_SWxMODE_MASK	0xf
++#define PFUZE100_SWxMODE_APS_APS	0x8
++#define PFUZE100_SWxMODE_APS_OFF	0x4
 +
- static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
- 	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
-@@ -1287,7 +1303,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 		CPLL_CON0, NULL),
- 	[dpll] = PLL(pll_2550, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
- 		DPLL_CON0, NULL),
--	[epll] = PLL(pll_2650, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
-+	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
- 		EPLL_CON0, NULL),
- 	[rpll] = PLL(pll_2650, CLK_FOUT_RPLL, "fout_rpll", "fin_pll", RPLL_LOCK,
- 		RPLL_CON0, NULL),
-@@ -1402,7 +1418,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
-
- 	if (_get_rate("fin_pll") == 24 * MHZ) {
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
--		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
++#define PFUZE100_VGENxLPWR	BIT(6)
++#define PFUZE100_VGENxSTBY	BIT(5)
++
+ enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
+ 
+ struct pfuze_regulator {
+@@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(int index)
+ }
+ #endif
+ 
++static struct pfuze_chip *syspm_pfuze_chip;
++
++static void pfuze_power_off_prepare(void)
++{
++	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
++
++	/* Switch from default mode: APS/APS to APS/Off */
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++}
++
++static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
++{
++	if (pfuze_chip->chip_id != PFUZE100) {
++		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
++		return -ENODEV;
++	}
++
++	if (pm_power_off_prepare) {
++		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
++		return -EBUSY;
++	}
++
++	if (syspm_pfuze_chip) {
++		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
++		return -EBUSY;
++	}
++
++	syspm_pfuze_chip = pfuze_chip;
++	pm_power_off_prepare = pfuze_power_off_prepare;
++
++	return 0;
++}
++
+ static int pfuze_identify(struct pfuze_chip *pfuze_chip)
+ {
+ 	unsigned int value;
+@@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 		}
  	}
---
-1.9.1
-
+ 
++	if (of_property_read_bool(client->dev.of_node,
++				  "fsl,pmic-stby-poweroff"))
++		return pfuze_power_off_prepare_init(pfuze_chip);
++
++	return 0;
++}
++
++static int pfuze100_regulator_remove(struct i2c_client *client)
++{
++	if (syspm_pfuze_chip) {
++		syspm_pfuze_chip = NULL;
++		pm_power_off_prepare = NULL;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver = {
+ 		.of_match_table = pfuze_dt_ids,
+ 	},
+ 	.probe = pfuze100_regulator_probe,
++	.remove = pfuze100_regulator_remove,
+ };
+ module_i2c_driver(pfuze_driver);
+ 
+-- 
+2.11.0
