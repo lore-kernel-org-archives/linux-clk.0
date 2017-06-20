@@ -1,47 +1,117 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 01/15] clk: ingenic: Fix recalc_rate for clocks with fixed divider
-Date: Wed,  7 Jun 2017 22:04:25 +0200
-Message-Id: <20170607200439.24450-2-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Florian Fainelli <f.fainelli@gmail.com>
+Cc: Anup Patel <anup.patel@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+ Oza Pawandeep <oza.oza@broadcom.com>,
+ Srinath Mannam <srinath.mannam@broadcom.com>,
+ Pramod Kumar <pramod.kumar@broadcom.com>,
+ Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com
+References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+ <4c15213f-4ac6-a0a7-f2b8-cde2b4cee891@gmail.com>
+ <c26e95e1-4bfa-0d24-33cc-8d5ae3102864@gmail.com>
+ <20170606223027.GL20170@codeaurora.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <0e321ac9-37ce-6c52-e76a-250183ca299c@gmail.com>
+Date: Mon, 19 Jun 2017 17:28:45 -0700
+MIME-Version: 1.0
+In-Reply-To: <20170606223027.GL20170@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously, the clocks with a fixed divider would report their rate
-as being the same as the one of their parent, independently of the
-divider in use. This commit fixes this behaviour.
+On 06/06/2017 03:30 PM, Stephen Boyd wrote:
+> On 06/05, Florian Fainelli wrote:
+>>
+>>
+>> On 06/05/2017 09:51 AM, Florian Fainelli wrote:
+>>> On 06/01/2017 11:34 PM, Anup Patel wrote:
+>>>> This patchset adds initial support of Broadcom Stingray SOC
+>>>> by reusing existing Broadcom iProc device drivers.
+>>>>
+>>>> Most of the patches in this patchset are DT patches except
+>>>> the Stingray clock tree support which just one patch.
+>>>>
+>>>> This patchset is based on Linux-4.12-rc3 and it is also available
+>>>> at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
+>>>>
+>>>> Changes since v5:
+>>>>  - Rebased patches for Linux-4.12-rc3
+>>>>  - Update DT node names to match register offset
+>>>>
+>>>> Changes since v4:
+>>>>  - Reduce number of include headers in Stingray clk driver
+>>>>
+>>>> Changes since v3:
+>>>>  - Rebased patches for Linux-4.12-rc1
+>>>>  - Updated PATCH3 to have all clocks except genpll3 to be
+>>>>    registered via platform driver probe
+>>>>
+>>>> Changes since v2:
+>>>>  - Remove default bootargs from chosen DT node
+>>>>  - Remove "linux" prefix from stdout DT attribute of chosen DT node
+>>>>  - Remove use of GIC_CPU_MASK_xxx() for PPIs
+>>>>
+>>>> Changes since v1:
+>>>>  - Rebased patches for Linux-4.12-rc1
+>>>>  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
+>>>>  - Use ranges DT property to clear view of memory-layout
+>>>>  - Make bcm-sr.h part of clock DT bindings patch
+>>>>
+>>>> Anup Patel (3):
+>>>>   dt-bindings: bcm: Add Broadcom Stingray bindings document
+>>>>   arm64: dts: Initial DTS files for Broadcom Stingray SOC
+>>>>   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
+>>>>
+>>>> Oza Pawandeep (1):
+>>>>   arm64: dts: Add I2C DT nodes for Stingray SoC
+>>>>
+>>>> Pramod Kumar (3):
+>>>>   arm64: dts: Add NAND DT nodes for Stingray SOC
+>>>>   arm64: dts: Add pinctrl DT nodes for Stingray SOC
+>>>>   arm64: dts: Add GPIO DT nodes for Stingray SOC
+>>>>
+>>>> Sandeep Tripathy (3):
+>>>>   dt-bindings: clk: Extend binding doc for Stingray SOC
+>>>>   clk: bcm: Add clocks for Stingray SOC
+>>>>   arm64: dts: Add clock DT nodes for Stingray SOC
+>>>>
+>>>> Srinath Mannam (1):
+>>>>   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+>>>
+>>> Applied patches 1, 4-11 to devicetree-arm64/next, thanks!
+>>
+>> Also took patch 2, to make sure everything builds properly, Stephen, let
+>> me know if you want me to take patch #3 as well.
+>>
+> 
+> Usually clk tree takes includes and hosts that in a stable branch
+> for arm-soc maintainers to take. It seems that now arm-soc
+> maintainers are asking that dts files use plain numbers and then
+> switch to defines later after -rc1.
+> 
+> Should I go apply patch 2 myself so I can apply patch 3 to the
+> clk tree? Personally, I think this is fine because git doesn't
+> care about duplicate commits anyway and this is just #defines
+> we're talking about. Alternatively, you can host patch 2 in a
+> stable branch on v4.12-rc1 that I can pull into clk tree and then
+> apply patch 3 on top of and merge up into clk-next. Or you can
+> send me a PR for this clk driver and I can merge it into clk-next
+> where patch 2 is the parent of the clk driver change.
 
-This went unnoticed as neither the jz4740 nor the jz4780 CGU code
-have clocks with fixed dividers yet.
+Yes, please apply patch 2 and 3 in your tree, we should be fine. You
+would also find patch 2 in a stable branch:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/clk/ingenic/cgu.c | 2 ++
- 1 file changed, 2 insertions(+)
+https://github.com/Broadcom/stblinux/refs/heads/arm64-stingray-for-4.13
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index e8248f9185f7..eb9002ccf3fc 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -328,6 +328,8 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 		div *= clk_info->div.div;
- 
- 		rate /= div;
-+	} else if (clk_info->type & CGU_CLK_FIXDIV) {
-+		rate /= clk_info->fixdiv.div;
- 	}
- 
- 	return rate;
+Thanks!
 -- 
-2.11.0
+Florian
