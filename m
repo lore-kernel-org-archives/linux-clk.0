@@ -1,136 +1,94 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 20 Jun 2017 09:45:48 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        "daniel.thompson@linaro.org"
-	<daniel.thompson@linaro.org>,
-        "andrea.merello@gmail.com"
-	<andrea.merello@gmail.com>,
-        "radoslaw.pietrzyk@gmail.com"
-	<radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        "Olivier
- BIDEAU" <olivier.bideau@st.com>,
-        Amelie DELAUNAY <amelie.delaunay@st.com>,
-        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
-Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
-Date: Tue, 27 Jun 2017 12:17:20 +0000
-Message-ID: <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
-References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
- <20170621220703.GI4493@codeaurora.org>
-In-Reply-To: <20170621220703.GI4493@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner clock fixes for 4.12
+Message-ID: <20170620074548.gqs6bpu2fo2bm67v@flea.lan>
+References: <20170614192119.xktlt4o5puje2pdu@flea.home>
+ <20170614235042.GF20170@codeaurora.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="a6svomoeiks4q3om"
+In-Reply-To: <20170614235042.GF20170@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCk9uIDA2LzIyLzIwMTcgMTI6MDcgQU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gT24gMDYv
-MDcsIGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbSB3cm90ZToNCj4+IEZyb206IEdhYnJpZWwgRmVy
-bmFuZGV6IDxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+DQo+Pg0KPj4gVGhpcyBwYXRjaCBlbmFi
-bGVzIGNsb2NrcyBmb3IgU1RNMzJINzQzIGJvYXJkcy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBH
-YWJyaWVsIEZlcm5hbmRleiA8Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4NCj4+IGZvciBN
-RkQgY2hhbmdlczoNCj4+IEFja2VkLWJ5OiBMZWUgSm9uZXMgPGxlZS5qb25lc0BsaW5hcm8ub3Jn
-Pg0KPj4NCj4+IGZvciBEVC1CaW5kaW5ncw0KPj4gQWNrZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2Jo
-QGtlcm5lbC5vcmc+DQo+PiB2NDoNCj4+ICAgIC0gcmVuYW1lIGxvY2sgaW50byBzdG0zMnJjY19s
-b2NrDQo+PiAgICAtIGRvbid0IHVzZSBjbGtfcmVhZGwoKQ0KPj4gICAgLSByZW1vdmUgdXNlbGVz
-cyBwYXJlbnRoZXNlcyB3aXRoIEdFTk1BU0sNCj4+ICAgIC0gZml4IHBhcmVudHMgb2YgdGltZXJf
-eCBjbG9ja3MNCj4+ICAgIC0gc3VwcHJlc3MgcGxsIGNvbmZpZ3VyYXRpb24gZnJvbSBEVA0KPj4g
-ICAgLSBmaXgga2J1aWxkIHdhcm5pbmcNCj4+DQo+PiB2MzoNCj4+ICAgIC0gZml4IGNvbXBhdGli
-bGUgc3RyaW5nICJzdG0zMmg3LXBsbCIgaW50byAic3Qsc3RtMzJoNy1wbGwiDQo+PiAgICAtIGZp
-eCBiYWQgcGFyZW50IG5hbWUgZm9yIG1jbzIgY2xvY2sNCj4+ICAgIC0gc2V0IENMS19TRVRfUkFU
-RV9QQVJFTlQgZm9yIGx0ZGMgY2xvY2sNCj4+ICAgIC0gc2V0IENMS19JR05PUkVfVU5VU0VEIGZv
-ciBwbGwxDQo+PiAgICAtIGRpc2FibGUgcG93ZXIgZG9tYWluIHdyaXRlIHByb3RlY3Rpb24gb24g
-ZGlzYWJsZSBvcHMgaWYgbmVlZGVkDQo+Pg0KPj4NCj4+IHYyOg0KPj4gICAgLSByZW5hbWUgY29t
-cGF0aWJsZSBzdHJpbmcgInN0bTMyLHBsbCIgaW50byAic3RtMzJoNy1wbGwiDQo+PiAgICAtIHN1
-cHByZXNzICJzdCxwbGxyZ2UiIHByb3BlcnR5DQo+PiAgICAtIHN1cHByZXNzICJzdCwgZnJhYy1z
-dGF0dXMiIHByb3BlcnR5DQo+PiAgICAtIGNoYW5nZSBtYW5hZ2VtZW50IG9mICJzdCxmcmFjIiAg
-cHJvcGVydHkNCj4+IAkwIDogZW5hYmxlIDAgcGxsIGludGVnZXIgbW9kZQ0KPj4gCW90aGVyIHZh
-bHVlcyA6IGVuYWJsZSBwbGwgaW4gZnJhY3Rpb25hbCBtb2RlICh2YWx1ZSBpcw0KPj4gCXRoZSBm
-cmFjdGlvbmFsIGZhY3RvcikNCj4gUGxlYXNlIGRyb3AgdGhlIGNoYW5nZWxvZyBmcm9tIGNvbW1p
-dCB0ZXh0Lg0KPg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmg3LmMgYi9k
-cml2ZXJzL2Nsay9jbGstc3RtMzJoNy5jDQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5k
-ZXggMDAwMDAwMC4uMjkwN2MxZg0KPj4gLS0tIC9kZXYvbnVsbA0KPj4gKysrIGIvZHJpdmVycy9j
-bGsvY2xrLXN0bTMyaDcuYw0KPj4gQEAgLTAsMCArMSwxNTMyIEBADQo+PiArLyogUG93ZXIgZG9t
-YWluIGhlbHBlciAqLw0KPj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBkaXNhYmxlX3Bvd2VyX2RvbWFp
-bl93cml0ZV9wcm90ZWN0aW9uKHZvaWQpDQo+PiArew0KPj4gKwlpZiAocGRybSkNCj4+ICsJCXJl
-Z21hcF91cGRhdGVfYml0cyhwZHJtLCAweDAwLCAoMSA8PCA4KSwgKDEgPDwgOCkpOw0KPj4gK30N
-Cj4+ICsNCj4+ICtzdGF0aWMgaW5saW5lIHZvaWQgZW5hYmxlX3Bvd2VyX2RvbWFpbl93cml0ZV9w
-cm90ZWN0aW9uKHZvaWQpDQo+PiArew0KPj4gKwlpZiAocGRybSkNCj4+ICsJCXJlZ21hcF91cGRh
-dGVfYml0cyhwZHJtLCAweDAwLCAoMSA8PCA4KSwgKDAgPDwgOCkpOw0KPj4gK30NCj4+ICsNCj4+
-ICtzdGF0aWMgaW5saW5lIGludCBpc19lbmFibGVfcG93ZXJfZG9tYWluX3dyaXRlX3Byb3RlY3Rp
-b24odm9pZCkNCj4gUmV0dXJuIGJvb2wsIG5vdCBpbnQ/DQo+DQo+PiArew0KPj4gKwlpZiAocGRy
-bSkgew0KPj4gKwkJdTMyIHZhbDsNCj4+ICsNCj4+ICsJCXJlZ21hcF9yZWFkKHBkcm0sIDB4MDAs
-ICZ2YWwpOw0KPj4gKw0KPj4gKwkJcmV0dXJuICEodmFsICYgMHgxMDApOw0KPj4gKwl9DQo+PiAr
-CXJldHVybiAtMTsNCj4gUmV0dXJuaW5nIC0xIGxvb2tzIG9kZC4NCj4NCj4+ICt9DQo+PiArDQo+
-PiArLyogR2F0ZSBjbG9jayB3aXRoIHJlYWR5IGJpdCBhbmQgYmFja3VwIGRvbWFpbiBtYW5hZ2Vt
-ZW50ICovDQo+PiArc3RydWN0IHN0bTMyX3JlYWR5X2dhdGUgew0KPj4gKwlzdHJ1Y3QJY2xrX2dh
-dGUgZ2F0ZTsNCj4+ICsJdTgJYml0X3JkeTsNCj4+ICsJdTgJYmFja3VwX2RvbWFpbjsNCj4+ICt9
-Ow0KPj4gKw0KPj4gKyNkZWZpbmUgdG9fcmVhZHlfZ2F0ZV9jbGsoX3JnYXRlKSBjb250YWluZXJf
-b2YoX3JnYXRlLCBzdHJ1Y3Qgc3RtMzJfcmVhZHlfZ2F0ZSxcDQo+PiArCQlnYXRlKQ0KPj4gKw0K
-Pj4gKyNkZWZpbmUgUkdBVEVfVElNRU9VVCA2MDAwMDANCj4+ICsNCj4+ICtzdGF0aWMgaW50IHJl
-YWR5X2dhdGVfY2xrX2lzX2VuYWJsZWQoc3RydWN0IGNsa19odyAqaHcpDQo+PiArew0KPj4gKwly
-ZXR1cm4gY2xrX2dhdGVfb3BzLmlzX2VuYWJsZWQoaHcpOw0KPj4gK30NCj4gUGVyaGFwcyB3ZSBz
-aG91bGQgZXhwb3NlIGNsa19nYXRlX29wczo6aXNfZW5hYmxlZCBhcyBmdW5jdGlvbnMNCj4gdGhh
-dCBjYW4gYmUgZGlyZWN0bHkgY2FsbGVkIGFuZCBhc3NpZ25lZCBpbiBwbGFjZXMgbGlrZSB0aGlz
-IHNvDQo+IHdlIGRvbid0IG5lZWQgd3JhcHBlciBmdW5jdGlvbnMgdGhhdCBkbyBub3RoaW5nIGJl
-c2lkZXMgZm9yd2FyZA0KPiB0aGUgY2FsbC4NCj4NCj4+ICsNCj4+ICtzdGF0aWMgaW50IHJlYWR5
-X2dhdGVfY2xrX2VuYWJsZShzdHJ1Y3QgY2xrX2h3ICpodykNCj4+ICt7DQo+PiArCXN0cnVjdCBj
-bGtfZ2F0ZSAqZ2F0ZSA9IHRvX2Nsa19nYXRlKGh3KTsNCj4+ICsJc3RydWN0IHN0bTMyX3JlYWR5
-X2dhdGUgKnJnYXRlID0gdG9fcmVhZHlfZ2F0ZV9jbGsoZ2F0ZSk7DQo+PiArCWludCBkYnBfc3Rh
-dHVzOw0KPj4gKwlpbnQgYml0X3N0YXR1czsNCj4+ICsJdW5zaWduZWQgaW50IHRpbWVvdXQgPSBS
-R0FURV9USU1FT1VUOw0KPj4gKw0KPj4gKwlpZiAoY2xrX2dhdGVfb3BzLmlzX2VuYWJsZWQoaHcp
-KQ0KPj4gKwkJcmV0dXJuIDA7DQo+PiArDQo+PiArCWRicF9zdGF0dXMgPSBpc19lbmFibGVfcG93
-ZXJfZG9tYWluX3dyaXRlX3Byb3RlY3Rpb24oKTsNCj4+ICsNCj4+ICsJaWYgKHJnYXRlLT5iYWNr
-dXBfZG9tYWluICYmIGRicF9zdGF0dXMpDQo+PiArCQlkaXNhYmxlX3Bvd2VyX2RvbWFpbl93cml0
-ZV9wcm90ZWN0aW9uKCk7DQo+PiArDQo+PiArCWNsa19nYXRlX29wcy5lbmFibGUoaHcpOw0KPj4g
-Kw0KPj4gKwlkbyB7DQo+PiArCQliaXRfc3RhdHVzID0gIShyZWFkbChnYXRlLT5yZWcpICYgQklU
-KHJnYXRlLT5iaXRfcmR5KSk7DQo+PiArDQo+PiArCQlpZiAoYml0X3N0YXR1cykNCj4+ICsJCQl1
-ZGVsYXkoMTAwMCk7DQo+PiArDQo+PiArCX0gd2hpbGUgKGJpdF9zdGF0dXMgJiYgLS10aW1lb3V0
-KTsNCj4gcmVhZGxfcG9sbF90aW1lb3V0Pw0KaWYgaSB1c2UgcmVhZGxfcG9sbF90aW1lb3V0ICh3
-aWNoIHVzZSAna3RpbWVfZ2V0KCknKSBpdCBjYW4gYmUgDQpvcGVyYXRpb25hbCBvbmx5IGFmdGVy
-IHRoZSBzZWxlY3Rpb24gb2YgY2xvY2tzb3VyY2UgPyAoZGV2aWNlX2luaXRjYWxsKS4NCkFuZCB0
-aGVuIGlmIGEgZHJpdmVyIHR1cm4gb24gYSBjbG9jayBiZWZvcmUsIGl0IGNvdWxkIGJsb2NrZWQg
-dGhlIGxpbnV4IA0KY29uc29sZSA/DQoNCj4NCj4+ICsNCj4+ICsvKiBSVEMgY2xvY2sgKi8NCj4+
-ICtzdGF0aWMgdTggcnRjX211eF9nZXRfcGFyZW50KHN0cnVjdCBjbGtfaHcgKmh3KQ0KPj4gK3sN
-Cj4+ICsJcmV0dXJuIGNsa19tdXhfb3BzLmdldF9wYXJlbnQoaHcpOw0KPj4gK30NCj4+ICsNCj4+
-ICtzdGF0aWMgaW50IHJ0Y19tdXhfc2V0X3BhcmVudChzdHJ1Y3QgY2xrX2h3ICpodywgdTggaW5k
-ZXgpDQo+PiArew0KPj4gKwlpbnQgZGJwX3N0YXR1czsNCj4+ICsJaW50IGVycjsNCj4+ICsNCj4+
-ICsJZGJwX3N0YXR1cyA9IGlzX2VuYWJsZV9wb3dlcl9kb21haW5fd3JpdGVfcHJvdGVjdGlvbigp
-Ow0KPj4gKw0KPj4gKwlpZiAoZGJwX3N0YXR1cykNCj4+ICsJCWRpc2FibGVfcG93ZXJfZG9tYWlu
-X3dyaXRlX3Byb3RlY3Rpb24oKTsNCj4+ICsNCj4+ICsJZXJyID0gY2xrX211eF9vcHMuc2V0X3Bh
-cmVudChodywgaW5kZXgpOw0KPj4gKw0KPj4gKwlpZiAoZGJwX3N0YXR1cykNCj4+ICsJCWVuYWJs
-ZV9wb3dlcl9kb21haW5fd3JpdGVfcHJvdGVjdGlvbigpOw0KPj4gKw0KPj4gKwlyZXR1cm4gZXJy
-Ow0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50IHJ0Y19tdXhfZGV0ZXJtaW5lX3JhdGUoc3Ry
-dWN0IGNsa19odyAqaHcsDQo+PiArCQlzdHJ1Y3QgY2xrX3JhdGVfcmVxdWVzdCAqcmVxKQ0KPj4g
-K3sNCj4+ICsJcmV0dXJuIGNsa19tdXhfb3BzLmRldGVybWluZV9yYXRlKGh3LCByZXEpOw0KPj4g
-K30NCj4gSW4gdGhpcyBjYXNlIHdlIGhhdmUgdGhhdCBmdW5jdGlvbiBleHBvc2VkIGFscmVhZHkg
-c28gaXQgY291bGQNCj4gYmUgYXNzaWduZWQuDQo+DQo+PiArDQo+PiArc3RhdGljIGNvbnN0IHN0
-cnVjdCBjbGtfb3BzIHJ0Y19tdXhfb3BzID0gew0KPj4gKwkuZ2V0X3BhcmVudAk9IHJ0Y19tdXhf
-Z2V0X3BhcmVudCwNCj4+ICsJLnNldF9wYXJlbnQJPSBydGNfbXV4X3NldF9wYXJlbnQsDQo+PiAr
-CS5kZXRlcm1pbmVfcmF0ZSA9IHJ0Y19tdXhfZGV0ZXJtaW5lX3JhdGUsDQo+PiArfTsNCj4+ICsN
-Cj4+ICsvKiBDbG9jayBnYXRlIHdpdGggYmFja3VwIGRvbWFpbiBwcm90ZWN0aW9uIG1hbmFnZW1l
-bnQgKi8NCj4+ICtzdGF0aWMgaW50IGJkX2dhdGVfaXNfZW5hYmxlZChzdHJ1Y3QgY2xrX2h3ICpo
-dykNCj4+ICt7DQo+PiArCXJldHVybiBjbGtfZ2F0ZV9vcHMuaXNfZW5hYmxlZChodyk7DQo+PiAr
-fQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgYmRfZ2F0ZV9lbmFibGUoc3RydWN0IGNsa19odyAqaHcp
-DQo+PiArew0KPj4gKwlpbnQgZGJwX3N0YXR1czsNCj4+ICsJaW50IGVycjsNCj4+ICsNCj4+ICsJ
-aWYgKGJkX2dhdGVfaXNfZW5hYmxlZChodykpDQo+PiArCQlyZXR1cm4gMDsNCj4+ICsNCj4gWy4u
-Ll0NCj4+ICsNCj4+ICsJcmV0dXJuOw0KPj4gKw0KPj4gK2Vycl9mcmVlX2Nsa3M6DQo+PiArCWtm
-cmVlKGNsa19kYXRhKTsNCj4+ICt9DQo+PiArDQo+PiArQ0xLX09GX0RFQ0xBUkVfRFJJVkVSKHN0
-bTMyaDdfcmNjLCAic3Qsc3RtMzJoNzQzLXJjYyIsIHN0bTMyaDdfcmNjX2luaXQpOw0KPiBDYW4g
-eW91IGFkZCBhIGNvbW1lbnQgYWJvdmUgdGhpcyB3aHkgd2UgY2FuJ3QgZG8gYSBzcGxpdCBkZXNp
-Z24NCj4gd2l0aCBhIHBsYXRmb3JtIGRyaXZlciBhbmQgYSBDTEtfT0ZfREVDTEFSRV9EUklWRVIo
-KSByb3V0aW5lIGhlcmUNCj4gYW5kIGFsc28gbWVudGlvbiB0aGUgb3RoZXIgZHJpdmVyIHRoYXQn
-cyBwcm9iaW5nIGFnYWluc3QgdGhlIHNhbWUNCj4gY29tcGF0aWJsZT8NCj4NCg==
+
+--a6svomoeiks4q3om
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Stephen,
+
+On Wed, Jun 14, 2017 at 04:50:42PM -0700, Stephen Boyd wrote:
+> On 06/14, Maxime Ripard wrote:
+> > Hi Mike, Stephen,
+> >=20
+> > Please pull the following patches for 4.12
+> >=20
+> > Thanks!
+> > Maxime
+> >=20
+> > The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c=
+43f6:
+> >=20
+> >   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> >=20
+> > are available in the git repository at:
+> >=20
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/=
+sunxi-clk-fixes-for-4.12
+> >=20
+> > for you to fetch changes up to d85da227c3ae43d9ca513d60f244213cb4e55485:
+> >=20
+> >   clk: sunxi-ng: a64: Export PLL_PERIPH0 clock for the PRCM (2017-05-31=
+ 21:57:30 +0200)
+> >=20
+> > ----------------------------------------------------------------
+> > Allwinner clock fixes for 4.12
+> >=20
+> > Some fixes that fix some bindings that went in 4.12, fix a few reset and
+> > clock offsets and a build error fix
+> >=20
+>=20
+> The last few don't have any Fixes: tag. Is that because they
+> aren't fixes for anything in the tree? I pulled it, but I'm
+> second guessing it all.
+
+They probably should have, I'm not sure about it. They are amendments
+to one DT binding that got merged into 4.12, and must be merged before
+the 4.12 release in order to not get bitten by the ABI stability rules.
+
+So yeah, it probably should have had a Fixes tag in the first place.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--a6svomoeiks4q3om
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZSNKsAAoJEBx+YmzsjxAgwOEQAK1DLVx+YsAYuns9jcBAgwbF
+K53a3eCak60+Z91q6EwOfpcDpVHyOv/lopbfIKXClbr3jP3NuCku1X/tdeT+ImMJ
+gtLfRo08+2Q4L+iqAwilt7v1NNOuBgTLq3cDgkhlHP8gADmdbtzV5a1OxFO7IsYB
+o4hLaBV0KD5gqWYtxGzJVyNQN9afaFO2JCPyV0bs/hfPjG8QA1aTYCTD2Ofg7E57
+U4azcC5Vwgm3wY4E1tN4BmpN7me3bN5k14D2++bRRCzbrv9SyQcS7jWRcTX1eV4o
+KCn/NNk8/4GZyLNFvW3IAZVmX1V4kGrsClssICXB6bv7j8I3UMMEHB35acptd+RJ
+z2Q5mrP10rzZT59ZExWr9M8b59ShA7b7AihaEoDTAGBL0GAnmzbCKXIkaFaapVu3
++90wldHZwZ1uk2Ptx95dypZttrJIHABNqCL20MKD7WKgAAmX7+x9XTjAZ9vKhnKz
+8A5AkDjddUTFlKj1Ath25cXr5FY1gmrG++Fhd4IqEOI3rf5OlUGMzFJRjh5fDLMs
+dwqVUh//5U00RzW8qMZkjHjUUD6qGZ/G/FGPInHFEBlLcU+MzAZfaU733oIntnMo
++WrANcXee7s/l+QPCp/1Je1YQZNwKJ6H8OTohg7Yd/eHhNJQmalm/PM/6/SScCa2
+aFFGTFr/Tu0ELjUcyYab
+=warX
+-----END PGP SIGNATURE-----
+
+--a6svomoeiks4q3om--
