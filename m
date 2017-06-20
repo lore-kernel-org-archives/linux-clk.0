@@ -1,108 +1,45 @@
-Return-Path: <zhang.chunyan@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:40118 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752482AbdFTBBk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2017 21:01:40 -0400
+Date: Mon, 19 Jun 2017 18:01:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, aisheng.dong@nxp.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
+        richard@nod.at, robh+dt@kernel.org, mark.rutland@arm.com,
+        han.xu@nxp.com, fabio.estevam@freescale.com,
+        LW@KARO-electronics.de, linux-mtd@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] clk: imx7d: create clocks behind rawnand clock
+ gate
+Message-ID: <20170620010125.GI20170@codeaurora.org>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+ <8b9edf13938e3166081e72ba8fa4ac822035079c.1496961128.git-series.stefan@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <20170602225621.GE20170@codeaurora.org>
-References: <1496306801-19239-1-git-send-email-zhang.chunyan@linaro.org> <20170602225621.GE20170@codeaurora.org>
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
-Date: Mon, 5 Jun 2017 11:15:25 +0800
-Message-ID: <CAG2=9p_fOV6QBTTHWeSAaMa=3J2tkpD7z+ju+PEy+fQCV59BUA@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: clock: address more for clock-cells property
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lyra Zhang <zhang.lyra@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <8b9edf13938e3166081e72ba8fa4ac822035079c.1496961128.git-series.stefan@agner.ch>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 06/08, Stefan Agner wrote:
+> The rawnand clock gate gates two clocks, NAND_USDHC_BUS_CLK_ROOT
+> and NAND_CLK_ROOT. However, the gate has been in the chain of the
+> latter only. This does not allow to use the NAND_USDHC_BUS_CLK_ROOT
+> only, e.g. as required by APBH-Bridge-DMA.
+> 
+> Add new clocks which represent the clock after the gate, and use a
+> shared clock gate to correctly model the hardware.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
 
-On 3 June 2017 at 06:56, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/01, Chunyan Zhang wrote:
->> The value of property 'clock-cells' is not determined only by the number of
->> clock outputs in one clock node, it is actually determined by whether the
->> clock output in this node can be referenced directly without index.  If
->> the output clock has to be referenced by a index, the clock-cell of this
->> clock node can't be defined 0.
->>
->> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
->> ---
->>  Documentation/devicetree/bindings/clock/clock-bindings.txt | 10 ++++++++--
->>  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> I'm leaving this patch for Rob/DT maintainers to apply.
->
->>
->> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
->> index 2ec489e..cef3db5 100644
->> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
->> @@ -15,8 +15,14 @@ value of a #clock-cells property in the clock provider node.
->>
->>  Required properties:
->>  #clock-cells:           Number of cells in a clock specifier; Typically 0 for nodes
->> -                with a single clock output and 1 for nodes with multiple
->> -                clock outputs.
->> +                with a single clock output and it must be able to be
->> +                referenced without index, and 1 for nodes with single or
->> +                multiple clock outputs which have to be referenced by index.
->> +
->> +                Please note that if a node with a single clock output
->> +                but it has "clock-indices" property (see bellow), it has
->> +                to be referenced by index, its "#clock-cells" cannot be
->> +                defined 0.
->
-> Maybe this should be added to the clock-indices area of the
-> document instead of here? It seems to me that you can't have
-> clock-indices if you have #clock-cells=<0>, and that's sort of
-> obvious because 0 cells means 1 output and >0 cells means
-> potentially many outputs.
+Applied to clk-next
 
-Sorry for not being able to document clear enough.
-Let me try to explain why I added this paragraph here rather than
-clock-indices area.
-
-The sentence "0 for nodes with a single clock output" made me confused.
-In the platform I'm working on, some clock has a single clock output
-though, the identifying number for the clock output , #clock-cells
-cannot be set 0.
-
-I just wanted to make this sort of cases being cleared.  My point was
-that clock-cells with zero was not for all kinds of clocks which has
-one single output.
-
-I tried to rewrite the description below, would it be better? :)
-
---- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-+++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-@@ -18,6 +18,9 @@ Required properties:
-                   with a single clock output and 1 for nodes with multiple
-                   clock outputs.
-
-+                  There's one exception, please see the description for
-+                  clock-indices below.
-+
- Optional properties:
- clock-output-names: Recommended to be a list of strings of clock output signal
-                    names indexed by the first cell in the clock specifier.
-@@ -48,6 +51,13 @@ clock-indices:          If the identifying number
-for the clocks in the node
-                   is not linear from zero, then this allows the mapping of
-                   identifiers into the clock-output-names array.
-
-+                  This property not only servers for clocks with multiple
-+                  clock outputs, but also for clocks with a single clock
-+                  output whose identifying number is not zero.
-+
-+                  So long as clock-indices is set, clock-cells cannot be
-+                  set zero.
-+
- For example, if we have two clocks <&oscillator 1> and <&oscillator 3>:
-
-
-Thanks for the review,
-Chunyan
-
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
