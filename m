@@ -1,74 +1,58 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 08/15] MIPS: ingenic: Use common cmdline handling code
-Date: Wed,  7 Jun 2017 22:04:32 +0200
-Message-Id: <20170607200439.24450-9-paul@crapouillou.net>
-In-Reply-To: <20170607200439.24450-1-paul@crapouillou.net>
-References: <20170607200439.24450-1-paul@crapouillou.net>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 20 Jun 2017 17:26:11 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH 3/9] clk: fractional-divider: add
+ CLK_FRAC_DIVIDER_ZERO_BASED flag support
+Message-ID: <20170620092611.GC6805@b29396-OptiPlex-7040>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-4-git-send-email-aisheng.dong@nxp.com>
+ <20170620015547.GN4493@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170620015547.GN4493@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Burton <paul.burton@imgtec.com>
+On Mon, Jun 19, 2017 at 06:55:47PM -0700, Stephen Boyd wrote:
+> On 05/15, Dong Aisheng wrote:
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index a6efbb9..4466cae 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -557,6 +557,11 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+> >   * @lock:	register lock
+> >   *
+> >   * Clock with adjustable fractional divider affecting its output frequency.
+> > + *
+> > + * Flags:
+> > + * CLK_FRAC_DIVIDER_ZERO_BASED - by default the divisor is the value read
+> > + *	from the register.  If CLK_FRAC_DIVIDER_ZERO_BASED is set then the
+> > + *	divider is the raw value read from the register plus one.
+> 
+> This should say the numerator and denominator are both the value
+> read plus one. It isn't clear if it applies to the numerator, or
+> the denominator, or both.
+> 
 
-jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
-arcs_cmdline, up to argc (in fw_arg0). The common code in
-fw_init_cmdline will do the exact same thing when run on a system where
-fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
-use it). Remove the custom implementation & use the generic code.
+Good suggestion.
+Will improve it.
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
----
- arch/mips/jz4740/prom.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+Regards
+Dong Aisheng
 
-diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
-index 47e857194ce6..a62dd8e6ecf9 100644
---- a/arch/mips/jz4740/prom.c
-+++ b/arch/mips/jz4740/prom.c
-@@ -20,33 +20,13 @@
- #include <linux/serial_reg.h>
- 
- #include <asm/bootinfo.h>
-+#include <asm/fw/fw.h>
- #include <asm/mach-jz4740/base.h>
- 
--static __init void jz4740_init_cmdline(int argc, char *argv[])
--{
--	unsigned int count = COMMAND_LINE_SIZE - 1;
--	int i;
--	char *dst = &(arcs_cmdline[0]);
--	char *src;
--
--	for (i = 1; i < argc && count; ++i) {
--		src = argv[i];
--		while (*src && count) {
--			*dst++ = *src++;
--			--count;
--		}
--		*dst++ = ' ';
--	}
--	if (i > 1)
--		--dst;
--
--	*dst = 0;
--}
--
- void __init prom_init(void)
- {
--	jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
- 	mips_machtype = MACH_INGENIC_JZ4740;
-+	fw_init_cmdline();
- }
- 
- void __init prom_free_prom_memory(void)
--- 
-2.11.0
+> >   */
+> >  struct clk_fractional_divider {
+> >  	struct clk_hw	hw;
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
