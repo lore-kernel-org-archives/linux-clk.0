@@ -1,46 +1,46 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Jun 2017 15:39:55 -0700
+Date: Mon, 19 Jun 2017 18:25:30 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com,
-	linux@armlinux.org.uk, geert@linux-m68k.org, f.fainelli@gmail.com,
-	dongas86@gmail.com, Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V3 2/3] clk: add managed version of clk_bulk_get
-Message-ID: <20170602223955.GW20170@codeaurora.org>
-References: <1495201746-31841-1-git-send-email-aisheng.dong@nxp.com>
- <1495201746-31841-3-git-send-email-aisheng.dong@nxp.com>
+To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
+	Geng Ren <geng.ren@spreadtrum.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH V1 0/9] add clock driver for Spreadtrum platforms
+Message-ID: <20170620012530.GG4493@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1495201746-31841-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/19, Dong Aisheng wrote:
-> This patch introduces the managed version of clk_bulk_get.
+On 06/18, Chunyan Zhang wrote:
+> In the last cycle, the patches support Whale2 sc9860 mobile chip have been
+> merged. This patchset adds clock driver which is used on almost all
+> Spreadtrum SoCs.
 > 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Anson Huang <anson.huang@nxp.com>
-> Cc: Robin Gong <yibin.gong@nxp.com>
-> Cc: Bai Ping <ping.bai@nxp.com>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: Octavian Purdila <octavian.purdila@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
+> This is a rewrite of Spreadtrum's original clock driver[1] according to the
+> comments[2] from Stephen Boyd.
+> 
+> This series also adds Spreadtrum clock binding documentation and devicetree
+> data.
+> 
+> Any comments would be greatly appreciated.
 
-Applied to clk-bulk-get and merged into clk-next.
+Overall it seems to copy quite a bit of code from sunxi-ng, which
+is OK, but if that's just copy/paste + replace some names then
+perhaps we should consolidate the two implementations into one
+that both SoCs can use.
+
+Also, is there any reason why we can't use a platform device
+driver for this instead of the DT probing mechanism? That is more
+preferred method of probing clk controllers.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
