@@ -1,119 +1,39 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
- Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH] clk: scpi: error when clock fails to register
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20170628135345.9337-1-jbrunet@baylibre.com>
- <c7123c06-b75b-5209-5817-230c63c1bf49@arm.com>
- <1498664332.2337.6.camel@baylibre.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <76efd418-9fd5-6ac5-b4c9-c75c5df69df0@arm.com>
-Date: Wed, 28 Jun 2017 16:52:36 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Jun 2017 17:43:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, linus.walleij@linaro.org,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
+	sjaganat@codeaurora.org, sricharan@codeaurora.org
+Subject: Re: [PATCH v6 3/6] clk: qcom: Add DT bindings for ipq8074 gcc clock
+ controller
+Message-ID: <20170620004338.GC20170@codeaurora.org>
+References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+ <1497001319-30353-4-git-send-email-varada@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1498664332.2337.6.camel@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1497001319-30353-4-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 28/06/17 16:38, Jerome Brunet wrote:
-> On Wed, 2017-06-28 at 16:04 +0100, Sudeep Holla wrote:
->>
->> On 28/06/17 14:53, Jerome Brunet wrote:
->>> Current implementation of scpi_clk_add just print a warning when clock
->>> fails to register but then keep going as if nothing happened. The
->>> provider is then registered with bogus data.
->>>
->>> This may latter lead to an Oops in __clk_create_clk when
->>> hlist_add_head(&clk->clks_node, &hw->core->clks) is called.
->>>
->> What's the path of this call ? I see one in devm_clk_hw_register
->> but that's one which failed.
->>
+On 06/09, Varadarajan Narayanan wrote:
+> From: Abhishek Sahu <absahu@codeaurora.org>
 > 
-> bL cpu freq driver requesting the cpu clock, which failed to register. Here the
-> Oops call trace:
+> Add the compatible strings and the include file for ipq8074 gcc
+> clock controller.
 > 
-> [    2.202284] [<ffff00000849a058>] __clk_create_clk.part.18+0x68/0xb0
-> [    2.208494] [<ffff00000849ac2c>] __of_clk_get_from_provider+0xfc/0x140
-> [    2.214962] [<ffff000008496c28>] __of_clk_get_by_name+0x100/0x118
-> [    2.220999] [<ffff000008496c94>] clk_get+0x2c/0x78
-> [    2.225744] [<ffff000008570110>] dev_pm_opp_get_opp_table+0xb0/0x118
-> [    2.232039] [<ffff000008570940>] dev_pm_opp_add+0x20/0x68
-> [    2.237388] [<ffff0000087a0f30>] scpi_init_opp_table+0xa8/0x188
-> [    2.243252] [<ffff0000087a0558>] _get_cluster_clk_and_freq_table+0x80/0x180
-> [    2.250151] [<ffff0000087a0a48>] bL_cpufreq_init+0x3f0/0x480
-> [    2.255758] [<ffff00000879eed8>] cpufreq_online+0xc0/0x658
-> [    2.261191] [<ffff00000879f500>] cpufreq_add_dev+0x78/0x88
-> [    2.266625] [<ffff00000855c2c4>] subsys_interface_register+0x84/0xc8
-> [    2.272922] [<ffff00000879e330>] cpufreq_register_driver+0x138/0x1b8
-> [    2.279218] [<ffff0000087a0b4c>] bL_cpufreq_register+0x74/0x120
-> [    2.285083] [<ffff0000087a1038>] scpi_cpufreq_probe+0x28/0x38
-> [    2.290776] [<ffff00000855fbf0>] platform_drv_probe+0x50/0xb8
-> [    2.296468] [<ffff00000855dd84>] driver_probe_device+0x21c/0x2d8
-> 
+> Acked-by: Rob Herring <robh@kernel.org> (bindings)
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Thanks for this stack. I just worked out the same path now. I did come
-up with the patch as below. That should work if my understanding is correct.
-
-> But that's not the point. The point is there is path in clk-scpi driver which
-> registers uninitialized data in the clock provider. That's not good. 
-> 
->> Also one of the reason for keeping it continuing is, if firmware fails
->> on some non-critical clock, that's fine rather than punishing the entire
->> set of clocks and may even fail the boot.
-> 
-> I understand, but you have no way to know whether a clock is critical or not so 
-> this explanation looks a bit weak, plus it does not keep the boot from failing
-> ... not for me at least.
-> 
-> As explained this approach is registering corrupt data in the provider when
-> failing. It makes the kernel Oops, it shall be fixed.
-> 
-
-Agreed, I want to look at ways to fix that, hence requested you more data.
-
-> If you have a better solution later on, I don't think there would be any problem
-> to revert this patch.
-> 
-
-Sure I am not against the patch as a fix. I was just trying to better
-understand the problem. I had seen the usefulness of skipping on Juno
-platforms
-in earlier days. Also I am now working on the new SCMI[1] specification
-and just want to cover this.
-
----
-
-diff --git i/drivers/clk/clk-scpi.c w/drivers/clk/clk-scpi.c
-index 96d37175d0ad..d83c0b84798d 100644
---- i/drivers/clk/clk-scpi.c
-+++ w/drivers/clk/clk-scpi.c
-@@ -245,11 +245,14 @@ static int scpi_clk_add(struct device *dev, struct
-device_node *np,
-                sclk->id = val;
-
-                err = scpi_clk_ops_init(dev, match, sclk, name);
--               if (err)
-+               if (err) {
-                        dev_err(dev, "failed to register clock '%s'\n",
-name);
--               else
-+                       clk_data->clk[idx] = NULL;
-+                       devm_kfree(dev, sclk);
-+               } else {
-                        dev_dbg(dev, "Registered clock '%s'\n", name);
--               clk_data->clk[idx] = sclk;
-+                       clk_data->clk[idx] = sclk;
-+               }
-        }
-
-        return of_clk_add_hw_provider(np, scpi_of_clk_src_get, clk_data);
+Applied to clk-next
 
 -- 
-Regards,
-Sudeep
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
