@@ -1,49 +1,213 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170601073858.GU20170@codeaurora.org>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <CACRpkdbXEFeVkD8rETyrnuoAxUvnFt2BL07UsXuXfSnq3Qdyfw@mail.gmail.com>
- <CACRpkdYvwwJcxKPtKUyZBLWsmjXji7pHDKNz9NRTETqj2P3drQ@mail.gmail.com> <20170601073858.GU20170@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 9 Jun 2017 10:48:57 +0200
-Message-ID: <CACRpkdbW24L2kLL9buPRAawXOuQ1ypCLf58gCq5=BWP5ex4zuA@mail.gmail.com>
-Subject: Re: [PATCH 1/5 v2] clk: qcom: Update DT bindings for the
- MSM8660/APQ8060 RPMCC
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 20 Jun 2017 17:31:43 +0800
+From: Dong Aisheng <dongas86@gmail.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH 4/9] clk: imx: add pllv4 support
+Message-ID: <20170620093143.GD6805@b29396-OptiPlex-7040>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
+ <20170620015917.GO4493@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170620015917.GO4493@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 1, 2017 at 9:38 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 05/24, Linus Walleij wrote:
+On Mon, Jun 19, 2017 at 06:59:17PM -0700, Stephen Boyd wrote:
+> On 05/15, Dong Aisheng wrote:
+> >  obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+> > diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
+> > new file mode 100644
+> > index 0000000..502da64
+> > --- /dev/null
+> > +++ b/drivers/clk/imx/clk-pllv4.c
+> > @@ -0,0 +1,196 @@
+> > +/*
+> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> > + * Copyright 2017 NXP
+> > + *
+> > + * Author: Dong Aisheng <aisheng.dong@nxp.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License
+> > + * as published by the Free Software Foundation; either version 2
+> > + * of the License, or (at your option) any later version.
+> > + *
+> > + * http://www.opensource.org/licenses/gpl-license.html
+> > + * http://www.gnu.org/copyleft/gpl.html
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clk.h>
+> 
+> Is this include used?
+> 
 
->> I am sorry if you guys are swamped, I just don't know what to do,
->> clock drivers are starting to become the bottleneck for everything
->> I do. I bet the ARM SoC maintainers must be noticing it too.
-(...)
-> Meh. Life happens and msm8660 is about a decade old now and not
-> something that I can easily review without digging through old
-> websites to find documentation on the code I worked on 7 years
-> ago. So sorry, but these sorts of patches are basically
-> approaching priority none for me and I have to steal time to
-> review them.
+Nice catch. Will remove.
 
-Sorry the reference above was mainly to the Gemini SoC clock driver
-which was blocking ARM consolidation, the fact that this MSM8660
-thing was stalled too just got me to think it was related.
+> > +#include <linux/delay.h>
+> > +#include <linux/err.h>
+> > +#include <linux/slab.h>
+> > +
+> > +/* PLL Control Status Register (xPLLCSR) */
+> > +#define PLL_CSR_OFFSET		0x0
+> > +#define PLL_VLD			BIT(24)
+> > +#define PLL_EN			BIT(0)
+> > +
+> > +/* PLL Configuration Register (xPLLCFG) */
+> > +#define PLL_CFG_OFFSET		0x08
+> > +#define BP_PLL_MULT		16
+> > +#define BM_PLL_MULT		(0x7f << 16)
+> > +
+> > +/* PLL Numerator Register (xPLLNUM) */
+> > +#define PLL_NUM_OFFSET		0x10
+> > +
+> > +/* PLL Denominator Register (xPLLDENOM) */
+> > +#define PLL_DENOM_OFFSET	0x14
+> > +
+> > +struct clk_pllv4 {
+> > +	struct clk_hw	hw;
+> > +	void __iomem	*base;
+> > +};
+> > +
+> > +/* Valid PLL MULT Table */
+> > +static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
+> > +
+> > +#define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
+> > +
+> > +static int clk_pllv4_wait_lock(struct clk_pllv4 *pll)
+> > +{
+> > +	unsigned long timeout = jiffies + msecs_to_jiffies(5);
+> > +
+> > +	/* Wait for PLL to lock */
+> > +	do {
+> > +		if (readl_relaxed(pll->base  + PLL_CSR_OFFSET) & PLL_VLD)
+> > +			break;
+> > +		if (time_after(jiffies, timeout))
+> > +			break;
+> > +			usleep_range(50, 500);
+> > +	} while (1);
+> > +
+> > +	return readl_relaxed(pll->base + PLL_CSR_OFFSET) & PLL_VLD ?
+> > +	       0 : -ETIMEDOUT;
+> 
+> Use readl_poll_timeout() instead?
+> 
 
-I understand the MSM8660 is low prio, but the first DragonBoard
-was pushed to developers en masse in 2012 (yours truly included),
-which was just half a decade ago, and started
-the community boards effort from Qualcomm, and yeah, community
-moves slower than markets usually, the board is still supported by
-the BSquare company that managed the board release for Qualcomm,
-I can still login and check schematics and support forums,
-cool isn't it :D
+Good idea.
 
-Yours,
-Linus Walleij
+> > +}
+> > +
+> > +static int clk_pllv4_is_enabled(struct clk_hw *hw)
+> > +{
+> > +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+> > +
+> > +	if (readl_relaxed(pll->base) & PLL_EN)
+> > +		return 1;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
+> > +					   unsigned long parent_rate)
+> > +{
+> > +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+> > +	u32 div;
+> > +
+> > +	div = (readl_relaxed(pll->base + PLL_CFG_OFFSET)
+> > +	       & BM_PLL_MULT) >> BP_PLL_MULT;
+> 
+> Put that on multiple lines please:
+> 
+> 	div = readl_relaxed(pll->base + PLL_CFG_OFFSET);
+> 	div &= BM_PLL_MULT;
+> 	div >>= BP_PLL_MULT; /* Why BP this time? */
+> 
+
+Of course.
+
+> > +
+> > +	return parent_rate * div;
+> > +}
+> > +
+> > +static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +				 unsigned long *prate)
+> > +{
+> > +	unsigned long parent_rate = *prate;
+> > +	unsigned long round_rate, i;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> > +		round_rate = parent_rate * pllv4_mult_table[i];
+> > +		if (rate >= round_rate)
+> > +			return round_rate;
+> > +	}
+> > +
+> > +	return round_rate;
+> > +}
+> > +
+> > +static bool clk_pllv4_is_valid_mult(unsigned int mult)
+> > +{
+> > +	int i;
+> > +
+> > +	/* check if mult is in valid MULT table */
+> > +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> > +		if (pllv4_mult_table[i] == mult)
+> > +			return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> > +
+> > +static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +			      unsigned long parent_rate)
+> > +{
+> > +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
+> > +	u32 val, mult;
+> > +
+> > +	if (clk_pllv4_is_enabled(hw)) {
+> > +		WARN(1, "clk_pllv4: can't change rate when pll is enabled");
+> > +		return -EINVAL;
+> 
+> Sad, CLK_SET_RATE_GATE isn't working for you I suppose?
+> 
+
+CLK_SET_RATE_GATE can't work in early stage before running clk_disable_unused.
+At that point, the clock tree state is still not consistent with HW.
+e.g. prepare/enable count is still zero but it's actually enabled due to
+reset state or bootloader.
+
+The code here is adding a double check in case user sets rate in early stage.
+
+However, probably it could also be moved into clock core as it's not platform
+dependant behavior?
+
+Regards
+Dong Aisheng
+
+> > +	}
+> > +
+> > +	mult = rate / parent_rate;
+> > +
+> > +	if (clk_pllv4_is_valid_mult(mult))
+> > +		return -EINVAL;
+> > +
+> > +	val = readl_relaxed(pll->base + PLL_CFG_OFFSET);
+> > +	val &= ~BM_PLL_MULT;
+> > +	val |= mult << BP_PLL_MULT;
+> > +	writel_relaxed(val, pll->base + PLL_CFG_OFFSET);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
