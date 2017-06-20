@@ -1,62 +1,52 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv4 2/2] clk: keystone: Add sci-clk driver support
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Tue, 20 Jun 2017 17:32:21 +0800
+From: Dong Aisheng <dongas86@gmail.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <ssantosh@kernel.org>,
-        <mturquette@baylibre.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1495458113-7366-1-git-send-email-t-kristo@ti.com>
- <1495458113-7366-3-git-send-email-t-kristo@ti.com>
- <20170613020455.GQ20170@codeaurora.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <0b4a0ee6-0769-2112-d3dc-7c219eb9bbcc@ti.com>
-Date: Tue, 13 Jun 2017 10:06:12 +0300
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH 6/9] clk: imx: add composite clk support
+Message-ID: <20170620093221.GE6805@b29396-OptiPlex-7040>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-7-git-send-email-aisheng.dong@nxp.com>
+ <20170620020013.GP4493@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170613020455.GQ20170@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170620020013.GP4493@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13/06/17 05:04, Stephen Boyd wrote:
-> On 05/22, Tero Kristo wrote:
->> +
->> +/**
->> + * ti_sci_clk_probe - Probe function for the TI SCI clock driver
->> + * @pdev: platform device pointer to be probed
->> + *
->> + * Probes the TI SCI clock device. Allocates a new clock provider
->> + * and registers this to the common clock framework. Also applies
->> + * any required flags to the identified clocks via clock lists
->> + * supplied from DT. Returns 0 for success, negative error value
->> + * for failure.
->> + */
->> +static int ti_sci_clk_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct sci_clk_provider *provider;
->> +	const struct ti_sci_handle *handle;
->> +	struct sci_clk_data *data;
->> +	int ret;
->> +
->> +	data = (struct sci_clk_data *)of_device_get_match_data(dev);
+On Mon, Jun 19, 2017 at 07:00:13PM -0700, Stephen Boyd wrote:
+> On 05/15, Dong Aisheng wrote:
+> > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> > index 51b84e4..665777e 100644
+> > --- a/drivers/clk/imx/clk.h
+> > +++ b/drivers/clk/imx/clk.h
+> > @@ -69,6 +69,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+> >  			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+> >  			     const char **parent_names, int num_parents);
+> >  
+> > +struct clk *imx_clk_composite(const char *name,
+> > +			      const char * const *parent_names,
+> > +			      int num_parents, bool mux_present,
+> > +			      bool rate_present, bool gate_present,
+> > +			      void __iomem *reg);
+> > +
+> >  struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+> >  				  void __iomem *reg, u8 shift, u8 width,
+> >  				  void (*fixup)(u32 *val));
+> > @@ -209,5 +215,4 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
+> >  struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+> >  		struct clk *div, struct clk *mux, struct clk *pll,
+> >  		struct clk *step);
+> > -
 > 
-> It would be nice to avoid this cast, and also check for NULL
-> here. I tried to do it in a few minutes but then that caused a
-> problem with throwing away const on sci_clk_data. Can this be
-> resolved? We probably shouldn't be assigning the
-> sci_clk_data::clocks member anyway if the structure is const
-> assuming it goes into the read-only section. It may cause some
-> restructuring of the code though.
-
-Yeah, thats a good catch. I just cooked up a fix for that, will post v5 
-of this patch alone in a bit.
-
-Basically I moved the sci_clk_data->clocks to the provider itself so the 
-sci_clk_data can remain const.
-
--Tero
-
+> Noise?
 > 
->> +
->> +	handle = devm_ti_sci_get_handle(dev);
->> +	if (IS_ERR(handle))
->> +		return PTR_ERR(handle);
+
+Yes, got by mistake.
+Will remove.
+
+Regards
+Dong Aisheng
