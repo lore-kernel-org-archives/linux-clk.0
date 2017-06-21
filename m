@@ -1,32 +1,36 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 17:25:40 -0700
+Date: Wed, 21 Jun 2017 14:50:53 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 2/3 v6] clk: add DT bindings header for Gemini clock
- controller
-Message-ID: <20170620002540.GX20170@codeaurora.org>
-References: <20170618215550.29216-1-linus.walleij@linaro.org>
- <20170618215550.29216-2-linus.walleij@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: keystone: TI_SCI_PROTOCOL is needed for clk driver
+Message-ID: <20170621215053.GH4493@codeaurora.org>
+References: <20170620201249.145468-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170618215550.29216-2-linus.walleij@linaro.org>
+In-Reply-To: <20170620201249.145468-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/18, Linus Walleij wrote:
-> This adds the DT binding macros used by the clock controller.
+On 06/20, Arnd Bergmann wrote:
+> CONFIG_COMPILE_TEST allows building a configuration without
+> TI_SCI_PROTOCOL, which then fails to link:
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+> drivers/clk/keystone/sci-clk.o: In function `ti_sci_clk_probe':
+> sci-clk.c:(.text.ti_sci_clk_probe+0x4c): undefined reference to `devm_ti_sci_get_handle'
+> 
+> This makes it a hard dependency. Right now, that means we can't
+> actually compile-test the driver unless ARCH_KEYSTONE is set as
+> well, but we can fix that by allowing TI_MESSAGE_MANAGER to
+> be selected for COMPILE_TEST as well.
+> 
+> Fixes: b745c0794e2f ("clk: keystone: Add sci-clk driver support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
 
-Applied to clk-next
+Looks ok to me. Tero?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
