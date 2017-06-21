@@ -1,149 +1,77 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:41396 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751715AbdFGL6o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2017 07:58:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] clk: renesas: cpg-mssr: Restore module clock registers during resume
-Date: Wed,  7 Jun 2017 13:58:38 +0200
-Message-Id: <1496836718-10762-1-git-send-email-geert+renesas@glider.be>
+Received: from szxga02-in.huawei.com ([45.249.212.188]:8370 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752227AbdFUJXS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 05:23:18 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <kishon@ti.com>,
+        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
+        <balbi@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <project-aspen-dev@linaro.org>, <yanhaifeng@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 2/5] dt-bindings: phy-hisi-inno-usb2: add support for hisi-inno-usb2 phy
+Date: Wed, 21 Jun 2017 17:00:42 +0800
+Message-ID: <1498035645-22804-3-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
-clock register state is lost.  Note that as the boot loader skips most
-initialization after resume, clock register state differs from the state
-encountered during normal system boot, too.
+Add support for hisi-inno-usb2 phy.
 
-Hence after s2ram, some operations may fail because module clocks are
-disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
-fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
-
-    ravb e6800000.ethernet eth0: failed to switch device to config mode
-    ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
-    ravb e6800000.ethernet eth0: failed to switch device to config
-    PM: Device e6800000.ethernet failed to resume: error -110
-
-To fix this, restore all bits of the SMSTPCR registers that have ever
-been written to by Linux.
-
-Note that while this fixes EtherAVB operation after resume from s2ram,
-EtherAVB cannot be used as an actual wake-up source from s2ram, only
-from s2idle, due to PSCI limitations.
-
-TODO: Restore other clock registers, which requires clock-specific code.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
 ---
-Tested on Salvator-X (R-Car H3 and M3-W), and Koelsch (R-Car M2-W).
+ .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
 
- drivers/clk/renesas/renesas-cpg-mssr.c | 56 ++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 7bf164ad64ebd8ef..0f23ad17fba979ac 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -106,6 +106,8 @@ static const u16 srcr[] = {
-  * @num_core_clks: Number of Core Clocks in clks[]
-  * @num_mod_clks: Number of Module Clocks in clks[]
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-+ * @smstpcr_shadow[].mask: Mask of SMSTPCR[] bits ever written to
-+ * @smstpcr_shadow[].val: Last bit values written to SMSTPCR[]
-  */
- struct cpg_mssr_priv {
- #ifdef CONFIG_RESET_CONTROLLER
-@@ -119,6 +121,11 @@ struct cpg_mssr_priv {
- 	unsigned int num_core_clks;
- 	unsigned int num_mod_clks;
- 	unsigned int last_dt_core_clk;
+diff --git a/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+new file mode 100644
+index 0000000..21f8208
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+@@ -0,0 +1,36 @@
++HiSilicon INNO USB2 PHY
++-----------------------
++Required properties:
++- compatible: Should be one of the following strings:
++		"hisilicon,inno-usb2-phy",
++		"hisilicon,hi3798cv200-usb2-phy",
++- #phy-cells: Must be 0
++- hisilicon,peripheral-syscon: Phandle of syscon used to control phy.
++- clocks: Phandle and clock specifier pair for reference clock utmi_refclk.
++- resets: List of phandle and reset specifier pairs for each reset signal in
++reset-names.
++- reset-names: Should be "por_rst" and "test_rst". The test_rst only
++exists in some of SOCs, so it is optional.
 +
-+	struct {
-+		u32 mask;
-+		u32 val;
-+	} smstpcr_shadow[ARRAY_SIZE(smstpcr)];
- };
- 
- 
-@@ -161,6 +168,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 
- 	spin_unlock_irqrestore(&priv->rmw_lock, flags);
- 
-+	priv->smstpcr_shadow[reg].mask |= bitmask;
-+	if (enable)
-+		priv->smstpcr_shadow[reg].val &= ~bitmask;
-+	else
-+		priv->smstpcr_shadow[reg].val |= bitmask;
++Phy node can include up to four subnodes. Each subnode represents one port.
++The required properties of port node are as follows:
++- clocks: Phandle and clock specifier pair for utmi_clock.
++- resets: List of phandle and reset specifier pairs for port reset and utmi reset.
++- reset-names: List of reset signal names. Should be "port_rst" and "utmi_rst"
 +
- 	if (!enable)
- 		return 0;
- 
-@@ -727,6 +740,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	if (!clks)
- 		return -ENOMEM;
- 
-+	dev_set_drvdata(dev, priv);
- 	priv->clks = clks;
- 	priv->num_core_clks = info->num_total_core_clks;
- 	priv->num_mod_clks = info->num_hw_mod_clks;
-@@ -763,10 +777,52 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int cpg_mssr_resume_noirq(struct device *dev)
-+{
-+	struct cpg_mssr_priv *priv = dev_get_drvdata(dev);
-+	unsigned int reg, i;
-+	u32 value, mask;
++Refer to phy/phy-bindings.txt for the generic PHY binding properties
 +
-+	for (reg = 0; reg < ARRAY_SIZE(priv->smstpcr_shadow); reg++) {
-+		/* Restore bits ever written to */
-+		mask = priv->smstpcr_shadow[reg].mask;
-+		if (!mask)
-+			continue;
-+
-+		value = readl(priv->base + SMSTPCR(reg));
-+		value &= ~mask;
-+		value |= priv->smstpcr_shadow[reg].val;
-+		writel(value, priv->base + SMSTPCR(reg));
-+
-+		/* Wait until enabled clocks are really enabled */
-+		mask &= ~priv->smstpcr_shadow[reg].val;
-+		if (!mask)
-+			continue;
-+
-+		for (i = 1000; i > 0; --i) {
-+			value = readl(priv->base + MSTPSR(reg));
-+			if (!(value & mask))
-+				break;
-+			cpu_relax();
-+		}
-+
-+		if (!i)
-+			dev_warn(dev, "Failed to enable SMSTP %p[0x%x]\n",
-+				 priv->base + SMSTPCR(reg), value & mask);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops cpg_mssr_pm = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, cpg_mssr_resume_noirq)
-+};
-+
- static struct platform_driver cpg_mssr_driver = {
- 	.driver		= {
- 		.name	= "renesas-cpg-mssr",
- 		.of_match_table = cpg_mssr_match,
-+		.pm = &cpg_mssr_pm,
- 	},
- };
- 
++Example:
++usb_phy: phy {
++		 compatible = "hisilicon,inno_usb2_phy";
++		 #phy-cells = <0>;
++		 hisilicon,peripheral-syscon = <&peri_ctrl>;
++		 clocks = <&crg USB2_REF_CLK>;
++		 resets = <&crg 0xb4 2>;
++		 reset-names = "por_rst";
++		 port0 {
++			 clocks = <&crg USB2_UTMI0_CLK>;
++			 resets = <&crg 0xb4 5>, <&crg 0xb4 1>;
++			 reset-names = "port_rst", "utmi_rst";
++		 };
++	 };
 -- 
-2.7.4
+1.9.1
 
