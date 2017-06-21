@@ -1,174 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:33265 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751718AbdFLLX6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2017 07:23:58 -0400
-Received: by mail-lf0-f54.google.com with SMTP id m77so24867946lfe.0
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2017 04:23:57 -0700 (PDT)
-Date: Mon, 12 Jun 2017 13:23:54 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH/RFC] clk: renesas: cpg-mssr: Restore module clock
- registers during resume
-Message-ID: <20170612112354.GF17461@bigcity.dyn.berto.se>
-References: <1496836718-10762-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Jun 2017 15:08:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: bcm: don't mark iproc_pll_clk_setup as __init
+Message-ID: <20170621220858.GJ4493@codeaurora.org>
+References: <20170621215851.4052618-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1496836718-10762-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170621215851.4052618-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On 06/21, Arnd Bergmann wrote:
+> This function is now called from the probe() function of a
+> platform driver, which may be called later than __init,
+> which triggers a lot of warnings like:
+> 
+> WARNING: drivers/clk/built-in.o(.text+0x1a41c): Section mismatch in reference from the function sr_lcpll1_clk_init() to the function .init.text:iproc_pll_clk_setup()
+> 
+> This removes the annotation on iproc_pll_clk_setup to address
+> all those warnings.
+> 
+> Fixes: 654cdd3229cd ("clk: bcm: Add clocks for Stingray SOC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks for your patch.
-
-On 2017-06-07 13:58:38 +0200, Geert Uytterhoeven wrote:
-> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
-> clock register state is lost.  Note that as the boot loader skips most
-> initialization after resume, clock register state differs from the state
-> encountered during normal system boot, too.
-> 
-> Hence after s2ram, some operations may fail because module clocks are
-> disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
-> fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
-> 
->     ravb e6800000.ethernet eth0: failed to switch device to config mode
->     ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
->     ravb e6800000.ethernet eth0: failed to switch device to config
->     PM: Device e6800000.ethernet failed to resume: error -110
-> 
-> To fix this, restore all bits of the SMSTPCR registers that have ever
-> been written to by Linux.
-> 
-> Note that while this fixes EtherAVB operation after resume from s2ram,
-> EtherAVB cannot be used as an actual wake-up source from s2ram, only
-> from s2idle, due to PSCI limitations.
-
-I tested this on H3 ES1.0 for EtherAVB and it now works as you describe 
-above after s2ram \o/.
-
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> 
-> TODO: Restore other clock registers, which requires clock-specific code.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> Tested on Salvator-X (R-Car H3 and M3-W), and Koelsch (R-Car M2-W).
-> 
->  drivers/clk/renesas/renesas-cpg-mssr.c | 56 ++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> 
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index 7bf164ad64ebd8ef..0f23ad17fba979ac 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -106,6 +106,8 @@ static const u16 srcr[] = {
->   * @num_core_clks: Number of Core Clocks in clks[]
->   * @num_mod_clks: Number of Module Clocks in clks[]
->   * @last_dt_core_clk: ID of the last Core Clock exported to DT
-> + * @smstpcr_shadow[].mask: Mask of SMSTPCR[] bits ever written to
-> + * @smstpcr_shadow[].val: Last bit values written to SMSTPCR[]
->   */
->  struct cpg_mssr_priv {
->  #ifdef CONFIG_RESET_CONTROLLER
-> @@ -119,6 +121,11 @@ struct cpg_mssr_priv {
->  	unsigned int num_core_clks;
->  	unsigned int num_mod_clks;
->  	unsigned int last_dt_core_clk;
-> +
-> +	struct {
-> +		u32 mask;
-> +		u32 val;
-> +	} smstpcr_shadow[ARRAY_SIZE(smstpcr)];
->  };
->  
->  
-> @@ -161,6 +168,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
->  
->  	spin_unlock_irqrestore(&priv->rmw_lock, flags);
->  
-> +	priv->smstpcr_shadow[reg].mask |= bitmask;
-> +	if (enable)
-> +		priv->smstpcr_shadow[reg].val &= ~bitmask;
-> +	else
-> +		priv->smstpcr_shadow[reg].val |= bitmask;
-> +
->  	if (!enable)
->  		return 0;
->  
-> @@ -727,6 +740,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
->  	if (!clks)
->  		return -ENOMEM;
->  
-> +	dev_set_drvdata(dev, priv);
->  	priv->clks = clks;
->  	priv->num_core_clks = info->num_total_core_clks;
->  	priv->num_mod_clks = info->num_hw_mod_clks;
-> @@ -763,10 +777,52 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static int cpg_mssr_resume_noirq(struct device *dev)
-> +{
-> +	struct cpg_mssr_priv *priv = dev_get_drvdata(dev);
-> +	unsigned int reg, i;
-> +	u32 value, mask;
-> +
-> +	for (reg = 0; reg < ARRAY_SIZE(priv->smstpcr_shadow); reg++) {
-> +		/* Restore bits ever written to */
-> +		mask = priv->smstpcr_shadow[reg].mask;
-> +		if (!mask)
-> +			continue;
-> +
-> +		value = readl(priv->base + SMSTPCR(reg));
-> +		value &= ~mask;
-> +		value |= priv->smstpcr_shadow[reg].val;
-> +		writel(value, priv->base + SMSTPCR(reg));
-> +
-> +		/* Wait until enabled clocks are really enabled */
-> +		mask &= ~priv->smstpcr_shadow[reg].val;
-> +		if (!mask)
-> +			continue;
-> +
-> +		for (i = 1000; i > 0; --i) {
-> +			value = readl(priv->base + MSTPSR(reg));
-> +			if (!(value & mask))
-> +				break;
-> +			cpu_relax();
-> +		}
-> +
-> +		if (!i)
-> +			dev_warn(dev, "Failed to enable SMSTP %p[0x%x]\n",
-> +				 priv->base + SMSTPCR(reg), value & mask);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops cpg_mssr_pm = {
-> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, cpg_mssr_resume_noirq)
-> +};
-> +
->  static struct platform_driver cpg_mssr_driver = {
->  	.driver		= {
->  		.name	= "renesas-cpg-mssr",
->  		.of_match_table = cpg_mssr_match,
-> +		.pm = &cpg_mssr_pm,
->  	},
->  };
->  
-> -- 
-> 2.7.4
-> 
+Thanks. I already have the fix in my queue though.
 
 -- 
-Regards,
-Niklas Söderlund
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
