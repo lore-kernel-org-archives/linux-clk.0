@@ -1,97 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Jun 2017 17:35:11 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Dong Aisheng <dongas86@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH 9/9] clk: imx: add imx7ulp clk driver
-Message-ID: <20170701003511.GR22780@codeaurora.org>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-10-git-send-email-aisheng.dong@nxp.com>
- <20170620020119.GQ4493@codeaurora.org>
- <20170620094256.GF6805@b29396-OptiPlex-7040>
- <20170620204152.GS4493@codeaurora.org>
- <AM3PR04MB3068D246A722A3EAA6652C280DA0@AM3PR04MB306.eurprd04.prod.outlook.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34699 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbdFUJQ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 05:16:28 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <AM3PR04MB3068D246A722A3EAA6652C280DA0@AM3PR04MB306.eurprd04.prod.outlook.com>
+In-Reply-To: <20170621090150.3868-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170621090150.3868-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Jun 2017 11:16:26 +0200
+Message-ID: <CAMuHMdWScq8wOunFjPgDL7-qPUuteEdPkcR_JeOXes9xyWHCiQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add HDMI clocks
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/21, A.s. Dong wrote:
-> > -----Original Message-----
-> > From: Stephen Boyd [mailto:sboyd@codeaurora.org]
-> > Sent: Wednesday, June 21, 2017 4:42 AM
-> > To: Dong Aisheng
-> > Cc: A.s. Dong; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
-> > shawnguo@kernel.org; Anson Huang; Jacky Bai
-> > Subject: Re: [PATCH 9/9] clk: imx: add imx7ulp clk driver
-> > 
-> > On 06/20, Dong Aisheng wrote:
-> > > On Mon, Jun 19, 2017 at 07:01:19PM -0700, Stephen Boyd wrote:
-> > > >
-> > > > Any reason why it can't be a platform driver? If not, please add
-> > > > some comment explaining why.
-> > > >
-> > >
-> > > Timer is using it at early stage. GIC seems not although standard
-> > > binding claim possible clock requirement.
-> > > Others still not sure.
-> > >
-> > > What your suggestion?
-> > > Convert timer to platform driver and make clock as platform driver as
-> > well?
-> > >
-> > 
-> > The timer can't be a platform driver because it would be too late. The
-> > clock driver could register whatever clks are required for the timer/GIC
-> > in a CLK_OF_DECLARE_DRIVER hook, and then leave the rest to a platform
-> > driver. This way we get some of the device driver framework in this code.
-> > 
-> 
-> Okay, I could try it. Thanks.
-> 
-> One thing is that TPM clock has a lot parents and parents having parents,
-> as well as PIT timer. So I may need enable more than half clocks in
-> CLK_OF_DECLARE_DRIVER hook.
+Hi Laurent,
 
-That's fine.
+On Wed, Jun 21, 2017 at 11:01 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Add the HDMI and HDMI0 clocks to the R8A7796 CPG/MSSR driver.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> Hi Geert,
+>
+> I'd like to upstream HDMI output support on M3-W in v4.14. To ease dependency
+> handling, it would be great if this patch could already make it to v4.13.
 
-> 
-> BTW, What's benefit to convert into two parts of probe?
-> I'm not quite if I already get it all, can you help clarify it?
-> 
+I believe a similar patch is already in clk-next, destined for v4.13?
 
-The benefit is that we still get a platform driver and we can
-associate a device pointer with the clock controller eventually.
-Here's a reply I sent yesterday on the same topic:
+Gr{oetje,eeting}s,
 
-Reasons (in no particular order):
+                        Geert
 
-  1. We get a dev pointer to use with clk_hw_register()
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  2. We can handle probe defer if some resource is not available
-
-  3. Using device model gets us a hook into power management frameworks
-     like runtime PM and system PM for things like suspend and hibernate
-
-  4. It encourages a single DT node clk controller style binding
-     instead of a single node per clk style binding
-
-  5. We can use non-DT specific functions like devm_ioremap_resource() to map
-     registers and acquire other resources, leading to more portable and
-     generic code
-
-  6. We may be able to make the device driver a module, which will
-     make distros happy if we don't have to compile in all
-     these clk drivers to the resulting vmlinux (this one doesn't
-     apply here)
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
