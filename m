@@ -1,67 +1,101 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 2/4] dt: bindings: Add bindings for bcm2835-aux-intc
-To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
- Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <d097e5d9-0ee6-9ea4-184f-1dd997849892@raspberrypi.org>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <5093ed34-a930-dea5-6642-03e1e4910362@gmail.com>
-Date: Mon, 12 Jun 2017 11:21:19 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([45.249.212.188]:8807 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbdFUJXS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 05:23:18 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <kishon@ti.com>,
+        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
+        <balbi@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <project-aspen-dev@linaro.org>, <yanhaifeng@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 5/5] arm64: defconfig: enable some drivers and configs for hi3798cv200-poplar board.
+Date: Wed, 21 Jun 2017 17:00:45 +0800
+Message-ID: <1498035645-22804-6-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <d097e5d9-0ee6-9ea4-184f-1dd997849892@raspberrypi.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12/2017 07:25 AM, Phil Elwell wrote:
-> Add bindings documentation for brcm,bcm2835-aux-intc and human-readable
-> declarations for the BCM2835 AUX IRQs.
-> 
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-> ---
->  .../interrupt-controller/brcm,bcm2835-aux-intc.txt | 28 ++++++++++++++++++++++
->  .../interrupt-controller/bcm2835-aux-intc.h        | 20 ++++++++++++++++
->  2 files changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
->  create mode 100644 include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
-> new file mode 100644
-> index 0000000..f3f895c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2835-aux-intc.txt
-> @@ -0,0 +1,28 @@
-> +BCM2835 Auxiliary ("AUXIRQ") Interrupt Controller
-> +
-> +The BCM2835 family of SoCs multiplexes the interrupts for peripherals in
-> +the AUX block into a single IRQ. The AUXIRQ register shows the IRQ status
-> +of each of the peripherals. Note that there are no masking or clearing
-> +facilities - interrupts must be enabled and acknowledged in the
-> +individual peripherals.
-> +
-> +Required properties:
-> +- compatible :	     Should be "brcm,bcm2835-aux-intc".
-> +- reg :		     Specifies base physical address and size of the registers.
-> +- interrupts :	     The interrupt number - see
-> +		     bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
-> +- interrupt-controller : Identifies the node as an interrupt controller
-> +- #interrupt-cells : Specifies the number of cells needed to encode an
-> +		     interrupt source. The value shall be 1.
-> +
-> +  The cell contains the interrupt specifier, as found in
-> +  include/dt-bindings/interrupt-controller/bcm2835-aux-intc.h. Valid values
-> +  are 0..2.
+Enable GMAC,I2C,IR,USB2-PHY for hi3798cv200-poplar board.
 
-This last sentence is sort of doomed for failure in case there are
-additional interrupts being added in the future, referring to
-bcm2835-aux-intc.h seems to be good enough IMHO.
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+---
+ arch/arm64/configs/defconfig | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 97c123e..b45d760 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -31,6 +31,8 @@ CONFIG_JUMP_LABEL=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_IOSCHED_DEADLINE is not set
++CONFIG_PARTITION_ADVANCED=y
++CONFIG_CMDLINE_PARTITION=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_ALPINE=y
+ CONFIG_ARCH_BCM2835=y
+@@ -179,6 +181,7 @@ CONFIG_VIRTIO_NET=y
+ CONFIG_AMD_XGBE=y
+ CONFIG_NET_XGENE=y
+ CONFIG_MACB=y
++CONFIG_HIX5HD2_GMAC=y
+ CONFIG_HNS_DSAF=y
+ CONFIG_HNS_ENET=y
+ CONFIG_E1000E=y
+@@ -259,6 +262,7 @@ CONFIG_I2C_TEGRA=y
+ CONFIG_I2C_UNIPHIER_F=y
+ CONFIG_I2C_RCAR=y
+ CONFIG_I2C_CROS_EC_TUNNEL=y
++CONFIG_I2C_HIX5HD2=y
+ CONFIG_SPI=y
+ CONFIG_SPI_BCM2835=m
+ CONFIG_SPI_BCM2835AUX=m
+@@ -277,6 +281,7 @@ CONFIG_PINCTRL_MSM8994=y
+ CONFIG_PINCTRL_MSM8996=y
+ CONFIG_PINCTRL_QDF2XXX=y
+ CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
++CONFIG_GPIO_SYSFS=y
+ CONFIG_GPIO_DWAPB=y
+ CONFIG_GPIO_PL061=y
+ CONFIG_GPIO_RCAR=y
+@@ -322,7 +327,7 @@ CONFIG_REGULATOR_QCOM_SMD_RPM=y
+ CONFIG_REGULATOR_QCOM_SPMI=y
+ CONFIG_REGULATOR_RK808=y
+ CONFIG_REGULATOR_S2MPS11=y
+-CONFIG_MEDIA_SUPPORT=m
++CONFIG_MEDIA_SUPPORT=y
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_ANALOG_TV_SUPPORT=y
+ CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y
+@@ -359,6 +364,10 @@ CONFIG_BACKLIGHT_GENERIC=m
+ CONFIG_BACKLIGHT_LP855X=m
+ CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_LOGO=y
++CONFIG_MEDIA_RC_SUPPORT=y
++CONFIG_RC_DEVICES=y
++CONFIG_IR_HIX5HD2=y
++CONFIG_LIRC=y
+ # CONFIG_LOGO_LINUX_MONO is not set
+ # CONFIG_LOGO_LINUX_VGA16 is not set
+ CONFIG_SOUND=y
+@@ -488,7 +497,9 @@ CONFIG_PWM_MESON=m
+ CONFIG_PWM_ROCKCHIP=y
+ CONFIG_PWM_SAMSUNG=y
+ CONFIG_PWM_TEGRA=m
++CONFIG_TI_SYSCON_RESET=y
+ CONFIG_PHY_RCAR_GEN3_USB2=y
++CONFIG_PHY_HISI_INNO_USB2=y
+ CONFIG_PHY_HI6220_USB=y
+ CONFIG_PHY_SUN4I_USB=y
+ CONFIG_PHY_ROCKCHIP_INNO_USB2=y
 -- 
-Florian
+1.9.1
+
