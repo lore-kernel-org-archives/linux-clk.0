@@ -1,27 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 17:47:27 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-clk@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: gcc-msm8916: add support to 9.6MHz codec clk
-Message-ID: <20170620004727.GE20170@codeaurora.org>
-References: <20170612094122.6770-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170612094122.6770-1-srinivas.kandagatla@linaro.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/2] clk: ARM: dts: exynos: Fix hang on Odroid U3
+Date: Wed, 21 Jun 2017 21:08:05 +0200
+Message-Id: <20170621190807.14850-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12, Srinivas Kandagatla wrote:
-> MCLK for internal audio codec is expected to be at 9.6MHz by default.
-> This patch adds support to 9.6MHz to make the default case possible.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
+Recent linux-next fails to boot on Odroid U3 (Exynos4412) because
+of commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation
+for PLL36XX clocks").
 
-Applied to clk-next
+Patchset fixes it. Patches are independent although both are required
+to fix the issue.
+
+I will be taking DTS change.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (2):
+  clk: samsung: audss: Fix silent hang on Exynos4412 due to disabled
+    EPLL
+  ARM: dts: exynos: Add clocks to audss block to fix silent hang on
+    Exynos4412
+
+ arch/arm/boot/dts/exynos4.dtsi         | 3 +++
+ drivers/clk/samsung/clk-exynos-audss.c | 1 +
+ 2 files changed, 4 insertions(+)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
