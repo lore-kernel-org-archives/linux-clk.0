@@ -1,53 +1,58 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Jun 2017 10:45:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v6 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
-Date: Tue, 20 Jun 2017 16:09:05 +0200
-Message-Id: <20170620140910.7568-2-o.rempel@pengutronix.de>
-In-Reply-To: <20170620140910.7568-1-o.rempel@pengutronix.de>
-References: <20170620140910.7568-1-o.rempel@pengutronix.de>
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v8] clk: Add Gemini SoC clock controller
+Message-ID: <20170621174540.GB4493@codeaurora.org>
+References: <20170621075952.26387-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170621075952.26387-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 06/21, Linus Walleij wrote:
+> The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
+> controller that derive all clocks from a single crystal, using some
+> documented and some undocumented PLLs, half dividers, counters and
+> gates. This is a best attempt to construct a clock driver for the
+> clocks so at least we can gate off unused hardware and driver the
+> PCI bus clock.
+> 
+> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-index 9252912a5b0e..8f93e1503e59 100644
---- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-@@ -6,6 +6,14 @@ Required properties:
- - interrupts: Should contain CCM interrupt
- - #clock-cells: Should be <1>
+Applied to clk-next + this fixup
+
+---8<---
+diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+index 3ddd2faec674..b82db96ce0c7 100644
+--- a/drivers/clk/clk-gemini.c
++++ b/drivers/clk/clk-gemini.c
+@@ -279,13 +279,9 @@ static int gemini_clk_probe(struct platform_device *pdev)
  
-+Optional properties:
-+- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
-+  on power off.
-+  Use this property if the SoC should be powered off by external power
-+  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-+  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
-+  be using "syscon-poweroff" driver instead.
-+
- The clock consumer should specify the desired clock by having the clock
- ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
- for the full list of i.MX6 Quad and DualLite clock IDs.
+ 	/* Remap the system controller for the exclusive register */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+ 	base = devm_ioremap_resource(dev, res);
+-	if (!base) {
+-		dev_err(dev, "no memory base\n");
+-		return -ENODEV;
+-	}
++	if (IS_ERR(base))
++		return PTR_ERR(base);
+ 
+ 	map = syscon_node_to_regmap(np);
+ 	if (IS_ERR(map)) {
+
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
