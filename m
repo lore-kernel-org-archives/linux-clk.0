@@ -1,157 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:50917 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751675AbdFGItd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Jun 2017 04:49:33 -0400
-Date: Wed, 07 Jun 2017 16:48:50 +0800
-In-Reply-To: <20170607084544.kgclybyxxttfk3ko@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io> <20170604160149.30230-2-icenowy@aosc.io> <20170607084544.kgclybyxxttfk3ko@flea.lan>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Jun 2017 14:50:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 01/17] clk: ingenic: Use const pointer to clk_ops in
+ struct
+Message-ID: <20170621215038.GG4493@codeaurora.org>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v2 01/11] dt-bindings: update the binding for Allwinner H3 TVE support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <092D4797-0034-4C39-A30A-92CFAB23AAF8@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06/20, Paul Cercueil wrote:
+> The CGU common code does not modify the pointed clk_ops structure, so it
+> should be marked as const.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
 
+How did you want to merge this series? I can ack clk patches if
+you like, or apply the clk patches to the clk tree.
 
-于 2017年6月7日 GMT+08:00 下午4:45:44, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->On Mon, Jun 05, 2017 at 12:01:39AM +0800, Icenowy Zheng wrote:
->> Allwinner H3 features a "DE2.0" and a TV Encoder.
->> 
->> Add device tree bindings for the following parts:
->> - H3 TCONs
->> - H3 Mixers
->> - The connection between H3 TCONs and H3 Mixers
->> - H3 TV Encoder
->> - H3 Display engine
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Changes in v2:
->> - Changed endpoint reg definition on TCONs and Mixers. Now the
->endpoint
->>   id is just the component id.
->> - Changed TVE and TCON1 binding -- now CLK_TVE is passed as TCON1
->lcd-ch1.
->> 
->>  .../bindings/display/sunxi/sun4i-drm.txt           | 37
->+++++++++++++++++++---
->>  1 file changed, 33 insertions(+), 4 deletions(-)
->> 
->> diff --git
->a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> index b83e6018041d..7ad164cb7dcb 100644
->> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> @@ -49,7 +49,9 @@ The TV Encoder supports the composite and VGA
->output. It is one end of
->>  the pipeline.
->>  
->>  Required properties:
->> - - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
->> + - compatible: value must be either:
->> +    * allwinner,sun4i-a10-tv-encoder
->> +    * allwinner,sun8i-h3-tv-encoder
->>   - reg: base address and size of memory-mapped region
->>   - clocks: the clocks driving the TV encoder
->>   - resets: phandle to the reset controller driving the encoder
->> @@ -69,23 +71,27 @@ Required properties:
->>     * allwinner,sun6i-a31-tcon
->>     * allwinner,sun6i-a31s-tcon
->>     * allwinner,sun8i-a33-tcon
->> +   * allwinner,sun8i-h3-tcon
->>     * allwinner,sun8i-v3s-tcon
->>   - reg: base address and size of memory-mapped region
->>   - interrupts: interrupt associated to this IP
->>   - clocks: phandles to the clocks feeding the TCON. Three are
->needed:
->>     - 'ahb': the interface clocks
->> -   - 'tcon-ch0': The clock driving the TCON channel 0
->>   - resets: phandles to the reset controllers driving the encoder
->>     - "lcd": the reset line for the TCON channel 0
->>  
->>   - clock-names: the clock names mentioned above
->>   - reset-names: the reset names mentioned above
->> - - clock-output-names: Name of the pixel clock created
->>  
->>  - ports: A ports node with endpoint definitions as defined in
->>    Documentation/devicetree/bindings/media/video-interfaces.txt. The
->>    first port should be the input endpoint, the second one the output
->>  
->> +  In the situation of Display Engine 2.0 that the connection between
->> +  the mixer and the TCON can be swapped, the input should have two
->> +  endpoints. The first input endpoint should be connected to mixer0
->> +  and the second should be connected to mixer1.
->> +
->
->AFAIK, this is also the case for dual-pipelines on DE1 (for example on
->the A31). And this is already covered by:
->
->"
->For the input port of all components up to the TCON in the display
->pipeline, if there are multiple components, the local endpoint IDs
->must correspond to the index of the upstream block. For example, if
->the remote endpoint is Frontend 1, then the local endpoint ID must
->be 1.
->"
-
-If you think it can fully cover this situation, I'm glad to remove
-this paragraph, although I think overall paragraphs are easy
-to be ignored.
-
->
->>    The output may have multiple endpoints. The TCON has two channels,
->>    usually with the first channel being used for the panels
->interfaces
->>    (RGB, LVDS, etc.), and the second being used for the outputs that
->> @@ -94,7 +100,23 @@ Required properties:
->>    channel the endpoint is associated to. If that property is not
->>    present, the endpoint number will be used as the channel number.
->>  
->> -On SoCs other than the A33 and V3s, there is one more clock
->required:
->> +For the following compatibles:
->> +   * allwinner,sun5i-a13-tcon
->> +   * allwinner,sun6i-a31-tcon
->> +   * allwinner,sun6i-a31s-tcon
->> +   * allwinner,sun8i-a33-tcon
->> +   * allwinner,sun8i-v3s-tcon
->> +there is one more clock and one more property required:
->> + - clocks:
->> +   - 'tcon-ch0': The clock driving the TCON channel 0
->> + - clock-output-names: Name of the pixel clock created
->> +
->> +For the following compatibles:
->> +   * allwinner,sun5i-a13-tcon
->> +   * allwinner,sun6i-a31-tcon
->> +   * allwinner,sun6i-a31s-tcon
->> +   * allwinner,sun8i-h3-tcon
->> +there is one more clock required:
->>     - 'tcon-ch1': The clock driving the TCON channel 1
->>  
->>  DRC
->> @@ -189,6 +211,8 @@ supported.
->>  Required properties:
->>    - compatible: value must be one of:
->>      * allwinner,sun8i-v3s-de2-mixer
->> +    * allwinner,sun8i-h3-de2-mixer0
->> +    * allwinner,sun8i-h3-de2-mixer1
->
->Again, please explain why we need to have different compatibles
->here. If it's only about the number of planes, this should be dealt
->with a property, not a compatible.
-
-Only mixer0 has "VEP" and write-back support, at least on H3.
-
->
->Maxime
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
