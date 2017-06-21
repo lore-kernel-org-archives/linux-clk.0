@@ -1,156 +1,118 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 13 Jun 2017 09:44:32 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: icenowy@aosc.io
-Cc: devicetree@vger.kernel.org,
-        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 07/11] drm: sun4i: add support for the TV encoder in
- H3 SoC
-Message-ID: <20170613074432.btwgc4e7pndtsvbf@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io>
- <20170604160149.30230-8-icenowy@aosc.io>
- <20170607093845.cu5kk55nj72roysf@flea.lan>
- <362bb72d74cd7181ae02dbf73b0e724e@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jujgstq4zz4ccqii"
-In-Reply-To: <362bb72d74cd7181ae02dbf73b0e724e@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1498050903.7387.12.camel@baylibre.com>
+Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, Kevin Hilman
+ <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..."
+ <linux-amlogic@lists.infradead.org>, Russell King <linux@armlinux.org.uk>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>, Adriana Reus
+ <adi.reus@gmail.com>
+Date: Wed, 21 Jun 2017 15:15:03 +0200
+In-Reply-To: <1497961950.7387.7.camel@baylibre.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
+	 <1497955822.7387.3.camel@baylibre.com>
+	 <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
+	 <1497961950.7387.7.camel@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, 2017-06-20 at 14:32 +0200, Jerome Brunet wrote:
+> On Tue, 2017-06-20 at 13:54 +0200, Linus Walleij wrote:
+> > On Tue, Jun 20, 2017 at 12:50 PM, Jerome Brunet <jbrunet@baylibre.com>
+> > wrote:
+> > > On Tue, 2017-06-20 at 11:07 +0200, Linus Walleij wrote:
+> > > When the rate is critical to perform a particular task. My example is the
+> > > audio
+> > > and i2s output. You can't tolerate glitches during the playback, the end
+> > > user
+> > > would complain (longer description in the original RFC)
+> > 
+> > I see. Thanks for your detailed explanation!
+> > 
+> > > It also fixes the behavior of CLK_SET_RATE_GATE flag, which is why I put
+> > > you
+> > > in
+> > > CC.
+> > > 
+> > > ux500 uses this flag several time, I'd like make sure people are not
+> > > relying
+> > > on
+> > > its broken implementation.
+> > 
+> > Ux500 audio is broken, but I'm fixing it a little at a time...
+> 
+> No problem with Ux500 audio, don't worry :)
+> Audio is just one application among others.
+> 
+> The concern regarding ux500 is that the clock controller declares clocks using
+> the CLK_SET_RATE_GATE flag (like qcom, at91 and several other)
+> 
+> here is the definition:
+> #define CLK_SET_RATE_GATE	BIT(0) /* must be gated across rate change */
+> 
+> My interpretation it that, as long as clock is enabled, rate can't change.
+> 
+> The implementation of this flag is currently broken:
+> * If you call set_rate on directly on the clock while it is enabled, you will
+> get -EBUSY, as expected
+> * If you call set_rate on its parent, rate will change, changing the rate of
+> the
+> child clock as well ...
+> 
+> With this patchset applied, calling set_rate on the parent would also return
+> -EBUSY, enforcing the "rate can't change while enabled" property.
+> 
+> To build confidence that this won't be causing regression, I'd like to check
+> that platform using this flag are no relying on the broken behavior.
+> 
+> I've included the clock maintainers of at91, qcom, and ux500 (you) in this
+> thread because they are the heaviest users of this flag, so the more likely to
+> report a problem.
+> 
+> If you could apply this series and just do things as usual, It'd be awesome !
+> 
+> I'll also seek the help of the kci guys, see if it is possible to give the
+> series spin on it.
+> 
 
---jujgstq4zz4ccqii
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I managed to have a run on kci - based on v4.12-rc6:
+https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-10-ge
+a373ddef830/
 
-On Sun, Jun 11, 2017 at 02:43:42PM +0800, icenowy@aosc.io wrote:
-> =E5=9C=A8 2017-06-07 17:38=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
-=9A
-> > On Mon, Jun 05, 2017 at 12:01:45AM +0800, Icenowy Zheng wrote:
-> > > Allwinner H3 features a TV encoder similar to the one in earlier SoCs,
-> > > but has a internal fixed clock divider that divides the TCON1 clock
-> > > (called TVE clock in datasheet) by 11.
-> > >=20
-> > > Add support for it.
-> > >=20
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > ---
-> > > Changes in v2:
-> > > - Quirk part rewritten.
-> > >=20
-> > >  drivers/gpu/drm/sun4i/sun4i_tv.c | 35
-> > > ++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 34 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c
-> > > b/drivers/gpu/drm/sun4i/sun4i_tv.c
-> > > index 338b9e5bb2a3..b9ff6d5ea67a 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-> > > @@ -13,6 +13,7 @@
-> > >  #include <linux/clk.h>
-> > >  #include <linux/component.h>
-> > >  #include <linux/of_address.h>
-> > > +#include <linux/of_device.h>
-> > >  #include <linux/regmap.h>
-> > >  #include <linux/reset.h>
-> > >=20
-> > > @@ -169,14 +170,21 @@ struct tv_mode {
-> > >  	const struct resync_parameters	*resync_params;
-> > >  };
-> > >=20
-> > > +struct sun4i_tv_quirks {
-> > > +	int fixed_divider;
-> > > +};
-> > > +
-> > >  struct sun4i_tv {
-> > >  	struct drm_connector	connector;
-> > >  	struct drm_encoder	encoder;
-> > >=20
-> > >  	struct clk		*clk;
-> > > +	struct clk		*mod_clk;
-> > >  	struct regmap		*regs;
-> > >  	struct reset_control	*reset;
-> > >=20
-> > > +	const struct sun4i_tv_quirks *quirks;
-> > > +
-> > >  	struct sun4i_drv	*drv;
-> > >  };
-> > >=20
-> > > @@ -391,6 +399,12 @@ static void sun4i_tv_mode_set(struct
-> > > drm_encoder *encoder,
-> > >  	struct sun4i_tcon *tcon =3D crtc->tcon;
-> > >  	const struct tv_mode *tv_mode =3D sun4i_tv_find_tv_by_mode(mode);
-> > >=20
-> > > +	if (tv->quirks->fixed_divider) {
-> > > +		DRM_DEBUG_DRIVER("Applying fixed divider %d on TVE clock\n",
-> > > +				 tv->quirks->fixed_divider);
-> > > +		mode->crtc_clock *=3D tv->quirks->fixed_divider;
-> > > +	}
-> > > +
-> >=20
-> > You're not allowed to change the mode in mode_set, and you shouldn't
-> > even change it. The output pixel clock is still 27MHz.
-> >=20
-> > You should implement that using the states, as we discussed already.
->=20
-> After reading the comments at include/drm/drm_modeset_helper_vtables.h,
-> I think the atomic_check function is allowed to directly change
-> the adjust_mode of crtc_state.
->=20
-> And according to other comments at include/drm/drm_modes.h, the
-> crtc_clock in adjust_mode should be the clock to be really feed
-> to the hardware.
->=20
-> So I think I can just change this in atomic_check.
->=20
-> However, the mode_set function of sun4i_tv seems to be not
-> regarding adjusted_mode and still use original mode.
->=20
-> So my current design is:
-> - Multiply adjusted_mode in atomic_check.
-> - Feed adjust_mode to TCON code in mode_set function.
->=20
-> Is this proper?
->=20
-> (From my own understanding to the comments I think so.)
+There was no build regression but kci did find one boot regression on qcom
+platforms:
+* qcom-apq8064-cm-qs600
+* qcom-apq8064-ifc6410
 
-No, it's not. The pixel clock in the mode is the pixel clock output
-physically by the connector. You want to use it for an intermediate
-clock in your pipeline.
+it seems the problem is coming from the clock used by the mmc driver
+(drivers/mmc/host/mmci.c)
 
-This is not the same clock, and not the same frequency.
+the driver does following sequence:
+* get_clk
+* prepare_enable
+* get_rate
+* set_rate
+* ...
 
-Maxime
+with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has CLK_SET_RATE_PARENT
+flag so it will transmit the request to its parent.
+The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+This can't work with sequence above. The flag was clearly bypassed before, so I
+think it would be best to remove CLK_SET_RATE_GATE from the SDCx_src clocks
 
---jujgstq4zz4ccqii
-Content-Type: application/pgp-signature; name="signature.asc"
+Stephen, would you agree ?
 
------BEGIN PGP SIGNATURE-----
+There was an issue with the chip board as well but this particular board has not
+been very reliable in this lab lately. It has failed on several other job.
 
-iQIcBAEBAgAGBQJZP5fgAAoJEBx+YmzsjxAgYdEQAIGDtjVeVkMnmq+T0Tu8e+JP
-do/cLThLwGEljNqGMX1mYGsXBoiQOtO/AlTcH34I4+tCcUNuUksqGmmabvBEPJuw
-PrBA1lkxQJtviT3f2bYsLjM5euu5/PD9dbad4TcwOT8MkyHplodN2sBa4EmzNpNo
-K1TOGVJgqfPFfQXcEkvtrlTXuZRChA88n4Y53ZCPYKKywE5G2F/5L/MMrYUKKHcM
-1UJhhQuMUtg7KWyrNTJOvnEbhd+jw0uEfe/ib5NqjNIoBKI8qP7ZB0dGen72ltR1
-a/vQa7Iq2hvFUKQcprhqDo1JlDYWGXMxBMMRAZBe2IF+taYvOWHFSDA7KtAPbVMG
-+BMHqOQlXXEQb7DbJx/DYZaXNBhmOEHauoAIPOw5vth6P1+2iEal5O4sW1JArlaQ
-sKUr+zRqHdhl+ed+Pgx+tY7/aRnkyuBm0SXeZ4I+gyXF1YXlOcmyKbb5QXGMlhAK
-357qj9F+FcpCMTXfKhUwn2Qi8v78aJakassUEVgdCe1BicidVestIvwO6V7XIzyB
-u0pWWxoXqKF2ooX6c70LVwGFzT/D9M+7K8IZnmmCJDHLkgwajvCujVPM55IH045+
-DvY2E0+FkBxaABggqH5/8O7ZHNMsKtdaPEVqy0iXp0dmJuFPNwMdvmI5DI5D7K+n
-agOVd2Ntreiv5XjaQwhp
-=yZSm
------END PGP SIGNATURE-----
-
---jujgstq4zz4ccqii--
+> > 
+> > Yours,
+> > Linus Walleij
+> 
+> 
