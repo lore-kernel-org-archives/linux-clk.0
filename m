@@ -1,28 +1,135 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Jun 2017 15:40:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: Add const to some parent name arrays
-Message-ID: <20170602224048.GY20170@codeaurora.org>
-References: <20170602175831.29100-1-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([45.249.212.188]:8369 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752668AbdFUJYS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 05:24:18 -0400
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <kishon@ti.com>,
+        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
+        <balbi@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <project-aspen-dev@linaro.org>, <yanhaifeng@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 4/5] arm64: dts: hisilicon: add usb2 controller and phy nodes for poplar board.
+Date: Wed, 21 Jun 2017 17:00:44 +0800
+Message-ID: <1498035645-22804-5-git-send-email-xuejiancheng@hisilicon.com>
+In-Reply-To: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170602175831.29100-1-sboyd@codeaurora.org>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02, Stephen Boyd wrote:
-> These can be marked as const * const.
-> 
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+Add usb2 controller and phy nodes for poplar board.
 
-Applied to clk-next
+Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
+ .../boot/dts/hisilicon/hi3798cv200-poplar.dts      | 13 ++++++
+ arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi     | 47 ++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
+index 684fa09..40db803 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
++++ b/arch/arm64/boot/dts/hisilicon/hi3798cv200-poplar.dts
+@@ -64,6 +64,10 @@
+ 	};
+ };
+ 
++&ehci {
++	status = "okay";
++};
++
+ &gmac1 {
+ 	status = "okay";
+ 	#address-cells = <1>;
+@@ -147,6 +151,10 @@
+ 	status = "okay";
+ };
+ 
++&ohci {
++	status = "okay";
++};
++
+ &spi0 {
+ 	status = "okay";
+ 	label = "LS-SPI0";
+@@ -161,3 +169,8 @@
+ 	label = "LS-UART0";
+ };
+ /* No optional LS-UART1 on Low Speed Expansion Connector. */
++
++&usb2_phy1 {
++	status = "okay";
++};
++
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi b/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
+index 75865f8a..422aeaf 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi
+@@ -106,6 +106,11 @@
+ 			#reset-cells = <2>;
+ 		};
+ 
++		peri_ctrl: system-controller@8a20000 {
++			compatible = "syscon";
++			reg = <0x8a20000 0x1000>;
++		};
++
+ 		uart0: serial@8b00000 {
+ 			compatible = "arm,pl011", "arm,primecell";
+ 			reg = <0x8b00000 0x1000>;
+@@ -407,5 +412,47 @@
+ 			clocks = <&sysctrl HISTB_IR_CLK>;
+ 			status = "disabled";
+ 		};
++
++		ehci: ehci@0x9890000 {
++			compatible = "generic-ehci";
++			reg = <0x9890000 0x10000>;
++			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HISTB_USB2_BUS_CLK>,
++				 <&crg HISTB_USB2_PHY_CLK>;
++			clock-names = "ehci_system", "phy";
++			resets = <&crg 0xb8 12>,
++				 <&crg 0xb8 16>;
++			reset-names = "bus", "phy";
++			status = "disabled";
++		};
++
++		ohci: ohci@0x9880000 {
++			compatible = "generic-ohci";
++			reg = <0x9880000 0x10000>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HISTB_USB2_BUS_CLK>,
++				 <&crg HISTB_USB2_12M_CLK>,
++				 <&crg HISTB_USB2_48M_CLK>;
++			clock-names = "ahb_biu", "clk12", "clk48";
++			resets = <&crg 0xb8 12>;
++			reset-names = "bus";
++			status = "disabled";
++		};
++
++		usb2_phy1: usb-phy@1 {
++			compatible = "hisilicon,hi3798cv200-usb2-phy";
++			#phy-cells = <0>;
++			hisilicon,peripheral-syscon = <&peri_ctrl>;
++			clocks = <&crg HISTB_USB2_PHY1_REF_CLK>;
++			resets = <&crg 0xbc 4>;
++			reset-names = "por_rst";
++			status = "disabled";
++
++			usb2_port1: port@1 {
++				clocks = <&crg HISTB_USB2_UTMI_CLK>;
++				resets = <&crg 0xbc 9>, <&crg 0xb8 13>;
++				reset-names = "port_rst", "utmi_rst";
++			};
++		};
+ 	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
