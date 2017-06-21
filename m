@@ -1,62 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 18:31:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V1 3/9] clk: sprd: add gate clock support
-Message-ID: <20170620013130.GI4493@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-4-chunyan.zhang@spreadtrum.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+To: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <kishon@ti.com>,
+        <xuwei5@hisilicon.com>, <catalin.marinas@arm.com>,
+        <balbi@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <project-aspen-dev@linaro.org>, <yanhaifeng@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>
+Subject: [PATCH 0/5] enable usb2 function on poplar board.
+Date: Wed, 21 Jun 2017 17:00:40 +0800
+Message-ID: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170618015855.27738-4-chunyan.zhang@spreadtrum.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/18, Chunyan Zhang wrote:
-> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-> index 8f802b2..333e2b2 100644
-> --- a/drivers/clk/sprd/Makefile
-> +++ b/drivers/clk/sprd/Makefile
-> @@ -1,3 +1,3 @@
->  ifneq ($(CONFIG_OF),)
-> -obj-y	+= ccu_common.o
-> +obj-y	+= ccu_common.o ccu_gate.o
+This patchset is mainly used to enable usb2 function on poplar board.
 
-Can this be built as a module?
+Jiancheng Xue (4):
+  clk: hisilicon: add usb2 clocks for hi3798cv200 SoC
+  dt-bindings: phy-hisi-inno-usb2: add support for hisi-inno-usb2 phy
+  arm64: dts: hisilicon: add usb2 controller and phy nodes for poplar
+    board.
+  arm64: defconfig: enable some drivers and configs for
+    hi3798cv200-poplar board.
 
->  endif
-> diff --git a/drivers/clk/sprd/ccu_gate.c b/drivers/clk/sprd/ccu_gate.c
-> new file mode 100644
-> index 0000000..3d27615
-> --- /dev/null
-> +++ b/drivers/clk/sprd/ccu_gate.c
-> @@ -0,0 +1,102 @@
-> +/*
-> + * Spreadtrum gate clock driver
-> + *
-> + * Copyright (C) 2017 Spreadtrum, Inc.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "ccu_gate.h"
-> +
-> +DEFINE_SPINLOCK(gate_lock);
+Pengcheng Li (1):
+  phy: add inno-usb2-phy driver for hi3798cv200 SoC
 
-This variable name is not very unique for debugging lockdep
-reports. Probably needs 'sprd' in the name.
+ .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt |  36 +++
+ .../boot/dts/hisilicon/hi3798cv200-poplar.dts      |  13 +
+ arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi     |  47 ++++
+ arch/arm64/configs/defconfig                       |  13 +-
+ drivers/clk/hisilicon/crg-hi3798cv200.c            |  21 ++
+ drivers/phy/Kconfig                                |  10 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-hisi-inno-usb2.c                   | 287 +++++++++++++++++++++
+ include/dt-bindings/clock/histb-clock.h            |   9 +-
+ 9 files changed, 435 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+ create mode 100644 drivers/phy/phy-hisi-inno-usb2.c
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
