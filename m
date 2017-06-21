@@ -1,42 +1,108 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1496651008.3552.24.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: meson8b: add compatibles for Meson8 and
- Meson8m2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
- robh+dt@kernel.org, mark.rutland@arm.com, carlo@caione.org,
- khilman@baylibre.com,  linux@armlinux.org.uk, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Date: Mon, 05 Jun 2017 10:23:28 +0200
-In-Reply-To: <CAFBinCCLL5ZqiZzWi-RsfZ-5_h20O5LRRY3+K7dt=U4qrveQ_w@mail.gmail.com>
-References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
-	 <20170604183341.21417-2-martin.blumenstingl@googlemail.com>
-	 <1496606325.3552.16.camel@baylibre.com>
-	 <CAFBinCCLL5ZqiZzWi-RsfZ-5_h20O5LRRY3+K7dt=U4qrveQ_w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:33079 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751640AbdFUKxB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2017 06:53:01 -0400
+Received: by mail-wr0-f170.google.com with SMTP id r103so129541803wrb.0
+        for <linux-clk@vger.kernel.org>; Wed, 21 Jun 2017 03:53:00 -0700 (PDT)
+Subject: Re: [project-aspen-dev] [PATCH 3/5] phy: add inno-usb2-phy driver for
+ hi3798cv200 SoC
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>, sboyd@codeaurora.org,
+        robh+dt@kernel.org, kishon@ti.com, xuwei5@hisilicon.com,
+        catalin.marinas@arm.com, balbi@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, project-aspen-dev@linaro.org,
+        yanhaifeng@hisilicon.com, Pengcheng Li <lpc.li@hisilicon.com>
+References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
+ <1498035645-22804-4-git-send-email-xuejiancheng@hisilicon.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Message-ID: <53b0ac0f-91b8-1ad3-91a4-a776b028fc8f@linaro.org>
+Date: Wed, 21 Jun 2017 11:52:56 +0100
+MIME-Version: 1.0
+In-Reply-To: <1498035645-22804-4-git-send-email-xuejiancheng@hisilicon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-06-05 at 00:27 +0200, Martin Blumenstingl wrote:
-> > I think you should split the binding documentation and clk changes into
-> > separate
-> > patches.
+On 21/06/17 10:00, Jiancheng Xue wrote:
+> From: Pengcheng Li <lpc.li@hisilicon.com>
 > 
-> OK, from what I know is that for "trivial" changes the driver and
-> dt-binding changes can go through one patch.
-> this patch started as a four-line patch which added two lines of
-> documentation and two lines of driver code.
+> Add inno-usb2-phy driver for hi3798cv200 SoC.
+> 
+> Signed-off-by: Pengcheng Li <lpc.li@hisilicon.com>
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+> ---
+>   drivers/phy/Kconfig              |  10 ++
+>   drivers/phy/Makefile             |   1 +
+>   drivers/phy/phy-hisi-inno-usb2.c | 287 +++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 298 insertions(+)
+>   create mode 100644 drivers/phy/phy-hisi-inno-usb2.c
+> 
+> ...
+> diff --git a/drivers/phy/phy-hisi-inno-usb2.c b/drivers/phy/phy-hisi-inno-usb2.c
+> new file mode 100644
+> index 0000000..582c500
+> --- /dev/null
+> +++ b/drivers/phy/phy-hisi-inno-usb2.c
+> @@ -0,0 +1,287 @@
+ > ...> +static int hisi_inno_phy_of_get_ports(struct device *dev,
+> +					struct  hisi_inno_phy_priv *priv)
+> +{
+> +	struct device_node *node = dev->of_node;
+> +	struct device_node *child;
+> +	int port = 0;
+> +	int ret;
+> +
+> +	priv->port_num = of_get_child_count(node);
+> +	if (priv->port_num > MAX_PORTS) {
+> +		dev_err(dev, "too many ports : %d (max = %d)\n",
+> +				priv->port_num, MAX_PORTS);
+> +		return -EINVAL;
+> +	}
+> +
+> +	priv->ports = devm_kcalloc(dev, priv->port_num,
+> +				sizeof(struct hisi_inno_phy_port), GFP_KERNEL);
+> +	if (!priv->ports)
+> +		return -ENOMEM;
+> +
+> +	for_each_child_of_node(node, child) {
+> +		struct hisi_inno_phy_port *phy_port = &priv->ports[port];
+> +
+> +		phy_port->utmi_clk = devm_get_clk_from_child(dev, child, NULL);
+> +		if (IS_ERR(phy_port->utmi_clk)) {
+> +			ret = PTR_ERR(phy_port->utmi_clk);
+> +			goto fail;
+> +		}
+> +
+> +		phy_port->port_rst = of_reset_control_get_exclusive(child, "port_rst"); > +		if (IS_ERR(phy_port->port_rst)) {
+> +			ret = PTR_ERR(phy_port->port_rst);
+> +			goto fail;
+> +		}
+> +
+> +		phy_port->utmi_rst = of_reset_control_get_exclusive(child, "utmi_rst");
+> +		if (IS_ERR(phy_port->utmi_rst)) {
+> +			ret = PTR_ERR(phy_port->utmi_rst);
+> +			reset_control_put(phy_port->port_rst);
+> +			goto fail;
+> +		}
+> +		port++;
+> +	}
+> +
+> +	return 0;
+> +
+> +fail:
+> +	while (--port >= 0) {
+> +		struct hisi_inno_phy_port *phy_port = &priv->ports[port];
+> +
+> +		reset_control_put(phy_port->utmi_rst);
+> +		reset_control_put(phy_port->port_rst) > +		clk_put(phy_port->utmi_clk);
 
-I'm not aware of such tolerance but if you've have seen that the DT maintainers
-are OK with it, feel free to point me to it.
+clk_put() should not be needed here.
 
-Last time I heard about it, DT guys were using filter-branch on the kernel tree
-to create a separate tree, so I was thinking that this "documentation as a
-separate patch" was a hard rule ... but I may be wrong
+> +	}
 
-> however, with all the Kconfig/comment/etc updates I think that you are
-> right and it's worth splitting this into two patches (one for the
-> clock driver and one for the dt-binding changes)
+Do we also need clean up code like this in a remove callback?
+
+
+Daniel.
