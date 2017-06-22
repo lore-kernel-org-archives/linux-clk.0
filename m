@@ -1,90 +1,126 @@
-Return-Path: <Marcin.Nowakowski@imgtec.com>
-Subject: Re: [PATCH 06/15] serial: 8250_ingenic: Parse earlycon options
-To: Paul Cercueil <paul@crapouillou.net>, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
-CC: Paul Burton <paul.burton@imgtec.com>, Maarten ter Huurne
-	<maarten@treewalker.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mips@linux-mips.org>,
-	<linux-clk@vger.kernel.org>
-References: <20170607200439.24450-1-paul@crapouillou.net>
- <20170607200439.24450-7-paul@crapouillou.net>
-From: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
-Message-ID: <939febde-f962-6e2b-3657-a9b6c719dac1@imgtec.com>
-Date: Thu, 8 Jun 2017 09:31:13 +0200
+Return-Path: <marc.zyngier@arm.com>
+Subject: Re: [PATCH v3 3/4] irqchip: Add BCM2835 AUX interrupt controller
+To: Phil Elwell <phil@raspberrypi.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Florian Fainelli
+ <f.fainelli@gmail.com>, Stefan Wahren <stefan.wahren@i2se.com>,
+ Eric Anholt <eric@anholt.net>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <4ceb6c92-f752-180e-6a6e-a94dcd120737@raspberrypi.org>
+ <1497457750-35585-1-git-send-email-phil@raspberrypi.org>
+ <1497457750-35585-4-git-send-email-phil@raspberrypi.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <cc8f00e4-c8af-1d51-e020-32991f91210d@arm.com>
+Date: Thu, 22 Jun 2017 14:55:08 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170607200439.24450-7-paul@crapouillou.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <1497457750-35585-4-git-send-email-phil@raspberrypi.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
-
-On 07.06.2017 22:04, Paul Cercueil wrote:
-> In the devicetree, it is possible to specify the baudrate, parity,
-> bits, flow of the early console, by passing a configuration string like
-> this:
+On 14/06/17 17:29, Phil Elwell wrote:
+> Devices in the BCM2835 AUX block share a common interrupt line, with a
+> register indicating which devices have active IRQs. Expose this as a
+> nested interrupt controller to avoid IRQ sharing problems (easily
+> observed if UART1 and SPI1/2 are enabled simultaneously).
 > 
-> aliases {
-> 	serial0 = &uart0;
-> };
-> 
-> chosen {
-> 	stdout-path = "serial0:57600n8";
-> };
-> 
-> This, for instance, will configure the early console for a baudrate of
-> 57600 bps, no parity, and 8 bits per baud.
-> 
-> This patches implements parsing of this configuration string in the
-> 8250_ingenic driver, which previously just ignored it.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 > ---
->   drivers/tty/serial/8250/8250_ingenic.c | 14 ++++++++++++--
->   1 file changed, 12 insertions(+), 2 deletions(-)
+>  drivers/irqchip/Makefile          |   2 +-
+>  drivers/irqchip/irq-bcm2835-aux.c | 153 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 154 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/irqchip/irq-bcm2835-aux.c
 > 
-> diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-> index b31b2ca552d1..59f3e632df49 100644
-> --- a/drivers/tty/serial/8250/8250_ingenic.c
-> +++ b/drivers/tty/serial/8250/8250_ingenic.c
-> @@ -99,14 +99,24 @@ static int __init ingenic_early_console_setup(struct earlycon_device *dev,
->   					      const char *opt)
->   {
->   	struct uart_port *port = &dev->port;
-> -	unsigned int baud, divisor;
-> +	unsigned int divisor;
-> +	int baud = 115200;
->   
->   	if (!dev->port.membase)
->   		return -ENODEV;
->   
-> +	if (opt) {
-> +		char options[256];
-> +		unsigned int parity, bits, flow; /* unused for now */
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index b64c59b..cf01920 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -3,7 +3,7 @@ obj-$(CONFIG_IRQCHIP)			+= irqchip.o
+>  obj-$(CONFIG_ALPINE_MSI)		+= irq-alpine-msi.o
+>  obj-$(CONFIG_ATH79)			+= irq-ath79-cpu.o
+>  obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
+> -obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
+> +obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o irq-bcm2835-aux.o
+>  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
+>  obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
+>  obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
+> diff --git a/drivers/irqchip/irq-bcm2835-aux.c b/drivers/irqchip/irq-bcm2835-aux.c
+> new file mode 100644
+> index 0000000..2151d51
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-bcm2835-aux.c
+> @@ -0,0 +1,153 @@
+> +/*
+> + * Copyright (C) 2017 Raspberry Pi (Trading) Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
 > +
-> +		strlcpy(options, opt, sizeof(options));
-
-Rather than adding this extra local copy maybe you could instead:
-
--void uart_parse_options(char *options, int *baud, int *parity, int *bits,
-+void uart_parse_options(const char *options, int *baud, int *parity, 
-int *bits,
-
-I cannot see any reason why uart_parse_options shouldn't take 'const 
-char *options' as an argument.
-
-> +		uart_parse_options(options, &baud, &parity, &bits, &flow);
-> +	}
+> +#include <linux/interrupt.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/module.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/platform_device.h>
+> +#include <dt-bindings/interrupt-controller/bcm2835-aux-intc.h>
 > +
->   	ingenic_early_console_setup_clock(dev);
->   
-> -	baud = dev->baud ?: 115200;
-> +	if (dev->baud)
-> +		baud = dev->baud;
->   	divisor = DIV_ROUND_CLOSEST(port->uartclk, 16 * baud);
->   
->   	early_out(port, UART_IER, 0);
-> 
+> +#define BCM2835_AUXIRQ		0x00
+> +
+> +#define BCM2835_AUX_IRQ_UART_MASK BIT(BCM2835_AUX_IRQ_UART)
+> +#define BCM2835_AUX_IRQ_SPI1_MASK BIT(BCM2835_AUX_IRQ_SPI1)
+> +#define BCM2835_AUX_IRQ_SPI2_MASK BIT(BCM2835_AUX_IRQ_SPI2)
+> +
+> +#define BCM2835_AUX_IRQ_ALL_MASK \
+> +	(BCM2835_AUX_IRQ_UART_MASK | \
+> +	 BCM2835_AUX_IRQ_SPI1_MASK | \
+> +	 BCM2835_AUX_IRQ_SPI2_MASK)
+> +
+> +struct aux_irq_state {
+> +	void __iomem      *status;
+> +	struct irq_domain *domain;
+> +};
+> +
+> +static struct aux_irq_state aux_irq __read_mostly;
+> +
+> +static irqreturn_t bcm2835_aux_irq_handler(int irq, void *dev_id)
+> +{
+> +	u32 stat = readl_relaxed(aux_irq.status);
+> +
+> +	if (stat & BCM2835_AUX_IRQ_UART_MASK)
+> +		generic_handle_irq(irq_linear_revmap(aux_irq.domain,
+> +						     BCM2835_AUX_IRQ_UART));
+> +
+> +	if (stat & BCM2835_AUX_IRQ_SPI1_MASK)
+> +		generic_handle_irq(irq_linear_revmap(aux_irq.domain,
+> +						     BCM2835_AUX_IRQ_SPI1));
+> +
+> +	if (stat & BCM2835_AUX_IRQ_SPI2_MASK)
+> +		generic_handle_irq(irq_linear_revmap(aux_irq.domain,
+> +						     BCM2835_AUX_IRQ_SPI2));
+> +
+> +	return (stat & BCM2835_AUX_IRQ_ALL_MASK) ? IRQ_HANDLED : IRQ_NONE;
 
+That feels like the wrong conditions to return IRQ_HANDLED. Only the
+last level handler actually knows whether this has been handled or not.
 
-Marcin
+A vaguely better approach would be to reread the HW status and only
+return IRQ_HANDLED if everything is clear. Yes, this is racy (another
+interrupt could have come in the meantime). But I doubt you can do much
+better given the quality of the HW...
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
