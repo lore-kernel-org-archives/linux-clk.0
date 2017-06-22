@@ -1,57 +1,55 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 16:36:55 -0700
+Date: Thu, 22 Jun 2017 14:55:49 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: Re: [PATCH v3 1/2] clk: Hi3660: register fixed_rate_clks with
- CLK_OF_DECLARE_DRIVER
-Message-ID: <20170619233655.GR20170@codeaurora.org>
-References: <1495428748-11153-1-git-send-email-leo.yan@linaro.org>
- <1495428748-11153-2-git-send-email-leo.yan@linaro.org>
+	Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: audss: Fix silent hang on Exynos4412
+ due to disabled EPLL
+Message-ID: <20170622215549.GM4493@codeaurora.org>
+References: <20170621190807.14850-1-krzk@kernel.org>
+ <CGME20170621190822epcas2p49ed738ef43e6d68f72903d185e20332e@epcas2p4.samsung.com>
+ <20170621190807.14850-2-krzk@kernel.org>
+ <99de23b6-4049-7542-008b-abf65df356f0@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1495428748-11153-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <99de23b6-4049-7542-008b-abf65df356f0@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/22, Leo Yan wrote:
-> The timer will register into system at very early phase at kernel boot;
-> if timer needs to use clock, the clock should be get ready in function
-> of_clk_init() so later the timer driver probe can retrieve clock
-> successfully. This is finished in below flow on arm64:
+On 06/22, Sylwester Nawrocki wrote:
+> On 06/21/2017 09:08 PM, Krzysztof Kozlowski wrote:
+> >Similarly to commit f1e9203e2366 ("clk: samsung: Fix Exynos 5420 pinctrl
+> >setup and clock disable failure due to domain being gated") for
+> >Exynos5420, the Exynos4412 also requires that EPLL is not disabled.
+> >Otherwise any access to MAUDIO block will silently halt.
+> >
+> >This was not visible before because EPLL on Exynos4 could not be
+> >disabled before commit 6edfa11cb396 ("clk: samsung:
+> >Add enable/disable operation for PLL36XX clocks").  After this commit,
+> >on Odroid U3 board one can see silent hang, usually with last (but
+> >unrelated) messages:
+> >
+> >	[    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
+> >	[    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
+> >	[    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
+> >
+> >Mark Exynos4 variant as also needed EPLL to be enabled all the time.
+> >
+> >Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > 
->   start_kernel()
->     `-> time_init()
->           `-> of_clk_init(NULL)    => register timer's clock
->           `-> clocksource_probe()  => register timer
+> Stephen, Mike,
 > 
-> On Hi3660 the sp804 timer uses clock "osc32k", this clock is registered
-> as platform driver rather than CLK_OF_DECLARE_DRIVER method. As result,
-> sp804 timer probe returns failure due if cannot bind clock properly.
+> Can you please apply this patch directly?
 > 
-> To fix the failure, this patch is to split crgctrl clocks into two
-> subsets. One part is for fixed_rate_clks which includes pre-defined
-> fixed rate clocks, and "osc32k" clock is in this category; So we change
-> their registration to CLK_OF_DECLARE_DRIVER method, as result the clocks
-> can be registered ahead with function of_clk_init() and timer driver can
-> bind timer clock successfully; the rest of the crgctrl clocks are still
-> registered by the probe of the platform driver.
-> 
-> This patch also adds checking for all crgctrl clocks registration and
-> print out log if any clock has failure.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
 
-Applied to clk-next
+Applied to clk-next.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
