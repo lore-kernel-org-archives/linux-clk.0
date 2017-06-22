@@ -1,93 +1,131 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH v3 8/9] arm64: dts: marvell: remove *-clock-output-names on cp110
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-	<cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-	<99492ad5e3026e12a57623bdcf0cc33d4935eb66.1496328934.git-series.gregory.clement@free-electrons.com>
-Date: Tue, 20 Jun 2017 16:10:36 +0200
-In-Reply-To: <99492ad5e3026e12a57623bdcf0cc33d4935eb66.1496328934.git-series.gregory.clement@free-electrons.com>
-	(Gregory CLEMENT's message of "Thu, 1 Jun 2017 16:55:41 +0200")
-Message-ID: <87efue4un7.fsf@free-electrons.com>
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170620012411.GF4493@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-10-chunyan.zhang@spreadtrum.com> <20170620012411.GF4493@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 22 Jun 2017 18:24:45 +0800
+Message-ID: <CAAfSe-tBtcsyocumaDAyUP674ey1z+xmfAOR7cqnakM_+MOtfQ@mail.gmail.com>
+Subject: Re: [PATCH V1 9/9] arm64: dts: add ccu for SC9860
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
- 
- On jeu., juin 01 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+Hi Stephen,
 
-> The *-clock-output-names of the cp110-system-controller0 node are not
-> used anymore, so remove them.
+On 20 June 2017 at 09:24, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/18, Chunyan Zhang wrote:
+>> diff --git a/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
+>> new file mode 100644
+>> index 0000000..e15bf2d
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
+>> @@ -0,0 +1,67 @@
+>> +/*
+>> + * Spreadtrum SC9860 SoC CCU
+>> + *
+>> + * Copyright (C) 2017, Spreadtrum Communications Inc.
+>> + *
+>> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> + */
+>> +
+>> +&soc {
+>> +     ext_26m: ext-26m {
+>> +             compatible = "fixed-clock";
+>> +             #clock-cells = <0>;
+>> +             clock-frequency = <26000000>;
+>> +             clock-output-names = "ext-26m";
+>> +     };
+>> +
+>> +     ext_32m_sine0: ext-32m-sine0 {
+>> +             compatible = "fixed-clock";
+>> +             #clock-cells = <0>;
+>> +             clock-frequency = <32000000>;
+>> +             clock-output-names = "ext-32m-sine0";
+>> +     };
+>> +
+>> +     ext_32m_sine1: ext-32m-sine1 {
+>> +             compatible = "fixed-clock";
+>> +             #clock-cells = <0>;
+>> +             clock-frequency = <32000000>;
+>> +             clock-output-names = "ext-32m-sine1";
+>> +     };
+>> +
+>> +     ext_rco_100m: ext-rco-100m {
+>> +             compatible = "fixed-clock";
+>> +             #clock-cells = <0>;
+>> +             clock-frequency = <100000000>;
+>> +             clock-output-names = "ext-rco-100m";
+>> +     };
+>> +
+>> +     ext_32k: ext-32k {
+>> +             compatible = "fixed-clock";
+>> +             #clock-cells = <0>;
+>> +             clock-frequency = <32768>;
+>> +             clock-output-names = "ext-32k";
+>> +     };
 >
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-Applied on mvebu/dt64
-
-Thanks,
-
-Gregory
-
-> ---
->  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 13 +-------------
->  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 13 +-------------
->  2 files changed, 26 deletions(-)
+> These should all be outside of the soc node as they're probably
+> on the board and not the SoC? The hint is that they don't have a
+> reg property.
 >
-> diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-> index ac8df5201cd6..a0f57a8e5dcb 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-> @@ -101,19 +101,6 @@
->  					     "syscon";
->  				reg = <0x440000 0x1000>;
->  				#clock-cells = <2>;
-> -				core-clock-output-names =
-> -					"cpm-apll", "cpm-ppv2-core", "cpm-eip",
-> -					"cpm-core", "cpm-nand-core";
-> -				gate-clock-output-names =
-> -					"cpm-audio", "cpm-communit", "cpm-nand",
-> -					"cpm-ppv2", "cpm-sdio", "cpm-mg-domain",
-> -					"cpm-mg-core", "cpm-xor1", "cpm-xor0",
-> -					"cpm-gop-dp", "none", "cpm-pcie_x10",
-> -					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
-> -					"cpm-sata", "cpm-sata-usb", "cpm-main",
-> -					"cpm-sd-mmc-gop", "none", "none",
-> -					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
-> -					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
->  			};
->  
->  			cpm_rtc: rtc@284000 {
-> diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-> index 7740a75a8230..9584bc8d8b3f 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-> @@ -108,19 +108,6 @@
->  					     "syscon";
->  				reg = <0x440000 0x1000>;
->  				#clock-cells = <2>;
-> -				core-clock-output-names =
-> -					"cps-apll", "cps-ppv2-core", "cps-eip",
-> -					"cps-core", "cps-nand-core";
-> -				gate-clock-output-names =
-> -					"cps-audio", "cps-communit", "cps-nand",
-> -					"cps-ppv2", "cps-sdio", "cps-mg-domain",
-> -					"cps-mg-core", "cps-xor1", "cps-xor0",
-> -					"cps-gop-dp", "none", "cps-pcie_x10",
-> -					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
-> -					"cps-sata", "cps-sata-usb", "cps-main",
-> -					"cps-sd-mmc-gop", "none", "none",
-> -					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
-> -					"cps-usb3dev", "cps-eip150", "cps-eip197";
->  			};
->  
->  			cps_sata0: sata@540000 {
-> -- 
-> git-series 0.9.1
+>> +
+>> +     ccu: clk {
+>
+> clock-controller is a more standard node name.
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+OK, will address.
+
+>
+>> +             compatible = "sprd,sc9860-ccu";
+>> +             #clock-cells = <1>;
+>> +             reg = <0 0x20000000 0 0x400>,
+>> +                   <0 0x20210000 0 0x3000>,
+>> +                   <0 0x402b0000 0 0x4000>,
+>> +                   <0 0x402d0000 0 0x400>,
+>> +                   <0 0x402e0000 0 0x4000>,
+>> +                   <0 0x40400000 0 0x400>,
+>> +                   <0 0x40880000 0 0x400>,
+>> +                   <0 0x415e0000 0 0x400>,
+>> +                   <0 0x60200000 0 0x400>,
+>> +                   <0 0x61000000 0 0x400>,
+>> +                   <0 0x61100000 0 0x3000>,
+>> +                   <0 0x62000000 0 0x4000>,
+>> +                   <0 0x62100000 0 0x4000>,
+>> +                   <0 0x63000000 0 0x400>,
+>> +                   <0 0x63100000 0 0x3000>,
+>> +                   <0 0x70b00000 0 0x3000>;
+>
+> There are a lot of reg properties here. Perhaps there needs to be
+> different nodes for the different clock controllers in this SoC?
+>
+
+On Spreadtrum's platform, clocks are basically located in a few
+address areas due to some hardware design issue, that says there're
+more than one kinds of clocks in one address range, and one kind of
+clocks have more than one physical address bases, except ccu_pll and
+ccu_div in this patchset.
+
+We're planning to map the whole device area at one time before
+initializing each of them, once that has been done and upstreamed, I
+will remove these lists of addressed.
+
+Thanks for your review,
+Chunyan
+
+>> +             clocks = <&ext_26m>, <&ext_rco_100m>, <&ext_32k>;
+>> +             clock-names = "ext-26m", "ext-rco-100m", "ext-32k";
+>> +     };
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
