@@ -1,74 +1,48 @@
-Return-Path: <R.E.Wolff@bitwizard.nl>
-Date: Mon, 12 Jun 2017 18:33:37 +0200
-From: Rogier Wolff <R.E.Wolff@BitWizard.nl>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Phil Elwell <phil@raspberrypi.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Eric Anholt <eric@anholt.net>, Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] irqchip: Add BCM2835 AUX interrupt controller
-Message-ID: <20170612163337.GG18236@BitWizard.nl>
-References: <c5ceca4d-81d1-9faf-bc4a-3ea3113abf36@raspberrypi.org>
- <56e314db-49a9-48fa-d7d9-877bd68aadfc@arm.com>
- <fb54ef5b-3bbb-4c39-e993-48bf45982412@raspberrypi.org>
- <9cbf68ce-6041-3e04-8f82-8d948ab4a716@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9cbf68ce-6041-3e04-8f82-8d948ab4a716@arm.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: audss: Fix silent hang on Exynos4412
+ due to disabled EPLL
+To: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <99de23b6-4049-7542-008b-abf65df356f0@samsung.com>
+Date: Thu, 22 Jun 2017 12:27:10 +0200
+MIME-version: 1.0
+In-reply-to: <20170621190807.14850-2-krzk@kernel.org>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <20170621190807.14850-1-krzk@kernel.org>
+	<CGME20170621190822epcas2p49ed738ef43e6d68f72903d185e20332e@epcas2p4.samsung.com>
+	<20170621190807.14850-2-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 12, 2017 at 05:19:03PM +0100, Marc Zyngier wrote:
-
-> > Does Linux not notice when one calls generic_handle_irq with the number of an
-> > interrupt without a handler?
+On 06/21/2017 09:08 PM, Krzysztof Kozlowski wrote:
+> Similarly to commit f1e9203e2366 ("clk: samsung: Fix Exynos 5420 pinctrl
+> setup and clock disable failure due to domain being gated") for
+> Exynos5420, the Exynos4412 also requires that EPLL is not disabled.
+> Otherwise any access to MAUDIO block will silently halt.
 > 
-> It is not so much that the interrupt doesn't have a handler, but that
-> the device (or one of the devices) is in some sort of interrupt frenzy,
-> and the driver is not able to handle this interrupt.
+> This was not visible before because EPLL on Exynos4 could not be
+> disabled before commit 6edfa11cb396 ("clk: samsung:
+> Add enable/disable operation for PLL36XX clocks").  After this commit,
+> on Odroid U3 board one can see silent hang, usually with last (but
+> unrelated) messages:
 > 
-> In such a case, Linux tries to mask this interrupt, which in your case
-> does exactly nothing. At this point, the system is dead.
+> 	[    2.382741] input: gpio_keys as /devices/platform/gpio_keys/input/input0
+> 	[    2.405686] usb 1-3: new high-speed USB device number 3 using exynos-ehci
+> 	[    2.419843] max77686-rtc max77686-rtc: setting system clock to 2017-06-21 17:04:13 UTC (1498064653)
+> 
+> Mark Exynos4 variant as also needed EPLL to be enabled all the time.
+> 
+> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-In the old days, you had edge-triggered interrupts. That always led to
-race conditions: If you handled the interrupt, the hardware might fire
-an interrupt again AFTER you've checked: "nothing more to do?" and
-before you have told the hardware "I've seen that interrupt". So then
-you end up with hardware thinking the interrupt has been handled while
-it has in fact not been handled. You can be very careful in what order
-you do things, and get it almost right.... 
+Stephen, Mike,
 
-So nowadays interrupts are level triggered. That means that a device
-that wants attention, but for SOME reason, thinks that it was not
-properly handled will keep the interrupt line asserted, and interrupts
-will keep firing.
-
-When this happens (it's common when you're writing the device driver,
-but it sometimes happens in the field when something unexpected
-occurs), an interrupt storm starts. As soon as the generic handler
-returns from interrupt, the hardware reenters the interrupt handler.
-
-Without any countermeasures, the system would lock up without much
-debugging options. Nowadays (since two decades or so), the Linux
-kernel can disable the interrupt, print an error message and try to
-continue. It won't work if other important interrupts for the system
-were on the same IRQ line, but often enough, you just get a message
-that an interrupt was disabled and that one peripheral will stop
-working. Good opportunities for debugging the situation.
-
-	Roger. 
-
+Can you please apply this patch directly?
 
 -- 
-** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 **
-**    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    **
-*-- BitWizard writes Linux device drivers for any device you may have! --*
-The plan was simple, like my brother-in-law Phil. But unlike
-Phil, this plan just might work.
+Thanks,
+Sylwester
