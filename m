@@ -1,86 +1,61 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v6 00/11] Broadcom Stingray SOC Initial Support
-To: Anup Patel <anup.patel@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Oza Pawandeep
- <oza.oza@broadcom.com>, Srinath Mannam <srinath.mannam@broadcom.com>,
- Pramod Kumar <pramod.kumar@broadcom.com>,
- Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- bcm-kernel-feedback-list@broadcom.com
-References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <4c15213f-4ac6-a0a7-f2b8-cde2b4cee891@gmail.com>
-Date: Mon, 5 Jun 2017 09:51:15 -0700
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
-Content-Type: text/plain; charset=utf-8
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-8-chunyan.zhang@spreadtrum.com> <20170620013710.GJ4493@codeaurora.org>
+ <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 22 Jun 2017 13:15:24 +0200
+Message-ID: <CAK8P3a1ELg1XcY-QOZn-f6kR9yt-Q6LNLUYEY-BNW-2BaBy6EQ@mail.gmail.com>
+Subject: Re: [PATCH V1 7/9] clk: sprd: add adjustable pll support
+To: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01/2017 11:34 PM, Anup Patel wrote:
-> This patchset adds initial support of Broadcom Stingray SOC
-> by reusing existing Broadcom iProc device drivers.
-> 
-> Most of the patches in this patchset are DT patches except
-> the Stingray clock tree support which just one patch.
-> 
-> This patchset is based on Linux-4.12-rc3 and it is also available
-> at stingray-v6 branch of https://github.com/Broadcom/arm64-linux.git
-> 
-> Changes since v5:
->  - Rebased patches for Linux-4.12-rc3
->  - Update DT node names to match register offset
-> 
-> Changes since v4:
->  - Reduce number of include headers in Stingray clk driver
-> 
-> Changes since v3:
->  - Rebased patches for Linux-4.12-rc1
->  - Updated PATCH3 to have all clocks except genpll3 to be
->    registered via platform driver probe
-> 
-> Changes since v2:
->  - Remove default bootargs from chosen DT node
->  - Remove "linux" prefix from stdout DT attribute of chosen DT node
->  - Remove use of GIC_CPU_MASK_xxx() for PPIs
-> 
-> Changes since v1:
->  - Rebased patches for Linux-4.12-rc1
->  - Removed unwanted /memreserve/ from bcm958742-base.dtsi
->  - Use ranges DT property to clear view of memory-layout
->  - Make bcm-sr.h part of clock DT bindings patch
-> 
-> Anup Patel (3):
->   dt-bindings: bcm: Add Broadcom Stingray bindings document
->   arm64: dts: Initial DTS files for Broadcom Stingray SOC
->   arm64: dts: Add PL022, PL330 and SP805 DT nodes for Stingray
-> 
-> Oza Pawandeep (1):
->   arm64: dts: Add I2C DT nodes for Stingray SoC
-> 
-> Pramod Kumar (3):
->   arm64: dts: Add NAND DT nodes for Stingray SOC
->   arm64: dts: Add pinctrl DT nodes for Stingray SOC
->   arm64: dts: Add GPIO DT nodes for Stingray SOC
-> 
-> Sandeep Tripathy (3):
->   dt-bindings: clk: Extend binding doc for Stingray SOC
->   clk: bcm: Add clocks for Stingray SOC
->   arm64: dts: Add clock DT nodes for Stingray SOC
-> 
-> Srinath Mannam (1):
->   arm64: dts: Add PWM and SDHCI DT nodes for Stingray SOC
+On Thu, Jun 22, 2017 at 12:17 PM, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> On 20 June 2017 at 09:37, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 06/18, Chunyan Zhang wrote:
 
-Applied patches 1, 4-11 to devicetree-arm64/next, thanks!
---
-Florian
+>>> +     kint = DIV_ROUND_CLOSEST(((fvco - refin * nint * CCU_PLL_1M)/10000) *
+>>> +     ((mask >> (shift + i)) + 1), refin * 100) << i;
+>>> +     cfg[index].val |= (kint << shift) & mask;
+>>> +     cfg[index].msk |= mask;
+>>> +
+>>> +     ibias_val = pll_get_ibias(fvco, pll->itable);
+>>> +
+>>> +     mask = pmask(pll, PLL_IBIAS);
+>>> +     index = pindex(pll, PLL_IBIAS);
+>>> +     shift = pshift(pll, PLL_IBIAS);
+>>> +     cfg[index].val |= ibias_val << shift & mask;
+>>> +     cfg[index].msk |= mask;
+>>> +
+>>> +     for (i = 0; i < reg_num; i++) {
+>>> +             if (cfg[i].msk)
+>>> +                     ccu_pll_writel(pll, i, cfg[i].val, cfg[i].msk);
+>>> +     }
+>>> +
+>>
+>> Are we waiting for the writel() to go through above? If so we
+>> need a readl() of the same register to make sure the write has
+>> completed before delaying.
+>
+> After writing these configuration registers, we have to wait a certain
+> time to make sure the pll has worked as we configured.  This depends
+> on other circuit part, so we use udelay rather than reading the same
+> register.
 
--- 
-Florian
+I think you have to do both: normally the writel() is not guaranteed
+to arrive at the device until you read back from an address in the
+same device, so the delay must happen after the readl(), or you won't
+know how long to wait for.
+
+       Arnd
