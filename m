@@ -1,554 +1,65 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Anup Patel <anup.patel@broadcom.com>,
-	Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v6 04/11] arm64: dts: Initial DTS files for Broadcom Stingray SOC
-Date: Fri,  2 Jun 2017 12:04:28 +0530
-Message-Id: <1496385275-6899-5-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
-References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <zhang.lyra@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20170620012530.GG4493@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com> <20170620012530.GG4493@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 22 Jun 2017 18:07:52 +0800
+Message-ID: <CAAfSe-uTzgz0kyhQQzqpYKnYxDLv+3gG_9MfdrBTY-AUC549Gg@mail.gmail.com>
+Subject: Re: [PATCH V1 0/9] add clock driver for Spreadtrum platforms
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The Broadcom Stingray SoC is a new member in Broadcom iProc
-SoC family.
+Hi Stephen,
 
-This patch adds initial DTS files for Broadcom Stingray SoC
-and two of its reference boards (bcm958742k and bcm958742t).
+On 20 June 2017 at 09:25, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/18, Chunyan Zhang wrote:
+>> In the last cycle, the patches support Whale2 sc9860 mobile chip have been
+>> merged. This patchset adds clock driver which is used on almost all
+>> Spreadtrum SoCs.
+>>
+>> This is a rewrite of Spreadtrum's original clock driver[1] according to the
+>> comments[2] from Stephen Boyd.
+>>
+>> This series also adds Spreadtrum clock binding documentation and devicetree
+>> data.
+>>
+>> Any comments would be greatly appreciated.
+>
+> Overall it seems to copy quite a bit of code from sunxi-ng, which
+> is OK, but if that's just copy/paste + replace some names then
+> perhaps we should consolidate the two implementations into one
+> that both SoCs can use.
+>
 
-We have lot of reference boards and large number of devices
-in Broadcom Stingray SoC so eventually we will have quite
-a few DTS files for Stingray. To tackle, we have added a
-separate directory for Stingray DTS files.
+OK, will try.
 
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
----
- arch/arm64/boot/dts/broadcom/Makefile              |   1 +
- arch/arm64/boot/dts/broadcom/stingray/Makefile     |   6 +
- .../boot/dts/broadcom/stingray/bcm958742-base.dtsi |  55 ++++
- .../boot/dts/broadcom/stingray/bcm958742k.dts      |  48 ++++
- .../boot/dts/broadcom/stingray/bcm958742t.dts      |  40 +++
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 302 +++++++++++++++++++++
- 6 files changed, 452 insertions(+)
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/Makefile
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+> Also, is there any reason why we can't use a platform device
+> driver for this instead of the DT probing mechanism? That is more
+> preferred method of probing clk controllers.
 
-diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index bfa8f8e..f11bdd6 100644
---- a/arch/arm64/boot/dts/broadcom/Makefile
-+++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -1,6 +1,7 @@
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2837-rpi-3-b.dtb
- dtb-$(CONFIG_ARCH_BCM_IPROC) += ns2-svk.dtb ns2-xmc.dtb
- 
-+dts-dirs	:= stingray
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
- clean-files	:= *.dtb
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/Makefile b/arch/arm64/boot/dts/broadcom/stingray/Makefile
-new file mode 100644
-index 0000000..f70028e
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/Makefile
-@@ -0,0 +1,6 @@
-+dtb-$(CONFIG_ARCH_BCM_IPROC) += bcm958742k.dtb
-+dtb-$(CONFIG_ARCH_BCM_IPROC) += bcm958742t.dtb
-+
-+always		:= $(dtb-y)
-+subdir-y	:= $(dts-dirs)
-+clean-files	:= *.dtb
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-new file mode 100644
-index 0000000..992944b
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -0,0 +1,55 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#include "stingray.dtsi"
-+
-+/ {
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		serial0 = &uart1;
-+		serial1 = &uart0;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+};
-+
-+&memory { /* Default DRAM banks */
-+	reg = <0x00000000 0x80000000 0x0 0x80000000>, /* 2G @ 2G */
-+	      <0x00000008 0x80000000 0x1 0x80000000>; /* 6G @ 34G */
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-new file mode 100644
-index 0000000..c309cda
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742k.dts
-@@ -0,0 +1,48 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2016-2017 Broadcom.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+/dts-v1/;
-+
-+#include "bcm958742-base.dtsi"
-+
-+/ {
-+	compatible = "brcm,bcm958742k", "brcm,stingray";
-+	model = "Stingray Combo SVK (BCM958742K)";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts b/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
-new file mode 100644
-index 0000000..6ebe399
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742t.dts
-@@ -0,0 +1,40 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2017 Broadcom.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+/dts-v1/;
-+
-+#include "bcm958742-base.dtsi"
-+
-+/ {
-+	compatible = "brcm,bcm958742t", "brcm,stingray";
-+	model = "Stingray SST100 (BCM958742T)";
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-new file mode 100644
-index 0000000..61133b7
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -0,0 +1,302 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2015-2017 Broadcom.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "brcm,stingray";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		cpu@000 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER0_L2>;
-+		};
-+
-+		cpu@001 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER0_L2>;
-+		};
-+
-+		cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x100>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER1_L2>;
-+		};
-+
-+		cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x101>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER1_L2>;
-+		};
-+
-+		cpu@200 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x200>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER2_L2>;
-+		};
-+
-+		cpu@201 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x201>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER2_L2>;
-+		};
-+
-+		cpu@300 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x300>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER3_L2>;
-+		};
-+
-+		cpu@301 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72", "arm,armv8";
-+			reg = <0x0 0x301>;
-+			enable-method = "psci";
-+			next-level-cache = <&CLUSTER3_L2>;
-+		};
-+
-+		CLUSTER0_L2: l2-cache@000 {
-+			compatible = "cache";
-+		};
-+
-+		CLUSTER1_L2: l2-cache@100 {
-+			compatible = "cache";
-+		};
-+
-+		CLUSTER2_L2: l2-cache@200 {
-+			compatible = "cache";
-+		};
-+
-+		CLUSTER3_L2: l2-cache@300 {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	memory: memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x80000000 0 0x40000000>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	scr {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x0 0x61000000 0x05000000>;
-+
-+		gic: interrupt-controller@02c00000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			interrupt-controller;
-+			reg = <0x02c00000 0x010000>, /* GICD */
-+			      <0x02e00000 0x600000>; /* GICR */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			gic_its: gic-its@63c20000 {
-+				compatible = "arm,gic-v3-its";
-+				msi-controller;
-+				#msi-cells = <1>;
-+				reg = <0x02c20000 0x10000>;
-+			};
-+		};
-+
-+		smmu: mmu@03000000 {
-+			compatible = "arm,mmu-500";
-+			reg = <0x03000000 0x80000>;
-+			#global-interrupts = <1>;
-+			interrupts = <GIC_SPI 704 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 711 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 712 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 713 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 715 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 716 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 717 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 718 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 719 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 720 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 721 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 722 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 723 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 724 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 725 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 726 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 727 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 728 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 729 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 730 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 731 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 732 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 733 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 734 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 735 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 736 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 737 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 738 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 739 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 740 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 741 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 742 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 743 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 744 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 745 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 746 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 747 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 748 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 749 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 750 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 751 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 752 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 753 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 754 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 756 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 757 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 758 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 760 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 761 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 763 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 767 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 771 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <2>;
-+		};
-+	};
-+
-+	hsls {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x0 0x68900000 0x17700000>;
-+
-+		uart0: uart@00100000 {
-+			device_type = "serial";
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x00100000 0x1000>;
-+			reg-shift = <2>;
-+			clock-frequency = <25000000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		uart1: uart@00110000 {
-+			device_type = "serial";
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x00110000 0x1000>;
-+			reg-shift = <2>;
-+			clock-frequency = <25000000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		uart2: uart@00120000 {
-+			device_type = "serial";
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x00120000 0x1000>;
-+			reg-shift = <2>;
-+			clock-frequency = <25000000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		uart3: uart@00130000 {
-+			device_type = "serial";
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x00130000 0x1000>;
-+			reg-shift = <2>;
-+			clock-frequency = <25000000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		hwrng: hwrng@00220000 {
-+			compatible = "brcm,iproc-rng200";
-+			reg = <0x00220000 0x28>;
-+		};
-+	};
-+};
--- 
-2.7.4
+>From what I have known on ARM platforms, device drivers cannot
+recognize out which SoC the driver is running on, assume that the
+device on different SoC has some differences.  To make one only kernel
+Image can be used on all SoCs of Spreadtrum, we selected the way of
+loading different dtb for each SoC.
+
+Actually, I haven't understood the merits of moving more clk things to
+driver from DT, could you please introduce more about that?
+
+
+Many appreciated,
+Chunyan
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
