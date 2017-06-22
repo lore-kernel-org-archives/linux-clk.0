@@ -1,110 +1,271 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:51798 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751397AbdFGRZy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Jun 2017 13:25:54 -0400
-From: Alexander Stein <alexanders83@web.de>
-To: Phil Elwell <phil@raspberrypi.org>
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: bcm2835: Add AUX interrupt controller
-Date: Wed, 07 Jun 2017 19:25:07 +0200
-Message-ID: <2599573.4PsWGx6B1X@localhost>
-In-Reply-To: <369bb235-77fb-60ad-61d8-3de039e0f838@raspberrypi.org>
-References: <79d4534c-49fe-3af4-13d8-2aaf22120d43@raspberrypi.org> <3148562.tSrsoIclEp@ws-stein> <369bb235-77fb-60ad-61d8-3de039e0f838@raspberrypi.org>
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170620012910.GH4493@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-3-chunyan.zhang@spreadtrum.com> <20170620012910.GH4493@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 22 Jun 2017 18:12:09 +0800
+Message-ID: <CAAfSe-trR-pUaVqnK4=5M2hRrWr7B4WmdpXn3kytZgy_yXV88g@mail.gmail.com>
+Subject: Re: [PATCH V1 2/9] clk: sprd: Add common infrastructure
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
- On Wednesday, June 7, 2017, 2:37:41 PM CEST Phil Elwell wrote:
-> On 07/06/2017 13:07, Alexander Stein wrote:
-> > On Wednesday 07 June 2017 12:11:45, Phil Elwell wrote:
-> >> Devices in the AUX block share a common interrupt line, with a register
-> >> indicating which devices have active IRQs. Expose this as a nested
-> >> interrupt controller to avoid IRQ sharing problems (easily observed if
-> >> UART1 and SPI1/2 are enabled simultaneously).
-> >> 
-> >> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-> >> ---
-> >> 
-> >>  drivers/clk/bcm/clk-bcm2835-aux.c | 120
-> >> 
-> >> ++++++++++++++++++++++++++++++++++++++ 1 file changed, 120 insertions(+)
-> >> 
-> >> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c
-> >> b/drivers/clk/bcm/clk-bcm2835-aux.c index bd750cf..41e0702 100644
-> >> --- a/drivers/clk/bcm/clk-bcm2835-aux.c
-> >> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-> >> [...]
-> >> +struct auxirq_state {
-> >> +	void __iomem      *status;
-> >> +	u32                enables;
-> >> +	struct irq_domain *domain;
-> >> +	struct regmap     *local_regmap;
-> >> +};
-> >> +
-> >> +static struct auxirq_state auxirq __read_mostly;
-> >> +
-> >> +static irqreturn_t bcm2835_auxirq_handler(int irq, void *dev_id)
-> >> +{
-> >> +	u32 stat = readl_relaxed(auxirq.status);
-> >> +	u32 masked = stat & auxirq.enables;
-> > 
-> > Doesn't this hide any spurious interrupts? Is this acceptable? I mean
-> > getting informed about spurious interrupts seems nice to me, as it
-> > indicates a hardware/configuration problem.
-> 
-> Thanks for the reply. This interrupt handler is capable of dispatching
-> multiple interrupts but must return a single value - IRQ_HANDLED or
-> IRQ_NONE. I've assumed that returning IRQ_NONE repeatedly will trigger the
-> spurious interrupt detection.
-> 
-> This implementation returns IRQ_HANDLED if any unmasked interrupts are
-> raised, otherwise it returns IRQ_NONE. Therefore provided any spurious
-> interrupt isn't always coincident with a real interrupt then it ought
-> eventually to be identified as spurious. The alternative - returning
-> IRQ_NONE if there are any spurious interrupts - seems prone to causing
-> collateral damage.
-> 
-> What did you have in mind?
+On 20 June 2017 at 09:29, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/18, Chunyan Zhang wrote:
+>> Added Spreadtrum's clock driver common structure and registration code.
+>>
+>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>> ---
+>>  drivers/clk/Makefile          |  1 +
+>>  drivers/clk/sprd/Makefile     |  3 ++
+>>  drivers/clk/sprd/ccu_common.c | 78 +++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/sprd/ccu_common.h | 90 +++++++++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 172 insertions(+)
+>>  create mode 100644 drivers/clk/sprd/Makefile
+>>  create mode 100644 drivers/clk/sprd/ccu_common.c
+>>  create mode 100644 drivers/clk/sprd/ccu_common.h
+>>
+>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>> index c19983a..1d62721 100644
+>> --- a/drivers/clk/Makefile
+>> +++ b/drivers/clk/Makefile
+>> @@ -81,6 +81,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)    += samsung/
+>>  obj-$(CONFIG_ARCH_SIRF)                      += sirf/
+>>  obj-$(CONFIG_ARCH_SOCFPGA)           += socfpga/
+>>  obj-$(CONFIG_PLAT_SPEAR)             += spear/
+>> +obj-$(CONFIG_ARCH_SPRD)                      += sprd/
+>>  obj-$(CONFIG_ARCH_STI)                       += st/
+>>  obj-$(CONFIG_ARCH_SUNXI)             += sunxi/
+>>  obj-$(CONFIG_ARCH_SUNXI)             += sunxi-ng/
+>> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+>> new file mode 100644
+>> index 0000000..8f802b2
+>> --- /dev/null
+>> +++ b/drivers/clk/sprd/Makefile
+>> @@ -0,0 +1,3 @@
+>> +ifneq ($(CONFIG_OF),)
+>> +obj-y        += ccu_common.o
+>> +endif
+>
+> I'd prefer a Kconfig for SPRD clk drivers instead of this
+> CONFIG_OF check. Then we can compile test the sprd code in
+> configurations that don't have CONFIG_ARCH_SPRD set too.
 
-I was wondering about "stat & auxirq.enables". With that you wouldn't forward 
-any spurious interrupts to e.g. SPI1. I don't know which way is better, 
-returning IRQ_NONE is a masked interrupt happens, or pass it further down. I 
-guess this also raises a warning if the SPI driver also returns IRQ_NONE.
-BTW: Is it even allowed to call generic_handle_irq on a masked irq?
+Ok, make sense, will address this in the next version.
 
-> >> +	if (masked & BCM2835_AUXIRQ_UART_MASK)
-> >> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
-> >> +						     BCM2835_AUXIRQ_UART_IRQ));
-> >> +
-> >> +	if (masked & BCM2835_AUXIRQ_SPI1_MASK)
-> >> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
-> >> +						     BCM2835_AUXIRQ_SPI1_IRQ));
-> >> +
-> >> +	if (masked & BCM2835_AUXIRQ_SPI2_MASK)
-> >> +		generic_handle_irq(irq_linear_revmap(auxirq.domain,
-> >> +						     BCM2835_AUXIRQ_SPI2_IRQ));
-> >> +
-> >> +	return (masked & BCM2835_AUXIRQ_ALL_MASK) ? IRQ_HANDLED : IRQ_NONE;
-> >> +}
-> > 
-> > How does interrupt acknowledgement work in these 3 interrupts work?
-> 
-> The interrupt "controller" is just combinatorial logic on the three
-> level-sensitive interrupt lines from the devices. Interrupts must be
-> acknowledged and cleared at source.
+>
+>> diff --git a/drivers/clk/sprd/ccu_common.c b/drivers/clk/sprd/ccu_common.c
+>> new file mode 100644
+>> index 0000000..911f4ba
+>> --- /dev/null
+>> +++ b/drivers/clk/sprd/ccu_common.c
+>> @@ -0,0 +1,78 @@
+>> +/*
+>> + * Spreadtrum clock infrastructure
+>> + *
+>> + * Copyright (C) 2017 Spreadtrum, Inc.
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0
+>> + */
+>> +
+>> +#include "ccu_common.h"
+>> +
+>> +static inline void __iomem *ccu_find_base(struct ccu_addr_map *maps,
+>> +                                       unsigned int num, unsigned int reg)
+>> +{
+>> +     int i;
+>> +
+>> +     for (i = 0; i < num; i++)
+>> +             if ((reg & 0xffff0000) == maps[i].phy)
+>
+> What is this?
 
-Thanks for the info.
+You can look at ccu-sc9860.c, different from sunxi-ng, we specify the
+whole register address rather than register offset when initializing
+Spreadtrum clocks, the high 16 bits is the base address which is
+configured in DT, and is mapped in the board clock files like
+ccu-sc9860.c, I will write more in commit message to explain this when
+cooking next version of the patchset.
 
-Best regards,
-Alexander
+>
+>> +                     return maps[i].virt;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
+>> +                unsigned int count, const struct sprd_ccu_desc *desc)
+>> +{
+>> +     int i, ret = 0;
+>> +     struct ccu_common *cclk;
+>> +     struct clk_hw *hw;
+>> +
+>> +     for (i = 0; i < desc->num_ccu_clks; i++) {
+>> +             cclk = desc->ccu_clks[i];
+>> +             if (!cclk)
+>> +                     continue;
+>> +
+>> +             cclk->base = ccu_find_base(maps, count, cclk->reg);
+>> +             if (!cclk->base) {
+>> +                     pr_err("%s: No mapped address found for clock(0x%x)\n",
+>> +                             __func__, cclk->reg);
+>> +                     return -EINVAL;
+>> +             }
+>> +             cclk->reg = cclk->reg & 0xffff;
+>> +     }
+>> +
+>> +     for (i = 0; i < desc->hw_clks->num; i++) {
+>> +
+>> +             hw = desc->hw_clks->hws[i];
+>> +
+>> +             if (!hw)
+>> +                     continue;
+>> +
+>> +             ret = clk_hw_register(NULL, hw);
+>> +             if (ret) {
+>> +                     pr_err("Couldn't register clock %d - %s\n",
+>> +                            i, hw->init->name);
+>> +                     goto err_clk_unreg;
+>> +             }
+>> +     }
+>> +
+>> +     ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+>> +                                  desc->hw_clks);
+>> +     if (ret) {
+>> +             pr_err("Failed to add clock provider.\n");
+>> +             goto err_clk_unreg;
+>> +     }
+>> +
+>> +     return 0;
+>> +
+>> +err_clk_unreg:
+>> +     while (--i >= 0) {
+>> +             hw = desc->hw_clks->hws[i];
+>> +             if (!hw)
+>> +                     continue;
+>> +
+>> +             clk_hw_unregister(hw);
+>> +     }
+>> +
+>> +     return ret;
+>> +}
+>> diff --git a/drivers/clk/sprd/ccu_common.h b/drivers/clk/sprd/ccu_common.h
+>> new file mode 100644
+>> index 0000000..ff07772
+>> --- /dev/null
+>> +++ b/drivers/clk/sprd/ccu_common.h
+>> @@ -0,0 +1,90 @@
+>> +/*
+>> + * Spreadtrum clock infrastructure
+>> + *
+>> + * Copyright (C) 2017 Spreadtrum, Inc.
+>> + *
+>> + * SPDX-License-Identifier: GPL-2.0
+>> + */
+>> +
+>> +#ifndef _CCU_COMMON_H_
+>> +#define _CCU_COMMON_H_
+>> +
+>> +#include <linux/clk-provider.h>
+>> +
+>> +struct device_node;
+>> +
+>> +#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)   \
+>> +     (&(struct clk_init_data) {                      \
+>> +             .flags          = _flags,               \
+>> +             .name           = _name,                \
+>> +             .parent_names   = NULL,                 \
+>> +             .num_parents    = 0,                    \
+>> +             .ops            = _ops,                 \
+>> +     })
+>> +
+>> +#define CLK_HW_INIT(_name, _parent, _ops, _flags)            \
+>> +     (&(struct clk_init_data) {                              \
+>> +             .flags          = _flags,                       \
+>> +             .name           = _name,                        \
+>> +             .parent_names   = (const char *[]) { _parent }, \
+>> +             .num_parents    = 1,                            \
+>> +             .ops            = _ops,                         \
+>> +     })
+>> +
+>> +#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)   \
+>> +     (&(struct clk_init_data) {                              \
+>> +             .flags          = _flags,                       \
+>> +             .name           = _name,                        \
+>> +             .parent_names   = _parents,                     \
+>> +             .num_parents    = ARRAY_SIZE(_parents),         \
+>> +             .ops            = _ops,                         \
+>> +     })
+>> +
+>> +#define CLK_FIXED_FACTOR(_struct, _name, _parent,                    \
+>> +                     _div, _mult, _flags)                            \
+>> +     struct clk_fixed_factor _struct = {                             \
+>> +             .div            = _div,                                 \
+>> +             .mult           = _mult,                                \
+>> +             .hw.init        = CLK_HW_INIT(_name,                    \
+>> +                                           _parent,                  \
+>> +                                           &clk_fixed_factor_ops,    \
+>> +                                           _flags),                  \
+>> +     }
+>> +
+>> +struct ccu_common {
+>> +     void __iomem    *base;
+>> +     u32             reg;
+>> +     spinlock_t      *lock;
+>> +     struct clk_hw   hw;
+>> +};
+>> +
+>> +struct ccu_addr_map {
+>> +     phys_addr_t phy;
+>> +     void __iomem *virt;
+>> +};
+>> +
+>> +static inline u32 ccu_readl(struct ccu_common *common)
+>> +{
+>> +     return readl(common->base + common->reg);
+>> +}
+>> +
+>> +static inline void ccu_writel(u32 val, struct ccu_common *common)
+>> +{
+>> +     writel(val, common->base + common->reg);
+>> +}
+>> +
+>> +static inline struct ccu_common *hw_to_ccu_common(struct clk_hw *hw)
+>> +{
+>> +     return container_of(hw, struct ccu_common, hw);
+>> +}
+>> +
+>> +struct sprd_ccu_desc {
+>> +     struct ccu_common               **ccu_clks;
+>> +     unsigned long                   num_ccu_clks;
+>> +     struct clk_hw_onecell_data      *hw_clks;
+>> +};
+>> +
+>> +int sprd_ccu_probe(struct device_node *node, struct ccu_addr_map *maps,
+>> +                unsigned int count, const struct sprd_ccu_desc *desc);
+>> +
+>> +#endif /* _CCU_COMMON_H_ */
+>
+> Do you call them CCUs internally? I thought CCU was a sunxi
+> thing, so it may make more sense to call it whatever you call the
+> clock controller on your hardware.
 
+OK, will address that.
 
+Thanks,
+Chunyan
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
