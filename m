@@ -1,80 +1,138 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1497253225.3086.2.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: meson8b: add compatibles for Meson8 and
- Meson8m2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
- robh+dt@kernel.org, mark.rutland@arm.com, carlo@caione.org,
- linux@armlinux.org.uk,  devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Date: Mon, 12 Jun 2017 09:40:25 +0200
-In-Reply-To: <m2lgp19ghu.fsf@baylibre.com>
-References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
-	 <20170604183341.21417-2-martin.blumenstingl@googlemail.com>
-	 <1496606325.3552.16.camel@baylibre.com> <m2lgp19ghu.fsf@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        "daniel.thompson@linaro.org"
+	<daniel.thompson@linaro.org>,
+        "andrea.merello@gmail.com"
+	<andrea.merello@gmail.com>,
+        "radoslaw.pietrzyk@gmail.com"
+	<radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        "Olivier
+ BIDEAU" <olivier.bideau@st.com>,
+        Amelie DELAUNAY <amelie.delaunay@st.com>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
+Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
+Date: Thu, 22 Jun 2017 14:20:33 +0000
+Message-ID: <18dca3a5-6e9d-fdd5-d2a3-614d652199a6@st.com>
+References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
+ <20170621220703.GI4493@codeaurora.org>
+In-Reply-To: <20170621220703.GI4493@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2017-06-09 at 11:13 -0700, Kevin Hilman wrote:
-> Jerome Brunet <jbrunet@baylibre.com> writes:
-> 
-> > On Sun, 2017-06-04 at 20:33 +0200, Martin Blumenstingl wrote:
-> > > The clock controller on Meson8, Meson8b and Meson8m2 is very similar
-> > > based on the code from the Amlogic GPL kernel sources. Add separate
-> > > compatibles for each SoC to make sure that we can easily implement
-> > > all the small differences for each SoC later on.
-> > > 
-> > > In general the Meson8 and Meson8m2 seem to be almost identical as they
-> > > even share the same mach-meson8 directory in Amlogic's GPL kernel
-> > > sources.
-> > > The main clocks on Meson8, Meson8b and Meson8m2 are very similar,
-> > > because they are all using the same PLL values, 90% of the clock gates
-> > > are the same (the actual diffstat of the mach-meson8/clock.c and
-> > > mach-meson8b/clock.c files is around 30 to 40 lines, when excluding
-> > > all commented out code).
-> > > The difference between the Meson8 and Meson8b clock gates seem to be:
-> > > - Meson8 has AIU_PCLK, HDMI_RX, VCLK2_ENCT, VCLK2_ENCL, UART3,
-> > >   CSI_DIG_CLKIN gates which don't seem to be available on Meson8b
-> > > - the gate on Meson8 for bit 7 seems to be named "_1200XXX" instead
-> > >   of "PERIPHS_TOP" (on Meson8b)
-> > > - Meson8b has a SANA gate which doesn't seem to exist on Meson8 (or
-> > >   on Meson8 the same bit is used by the UART3 gate in Amlogic's GPL
-> > >   kernel sources)
-> > > None of these gates is added for now, since it's unclear whether these
-> > > definitions are actually correct (the VCLK2_ENCT gate for example is
-> > > defined, but only used in some commented block).
-> > > 
-> > > The main difference between all three SoCs seem to be the video (VPU)
-> > > clocks. Apart from different supported clock rates (according to vpu.c
-> > > in mach-meson8 and mach-meson8b from Amlogic's GPL kernel sources) the
-> > > most notable difference is that Meson8m2 has a GP_PLL clock and a mux
-> > > (probably the same as on the Meson GX SoCs) to support glitch-free
-> > > (clock rate) switching.
-> > > None of these VPU clocks are not supported by our mainline meson8b
-> > > clock driver yet though.
-> > > 
-> > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > > ---
-> > >  .../devicetree/bindings/clock/amlogic,meson8b-clkc.txt        | 11
-> > > +++++++---
-> > 
-> > I think you should split the binding documentation and clk changes into
-> > separate
-> > patches.
-> > 
-> > > -
-> > >  drivers/clk/meson/Kconfig                                     |  6 +++---
-> > >  drivers/clk/meson/meson8b.c                                   |  5 ++++-
-> > 
-> > The change being more platform than clock related, I'd prefer if Kevin or
-> > Carlo
-> > ack it before we apply it.
-> 
-> Acked-by: Kevin Hilman <khilman@baylibre.com>
-
-Applied to next/drivers with Kevin and Rob's Acks.
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciByZXZpZXdpbmcuDQoNCk9uIDA2LzIyLzIwMTcgMTI6
+MDcgQU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gT24gMDYvMDcsIGdhYnJpZWwuZmVybmFuZGV6
+QHN0LmNvbSB3cm90ZToNCj4+IEZyb206IEdhYnJpZWwgRmVybmFuZGV6IDxnYWJyaWVsLmZlcm5h
+bmRlekBzdC5jb20+DQo+Pg0KPj4gVGhpcyBwYXRjaCBlbmFibGVzIGNsb2NrcyBmb3IgU1RNMzJI
+NzQzIGJvYXJkcy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBHYWJyaWVsIEZlcm5hbmRleiA8Z2Fi
+cmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4NCj4+IGZvciBNRkQgY2hhbmdlczoNCj4+IEFja2Vk
+LWJ5OiBMZWUgSm9uZXMgPGxlZS5qb25lc0BsaW5hcm8ub3JnPg0KPj4NCj4+IGZvciBEVC1CaW5k
+aW5ncw0KPj4gQWNrZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+PiB2NDoN
+Cj4+ICAgIC0gcmVuYW1lIGxvY2sgaW50byBzdG0zMnJjY19sb2NrDQo+PiAgICAtIGRvbid0IHVz
+ZSBjbGtfcmVhZGwoKQ0KPj4gICAgLSByZW1vdmUgdXNlbGVzcyBwYXJlbnRoZXNlcyB3aXRoIEdF
+Tk1BU0sNCj4+ICAgIC0gZml4IHBhcmVudHMgb2YgdGltZXJfeCBjbG9ja3MNCj4+ICAgIC0gc3Vw
+cHJlc3MgcGxsIGNvbmZpZ3VyYXRpb24gZnJvbSBEVA0KPj4gICAgLSBmaXgga2J1aWxkIHdhcm5p
+bmcNCj4+DQo+PiB2MzoNCj4+ICAgIC0gZml4IGNvbXBhdGlibGUgc3RyaW5nICJzdG0zMmg3LXBs
+bCIgaW50byAic3Qsc3RtMzJoNy1wbGwiDQo+PiAgICAtIGZpeCBiYWQgcGFyZW50IG5hbWUgZm9y
+IG1jbzIgY2xvY2sNCj4+ICAgIC0gc2V0IENMS19TRVRfUkFURV9QQVJFTlQgZm9yIGx0ZGMgY2xv
+Y2sNCj4+ICAgIC0gc2V0IENMS19JR05PUkVfVU5VU0VEIGZvciBwbGwxDQo+PiAgICAtIGRpc2Fi
+bGUgcG93ZXIgZG9tYWluIHdyaXRlIHByb3RlY3Rpb24gb24gZGlzYWJsZSBvcHMgaWYgbmVlZGVk
+DQo+Pg0KPj4NCj4+IHYyOg0KPj4gICAgLSByZW5hbWUgY29tcGF0aWJsZSBzdHJpbmcgInN0bTMy
+LHBsbCIgaW50byAic3RtMzJoNy1wbGwiDQo+PiAgICAtIHN1cHByZXNzICJzdCxwbGxyZ2UiIHBy
+b3BlcnR5DQo+PiAgICAtIHN1cHByZXNzICJzdCwgZnJhYy1zdGF0dXMiIHByb3BlcnR5DQo+PiAg
+ICAtIGNoYW5nZSBtYW5hZ2VtZW50IG9mICJzdCxmcmFjIiAgcHJvcGVydHkNCj4+IAkwIDogZW5h
+YmxlIDAgcGxsIGludGVnZXIgbW9kZQ0KPj4gCW90aGVyIHZhbHVlcyA6IGVuYWJsZSBwbGwgaW4g
+ZnJhY3Rpb25hbCBtb2RlICh2YWx1ZSBpcw0KPj4gCXRoZSBmcmFjdGlvbmFsIGZhY3RvcikNCj4g
+UGxlYXNlIGRyb3AgdGhlIGNoYW5nZWxvZyBmcm9tIGNvbW1pdCB0ZXh0Lg0KDQpzdHJhbmdlLCBp
+IGFkZGVkIHRoZSBjaGFuZ2Vsb2cgYWZ0ZXIgJ2dpdCBmb3JtYXQtcGF0Y2gnDQoNCj4NCj4+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJoNy5jIGIvZHJpdmVycy9jbGsvY2xrLXN0
+bTMyaDcuYw0KPj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAuLjI5MDdj
+MWYNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmg3LmMN
+Cj4+IEBAIC0wLDAgKzEsMTUzMiBAQA0KPj4gKy8qIFBvd2VyIGRvbWFpbiBoZWxwZXIgKi8NCj4+
+ICtzdGF0aWMgaW5saW5lIHZvaWQgZGlzYWJsZV9wb3dlcl9kb21haW5fd3JpdGVfcHJvdGVjdGlv
+bih2b2lkKQ0KPj4gK3sNCj4+ICsJaWYgKHBkcm0pDQo+PiArCQlyZWdtYXBfdXBkYXRlX2JpdHMo
+cGRybSwgMHgwMCwgKDEgPDwgOCksICgxIDw8IDgpKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGlj
+IGlubGluZSB2b2lkIGVuYWJsZV9wb3dlcl9kb21haW5fd3JpdGVfcHJvdGVjdGlvbih2b2lkKQ0K
+Pj4gK3sNCj4+ICsJaWYgKHBkcm0pDQo+PiArCQlyZWdtYXBfdXBkYXRlX2JpdHMocGRybSwgMHgw
+MCwgKDEgPDwgOCksICgwIDw8IDgpKTsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIGlubGluZSBp
+bnQgaXNfZW5hYmxlX3Bvd2VyX2RvbWFpbl93cml0ZV9wcm90ZWN0aW9uKHZvaWQpDQo+IFJldHVy
+biBib29sLCBub3QgaW50Pw0KDQpvaw0KDQo+DQo+PiArew0KPj4gKwlpZiAocGRybSkgew0KPj4g
+KwkJdTMyIHZhbDsNCj4+ICsNCj4+ICsJCXJlZ21hcF9yZWFkKHBkcm0sIDB4MDAsICZ2YWwpOw0K
+Pj4gKw0KPj4gKwkJcmV0dXJuICEodmFsICYgMHgxMDApOw0KPj4gKwl9DQo+PiArCXJldHVybiAt
+MTsNCj4gUmV0dXJuaW5nIC0xIGxvb2tzIG9kZC4NCg0Kb2sgaSB3aWxsIGNoYW5nZSBpdA0KDQo+
+DQo+PiArfQ0KPj4gKw0KPj4gKy8qIEdhdGUgY2xvY2sgd2l0aCByZWFkeSBiaXQgYW5kIGJhY2t1
+cCBkb21haW4gbWFuYWdlbWVudCAqLw0KPj4gK3N0cnVjdCBzdG0zMl9yZWFkeV9nYXRlIHsNCj4+
+ICsJc3RydWN0CWNsa19nYXRlIGdhdGU7DQo+PiArCXU4CWJpdF9yZHk7DQo+PiArCXU4CWJhY2t1
+cF9kb21haW47DQo+PiArfTsNCj4+ICsNCj4+ICsjZGVmaW5lIHRvX3JlYWR5X2dhdGVfY2xrKF9y
+Z2F0ZSkgY29udGFpbmVyX29mKF9yZ2F0ZSwgc3RydWN0IHN0bTMyX3JlYWR5X2dhdGUsXA0KPj4g
+KwkJZ2F0ZSkNCj4+ICsNCj4+ICsjZGVmaW5lIFJHQVRFX1RJTUVPVVQgNjAwMDAwDQo+PiArDQo+
+PiArc3RhdGljIGludCByZWFkeV9nYXRlX2Nsa19pc19lbmFibGVkKHN0cnVjdCBjbGtfaHcgKmh3
+KQ0KPj4gK3sNCj4+ICsJcmV0dXJuIGNsa19nYXRlX29wcy5pc19lbmFibGVkKGh3KTsNCj4+ICt9
+DQo+IFBlcmhhcHMgd2Ugc2hvdWxkIGV4cG9zZSBjbGtfZ2F0ZV9vcHM6OmlzX2VuYWJsZWQgYXMg
+ZnVuY3Rpb25zDQo+IHRoYXQgY2FuIGJlIGRpcmVjdGx5IGNhbGxlZCBhbmQgYXNzaWduZWQgaW4g
+cGxhY2VzIGxpa2UgdGhpcyBzbw0KPiB3ZSBkb24ndCBuZWVkIHdyYXBwZXIgZnVuY3Rpb25zIHRo
+YXQgZG8gbm90aGluZyBiZXNpZGVzIGZvcndhcmQNCj4gdGhlIGNhbGwuDQoNCm9rIGkgd2lsbCBh
+ZGQgYSBwYXRjaCBpbiBjbGsuYyBhbmQgY2xrLXByb3ZpZGVyLmggdG8gZXhwb3J0ICdjbGtfZ2F0
+ZV9pc19lbmFibGVkJw0KDQo+DQo+PiArDQo+PiArc3RhdGljIGludCByZWFkeV9nYXRlX2Nsa19l
+bmFibGUoc3RydWN0IGNsa19odyAqaHcpDQo+PiArew0KPj4gKwlzdHJ1Y3QgY2xrX2dhdGUgKmdh
+dGUgPSB0b19jbGtfZ2F0ZShodyk7DQo+PiArCXN0cnVjdCBzdG0zMl9yZWFkeV9nYXRlICpyZ2F0
+ZSA9IHRvX3JlYWR5X2dhdGVfY2xrKGdhdGUpOw0KPj4gKwlpbnQgZGJwX3N0YXR1czsNCj4+ICsJ
+aW50IGJpdF9zdGF0dXM7DQo+PiArCXVuc2lnbmVkIGludCB0aW1lb3V0ID0gUkdBVEVfVElNRU9V
+VDsNCj4+ICsNCj4+ICsJaWYgKGNsa19nYXRlX29wcy5pc19lbmFibGVkKGh3KSkNCj4+ICsJCXJl
+dHVybiAwOw0KPj4gKw0KPj4gKwlkYnBfc3RhdHVzID0gaXNfZW5hYmxlX3Bvd2VyX2RvbWFpbl93
+cml0ZV9wcm90ZWN0aW9uKCk7DQo+PiArDQo+PiArCWlmIChyZ2F0ZS0+YmFja3VwX2RvbWFpbiAm
+JiBkYnBfc3RhdHVzKQ0KPj4gKwkJZGlzYWJsZV9wb3dlcl9kb21haW5fd3JpdGVfcHJvdGVjdGlv
+bigpOw0KPj4gKw0KPj4gKwljbGtfZ2F0ZV9vcHMuZW5hYmxlKGh3KTsNCj4+ICsNCj4+ICsJZG8g
+ew0KPj4gKwkJYml0X3N0YXR1cyA9ICEocmVhZGwoZ2F0ZS0+cmVnKSAmIEJJVChyZ2F0ZS0+Yml0
+X3JkeSkpOw0KPj4gKw0KPj4gKwkJaWYgKGJpdF9zdGF0dXMpDQo+PiArCQkJdWRlbGF5KDEwMDAp
+Ow0KPj4gKw0KPj4gKwl9IHdoaWxlIChiaXRfc3RhdHVzICYmIC0tdGltZW91dCk7DQo+IHJlYWRs
+X3BvbGxfdGltZW91dD8NCg0KbGFzdCB0aW1lIGl0IGRpZG4ndCB3b3JrLCBpIHdpbGwgaW52ZXN0
+aWdhdGUgYWdhaW4NCg0KPj4gKw0KPj4gKy8qIFJUQyBjbG9jayAqLw0KPj4gK3N0YXRpYyB1OCBy
+dGNfbXV4X2dldF9wYXJlbnQoc3RydWN0IGNsa19odyAqaHcpDQo+PiArew0KPj4gKwlyZXR1cm4g
+Y2xrX211eF9vcHMuZ2V0X3BhcmVudChodyk7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQg
+cnRjX211eF9zZXRfcGFyZW50KHN0cnVjdCBjbGtfaHcgKmh3LCB1OCBpbmRleCkNCj4+ICt7DQo+
+PiArCWludCBkYnBfc3RhdHVzOw0KPj4gKwlpbnQgZXJyOw0KPj4gKw0KPj4gKwlkYnBfc3RhdHVz
+ID0gaXNfZW5hYmxlX3Bvd2VyX2RvbWFpbl93cml0ZV9wcm90ZWN0aW9uKCk7DQo+PiArDQo+PiAr
+CWlmIChkYnBfc3RhdHVzKQ0KPj4gKwkJZGlzYWJsZV9wb3dlcl9kb21haW5fd3JpdGVfcHJvdGVj
+dGlvbigpOw0KPj4gKw0KPj4gKwllcnIgPSBjbGtfbXV4X29wcy5zZXRfcGFyZW50KGh3LCBpbmRl
+eCk7DQo+PiArDQo+PiArCWlmIChkYnBfc3RhdHVzKQ0KPj4gKwkJZW5hYmxlX3Bvd2VyX2RvbWFp
+bl93cml0ZV9wcm90ZWN0aW9uKCk7DQo+PiArDQo+PiArCXJldHVybiBlcnI7DQo+PiArfQ0KPj4g
+Kw0KPj4gK3N0YXRpYyBpbnQgcnRjX211eF9kZXRlcm1pbmVfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpo
+dywNCj4+ICsJCXN0cnVjdCBjbGtfcmF0ZV9yZXF1ZXN0ICpyZXEpDQo+PiArew0KPj4gKwlyZXR1
+cm4gY2xrX211eF9vcHMuZGV0ZXJtaW5lX3JhdGUoaHcsIHJlcSk7DQo+PiArfQ0KPiBJbiB0aGlz
+IGNhc2Ugd2UgaGF2ZSB0aGF0IGZ1bmN0aW9uIGV4cG9zZWQgYWxyZWFkeSBzbyBpdCBjb3VsZA0K
+PiBiZSBhc3NpZ25lZC4NCg0Kb2sgaSB3aWxsIHVzZSBfX2Nsa19tdXhfZGV0ZXJtaW5lX3JhdGUN
+Cg0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX29wcyBydGNfbXV4X29wcyA9IHsN
+Cj4+ICsJLmdldF9wYXJlbnQJPSBydGNfbXV4X2dldF9wYXJlbnQsDQo+PiArCS5zZXRfcGFyZW50
+CT0gcnRjX211eF9zZXRfcGFyZW50LA0KPj4gKwkuZGV0ZXJtaW5lX3JhdGUgPSBydGNfbXV4X2Rl
+dGVybWluZV9yYXRlLA0KPj4gK307DQo+PiArDQo+PiArLyogQ2xvY2sgZ2F0ZSB3aXRoIGJhY2t1
+cCBkb21haW4gcHJvdGVjdGlvbiBtYW5hZ2VtZW50ICovDQo+PiArc3RhdGljIGludCBiZF9nYXRl
+X2lzX2VuYWJsZWQoc3RydWN0IGNsa19odyAqaHcpDQo+PiArew0KPj4gKwlyZXR1cm4gY2xrX2dh
+dGVfb3BzLmlzX2VuYWJsZWQoaHcpOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50IGJkX2dh
+dGVfZW5hYmxlKHN0cnVjdCBjbGtfaHcgKmh3KQ0KPj4gK3sNCj4+ICsJaW50IGRicF9zdGF0dXM7
+DQo+PiArCWludCBlcnI7DQo+PiArDQo+PiArCWlmIChiZF9nYXRlX2lzX2VuYWJsZWQoaHcpKQ0K
+Pj4gKwkJcmV0dXJuIDA7DQo+PiArDQo+IFsuLi5dDQo+PiArDQo+PiArCXJldHVybjsNCj4+ICsN
+Cj4+ICtlcnJfZnJlZV9jbGtzOg0KPj4gKwlrZnJlZShjbGtfZGF0YSk7DQo+PiAgICt9DQo+PiAr
+DQo+PiArQ0xLX09GX0RFQ0xBUkVfRFJJVkVSKHN0bTMyaDdfcmNjLCAic3Qsc3RtMzJoNzQzLXJj
+YyIsIHN0bTMyaDdfcmNjX2luaXQpOw0KPiBDYW4geW91IGFkZCBhIGNvbW1lbnQgYWJvdmUgdGhp
+cyB3aHkgd2UgY2FuJ3QgZG8gYSBzcGxpdCBkZXNpZ24NCj4gd2l0aCBhIHBsYXRmb3JtIGRyaXZl
+ciBhbmQgYSBDTEtfT0ZfREVDTEFSRV9EUklWRVIoKSByb3V0aW5lIGhlcmUNCj4gYW5kIGFsc28g
+bWVudGlvbiB0aGUgb3RoZXIgZHJpdmVyIHRoYXQncyBwcm9iaW5nIGFnYWluc3QgdGhlIHNhbWUN
+Cj4gY29tcGF0aWJsZT8NCj4NCg0Kb2sNCg==
