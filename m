@@ -1,178 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:47001 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752727AbdFWOoJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2017 10:44:09 -0400
-Date: Fri, 23 Jun 2017 16:44:06 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 07/11] drm: sun4i: add support for the TV encoder in
- H3 SoC
-Message-ID: <20170623144406.cmib5wabi5qiuqme@flea.lan>
-References: <20170604160149.30230-1-icenowy@aosc.io>
- <20170604160149.30230-8-icenowy@aosc.io>
- <20170607093845.cu5kk55nj72roysf@flea.lan>
- <362bb72d74cd7181ae02dbf73b0e724e@aosc.io>
- <20170613074432.btwgc4e7pndtsvbf@flea.lan>
- <5A2149A9-CC7B-4946-9219-A4FE3228B402@aosc.io>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: keystone: TI_SCI_PROTOCOL is needed for clk driver
+To: Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>
+CC: Santosh Shilimkar <ssantosh@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20170620201249.145468-1-arnd@arndb.de>
+ <20170621215053.GH4493@codeaurora.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <c5b9e51f-4c16-6cdd-0b84-dd372d1e7982@ti.com>
+Date: Thu, 22 Jun 2017 09:09:09 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="htddjr5mziyb4jku"
-In-Reply-To: <5A2149A9-CC7B-4946-9219-A4FE3228B402@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170621215053.GH4493@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 22/06/17 00:50, Stephen Boyd wrote:
+> On 06/20, Arnd Bergmann wrote:
+>> CONFIG_COMPILE_TEST allows building a configuration without
+>> TI_SCI_PROTOCOL, which then fails to link:
+>>
+>> drivers/clk/keystone/sci-clk.o: In function `ti_sci_clk_probe':
+>> sci-clk.c:(.text.ti_sci_clk_probe+0x4c): undefined reference to `devm_ti_sci_get_handle'
+>>
+>> This makes it a hard dependency. Right now, that means we can't
+>> actually compile-test the driver unless ARCH_KEYSTONE is set as
+>> well, but we can fix that by allowing TI_MESSAGE_MANAGER to
+>> be selected for COMPILE_TEST as well.
+>>
+>> Fixes: b745c0794e2f ("clk: keystone: Add sci-clk driver support")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>
+> 
+> Looks ok to me. Tero?
+> 
 
---htddjr5mziyb4jku
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, looks okay to me also, been traveling so sorry about the latency.
 
-On Tue, Jun 13, 2017 at 05:51:42PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2017=E5=B9=B46=E6=9C=8813=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
-3:44:32, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
-=B0:
-> >On Sun, Jun 11, 2017 at 02:43:42PM +0800, icenowy@aosc.io wrote:
-> >> =E5=9C=A8 2017-06-07 17:38=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=
-=BC=9A
-> >> > On Mon, Jun 05, 2017 at 12:01:45AM +0800, Icenowy Zheng wrote:
-> >> > > Allwinner H3 features a TV encoder similar to the one in earlier
-> >SoCs,
-> >> > > but has a internal fixed clock divider that divides the TCON1
-> >clock
-> >> > > (called TVE clock in datasheet) by 11.
-> >> > >=20
-> >> > > Add support for it.
-> >> > >=20
-> >> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >> > > ---
-> >> > > Changes in v2:
-> >> > > - Quirk part rewritten.
-> >> > >=20
-> >> > >  drivers/gpu/drm/sun4i/sun4i_tv.c | 35
-> >> > > ++++++++++++++++++++++++++++++++++-
-> >> > >  1 file changed, 34 insertions(+), 1 deletion(-)
-> >> > >=20
-> >> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c
-> >> > > b/drivers/gpu/drm/sun4i/sun4i_tv.c
-> >> > > index 338b9e5bb2a3..b9ff6d5ea67a 100644
-> >> > > --- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-> >> > > +++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-> >> > > @@ -13,6 +13,7 @@
-> >> > >  #include <linux/clk.h>
-> >> > >  #include <linux/component.h>
-> >> > >  #include <linux/of_address.h>
-> >> > > +#include <linux/of_device.h>
-> >> > >  #include <linux/regmap.h>
-> >> > >  #include <linux/reset.h>
-> >> > >=20
-> >> > > @@ -169,14 +170,21 @@ struct tv_mode {
-> >> > >  	const struct resync_parameters	*resync_params;
-> >> > >  };
-> >> > >=20
-> >> > > +struct sun4i_tv_quirks {
-> >> > > +	int fixed_divider;
-> >> > > +};
-> >> > > +
-> >> > >  struct sun4i_tv {
-> >> > >  	struct drm_connector	connector;
-> >> > >  	struct drm_encoder	encoder;
-> >> > >=20
-> >> > >  	struct clk		*clk;
-> >> > > +	struct clk		*mod_clk;
-> >> > >  	struct regmap		*regs;
-> >> > >  	struct reset_control	*reset;
-> >> > >=20
-> >> > > +	const struct sun4i_tv_quirks *quirks;
-> >> > > +
-> >> > >  	struct sun4i_drv	*drv;
-> >> > >  };
-> >> > >=20
-> >> > > @@ -391,6 +399,12 @@ static void sun4i_tv_mode_set(struct
-> >> > > drm_encoder *encoder,
-> >> > >  	struct sun4i_tcon *tcon =3D crtc->tcon;
-> >> > >  	const struct tv_mode *tv_mode =3D sun4i_tv_find_tv_by_mode(mode);
-> >> > >=20
-> >> > > +	if (tv->quirks->fixed_divider) {
-> >> > > +		DRM_DEBUG_DRIVER("Applying fixed divider %d on TVE clock\n",
-> >> > > +				 tv->quirks->fixed_divider);
-> >> > > +		mode->crtc_clock *=3D tv->quirks->fixed_divider;
-> >> > > +	}
-> >> > > +
-> >> >=20
-> >> > You're not allowed to change the mode in mode_set, and you
-> >shouldn't
-> >> > even change it. The output pixel clock is still 27MHz.
-> >> >=20
-> >> > You should implement that using the states, as we discussed
-> >already.
-> >>=20
-> >> After reading the comments at
-> >include/drm/drm_modeset_helper_vtables.h,
-> >> I think the atomic_check function is allowed to directly change
-> >> the adjust_mode of crtc_state.
-> >>=20
-> >> And according to other comments at include/drm/drm_modes.h, the
-> >> crtc_clock in adjust_mode should be the clock to be really feed
-> >> to the hardware.
-> >>=20
-> >> So I think I can just change this in atomic_check.
-> >>=20
-> >> However, the mode_set function of sun4i_tv seems to be not
-> >> regarding adjusted_mode and still use original mode.
-> >>=20
-> >> So my current design is:
-> >> - Multiply adjusted_mode in atomic_check.
-> >> - Feed adjust_mode to TCON code in mode_set function.
-> >>=20
-> >> Is this proper?
-> >>=20
-> >> (From my own understanding to the comments I think so.)
-> >
-> >No, it's not. The pixel clock in the mode is the pixel clock output
-> >physically by the connector. You want to use it for an intermediate
-> >clock in your pipeline.
-> >
-> >This is not the same clock, and not the same frequency.
->=20
-> So should a multiplier parameter be passed via
-> tcon1_mode_set function?
-
-No, and I've explained a couple of times already what you needed to
-do. Please read again the previous messages.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---htddjr5mziyb4jku
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZTSk2AAoJEBx+YmzsjxAgPdMP/ApPr8YU7p1FoWIHmx8qUEHX
-DpWK0KJD8iVdtHsedUX3j2ryoDQTsB1KSuB4t7cT9O4ikzyCDafHlUOOcuxm8B7i
-Fq/gsjONlByHPSntfq1bIjr4GvqVOMbmVJ0EsZhkoWphzLOPQ9ecI1QKrLhWumkN
-rllG6Ayd+nLbIDrwC5fXBThE83eQgNmTGb9i0zvHjnOrTZKMEEHGTRbvaS//u5eS
-tx0wdLFhvC7Ggil9LEk9Hq8DofEtRdFn1HMnccSMK/Ekq4NZhJjiGsATP9i+U2Fi
-sVGky2eCPymoWqJENDMV9Vw1zVEjmUjIULn2j+YRhFgNk/8FugsfKBMuDe8TKg+T
-0XakEFZoC2VEZi30EJ42zz2psaUdnTDszfS7TghNNnC5s/QuU7In8yDEUorODOJ/
-p7VuUZADGJdTyho/1ed9WLSj/HmvsyIMxs91ejbOcqyhJNBpq6Cqe0fPTVyDHs8I
-wzJwIhfawmV8Ok7Wn30GzqeekqjYpJHzCypKdKi2Rd7mpJjAAzXlbMfdv/YPL2Pb
-INxP6GRooK5VdJqj7oM2QRS41pERG5Hlxkp+UH3wtKyLOPUaeMh2kqKm+m68GY0s
-NPN0rMC/nexNzb7JN5M4lfyXJA7p4rsdMHthFBDSzf1keEYyHuaawOzkiet7bpuY
-G9xLFmE8dRRNMZGccVPE
-=40Xp
------END PGP SIGNATURE-----
-
---htddjr5mziyb4jku--
+Acked-by: Tero Kristo <t-kristo@ti.com>
