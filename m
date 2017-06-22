@@ -1,175 +1,57 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 22 Jun 2017 15:56:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
+	Frank Rowand <frowand.list@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v7 7/8] clk: Loongson: Add Loongson-1A clock support
-Date: Fri, 16 Jun 2017 10:52:52 +0800
-Message-Id: <1497581573-17258-8-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
-References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] dt-bindings: Document img,boston-clock binding
+Message-ID: <20170622205655.2sp2v3hva3jtsuay@rob-hp-laptop>
+References: <20170617205249.1391-1-paul.burton@imgtec.com>
+ <20170617205249.1391-2-paul.burton@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170617205249.1391-2-paul.burton@imgtec.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds clock support to Loongson-1A SoC.
+On Sat, Jun 17, 2017 at 01:52:46PM -0700, Paul Burton wrote:
+> Add device tree binding documentation for the clocks provided by the
+> MIPS Boston development board from Imagination Technologies, and a
+> header file describing the available clocks for use by device trees &
+> driver.
+> 
+> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-mips@linux-mips.org
+> 
+> ---
+> 
+> Changes in v5: None
 
-Unfortunately, The Loongson-1A's PLL register is written only,
-so we just set it with a fixed value.
+I reviewed v4. Please add acks/reviewed-by when posting new versions.
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
----
- arch/mips/include/asm/mach-loongson32/regs-clk.h | 30 +++++++++-
- drivers/clk/loongson1/Makefile                   |  1 +
- drivers/clk/loongson1/clk-loongson1a.c           | 75 ++++++++++++++++++++++++
- 3 files changed, 105 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/loongson1/clk-loongson1a.c
-
-diff --git a/arch/mips/include/asm/mach-loongson32/regs-clk.h b/arch/mips/include/asm/mach-loongson32/regs-clk.h
-index e5e8f11..d8278a4 100644
---- a/arch/mips/include/asm/mach-loongson32/regs-clk.h
-+++ b/arch/mips/include/asm/mach-loongson32/regs-clk.h
-@@ -18,7 +18,35 @@
- #define LS1X_CLK_PLL_FREQ		LS1X_CLK_REG(0x0)
- #define LS1X_CLK_PLL_DIV		LS1X_CLK_REG(0x4)
- 
--#if defined(CONFIG_LOONGSON1_LS1B)
-+#if defined(CONFIG_LOONGSON1_LS1A)
-+/* write only */
-+#define CORE_PLL_CFG		0x1fe78030
-+#define CPU_MUL			GENMASK(2, 0)
-+#define CPU_CFG_EN		BIT(3)
-+#define DDR_MUL			GENMASK(6, 4)
-+#define DDR_CFG_EN		BIT(7)
-+#define CPU_CFG_W_EN		BIT(11)
-+#define DDR_CFG_W_EN		BIT(15)
-+
-+#define VGA_PLL_CFG		0x1fd00410
-+#define VGA_M			GENMASK(7, 0)
-+#define VGA_N			GENMASK(11, 8)
-+#define VGA_OD			GENMASK(13, 12)
-+#define VGA_FRAC		GENMASK(31, 14)
-+
-+#define LCD_PLL_CFG		0x1fd00410
-+#define LCD_M			GENMASK(7, 0)
-+#define LCD_N			GENMASK(11, 8)
-+#define LCD_OD			GENMASK(13, 12)
-+#define LCD_FRAC		GENMASK(31, 14)
-+
-+#define GPU_PLL_CFG		0x1fd00414
-+#define GPU_M			GENMASK(7, 0)
-+#define GPU_N			GENMASK(11, 8)
-+#define GPU_OD			GENMASK(13, 12)
-+#define GPU_FRAC		GENMASK(31, 14)
-+
-+#elif defined(CONFIG_LOONGSON1_LS1B)
- /* Clock PLL Divisor Register Bits */
- #define DIV_DC_EN			BIT(31)
- #define DIV_DC_RST			BIT(30)
-diff --git a/drivers/clk/loongson1/Makefile b/drivers/clk/loongson1/Makefile
-index b7f6a16..da7b2dd 100644
---- a/drivers/clk/loongson1/Makefile
-+++ b/drivers/clk/loongson1/Makefile
-@@ -1,3 +1,4 @@
- obj-y				+= clk.o
-+obj-$(CONFIG_LOONGSON1_LS1A)	+= clk-loongson1a.o
- obj-$(CONFIG_LOONGSON1_LS1B)	+= clk-loongson1b.o
- obj-$(CONFIG_LOONGSON1_LS1C)	+= clk-loongson1c.o
-diff --git a/drivers/clk/loongson1/clk-loongson1a.c b/drivers/clk/loongson1/clk-loongson1a.c
-new file mode 100644
-index 0000000..263a82c
---- /dev/null
-+++ b/drivers/clk/loongson1/clk-loongson1a.c
-@@ -0,0 +1,75 @@
-+/*
-+ * Copyright (c) 2012-2016 Binbin Zhou <zhoubb@lemote.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/err.h>
-+
-+#include <loongson1.h>
-+#include "clk.h"
-+
-+#define OSC		(33 * 1000000)
-+#define DIV_APB		2
-+
-+static DEFINE_SPINLOCK(_lock);
-+
-+static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	/* Workaround, loongson-1A pll register is written only */
-+	return OSC * 8;
-+}
-+
-+static const struct clk_ops ls1x_pll_clk_ops = {
-+	.recalc_rate = ls1x_pll_recalc_rate,
-+};
-+
-+void __init ls1x_clk_init(void)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
-+	clk_hw_register_clkdev(hw, "osc_clk", NULL);
-+
-+	/* clock from 33 MHz OSC clk */
-+	hw = clk_hw_register_pll(NULL, "pll_clk", "osc_clk",
-+				&ls1x_pll_clk_ops, 0);
-+	clk_hw_register_clkdev(hw, "pll_clk", NULL);
-+
-+	/* cpu clk */
-+	hw = clk_hw_register_fixed_factor(NULL, "cpu_clk", "pll_clk",
-+					0, 1, 1);
-+	clk_hw_register_clkdev(hw, "cpu_clk", NULL);
-+
-+	/* dc clk */
-+	hw = clk_hw_register_fixed_factor(NULL, "ddr_clk", "pll_clk",
-+					0, 1, 1);
-+	clk_hw_register_clkdev(hw, "ddr_clk", NULL);
-+
-+	/* ahb clk */
-+	hw = clk_hw_register_fixed_factor(NULL, "ahb_clk", "pll_clk",
-+					0, 1, 2);
-+	clk_hw_register_clkdev(hw, "ahb_clk", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-dma", NULL);
-+	clk_hw_register_clkdev(hw, "stmmaceth", NULL);
-+
-+	/* clock derived from AHB clk */
-+	/* APB clk is always half of the AHB clk */
-+	hw = clk_hw_register_fixed_factor(NULL, "apb_clk", "ahb_clk",
-+					0, 1, DIV_APB);
-+	clk_hw_register_clkdev(hw, "apb_clk", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-ac97", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-i2c", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-nand", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-pwmtimer", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-spi", NULL);
-+	clk_hw_register_clkdev(hw, "ls1x-wdt", NULL);
-+	clk_hw_register_clkdev(hw, "serial8250", NULL);
-+}
--- 
-2.9.3
+> 
+> Changes in v4:
+> - Move img,boston-clock node under platform register syscon node.
+> - Add MAINTAINERS entry.
+> 
+> Changes in v3: None
+> 
+> Changes in v2:
+> - Add BOSTON_CLK_INPUT to expose the input clock.
+> 
+>  .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  7 +++++
+>  include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
+>  3 files changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>  create mode 100644 include/dt-bindings/clock/boston-clock.h
