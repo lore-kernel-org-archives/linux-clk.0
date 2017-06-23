@@ -1,86 +1,207 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH v3 0/9] Improve cp110 clk support on Marvell Armada 7K/8K
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-Date: Mon, 12 Jun 2017 17:43:59 +0200
-In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-	(Gregory CLEMENT's message of "Thu, 1 Jun 2017 16:55:33 +0200")
-Message-ID: <87k24h9pog.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock controller
+Date: Fri, 23 Jun 2017 19:15:33 +0300
+Message-Id: <20170623161533.20449-4-georgi.djakov@linaro.org>
+In-Reply-To: <20170623161533.20449-1-georgi.djakov@linaro.org>
+References: <20170623161533.20449-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen and Mike,
+Add a driver for the APCS clock controller. It is part of the APCS
+hardware block, which among other things implements also a combined
+mux and half integer divider functionality. It can choose between a
+fixed-rate clock or the dedicated APCS (A53) PLL. The source and the
+divider can be set both at the same time.
+
+This is required for enabling CPU frequency scaling on MSM8916-based
+platforms.
+
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   5 +
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            | 122 +++++++++++++++++++++
+ 2 files changed, 127 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+index fb961c310f44..2432be307083 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
++++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+@@ -21,6 +21,11 @@ platforms.
+ 	Value type: <u32>
+ 	Definition: as described in mailbox.txt, must be 1
  
- On jeu., juin 01 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-
-> Hi,
->
-> We got more information about the clock controllers and the clock tree
-> of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
->
-> In this 3rd version I removed the GOP changes because the clock is
-> actually shared between GOP and SD/eMMC.
->
-> The last two patches modifying the device tree _must_ be merged
-> through the mvebu tree to avoid future conflict (especially with the
-> recent ICU series sent by Thomas Petazzoni).
->
-
-I would like to know the status of this series.
-
-I am about to send a binding documentation series to ease the merging of
-the pinctrl part and I also plan adding the patch 2, 4 and 6 from this
-series. So if you have not yet applied them you can skip them else I
-will need the reference to your stable branch.
-
-Thanks,
-
-Gregory
-
-> Changelog:
-> v2 -> v3
->  - removed the GOP changed
-> cover letter for v2:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509816.html
->
-> v1 -> v2
->  - split the patch to have separate patch for the binding documentation
->  - added the acked-by from Rob Herring
-> cover letter for v2:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507381.html
->
-> Thanks,
->
-> Gregory
->
-> Gregory CLEMENT (8):
->   clk: mvebu: cp110: make failure labels more meaningful
->   dt-bindings: cp110: do not depend anymore of the *-clock-output-names
->   clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
->   dt-bindings: cp110: introduce a new binding
->   clk: mvebu: cp110: introduce a new binding
->   dt-bindings: cp110: add sdio clock to cp-110 system controller
->   arm64: dts: marvell: remove *-clock-output-names on cp110
->   arm64: dts: marvell: use new binding for the system controller on cp110
->
-> Konstantin Porotchkin (1):
->   clk: mvebu: cp110: add sdio clock to cp-110 system controller
->
->  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  33 +++++-------
->  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
->  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
->  drivers/clk/mvebu/cp110-system-controller.c                                | 200 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
->  4 files changed, 194 insertions(+), 141 deletions(-)
->
-> base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
-> -- 
-> git-series 0.9.1
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
++- #clock-cells:
++	Usage: required for msm8916 platforms
++	Value type: <u32>
++	Definition: as described in clock-bindings.txt, must be 0
++
+ 
+ = EXAMPLE
+ The following example describes the APCS HMSS found in MSM8996 and part of the
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index 9924c6d7f05d..da363c6580da 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -11,6 +11,8 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
+@@ -19,6 +21,34 @@
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/mailbox_controller.h>
++#include <linux/regmap.h>
++
++#include "../clk/qcom/clk-regmap.h"
++#include "../clk/qcom/clk-regmap-mux-div.h"
++
++enum {
++	P_GPLL0,
++	P_A53PLL,
++};
++
++static const struct parent_map gpll0_a53cc_map[] = {
++	{ P_GPLL0, 4 },
++	{ P_A53PLL, 5 },
++};
++
++static const char * const gpll0_a53cc[] = {
++	"gpll0_vote",
++	"a53pll",
++};
++
++static const struct regmap_config a53cc_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x1000,
++	.fast_io		= true,
++	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
++};
+ 
+ #define QCOM_APCS_IPC_BITS	32
+ 
+@@ -45,8 +75,93 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
+ 	.send_data = qcom_apcs_ipc_send_data,
+ };
+ 
++/*
++ * We use the notifier function for switching to a temporary safe configuration
++ * (mux and divider), while the A53 PLL is reconfigured.
++ */
++static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
++			     void *data)
++{
++	int ret = 0;
++	struct clk_regmap_mux_div *md = container_of(nb,
++						     struct clk_regmap_mux_div,
++						     clk_nb);
++	if (event == PRE_RATE_CHANGE)
++		/* set the mux and divider to safe frequency (400mhz) */
++		ret = __mux_div_set_src_div(md, 4, 3);
++
++	return notifier_from_errno(ret);
++}
++
++static int msm8916_register_clk(struct device *dev, void __iomem *base)
++{
++	struct clk_regmap_mux_div *a53cc;
++	struct clk *pclk;
++	struct regmap *regmap;
++	struct clk_init_data init = { };
++	int ret;
++
++	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
++	if (!a53cc)
++		return -ENOMEM;
++
++	a53cc->reg_offset = 0x50;
++	a53cc->hid_width = 5;
++	a53cc->hid_shift = 0;
++	a53cc->src_width = 3;
++	a53cc->src_shift = 8;
++	a53cc->parent_map = gpll0_a53cc_map;
++
++	init.name = "a53mux";
++	init.parent_names = gpll0_a53cc;
++	init.num_parents = 2;
++	init.ops = &clk_regmap_mux_div_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	a53cc->clkr.hw.init = &init;
++
++	pclk = __clk_lookup(gpll0_a53cc[1]);
++	if (!pclk)
++		return -EPROBE_DEFER;
++
++	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
++	ret = clk_notifier_register(pclk, &a53cc->clk_nb);
++	if (ret) {
++		dev_err(dev, "failed to register clock notifier: %d\n", ret);
++		return ret;
++	}
++
++	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
++	if (IS_ERR(regmap)) {
++		ret = PTR_ERR(regmap);
++		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
++		goto err;
++	}
++
++	a53cc->clkr.regmap = regmap;
++
++	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
++	if (ret) {
++		dev_err(dev, "failed to register regmap clock: %d\n", ret);
++		goto err;
++	}
++
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
++				     &a53cc->clkr.hw);
++	if (ret) {
++		dev_err(dev, "failed to add clock provider: %d\n", ret);
++		goto err;
++	}
++
++	return 0;
++
++err:
++	clk_notifier_unregister(pclk, &a53cc->clk_nb);
++	return ret;
++}
++
+ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ {
++	struct device_node *np = pdev->dev.of_node;
+ 	struct qcom_apcs_ipc *apcs;
+ 	struct resource *res;
+ 	unsigned long offset;
+@@ -63,6 +178,13 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
++	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
++		/* register the APCS mux and divider clock */
++		ret = msm8916_register_clk(&pdev->dev, base);
++		if (ret)
++			return ret;
++	}
++
+ 	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+ 	apcs->reg = base + offset;
