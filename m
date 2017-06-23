@@ -1,50 +1,77 @@
-Return-Path: <paul@outils.crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Thu, 08 Jun 2017 23:10:06 +0200
-From: Paul Cercueil <paul@crapouillou.net>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
- <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Paul Burton
- <paul.burton@imgtec.com>, Maarten ter Huurne <maarten@treewalker.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/15] clk: Add Ingenic jz4770 CGU driver
-In-Reply-To: <20170607205943.GO20170@codeaurora.org>
-References: <20170607200439.24450-1-paul@crapouillou.net>
- <20170607200439.24450-5-paul@crapouillou.net>
- <20170607205943.GO20170@codeaurora.org>
-Message-ID: <f2ef2abdef9054e9916e10f588e8fec4@crapouillou.net>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org,
+	thomas.petazzoni@free-electrons.com,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH 6/6] ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+Date: Fri, 23 Jun 2017 11:00:59 +0200
+Message-Id: <20170623090059.8371-7-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
->> +	register_syscore_ops(&jz4770_cgu_pm_ops);
->> +#endif
->> +}
->> +CLK_OF_DECLARE(jz4770_cgu, "ingenic,jz4770-cgu", jz4770_cgu_init);
-> 
-> Any reason this can't be a platform driver? Please add a comment
-> above CLK_OF_DECLARE describing what is preventing that.
+This patch adds the pin muxing for classd and enables it.
 
-It would probably be possible, if we cared about having a platform 
-driver.
-But we will only ever probe it from devicetree, just like with the
-already existing jz4740-cgu and jz4780-cgu drivers.
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
->> diff --git a/include/dt-bindings/clock/jz4770-cgu.h 
->> b/include/dt-bindings/clock/jz4770-cgu.h
->> new file mode 100644
->> index 000000000000..54b8b2ae4a73
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/jz4770-cgu.h
-> 
-> Can you split this file off into a different patch? That way clk
-> tree can apply clk patches on top of a stable branch where this
-> file lives by itself.
-
-Sure.
-
-Thanks,
-- Paul
+diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+index 2e2c3d1a1fa2..e92b030ca45a 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+@@ -355,6 +355,14 @@
+ 					bias-pull-up;
+ 				};
+ 
++				pinctrl_classd_default: classd_default {
++					pinmux = <PIN_PB1__CLASSD_R0>,
++						 <PIN_PB2__CLASSD_R1>,
++						 <PIN_PB3__CLASSD_R2>,
++						 <PIN_PB4__CLASSD_R3>;
++					bias-pull-up;
++				};
++
+ 				pinctrl_flx0_default: flx0_default {
+ 					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
+ 						 <PIN_PB29__FLEXCOM0_IO1>;
+@@ -488,6 +496,14 @@
+ 
+ 			};
+ 
++			classd: classd@fc048000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_classd_default>;
++				atmel,pwm-type = "diff";
++				atmel,non-overlap-time = <10>;
++				status = "okay";
++			};
++
+ 			can1: can@fc050000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can1_default>;
+-- 
+2.11.0
