@@ -1,55 +1,107 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Jun 2017 12:24:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [GIT PULL] Update binding documentation for CP110 and AP806
-Message-ID: <20170630192430.GP22780@codeaurora.org>
-References: <87h8yyvu7t.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87h8yyvu7t.fsf@free-electrons.com>
+	alsa-devel@alsa-project.org,
+	thomas.petazzoni@free-electrons.com
+Subject: [PATCH 4/6] clk: at91: clk-generated: create function to find best_diff
+Date: Fri, 23 Jun 2017 11:00:57 +0200
+Message-Id: <20170623090059.8371-5-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/30, Gregory CLEMENT wrote:
-> 
-> Hi Stephen,
-> 
-> As seen on Tuesday this is the pull request for the remaining binding
-> documentation which depends on the documentation already applied in your
-> tree.
-> 
-> Thanks for taking care of it,
-> 
-> Gregory
-> 
-> The following changes since commit 7e5b11afecc0f558c5a6723970770f92f2529d4e:
-> 
->   dt-bindings: ap806: introduce a new binding (2017-06-01 12:02:01 +0900)
-> 
-> are available in the git repository at:
-> 
->   git://git.infradead.org/linux-mvebu.git binding-doc-cp110-ap806
-> 
-> for you to fetch changes up to 1fa67c675f6477ceb670f087a6f6739f7b3cb099:
-> 
->   gpio: dt-bindings: Add documentation for gpio controllers on Armada 7K/8K (2017-06-27 09:07:17 +0200)
-> 
-> ----------------------------------------------------------------
+The way to find the best_diff and do the appropriate process afterwards
+can be re-used.
 
-Pulled into clk-next.
+This patch prepares the driver for an upcoming patch that will allow
+clk_generated to determine the rate of the audio_pll.
 
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ drivers/clk/at91/clk-generated.c | 41 ++++++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index dab7002937e6..6530a2e7e84d 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -99,15 +99,36 @@ clk_generated_recalc_rate(struct clk_hw *hw,
+ 	return DIV_ROUND_CLOSEST(parent_rate, gck->gckdiv + 1);
+ }
+ 
++static void clk_generated_best_diff(struct clk_rate_request *req,
++				    struct clk_hw *parent,
++				    unsigned long parent_rate, u32 div,
++				    int *best_diff, long *best_rate)
++{
++	unsigned long tmp_rate;
++	int tmp_diff;
++
++	if (!div)
++		tmp_rate = parent_rate;
++	else
++		tmp_rate = parent_rate / div;
++	tmp_diff = abs(req->rate - tmp_rate);
++
++	if (*best_diff < 0 || *best_diff > tmp_diff) {
++		*best_rate = tmp_rate;
++		*best_diff = tmp_diff;
++		req->best_parent_rate = parent_rate;
++		req->best_parent_hw = parent;
++	}
++}
++
+ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 					struct clk_rate_request *req)
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+ 	struct clk_hw *parent = NULL;
+ 	long best_rate = -EINVAL;
+-	unsigned long tmp_rate, min_rate;
++	unsigned long min_rate;
+ 	int best_diff = -1;
+-	int tmp_diff;
+ 	int i;
+ 
+ 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+@@ -125,18 +146,10 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 			continue;
+ 
+ 		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
+-		if (!div)
+-			tmp_rate = parent_rate;
+-		else
+-			tmp_rate = parent_rate / div;
+-		tmp_diff = abs(req->rate - tmp_rate);
+-
+-		if (best_diff < 0 || best_diff > tmp_diff) {
+-			best_rate = tmp_rate;
+-			best_diff = tmp_diff;
+-			req->best_parent_rate = parent_rate;
+-			req->best_parent_hw = parent;
+-		}
++
++		clk_generated_best_diff(req, parent, parent_rate, div,
++					&best_diff, &best_rate);
++
+ 
+ 		if (!best_diff)
+ 			break;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
