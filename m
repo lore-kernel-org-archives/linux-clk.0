@@ -1,147 +1,81 @@
-Return-Path: <Chunyan.Zhang@spreadtrum.com>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Arnd
- Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang
-	<xiaolong.zhang@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Geng
- Ren <geng.ren@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan
- Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V1 9/9] arm64: dts: add ccu for SC9860
-Date: Sun, 18 Jun 2017 09:58:55 +0800
-Message-ID: <20170618015855.27738-10-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org,
+	thomas.petazzoni@free-electrons.com
+Subject: [PATCH 1/6] clk: at91: clk-generated: remove useless divisor loop
+Date: Fri, 23 Jun 2017 11:00:54 +0200
+Message-Id: <20170623090059.8371-2-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now we have clock driver, so add clock dt for SC9860 platform.
-This patch also removed "ext-26m" from whale2.dtsi since it
-is described in sc9860-ccu.dtsi.
+The driver requests the current clk rate of each of its parent clocks to
+decide whether a clock rate is suitable or not. It does not request
+determine_rate from a parent clock which could request a rate change in
+parent clock (i.e. there is no parent rate propagation).
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+We know the rate we want (passed along req argument of the function) and
+the parent clock rate, thus we know the closest rounded divisor, we
+don't need to iterate over the available divisors to find the best one
+for a given clock.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
 ---
- arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi | 67 ++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/sprd/sc9860.dtsi     |  2 +
- arch/arm64/boot/dts/sprd/whale2.dtsi     |  8 ----
- 3 files changed, 69 insertions(+), 8 deletions(-)
- create mode 100644 arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
+ drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
-new file mode 100644
-index 0000000..e15bf2d
---- /dev/null
-+++ b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
-@@ -0,0 +1,67 @@
-+/*
-+ * Spreadtrum SC9860 SoC CCU
-+ *
-+ * Copyright (C) 2017, Spreadtrum Communications Inc.
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+&soc {
-+	ext_26m: ext-26m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "ext-26m";
-+	};
-+
-+	ext_32m_sine0: ext-32m-sine0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000000>;
-+		clock-output-names = "ext-32m-sine0";
-+	};
-+
-+	ext_32m_sine1: ext-32m-sine1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000000>;
-+		clock-output-names = "ext-32m-sine1";
-+	};
-+
-+	ext_rco_100m: ext-rco-100m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+		clock-output-names = "ext-rco-100m";
-+	};
-+
-+	ext_32k: ext-32k {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "ext-32k";
-+	};
-+
-+	ccu: clk {
-+		compatible = "sprd,sc9860-ccu";
-+		#clock-cells = <1>;
-+		reg = <0 0x20000000 0 0x400>,
-+		      <0 0x20210000 0 0x3000>,
-+		      <0 0x402b0000 0 0x4000>,
-+		      <0 0x402d0000 0 0x400>,
-+		      <0 0x402e0000 0 0x4000>,
-+		      <0 0x40400000 0 0x400>,
-+		      <0 0x40880000 0 0x400>,
-+		      <0 0x415e0000 0 0x400>,
-+		      <0 0x60200000 0 0x400>,
-+		      <0 0x61000000 0 0x400>,
-+		      <0 0x61100000 0 0x3000>,
-+		      <0 0x62000000 0 0x4000>,
-+		      <0 0x62100000 0 0x4000>,
-+		      <0 0x63000000 0 0x400>,
-+		      <0 0x63100000 0 0x3000>,
-+		      <0 0x70b00000 0 0x3000>;
-+		clocks = <&ext_26m>, <&ext_rco_100m>, <&ext_32k>;
-+		clock-names = "ext-26m", "ext-rco-100m", "ext-32k";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-index 7b7d8ce..10ff7c6 100644
---- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
-+++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-@@ -7,7 +7,9 @@
-  */
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 07c8f701e51c..dab7002937e6 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 		    (gck->range.max && min_rate > gck->range.max))
+ 			continue;
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sc9860-ccu.h>
- #include "whale2.dtsi"
-+#include "sc9860-ccu.dtsi"
+-		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
+-			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
+-			tmp_diff = abs(req->rate - tmp_rate);
+-
+-			if (best_diff < 0 || best_diff > tmp_diff) {
+-				best_rate = tmp_rate;
+-				best_diff = tmp_diff;
+-				req->best_parent_rate = parent_rate;
+-				req->best_parent_hw = parent;
+-			}
+-
+-			if (!best_diff || tmp_rate < req->rate)
+-				break;
++		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
++		if (!div)
++			tmp_rate = parent_rate;
++		else
++			tmp_rate = parent_rate / div;
++		tmp_diff = abs(req->rate - tmp_rate);
++
++		if (best_diff < 0 || best_diff > tmp_diff) {
++			best_rate = tmp_rate;
++			best_diff = tmp_diff;
++			req->best_parent_rate = parent_rate;
++			req->best_parent_hw = parent;
+ 		}
  
- / {
- 	cpus {
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 7c217c5..9d69b84 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -59,13 +59,5 @@
- 				status = "disabled";
- 			};
- 		};
--
--	};
--
--	ext_26m: ext-26m {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <26000000>;
--		clock-output-names = "ext_26m";
- 	};
- };
+ 		if (!best_diff)
 -- 
-2.7.4
+2.11.0
