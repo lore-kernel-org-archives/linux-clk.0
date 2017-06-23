@@ -1,74 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 12 Jun 2017 14:02:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
-Message-ID: <20170612210248.GP20170@codeaurora.org>
-References: <20170524082044.8473-1-linus.walleij@linaro.org>
- <20170601070208.GO20170@codeaurora.org>
- <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
- <20170605195812.GH20170@codeaurora.org>
- <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
- <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 23 Jun 2017 10:45:28 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh+dt@kernel.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock
+ controller
+Message-ID: <20170623174528.GC18666@tuxbook>
+References: <20170623161533.20449-1-georgi.djakov@linaro.org>
+ <20170623161533.20449-4-georgi.djakov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
+In-Reply-To: <20170623161533.20449-4-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12, Linus Walleij wrote:
-> On Thu, Jun 8, 2017 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> > I think the timer may be more of an issue...
-> >
-> > It is using CLOCKSOURCE_OF_DECLARE(), at least last time
-> > I checked there was no such thing as clocksources retrying their
-> > calls, and that cannot be regular probes because of, yeah device
-> > core is using the timer, I think.
-> >
-> > Yeah I looked in:
-> > drivers/clocksource/clksrc-probe.c
-> >
-> > It will just fail if it can't initialize the clocksource.
-> >
-> > I don't understand what platforms can actually get their timers
-> > up at all without the clock framework? Those hardcoding the
-> > clock frequency in the device tree, or things like the ARM
-> > TWD which has it encoded in hardware perhaps?
-> 
-> I just confirmed this to be the problem using a scratch patch for
-> a platform device init and some earlydebug prints:
-> 
-> Uncompressing Linux... done, booting the kernel.
->  Booting Linux on physical CPU 0x0
-> start_kernel
-> (...)
->  NR_IRQS:16 nr_irqs:16 16
->  could not get PCLK
-> Failed to initialize '/soc/timer@43000000': -517
->  clocksource_probe: no matching clocksources found
->  sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every
-> 21474836475000000ns
->  Console: colour dummy device 80x30
->  Calibrating delay loop...
-> 
-> So the deferred clock makes the whole platform hang because the timer
-> needs it. Without a clocksource, the delay loop cannot be calibrated, so
-> it hangs there.
-> 
+On Fri 23 Jun 09:15 PDT 2017, Georgi Djakov wrote:
 
-Ok. So can the certain clks that are required to get the timer
-going be put into CLK_OF_DECLARE_DRIVER() and then have a regular
-platform driver for the rest of the clks that aren't required for
-early boot? We've been doing this sort of hybrid design lately,
-so hopefully that works here too.
+> +static int msm8916_register_clk(struct device *dev, void __iomem *base)
+> +{
+[..]
+> +	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
+> +	if (IS_ERR(regmap)) {
+> +		ret = PTR_ERR(regmap);
+> +		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
+> +		goto err;
+> +	}
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I think it would be cleaner if you create the regmap in probe() and we
+use that throughout the driver - rather than using two different access
+mechanism.
+
+> +
+> +	a53cc->clkr.regmap = regmap;
+> +
+> +	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
+> +				     &a53cc->clkr.hw);
+> +	if (ret) {
+> +		dev_err(dev, "failed to add clock provider: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	return 0;
+> +
+> +err:
+> +	clk_notifier_unregister(pclk, &a53cc->clk_nb);
+> +	return ret;
+> +}
+> +
+>  static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  {
+> +	struct device_node *np = pdev->dev.of_node;
+>  	struct qcom_apcs_ipc *apcs;
+>  	struct resource *res;
+>  	unsigned long offset;
+> @@ -63,6 +178,13 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+>  
+> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
+> +		/* register the APCS mux and divider clock */
+> +		ret = msm8916_register_clk(&pdev->dev, base);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+
+Don't you need to clean up anything in the below error path and in
+remove()?
+
+>  	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
+>  
+>  	apcs->reg = base + offset;
+
+Other than that I think this looks reasonable.
+
+Regards,
+Bjorn
