@@ -1,262 +1,133 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 6 Jun 2017 21:27:44 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 14/19] drm/sun4i: hdmi: Add support for A31's HDMI
- controller
-Message-ID: <20170606192744.sktuiwm3udn623gt@flea.lan>
-References: <20170602101024.18940-1-wens@csie.org>
- <20170602101024.18940-15-wens@csie.org>
- <20170602194110.goale2ssyg5vuqiv@flea.lan>
- <CAGb2v65eFAmAybmHkQcKjF+ZKxh+_G6q9i2GPzMs5854X8bQug@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kaeyxzg3n7kjyrdh"
-In-Reply-To: <CAGb2v65eFAmAybmHkQcKjF+ZKxh+_G6q9i2GPzMs5854X8bQug@mail.gmail.com>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org,
+	thomas.petazzoni@free-electrons.com
+Subject: [PATCH 5/6] clk: at91: clk-generated: make gclk determine audio_pll rate
+Date: Fri, 23 Jun 2017 11:00:58 +0200
+Message-Id: <20170623090059.8371-6-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This allows gclk to determine audio_pll rate and set the parent rate
+accordingly.
 
---kaeyxzg3n7kjyrdh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+However, there are multiple children clocks that could technically
+change the rate of audio_pll. Since the clock rate is usually critical
+for IPs, it isn't a good idea to have multiple clocks changing audio_pll
+clock rate. There isn't any rate locking system for the moment, thus
+we enforce that classd_gclk be the only one allowed to change audio_pll
+rate. To remain consistent, we deny other clocks to be children of
+audio_pll so classd_gclk altering audio_pll rate does not impact any
+other device.
 
-On Sat, Jun 03, 2017 at 11:19:09PM +0800, Chen-Yu Tsai wrote:
-> On Sat, Jun 3, 2017 at 3:41 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > On Fri, Jun 02, 2017 at 06:10:19PM +0800, Chen-Yu Tsai wrote:
-> >> The HDMI controller found in the A31 SoCs is slightly different
-> >> from the one already supported, which is found in the A10s:
-> >>
-> >>   - Need different initial values for the PLL related registers
-> >>
-> >>   - Different behavior of the DDC and TMDS clocks
-> >>
-> >>   - Different register layout for the DDC portion
-> >>
-> >>   - Separate DDC parent clock
-> >>
-> >> This patch adds support for it.
-> >>
-> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >> ---
-> >>  drivers/gpu/drm/sun4i/sun4i_hdmi.h     |   3 +
-> >>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 141 ++++++++++++++++++++++++=
-+++++++++
-> >>  2 files changed, 144 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4=
-i/sun4i_hdmi.h
-> >> index c63d0bd95963..2589bc92be59 100644
-> >> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> >> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> >> @@ -56,10 +56,13 @@
-> >>  #define SUN4I_HDMI_PAD_CTRL0_TXEN            BIT(23)
-> >>
-> >>  #define SUN4I_HDMI_PAD_CTRL1_REG     0x204
-> >> +#define SUN4I_HDMI_PAD_CTRL1_UNKNOWN         BIT(24) /* set on A31 */
-> >>  #define SUN4I_HDMI_PAD_CTRL1_AMP_OPT         BIT(23)
-> >>  #define SUN4I_HDMI_PAD_CTRL1_AMPCK_OPT               BIT(22)
-> >>  #define SUN4I_HDMI_PAD_CTRL1_EMP_OPT         BIT(20)
-> >>  #define SUN4I_HDMI_PAD_CTRL1_EMPCK_OPT               BIT(19)
-> >> +#define SUN4I_HDMI_PAD_CTRL1_PWSCK           BIT(18)
-> >> +#define SUN4I_HDMI_PAD_CTRL1_PWSDT           BIT(17)
-> >>  #define SUN4I_HDMI_PAD_CTRL1_REG_DEN         BIT(15)
-> >>  #define SUN4I_HDMI_PAD_CTRL1_REG_DENCK               BIT(14)
-> >>  #define SUN4I_HDMI_PAD_CTRL1_REG_EMP(n)              (((n) & 7) << 10)
-> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/=
-sun4i/sun4i_hdmi_enc.c
-> >> index 9ded40aaed32..e9abf93eb41c 100644
-> >> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> >> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> >> @@ -293,6 +293,109 @@ static const struct drm_connector_helper_funcs s=
-un4i_hdmi_connector_helper_funcs
-> >>       .get_modes      =3D sun4i_hdmi_get_modes,
-> >>  };
-> >>
-> >> +static int sun6i_hdmi_read_sub_block(struct sun4i_hdmi *hdmi,
-> >> +                                  unsigned int blk, unsigned int offs=
-et,
-> >> +                                  u8 *buf, unsigned int count)
-> >> +{
-> >> +     unsigned long reg;
-> >> +     int i;
-> >> +
-> >> +     reg =3D readl(hdmi->base + SUN6I_HDMI_DDC_FIFO_CTRL_REG);
-> >> +     writel(reg | SUN6I_HDMI_DDC_FIFO_CTRL_CLEAR,
-> >> +            hdmi->base + SUN6I_HDMI_DDC_FIFO_CTRL_REG);
-> >> +     writel(SUN6I_HDMI_DDC_ADDR_SEGMENT(offset >> 8) |
-> >> +            SUN6I_HDMI_DDC_ADDR_EDDC(DDC_SEGMENT_ADDR << 1) |
-> >> +            SUN6I_HDMI_DDC_ADDR_OFFSET(offset) |
-> >> +            SUN6I_HDMI_DDC_ADDR_SLAVE(DDC_ADDR),
-> >> +            hdmi->base + SUN6I_HDMI_DDC_ADDR_REG);
-> >> +
-> >> +     writel(SUN6I_HDMI_DDC_CMD_EXPLICIT_EDDC_READ |
-> >> +            SUN6I_HDMI_DDC_CMD_BYTE_COUNT(count),
-> >> +            hdmi->base + SUN6I_HDMI_DDC_CMD_REG);
-> >> +
-> >> +     reg =3D readl(hdmi->base + SUN6I_HDMI_DDC_CTRL_REG);
-> >> +     writel(reg | SUN6I_HDMI_DDC_CTRL_START_CMD,
-> >> +            hdmi->base + SUN6I_HDMI_DDC_CTRL_REG);
-> >> +
-> >> +     if (readl_poll_timeout(hdmi->base + SUN6I_HDMI_DDC_CTRL_REG, reg,
-> >> +                            !(reg & SUN6I_HDMI_DDC_CTRL_START_CMD),
-> >> +                            100, 100000))
-> >> +             return -EIO;
-> >> +
-> >> +     for (i =3D 0; i < count; i++)
-> >> +             buf[i] =3D readb(hdmi->base + SUN6I_HDMI_DDC_FIFO_DATA_R=
-EG);
-> >> +
-> >> +     return 0;
-> >> +}
-> >> +
-> >> +static int sun6i_hdmi_read_edid_block(void *data, u8 *buf, unsigned i=
-nt blk,
-> >> +                                   size_t length)
-> >> +{
-> >> +     struct sun4i_hdmi *hdmi =3D data;
-> >> +     int retry =3D 2, i;
-> >> +
-> >> +     do {
-> >> +             for (i =3D 0; i < length; i +=3D SUN4I_HDMI_DDC_FIFO_SIZ=
-E) {
-> >> +                     unsigned char offset =3D blk * EDID_LENGTH + i;
-> >> +                     unsigned int count =3D min((unsigned int)SUN4I_H=
-DMI_DDC_FIFO_SIZE,
-> >> +                                              length - i);
-> >> +                     int ret;
-> >> +
-> >> +                     ret =3D sun6i_hdmi_read_sub_block(hdmi, blk, off=
-set,
-> >> +                                                     buf + i, count);
-> >> +                     if (ret)
-> >> +                             return ret;
-> >> +             }
-> >> +     } while (!drm_edid_block_valid(buf, blk, true, NULL) && (retry--=
-));
-> >> +
-> >> +     return 0;
-> >> +}
-> >> +
-> >> +static int sun6i_hdmi_get_modes(struct drm_connector *connector)
-> >> +{
-> >> +     struct sun4i_hdmi *hdmi =3D drm_connector_to_sun4i_hdmi(connecto=
-r);
-> >> +     u32 reg;
-> >> +     struct edid *edid;
-> >> +     int ret;
-> >> +
-> >> +     clk_set_rate(hdmi->ddc_clk, 100000);
-> >> +     clk_prepare_enable(hdmi->ddc_clk);
-> >> +
-> >> +     /* Reset i2c controller */
-> >> +     writel(SUN6I_HDMI_DDC_CTRL_ENABLE | SUN6I_HDMI_DDC_CTRL_RESET |
-> >> +            SUN6I_HDMI_DDC_CTRL_SDA_ENABLE |
-> >> +            SUN6I_HDMI_DDC_CTRL_SCL_ENABLE,
-> >> +            hdmi->base + SUN6I_HDMI_DDC_CTRL_REG);
-> >> +     if (readl_poll_timeout(hdmi->base + SUN6I_HDMI_DDC_CTRL_REG, reg,
-> >> +                            !(reg & SUN6I_HDMI_DDC_CTRL_RESET),
-> >> +                            100, 2000)) {
-> >> +             dev_err(hdmi->dev, "DDC reset timeout: %08x\n", reg);
-> >> +             clk_disable_unprepare(hdmi->ddc_clk);
-> >> +             return -EIO;
-> >> +     }
-> >> +
-> >> +     edid =3D drm_do_get_edid(connector, sun6i_hdmi_read_edid_block, =
-hdmi);
-> >> +
-> >> +     clk_disable_unprepare(hdmi->ddc_clk);
-> >> +
-> >> +     if (!edid)
-> >> +             return 0;
-> >> +
-> >> +     hdmi->hdmi_monitor =3D drm_detect_hdmi_monitor(edid);
-> >> +     DRM_DEBUG_DRIVER("Monitor is %s monitor\n",
-> >> +                      hdmi->hdmi_monitor ? "an HDMI" : "a DVI");
-> >> +
-> >> +     drm_mode_connector_update_edid_property(connector, edid);
-> >> +     ret =3D drm_add_edid_modes(connector, edid);
-> >> +     kfree(edid);
-> >> +
-> >> +     return ret;
-> >> +}
-> >> +
-> >> +static const struct drm_connector_helper_funcs sun6i_hdmi_connector_h=
-elper_funcs =3D {
-> >> +     .get_modes      =3D sun6i_hdmi_get_modes,
-> >> +};
-> >> +
-> >
-> > Every thing here can be handled through regfield without having to
-> > duplicate the logic.
->=20
-> Hmm... You're right. Does that mean we should convert the entire driver to
-> using regmap? Or just the DDC bits here, since they won't conflict with
-> any other access patterns in the whole HDMI driver?
+This needs to be re-worked once we have a rate locking system so two
+clocks could be children of the same clock and be sure the clock rate
+isn't changed by one or the other.
 
-I guess we could just convert everything (and I wish I would have done
-it before...)
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ drivers/clk/at91/clk-generated.c | 41 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 6 deletions(-)
 
-> >>  static enum drm_connector_status
-> >>  sun4i_hdmi_connector_detect(struct drm_connector *connector, bool for=
-ce)
-> >>  {
-> >> @@ -367,6 +470,43 @@ static const struct sun4i_hdmi_variant sun5i_vari=
-ant =3D {
-> >>                                 SUN4I_HDMI_PLL_CTRL_PLL_EN,
-> >>  };
-> >>
-> >> +static const struct sun4i_hdmi_variant sun6i_variant =3D {
-> >> +     .connector_helpers      =3D &sun6i_hdmi_connector_helper_funcs,
-> >> +     .ddc_create             =3D sun6i_ddc_create,
-> >> +     .tmds_create            =3D sun6i_tmds_create,
-> >> +     .has_ddc_parent_clk     =3D true,
-> >> +     .has_reset_control      =3D true,
-> >> +     .pad_ctrl0_init_val     =3D 0xff |
-> >
-> > What is this 0xff for?
->=20
-> Unknown. It is set in the mainline U-boot driver.
->=20
-> Looking at an old 3.3 kernel from the BSP, it seems the higher 4 bits
-> control the transmitter. But the lower 4 bits are still unknown.
-
-Can you add a comment for that?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---kaeyxzg3n7kjyrdh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZNwIwAAoJEBx+YmzsjxAg88UP/jXMtp6rZZQSALgJPeMhMnuC
-ADQJuGFs5l2dHVj3ZDIP9619U2mdXmV9c5IUPiQMqnUPUx8iYDin0rMgr/5oIoni
-b/M3/z7CBkwMeun3rLIHhZaru7Vr/Li8nR4lIGehBW21mvOL6cS+fJe1t35cJvbd
-3+Oivj/L0fc/CgpLMq245rx7Wa58+S75wFGJLsHFV0WMcFXlimMnYVLVoRf4P1wa
-CvNXW5iCskMplkxHdA0PWsFvGvuwWeEBNW8eZ6f8d7xT/H/wcC8J0SVevMmC3Vzd
-SzWHTw3i0RuBuVuJEYMMIDsD10rYjXLU3gOmQpqhRAOzIPWmbWa6J7X1jDBcnwcB
-UxOXeZb82+d54DCuyHmoaU9o2a/mpGYB4ZwL27P0L2GIeyBoV3ZF9/maI74yiaog
-4qNymOHpUoqKuSpfzQ5TDcbD7stjbAM3zw5htZBOBgY2quExa524dfjii+nNtTBd
-NXdT+Lf5PDfGqSes6/fcVWYegIhrOTU4vgFCpBb6fVfas0iW3jlxWQKvG07Bi76X
-LuJdhf5R/Yd+qwNMu3IUzgsEq5cJVHaexZeXv2VfcOiwrykrKfPrfkM0Efzxfbbq
-v/YaM2SJ4aJgDEd9x7UHkUGB1umuJ9U+UmdXYb+unCxWwdDEs/gx9NFkCHQ8avqt
-E/xnQrUmri1ZaYKwVmTb
-=FIBi
------END PGP SIGNATURE-----
-
---kaeyxzg3n7kjyrdh--
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 6530a2e7e84d..e66ee735a569 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -26,6 +26,9 @@
+ #define GENERATED_SOURCE_MAX	6
+ #define GENERATED_MAX_DIV	255
+ 
++#define GCK_ID_CLASSD		59
++#define GCK_INDEX_DT_AUDIO_PLL	5
++
+ struct clk_generated {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -126,15 +129,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+ 	struct clk_hw *parent = NULL;
++	struct clk_rate_request req_parent = *req;
+ 	long best_rate = -EINVAL;
+-	unsigned long min_rate;
++	unsigned long min_rate, parent_rate;
+ 	int best_diff = -1;
+ 	int i;
++	u32 div;
+ 
+-	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+-		u32 div;
+-		unsigned long parent_rate;
+-
++	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+@@ -150,11 +152,37 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 		clk_generated_best_diff(req, parent, parent_rate, div,
+ 					&best_diff, &best_rate);
+ 
++		if (!best_diff)
++			break;
++	}
++
++	/*
++	 * The audio_pll rate can be modified unlike the five others clocks that
++	 * should never be altered.
++	 * The audio_pll can technically be used by multiple consumers. However,
++	 * they all are likely to want to modify its rate while the rate is
++	 * critical for each one. Since we do not have a rate locking for the
++	 * moment, let classd_gclk be the only consumer of the audio_pll clock.
++	 */
++
++	if (gck->id != GCK_ID_CLASSD)
++		goto end;
++
++	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
++	if (!parent)
++		goto end;
++
++	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
++		req_parent.rate = req->rate * div;
++		__clk_determine_rate(parent, &req_parent);
++		clk_generated_best_diff(req, parent, req_parent.rate, div,
++					&best_diff, &best_rate);
+ 
+ 		if (!best_diff)
+ 			break;
+ 	}
+ 
++end:
+ 	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
+ 		 __func__, best_rate,
+ 		 __clk_get_name((req->best_parent_hw)->clk),
+@@ -264,7 +292,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 	init.ops = &generated_ops;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+-	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
++	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
++		CLK_SET_RATE_PARENT;
+ 
+ 	gck->id = id;
+ 	gck->hw.init = &init;
+-- 
+2.11.0
