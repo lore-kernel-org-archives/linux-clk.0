@@ -1,62 +1,72 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org,
+	robh+dt@kernel.org
+Cc: mturquette@baylibre.com,
 	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v5 6/6] arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-Date: Thu,  8 Jun 2017 11:14:01 +0530
-Message-Id: <1496900641-27755-7-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1496900641-27755-1-git-send-email-varada@codeaurora.org>
-References: <1496900641-27755-1-git-send-email-varada@codeaurora.org>
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v8 0/3] Add support for Qualcomm A53 CPU clock
+Date: Fri, 23 Jun 2017 19:15:30 +0300
+Message-Id: <20170623161533.20449-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+This patchset adds support for the A53 CPU clock and allows scaling
+of the CPU frequency on msm8916 based platforms.
 
-These configs are required for booting kernel in qcom
-ipq8074 boards.
+Changes since v7 (https://lkml.org/lkml/2016/10/31/296)
+ * Add the APCS clock controller to the APCS driver to expose both the
+ mailbox and clock controller functionality as discussed earlier:
+ https://lkml.org/lkml/2016/11/14/860
+ * Changed the a53pll compatible string as suggested by Rob.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Changes since v6 (https://lkml.org/lkml/2016/9/7/347)
+ * Addressed various comments from Stephen Boyd
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 65cdd87..c20328e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -267,6 +267,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SPIDEV=m
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -450,6 +451,7 @@ CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Changes since v5 (https://lkml.org/lkml/2016/2/1/407)
+ * Rebase to clk-next and update according to the recent API changes.
+
+Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
+ * Convert to builtin drivers as now __clk_lookup() is used
+
+Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
+ * Split driver into two parts - and separate A53 PLL and
+   A53 clock controller drivers.
+ * Drop the safe switch hook patch. Add a clock notifier in
+   the clock provider to handle switching via safe mux and
+   divider configuration.
+
+Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
+ * Drop gpll0_vote patch.
+ * Switch to the new clk_hw_* APIs.
+ * Rebase to the current clk-next.
+
+Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
+ * Drop SR2 PLL patch, as it is already applied.
+ * Add gpll0_vote rate propagation patch.
+ * Update/rebase patches to the current clk-next.
+
+
+Georgi Djakov (3):
+  clk: qcom: Add A53 PLL support
+  clk: qcom: Add regmap mux-div clocks support
+  mailbox: qcom: Add support for APCS clock controller
+
+ .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 ++
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   5 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   2 +
+ drivers/clk/qcom/a53-pll.c                         |  94 ++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.c              | 237 +++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h              |  52 +++++
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            | 122 +++++++++++
+ 8 files changed, 543 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
