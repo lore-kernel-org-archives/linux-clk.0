@@ -1,96 +1,41 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Pramod Kumar <pramodku@broadcom.com>
-Subject: [PATCH v6 08/11] arm64: dts: Add GPIO DT nodes for Stingray SOC
-Date: Fri,  2 Jun 2017 12:04:32 +0530
-Message-Id: <1496385275-6899-9-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
-References: <1496385275-6899-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170621174540.GB4493@codeaurora.org>
+References: <20170621075952.26387-1-linus.walleij@linaro.org> <20170621174540.GB4493@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Jun 2017 00:08:55 +0200
+Message-ID: <CACRpkdbv9L1mwtaBTW93BNkGbPcRjsO5yda+SY2iHUSL41Q2ZQ@mail.gmail.com>
+Subject: Re: [PATCH v8] clk: Add Gemini SoC clock controller
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk <linux-clk@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+On Wed, Jun 21, 2017 at 7:45 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/21, Linus Walleij wrote:
+>> The Cortina Systems Gemini (SL3516/CS3516) has an on-chip clock
+>> controller that derive all clocks from a single crystal, using some
+>> documented and some undocumented PLLs, half dividers, counters and
+>> gates. This is a best attempt to construct a clock driver for the
+>> clocks so at least we can gate off unused hardware and driver the
+>> PCI bus clock.
+>>
+>> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>
+> Applied to clk-next + this fixup
 
-The GPIOs on Stingray SOC are based on iProc GPIOs hence
-using this we add GPIO DT nodes for Stingray SOC.
+Thanks, and thanks a lot for fixing.
 
-Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Hm, I copied that code from somewhere.
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 639c25d..e91debe 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -251,6 +251,14 @@
- 		ranges = <0x0 0x0 0x66400000 0x100000>;
- 
- 		#include "stingray-clock.dtsi"
-+
-+		gpio_crmu: gpio@00024800 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x00024800 0x4c>;
-+			ngpios = <6>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+		};
- 	};
- 
- 	hsls {
-@@ -261,6 +269,32 @@
- 
- 		#include "stingray-pinctrl.dtsi"
- 
-+		gpio_hsls: gpio@000d0000 {
-+			compatible = "brcm,iproc-gpio";
-+			reg = <0x000d0000 0x864>;
-+			ngpios = <151>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-ranges = <&pinmux 0 0 16>,
-+					<&pinmux 16 71 2>,
-+					<&pinmux 18 131 8>,
-+					<&pinmux 26 83 6>,
-+					<&pinmux 32 123 4>,
-+					<&pinmux 36 43 24>,
-+					<&pinmux 60 89 2>,
-+					<&pinmux 62 73 4>,
-+					<&pinmux 66 95 28>,
-+					<&pinmux 94 127 4>,
-+					<&pinmux 98 139 10>,
-+					<&pinmux 108 16 27>,
-+					<&pinmux 135 77 6>,
-+					<&pinmux 141 67 4>,
-+					<&pinmux 145 149 6>,
-+					<&pinmux 151 91 4>;
-+		};
-+
- 		uart0: uart@00100000 {
- 			device_type = "serial";
- 			compatible = "snps,dw-apb-uart";
--- 
-2.7.4
+Now I need to try to remember where so I can go and
+fix the bad example.
+
+Yours,
+Linus Walleij
