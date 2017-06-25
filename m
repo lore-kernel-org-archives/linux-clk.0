@@ -1,117 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:34487 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752758AbdF2Q0k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2017 12:26:40 -0400
+Return-Path: <net147@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170629151826.GA18905@bigcity.dyn.berto.se>
-References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be> <20170629151826.GA18905@bigcity.dyn.berto.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jun 2017 18:26:38 +0200
-Message-ID: <CAMuHMdWhiBftHJ_qxGW67BYkEaBcC7CBC7ZBEi9nozRvKcW1EA@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 0/5] clk: renesas: rcar-gen3: Restore clocks during resume
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
+In-Reply-To: <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
+References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+ <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
+From: Jonathan Liu <net147@gmail.com>
+Date: Mon, 26 Jun 2017 08:05:16 +1000
+Message-ID: <CANwerB1q68-PpQ7+-QbgBgZHeWw_4p1ruiwzy7upjLLRTDEG1w@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 1/6] clk: sunxi-ng: div: Add support for
+ fixed post-divider
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>, Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Niklas,
+Hi Priit,
 
-On Thu, Jun 29, 2017 at 5:18 PM, Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
-> On 2017-06-29 15:25:15 +0200, Geert Uytterhoeven wrote:
->> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
->> clock register state is lost.  Note that as the boot loader skips most
->> initialization after resume, clock register state differs from the state
->> encountered during normal system boot, too.
->>
->> Hence after s2ram, some operations may fail because module clocks are
->> disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
->> fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
->>
->>     ravb e6800000.ethernet eth0: failed to switch device to config mode
->>     ravb e6800000.ethernet eth0: device will be stopped after h/w proces=
-ses are done.
->>     ravb e6800000.ethernet eth0: failed to switch device to config
->>     PM: Device e6800000.ethernet failed to resume: error -110
->>
->> In addition, some clocks that were disabled by clk_disable_unused() may
->> have been re-enabled, wasting power.
->>
->> This RFC is a second attempt to fix this issue by restoring clock regist=
-ers
->> during system resume.
+This is showing from clock rate of 171428572 in the output of "cat
+/sys/kernel/debug/clk/clk_summary" for pll-periph-sata.
+The clock rate should be 100000000 (100 MHz) when read from the hardware.
 
->> This has been tested on Salvator-X with R-Car H3 ES1.0 and M3-W ES1.0.
->> On Salvator-XS with R-Car H3 ES2.0, EtherAVB restarts after system resum=
-e,
->> but NFS fails with "server not responding", probably not due to a clock
->> issue.
+On 26 June 2017 at 06:45, Priit Laes <plaes@plaes.org> wrote:
+> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
+> 6 is fixed post-divider.
 >
-> I tested this series using this setup:
+> Signed-off-by: Priit Laes <plaes@plaes.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++--
+>  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
+>  2 files changed, 12 insertions(+), 3 deletions(-)
 >
-> - Base latest renesas-drivers, 710def1a48c7bc9d ("of_mdio: Fix broken
->   PHY IRQ in case of probe deferral"). This branch also includes the
->   RAVB WoL patches.
->
-> - Salvator-X H3 ES1.0
->
-> - The arm64 defconfig.
->
-> The test procedure I used:
->
->     arm64 ~/shared/deep-sleep # cat sleep.sh
->     #!/bin/bash
->
->     ethtool -s eth0 wol g
->
->     echo disabled > /sys/devices/platform/soc/e6800000.ethernet/power/wak=
-eup
->
->     echo 0 > /sys/module/printk/parameters/console_suspend
->
->     i2cset -f -y 7 0x30 0x20 0x0F
->
->     echo "Flip Switch"
->     read -n 1
->
->     echo mem > /sys/power/state
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+> index c0e5c10..de30e15 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.c
+> +++ b/drivers/clk/sunxi-ng/ccu_div.c
 
-Looks good.
+Missing handling of fixed_post_div in ccu_div_round_rate.
+ccu_div_round_rate should multiply the rate by the postdiv before
+looking up the divider using divider_get_val and divide val by postdiv
+just before returning.
 
-> And for me the NFS root came up OK after flipping switch back. I wonder
-> what is different in our test procedures. I would like to provide my
-> tested-by tag but I first want to figure out why NFS (or maybe the whole
-> net interface?) don't work for you after resume.
+> @@ -62,8 +62,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
+>         parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
+>                                                   parent_rate);
+>
+> -       return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+> -                                  cd->div.flags);
+> +       val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+> +                                 cd->div.flags);
+> +
+> +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +               val /= cd->fixed_post_div;
+> +
+> +       return val;
+>  }
+>
+>  static int ccu_div_determine_rate(struct clk_hw *hw,
 
-Sorry for the confusion: NFS fails only on Salvator-XS H3 ES2.0.
-It works fine on Salvator-X H3 ES1.0 and M3-W ES1.0.
+> @@ -89,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>         val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
+>                               cd->div.flags);
+>
+> +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +               val *= cd->fixed_post_div;
+> +
+>         spin_lock_irqsave(cd->common.lock, flags);
+>
+>         reg = readl(cd->common.base + cd->common.reg);
 
-> I also know you reported an IRQ storm when resuming using WoL which I in
-> over 1000 suspend/resume cycles never have been able to reproduce. Maybe
-> my test environment or procedure is to kind and/or something is falling
-> thru the cracks :-( Do you notice any difference in test procedure or
-> console printouts?
+val here is the divider value that is stored in the clock register
+field not the actual rate so this is incorrect. Instead the rate needs
+to be multiplied by postdiv just before divider_get_val.
 
-I saw the IRQ storm only once.
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+> index 08d0744..f3a5028 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.h
+> +++ b/drivers/clk/sunxi-ng/ccu_div.h
+> @@ -86,9 +86,10 @@ struct ccu_div_internal {
+>  struct ccu_div {
+>         u32                     enable;
+>
+> -       struct ccu_div_internal         div;
+> +       struct ccu_div_internal div;
+>         struct ccu_mux_internal mux;
+>         struct ccu_common       common;
+> +       unsigned int            fixed_post_div;
+>  };
+>
+>  #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,   \
+> --
+> git-series 0.9.1
 
-Thanks for testing!
+Thanks.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Regards,
+Jonathan
