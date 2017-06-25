@@ -1,114 +1,79 @@
-Return-Path: <paul@crapouillou.net>
+Return-Path: <afaerber@suse.de>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Satoru OKAMOTO <okamoto.satoru@socionext.com>,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/5] clk: mb86s7x: Suppress build
+Date: Sun, 25 Jun 2017 19:00:16 +0200
+Message-Id: <20170625170020.11791-2-afaerber@suse.de>
+In-Reply-To: <20170625170020.11791-1-afaerber@suse.de>
+References: <20170625170020.11791-1-afaerber@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Mon, 26 Jun 2017 15:32:12 +0200
-From: Paul Cercueil <paul@crapouillou.net>
-To: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
- <robh+dt@kernel.org>, Paul Burton <paul.burton@imgtec.com>, Maarten ter
- Huurne <maarten@treewalker.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 15/17] MIPS: JZ4770: Workaround for corrupted DMA
- transfers
-In-Reply-To: <ca37b50d-951c-2264-fa37-cca7149ed4ba@imgtec.com>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170620151855.19399-1-paul@crapouillou.net>
- <20170620151855.19399-15-paul@crapouillou.net>
- <ca37b50d-951c-2264-fa37-cca7149ed4ba@imgtec.com>
-Message-ID: <30175ba3ce2d1bd6f83ccb515f179aec@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+It fails to build once we introduce the ARCH_MB86S7X Kconfig symbol:
 
-Le 2017-06-22 09:21, Marcin Nowakowski a écrit :
-> Hi Paul, Maarten,
-> 
-> On 20.06.2017 17:18, Paul Cercueil wrote:
->> From: Maarten ter Huurne <maarten@treewalker.org>
->> 
->> We have seen MMC DMA transfers read corrupted data from SDRAM when
->> a burst interval ends at physical address 0x10000000. To avoid this
->> problem, we remove the final page of low memory from the memory map.
->> 
->> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
->> ---
->>   arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
->>   arch/mips/kernel/setup.c |  8 ++++++++
->>   2 files changed, 32 insertions(+)
->> 
->>   v2: No change
->> 
->> diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
->> index afd84ee966e8..6948b133a15d 100644
->> --- a/arch/mips/jz4740/setup.c
->> +++ b/arch/mips/jz4740/setup.c
->> @@ -23,6 +23,7 @@
->>     #include <asm/bootinfo.h>
->>   #include <asm/mips_machine.h>
->> +#include <asm/page.h>
->>   #include <asm/prom.h>
->>     #include <asm/mach-jz4740/base.h>
->> @@ -102,6 +103,29 @@ void __init arch_init_irq(void)
->>   	irqchip_init();
->>   }
->>   +/*
->> + * We have seen MMC DMA transfers read corrupted data from SDRAM when 
->> a burst
->> + * interval ends at physical address 0x10000000. To avoid this 
->> problem, we
->> + * remove the final page of low memory from the memory map.
->> + */
->> +void __init jz4770_reserve_unsafe_for_dma(void)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < boot_mem_map.nr_map; i++) {
->> +		struct boot_mem_map_entry *entry = boot_mem_map.map + i;
->> +
->> +		if (entry->type != BOOT_MEM_RAM)
->> +			continue;
->> +
->> +		if (entry->addr + entry->size != 0x10000000)
->> +			continue;
->> +
->> +		entry->size -= PAGE_SIZE;
->> +		break;
->> +	}
->> +}
->> +
->>   static int __init jz4740_machine_setup(void)
->>   {
->>   	mips_machine_setup();
->> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
->> index 89785600fde4..cccfd7ba89fe 100644
->> --- a/arch/mips/kernel/setup.c
->> +++ b/arch/mips/kernel/setup.c
->> @@ -838,6 +838,14 @@ static void __init arch_mem_init(char 
->> **cmdline_p)
->>     	parse_early_param();
->>   +#ifdef CONFIG_MACH_JZ4770
->> +	if (current_cpu_type() == CPU_JZRISC &&
->> +				mips_machtype == MACH_INGENIC_JZ4770) {
->> +		extern void __init jz4770_reserve_unsafe_for_dma(void);
->> +		jz4770_reserve_unsafe_for_dma();
->> +	}
->> +#endif
->> +
-> 
-> This part doesn't look good in the platform-agnostic code ... is there
-> a reason why you wouldn't do that from within plat_mem_setup()?
-> 
+  drivers/clk/clk-mb86s7x.c:27:10: fatal error: soc/mb86s7x/scb_mhu.h: No such file or directory
+   #include <soc/mb86s7x/scb_mhu.h>
+            ^~~~~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
 
-I agree, but, doing it in plat_mem_setup() is too early, as the 'boot 
-mem map' hasn't been initialized yet then...
+And when commenting out that line, we get:
 
->>   	if (usermem) {
->>   		pr_info("User-defined physical RAM map:\n");
->>   		print_memory_map();
->> 
-> 
-> 
-> Marcin
+  drivers/clk/clk-mb86s7x.c: In function 'crg_gate_control':
+  drivers/clk/clk-mb86s7x.c:72:8: error: implicit declaration of function 'mb86s7x_send_packet' [-Werror=implicit-function-declaration]
+    ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
+          ^~~~~~~~~~~~~~~~~~~
+  drivers/clk/clk-mb86s7x.c:72:28: error: 'CMD_PERI_CLOCK_GATE_SET_REQ' undeclared (first use in this function)
+    ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
+                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/clk/clk-mb86s7x.c:72:28: note: each undeclared identifier is reported only once for each function it appears in
+  drivers/clk/clk-mb86s7x.c: In function 'crg_rate_control':
+  drivers/clk/clk-mb86s7x.c:116:10: error: 'CMD_PERI_CLOCK_RATE_SET_REQ' undeclared (first use in this function)
+     code = CMD_PERI_CLOCK_RATE_SET_REQ;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/clk/clk-mb86s7x.c:121:10: error: 'CMD_PERI_CLOCK_RATE_GET_REQ' undeclared (first use in this function); did you mean 'CMD_PERI_CLOCK_RATE_SET_REQ'?
+     code = CMD_PERI_CLOCK_RATE_GET_REQ;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+            CMD_PERI_CLOCK_RATE_SET_REQ
+  drivers/clk/clk-mb86s7x.c: In function 'mhu_cluster_rate':
+  drivers/clk/clk-mb86s7x.c:276:10: error: 'CMD_CPU_CLOCK_RATE_GET_REQ' undeclared (first use in this function)
+     code = CMD_CPU_CLOCK_RATE_GET_REQ;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/clk/clk-mb86s7x.c:278:10: error: 'CMD_CPU_CLOCK_RATE_SET_REQ' undeclared (first use in this function); did you mean 'CMD_CPU_CLOCK_RATE_GET_REQ'?
+     code = CMD_CPU_CLOCK_RATE_SET_REQ;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+            CMD_CPU_CLOCK_RATE_GET_REQ
+  cc1: some warnings being treated as errors
+  scripts/Makefile.build:302: recipe for target
+  'drivers/clk/clk-mb86s7x.o' failed
+  make[2]: *** [drivers/clk/clk-mb86s7x.o] Error 1
+
+Comment it out in the Makefile for now.
+
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+---
+ drivers/clk/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 4f6a812342ed..0f0ab6f03ccd 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -28,7 +28,7 @@ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+-obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
++#obj-$(CONFIG_ARCH_MB86S7X)		+= clk-mb86s7x.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+ obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
+-- 
+2.12.3
