@@ -1,45 +1,83 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jun 2017 13:56:18 +0200
-Message-ID: <CAMuHMdWRadUCZUycUW3dKJhS__aRRVbV1tXo0umUQ7KHOYQMoQ@mail.gmail.com>
-Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
- cpg-mssr: Add interface for critical core clocks)
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@baylibre.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <plaes@plaes.org>
+From: Priit Laes <plaes@plaes.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>,
+	Priit Laes <plaes@plaes.org>
+Subject: [PATCH v4 1/6] clk: sunxi-ng: div: Add support for fixed post-divider
+Date: Sun, 25 Jun 2017 23:45:42 +0300
+Message-Id: <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
+In-Reply-To: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+In-Reply-To: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dirk,
+SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
+6 is fixed post-divider.
 
-On Thu, Jun 29, 2017 at 11:27 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> CC clock, ARM, DT, PM people
->
-> TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
-> disables them as being unused.
+Signed-off-by: Priit Laes <plaes@plaes.org>
+---
+ drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++--
+ drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-> Of course this is not limited to clocks, but also to e.g. PM domains.
-
-BTW, how do you prevent Linux from powering down the CR7 PM domain,
-which contains the Cortex R7?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+index c0e5c10..de30e15 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.c
++++ b/drivers/clk/sunxi-ng/ccu_div.c
+@@ -62,8 +62,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
+ 	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
+ 						  parent_rate);
+ 
+-	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+-				   cd->div.flags);
++	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
++				  cd->div.flags);
++
++	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		val /= cd->fixed_post_div;
++
++	return val;
+ }
+ 
+ static int ccu_div_determine_rate(struct clk_hw *hw,
+@@ -89,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
+ 			      cd->div.flags);
+ 
++	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		val *= cd->fixed_post_div;
++
+ 	spin_lock_irqsave(cd->common.lock, flags);
+ 
+ 	reg = readl(cd->common.base + cd->common.reg);
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index 08d0744..f3a5028 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -86,9 +86,10 @@ struct ccu_div_internal {
+ struct ccu_div {
+ 	u32			enable;
+ 
+-	struct ccu_div_internal		div;
++	struct ccu_div_internal	div;
+ 	struct ccu_mux_internal	mux;
+ 	struct ccu_common	common;
++	unsigned int		fixed_post_div;
+ };
+ 
+ #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
+-- 
+git-series 0.9.1
