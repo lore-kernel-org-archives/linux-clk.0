@@ -1,53 +1,55 @@
-Return-Path: <ibmirkin@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:53134 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbdFZNuO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2017 09:50:14 -0400
 MIME-Version: 1.0
-Sender: ibmirkin@gmail.com
-In-Reply-To: <20170607223625.aofk3cba3w4cvlys@rob-hp-laptop>
-References: <20170602101024.18940-1-wens@csie.org> <20170602101024.18940-20-wens@csie.org>
- <20170602194219.hiajr7dt2oikm52q@flea.lan> <20170607223625.aofk3cba3w4cvlys@rob-hp-laptop>
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Date: Wed, 7 Jun 2017 18:47:53 -0400
-Message-ID: <CAKb7UvgKhgCpeNzUX1ecFPuF6j+KvAWW3vprZ9nnVMBBJFi_zQ@mail.gmail.com>
-Subject: Re: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on the
- MSI Primo81 tablet
-To: Rob Herring <robh@kernel.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	devicetree <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-sunxi@googlegroups.com,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Mon, 26 Jun 2017 15:50:11 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Burton <paul.burton@imgtec.com>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/15] clk: Add Ingenic jz4770 CGU driver
+In-Reply-To: <20170607205943.GO20170@codeaurora.org>
+References: <20170607200439.24450-1-paul@crapouillou.net>
+ <20170607200439.24450-5-paul@crapouillou.net>
+ <20170607205943.GO20170@codeaurora.org>
+Message-ID: <639b492cc57200bab14572ac591ef8af@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 7, 2017 at 6:36 PM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Jun 02, 2017 at 09:42:19PM +0200, Maxime Ripard wrote:
->> On Fri, Jun 02, 2017 at 06:10:24PM +0800, Chen-Yu Tsai wrote:
->> > The MSI Primo81 tablet has a micro HDMI connector at the bottom.
->> > This is connected to the SoCs HDMI output.
->> >
->> > Enable the display pipeline and the HDMI output.
->> >
->> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> > ---
->> >  arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
->> >  1 file changed, 25 insertions(+)
->> >
->> > diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->> > index f3712753fa42..26154b2f87a3 100644
->> > --- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->> > +++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
->> > @@ -52,17 +52,42 @@
->> >  / {
->> >     model = "MSI Primo81 tablet";
->> >     compatible = "msi,primo81", "allwinner,sun6i-a31s";
->> > +
->> > +   hdmi-connector {
->> > +           compatible = "hdmi-connector";
->> > +           type = "c";
->>
->> Should we add a connector type for this one?
->
-> c as in USB Type C? I'd prefer to see a new compatible string. Is type
-> even documented?
+Hi,
 
-Probably as in HDMI Type C (there are Type A, C, and D connectors, aka
-"regular", "mini", and "micro").
+Le 2017-06-07 22:59, Stephen Boyd a écrit :
+> On 06/07, Paul Cercueil wrote:
+>> Add support for the clocks provided by the CGU in the Ingenic JZ4770
+>> SoC.
+>> 
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+
+[...]
+
+>> diff --git a/include/dt-bindings/clock/jz4770-cgu.h 
+>> b/include/dt-bindings/clock/jz4770-cgu.h
+>> new file mode 100644
+>> index 000000000000..54b8b2ae4a73
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/jz4770-cgu.h
+> 
+> Can you split this file off into a different patch? That way clk
+> tree can apply clk patches on top of a stable branch where this
+> file lives by itself.
+
+Oops, I forgot that in the v2.
+
+The jz4770-cgu.c file includes and uses 
+<dt-bindings/clock/jz4770-cgu.h>, so I don't think
+it would make sense to split it, since it wouldn't compile without it.
