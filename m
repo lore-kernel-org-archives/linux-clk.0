@@ -1,58 +1,38 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 20 Jun 2017 17:26:11 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH 3/9] clk: fractional-divider: add
- CLK_FRAC_DIVIDER_ZERO_BASED flag support
-Message-ID: <20170620092611.GC6805@b29396-OptiPlex-7040>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-4-git-send-email-aisheng.dong@nxp.com>
- <20170620015547.GN4493@codeaurora.org>
+Return-Path: <paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170620015547.GN4493@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Mon, 26 Jun 2017 15:34:38 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
+ <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Paul Burton
+ <paul.burton@imgtec.com>, Maarten ter Huurne <maarten@treewalker.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@linux-mips.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 01/17] clk: ingenic: Use const pointer to clk_ops in
+ struct
+In-Reply-To: <20170621215038.GG4493@codeaurora.org>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170620151855.19399-1-paul@crapouillou.net>
+ <20170621215038.GG4493@codeaurora.org>
+Message-ID: <580231557b0447d9019a20ac99292938@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 19, 2017 at 06:55:47PM -0700, Stephen Boyd wrote:
-> On 05/15, Dong Aisheng wrote:
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index a6efbb9..4466cae 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -557,6 +557,11 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
-> >   * @lock:	register lock
-> >   *
-> >   * Clock with adjustable fractional divider affecting its output frequency.
-> > + *
-> > + * Flags:
-> > + * CLK_FRAC_DIVIDER_ZERO_BASED - by default the divisor is the value read
-> > + *	from the register.  If CLK_FRAC_DIVIDER_ZERO_BASED is set then the
-> > + *	divider is the raw value read from the register plus one.
-> 
-> This should say the numerator and denominator are both the value
-> read plus one. It isn't clear if it applies to the numerator, or
-> the denominator, or both.
-> 
+Hi,
 
-Good suggestion.
-Will improve it.
-
-Regards
-Dong Aisheng
-
-> >   */
-> >  struct clk_fractional_divider {
-> >  	struct clk_hw	hw;
+Le 2017-06-21 23:50, Stephen Boyd a écrit :
+> On 06/20, Paul Cercueil wrote:
+>> The CGU common code does not modify the pointed clk_ops structure, so 
+>> it
+>> should be marked as const.
+>> 
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> ---
 > 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> How did you want to merge this series? I can ack clk patches if
+> you like, or apply the clk patches to the clk tree.
+
+The clk patches refer to CONFIG_MACH_JZ4770 in the Kconfig, so they 
+indirectly depend on the other patches. I think it's better that you ack 
+them then.
