@@ -1,41 +1,37 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: div6: Document fields used for parent selection
-Date: Thu, 29 Jun 2017 14:50:00 +0200
-Message-Id: <1498740600-1772-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 26 Jun 2017 14:40:58 -0500
+From: Rob Herring <robh@kernel.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com,
+	bjorn.andersson@linaro.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock
+ controller
+Message-ID: <20170626194058.43fttjvs23vxtuuu@rob-hp-laptop>
+References: <20170623161533.20449-1-georgi.djakov@linaro.org>
+ <20170623161533.20449-4-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170623161533.20449-4-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the missing documentation for the fields in struct div6_clock
-related to parent selection for DIV6 clocks with selectable parents, as
-found in R/SH-Mobile SoCs.
+On Fri, Jun 23, 2017 at 07:15:33PM +0300, Georgi Djakov wrote:
+> Add a driver for the APCS clock controller. It is part of the APCS
+> hardware block, which among other things implements also a combined
+> mux and half integer divider functionality. It can choose between a
+> fixed-rate clock or the dedicated APCS (A53) PLL. The source and the
+> divider can be set both at the same time.
+> 
+> This is required for enabling CPU frequency scaling on MSM8916-based
+> platforms.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   5 +
 
-Fixes: c6d67fb037f4eaaf ("clk: shmobile: div6: support selectable-input clocks")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in clk-renesas-for-v4.14.
+Acked-by: Rob Herring <robh@kernel.org>
 
- drivers/clk/renesas/clk-div6.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-index 0627860233cbf97e..3e0040c0ac87a14b 100644
---- a/drivers/clk/renesas/clk-div6.c
-+++ b/drivers/clk/renesas/clk-div6.c
-@@ -29,6 +29,9 @@
-  * @hw: handle between common and hardware-specific interfaces
-  * @reg: IO-remapped register
-  * @div: divisor value (1-64)
-+ * @src_shift: Shift to access the register bits to select the parent clock
-+ * @src_width: Number of register bits to select the parent clock (may be 0)
-+ * @parents: Array to map from valid parent clocks indices to hardware indices
-  */
- struct div6_clock {
- 	struct clk_hw hw;
--- 
-2.7.4
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c            | 122 +++++++++++++++++++++
+>  2 files changed, 127 insertions(+)
