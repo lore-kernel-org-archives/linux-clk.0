@@ -1,143 +1,88 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v3 7/9] clk: mvebu: cp110: add sdio clock to cp-110 system controller
-Date: Thu,  1 Jun 2017 16:55:40 +0200
-Message-Id: <71f731afd7f11b6ca3c0cffba3855c6ceac78d94.1496328934.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
-References: <cover.6bb422e6a233460049bb63792b32a5ba851dcddd.1496328934.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 26 Jun 2017 10:56:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: sboyd@codeaurora.org, kishon@ti.com, xuwei5@hisilicon.com,
+        catalin.marinas@arm.com, balbi@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, project-aspen-dev@linaro.org,
+        yanhaifeng@hisilicon.com
+Subject: Re: [PATCH 2/5] dt-bindings: phy-hisi-inno-usb2: add support for
+ hisi-inno-usb2 phy
+Message-ID: <20170626155600.abksvlvxehksp2hp@rob-hp-laptop>
+References: <1498035645-22804-1-git-send-email-xuejiancheng@hisilicon.com>
+ <1498035645-22804-3-git-send-email-xuejiancheng@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1498035645-22804-3-git-send-email-xuejiancheng@hisilicon.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Konstantin Porotchkin <kostap@marvell.com>
+On Wed, Jun 21, 2017 at 05:00:42PM +0800, Jiancheng Xue wrote:
+> Add support for hisi-inno-usb2 phy.
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+> ---
+>  .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt | 36 ++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+> new file mode 100644
+> index 0000000..21f8208
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+> @@ -0,0 +1,36 @@
+> +HiSilicon INNO USB2 PHY
+> +-----------------------
+> +Required properties:
+> +- compatible: Should be one of the following strings:
+> +		"hisilicon,inno-usb2-phy",
+> +		"hisilicon,hi3798cv200-usb2-phy",
+> +- #phy-cells: Must be 0
+> +- hisilicon,peripheral-syscon: Phandle of syscon used to control phy.
+> +- clocks: Phandle and clock specifier pair for reference clock utmi_refclk.
+> +- resets: List of phandle and reset specifier pairs for each reset signal in
+> +reset-names.
+> +- reset-names: Should be "por_rst" and "test_rst". The test_rst only
+> +exists in some of SOCs, so it is optional.
 
-This commit updates the CP110 system controller driver to add the
-definition for a missing clock.
+_rst is redundant.
 
-The SDIO clock is dedicated driving the SDHCI interface and its frequency
-is 400MHz (2/5 of PLL source clock).
+> +
+> +Phy node can include up to four subnodes. Each subnode represents one port.
+> +The required properties of port node are as follows:
+> +- clocks: Phandle and clock specifier pair for utmi_clock.
+> +- resets: List of phandle and reset specifier pairs for port reset and utmi reset.
+> +- reset-names: List of reset signal names. Should be "port_rst" and "utmi_rst"
+> +
+> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
+> +
+> +Example:
+> +usb_phy: phy {
+> +		 compatible = "hisilicon,inno_usb2_phy";
 
-The SDIO interface should be bound to this clock and not the core clock
-as in the older code.
-Using the wrong clock lead to a maximum SDHCI frequency of 250 Mhz, while
-the HW really supports up to 400 Mhz.
+Doesn't match the above compatible.
 
-This patch also fixes the NAND clock relationship documentation.
+> +		 #phy-cells = <0>;
+> +		 hisilicon,peripheral-syscon = <&peri_ctrl>;
+> +		 clocks = <&crg USB2_REF_CLK>;
+> +		 resets = <&crg 0xb4 2>;
+> +		 reset-names = "por_rst";
+> +		 port0 {
 
-Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
-[gregory.clement@free-electrons.com:
-- use sdio instead of emmc to name the clock]
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/clk/mvebu/cp110-system-controller.c | 28 ++++++++++++++++++----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+port@0 and provide a reg property.
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index ae3d81263304..b034b79345ec 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -11,15 +11,16 @@
-  */
- 
- /*
-- * CP110 has 5 core clocks:
-+ * CP110 has 6 core clocks:
-  *
-  *  - APLL		(1 Ghz)
-  *    - PPv2 core	(1/3 APLL)
-  *    - EIP		(1/2 APLL)
-- *      - Core		(1/2 EIP)
-+ *     - Core		(1/2 EIP)
-+ *    - SDIO		(2/5 APLL)
-  *
-  *  - NAND clock, which is either:
-- *    - Equal to the core clock
-+ *    - Equal to SDIO clock
-  *    - 2/5 APLL
-  *
-  * CP110 has 32 gatable clocks, for the various peripherals in the
-@@ -46,7 +47,7 @@ enum {
- 	CP110_CLK_TYPE_GATABLE,
- };
- 
--#define CP110_MAX_CORE_CLOCKS		5
-+#define CP110_MAX_CORE_CLOCKS		6
- #define CP110_MAX_GATABLE_CLOCKS	32
- 
- #define CP110_CLK_NUM \
-@@ -57,6 +58,7 @@ enum {
- #define CP110_CORE_EIP			2
- #define CP110_CORE_CORE			3
- #define CP110_CORE_NAND			4
-+#define CP110_CORE_SDIO			5
- 
- /* A number of gatable clocks need special handling */
- #define CP110_GATE_AUDIO		0
-@@ -235,7 +237,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 	struct regmap *regmap;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name;
-+	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name,
-+		*sdio_name;
- 	struct clk_hw_onecell_data *cp110_clk_data;
- 	struct clk_hw *hw, **cp110_clks;
- 	u32 nand_clk_ctrl;
-@@ -315,6 +318,17 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 
- 	cp110_clks[CP110_CORE_NAND] = hw;
- 
-+	/* SDIO clock is APLL/2.5 */
-+	sdio_name = cp110_unique_name(dev, syscon_node, "sdio-core");
-+	hw = clk_hw_register_fixed_factor(NULL, sdio_name,
-+					  apll_name, 0, 2, 5);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
-+		goto fail_sdio;
-+	}
-+
-+	cp110_clks[CP110_CORE_SDIO] = hw;
-+
- 	/* create the unique name for all the gate clocks */
- 	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++)
- 		gate_name[i] =	cp110_unique_name(dev, syscon_node,
-@@ -344,6 +358,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 			parent = ppv2_name;
- 			break;
- 		case CP110_GATE_SDIO:
-+			parent = sdio_name;
-+			break;
- 		case CP110_GATE_GOP_DP:
- 			parent = gate_name[CP110_GATE_SDMMC_GOP];
- 			break;
-@@ -391,6 +407,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
- 			cp110_unregister_gate(hw);
- 	}
- 
-+	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_SDIO]);
-+fail_sdio:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_NAND]);
- fail_nand:
- 	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
--- 
-git-series 0.9.1
+> +			 clocks = <&crg USB2_UTMI0_CLK>;
+> +			 resets = <&crg 0xb4 5>, <&crg 0xb4 1>;
+> +			 reset-names = "port_rst", "utmi_rst";
+> +		 };
+> +	 };
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
