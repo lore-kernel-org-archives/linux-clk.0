@@ -1,57 +1,42 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v7 2/4] dt-bindings: qcom: Add ipq8074 bindings
-Date: Thu, 29 Jun 2017 11:48:32 +0530
-Message-Id: <1498717114-338-3-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1498717114-338-1-git-send-email-varada@codeaurora.org>
-References: <1498717114-338-1-git-send-email-varada@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:35911 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751406AbdFZRjA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2017 13:39:00 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170626172652.28018-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20170626172652.28018-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Jun 2017 19:38:58 +0200
+Message-ID: <CAMuHMdWkgeuMGhpMrYJhh9XDSEzPv48tkTeGOW9FQvukU+oaXg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add PWM clock
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Jun 26, 2017 at 7:26 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -152,6 +152,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+>         DEF_MOD("hscif1",                519,   R8A7796_CLK_S3D1),
+>         DEF_MOD("hscif0",                520,   R8A7796_CLK_S3D1),
+>         DEF_MOD("thermal",               522,   R8A7796_CLK_CP),
+> +       DEF_MOD("pwm",                   523,   R8A7796_CLK_S0D12),
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
-index 028d16e..0ed4d39 100644
---- a/Documentation/devicetree/bindings/arm/qcom.txt
-+++ b/Documentation/devicetree/bindings/arm/qcom.txt
-@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
- 	msm8994
- 	msm8996
- 	mdm9615
-+	ipq8074
- 
- The 'board' element must be one of the following strings:
- 
-@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
- 	dragonboard
- 	mtp
- 	sbc
-+	hk01
- 
- The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
- where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Cfr. commit a0b381fafffaf07c ("clk: renesas: r8a7796: Add PWM clock")
+in clk-next.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
