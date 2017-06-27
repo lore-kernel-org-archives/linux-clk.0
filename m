@@ -1,68 +1,99 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34876 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751177AbdFBAgj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2017 20:36:39 -0400
-Received: by mail-lf0-f68.google.com with SMTP id v20so519187lfa.2
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2017 17:36:38 -0700 (PDT)
-Date: Thu, 1 Jun 2017 17:27:03 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "arm@kernel.org" <arm@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [GIT PULL] Gemini DTS updates, take one
-Message-ID: <20170602002703.GM13314@localhost>
-References: <CACRpkdYVqQ4qyraofQO3sLUV=NjBn48a9sX-k+O9ASSaBY7pyA@mail.gmail.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock
+ controller
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com, robh+dt@kernel.org,
+ mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20170623161533.20449-1-georgi.djakov@linaro.org>
+ <20170623161533.20449-4-georgi.djakov@linaro.org>
+ <20170623174528.GC18666@tuxbook>
+Message-ID: <fca63479-8d47-1d89-eff8-179c13ef32fd@linaro.org>
+Date: Tue, 27 Jun 2017 19:21:20 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdYVqQ4qyraofQO3sLUV=NjBn48a9sX-k+O9ASSaBY7pyA@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170623174528.GC18666@tuxbook>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 24, 2017 at 11:03:14AM +0200, Linus Walleij wrote:
-> Hi ARM SoC folks,
-> 
-> this is a first pull request of DTS updates to the Gemini architecture.
-> 
-> It tries to follow the merge strategy to merge DTS files with numeral
-> and then patch in macros after -rc1.
+Hi Bjorn,
 
-Appreciated!
+On 06/23/2017 08:45 PM, Bjorn Andersson wrote:
+> On Fri 23 Jun 09:15 PDT 2017, Georgi Djakov wrote:
+> 
+>> +static int msm8916_register_clk(struct device *dev, void __iomem *base)
+>> +{
+> [..]
+>> +	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
+>> +	if (IS_ERR(regmap)) {
+>> +		ret = PTR_ERR(regmap);
+>> +		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
+>> +		goto err;
+>> +	}
+> 
+> I think it would be cleaner if you create the regmap in probe() and we
+> use that throughout the driver - rather than using two different access
+> mechanism.
 
-> The combines clock+reset DT bindings are part of the pull request,
-> but the macros and drivers are merged by the subsystem maintainers
-> for clock and reset respectively.
-> 
-> I will likely submit more Gemini DTS pulls based on this one as drivers
-> trickle in: ATA/SATA, DMA and maybe Hans' USB work come to mind.
-> But let's create a firm base for it all first.
+Ok agree, will make sure its consistent.
 
-Cool.
+> 
+>> +
+>> +	a53cc->clkr.regmap = regmap;
+>> +
+>> +	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
+>> +		goto err;
+>> +	}
+>> +
+>> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
+>> +				     &a53cc->clkr.hw);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to add clock provider: %d\n", ret);
+>> +		goto err;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +err:
+>> +	clk_notifier_unregister(pclk, &a53cc->clk_nb);
+>> +	return ret;
+>> +}
+>> +
+>>  static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>>  {
+>> +	struct device_node *np = pdev->dev.of_node;
+>>  	struct qcom_apcs_ipc *apcs;
+>>  	struct resource *res;
+>>  	unsigned long offset;
+>> @@ -63,6 +178,13 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>>  	if (IS_ERR(base))
+>>  		return PTR_ERR(base);
+>>  
+>> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
+>> +		/* register the APCS mux and divider clock */
+>> +		ret = msm8916_register_clk(&pdev->dev, base);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+> 
+> Don't you need to clean up anything in the below error path and in
+> remove()?
 
-> Please pull it into ARM SoC!
-> 
-> Yours,
-> Linus Walleij
-> 
-> 
-> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
-> 
->   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-nomadik.git
-> tags/gemini-v4.13-dts-1
-> 
-> for you to fetch changes up to 664ed4e283926d753e876a1347b7729135a3f6b8:
-> 
->   ARM: dts: Add clocks to the Gemini SoC (2017-05-24 10:50:22 +0200)
+Right, will take care of it.
 
-Merged into next/dt for v4.13. Thanks!
+> 
+>>  	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
+>>  
+>>  	apcs->reg = base + offset;
+> 
+> Other than that I think this looks reasonable.
 
--Olof
+Thanks for your time!
+
+BR,
+Georgi
