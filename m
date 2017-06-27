@@ -1,213 +1,117 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Tue, 20 Jun 2017 17:31:43 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com
-Subject: Re: [PATCH 4/9] clk: imx: add pllv4 support
-Message-ID: <20170620093143.GD6805@b29396-OptiPlex-7040>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
- <20170620015917.GO4493@codeaurora.org>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v8 1/3] clk: qcom: Add A53 PLL support
+To: Riku Voipio <riku.voipio@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, jassisinghbrar@gmail.com,
+ Bjorn Andersson <bjorn.andersson@linaro.org>, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20170623161533.20449-1-georgi.djakov@linaro.org>
+ <20170623161533.20449-2-georgi.djakov@linaro.org>
+ <20170626194015.pejm43gl5khoqizy@rob-hp-laptop>
+ <CAAqcGHm3R_P71szGq4Tf+B8sB9Mwd0RAi9RsssV5MwWcfuGdsw@mail.gmail.com>
+Message-ID: <c9ff9e8d-3214-6faf-484d-849f43be7a7d@linaro.org>
+Date: Tue, 27 Jun 2017 19:23:10 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170620015917.GO4493@codeaurora.org>
+In-Reply-To: <CAAqcGHm3R_P71szGq4Tf+B8sB9Mwd0RAi9RsssV5MwWcfuGdsw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 19, 2017 at 06:59:17PM -0700, Stephen Boyd wrote:
-> On 05/15, Dong Aisheng wrote:
-> >  obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
-> > diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
-> > new file mode 100644
-> > index 0000000..502da64
-> > --- /dev/null
-> > +++ b/drivers/clk/imx/clk-pllv4.c
-> > @@ -0,0 +1,196 @@
-> > +/*
-> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > + * Copyright 2017 NXP
-> > + *
-> > + * Author: Dong Aisheng <aisheng.dong@nxp.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License
-> > + * as published by the Free Software Foundation; either version 2
-> > + * of the License, or (at your option) any later version.
-> > + *
-> > + * http://www.opensource.org/licenses/gpl-license.html
-> > + * http://www.gnu.org/copyleft/gpl.html
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/clk.h>
+On 06/27/2017 12:48 PM, Riku Voipio wrote:
+> On 26 June 2017 at 22:40, Rob Herring <robh@kernel.org> wrote:
+>> On Fri, Jun 23, 2017 at 07:15:31PM +0300, Georgi Djakov wrote:
+>>> The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
+>>> a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
+>>> are connected to a mux and half-integer divider, which is feeding the
+>>> CPU cores.
+>>>
+>>> This patch adds support for the primary CPU PLL which generates the
+>>> higher range of frequencies above 1GHz.
+>>>
+>>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>>> ---
+>>>  .../devicetree/bindings/clock/qcom,a53pll.txt      | 22 +++++
+>>
+>> It's preferred to split bindings to a separate patch. In any case,
+>>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>>
+>> One kconfig comment though:
+>>
+>>>  drivers/clk/qcom/Kconfig                           |  9 +++
+>>>  drivers/clk/qcom/Makefile                          |  1 +
+>>>  drivers/clk/qcom/a53-pll.c                         | 94 ++++++++++++++++++++++
+>>>  4 files changed, 126 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+>>>  create mode 100644 drivers/clk/qcom/a53-pll.c
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+>>> new file mode 100644
+>>> index 000000000000..f4c2fddf6e7f
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
+>>> @@ -0,0 +1,22 @@
+>>> +MSM8916 A53 PLL Binding
+>>> +---------------
+>>> +The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
+>>> +above 1GHz.
+>>> +
+>>> +Required properties :
+>>> +- compatible : Shall contain only one of the following:
+>>> +
+>>> +             "qcom,msm8916-a53pll"
+>>> +
+>>> +- reg : shall contain base register location and length
+>>> +
+>>> +- #clock-cells : must be set to <0>
+>>> +
+>>> +Example:
+>>> +
+>>> +     a53pll: clock@b016000 {
+>>> +             compatible = "qcom,msm8916-a53pll";
+>>> +             reg = <0xb016000 0x40>;
+>>> +             #clock-cells = <0>;
+>>> +     };
+>>> +
+>>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>>> index 9f6c278deead..057cf60ed037 100644
+>>> --- a/drivers/clk/qcom/Kconfig
+>>> +++ b/drivers/clk/qcom/Kconfig
+>>> @@ -12,6 +12,15 @@ config COMMON_CLK_QCOM
+>>>       select REGMAP_MMIO
+>>>       select RESET_CONTROLLER
+>>>
+>>> +config QCOM_A53PLL
+>>> +     bool "A53 PLL"
+>>
+>> Figuring out config options needed for a specific QC SoC is "fun". If
+>> this is only for MSM8916, then add that to the config option or prompt
+>> text at least.
 > 
-> Is this include used?
+>> And please update the arm64 defconfig with this option.
 > 
-
-Nice catch. Will remove.
-
-> > +#include <linux/delay.h>
-> > +#include <linux/err.h>
-> > +#include <linux/slab.h>
-> > +
-> > +/* PLL Control Status Register (xPLLCSR) */
-> > +#define PLL_CSR_OFFSET		0x0
-> > +#define PLL_VLD			BIT(24)
-> > +#define PLL_EN			BIT(0)
-> > +
-> > +/* PLL Configuration Register (xPLLCFG) */
-> > +#define PLL_CFG_OFFSET		0x08
-> > +#define BP_PLL_MULT		16
-> > +#define BM_PLL_MULT		(0x7f << 16)
-> > +
-> > +/* PLL Numerator Register (xPLLNUM) */
-> > +#define PLL_NUM_OFFSET		0x10
-> > +
-> > +/* PLL Denominator Register (xPLLDENOM) */
-> > +#define PLL_DENOM_OFFSET	0x14
-> > +
-> > +struct clk_pllv4 {
-> > +	struct clk_hw	hw;
-> > +	void __iomem	*base;
-> > +};
-> > +
-> > +/* Valid PLL MULT Table */
-> > +static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
-> > +
-> > +#define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
-> > +
-> > +static int clk_pllv4_wait_lock(struct clk_pllv4 *pll)
-> > +{
-> > +	unsigned long timeout = jiffies + msecs_to_jiffies(5);
-> > +
-> > +	/* Wait for PLL to lock */
-> > +	do {
-> > +		if (readl_relaxed(pll->base  + PLL_CSR_OFFSET) & PLL_VLD)
-> > +			break;
-> > +		if (time_after(jiffies, timeout))
-> > +			break;
-> > +			usleep_range(50, 500);
-> > +	} while (1);
-> > +
-> > +	return readl_relaxed(pll->base + PLL_CSR_OFFSET) & PLL_VLD ?
-> > +	       0 : -ETIMEDOUT;
+> Maybe instead of updating defconfig set:
 > 
-> Use readl_poll_timeout() instead?
+>         default ARCH_QCOM
 > 
+> I think the effect is roughly same but it makes the life of
+> distribution maintainers easier.>
 
-Good idea.
+Thanks for the ideas, Riku and Rob. It looks like currently its only
+used in msm8916 (but i might be wrong), so i will add MSM8916 to the
+prompt and rename it to MSM_A53PLL_8916 to be more consistent with the
+rest of the options.
 
-> > +}
-> > +
-> > +static int clk_pllv4_is_enabled(struct clk_hw *hw)
-> > +{
-> > +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-> > +
-> > +	if (readl_relaxed(pll->base) & PLL_EN)
-> > +		return 1;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
-> > +					   unsigned long parent_rate)
-> > +{
-> > +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-> > +	u32 div;
-> > +
-> > +	div = (readl_relaxed(pll->base + PLL_CFG_OFFSET)
-> > +	       & BM_PLL_MULT) >> BP_PLL_MULT;
-> 
-> Put that on multiple lines please:
-> 
-> 	div = readl_relaxed(pll->base + PLL_CFG_OFFSET);
-> 	div &= BM_PLL_MULT;
-> 	div >>= BP_PLL_MULT; /* Why BP this time? */
-> 
+If there are no objections, i can add:
+	default ARCH_QCOM && ARM64
 
-Of course.
+Thanks,
+Georgi
 
-> > +
-> > +	return parent_rate * div;
-> > +}
-> > +
-> > +static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
-> > +				 unsigned long *prate)
-> > +{
-> > +	unsigned long parent_rate = *prate;
-> > +	unsigned long round_rate, i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> > +		round_rate = parent_rate * pllv4_mult_table[i];
-> > +		if (rate >= round_rate)
-> > +			return round_rate;
-> > +	}
-> > +
-> > +	return round_rate;
-> > +}
-> > +
-> > +static bool clk_pllv4_is_valid_mult(unsigned int mult)
-> > +{
-> > +	int i;
-> > +
-> > +	/* check if mult is in valid MULT table */
-> > +	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> > +		if (pllv4_mult_table[i] == mult)
-> > +			return true;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			      unsigned long parent_rate)
-> > +{
-> > +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-> > +	u32 val, mult;
-> > +
-> > +	if (clk_pllv4_is_enabled(hw)) {
-> > +		WARN(1, "clk_pllv4: can't change rate when pll is enabled");
-> > +		return -EINVAL;
-> 
-> Sad, CLK_SET_RATE_GATE isn't working for you I suppose?
-> 
-
-CLK_SET_RATE_GATE can't work in early stage before running clk_disable_unused.
-At that point, the clock tree state is still not consistent with HW.
-e.g. prepare/enable count is still zero but it's actually enabled due to
-reset state or bootloader.
-
-The code here is adding a double check in case user sets rate in early stage.
-
-However, probably it could also be moved into clock core as it's not platform
-dependant behavior?
-
-Regards
-Dong Aisheng
-
-> > +	}
-> > +
-> > +	mult = rate / parent_rate;
-> > +
-> > +	if (clk_pllv4_is_valid_mult(mult))
-> > +		return -EINVAL;
-> > +
-> > +	val = readl_relaxed(pll->base + PLL_CFG_OFFSET);
-> > +	val &= ~BM_PLL_MULT;
-> > +	val |= mult << BP_PLL_MULT;
-> > +	writel_relaxed(val, pll->base + PLL_CFG_OFFSET);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>> +     depends on COMMON_CLK_QCOM
+>>> +     help
+>>> +       Support for the A53 PLL on Qualcomm MSM8916 devices. It provides
+>>> +       support for CPU frequencies above 1GHz.
+>>> +       Say Y if you want to support CPU frequency scaling on devices
+>>> +       such as MSM8916.
