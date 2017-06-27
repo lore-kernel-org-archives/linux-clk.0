@@ -1,129 +1,169 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>
-CC: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@imgtec.com>,
-	Frank Rowand <frowand.list@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH v5 1/4] dt-bindings: Document img,boston-clock binding
-Date: Sat, 17 Jun 2017 13:52:46 -0700
-Message-ID: <20170617205249.1391-2-paul.burton@imgtec.com>
-In-Reply-To: <20170617205249.1391-1-paul.burton@imgtec.com>
-References: <20170617205249.1391-1-paul.burton@imgtec.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v8 3/3] mailbox: qcom: Add support for APCS clock
+ controller
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: jassisinghbrar@gmail.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+ mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20170623161533.20449-1-georgi.djakov@linaro.org>
+ <20170623161533.20449-4-georgi.djakov@linaro.org>
+ <20170626224735.GQ4493@codeaurora.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <0dc001d7-6ea4-4521-027e-5587a8188b1d@linaro.org>
+Date: Tue, 27 Jun 2017 19:24:40 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170626224735.GQ4493@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding documentation for the clocks provided by the
-MIPS Boston development board from Imagination Technologies, and a
-header file describing the available clocks for use by device trees &
-driver.
+Hi Stephen,
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
+On 06/27/2017 01:47 AM, Stephen Boyd wrote:
+> On 06/23, Georgi Djakov wrote:
+>> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> index 9924c6d7f05d..da363c6580da 100644
+>> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> @@ -11,6 +11,8 @@
+>>   * GNU General Public License for more details.
+>>   */
+>>  
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>>  #include <linux/kernel.h>
+>>  #include <linux/module.h>
+>>  #include <linux/io.h>
+>> @@ -19,6 +21,34 @@
+>>  #include <linux/of_platform.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/mailbox_controller.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +#include "../clk/qcom/clk-regmap.h"
+>> +#include "../clk/qcom/clk-regmap-mux-div.h"
+> 
+> Why?
+> 
+>> +
+>> +
+>> +static int msm8916_register_clk(struct device *dev, void __iomem *base)
+>> +{
+>> +	struct clk_regmap_mux_div *a53cc;
+>> +	struct clk *pclk;
+>> +	struct regmap *regmap;
+>> +	struct clk_init_data init = { };
+>> +	int ret;
+>> +
+>> +	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
+>> +	if (!a53cc)
+>> +		return -ENOMEM;
+>> +
+>> +	a53cc->reg_offset = 0x50;
+>> +	a53cc->hid_width = 5;
+>> +	a53cc->hid_shift = 0;
+>> +	a53cc->src_width = 3;
+>> +	a53cc->src_shift = 8;
+>> +	a53cc->parent_map = gpll0_a53cc_map;
+>> +
+>> +	init.name = "a53mux";
+>> +	init.parent_names = gpll0_a53cc;
+>> +	init.num_parents = 2;
+> 
+> ARRAY_SIZE(gpll0_a53cc) instead of 2 please
 
----
+Ok.
 
-Changes in v5: None
+> 
+>> +	init.ops = &clk_regmap_mux_div_ops;
+>> +	init.flags = CLK_SET_RATE_PARENT;
+>> +	a53cc->clkr.hw.init = &init;
+>> +
+>> +	pclk = __clk_lookup(gpll0_a53cc[1]);
+> 
+> Urgh.. ok. We can't clk_get()?
 
-Changes in v4:
-- Move img,boston-clock node under platform register syscon node.
-- Add MAINTAINERS entry.
+Ok, will do.
 
-Changes in v3: None
+> 
+>> +	if (!pclk)
+>> +		return -EPROBE_DEFER;
+>> +
+>> +	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
+>> +	ret = clk_notifier_register(pclk, &a53cc->clk_nb);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to register clock notifier: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
+>> +	if (IS_ERR(regmap)) {
+>> +		ret = PTR_ERR(regmap);
+>> +		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
+>> +		goto err;
+>> +	}
+>> +
+>> +	a53cc->clkr.regmap = regmap;
+>> +
+>> +	ret = devm_clk_register_regmap(dev, &a53cc->clkr);
+> 
+> Regmap is not a requirement to work with the qcom clk driver.
+> 
 
-Changes in v2:
-- Add BOSTON_CLK_INPUT to expose the input clock.
+The other option then is to drop the regmap-mux-div patch and switch
+to readl()/writel().
 
- .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
- MAINTAINERS                                        |  7 +++++
- include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
- 3 files changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
- create mode 100644 include/dt-bindings/clock/boston-clock.h
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
+>> +		goto err;
+>> +	}
+>> +
+>> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
+>> +				     &a53cc->clkr.hw);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to add clock provider: %d\n", ret);
+>> +		goto err;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +err:
+>> +	clk_notifier_unregister(pclk, &a53cc->clk_nb);
+>> +	return ret;
+>> +}
+>> +
+>>  static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>>  {
+>> +	struct device_node *np = pdev->dev.of_node;
+>>  	struct qcom_apcs_ipc *apcs;
+>>  	struct resource *res;
+>>  	unsigned long offset;
+>> @@ -63,6 +178,13 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>>  	if (IS_ERR(base))
+>>  		return PTR_ERR(base);
+>>  
+>> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
+>> +		/* register the APCS mux and divider clock */
+>> +		ret = msm8916_register_clk(&pdev->dev, base);
+> 
+> Register a child platform device here instead of creating clks in the
+> same driver?
 
-diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-new file mode 100644
-index 000000000000..7bc5e9ffb624
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
-@@ -0,0 +1,31 @@
-+Binding for Imagination Technologies MIPS Boston clock sources.
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+The device node must be a child node of the syscon node corresponding to the
-+Boston system's platform registers.
-+
-+Required properties:
-+- compatible : Should be "img,boston-clock".
-+- #clock-cells : Should be set to 1.
-+  Values available for clock consumers can be found in the header file:
-+    <dt-bindings/clock/boston-clock.h>
-+
-+Example:
-+
-+	system-controller@17ffd000 {
-+		compatible = "img,boston-platform-regs", "syscon";
-+		reg = <0x17ffd000 0x1000>;
-+
-+		clk_boston: clock {
-+			compatible = "img,boston-clock";
-+			#clock-cells = <1>;
-+		};
-+	};
-+
-+	uart0: uart@17ffe000 {
-+		/* ... */
-+		clocks = <&clk_boston BOSTON_CLK_SYS>;
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09b5ab6a8a5c..6a341862f5d6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8498,6 +8498,13 @@ F:	arch/mips/include/asm/mach-loongson32/
- F:	drivers/*/*loongson1*
- F:	drivers/*/*/*loongson1*
- 
-+MIPS BOSTON DEVELOPMENT BOARD
-+M:	Paul Burton <paul.burton@imgtec.com>
-+L:	linux-mips@linux-mips.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/img,boston-clock.txt
-+F:	include/dt-bindings/clock/boston-clock.h
-+
- MIROSOUND PCM20 FM RADIO RECEIVER DRIVER
- M:	Hans Verkuil <hverkuil@xs4all.nl>
- L:	linux-media@vger.kernel.org
-diff --git a/include/dt-bindings/clock/boston-clock.h b/include/dt-bindings/clock/boston-clock.h
-new file mode 100644
-index 000000000000..a6f009821137
---- /dev/null
-+++ b/include/dt-bindings/clock/boston-clock.h
-@@ -0,0 +1,14 @@
-+/*
-+ * Copyright (C) 2016 Imagination Technologies
-+ *
-+ * SPDX-License-Identifier:	GPL-2.0
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
-+#define __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__
-+
-+#define BOSTON_CLK_INPUT 0
-+#define BOSTON_CLK_SYS 1
-+#define BOSTON_CLK_CPU 2
-+
-+#endif /* __DT_BINDINGS_CLOCK_BOSTON_CLOCK_H__ */
--- 
-2.13.1
+Ok, we can register a child platform device and create a separate driver
+in drivers/clk. If we are dropping regmap, then we can also move the
+mux-div clk ops and clk registration into the same file. I will give it
+a try.
+
+Thanks,
+Georgi
+
+> 
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>>  	offset = (unsigned long)of_device_get_match_data(&pdev->dev);
+>>  
+>>  	apcs->reg = base + offset;
+> 
