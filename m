@@ -1,131 +1,69 @@
-Return-Path: <zhang.lyra@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 28 Jun 2017 09:13:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Satoru OKAMOTO <okamoto.satoru@socionext.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Jassi Brar <jaswinder.singh@linaro.org>,
+	Andy Green <andy.green@linaro.org>,
+	Vincent Yang <vincent.yang@socionext.com>,
+	Tetsuya Nuriya <nuriya.tetsuya@socionext.com>
+Subject: Re: [PATCH 1/5] clk: mb86s7x: Suppress build
+Message-ID: <20170628161354.GB5316@codeaurora.org>
+References: <20170625170020.11791-1-afaerber@suse.de>
+ <20170625170020.11791-2-afaerber@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20170620012411.GF4493@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-10-chunyan.zhang@spreadtrum.com> <20170620012411.GF4493@codeaurora.org>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 22 Jun 2017 18:24:45 +0800
-Message-ID: <CAAfSe-tBtcsyocumaDAyUP674ey1z+xmfAOR7cqnakM_+MOtfQ@mail.gmail.com>
-Subject: Re: [PATCH V1 9/9] arm64: dts: add ccu for SC9860
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20170625170020.11791-2-afaerber@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 06/25, Andreas Färber wrote:
+> It fails to build once we introduce the ARCH_MB86S7X Kconfig symbol:
+> 
+>   drivers/clk/clk-mb86s7x.c:27:10: fatal error: soc/mb86s7x/scb_mhu.h: No such file or directory
+>    #include <soc/mb86s7x/scb_mhu.h>
+>             ^~~~~~~~~~~~~~~~~~~~~~~
+>   compilation terminated.
+> 
+> And when commenting out that line, we get:
+> 
+>   drivers/clk/clk-mb86s7x.c: In function 'crg_gate_control':
+>   drivers/clk/clk-mb86s7x.c:72:8: error: implicit declaration of function 'mb86s7x_send_packet' [-Werror=implicit-function-declaration]
+>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
+>           ^~~~~~~~~~~~~~~~~~~
+>   drivers/clk/clk-mb86s7x.c:72:28: error: 'CMD_PERI_CLOCK_GATE_SET_REQ' undeclared (first use in this function)
+>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
+>                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   drivers/clk/clk-mb86s7x.c:72:28: note: each undeclared identifier is reported only once for each function it appears in
+>   drivers/clk/clk-mb86s7x.c: In function 'crg_rate_control':
+>   drivers/clk/clk-mb86s7x.c:116:10: error: 'CMD_PERI_CLOCK_RATE_SET_REQ' undeclared (first use in this function)
+>      code = CMD_PERI_CLOCK_RATE_SET_REQ;
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   drivers/clk/clk-mb86s7x.c:121:10: error: 'CMD_PERI_CLOCK_RATE_GET_REQ' undeclared (first use in this function); did you mean 'CMD_PERI_CLOCK_RATE_SET_REQ'?
+>      code = CMD_PERI_CLOCK_RATE_GET_REQ;
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>             CMD_PERI_CLOCK_RATE_SET_REQ
+>   drivers/clk/clk-mb86s7x.c: In function 'mhu_cluster_rate':
+>   drivers/clk/clk-mb86s7x.c:276:10: error: 'CMD_CPU_CLOCK_RATE_GET_REQ' undeclared (first use in this function)
+>      code = CMD_CPU_CLOCK_RATE_GET_REQ;
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>   drivers/clk/clk-mb86s7x.c:278:10: error: 'CMD_CPU_CLOCK_RATE_SET_REQ' undeclared (first use in this function); did you mean 'CMD_CPU_CLOCK_RATE_GET_REQ'?
+>      code = CMD_CPU_CLOCK_RATE_SET_REQ;
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>             CMD_CPU_CLOCK_RATE_GET_REQ
+>   cc1: some warnings being treated as errors
+>   scripts/Makefile.build:302: recipe for target
+>   'drivers/clk/clk-mb86s7x.o' failed
+>   make[2]: *** [drivers/clk/clk-mb86s7x.o] Error 1
+> 
+> Comment it out in the Makefile for now.
+> 
 
-On 20 June 2017 at 09:24, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/18, Chunyan Zhang wrote:
->> diff --git a/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
->> new file mode 100644
->> index 0000000..e15bf2d
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/sprd/sc9860-ccu.dtsi
->> @@ -0,0 +1,67 @@
->> +/*
->> + * Spreadtrum SC9860 SoC CCU
->> + *
->> + * Copyright (C) 2017, Spreadtrum Communications Inc.
->> + *
->> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> + */
->> +
->> +&soc {
->> +     ext_26m: ext-26m {
->> +             compatible = "fixed-clock";
->> +             #clock-cells = <0>;
->> +             clock-frequency = <26000000>;
->> +             clock-output-names = "ext-26m";
->> +     };
->> +
->> +     ext_32m_sine0: ext-32m-sine0 {
->> +             compatible = "fixed-clock";
->> +             #clock-cells = <0>;
->> +             clock-frequency = <32000000>;
->> +             clock-output-names = "ext-32m-sine0";
->> +     };
->> +
->> +     ext_32m_sine1: ext-32m-sine1 {
->> +             compatible = "fixed-clock";
->> +             #clock-cells = <0>;
->> +             clock-frequency = <32000000>;
->> +             clock-output-names = "ext-32m-sine1";
->> +     };
->> +
->> +     ext_rco_100m: ext-rco-100m {
->> +             compatible = "fixed-clock";
->> +             #clock-cells = <0>;
->> +             clock-frequency = <100000000>;
->> +             clock-output-names = "ext-rco-100m";
->> +     };
->> +
->> +     ext_32k: ext-32k {
->> +             compatible = "fixed-clock";
->> +             #clock-cells = <0>;
->> +             clock-frequency = <32768>;
->> +             clock-output-names = "ext-32k";
->> +     };
->
-> These should all be outside of the soc node as they're probably
-> on the board and not the SoC? The hint is that they don't have a
-> reg property.
->
->> +
->> +     ccu: clk {
->
-> clock-controller is a more standard node name.
+Why not delete the whole driver instead? It's been two years and
+the driver has never compiled.
 
-OK, will address.
-
->
->> +             compatible = "sprd,sc9860-ccu";
->> +             #clock-cells = <1>;
->> +             reg = <0 0x20000000 0 0x400>,
->> +                   <0 0x20210000 0 0x3000>,
->> +                   <0 0x402b0000 0 0x4000>,
->> +                   <0 0x402d0000 0 0x400>,
->> +                   <0 0x402e0000 0 0x4000>,
->> +                   <0 0x40400000 0 0x400>,
->> +                   <0 0x40880000 0 0x400>,
->> +                   <0 0x415e0000 0 0x400>,
->> +                   <0 0x60200000 0 0x400>,
->> +                   <0 0x61000000 0 0x400>,
->> +                   <0 0x61100000 0 0x3000>,
->> +                   <0 0x62000000 0 0x4000>,
->> +                   <0 0x62100000 0 0x4000>,
->> +                   <0 0x63000000 0 0x400>,
->> +                   <0 0x63100000 0 0x3000>,
->> +                   <0 0x70b00000 0 0x3000>;
->
-> There are a lot of reg properties here. Perhaps there needs to be
-> different nodes for the different clock controllers in this SoC?
->
-
-On Spreadtrum's platform, clocks are basically located in a few
-address areas due to some hardware design issue, that says there're
-more than one kinds of clocks in one address range, and one kind of
-clocks have more than one physical address bases, except ccu_pll and
-ccu_div in this patchset.
-
-We're planning to map the whole device area at one time before
-initializing each of them, once that has been done and upstreamed, I
-will remove these lists of addressed.
-
-Thanks for your review,
-Chunyan
-
->> +             clocks = <&ext_26m>, <&ext_rco_100m>, <&ext_32k>;
->> +             clock-names = "ext-26m", "ext-rco-100m", "ext-32k";
->> +     };
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
