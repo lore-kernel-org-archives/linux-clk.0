@@ -1,38 +1,39 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH] clk: scpi: error when clock fails to register
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20170628135345.9337-1-jbrunet@baylibre.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <c7123c06-b75b-5209-5817-230c63c1bf49@arm.com>
+Date: Wed, 28 Jun 2017 16:04:17 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170612210248.GP20170@codeaurora.org>
-References: <20170524082044.8473-1-linus.walleij@linaro.org>
- <20170601070208.GO20170@codeaurora.org> <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
- <20170605195812.GH20170@codeaurora.org> <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
- <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com> <20170612210248.GP20170@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 14 Jun 2017 13:31:55 +0200
-Message-ID: <CACRpkdbF4syppZsFv2hbB1JxHvnndbS53yY8Pkbz2zoq5Jjzjw@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20170628135345.9337-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 12, 2017 at 11:02 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/12, Linus Walleij wrote:
 
->> So the deferred clock makes the whole platform hang because the timer
->> needs it. Without a clocksource, the delay loop cannot be calibrated, so
->> it hangs there.
->
-> Ok. So can the certain clks that are required to get the timer
-> going be put into CLK_OF_DECLARE_DRIVER() and then have a regular
-> platform driver for the rest of the clks that aren't required for
-> early boot? We've been doing this sort of hybrid design lately,
-> so hopefully that works here too.
 
-Sure I will give it a spin!
+On 28/06/17 14:53, Jerome Brunet wrote:
+> Current implementation of scpi_clk_add just print a warning when clock
+> fails to register but then keep going as if nothing happened. The
+> provider is then registered with bogus data.
+> 
+> This may latter lead to an Oops in __clk_create_clk when
+> hlist_add_head(&clk->clks_node, &hw->core->clks) is called.
+> 
 
-Is there a best-in-class driver doing this I can use as inspiration?
+What's the path of this call ? I see one in devm_clk_hw_register
+but that's one which failed.
 
-Yours,
-Linus Walleij
+Also one of the reason for keeping it continuing is, if firmware fails
+on some non-critical clock, that's fine rather than punishing the entire
+set of clocks and may even fail the boot.
+
+-- 
+Regards,
+Sudeep
