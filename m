@@ -1,156 +1,69 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 3/3] ARM: dts: meson8: add and use the real clock
- controller
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jerome Brunet <jbrunet@baylibre.com>
-References: <20170604183341.21417-1-martin.blumenstingl@googlemail.com>
- <20170604183341.21417-4-martin.blumenstingl@googlemail.com>
- <1496607638.3552.20.camel@baylibre.com>
- <CAFBinCBi4TrX58XoSkiCLiUECWQhsETdC-PeW1xR7+fMr=U3kg@mail.gmail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- mark.rutland@arm.com, carlo@caione.org, khilman@baylibre.com,
- linux@armlinux.org.uk, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <64d7a1cf-1a6f-2872-cef2-925782210c96@baylibre.com>
-Date: Wed, 7 Jun 2017 13:55:25 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAFBinCBi4TrX58XoSkiCLiUECWQhsETdC-PeW1xR7+fMr=U3kg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1498664332.2337.6.camel@baylibre.com>
+Subject: Re: [PATCH] clk: scpi: error when clock fails to register
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>
+Date: Wed, 28 Jun 2017 17:38:52 +0200
+In-Reply-To: <c7123c06-b75b-5209-5817-230c63c1bf49@arm.com>
+References: <20170628135345.9337-1-jbrunet@baylibre.com>
+	 <c7123c06-b75b-5209-5817-230c63c1bf49@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/05/2017 12:13 AM, Martin Blumenstingl wrote:
-> Hi Jerome,
+On Wed, 2017-06-28 at 16:04 +0100, Sudeep Holla wrote:
 > 
-> On Sun, Jun 4, 2017 at 10:20 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
->> On Sun, 2017-06-04 at 20:33 +0200, Martin Blumenstingl wrote:
->>> This removes the dummy clk81 gate and replaces it with the actual clock
->>> controller's CLKID_CLK81. This will also allow us to pass the real clock
->>> IDs to all devices where the clock is controlled by clkc in the future.
->>>
->>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->>
->> This is going in the right direction and at least align meson8 and meson8b.
->>
->> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-> that was quick, thanks!
+> On 28/06/17 14:53, Jerome Brunet wrote:
+> > Current implementation of scpi_clk_add just print a warning when clock
+> > fails to register but then keep going as if nothing happened. The
+> > provider is then registered with bogus data.
+> > 
+> > This may latter lead to an Oops in __clk_create_clk when
+> > hlist_add_head(&clk->clks_node, &hw->core->clks) is called.
+> > 
+> What's the path of this call ? I see one in devm_clk_hw_register
+> but that's one which failed.
 > 
->> Later on, I'm wondering if some of these clock assignments should be moved to
->> meson.dtsi ? meson8.dtsi and meson8b.dtsi look very similar
-> actually I think that the Meson6/MX/<however it is called> clock
-> controller is different (based on a quick look).
-> so we may end up with a similar situation that we have on
-> GXBB/GXL/GXM: the clock controller will stay in the corresponding
-> .dtsi and we have to "duplicate" the clock assignments for each SoC
-> 
-> however, I guess at some point we can create a .dtsi with all the bits
-> that are shared between Meson8 and Meson8b (during my experiments
-> meson8m2.dtsi just inherits meson8.dtsi and overrides a bunch of
-> compatibles). we can discuss whether we want to move the clock
-> controller to that shared/common .dtsi as well once we start
-> generalizing this
 
-Personally I think we should use the same schema as arm64 and leave the clock
-definitions in the SoCs dtsi files.
+bL cpu freq driver requesting the cpu clock, which failed to register. Here the
+Oops call trace:
 
-Neil
+[    2.202284] [<ffff00000849a058>] __clk_create_clk.part.18+0x68/0xb0
+[    2.208494] [<ffff00000849ac2c>] __of_clk_get_from_provider+0xfc/0x140
+[    2.214962] [<ffff000008496c28>] __of_clk_get_by_name+0x100/0x118
+[    2.220999] [<ffff000008496c94>] clk_get+0x2c/0x78
+[    2.225744] [<ffff000008570110>] dev_pm_opp_get_opp_table+0xb0/0x118
+[    2.232039] [<ffff000008570940>] dev_pm_opp_add+0x20/0x68
+[    2.237388] [<ffff0000087a0f30>] scpi_init_opp_table+0xa8/0x188
+[    2.243252] [<ffff0000087a0558>] _get_cluster_clk_and_freq_table+0x80/0x180
+[    2.250151] [<ffff0000087a0a48>] bL_cpufreq_init+0x3f0/0x480
+[    2.255758] [<ffff00000879eed8>] cpufreq_online+0xc0/0x658
+[    2.261191] [<ffff00000879f500>] cpufreq_add_dev+0x78/0x88
+[    2.266625] [<ffff00000855c2c4>] subsys_interface_register+0x84/0xc8
+[    2.272922] [<ffff00000879e330>] cpufreq_register_driver+0x138/0x1b8
+[    2.279218] [<ffff0000087a0b4c>] bL_cpufreq_register+0x74/0x120
+[    2.285083] [<ffff0000087a1038>] scpi_cpufreq_probe+0x28/0x38
+[    2.290776] [<ffff00000855fbf0>] platform_drv_probe+0x50/0xb8
+[    2.296468] [<ffff00000855dd84>] driver_probe_device+0x21c/0x2d8
 
-> 
->>> ---
->>>  arch/arm/boot/dts/meson8.dtsi | 32 ++++++++++++++++----------------
->>>  1 file changed, 16 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
->>> index 6993077331c7..9b0b3ddbb17e 100644
->>> --- a/arch/arm/boot/dts/meson8.dtsi
->>> +++ b/arch/arm/boot/dts/meson8.dtsi
->>> @@ -43,6 +43,7 @@
->>>   *     OTHER DEALINGS IN THE SOFTWARE.
->>>   */
->>>
->>> +#include <dt-bindings/clock/meson8b-clkc.h>
->>>  #include <dt-bindings/gpio/meson8-gpio.h>
->>>  /include/ "meson.dtsi"
->>>
->>> @@ -82,13 +83,6 @@
->>>                       reg = <0x203>;
->>>               };
->>>       };
->>> -
->>> -     clk81: clk@0 {
->>> -             #clock-cells = <0>;
->>> -             compatible = "fixed-clock";
->>> -             clock-frequency = <141666666>;
->>> -     };
->>> -
->>>  }; /* end of / */
->>>
->>>  &aobus {
->>> @@ -126,6 +120,12 @@
->>>  };
->>>
->>>  &cbus {
->>> +     clkc: clock-controller@4000 {
->>> +             #clock-cells = <1>;
->>> +             compatible = "amlogic,meson8-clkc";
->>> +             reg = <0x8000 0x4>, <0x4000 0x460>;
->>> +     };
->>> +
->>>       pinctrl_cbus: pinctrl@9880 {
->>>               compatible = "amlogic,meson8-cbus-pinctrl";
->>>               reg = <0x9880 0x10>;
->>> @@ -172,20 +172,20 @@
->>>  };
->>>
->>>  &ethmac {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>       clock-names = "stmmaceth";
->>>  };
->>>
->>>  &i2c_AO {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>>
->>>  &i2c_A {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>>
->>>  &i2c_B {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>>
->>>  &L2 {
->>> @@ -195,21 +195,21 @@
->>>  };
->>>
->>>  &spifc {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>>
->>>  &uart_AO {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>>
->>>  &uart_A {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>>
->>>  &uart_B {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>>
->>>  &uart_C {
->>> -     clocks = <&clk81>;
->>> +     clocks = <&clkc CLKID_CLK81>;
->>>  };
->>
+But that's not the point. The point is there is path in clk-scpi driver which
+registers uninitialized data in the clock provider. That's not good. 
+
+> Also one of the reason for keeping it continuing is, if firmware fails
+> on some non-critical clock, that's fine rather than punishing the entire
+> set of clocks and may even fail the boot.
+
+I understand, but you have no way to know whether a clock is critical or not so 
+this explanation looks a bit weak, plus it does not keep the boot from failing
+... not for me at least.
+
+As explained this approach is registering corrupt data in the provider when
+failing. It makes the kernel Oops, it shall be fixed.
+
+If you have a better solution later on, I don't think there would be any problem
+to revert this patch.
