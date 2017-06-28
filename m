@@ -1,107 +1,51 @@
-Return-Path: <riku.voipio@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 28 Jun 2017 08:59:56 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre TORGUE <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	"daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+	"andrea.merello@gmail.com" <andrea.merello@gmail.com>,
+	"radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Ludovic BARRE <ludovic.barre@st.com>,
+	Olivier BIDEAU <olivier.bideau@st.com>,
+	Amelie DELAUNAY <amelie.delaunay@st.com>,
+	"gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
+Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
+Message-ID: <20170628155956.GA5316@codeaurora.org>
+References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
+ <20170621220703.GI4493@codeaurora.org>
+ <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20170626194015.pejm43gl5khoqizy@rob-hp-laptop>
-References: <20170623161533.20449-1-georgi.djakov@linaro.org>
- <20170623161533.20449-2-georgi.djakov@linaro.org> <20170626194015.pejm43gl5khoqizy@rob-hp-laptop>
-From: Riku Voipio <riku.voipio@linaro.org>
-Date: Tue, 27 Jun 2017 12:48:07 +0300
-Message-ID: <CAAqcGHm3R_P71szGq4Tf+B8sB9Mwd0RAi9RsssV5MwWcfuGdsw@mail.gmail.com>
-Subject: Re: [PATCH v8 1/3] clk: qcom: Add A53 PLL support
-To: Rob Herring <robh@kernel.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	jassisinghbrar@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26 June 2017 at 22:40, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Jun 23, 2017 at 07:15:31PM +0300, Georgi Djakov wrote:
->> The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
->> a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
->> are connected to a mux and half-integer divider, which is feeding the
->> CPU cores.
->>
->> This patch adds support for the primary CPU PLL which generates the
->> higher range of frequencies above 1GHz.
->>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
->>  .../devicetree/bindings/clock/qcom,a53pll.txt      | 22 +++++
->
-> It's preferred to split bindings to a separate patch. In any case,
->
-> Acked-by: Rob Herring <robh@kernel.org>
->
-> One kconfig comment though:
->
->>  drivers/clk/qcom/Kconfig                           |  9 +++
->>  drivers/clk/qcom/Makefile                          |  1 +
->>  drivers/clk/qcom/a53-pll.c                         | 94 ++++++++++++++++++++++
->>  4 files changed, 126 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->>  create mode 100644 drivers/clk/qcom/a53-pll.c
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->> new file mode 100644
->> index 000000000000..f4c2fddf6e7f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->> @@ -0,0 +1,22 @@
->> +MSM8916 A53 PLL Binding
->> +---------------
->> +The A53 PLL on MSM8916 platforms is the main CPU PLL used used for frequencies
->> +above 1GHz.
->> +
->> +Required properties :
->> +- compatible : Shall contain only one of the following:
->> +
->> +             "qcom,msm8916-a53pll"
->> +
->> +- reg : shall contain base register location and length
->> +
->> +- #clock-cells : must be set to <0>
->> +
->> +Example:
->> +
->> +     a53pll: clock@b016000 {
->> +             compatible = "qcom,msm8916-a53pll";
->> +             reg = <0xb016000 0x40>;
->> +             #clock-cells = <0>;
->> +     };
->> +
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 9f6c278deead..057cf60ed037 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -12,6 +12,15 @@ config COMMON_CLK_QCOM
->>       select REGMAP_MMIO
->>       select RESET_CONTROLLER
->>
->> +config QCOM_A53PLL
->> +     bool "A53 PLL"
->
-> Figuring out config options needed for a specific QC SoC is "fun". If
-> this is only for MSM8916, then add that to the config option or prompt
-> text at least.
+On 06/27, Gabriel FERNANDEZ wrote:
+> 
+> 
+> On 06/22/2017 12:07 AM, Stephen Boyd wrote:
+> > readl_poll_timeout?
+> >
+> if i use readl_poll_timeout (wich use 'ktime_get()') it can be 
+> operational only after the selection of clocksource ? (device_initcall).
+> And then if a driver turn on a clock before, it could blocked the linux 
+> console ?
+> 
 
-> And please update the arm64 defconfig with this option.
+Ok. I wonder if we could add some sort of starting check to
+readl_poll_timeout() that tests system_state for booting vs.
+scheduling? That should be sufficient to handle this case?
 
-Maybe instead of updating defconfig set:
-
-        default ARCH_QCOM
-
-I think the effect is roughly same but it makes the life of
-distribution maintainers easier.
-
->> +     depends on COMMON_CLK_QCOM
->> +     help
->> +       Support for the A53 PLL on Qualcomm MSM8916 devices. It provides
->> +       support for CPU frequencies above 1GHz.
->> +       Say Y if you want to support CPU frequency scaling on devices
->> +       such as MSM8916.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
