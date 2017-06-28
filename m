@@ -1,119 +1,54 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Sudeep Holla <sudeep.holla@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 03/19] drm/sun4i: tcon: Add support for demuxing TCON output on A31
-Date: Fri,  2 Jun 2017 18:10:08 +0800
-Message-Id: <20170602101024.18940-4-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
+	linux-kernel@vger.kernel.org,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH] clk: scpi: error when clock fails to register
+Date: Wed, 28 Jun 2017 15:53:45 +0200
+Message-Id: <20170628135345.9337-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On systems with 2 TCONs such as the A31, it is possible to demux the
-output of the TCONs to one encoder.
+Current implementation of scpi_clk_add just print a warning when clock
+fails to register but then keep going as if nothing happened. The
+provider is then registered with bogus data.
 
-Add support for this for the A31.
+This may latter lead to an Oops in __clk_create_clk when
+hlist_add_head(&clk->clks_node, &hw->core->clks) is called.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+This patch fixes the issue and errors if a clock fails to register.
+
+Fixes: cd52c2a4b5c4 ("clk: add support for clocks provided by SCP(System Control Processor)")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 61 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ drivers/clk/clk-scpi.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index d9791292553e..21bd7fab7aaa 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -14,9 +14,12 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_encoder.h>
- #include <drm/drm_modes.h>
- #include <drm/drm_of.h>
+diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+index 96d37175d0ad..e44b5ca91fed 100644
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -245,10 +245,12 @@ static int scpi_clk_add(struct device *dev, struct device_node *np,
+ 		sclk->id = val;
  
-+#include <uapi/drm/drm_mode.h>
+ 		err = scpi_clk_ops_init(dev, match, sclk, name);
+-		if (err)
++		if (err) {
+ 			dev_err(dev, "failed to register clock '%s'\n", name);
+-		else
+-			dev_dbg(dev, "Registered clock '%s'\n", name);
++			return err;
++		}
 +
- #include <linux/component.h>
- #include <linux/ioport.h>
- #include <linux/of_address.h>
-@@ -109,11 +112,69 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
- }
- EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
- 
-+static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
-+{
-+	struct sun4i_drv *drv = drm->dev_private;
-+	struct sun4i_tcon *tcon;
-+
-+	list_for_each_entry(tcon, &drv->tcon_list, list)
-+		if (tcon->id == 0)
-+			return tcon;
-+
-+	dev_warn(drm->dev,
-+		 "TCON0 not found, display output muxing may not work\n");
-+
-+	return tcon;
-+}
-+
-+static int _sun6i_tcon_set_mux(struct drm_encoder *encoder)
-+{
-+	struct sun4i_tcon *tcon = sun4i_get_first_tcon(encoder->dev);
-+	int tcon_id = drm_crtc_to_sun4i_crtc(encoder->crtc)->tcon->id;
-+	u32 shift;
-+
-+	DRM_DEBUG_DRIVER("Muxing encoder %s to CRTC %s (TCON %d)\n",
-+			 encoder->name, encoder->crtc->name, tcon_id);
-+
-+	/* Only 2 TCONs */
-+	if (tcon_id >= 2)
-+		return -EINVAL;
-+
-+	switch (encoder->encoder_type) {
-+	case DRM_MODE_ENCODER_TMDS:
-+		/* HDMI */
-+		shift = 8;
-+		break;
-+	case DRM_MODE_ENCODER_DSI:
-+		/* No MIPI DSI on A31s */
-+		if (of_device_is_compatible(tcon->dev->of_node,
-+					    "allwinner,sun6i-a31s-tcon"))
-+			return -EINVAL;
-+		shift = 0;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(tcon->regs, SUN4I_TCON_MUX_CTRL_REG,
-+			   0x3 << shift, tcon_id << shift);
-+
-+	return 0;
-+}
-+
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
- 			struct drm_encoder *encoder)
- {
-+	/* Get the device node of the display engine */
-+	struct device_node *node = encoder->dev->dev->of_node;
- 	u32 val;
- 
-+	if (of_device_is_compatible(node, "allwinner,sun6i-a31-display-engine") ||
-+	    of_device_is_compatible(node, "allwinner,sun6i-a31s-display-engine")) {
-+		_sun6i_tcon_set_mux(encoder);
-+		return;
-+	}
-+
- 	if (!tcon->quirks->has_unknown_mux)
- 		return;
++		dev_dbg(dev, "Registered clock '%s'\n", name);
+ 		clk_data->clk[idx] = sclk;
+ 	}
  
 -- 
-2.11.0
+2.9.4
