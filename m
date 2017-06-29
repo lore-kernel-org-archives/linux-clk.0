@@ -1,82 +1,150 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52132 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751297AbdFBKKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Jun 2017 06:10:40 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH 19/19] ARM: sun6i: a31s: Enable HDMI display output on the MSI Primo81 tablet
-Date: Fri,  2 Jun 2017 18:10:24 +0800
-Message-Id: <20170602101024.18940-20-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 5/8] clk: vc5: Split clock input mux and predivider
+Date: Thu, 29 Jun 2017 12:18:48 +0200
+Message-Id: <20170629101851.23972-5-marek.vasut@gmail.com>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The MSI Primo81 tablet has a micro HDMI connector at the bottom.
-This is connected to the SoCs HDMI output.
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Enable the display pipeline and the HDMI output.
+Split the VC5 clock input mux and the predivider to more accurately
+model the hardware and fix the previously incorrect assumption that
+both the OUT_SEL_I2CB and the PLL are fed from the predivider.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+It is in fact the clock input mux output which is directly feeding
+the clock into the OUT_SEL_I2CB output, while the clock input mux
+output first passes through the predivider before it is fed into
+the PLL.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm/boot/dts/sun6i-a31s-primo81.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/clk/clk-versaclock5.c | 46 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 34 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun6i-a31s-primo81.dts b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
-index f3712753fa42..26154b2f87a3 100644
---- a/arch/arm/boot/dts/sun6i-a31s-primo81.dts
-+++ b/arch/arm/boot/dts/sun6i-a31s-primo81.dts
-@@ -52,17 +52,42 @@
- / {
- 	model = "MSI Primo81 tablet";
- 	compatible = "msi,primo81", "allwinner,sun6i-a31s";
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "c";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index a5256f793627..fcde42393997 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -157,6 +157,7 @@ struct vc5_driver_data {
+ 	struct clk		*pin_clkin;
+ 	unsigned char		clk_mux_ins;
+ 	struct clk_hw		clk_mux;
++	struct clk_hw		clk_pfd;
+ 	struct vc5_hw_data	clk_pll;
+ 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+ 	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
+@@ -166,6 +167,10 @@ static const char * const vc5_mux_names[] = {
+ 	"mux"
  };
  
- &cpu0 {
- 	cpu-supply = <&reg_dcdc3>;
++static const char * const vc5_pfd_names[] = {
++	"pfd"
++};
++
+ static const char * const vc5_pll_names[] = {
+ 	"pll"
+ };
+@@ -254,11 +259,16 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
+ }
+ 
+-static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
++static const struct clk_ops vc5_mux_ops = {
++	.set_parent	= vc5_mux_set_parent,
++	.get_parent	= vc5_mux_get_parent,
++};
++
++static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
+ 					 unsigned long parent_rate)
+ {
+ 	struct vc5_driver_data *vc5 =
+-		container_of(hw, struct vc5_driver_data, clk_mux);
++		container_of(hw, struct vc5_driver_data, clk_pfd);
+ 	unsigned int prediv, div;
+ 
+ 	regmap_read(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV, &prediv);
+@@ -276,7 +286,7 @@ static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
+ 		return parent_rate / VC5_REF_DIVIDER_REF_DIV(div);
+ }
+ 
+-static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
++static long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			       unsigned long *parent_rate)
+ {
+ 	unsigned long idiv;
+@@ -296,11 +306,11 @@ static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return *parent_rate / idiv;
+ }
+ 
+-static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
++static int vc5_pfd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			    unsigned long parent_rate)
+ {
+ 	struct vc5_driver_data *vc5 =
+-		container_of(hw, struct vc5_driver_data, clk_mux);
++		container_of(hw, struct vc5_driver_data, clk_pfd);
+ 	unsigned long idiv;
+ 	u8 div;
+ 
+@@ -328,12 +338,10 @@ static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
+-static const struct clk_ops vc5_mux_ops = {
+-	.set_parent	= vc5_mux_set_parent,
+-	.get_parent	= vc5_mux_get_parent,
+-	.recalc_rate	= vc5_mux_recalc_rate,
+-	.round_rate	= vc5_mux_round_rate,
+-	.set_rate	= vc5_mux_set_rate,
++static const struct clk_ops vc5_pfd_ops = {
++	.recalc_rate	= vc5_pfd_recalc_rate,
++	.round_rate	= vc5_pfd_round_rate,
++	.set_rate	= vc5_pfd_set_rate,
  };
  
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	/* rtl8188etv wifi is connected here */
- 	status = "okay";
- };
+ /*
+@@ -699,12 +707,26 @@ static int vc5_probe(struct i2c_client *client,
+ 		goto err_clk;
+ 	}
  
-+&hdmi {
-+	status = "okay";
-+};
++	/* Register PFD */
++	memset(&init, 0, sizeof(init));
++	init.name = vc5_pfd_names[0];
++	init.ops = &vc5_pfd_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = vc5_mux_names;
++	init.num_parents = 1;
++	vc5->clk_pfd.init = &init;
++	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
++	if (ret) {
++		dev_err(&client->dev, "unable to register %s\n", init.name);
++		goto err_clk;
++	}
 +
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c0 {
- 	/* pull-ups and device VDDIO use AXP221 DLDO3 */
- 	pinctrl-names = "default";
+ 	/* Register PLL */
+ 	memset(&init, 0, sizeof(init));
+ 	init.name = vc5_pll_names[0];
+ 	init.ops = &vc5_pll_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = vc5_mux_names;
++	init.parent_names = vc5_pfd_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_pll.num = 0;
+ 	vc5->clk_pll.vc5 = vc5;
 -- 
 2.11.0
-
