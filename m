@@ -1,54 +1,62 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 8 Jun 2017 17:20:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-	Frank Rowand <frowand.list@gmail.com>,
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: Document img,boston-clock binding
-Message-ID: <20170608222047.c27en4hqbqkqybin@rob-hp-laptop>
-References: <20170602182003.16269-1-paul.burton@imgtec.com>
- <20170602182003.16269-2-paul.burton@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170602182003.16269-2-paul.burton@imgtec.com>
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 3/8] clk: vc5: Do not warn about disabled output buffer input muxes
+Date: Thu, 29 Jun 2017 12:18:46 +0200
+Message-Id: <20170629101851.23972-3-marek.vasut@gmail.com>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 02, 2017 at 11:20:00AM -0700, Paul Burton wrote:
-> Add device tree binding documentation for the clocks provided by the
-> MIPS Boston development board from Imagination Technologies, and a
-> header file describing the available clocks for use by device trees &
-> driver.
-> 
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
-> 
-> ---
-> 
-> Changes in v4:
-> - Move img,boston-clock node under platform register syscon node.
-> - Add MAINTAINERS entry.
-> 
-> Changes in v3: None
-> 
-> Changes in v2:
-> - Add BOSTON_CLK_INPUT to expose the input clock.
-> 
->  .../devicetree/bindings/clock/img,boston-clock.txt | 31 ++++++++++++++++++++++
->  MAINTAINERS                                        |  7 +++++
->  include/dt-bindings/clock/boston-clock.h           | 14 ++++++++++
->  3 files changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/img,boston-clock.txt
->  create mode 100644 include/dt-bindings/clock/boston-clock.h
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The output buffer input mux can be configured in either of three
+states -- disabled, input from FOD, input from previous output.
+If the output buffer input mux is set to disabled, the code in
+vc5_clk_out_get_parent() would consider this an invalid setting
+and warn about it, which is not necessarily the case.
+
+In case the output buffer input mux is disabled, default to input
+from FOD to have some parent and don't print the warning.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/clk/clk-versaclock5.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index d835d48cf14d..766fcc5cc0b3 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -541,6 +541,9 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+ 	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
+ 	src &= mask;
+ 
++	if (src == 0)	/* Input mux set to DISABLED */
++		return 0;
++
+ 	if ((src & fodclkmask) == VC5_OUT_DIV_CONTROL_EN_FOD)
+ 		return 0;
+ 
+@@ -549,6 +552,7 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+ 
+ 	dev_warn(&vc5->client->dev,
+ 		 "Invalid clock output configuration (%02x)\n", src);
++
+ 	return 0;
+ }
+ 
+-- 
+2.11.0
