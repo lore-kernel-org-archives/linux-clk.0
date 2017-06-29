@@ -1,58 +1,63 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v4 0/6] provide power off support for iMX6 with external PMIC
-Date: Fri,  9 Jun 2017 16:07:33 +0200
-Message-Id: <20170609140739.15726-1-o.rempel@pengutronix.de>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170629101851.23972-7-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com> <20170629101851.23972-7-marek.vasut@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 13:38:56 +0200
+Message-ID: <CAMuHMdXaEDtKwZYDaZ0qUvUk_0WuZwf6ky+nfeahQuU7q4qiyQ@mail.gmail.com>
+Subject: Re: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Alexey Firago <alexey_firago@mentor.com>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series is providing power off support for Freescale/NXP iMX6 based
-boards with external power management integrated circuit (PMIC).
+Hi Marek,
 
-changes:
-v4:
- - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
-   patch
- - add Acked-by to "ARM: imx6q: provide documentation for new ..."
-   patch
+On Thu, Jun 29, 2017 at 12:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>
+> IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
+> Input clock source can be taken from either external crystal or from
+> external reference clock.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.txt         | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> index 53d7e50ed875..a3d4260039a8 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
 
-v3:
- - set pm_power_off_prepare = NULL on .remove.
- - documentation and spelling fixes.
- - use %pf instead of lookup_symbol_name.
+Probably you want to sprinkle the first few lines of the document with
+a few "VersaClock 6" references?
 
-Oleksij Rempel (6):
-  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
-    property
-  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
-    is set
-  kernel/reboot.c: export pm_power_off_prepare
-  regulator: pfuze100: add fsl,pmic-stby-poweroff property
-  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-  ARM: dts: imx6: RIoTboard provide standby on power off option
+> @@ -7,18 +7,20 @@ from 3 to 12 output clocks.
 
- .../devicetree/bindings/clock/imx6q-clock.txt      |  8 ++
- .../devicetree/bindings/regulator/pfuze100.txt     |  7 ++
- arch/arm/boot/dts/imx6dl-riotboard.dts             |  5 ++
- arch/arm/mach-imx/pm-imx6.c                        | 27 +++++++
- drivers/regulator/pfuze100-regulator.c             | 92 ++++++++++++++++++++++
- kernel/reboot.c                                    |  1 +
- 6 files changed, 140 insertions(+)
+The rest looks OK to me, so
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
