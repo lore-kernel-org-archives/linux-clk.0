@@ -1,71 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:54588 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751161AbdFDQCE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 4 Jun 2017 12:02:04 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 00/11] Support for H3 Composite Output support
-Date: Mon,  5 Jun 2017 00:01:38 +0800
-Message-Id: <20170604160149.30230-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1a65c823-d39f-1824-886d-d32fddcee4f0@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com> <20170629101851.23972-7-marek.vasut@gmail.com>
+ <CAMuHMdXaEDtKwZYDaZ0qUvUk_0WuZwf6ky+nfeahQuU7q4qiyQ@mail.gmail.com> <1a65c823-d39f-1824-886d-d32fddcee4f0@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 18:27:30 +0200
+Message-ID: <CAMuHMdVB_XXSy7gynkfjBrPKa0EqAg=aCQD_U72AG7NQ+pw9hQ@mail.gmail.com>
+Subject: Re: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Alexey Firago <alexey_firago@mentor.com>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H3 SoC features a TV Encoder like the one in Allwinner A13,
-which can only output TV Composite signal.
+Hi Marek,
 
-The display pipeline of H3 is also special -- it has two mixers and
-two TCONs, of which the connection can be swapped. The TCONs do not
-have channel 0 (as they are all connected to internal bridges, TVE
-and HDMI TX).
+On Thu, Jun 29, 2017 at 5:49 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 06/29/2017 01:38 PM, Geert Uytterhoeven wrote:
+>> On Thu, Jun 29, 2017 at 12:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>
+>>> IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
+>>> Input clock source can be taken from either external crystal or from
+>>> external reference clock.
+>>>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Add support for the display pipeline and the TVE in H3, in order to
-make it possible to display something with mainline kernel with H3.
+>>> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+>>
+>> Probably you want to sprinkle the first few lines of the document with
+>> a few "VersaClock 6" references?
+>
+> Something like this?
+>
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> @@ -1,7 +1,7 @@
+> -Binding for IDT VersaClock5 programmable i2c clock generator.
+> +Binding for IDT VersaClock 5,6 programmable i2c clock generators.
+>
+> -The IDT VersaClock5 are programmable i2c clock generators providing
+> -from 3 to 12 output clocks.
+> +The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
+> +generators providing from 3 to 12 output clocks.
+>
+>  ==I2C device node==
 
-The image quality of TVE is bad, so HDMI is a better output -- this
-patchset also prepared the mixers and TCONs for HDMI output, and
-the HDMI controller driver is already done by Jernej Skrabec.
+Exactly. Thanks!
 
-So if possible, please apply PATCH 1~5 and 8,9 as soon as possible,
-so that Jernej can submit his HDMI patches.
+Gr{oetje,eeting}s,
 
-Currently the jack detection feature of the TVE is still not so
-clear -- so it's not implemented in this version. Thus the TV
-output shouldn't be defaultly enabled now.
+                        Geert
 
-Icenowy Zheng (11):
-  dt-bindings: update the binding for Allwinner H3 TVE support
-  drm: sun4i: add support for H3 mixers
-  drm: sun4i: ignore swapped mixer<->tcon connection for DE2
-  drm: sun4i: add support for H3's TCON0/1
-  drm: sun4i: add compatible for H3 display engine
-  drm: sun4i: add color space correction support for DE2 mixer
-  drm: sun4i: add support for the TV encoder in H3 SoC
-  clk: sunxi-ng: allow CLK_DE to set CLK_PLL_DE for H3
-  clk: sunxi-ng: export CLK_PLL_DE for H3
-  ARM: sun8i: h3: add display engine pipeline for TVE
-  [DO NOT MERGE] ARM: sun8i: h3: enable TV output on Orange Pi PC
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- .../bindings/display/sunxi/sun4i-drm.txt           |  37 +++-
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  12 ++
- arch/arm/boot/dts/sun8i-h3.dtsi                    | 186 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   3 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |  46 +++++
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 113 ++++++++++---
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   3 +
- drivers/gpu/drm/sun4i/sun4i_tv.c                   |  35 +++-
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  53 ++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.h                |   6 +-
- include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
- 12 files changed, 463 insertions(+), 35 deletions(-)
-
--- 
-2.12.2
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
