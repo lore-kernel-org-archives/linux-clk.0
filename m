@@ -1,102 +1,223 @@
-Return-Path: <net147@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:33769 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753517AbdF2PSa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2017 11:18:30 -0400
+Received: by mail-lf0-f46.google.com with SMTP id z78so13185612lff.0
+        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2017 08:18:29 -0700 (PDT)
+Date: Thu, 29 Jun 2017 17:18:26 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH/RFC v2 0/5] clk: renesas: rcar-gen3: Restore clocks
+ during resume
+Message-ID: <20170629151826.GA18905@bigcity.dyn.berto.se>
+References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
- <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
-From: Jonathan Liu <net147@gmail.com>
-Date: Mon, 26 Jun 2017 08:05:16 +1000
-Message-ID: <CANwerB1q68-PpQ7+-QbgBgZHeWw_4p1ruiwzy7upjLLRTDEG1w@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v4 1/6] clk: sunxi-ng: div: Add support for
- fixed post-divider
-To: Priit Laes <plaes@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Priit,
+Hi Geert,
 
-This is showing from clock rate of 171428572 in the output of "cat
-/sys/kernel/debug/clk/clk_summary" for pll-periph-sata.
-The clock rate should be 100000000 (100 MHz) when read from the hardware.
+Thanks for your hard work!
 
-On 26 June 2017 at 06:45, Priit Laes <plaes@plaes.org> wrote:
-> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-> 6 is fixed post-divider.
->
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++--
->  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
->  2 files changed, 12 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-> index c0e5c10..de30e15 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.c
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
+On 2017-06-29 15:25:15 +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> clock register state is lost.  Note that as the boot loader skips most
+> initialization after resume, clock register state differs from the state
+> encountered during normal system boot, too.
+> 
+> Hence after s2ram, some operations may fail because module clocks are
+> disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
+> fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
+> 
+>     ravb e6800000.ethernet eth0: failed to switch device to config mode
+>     ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
+>     ravb e6800000.ethernet eth0: failed to switch device to config
+>     PM: Device e6800000.ethernet failed to resume: error -110
+> 
+> In addition, some clocks that were disabled by clk_disable_unused() may
+> have been re-enabled, wasting power.
+> 
+> This RFC is a second attempt to fix this issue by restoring clock registers
+> during system resume.
+> 
+> Note that while this fixes EtherAVB operation after resume from s2ram,
+> EtherAVB cannot be used as an actual wake-up source from s2ram, only
+> from s2idle, due to PSCI limitations.
+> 
+> Changes compared to v1 (more details in the individual patches):
+>   - Save module clock registers in suspend_noirq instead of constantly
+>     updating shadow registers,
+>   - Restore all module clocks under our control, not just the ones we ever
+>     changed,
+>   - Also restore DIV6, SDHI, and R clocks, thus covering all supported
+>     programmable core clocks on R-Car Gen3.
+> 
+> As clock register restore is only needed on R-Car Gen3 with PSCI, although
+> harmless on other systems, perhaps the save/restore code should be
+> protected by #ifdef CONFIG_ARM_PSCI_FW?
+> 
+> This series is against clk-next, with "clk: renesas: div6: Document fields
+> used for parent selection" applied on top.
+> 
+> This has been tested on Salvator-X with R-Car H3 ES1.0 and M3-W ES1.0.
+> On Salvator-XS with R-Car H3 ES2.0, EtherAVB restarts after system resume,
+> but NFS fails with "server not responding", probably not due to a clock
+> issue.
 
-Missing handling of fixed_post_div in ccu_div_round_rate.
-ccu_div_round_rate should multiply the rate by the postdiv before
-looking up the divider using divider_get_val and divide val by postdiv
-just before returning.
+I tested this series using this setup:
 
-> @@ -62,8 +62,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
->         parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
->                                                   parent_rate);
->
-> -       return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> -                                  cd->div.flags);
-> +       val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> +                                 cd->div.flags);
-> +
-> +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               val /= cd->fixed_post_div;
-> +
-> +       return val;
->  }
->
->  static int ccu_div_determine_rate(struct clk_hw *hw,
+- Base latest renesas-drivers, 710def1a48c7bc9d ("of_mdio: Fix broken 
+  PHY IRQ in case of probe deferral"). This branch also includes the 
+  RAVB WoL patches.
 
-> @@ -89,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
->         val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
->                               cd->div.flags);
->
-> +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               val *= cd->fixed_post_div;
-> +
->         spin_lock_irqsave(cd->common.lock, flags);
->
->         reg = readl(cd->common.base + cd->common.reg);
+- Salvator-X H3 ES1.0
 
-val here is the divider value that is stored in the clock register
-field not the actual rate so this is incorrect. Instead the rate needs
-to be multiplied by postdiv just before divider_get_val.
+- The arm64 defconfig.
 
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-> index 08d0744..f3a5028 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.h
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -86,9 +86,10 @@ struct ccu_div_internal {
->  struct ccu_div {
->         u32                     enable;
->
-> -       struct ccu_div_internal         div;
-> +       struct ccu_div_internal div;
->         struct ccu_mux_internal mux;
->         struct ccu_common       common;
-> +       unsigned int            fixed_post_div;
->  };
->
->  #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,   \
+The test procedure I used:
+
+    arm64 ~/shared/deep-sleep # cat sleep.sh
+    #!/bin/bash
+
+    ethtool -s eth0 wol g
+
+    echo disabled > /sys/devices/platform/soc/e6800000.ethernet/power/wakeup
+
+    echo 0 > /sys/module/printk/parameters/console_suspend
+
+    i2cset -f -y 7 0x30 0x20 0x0F
+
+    echo "Flip Switch"
+    read -n 1
+
+    echo mem > /sys/power/state
+
+And for me the NFS root came up OK after flipping switch back. I wonder 
+what is different in our test procedures. I would like to provide my 
+tested-by tag but I first want to figure out why NFS (or maybe the whole 
+net interface?) don't work for you after resume.
+
+arm64 ~/shared/deep-sleep # ./sleep.sh
+Flip Switch
+
+[  720.992971] PM: Syncing filesystems ... done.
+[  720.998841] Freezing user space processes ... (elapsed 0.001 seconds) done.
+[  721.007530] OOM killer disabled.
+[  721.010763] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+[  721.600789] vsp1 fea38000.vsp: pipeline 0 stop timeout
+[  722.112773] vsp1 fea30000.vsp: pipeline 0 stop timeout
+[  722.624769] vsp1 fea28000.vsp: pipeline 0 stop timeout
+[  723.136772] vsp1 fea20000.vsp: pipeline 0 stop timeout
+[  723.147535] ohci-platform ee080000.usb: runtime PM trying to suspend device but active child
+[  723.156051] phy_rcar_gen3_usb2 ee080200.usb-phy: runtime PM trying to suspend device but active child
+[  723.167851] ohci-platform ee0c0000.usb: runtime PM trying to suspend device but active child
+[  723.176313] ohci-platform ee0a0000.usb: runtime PM trying to suspend device but active child
+[  723.184769] phy_rcar_gen3_usb2 ee0c0200.usb-phy: runtime PM trying to suspend device but active child
+[  723.194001] phy_rcar_gen3_usb2 ee0a0200.usb-phy: runtime PM trying to suspend device but active child
+[  723.203413] Disabling non-boot CPUs ...
+[  723.229225] IRQ15 no longer affine to CPU1
+[  723.229561] CPU1: shutdown
+[  723.236412] psci: CPU1 killed.
+[  723.277182] IRQ16 no longer affine to CPU2
+[  723.277535] CPU2: shutdown
+[  723.284367] psci: CPU2 killed.
+[  723.329121] IRQ17 no longer affine to CPU3
+[  723.329404] CPU3: shutdown
+[  723.336229] psci: CPU3 killed.
+
+!! Flipping switch back here !!
+
+NOTICE:  BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.1.0.12
+NOTICE:  BL2: PRR is R-Car H3 ES1.0
+NOTICE:  BL2: Boot device is HyperFlash(160MHz)
+NOTICE:  BL2: LCM state is CM
+NOTICE:  BL2: AVS setting succeeded. DVFS_SetVID=0x52
+NOTICE:  BL2: DDR1600(rev.0.20)[WARM_BOOT]..0
+NOTICE:  BL2: DRAM Split is 4ch
+NOTICE:  BL2: QoS is default setting(rev.0.33)
+NOTICE:  BL2: v1.3(release):c040be5
+NOTICE:  BL2: Built : 16:03:29, Jan 30 2017
+NOTICE:  BL2: Normal boot
+ÿ[  723.351187] Enabling non-boot CPUs ...dToRAM)
+[  723.367103] Detected PIPT I-cache on CPU1
+[  723.367163] CPU1: Booted secondary processor [411fd073]
+[  723.367448]  cache: parent cpu1 should not be sleeping
+[  723.381957] CPU1 is up
+[  723.394114] Detected PIPT I-cache on CPU2
+[  723.394134] CPU2: Booted secondary processor [411fd073]
+[  723.394306]  cache: parent cpu2 should not be sleeping
+[  723.408755] CPU2 is up
+[  723.426652] Detected PIPT I-cache on CPU3
+[  723.426673] CPU3: Booted secondary processor [411fd073]
+[  723.426845]  cache: parent cpu3 should not be sleeping
+[  723.441328] CPU3 is up
+[  723.565306] usb usb2: root hub lost power or was reset
+[  723.565325] usb usb1: root hub lost power or was reset
+[  723.569644] usb usb5: root hub lost power or was reset
+[  723.649254] ravb e6800000.ethernet eth0: limited PHY to 100Mbit/s
+[  723.655345] Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: attached PHY driver [Micrel KSZ9031 Gigabit PHY] (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=236)
+[  723.762737] usb usb3: root hub lost power or was reset
+[  723.854727] usb usb4: root hub lost power or was reset
+[  723.950730] usb usb6: root hub lost power or was reset
+[  724.092718] ata1: link resume succeeded after 1 retries
+[  724.153545] OOM killer enabled.
+[  724.158915] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[  724.158918] [drm] No driver support for vblank timestamp query.
+[  724.172372] Restarting tasks ... done.
+[  724.202297] ata1: SATA link down (SStatus 0 SControl 300)
+[  725.265366] ravb e6800000.ethernet eth0: Link is Up - 100Mbps/Full - flow control rx/tx
+arm64 ~/shared/deep-sleep #
+
+I also know you reported an IRQ storm when resuming using WoL which I in 
+over 1000 suspend/resume cycles never have been able to reproduce. Maybe 
+my test environment or procedure is to kind and/or something is falling 
+thru the cracks :-( Do you notice any difference in test procedure or 
+console printouts?
+
+> 
+> Thanks for your comments!
+> 
+> Geert Uytterhoeven (5):
+>   [RFC] clk: renesas: cpg-mssr: Restore module clocks during resume
+>   [RFC] clk: renesas: cpg-mssr: Add support to restore core clocks
+>     during resume
+>   [RFC] clk: renesas: div6: Restore clock state during resume
+>   [RFC] clk: renesas: rcar-gen3: Restore SDHI clocks during resume
+>   [RFC] clk: renesas: rcar-gen3: Restore R clock during resume
+> 
+>  drivers/clk/renesas/clk-div6.c         | 38 ++++++++++++++-
+>  drivers/clk/renesas/clk-div6.h         |  3 +-
+>  drivers/clk/renesas/rcar-gen2-cpg.c    |  7 ++-
+>  drivers/clk/renesas/rcar-gen2-cpg.h    |  6 +--
+>  drivers/clk/renesas/rcar-gen3-cpg.c    | 79 +++++++++++++++++++++++++-------
+>  drivers/clk/renesas/rcar-gen3-cpg.h    |  3 +-
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 84 +++++++++++++++++++++++++++++++++-
+>  drivers/clk/renesas/renesas-cpg-mssr.h |  3 +-
+>  8 files changed, 193 insertions(+), 30 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
 > --
-> git-series 0.9.1
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
 
-Thanks.
-
+-- 
 Regards,
-Jonathan
+Niklas Söderlund
