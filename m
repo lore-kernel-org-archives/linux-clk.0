@@ -1,125 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from plaes.org ([188.166.43.21]:48668 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750786AbdFZFxc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Jun 2017 01:53:32 -0400
-Date: Mon, 26 Jun 2017 05:53:31 +0000
-From: Priit Laes <plaes@plaes.org>
-To: Jonathan Liu <net147@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH v4 1/6] clk: sunxi-ng: div: Add support for
- fixed post-divider
-Message-ID: <20170626055331.GB31066@plaes.org>
-References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
- <bc043a64775ec8c9cfcfe6d638e348d38e34eba3.1498422562.git-series.plaes@plaes.org>
- <CANwerB1q68-PpQ7+-QbgBgZHeWw_4p1ruiwzy7upjLLRTDEG1w@mail.gmail.com>
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        "daniel.thompson@linaro.org"
+	<daniel.thompson@linaro.org>,
+        "andrea.merello@gmail.com"
+	<andrea.merello@gmail.com>,
+        "radoslaw.pietrzyk@gmail.com"
+	<radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        "Olivier
+ BIDEAU" <olivier.bideau@st.com>,
+        Amelie DELAUNAY <amelie.delaunay@st.com>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
+        "Gabriel
+ FERNANDEZ" <gabriel.fernandez@st.com>
+Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
+Date: Thu, 29 Jun 2017 13:41:04 +0000
+Message-ID: <7c0c3861-cf61-a9e2-cd5d-2ae30b8f32fa@st.com>
+References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
+ <20170621220703.GI4493@codeaurora.org>
+ <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
+ <20170628155956.GA5316@codeaurora.org>
+In-Reply-To: <20170628155956.GA5316@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CANwerB1q68-PpQ7+-QbgBgZHeWw_4p1ruiwzy7upjLLRTDEG1w@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 26, 2017 at 08:05:16AM +1000, Jonathan Liu wrote:
-> Hi Priit,
-> 
-> This is showing from clock rate of 171428572 in the output of "cat
-> /sys/kernel/debug/clk/clk_summary" for pll-periph-sata.
-> The clock rate should be 100000000 (100 MHz) when read from the hardware.
-
-This is what I see on Cubietruck. Can you check with sunxi-ccu-wip branch?
-
-$ cat /sys/kernel/debug/clk/clk_summary  |grep -i sata
-          pll-periph-sata                 1            1   100000000          0 0  
-             sata                         1            1   100000000          0 0  
-                ahb-sata                  1            1   300000000          0 0  
-
-> 
-> On 26 June 2017 at 06:45, Priit Laes <plaes@plaes.org> wrote:
-> > SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-> > 6 is fixed post-divider.
-> >
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++--
-> >  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
-> >  2 files changed, 12 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-> > index c0e5c10..de30e15 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_div.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> 
-> Missing handling of fixed_post_div in ccu_div_round_rate.
-> ccu_div_round_rate should multiply the rate by the postdiv before
-> looking up the divider using divider_get_val and divide val by postdiv
-> just before returning.
-> 
-> > @@ -62,8 +62,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
-> >         parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
-> >                                                   parent_rate);
-> >
-> > -       return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> > -                                  cd->div.flags);
-> > +       val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> > +                                 cd->div.flags);
-> > +
-> > +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> > +               val /= cd->fixed_post_div;
-> > +
-> > +       return val;
-> >  }
-> >
-> >  static int ccu_div_determine_rate(struct clk_hw *hw,
-> 
-> > @@ -89,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> >         val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
-> >                               cd->div.flags);
-> >
-> > +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> > +               val *= cd->fixed_post_div;
-> > +
-> >         spin_lock_irqsave(cd->common.lock, flags);
-> >
-> >         reg = readl(cd->common.base + cd->common.reg);
-> 
-> val here is the divider value that is stored in the clock register
-> field not the actual rate so this is incorrect. Instead the rate needs
-> to be multiplied by postdiv just before divider_get_val.
-
-OK, thanks, this one I wasn't really sure about.
-
-> 
-> > diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-> > index 08d0744..f3a5028 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_div.h
-> > +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> > @@ -86,9 +86,10 @@ struct ccu_div_internal {
-> >  struct ccu_div {
-> >         u32                     enable;
-> >
-> > -       struct ccu_div_internal         div;
-> > +       struct ccu_div_internal div;
-> >         struct ccu_mux_internal mux;
-> >         struct ccu_common       common;
-> > +       unsigned int            fixed_post_div;
-> >  };
-> >
-> >  #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,   \
-> > --
-> > git-series 0.9.1
-> 
-> Thanks.
-> 
-> Regards,
-> Jonathan
+DQoNCk9uIDA2LzI4LzIwMTcgMDU6NTkgUE0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gT24gMDYv
+MjcsIEdhYnJpZWwgRkVSTkFOREVaIHdyb3RlOg0KPj4NCj4+IE9uIDA2LzIyLzIwMTcgMTI6MDcg
+QU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4+PiByZWFkbF9wb2xsX3RpbWVvdXQ/DQo+Pj4NCj4+
+IGlmIGkgdXNlIHJlYWRsX3BvbGxfdGltZW91dCAod2ljaCB1c2UgJ2t0aW1lX2dldCgpJykgaXQg
+Y2FuIGJlDQo+PiBvcGVyYXRpb25hbCBvbmx5IGFmdGVyIHRoZSBzZWxlY3Rpb24gb2YgY2xvY2tz
+b3VyY2UgPyAoZGV2aWNlX2luaXRjYWxsKS4NCj4+IEFuZCB0aGVuIGlmIGEgZHJpdmVyIHR1cm4g
+b24gYSBjbG9jayBiZWZvcmUsIGl0IGNvdWxkIGJsb2NrZWQgdGhlIGxpbnV4DQo+PiBjb25zb2xl
+ID8NCj4+DQo+IE9rLiBJIHdvbmRlciBpZiB3ZSBjb3VsZCBhZGQgc29tZSBzb3J0IG9mIHN0YXJ0
+aW5nIGNoZWNrIHRvDQo+IHJlYWRsX3BvbGxfdGltZW91dCgpIHRoYXQgdGVzdHMgc3lzdGVtX3N0
+YXRlIGZvciBib290aW5nIHZzLg0KPiBzY2hlZHVsaW5nPyBUaGF0IHNob3VsZCBiZSBzdWZmaWNp
+ZW50IHRvIGhhbmRsZSB0aGlzIGNhc2U/DQo+DQpPb3BzIGkgdGhpbmsgaSB1bmRlcnN0b29kIG15
+IHByb2JsZW0uLi4NCmkgdXNlZCByZWFkbF9wb2xsX3RpbWVvdXQgaW4gYXRvbWljIGNvbnRleHQu
+DQpJIGhhdmUgdG8gbW92ZSBteSBjb2RlIGluIHRoZSAucHJlcGFyZSBvcHMuDQoNCklmIHlvdSBh
+cmUgb2sgd2l0aCB0aGF0IGkgd2lsbCBzZW5kIGEgdjUNCg0KVGhhbmtzDQoNCkdhYnJpZWwNCg0K
