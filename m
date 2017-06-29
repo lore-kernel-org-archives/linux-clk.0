@@ -1,43 +1,73 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de, xf@rock-chips.com
-Cc: linux-clk@vger.kernel.org, huangtao@rock-chips.com,
-        xxx@rock-chips.com, cl@rock-chips.com,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, zhengxing@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 0/3] clk: rockchip: support clk controller for RK3128 SoC
-Date: Fri,  2 Jun 2017 09:47:22 +0800
-Message-Id: <1496368045-17746-1-git-send-email-zhangqing@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170629101851.23972-8-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com> <20170629101851.23972-8-marek.vasut@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 13:41:57 +0200
+Message-ID: <CAMuHMdVRVURPWXb=pXDsxMgmiB6QvMsXHWTYM6UMW7sufUzf3w@mail.gmail.com>
+Subject: Re: [PATCH 8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Alexey Firago <alexey_firago@mentor.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver and clk ID\SRST ID it's also applies to the RK3126 SoC.
+Hi Marek,
 
-change in V4:
-remove the clk ID of usb480m_phy
+On Thu, Jun 29, 2017 at 12:18 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>
+> Update IDT VersaClock 6 driver to support 5P49V6901. This chip has
 
-change in V3:
-export clk ID for usb480m and usb480m_phy
+Update the IDT VersaClock5 driver to support the VersaClock6 5P49V6901?
 
-change in V2:
-rename the rk312x to rk3128.
+> two clock inputs (external XTAL or external CLKIN), four fractional
+> dividers (FODs) and five clock outputs (four universal clock outputs
+> and one reference clock output at OUT0_SELB_I2C).
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/clk/clk-versaclock5.c | 11 +++++++++++
 
-Elaine Zhang (3):
-  clk: rockchip: add dt-binding header for rk3128
-  dt-bindings: add bindings for rk3128 clock controller
-  clk: rockchip: add clock controller for rk3128
+and
 
- .../bindings/clock/rockchip,rk3128-cru.txt         |  56 ++
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-rk3128.c                  | 612 +++++++++++++++++++++
- include/dt-bindings/clock/rk3128-cru.h             | 282 ++++++++++
- 4 files changed, 951 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-rk3128.c
- create mode 100644 include/dt-bindings/clock/rk3128-cru.h
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -210,14 +210,14 @@ config COMMON_CLK_OXNAS
+          Support for the OXNAS SoC Family clocks.
 
--- 
-1.9.1
+ config COMMON_CLK_VC5
+-       tristate "Clock driver for IDT VersaClock5 devices"
++       tristate "Clock driver for IDT VersaClock5/6 devices"
+        depends on I2C
+        depends on OF
+        select REGMAP_I2C
+        help
+        ---help---
+-         This driver supports the IDT VersaClock5 programmable clock
+-         generator.
++         This driver supports the IDT VersaClock5 and VersaClock6
++         programmable clock generator.
+
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
