@@ -1,52 +1,81 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Jun 2017 19:01:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, Anson.Huang@nxp.com, ping.bai@nxp.com
-Subject: Re: [PATCH 9/9] clk: imx: add imx7ulp clk driver
-Message-ID: <20170620020119.GQ4493@codeaurora.org>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-10-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1494856763-6543-10-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
+Date: Thu, 29 Jun 2017 12:18:50 +0200
+Message-Id: <20170629101851.23972-7-marek.vasut@gmail.com>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/15, Dong Aisheng wrote:
-> +
-> +	clks[IMX7ULP_CLK_VIU]		= imx_clk_gate("viu",	"nic1_clk",	base + 0xA0, 30);
-> +	clks[IMX7ULP_CLK_PCTLC]		= imx_clk_gate("pctlc", "nic1_bus_clk", base + 0xB8, 30);
-> +	clks[IMX7ULP_CLK_PCTLD]		= imx_clk_gate("pctld", "nic1_bus_clk", base + 0xBC, 30);
-> +	clks[IMX7ULP_CLK_PCTLE]		= imx_clk_gate("pctle", "nic1_bus_clk", base + 0xc0, 30);
-> +	clks[IMX7ULP_CLK_PCTLF]		= imx_clk_gate("pctlf", "nic1_bus_clk", base + 0xc4, 30);
-> +
-> +	clks[IMX7ULP_CLK_GPU3D]		= imx_clk_composite("gpu3d",   periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x140);
-> +	clks[IMX7ULP_CLK_GPU2D]		= imx_clk_composite("gpu2d",   periph_plat_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x144);
-> +
-> +	imx_check_clocks(clks, ARRAY_SIZE(clks));
-> +
-> +	clk_data.clks = clks;
-> +	clk_data.clk_num = ARRAY_SIZE(clks);
-> +	of_clk_add_provider(scg_node, of_clk_src_onecell_get, &clk_data);
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Please use of_clk_add_hw_provider() instead, and the associated
-clk_hw registration APIs.
+IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
+Input clock source can be taken from either external crystal or from
+external reference clock.
 
-> +
-> +	pr_info("i.MX7ULP clock tree init done.\n");
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+---
+ .../devicetree/bindings/clock/idt,versaclock5.txt         | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-pr_debug?
-
-> +}
-> +
-> +CLK_OF_DECLARE(imx7ulp, "fsl,imx7ulp-clock", imx7ulp_clocks_init);
-> 
-
-Any reason why it can't be a platform driver? If not, please add
-some comment explaining why.
-
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+index 53d7e50ed875..a3d4260039a8 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -7,18 +7,20 @@ from 3 to 12 output clocks.
+ 
+ Required properties:
+ - compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
+-		"idt,5p49v5935".
++		"idt,5p49v5935" , "idt,5p49v6901".
+ - reg:		i2c device address, shall be 0x68 or 0x6a.
+ - #clock-cells:	from common clock binding; shall be set to 1.
+ - clocks:	from common clock binding; list of parent clock handles,
+-		- 5p49v5923: (required) either or both of XTAL or CLKIN
++		- 5p49v5923 and
++		  5p49v6901: (required) either or both of XTAL or CLKIN
+ 					reference clock.
+ 		- 5p49v5933 and
+ 		- 5p49v5935: (optional) property not present (internal
+ 					Xtal used) or CLKIN reference
+ 					clock.
+ - clock-names:	from common clock binding; clock input names, can be
+-		- 5p49v5923: (required) either or both of "xin", "clkin".
++		- 5p49v5923 and
++		  5p49v6901: (required) either or both of "xin", "clkin".
+ 		- 5p49v5933 and
+ 		- 5p49v5935: (optional) property not present or "clkin".
+ 
+@@ -44,6 +46,13 @@ clock specifier, the following mapping applies:
+ 	3 -- OUT3
+ 	4 -- OUT4
+ 
++5P49V6901:
++	0 -- OUT0_SEL_I2CB
++	1 -- OUT1
++	2 -- OUT2
++	3 -- OUT3
++	4 -- OUT4
++
+ ==Example==
+ 
+ /* 25MHz reference crystal */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
