@@ -1,316 +1,70 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: [PATCH v5 5/6] arm64: dts: Add ipq8074 SoC and HK01 board support
-Date: Thu,  8 Jun 2017 11:14:00 +0530
-Message-Id: <1496900641-27755-6-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1496900641-27755-1-git-send-email-varada@codeaurora.org>
-References: <1496900641-27755-1-git-send-email-varada@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <b42a6818-4bc1-6556-5adf-c74a205b745b@de.bosch.com>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <b2328038-64ac-f7e0-d8a9-434f2f0b0300@de.bosch.com> <CAMuHMdVD3i0YhGCf-HSS+y+4SHvXi9sW3V4-ScQX=7R+DX=kEQ@mail.gmail.com>
+ <b42a6818-4bc1-6556-5adf-c74a205b745b@de.bosch.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 15:22:51 +0200
+Message-ID: <CAMuHMdV7onyF3o0POVh0v0O-Zp_bmGK3zyadg1SHa4r6k-P_2g@mail.gmail.com>
+Subject: Re: Clocks used by another OS/CPU
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@baylibre.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add initial device tree support for the Qualcomm IPQ8074 SoC and
-HK01 evaluation board.
+Hi Dirk,
 
-Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/Makefile         |   1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  53 ++++++++
- arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 194 ++++++++++++++++++++++++++++++
- 3 files changed, 248 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+On Thu, Jun 29, 2017 at 3:18 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> On 29.06.2017 13:18, Geert Uytterhoeven wrote:
+>> On Thu, Jun 29, 2017 at 12:28 PM, Dirk Behme <dirk.behme@de.bosch.com>
+>> wrote:
+>>> On 29.06.2017 11:27, Geert Uytterhoeven wrote:
+>>>> TL;DR: Clocks may be in use by another CPU not running Linux, while
+>>>> Linux
+>>>> disables them as being unused.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index cc0f02d..ff81d7e 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -1,5 +1,6 @@
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-new file mode 100644
-index 0000000..7d44be9
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-@@ -0,0 +1,53 @@
-+/dts-v1/;
-+/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#include "ipq8074.dtsi"
-+
-+/ {
-+	#address-cells = <0x2>;
-+	#size-cells = <0x2>;
-+	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
-+	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
-+	interrupt-parent = <&intc>;
-+
-+	aliases {
-+		serial0 = &blsp1_uart5;
-+	};
-+
-+	chosen {
-+		bootargs = "root=/dev/ram0 rw init=/init";
-+		stdout-path = "serial0";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x0 0x20000000>;
-+	};
-+
-+	soc {
-+		pinctrl@1000000 {
-+			serial_4_pins: serial4_pinmux {
-+				mux {
-+					pins = "gpio23", "gpio24";
-+					function = "blsp4_uart1";
-+					bias-disable;
-+				};
-+			};
-+		};
-+
-+		serial@78b3000 {
-+			pinctrl-0 = <&serial_4_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-new file mode 100644
-index 0000000..2bc5dec
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -0,0 +1,194 @@
-+/*
-+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ8074";
-+	compatible = "qcom,ipq8074";
-+
-+	soc: soc {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+		ranges = <0 0 0 0xffffffff>;
-+		compatible = "simple-bus";
-+
-+		pinctrl@1000000 {
-+			compatible = "qcom,ipq8074-pinctrl";
-+			reg = <0x1000000 0x300000>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <0x2>;
-+			interrupt-controller;
-+			#interrupt-cells = <0x2>;
-+		};
-+
-+		intc: interrupt-controller@b000000 {
-+			compatible = "qcom,msm-qgic2";
-+			interrupt-controller;
-+			#interrupt-cells = <0x3>;
-+			reg = <0xb000000 0x1000>, <0xb002000 0x1000>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		timer@b120000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0xb120000 0x1000>;
-+			clock-frequency = <19200000>;
-+
-+			frame@b120000 {
-+				frame-number = <0>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb121000 0x1000>,
-+				      <0xb122000 0x1000>;
-+			};
-+
-+			frame@b123000 {
-+				frame-number = <1>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb123000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b124000 {
-+				frame-number = <2>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb124000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b125000 {
-+				frame-number = <3>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb125000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b126000 {
-+				frame-number = <4>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb126000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b127000 {
-+				frame-number = <5>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb127000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b128000 {
-+				frame-number = <6>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb128000 0x1000>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		gcc: gcc@1800000 {
-+			compatible = "qcom,gcc-ipq8074";
-+			reg = <0x1800000 0x80000>;
-+			#clock-cells = <0x1>;
-+			#reset-cells = <0x1>;
-+		};
-+
-+		blsp1_uart5: serial@78b3000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78b3000 0x200>;
-+			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0>;
-+			next-level-cache = <&L2_0>;
-+			enable-method = "psci";
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x1>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x2>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x3>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		L2_0: l2-cache {
-+			compatible = "cache";
-+			cache-level = <0x2>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 7 GIC_CPU_MASK_SIMPLE(4)>;
-+	};
-+
-+	clocks {
-+		sleep_clk: sleep_clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <32000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		xo: xo {
-+			compatible = "fixed-clock";
-+			clock-frequency = <19200000>;
-+			#clock-cells = <0>;
-+		};
-+	};
-+};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>>>> On r8a7795, there are several Cortex A cores running Linux, and a Cortex
+>>>> R7
+>>>> core which may run another OS.
+>>>> This is an interesting issue, and relevant to other SoCs, too.
+
+> First of all, just the clocks we know (*) are used by the R7 side *and* are
+> disabled by the kernel (for a practical demo this are e.g. ~7 clocks).
+>
+> (*) Yes, this is board (and R7 software) related. And yes, this might result
+> in board specific r8a7795_crit_mod_clks/r8a7795_crit_core_clks[] tables. So
+> yes, most probably device tree would be an option. While there is
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c#n3402
+>
+> unfortunately
+>
+> a) its marked as "Do not use this function"
+>
+> and
+>
+> b) even if we would ignore (a) we couldn't figure how to use this for the
+> RCar3 clocks (being no clock expert)
+
+You cannot, as it only supports the legacy one-clock-per-node style.
+You can use it on e.g. sd2_clk in arch/arm/boot/dts/r8a7791.dtsi, until R-Car
+Gen2 is switched to the new CPG/MSSR driver.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
