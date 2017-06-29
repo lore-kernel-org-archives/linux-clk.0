@@ -1,119 +1,77 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH v7 3/8] MIPS: Loongson: Add basic Loongson-1A CPU support
-Date: Fri, 16 Jun 2017 10:52:48 +0800
-Message-Id: <1497581573-17258-4-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
-References: <1497581573-17258-1-git-send-email-zhoubb@lemote.com>
+Return-Path: <Dirk.Behme@de.bosch.com>
+Subject: Re: Clocks used by another OS/CPU
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@baylibre.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <CAMuHMdWRadUCZUycUW3dKJhS__aRRVbV1tXo0umUQ7KHOYQMoQ@mail.gmail.com>
+ <50911172-8fa1-8341-0ed0-d40f00d9392c@de.bosch.com>
+ <CAMuHMdXedexq_jGq+y3Hbmph1_1N_LjT7dhYJ=rC0Q2oK_Xjug@mail.gmail.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <d1ee0f5b-d9ef-96c0-b698-a4a1cef58428@de.bosch.com>
+Date: Thu, 29 Jun 2017 14:55:14 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXedexq_jGq+y3Hbmph1_1N_LjT7dhYJ=rC0Q2oK_Xjug@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The Loongson-1A CPU is similar with Loongson-1B/1C, which is a 32-bit SoC.
-It implements the MIPS32 release 2 instruction set.
+On 29.06.2017 14:45, Geert Uytterhoeven wrote:
+> Hi Dirk,
+> 
+> On Thu, Jun 29, 2017 at 2:07 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> On 29.06.2017 13:56, Geert Uytterhoeven wrote:
+>>> On Thu, Jun 29, 2017 at 11:27 AM, Geert Uytterhoeven
+>>> <geert@linux-m68k.org> wrote:
+>>>> CC clock, ARM, DT, PM people
+>>>>
+>>>> TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
+>>>> disables them as being unused.
+>>>
+>>>> Of course this is not limited to clocks, but also to e.g. PM domains.
+>>>
+>>> BTW, how do you prevent Linux from powering down the CR7 PM domain,
+>>> which contains the Cortex R7?
+>>
+>> The idea is
+>>
+>> --- a/drivers/soc/renesas/r8a7795-sysc.c
+>> +++ b/drivers/soc/renesas/r8a7795-sysc.c
+>> @@ -38,7 +38,8 @@ static const struct rcar_sysc_area r8a7795_areas[]
+>> __initconst = {
+>>          { "ca53-cpu3",  0x200, 3, R8A7795_PD_CA53_CPU3, R8A7795_PD_CA53_SCU,
+>>            PD_CPU_NOCR },
+>>          { "a3vp",       0x340, 0, R8A7795_PD_A3VP,      R8A7795_PD_ALWAYS_ON
+>> },
+>> -       { "cr7",        0x240, 0, R8A7795_PD_CR7,       R8A7795_PD_ALWAYS_ON
+>> },
+>> +       { "cr7",        0x240, 0, R8A7795_PD_CR7,
+>> R8A7795_PD_ALWAYS_ON,
+>> +         PD_CPU_NOCR },
+>>          { "a3vc",       0x380, 0, R8A7795_PD_A3VC,      R8A7795_PD_ALWAYS_ON
+>> },
+>>          { "a2vc0",      0x3c0, 0, R8A7795_PD_A2VC0,     R8A7795_PD_A3VC },
+>>          { "a2vc1",      0x3c0, 1, R8A7795_PD_A2VC1,     R8A7795_PD_A3VC },
+>>
+>>
+>> Not finally tested, though.
+> 
+> Pretending the CR7 PM Domain can only be controlled through WFI/APMU only should
+> work.
+> But IMHO it is a hack, just like your solution for the CANFD clock.
 
-It's a cost-effective single chip system based on LS232 processor core, and
-is applicable to fields such as industrial control.
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
----
- arch/mips/include/asm/cpu-type.h    |  3 ++-
- arch/mips/kernel/cpu-probe.c        |  4 +++-
- arch/mips/loongson32/Platform       |  1 +
- arch/mips/loongson32/common/setup.c |  4 +++-
- arch/mips/mm/c-r4k.c                | 10 ++++++++++
- 5 files changed, 19 insertions(+), 3 deletions(-)
+Well, it seems to be the best solution recent mainline gives us and 
+seems to work ;)
 
-diff --git a/arch/mips/include/asm/cpu-type.h b/arch/mips/include/asm/cpu-type.h
-index bdd6dc1..13ea1ea5 100644
---- a/arch/mips/include/asm/cpu-type.h
-+++ b/arch/mips/include/asm/cpu-type.h
-@@ -24,7 +24,8 @@ static inline int __pure __get_cpu_type(const int cpu_type)
- 	case CPU_LOONGSON3:
- #endif
- 
--#if defined(CONFIG_SYS_HAS_CPU_LOONGSON1B) || \
-+#if defined(CONFIG_SYS_HAS_CPU_LOONGSON1A) || \
-+    defined(CONFIG_SYS_HAS_CPU_LOONGSON1B) || \
-     defined(CONFIG_SYS_HAS_CPU_LOONGSON1C)
- 	case CPU_LOONGSON1:
- #endif
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index 657d65d..59ad3b7 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1503,7 +1503,9 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
- 
- 		switch (c->processor_id & PRID_REV_MASK) {
- 		case PRID_REV_LOONGSON1ABC:
--#ifdef CONFIG_CPU_LOONGSON1B
-+#if defined(CONFIG_LOONGSON1_LS1A)
-+			__cpu_name[cpu] = "Loongson 1A";
-+#elif defined(CONFIG_CPU_LOONGSON1B)
- 			__cpu_name[cpu] = "Loongson 1B";
- #endif
- 			break;
-diff --git a/arch/mips/loongson32/Platform b/arch/mips/loongson32/Platform
-index ffe01c6..a9e0fa7 100644
---- a/arch/mips/loongson32/Platform
-+++ b/arch/mips/loongson32/Platform
-@@ -4,5 +4,6 @@ cflags-$(CONFIG_CPU_LOONGSON1)	+= \
- 
- platform-$(CONFIG_MACH_LOONGSON32)	+= loongson32/
- cflags-$(CONFIG_MACH_LOONGSON32)	+= -I$(srctree)/arch/mips/include/asm/mach-loongson32
-+load-$(CONFIG_LOONGSON1_LS1A)		+= 0xffffffff80200000
- load-$(CONFIG_LOONGSON1_LS1B)		+= 0xffffffff80100000
- load-$(CONFIG_LOONGSON1_LS1C)		+= 0xffffffff80100000
-diff --git a/arch/mips/loongson32/common/setup.c b/arch/mips/loongson32/common/setup.c
-index c8e8b3e..1c3324a 100644
---- a/arch/mips/loongson32/common/setup.c
-+++ b/arch/mips/loongson32/common/setup.c
-@@ -22,7 +22,9 @@ const char *get_system_type(void)
- 
- 	switch (processor_id & PRID_REV_MASK) {
- 	case PRID_REV_LOONGSON1ABC:
--#if defined(CONFIG_LOONGSON1_LS1B)
-+#if defined(CONFIG_LOONGSON1_LS1A)
-+		return "LOONGSON LS1A";
-+#elif defined(CONFIG_LOONGSON1_LS1B)
- 		return "LOONGSON LS1B";
- #elif defined(CONFIG_LOONGSON1_LS1C)
- 		return "LOONGSON LS1C";
-diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
-index e7f798d..44c4088 100644
---- a/arch/mips/mm/c-r4k.c
-+++ b/arch/mips/mm/c-r4k.c
-@@ -1366,6 +1366,16 @@ static void probe_pcache(void)
- 		c->options |= MIPS_CPU_PREFETCH;
- 		break;
- 
-+	case CPU_LOONGSON1:
-+		if (read_c0_config7() & MIPS_CONF7_AR) {
-+			/*
-+			 * effectively physically indexed dcache,
-+			 * thus no virtual aliases.
-+			 */
-+			c->dcache.flags |= MIPS_CACHE_PINDEX;
-+			break;
-+		}
-+
- 	default:
- 		if (!(config & MIPS_CONF_M))
- 			panic("Don't know how to probe P-caches on this cpu.");
--- 
-2.9.3
+And for me it looks at least better than the other solution I've seen so 
+far: Remove the 'cr7', 'canfd' etc lines completely from the kernel.
+
+Best regards
+
+Dirk
