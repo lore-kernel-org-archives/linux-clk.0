@@ -1,67 +1,65 @@
-Return-Path: <leonard.crestez@nxp.com>
-Message-ID: <1497969426.3177.14.camel@nxp.com>
-Subject: Re: [PATCH v5 3/6] kernel/reboot.c: export pm_power_off_prepare
-From: Leonard Crestez <leonard.crestez@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-CC: Andrew Morton <akpm@linux-foundation.org>, <devicetree@vger.kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, <kernel@pengutronix.de>, Liam Girdwood
-	<lgirdwood@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Mark Brown
-	<broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Date: Tue, 20 Jun 2017 17:37:06 +0300
-In-Reply-To: <5023d338-f845-b8a6-c4a0-d414c75f841c@pengutronix.de>
-References: <20170619050245.2632-1-o.rempel@pengutronix.de>
-	 <20170619050245.2632-4-o.rempel@pengutronix.de>
-	 <1497872109.5380.10.camel@nxp.com>
-	 <5023d338-f845-b8a6-c4a0-d414c75f841c@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH 1/5] clk: mb86s7x: Suppress build
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Satoru OKAMOTO <okamoto.satoru@socionext.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Andy Green <andy.green@linaro.org>, Vincent Yang
+ <vincent.yang@socionext.com>, Tetsuya Nuriya <nuriya.tetsuya@socionext.com>
+References: <20170625170020.11791-1-afaerber@suse.de>
+ <20170625170020.11791-2-afaerber@suse.de>
+ <20170628161354.GB5316@codeaurora.org>
+ <CAJe_ZhdkfK1wB88hrMP=kmMNBfqxGtHDxseuyUXHToq77bzQ+g@mail.gmail.com>
+ <20170628222929.GC5316@codeaurora.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <90983570-ba4d-d58e-b136-de0a1fa1d0c2@suse.de>
+Date: Thu, 29 Jun 2017 13:17:37 +0200
 MIME-Version: 1.0
-Return-Path: leonard.crestez@nxp.com
+In-Reply-To: <20170628222929.GC5316@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-06-20 at 07:01 +0200, Oleksij Rempel wrote:
+Am 29.06.2017 um 00:29 schrieb Stephen Boyd:
+> On 06/28, Jassi Brar wrote:
+>> On 28 June 2017 at 21:43, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>> On 06/25, Andreas Färber wrote:
+>>>> It fails to build once we introduce the ARCH_MB86S7X Kconfig symbol:
+>>>>
+>>>>   drivers/clk/clk-mb86s7x.c:27:10: fatal error: soc/mb86s7x/scb_mhu.h: No such file or directory
+>>>>    #include <soc/mb86s7x/scb_mhu.h>
+>>>>             ^~~~~~~~~~~~~~~~~~~~~~~
+>>>>   compilation terminated.
+[...]
+>>>> Comment it out in the Makefile for now.
+>>>>
+>>>
+>>> Why not delete the whole driver instead? It's been two years and
+>>> the driver has never compiled.
+>>>
+>> I won't complain. The interest of moving powers evaporated in the
+>> midst of upstreaming. Though some next platform is supposed to reuse
+>> the IPs, but I can't say when will that be upstreamed and by whom.
+
+Satoru-san is in CC to comment on that aspect. :)
+
+> Thanks for the info.
 > 
-> On 19.06.2017 13:35, Leonard Crestez wrote:
-> > 
-> > On Mon, 2017-06-19 at 07:02 +0200, Oleksij Rempel wrote:
-> > > 
-> > > Export pm_power_off_prepare. It is needed to implement power off on
-> > > Freescale/NXP iMX6 based boards with external power management
-> > > integrated circuit (PMIC).
-> > > 
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > ---
-> > >  kernel/reboot.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/kernel/reboot.c b/kernel/reboot.c
-> > > index bd30a973fe94..a6903bf772c7 100644
-> > > --- a/kernel/reboot.c
-> > > +++ b/kernel/reboot.c
-> > > @@ -49,6 +49,7 @@ int reboot_force;
-> > >   */
-> > > 
-> > >  void (*pm_power_off_prepare)(void);
-> > > +EXPORT_SYMBOL(pm_power_off_prepare);
-> > > 
-> > Could you register a reboot notifier in the pfuze driver instead? Right
-> > now the only user of pm_power_off_prepare is ACPI so this alternative
-> > seems less intrusive.
-> hm... in this case i will need to make sure that reboot handler is not 
-> executed on reboot. This will make code looks strange. Which is opposite 
-> of your comment in other email about strange standby code for power off :)
-> Should i really do this?
+> Andreas, can you send a deletion patch instead?
 
-A reboot handler receives a parameter to differentiate between reboot
-and shutdown so it would be easy. Isn't it preferable to use an
-existing mechanism instead of exporting a new symbol?
+I can.
 
-But maybe somebody else will Ack this, I don't particularly insist on
-changing this.
+But obviously the idea is to follow-up on this initial series with an
+scb mailbox driver (which is blocking both clk and PM domains drivers)
+and to either resolve the compilation failure by adding the expected
+symbols or to update the clk driver to build against a new driver.
 
---
 Regards,
-Leonard
+Andreas
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
