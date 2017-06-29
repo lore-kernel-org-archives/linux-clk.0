@@ -1,107 +1,316 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Jun 2017 00:33:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH 5/5 v2] clk: qcom: Add support for MSM8660 LCC
-Message-ID: <20170601073359.GT20170@codeaurora.org>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-5-linus.walleij@linaro.org>
- <20170527201913.GN12920@tuxbook>
- <CACRpkdYtMfhpuY-9siVuRULuPh542rK==m+mrmfmfr3y4KdWiw@mail.gmail.com>
- <20170530192429.GT12920@tuxbook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170530192429.GT12920@tuxbook>
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>,
+	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Subject: [PATCH v7 3/4] arm64: dts: Add ipq8074 SoC and HK01 board support
+Date: Thu, 29 Jun 2017 11:48:33 +0530
+Message-Id: <1498717114-338-4-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1498717114-338-1-git-send-email-varada@codeaurora.org>
+References: <1498717114-338-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/30, Bjorn Andersson wrote:
-> On Mon 29 May 05:23 PDT 2017, Linus Walleij wrote:
-> 
-> > On Sat, May 27, 2017 at 10:19 PM, Bjorn Andersson
-> > <bjorn.andersson@linaro.org> wrote:
-> > > On Wed 19 Apr 02:13 PDT 2017, Linus Walleij wrote:
-> > >> diff --git a/drivers/clk/qcom/lcc-msm8660.c b/drivers/clk/qcom/lcc-msm8660.c
-> > > [..]
-> > >> +/* The vendor code uses PLL4 as parent everywhere */
-> > >> +static const struct parent_map lcc_parent_map[] = {
-> > >> +     { P_PXO, 0 },
-> > >> +     { P_CXO, 1 },
-> > >> +     /* Select RPM PLL4, but also used for selecting LPA PLL0 */
-> > >> +     { P_PLL4_LPA_PLL0, 2 },
-> > >> +     /* Will just ground the line */
-> > >> +     { P_GND, 6 },
-> > >> +};
-> > >> +
-> > >> +static const char * const lcc_parent_tbl[] = {
-> > >> +     "pxo",
-> > >> +     "cxo",
-> > >> +     /*
-> > >> +      * PLL4 is an RPM clock on MSM8660/APQ8060, set to "pll4" for this
-> > >> +      * If we enable and mux in the LPA_PLL0 on this platform, we can
-> > >> +      * set this to "lpa_pll0" instead
-> > >> +      */
-> > >> +     "pll4_clk",
-> > >> +     "gnd", /* This is a very inactive parent */
-> > >> +};
-> > >> +
-> > >> +/*
-> > >> + * This table is evidently for using PLL4 as parent, if we start using
-> > >> + * LPA_PLL0 we need to provide a second table.
-> > >> + */
-> > >
-> > > Aren't you muxing in LPA_PLL0 as source instead of PLL4 at the bottom of
-> > > probe()? And as you hard code that selector, shouldn't the parent table
-> > > reference lpa_pll0?
-> > 
-> > I think it's just a naming problem.
-> > 
-> > I'm actually using:
-> > 
-> > >> +     {   768000, P_PLL4_LPA_PLL0, 4,  1, 176 },
-> > 
-> > Because as far as I can tell, RPM clock PLL4 and LPA_PLL0 is the
-> > same thing, just different names.
-> > 
-> > I don't think the 8660 has its own LPA PLL, it's just the layers of
-> > confusion in the code that make it seem like so.
-> > 
-> > Or maybe someone was in the planning stages of adding the LPA PLL
-> > to the hardware and never got there. So some code confusingly
-> > refers to that...
-> > 
-> > I would really like to see how it actually works.
-> > 
-> 
-> 8660 and 8960 are basically different revisions of the same SoC, so
-> reviewing clock-8x60.c and clock-8960.c found in below repository gives
-> some additional insight.
-> 
-> clock-8x60.c mentions LPA_PLL0 in _one_ comment and carries the
-> definitions for a LCC_PLL0 clock, but no references are made to these
-> defines. The code ever only references "pll4".
-> 
-> clock-8960.c goes beyond this and actually reference the LCC_PLL0
-> registers and they are all used to query and configure "pll4".
-> 
-> 
-> So AFAICT PLL4 is controlled/implemented in the LCC block and is called
-> PLL0 in that context and that on 8660 it's completely controlled by the
-> RPM.
-> 
-> As such I think it makes sense - on 8660 - to just reference "pll4",
-> perhaps with some comment in the code referencing LCC_PLL0 as the actual
-> implementation.
+Add initial device tree support for the Qualcomm IPQ8074 SoC and
+HK01 evaluation board.
 
-Correct, LCC_PLL0 is a local naming scheme for the audio clock
-controller's 0th PLL. That just so happens to be PLL4 "globally"
-in the SoC. From global clock control standpoint it's PLL4. I
-would just reference PLL4 everywhere and ignore the whole
-LCC_PLL0 thing.
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/Makefile         |   1 +
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  52 ++++++++
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 194 ++++++++++++++++++++++++++++++
+ 3 files changed, 247 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
 
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index cc0f02d..ff81d7e 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -1,5 +1,6 @@
+ dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+new file mode 100644
+index 0000000..6a838b5
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+@@ -0,0 +1,52 @@
++/dts-v1/;
++/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#include "ipq8074.dtsi"
++
++/ {
++	#address-cells = <0x2>;
++	#size-cells = <0x2>;
++	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
++	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
++	interrupt-parent = <&intc>;
++
++	aliases {
++		serial0 = &blsp1_uart5;
++	};
++
++	chosen {
++		stdout-path = "serial0";
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x0 0x40000000 0x0 0x20000000>;
++	};
++
++	soc {
++		pinctrl@1000000 {
++			serial_4_pins: serial4_pinmux {
++				mux {
++					pins = "gpio23", "gpio24";
++					function = "blsp4_uart1";
++					bias-disable;
++				};
++			};
++		};
++
++		serial@78b3000 {
++			pinctrl-0 = <&serial_4_pins>;
++			pinctrl-names = "default";
++			status = "ok";
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+new file mode 100644
+index 0000000..2bc5dec
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -0,0 +1,194 @@
++/*
++ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
++
++/ {
++	model = "Qualcomm Technologies, Inc. IPQ8074";
++	compatible = "qcom,ipq8074";
++
++	soc: soc {
++		#address-cells = <0x1>;
++		#size-cells = <0x1>;
++		ranges = <0 0 0 0xffffffff>;
++		compatible = "simple-bus";
++
++		pinctrl@1000000 {
++			compatible = "qcom,ipq8074-pinctrl";
++			reg = <0x1000000 0x300000>;
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <0x2>;
++			interrupt-controller;
++			#interrupt-cells = <0x2>;
++		};
++
++		intc: interrupt-controller@b000000 {
++			compatible = "qcom,msm-qgic2";
++			interrupt-controller;
++			#interrupt-cells = <0x3>;
++			reg = <0xb000000 0x1000>, <0xb002000 0x1000>;
++		};
++
++		timer {
++			compatible = "arm,armv8-timer";
++			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		timer@b120000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			compatible = "arm,armv7-timer-mem";
++			reg = <0xb120000 0x1000>;
++			clock-frequency = <19200000>;
++
++			frame@b120000 {
++				frame-number = <0>;
++				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb121000 0x1000>,
++				      <0xb122000 0x1000>;
++			};
++
++			frame@b123000 {
++				frame-number = <1>;
++				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb123000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b124000 {
++				frame-number = <2>;
++				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb124000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b125000 {
++				frame-number = <3>;
++				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb125000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b126000 {
++				frame-number = <4>;
++				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb126000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b127000 {
++				frame-number = <5>;
++				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb127000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b128000 {
++				frame-number = <6>;
++				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb128000 0x1000>;
++				status = "disabled";
++			};
++		};
++
++		gcc: gcc@1800000 {
++			compatible = "qcom,gcc-ipq8074";
++			reg = <0x1800000 0x80000>;
++			#clock-cells = <0x1>;
++			#reset-cells = <0x1>;
++		};
++
++		blsp1_uart5: serial@78b3000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x78b3000 0x200>;
++			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++	};
++
++	cpus {
++		#address-cells = <0x1>;
++		#size-cells = <0x0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			next-level-cache = <&L2_0>;
++			enable-method = "psci";
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			enable-method = "psci";
++			reg = <0x1>;
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			enable-method = "psci";
++			reg = <0x2>;
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			enable-method = "psci";
++			reg = <0x3>;
++			next-level-cache = <&L2_0>;
++		};
++
++		L2_0: l2-cache {
++			compatible = "cache";
++			cache-level = <0x2>;
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupts = <GIC_PPI 7 GIC_CPU_MASK_SIMPLE(4)>;
++	};
++
++	clocks {
++		sleep_clk: sleep_clk {
++			compatible = "fixed-clock";
++			clock-frequency = <32000>;
++			#clock-cells = <0>;
++		};
++
++		xo: xo {
++			compatible = "fixed-clock";
++			clock-frequency = <19200000>;
++			#clock-cells = <0>;
++		};
++	};
++};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
