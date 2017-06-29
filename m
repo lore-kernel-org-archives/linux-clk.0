@@ -1,47 +1,45 @@
-Return-Path: <chunkeey@googlemail.com>
-Return-Path: <chunkeey@googlemail.com>
-From: Christian Lamparter <chunkeey@googlemail.com>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org
-Subject: Re: [PATCH v4 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
-Date: Sun, 04 Jun 2017 02:33:50 +0200
-Message-ID: <3316949.YG4fliAlpW@debian64>
-In-Reply-To: <1496474875-7190-2-git-send-email-varada@codeaurora.org>
-References: <1496474875-7190-1-git-send-email-varada@codeaurora.org> <1496474875-7190-2-git-send-email-varada@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jun 2017 13:56:18 +0200
+Message-ID: <CAMuHMdWRadUCZUycUW3dKJhS__aRRVbV1tXo0umUQ7KHOYQMoQ@mail.gmail.com>
+Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
+ cpg-mssr: Add interface for critical core clocks)
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@baylibre.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday, June 3, 2017 12:57:50 PM CEST Varadarajan Narayanan wrote:
-> +- function:
-> +       Usage: required
-> +       Value type: <string>
-> +       Definition: Specify the alternative function to be configured for the
-> +                   specified pins. Functions are only valid for gpio pins.
-> +                   Valid values are:
-> +                   atest_char, atest_char0, atest_char1, atest_char2,
-> +                   atest_char3, audio_rxbclk, audio_rxd, audio_rxfsync,
-> +                   audio_rxmclk, audio_txbclk, audio_txd, audio_txfsync,
-> +                   audio_txmclk, blsp0_i2c, blsp0_spi, blsp0_uart, blsp1_i2c,
-> +                   blsp1_spi, blsp1_uart, blsp2_i2c, blsp2_spi, blsp2_uart,
-> +                   blsp3_i2c, blsp3_spi, blsp3_spi0, blsp3_spi1, blsp3_spi2,
-> +                   blsp3_spi3, blsp3_uart, blsp4_i2c0, blsp4_i2c1, blsp4_spi0,
-> +                   blsp4_spi1, blsp4_uart0, blsp4_uart1, blsp5_i2c, blsp5_spi,
-> +                   blsp5_uart, burn0, burn1, cri_trng, cri_trng0, cri_trng1,
-> +                   cxc0, cxc1, dbg_out, gcc_plltest, gcc_tlmm, gpio, ldo_en,
-> +                   ldo_update, led0, led1, led2, mac0_sa0, mac0_sa1, mac1_sa0,
-> +                   mac1_sa1, mac1_sa2, mac1_sa3, mac2_sa0, mac2_sa1, mdc,
-> +                   mdio, NA, pcie0_clk, pcie0_rst, pcie0_wake, pcie1_clk,
-> +                   pcie1_rst, pcie1_wake, pcm_drx, pcm_dtx, pcm_fsync,
-> +                   pcm_pclk, pcm_zsi0, pcm_zsi1, prng_rosc, pta1_0, pta1_1,
-> +                   pta1_2, pta2_0, pta2_1, pta2_2, pwm0, pwm1, pwm2, pwm3,
-> +                   qdss_cti_trig_in_a0, qdss_cti_trig_in_a1,
-> +                   qdss_cti_trig_in_b0, qdss_cti_trig_in_b1,
-> +                   qdss_cti_trig_out_a0, qdss_cti_trig_out_a1,
-> +                   qdss_cti_trig_out_b0, qdss_cti_trig_out_b1,
-> +                   qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a,
-> +                   qdss_tracectl_b, qdss_tracedata_a, qdss_tracedata_b,
-> +                   qpic, rx0, rx1, rx2, sd_card, sd_write, tsens_max, wci2a,
-> +                   wci2b, wci2c, wci2d, NA
+Hi Dirk,
 
-The "NA" function is listed twice. It should be there at all.
+On Thu, Jun 29, 2017 at 11:27 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> CC clock, ARM, DT, PM people
+>
+> TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
+> disables them as being unused.
+
+> Of course this is not limited to clocks, but also to e.g. PM domains.
+
+BTW, how do you prevent Linux from powering down the CR7 PM domain,
+which contains the Cortex R7?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
