@@ -1,64 +1,76 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bjorn.andersson@linaro.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	varada@codeaurora.org,
-	mraghava@codeaurora.org
-Subject: [PATCH v4 6/6] arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
-Date: Sat,  3 Jun 2017 12:57:55 +0530
-Message-Id: <1496474875-7190-7-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1496474875-7190-1-git-send-email-varada@codeaurora.org>
-References: <1496474875-7190-1-git-send-email-varada@codeaurora.org>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 4/8] clk: vc5: Configure the output buffer input mux on prepare
+Date: Thu, 29 Jun 2017 12:18:47 +0200
+Message-Id: <20170629101851.23972-4-marek.vasut@gmail.com>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-These configs are required for booting kernel in qcom
-ipq8074 boards.
+The output buffer input mux can be configured in either of three
+states -- disabled, input from FOD, input from previous output.
+Once the .prepare() callback of the output buffer is called, the
+output buffer input mux must be set to either input from FOD or
+input from previous output, it cannot be set to Disabled anymore
+or the output won't work.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+Default to the input from FOD if the output buffer input mux was
+Disabled and the .prepare() was called on it.
+
+Note that we do not set the output buffer input mux back to Disabled
+in the .unprepare() callback as there is no obvious benefit of doing
+so. We disable the entire output buffer in the .unprepare() callback
+already.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk-versaclock5.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 65cdd87..c20328e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -267,6 +267,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SPIDEV=m
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -450,6 +451,7 @@ CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 766fcc5cc0b3..a5256f793627 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -507,6 +507,25 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
+ {
+ 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
++	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
++			VC5_OUT_DIV_CONTROL_SEL_EXT |
++			VC5_OUT_DIV_CONTROL_EN_FOD;
++	unsigned int src;
++	int ret;
++
++	/*
++	 * If the input mux is disabled, enable it first and
++	 * select source from matching FOD.
++	 */
++	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
++	if ((src & mask) == 0) {
++		src = VC5_OUT_DIV_CONTROL_RESET | VC5_OUT_DIV_CONTROL_EN_FOD;
++		ret = regmap_update_bits(vc5->regmap,
++					 VC5_OUT_DIV_CONTROL(hwdata->num),
++					 mask | VC5_OUT_DIV_CONTROL_RESET, src);
++		if (ret)
++			return ret;
++	}
+ 
+ 	/* Enable the clock buffer */
+ 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
