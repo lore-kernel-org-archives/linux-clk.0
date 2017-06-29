@@ -1,274 +1,130 @@
-Return-Path: <James.Hogan@imgtec.com>
-Date: Fri, 23 Jun 2017 23:20:25 +0100
-From: James Hogan <james.hogan@imgtec.com>
-To: Paul Burton <paul.burton@imgtec.com>
-CC: <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v5 2/4] clk: boston: Add a driver for MIPS Boston board
- clocks
-Message-ID: <20170623222025.GF31455@jhogan-linux.le.imgtec.org>
-References: <20170617205249.1391-1-paul.burton@imgtec.com>
- <20170617205249.1391-3-paul.burton@imgtec.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 29 Jun 2017 13:53:57 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Emmanuel Vadot <manu@bidouilliste.com>
+Cc: Andre Przywara <andre.przywara@arm.com>, plaes@plaes.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 5/6] ARM: sun7i: Convert to CCU
+Message-ID: <20170629115357.sxs3tjmhfncfvtpj@flea>
+References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+ <ac9cc7f0a67d3e9e5edd0d5eb21cc60820c2b457.1498422562.git-series.plaes@plaes.org>
+ <a08cbe0d-dad4-7d0c-9845-452e0d6e3f03@arm.com>
+ <20170629132812.52ce1214d6967b82da52123e@bidouilliste.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oFbHfjnMgUMsrGjO"
-In-Reply-To: <20170617205249.1391-3-paul.burton@imgtec.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="peq7wjbm7zxjedk7"
+In-Reply-To: <20170629132812.52ce1214d6967b82da52123e@bidouilliste.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---oFbHfjnMgUMsrGjO
-Content-Type: text/plain; charset=utf-8
+
+--peq7wjbm7zxjedk7
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 17, 2017 at 01:52:47PM -0700, Paul Burton wrote:
-> Add a driver for the clocks provided by the MIPS Boston board from
-> Imagination Technologies. 2 clocks are provided - the system clock & the
-> CPU clock - and each is a simple fixed rate clock whose frequency can be
-> determined by reading a register provided by the board.
+On Thu, Jun 29, 2017 at 01:28:12PM +0200, Emmanuel Vadot wrote:
+> On Thu, 29 Jun 2017 11:57:05 +0100
+> Andre Przywara <andre.przywara@arm.com> wrote:
 >=20
-> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
+> > Hi,
+> >=20
+> > On 25/06/17 21:45, Priit Laes wrote:
+> > > Convert sun7i-a20.dtsi to new CCU driver.
+> >=20
+> > I know that some people hat^Wget annoyed by me asking this, but anyway:
+> >=20
+> > Why do we actually need this?
+>=20
+>  No. I can understand the need for clkng/sunxi-ng/whatever you call it,
+> it's not that bad (but see below) to add a new SoC on FreeBSD now that
+> I've added the framework, but breaking old SoC that were perfectly fine
+> isn't acceptable.
 
-FWIW
-Reviewed-by: James Hogan <james.hogan@imgtec.com>
+We haven't broken it.
 
-Cheers
-James
+>  It also mean that, on FreeBSD, we still have patches for sun7i dts to
+> add hdmi support (which we have since a year or so) because last time
+> someone (I think plaes) wanted to add clock node for it, it was said
+> that it was needed to move to clkng first.
 
->=20
-> ---
->=20
-> Changes in v5:
-> - Use struct clk_hw rather than struct clk.
-> - Comment on reasoning for use of CLK_OF_DECLARE.
-> - Drop depends on OF from Kconfig.
-> - Define pr_fmt to get clearer error messages.
->=20
-> Changes in v4:
-> - Adjust to expect the parent node to be the syscon.
-> - Update MAINTAINERS entry.
->=20
-> Changes in v3: None
->=20
-> Changes in v2:
-> - Support BOSTON_CLK_INPUT.
-> - Register clocks with clk_register_fixed_rate during boot, removing need=
- for clk_ops.
-> - s/uint32_t/u32/.
-> - Move driver to a vendor directory.
->=20
->  MAINTAINERS                     |   1 +
->  drivers/clk/Kconfig             |   1 +
->  drivers/clk/Makefile            |   1 +
->  drivers/clk/imgtec/Kconfig      |   9 ++++
->  drivers/clk/imgtec/Makefile     |   1 +
->  drivers/clk/imgtec/clk-boston.c | 103 ++++++++++++++++++++++++++++++++++=
-++++++
->  6 files changed, 116 insertions(+)
->  create mode 100644 drivers/clk/imgtec/Kconfig
->  create mode 100644 drivers/clk/imgtec/Makefile
->  create mode 100644 drivers/clk/imgtec/clk-boston.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6a341862f5d6..2749877a4574 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8503,6 +8503,7 @@ M:	Paul Burton <paul.burton@imgtec.com>
->  L:	linux-mips@linux-mips.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/img,boston-clock.txt
-> +F:	drivers/clk/imgtec/clk-boston.c
->  F:	include/dt-bindings/clock/boston-clock.h
-> =20
->  MIROSOUND PCM20 FM RADIO RECEIVER DRIVER
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 36cfea38135f..251a22139e73 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -219,6 +219,7 @@ config COMMON_CLK_VC5
-> =20
->  source "drivers/clk/bcm/Kconfig"
->  source "drivers/clk/hisilicon/Kconfig"
-> +source "drivers/clk/imgtec/Kconfig"
->  source "drivers/clk/mediatek/Kconfig"
->  source "drivers/clk/meson/Kconfig"
->  source "drivers/clk/mvebu/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index c19983afcb81..a4a7c5df8b93 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -59,6 +59,7 @@ obj-y					+=3D bcm/
->  obj-$(CONFIG_ARCH_BERLIN)		+=3D berlin/
->  obj-$(CONFIG_H8300)			+=3D h8300/
->  obj-$(CONFIG_ARCH_HISI)			+=3D hisilicon/
-> +obj-y					+=3D imgtec/
->  obj-$(CONFIG_ARCH_MXC)			+=3D imx/
->  obj-$(CONFIG_MACH_INGENIC)		+=3D ingenic/
->  obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+=3D keystone/
-> diff --git a/drivers/clk/imgtec/Kconfig b/drivers/clk/imgtec/Kconfig
-> new file mode 100644
-> index 000000000000..f6dcb748e9c4
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/Kconfig
-> @@ -0,0 +1,9 @@
-> +config COMMON_CLK_BOSTON
-> +	bool "Clock driver for MIPS Boston boards"
-> +	depends on MIPS || COMPILE_TEST
-> +	select MFD_SYSCON
-> +	---help---
-> +	  Enable this to support the system & CPU clocks on the MIPS Boston
-> +	  development board from Imagination Technologies. These are simple
-> +	  fixed rate clocks whose rate is determined by reading a platform
-> +	  provided register.
-> diff --git a/drivers/clk/imgtec/Makefile b/drivers/clk/imgtec/Makefile
-> new file mode 100644
-> index 000000000000..ac779b8c22f2
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_COMMON_CLK_BOSTON)		+=3D clk-boston.o
-> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-bos=
-ton.c
-> new file mode 100644
-> index 000000000000..f18f10351785
-> --- /dev/null
-> +++ b/drivers/clk/imgtec/clk-boston.c
-> @@ -0,0 +1,103 @@
-> +/*
-> + * Copyright (C) 2016-2017 Imagination Technologies
-> + * Author: Paul Burton <paul.burton@imgtec.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms of the GNU General Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at y=
-our
-> + * option) any later version.
-> + */
-> +
-> +#define pr_fmt(fmt) "clk-boston: " fmt
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/syscon.h>
-> +
-> +#include <dt-bindings/clock/boston-clock.h>
-> +
-> +#define BOSTON_PLAT_MMCMDIV		0x30
-> +# define BOSTON_PLAT_MMCMDIV_CLK0DIV	(0xff << 0)
-> +# define BOSTON_PLAT_MMCMDIV_INPUT	(0xff << 8)
-> +# define BOSTON_PLAT_MMCMDIV_MUL	(0xff << 16)
-> +# define BOSTON_PLAT_MMCMDIV_CLK1DIV	(0xff << 24)
-> +
-> +#define BOSTON_CLK_COUNT 3
-> +
-> +static u32 ext_field(u32 val, u32 mask)
-> +{
-> +	return (val & mask) >> (ffs(mask) - 1);
-> +}
-> +
-> +static void __init clk_boston_setup(struct device_node *np)
-> +{
-> +	unsigned long in_freq, cpu_freq, sys_freq;
-> +	uint mmcmdiv, mul, cpu_div, sys_div;
-> +	struct clk_hw_onecell_data *onecell;
-> +	struct regmap *regmap;
-> +	struct clk_hw *hw;
-> +	int err;
-> +
-> +	regmap =3D syscon_node_to_regmap(np->parent);
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("failed to find regmap\n");
-> +		return;
-> +	}
-> +
-> +	err =3D regmap_read(regmap, BOSTON_PLAT_MMCMDIV, &mmcmdiv);
-> +	if (err) {
-> +		pr_err("failed to read mmcm_div register: %d\n", err);
-> +		return;
-> +	}
-> +
-> +	in_freq =3D ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_INPUT) * 1000000;
-> +	mul =3D ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_MUL);
-> +
-> +	sys_div =3D ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK0DIV);
-> +	sys_freq =3D mult_frac(in_freq, mul, sys_div);
-> +
-> +	cpu_div =3D ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
-> +	cpu_freq =3D mult_frac(in_freq, mul, cpu_div);
-> +
-> +	onecell =3D kzalloc(sizeof(*onecell) +
-> +			  (BOSTON_CLK_COUNT * sizeof(struct clk_hw *)),
-> +			  GFP_KERNEL);
-> +	if (!onecell)
-> +		return;
-> +
-> +	onecell->num =3D BOSTON_CLK_COUNT;
-> +
-> +	hw =3D clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
-> +	if (IS_ERR(hw)) {
-> +		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
-> +		return;
-> +	}
-> +	onecell->hws[BOSTON_CLK_INPUT] =3D hw;
-> +
-> +	hw =3D clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
-> +	if (IS_ERR(hw)) {
-> +		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
-> +		return;
-> +	}
-> +	onecell->hws[BOSTON_CLK_SYS] =3D hw;
-> +
-> +	hw =3D clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
-> +	if (IS_ERR(hw)) {
-> +		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
-> +		return;
-> +	}
-> +	onecell->hws[BOSTON_CLK_CPU] =3D hw;
-> +
-> +	err =3D of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
-> +	if (err)
-> +		pr_err("failed to add DT provider: %d\n", err);
-> +}
-> +
-> +/*
-> + * Use CLK_OF_DECLARE so that this driver is probed early enough to prov=
-ide the
-> + * CPU frequency for use with the GIC or cop0 counters/timers.
-> + */
-> +CLK_OF_DECLARE(clk_boston, "img,boston-clock", clk_boston_setup);
-> --=20
-> 2.13.1
->=20
->=20
+This is a circular argument. It wouldn't have been the case with
+sunxi-ng, since we would have had that clock from the start...
 
---oFbHfjnMgUMsrGjO
+> > This ultimately makes the DT incompatible with older kernels (as
+> > actually shipped by distros today).
+>=20
+>  Yes, right now sun5i support is broken in FreeBSD because I couldn't
+> find the time to make a driver for it yet.
+
+Probably because you merged new DTs without updating the code. That
+has nothing to do with backward compatibility, the old DT would still
+work fine.
+
+> > So if we for instance use UEFI boot or otherwise just use "one golden
+> > DT" to drive all kernels (like using the DT from U-Boot), we now don't
+> > have one good DT that fits all. This is really a showstopper for boards
+> > which ship a DT in firmware (in SPI flash, for instance, or on some eMM=
+C).
+> > So:
+> > - Do we actually need to change the .dtsi? The old .dtsi should still w=
+ork.
+> > - Is there anything that the new and fancy clocks gives us over the
+> > existing clocks? If yes, that should be a  stated in the commit message
+> > or cover letter.
+> > - Why do we change the clocks for those older SoCs in the first place?
+> > Can't we just keep on using what worked for years? I think we really
+> > can't remove the old code anyway.
+> >=20
+> > The new clock driver moves information from the DT into the kernel. That
+> > means it is no longer available for a DT consumer and the SoC details
+> > (which clocks is located where, for instance), have to be replicated to
+> > other DT users (U-Boot, *BSD, you-name-it). We already came across this
+> > issue when looking at converting U-Boot over to use DT clocks.
+> > Also it ultimately requires kernel changes for each new SoC, even if it
+> > only differs in some detail which could be perfectly modelled in DT
+> > (think of H3 vs. H5).
+>=20
+>  The last point is very interesting, before adding a new Allwinner SoC
+> was just a matter of maybe handling one/two new clocks (at least to
+> have something that 'just boots'), now it's a whole new big boring file
+> to write while reading datasheet.
+
+You can definitely do that with sunxi-ng bindings if you want. You
+just have to populate only the IDs that are of interest to you.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--peq7wjbm7zxjedk7
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAllNlCgACgkQbAtpk944
-dnrM+Q/8DHAAqQGV2Q1s6qhrNEs33+XDP0R/kY5bc02dVBuOk1c9hCzPL1HiAbo7
-0tjOD4krjlXWEgOFQXBG7Lb/gesOTJBanAd/Y96hYKboe9Fhs/m1QImZty8zT2s5
-Fcp9hkAOsG1+lvQTLhXcvyo5y4EkSbfsy9p5KwVe507lXkQQWaQijH3gUbd++yKt
-cl5uSZbM5GyXT6XSb2Y5O9XqCnub6AH2R9cKvuMQwAHR4WDVhYKUwrig3Kh05zeY
-HM00K7ZZRfb2eV+28sA8mO3IQuaTQ+pb1x1/GkCflo/4eBayvwkUwl/fs1tb/YS2
-R19CHqxsycEVtNosCbM9Ju1Z39UF6D1y60tfDQxyqyZLhqSGvRtsCBHS2sFKNp+Q
-R6pl4IbNd2amE9al56oJdaAqO0ssYm7fvZwChKDNn8HcyGYZiWZuBQyPHBvwyZuL
-Ezn5F/3AqSKHvmUrpZiELV3qLV6eSziyVKfSXVy6hOV4UMY6dtC9wW9I0m3wMTDj
-E7cSXPWl/3sK4GByjvh43OnZqA3bGZk253mOpl2t3gHELMH/c4ZVzPDXMVA4Z3Jg
-Zs/Qep6aCi8k3+0gdzNRd+AvS4MR6Z/q0tZsjkohbM77JUIvhiHKOlAk81IsTJrn
-3ogFyqVjTKtjqAcOZ/A4ldB3Zl2l/38XfLUjIzqAn3RfPSFKCT8=
-=/Acu
+iQIcBAEBAgAGBQJZVOpVAAoJEBx+YmzsjxAgMcEP/juatuVT29xQPy4FEJ+D2snk
+gNNW9WVQwDcsbSC9qJbC6etbqMIb81lRT0z9/zxhN9a7MmRQrSvConSXpi0MbT2/
+1BLWS3puckMzuOd+g9MRwAJXI5DnWmU0q4wD98JFt53qTeyH44ZgcieuI6HFKapY
+mblx5Ftqb8dIcHaesHzMjYKKhrJ9hDNK+GospmcTij+e2fUwZvU08gN8SgLzURUG
+INtGdc7WNph7V2RBh0abSMibZ599g02/8eq1J7bUQu9xB+lZMziXYX+ymrd8Iwkl
+epy5NEXSrqAJEz5csRyl79LRrPv3+8ndiEBPhUzBe1/bSQNeAJRwnMAlEetHIZKe
+mFDhDvnXeW9jHwO5jkwgLBzmjWH9gE+3dNOO6aDqkD54jmeRR1G67+v06ogTOML0
+057pwl3IhubCqlZjMI8i8j10SEUNkxdhk5acF7wf6TW7P7XC8W4y8oJAO0YeGJKQ
+4380NSjwFf9CEOlVwg4W6R5yvuX50cfnf5yMZX8ZM0CAG/zJsxjyuqE/+YMob1UN
+uONfpHKnBNVekTOiOhAnadaNIfWROgTwpWACLE6nGILLCObex1BwPFmFUAc+9dT+
+cqsmXa0Ej9S9Z3FXMuuV4rrcXnJNg1rUX+PRfJX/U1wzGYWOrSHrt0ahyWK769Cd
+qQDNAMQzP6wgXDw+PC2z
+=i9Iv
 -----END PGP SIGNATURE-----
 
---oFbHfjnMgUMsrGjO--
+--peq7wjbm7zxjedk7--
