@@ -1,133 +1,92 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
 	mark.rutland@arm.com,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	alsa-devel@alsa-project.org,
-	thomas.petazzoni@free-electrons.com
-Subject: [PATCH 5/6] clk: at91: clk-generated: make gclk determine audio_pll rate
-Date: Fri, 23 Jun 2017 11:00:58 +0200
-Message-Id: <20170623090059.8371-6-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
-References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	sricharan@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH v7 0/4] Add minimal boot support for IPQ8074
+Date: Thu, 29 Jun 2017 11:48:30 +0530
+Message-Id: <1498717114-338-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This allows gclk to determine audio_pll rate and set the parent rate
-accordingly.
+v7:
+    Remove the following clk related patches (Stephen Boyd has picked them)
 
-However, there are multiple children clocks that could technically
-change the rate of audio_pll. Since the clock rate is usually critical
-for IPs, it isn't a good idea to have multiple clocks changing audio_pll
-clock rate. There isn't any rate locking system for the moment, thus
-we enforce that classd_gclk be the only one allowed to change audio_pll
-rate. To remain consistent, we deny other clocks to be children of
-audio_pll so classd_gclk altering audio_pll rate does not impact any
-other device.
+    Incorporate Bjorn's comment in
+	arm64: dts: Add ipq8074 SoC and HK01 board support
 
-This needs to be re-worked once we have a rate locking system so two
-clocks could be children of the same clock and be sure the clock rate
-isn't changed by one or the other.
+    Included Bjorn's and Rob's Ack for rest of the patches.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
----
- drivers/clk/at91/clk-generated.c | 41 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 6 deletions(-)
+v6:
+  * Include Rob's Ack to the first patch.
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 6530a2e7e84d..e66ee735a569 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -26,6 +26,9 @@
- #define GENERATED_SOURCE_MAX	6
- #define GENERATED_MAX_DIV	255
- 
-+#define GCK_ID_CLASSD		59
-+#define GCK_INDEX_DT_AUDIO_PLL	5
-+
- struct clk_generated {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-@@ -126,15 +129,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- {
- 	struct clk_generated *gck = to_clk_generated(hw);
- 	struct clk_hw *parent = NULL;
-+	struct clk_rate_request req_parent = *req;
- 	long best_rate = -EINVAL;
--	unsigned long min_rate;
-+	unsigned long min_rate, parent_rate;
- 	int best_diff = -1;
- 	int i;
-+	u32 div;
- 
--	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
--		u32 div;
--		unsigned long parent_rate;
--
-+	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
- 		parent = clk_hw_get_parent_by_index(hw, i);
- 		if (!parent)
- 			continue;
-@@ -150,11 +152,37 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 		clk_generated_best_diff(req, parent, parent_rate, div,
- 					&best_diff, &best_rate);
- 
-+		if (!best_diff)
-+			break;
-+	}
-+
-+	/*
-+	 * The audio_pll rate can be modified unlike the five others clocks that
-+	 * should never be altered.
-+	 * The audio_pll can technically be used by multiple consumers. However,
-+	 * they all are likely to want to modify its rate while the rate is
-+	 * critical for each one. Since we do not have a rate locking for the
-+	 * moment, let classd_gclk be the only consumer of the audio_pll clock.
-+	 */
-+
-+	if (gck->id != GCK_ID_CLASSD)
-+		goto end;
-+
-+	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
-+	if (!parent)
-+		goto end;
-+
-+	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
-+		req_parent.rate = req->rate * div;
-+		__clk_determine_rate(parent, &req_parent);
-+		clk_generated_best_diff(req, parent, req_parent.rate, div,
-+					&best_diff, &best_rate);
- 
- 		if (!best_diff)
- 			break;
- 	}
- 
-+end:
- 	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
- 		 __func__, best_rate,
- 		 __clk_get_name((req->best_parent_hw)->clk),
-@@ -264,7 +292,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
- 	init.ops = &generated_ops;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
--	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
-+	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
-+		CLK_SET_RATE_PARENT;
- 
- 	gck->id = id;
- 	gck->hw.init = &init;
+v5:
+  * Removed the 'NA' binding from documentation
+
+v4:
+  * Split the clock patch and addressed a minor comment
+    in the clock driver as per stephen's feedback.
+
+v3:
+  * Addressed review feedback from Bjorn for pinctrl
+     - Unified the names for qpic pads.
+     - Corrected the names for pwm pins.
+  * Updated pinctrl documentation.
+  * Updated the default bootargs in ipq8074-hk01.dts.
+  * Updated the gcc clocks driver for removing the
+    unused halt_bit in few places.
+
+v2:
+  * Addressed review feedback from Stephen
+    - Removed cpu-map entries
+    - Added mmio-timer nodes
+  * Fix sparse warnings in the gcc-ipq8074.c
+  * Updated pinctrl documentation
+
+v1:
+  https://www.spinics.net/lists/kernel/msg2498734.html
+  This series adds minimal board boot support for ipq8074-hk01
+  board.
+
+
+Abhishek Sahu (1):
+  arm64: defconfig: Enable qcom ipq8074 clock and pinctrl
+
+Varadarajan Narayanan (3):
+  pinctrl: qcom: Add ipq8074 pinctrl driver
+  dt-bindings: qcom: Add ipq8074 bindings
+  arm64: dts: Add ipq8074 SoC and HK01 board support
+
+ Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
+ .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  172 ++++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   52 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/pinctrl/qcom/Kconfig                       |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1076 ++++++++++++++++++++
+ 9 files changed, 1510 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
+
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
