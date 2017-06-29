@@ -1,79 +1,69 @@
-Return-Path: <robh+dt@kernel.org>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexey Firago <alexey_firago@mentor.com>, Michael Turquette <mturquette@baylibre.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/8] clk: vc5: Prevent division by zero on unconfigured outputs
+Date: Thu, 29 Jun 2017 13:26:09 +0300
+Message-ID: <6045977.UVitDAHN3D@avalon>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Fri, 30 Jun 2017 10:58:26 -0500
-Message-ID: <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
-Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
- cpg-mssr: Add interface for critical core clocks)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@baylibre.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 29, 2017 at 4:27 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Dirk,
->
-> CC clock, ARM, DT, PM people
->
-> TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
-> disables them as being unused.
->
-> On Mon, Jun 26, 2017 at 1:30 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
->> With commit 72f5df2c2bbb6 ("clk: renesas: cpg-mssr: Migrate to
->> CLK_IS_CRITICAL") we are able to handle critical module clocks.
->> Introduce the same logic for critical core clocks.
->>
->> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
->> ---
->> Commit
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/clk/renesas?id=72f5df2c2bbb66d4a555cb51eb9f412abf1af77f
->>
->> is quite nice to avoid *module* clocks being disabled. Unfortunately,
->> there are *core* clocks, too. E.g. using an other OS on the Cortex R7
->> core of the r8a7795, the 'canfd' is a quite popular core clock which
->> shouldn't be disabled by Linux.
->>
->> Therefore, this patch is a proposal to use the same 'mark clocks as
->> critical' logic implemented for the module clocks for the core
->> clocks, too.
->>
->> Opinions?
->
-> On r8a7795, there are several Cortex A cores running Linux, and a Cortex R7
-> core which may run another OS.
-> This is an interesting issue, and relevant to other SoCs, too.
->
-> In this particular case, the "canfd" clock is a core clock used as an
-> auxiliary clock for the CAN0, CAN1, and CANFD interfaces.  This can lead
-> to three scenarios:
->   1. Linux controls all CAN interfaces
->      => no issue,
->   2. The OS on the RT CPU controls all CAN interfaces
->      => issue, Linux disables the clock
->   3. Mix of 1 and 2
->      => More issues.
-> Of course this is not limited to clocks, but also to e.g. PM domains.
->
-> How can this be handled?
-> I believe just marking the "canfd" clock critical is not the right solution,
-> as about any clock could be used by the RT CPU.
->
-> Still, Linux needs to be made aware that devices (clocks and PM domains) are
-> controlled by another CPU/OS.
->
-> Should this be described in DT? It feels like software policy to me.
+Hi Marek,
 
-No, it shouldn't. It is Linux policy to disable all unused clocks, so
-Linux gets to deal with the consequences.
+Thank you for the patches.
 
-Rob
+On Thursday 29 Jun 2017 12:18:44 Marek Vasut wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> In case the initial values of the FOD registers are not configured in
+> the OTP or by the bootloader, it is possible that the FOD registers
+> will contain zeroes. The code in vc5_fod_recalc_rate() immediately
+> feeds the FOD divider value obtained from the FOD registers into the
+> div64_u64() and if the FOD divider value is zero, triggers division
+> by zero exception.
+> 
+> Check if the FOD divider value is zero and return the frequency of
+> the FOD output as 0 Hz if it is so. This prevents the division by
+> zero exception.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+
+For the whole series,
+
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+on Salvator-XS with the display LVDS output.
+
+> ---
+>  drivers/clk/clk-versaclock5.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> index ea7d552a2f2b..60bf4afb51bd 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw
+> *hw, div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
+>  		  (od_frc[2] << 6) | (od_frc[3] >> 2);
+> 
+> +	/* Avoid division by zero if the output is not configured. */
+> +	if ((div_int == 0) && (div_frc == 0))
+> +		return 0;
+> +
+>  	/* The PLL divider has 12 integer bits and 30 fractional bits */
+>  	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + 
+div_frc);
+>  }
+
+-- 
+Regards,
+
+Laurent Pinchart
