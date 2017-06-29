@@ -1,81 +1,132 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	alsa-devel@alsa-project.org,
-	thomas.petazzoni@free-electrons.com
-Subject: [PATCH 1/6] clk: at91: clk-generated: remove useless divisor loop
-Date: Fri, 23 Jun 2017 11:00:54 +0200
-Message-Id: <20170623090059.8371-2-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
-References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 29 Jun 2017 13:49:05 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: plaes@plaes.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 5/6] ARM: sun7i: Convert to CCU
+Message-ID: <20170629114905.hr6icycjcn2fekfd@flea>
+References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+ <ac9cc7f0a67d3e9e5edd0d5eb21cc60820c2b457.1498422562.git-series.plaes@plaes.org>
+ <a08cbe0d-dad4-7d0c-9845-452e0d6e3f03@arm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ggpms2er24kjfgoa"
+In-Reply-To: <a08cbe0d-dad4-7d0c-9845-452e0d6e3f03@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver requests the current clk rate of each of its parent clocks to
-decide whether a clock rate is suitable or not. It does not request
-determine_rate from a parent clock which could request a rate change in
-parent clock (i.e. there is no parent rate propagation).
 
-We know the rate we want (passed along req argument of the function) and
-the parent clock rate, thus we know the closest rounded divisor, we
-don't need to iterate over the available divisors to find the best one
-for a given clock.
+--ggpms2er24kjfgoa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
----
- drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+On Thu, Jun 29, 2017 at 11:57:05AM +0100, Andre Przywara wrote:
+> Hi,
+>=20
+> On 25/06/17 21:45, Priit Laes wrote:
+> > Convert sun7i-a20.dtsi to new CCU driver.
+>=20
+> I know that some people hat^Wget annoyed by me asking this, but anyway:
+>=20
+> Why do we actually need this?
+>=20
+> This ultimately makes the DT incompatible with older kernels (as
+> actually shipped by distros today).
+>
+> So if we for instance use UEFI boot or otherwise just use "one golden
+> DT" to drive all kernels (like using the DT from U-Boot), we now don't
+> have one good DT that fits all.
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 07c8f701e51c..dab7002937e6 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 		    (gck->range.max && min_rate > gck->range.max))
- 			continue;
- 
--		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
--			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
--			tmp_diff = abs(req->rate - tmp_rate);
--
--			if (best_diff < 0 || best_diff > tmp_diff) {
--				best_rate = tmp_rate;
--				best_diff = tmp_diff;
--				req->best_parent_rate = parent_rate;
--				req->best_parent_hw = parent;
--			}
--
--			if (!best_diff || tmp_rate < req->rate)
--				break;
-+		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-+		if (!div)
-+			tmp_rate = parent_rate;
-+		else
-+			tmp_rate = parent_rate / div;
-+		tmp_diff = abs(req->rate - tmp_rate);
-+
-+		if (best_diff < 0 || best_diff > tmp_diff) {
-+			best_rate = tmp_rate;
-+			best_diff = tmp_diff;
-+			req->best_parent_rate = parent_rate;
-+			req->best_parent_hw = parent;
- 		}
- 
- 		if (!best_diff)
--- 
-2.11.0
+What is broken exactly?
+
+> This is really a showstopper for boards which ship a DT in firmware
+> (in SPI flash, for instance, or on some eMMC).
+>
+> So:
+> - Do we actually need to change the .dtsi? The old .dtsi should still wor=
+k.
+
+It does.
+
+> - Is there anything that the new and fancy clocks gives us over the
+> existing clocks? If yes, that should be a  stated in the commit message
+> or cover letter.
+
+Yes, support for all the clocks used in the SoC, and not a single
+fraction of them (which will reduce the number of additions of new
+bindings and drivers, which will in turn make the DT have less
+changes, which will make it far more easier for distros and / or
+firmwares to ship an immutable DT).
+
+> - Why do we change the clocks for those older SoCs in the first place?
+> Can't we just keep on using what worked for years?
+
+Please tell me where the displays clocks, CSI or HDMI clocks are in
+the old code.
+
+> I think we really can't remove the old code anyway.
+
+We don't.
+
+> The new clock driver moves information from the DT into the kernel. That
+> means it is no longer available for a DT consumer and the SoC details
+> (which clocks is located where, for instance), have to be replicated to
+> other DT users (U-Boot, *BSD, you-name-it). We already came across this
+> issue when looking at converting U-Boot over to use DT clocks.
+> Also it ultimately requires kernel changes for each new SoC, even if it
+> only differs in some detail which could be perfectly modelled in DT
+> (think of H3 vs. H5).
+
+Doing otherwise would also assume that you have a perfect
+understanding of all the clocks interactions, relationship and
+computations from day one, which is something the old code proved that
+it was unreasonable.
+
+The new binding also makes it easier to add SCPI that you're
+interested in iirc, where you basically just have to change the CCU
+compatible, and be done with it as long as you use the same IDs.
+
+It also lowers the barrier of entry for people that would want to
+write new drivers, since the first thing you'd need to do otherwise
+would be to create a clock driver for that, which is yet another thing
+to learn.
+
+The reduced duplication is also neat and reduces the number of similar
+bugs in each and every clock, even though it's not related to clocks.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ggpms2er24kjfgoa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZVOkxAAoJEBx+YmzsjxAgG3gP/ii4+t+51WQCK/0FLH3Sk5I8
+GHgei9WjlPcKYG2XLx7sHwlCe9zXQsaySnKbgnmjDu+OYhqEYxsyYLygjVBt5/Ji
++aM8OPT+LiNndib1ZvTa0ogF1gpJxd0oUA/s/lHQPaKsS3UjTnnf6lt1O1nKeFU/
+O9ykl/OF8Sq2sUSmONwh1K/YHZZAASBbKlZKrjR/AbDNhVZmeUubwYoKg/6v8usM
+sTZJgxLbg0iViTxbLK5tn7R4/uGEOl/X3ttQtTKJVBu5uuSfRuWSvGr9jtzRh5j9
+BZoe8C0d6HSWwkHaDHInGW6Wphw61hy4tC3ZircFWo7F+SUVEK1EM6dHVEbsK9nP
+17Kf1ejMbJLR02FeZW2Vy28AmtEj5UHMVLi8shfNFGJwnV7073Kydq+HTBgmC1X9
+Dzx1lEcVb3EiZ8v0Mp5ER7Y7QWUmRu1AAuGyUwL3kQvKvMFgiS3JsvsFOsYuvZwr
+TkCKCM6ySYix0dp2W3CVU6sz7WOUfBHEZgNDKs7iLJJ2vGtjp0Bw3gm+OMz+vx26
+5YrOn9t76iLyBVfKZ/NgbqIsREsN8egpqtAgg14YKWJFDCtS7T/E0VTE8zRDKxSl
+Ry26pv1onaBRJb17lSCPdZobY91UtcZnEzFwT/fZQL9j2FcuMaKRTkSzwT4P1Jak
+hqaEZu4wbnrdgJFSJWsm
+=yqPY
+-----END PGP SIGNATURE-----
+
+--ggpms2er24kjfgoa--
