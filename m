@@ -1,82 +1,46 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	varada@codeaurora.org,
-	mraghava@codeaurora.org
-Subject: [PATCH v3 0/5] Add minimal boot support for IPQ8074
-Date: Thu,  1 Jun 2017 16:57:57 +0530
-Message-Id: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/8] clk: vc5: Fix trivial typo
+Date: Thu, 29 Jun 2017 12:18:45 +0200
+Message-Id: <20170629101851.23972-2-marek.vasut@gmail.com>
+In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-v3:
-  * Addressed review feedback from Bjorn for pinctrl
-     - Unified the names for qpic pads.
-     - Corrected the names for pwm pins.
-  * Updated pinctrl documentation.
-  * Updated the default bootargs in ipq8074-hk01.dts.
-  * Updated the gcc clocks driver for removing the
-    unused halt_bit in few places.
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-v2:
-  * Addressed review feedback from Stephen
-    - Removed cpu-map entries
-    - Added mmio-timer nodes
-  * Fix sparse warnings in the gcc-ipq8074.c
-  * Updated pinctrl documentation
+Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
 
-v1:
-  https://www.spinics.net/lists/kernel/msg2498734.html
-  This series adds minimal board boot support for ipq8074-hk01
-  board.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Abhishek Sahu (2):
-  clk: qcom: ipq8074: Add Global Clock Controller support
-  arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
-
-Varadarajan Narayanan (3):
-  pinctrl: qcom: Add ipq8074 pinctrl driver
-  dt-bindings: qcom: Add IPQ8074 bindings
-  arm64: dts: Add ipq8074 SoC and HK01 board support
-
- Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  172 ++++
- arch/arm64/boot/dts/qcom/Makefile                  |    1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   53 +
- arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  194 ++++
- arch/arm64/configs/defconfig                       |    2 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-ipq8074.c                     | 1009 ++++++++++++++++++
- drivers/pinctrl/qcom/Kconfig                       |   10 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1076 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
- 14 files changed, 2683 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
- create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
-
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 60bf4afb51bd..d835d48cf14d 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -520,7 +520,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
+ 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 
+-	/* Enable the clock buffer */
++	/* Disable the clock buffer */
+ 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+ 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
+ }
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
