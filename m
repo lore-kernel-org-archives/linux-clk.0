@@ -1,193 +1,167 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 29 Jun 2017 18:44:52 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
-Subject: Re: [PATCH V1 7/9] clk: sprd: add adjustable pll support
-Message-ID: <20170630014452.GL22780@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-8-chunyan.zhang@spreadtrum.com>
- <20170620013710.GJ4493@codeaurora.org>
- <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34746 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753222AbdF2NZY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2017 09:25:24 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 3/5] clk: renesas: div6: Restore clock state during resume
+Date: Thu, 29 Jun 2017 15:25:18 +0200
+Message-Id: <1498742720-2713-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22, Chunyan Zhang wrote:
-> On 20 June 2017 at 09:37, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 06/18, Chunyan Zhang wrote:
-> >> diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-> >> index 83232e5..c593a93 100644
-> >> --- a/drivers/clk/sprd/Makefile
-> >> +++ b/drivers/clk/sprd/Makefile
-> >> @@ -1,3 +1,3 @@
-> >>  ifneq ($(CONFIG_OF),)
-> >> -obj-y        += ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o ccu_composite.o
-> >> +obj-y        += ccu_common.o ccu_gate.o ccu_mux.o ccu_div.o ccu_composite.o ccu_pll.o
-> >>  endif
-> >> diff --git a/drivers/clk/sprd/ccu_pll.c b/drivers/clk/sprd/ccu_pll.c
-> >> new file mode 100644
-> >> index 0000000..6c908e4
-> >> --- /dev/null
-> >> +++ b/drivers/clk/sprd/ccu_pll.c
-> >> @@ -0,0 +1,241 @@
-> >> +/*
-> >> + * Spreadtrum pll clock driver
-> >> + *
-> >> + * Copyright (C) 2015~2017 Spreadtrum, Inc.
-> >> + *
-> >> + * SPDX-License-Identifier: GPL-2.0
-> >> + */
-> >> +
-> >> +#include <linux/delay.h>
-> >> +#include <linux/clk.h>
-> >
-> > Is this include used? Should be clk-provider?
-> 
-> Right, will remove it.
-> 
-> >
-> >> +#include <linux/err.h>
-> >> +#include <linux/slab.h>
-> >> +
-> >> +#include "ccu_pll.h"
-> >> +
-> >> +#define CCU_PLL_1M   1000000
-> >> +#define CCU_PLL_10M  (CCU_PLL_1M * 10)
-> >> +
-> >> +#define pindex(pll, member)          \
-> >> +     (pll->factors[member].shift / (8 * sizeof(pll->regs[0])))
-> >> +
-> >> +#define pshift(pll, member)          \
-> >> +     (pll->factors[member].shift % (8 * sizeof(pll->regs[0])))
-> >> +
-> >> +#define pwidth(pll, member)          \
-> >> +     pll->factors[member].width
-> >> +
-> >> +#define pmask(pll, member)                                   \
-> >> +     ((pwidth(pll, member)) ?                                \
-> >> +     GENMASK(pwidth(pll, member) + pshift(pll, member) - 1,  \
-> >> +     pshift(pll, member)) : 0)
-> >> +
-> >> +#define pinternal(pll, cfg, member)  \
-> >> +     (cfg[pindex(pll, member)] & pmask(pll, member))
-> >> +
-> >> +#define pinternal_val(pll, cfg, member)      \
-> >> +     (pinternal(pll, cfg, member) >> pshift(pll, member))
-> >> +
-> >> +static unsigned long pll_get_refin_rate(struct ccu_pll *pll)
-> >
-> > pll could be const?
-> 
-> What this function returns is a factor used to calculate the pll rate
-> later, I will rename this function in the next iterator.
-> 
+On R-Car Gen3 systems, PSCI system suspend powers down the SoC, losing
+clock configuration.  Register an (optional) notifier to restore the
+DIV6 clock state during system resume.
 
-Rename is fine, but pll can still be marked const?
-> 
-> >
-> >> +             nint = pinternal_val(pll, cfg, PLL_NINT);
-> >> +             if (pinternal(pll, cfg, PLL_SDM_EN))
-> >> +                     kint = pinternal_val(pll, cfg, PLL_KINT);
-> >> +
-> >> +             mask = pmask(pll, PLL_KINT);
-> >> +#ifdef CONFIG_64BIT
-> >> +             k1 = 1000;
-> >> +             k2 = 1000;
-> >> +             rate = DIV_ROUND_CLOSEST(refin * kint * k1,
-> >> +                                      ((mask >> __ffs(mask)) + 1)) *
-> >> +                                      k2 + refin * nint * CCU_PLL_1M;
-> >> +#else
-> >> +             k1 = 100;
-> >> +             k2 = 10000;
-> >> +             i = pwidth(pll, PLL_KINT);
-> >> +             i = i < 21 ? 0 : i - 21;
-> >> +             rate = DIV_ROUND_CLOSEST(refin * (kint >> i) * k1,
-> >> +                                      ((mask >> (__ffs(mask) + i)) + 1)) *
-> >> +                                      k2 + refin * nint * CCU_PLL_1M;
-> >> +#endif
-> >> +     }
-> >> +
-> >> +     return rate;
-> >> +}
-> >> +
-> >> +static int ccu_pll_helper_set_rate(struct ccu_pll *pll,
-> >> +                                unsigned long rate,
-> >> +                                unsigned long parent_rate)
-> >> +{
-> >> +     u32 mask, shift, width, ibias_val, index, kint, nint;
-> >> +     u32 reg_num = pll->regs[0], i = 0;
-> >> +     unsigned long refin, fvco = rate;
-> >> +     struct reg_cfg *cfg;
-> >> +
-> >> +     cfg = kcalloc(reg_num, sizeof(*cfg), GFP_KERNEL);
-> >> +     if (!cfg)
-> >> +             return -ENOMEM;
-> >> +
-> >> +     refin = pll_get_refin_rate(pll);
-> >> +
-> >> +     mask = pmask(pll, PLL_PREDIV);
-> >> +     index = pindex(pll, PLL_PREDIV);
-> >> +     width = pwidth(pll, PLL_PREDIV);
-> >> +     if (width && (ccu_pll_readl(pll, index) & mask))
-> >> +             refin = refin * 2;
-> >> +
-> >> +     mask = pmask(pll, PLL_POSTDIV);
-> >> +     index = pindex(pll, PLL_POSTDIV);
-> >> +     width = pwidth(pll, PLL_POSTDIV);
-> >> +     cfg[index].msk = mask;
-> >> +     if (width && ((pll->fflag == 1 && fvco <= pll->fvco) ||
-> >> +                   (pll->fflag == 0 && fvco > pll->fvco)))
-> >> +             cfg[index].val |= mask;
-> >> +
-> >> +     if (width && fvco <= pll->fvco)
-> >> +             fvco = fvco * 2;
-> >> +
-> >> +     mask = pmask(pll, PLL_DIV_S);
-> >> +     index = pindex(pll, PLL_DIV_S);
-> >> +     cfg[index].val |= mask;
-> >> +     cfg[index].msk |= mask;
-> >> +
-> >> +     mask = pmask(pll, PLL_SDM_EN);
-> >> +     index = pindex(pll, PLL_SDM_EN);
-> >> +     cfg[index].val |= mask;
-> >> +     cfg[index].msk |= mask;
-> >> +
-> >> +     nint  = fvco/(refin * CCU_PLL_1M);
-> >> +
-> >> +     mask = pmask(pll, PLL_NINT);
-> >> +     index = pindex(pll, PLL_NINT);
-> >> +     shift = pshift(pll, PLL_NINT);
-> >> +     cfg[index].val |= (nint << shift) & mask;
-> >> +     cfg[index].msk |= mask;
-> >> +
-> >> +     mask = pmask(pll, PLL_KINT);
-> >> +     index = pindex(pll, PLL_KINT);
-> >> +     width = pwidth(pll, PLL_KINT);
-> >> +     shift = pshift(pll, PLL_KINT);
-> >> +#ifndef CONFIG_64BIT
-> >> +     i = width < 21 ? 0 : i - 21;
-> >> +#endif
-> >
-> > What's this? Why do we depend on CONFIG_64BIT?
-> 
-> On 32-bit SoCs, the largest width we can support is limited due to the
-> limitation of calculation precision.
+As DIV6 clocks can be picky w.r.t. modifying multiple register fields at
+once, restore is not implemented by blindly restoring the register
+value, but by using the existing cpg_div6_clock_{en,dis}able() helpers.
 
-Does the hardware width change? Still not clear to me what's
-going on here.
+Note that this does not yet support DIV6 clocks with multiple parents,
+which do not exist on R-Car Gen3 SoCs.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ drivers/clk/renesas/clk-div6.c         | 38 ++++++++++++++++++++++++++++++++--
+ drivers/clk/renesas/clk-div6.h         |  3 ++-
+ drivers/clk/renesas/renesas-cpg-mssr.c |  3 ++-
+ 3 files changed, 40 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 3e0040c0ac87a14b..6bc9469e769d035c 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -14,8 +14,10 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/notifier.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/pm.h>
+ #include <linux/slab.h>
+ 
+ #include "clk-div6.h"
+@@ -32,6 +34,7 @@
+  * @src_shift: Shift to access the register bits to select the parent clock
+  * @src_width: Number of register bits to select the parent clock (may be 0)
+  * @parents: Array to map from valid parent clocks indices to hardware indices
++ * @nb: Notifier block to save/restore clock state for system resume
+  */
+ struct div6_clock {
+ 	struct clk_hw hw;
+@@ -40,6 +43,7 @@ struct div6_clock {
+ 	u32 src_shift;
+ 	u32 src_width;
+ 	u8 *parents;
++	struct notifier_block nb;
+ };
+ 
+ #define to_div6_clock(_hw) container_of(_hw, struct div6_clock, hw)
+@@ -176,6 +180,29 @@ static const struct clk_ops cpg_div6_clock_ops = {
+ 	.set_rate = cpg_div6_clock_set_rate,
+ };
+ 
++static int cpg_div6_clock_resume(struct notifier_block *nb,
++				 unsigned long action, void *data)
++{
++	struct div6_clock *clock = container_of(nb, struct div6_clock, nb);
++
++	switch (action) {
++	case PM_EVENT_RESUME:
++		/*
++		 * TODO: This does not yet support DIV6 clocks with multiple
++		 * parents, as the parent selection bits are not restored.
++		 * Fortunately so far such DIV6 clocks are found only on
++		 * R/SH-Mobile SoCs, while the resume functionality is only
++		 * needed on R-Car Gen3.
++		 */
++		if (__clk_get_enable_count(clock->hw.clk))
++			cpg_div6_clock_enable(&clock->hw);
++		else
++			cpg_div6_clock_disable(&clock->hw);
++		return NOTIFY_OK;
++	}
++
++	return NOTIFY_DONE;
++}
+ 
+ /**
+  * cpg_div6_register - Register a DIV6 clock
+@@ -183,11 +210,13 @@ static const struct clk_ops cpg_div6_clock_ops = {
+  * @num_parents: Number of parent clocks of the DIV6 clock (1, 4, or 8)
+  * @parent_names: Array containing the names of the parent clocks
+  * @reg: Mapped register used to control the DIV6 clock
++ * @notifiers: Optional notifier chain to save/restore state for system resume
+  */
+ struct clk * __init cpg_div6_register(const char *name,
+ 				      unsigned int num_parents,
+ 				      const char **parent_names,
+-				      void __iomem *reg)
++				      void __iomem *reg,
++				      struct raw_notifier_head *notifiers)
+ {
+ 	unsigned int valid_parents;
+ 	struct clk_init_data init;
+@@ -258,6 +287,11 @@ struct clk * __init cpg_div6_register(const char *name,
+ 	if (IS_ERR(clk))
+ 		goto free_parents;
+ 
++	if (notifiers) {
++		clock->nb.notifier_call = cpg_div6_clock_resume;
++		raw_notifier_chain_register(notifiers, &clock->nb);
++	}
++
+ 	return clk;
+ 
+ free_parents:
+@@ -301,7 +335,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	for (i = 0; i < num_parents; i++)
+ 		parent_names[i] = of_clk_get_parent_name(np, i);
+ 
+-	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg);
++	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg, NULL);
+ 	if (IS_ERR(clk)) {
+ 		pr_err("%s: failed to register %s DIV6 clock (%ld)\n",
+ 		       __func__, np->name, PTR_ERR(clk));
+diff --git a/drivers/clk/renesas/clk-div6.h b/drivers/clk/renesas/clk-div6.h
+index 567b31d2bfa5269c..da4807299dda735b 100644
+--- a/drivers/clk/renesas/clk-div6.h
++++ b/drivers/clk/renesas/clk-div6.h
+@@ -2,6 +2,7 @@
+ #define __RENESAS_CLK_DIV6_H__
+ 
+ struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
+-			      const char **parent_names, void __iomem *reg);
++			      const char **parent_names, void __iomem *reg,
++			      struct raw_notifier_head *notifiers);
+ 
+ #endif
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index ab12b2ec61a3c041..a766ac079d86a901 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -302,7 +302,8 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 
+ 		if (core->type == CLK_TYPE_DIV6P1) {
+ 			clk = cpg_div6_register(core->name, 1, &parent_name,
+-						priv->base + core->offset);
++						priv->base + core->offset,
++						&priv->notifiers);
+ 		} else {
+ 			clk = clk_register_fixed_factor(NULL, core->name,
+ 							parent_name, 0,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
