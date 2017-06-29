@@ -1,36 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34232 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751734AbdFIKUP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 06:20:15 -0400
-Subject: Re: [PATCH 1/3] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5f07dd96-e1fb-0789-22fc-a38e20d50e47@samsung.com>
-Date: Fri, 09 Jun 2017 12:19:53 +0200
-MIME-version: 1.0
-In-reply-to: <20170608170411.cfqvqmgzgi6qs7hz@kozik-lap>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20170608141722epcas5p2310095ad549f30841430f5cc3e364908@epcas5p2.samsung.com>
-        <1496931433-5712-1-git-send-email-s.nawrocki@samsung.com>
-        <20170608170411.cfqvqmgzgi6qs7hz@kozik-lap>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: div6: Document fields used for parent selection
+Date: Thu, 29 Jun 2017 14:50:00 +0200
+Message-Id: <1498740600-1772-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/08/2017 07:04 PM, Krzysztof Kozlowski wrote:
-> Everything looks good... but you are aware that lock_stat and enable
-> offsets are equal to PLL35XX so the disable/enable ops could be re-used
-> directly?
+Add the missing documentation for the fields in struct div6_clock
+related to parent selection for DIV6 clocks with selectable parents, as
+found in R/SH-Mobile SoCs.
 
-I planned to add enable/disable ops for all PLLs and there are different
-bit offsets used for some PLLs than 29 and 31, e.g. PLL2650XX.
-I just reworked the $subject patch to reuse the pll35xx callback functions
-for pll36xx but I think it's better to leave this patch as is, so it is
-easier to handle differences across the PLLs.
+Fixes: c6d67fb037f4eaaf ("clk: shmobile: div6: support selectable-input clocks")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v4.14.
 
+ drivers/clk/renesas/clk-div6.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 0627860233cbf97e..3e0040c0ac87a14b 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -29,6 +29,9 @@
+  * @hw: handle between common and hardware-specific interfaces
+  * @reg: IO-remapped register
+  * @div: divisor value (1-64)
++ * @src_shift: Shift to access the register bits to select the parent clock
++ * @src_width: Number of register bits to select the parent clock (may be 0)
++ * @parents: Array to map from valid parent clocks indices to hardware indices
+  */
+ struct div6_clock {
+ 	struct clk_hw hw;
 -- 
-Thanks,
-Sylwester
+2.7.4
