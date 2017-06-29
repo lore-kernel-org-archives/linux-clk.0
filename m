@@ -1,57 +1,38 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	sricharan@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v5 2/6] dt-bindings: qcom: Add ipq8074 bindings
-Date: Thu,  8 Jun 2017 11:13:57 +0530
-Message-Id: <1496900641-27755-3-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1496900641-27755-1-git-send-email-varada@codeaurora.org>
-References: <1496900641-27755-1-git-send-email-varada@codeaurora.org>
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] clk: gemini: Read status before using the value
+Date: Thu, 29 Jun 2017 15:31:07 +0930
+Message-Id: <20170629060107.12548-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
- 1 file changed, 2 insertions(+)
+The probe does a shift and mask of val without having read it from the hardware.
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
-index 028d16e..0ed4d39 100644
---- a/Documentation/devicetree/bindings/arm/qcom.txt
-+++ b/Documentation/devicetree/bindings/arm/qcom.txt
-@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
- 	msm8994
- 	msm8996
- 	mdm9615
-+	ipq8074
+Fixes: 846423f96721 ("clk: Add Gemini SoC clock controller")
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+Compile tested only as I don't have access to the hardware. I noticed the bug
+while reading the driver.
+
+ drivers/clk/clk-gemini.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+index b82db96ce0c7..c391a49aaaff 100644
+--- a/drivers/clk/clk-gemini.c
++++ b/drivers/clk/clk-gemini.c
+@@ -306,6 +306,7 @@ static int gemini_clk_probe(struct platform_device *pdev)
+ 	gemini_clk_data->hws[GEMINI_CLK_RTC] = hw;
  
- The 'board' element must be one of the following strings:
- 
-@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
- 	dragonboard
- 	mtp
- 	sbc
-+	hk01
- 
- The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
- where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
+ 	/* CPU clock derived as a fixed ratio from the AHB clock */
++	regmap_read(map, GEMINI_GLOBAL_STATUS, &val);
+ 	val >>= CPU_AHB_RATIO_SHIFT;
+ 	val &= CPU_AHB_RATIO_MASK;
+ 	hw = clk_hw_register_fixed_factor(NULL, "cpu", "ahb", 0,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.13.2
