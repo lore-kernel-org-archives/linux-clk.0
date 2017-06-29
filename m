@@ -1,97 +1,156 @@
-Return-Path: <paul@outils.crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 15/17] MIPS: JZ4770: Workaround for corrupted DMA transfers
-Date: Tue, 20 Jun 2017 17:18:53 +0200
-Message-Id: <20170620151855.19399-15-paul@crapouillou.net>
-In-Reply-To: <20170620151855.19399-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170620151855.19399-1-paul@crapouillou.net>
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH] clk: scpi: error when clock fails to register
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20170628135345.9337-1-jbrunet@baylibre.com>
+ <c7123c06-b75b-5209-5817-230c63c1bf49@arm.com>
+ <1498664332.2337.6.camel@baylibre.com>
+ <76efd418-9fd5-6ac5-b4c9-c75c5df69df0@arm.com>
+ <1498668381.2337.10.camel@baylibre.com>
+ <3e77fd3c-9807-10d4-3a8c-cab8b5562f6c@arm.com>
+ <1498726219.27840.2.camel@baylibre.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <fc327a9f-e990-55fb-8e60-03064292e54e@arm.com>
+Date: Thu, 29 Jun 2017 10:12:34 +0100
+MIME-Version: 1.0
+In-Reply-To: <1498726219.27840.2.camel@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Maarten ter Huurne <maarten@treewalker.org>
+Hi Jerome,
 
-We have seen MMC DMA transfers read corrupted data from SDRAM when
-a burst interval ends at physical address 0x10000000. To avoid this
-problem, we remove the final page of low memory from the memory map.
+On 29/06/17 09:50, Jerome Brunet wrote:
+> On Wed, 2017-06-28 at 18:07 +0100, Sudeep Holla wrote:
+>>
+>> On 28/06/17 17:46, Jerome Brunet wrote:
+>>> On Wed, 2017-06-28 at 16:52 +0100, Sudeep Holla wrote:
+>>
+>> [..]
+>>
+>>>>
+>>>> Thanks for this stack. I just worked out the same path now. I did come
+>>>> up with the patch as below. That should work if my understanding is
+>>>> correct.
+>>>
+>>> I tried.
+>>
+>> Thanks.
+>>
+>>> It does not work unfortunately. Still crashes but somewhere else:
+>>> [    2.301482] [<ffff00000849e67c>] scpi_of_clk_src_get+0x14/0x58
+>>> [    2.307261] [<ffff000008495f40>] __of_clk_get_by_name+0x100/0x118
+>>> [    2.313297] [<ffff000008495fac>] clk_get+0x2c/0x78
+>>> [    2.318044] [<ffff00000856f4d0>] dev_pm_opp_get_opp_table+0xb0/0x118
+>>> [    2.324338] [<ffff00000856fd00>] dev_pm_opp_add+0x20/0x68
+>>> [    2.329687] [<ffff0000087a04f8>] scpi_init_opp_table+0xa8/0x188
+>>> [    2.335550] [<ffff00000879fb20>]
+>>> _get_cluster_clk_and_freq_table+0x80/0x180
+>>> [    2.342450] [<ffff0000087a0010>] bL_cpufreq_init+0x3f0/0x480
+>>> [    2.348056] [<ffff00000879e4a0>] cpufreq_online+0xc0/0x658
+>>> [    2.353490] [<ffff00000879eac8>] cpufreq_add_dev+0x78/0x88
+>>> [    2.358924] [<ffff00000855b684>] subsys_interface_register+0x84/0xc8
+>>> [    2.365220] [<ffff00000879d8f8>] cpufreq_register_driver+0x138/0x1b8
+>>> [    2.371516] [<ffff0000087a0114>] bL_cpufreq_register+0x74/0x120
+>>> [    2.377381] [<ffff0000087a0600>] scpi_cpufreq_probe+0x28/0x38
+>>> [    2.383076] [<ffff00000855efb0>] platform_drv_probe+0x50/0xb8
+>>> [    2.388766] [<ffff00000855d144>] driver_probe_device+0x21c/0x2d8
+>>>
+>>
+>> Looks like a different route and I know why. I have added an extra check
+>> now which should work if I have not missed anything more.
+>>
+>>> I have not looked at ALL the clock providers, but I have seen a few and I
+>>> don't
+>>> remember seeing any which fails, at some point, to register a clocks and
+>>> still
+>>> register successfully. 
+>>>
+>>
+>> No problem, as I said I am fine with the patch you sent as a fix for now
+>> but just curious to know what are the issues to be fixed to continue
+>> supporting that feature. Please bear with me.
+> 
+> I am :) and I understand what you are trying to do, having a degraded clock
+> provider is better than nothing according to you, correct?
+> 
+> I'm wondering whether this is correct or not, that why I'm challenging this a
+> bit.
+> 
 
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
----
- arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
- arch/mips/kernel/setup.c |  8 ++++++++
- 2 files changed, 32 insertions(+)
+Fair enough. But the situation I had on my platform is that it provides
+DVFS support for 2 CPU clusters and 1 GPU domain. I didn't want to block
+using CPUFreq until GPU DVFS was properly supported in the firmware.
+I had similar situation with the clock and hence I allowed it to continue.
 
- v2: No change
+> If you failed to register an scpi clock it is probably because the communication
+> with the FW is not working, or at least 'not that good', right ?
+> 
 
-diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-index afd84ee966e8..6948b133a15d 100644
---- a/arch/mips/jz4740/setup.c
-+++ b/arch/mips/jz4740/setup.c
-@@ -23,6 +23,7 @@
- 
- #include <asm/bootinfo.h>
- #include <asm/mips_machine.h>
-+#include <asm/page.h>
- #include <asm/prom.h>
- 
- #include <asm/mach-jz4740/base.h>
-@@ -102,6 +103,29 @@ void __init arch_init_irq(void)
- 	irqchip_init();
- }
- 
-+/*
-+ * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
-+ * interval ends at physical address 0x10000000. To avoid this problem, we
-+ * remove the final page of low memory from the memory map.
-+ */
-+void __init jz4770_reserve_unsafe_for_dma(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < boot_mem_map.nr_map; i++) {
-+		struct boot_mem_map_entry *entry = boot_mem_map.map + i;
-+
-+		if (entry->type != BOOT_MEM_RAM)
-+			continue;
-+
-+		if (entry->addr + entry->size != 0x10000000)
-+			continue;
-+
-+		entry->size -= PAGE_SIZE;
-+		break;
-+	}
-+}
-+
- static int __init jz4740_machine_setup(void)
- {
- 	mips_machine_setup();
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 89785600fde4..cccfd7ba89fe 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -838,6 +838,14 @@ static void __init arch_mem_init(char **cmdline_p)
- 
- 	parse_early_param();
- 
-+#ifdef CONFIG_MACH_JZ4770
-+	if (current_cpu_type() == CPU_JZRISC &&
-+				mips_machtype == MACH_INGENIC_JZ4770) {
-+		extern void __init jz4770_reserve_unsafe_for_dma(void);
-+		jz4770_reserve_unsafe_for_dma();
-+	}
-+#endif
-+
- 	if (usermem) {
- 		pr_info("User-defined physical RAM map:\n");
- 		print_memory_map();
+Not exactly, what if the error is for that particular clock. That's my
+point. If we have reached so far means the communication is fine. Just a
+fault piece of hardware which may not be critical.
+
+> If for some reason, you manage to register some other clocks from the same FW,
+> how confident can you be that communication will be ok for them ? that the
+> settings you request will be applied correctly ?
+> 
+
+Not sure, I am not registering the clock. Think SCPI as a single clock
+provider with multiple clock outputs. You don't want to disable it
+entirely if one of the clock outputs have problem. That's my counter
+argument.
+
+> Is it possible that you may be causing more harm/damage playing with a broken HW
+> ?
+> 
+Not sure how if we are not registering that clock output from the h/w
+clock provider perspective.
+
+>>
+>>> It seems strange to continue with a broken controller.
+>>>
+>>
+>> I would have agreed if it was single driver or h/w controlled by Linux.
+>> Since it's in the firmware, we should allow the working clocks/opps to
+>> work though few are broken. It's not good if we had to disable
+>> everything if some piece of firmware is not yet ready or broken.
+>> But again, we can get it working later, for now, I am fine with you patch.
+> 
+> I tried your last version, and it does not Oops, at least not for me.
+> 
+> The end result still looks odd to me:
+> [    1.115219] scpi_clocks scpi:clocks: failed to register clock 'vcpu'
+> [    1.159490] cpu cpu0: _get_cluster_clk_and_freq_table: Failed to get clk for
+> cpu: 0, cluster: 0
+> [    1.162986] cpu cpu0: _get_cluster_clk_and_freq_table: Failed to get data for
+> cluster: 0
+> [    1.170945] cpu cpu1: _get_cluster_clk_and_freq_table: Failed to get clk for
+> cpu: 1, cluster: 0
+> [    1.179634] cpu cpu1: _get_cluster_clk_and_freq_table: Failed to get data for
+> cluster: 0
+> [    1.187654] cpu cpu2: _get_cluster_clk_and_freq_table: Failed to get clk for
+> cpu: 2, cluster: 0
+> [    1.196284] cpu cpu2: _get_cluster_clk_and_freq_table: Failed to get data for
+> cluster: 0
+> [    1.204375] cpu cpu3: _get_cluster_clk_and_freq_table: Failed to get clk for
+> cpu: 3, cluster: 0
+> [    1.212911] cpu cpu3: _get_cluster_clk_and_freq_table: Failed to get data for
+> cluster: 0
+> [    1.220612] arm_big_little: bL_cpufreq_register: Registered platform driver:
+> scpi
+> 
+> So now, I have an scpi clock provider which registers successfully but fails to
+> register its only clock. As a consequence, I also have a cpufreq driver which
+> manages to register but has no clock cpu clock to drive ...
+> 
+
+Yes, I agree the above is not entirely acceptable situation.
+
 -- 
-2.11.0
+Regards,
+Sudeep
