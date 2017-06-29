@@ -1,54 +1,38 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH] clk: scpi: error when clock fails to register
-Date: Wed, 28 Jun 2017 15:53:45 +0200
-Message-Id: <20170628135345.9337-1-jbrunet@baylibre.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 28 Jun 2017 21:32:02 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linus.walleij@linaro.org,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org,
+	sjaganat@codeaurora.org, sricharan@codeaurora.org
+Subject: Re: [PATCH v6 6/6] arm64: defconfig: Enable qcom ipq8074 clock and
+ pinctrl
+Message-ID: <20170629043202.GT18666@tuxbook>
+References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+ <1497001319-30353-7-git-send-email-varada@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1497001319-30353-7-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Current implementation of scpi_clk_add just print a warning when clock
-fails to register but then keep going as if nothing happened. The
-provider is then registered with bogus data.
+On Fri 09 Jun 02:41 PDT 2017, Varadarajan Narayanan wrote:
 
-This may latter lead to an Oops in __clk_create_clk when
-hlist_add_head(&clk->clks_node, &hw->core->clks) is called.
+> From: Abhishek Sahu <absahu@codeaurora.org>
+> 
+> These configs are required for booting kernel in qcom
+> ipq8074 boards.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 
-This patch fixes the issue and errors if a clock fails to register.
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Fixes: cd52c2a4b5c4 ("clk: add support for clocks provided by SCP(System Control Processor)")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk-scpi.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-index 96d37175d0ad..e44b5ca91fed 100644
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -245,10 +245,12 @@ static int scpi_clk_add(struct device *dev, struct device_node *np,
- 		sclk->id = val;
- 
- 		err = scpi_clk_ops_init(dev, match, sclk, name);
--		if (err)
-+		if (err) {
- 			dev_err(dev, "failed to register clock '%s'\n", name);
--		else
--			dev_dbg(dev, "Registered clock '%s'\n", name);
-+			return err;
-+		}
-+
-+		dev_dbg(dev, "Registered clock '%s'\n", name);
- 		clk_data->clk[idx] = sclk;
- 	}
- 
--- 
-2.9.4
+Regards,
+Bjorn
