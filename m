@@ -1,154 +1,132 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hs01.dk-develop.de ([213.136.71.231]:56973 "EHLO
-        hs01.dk-develop.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751313AbdFEM21 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2017 08:28:27 -0400
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
-To: rjui@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        stefan.wahren@i2se.com, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org
-Subject: [PATCH] clk: bcm2835: remove remains from stub clk driver
-Date: Mon,  5 Jun 2017 14:19:33 +0200
-Message-Id: <20170605121933.25288-1-danilokrummrich@dk-develop.de>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34681 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751729AbdF3G2l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2017 02:28:41 -0400
+Received: by mail-lf0-f49.google.com with SMTP id l13so64583141lfl.1
+        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2017 23:28:40 -0700 (PDT)
+Date: Fri, 30 Jun 2017 08:28:36 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH/RFC v2 0/5] clk: renesas: rcar-gen3: Restore clocks
+ during resume
+Message-ID: <20170630062836.GB18905@bigcity.dyn.berto.se>
+References: <1498742720-2713-1-git-send-email-geert+renesas@glider.be>
+ <20170629151826.GA18905@bigcity.dyn.berto.se>
+ <CAMuHMdWhiBftHJ_qxGW67BYkEaBcC7CBC7ZBEi9nozRvKcW1EA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <CAMuHMdWhiBftHJ_qxGW67BYkEaBcC7CBC7ZBEi9nozRvKcW1EA@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit removes the fixed clocks introduced as a stub clock driver
-added with commit 75fabc3f6448 ("ARM: bcm2835: add stub clock driver").
-Originally they were used to drive the AMBA bus and PL011 uart driver.
-Now these clocks are derived by the CPRMAN clock driver and configured
-in DT.
+Hi Geert,
 
-Additionally, get rid of init_machine function in bcm2835 board file
-as there's nothing to do any longer.
+On 2017-06-29 18:26:38 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Thu, Jun 29, 2017 at 5:18 PM, Niklas Söderlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > On 2017-06-29 15:25:15 +0200, Geert Uytterhoeven wrote:
+> >> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> >> clock register state is lost.  Note that as the boot loader skips most
+> >> initialization after resume, clock register state differs from the state
+> >> encountered during normal system boot, too.
+> >>
+> >> Hence after s2ram, some operations may fail because module clocks are
+> >> disabled, while drivers expect them to be still enabled.  E.g. EtherAVB
+> >> fails when Wake-on-LAN has been enabled using "ethtool -s eth0 wol g":
+> >>
+> >>     ravb e6800000.ethernet eth0: failed to switch device to config mode
+> >>     ravb e6800000.ethernet eth0: device will be stopped after h/w processes are done.
+> >>     ravb e6800000.ethernet eth0: failed to switch device to config
+> >>     PM: Device e6800000.ethernet failed to resume: error -110
+> >>
+> >> In addition, some clocks that were disabled by clk_disable_unused() may
+> >> have been re-enabled, wasting power.
+> >>
+> >> This RFC is a second attempt to fix this issue by restoring clock registers
+> >> during system resume.
+> 
+> >> This has been tested on Salvator-X with R-Car H3 ES1.0 and M3-W ES1.0.
+> >> On Salvator-XS with R-Car H3 ES2.0, EtherAVB restarts after system resume,
+> >> but NFS fails with "server not responding", probably not due to a clock
+> >> issue.
+> >
+> > I tested this series using this setup:
+> >
+> > - Base latest renesas-drivers, 710def1a48c7bc9d ("of_mdio: Fix broken
+> >   PHY IRQ in case of probe deferral"). This branch also includes the
+> >   RAVB WoL patches.
+> >
+> > - Salvator-X H3 ES1.0
+> >
+> > - The arm64 defconfig.
+> >
+> > The test procedure I used:
+> >
+> >     arm64 ~/shared/deep-sleep # cat sleep.sh
+> >     #!/bin/bash
+> >
+> >     ethtool -s eth0 wol g
+> >
+> >     echo disabled > /sys/devices/platform/soc/e6800000.ethernet/power/wakeup
+> >
+> >     echo 0 > /sys/module/printk/parameters/console_suspend
+> >
+> >     i2cset -f -y 7 0x30 0x20 0x0F
+> >
+> >     echo "Flip Switch"
+> >     read -n 1
+> >
+> >     echo mem > /sys/power/state
+> 
+> Looks good.
+> 
+> > And for me the NFS root came up OK after flipping switch back. I wonder
+> > what is different in our test procedures. I would like to provide my
+> > tested-by tag but I first want to figure out why NFS (or maybe the whole
+> > net interface?) don't work for you after resume.
+> 
+> Sorry for the confusion: NFS fails only on Salvator-XS H3 ES2.0.
+> It works fine on Salvator-X H3 ES1.0 and M3-W ES1.0.
 
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
----
- arch/arm/mach-bcm/board_bcm2835.c |  7 -------
- drivers/clk/bcm/clk-bcm2835-aux.c |  1 -
- drivers/clk/bcm/clk-bcm2835.c     | 30 ------------------------------
- include/linux/clk/bcm2835.h       | 24 ------------------------
- 4 files changed, 62 deletions(-)
- delete mode 100644 include/linux/clk/bcm2835.h
+Dooh, I should read the error descriptions more carefully before directly 
+jumping to the conclusion that WoL is broken :-) For the entire series:
 
-diff --git a/arch/arm/mach-bcm/board_bcm2835.c b/arch/arm/mach-bcm/board_bcm2835.c
-index 0c1edfc..24af33f 100644
---- a/arch/arm/mach-bcm/board_bcm2835.c
-+++ b/arch/arm/mach-bcm/board_bcm2835.c
-@@ -15,16 +15,10 @@
- #include <linux/init.h>
- #include <linux/irqchip.h>
- #include <linux/of_address.h>
--#include <linux/clk/bcm2835.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- 
--static void __init bcm2835_init(void)
--{
--	bcm2835_init_clocks();
--}
--
- static const char * const bcm2835_compat[] = {
- #ifdef CONFIG_ARCH_MULTI_V6
- 	"brcm,bcm2835",
-@@ -36,6 +30,5 @@ static const char * const bcm2835_compat[] = {
- };
- 
- DT_MACHINE_START(BCM2835, "BCM2835")
--	.init_machine = bcm2835_init,
- 	.dt_compat = bcm2835_compat
- MACHINE_END
-diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-index bd750cf..77e276d 100644
---- a/drivers/clk/bcm/clk-bcm2835-aux.c
-+++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-@@ -14,7 +14,6 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
--#include <linux/clk/bcm2835.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <dt-bindings/clock/bcm2835-aux.h>
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 0258538..e8f37f7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -37,7 +37,6 @@
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/clk.h>
--#include <linux/clk/bcm2835.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/module.h>
-@@ -416,35 +415,6 @@ static int bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
- 	return regdump ? 0 : -ENOMEM;
- }
- 
--/*
-- * These are fixed clocks. They're probably not all root clocks and it may
-- * be possible to turn them on and off but until this is mapped out better
-- * it's the only way they can be used.
-- */
--void __init bcm2835_init_clocks(void)
--{
--	struct clk_hw *hw;
--	int ret;
--
--	hw = clk_hw_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 126000000);
--	if (IS_ERR(hw))
--		pr_err("apb_pclk not registered\n");
--
--	hw = clk_hw_register_fixed_rate(NULL, "uart0_pclk", NULL, 0, 3000000);
--	if (IS_ERR(hw))
--		pr_err("uart0_pclk not registered\n");
--	ret = clk_hw_register_clkdev(hw, NULL, "20201000.uart");
--	if (ret)
--		pr_err("uart0_pclk alias not registered\n");
--
--	hw = clk_hw_register_fixed_rate(NULL, "uart1_pclk", NULL, 0, 125000000);
--	if (IS_ERR(hw))
--		pr_err("uart1_pclk not registered\n");
--	ret = clk_hw_register_clkdev(hw, NULL, "20215000.uart");
--	if (ret)
--		pr_err("uart1_pclk alias not registered\n");
--}
--
- struct bcm2835_pll_data {
- 	const char *name;
- 	u32 cm_ctrl_reg;
-diff --git a/include/linux/clk/bcm2835.h b/include/linux/clk/bcm2835.h
-deleted file mode 100644
-index aa937f6..0000000
---- a/include/linux/clk/bcm2835.h
-+++ /dev/null
-@@ -1,24 +0,0 @@
--/*
-- * Copyright (C) 2010 Broadcom
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
--
--#ifndef __LINUX_CLK_BCM2835_H_
--#define __LINUX_CLK_BCM2835_H_
--
--void __init bcm2835_init_clocks(void);
--
--#endif
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Lets hope I soon can get my hands on a Salvator-XS to try and figure out 
+the RAVB issue!
+
+> 
+> > I also know you reported an IRQ storm when resuming using WoL which I in
+> > over 1000 suspend/resume cycles never have been able to reproduce. Maybe
+> > my test environment or procedure is to kind and/or something is falling
+> > thru the cracks :-( Do you notice any difference in test procedure or
+> > console printouts?
+> 
+> I saw the IRQ storm only once.
+> 
+> Thanks for testing!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
 -- 
-2.9.3
-
+Regards,
+Niklas Söderlund
