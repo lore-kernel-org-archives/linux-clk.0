@@ -1,71 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:52194 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751286AbdFBKKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Jun 2017 06:10:40 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH 11/19] drm/sun4i: hdmi: Add A31 specific DDC register definitions
-Date: Fri,  2 Jun 2017 18:10:16 +0800
-Message-Id: <20170602101024.18940-12-wens@csie.org>
-In-Reply-To: <20170602101024.18940-1-wens@csie.org>
-References: <20170602101024.18940-1-wens@csie.org>
-Sender: linux-clk-owner@vger.kernel.org
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        "daniel.thompson@linaro.org"
+	<daniel.thompson@linaro.org>,
+        "andrea.merello@gmail.com"
+	<andrea.merello@gmail.com>,
+        "radoslaw.pietrzyk@gmail.com"
+	<radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        "Olivier
+ BIDEAU" <olivier.bideau@st.com>,
+        Amelie DELAUNAY <amelie.delaunay@st.com>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
+Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
+Date: Fri, 30 Jun 2017 07:14:23 +0000
+Message-ID: <d325071a-5da5-4ff1-89b9-fc1bbe10e223@st.com>
+References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
+ <20170621220703.GI4493@codeaurora.org>
+ <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
+ <20170628155956.GA5316@codeaurora.org>
+ <7c0c3861-cf61-a9e2-cd5d-2ae30b8f32fa@st.com>
+ <20170630002008.GD22780@codeaurora.org>
+In-Reply-To: <20170630002008.GD22780@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The DDC block for the HDMI controller is different on the A31.
-
-This patch adds the register definitions.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index 3a4987ab8da8..08c514672fd3 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -124,6 +124,32 @@
- 
- #define SUN4I_HDMI_DDC_FIFO_SIZE	16
- 
-+/* A31 specific */
-+#define SUN6I_HDMI_DDC_CTRL_REG		0x500
-+#define SUN6I_HDMI_DDC_CTRL_RESET		BIT(31)
-+#define SUN6I_HDMI_DDC_CTRL_START_CMD		BIT(27)
-+#define SUN6I_HDMI_DDC_CTRL_SDA_ENABLE		BIT(6)
-+#define SUN6I_HDMI_DDC_CTRL_SCL_ENABLE		BIT(4)
-+#define SUN6I_HDMI_DDC_CTRL_ENABLE		BIT(0)
-+
-+#define SUN6I_HDMI_DDC_CMD_REG		0x508
-+#define SUN6I_HDMI_DDC_CMD_EXPLICIT_EDDC_READ	6
-+#define SUN6I_HDMI_DDC_CMD_BYTE_COUNT(count)	((count) << 16)
-+
-+#define SUN6I_HDMI_DDC_ADDR_REG		0x50c
-+#define SUN6I_HDMI_DDC_ADDR_SEGMENT(seg)	(((seg) & 0xff) << 24)
-+#define SUN6I_HDMI_DDC_ADDR_EDDC(addr)		(((addr) & 0xff) << 16)
-+#define SUN6I_HDMI_DDC_ADDR_OFFSET(off)		(((off) & 0xff) << 8)
-+#define SUN6I_HDMI_DDC_ADDR_SLAVE(addr)		(((addr) & 0xff) << 1)
-+
-+#define SUN6I_HDMI_DDC_FIFO_CTRL_REG	0x518
-+#define SUN6I_HDMI_DDC_FIFO_CTRL_CLEAR		BIT(15)
-+
-+#define SUN6I_HDMI_DDC_CLK_REG		0x520
-+/* DDC CLK bit fields are the same, but the formula is not */
-+
-+#define SUN6I_HDMI_DDC_FIFO_DATA_REG	0x580
-+
- enum sun4i_hdmi_pkt_type {
- 	SUN4I_HDMI_PKT_AVI = 2,
- 	SUN4I_HDMI_PKT_END = 15,
--- 
-2.11.0
-
+DQoNCk9uIDA2LzMwLzIwMTcgMDI6MjAgQU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gT24gMDYv
+MjksIEdhYnJpZWwgRkVSTkFOREVaIHdyb3RlOg0KPj4NCj4+IE9uIDA2LzI4LzIwMTcgMDU6NTkg
+UE0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4+PiBPbiAwNi8yNywgR2FicmllbCBGRVJOQU5ERVog
+d3JvdGU6DQo+Pj4+IE9uIDA2LzIyLzIwMTcgMTI6MDcgQU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToN
+Cj4+Pj4+IHJlYWRsX3BvbGxfdGltZW91dD8NCj4+Pj4+DQo+Pj4+IGlmIGkgdXNlIHJlYWRsX3Bv
+bGxfdGltZW91dCAod2ljaCB1c2UgJ2t0aW1lX2dldCgpJykgaXQgY2FuIGJlDQo+Pj4+IG9wZXJh
+dGlvbmFsIG9ubHkgYWZ0ZXIgdGhlIHNlbGVjdGlvbiBvZiBjbG9ja3NvdXJjZSA/IChkZXZpY2Vf
+aW5pdGNhbGwpLg0KPj4+PiBBbmQgdGhlbiBpZiBhIGRyaXZlciB0dXJuIG9uIGEgY2xvY2sgYmVm
+b3JlLCBpdCBjb3VsZCBibG9ja2VkIHRoZSBsaW51eA0KPj4+PiBjb25zb2xlID8NCj4+Pj4NCj4+
+PiBPay4gSSB3b25kZXIgaWYgd2UgY291bGQgYWRkIHNvbWUgc29ydCBvZiBzdGFydGluZyBjaGVj
+ayB0bw0KPj4+IHJlYWRsX3BvbGxfdGltZW91dCgpIHRoYXQgdGVzdHMgc3lzdGVtX3N0YXRlIGZv
+ciBib290aW5nIHZzLg0KPj4+IHNjaGVkdWxpbmc/IFRoYXQgc2hvdWxkIGJlIHN1ZmZpY2llbnQg
+dG8gaGFuZGxlIHRoaXMgY2FzZT8NCj4+Pg0KPj4gT29wcyBpIHRoaW5rIGkgdW5kZXJzdG9vZCBt
+eSBwcm9ibGVtLi4uDQo+PiBpIHVzZWQgcmVhZGxfcG9sbF90aW1lb3V0IGluIGF0b21pYyBjb250
+ZXh0Lg0KPj4gSSBoYXZlIHRvIG1vdmUgbXkgY29kZSBpbiB0aGUgLnByZXBhcmUgb3BzLg0KPj4N
+Cj4+IElmIHlvdSBhcmUgb2sgd2l0aCB0aGF0IGkgd2lsbCBzZW5kIGEgdjUNCj4+DQo+IFRoZXJl
+J3MgcmVhZGxfcG9sbF90aW1lb3V0X2F0b21pYygpIGZvciB0aG9zZSBtb2Rlcy4NCj4NCnllcyBp
+dCdzIGV4YWN0bHkgdGhlIHRlc3QgaSBtYWRlICh1c2UgJ3JlYWRsX3BvbGxfdGltZW91dCgpX2F0
+b21pYycgaW4gDQouZW5hYmxlIG9wcykgYnV0IGknbSBibG9ja2VkLg0KDQppZiBpIGRvIHRoZSBz
+YW1lIGluIC5wcmVwYXJlIG9wcyB3aXRoICdyZWFkbF9wb2xsX3RpbWVvdXQoKScgaXQncyBvay4N
+Cg==
