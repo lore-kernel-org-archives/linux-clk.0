@@ -1,44 +1,34 @@
-Return-Path: <brandon.streiff@ni.com>
-From: Brandon Streiff <brandon.streiff@ni.com>
-To: 
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Brandon Streiff
-	<brandon.streiff@ni.com>
-Subject: [PATCH] clk: si5351: expand compatible strings in documentation
-Date: Thu, 29 Jun 2017 08:31:45 -0500
-Message-ID: <1498743105-29078-1-git-send-email-brandon.streiff@ni.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 30 Jun 2017 12:26:47 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/8] clk: vc5: Do not warn about disabled output buffer
+ input muxes
+Message-ID: <20170630192647.GQ22780@codeaurora.org>
+References: <20170629101851.23972-1-marek.vasut@gmail.com>
+ <20170629101851.23972-3-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170629101851.23972-3-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-checkpatch.pl doesn't know how to expand "silabs,si5351{a,a-msop,b,c}"
-and so generates warnings about si5351-compatible devices appearing to
-be un-documented. Resolve this by documenting the compatible options
-supported by the clk-si5351 driver individually.
+On 06/29, Marek Vasut wrote:
+> @@ -549,6 +552,7 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+>  
+>  	dev_warn(&vc5->client->dev,
+>  		 "Invalid clock output configuration (%02x)\n", src);
+> +
+>  	return 0;
+>  }
+>  
 
-Signed-off-by: Brandon Streiff <brandon.streiff@ni.com>
----
- Documentation/devicetree/bindings/clock/silabs,si5351.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Please drop this hunk as it isn't relevant to the patch.
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-index 28b2830..a6c4ef3 100644
---- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-@@ -12,7 +12,11 @@ generators can be found in [1].
- ==I2C device node==
- 
- Required properties:
--- compatible: shall be one of "silabs,si5351{a,a-msop,b,c}".
-+- compatible: shall be one of the following:
-+	"silabs,si5351a" - Si5351a, QFN20 package
-+	"silabs,si5351a-msop" - Si5351a, MSOP10 package
-+	"silabs,si5351b" - Si5351b, QFN20 package
-+	"silabs,si5351c" - Si5351c, QFN20 package
- - reg: i2c device address, shall be 0x60 or 0x61.
- - #clock-cells: from common clock binding; shall be set to 1.
- - clocks: from common clock binding; list of parent clock
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
