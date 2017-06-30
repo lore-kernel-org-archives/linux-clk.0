@@ -1,83 +1,94 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
-Date: Thu, 29 Jun 2017 12:18:51 +0200
-Message-Id: <20170629101851.23972-8-marek.vasut@gmail.com>
-In-Reply-To: <20170629101851.23972-1-marek.vasut@gmail.com>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
+Return-Path: <zhang.lyra@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20170630005708.GI22780@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-10-chunyan.zhang@spreadtrum.com> <20170620012411.GF4493@codeaurora.org>
+ <CAAfSe-tBtcsyocumaDAyUP674ey1z+xmfAOR7cqnakM_+MOtfQ@mail.gmail.com> <20170630005708.GI22780@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 30 Jun 2017 15:37:29 +0800
+Message-ID: <CAAfSe-vsj8SsdB+kVOyNLALM8SkS5KJKbeDN6CHHWL4SjdrbdQ@mail.gmail.com>
+Subject: Re: [PATCH V1 9/9] arm64: dts: add ccu for SC9860
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Hi Stephen,
 
-Update IDT VersaClock 6 driver to support 5P49V6901. This chip has
-two clock inputs (external XTAL or external CLKIN), four fractional
-dividers (FODs) and five clock outputs (four universal clock outputs
-and one reference clock output at OUT0_SELB_I2C).
+Thanks for your every so clear and detailed answer, thank you.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/clk-versaclock5.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 30 June 2017 at 08:57, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/22, Chunyan Zhang wrote:
+>> Hi Stephen,
+>>
+>> On 20 June 2017 at 09:24, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 06/18, Chunyan Zhang wrote:
+>>
+>> >
+>> >> +             compatible = "sprd,sc9860-ccu";
+>> >> +             #clock-cells = <1>;
+>> >> +             reg = <0 0x20000000 0 0x400>,
+>> >> +                   <0 0x20210000 0 0x3000>,
+>> >> +                   <0 0x402b0000 0 0x4000>,
+>> >> +                   <0 0x402d0000 0 0x400>,
+>> >> +                   <0 0x402e0000 0 0x4000>,
+>> >> +                   <0 0x40400000 0 0x400>,
+>> >> +                   <0 0x40880000 0 0x400>,
+>> >> +                   <0 0x415e0000 0 0x400>,
+>> >> +                   <0 0x60200000 0 0x400>,
+>> >> +                   <0 0x61000000 0 0x400>,
+>> >> +                   <0 0x61100000 0 0x3000>,
+>> >> +                   <0 0x62000000 0 0x4000>,
+>> >> +                   <0 0x62100000 0 0x4000>,
+>> >> +                   <0 0x63000000 0 0x400>,
+>> >> +                   <0 0x63100000 0 0x3000>,
+>> >> +                   <0 0x70b00000 0 0x3000>;
+>> >
+>> > There are a lot of reg properties here. Perhaps there needs to be
+>> > different nodes for the different clock controllers in this SoC?
+>> >
+>>
+>> On Spreadtrum's platform, clocks are basically located in a few
+>> address areas due to some hardware design issue, that says there're
+>> more than one kinds of clocks in one address range, and one kind of
+>> clocks have more than one physical address bases, except ccu_pll and
+>> ccu_div in this patchset.
+>>
+>> We're planning to map the whole device area at one time before
+>> initializing each of them, once that has been done and upstreamed, I
+>> will remove these lists of addressed.
+>
+> Ok. Does this mean we need to wait for those patches to be sent
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 6db84358520a..6e3166e00c8e 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -131,6 +131,7 @@ enum vc5_model {
- 	IDT_VC5_5P49V5923,
- 	IDT_VC5_5P49V5933,
- 	IDT_VC5_5P49V5935,
-+	IDT_VC6_5P49V6901,
- };
- 
- /* Structure to describe features of a particular VC5 model */
-@@ -687,6 +688,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 		return (n == 0) ? 0 : 3;
- 	case IDT_VC5_5P49V5923:
- 	case IDT_VC5_5P49V5935:
-+	case IDT_VC6_5P49V6901:
- 	default:
- 		return n;
- 	}
-@@ -924,10 +926,18 @@ static const struct vc5_chip_info idt_5p49v5935_info = {
- 	.flags = VC5_HAS_INTERNAL_XTAL,
- };
- 
-+static const struct vc5_chip_info idt_5p49v6901_info = {
-+	.model = IDT_VC6_5P49V6901,
-+	.clk_fod_cnt = 4,
-+	.clk_out_cnt = 5,
-+	.flags = VC5_HAS_PFD_FREQ_DBL,
-+};
-+
- static const struct i2c_device_id vc5_id[] = {
- 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
- 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
- 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
-+	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, vc5_id);
-@@ -936,6 +946,7 @@ static const struct of_device_id clk_vc5_of_match[] = {
- 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
- 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
- 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
-+	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
--- 
-2.11.0
+I don't think that would come out for review in the near future, so I
+have to keep these ranges of the address listed here for the time
+being.
+
+> out for review? Is it more like certain clks are embedded inside
+> other devices like display controllers, i2c controllers, etc? Is
+
+>From what I understand, that's just something like you said.
+
+> there any more information I can get on this SoC?
+
+I think you may get more information from our dts files [1], if you
+would like to :)
+
+
+Thanks again,
+Chunyan
+
+[1] https://github.com/sprdlinux/kernel/blob/sp9860g-1h10/arch/arm64/boot/dts/sprd/whale.dtsi
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
