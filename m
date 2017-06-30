@@ -1,198 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:33788 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751540AbdFIKiv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2017 06:38:51 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 1/3] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Date: Fri, 09 Jun 2017 12:38:29 +0200
-Message-id: <1497004711-24052-1-git-send-email-s.nawrocki@samsung.com>
-References: <CGME20170609103849epcas5p397e85db2388d4d91f5a775996cb9541d@epcas5p3.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 30 Jun 2017 11:54:03 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre TORGUE <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	"daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+	"andrea.merello@gmail.com" <andrea.merello@gmail.com>,
+	"radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Ludovic BARRE <ludovic.barre@st.com>,
+	Olivier BIDEAU <olivier.bideau@st.com>,
+	Amelie DELAUNAY <amelie.delaunay@st.com>,
+	"gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
+Subject: Re: [RESEND PATCH v4] clk: stm32h7: Add stm32h743 clock driver
+Message-ID: <20170630185403.GN22780@codeaurora.org>
+References: <1496818794-14771-1-git-send-email-gabriel.fernandez@st.com>
+ <20170621220703.GI4493@codeaurora.org>
+ <110cf67f-e1d6-1f99-953c-6b9639bb4910@st.com>
+ <20170628155956.GA5316@codeaurora.org>
+ <7c0c3861-cf61-a9e2-cd5d-2ae30b8f32fa@st.com>
+ <20170630002008.GD22780@codeaurora.org>
+ <d325071a-5da5-4ff1-89b9-fc1bbe10e223@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <d325071a-5da5-4ff1-89b9-fc1bbe10e223@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The existing enable/disable ops for PLL35XX are made more generic
-and used also for PLL36XX. This fixes issues in the kernel with
-PLL36XX PLLs when the PLL has not been already enabled by bootloader.
+On 06/30, Gabriel FERNANDEZ wrote:
+> 
+> 
+> On 06/30/2017 02:20 AM, Stephen Boyd wrote:
+> > On 06/29, Gabriel FERNANDEZ wrote:
+> >>
+> >> On 06/28/2017 05:59 PM, Stephen Boyd wrote:
+> >>> On 06/27, Gabriel FERNANDEZ wrote:
+> >>>> On 06/22/2017 12:07 AM, Stephen Boyd wrote:
+> >>>>> readl_poll_timeout?
+> >>>>>
+> >>>> if i use readl_poll_timeout (wich use 'ktime_get()') it can be
+> >>>> operational only after the selection of clocksource ? (device_initcall).
+> >>>> And then if a driver turn on a clock before, it could blocked the linux
+> >>>> console ?
+> >>>>
+> >>> Ok. I wonder if we could add some sort of starting check to
+> >>> readl_poll_timeout() that tests system_state for booting vs.
+> >>> scheduling? That should be sufficient to handle this case?
+> >>>
+> >> Oops i think i understood my problem...
+> >> i used readl_poll_timeout in atomic context.
+> >> I have to move my code in the .prepare ops.
+> >>
+> >> If you are ok with that i will send a v5
+> >>
+> > There's readl_poll_timeout_atomic() for those modes.
+> >
+> yes it's exactly the test i made (use 'readl_poll_timeout()_atomic' in 
+> .enable ops) but i'm blocked.
+> 
+> if i do the same in .prepare ops with 'readl_poll_timeout()' it's ok.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v1:
- - none
+I'm still confused. readl_poll_timeout_atomic() uses ktime_get(),
+and so does readl_poll_timeout(), so how does moving to the
+prepare op fix the problem? What's the actual problem?
 
- drivers/clk/samsung/clk-pll.c | 87 +++++++++++++++++++++++++------------------
- 1 file changed, 50 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index db68057..037c614 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -23,6 +23,10 @@ struct samsung_clk_pll {
- 	struct clk_hw		hw;
- 	void __iomem		*lock_reg;
- 	void __iomem		*con_reg;
-+	/* PLL enable control bit offset in @con_reg register */
-+	unsigned short		enable_offs;
-+	/* PLL lock status bit offset in @con_reg register */
-+	unsigned short		lock_offs;
- 	enum samsung_pll_type	type;
- 	unsigned int		rate_count;
- 	const struct samsung_pll_rate_table *rate_table;
-@@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
- 	return rate_table[i - 1].rate;
- }
-
-+static int samsung_pll3xxx_enable(struct clk_hw *hw)
-+{
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 tmp;
-+
-+	tmp = readl_relaxed(pll->con_reg);
-+	tmp |= BIT(pll->enable_offs);
-+	writel_relaxed(tmp, pll->con_reg);
-+
-+	/* wait lock time */
-+	do {
-+		cpu_relax();
-+		tmp = readl_relaxed(pll->con_reg);
-+	} while (!(tmp & BIT(pll->lock_offs)));
-+
-+	return 0;
-+}
-+
-+static void samsung_pll3xxx_disable(struct clk_hw *hw)
-+{
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 tmp;
-+
-+	tmp = readl_relaxed(pll->con_reg);
-+	tmp &= ~BIT(pll->enable_offs);
-+	writel_relaxed(tmp, pll->con_reg);
-+}
-+
- /*
-  * PLL2126 Clock Type
-  */
-@@ -142,34 +174,6 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
- #define PLL35XX_LOCK_STAT_SHIFT	(29)
- #define PLL35XX_ENABLE_SHIFT	(31)
-
--static int samsung_pll35xx_enable(struct clk_hw *hw)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 tmp;
--
--	tmp = readl_relaxed(pll->con_reg);
--	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
--	writel_relaxed(tmp, pll->con_reg);
--
--	/* wait_lock_time */
--	do {
--		cpu_relax();
--		tmp = readl_relaxed(pll->con_reg);
--	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
--
--	return 0;
--}
--
--static void samsung_pll35xx_disable(struct clk_hw *hw)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 tmp;
--
--	tmp = readl_relaxed(pll->con_reg);
--	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
--	writel_relaxed(tmp, pll->con_reg);
--}
--
- static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
- 				unsigned long parent_rate)
- {
-@@ -238,12 +242,12 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 			(rate->sdiv << PLL35XX_SDIV_SHIFT);
- 	writel_relaxed(tmp, pll->con_reg);
-
--	/* wait_lock_time if enabled */
--	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
-+	/* Wait until the PLL is locked if it is enabled. */
-+	if (tmp & BIT(pll->enable_offs)) {
- 		do {
- 			cpu_relax();
- 			tmp = readl_relaxed(pll->con_reg);
--		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
-+		} while (!(tmp & BIT(pll->lock_offs)));
- 	}
- 	return 0;
- }
-@@ -252,8 +256,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	.recalc_rate = samsung_pll35xx_recalc_rate,
- 	.round_rate = samsung_pll_round_rate,
- 	.set_rate = samsung_pll35xx_set_rate,
--	.enable = samsung_pll35xx_enable,
--	.disable = samsung_pll35xx_disable,
-+	.enable = samsung_pll3xxx_enable,
-+	.disable = samsung_pll3xxx_disable,
- };
-
- static const struct clk_ops samsung_pll35xx_clk_min_ops = {
-@@ -275,6 +279,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- #define PLL36XX_SDIV_SHIFT	(0)
- #define PLL36XX_KDIV_SHIFT	(0)
- #define PLL36XX_LOCK_STAT_SHIFT	(29)
-+#define PLL36XX_ENABLE_SHIFT	(31)
-
- static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
- 				unsigned long parent_rate)
-@@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	writel_relaxed(pll_con1, pll->con_reg + 4);
-
- 	/* wait_lock_time */
--	do {
--		cpu_relax();
--		tmp = readl_relaxed(pll->con_reg);
--	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
-+	if (pll_con0 & BIT(pll->enable_offs)) {
-+		do {
-+			cpu_relax();
-+			tmp = readl_relaxed(pll->con_reg);
-+		} while (!(tmp & BIT(pll->lock_offs)));
-+	}
-
- 	return 0;
- }
-@@ -366,6 +373,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	.recalc_rate = samsung_pll36xx_recalc_rate,
- 	.set_rate = samsung_pll36xx_set_rate,
- 	.round_rate = samsung_pll_round_rate,
-+	.enable = samsung_pll3xxx_enable,
-+	.disable = samsung_pll3xxx_disable,
- };
-
- static const struct clk_ops samsung_pll36xx_clk_min_ops = {
-@@ -1287,6 +1296,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	case pll_1450x:
- 	case pll_1451x:
- 	case pll_1452x:
-+		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
-+		pll->lock_offs = PLL35XX_LOCK_STAT_SHIFT;
- 		if (!pll->rate_table)
- 			init.ops = &samsung_pll35xx_clk_min_ops;
- 		else
-@@ -1305,6 +1316,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	/* clk_ops for 36xx and 2650 are similar */
- 	case pll_36xx:
- 	case pll_2650:
-+		pll->enable_offs = PLL36XX_ENABLE_SHIFT;
-+		pll->lock_offs = PLL36XX_LOCK_STAT_SHIFT;
- 		if (!pll->rate_table)
- 			init.ops = &samsung_pll36xx_clk_min_ops;
- 		else
---
-1.9.1
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
