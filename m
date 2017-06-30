@@ -1,59 +1,119 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
-References: <20170524082044.8473-1-linus.walleij@linaro.org>
- <20170601070208.GO20170@codeaurora.org> <CACRpkdZv8MzXVecEXVdJ+P0MxVscYSy=MxC-yQAR0S4yQ6-rwQ@mail.gmail.com>
- <20170605195812.GH20170@codeaurora.org> <CACRpkdbya9xaN-i7AkG0bTyuFYfZc59sSTYhWB43=9btSKfPpQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 12 Jun 2017 08:21:20 +0200
-Message-ID: <CACRpkdapAgHix2vw-woDFi4sh+H3_EX7w-5q=opBGMyegFrXbA@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v4] clk: Add Gemini SoC clock controller
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 29 Jun 2017 18:41:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
+	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
+Subject: Re: [PATCH V1 8/9] clk: sprd: add clocks support for SC9860
+Message-ID: <20170630014117.GJ22780@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-9-chunyan.zhang@spreadtrum.com>
+ <20170620014137.GK4493@codeaurora.org>
+ <CAAfSe-s5oPB_G=sSAqVpYkgxhD=AE3nxv-V7-t0v+qw_AtxH3g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAAfSe-s5oPB_G=sSAqVpYkgxhD=AE3nxv-V7-t0v+qw_AtxH3g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 8, 2017 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On 06/22, Chunyan Zhang wrote:
+> Hi Stephen,
+> 
+> On 20 June 2017 at 09:41, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 06/18, Chunyan Zhang wrote:
+> >> +++ b/include/dt-bindings/clock/sc9860-ccu.h
+> >> @@ -0,0 +1,19 @@
+> >> +/*
+> >> + * Spreadtrum SC9860 platform clocks
+> >> + *
+> >> + * Copyright (C) 2017, Spreadtrum Communications Inc.
+> >> + *
+> >> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> >> + */
+> >> +
+> >> +#ifndef _DT_BINDINGS_CLK_SC9860_CCU_H_
+> >> +#define _DT_BINDINGS_CLK_SC9860_CCU_H_
+> >> +
+> >> +#define CLK_FAC_1M   2
+> >> +#define CLK_EMMC_2X_EN       29
+> >> +#define CLK_L0_409M6 60
+> >> +#define CLK_EMMC_2X  88
+> >> +#define CLK_EMMC_EB  158
+> >
+> > Why are only a handful exposed in the header file? Not exposing
+> > everything is mostly a maintenance nightmare right now.
+> 
+> No special reason here, my thought simply was that there's no much
+> Spreadtrum's device driver in mainline at present, so most of the
+> clocks wouldn't be needed for now, I planned to expose only those when
+> the device driver they provide clock to, that's saying when we add a
+> new device driver we'll expose the clocks this device needs.
 
-> I think the timer may be more of an issue...
->
-> It is using CLOCKSOURCE_OF_DECLARE(), at least last time
-> I checked there was no such thing as clocksources retrying their
-> calls, and that cannot be regular probes because of, yeah device
-> core is using the timer, I think.
->
-> Yeah I looked in:
-> drivers/clocksource/clksrc-probe.c
->
-> It will just fail if it can't initialize the clocksource.
->
-> I don't understand what platforms can actually get their timers
-> up at all without the clock framework? Those hardcoding the
-> clock frequency in the device tree, or things like the ARM
-> TWD which has it encoded in hardware perhaps?
+Please no. I don't want to get the one-off patch in my inbox to
+add more and more ids here "just because" nobody was using the
+numbers before. I really don't care that someone has added the
+driver for some random device on their SoC now and so they need
+to expose the number into a header file. I know some people are
+doing this, and it's really not meaningful. I'm much happier if
+we're exposing every single clk number to DT and reducing churn
+in the include/dt-bindings/ directory. And really, the raw number
+could be used in dt, so the enforcement of any sort of ABI needs
+to be in the clk driver anyway.
 
-I just confirmed this to be the problem using a scratch patch for
-a platform device init and some earlydebug prints:
+Now if a clk was left out of the clk driver implementation, then
+the number could be left out of the header file, but even then it
+doesn't really need to be. The clk driver could be implemented in
+a way to return an error if the number doesn't map to a clk_hw
+structure in the driver. In the future, the clk could be added to
+the driver, and then DT wouldn't need to change and consumer
+drivers would start to work when various branches are merged
+together.
 
-Uncompressing Linux... done, booting the kernel.
- Booting Linux on physical CPU 0x0
-start_kernel
-(...)
- NR_IRQS:16 nr_irqs:16 16
- could not get PCLK
-Failed to initialize '/soc/timer@43000000': -517
- clocksource_probe: no matching clocksources found
- sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every
-21474836475000000ns
- Console: colour dummy device 80x30
- Calibrating delay loop...
+Also, sometimes clk driver authors don't know about all the clks
+that they have on their hardware (I doubt this includes you
+because you work at the company making the SoC here). In this
+case, it's OK to leave out the ids that aren't known to the
+binding author because we can't expect more from these people.
+And if you know for a fact that a certain clk will never need to
+be exposed in the binding, like some random internal clk that
+nobody will care to use, then it's also OK to leave that out from
+the binding.
 
-So the deferred clock makes the whole platform hang because the timer
-needs it. Without a clocksource, the delay loop cannot be calibrated, so
-it hangs there.
+> 
+> Another reason is, I'm not sure if there are still some clocks I
+> haven't listed for SC9860 , so if we need to add a clock in the
+> feature, the value of these macros defined in
+> "include/dt-bindings/clock/sc9860-ccu.h" may be changed, that means I
+> need to change the index of all clocks following the clock inserted
+> into.
 
-Yours,
-Linus Walleij
+When modifying a dt-bindings header file to add more clk ids you
+should _never_ modify existing numbers. That would be a backwards
+incompatible change of the DT binding. If anything, just keep
+adding more numbers to the end of the number space. If something
+needs to be removed, make that number map to an error or some
+no-op clk_hw structure in the clk driver.
+
+> 
+> But why will not exposing everything bring trouble to maintenance? :)
+> 
+
+Mostly it's because I spend too much time worrying about these
+include/dt-bindings files and how they're going to land in Linus'
+tree and not enough time reviewing driver and core framework
+patches. I'm trying to reduce the time spent worrying about these
+header files to a manageable amount.
+
+Hopefully that's helpful. Sorry for the long email.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
