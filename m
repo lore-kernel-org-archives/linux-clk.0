@@ -1,352 +1,43 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 5 Jun 2017 16:45:46 +0200
+Date: Fri, 30 Jun 2017 11:52:59 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, kbuild-all@01.org,
-	Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] clk: sunxi-ng: Move all clock types to a library
-Message-ID: <20170605144546.b6oh5sygrza22hbe@flea.lan>
-References: <20170602223006.1653-1-sboyd@codeaurora.org>
- <201706031243.qNvuUbQX%fengguang.wu@intel.com>
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>
+Subject: Re: [PATCH v4 6/6] ARM: sun4i: Convert to CCU
+Message-ID: <20170630095259.publzn56jy3ru5qb@flea>
+References: <cover.24b2b13ec5a68552e186ba1637f1328363c3886e.1498422562.git-series.plaes@plaes.org>
+ <f4b2bbc20ca8afa9cc918ba8f781bd69ec3c6d00.1498422562.git-series.plaes@plaes.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hnoybsnj5wdx6i4l"
-In-Reply-To: <201706031243.qNvuUbQX%fengguang.wu@intel.com>
+	protocol="application/pgp-signature"; boundary="4barowp35roet375"
+In-Reply-To: <f4b2bbc20ca8afa9cc918ba8f781bd69ec3c6d00.1498422562.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---hnoybsnj5wdx6i4l
+--4barowp35roet375
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Sat, Jun 03, 2017 at 12:22:32PM +0800, kbuild test robot wrote:
-> Hi Stephen,
->=20
-> [auto build test ERROR on sunxi/sunxi/for-next]
-> [also build test ERROR on next-20170602]
-> [cannot apply to clk/clk-next v4.12-rc3]
-> [if your patch is applied to the wrong git tree, please drop us a note to=
- help improve the system]
->=20
-> url:    https://github.com/0day-ci/linux/commits/Stephen-Boyd/clk-sunxi-n=
-g-Move-all-clock-types-to-a-library/20170603-090538
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git s=
-unxi/for-next
-> config: arm-sunxi_defconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
-> reproduce:
->         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbi=
-n/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=3Darm=20
->=20
-> All errors (new ones prefixed by >>):
->=20
->    drivers/built-in.o: In function `sun8i_a83t_ccu_probe':
-> >> sunxi_sid.c:(.text+0x2dc74): undefined reference to `sunxi_ccu_probe'
->    drivers/built-in.o: In function `sun9i_a80_ccu_probe':
->    sunxi_sid.c:(.text+0x2dd14): undefined reference to `sunxi_ccu_probe'
->    drivers/built-in.o: In function `sun9i_a80_de_clk_probe':
->    sunxi_sid.c:(.text+0x2de20): undefined reference to `sunxi_ccu_probe'
->    drivers/built-in.o: In function `sun9i_a80_usb_clk_probe':
->    sunxi_sid.c:(.text+0x2df34): undefined reference to `sunxi_ccu_probe'
->    drivers/built-in.o: In function `sun5i_ccu_init':
-> >> sunxi_sid.c:(.init.text+0x3f9c): undefined reference to `sunxi_ccu_pro=
-be'
->    drivers/built-in.o:sunxi_sid.c:(.init.text+0x4070): more undefined ref=
-erences to `sunxi_ccu_probe' follow
->    drivers/built-in.o: In function `sun6i_a31_ccu_setup':
-> >> sunxi_sid.c:(.init.text+0x4084): undefined reference to `ccu_mux_notif=
-ier_register'
->    drivers/built-in.o: In function `sun8i_a23_ccu_setup':
->    sunxi_sid.c:(.init.text+0x411c): undefined reference to `sunxi_ccu_pro=
-be'
->    drivers/built-in.o: In function `sun8i_a33_ccu_setup':
->    sunxi_sid.c:(.init.text+0x41b8): undefined reference to `sunxi_ccu_pro=
-be'
-> >> sunxi_sid.c:(.init.text+0x41c0): undefined reference to `ccu_pll_notif=
-ier_register'
->    sunxi_sid.c:(.init.text+0x41d0): undefined reference to `ccu_mux_notif=
-ier_register'
->    drivers/built-in.o: In function `sunxi_h3_h5_ccu_init':
->    sunxi_sid.c:(.init.text+0x425c): undefined reference to `sunxi_ccu_pro=
-be'
->    sunxi_sid.c:(.init.text+0x4270): undefined reference to `ccu_mux_notif=
-ier_register'
->    drivers/built-in.o: In function `sun8i_v3s_ccu_setup':
->    sunxi_sid.c:(.init.text+0x4308): undefined reference to `sunxi_ccu_pro=
-be'
->    drivers/built-in.o: In function `sunxi_r_ccu_init':
->    sunxi_sid.c:(.init.text+0x4368): undefined reference to `sunxi_ccu_pro=
-be'
->    drivers/built-in.o: In function `.LANCHOR0':
-> >> sunxi_sid.c:(.data+0x157c4): undefined reference to `ccu_gate_ops'
-> >> sunxi_sid.c:(.data+0x15840): undefined reference to `ccu_mp_ops'
-> >> sunxi_sid.c:(.data+0x158a4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x15908): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x15940): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1597c): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x159b8): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15a20): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x15a84): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x15aec): undefined reference to `ccu_div_ops'
-> >> sunxi_sid.c:(.data+0x15b40): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x15ba4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x15c08): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x15c40): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15c7c): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15cb8): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15cf4): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15d30): undefined reference to `ccu_gate_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x15d6c): more undefined referen=
-ces to `ccu_gate_ops' follow
->    drivers/built-in.o: In function `.LANCHOR0':
->    sunxi_sid.c:(.data+0x15e4c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x15e84): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15ec0): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15efc): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x15f78): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x15fcc): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x16020): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x16098): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x16110): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x16188): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x16200): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x16278): undefined reference to `ccu_mp_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x162f0): more undefined referen=
-ces to `ccu_mp_ops' follow
->    drivers/built-in.o: In function `.LANCHOR0':
->    sunxi_sid.c:(.data+0x16508): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x16544): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x16580): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x165bc): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x165f8): undefined reference to `ccu_gate_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x16634): more undefined referen=
-ces to `ccu_gate_ops' follow
->    drivers/built-in.o: In function `.LANCHOR0':
->    sunxi_sid.c:(.data+0x16ee4): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x16f48): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x16fd8): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1703c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x17094): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x170cc): undefined reference to `ccu_gate_ops'
-> >> sunxi_sid.c:(.data+0x1713c): undefined reference to `ccu_mult_ops'
-> >> sunxi_sid.c:(.data+0x17190): undefined reference to `ccu_nk_ops'
->    sunxi_sid.c:(.data+0x171f8): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x17260): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x172b4): undefined reference to `ccu_nk_ops'
-> >> sunxi_sid.c:(.data+0x17328): undefined reference to `ccu_nkmp_ops'
->    sunxi_sid.c:(.data+0x17398): undefined reference to `ccu_mult_ops'
-> >> sunxi_sid.c:(.data+0x17404): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x17478): undefined reference to `ccu_nkmp_ops'
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x17d40): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x17db8): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x17e30): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x17e94): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x17ef8): undefined reference to `ccu_div_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x17f5c): more undefined referen=
-ces to `ccu_div_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x18358): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x183d0): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x18408): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18444): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x184ac): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x184e4): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18520): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1855c): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x185c4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1862c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x18690): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x186f4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x18758): undefined reference to `ccu_div_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x187bc): more undefined referen=
-ces to `ccu_div_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x18810): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x18864): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x188c8): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1892c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x18990): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x189f4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x18a58): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x18a90): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18acc): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18b08): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18b44): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18b80): undefined reference to `ccu_gate_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x18bbc): more undefined referen=
-ces to `ccu_gate_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x18d8c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x18df0): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x18e68): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x18ea0): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18edc): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18f18): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18f54): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x18f90): undefined reference to `ccu_gate_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x18fcc): more undefined referen=
-ces to `ccu_gate_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x19024): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x19078): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x190cc): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x19144): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x191bc): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x19234): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x192ac): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x19324): undefined reference to `ccu_mp_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x1939c): more undefined referen=
-ces to `ccu_mp_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
-> >> sunxi_sid.c:(.data+0x193d4): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x19410): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1948c): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x194c4): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x19500): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1957c): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x195b4): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x195f0): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1966c): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x196a4): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x196e0): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1975c): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x197d4): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1984c): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x19884): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x198c0): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x198fc): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x19938): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x19974): undefined reference to `ccu_gate_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x199b0): more undefined referen=
-ces to `ccu_gate_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x1a56c): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1a5d0): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1a660): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1a6c4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1a764): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1a7cc): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1a838): undefined reference to `ccu_nm_ops'
-> >> sunxi_sid.c:(.data+0x1a8b0): undefined reference to `ccu_nkm_ops'
->    sunxi_sid.c:(.data+0x1a918): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1a984): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1a9d8): undefined reference to `ccu_nk_ops'
->    sunxi_sid.c:(.data+0x1aa50): undefined reference to `ccu_nkm_ops'
->    sunxi_sid.c:(.data+0x1aabc): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1ab28): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1ab94): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1abac): undefined reference to `ccu_nkm_ops'
->    sunxi_sid.c:(.data+0x1b154): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b1b8): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b220): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b284): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b2e8): undefined reference to `ccu_div_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x1b34c): more undefined referen=
-ces to `ccu_div_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x1b384): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1b3c0): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1b428): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b490): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b4f4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b558): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b5ac): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1b610): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b674): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1b6ac): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1b6e8): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1b724): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1b760): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1b79c): undefined reference to `ccu_gate_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x1b7d8): more undefined referen=
-ces to `ccu_gate_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x1b920): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1b974): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1b9ec): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1ba64): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1ba9c): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1bad8): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1bb54): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1bb8c): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1bbc8): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1bc44): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1bc7c): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1bcb8): undefined reference to `ccu_phase_ops'
->    sunxi_sid.c:(.data+0x1bd34): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1bdac): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1bde4): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1be20): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1be5c): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1be98): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1bed4): undefined reference to `ccu_gate_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x1bf10): more undefined referen=
-ces to `ccu_gate_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x1c61c): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1c680): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1c710): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1c774): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1c7cc): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1c834): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1c8a0): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1c918): undefined reference to `ccu_nkm_ops'
->    sunxi_sid.c:(.data+0x1c984): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1c9d8): undefined reference to `ccu_nk_ops'
->    sunxi_sid.c:(.data+0x1ca50): undefined reference to `ccu_nkm_ops'
->    sunxi_sid.c:(.data+0x1cabc): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1cb28): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1cb94): undefined reference to `ccu_nm_ops'
->    sunxi_sid.c:(.data+0x1cc08): undefined reference to `ccu_nkmp_ops'
->    sunxi_sid.c:(.data+0x1d25c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d2c0): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d328): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d38c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d3f0): undefined reference to `ccu_div_ops'
->    drivers/built-in.o:sunxi_sid.c:(.data+0x1d454): more undefined referen=
-ces to `ccu_div_ops' follow
->    drivers/built-in.o: In function `.LANCHOR1':
->    sunxi_sid.c:(.data+0x1d48c): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d4c8): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d504): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d56c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d5d4): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d638): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d69c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d6f0): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1d754): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d7b8): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d7f0): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d82c): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d868): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d8a4): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d8e0): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1d938): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1d99c): undefined reference to `ccu_div_ops'
->    sunxi_sid.c:(.data+0x1d9d8): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1da14): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1da50): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1da8c): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1dac8): undefined reference to `ccu_gate_ops'
->    sunxi_sid.c:(.data+0x1db20): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1db74): undefined reference to `ccu_mux_ops'
->    sunxi_sid.c:(.data+0x1dbec): undefined reference to `ccu_mp_ops'
->    sunxi_sid.c:(.data+0x1dc64): undefined reference to `ccu_mp_ops'
+On Sun, Jun 25, 2017 at 11:45:47PM +0300, Priit Laes wrote:
+>  		osc24M: clk@01c20050 {
+>  			#clock-cells =3D <0>;
+>  			compatible =3D "allwinner,sun4i-a10-osc-clk";
+> @@ -187,487 +176,12 @@
+>  			clock-output-names =3D "osc24M";
+>  		};
 
-It seems like even though the lib.a file is compiled properly, it is
-never linked in. It looks like we would be supposed to add
-drivers/clk/sunxi-ng/ to libs-y, but that doesn't seem to work for
-Makefiles in drivers/*
+This should be a fixed clock now.
 
 Maxime
 
@@ -355,24 +46,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---hnoybsnj5wdx6i4l
+--4barowp35roet375
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZNW6aAAoJEBx+YmzsjxAgf3wP/i+Wgh5ki01xgIgSFGSq04Qr
-KydDEfUsuWgdiIv4T/JyCa7Ufs9r38Z9hA6O38ZtbU491o7u3b2lvmOwaLtnxMSo
-ZEwUhrEc1n0q48vcRDcHvbTMIrMoSFkAZlZupPVBX8JSk0pJ2TGArGBaQPQtfLDn
-RqmX1OhR5w63uyTQ6E+rRqXlMSSvXTxONolHOh9eCDb5RL1RyE/cqznrR2J38oyx
-/+OV10E/dI3fDU3O+F56VD/evA+s4QQ5+IGf7x5a5nMnRH4qmoUHm6gFHApieRtL
-eItEHpfb/iwSfzTSdlGdn9gDHK3OukZAMW8eruh4nNAPXnHTmGIKY7UeA4QBT1iQ
-XDfu/jVWuaBSQjdLxKP1tDZRlneauwTl3hcpmV3eDkIOT06j7ItRDnINkD5rIOFf
-jWGg1zek+0+cuTxcSRERZpmpxvHyMUJPPuXGbdUJ5KppYj0Adsn5w5BQCPmjsHFL
-7nTdiAerFiDLXWx7+28lZ/ZDMAJ46tLsrkRLJI/b3/6/cs26TxLMCir3CxXiv4uI
-mP22b6vWS5f/3fnkUWhr18uaV1HnFEM2apJtxekMDZpV+0UDtGwuuuz1DA32sZPr
-YfnX/gzxTtWpMYJeJwJfO1uE51B3ztsm4k8B/sgWVeWkcttirYh8BhpSj3kkCi7U
-dB/SqgzLF3Jw+vnYNHaY
-=CBKs
+iQIcBAEBAgAGBQJZVh97AAoJEBx+YmzsjxAgvNUQAL2YavHx6f00MJFhgG1N8kr3
+/NBAHvkYmbpgN2HRNkyNeaD5KeXTgbxlOy7Qr+YqGGXEsEGiCAxsfEaUOzZUF9Tb
+7ftx+qcUOTMNZv1hMQgptgMdS9EvtrjEVIpEOugno7MOZaIJiZ2Hv1kG3W6kDGXV
+3xawBesdj/QPMc740EhkPa/rBcGdd/8pAVXGGGdhCgHs4fIo5xN/SPPhfvoL95Bj
+yh7glPYez97BREaXhNvYaEaIcikkT7XNi1kOtkkq9Aw/ybA0mcUaudvLX76zwMX6
+V6qSlWzYoSuPOeyhsvCJ9R39/jcPeoDCGZY1YUmHF2BxBhNn4HpaXzBEr5YuDKx6
+19wbqyT8RXykjpyeUa/dF2R9OtJuwqhTjeaXkyF6plFBbabO5gSG1vU6v8sZBokk
+7RIOjzvFXI14tyZAZjTzh35lgQ0J9a7X5uKRa37vxbb8lYWTygSjS9q4+fSIC8VS
+U4dGcluS/35qaeigPHjrG2WOSth5Pf/mI/+uh1ArAULxrgqIgwC3bfbV6qctF3Cu
+L7qyfAuFjyTfr/ak/FTAseX8H43RS93ogjhGS8tunYaH+R2VDkMoNHCu7BB9noij
+FTks2WcH+J/qb6lMAs8pcXzKoE7cD9oxIrb/41iyFwma6cM7UEXfHOSzgSs4wEG5
+jMqP/C7cxcZkVPcQ5GYC
+=ldHl
 -----END PGP SIGNATURE-----
 
---hnoybsnj5wdx6i4l--
+--4barowp35roet375--
