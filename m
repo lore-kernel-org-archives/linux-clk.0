@@ -1,69 +1,74 @@
-Return-Path: <zhang.lyra@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1ELg1XcY-QOZn-f6kR9yt-Q6LNLUYEY-BNW-2BaBy6EQ@mail.gmail.com>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-8-chunyan.zhang@spreadtrum.com> <20170620013710.GJ4493@codeaurora.org>
- <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com> <CAK8P3a1ELg1XcY-QOZn-f6kR9yt-Q6LNLUYEY-BNW-2BaBy6EQ@mail.gmail.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 22 Jun 2017 20:06:29 +0800
-Message-ID: <CAAfSe-vtAqmiJ-ZuxQde4i7FEo76kkbk-mev_S31i3g3GHwrcQ@mail.gmail.com>
-Subject: Re: [PATCH V1 7/9] clk: sprd: add adjustable pll support
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 29 Jun 2017 17:57:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>,
 	Geng Ren <geng.ren@spreadtrum.com>, Ben Li <ben.li@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH V1 9/9] arm64: dts: add ccu for SC9860
+Message-ID: <20170630005708.GI22780@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-10-chunyan.zhang@spreadtrum.com>
+ <20170620012411.GF4493@codeaurora.org>
+ <CAAfSe-tBtcsyocumaDAyUP674ey1z+xmfAOR7cqnakM_+MOtfQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAAfSe-tBtcsyocumaDAyUP674ey1z+xmfAOR7cqnakM_+MOtfQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
+On 06/22, Chunyan Zhang wrote:
+> Hi Stephen,
+> 
+> On 20 June 2017 at 09:24, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 06/18, Chunyan Zhang wrote:
+> 
+> >
+> >> +             compatible = "sprd,sc9860-ccu";
+> >> +             #clock-cells = <1>;
+> >> +             reg = <0 0x20000000 0 0x400>,
+> >> +                   <0 0x20210000 0 0x3000>,
+> >> +                   <0 0x402b0000 0 0x4000>,
+> >> +                   <0 0x402d0000 0 0x400>,
+> >> +                   <0 0x402e0000 0 0x4000>,
+> >> +                   <0 0x40400000 0 0x400>,
+> >> +                   <0 0x40880000 0 0x400>,
+> >> +                   <0 0x415e0000 0 0x400>,
+> >> +                   <0 0x60200000 0 0x400>,
+> >> +                   <0 0x61000000 0 0x400>,
+> >> +                   <0 0x61100000 0 0x3000>,
+> >> +                   <0 0x62000000 0 0x4000>,
+> >> +                   <0 0x62100000 0 0x4000>,
+> >> +                   <0 0x63000000 0 0x400>,
+> >> +                   <0 0x63100000 0 0x3000>,
+> >> +                   <0 0x70b00000 0 0x3000>;
+> >
+> > There are a lot of reg properties here. Perhaps there needs to be
+> > different nodes for the different clock controllers in this SoC?
+> >
+> 
+> On Spreadtrum's platform, clocks are basically located in a few
+> address areas due to some hardware design issue, that says there're
+> more than one kinds of clocks in one address range, and one kind of
+> clocks have more than one physical address bases, except ccu_pll and
+> ccu_div in this patchset.
+> 
+> We're planning to map the whole device area at one time before
+> initializing each of them, once that has been done and upstreamed, I
+> will remove these lists of addressed.
 
-On 22 June 2017 at 19:15, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Jun 22, 2017 at 12:17 PM, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->> On 20 June 2017 at 09:37, Stephen Boyd <sboyd@codeaurora.org> wrote:
->>> On 06/18, Chunyan Zhang wrote:
->
->>>> +     kint = DIV_ROUND_CLOSEST(((fvco - refin * nint * CCU_PLL_1M)/10000) *
->>>> +     ((mask >> (shift + i)) + 1), refin * 100) << i;
->>>> +     cfg[index].val |= (kint << shift) & mask;
->>>> +     cfg[index].msk |= mask;
->>>> +
->>>> +     ibias_val = pll_get_ibias(fvco, pll->itable);
->>>> +
->>>> +     mask = pmask(pll, PLL_IBIAS);
->>>> +     index = pindex(pll, PLL_IBIAS);
->>>> +     shift = pshift(pll, PLL_IBIAS);
->>>> +     cfg[index].val |= ibias_val << shift & mask;
->>>> +     cfg[index].msk |= mask;
->>>> +
->>>> +     for (i = 0; i < reg_num; i++) {
->>>> +             if (cfg[i].msk)
->>>> +                     ccu_pll_writel(pll, i, cfg[i].val, cfg[i].msk);
->>>> +     }
->>>> +
->>>
->>> Are we waiting for the writel() to go through above? If so we
->>> need a readl() of the same register to make sure the write has
->>> completed before delaying.
->>
->> After writing these configuration registers, we have to wait a certain
->> time to make sure the pll has worked as we configured.  This depends
->> on other circuit part, so we use udelay rather than reading the same
->> register.
->
-> I think you have to do both: normally the writel() is not guaranteed
-> to arrive at the device until you read back from an address in the
-> same device, so the delay must happen after the readl(), or you won't
-> know how long to wait for.
+Ok. Does this mean we need to wait for those patches to be sent
+out for review? Is it more like certain clks are embedded inside
+other devices like display controllers, i2c controllers, etc? Is
+there any more information I can get on this SoC?
 
-I got it, will add the readl() in the next iterator.
-
-Thanks,
-Chunyan
-
->
->        Arnd
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
