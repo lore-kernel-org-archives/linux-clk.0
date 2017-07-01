@@ -1,67 +1,56 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Wed, 26 Jul 2017 08:57:32 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/9] add support for Sama5d2 audio PLLs and enable
- ClassD
-Message-ID: <20170726065732.zphp7zaug4ypcqzj@piout.net>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
- <194d2fc6-4c88-bc3b-1127-b4c0bdb7c6a1@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <194d2fc6-4c88-bc3b-1127-b4c0bdb7c6a1@microchip.com>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 3/8] clk: vc5: Do not warn about disabled output buffer input muxes
+Date: Sat,  1 Jul 2017 22:04:53 +0200
+Message-Id: <20170701200459.11505-3-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/07/2017 at 17:44:19 +0200, Nicolas Ferre wrote:
-> On 25/07/2017 at 09:37, Quentin Schulz wrote:
-> > This patch series adds support for the audio PLLs and enables ClassD that
-> > can be found in ATMEL Sama5d2 SoC.
-> > 
-> > There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
-> > FRAC can output between 620 and 700MHz and only multiply the rate of its
-> > parent. The two audio PLLs then divide the FRAC rate to best match the
-> > asked rate.
-> > 
-> > I basically took an old patch series posted by Nicolas on December, 6th
-> > 2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
-> > sent on July, 15th 2015.
-> > 
-> > I also fixed the function used to compute the divisors, removed useless
-> > spinlocks and added a range to the audio frac PLL to stay within vendor's
-> > supported range. Clocks that are children of gclk (generated-clk) are now
-> > able to propagate rate to the audio PLL clocks when needed.
-> > 
-> > However, there are multiple children clocks that could technically
-> > change the rate of audio_pll (via gck). With the rate locking introduced
-> > in Jerome Brunet's patch series[5], the first consumer to enable the clock
-> > will be the one definitely setting the rate of the clock. Without the rate
-> > locking, the last consumer to set the rate will be able to mess with the
-> > rate.
-> > Since audio IPs are most likely to request the same rate, we enforce
-> > that the only clks able to modify gck rate are those of audio IPs.
-> > 
-> > To remain consistent, we deny other clocks to be children of audio_pll.
-> 
-> Quentin,
-> 
-> Thanks for having revived this series. Everything's okay on my side for
-> this v4. I think that my tag isn't missing from any patch of this
-> series. Now we surely need to define which path it must take...
-> 
+The output buffer input mux can be configured in either of three
+states -- disabled, input from FOD, input from previous output.
+If the output buffer input mux is set to disabled, the code in
+vc5_clk_out_get_parent() would consider this an invalid setting
+and warn about it, which is not necessarily the case.
 
-I'll take the two dts patches now as the bindings have been acked.
-Everything else should probably go through the clk tree.
+In case the output buffer input mux is disabled, default to input
+from FOD to have some parent and don't print the warning.
 
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+V2: Drop chunk adding useless newline
+---
+ drivers/clk/clk-versaclock5.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index d835d48cf14d..248689d89632 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -541,6 +541,9 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+ 	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
+ 	src &= mask;
+ 
++	if (src == 0)	/* Input mux set to DISABLED */
++		return 0;
++
+ 	if ((src & fodclkmask) == VC5_OUT_DIV_CONTROL_EN_FOD)
+ 		return 0;
+ 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.11.0
