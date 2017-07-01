@@ -1,268 +1,76 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
-	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
-	<ping.bai@nxp.com>
-Subject: [PATCH V2 04/10] clk: imx: add pllv4 support
-Date: Thu, 13 Jul 2017 19:47:09 +0800
-Message-ID: <1499946435-7177-5-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 4/8] clk: vc5: Configure the output buffer input mux on prepare
+Date: Sat,  1 Jul 2017 22:04:54 +0200
+Message-Id: <20170701200459.11505-4-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-pllv4 is designed for System Clock Generation (SCG) module observed
-in IMX ULP SoC series. e.g. i.MX7ULP.
+The output buffer input mux can be configured in either of three
+states -- disabled, input from FOD, input from previous output.
+Once the .prepare() callback of the output buffer is called, the
+output buffer input mux must be set to either input from FOD or
+input from previous output, it cannot be set to Disabled anymore
+or the output won't work.
 
-The SCG modules generates clock used to derive processor, system,
-peripheral bus and external memory interface clocks while this patch
-intends to support the PLL part.
+Default to the input from FOD if the output buffer input mux was
+Disabled and the .prepare() was called on it.
 
+Note that we do not set the output buffer input mux back to Disabled
+in the .unprepare() callback as there is no obvious benefit of doing
+so. We disable the entire output buffer in the .unprepare() callback
+already.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
 Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
 ---
-ChangeLog:
-v1->v2:
- * remove clk_pllv4_is_enabled() check in set_rate, instead it will
-   be handled by core later.
- * use readl_poll_timeout
- * use clk_hw_register instead of clk_register
- * other minor changes
----
- drivers/clk/imx/Makefile    |   1 +
- drivers/clk/imx/clk-pllv4.c | 188 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h       |   3 +
- 3 files changed, 192 insertions(+)
- create mode 100644 drivers/clk/imx/clk-pllv4.c
+ drivers/clk/clk-versaclock5.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 1ada68a..1e308e2 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -10,6 +10,7 @@ obj-y += \
- 	clk-pllv1.o \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
-+	clk-pllv4.o \
- 	clk-pfd.o
- 
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
-diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
-new file mode 100644
-index 0000000..47e4d1c
---- /dev/null
-+++ b/drivers/clk/imx/clk-pllv4.c
-@@ -0,0 +1,188 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ *
-+ * Author: Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version 2
-+ * of the License, or (at your option) any later version.
-+ *
-+ * http://www.opensource.org/licenses/gpl-license.html
-+ * http://www.gnu.org/copyleft/gpl.html
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+
-+/* PLL Control Status Register (xPLLCSR) */
-+#define PLL_CSR_OFFSET		0x0
-+#define PLL_VLD			BIT(24)
-+#define PLL_EN			BIT(0)
-+
-+/* PLL Configuration Register (xPLLCFG) */
-+#define PLL_CFG_OFFSET		0x08
-+#define BP_PLL_MULT		16
-+#define BM_PLL_MULT		(0x7f << 16)
-+
-+/* PLL Numerator Register (xPLLNUM) */
-+#define PLL_NUM_OFFSET		0x10
-+
-+/* PLL Denominator Register (xPLLDENOM) */
-+#define PLL_DENOM_OFFSET	0x14
-+
-+struct clk_pllv4 {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+/* Valid PLL MULT Table */
-+static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
-+
-+#define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
-+
-+#define LOCK_TIMEOUT_US		USEC_PER_MSEC
-+
-+static inline int clk_pllv4_wait_lock(struct clk_pllv4 *pll)
-+{
-+	u32 csr;
-+
-+	return readl_poll_timeout(pll->base  + PLL_CSR_OFFSET,
-+				  csr, csr & PLL_VLD, 0, LOCK_TIMEOUT_US);
-+}
-+
-+static int clk_pllv4_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-+
-+	if (readl_relaxed(pll->base) & PLL_EN)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-+	u32 div;
-+
-+	div = readl_relaxed(pll->base + PLL_CFG_OFFSET);
-+	div &= BM_PLL_MULT;
-+	div >>= BP_PLL_MULT;
-+
-+	return parent_rate * div;
-+}
-+
-+static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	unsigned long round_rate, i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-+		round_rate = parent_rate * pllv4_mult_table[i];
-+		if (rate >= round_rate)
-+			return round_rate;
-+	}
-+
-+	return round_rate;
-+}
-+
-+static bool clk_pllv4_is_valid_mult(unsigned int mult)
-+{
-+	int i;
-+
-+	/* check if mult is in valid MULT table */
-+	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-+		if (pllv4_mult_table[i] == mult)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-+	u32 val, mult;
-+
-+	mult = rate / parent_rate;
-+
-+	if (clk_pllv4_is_valid_mult(mult))
-+		return -EINVAL;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG_OFFSET);
-+	val &= ~BM_PLL_MULT;
-+	val |= mult << BP_PLL_MULT;
-+	writel_relaxed(val, pll->base + PLL_CFG_OFFSET);
-+
-+	return 0;
-+}
-+
-+static int clk_pllv4_enable(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-+
-+	val = readl_relaxed(pll->base);
-+	val |= PLL_EN;
-+	writel_relaxed(val, pll->base);
-+
-+	return clk_pllv4_wait_lock(pll);
-+}
-+
-+static void clk_pllv4_disable(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct clk_pllv4 *pll = to_clk_pllv4(hw);
-+
-+	val = readl_relaxed(pll->base);
-+	val &= ~PLL_EN;
-+	writel_relaxed(val, pll->base);
-+}
-+
-+static const struct clk_ops clk_pllv4_ops = {
-+	.recalc_rate	= clk_pllv4_recalc_rate,
-+	.round_rate	= clk_pllv4_round_rate,
-+	.set_rate	= clk_pllv4_set_rate,
-+	.enable		= clk_pllv4_enable,
-+	.disable	= clk_pllv4_disable,
-+	.is_enabled	= clk_pllv4_is_enabled,
-+};
-+
-+struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
-+			  void __iomem *base)
-+{
-+	struct clk_pllv4 *pll;
-+	struct clk_hw *hw;
-+	struct clk_init_data init;
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 248689d89632..7bdfd34e8280 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -507,6 +507,25 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
+ {
+ 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
++	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
++			VC5_OUT_DIV_CONTROL_SEL_EXT |
++			VC5_OUT_DIV_CONTROL_EN_FOD;
++	unsigned int src;
 +	int ret;
 +
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+
-+	init.name = name;
-+	init.ops = &clk_pllv4_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_GATE;
-+
-+	pll->hw.init = &init;
-+
-+	hw = &pll->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pll);
-+		hw = ERR_PTR(ret);
++	/*
++	 * If the input mux is disabled, enable it first and
++	 * select source from matching FOD.
++	 */
++	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
++	if ((src & mask) == 0) {
++		src = VC5_OUT_DIV_CONTROL_RESET | VC5_OUT_DIV_CONTROL_EN_FOD;
++		ret = regmap_update_bits(vc5->regmap,
++					 VC5_OUT_DIV_CONTROL(hwdata->num),
++					 mask | VC5_OUT_DIV_CONTROL_RESET, src);
++		if (ret)
++			return ret;
 +	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index d54f072..132c89f 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -41,6 +41,9 @@ enum imx_pllv3_type {
- struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 		const char *parent_name, void __iomem *base, u32 div_mask);
  
-+struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
-+			     void __iomem *base);
-+
- struct clk *clk_register_gate2(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 bit_idx, u8 cgr_val,
+ 	/* Enable the clock buffer */
+ 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
 -- 
-2.7.4
+2.11.0
