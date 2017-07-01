@@ -1,90 +1,164 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, Vladimir
- Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
-        <gabriel.fernandez.st@gmail.com>,
-        Arvind Yadav
-	<arvind.yadav.cs@gmail.com>
-Subject: [PATCH v7 0/3] clk: stm32h7: Add stm32h743 clock driver
-Date: Wed, 19 Jul 2017 16:25:41 +0200
-Message-ID: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 6/8] clk: vc5: Add support for the input frequency doubler
+Date: Sat,  1 Jul 2017 22:04:56 +0200
+Message-Id: <20170701200459.11505-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+The VersaClock 6 has an input frequency doubler between the input
+clock mux and the predivider. Add new capability flag and support
+for this frequency doubler block into the driver.
 
-v6:
-  - rename clk_gate_is_enabled() in nxp lpc32xx driver.
-  - add EXPORT_SYMBOL_GPL(clk_gate_is_enabled)
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+ drivers/clk/clk-versaclock5.c | 78 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 77 insertions(+), 1 deletion(-)
 
-v5:
-  - return bool instead int for enable_power_domain_write_protection()
-  - add comment to explain use of CLK_OF_DECLARE_DRIVER()
-  - add comment to explain why we can't use read_poll_timeout()
-  - expose clk_gate_ops::is_enabled
-  - use of __clk_mux_determine_rate & clk_gate_is_enabled to avoid wrapper
-	function.
-
-v4:
-  - rename lock into stm32rcc_lock
-  - don't use clk_readl() 
-  - remove useless parentheses with GENMASK
-  - fix parents of timer_x clocks
-  - suppress pll configuration from DT
-  - fix kbuild warning
-
-v3:
-  - fix compatible string "stm32h7-pll" into "st,stm32h7-pll"
-  - fix bad parent name for mco2 clock
-  - set CLK_SET_RATE_PARENT for ltdc clock
-  - set CLK_IGNORE_UNUSED for pll1
-  - disable power domain write protection on disable ops if needed
-
-
-v2:
-  - rename compatible string "stm32,pll" into "stm32h7-pll"
-  - suppress "st,pllrge" property
-  - suppress "st, frac-status" property
-  - change management of "st,frac"  property
-	0 : enable 0 pll integer mode 
-	other values : enable pll in fractional mode (value is
-	the fractional factor)
-
-Gabriel Fernandez (3):
-  clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
-  clk: gate: expose clk_gate_ops::is_enabled
-  clk: stm32h7: Add stm32h743 clock driver
-
- .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   82 ++
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-gate.c                             |    3 +-
- drivers/clk/clk-stm32h7.c                          | 1409 ++++++++++++++++++++
- drivers/clk/nxp/clk-lpc32xx.c                      |   12 +-
- include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
- include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
- include/linux/clk-provider.h                       |    1 +
- 8 files changed, 1802 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
- create mode 100644 drivers/clk/clk-stm32h7.c
- create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
- create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
-
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 453c9f721b78..d0406b62133a 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -57,6 +57,7 @@
+ #define VC5_PRIM_SRC_SHDN			0x10
+ #define VC5_PRIM_SRC_SHDN_EN_XTAL		BIT(7)
+ #define VC5_PRIM_SRC_SHDN_EN_CLKIN		BIT(6)
++#define VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ	BIT(3)
+ #define VC5_PRIM_SRC_SHDN_SP			BIT(1)
+ #define VC5_PRIM_SRC_SHDN_EN_GBL_SHDN		BIT(0)
+ 
+@@ -122,6 +123,8 @@
+ /* flags to describe chip features */
+ /* chip has built-in oscilator */
+ #define VC5_HAS_INTERNAL_XTAL	BIT(0)
++/* chip has PFD requency doubler */
++#define VC5_HAS_PFD_FREQ_DBL	BIT(1)
+ 
+ /* Supported IDT VC5 models. */
+ enum vc5_model {
+@@ -157,6 +160,7 @@ struct vc5_driver_data {
+ 	struct clk		*pin_clkin;
+ 	unsigned char		clk_mux_ins;
+ 	struct clk_hw		clk_mux;
++	struct clk_hw		clk_mul;
+ 	struct clk_hw		clk_pfd;
+ 	struct vc5_hw_data	clk_pll;
+ 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+@@ -167,6 +171,10 @@ static const char * const vc5_mux_names[] = {
+ 	"mux"
+ };
+ 
++static const char * const vc5_dbl_names[] = {
++	"dbl"
++};
++
+ static const char * const vc5_pfd_names[] = {
+ 	"pfd"
+ };
+@@ -264,6 +272,54 @@ static const struct clk_ops vc5_mux_ops = {
+ 	.get_parent	= vc5_mux_get_parent,
+ };
+ 
++static unsigned long vc5_dbl_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct vc5_driver_data *vc5 =
++		container_of(hw, struct vc5_driver_data, clk_mul);
++	unsigned int premul;
++
++	regmap_read(vc5->regmap, VC5_PRIM_SRC_SHDN, &premul);
++	if (premul & VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ)
++		parent_rate *= 2;
++
++	return parent_rate;
++}
++
++static long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *parent_rate)
++{
++	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
++		return rate;
++	else
++		return -EINVAL;
++}
++
++static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct vc5_driver_data *vc5 =
++		container_of(hw, struct vc5_driver_data, clk_mul);
++	u32 mask;
++
++	if ((parent_rate * 2) == rate)
++		mask = VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ;
++	else
++		mask = 0;
++
++	regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN,
++			   VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ,
++			   mask);
++
++	return 0;
++}
++
++static const struct clk_ops vc5_dbl_ops = {
++	.recalc_rate	= vc5_dbl_recalc_rate,
++	.round_rate	= vc5_dbl_round_rate,
++	.set_rate	= vc5_dbl_set_rate,
++};
++
+ static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
+ 					 unsigned long parent_rate)
+ {
+@@ -706,12 +762,32 @@ static int vc5_probe(struct i2c_client *client,
+ 		goto err_clk;
+ 	}
+ 
++	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
++		/* Register frequency doubler */
++		memset(&init, 0, sizeof(init));
++		init.name = vc5_dbl_names[0];
++		init.ops = &vc5_dbl_ops;
++		init.flags = CLK_SET_RATE_PARENT;
++		init.parent_names = vc5_mux_names;
++		init.num_parents = 1;
++		vc5->clk_mul.init = &init;
++		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
++		if (ret) {
++			dev_err(&client->dev, "unable to register %s\n",
++				init.name);
++			goto err_clk;
++		}
++	}
++
+ 	/* Register PFD */
+ 	memset(&init, 0, sizeof(init));
+ 	init.name = vc5_pfd_names[0];
+ 	init.ops = &vc5_pfd_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = vc5_mux_names;
++	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL)
++		init.parent_names = vc5_dbl_names;
++	else
++		init.parent_names = vc5_mux_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_pfd.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
 -- 
-1.9.1
+2.11.0
