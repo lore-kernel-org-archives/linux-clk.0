@@ -1,98 +1,110 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  devicetree@vger.kernel.org,  Nadav Haklai <nadavh@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Marcin Wojtas <mw@semihalf.com>,  Omri Itach <omrii@marvell.com>,  Shadi Ammouri <shadi@marvell.com>
-Subject: Re: [PATCH v2 00/11] Improve cp110 clk support on Marvell Armada 7K/8K
-References: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-Date: Thu, 01 Jun 2017 15:34:13 +0200
-In-Reply-To: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
-	(Gregory CLEMENT's message of "Wed, 31 May 2017 15:41:44 +0200")
-Message-ID: <87lgpbsuga.fsf@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 30 Jun 2017 17:55:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
+ support
+Message-ID: <20170701005542.GT22780@codeaurora.org>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
+ <20170620014512.GL4493@codeaurora.org>
+ <20170620090815.GA6805@b29396-OptiPlex-7040>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170620090815.GA6805@b29396-OptiPlex-7040>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi ,
+On 06/20, Dong Aisheng wrote:
+> Hi Stephen,
+> 
+> On Mon, Jun 19, 2017 at 06:45:12PM -0700, Stephen Boyd wrote:
+> > On 05/15, Dong Aisheng wrote:
+> > > ---
+> > >  drivers/clk/clk-divider.c    | 2 ++
+> > >  include/linux/clk-provider.h | 4 ++++
+> > >  2 files changed, 6 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > > index 96386ff..f78ba7a 100644
+> > > --- a/drivers/clk/clk-divider.c
+> > > +++ b/drivers/clk/clk-divider.c
+> > > @@ -125,6 +125,8 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+> > >  
+> > >  	div = _get_div(table, val, flags, divider->width);
+> > >  	if (!div) {
+> > > +		if (flags & CLK_DIVIDER_ZERO_GATE)
+> > > +			return 0;
+> > >  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+> > 
+> > Why not use the CLK_DIVIDER_ALLOW_ZERO flag? A clk being off
+> > doesn't mean the rate is 0. The divider is just disabled, so we
+> > would consider the rate as whatever the parent is, which is what
+> > this code does before this patch. Similarly, we don't do anything
+> > about gate clocks and return a rate of 0 when they're disabled.
+> > 
+> 
+> The semantic of CLK_DIVIDER_ALLOW_ZERO seems a bit different.
+> 
+> See below definition:
+> * CLK_DIVIDER_ALLOW_ZERO - Allow zero divisors.  For dividers which have
+> *      CLK_DIVIDER_ONE_BASED set, it is possible to end up with a zero divisor.
+> *      Some hardware implementations gracefully handle this case and allow a
+> *      zero divisor by not modifying their input clock
+> *      (divide by one / bypass).
+> 
+> zero divisor is simply as divide by one or bypass which is supported by
+> hardware.
+> 
+> But it's not true for this hardware.
+> 
+> If we consider the rate as whatever the parent is if divider is zero,
+> we may got an issue like below:
+> e.g.
+> Assuming spll_bus_clk divider is 0x0 and it may be enabled by users directly
+> without setting a rate first.
+> 
+> Then the clock tree looks like:
+> ...
+> spll_pfd0                    1            1   500210526          0 0  
+>   spll_pfd_sel              1            1   500210526          0 0   
+>     spll_sel               1            1   500210526          0 0    
+>       spll_bus_clk           1            1   500210526          0 0 
+> 
+> But the spll_bus_clk clock rate actually is wrong and it's even not enabled,
+> not like CLK_DIVIDER_ALLOW_ZERO which zero divider means simply bypass.
+> 
+> So for this case, we probably can't simply assume zero divider rate as its
+> parent, it is actually set to 0 in hw, although it's something like gate,
+> but a bit different from gate as the normal gate does not affect divider
+> where you can keep the rate.
+> 
+> How would you suggest for this? 
+> 
 
-Please do not apply this version. I was just pointed that I misread the
-documentation and that the GOP clock are really also used by the
-SD/eMMC.
+It seems that set_rate() and enable/disable are conflated here.
+>From what you describe, it sounds like the clk is considered off
+when the divider value is zero, and it's on when the divider
+value is non-zero.
 
-So I am about sending a new version of the series removing the 2 first
-patchs and fixing the patch 5.
+I'd suggest you make it so this clk supports enable/disable and
+set_rate with the same register. Something like, set rate when
+the clk is disabled will cache the rate request and only when the
+clk is enabled will the driver actually program the hardware to
+have the requested divider value. Similarly, when the clk is
+disabled we'll write a 0 there, but when the clk is enabled we'll
+restore whatever rate (divider) was chosen last.
 
-Gregory
-
- On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-
-> Hi,
->
-> We got more information about the clock controllers and the clock tree
-> of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
->
-> The main change in this second version is about the binding
-> documentation: all the documentation related changes are now move in
-> their own patches. It allows to provide a stable -dt branch for theses
-> changes. I also added the acked-by from Rob Herring.
->
-> However the last two patches modifying the device tree _must_ be
-> merged through the mvebu tree to avoid future conflict (especially
-> with the recent ICU series sent by Thomas Petazzoni).
->
-> For the record:
->
-> The clock tree needs to be fixed, indeed the GOP clock is only the
-> clock for the GOIP and not for the SDIO, it is fixed in the first
-> patch.
->
-> The third patch does a small improve of the code itself.
->
-> The purpose of the fifth patch is to have an easier way to add new
-> clocks without breaking the backward compatibility. Indeed, we expect
-> to continue to have new update on the datasheet and this patch will
-> allow integrating this change easier and faster.
->
-> The  patch 7 is needed to ease the integration of the pinctrl node
-> in the device tree.
->
-> The patch 9 adds a new clock for the SDIO, it also fixes the clock
-> tree.
->
-> In this series, even if there is some change in the device tree
-> binding, we paid attention to the backward compatibility, and the
-> driver can still work with the old device tree.
->
-> Thanks,
->
-> Gregory
->
-> Gregory CLEMENT (10):
->   dt-bindings: cp110: fix name of the GOP gate clock
->   clk: mvebu: cp110 fix name of the GOP gate clock
->   clk: mvebu: cp110: make failure labels more meaningful
->   dt-bindings: cp110: do not depend anymore of the *-clock-output-names
->   clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
->   dt-bindings: cp110: introduce a new binding
->   clk: mvebu: cp110: introduce a new binding
->   dt-bindings: cp110: add sdio clock to cp-110 system controller
->   arm64: dts: marvell: remove *-clock-output-names on cp110
->   arm64: dts: marvell: use new binding for the system controller on cp110
->
-> Konstantin Porotchkin (1):
->   clk: mvebu: cp110: add sdio clock to cp-110 system controller
->
->  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  35 +++++-------
->  arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
->  arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
->  drivers/clk/mvebu/cp110-system-controller.c                                | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
->  4 files changed, 196 insertions(+), 143 deletions(-)
->
-> base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
-> -- 
-> git-series 0.9.1
+It does mean that recalc rate will be sort of odd, because when
+the clk is off it will return 0, and when the clk is on it will
+return the right rate. So to make things work, we'll need to
+return the cached rate in recalc rate when the clk is off and
+read the hardware when the clk is on. Probably an if register ==
+0 then lookup in cache, otherwise do normal division.
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
