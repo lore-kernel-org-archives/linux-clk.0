@@ -1,71 +1,78 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 11/11] ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
-Date: Fri, 14 Jul 2017 14:43:02 +0800
-Message-Id: <20170714064302.20383-12-wens@csie.org>
-In-Reply-To: <20170714064302.20383-1-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org>
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 08/18] serial: 8250_ingenic: Add support for the JZ4770 SoC
+Date: Sun,  2 Jul 2017 18:30:06 +0200
+Message-Id: <20170702163016.6714-9-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-The H8 homlet has a micro-SD card slot connected to mmc0,
-and onboard eMMC from FORESEE, connected to mmc2.
+The JZ4770 SoC's UART is no different from the other JZ SoCs, so this
+commit simply adds the ingenic,jz4770-uart compatible string.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts   | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ Documentation/devicetree/bindings/serial/ingenic,uart.txt | 8 ++++++--
+ drivers/tty/serial/8250/8250_ingenic.c                    | 5 +++++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-index aecdeeb368ed..7afbaa4eea8d 100644
---- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-@@ -43,6 +43,7 @@
+ v2: List one compatible entry per line
+ v3: No change
+
+diff --git a/Documentation/devicetree/bindings/serial/ingenic,uart.txt b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+index 02cb7fe59cb7..c3c6406d5cfe 100644
+--- a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
++++ b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
+@@ -1,8 +1,12 @@
+ * Ingenic SoC UART
  
- /dts-v1/;
- #include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
+ Required properties:
+-- compatible : "ingenic,jz4740-uart", "ingenic,jz4760-uart",
+-	"ingenic,jz4775-uart" or "ingenic,jz4780-uart"
++- compatible : One of:
++  - "ingenic,jz4740-uart",
++  - "ingenic,jz4760-uart",
++  - "ingenic,jz4770-uart",
++  - "ingenic,jz4775-uart",
++  - "ingenic,jz4780-uart".
+ - reg : offset and length of the register set for the device.
+ - interrupts : should contain uart interrupt.
+ - clocks : phandles to the module & baud clocks.
+diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
+index 4d9dc10e265c..b31b2ca552d1 100644
+--- a/drivers/tty/serial/8250/8250_ingenic.c
++++ b/drivers/tty/serial/8250/8250_ingenic.c
+@@ -133,6 +133,10 @@ EARLYCON_DECLARE(jz4740_uart, ingenic_early_console_setup);
+ OF_EARLYCON_DECLARE(jz4740_uart, "ingenic,jz4740-uart",
+ 		    ingenic_early_console_setup);
  
- / {
- 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
-@@ -57,6 +58,26 @@
- 	};
- };
- 
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
++EARLYCON_DECLARE(jz4770_uart, ingenic_early_console_setup);
++OF_EARLYCON_DECLARE(jz4770_uart, "ingenic,jz4770-uart",
++		    ingenic_early_console_setup);
 +
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
+ EARLYCON_DECLARE(jz4775_uart, ingenic_early_console_setup);
+ OF_EARLYCON_DECLARE(jz4775_uart, "ingenic,jz4775-uart",
+ 		    ingenic_early_console_setup);
+@@ -327,6 +331,7 @@ static const struct ingenic_uart_config jz4780_uart_config = {
+ static const struct of_device_id of_match[] = {
+ 	{ .compatible = "ingenic,jz4740-uart", .data = &jz4740_uart_config },
+ 	{ .compatible = "ingenic,jz4760-uart", .data = &jz4760_uart_config },
++	{ .compatible = "ingenic,jz4770-uart", .data = &jz4760_uart_config },
+ 	{ .compatible = "ingenic,jz4775-uart", .data = &jz4760_uart_config },
+ 	{ .compatible = "ingenic,jz4780-uart", .data = &jz4780_uart_config },
+ 	{ /* sentinel */ }
 -- 
-2.13.2
+2.11.0
