@@ -1,79 +1,78 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 4/8] clk: vc5: Configure the output buffer input mux on prepare
-Date: Sun,  9 Jul 2017 15:28:10 +0200
-Message-Id: <20170709132814.2339-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 11/18] MIPS: ingenic: Use common cmdline handling code
+Date: Sun,  2 Jul 2017 18:30:09 +0200
+Message-Id: <20170702163016.6714-12-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-Once the .prepare() callback of the output buffer is called, the
-output buffer input mux must be set to either input from FOD or
-input from previous output, it cannot be set to Disabled anymore
-or the output won't work.
+From: Paul Burton <paul.burton@imgtec.com>
 
-Default to the input from FOD if the output buffer input mux was
-Disabled and the .prepare() was called on it.
+jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
+arcs_cmdline, up to argc (in fw_arg0). The common code in
+fw_init_cmdline will do the exact same thing when run on a system where
+fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
+use it). Remove the custom implementation & use the generic code.
 
-Note that we do not set the output buffer input mux back to Disabled
-in the .unprepare() callback as there is no obvious benefit of doing
-so. We disable the entire output buffer in the .unprepare() callback
-already.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
 ---
-V2: None
-V3: None
----
- drivers/clk/clk-versaclock5.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/mips/jz4740/prom.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 248689d89632..7bdfd34e8280 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -507,6 +507,25 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- {
- 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
- 	struct vc5_driver_data *vc5 = hwdata->vc5;
-+	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
-+			VC5_OUT_DIV_CONTROL_SEL_EXT |
-+			VC5_OUT_DIV_CONTROL_EN_FOD;
-+	unsigned int src;
-+	int ret;
-+
-+	/*
-+	 * If the input mux is disabled, enable it first and
-+	 * select source from matching FOD.
-+	 */
-+	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
-+	if ((src & mask) == 0) {
-+		src = VC5_OUT_DIV_CONTROL_RESET | VC5_OUT_DIV_CONTROL_EN_FOD;
-+		ret = regmap_update_bits(vc5->regmap,
-+					 VC5_OUT_DIV_CONTROL(hwdata->num),
-+					 mask | VC5_OUT_DIV_CONTROL_RESET, src);
-+		if (ret)
-+			return ret;
-+	}
+ v2: No change
+ v3: No change
+
+diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
+index 47e857194ce6..a62dd8e6ecf9 100644
+--- a/arch/mips/jz4740/prom.c
++++ b/arch/mips/jz4740/prom.c
+@@ -20,33 +20,13 @@
+ #include <linux/serial_reg.h>
  
- 	/* Enable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+ #include <asm/bootinfo.h>
++#include <asm/fw/fw.h>
+ #include <asm/mach-jz4740/base.h>
+ 
+-static __init void jz4740_init_cmdline(int argc, char *argv[])
+-{
+-	unsigned int count = COMMAND_LINE_SIZE - 1;
+-	int i;
+-	char *dst = &(arcs_cmdline[0]);
+-	char *src;
+-
+-	for (i = 1; i < argc && count; ++i) {
+-		src = argv[i];
+-		while (*src && count) {
+-			*dst++ = *src++;
+-			--count;
+-		}
+-		*dst++ = ' ';
+-	}
+-	if (i > 1)
+-		--dst;
+-
+-	*dst = 0;
+-}
+-
+ void __init prom_init(void)
+ {
+-	jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
+ 	mips_machtype = MACH_INGENIC_JZ4740;
++	fw_init_cmdline();
+ }
+ 
+ void __init prom_free_prom_memory(void)
 -- 
 2.11.0
