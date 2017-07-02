@@ -1,76 +1,97 @@
-Return-Path: <adriana.reus@nxp.com>
-From: Adriana Reus <adriana.reus@nxp.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	l.stach@pengutronix.de
-Cc: aisheng.dong@nxp.com,
-	fabio.estevam@nxp.com,
-	shawnguo@kernel.org,
-	fugang.duan@nxp.com,
-	anson.huang@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
 	linux-clk@vger.kernel.org,
-	Adriana Reus <adriana.reus@nxp.com>
-Subject: [RFC 2/2] clk: imx: Remove enabling uart clocks from ccm driver.
-Date: Mon,  3 Jul 2017 17:28:03 +0300
-Message-Id: <1499092083-2852-3-git-send-email-adriana.reus@nxp.com>
-In-Reply-To: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
-References: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: adriana.reus@nxp.com
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 05/18] dt-bindings: clock: Add jz4770-cgu.h header
+Date: Sun,  2 Jul 2017 18:30:03 +0200
+Message-Id: <20170702163016.6714-6-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove uart clock enable functionality from ccm driver and
-leave uart clocks enabling and setup to the serial driver.
+This will be used from the devicetree bindings to specify the clocks
+that should be obtained from the jz4770-cgu driver.
 
-This functionality was introduced by patch
-"b9af68f clk: imx7d: retain early UART clocks during kernel init"
-to ensure that for earlycon and earlyprink we have the uart port enabled
-even if the bootloader does not enable it.
-
-However, on imx7d uart root clocks are recommended to be gated when
-changing frequency and if the CLK_SET_RATE_GATE is set for these clocks
-this means that the serial driver will fail to re-parent or set_frequency
-via device tree attributes on them because the ccm driver has them all in use.
-
-Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/imx/clk-imx7d.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+ include/dt-bindings/clock/jz4770-cgu.h | 57 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 include/dt-bindings/clock/jz4770-cgu.h
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index e1c31f5..374ec0f 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -392,17 +392,6 @@ static int const clks_init_on[] __initconst = {
- 
- static struct clk_onecell_data clk_data;
- 
--static struct clk ** const uart_clks[] __initconst = {
--	&clks[IMX7D_UART1_ROOT_CLK],
--	&clks[IMX7D_UART2_ROOT_CLK],
--	&clks[IMX7D_UART3_ROOT_CLK],
--	&clks[IMX7D_UART4_ROOT_CLK],
--	&clks[IMX7D_UART5_ROOT_CLK],
--	&clks[IMX7D_UART6_ROOT_CLK],
--	&clks[IMX7D_UART7_ROOT_CLK],
--	NULL
--};
--
- static void __init imx7d_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -897,10 +886,5 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
--	/* set uart module clock's parent clock source that must be great then 80MHz */
--	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
--
--	imx_register_uart_clocks(uart_clks);
--
- }
- CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
+ v3: New patch in this series
+
+diff --git a/include/dt-bindings/clock/jz4770-cgu.h b/include/dt-bindings/clock/jz4770-cgu.h
+new file mode 100644
+index 000000000000..54b8b2ae4a73
+--- /dev/null
++++ b/include/dt-bindings/clock/jz4770-cgu.h
+@@ -0,0 +1,57 @@
++/*
++ * This header provides clock numbers for the ingenic,jz4770-cgu DT binding.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_JZ4770_CGU_H__
++#define __DT_BINDINGS_CLOCK_JZ4770_CGU_H__
++
++#define JZ4770_CLK_EXT		0
++#define JZ4770_CLK_OSC32K	1
++#define JZ4770_CLK_PLL0		2
++#define JZ4770_CLK_PLL1		3
++#define JZ4770_CLK_CCLK		4
++#define JZ4770_CLK_H0CLK	5
++#define JZ4770_CLK_H1CLK	6
++#define JZ4770_CLK_H2CLK	7
++#define JZ4770_CLK_C1CLK	8
++#define JZ4770_CLK_PCLK		9
++#define JZ4770_CLK_MMC0_MUX	10
++#define JZ4770_CLK_MMC0		11
++#define JZ4770_CLK_MMC1_MUX	12
++#define JZ4770_CLK_MMC1		13
++#define JZ4770_CLK_MMC2_MUX	14
++#define JZ4770_CLK_MMC2		15
++#define JZ4770_CLK_CIM		16
++#define JZ4770_CLK_UHC		17
++#define JZ4770_CLK_GPU		18
++#define JZ4770_CLK_BCH		19
++#define JZ4770_CLK_LPCLK_MUX	20
++#define JZ4770_CLK_GPS		21
++#define JZ4770_CLK_SSI_MUX	22
++#define JZ4770_CLK_PCM_MUX	23
++#define JZ4770_CLK_I2S		24
++#define JZ4770_CLK_OTG		25
++#define JZ4770_CLK_SSI0		26
++#define JZ4770_CLK_SSI1		27
++#define JZ4770_CLK_SSI2		28
++#define JZ4770_CLK_PCM0		29
++#define JZ4770_CLK_PCM1		30
++#define JZ4770_CLK_DMA		31
++#define JZ4770_CLK_I2C0		32
++#define JZ4770_CLK_I2C1		33
++#define JZ4770_CLK_I2C2		34
++#define JZ4770_CLK_UART0	35
++#define JZ4770_CLK_UART1	36
++#define JZ4770_CLK_UART2	37
++#define JZ4770_CLK_UART3	38
++#define JZ4770_CLK_IPU		39
++#define JZ4770_CLK_ADC		40
++#define JZ4770_CLK_AIC		41
++#define JZ4770_CLK_AUX		42
++#define JZ4770_CLK_VPU		43
++#define JZ4770_CLK_UHC_PHY	44
++#define JZ4770_CLK_OTG_PHY	45
++#define JZ4770_CLK_EXT512	46
++#define JZ4770_CLK_RTC		47
++
++#endif /* __DT_BINDINGS_CLOCK_JZ4770_CGU_H__ */
 -- 
-2.7.4
+2.11.0
