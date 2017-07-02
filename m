@@ -1,47 +1,61 @@
-Return-Path: <oliver@schinagl.nl>
-Subject: Re: [linux-sunxi] [PATCH v5 6/6] ARM: sun4i: Convert to CCU
-To: plaes@plaes.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
- <796d0ecb0fe0204891387910b8222bfa43a93326.1499197129.git-series.plaes@plaes.org>
-Cc: linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>
-From: Olliver Schinagl <oliver@schinagl.nl>
-Message-ID: <c52b7297-76c6-1f87-e87d-149a3f469bef@schinagl.nl>
-Date: Mon, 10 Jul 2017 13:44:18 +0200
-MIME-Version: 1.0
-In-Reply-To: <796d0ecb0fe0204891387910b8222bfa43a93326.1499197129.git-series.plaes@plaes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 01/18] clk: ingenic: Use const pointer to clk_ops in struct
+Date: Sun,  2 Jul 2017 18:29:59 +0200
+Message-Id: <20170702163016.6714-2-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Pritt,
+The CGU common code does not modify the pointed clk_ops structure, so it
+should be marked as const.
 
-On 04-07-17 22:05, Priit Laes wrote:
-> Convert sun4i-a10.dtsi to new CCU driver.
->
-> Tested on Gemei G9 tablet.
->
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  arch/arm/boot/dts/sun4i-a10.dtsi | 646 +++-----------------------------
->  1 file changed, 73 insertions(+), 573 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-> index 41c2579..fc23c41 100644
-> --- a/arch/arm/boot/dts/sun4i-a10.dtsi
-> +++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-> @@ -45,7 +45,6 @@
->
->  #include <dt-bindings/thermal/thermal.h>
->
-> -#include <dt-bindings/clock/sun4i-a10-pll2.h>
->  #include <dt-bindings/dma/sun4i-a10.h>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/cgu.h        | 2 +-
+ drivers/clk/ingenic/jz4780-cgu.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I think the same includes are missing here as well?
+ v2: New patch in this series
+ v3: No change
 
-Olliver
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index 09700b2c555d..da448b0cac18 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -120,7 +120,7 @@ struct ingenic_cgu_gate_info {
+  * @clk_ops: custom clock operation callbacks
+  */
+ struct ingenic_cgu_custom_info {
+-	struct clk_ops *clk_ops;
++	const struct clk_ops *clk_ops;
+ };
+ 
+ /**
+diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
+index b35d6d9dd5aa..a21698fb202c 100644
+--- a/drivers/clk/ingenic/jz4780-cgu.c
++++ b/drivers/clk/ingenic/jz4780-cgu.c
+@@ -203,7 +203,7 @@ static int jz4780_otg_phy_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	return 0;
+ }
+ 
+-static struct clk_ops jz4780_otg_phy_ops = {
++static const struct clk_ops jz4780_otg_phy_ops = {
+ 	.get_parent = jz4780_otg_phy_get_parent,
+ 	.set_parent = jz4780_otg_phy_set_parent,
+ 
+-- 
+2.11.0
