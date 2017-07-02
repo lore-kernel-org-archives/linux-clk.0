@@ -1,80 +1,51 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
-        <gabriel.fernandez.st@gmail.com>
-Subject: [PATCH v5 0/2] clk: stm32h7: Add stm32h743 clock driver
-Date: Thu, 13 Jul 2017 16:02:30 +0200
-Message-ID: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 02/18] clk: ingenic: Fix recalc_rate for clocks with fixed divider
+Date: Sun,  2 Jul 2017 18:30:00 +0200
+Message-Id: <20170702163016.6714-3-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Previously, the clocks with a fixed divider would report their rate
+as being the same as the one of their parent, independently of the
+divider in use. This commit fixes this behaviour.
 
-v5:
-  - return bool instead int for enable_power_domain_write_protection()
-  - add comment to explain use of CLK_OF_DECLARE_DRIVER()
-  - add comment to explain why we can't use read_poll_timeout()
-  - expose clk_gate_ops::is_enabled
-  - use of __clk_mux_determine_rate & clk_gate_is_enabled to avoid wrapper
-	function.
+This went unnoticed as neither the jz4740 nor the jz4780 CGU code
+have clocks with fixed dividers yet.
 
-v4:
-  - rename lock into stm32rcc_lock
-  - don't use clk_readl() 
-  - remove useless parentheses with GENMASK
-  - fix parents of timer_x clocks
-  - suppress pll configuration from DT
-  - fix kbuild warning
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/cgu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v3:
-  - fix compatible string "stm32h7-pll" into "st,stm32h7-pll"
-  - fix bad parent name for mco2 clock
-  - set CLK_SET_RATE_PARENT for ltdc clock
-  - set CLK_IGNORE_UNUSED for pll1
-  - disable power domain write protection on disable ops if needed
+ v2: No changes
+ v3: No changes
 
-
-v2:
-  - rename compatible string "stm32,pll" into "stm32h7-pll"
-  - suppress "st,pllrge" property
-  - suppress "st, frac-status" property
-  - change management of "st,frac"  property
-	0 : enable 0 pll integer mode 
-	other values : enable pll in fractional mode (value is
-	the fractional factor)
-
-Gabriel Fernandez (2):
-  clk: gate: expose clk_gate_ops::is_enabled
-  clk: stm32h7: Add stm32h743 clock driver
-
- .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   81 ++
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-gate.c                             |    2 +-
- drivers/clk/clk-stm32h7.c                          | 1522 ++++++++++++++++++++
- include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
- include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
- include/linux/clk-provider.h                       |    1 +
- 7 files changed, 1907 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
- create mode 100644 drivers/clk/clk-stm32h7.c
- create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
- create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
-
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index e8248f9185f7..eb9002ccf3fc 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -328,6 +328,8 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 		div *= clk_info->div.div;
+ 
+ 		rate /= div;
++	} else if (clk_info->type & CGU_CLK_FIXDIV) {
++		rate /= clk_info->fixdiv.div;
+ 	}
+ 
+ 	return rate;
 -- 
-1.9.1
+2.11.0
