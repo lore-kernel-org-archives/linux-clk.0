@@ -1,82 +1,158 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 11 Jul 2017 22:25:35 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, Jose.Abreu@synopsys.com,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v4] clk: axs10x: introduce AXS10X pll driver
-Message-ID: <20170712052535.GY22780@codeaurora.org>
-References: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
+Return-Path: <dirk.behme@gmail.com>
+Return-Path: <dirk.behme@gmail.com>
+Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
+ cpg-mssr: Add interface for critical core clocks)
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Dirk Behme <dirk.behme@de.bosch.com>,
+ Linux PM list <linux-pm@vger.kernel.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Kevin Hilman <khilman@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
+ <20170630202453.eh6vaehkap3as4np@pengutronix.de>
+ <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
+ <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <6098d579-f206-5a23-bbfc-ac13e0448479@gmail.com>
+Date: Sun, 2 Jul 2017 07:48:41 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/21, Eugeniy Paltsev wrote:
-> AXS10X boards manages it's clocks using various PLLs. These PLL has same
-> dividers and corresponding control registers mapped to different addresses.
-> So we add one common driver for such PLLs.
+On 01.07.2017 20:14, Uwe Kleine-König wrote:
+> Hello,
 > 
-> Each PLL on AXS10X board consist of three dividers: IDIV, FBDIV and
-> ODIV. Output clock value is managed using these dividers.
+> On Sat, Jul 01, 2017 at 07:02:48AM +0200, Dirk Behme wrote:
+>> On 30.06.2017 22:24, Uwe Kleine-König wrote:
+>>> Hello,
+>>>
+>>> On Fri, Jun 30, 2017 at 10:58:26AM -0500, Rob Herring wrote:
+>>>>> TL;DR: Clocks may be in use by another CPU not running Linux, while Linux
+>>>>> disables them as being unused.
+>>>
+>>> not long ago I thought with a few colleagues about this. The scenario is
+>>> to start a Linux kernel on a Cortex-M companion to a Cortex-A.
+>>>
+>>>>> On Mon, Jun 26, 2017 at 1:30 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>>>>> With commit 72f5df2c2bbb6 ("clk: renesas: cpg-mssr: Migrate to
+>>>>>> CLK_IS_CRITICAL") we are able to handle critical module clocks.
+>>>>>> Introduce the same logic for critical core clocks.
+>>>>>>
+>>>>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>>>>>> ---
+>>>>>> Commit
+>>>>>>
+>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/clk/renesas?id=72f5df2c2bbb66d4a555cb51eb9f412abf1af77f
+>>>>>>
+>>>>>> is quite nice to avoid *module* clocks being disabled. Unfortunately,
+>>>>>> there are *core* clocks, too. E.g. using an other OS on the Cortex R7
+>>>>>> core of the r8a7795, the 'canfd' is a quite popular core clock which
+>>>>>> shouldn't be disabled by Linux.
+>>>>>>
+>>>>>> Therefore, this patch is a proposal to use the same 'mark clocks as
+>>>>>> critical' logic implemented for the module clocks for the core
+>>>>>> clocks, too.
+>>>>>>
+>>>>>> Opinions?
+>>>>>
+>>>>> On r8a7795, there are several Cortex A cores running Linux, and a Cortex R7
+>>>>> core which may run another OS.
+>>>>> This is an interesting issue, and relevant to other SoCs, too.
+>>>>>
+>>>>> In this particular case, the "canfd" clock is a core clock used as an
+>>>>> auxiliary clock for the CAN0, CAN1, and CANFD interfaces.  This can lead
+>>>>> to three scenarios:
+>>>>>     1. Linux controls all CAN interfaces
+>>>>>        => no issue,
+>>>>>     2. The OS on the RT CPU controls all CAN interfaces
+>>>>>        => issue, Linux disables the clock
+>>>>>     3. Mix of 1 and 2
+>>>>>        => More issues.
+>>>>> Of course this is not limited to clocks, but also to e.g. PM domains.
+>>>>>
+>>>>> How can this be handled?
+>>>>> I believe just marking the "canfd" clock critical is not the right solution,
+>>>>> as about any clock could be used by the RT CPU.
+>>>>>
+>>>>> Still, Linux needs to be made aware that devices (clocks and PM domains) are
+>>>>> controlled by another CPU/OS.
+>>>>>
+>>>>> Should this be described in DT? It feels like software policy to me.
+>>>>
+>>>> No, it shouldn't. It is Linux policy to disable all unused clocks, so
+>>>> Linux gets to deal with the consequences.
+>>>
+>>> The ideal solution I imagine is to make the other CPU's OS a consumer of
+>>> the Linux clock driver. This would require a generic device driver on the
+>>> companion CPU that forwards clk requests via inter-cpu communication to
+>>> the Linux clk driver. It could be feed with the necessary information by
+>>> the rproc glue. So when the companion cpu is supposed to care for the
+>>> can0 device, the steps that should happen are:
+>>>
+>>>    - make sure can0 isn't occupied by the Linux Host
+>>>    - reroute the can irq to the companion cpu (if necessary)
+>>>    - create a dtb containing something like this for the companion CPU:
+>>>
+>>>    	clks: virtclk {
+>>> 		compatible = ???
+>>> 		#clock-cells = <1>;
+>>> 		...
+>>> 	};
+>>>
+>>> 	can@$address {
+>>> 		compatible = ...
+>>> 		regs = ...
+>>> 		clocks = <&clks 3>;
+>>> 		clock-names = ...
+>>> 		...
+>>> 	};
+>>>
+>>>      where the driver binding to the virtclk device just forwards clk
+>>>      requests to the Linux host side which then knows that clk 3 is the
+>>>      can clock and does the necessary stuff.
+>>>
+>>> This way the can clock doesn't need special handling in the host's dtb
+>>> and no clock necessary for the companion is disabled as unused because
+>>> it is requested and enabled.
+>>>
+>>> The only problem I see is that implementing such a driver/protocol
+>>> probably is time consuming.
+>>
+>>
+>> The other problem is security related. If, at all, you have to do it the
+>> other way around, then:
+>>
+>> Make Linux a consumer of the other CPU's (trusted/trustzone/whatever
+>> secured) OS clock driver.
 > 
-> We add pre-defined tables with supported rate values and appropriate
-> configurations of IDIV, FBDIV and ODIV for each value.
+> That doesn't matter much. Either way the first CPU has to provide the
+> master side of this device (as it needs clks for booting up) and the 2nd
+> gets this virtual clk device that forwards clk requests to the first
+> CPU.
 > 
-> As of today we add support for PLLs that generate clock for the
-> following devices:
->  * ARC core on AXC CPU tiles.
->  * ARC PGU on ARC SDP Mainboard.
-> and more to come later.
-> 
-> By this patch we add support for two plls (arc core pll and pgu pll),
-> so we had to use two different init types: CLK_OF_DECLARE for arc core pll and
-> regular probing for pgu pll.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Jose Abreu <joabreu@synopsys.com>
-> 
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> Signed-off-by: Vlad Zakharov <vzakhar@synopsys.com>
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+> On my machine (Udoo Neo, A9 + M4) the A9 is the primary CPU that is
+> started by the bootrom. If I want the M4 being the primary device I'd
+> need support in the bootloader to wait long enough (i.e. until the M4 is
+> up) before letting the A9 jump into Linux. Managable I'd say. This way
+> would even make sense if the M4 runs a rt critical OS that shouldn't be
+> forced to wait on the non-rt A9 to enable a clk.
 
-Sorry this missed the cutoff for new code for v4.13. Should be in
-clk-next next week though.
 
-> +}
-> +
-> +static inline struct axs10x_pll_clk *to_axs10x_pll_clk(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct axs10x_pll_clk, hw);
-> +}
-> +
-> +static inline u32 axs10x_div_get_value(u32 reg)
-> +{
-> +	if (PLL_REG_GET_BYPASS(reg))
-> +		return 1;
-> +
-> +	return PLL_REG_GET_HIGH(reg) + PLL_REG_GET_LOW(reg);
-> +}
-> +
-> +static inline u32 axs10x_encode_div(unsigned int id, int upd)
-> +{
-> +	u32 div = 0;
-> +
-> +	PLL_REG_SET_LOW(div, (id % 2 == 0) ? id >> 1 : (id >> 1) + 1);
-> +	PLL_REG_SET_HIGH(div, id >> 1);
-> +	PLL_REG_SET_EDGE(div, id % 2);
-> +	PLL_REG_SET_BYPASS(div, id == 1 ? 1 : 0);
-> +	PLL_REG_SET_NOUPD(div, !upd);
+Overall, assuming that the issue we are discussing here can be solved 
+quite easily in hardware (a set of clock registers for each CPU/OS 
+domain, connected cleverly to effectively control each clock, with 
+access protection for each set of registers) I tend to think that for 
+a SoC supposed to run different OS on different cores this is a 
+missing hardware feature (bug?).
 
-So sparse complains here about a "dubious !x & y". Perhaps this
-can be changed to
+Best regards
 
-	PLL_REG_SET_NOUPD(div, upd == 0 ? 1 : 0);
-
-That way sparse doesn't complain. I can make the change when
-applying if you agree.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Dirk
