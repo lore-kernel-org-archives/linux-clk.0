@@ -1,69 +1,65 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Dong Aisheng <dongas86@gmail.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"Anson Huang" <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: RE: [PATCH 4/9] clk: imx: add pllv4 support
-Date: Mon, 3 Jul 2017 03:21:16 +0000
-Message-ID: <AM3PR04MB306EEF6F5F442465B258E3C80D60@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
- <20170620015917.GO4493@codeaurora.org>
- <20170620093143.GD6805@b29396-OptiPlex-7040>
- <20170701003642.GS22780@codeaurora.org>
-In-Reply-To: <20170701003642.GS22780@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 07/18] serial: core: Make uart_parse_options take const char* argument
+Date: Sun,  2 Jul 2017 18:30:05 +0200
+Message-Id: <20170702163016.6714-8-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
-> Sent: Saturday, July 01, 2017 8:37 AM
-> To: Dong Aisheng
-> Cc: A.s. Dong; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
-> shawnguo@kernel.org; Anson Huang; Jacky Bai
-> Subject: Re: [PATCH 4/9] clk: imx: add pllv4 support
->=20
-> On 06/20, Dong Aisheng wrote:
-> > On Mon, Jun 19, 2017 at 06:59:17PM -0700, Stephen Boyd wrote:
-> > > On 05/15, Dong Aisheng wrote:
-> > > > +
-> > > > +	if (clk_pllv4_is_enabled(hw)) {
-> > > > +		WARN(1, "clk_pllv4: can't change rate when pll is
-> enabled");
-> > > > +		return -EINVAL;
-> > >
-> > > Sad, CLK_SET_RATE_GATE isn't working for you I suppose?
-> > >
-> >
-> > CLK_SET_RATE_GATE can't work in early stage before running
-> clk_disable_unused.
-> > At that point, the clock tree state is still not consistent with HW.
-> > e.g. prepare/enable count is still zero but it's actually enabled due
-> > to reset state or bootloader.
-> >
-> > The code here is adding a double check in case user sets rate in early
-> stage.
-> >
-> > However, probably it could also be moved into clock core as it's not
-> > platform dependant behavior?
-> >
->=20
-> Ok. It would be good to fix the core framework to synchronize the
-> prepared/enabled state at registration time so we don't need this check
-> in the driver.
->=20
+The pointed string is never modified from within uart_parse_options, so
+it should be marked as const in the function prototype.
 
-I will prepare a core fix later and remove these checks first.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/tty/serial/serial_core.c | 5 +++--
+ include/linux/serial_core.h      | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-Regards
-Dong Aisheng
+ v2: New patch in this series
+ v3: No change
 
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
-> Linux Foundation Collaborative Project
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 13bfd5dcffce..95d3770bdb37 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -1954,9 +1954,10 @@ EXPORT_SYMBOL_GPL(uart_parse_earlycon);
+  *	eg: 115200n8r
+  */
+ void
+-uart_parse_options(char *options, int *baud, int *parity, int *bits, int *flow)
++uart_parse_options(const char *options, int *baud, int *parity,
++		   int *bits, int *flow)
+ {
+-	char *s = options;
++	const char *s = options;
+ 
+ 	*baud = simple_strtoul(s, NULL, 10);
+ 	while (*s >= '0' && *s <= '9')
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index 64d892f1e5cd..67f88fb53195 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -386,7 +386,7 @@ struct uart_port *uart_get_console(struct uart_port *ports, int nr,
+ 				   struct console *c);
+ int uart_parse_earlycon(char *p, unsigned char *iotype, resource_size_t *addr,
+ 			char **options);
+-void uart_parse_options(char *options, int *baud, int *parity, int *bits,
++void uart_parse_options(const char *options, int *baud, int *parity, int *bits,
+ 			int *flow);
+ int uart_set_options(struct uart_port *port, struct console *co, int baud,
+ 		     int parity, int bits, int flow);
+-- 
+2.11.0
