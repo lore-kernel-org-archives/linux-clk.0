@@ -1,55 +1,80 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [GIT PULL] Meson clock fixes for 4.13-rc4
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: jbrunet@baylibre.com, linux-clk@vger.kernel.org,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Message-ID: <ce41382f-fd93-1dc9-0dba-1484ac555945@baylibre.com>
-Date: Mon, 31 Jul 2017 11:25:46 +0200
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH 1/8] clk: vc5: Prevent division by zero on unconfigured
+ outputs
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+ <2363282.tNHzvZyBNU@avalon>
+Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Alexey Firago
+ <alexey_firago@mentor.com>, Michael Turquette <mturquette@baylibre.com>,
+ linux-renesas-soc@vger.kernel.org
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <c78502c8-ac7d-b850-ca0f-d3af61eb8390@gmail.com>
+Date: Sun, 2 Jul 2017 10:28:39 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <2363282.tNHzvZyBNU@avalon>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+On 07/02/2017 10:19 AM, Laurent Pinchart wrote:
+> Hi Marek,
+> 
+> Thank you for the patch.
+> 
+> On Saturday 01 Jul 2017 22:04:51 Marek Vasut wrote:
+>> In case the initial values of the FOD registers are not configured in
+>> the OTP or by the bootloader, it is possible that the FOD registers
+>> will contain zeroes. The code in vc5_fod_recalc_rate() immediately
+>> feeds the FOD divider value obtained from the FOD registers into the
+>> div64_u64() and if the FOD divider value is zero, triggers division
+>> by zero exception.
+>>
+>> Check if the FOD divider value is zero and return the frequency of
+>> the FOD output as 0 Hz if it is so. This prevents the division by
+>> zero exception.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: Alexey Firago <alexey_firago@mentor.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> on Salvator-XS with the display LVDS output.
+>> ---
+>>  drivers/clk/clk-versaclock5.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+>> index ea7d552a2f2b..60bf4afb51bd 100644
+>> --- a/drivers/clk/clk-versaclock5.c
+>> +++ b/drivers/clk/clk-versaclock5.c
+>> @@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw
+>> *hw, div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
+>>  		  (od_frc[2] << 6) | (od_frc[3] >> 2);
+>>
+>> +	/* Avoid division by zero if the output is not configured. */
+>> +	if ((div_int == 0) && (div_frc == 0))
+> 
+> Inner parentheses are not needed.
 
-Here is some fixes for Meson GXBB and Meson8 drivers, that could go for 4.13-rc4.
+While I know they're not needed, I prefer to add those (and keep them)
+as it makes the expression easier to parse at a first glance IMO.
 
-Thanks,
-Neil
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+>> +		return 0;
+>> +
+>>  	/* The PLL divider has 12 integer bits and 30 fractional bits */
+>>  	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + 
+> div_frc);
+>>  }
+> 
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-
-are available in the git repository at:
-
-  git://github.com/baylibre/clk-meson.git tags/meson-clk-fixes-for-4.13-rc4
-
-for you to fetch changes up to c1922eed58f38f3d7876f53e1000e3c3e3024e54:
-
-  clk: meson: mpll: fix mpll0 fractional part ignored (2017-07-31 10:08:01 +0200)
-
-----------------------------------------------------------------
-Meson Clock fixes:
-- gxbb: fix meson cts_amclk divider flags
-- gxbb: fix clk_mclk_i958 divider flags
-- meson8b: fix protection against undefined clks
-- gxbb: fix protection against undefined clks
-- mpll: fix mpll0 fractional part ignored
-
-----------------------------------------------------------------
-Jerome Brunet (5):
-      clk: meson: gxbb: fix meson cts_amclk divider flags
-      clk: meson: gxbb: fix clk_mclk_i958 divider flags
-      clk: meson: meson8b: fix protection against undefined clks
-      clk: meson: gxbb: fix protection against undefined clks
-      clk: meson: mpll: fix mpll0 fractional part ignored
-
- drivers/clk/meson/clk-mpll.c |  7 +++++++
- drivers/clk/meson/clkc.h     |  1 +
- drivers/clk/meson/gxbb.c     | 17 +++++++++++++----
- drivers/clk/meson/meson8b.c  |  6 ++++++
- 4 files changed, 27 insertions(+), 4 deletions(-)
+-- 
+Best regards,
+Marek Vasut
