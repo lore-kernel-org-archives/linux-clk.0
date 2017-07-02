@@ -1,31 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Jul 2017 13:34:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: renesas: rcar-gen3: Add divider support for
- PLL1 and PLL3
-Message-ID: <20170721203418.GE19878@codeaurora.org>
-References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
- <1500554409-22423-3-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500554409-22423-3-git-send-email-geert+renesas@glider.be>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 03/18] clk: ingenic: support PLLs with no bypass bit
+Date: Sun,  2 Jul 2017 18:30:01 +0200
+Message-Id: <20170702163016.6714-4-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/20, Geert Uytterhoeven wrote:
-> On some R-Car Gen3 SoCs (e.g. R-Car D3), PLL1 and PLL3 use a divider
-> value different from one.  Extend struct rcar_gen3_cpg_pll_config to handle
-> this.  As all multipliers and dividers are small, table size increase
-> can be kept limited by storing them in u8s instead of unsigned ints,
-> which saves ca. 0.5 KiB for a generic kernel.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+The second PLL of the JZ4770 does not have a bypass bit.
+This commit makes it possible to support it with the current common CGU
+code.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/cgu.c | 3 ++-
+ drivers/clk/ingenic/cgu.h | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
+ v2: No change
+ v3: No change
+
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index eb9002ccf3fc..75b083ba294c 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -100,7 +100,8 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	n += pll_info->n_offset;
+ 	od_enc = ctl >> pll_info->od_shift;
+ 	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
+-	bypass = !!(ctl & BIT(pll_info->bypass_bit));
++	bypass = !pll_info->no_bypass_bit &&
++		 !!(ctl & BIT(pll_info->bypass_bit));
+ 	enable = !!(ctl & BIT(pll_info->enable_bit));
+ 
+ 	if (bypass)
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index da448b0cac18..21420b455985 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -48,6 +48,7 @@
+  * @bypass_bit: the index of the bypass bit in the PLL control register
+  * @enable_bit: the index of the enable bit in the PLL control register
+  * @stable_bit: the index of the stable bit in the PLL control register
++ * @no_bypass_bit: if set, the PLL has no bypass functionality
+  */
+ struct ingenic_cgu_pll_info {
+ 	unsigned reg;
+@@ -58,6 +59,7 @@ struct ingenic_cgu_pll_info {
+ 	u8 bypass_bit;
+ 	u8 enable_bit;
+ 	u8 stable_bit;
++	bool no_bypass_bit;
+ };
+ 
+ /**
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
