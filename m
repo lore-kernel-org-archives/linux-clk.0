@@ -1,282 +1,53 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC 08/12] clk: qcom: support for Huayra PLL
-Date: Thu, 27 Jul 2017 16:40:21 +0530
-Message-Id: <1501153825-5181-9-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexey Firago <alexey_firago@mentor.com>, Michael Turquette <mturquette@baylibre.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/8] clk: vc5: Fix trivial typo
+Date: Sun, 02 Jul 2017 11:20:46 +0300
+Message-ID: <8820228.n1n3Vzy2c2@avalon>
+In-Reply-To: <20170701200459.11505-2-marek.vasut+renesas@gmail.com>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com> <20170701200459.11505-2-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Following are the major differences in Huayra PLL
+Hi Marek,
 
-1. PLL Alpha Value is 16 bits
-2. Depending on alpha_mode, the pll_alpha_val can be treated as
-   M/N value or as a two’s compliment number.
-3. Huayra PLL supports PLL dynamic programming. User can change
-   L_VAL, without having to go through the power on sequence.
+Thank you for the patch.
 
-Since the decoding of alpha val and dynamic programming are
-completely different for other Alpha PLL’s so this patch
-made adds separate functions for Huayra PLL.
+On Saturday 01 Jul 2017 22:04:52 Marek Vasut wrote:
+> Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> on Salvator-XS with the display LVDS output.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 179 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |   6 ++
- 2 files changed, 185 insertions(+)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 0ac9f96..d17d83a 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -41,9 +41,17 @@
- # define PLL_POST_DIV_SHIFT	8
- # define PLL_POST_DIV_MASK	0xf
- # define PLL_ALPHA_EN		BIT(24)
-+# define PLL_ALPHA_MODE		BIT(25)
- # define PLL_VCO_SHIFT		20
- # define PLL_VCO_MASK		0x3
- 
-+#define PLL_HUAYRA_M_WIDTH		8
-+#define PLL_HUAYRA_M_SHIFT		8
-+#define PLL_HUAYRA_M_MASK		0xff
-+#define PLL_HUAYRA_N_SHIFT		0
-+#define PLL_HUAYRA_N_MASK		0xff
-+#define PLL_HUAYRA_ALPHA_WIDTH		16
-+
- /*
-  * Even though 40 bits are present, use only 32 for ease of calculation.
-  */
-@@ -85,6 +93,18 @@
- 	[ALPHA_PLL_STATUS] = 0x24,
- };
- 
-+const u8 huayra_pll_offsets[] = {
-+	[ALPHA_PLL_MODE] = 0x00,
-+	[ALPHA_PLL_L_VAL] = 0x04,
-+	[ALPHA_PLL_ALPHA_VAL] = 0x08,
-+	[ALPHA_PLL_USER_CTL] = 0x10,
-+	[ALPHA_PLL_CONFIG_CTL] = 0x14,
-+	[ALPHA_PLL_CONFIG_CTL_U] = 0x18,
-+	[ALPHA_PLL_TEST_CTL] = 0x1c,
-+	[ALPHA_PLL_TEST_CTL_U] = 0x20,
-+	[ALPHA_PLL_STATUS] = 0x24,
-+};
-+
- static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
- 			const char *action)
- {
-@@ -493,6 +513,155 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return clamp(rate, min_freq, max_freq);
- }
- 
-+static unsigned long
-+alpha_pll_huayra_calc_rate(u64 prate, u32 l, u32 a)
-+{
-+	/*
-+	 * a contains 16 bit alpha_val in two’s compliment number in the range
-+	 * of [-0.5, 0.5).
-+	 */
-+	if (a >= BIT(PLL_HUAYRA_ALPHA_WIDTH - 1))
-+		l -= 1;
-+
-+	return (prate * l) + (prate * a >> PLL_HUAYRA_ALPHA_WIDTH);
-+}
-+
-+static unsigned long
-+alpha_pll_huayra_round_rate(unsigned long rate, unsigned long prate,
-+			    u32 *l, u32 *a)
-+{
-+	u64 remainder;
-+	u64 quotient;
-+
-+	quotient = rate;
-+	remainder = do_div(quotient, prate);
-+	*l = quotient;
-+
-+	if (!remainder) {
-+		*a = 0;
-+		return rate;
-+	}
-+
-+	quotient = remainder << PLL_HUAYRA_ALPHA_WIDTH;
-+	remainder = do_div(quotient, prate);
-+
-+	if (remainder)
-+		quotient++;
-+
-+	/*
-+	 * alpha_val should be in two’s compliment number in the range
-+	 * of [-0.5, 0.5) so if quotient >= 0.5 then increment the l value
-+	 * since alpha value will be subtracted in this case.
-+	 */
-+	if (quotient >= BIT(PLL_HUAYRA_ALPHA_WIDTH - 1))
-+		*l += 1;
-+
-+	*a = quotient;
-+	return alpha_pll_huayra_calc_rate(prate, *l, *a);
-+}
-+
-+static unsigned long
-+clk_alpha_pll_huayra_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	u32 l, alpha = 0, ctl, alpha_m, alpha_n;
-+	u64 rate = parent_rate, tmp;
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+
-+	regmap_read(pll->clkr.regmap, pll_l(pll), &l);
-+	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
-+
-+	if (ctl & PLL_ALPHA_EN) {
-+		regmap_read(pll->clkr.regmap, pll_alpha(pll), &alpha);
-+		/*
-+		 * Depending upon alpha_mode, it can be treated as M/N value or
-+		 * as a two’s compliment number. When
-+		 * alpha_mode=1 pll_alpha_val<15:8>=M & pll_apla_val<7:0>=N
-+		 *		Fout=FIN*(L+(M/N))
-+		 * M is a signed number (-128 to 127) and N is unsigned
-+		 * (0 to 255). M/N has to be within +/-0.5.
-+		 *
-+		 * alpha_mode=0, it is a two’s compliment number in the range
-+		 * of [-0.5, 0.5).
-+		 *		Fout=FIN*(L+(alpha_val)/2^16),where alpha_val is
-+		 * two’s compliment number.
-+		 */
-+		if (!(ctl & PLL_ALPHA_MODE))
-+			return alpha_pll_huayra_calc_rate(rate, l, alpha);
-+
-+		alpha_m = alpha >> PLL_HUAYRA_M_SHIFT & PLL_HUAYRA_M_MASK;
-+		alpha_n = alpha >> PLL_HUAYRA_N_SHIFT & PLL_HUAYRA_N_MASK;
-+
-+		rate *= l;
-+		tmp = parent_rate;
-+		if (alpha_m >= BIT(PLL_HUAYRA_M_WIDTH - 1)) {
-+			alpha_m = BIT(PLL_HUAYRA_M_WIDTH) - alpha_m;
-+			tmp *= alpha_m;
-+			do_div(tmp, alpha_n);
-+			rate -= tmp;
-+		} else {
-+			tmp *= alpha_m;
-+			do_div(tmp, alpha_n);
-+			rate += tmp;
-+		}
-+
-+		return rate;
-+	}
-+
-+	return alpha_pll_huayra_calc_rate(rate, l, alpha);
-+}
-+
-+static int clk_alpha_pll_huayra_set_rate(struct clk_hw *hw, unsigned long rate,
-+					 unsigned long prate)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	u32 l, a, ctl, cur_alpha = 0;
-+
-+	rate = alpha_pll_huayra_round_rate(rate, prate, &l, &a);
-+
-+	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
-+
-+	if (ctl & PLL_ALPHA_EN)
-+		regmap_read(pll->clkr.regmap, pll_alpha(pll), &cur_alpha);
-+
-+	/*
-+	 * Huayra PLL supports PLL dynamic programming. User can change L_VAL,
-+	 * without having to go through the power on sequence.
-+	 */
-+	if (clk_hw_is_enabled(hw)) {
-+		if (cur_alpha != a) {
-+			pr_err("clock needs to be gated %s\n",
-+			       clk_hw_get_name(hw));
-+			return -EBUSY;
-+		}
-+
-+		regmap_write(pll->clkr.regmap, pll_l(pll), l);
-+		/* Ensure that the write above goes to detect L val change. */
-+		mb();
-+		return wait_for_pll_enable_lock(pll);
-+	}
-+
-+	regmap_write(pll->clkr.regmap, pll_l(pll), l);
-+	regmap_write(pll->clkr.regmap, pll_alpha(pll), a);
-+
-+	if (a == 0)
-+		regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
-+				   PLL_ALPHA_EN, 0x0);
-+	else
-+		regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
-+				   PLL_ALPHA_EN | PLL_ALPHA_MODE, PLL_ALPHA_EN);
-+
-+	return 0;
-+}
-+
-+static long clk_alpha_pll_huayra_round_rate(struct clk_hw *hw,
-+					    unsigned long rate,
-+					    unsigned long *prate)
-+{
-+	u32 l, a;
-+
-+	return alpha_pll_huayra_round_rate(rate, *prate, &l, &a);
-+}
-+
- const struct clk_ops clk_alpha_pll_ops = {
- 	.enable = clk_alpha_pll_enable,
- 	.disable = clk_alpha_pll_disable,
-@@ -513,6 +682,16 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
- 
-+const struct clk_ops clk_alpha_pll_huayra_ops = {
-+	.enable = clk_alpha_pll_enable,
-+	.disable = clk_alpha_pll_disable,
-+	.is_enabled = clk_alpha_pll_is_enabled,
-+	.recalc_rate = clk_alpha_pll_huayra_recalc_rate,
-+	.round_rate = clk_alpha_pll_huayra_round_rate,
-+	.set_rate = clk_alpha_pll_huayra_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_huayra_ops);
-+
- static unsigned long
- clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- {
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 01869a8..c98e7469 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -61,6 +61,10 @@ struct clk_alpha_pll {
- 	struct clk_regmap clkr;
- };
- 
-+#define CLK_HUAYRA_PLL_FLAGS	(HAVE_NO_VCO_CONF | SUPPORTS_DYNAMIC_UPDATE | \
-+				 SUPPORTS_64BIT_CONFIG_CTL |		      \
-+				 SUPPORTS_16BIT_ALPHA)
-+
- /**
-  * struct clk_alpha_pll_postdiv - phase locked loop (PLL) post-divider
-  * @base: base address of registers
-@@ -97,9 +101,11 @@ struct alpha_pll_config {
- };
- 
- extern const u8 alpha_pll_offsets[];
-+extern const u8 huayra_pll_offsets[];
- 
- extern const struct clk_ops clk_alpha_pll_ops;
- extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
-+extern const struct clk_ops clk_alpha_pll_huayra_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_ops;
- 
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+> ---
+>  drivers/clk/clk-versaclock5.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> index 60bf4afb51bd..d835d48cf14d 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -520,7 +520,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
+>  	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
+>  	struct vc5_driver_data *vc5 = hwdata->vc5;
+> 
+> -	/* Enable the clock buffer */
+> +	/* Disable the clock buffer */
+>  	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+>  			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
+>  }
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Regards,
+
+Laurent Pinchart
