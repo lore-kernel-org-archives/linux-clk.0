@@ -1,59 +1,283 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170704175117.8636-1-robdclark@gmail.com>
-References: <20170704175117.8636-1-robdclark@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Jul 2017 20:45:48 +0200
-Message-ID: <CAMuHMdWg45oc-9aQAMkxNrUL57vd6Vmqqn7TFfzz7-qMmzxKGQ@mail.gmail.com>
-Subject: Re: [RFC] clk: inherit display clocks enabled by bootloader
-To: Rob Clark <robdclark@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	DRI Development <dri-devel@lists.freedesktop.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Archit Taneja <architt@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
-	Rajendra Nayak <rnayak@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 14/18] MIPS: ingenic: Initial JZ4770 support
+Date: Sun,  2 Jul 2017 18:30:12 +0200
+Message-Id: <20170702163016.6714-15-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 4, 2017 at 7:51 PM, Rob Clark <robdclark@gmail.com> wrote:
-> The goal here is to support inheriting a display setup by bootloader,
-> although there may also be some non-display related use-cases.
->
-> Rough idea is to add a flag for clks and power domains that might
-> already be enabled when kernel starts, and make corresponding fixups
-> to clk enable/prepare_count and power-domain state so that these are
-> not automatically disabled late in boot.
->
-> If bootloader is enabling display, and kernel is using efifb before
-> real display driver is loaded (potentially from kernel module after
-> userspace starts, in a typical distro kernel), we don't want to kill
-> the clocks and power domains that are used by the display before
-> userspace starts.
->
-> Second part will be (*waves hands*) for drm/msm to check if display
-> related clocks are enabled when it is loaded, and if so use drm
-> atomic framework's hooks to read back hw state to sync existing
-> display state w/ software state, and skip the initial clk_enable.
-> Therefore inheriting the enable done by bootloader.
->
-> Obviously this should be split up into multiple patches and many
-> TODOs addressed.  But I guess this is enough for now to start
-> discussing the approach, and in particular how drm and clock/pd
-> drivers work together to handle handover from bootloader.
->
-> The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
-> on leaf nodes.
+Provide just enough bits (clocks, clocksource, uart) to allow a kernel
+to boot on the JZ4770 SoC to a initramfs userspace.
 
-Cfr. Documentation/devicetree/bindings/display/simple-framebuffer.txt?
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/boot/dts/ingenic/jz4770.dtsi | 210 +++++++++++++++++++++++++++++++++
+ arch/mips/jz4740/Kconfig               |   6 +
+ arch/mips/jz4740/time.c                |   2 +-
+ 3 files changed, 217 insertions(+), 1 deletion(-)
+ create mode 100644 arch/mips/boot/dts/ingenic/jz4770.dtsi
 
-Gr{oetje,eeting}s,
+ v2: No change
+ v3: No change
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+new file mode 100644
+index 000000000000..d8d0a741ff5d
+--- /dev/null
++++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+@@ -0,0 +1,210 @@
++#include <dt-bindings/clock/jz4770-cgu.h>
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "ingenic,jz4770";
++
++	cpuintc: interrupt-controller {
++		#address-cells = <0>;
++		#interrupt-cells = <1>;
++		interrupt-controller;
++		compatible = "mti,cpu-interrupt-controller";
++	};
++
++	intc: interrupt-controller@10001000 {
++		compatible = "ingenic,jz4770-intc";
++		reg = <0x10001000 0x40>;
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&cpuintc>;
++		interrupts = <2>;
++	};
++
++	ext: ext {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++	};
++
++	osc32k: osc32k {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++	};
++
++	cgu: jz4770-cgu@10000000 {
++		compatible = "ingenic,jz4770-cgu";
++		reg = <0x10000000 0x100>;
++
++		clocks = <&ext>, <&osc32k>;
++		clock-names = "ext", "osc32k";
++
++		#clock-cells = <1>;
++	};
++
++	pinctrl: pin-controller@10010000 {
++		compatible = "ingenic,jz4770-pinctrl";
++		reg = <0x10010000 0x600>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		gpa: gpio@0 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <0>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 0 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <17>;
++		};
++
++		gpb: gpio@1 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <1>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 32 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <16>;
++		};
++
++		gpc: gpio@2 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <2>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 64 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <15>;
++		};
++
++		gpd: gpio@3 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <3>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 96 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <14>;
++		};
++
++		gpe: gpio@4 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <4>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 128 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <13>;
++		};
++
++		gpf: gpio@5 {
++			compatible = "ingenic,jz4770-gpio";
++			reg = <5>;
++
++			gpio-controller;
++			gpio-ranges = <&pinctrl 0 160 32>;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			interrupt-parent = <&intc>;
++			interrupts = <12>;
++		};
++	};
++
++	uart0: serial@10030000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10030000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART0>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <5>;
++
++		status = "disabled";
++	};
++
++	uart1: serial@10031000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10031000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART1>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <4>;
++
++		status = "disabled";
++	};
++
++	uart2: serial@10032000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10032000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART2>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <3>;
++
++		status = "disabled";
++	};
++
++	uart3: serial@10033000 {
++		compatible = "ingenic,jz4770-uart";
++		reg = <0x10033000 0x100>;
++
++		clocks = <&ext>, <&cgu JZ4770_CLK_UART3>;
++		clock-names = "baud", "module";
++
++		interrupt-parent = <&intc>;
++		interrupts = <2>;
++
++		status = "disabled";
++	};
++
++	uhc: uhc@13430000 {
++		compatible = "generic-ohci";
++		reg = <0x13430000 0x1000>;
++
++		clocks = <&cgu JZ4770_CLK_UHC>, <&cgu JZ4770_CLK_UHC_PHY>;
++		assigned-clocks = <&cgu JZ4770_CLK_UHC>;
++		assigned-clock-rates = <48000000>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <20>;
++
++		status = "disabled";
++	};
++};
+diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
+index 36f82017695d..922850503271 100644
+--- a/arch/mips/jz4740/Kconfig
++++ b/arch/mips/jz4740/Kconfig
+@@ -17,6 +17,12 @@ config MACH_JZ4740
+ 	bool
+ 	select SYS_HAS_CPU_MIPS32_R1
+ 
++config MACH_JZ4770
++	bool
++	select MIPS_CPU_SCACHE
++	select SYS_HAS_CPU_MIPS32_R2
++	select SYS_SUPPORTS_HIGHMEM
++
+ config MACH_JZ4780
+ 	bool
+ 	select MIPS_CPU_SCACHE
+diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
+index bb1ad5119da4..2ca9160f642a 100644
+--- a/arch/mips/jz4740/time.c
++++ b/arch/mips/jz4740/time.c
+@@ -113,7 +113,7 @@ static struct clock_event_device jz4740_clockevent = {
+ #ifdef CONFIG_MACH_JZ4740
+ 	.irq = JZ4740_IRQ_TCU0,
+ #endif
+-#ifdef CONFIG_MACH_JZ4780
++#if defined(CONFIG_MACH_JZ4770) || defined(CONFIG_MACH_JZ4780)
+ 	.irq = JZ4780_IRQ_TCU2,
+ #endif
+ };
+-- 
+2.11.0
