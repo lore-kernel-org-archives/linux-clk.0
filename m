@@ -1,80 +1,101 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	linux-clk@vger.kernel.org,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Paul Burton <paul.burton@imgtec.com>,
+	Maarten ter Huurne <maarten@treewalker.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH v4 9/9] ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
-Date: Tue, 25 Jul 2017 09:37:10 +0200
-Message-Id: <f2f55956879fd7e80cf0fb72ba743f8c5cb28fcc.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 10/18] MIPS: Setup boot_command_line before plat_mem_setup
+Date: Sun,  2 Jul 2017 18:30:08 +0200
+Message-Id: <20170702163016.6714-11-paul@crapouillou.net>
+In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
+References: <20170607200439.24450-2-paul@crapouillou.net>
+ <20170702163016.6714-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+From: Paul Burton <paul.burton@imgtec.com>
 
-This patch adds the pin muxing for classd and enables it.
+Platforms using DT will typically call __dt_setup_arch from
+plat_mem_setup. This in turn calls early_init_dt_scan. When
+CONFIG_CMDLINE is set, this leads to its value being copied into
+boot_command_line by early_init_dt_scan_chosen. If this happens before
+the code setting up boot_command_line in arch_mem_init runs, that code
+will go on to append CONFIG_CMDLINE (via builtin_cmdline) to
+boot_command_line again, duplicating it. For some command line
+parameters (eg. earlycon) this can be a problem. Set up
+boot_command_line before early_init_dt_scan_chosen gets called such that
+it will not write CONFIG_CMDLINE in this scenario & the arguments aren't
+duplicated.
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
 ---
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/mips/kernel/setup.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index 6eec8dc..c7e9ccf 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -355,6 +355,14 @@
- 					bias-pull-up;
- 				};
+ v2: No change
+ v3: No change
+
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 01d1dbde5fbf..89785600fde4 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -785,25 +785,6 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	struct memblock_region *reg;
+ 	extern void plat_mem_setup(void);
  
-+				pinctrl_classd_default: classd_default {
-+					pinmux = <PIN_PB1__CLASSD_R0>,
-+						 <PIN_PB2__CLASSD_R1>,
-+						 <PIN_PB3__CLASSD_R2>,
-+						 <PIN_PB4__CLASSD_R3>;
-+					bias-pull-up;
-+				};
+-	/* call board setup routine */
+-	plat_mem_setup();
+-
+-	/*
+-	 * Make sure all kernel memory is in the maps.  The "UP" and
+-	 * "DOWN" are opposite for initdata since if it crosses over
+-	 * into another memory section you don't want that to be
+-	 * freed when the initdata is freed.
+-	 */
+-	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
+-			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
+-			 BOOT_MEM_RAM);
+-	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
+-			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
+-			 BOOT_MEM_INIT_RAM);
+-
+-	pr_info("Determined physical RAM map:\n");
+-	print_memory_map();
+-
+ #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
+ 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
+ #else
+@@ -831,6 +812,26 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	}
+ #endif
+ #endif
 +
- 				pinctrl_flx0_default: flx0_default {
- 					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
- 						 <PIN_PB29__FLEXCOM0_IO1>;
-@@ -488,6 +496,14 @@
- 
- 			};
- 
-+			classd: classd@fc048000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_classd_default>;
-+				atmel,pwm-type = "diff";
-+				atmel,non-overlap-time = <10>;
-+				status = "okay";
-+			};
++	/* call board setup routine */
++	plat_mem_setup();
 +
- 			can1: can@fc050000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can1_default>;
++	/*
++	 * Make sure all kernel memory is in the maps.  The "UP" and
++	 * "DOWN" are opposite for initdata since if it crosses over
++	 * into another memory section you don't want that to be
++	 * freed when the initdata is freed.
++	 */
++	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
++			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
++			 BOOT_MEM_RAM);
++	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
++			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
++			 BOOT_MEM_INIT_RAM);
++
++	pr_info("Determined physical RAM map:\n");
++	print_memory_map();
++
+ 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
+ 
+ 	*cmdline_p = command_line;
 -- 
-git-series 0.9.1
+2.11.0
