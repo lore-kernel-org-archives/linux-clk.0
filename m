@@ -1,45 +1,76 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <adriana.reus@nxp.com>
+From: Adriana Reus <adriana.reus@nxp.com>
 To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	l.stach@pengutronix.de
+Cc: aisheng.dong@nxp.com,
+	fabio.estevam@nxp.com,
+	shawnguo@kernel.org,
+	fugang.duan@nxp.com,
+	anson.huang@nxp.com,
 	linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org,
-	vivek.gautam@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 0/5] clk: qcom: gdsc: Add support for clk control
-Date: Thu, 20 Jul 2017 10:18:14 +0530
-Message-Id: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	Adriana Reus <adriana.reus@nxp.com>
+Subject: [RFC 2/2] clk: imx: Remove enabling uart clocks from ccm driver.
+Date: Mon,  3 Jul 2017 17:28:03 +0300
+Message-Id: <1499092083-2852-3-git-send-email-adriana.reus@nxp.com>
+In-Reply-To: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
+References: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: adriana.reus@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This series allows clocks associated with GDSCs to be controlled
-along with the powerdomains. To start with, some of the mmagic
-clocks are assocaited with the mmagic gdscs on msm8996 so the
-devices in these mmagic domains (vidc, mdss, their smmu instances etc)
-don't have to put these in their resp. DT bindings.
+Remove uart clock enable functionality from ccm driver and
+leave uart clocks enabling and setup to the serial driver.
 
-changes in v2:
-* Fixed review comments from Stan
-* Added mmagic clocks needed by gpu
+This functionality was introduced by patch
+"b9af68f clk: imx7d: retain early UART clocks during kernel init"
+to ensure that for earlycon and earlyprink we have the uart port enabled
+even if the bootloader does not enable it.
 
-Rajendra Nayak (5):
-  arm64: qcom: Select PM_GENERIC_DOMAINS
-  clk: Add clk_hw_get_clk() helper API to be used by clk providers
-  clk: qcom: gdsc: Add support to control associated clks
-  clk: qcom: gcc-msm8996: Mark gcc_mmss_noc_cfg_ahb_clk as a critical
-    clock
-  clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
+However, on imx7d uart root clocks are recommended to be gated when
+changing frequency and if the CLK_SET_RATE_GATE is set for these clocks
+this means that the serial driver will fail to re-parent or set_frequency
+via device tree attributes on them because the ccm driver has them all in use.
 
- arch/arm64/Kconfig.platforms    |  2 ++
- drivers/clk/clk.c               | 39 +++++++++++++++++++++++++++
- drivers/clk/qcom/gcc-msm8996.c  |  2 +-
- drivers/clk/qcom/gdsc.c         | 60 +++++++++++++++++++++++++++++++++++++++--
- drivers/clk/qcom/gdsc.h         |  8 ++++++
- drivers/clk/qcom/mmcc-msm8996.c | 26 ++++++++++++++++++
- include/linux/clk-provider.h    |  5 ++++
- 7 files changed, 139 insertions(+), 3 deletions(-)
+Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index e1c31f5..374ec0f 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -392,17 +392,6 @@ static int const clks_init_on[] __initconst = {
+ 
+ static struct clk_onecell_data clk_data;
+ 
+-static struct clk ** const uart_clks[] __initconst = {
+-	&clks[IMX7D_UART1_ROOT_CLK],
+-	&clks[IMX7D_UART2_ROOT_CLK],
+-	&clks[IMX7D_UART3_ROOT_CLK],
+-	&clks[IMX7D_UART4_ROOT_CLK],
+-	&clks[IMX7D_UART5_ROOT_CLK],
+-	&clks[IMX7D_UART6_ROOT_CLK],
+-	&clks[IMX7D_UART7_ROOT_CLK],
+-	NULL
+-};
+-
+ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -897,10 +886,5 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 
+-	/* set uart module clock's parent clock source that must be great then 80MHz */
+-	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+-
+-	imx_register_uart_clocks(uart_clks);
+-
+ }
+ CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
