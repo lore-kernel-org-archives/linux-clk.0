@@ -1,64 +1,69 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20170730164150.26302-1-jernej.skrabec@siol.net>
-References: <20170730164150.26302-1-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 31 Jul 2017 13:13:34 +0800
-Message-ID: <CAGb2v65pH-Me6JjMYzp41NwS478azMTLBPrkJwZcho9Ay2JX1Q@mail.gmail.com>
-Subject: Re: [PATCH 0/4] clk: sunxi-ng: Fix issues with fractional mode
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1499092935.2308.18.camel@pengutronix.de>
+Subject: Re: [RFC 0/2] clk: imx7d: Uart clock set-up conflict if clk needs
+ gating on set rate or re-parent
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Adriana Reus <adriana.reus@nxp.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, aisheng.dong@nxp.com,
+	fabio.estevam@nxp.com, shawnguo@kernel.org, fugang.duan@nxp.com,
+	anson.huang@nxp.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Date: Mon, 03 Jul 2017 16:42:15 +0200
+In-Reply-To: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
+References: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jernej,
+Am Montag, den 03.07.2017, 17:28 +0300 schrieb Adriana Reus:
+> Hi all,
+> 
+> I am currently trying to fix an issue occurring when trying to set the
+> CLK_SET_RATE_GATE flag for the uart root clks. This causes the imx serial
+> driver to fail when setting up devicetree specified frequency or parent because
+> the uart clk is already in use by the ccm driver that starts up all uart clocks
+> for earlycon.
+> 
+> Some context:
+> 
+> There are three main types of clock slices on imx7d ccm: "Core clock slice",
+> "Bus clock slice (AXI/AHB)", and "Peripheral clock slice". Vast majority of
+> clock roots fall in the peripheral slice category:
+> 
+>     8:1 mux -> gate -> div -> div -> gate
+> 
+> The root clocks that derive from peripheral slices are expected to be
+> gated when changing frequency [0].
+> 
+> The first patch of this series sets this up. (It is only a reference point for
+> this conversation, not to be merged as it WIP and needs more testing).
+> 
+> When setting this up, the imx serial driver
+> (platform_driver_register -> of_clk_set_defaults) will fail
+> to set the rate or parent specified in the devicetree:
+> 
+>     imx-uart 30a70000.serial: clk_set_rate() failed
+>     imx-uart: probe of 30a70000.serial failed with error -16
+> 
+> The reason for this is that the uart clks are already prepared and enabled in
+> imx7d_clocks_init by the imx_register_uart_clocks function if earlycon is
+> enabled. Functionality added in patches:
+> 'commit 55adc61c568af99419be1dc0412f8eae019c71f2
+> ("clk: imx: add common logic to detect early UART usage")'
+> 'commit 1b9af68f325cb91ac9fc691f52d69dfb0826afd7
+> ("clk: imx7d: retain early UART clocks during kernel init")'
+> 
+> One option is to remove the imx_register_uart_clocks from the ccm driver and
+> leave the uart clock set up and enable entirely to the serial driver and DT.
+> The second RFC patch does this for imx7d.
 
-On Mon, Jul 31, 2017 at 12:41 AM, Jernej Skrabec
-<jernej.skrabec@siol.net> wrote:
-> During development of H3 HDMI driver, I found some issues with
-> setting video clock rate. It turned out that clock driver decided
-> to use fractional mode and selected right frequency, but it didn't
-> enable it. Additionally, fractional helpers don't wait on lock.
+This is not an option. The CCM holds a reference to those clocks,
+specifically to prevent them from being disabled before a real serial
+driver is bound. If this isn't done you might end up in a situation
+where PM or driver probe deferal disables the UART clock/the parent of
+this clock, even if it was previously enabled by the bootloader. With
+earlycon this might lead to a full system hang at this point, when
+earlycon tries to access a clock gated UART.
 
-What kind of resolution were you testing to actually hit this?
-
-AFAIK the fractional mode is either 297 or 270 MHz. Even Full HD
-1080p60 dot clocks aren't that high. And the clk drivers should
-try to request a matching parent clk rate. So the PLL wouldn't
-go that high. Are you testing 4k @ 30fps?
-
-As it stands, I don't think any of the existing display support
-can go that high, so I think we're safe as far as old kernels
-go, i.e. we don't need to Cc stable for these.
-
-Regards
-ChenYu
-
-> Patch 1 adds a call to N-M clock driver which enables fractional mode.
-> It also clears M factor before that as required by most SoCs.
->
-> Patch 2 adds a call to N clock driver which enables fractional mode.
->
-> Patch 3 makes fractional helpers less chatty.
->
-> Patch 4 adds a wait for lock to fractional helpers.
->
-> Jernej Skrabec (4):
->   clk: sunxi-ng: Fix fractional mode for N-M clocks
->   clk: sunxi-ng: multiplier: Fix fractional mode
->   clk: sunxi-ng: Make fractional helper less chatty
->   clk: sunxi-ng: Wait for lock when using fractional mode
->
->  drivers/clk/sunxi-ng/ccu_frac.c | 14 ++++++++------
->  drivers/clk/sunxi-ng/ccu_frac.h |  2 +-
->  drivers/clk/sunxi-ng/ccu_mult.c | 10 +++++++---
->  drivers/clk/sunxi-ng/ccu_nm.c   | 19 ++++++++++++++++---
->  4 files changed, 32 insertions(+), 13 deletions(-)
->
-> --
-> 2.13.3
->
+Regards,
+Lucas
