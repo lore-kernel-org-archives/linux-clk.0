@@ -1,100 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Jul 2017 16:05:36 -0700
-From: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Jose.Abreu@synopsys.com" <Jose.Abreu@synopsys.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH v4] clk: axs10x: introduce AXS10X pll driver
-Message-ID: <20170712230536.GE22780@codeaurora.org>
-References: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
- <20170712052535.GY22780@codeaurora.org>
- <1499846503.9320.1.camel@synopsys.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Dong Aisheng <dongas86@gmail.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"Anson Huang" <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Subject: RE: [PATCH 4/9] clk: imx: add pllv4 support
+Date: Mon, 3 Jul 2017 03:21:16 +0000
+Message-ID: <AM3PR04MB306EEF6F5F442465B258E3C80D60@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-5-git-send-email-aisheng.dong@nxp.com>
+ <20170620015917.GO4493@codeaurora.org>
+ <20170620093143.GD6805@b29396-OptiPlex-7040>
+ <20170701003642.GS22780@codeaurora.org>
+In-Reply-To: <20170701003642.GS22780@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1499846503.9320.1.camel@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/12, Eugeniy Paltsev wrote:
-> On Tue, 2017-07-11 at 22:25 -0700, Stephen Boyd wrote:
-> > On 06/21, Eugeniy Paltsev wrote:
-> > > AXS10X boards manages it's clocks using various PLLs. These PLL has
-> > > same
-> > > dividers and corresponding control registers mapped to different
-> > > addresses.
-> > > So we add one common driver for such PLLs.
-> > > 
-> > > Each PLL on AXS10X board consist of three dividers: IDIV, FBDIV and
-> > > ODIV. Output clock value is managed using these dividers.
-> > > 
-> > > We add pre-defined tables with supported rate values and
-> > > appropriate
-> > > configurations of IDIV, FBDIV and ODIV for each value.
-> > > 
-> > > As of today we add support for PLLs that generate clock for the
-> > > following devices:
-> > >  * ARC core on AXC CPU tiles.
-> > >  * ARC PGU on ARC SDP Mainboard.
-> > > and more to come later.
-> > > 
-> > > By this patch we add support for two plls (arc core pll and pgu
-> > > pll),
-> > > so we had to use two different init types: CLK_OF_DECLARE for arc
-> > > core pll and
-> > > regular probing for pgu pll.
-> > > 
-> > > Acked-by: Rob Herring <robh@kernel.org>
-> > > Acked-by: Jose Abreu <joabreu@synopsys.com>
-> > > 
-> > > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > > Signed-off-by: Vlad Zakharov <vzakhar@synopsys.com>
-> > > Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> > 
-> > Sorry this missed the cutoff for new code for v4.13. Should be in
-> > clk-next next week though.
-> > 
-> > > +}
-> > > +
-> > > +static inline struct axs10x_pll_clk *to_axs10x_pll_clk(struct
-> > > clk_hw *hw)
-> > > +{
-> > > +	return container_of(hw, struct axs10x_pll_clk, hw);
-> > > +}
-> > > +
-> > > +static inline u32 axs10x_div_get_value(u32 reg)
-> > > +{
-> > > +	if (PLL_REG_GET_BYPASS(reg))
-> > > +		return 1;
-> > > +
-> > > +	return PLL_REG_GET_HIGH(reg) + PLL_REG_GET_LOW(reg);
-> > > +}
-> > > +
-> > > +static inline u32 axs10x_encode_div(unsigned int id, int upd)
-> > > +{
-> > > +	u32 div = 0;
-> > > +
-> > > +	PLL_REG_SET_LOW(div, (id % 2 == 0) ? id >> 1 : (id >> 1) +
-> > > 1);
-> > > +	PLL_REG_SET_HIGH(div, id >> 1);
-> > > +	PLL_REG_SET_EDGE(div, id % 2);
-> > > +	PLL_REG_SET_BYPASS(div, id == 1 ? 1 : 0);
-> > > +	PLL_REG_SET_NOUPD(div, !upd);
-> > 
-> > So sparse complains here about a "dubious !x & y". Perhaps this
-> > can be changed to
-> > 
-> > 	PLL_REG_SET_NOUPD(div, upd == 0 ? 1 : 0);
-> > 
-> > That way sparse doesn't complain. I can make the change when
-> > applying if you agree.
-> 
-> Sure, thanks a lot.
-> 
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
+> Sent: Saturday, July 01, 2017 8:37 AM
+> To: Dong Aisheng
+> Cc: A.s. Dong; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
+> shawnguo@kernel.org; Anson Huang; Jacky Bai
+> Subject: Re: [PATCH 4/9] clk: imx: add pllv4 support
+>=20
+> On 06/20, Dong Aisheng wrote:
+> > On Mon, Jun 19, 2017 at 06:59:17PM -0700, Stephen Boyd wrote:
+> > > On 05/15, Dong Aisheng wrote:
+> > > > +
+> > > > +	if (clk_pllv4_is_enabled(hw)) {
+> > > > +		WARN(1, "clk_pllv4: can't change rate when pll is
+> enabled");
+> > > > +		return -EINVAL;
+> > >
+> > > Sad, CLK_SET_RATE_GATE isn't working for you I suppose?
+> > >
+> >
+> > CLK_SET_RATE_GATE can't work in early stage before running
+> clk_disable_unused.
+> > At that point, the clock tree state is still not consistent with HW.
+> > e.g. prepare/enable count is still zero but it's actually enabled due
+> > to reset state or bootloader.
+> >
+> > The code here is adding a double check in case user sets rate in early
+> stage.
+> >
+> > However, probably it could also be moved into clock core as it's not
+> > platform dependant behavior?
+> >
+>=20
+> Ok. It would be good to fix the core framework to synchronize the
+> prepared/enabled state at registration time so we don't need this check
+> in the driver.
+>=20
 
-Ok. Applied to clk-next.
+I will prepare a core fix later and remove these checks first.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards
+Dong Aisheng
+
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
+> Linux Foundation Collaborative Project
