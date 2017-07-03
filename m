@@ -1,107 +1,177 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 5 Jul 2017 09:15:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
-	geert+renesas@glider.be, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
- clock selector PHY
-Message-ID: <20170705141532.slvvbxh33sgwotje@rob-hp-laptop>
-References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20170630192228.GO22780@codeaurora.org>
+References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
+ <20170618015855.27738-8-chunyan.zhang@spreadtrum.com> <20170620013710.GJ4493@codeaurora.org>
+ <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
+ <20170630014452.GL22780@codeaurora.org> <CAAfSe-smKqgd42jDAGDA=NtYvRZExNanU7fHrRkT4W-WH-2=ug@mail.gmail.com>
+ <20170630192228.GO22780@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Mon, 3 Jul 2017 15:41:33 +0800
+Message-ID: <CAAfSe-sw669n2ZwpWpeCDw0S46Pg94xaWZFcSbEE6TYKg2JbLg@mail.gmail.com>
+Subject: Re: [PATCH V1 7/9] clk: sprd: add adjustable pll support
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 28, 2017 at 03:28:35PM +0900, Yoshihiro Shimoda wrote:
-> R-Car USB 2.0 controller can change the clock source from an oscillator
-> to an external clock via a register. So, this patch adds support
-> the clock source selector as a clock driver.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  This patch is based on the renesas-drivers.git /
-> renesas-drivers-2017-06-27-v4.12-rc7 tag.
-> 
->  Changes from v1:
->   - Change this driver as a clock driver from a generic phy driver.
->     https://patchwork.kernel.org/patch/9788697/
->   - Remove "RFC" tag.
-> 
->  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  54 ++++++
->  drivers/clk/renesas/Kconfig                        |   5 +
->  drivers/clk/renesas/Makefile                       |   1 +
->  drivers/clk/renesas/rcar-usb2-clock-sel.c          | 205 +++++++++++++++++++++
->  4 files changed, 265 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
->  create mode 100644 drivers/clk/renesas/rcar-usb2-clock-sel.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-> new file mode 100644
-> index 0000000..75ccafc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-> @@ -0,0 +1,54 @@
-> +* Renesas R-Car USB 2.0 clock selector
-> +
-> +This file provides information on what the device node for the R-Car USB 2.0
-> +clock selector.
-> +
-> +If you connect an external clock to the USB_EXTAL pin only, you should set
-> +the clock rate to "usb_extal" node only.
-> +If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this module
-> +is not needed because this is default setting. (Of course, you can set the
-> +clock rates to both "usb_extal" and "usb_xtal" nodes.
-> +
-> +Case 1: An external clock connects to R-Car SoC
-> +        +----------+   +--- R-Car ---------------------+
-> +        |External  |---|USB_EXTAL ---> all usb channels|
-> +        |clock     |   |USB_XTAL                       |
-> +        +----------+   +-------------------------------+
-> +In this case, we need this driver with "usb_extal" clock.
-> +
-> +Case 2: An oscillator connects to R-Car SoC
-> +        +----------+   +--- R-Car ---------------------+
-> +        |Oscillator|---|USB_EXTAL -+-> all usb channels|
-> +        |          |---|USB_XTAL --+                   |
-> +        +----------+   +-------------------------------+
-> +In this case, we don't need this selector.
-> +
-> +Required properties:
-> +- compatible: "renesas,r8a7795-rcar-usb2-clock-sel" if the device is a part of
-> +	      an R8A7795 SoC.
-> +              "renesas,r8a7796-rcar-usb2-clock-sel" if the device if a part of
-> +	      an R8A7796 SoC.
-> +              "renesas,rcar-gen3-usb2-clock-sel" for a generic R-Car Gen3
-> +              compatible device.
-> +
-> +              When compatible with the generic version, nodes must list the
-> +              SoC-specific version corresponding to the platform first
-> +              followed by the generic version.
-> +
-> +- reg: offset and length of the USB 2.0 clock selector register block.
-> +- clocks: A list of phandles and specifier pairs.
-> +- clock-names: Name of the clocks.
-> + - The functional clock must be "ehci_ohci"
-> + - The USB_EXTAL clock pin must be "usb_extal"
-> + - The USB_XTAL clock pin must be "usb_xtal"
-> +- #clock-cells: Must be 0
-> +
-> +Exxample (R-Car H3):
-> +
-> +        usb2_clksel: clock-controller@e6590630 {
-> +                compatible = "renesas,r8a77950-rcar-usb2-clock-sel",
-> +                             "renesas,rcar-gen3-usb2-clock-sel";
-> +                reg = <0 0xe6590630 0 0x02>;
-> +                clocks = <&cpg CPG_MOD 703>, <&usb_extal>, <&usb_xtal>;
-> +                clock-names = "ehci_ohci", "usb_extal", "usb_xtal";
+On 1 July 2017 at 03:22, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/30, Chunyan Zhang wrote:
+>> Hi Stephen,
+>>
+>> On 30 June 2017 at 09:44, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 06/22, Chunyan Zhang wrote:
+>> >> On 20 June 2017 at 09:37, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> >> > On 06/18, Chunyan Zhang wrote:
+>> >> >> +     pll->factors[member].width
+>> >> >> +
+>> >> >> +#define pmask(pll, member)                                   \
+>> >> >> +     ((pwidth(pll, member)) ?                                \
+>> >> >> +     GENMASK(pwidth(pll, member) + pshift(pll, member) - 1,  \
+>> >> >> +     pshift(pll, member)) : 0)
+>> >> >> +
+>> >> >> +#define pinternal(pll, cfg, member)  \
+>> >> >> +     (cfg[pindex(pll, member)] & pmask(pll, member))
+>> >> >> +
+>> >> >> +#define pinternal_val(pll, cfg, member)      \
+>> >> >> +     (pinternal(pll, cfg, member) >> pshift(pll, member))
+>> >> >> +
+>> >> >> +static unsigned long pll_get_refin_rate(struct ccu_pll *pll)
+>> >> >
+>> >> > pll could be const?
+>> >>
+>> >> What this function returns is a factor used to calculate the pll rate
+>> >> later, I will rename this function in the next iterator.
+>> >>
+>> >
+>> > Rename is fine, but pll can still be marked const?
+>>
+>> Oh, sorry I misunderstood :)
+>> You mean mark the input parameter "pll" const, right?
+>
+> Yes.
+>
+>> >> >> +
+>> >> >> +static int ccu_pll_helper_set_rate(struct ccu_pll *pll,
+>> >> >> +                                unsigned long rate,
+>> >> >> +                                unsigned long parent_rate)
+>> >> >> +{
+>> >> >> +     u32 mask, shift, width, ibias_val, index, kint, nint;
+>> >> >> +     u32 reg_num = pll->regs[0], i = 0;
+>> >> >> +     unsigned long refin, fvco = rate;
+>> >> >> +     struct reg_cfg *cfg;
+>> >> >> +
+>> >> >> +     cfg = kcalloc(reg_num, sizeof(*cfg), GFP_KERNEL);
+>> >> >> +     if (!cfg)
+>> >> >> +             return -ENOMEM;
+>> >> >> +
+>> >> >> +     refin = pll_get_refin_rate(pll);
+>> >> >> +
+>> >> >> +     mask = pmask(pll, PLL_PREDIV);
+>> >> >> +     index = pindex(pll, PLL_PREDIV);
+>> >> >> +     width = pwidth(pll, PLL_PREDIV);
+>> >> >> +     if (width && (ccu_pll_readl(pll, index) & mask))
+>> >> >> +             refin = refin * 2;
+>> >> >> +
+>> >> >> +     mask = pmask(pll, PLL_POSTDIV);
+>> >> >> +     index = pindex(pll, PLL_POSTDIV);
+>> >> >> +     width = pwidth(pll, PLL_POSTDIV);
+>> >> >> +     cfg[index].msk = mask;
+>> >> >> +     if (width && ((pll->fflag == 1 && fvco <= pll->fvco) ||
+>> >> >> +                   (pll->fflag == 0 && fvco > pll->fvco)))
+>> >> >> +             cfg[index].val |= mask;
+>> >> >> +
+>> >> >> +     if (width && fvco <= pll->fvco)
+>> >> >> +             fvco = fvco * 2;
+>> >> >> +
+>> >> >> +     mask = pmask(pll, PLL_DIV_S);
+>> >> >> +     index = pindex(pll, PLL_DIV_S);
+>> >> >> +     cfg[index].val |= mask;
+>> >> >> +     cfg[index].msk |= mask;
+>> >> >> +
+>> >> >> +     mask = pmask(pll, PLL_SDM_EN);
+>> >> >> +     index = pindex(pll, PLL_SDM_EN);
+>> >> >> +     cfg[index].val |= mask;
+>> >> >> +     cfg[index].msk |= mask;
+>> >> >> +
+>> >> >> +     nint  = fvco/(refin * CCU_PLL_1M);
+>> >> >> +
+>> >> >> +     mask = pmask(pll, PLL_NINT);
+>> >> >> +     index = pindex(pll, PLL_NINT);
+>> >> >> +     shift = pshift(pll, PLL_NINT);
+>> >> >> +     cfg[index].val |= (nint << shift) & mask;
+>> >> >> +     cfg[index].msk |= mask;
+>> >> >> +
+>> >> >> +     mask = pmask(pll, PLL_KINT);
+>> >> >> +     index = pindex(pll, PLL_KINT);
+>> >> >> +     width = pwidth(pll, PLL_KINT);
+>> >> >> +     shift = pshift(pll, PLL_KINT);
+>> >> >> +#ifndef CONFIG_64BIT
+>> >> >> +     i = width < 21 ? 0 : i - 21;
+>> >> >> +#endif
+>> >> >
+>> >> > What's this? Why do we depend on CONFIG_64BIT?
+>> >>
+>> >> On 32-bit SoCs, the largest width we can support is limited due to the
+>> >> limitation of calculation precision.
+>> >
+>> > Does the hardware width change? Still not clear to me what's
+>> > going on here.
+>>
+>> I heard from my colleague, that because the calculation precision on
+>> Spreadtrum's 32-bit SoCs is different from on 64-bit SoCs,  when the
+>> width of the value of PLL_KINT is larger than 21, the value is too
+>> large to be multiplied on 32-bit Spreadtrum's SoCs.
+>
+> It sounds like you're saying that the clk hardware is not
+> changing, but the sizeof(long) is different on 64-bit and 32-bit
+> CPUs so you've added this ifndef here for that.
+>
 
-Missing #clock-cells
+I finally figure out that this #ifndef is indeed not needed, thanks to
+your querying :)
 
-With that, for the binding:
+They told me that on Spreadtrum's 32-bit SoCs, only 20-bit of PLL_KINT
+is used and 3-bit is reserved in order to keep in line with the PLLs
+on 64-bit SoC.
+And we can get the same effect only if we define PLL with the specific
+'width' and 'shift' for PLL_KINT.
 
-Acked-by: Rob Herring <robh@kernel.org>
+I'll remove this statement and 'i' from here and
+sprd_pll_helper_recalc_rate() function.
 
-Rob
+>>
+>> i = width < 21 ? 0 : i - 20;
+>>
+>> Here ' i ' is used to adjust 'shift' rather than 'width'  like below (
+>> wrote the code back for convenience of understanding)
+>>
+>> +       kint = DIV_ROUND_CLOSEST(((fvco - refin * nint * CCU_PLL_1M)/10000) *
+>> +       ((mask >> (shift + i)) + 1), refin * 100) << i;
+>>
+>
+> Having the types for all these variables would also be helpful.
+>
+>   u32 mask, shift, width, kint, nint;
+>   unsigned long refin, fvco;
+>
+> Why don't we do 64-bit math here instead of 32-bit math? And use
+> DIV_ROUND_CLOSEST_ULL?
+
+Agree, we should use 64-bit math, will address this.
+
+Thanks,
+Chunyan
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
