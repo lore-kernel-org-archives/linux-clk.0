@@ -1,71 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:58640 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbdGMD7h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 23:59:37 -0400
-Subject: Re: [PATCH V4 4/6] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-5-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225547.GA22780@codeaurora.org>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <52b24d55-b7d5-2d50-4bb4-3e94d81c1be6@codeaurora.org>
-Date: Thu, 13 Jul 2017 09:29:30 +0530
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 3 Jul 2017 15:58:34 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, nicolas.ferre@microchip.com,
+ alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
+ lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, thomas.petazzoni@free-electrons.com
+Subject: Re: [PATCH 1/6] clk: at91: clk-generated: remove useless divisor
+ loop
+Message-ID: <20170703155834.4de2a304@bbrezillon>
+In-Reply-To: <20170623090059.8371-2-quentin.schulz@free-electrons.com>
+References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+	<20170623090059.8371-2-quentin.schulz@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20170712225547.GA22780@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, 23 Jun 2017 11:00:54 +0200
+Quentin Schulz <quentin.schulz@free-electrons.com> wrote:
 
+> The driver requests the current clk rate of each of its parent clocks to
+> decide whether a clock rate is suitable or not. It does not request
+> determine_rate from a parent clock which could request a rate change in
+> parent clock (i.e. there is no parent rate propagation).
+> 
+> We know the rate we want (passed along req argument of the function) and
+> the parent clock rate, thus we know the closest rounded divisor, we
+> don't need to iterate over the available divisors to find the best one
+> for a given clock.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
 
-On 07/13/2017 04:25 AM, Stephen Boyd wrote:
-> On 07/06, Vivek Gautam wrote:
->> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->> index ddbfa8ab69e6..75567d9698ab 100644
->> --- a/drivers/iommu/arm-smmu.c
->> +++ b/drivers/iommu/arm-smmu.c
->> @@ -1348,6 +1348,7 @@ static int arm_smmu_add_device(struct device *dev)
->>   	struct arm_smmu_device *smmu;
->>   	struct arm_smmu_master_cfg *cfg;
->>   	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
->> +	struct device_link *link = NULL;
-> Unnecessary initialization?
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Right, will drop this.
-Thanks.
-
->
->>   	int i, ret;
->>   
->>   	if (using_legacy_binding) {
->> @@ -1403,6 +1404,16 @@ static int arm_smmu_add_device(struct device *dev)
->>   
->>   	pm_runtime_put_sync(smmu->dev);
->>   
->> +	/*
->> +	 * Establish the link between smmu and master, so that the
->> +	 * smmu gets runtime enabled/disabled as per the master's
->> +	 * needs.
->> +	 */
->> +	link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
->> +	if (!link)
->> +		dev_warn(smmu->dev, "Unable to create device link between %s and %s\n",
->> +			 dev_name(smmu->dev), dev_name(dev));
->> +
->>   	return 0;
->>   
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+> ---
+>  drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index 07c8f701e51c..dab7002937e6 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  		    (gck->range.max && min_rate > gck->range.max))
+>  			continue;
+>  
+> -		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
+> -			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
+> -			tmp_diff = abs(req->rate - tmp_rate);
+> -
+> -			if (best_diff < 0 || best_diff > tmp_diff) {
+> -				best_rate = tmp_rate;
+> -				best_diff = tmp_diff;
+> -				req->best_parent_rate = parent_rate;
+> -				req->best_parent_hw = parent;
+> -			}
+> -
+> -			if (!best_diff || tmp_rate < req->rate)
+> -				break;
+> +		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
+> +		if (!div)
+> +			tmp_rate = parent_rate;
+> +		else
+> +			tmp_rate = parent_rate / div;
+> +		tmp_diff = abs(req->rate - tmp_rate);
+> +
+> +		if (best_diff < 0 || best_diff > tmp_diff) {
+> +			best_rate = tmp_rate;
+> +			best_diff = tmp_diff;
+> +			req->best_parent_rate = parent_rate;
+> +			req->best_parent_hw = parent;
+>  		}
+>  
+>  		if (!best_diff)
