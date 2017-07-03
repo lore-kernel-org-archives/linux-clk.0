@@ -1,248 +1,161 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:37248 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751725AbdG1JxU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2017 05:53:20 -0400
-Received: by mail-wm0-f45.google.com with SMTP id e199so15624253wmd.0
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2017 02:53:20 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] clk: meson: gxbb-aoclk: Switch to regmap for register access
-Date: Fri, 28 Jul 2017 11:53:07 +0200
-Message-Id: <1501235589-318-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
-References: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Dong Aisheng <dongas86@gmail.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"Anson Huang" <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Subject: RE: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
+ support
+Date: Mon, 3 Jul 2017 03:46:47 +0000
+Message-ID: <AM3PR04MB306CF3A71C1A9ED0A2427BF80D60@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
+ <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
+ <20170620014512.GL4493@codeaurora.org>
+ <20170620090815.GA6805@b29396-OptiPlex-7040>
+ <20170701005542.GT22780@codeaurora.org>
+In-Reply-To: <20170701005542.GT22780@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Switch the aoclk driver to use the new bindings and switch all the
-registers access to regmap only.
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
+> Sent: Saturday, July 01, 2017 8:56 AM
+> To: Dong Aisheng
+> Cc: A.s. Dong; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
+> shawnguo@kernel.org; Anson Huang; Jacky Bai
+> Subject: Re: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
+> support
+>=20
+> On 06/20, Dong Aisheng wrote:
+> > Hi Stephen,
+> >
+> > On Mon, Jun 19, 2017 at 06:45:12PM -0700, Stephen Boyd wrote:
+> > > On 05/15, Dong Aisheng wrote:
+> > > > ---
+> > > >  drivers/clk/clk-divider.c    | 2 ++
+> > > >  include/linux/clk-provider.h | 4 ++++
+> > > >  2 files changed, 6 insertions(+)
+> > > >
+> > > > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > > > index 96386ff..f78ba7a 100644
+> > > > --- a/drivers/clk/clk-divider.c
+> > > > +++ b/drivers/clk/clk-divider.c
+> > > > @@ -125,6 +125,8 @@ unsigned long divider_recalc_rate(struct
+> > > > clk_hw *hw, unsigned long parent_rate,
+> > > >
+> > > >  	div =3D _get_div(table, val, flags, divider->width);
+> > > >  	if (!div) {
+> > > > +		if (flags & CLK_DIVIDER_ZERO_GATE)
+> > > > +			return 0;
+> > > >  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+> > >
+> > > Why not use the CLK_DIVIDER_ALLOW_ZERO flag? A clk being off doesn't
+> > > mean the rate is 0. The divider is just disabled, so we would
+> > > consider the rate as whatever the parent is, which is what this code
+> > > does before this patch. Similarly, we don't do anything about gate
+> > > clocks and return a rate of 0 when they're disabled.
+> > >
+> >
+> > The semantic of CLK_DIVIDER_ALLOW_ZERO seems a bit different.
+> >
+> > See below definition:
+> > * CLK_DIVIDER_ALLOW_ZERO - Allow zero divisors.  For dividers which
+> have
+> > *      CLK_DIVIDER_ONE_BASED set, it is possible to end up with a zero
+> divisor.
+> > *      Some hardware implementations gracefully handle this case and
+> allow a
+> > *      zero divisor by not modifying their input clock
+> > *      (divide by one / bypass).
+> >
+> > zero divisor is simply as divide by one or bypass which is supported
+> > by hardware.
+> >
+> > But it's not true for this hardware.
+> >
+> > If we consider the rate as whatever the parent is if divider is zero,
+> > we may got an issue like below:
+> > e.g.
+> > Assuming spll_bus_clk divider is 0x0 and it may be enabled by users
+> > directly without setting a rate first.
+> >
+> > Then the clock tree looks like:
+> > ...
+> > spll_pfd0                    1            1   500210526          0 0
+> >   spll_pfd_sel              1            1   500210526          0 0
+> >     spll_sel               1            1   500210526          0 0
+> >       spll_bus_clk           1            1   500210526          0 0
+> >
+> > But the spll_bus_clk clock rate actually is wrong and it's even not
+> > enabled, not like CLK_DIVIDER_ALLOW_ZERO which zero divider means
+> simply bypass.
+> >
+> > So for this case, we probably can't simply assume zero divider rate as
+> > its parent, it is actually set to 0 in hw, although it's something
+> > like gate, but a bit different from gate as the normal gate does not
+> > affect divider where you can keep the rate.
+> >
+> > How would you suggest for this?
+> >
+>=20
+> It seems that set_rate() and enable/disable are conflated here.
+> From what you describe, it sounds like the clk is considered off when the
+> divider value is zero, and it's on when the divider value is non-zero.
+>=20
+> I'd suggest you make it so this clk supports enable/disable and set_rate
+> with the same register. Something like, set rate when the clk is disabled
+> will cache the rate request and only when the clk is enabled will the
+> driver actually program the hardware to have the requested divider value.
+> Similarly, when the clk is disabled we'll write a 0 there, but when the
+> clk is enabled we'll restore whatever rate (divider) was chosen last.
+>=20
+> It does mean that recalc rate will be sort of odd, because when the clk
+> is off it will return 0, and when the clk is on it will return the right
+> rate. So to make things work, we'll need to return the cached rate in
+> recalc rate when the clk is off and read the hardware when the clk is on.
+> Probably an if register =3D=3D
+> 0 then lookup in cache, otherwise do normal division.
+>=20
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/Makefile            |  2 +-
- drivers/clk/meson/gxbb-aoclk-regmap.c | 46 +++++++++++++++++++++++++++++++++++
- drivers/clk/meson/gxbb-aoclk.c        | 44 ++++++++++++++++-----------------
- drivers/clk/meson/gxbb-aoclk.h        | 26 ++++++++++++++++++++
- 4 files changed, 95 insertions(+), 23 deletions(-)
- create mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
- create mode 100644 drivers/clk/meson/gxbb-aoclk.h
+Well, good suggestions to me.
+It makes the implementation of this clock type more comprehensive.
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 83b6d9d..de65427 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,4 +4,4 @@
- 
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
--obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o
-+obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o
-diff --git a/drivers/clk/meson/gxbb-aoclk-regmap.c b/drivers/clk/meson/gxbb-aoclk-regmap.c
-new file mode 100644
-index 0000000..2515fbf
---- /dev/null
-+++ b/drivers/clk/meson/gxbb-aoclk-regmap.c
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS.
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0+
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/bitfield.h>
-+#include <linux/regmap.h>
-+#include "gxbb-aoclk.h"
-+
-+static int aoclk_gate_regmap_enable(struct clk_hw *hw)
-+{
-+	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
-+
-+	return regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
-+				  BIT(gate->bit_idx), BIT(gate->bit_idx));
-+}
-+
-+static void aoclk_gate_regmap_disable(struct clk_hw *hw)
-+{
-+	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
-+
-+	regmap_update_bits(gate->regmap, AO_RTI_GEN_CNTL_REG0,
-+			   BIT(gate->bit_idx), 0);
-+}
-+
-+static int aoclk_gate_regmap_is_enabled(struct clk_hw *hw)
-+{
-+	struct aoclk_gate_regmap *gate = to_aoclk_gate_regmap(hw);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(gate->regmap, AO_RTI_GEN_CNTL_REG0, &val);
-+	if (ret)
-+		return ret;
-+
-+	return (val & BIT(gate->bit_idx)) != 0;
-+}
-+
-+const struct clk_ops meson_aoclk_gate_regmap_ops = {
-+	.enable = aoclk_gate_regmap_enable,
-+	.disable = aoclk_gate_regmap_disable,
-+	.is_enabled = aoclk_gate_regmap_is_enabled,
-+};
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index b45c5fb..f61506c 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -56,16 +56,19 @@
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/reset-controller.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- #include <linux/init.h>
- #include <dt-bindings/clock/gxbb-aoclkc.h>
- #include <dt-bindings/reset/gxbb-aoclkc.h>
-+#include "gxbb-aoclk.h"
- 
- static DEFINE_SPINLOCK(gxbb_aoclk_lock);
- 
- struct gxbb_aoclk_reset_controller {
- 	struct reset_controller_dev reset;
- 	unsigned int *data;
--	void __iomem *base;
-+	struct regmap *regmap;
- };
- 
- static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
-@@ -74,9 +77,8 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
- 	struct gxbb_aoclk_reset_controller *reset =
- 		container_of(rcdev, struct gxbb_aoclk_reset_controller, reset);
- 
--	writel(BIT(reset->data[id]), reset->base);
--
--	return 0;
-+	return regmap_write(reset->regmap, AO_RTI_GEN_CNTL_REG0,
-+			    BIT(reset->data[id]));
- }
- 
- static const struct reset_control_ops gxbb_aoclk_reset_ops = {
-@@ -84,13 +86,12 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
- };
- 
- #define GXBB_AO_GATE(_name, _bit)					\
--static struct clk_gate _name##_ao = {					\
--	.reg = (void __iomem *)0,					\
-+static struct aoclk_gate_regmap _name##_ao = {				\
- 	.bit_idx = (_bit),						\
- 	.lock = &gxbb_aoclk_lock,					\
- 	.hw.init = &(struct clk_init_data) {				\
- 		.name = #_name "_ao",					\
--		.ops = &clk_gate_ops,					\
-+		.ops = &meson_aoclk_gate_regmap_ops,			\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-@@ -113,7 +114,7 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
- 	[RESET_AO_IR_BLASTER] = 23,
- };
- 
--static struct clk_gate *gxbb_aoclk_gate[] = {
-+static struct aoclk_gate_regmap *gxbb_aoclk_gate[] = {
- 	[CLKID_AO_REMOTE] = &remote_ao,
- 	[CLKID_AO_I2C_MASTER] = &i2c_master_ao,
- 	[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao,
-@@ -136,24 +137,23 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
- 
- static int gxbb_aoclkc_probe(struct platform_device *pdev)
- {
--	struct resource *res;
--	void __iomem *base;
--	int ret, clkid;
--	struct device *dev = &pdev->dev;
- 	struct gxbb_aoclk_reset_controller *rstc;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	int ret, clkid;
- 
- 	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
- 	if (!rstc)
- 		return -ENOMEM;
- 
--	/* Generic clocks */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "failed to get regmap\n");
-+		return -ENODEV;
-+	}
- 
- 	/* Reset Controller */
--	rstc->base = base;
-+	rstc->regmap = regmap;
- 	rstc->data = gxbb_aoclk_reset;
- 	rstc->reset.ops = &gxbb_aoclk_reset_ops;
- 	rstc->reset.nr_resets = ARRAY_SIZE(gxbb_aoclk_reset);
-@@ -161,10 +161,10 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
- 	ret = devm_reset_controller_register(dev, &rstc->reset);
- 
- 	/*
--	 * Populate base address and register all clks
-+	 * Populate regmap and register all clks
- 	 */
--	for (clkid = 0; clkid < gxbb_aoclk_onecell_data.num; clkid++) {
--		gxbb_aoclk_gate[clkid]->reg = base;
-+	for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
-+		gxbb_aoclk_gate[clkid]->regmap = regmap;
- 
- 		ret = devm_clk_hw_register(dev,
- 					gxbb_aoclk_onecell_data.hws[clkid]);
-@@ -177,7 +177,7 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id gxbb_aoclkc_match_table[] = {
--	{ .compatible = "amlogic,gxbb-aoclkc" },
-+	{ .compatible = "amlogic,meson-gx-aoclkc" },
- 	{ }
- };
- 
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-new file mode 100644
-index 0000000..2e26108
---- /dev/null
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * SPDX-License-Identifier: GPL-2.0+
-+ */
-+
-+#ifndef __GXBB_AOCLKC_H
-+#define __GXBB_AOCLKC_H
-+
-+/* AO Configuration Clock registers offsets */
-+#define AO_RTI_GEN_CNTL_REG0	0x40
-+
-+struct aoclk_gate_regmap {
-+	struct clk_hw hw;
-+	unsigned bit_idx;
-+	struct regmap *regmap;
-+	spinlock_t *lock;
-+};
-+
-+#define to_aoclk_gate_regmap(_hw) \
-+	container_of(_hw, struct aoclk_gate_regmap, hw)
-+
-+extern const struct clk_ops meson_aoclk_gate_regmap_ops;
-+
-+#endif /* __GXBB_AOCLKC_H */
--- 
-1.9.1
+It seems we still need keep CLK_DIVIDER_ZERO_GATE to distinguish with other=
+s.
 
+The change for recacle_rate may looks like:
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index f78ba7a..7364ac4 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -125,8 +125,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, un=
+signed long parent_rate,
+=20
+        div =3D _get_div(table, val, flags, divider->width);
+        if (!div) {
++               if ((flags & CLK_DIVIDER_ZERO_GATE) && clk_hw_is_enabled(hw=
+))
++                       return divider->cached_rate;
++
+                WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+                        "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not se=
+t\n",
+                        clk_hw_get_name(hw));
+
+And for the initial disabled state (div =3D 0), the calc_rate will still re=
+turn
+0 rate as there's still no set_rate happened.
+
+If any issue, please let me know.
+
+Regards
+Dong Aisheng
+
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
+> Linux Foundation Collaborative Project
