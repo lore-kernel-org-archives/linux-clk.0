@@ -1,55 +1,133 @@
-Return-Path: <robdclark@gmail.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 3 Jul 2017 16:19:05 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, nicolas.ferre@microchip.com,
+ alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
+ lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, thomas.petazzoni@free-electrons.com, Cyrille
+ Pitchen <cyrille.pitchen@wedev4u.fr>
+Subject: Re: [PATCH 5/6] clk: at91: clk-generated: make gclk determine
+ audio_pll rate
+Message-ID: <20170703161905.5f994151@bbrezillon>
+In-Reply-To: <20170623090059.8371-6-quentin.schulz@free-electrons.com>
+References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+ <20170623090059.8371-6-quentin.schulz@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWg45oc-9aQAMkxNrUL57vd6Vmqqn7TFfzz7-qMmzxKGQ@mail.gmail.com>
-References: <20170704175117.8636-1-robdclark@gmail.com> <CAMuHMdWg45oc-9aQAMkxNrUL57vd6Vmqqn7TFfzz7-qMmzxKGQ@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 4 Jul 2017 15:02:25 -0400
-Message-ID: <CAF6AEGuM8-kKxXq9-qcjFAPrVMt6HznEZOkGSVahRXjaCcxK4g@mail.gmail.com>
-Subject: Re: [RFC] clk: inherit display clocks enabled by bootloader
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	DRI Development <dri-devel@lists.freedesktop.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Archit Taneja <architt@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
-	Rajendra Nayak <rnayak@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 4, 2017 at 2:45 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Jul 4, 2017 at 7:51 PM, Rob Clark <robdclark@gmail.com> wrote:
->> The goal here is to support inheriting a display setup by bootloader,
->> although there may also be some non-display related use-cases.
->>
->> Rough idea is to add a flag for clks and power domains that might
->> already be enabled when kernel starts, and make corresponding fixups
->> to clk enable/prepare_count and power-domain state so that these are
->> not automatically disabled late in boot.
->>
->> If bootloader is enabling display, and kernel is using efifb before
->> real display driver is loaded (potentially from kernel module after
->> userspace starts, in a typical distro kernel), we don't want to kill
->> the clocks and power domains that are used by the display before
->> userspace starts.
->>
->> Second part will be (*waves hands*) for drm/msm to check if display
->> related clocks are enabled when it is loaded, and if so use drm
->> atomic framework's hooks to read back hw state to sync existing
->> display state w/ software state, and skip the initial clk_enable.
->> Therefore inheriting the enable done by bootloader.
->>
->> Obviously this should be split up into multiple patches and many
->> TODOs addressed.  But I guess this is enough for now to start
->> discussing the approach, and in particular how drm and clock/pd
->> drivers work together to handle handover from bootloader.
->>
->> The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
->> on leaf nodes.
->
-> Cfr. Documentation/devicetree/bindings/display/simple-framebuffer.txt?
->
+On Fri, 23 Jun 2017 11:00:58 +0200
+Quentin Schulz <quentin.schulz@free-electrons.com> wrote:
 
-which afaict doesn't help for efifb.. which we have no bindings for
-(and would seem like a strange thing to have bindings for)
+> This allows gclk to determine audio_pll rate and set the parent rate
+> accordingly.
+> 
+> However, there are multiple children clocks that could technically
+> change the rate of audio_pll. Since the clock rate is usually critical
+> for IPs, it isn't a good idea to have multiple clocks changing audio_pll
+> clock rate. There isn't any rate locking system for the moment, thus
+> we enforce that classd_gclk be the only one allowed to change audio_pll
+> rate. To remain consistent, we deny other clocks to be children of
+> audio_pll so classd_gclk altering audio_pll rate does not impact any
+> other device.
+> 
+> This needs to be re-worked once we have a rate locking system so two
+> clocks could be children of the same clock and be sure the clock rate
+> isn't changed by one or the other.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> ---
+>  drivers/clk/at91/clk-generated.c | 41 ++++++++++++++++++++++++++++++++++------
+>  1 file changed, 35 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index 6530a2e7e84d..e66ee735a569 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -26,6 +26,9 @@
+>  #define GENERATED_SOURCE_MAX	6
+>  #define GENERATED_MAX_DIV	255
+>  
+> +#define GCK_ID_CLASSD		59
+> +#define GCK_INDEX_DT_AUDIO_PLL	5
+> +
+>  struct clk_generated {
+>  	struct clk_hw hw;
+>  	struct regmap *regmap;
+> @@ -126,15 +129,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  {
+>  	struct clk_generated *gck = to_clk_generated(hw);
+>  	struct clk_hw *parent = NULL;
+> +	struct clk_rate_request req_parent = *req;
+>  	long best_rate = -EINVAL;
+> -	unsigned long min_rate;
+> +	unsigned long min_rate, parent_rate;
+>  	int best_diff = -1;
+>  	int i;
+> +	u32 div;
+>  
+> -	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+> -		u32 div;
+> -		unsigned long parent_rate;
+> -
+> +	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
+>  		parent = clk_hw_get_parent_by_index(hw, i);
+>  		if (!parent)
+>  			continue;
+> @@ -150,11 +152,37 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  		clk_generated_best_diff(req, parent, parent_rate, div,
+>  					&best_diff, &best_rate);
+>  
+> +		if (!best_diff)
+> +			break;
+> +	}
+> +
+> +	/*
+> +	 * The audio_pll rate can be modified unlike the five others clocks that
+> +	 * should never be altered.
+> +	 * The audio_pll can technically be used by multiple consumers. However,
+> +	 * they all are likely to want to modify its rate while the rate is
+> +	 * critical for each one. Since we do not have a rate locking for the
+> +	 * moment, let classd_gclk be the only consumer of the audio_pll clock.
+> +	 */
+> +
+> +	if (gck->id != GCK_ID_CLASSD)
+> +		goto end;
 
-BR,
--R
+As discussed on IRC with Nicolas and Cyrille, it seems we have other
+potential users of the audio-pll: SSC and I2S. Can you extend the test
+to let these GCK clks take the audio-pll?
+
+> +
+> +	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
+> +	if (!parent)
+> +		goto end;
+> +
+> +	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
+> +		req_parent.rate = req->rate * div;
+> +		__clk_determine_rate(parent, &req_parent);
+> +		clk_generated_best_diff(req, parent, req_parent.rate, div,
+> +					&best_diff, &best_rate);
+>  
+>  		if (!best_diff)
+>  			break;
+>  	}
+>  
+> +end:
+>  	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
+>  		 __func__, best_rate,
+>  		 __clk_get_name((req->best_parent_hw)->clk),
+> @@ -264,7 +292,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+>  	init.ops = &generated_ops;
+>  	init.parent_names = parent_names;
+>  	init.num_parents = num_parents;
+> -	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+> +		CLK_SET_RATE_PARENT;
+>  
+>  	gck->id = id;
+>  	gck->hw.init = &init;
