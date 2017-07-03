@@ -1,121 +1,103 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 3 Jul 2017 16:01:40 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, nicolas.ferre@microchip.com,
+ alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
+ lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ Nicolas Ferre <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+ thomas.petazzoni@free-electrons.com
+Subject: Re: [PATCH 2/6] clk: at91: add audio pll clock driver
+Message-ID: <20170703160140.6959bad8@bbrezillon>
+In-Reply-To: <20170623090059.8371-3-quentin.schulz@free-electrons.com>
+References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
+	<20170623090059.8371-3-quentin.schulz@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
- <20170719211515.46a1196c@windsurf> <1500543415.2354.37.camel@pengutronix.de>
- <20170720123640.43c2ce01@windsurf> <1500555312.2354.75.camel@pengutronix.de> <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 23 Jul 2017 20:41:48 +0200
-Message-ID: <CACRpkdaXOv7mX+b-q1K34CB5w0SWPXCKa21wHaxL7qjf91PJXQ@mail.gmail.com>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, lkml <linux-kernel@vger.kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>,
-	Peter Chen <Peter.Chen@nxp.com>, DRI <dri-devel@lists.freedesktop.org>,
-	Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk <linux-clk@vger.kernel.org>,
-	Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>,
-	Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>, Guenter Roeck <linux@roeck-us.net>,
-	Ohad Ben-Cohen <ohad@wizery.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Vincent Abriou <vincent.abriou@st.com>, Bin Liu <b-liu@ti.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, USB list <linux-usb@vger.kernel.org>,
-	linux-wireless <linux-wireless@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-	linux-spi <linux-spi@vger.kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-	nouveau@lists.freedesktop.org, Philippe Cornu <philippe.cornu@st.com>,
-	Kalle Valo <kvalo@qca.qualcomm.com>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Corentin Labbe <clabbe.montjoie@gmail.com>, Linux I2C <linux-i2c@vger.kernel.org>,
-	LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Lars-Peter Clausen <lars@metafoo.de>,
-	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Jon Hunter <jonathanh@nvidia.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Ben Skeggs <bskeggs@redhat.com>,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>, Mathias Nyman <mathias.nyman@intel.com>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Joachim Eastwood <manabian@gmail.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Patrice Chotard <patrice.chotard@st.com>, Stanimir Varbanov <svarbanov@mm-sol.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-	ath10k@lists.infradead.org, Kishon Vijay Abraham I <kishon@ti.com>, Chen-Yu Tsai <wens@csie.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Chen Feng <puck.chen@hisilicon.com>,
-	Mark Brown <broonie@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
-	Felipe Balbi <balbi@kernel.org>, Salil Mehta <salil.mehta@huawei.com>,
-	linux-mmc <linux-mmc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Brian Norris <computersforpeace@gmail.com>, "David S. Miller" <davem@davemloft.net>,
-	linux-remoteproc@vger.kernel.org,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	"linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	"devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Yannick Fertre <yannick.fertre@st.com>,
-	Ryder Lee <ryder.lee@mediatek.com>, Herbert Xu <herbert@gondor.apana.org.au>,
-	Richard Weinberger <richard@nod.at>, Jaehoon Chung <jh80.chung@samsung.com>,
-	Marek Vasut <marek.vasut@gmail.com>, linux-serial <linux-serial@vger.kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Alan Tull <atull@kernel.org>,
-	John Youn <johnyoun@synopsys.com>, Eduardo Valentin <edubezval@gmail.com>, dmaengine@vger.kernel.org,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Mark Yao <mark.yao@rock-chips.com>,
-	Moritz Fischer <moritz.fischer@ettus.com>,
-	Vivien Didelot <vivien.didelot@savoirfairelinux.com>, netdev <netdev@vger.kernel.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, Vinod Koul <vinod.koul@intel.com>,
-	Rongrong Zou <zourongrong@gmail.com>, linux-fpga@vger.kernel.org,
-	David Woodhouse <dwmw2@infradead.org>, Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 20, 2017 at 10:46 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Thu, Jul 20, 2017 at 5:55 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+On Fri, 23 Jun 2017 11:00:55 +0200
+Quentin Schulz <quentin.schulz@free-electrons.com> wrote:
 
->>> What about reset_control_get(struct device *, const char *, int flags)
->>> to replace all those variants ?
->>
->> While I like how this looks, unfortunately (devm_)reset_control_get
->> already exists without the flags, so we can't change to that with a
->> gentle transition.
->
-> This was done for gpiod_get() and its flags argument with horrifying
-> #define-ry, which thankfully was completely hidden from users.
+> From: Nicolas Ferre <nicolas.ferre@atmel.com>
+> 
+> This new clock driver set allows to have a fractional divided clock that
+> would generate a precise clock particularly suitable for audio
+> applications.
+> 
+> The main audio pll clock has two children clocks: one that is connected
+> to the PMC, the other that can directly drive a pad. As these two routes
+> have different enable bits and different dividers and divider formula,
+> they are handled by two different drivers. Each of them could modify the
+> rate of the main audio pll parent.
+> The main audio pll clock can output 620MHz to 700MHz.
+> 
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> ---
+>  .../devicetree/bindings/clock/at91-clock.txt       |  10 +
 
-For your reference:
+As already mentioned by Alex, DT bindings should go in a separate patch
 
-commit bae48da237fcedd7ad09569025483b988635efb7
-"gpiolib: add gpiod_get() and gpiod_put() functions"
+>  arch/arm/mach-at91/Kconfig                         |   4 +
+>  drivers/clk/at91/Makefile                          |   2 +
+>  drivers/clk/at91/clk-audio-pll-pad.c               | 204 ++++++++++++++++++
+>  drivers/clk/at91/clk-audio-pll-pmc.c               | 175 +++++++++++++++
+>  drivers/clk/at91/clk-audio-pll.c                   | 237 +++++++++++++++++++++
+>  include/linux/clk/at91_pmc.h                       |  25 +++
+>  sound/soc/atmel/atmel-classd.c                     |  20 +-
 
-commit 39b2bbe3d715cf5013b5c48695ccdd25bd3bf120
-"gpio: add flags argument to gpiod_get*() functions"
+Same goes for the atmel-classd changes.
 
-commit 0dbc8b7afef6e4fddcfebcbacbeb269a0a3b06d5
-"gpio: move varargs hack outside #ifdef GPIOLIB"
+>  8 files changed, 658 insertions(+), 19 deletions(-)
+>  create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
+>  create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
+>  create mode 100644 drivers/clk/at91/clk-audio-pll.c
+> 
 
-commit b17d1bf16cc72a374a48d748940f700009d40ff4
-"gpio: make flags mandatory for gpiod_get functions"
+[...]
 
-Retrospectively ... was that really a good idea... it was a LOT
-of trouble to add a flag, maybe it had been better to try and
-just slam all users in a single go.
+> diff --git a/drivers/clk/at91/clk-audio-pll-pmc.c b/drivers/clk/at91/clk-audio-pll-pmc.c
+> new file mode 100644
+> index 000000000000..208d0b59eb4e
+> --- /dev/null
+> +++ b/drivers/clk/at91/clk-audio-pll-pmc.c
+> @@ -0,0 +1,175 @@
+> +/*
+> + *  Copyright (C) 2016 Atmel Corporation,
+> + *                     Nicolas Ferre <nicolas.ferre@atmel.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk/at91_pmc.h>
+> +#include <linux/of.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "pmc.h"
+> +
+> +/*
+> + * DOC: PMC output for fractional PLL clock for audio
+> + *
+> + * Traits of this clock:
+> + * enable - clk_enable writes qdpmc, and enables PMC output
+> + * rate - rate is adjustable.
+> + *        clk->rate = parent->rate / (qdpmc + 1)
+> + * parent - fixed parent.  No clk_set_parent support
+> + */
+> +
+> +#define AUDIO_PLL_FOUT_MIN		620000000
+> +#define AUDIO_PLL_FOUT_MAX		700000000
+> +#define AUDIO_PLL_REFERENCE_FOUT	660000000
 
-But it worked.
-
-Yours,
-Linus Walleij
+These 3 macros are not unused, you can drop them.
