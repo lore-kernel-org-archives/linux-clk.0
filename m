@@ -1,50 +1,77 @@
-Return-Path: <plaes@plaes.org>
-From: Priit Laes <plaes@plaes.org>
+Return-Path: <garsilva@embeddedor.com>
+Date: Tue, 4 Jul 2017 17:17:07 -0500
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>,
-	Priit Laes <plaes@plaes.org>
-Subject: [PATCH v5 3/6] dt-bindings: List devicetree binding for the CCU of Allwinner A20
-Date: Tue,  4 Jul 2017 23:04:58 +0300
-Message-Id: <68788c4452291977ab16168d89cb91c4611e1a41.1499197129.git-series.plaes@plaes.org>
-In-Reply-To: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
-In-Reply-To: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] clk: moxart: remove unnecessary static in
+ moxart_of_pll_clk_init()
+Message-ID: <20170704221707.GA20243@embeddedgus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A20 is now driven by sunxi-ng CCU driver.
+Remove unnecessary static on local variable _base_.
+Such variable is initialized before being used,
+on every execution path throughout the function.
+The static has no benefit and, removing it reduces
+the code size.
 
-Add devicetree binding for it.
+This issue was detected using Coccinelle and the following semantic patch:
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Priit Laes <plaes@plaes.org>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+
+static T x@p;
+...
+x = <+...x...+>
+
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+
+In the following log you can see the difference in the code size and,
+a significant difference in bss segment. This log is the output
+of the size command, before and after the code change:
+
+before:
+   text    data     bss     dec     hex filename
+   1724     384     128    2236     8bc drivers/clk/clk-moxart.o
+
+after:
+   text    data     bss     dec     hex filename
+   1713     328      64    2105     839 drivers/clk/clk-moxart.o
+
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 ---
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-moxart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index df9fad5..81d0fa4 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -4,6 +4,7 @@ Allwinner Clock Control Unit Binding
- Required properties :
- - compatible: must contain one of the following compatibles:
- 		- "allwinner,sun6i-a31-ccu"
-+		- "allwinner,sun7i-a20-ccu"
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
- 		- "allwinner,sun8i-a83t-ccu"
+diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
+index b86dac8..d687d6a 100644
+--- a/drivers/clk/clk-moxart.c
++++ b/drivers/clk/clk-moxart.c
+@@ -18,7 +18,7 @@
+ 
+ static void __init moxart_of_pll_clk_init(struct device_node *node)
+ {
+-	static void __iomem *base;
++	void __iomem *base;
+ 	struct clk_hw *hw;
+ 	struct clk *ref_clk;
+ 	unsigned int mul;
 -- 
-git-series 0.9.1
+2.5.0
