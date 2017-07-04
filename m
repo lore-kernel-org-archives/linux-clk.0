@@ -1,81 +1,50 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, Vladimir
- Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
-        <gabriel.fernandez.st@gmail.com>,
-        Arvind Yadav
-	<arvind.yadav.cs@gmail.com>
-Subject: [PATCH v8 2/3] clk: gate: expose clk_gate_ops::is_enabled
-Date: Sat, 22 Jul 2017 14:01:09 +0200
-Message-ID: <1500724870-9071-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1500724870-9071-1-git-send-email-gabriel.fernandez@st.com>
-References: <1500724870-9071-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <plaes@plaes.org>
+From: Priit Laes <plaes@plaes.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>,
+	Priit Laes <plaes@plaes.org>
+Subject: [PATCH v5 4/6] dt-bindings: List devicetree binding for the CCU of Allwinner A10
+Date: Tue,  4 Jul 2017 23:04:59 +0300
+Message-Id: <0f68552ad8214115634d649ed34ea450461f9b5d.1499197129.git-series.plaes@plaes.org>
+In-Reply-To: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+In-Reply-To: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Allwinner A10 is now driven by sunxi-ng CCU driver.
 
-This patch exposes clk_gate_ops::is_enabled as functions
-that can be directly called and assigned in places like this so
-we don't need wrapper functions that do nothing besides forward
-the call.
+Add devicetree binding for it.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/clk/clk-gate.c       | 3 ++-
- include/linux/clk-provider.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 4e0c054a..dd82485 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
- 	clk_gate_endisable(hw, 0);
- }
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 81d0fa4..429168d 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
  
--static int clk_gate_is_enabled(struct clk_hw *hw)
-+int clk_gate_is_enabled(struct clk_hw *hw)
- {
- 	u32 reg;
- 	struct clk_gate *gate = to_clk_gate(hw);
-@@ -101,6 +101,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
- 
- 	return reg ? 1 : 0;
- }
-+EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
- 
- const struct clk_ops clk_gate_ops = {
- 	.enable = clk_gate_enable,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c59c625..e9587ab 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 		u8 clk_gate_flags, spinlock_t *lock);
- void clk_unregister_gate(struct clk *clk);
- void clk_hw_unregister_gate(struct clk_hw *hw);
-+int clk_gate_is_enabled(struct clk_hw *hw);
- 
- struct clk_div_table {
- 	unsigned int	val;
+ Required properties :
+ - compatible: must contain one of the following compatibles:
++		- "allwinner,sun4i-a10-ccu"
+ 		- "allwinner,sun6i-a31-ccu"
+ 		- "allwinner,sun7i-a20-ccu"
+ 		- "allwinner,sun8i-a23-ccu"
 -- 
-1.9.1
+git-series 0.9.1
