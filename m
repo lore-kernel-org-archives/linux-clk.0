@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 12 Jul 2017 23:48:43 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-Message-ID: <20170713064843.GX22780@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org>
- <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170704175117.8636-1-robdclark@gmail.com>
+References: <20170704175117.8636-1-robdclark@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Jul 2017 20:45:48 +0200
+Message-ID: <CAMuHMdWg45oc-9aQAMkxNrUL57vd6Vmqqn7TFfzz7-qMmzxKGQ@mail.gmail.com>
+Subject: Re: [RFC] clk: inherit display clocks enabled by bootloader
+To: Rob Clark <robdclark@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	DRI Development <dri-devel@lists.freedesktop.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Archit Taneja <architt@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
+	Rajendra Nayak <rnayak@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/13, Vivek Gautam wrote:
-> Hi Stephen,
-> 
-> 
-> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
-> >On 07/06, Vivek Gautam wrote:
-> >>@@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
-> >>  static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
-> >>  			     size_t size)
-> >>  {
-> >>-	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
-> >>+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> >>+	struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
-> >>+	size_t ret;
-> >>  	if (!ops)
-> >>  		return 0;
-> >>-	return ops->unmap(ops, iova, size);
-> >>+	pm_runtime_get_sync(smmu_domain->smmu->dev);
-> >Can these map/unmap ops be called from an atomic context? I seem
-> >to recall that being a problem before.
-> 
-> That's something which was dropped in the following patch merged in master:
-> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
-> 
-> Looks like we don't  need locks here anymore?
-> 
+On Tue, Jul 4, 2017 at 7:51 PM, Rob Clark <robdclark@gmail.com> wrote:
+> The goal here is to support inheriting a display setup by bootloader,
+> although there may also be some non-display related use-cases.
+>
+> Rough idea is to add a flag for clks and power domains that might
+> already be enabled when kernel starts, and make corresponding fixups
+> to clk enable/prepare_count and power-domain state so that these are
+> not automatically disabled late in boot.
+>
+> If bootloader is enabling display, and kernel is using efifb before
+> real display driver is loaded (potentially from kernel module after
+> userspace starts, in a typical distro kernel), we don't want to kill
+> the clocks and power domains that are used by the display before
+> userspace starts.
+>
+> Second part will be (*waves hands*) for drm/msm to check if display
+> related clocks are enabled when it is loaded, and if so use drm
+> atomic framework's hooks to read back hw state to sync existing
+> display state w/ software state, and skip the initial clk_enable.
+> Therefore inheriting the enable done by bootloader.
+>
+> Obviously this should be split up into multiple patches and many
+> TODOs addressed.  But I guess this is enough for now to start
+> discussing the approach, and in particular how drm and clock/pd
+> drivers work together to handle handover from bootloader.
+>
+> The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
+> on leaf nodes.
 
-While removing the spinlock around the map/unmap path may be one
-thing, I'm not sure that's all of them. Is there a path from an
-atomic DMA allocation (GFP_ATOMIC sort of thing) mapped into an
-IOMMU for a device that can eventually get down to here and
-attempt to turn a clk on?
+Cfr. Documentation/devicetree/bindings/display/simple-framebuffer.txt?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
