@@ -1,117 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 08/10] ARM: sun8i: h3: add operating-points-v2 table for CPU
-Date: Sun, 23 Jul 2017 18:27:47 +0800
-Message-Id: <20170723102749.17323-9-icenowy@aosc.io>
-In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 4 Jul 2017 10:31:37 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	"Dirk Behme" <dirk.behme@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Dirk
+ Behme" <dirk.behme@de.bosch.com>, Linux PM list <linux-pm@vger.kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Geert Uytterhoeven
+	<geert@linux-m68k.org>, Kevin Hilman <khilman@baylibre.com>, linux-clk
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk:
+ renesas: cpg-mssr: Add interface for critical core clocks)
+Message-ID: <20170704073137.GG14819@tbergstrom-lnx.Nvidia.com>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
+ <20170630202453.eh6vaehkap3as4np@pengutronix.de>
+ <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
+ <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
+ <8d255a76-babe-312d-15b3-3474969f2410@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <8d255a76-babe-312d-15b3-3474969f2410@arm.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPU on Allwinner H3 can do dynamic frequency scaling.
+On Mon, Jul 03, 2017 at 10:17:22AM +0100, Sudeep Holla wrote:
+>=20
+>=20
+> On 01/07/17 19:14, Uwe Kleine-K=F6nig wrote:
+> > Hello,
+> >=20
+> > On Sat, Jul 01, 2017 at 07:02:48AM +0200, Dirk Behme wrote:
+>=20
+> [...]
+>=20
+> >>
+> >>
+> >> The other problem is security related. If, at all, you have to do it t=
+he
+> >> other way around, then:
+> >>
+> >> Make Linux a consumer of the other CPU's (trusted/trustzone/whatever
+> >> secured) OS clock driver.
+>=20
+> Yes, that's better and is getting common on newer platforms. They have
+> separate M-class(or even low A-class e.g. A5/A7) processors to handle
+> all the system management.
+>=20
+> The new ARM SCMI specification[0][1] is designed to standardize the
+> interface. It covers the clocks in clock protocol.
+>=20
 
-Add a DVFS table based on the one tweaked by Armbian developers, which
-are proven to work stably on BSP kernels.
+Yes, however this doesn't exist on older SoCs which still have multiple CPU=
+'s
 
-Frequencies higher than 1008MHz are temporarily dropped in the table, as
-they may lead to over voltage on boards without proper regulator
-settings or over temperature on boards with proper regulator settings.
-They will be added back once regulator settings are ready and thermal
-sensor driver is merged.
-
-In order to satisfy all different regulators (SY8106A which is 50mV per
-level, SY8113B which have two states: 1.1V and 1.3V, and some board with
-non-tweakable regulators), all the OPPs are defined with a range which has
-the target value as the minimum allowed value, and 1.3V (the highest
-VDD-CPUX voltage suggested by the datasheet) as the maximum allowed value.
-It's proven to work well with a board with SY8113B.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm/boot/dts/sun8i-h3.dtsi | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index b36f9f423c39..a0cee17fe44b 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -43,32 +43,68 @@
- #include "sunxi-h3-h5.dtsi"
- 
- / {
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			opp-microvolt = <980000 980000 1300000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp@648000000 {
-+			opp-hz = /bits/ 64 <816000000>;
-+			opp-microvolt = <1020000 1020000 1300000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp@912000000 {
-+			opp-hz = /bits/ 64 <960000000>;
-+			opp-microvolt = <1080000 1080000 1300000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+
-+		opp@1008000000 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <1140000 1140000 1300000>;
-+			clock-latency-ns = <244144>; /* 8 32k periods */
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <0>;
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-names = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <0x2>;
- 		};
- 
- 		cpu@1 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu@2 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <2>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu@3 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <3>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 	};
- 
--- 
-2.13.0
+Peter.
