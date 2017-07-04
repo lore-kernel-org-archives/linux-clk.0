@@ -1,74 +1,92 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-References: <20170710203801.17496-1-carlo@caione.org>
- <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
- <20170710235403.GB25390@fury>
- <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
- <1500904960.29303.204.camel@linux.intel.com>
- <d92350f4-8bb3-85cb-4c2b-a44ab794c29a@linux.intel.com>
- <CAFqH_52ZaQ=JP==wAgsa3FKLZi0N4+PCMdYUBBL-nvKkoLDKMA@mail.gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Darren Hart <dvhart@infradead.org>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>, linux@endlessm.com,
- Carlo Caione <carlo@endlessm.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <20eea5c5-9f95-3273-97f6-193c56fe59fb@linux.intel.com>
-Date: Mon, 24 Jul 2017 18:26:55 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAFqH_52ZaQ=JP==wAgsa3FKLZi0N4+PCMdYUBBL-nvKkoLDKMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:43553 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752051AbdGDL7q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2017 07:59:46 -0400
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+        linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+        perex@perex.cz, tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+        cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/9] add support for Sama5d2 audio PLLs and enable ClassD
+Date: Tue,  4 Jul 2017 13:59:18 +0200
+Message-Id: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7/24/17 5:02 PM, Enric Balletbo Serra wrote:
-> 2017-07-24 16:07 GMT+02:00 Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com>:
->> On 7/24/17 4:02 PM, Andy Shevchenko wrote:
->>>
->>> On Mon, 2017-07-24 at 15:49 +0200, Pierre-Louis Bossart wrote:
->>>>
->>>> On 7/11/17 1:54 AM, Darren Hart wrote:
->>>>>
->>>>> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra
->>>>> wrote:
->>>
->>>
->>>>>> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>>>
->>>>>
->>>>> Excellent, thank you Enric. Pierre, any objections to this going in
->>>>> to
->>>>> 4.13 now and stable back to 4.12?
->>>>
->>>>
->>>> I saw an update of this patch being merged while I was away on an
->>>> extended summer break, but out of curiosity what was the problem with
->>>> no
->>>> audio on Baytrail? the code was added precisely to add support for
->>>> 19.2
->>>> MHz on Baytrail and finally solve audio issues. I have no reports of
->>>> broken functionality with this 282a4e4 commit... Enric, do you have a
->>>> bugzilla or pointers?
->>>
->>>
->>> TL;DR: We should respect firmware settings before blindly shut down
->>> "unused" resources. (We used to have similar stuff in GPIO/pinctrl
->>> driver for direct IRQ pins, where we shut up the pins which are used
->>> directly by IOAPIC)
->>
->>
->> I wasn't arguing against those patches, just curious as to which platforms
->> were broken by setting pmc_plat_3 blindly in the driver.
->>
->
-> After your patch the clock framework disables the required clocks
-> because the driver does not request then and audio stopped to
-> work.This is not the solution as is the codec who *must* request these
-> clocks. We should implement this in the codec driver.. But now, at
-> least, if firmware enables the clocks audio continues working on
-> Baytrail.
+This patch series adds support for the audio PLLs and enables ClassD that
+can be found in ATMEL Sama5d2 SoC.
 
-Clocks are not enabled/managed in any of the BIOSes I've seen for 
-Baytrail, are you talking about a Chromebook by any chance with the 
-legacy non-DPCM byt-max98080 driver?
+There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
+FRAC can output between 620 and 700MHz and only multiply the rate of its
+parent. The two audio PLLs then divide the FRAC rate to best match the
+asked rate.
+
+I basically took an old patch series posted by Nicolas on December, 6th
+2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
+sent on July, 15th 2015.
+
+I also fixed the function used to compute the divisors, removed useless
+spinlocks and added a range to the audio frac PLL to stay within vendor's
+supported range. Clocks that are children of gclk (generated-clk) are now
+able to propagate rate to the audio PLL clocks when needed.
+
+However, there are multiple children clocks that could technically
+change the rate of audio_pll (via gck). With the rate locking introduced
+in Jerome Brunet's patch series[5], the first consumer to enable the clock
+will be the one definitely setting the rate of the clock. Without the rate
+locking, the last consumer to set the rate will be able to mess with the
+rate.
+Since audio IPs are most likely to request the same rate, we enforce
+that the only clks able to modify gck rate are those of audio IPs.
+
+To remain consistent, we deny other clocks to be children of audio_pll.
+
+Thanks,
+Quentin
+
+[1] https://patchwork.kernel.org/patch/9462351/
+[2] https://patchwork.kernel.org/patch/9462347/
+[3] https://patchwork.kernel.org/patch/9462349/
+[4] https://www.spinics.net/lists/arm-kernel/msg436120.html
+[5] http://www.spinics.net/lists/linux-clk/msg17927.html
+
+Cyrille Pitchen (2):
+  ARM: dts: at91: sama5d2: add classd nodes
+  ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+
+Quentin Schulz (7):
+  clk: at91: clk-generated: remove useless divisor loop
+  clk: at91: add audio plls to the compatible list in DT binding
+  clk: at91: add audio pll clock drivers
+  clk: at91: clk-generated: create function to find best_diff
+  clk: at91: clk-generated: make gclk determine audio_pll rate
+  ASoC: atmel-classd: remove aclk clock from DT binding
+  ASoC: atmel-classd: remove aclk clock
+
+ .../devicetree/bindings/clock/at91-clock.txt       |  10 +
+ .../devicetree/bindings/sound/atmel-classd.txt     |   9 +-
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  16 ++
+ arch/arm/boot/dts/sama5d2.dtsi                     |  39 +++-
+ arch/arm/mach-at91/Kconfig                         |   4 +
+ drivers/clk/at91/Makefile                          |   2 +
+ drivers/clk/at91/clk-audio-pll-pad.c               | 206 ++++++++++++++++++
+ drivers/clk/at91/clk-audio-pll-pmc.c               | 174 +++++++++++++++
+ drivers/clk/at91/clk-audio-pll.c                   | 239 +++++++++++++++++++++
+ drivers/clk/at91/clk-generated.c                   |  86 ++++++--
+ include/linux/clk/at91_pmc.h                       |  25 +++
+ sound/soc/atmel/atmel-classd.c                     |  47 ++--
+ 12 files changed, 798 insertions(+), 59 deletions(-)
+ create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
+ create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
+ create mode 100644 drivers/clk/at91/clk-audio-pll.c
+
+-- 
+2.11.0
+
