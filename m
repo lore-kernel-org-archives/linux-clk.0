@@ -1,78 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 17 Jul 2017 18:17:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre TORGUE <alexandre.torgue@st.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	"daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-	"andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-	"radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Ludovic BARRE <ludovic.barre@st.com>,
-	Olivier BIDEAU <olivier.bideau@st.com>,
-	Amelie DELAUNAY <amelie.delaunay@st.com>,
-	"gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
-Subject: Re: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
-Message-ID: <20170718011713.GN22780@codeaurora.org>
-References: <201707150222.ogIMUhKu%fengguang.wu@intel.com>
- <cca4fdb9-7150-0259-4a78-b705b76f2986@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cca4fdb9-7150-0259-4a78-b705b76f2986@st.com>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v2 9/9] ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+Date: Tue,  4 Jul 2017 13:59:27 +0200
+Message-Id: <20170704115927.32662-10-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/17, Gabriel FERNANDEZ wrote:
-> Hi Stephen,
-> 
-> 
-> On 07/14/2017 08:52 PM, kbuild test robot wrote:
-> > Hi Gabriel,
-> >
-> > [auto build test ERROR on clk/clk-next]
-> > [also build test ERROR on v4.12 next-20170714]
-> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> >
-> > url:    https://github.com/0day-ci/linux/commits/gabriel-fernandez-st-com/clk-stm32h7-Add-stm32h743-clock-driver/20170714-170518
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> > config: arm-lpc32xx_defconfig (attached as .config)
-> > compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
-> > reproduce:
-> >          wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >          chmod +x ~/bin/make.cross
-> >          # save the attached .config to linux build tree
-> >          make.cross ARCH=arm
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >>> drivers/clk/nxp/clk-lpc32xx.c:906:12: error: static declaration of 'clk_gate_is_enabled' follows non-static declaration
-> >      static int clk_gate_is_enabled(struct clk_hw *hw)
-> >                 ^~~~~~~~~~~~~~~~~~~
-> >     In file included from drivers/clk/nxp/clk-lpc32xx.c:13:0:
-> >     include/linux/clk-provider.h:346:5: note: previous declaration of 'clk_gate_is_enabled' was here
-> >      int clk_gate_is_enabled(struct clk_hw *hw);
-> >          ^~~~~~~~~~~~~~~~~~~
-> >
-> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
-> Rename 'clk_gate_is_enabled' into'__clk_gate_is_enabled' from clk-gate.c 
-> file, is it a good solution for you ?
-> 
-> i could add also EXPORT_SYMBOL_GPL(__clk_gate_is_enabled) if you are ok.
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-No. We should rename the lpc32xx one to be less generic as it's
-in a specific driver. Double underscore usually means internal or
-unlocked (and we poorly did it this way for
-__clk_mux_determine_rate function already).
+This patch adds the pin muxing for classd and enables it.
 
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+index 2e2c3d1a1fa2..e92b030ca45a 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+@@ -355,6 +355,14 @@
+ 					bias-pull-up;
+ 				};
+ 
++				pinctrl_classd_default: classd_default {
++					pinmux = <PIN_PB1__CLASSD_R0>,
++						 <PIN_PB2__CLASSD_R1>,
++						 <PIN_PB3__CLASSD_R2>,
++						 <PIN_PB4__CLASSD_R3>;
++					bias-pull-up;
++				};
++
+ 				pinctrl_flx0_default: flx0_default {
+ 					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
+ 						 <PIN_PB29__FLEXCOM0_IO1>;
+@@ -488,6 +496,14 @@
+ 
+ 			};
+ 
++			classd: classd@fc048000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_classd_default>;
++				atmel,pwm-type = "diff";
++				atmel,non-overlap-time = <10>;
++				status = "okay";
++			};
++
+ 			can1: can@fc050000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can1_default>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
