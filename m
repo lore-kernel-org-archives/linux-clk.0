@@ -1,123 +1,72 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+ Dirk Behme <dirk.behme@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Dirk Behme <dirk.behme@de.bosch.com>,
+ Linux PM list <linux-pm@vger.kernel.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Kevin Hilman <khilman@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
+ cpg-mssr: Add interface for critical core clocks)
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
+ <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
+ <20170630202453.eh6vaehkap3as4np@pengutronix.de>
+ <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
+ <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
+ <8d255a76-babe-312d-15b3-3474969f2410@arm.com>
+ <20170704073137.GG14819@tbergstrom-lnx.Nvidia.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <c1a323ee-a4ca-4f8d-b57a-398b7318694d@arm.com>
+Date: Tue, 4 Jul 2017 09:49:25 +0100
 MIME-Version: 1.0
-Date: Thu, 20 Jul 2017 10:03:57 +0800
-From: icenowy@aosc.io
-To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>
-Subject: Re: [linux-sunxi] [PATCH v4 4/5] ARM: sunxi: h3/h5: switch
- apb0-related clocks to r_ccu
-In-Reply-To: <1500505173.23770.1.camel@xff.cz>
-References: <20170404095100.18649-1-icenowy@aosc.io>
- <20170404095100.18649-5-icenowy@aosc.io> <1500505173.23770.1.camel@xff.cz>
-Message-ID: <3299ee7dd04482f0a21752651335e223@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20170704073137.GG14819@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-5ZyoIDIwMTctMDctMjAgMDY6NTnvvIxPbmTFmWVqIEppcm1hbiDlhpnpgZPvvJoKPiBIaSwKPiAK
-PiBJY2Vub3d5IFpoZW5nIHDDrcWhZSB2IMOadCAwNC4gMDQuIDIwMTcgdiAxNzo1MCArMDgwMDoK
-Pj4gRnJvbTogSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4KPj4gCj4+IE5vdyB3ZSBo
-YXZlIGRyaXZlciBmb3IgdGhlIFBSQ00gQ0NVLCBzd2l0Y2ggdG8gdXNlIGl0IGluc3RlYWQgb2YK
-Pj4gb2xkLXN0eWxlIGNsb2NrIG5vZGVzIGZvciBhcGIwLXJlbGF0ZWQgY2xvY2tzIGluIHN1bnhp
-LWgzLWg1LmR0c2kgLgo+PiAKPj4gVGhlIG11eCAzIG9mIFJfQ0NVIGlzIHN0aWxsIHRoZSBpbnRl
-cm5hbCBvc2NpbGxhdG9yLCB3aGljaCBpcyBzYWlkIHRvIAo+PiBiZQo+PiAxNk1IeiBwbHVzIG1p
-bnVzIDMwJSwgYW5kIGdldCBhIG1lYXN1cmVkIHZhbHVlIG9mIDE1TUh6fjE2TUh6IG9uIG15IAo+
-PiB0d28KPj4gSDMgYm9hcmRzIGFuZCBvbmUgSDUgYm9hcmQuCj4gCj4gVGhlcmUncyBpc3N1ZSB3
-aXRoIHRoZSBuZXcgcl9jY3UgdGhhdCBicmVha3Mgcl9pMmMuIChubyBkZXZpY2VzIGNhbiBiZQo+
-IGZvdW5kIG9uIHRoZSBidXMpLiBSZXZlcnRpbmcgdGhpcyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUg
-d2l0aCB0aGUgSTJDCj4gY29udHJvbGxlci4gKGV2ZXJ5dGhpbmcgZWxzZSBiZWluZyB0aGUgc2Ft
-ZSkKPiAKPiBIZXJlJ3MgdGhlIGNvZGUgSSdtIHVzaW5nOiBodHRwczovL2dpdGh1Yi5jb20vbWVn
-b3VzL2xpbnV4L2NvbW1pdHMvb3Jhbgo+IGdlLXBpLTQuMTIKPiAKPiBUaGUgbGFzdCBjb21taXQg
-aXMgdGhlIHJldmVydC4KPiAKPiBUaGUgaXNzdWUgbWFuaWZlc3RzIGl0c2VsZiBieSBub24td29y
-a2luZyBEVkZTLCBiZWNhdXNlIGtlcm5lbCBsYWNrcwo+IGFjY2VzcyB0byBTWTgxMDZBIHJlZ3Vs
-YXRvciwgYmVjYXVzZSByX2kyYyBkb2Vzbid0IHdvcmsgd2l0aCBzdW54aS1uZwo+IGNsb2NrIGRy
-aXZlciAoc3VuOGktcikuCj4gCj4gUmVsZXZhbnQgZGlmZmVyZW5jZSBpbiByZWdpc3RlcnMgYmV0
-d2VlbiB3b3JraW5nL25vbi13b3JraW5nIHN0YXRlIGlzCj4ganVzdCB0aGlzIChkaWZmIC11KToK
-PiAKPiAgMHgwMWYwMjQwMCA9IDB4MDAwMDAwMDAKPiAgMHgwMWYwMjQwNCA9IDB4MDAwMDAwMDAK
-PiAtMHgwMWYwMjQwOCA9IDB4MDAwMDAwOTEKPiArMHgwMWYwMjQwOCA9IDB4MDAwMDAwOTUgREFU
-QSByZWdpc3RlciBpbmlzZGUgdGhlIEkyQyBjb250cm9sbGVyCj4gIDB4MDFmMDI0MGMgPSAweDAw
-MDAwMDQ0Cj4gIDB4MDFmMDI0MTAgPSAweDAwMDAwMGY4Cj4gLTB4MDFmMDI0MTQgPSAweDAwMDAw
-MDU5Cj4gKzB4MDFmMDI0MTQgPSAweDAwMDAwMDAwIENMT0NLIHNldHVwIHJlZ2lzdGVyIGluc2lk
-ZSB0aGUgSTJDIGNvbnRyb2xsZXIKPiAgMHgwMWYwMjQxOCA9IDB4MDAwMDAwMDAKPiAgMHgwMWYw
-MjQxYyA9IDB4MDAwMDAwMDAKPiAgMHgwMWYwMjQyMCA9IDB4MDAwMDAwM2EKPiAKPiBJdCBsb29r
-cyBsaWtlIHRoZSBuZXcgc3VueGktbmcgY2xvY2sgZHJpdmVyIGNhdXNlcyB0aGUgSTJDIGRyaXZl
-ciB0bwo+IG5vdCBjb3JyZWN0bHkgY29uZmlndXJlIHRoZSBDTE9DSyByZWdpc3Rlci4gSSBkb24n
-dCBrbm93IHdoeSBhbmQgSSdtCj4gbm90IHN1cmUgaG93IHRvIGRlYWwgd2l0aCB0aGlzLiBBbnkg
-aWRlYXMgd2hhdCBjYW4gSSBkbyBuZXh0Pwo+IAo+IHRoYW5rIHlvdSBhbmQgcmVnYXJkcywKPiAg
-IG8uCgpJdCBzZWVtcyB0byBiZSBhIHZlcnkgdmVyeSB2ZXJ5IHdlaXJkIHByb2JsZW0gLS0gdGhl
-IENQVVNfQ0ZHIHJlZ2lzdGVyCnNlZW1zIHRvIGJlIG5vdCBhY2Nlc3NpYmxlIGluIG5vbi1zZWN1
-cmUgbW9kZSBvbiBIMywgYW5kIGlmIHRoZSByX2NjdQpkcml2ZXIgcmVhZHMgaXQgYSB2YWx1ZSBv
-ZiAweDAgaXMgcmVhZCBvdXQgKHdoaWNoIG1lYW5zIHRoYXQgdGhlIHBhcmVudApvZiBhcjEwMCBp
-cyBvc2MzMmspLCBidXQgdGhlIHJlYWwgaW5pdGlhbCB2YWx1ZSBvZiB0aGUgcmVnaXN0ZXIgaXMK
-MHgwMDAxMDAwMCAod2hpY2ggbWVhbnMgdGhlIHBhcmVudCBpcyBvc2MyNE0pLgoKU28gdGhlIGJ1
-cyBjbG9jayBvZiByX2kyYyBpcyB3cm9uZ2x5IGNsYWltZWQgYXMgMzJrSHosIG5vdCAyNE1Ieiwg
-dGhlbgp0aGUgcl9pMmMgZmFpbHMgdG8gd29yay4KClRoaXMgY2xvY2sgcHJvYmxlbSBkb2Vzbid0
-IGV4aXN0IGZvciBBNjQuCgo+IAo+PiBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxpY2Vu
-b3d5QGFvc2MueHl6Pgo+PiAtLS0KPj4gQ2hhbmdlcyBpbiB2NDoKPj4gLSBUZW1wb3JhcmlseSBk
-cm9wcGVkIHRoZSBDQ1UgaGVhZGVycy4KPj4gQ2hhbmdlcyBpbiB2MzoKPj4gLSBDaGFuZ2Ugb3Nj
-MzIwMDAgdG8gaW9zYy4KPj4gCj4+ICBhcmNoL2FybS9ib290L2R0cy9zdW54aS1oMy1oNS5kdHNp
-IHwgNDUgCj4+ICsrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+ICAxIGZp
-bGUgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKSwgMzEgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZm
-IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvc3VueGktaDMtaDUuZHRzaSAKPj4gYi9hcmNoL2Fy
-bS9ib290L2R0cy9zdW54aS1oMy1oNS5kdHNpCj4+IGluZGV4IDY2NDBlYmZhNjQxOS4uMWFlZWFj
-YjNhODg0IDEwMDY0NAo+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9zdW54aS1oMy1oNS5kdHNp
-Cj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bnhpLWgzLWg1LmR0c2kKPj4gQEAgLTY4LDMx
-ICs2OCwxMiBAQAo+PiAgCQkJY2xvY2stb3V0cHV0LW5hbWVzID0gIm9zYzMyayI7Cj4+ICAJCX07
-Cj4+IAo+PiAtCQlhcGIwOiBhcGIwX2NsayB7Cj4+IC0JCQljb21wYXRpYmxlID0gImZpeGVkLWZh
-Y3Rvci1jbG9jayI7Cj4+ICsJCWlvc2M6IGludGVybmFsLW9zYy1jbGsgewo+PiAgCQkJI2Nsb2Nr
-LWNlbGxzID0gPDA+Owo+PiAtCQkJY2xvY2stZGl2ID0gPDE+Owo+PiAtCQkJY2xvY2stbXVsdCA9
-IDwxPjsKPj4gLQkJCWNsb2NrcyA9IDwmb3NjMjRNPjsKPj4gLQkJCWNsb2NrLW91dHB1dC1uYW1l
-cyA9ICJhcGIwIjsKPj4gLQkJfTsKPj4gLQo+PiAtCQlhcGIwX2dhdGVzOiBjbGtAMDFmMDE0Mjgg
-ewo+PiAtCQkJY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIsc3VuOGktaDMtYXBiMC1nYXRlcy1jbGsi
-LAo+PiAtCQkJCSAgICAgImFsbHdpbm5lcixzdW40aS1hMTAtZ2F0ZXMtY2xrIjsKPj4gLQkJCXJl
-ZyA9IDwweDAxZjAxNDI4IDB4ND47Cj4+IC0JCQkjY2xvY2stY2VsbHMgPSA8MT47Cj4+IC0JCQlj
-bG9ja3MgPSA8JmFwYjA+Owo+PiAtCQkJY2xvY2staW5kaWNlcyA9IDwwPiwgPDE+Owo+PiAtCQkJ
-Y2xvY2stb3V0cHV0LW5hbWVzID0gImFwYjBfcGlvIiwgImFwYjBfaXIiOwo+PiAtCQl9Owo+PiAt
-Cj4+IC0JCWlyX2NsazogaXJfY2xrQDAxZjAxNDU0IHsKPj4gLQkJCWNvbXBhdGlibGUgPSAiYWxs
-d2lubmVyLHN1bjRpLWExMC1tb2QwLWNsayI7Cj4+IC0JCQlyZWcgPSA8MHgwMWYwMTQ1NCAweDQ+
-Owo+PiAtCQkJI2Nsb2NrLWNlbGxzID0gPDA+Owo+PiAtCQkJY2xvY2tzID0gPCZvc2MzMms+LCA8
-Jm9zYzI0TT47Cj4+IC0JCQljbG9jay1vdXRwdXQtbmFtZXMgPSAiaXIiOwo+PiArCQkJY29tcGF0
-aWJsZSA9ICJmaXhlZC1jbG9jayI7Cj4+ICsJCQljbG9jay1mcmVxdWVuY3kgPSA8MTYwMDAwMDA+
-Owo+PiArCQkJY2xvY2stYWNjdXJhY3kgPSA8MzAwMDAwMDAwPjsKPj4gKwkJCWNsb2NrLW91dHB1
-dC1uYW1lcyA9ICJpb3NjIjsKPj4gIAkJfTsKPj4gIAl9Owo+PiAKPj4gQEAgLTU3Niw5ICs1NTcs
-MTIgQEAKPj4gIAkJCQkgICAgIDxHSUNfU1BJIDQxIElSUV9UWVBFX0xFVkVMX0hJR0g+Owo+PiAg
-CQl9Owo+PiAKPj4gLQkJYXBiMF9yZXNldDogcmVzZXRAMDFmMDE0YjAgewo+PiAtCQkJcmVnID0g
-PDB4MDFmMDE0YjAgMHg0PjsKPj4gLQkJCWNvbXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjZpLWEz
-MS1jbG9jay1yZXNldCI7Cj4+ICsJCXJfY2N1OiBjbG9ja0AxZjAxNDAwIHsKPj4gKwkJCWNvbXBh
-dGlibGUgPSAiYWxsd2lubmVyLHN1bjUwaS1hNjQtci1jY3UiOwo+PiArCQkJcmVnID0gPDB4MDFm
-MDE0MDAgMHgxMDA+Owo+PiArCQkJY2xvY2tzID0gPCZvc2MyNE0+LCA8Jm9zYzMyaz4sIDwmaW9z
-Yz47Cj4+ICsJCQljbG9jay1uYW1lcyA9ICJob3NjIiwgImxvc2MiLCAiaW9zYyI7Cj4+ICsJCQkj
-Y2xvY2stY2VsbHMgPSA8MT47Cj4+ICAJCQkjcmVzZXQtY2VsbHMgPSA8MT47Cj4+ICAJCX07Cj4+
-IAo+PiBAQCAtNTg5LDkgKzU3Myw5IEBACj4+IAo+PiAgCQlpcjogaXJAMDFmMDIwMDAgewo+PiAg
-CQkJY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIsc3VuNWktYTEzLWlyIjsKPj4gLQkJCWNsb2NrcyA9
-IDwmYXBiMF9nYXRlcyAxPiwgPCZpcl9jbGs+Owo+PiArCQkJY2xvY2tzID0gPCZyX2NjdSA0Piwg
-PCZyX2NjdSAxMT47Cj4+ICAJCQljbG9jay1uYW1lcyA9ICJhcGIiLCAiaXIiOwo+PiAtCQkJcmVz
-ZXRzID0gPCZhcGIwX3Jlc2V0IDE+Owo+PiArCQkJcmVzZXRzID0gPCZyX2NjdSAwPjsKPj4gIAkJ
-CWludGVycnVwdHMgPSA8R0lDX1NQSSAzNyBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPj4gIAkJCXJl
-ZyA9IDwweDAxZjAyMDAwIDB4NDA+Owo+PiAgCQkJc3RhdHVzID0gImRpc2FibGVkIjsKPj4gQEAg
-LTYwMSw5ICs1ODUsOCBAQAo+PiAgCQkJY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIsc3VuOGktaDMt
-ci1waW5jdHJsIjsKPj4gIAkJCXJlZyA9IDwweDAxZjAyYzAwIDB4NDAwPjsKPj4gIAkJCWludGVy
-cnVwdHMgPSA8R0lDX1NQSSA0NSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPj4gLQkJCWNsb2NrcyA9
-IDwmYXBiMF9nYXRlcyAwPiwgPCZvc2MyNE0+LCA8Jm9zYzMyaz47Cj4+ICsJCQljbG9ja3MgPSA8
-JnJfY2N1IDM+LCA8Jm9zYzI0TT4sIDwmb3NjMzJrPjsKPj4gIAkJCWNsb2NrLW5hbWVzID0gImFw
-YiIsICJob3NjIiwgImxvc2MiOwo+PiAtCQkJcmVzZXRzID0gPCZhcGIwX3Jlc2V0IDA+Owo+PiAg
-CQkJZ3Bpby1jb250cm9sbGVyOwo+PiAgCQkJI2dwaW8tY2VsbHMgPSA8Mz47Cj4+ICAJCQlpbnRl
-cnJ1cHQtY29udHJvbGxlcjsKPj4gLS0KPj4gMi4xMi4yCj4+IAo+IF9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gbGludXgtYXJtLWtlcm5lbCBtYWlsaW5n
-IGxpc3QKPiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBodHRwOi8vbGlz
-dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJu
-ZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRw
-Oi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+
+
+On 04/07/17 08:31, Peter De Schrijver wrote:
+> On Mon, Jul 03, 2017 at 10:17:22AM +0100, Sudeep Holla wrote:
+>>
+>>
+>> On 01/07/17 19:14, Uwe Kleine-König wrote:
+>>> Hello,
+>>>
+>>> On Sat, Jul 01, 2017 at 07:02:48AM +0200, Dirk Behme wrote:
+>>
+>> [...]
+>>
+>>>>
+>>>>
+>>>> The other problem is security related. If, at all, you have to do it the
+>>>> other way around, then:
+>>>>
+>>>> Make Linux a consumer of the other CPU's (trusted/trustzone/whatever
+>>>> secured) OS clock driver.
+>>
+>> Yes, that's better and is getting common on newer platforms. They have
+>> separate M-class(or even low A-class e.g. A5/A7) processors to handle
+>> all the system management.
+>>
+>> The new ARM SCMI specification[0][1] is designed to standardize the
+>> interface. It covers the clocks in clock protocol.
+>>
+> 
+> Yes, however this doesn't exist on older SoCs which still have multiple CPU's
+> 
+
+Agreed. But if someone is fixing/adding support in Linux as well as in
+the other OS running on those cores, why not consider this interface
+instead of trying to generalize something which will invariably SoC
+specific.
+-- 
+Regards,
+Sudeep
