@@ -1,73 +1,143 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53950 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934643AbdGTMhR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2017 08:37:17 -0400
-Date: Thu, 20 Jul 2017 13:37:01 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <ore@pengutronix.de>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Message-ID: <20170720123701.d5zyhbevyic3odxk@sirena.org.uk>
-References: <20170620140910.7568-1-o.rempel@pengutronix.de>
- <c64ce8db-eea6-3709-9c97-fda16e93481a@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ha7ewm5ymxmzzapa"
-In-Reply-To: <c64ce8db-eea6-3709-9c97-fda16e93481a@pengutronix.de>
-Subject: Re: [PATCH v6 0/6] provide power off support for iMX6 with external
- PMIC
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 6/9] clk: at91: clk-generated: make gclk determine audio_pll rate
+Date: Tue,  4 Jul 2017 13:59:24 +0200
+Message-Id: <20170704115927.32662-7-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This allows gclk to determine audio_pll rate and set the parent rate
+accordingly.
 
---ha7ewm5ymxmzzapa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+However, there are multiple children clocks that could technically
+change the rate of audio_pll (via gck). With the rate locking, the first
+consumer to enable the clock will be the one definitely setting the rate
+of the clock.
 
-On Tue, Jul 18, 2017 at 06:53:54AM +0200, Oleksij Rempel wrote:
-> Hallo all,
->=20
-> Here Gentle Ping to the Old King
->=20
-> DT is already ACKed.
+Since audio IPs are most likely to request the same rate, we enforce
+that the only clks able to modify gck rate are those of audio IPs.
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+To remain consistent, we deny other clocks to be children of audio_pll.
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, though there are some other maintainers who like them - if in
-doubt look at how patches for the subsystem are normally handled.
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
 
---ha7ewm5ymxmzzapa
-Content-Type: application/pgp-signature; name="signature.asc"
+v2:
+  - added conditions for audio pll rate setting restriction for SSC and
+I2S,
 
------BEGIN PGP SIGNATURE-----
+ drivers/clk/at91/clk-generated.c | 48 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 42 insertions(+), 6 deletions(-)
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllwo+wACgkQJNaLcl1U
-h9BaWgf8Dd+2GB8489Rn903Eedz3w5oQIll96IExlYdYQMJJCPhoEyb5PkQQpGJr
-K+vkLCCZgfrsWVmBZP9x/HqtZVIl5wZgT5gSWCsOmN9X05STUHGc19FiFAmw89/W
-HQ8TmbWNWLl2HJVYTUKqubYkQYTiU1hDAywMFhtCpDOEv1f2bg1w8mPddoprY3qx
-uSGliuCCY+N3px90DtMRqwZFiy68cqsEqxwacJuBLCVin+pwNEbQeVdbuw45HMTn
-1icKRfPWDifRxgwuoJAQw3znb2CePASnoy8+LF8e35Rfcw/OypvaghnyKcrfhIs3
-CkV6dfX75RqHo+tlw5+doLxwJWKgXg==
-=a+rz
------END PGP SIGNATURE-----
-
---ha7ewm5ymxmzzapa--
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 6530a2e7e84d..87866786a6ab 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -26,6 +26,13 @@
+ #define GENERATED_SOURCE_MAX	6
+ #define GENERATED_MAX_DIV	255
+ 
++#define GCK_ID_SSC0		43
++#define GCK_ID_SSC1		44
++#define GCK_ID_I2S0		54
++#define GCK_ID_I2S1		55
++#define GCK_ID_CLASSD		59
++#define GCK_INDEX_DT_AUDIO_PLL	5
++
+ struct clk_generated {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -126,15 +133,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+ 	struct clk_hw *parent = NULL;
++	struct clk_rate_request req_parent = *req;
+ 	long best_rate = -EINVAL;
+-	unsigned long min_rate;
++	unsigned long min_rate, parent_rate;
+ 	int best_diff = -1;
+ 	int i;
++	u32 div;
+ 
+-	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+-		u32 div;
+-		unsigned long parent_rate;
+-
++	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+@@ -150,11 +156,40 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 		clk_generated_best_diff(req, parent, parent_rate, div,
+ 					&best_diff, &best_rate);
+ 
++		if (!best_diff)
++			break;
++	}
++
++	/*
++	 * The audio_pll rate can be modified, unlike the five others clocks
++	 * that should never be altered.
++	 * The audio_pll can technically be used by multiple consumers. However,
++	 * with the rate locking, the first consumer to enable to clock will be
++	 * the one definitely setting the rate of the clock.
++	 * Since audio IPs are most likely to request the same rate, we enforce
++	 * that the only clks able to modify gck rate are those of audio IPs.
++	 */
++
++	if (gck->id != GCK_ID_SSC0 && gck->id != GCK_ID_SSC1 &&
++	    gck->id != GCK_ID_I2S0 && gck->id != GCK_ID_I2S1 &&
++	    gck->id != GCK_ID_CLASSD)
++		goto end;
++
++	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
++	if (!parent)
++		goto end;
++
++	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
++		req_parent.rate = req->rate * div;
++		__clk_determine_rate(parent, &req_parent);
++		clk_generated_best_diff(req, parent, req_parent.rate, div,
++					&best_diff, &best_rate);
+ 
+ 		if (!best_diff)
+ 			break;
+ 	}
+ 
++end:
+ 	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
+ 		 __func__, best_rate,
+ 		 __clk_get_name((req->best_parent_hw)->clk),
+@@ -264,7 +299,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 	init.ops = &generated_ops;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+-	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
++	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
++		CLK_SET_RATE_PARENT;
+ 
+ 	gck->id = id;
+ 	gck->hw.init = &init;
+-- 
+2.11.0
