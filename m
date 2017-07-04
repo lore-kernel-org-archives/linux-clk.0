@@ -1,45 +1,98 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37581 "EHLO pokefinder.org"
+Received: from plaes.org ([188.166.43.21]:40179 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751490AbdGRQoL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Jul 2017 12:44:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 0/2] clk: renesas: rcar-gen3-cpg: refactor accessing the SD div table
-Date: Tue, 18 Jul 2017 18:44:05 +0200
-Message-Id: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
+        id S1752161AbdGDUF5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Jul 2017 16:05:57 -0400
+From: Priit Laes <plaes@plaes.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>,
+        Priit Laes <plaes@plaes.org>
+Subject: [PATCH v5 0/6] ARM: sunxi: Convert sun4i/sun7i series SoCs to sunxi-ng CCU
+Date: Tue,  4 Jul 2017 23:04:55 +0300
+Message-Id: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Here is a patch series trying to implement the conclusions about accessing the
-SD divider table, coming from this discussion [1]. Patch 1 is a tiny, yet
-seperate cleanup. Patch 2 is the bulk of the work doing the checks only when needed.
-I think the code looks much better now.
+Hi,
 
-I tested this on a Salvator-X (R-Car M3-W) with highspeed and UHS SD cards. I
-could access them and checksum files. I also did not notice any performance
-regressions. There are also no WARNings in the boot log.
+This serie brings A10 (sun4i) and A20 (sun7i) SoCs into the
+sunxi-ng world. With this patchset we now support all the clocks
+in sun4i/sun7i SoCs.
 
-Please let me know if this is what you had in mind and if you can think of
-other ways of testing this change.
+As mentioned in sun5i conversion, this is pretty much standard
+stuff as most of the required clocks were already implemented in
+the sunxi-ng framework.
 
-Thanks,
+In order to make cross-tree merges bisectable, device trees are
+currently using plain numbers instead of defines.
 
-   Wolfram
+Changes from V4:
+ - Add CLK_SET_RATE_PARENT to "sata" clock.
+ - Fix postdivider support for divider clock (round_rate, determine_rate).
 
-[1] https://patchwork.kernel.org/patch/9688509/
+Changes from v3:
+ - Add support for fixed post-divider support for DIV clocks.
+ - Fix wrong clk_ops for SATA. Spotted by Jonathan Liu.
+ - Use numeric values for clock indices to make merging somewhat easier
+ - Create separate sun7i/a20 specific header.
 
-Wolfram Sang (2):
-  clk: renesas: rcar-gen3-cpg: drop superfluous variable
-  clk: renesas: rcar-gen3-cpg.c: refactor checks for accessing the div
-    table
+Changes from v2:
+ - Rename driver and relevant files to sun4i-a10-ccu.
+ - Drop mmc output and sample clocks for sun4i-a10.
+ - Rename CSI ISP clock to SCLK as it is called on other variants.
+ - Add comment on why PLL6 is used as AHB parent.
+ - Fix parents for out_a/out_b clocks.
+ - Stop exporting PLL_PERIPH_SATA gate. Driver takes care of gate.
+ - Rework SATA clock handling.
+ - Fix ahb gate parents.
+ - Simplefb clock fixes (add dependencies for HDMI/LVDS clocks).
+ - Fixes for pll-ve and pll-video1 clocks pointed out by Jonathan Liu.
+ - Adapt to latest upstream changes from sunxi-next.
 
- drivers/clk/renesas/rcar-gen3-cpg.c | 47 ++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 27 deletions(-)
+Changes from v1:
+ - Drop useless comments
+ - Add support for A10 / sun4i.
+ - Rename driver to sunxi-a10-a20.
+ - Add previously unimplemented clocks.
+ - Document the audio pll hardcoded post-divider
+ - Add Acked-by: Rob Herring <robh at kernel.org> on patch 4
 
+Priit Laes (6):
+  clk: sunxi-ng: div: Add support for fixed post-divider
+  clk: sunxi-ng: Add sun4i/sun7i CCU driver
+  dt-bindings: List devicetree binding for the CCU of Allwinner A20
+  dt-bindings: List devicetree binding for the CCU of Allwinner A10
+  ARM: sun7i: Convert to CCU
+  ARM: sun4i: Convert to CCU
+
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt |    2 +-
+ arch/arm/boot/dts/sun4i-a10.dtsi                      |  646 +----
+ arch/arm/boot/dts/sun7i-a20.dtsi                      |  719 +-----
+ drivers/clk/sunxi-ng/Kconfig                          |   14 +-
+ drivers/clk/sunxi-ng/Makefile                         |    1 +-
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.c                  | 1448 ++++++++++-
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.h                  |   61 +-
+ drivers/clk/sunxi-ng/ccu_div.c                        |   18 +-
+ drivers/clk/sunxi-ng/ccu_div.h                        |    3 +-
+ include/dt-bindings/clock/sun4i-a10-ccu.h             |  200 +-
+ include/dt-bindings/clock/sun7i-a20-ccu.h             |   53 +-
+ include/dt-bindings/reset/sun4i-a10-ccu.h             |   67 +-
+ 12 files changed, 2021 insertions(+), 1211 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
+ create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
+ create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
+
+base-commit: 25b1d5e0c166759abba86cd38b5e2e5b6d833876
 -- 
-2.11.0
-
+git-series 0.9.1
