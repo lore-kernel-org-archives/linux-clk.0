@@ -1,92 +1,276 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:43553 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752051AbdGDL7q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2017 07:59:46 -0400
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-        linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-        perex@perex.cz, tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-        cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/9] add support for Sama5d2 audio PLLs and enable ClassD
-Date: Tue,  4 Jul 2017 13:59:18 +0200
-Message-Id: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robdclark@gmail.com>
+Return-Path: <robdclark@gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Archit Taneja <architt@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	rnayak@codeaurora.org,
+	Rob Clark <robdclark@gmail.com>
+Subject: [RFC] clk: inherit display clocks enabled by bootloader
+Date: Tue,  4 Jul 2017 13:51:17 -0400
+Message-Id: <20170704175117.8636-1-robdclark@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the audio PLLs and enables ClassD that
-can be found in ATMEL Sama5d2 SoC.
+The goal here is to support inheriting a display setup by bootloader,
+although there may also be some non-display related use-cases.
 
-There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
-FRAC can output between 620 and 700MHz and only multiply the rate of its
-parent. The two audio PLLs then divide the FRAC rate to best match the
-asked rate.
+Rough idea is to add a flag for clks and power domains that might
+already be enabled when kernel starts, and make corresponding fixups
+to clk enable/prepare_count and power-domain state so that these are
+not automatically disabled late in boot.
 
-I basically took an old patch series posted by Nicolas on December, 6th
-2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
-sent on July, 15th 2015.
+If bootloader is enabling display, and kernel is using efifb before
+real display driver is loaded (potentially from kernel module after
+userspace starts, in a typical distro kernel), we don't want to kill
+the clocks and power domains that are used by the display before
+userspace starts.
 
-I also fixed the function used to compute the divisors, removed useless
-spinlocks and added a range to the audio frac PLL to stay within vendor's
-supported range. Clocks that are children of gclk (generated-clk) are now
-able to propagate rate to the audio PLL clocks when needed.
+Second part will be (*waves hands*) for drm/msm to check if display
+related clocks are enabled when it is loaded, and if so use drm
+atomic framework's hooks to read back hw state to sync existing
+display state w/ software state, and skip the initial clk_enable.
+Therefore inheriting the enable done by bootloader.
 
-However, there are multiple children clocks that could technically
-change the rate of audio_pll (via gck). With the rate locking introduced
-in Jerome Brunet's patch series[5], the first consumer to enable the clock
-will be the one definitely setting the rate of the clock. Without the rate
-locking, the last consumer to set the rate will be able to mess with the
-rate.
-Since audio IPs are most likely to request the same rate, we enforce
-that the only clks able to modify gck rate are those of audio IPs.
+Obviously this should be split up into multiple patches and many
+TODOs addressed.  But I guess this is enough for now to start
+discussing the approach, and in particular how drm and clock/pd
+drivers work together to handle handover from bootloader.
 
-To remain consistent, we deny other clocks to be children of audio_pll.
+The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
+on leaf nodes.
+---
+A bit hacky right now, but display survives clk_disable_unused()
+and genpd_power_off_unused().  It hangs just after that late in
+boot, which I'm still debugging (might be unrelated shenanigans).
+And haven't started on the drm/msm side of this.  But I figured
+it was half baked enough to send out for comments/ideas, or to
+see if anyone had some different idea about how to solve this.
 
-Thanks,
-Quentin
+ drivers/clk/clk.c              | 18 ++++++++++++++++++
+ drivers/clk/qcom/common.c      | 28 ++++++++++++++++++++++++++++
+ drivers/clk/qcom/gcc-msm8916.c | 15 ++++++++-------
+ drivers/clk/qcom/gdsc.c        |  9 +++++++++
+ drivers/clk/qcom/gdsc.h        |  1 +
+ include/linux/clk-provider.h   |  1 +
+ include/linux/clk.h            |  9 +++++++++
+ 7 files changed, 74 insertions(+), 7 deletions(-)
 
-[1] https://patchwork.kernel.org/patch/9462351/
-[2] https://patchwork.kernel.org/patch/9462347/
-[3] https://patchwork.kernel.org/patch/9462349/
-[4] https://www.spinics.net/lists/arm-kernel/msg436120.html
-[5] http://www.spinics.net/lists/linux-clk/msg17927.html
-
-Cyrille Pitchen (2):
-  ARM: dts: at91: sama5d2: add classd nodes
-  ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
-
-Quentin Schulz (7):
-  clk: at91: clk-generated: remove useless divisor loop
-  clk: at91: add audio plls to the compatible list in DT binding
-  clk: at91: add audio pll clock drivers
-  clk: at91: clk-generated: create function to find best_diff
-  clk: at91: clk-generated: make gclk determine audio_pll rate
-  ASoC: atmel-classd: remove aclk clock from DT binding
-  ASoC: atmel-classd: remove aclk clock
-
- .../devicetree/bindings/clock/at91-clock.txt       |  10 +
- .../devicetree/bindings/sound/atmel-classd.txt     |   9 +-
- arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  16 ++
- arch/arm/boot/dts/sama5d2.dtsi                     |  39 +++-
- arch/arm/mach-at91/Kconfig                         |   4 +
- drivers/clk/at91/Makefile                          |   2 +
- drivers/clk/at91/clk-audio-pll-pad.c               | 206 ++++++++++++++++++
- drivers/clk/at91/clk-audio-pll-pmc.c               | 174 +++++++++++++++
- drivers/clk/at91/clk-audio-pll.c                   | 239 +++++++++++++++++++++
- drivers/clk/at91/clk-generated.c                   |  86 ++++++--
- include/linux/clk/at91_pmc.h                       |  25 +++
- sound/soc/atmel/atmel-classd.c                     |  47 ++--
- 12 files changed, 798 insertions(+), 59 deletions(-)
- create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
- create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
- create mode 100644 drivers/clk/at91/clk-audio-pll.c
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fc58c52..7c84e8d 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -796,6 +796,24 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 		clk_core_disable_unprepare(core->parent);
+ }
+ 
++/* clock and it's parents are already prepared/enabled from bootloader,
++ * so simply record the fact.
++ */
++static void __clk_inherit_enabled(struct clk_core *core)
++{
++	core->enable_count++;
++	core->prepare_count++;
++if (core->hw->init->name) // XXX hack.. something funny with xo/xo_board..
++	if (core->parent)
++		__clk_inherit_enabled(core->parent);
++}
++
++void clk_inherit_enabled(struct clk *clk)
++{
++	__clk_inherit_enabled(clk->core);
++}
++EXPORT_SYMBOL_GPL(clk_inherit_enabled);
++
+ static bool clk_ignore_unused;
+ static int __init clk_ignore_unused_setup(char *__unused)
+ {
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index d523991..90b698c 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -11,6 +11,7 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/export.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+@@ -258,6 +259,33 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		return ret;
+ 
++	/* Check which of clocks that we inherit state from bootloader
++	 * are enabled, and fixup enable/prepare state (as well as that
++	 * of it's parents).
++	 *
++	 * TODO can we assume that parents coming from another clk
++	 * driver are already registered?
++	 */
++	for (i = 0; i < num_clks; i++) {
++		struct clk_hw *hw;
++
++		if (!rclks[i])
++			continue;
++
++		hw = &rclks[i]->hw;
++
++		if (!(hw->init->flags & CLK_INHERIT_BOOTLOADER))
++			continue;
++
++		if (!clk_is_enabled_regmap(hw))
++			continue;
++
++		dev_dbg(dev, "%s is enabled from bootloader!\n",
++			  hw->init->name);
++
++		clk_inherit_enabled(hw->clk);
++	}
++
+ 	reset = &cc->reset;
+ 	reset->rcdev.of_node = dev->of_node;
+ 	reset->rcdev.ops = &qcom_reset_ops;
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 628e6ca..eca64f7 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -2467,7 +2467,7 @@ static struct clk_branch gcc_mdss_ahb_clk = {
+ 				"pcnoc_bfdcd_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2484,7 +2484,7 @@ static struct clk_branch gcc_mdss_axi_clk = {
+ 				"system_noc_bfdcd_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2501,7 +2501,7 @@ static struct clk_branch gcc_mdss_byte0_clk = {
+ 				"byte0_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2518,7 +2518,7 @@ static struct clk_branch gcc_mdss_esc0_clk = {
+ 				"esc0_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2535,7 +2535,7 @@ static struct clk_branch gcc_mdss_mdp_clk = {
+ 				"mdp_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2552,7 +2552,7 @@ static struct clk_branch gcc_mdss_pclk0_clk = {
+ 				"pclk0_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2569,7 +2569,7 @@ static struct clk_branch gcc_mdss_vsync_clk = {
+ 				"vsync_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -3059,6 +3059,7 @@ static struct gdsc mdss_gdsc = {
+ 		.name = "mdss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = INHERIT_BL,
+ };
+ 
+ static struct gdsc jpeg_gdsc = {
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a4f3580..a1cf482 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -331,6 +331,15 @@ int gdsc_register(struct gdsc_desc *desc,
+ 		if (ret)
+ 			return ret;
+ 		data->domains[i] = &scs[i]->pd;
++
++		// TODO how do we tell if it is actually active?  If it is not
++		// really active and we do this, it won't be enabled when
++		// driver wants it!
++		//
++		// TODO figure out how powerdomain state is refcnted so we
++		// can properly tell genpd that the domain is in use.
++		if (scs[i]->flags & INHERIT_BL)
++			data->domains[i]->flags |= GENPD_FLAG_ALWAYS_ON;
+ 	}
+ 
+ 	/* Add subdomains */
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 3964834..3b5e64b 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -53,6 +53,7 @@ struct gdsc {
+ #define VOTABLE		BIT(0)
+ #define CLAMP_IO	BIT(1)
+ #define HW_CTRL		BIT(2)
++#define INHERIT_BL	BIT(3)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a428aec..7790382 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -35,6 +35,7 @@
+ #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
+ /* parents need enable during gate/ungate, set rate and re-parent */
+ #define CLK_OPS_PARENT_ENABLE	BIT(12)
++#define CLK_INHERIT_BOOTLOADER	BIT(13) /* clk may be enabled from bootloader */
+ 
+ struct clk;
+ struct clk_hw;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 024cd07..43003e9 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -295,6 +295,15 @@ int clk_enable(struct clk *clk);
+ void clk_disable(struct clk *clk);
+ 
+ /**
++ * clk_inherit_enabled - update the enable/prepare count of a clock and it's
++ * parents for clock enabled by bootloader.
++ *
++ * Intended to be used by clock drivers to inform the clk core of a clock
++ * that is already running.
++ */
++void clk_inherit_enabled(struct clk *clk);
++
++/**
+  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
+  *		  This is only valid once the clock source has been enabled.
+  * @clk: clock source
 -- 
-2.11.0
-
+2.9.4
