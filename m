@@ -1,183 +1,79 @@
-Return-Path: <vz@mleia.com>
-Subject: Re: [PATCH v7 3/3] clk: stm32h7: Add stm32h743 clock driver
-To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
- <1500474344-9832-4-git-send-email-gabriel.fernandez@st.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Russell King
- <linux@armlinux.org.uk>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>, Nicolas Pitre
- <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- daniel.thompson@linaro.org, andrea.merello@gmail.com,
- radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
- Sylvain Lemieux <slemieux.tyco@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ludovic.barre@st.com, olivier.bideau@st.com,
- amelie.delaunay@st.com, gabriel.fernandez.st@gmail.com,
- Arvind Yadav <arvind.yadav.cs@gmail.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <d999fc79-7b14-da8e-965f-371cf4352dd1@mleia.com>
-Date: Thu, 20 Jul 2017 00:20:26 +0300
-MIME-Version: 1.0
-In-Reply-To: <1500474344-9832-4-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:43560 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752143AbdGDL7q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2017 07:59:46 -0400
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+        linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+        perex@perex.cz, tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+        cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/9] clk: at91: clk-generated: remove useless divisor loop
+Date: Tue,  4 Jul 2017 13:59:19 +0200
+Message-Id: <20170704115927.32662-2-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Gabriel,
+The driver requests the current clk rate of each of its parent clocks to
+decide whether a clock rate is suitable or not. It does not request
+determine_rate from a parent clock which could request a rate change in
+parent clock (i.e. there is no parent rate propagation).
 
-On 07/19/2017 05:25 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch enables clocks for STM32H743 boards.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> for MFD changes:
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> 
-> for DT-Bindings
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   82 ++
+We know the rate we want (passed along req argument of the function) and
+the parent clock rate, thus we know the closest rounded divisor, we
+don't need to iterate over the available divisors to find the best one
+for a given clock.
 
-I'll provide some review comments about device tree bindings only.
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
->  drivers/clk/Makefile                               |    1 +
->  drivers/clk/clk-stm32h7.c                          | 1409 ++++++++++++++++++++
->  include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
->  include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
->  5 files changed, 1793 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
->  create mode 100644 drivers/clk/clk-stm32h7.c
->  create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
->  create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> new file mode 100644
-> index 0000000..442c50c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> @@ -0,0 +1,82 @@
-> +STMicroelectronics STM32H7 Reset and Clock Controller
-> +=====================================================
-> +
-> +The RCC IP is both a reset and a clock controller.
-> +
-> +Please refer to clock-bindings.txt for common clock controller binding usage.
-> +Please also refer to reset.txt for common reset controller binding usage.
-> +
-> +Required properties:
-> +- compatible: Should be:
-> +  "st,stm32h743-rcc"
-> +
-> +- reg: should be register base and length as documented in the
-> +  datasheet
-> +
-> +- #reset-cells: 1, see below
-> +
-> +- #clock-cells : from common clock binding; shall be set to 1
-> +
-> +- clocks: External oscillator clock phandle
-> +  - high speed external clock signal (HSE)
-> +  - low speed external clock signal (LSE)
-> +  - external I2S clock (I2S_CKIN)
-> +
-> +Optional properties:
-> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
-> +  write protection (RTC clock).
-> +
-> +Example:
-> +
-> +	rcc: rcc@58024400 {
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 07c8f701e51c..dab7002937e6 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 		    (gck->range.max && min_rate > gck->range.max))
+ 			continue;
+ 
+-		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
+-			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
+-			tmp_diff = abs(req->rate - tmp_rate);
+-
+-			if (best_diff < 0 || best_diff > tmp_diff) {
+-				best_rate = tmp_rate;
+-				best_diff = tmp_diff;
+-				req->best_parent_rate = parent_rate;
+-				req->best_parent_hw = parent;
+-			}
+-
+-			if (!best_diff || tmp_rate < req->rate)
+-				break;
++		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
++		if (!div)
++			tmp_rate = parent_rate;
++		else
++			tmp_rate = parent_rate / div;
++		tmp_diff = abs(req->rate - tmp_rate);
++
++		if (best_diff < 0 || best_diff > tmp_diff) {
++			best_rate = tmp_rate;
++			best_diff = tmp_diff;
++			req->best_parent_rate = parent_rate;
++			req->best_parent_hw = parent;
+ 		}
+ 
+ 		if (!best_diff)
+-- 
+2.11.0
 
-'rcc' as a generic device node name is awkward.
-
-I believe the main function of the device is clock controller (unlikely
-a generic reset controller can be converted into a clock controller),
-the locations of the document and device driver also indicate that
-primarily it is a clock controller, so I suggest to replace device node
-name with 'clock-controller' like below:
-
-	rcc: clock-controller@58024400 {
-
-> +		#reset-cells = <1>;
-> +		#clock-cells = <2>
-
-Missing trailing semicolon       ^^^
-
-My recommendation is to move #reset-cells and #clock-cells properties
-down after 'reg' or 'clocks' property in the list.
-
-> +		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
-> +		reg = <0x58024400 0x400>;
-> +		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
-> +
-> +		st,syscfg = <&pwrcfg>;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-
-Please drop #address-cells and #size-cells properties completely, from
-the document the device node does not define any children subnodes.
-
-> +	};
-> +
-> +The peripheral clock consumer should specify the desired clock by
-> +having the clock ID in its "clocks" phandle cell.
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/stm32h7-clks.h header and can be used in device
-> +tree sources.
-> +
-> +Example:
-> +
-> +		timer5: timer@40000c00 {
-> +			compatible = "st,stm32-timer";
-> +			reg = <0x40000c00 0x400>;
-> +			interrupts = <50>;
-> +			clocks = <&rcc TIM5_CK>;
-> +
-
-Please remote the empty line above.
-
-> +		};
-> +
-> +Specifying softreset control of devices
-> +=======================================
-> +
-> +Device nodes should specify the reset channel required in their "resets"
-> +property, containing a phandle to the reset device node and an index specifying
-> +which channel to use.
-> +The index is the bit number within the RCC registers bank, starting from RCC
-> +base address.
-> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-> +Where bit_offset is the bit offset within the register.
-> +
-> +For example, for CRC reset:
-> +  crc = AHB4RSTR_offset / 4 * 32 + CRCRST_bit_offset = 0x88 / 4 * 32 + 19 = 1107
-> +
-> +All available preprocessor macros for reset are defined dt-bindings//mfd/stm32h7-rcc.h
-
-Double slashes ---------->                                           ^^^^ 
-
-I have doubts if it is permitted to add source paths into the device
-tree bindings documentation, because such information is specific to
-the Linux source code.
-
-Rob, can you clarify please?
-
-> +header and can be used in device tree sources.
-> +
-> +example:
-
-For unification, please capitalize it: 'Example:'
-
-> +
-> +	timer2 {
-> +		resets	= <&rcc STM32H7_APB1L_RESET(TIM2)>;
-> +	};
-
---
-With best wishes,
-Vladimir
