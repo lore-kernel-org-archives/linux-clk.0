@@ -1,211 +1,146 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V2 05/10] clk: sprd: add mux clock support
-Date: Tue, 11 Jul 2017 18:56:22 +0800
-Message-ID: <20170711105627.20526-6-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
-References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:60281 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752212AbdGDUkG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2017 16:40:06 -0400
+Date: Tue, 4 Jul 2017 22:39:59 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+        linux@armlinux.org.uk, perex@perex.cz, tiwai@suse.com,
+        cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 6/9] clk: at91: clk-generated: make gclk determine
+ audio_pll rate
+Message-ID: <20170704223959.5f4ded05@bbrezillon>
+In-Reply-To: <20170704115927.32662-7-quentin.schulz@free-electrons.com>
+References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+        <20170704115927.32662-7-quentin.schulz@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds clock multiplexor support for Spreadtrum platforms,
-the mux clocks also can be found in sprd composite clocks, so
-provides two helpers that can be reused later on.
+Le Tue,  4 Jul 2017 13:59:24 +0200,
+Quentin Schulz <quentin.schulz@free-electrons.com> a écrit :
 
-Original-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/Makefile |  1 +
- drivers/clk/sprd/mux.c    | 86 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/mux.h    | 63 ++++++++++++++++++++++++++++++++++
- 3 files changed, 150 insertions(+)
- create mode 100644 drivers/clk/sprd/mux.c
- create mode 100644 drivers/clk/sprd/mux.h
+> This allows gclk to determine audio_pll rate and set the parent rate
+> accordingly.
+> 
+> However, there are multiple children clocks that could technically
+> change the rate of audio_pll (via gck). With the rate locking, the first
+> consumer to enable the clock will be the one definitely setting the rate
+> of the clock.
+> 
+> Since audio IPs are most likely to request the same rate, we enforce
+> that the only clks able to modify gck rate are those of audio IPs.
+> 
+> To remain consistent, we deny other clocks to be children of audio_pll.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 8cd5592..cee36b5 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -2,3 +2,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
- 
- clk-sprd-y	+= common.o
- clk-sprd-y	+= gate.o
-+clk-sprd-y	+= mux.o
-diff --git a/drivers/clk/sprd/mux.c b/drivers/clk/sprd/mux.c
-new file mode 100644
-index 0000000..b5d8988
---- /dev/null
-+++ b/drivers/clk/sprd/mux.c
-@@ -0,0 +1,86 @@
-+/*
-+ * Spreadtrum multiplexer clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+
-+#include "mux.h"
-+
-+DEFINE_SPINLOCK(sprd_mux_lock);
-+EXPORT_SYMBOL_GPL(sprd_mux_lock);
-+
-+u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-+			      const struct sprd_mux_internal *mux)
-+{
-+	u32 reg;
-+	u8 parent;
-+	int num_parents;
-+	int i;
-+
-+	reg = sprd_clk_readl(common);
-+	parent = reg >> mux->shift;
-+	parent &= (1 << mux->width) - 1;
-+
-+	if (mux->table) {
-+		num_parents = clk_hw_get_num_parents(&common->hw);
-+
-+		for (i = 0; i < num_parents; i++)
-+			if (parent == mux->table[i] ||
-+			    (i < (num_parents - 1) && parent > mux->table[i] &&
-+			     parent < mux->table[i + 1]))
-+				return i;
-+		if (i == num_parents)
-+			return i - 1;
-+	}
-+
-+	return parent;
-+}
-+EXPORT_SYMBOL_GPL(sprd_mux_helper_get_parent);
-+
-+static u8 sprd_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-+
-+	return sprd_mux_helper_get_parent(&cm->common, &cm->mux);
-+}
-+
-+int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-+			       const struct sprd_mux_internal *mux,
-+			       u8 index)
-+{
-+	unsigned long flags = 0;
-+	u32 reg;
-+
-+	if (mux->table)
-+		index = mux->table[index];
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	reg = sprd_clk_readl(common);
-+	reg &= ~GENMASK(mux->width + mux->shift - 1, mux->shift);
-+	sprd_clk_writel(reg | (index << mux->shift), common);
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sprd_mux_helper_set_parent);
-+
-+static int sprd_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sprd_mux *cm = hw_to_sprd_mux(hw);
-+
-+	return sprd_mux_helper_set_parent(&cm->common, &cm->mux, index);
-+}
-+
-+const struct clk_ops sprd_mux_ops = {
-+	.get_parent = sprd_mux_get_parent,
-+	.set_parent = sprd_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(sprd_mux_ops);
-diff --git a/drivers/clk/sprd/mux.h b/drivers/clk/sprd/mux.h
-new file mode 100644
-index 0000000..aa35514
---- /dev/null
-+++ b/drivers/clk/sprd/mux.h
-@@ -0,0 +1,63 @@
-+/*
-+ * Spreadtrum multiplexer clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_MUX_H_
-+#define _SPRD_MUX_H_
-+
-+#include "common.h"
-+
-+struct sprd_mux_internal {
-+	u8		shift;
-+	u8		width;
-+	const u8	*table;
-+};
-+
-+struct sprd_mux {
-+	struct sprd_mux_internal mux;
-+	struct sprd_clk_common	common;
-+};
-+
-+#define _SPRD_MUX_CLK(_shift, _width, _table)		\
-+	{						\
-+		.shift	= _shift,			\
-+		.width	= _width,			\
-+		.table	= _table,			\
-+	}
-+
-+#define SPRD_MUX_CLK(_struct, _name, _parents, _table,			\
-+				     _reg, _shift, _width,		\
-+				     _flags)				\
-+	struct sprd_mux _struct = {					\
-+		.mux	= _SPRD_MUX_CLK(_shift, _width, _table),	\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.lock		= &sprd_mux_lock,		\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+							      _parents, \
-+							      &sprd_mux_ops,\
-+							      _flags),	\
-+		}							\
-+	}
-+
-+static inline struct sprd_mux *hw_to_sprd_mux(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_mux, common);
-+}
-+
-+extern const struct clk_ops sprd_mux_ops;
-+extern spinlock_t sprd_mux_lock;
-+
-+u8 sprd_mux_helper_get_parent(const struct sprd_clk_common *common,
-+			      const struct sprd_mux_internal *mux);
-+int sprd_mux_helper_set_parent(const struct sprd_clk_common *common,
-+			       const struct sprd_mux_internal *mux,
-+			       u8 index);
-+
-+#endif /* _SPRD_MUX_H_ */
--- 
-2.7.4
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+> ---
+> 
+> v2:
+>   - added conditions for audio pll rate setting restriction for SSC and
+> I2S,
+> 
+>  drivers/clk/at91/clk-generated.c | 48 +++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 42 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index 6530a2e7e84d..87866786a6ab 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -26,6 +26,13 @@
+>  #define GENERATED_SOURCE_MAX	6
+>  #define GENERATED_MAX_DIV	255
+>  
+> +#define GCK_ID_SSC0		43
+> +#define GCK_ID_SSC1		44
+> +#define GCK_ID_I2S0		54
+> +#define GCK_ID_I2S1		55
+> +#define GCK_ID_CLASSD		59
+> +#define GCK_INDEX_DT_AUDIO_PLL	5
+> +
+>  struct clk_generated {
+>  	struct clk_hw hw;
+>  	struct regmap *regmap;
+> @@ -126,15 +133,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  {
+>  	struct clk_generated *gck = to_clk_generated(hw);
+>  	struct clk_hw *parent = NULL;
+> +	struct clk_rate_request req_parent = *req;
+>  	long best_rate = -EINVAL;
+> -	unsigned long min_rate;
+> +	unsigned long min_rate, parent_rate;
+>  	int best_diff = -1;
+>  	int i;
+> +	u32 div;
+>  
+> -	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+> -		u32 div;
+> -		unsigned long parent_rate;
+> -
+> +	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
+>  		parent = clk_hw_get_parent_by_index(hw, i);
+>  		if (!parent)
+>  			continue;
+> @@ -150,11 +156,40 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  		clk_generated_best_diff(req, parent, parent_rate, div,
+>  					&best_diff, &best_rate);
+>  
+> +		if (!best_diff)
+> +			break;
+> +	}
+> +
+> +	/*
+> +	 * The audio_pll rate can be modified, unlike the five others clocks
+> +	 * that should never be altered.
+> +	 * The audio_pll can technically be used by multiple consumers. However,
+> +	 * with the rate locking, the first consumer to enable to clock will be
+> +	 * the one definitely setting the rate of the clock.
+> +	 * Since audio IPs are most likely to request the same rate, we enforce
+> +	 * that the only clks able to modify gck rate are those of audio IPs.
+> +	 */
+> +
+> +	if (gck->id != GCK_ID_SSC0 && gck->id != GCK_ID_SSC1 &&
+> +	    gck->id != GCK_ID_I2S0 && gck->id != GCK_ID_I2S1 &&
+> +	    gck->id != GCK_ID_CLASSD)
+> +		goto end;
+> +
+> +	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
+> +	if (!parent)
+> +		goto end;
+> +
+> +	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
+> +		req_parent.rate = req->rate * div;
+> +		__clk_determine_rate(parent, &req_parent);
+> +		clk_generated_best_diff(req, parent, req_parent.rate, div,
+> +					&best_diff, &best_rate);
+>  
+>  		if (!best_diff)
+>  			break;
+>  	}
+>  
+> +end:
+>  	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
+>  		 __func__, best_rate,
+>  		 __clk_get_name((req->best_parent_hw)->clk),
+> @@ -264,7 +299,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+>  	init.ops = &generated_ops;
+>  	init.parent_names = parent_names;
+>  	init.num_parents = num_parents;
+> -	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+> +		CLK_SET_RATE_PARENT;
+>  
+>  	gck->id = id;
+>  	gck->hw.init = &init;
+
