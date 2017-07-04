@@ -1,43 +1,74 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
 	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a7792: Add IMR-LX3/LSX3 clocks
-Date: Wed,  5 Jul 2017 13:54:30 +0200
-Message-Id: <1499255670-26721-1-git-send-email-geert+renesas@glider.be>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/9] clk: at91: add audio plls to the compatible list in DT binding
+Date: Tue,  4 Jul 2017 13:59:20 +0200
+Message-Id: <20170704115927.32662-3-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the module clocks for the Image Renderer Light (SRAM) Extended 3
-(IMR-LX3/LSX3) Distortion Correction Engines on R-Car V2H.
+This new clock driver set allows to have a fractional divided clock that
+would generate a precise clock particularly suitable for audio
+applications.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The main audio pll clock has two children clocks: one that is connected
+to the PMC, the other that can directly drive a pad. As these two routes
+have different enable bits and different dividers and divider formulas,
+they are handled by two different drivers.
+
+This adds the audio plls (frac, pad and pmc) to the compatible list of
+at91 clocks in DT binding.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-To be queued in clk-renesas-for-v4.14.
 
- drivers/clk/renesas/r8a7792-cpg-mssr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+added in v2:
+  - split from big patch with pll drivers and dt-binding
 
-diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas/r8a7792-cpg-mssr.c
-index a832b9b6f7b0dde8..7f85bbf20bf782b7 100644
---- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
-@@ -118,6 +118,13 @@ static const struct mssr_mod_clk r8a7792_mod_clks[] __initconst = {
- 	DEF_MOD("vin1",			 810,	R8A7792_CLK_ZG),
- 	DEF_MOD("vin0",			 811,	R8A7792_CLK_ZG),
- 	DEF_MOD("etheravb",		 812,	R8A7792_CLK_HP),
-+	DEF_MOD("imr-lx3",		 821,	R8A7792_CLK_ZG),
-+	DEF_MOD("imr-lsx3-1",		 822,	R8A7792_CLK_ZG),
-+	DEF_MOD("imr-lsx3-0",		 823,	R8A7792_CLK_ZG),
-+	DEF_MOD("imr-lsx3-5",		 825,	R8A7792_CLK_ZG),
-+	DEF_MOD("imr-lsx3-4",		 826,	R8A7792_CLK_ZG),
-+	DEF_MOD("imr-lsx3-3",		 827,	R8A7792_CLK_ZG),
-+	DEF_MOD("imr-lsx3-2",		 828,	R8A7792_CLK_ZG),
- 	DEF_MOD("gyro-adc",		 901,	R8A7792_CLK_P),
- 	DEF_MOD("gpio7",		 904,	R8A7792_CLK_CP),
- 	DEF_MOD("gpio6",		 905,	R8A7792_CLK_CP),
+ Documentation/devicetree/bindings/clock/at91-clock.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+index 5f3ad65daf69..51c259a92d02 100644
+--- a/Documentation/devicetree/bindings/clock/at91-clock.txt
++++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+@@ -81,6 +81,16 @@ Required properties:
+ 	"atmel,sama5d2-clk-generated":
+ 		at91 generated clock
+ 
++	"atmel,sama5d2-clk-audio-pll-frac":
++		at91 audio fractional pll
++
++	"atmel,sama5d2-clk-audio-pll-pad":
++		at91 audio pll CLK_AUDIO output pin
++
++	"atmel,sama5d2-clk-audio-pll-pmc"
++		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
++		and can be used by peripheral clock or generic clock
++
+ Required properties for SCKC node:
+ - reg : defines the IO memory reserved for the SCKC.
+ - #size-cells : shall be 0 (reg is used to encode clk id).
 -- 
-2.7.4
+2.11.0
