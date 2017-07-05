@@ -1,1559 +1,282 @@
-Return-Path: <tirupath@codeaurora.org>
-Subject: Re: [PATCH V1] clk: qcom: Add qpnp clock divider support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
- andy.gross@linaro.org, david.brown@linaro.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-References: <1499945536-18281-1-git-send-email-tirupath@codeaurora.org>
- <1499945536-18281-2-git-send-email-tirupath@codeaurora.org>
- <20170714210837.GK22780@codeaurora.org>
-From: Tirupathi Reddy T <tirupath@codeaurora.org>
-Message-ID: <f488d813-9dcc-4d32-c40c-fa15bfdd2cf9@codeaurora.org>
-Date: Tue, 18 Jul 2017 17:05:17 +0530
+Return-Path: <Eugeniy.Paltsev@synopsys.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
+	Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: Re: [PATCH v4] clk: axs10x: introduce AXS10X pll driver
+Date: Wed, 5 Jul 2017 11:23:53 +0000
+Message-ID: <1499253832.2378.14.camel@synopsys.com>
+References: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20170714210837.GK22780@codeaurora.org>
-Content-Type: multipart/alternative;
- boundary="------------FACB47EF1C5B6D58E3D2D2E3"
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------FACB47EF1C5B6D58E3D2D2E3
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-
-On 7/15/2017 2:38 AM, Stephen Boyd wrote:
-> On 07/13, Tirupathi Reddy wrote:
->> diff --git a/Documentation/devicetree/bindings/clock/clk-qpnp-div.txt b/Documentation/devicetree/bindings/clock/clk-qpnp-div.txt
->> new file mode 100644
->> index 0000000..03b7b70
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/clk-qpnp-div.txt
->> @@ -0,0 +1,52 @@
->> +Qualcomm Technologies, Inc. QPNP clock divider (clkdiv)
->> +
->> +clkdiv configures the clock frequency of a set of outputs on the PMIC.
->> +These clocks are typically wired through alternate functions on
->> +gpio pins.
->> +
->> +=======================
->> +Supported Properties
->> +=======================
->> +
->> +- compatible
->> +	Usage:      required
->> +	Value type: <string>
->> +	Definition: should be "qcom,qpnp-clkdiv".
->> +
->> +- reg
->> +	Usage:      required
->> +	Value type: <prop-encoded-array>
->> +	Definition: Addresses and sizes for the memory of this CLKDIV
->> +		    peripheral.
->> +
->> +- qcom,cxo-freq
->> +	Usage:      required
->> +	Value type: <u32>
->> +	Definition: The frequency of the crystal oscillator (CXO) clock in Hz.
-> CXO should be a parent clk then. This could have clocks and
-> clock-names properties for that and then be hooked up to
-> xo_board.
-Sure. I will address in the next patch set.
->> +
->> +- qcom,clkdiv-id
->> +	Usage:      required
->> +	Value type: <u32>
->> +	Definition: Integer value specifies the hardware identifier of this
->> +		    CLKDIV peripheral.
-> This is to name the clk? You could use clock-output-names as
-> that's more standard. But this is also sort of confusing. If
-> there are multiple clkdivs then it would be good to combine them
-> into one device node assuming they're all next to each other.
-> This would be similar to how we handle gpios and regulators. Then
-> the naming is simple enough to be an incrementing number.
-Yes, multiple clkdivs present. We add sub-nodes for each clkdiv and 
-parse them inside driver as separate clock.
->> +
->> +- qcom,clkdiv-init-freq
->> +	Usage:      optional
->> +	Value type: <u32>
->> +	Definition: Initial output frequency in Hz to configure for the CLKDIV
->> +		    peripheral. The initial frequency value should be less than
->> +		    or equal to CXO clock frequency and greater than or equal to
->> +		    CXO_freq/64.
-> Use assigned-clock-rates instead.
-Sure. I will address in the next patch set.
->> +
->> +=======
->> +Example
->> +=======
->> +
->> +qcom,clkdiv@5b00 {
->> +	compatible = "qcom,qpnp-clkdiv";
->> +	reg = <0x5b00 0x100>;
->> +
->> +	qcom,cxo-freq = <19200000>;
->> +	qcom,clkdiv-id = <1>;
->> +	qcom,clkdiv-init-freq = <9600000>;
->> +};
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 9f6c278..c68ae96 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -196,3 +196,12 @@ config MSM_MMCC_8996
->>   	  Support for the multimedia clock controller on msm8996 devices.
->>   	  Say Y if you want to support multimedia devices such as display,
->>   	  graphics, video encode/decode, camera, etc.
->> +
->> +config CLOCK_QPNP_DIV
->> +	tristate "QPNP PMIC clkdiv driver"
->> +	depends on COMMON_CLK_QCOM && SPMI
-> COMPILE_TEST?
-Sure. I will address in the next patch set.
->
->> +	help
->> +	  This driver supports the clkdiv functionality on the Qualcomm
->> +	  Technologies, Inc. QPNP PMIC. It configures the frequency of
-> I'm not sure we ever really call it QPNP PMIC. I see one hit from
-> grep for the thermal driver. Perhaps SPMI PMIC is more
-> appropriate.
-Sure. I will address in the next patch set.
->
->> +	  clkdiv outputs on the PMIC. These clocks are typically wired
->> +	  through alternate functions on gpio pins.
->> diff --git a/drivers/clk/qcom/clk-qpnp-div.c b/drivers/clk/qcom/clk-qpnp-div.c
->> new file mode 100644
->> index 0000000..416c20f
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-qpnp-div.c
->> @@ -0,0 +1,422 @@
->> +/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 and
->> + * only version 2 as published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/delay.h>
->> +#include <linux/err.h>
->> +#include <linux/log2.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/types.h>
-> bitops.h?
-Sure. I will add it in the next patch set.
->
->> +
->> +#define Q_REG_DIV_CTL1			0x43
->> +#define Q_DIV_CTL1_DIV_FACTOR_MASK	GENMASK(2, 0)
->> +
->> +#define Q_REG_EN_CTL			0x46
->> +#define Q_REG_EN_MASK			BIT(7)
->> +#define Q_SET_EN			BIT(7)
->> +
->> +#define Q_CXO_PERIOD_NS(cxo_clk)	(NSEC_PER_SEC / cxo_clk)
->> +#define Q_DIV_PERIOD_NS(cxo_clk, div)	(NSEC_PER_SEC / (cxo_clk / div))
->> +#define Q_ENABLE_DELAY_NS(cxo_clk, div)	(2 * Q_CXO_PERIOD_NS(cxo_clk) + \
->> +					(3 * Q_DIV_PERIOD_NS(cxo_clk, div)))
->> +#define Q_DISABLE_DELAY_NS(cxo_clk, div) \
->> +					(3 * Q_DIV_PERIOD_NS(cxo_clk, div))
->> +
->> +#define CLK_QPNP_DIV_OFFSET		1
->> +
->> +enum q_clk_div_factor {
->> +	Q_CLKDIV_XO_DIV_1_0 = 0,
->> +	Q_CLKDIV_XO_DIV_1,
->> +	Q_CLKDIV_XO_DIV_2,
->> +	Q_CLKDIV_XO_DIV_4,
->> +	Q_CLKDIV_XO_DIV_8,
->> +	Q_CLKDIV_XO_DIV_16,
->> +	Q_CLKDIV_XO_DIV_32,
->> +	Q_CLKDIV_XO_DIV_64,
->> +	Q_CLKDIV_MAX_ALLOWED,
-> Please make #defines for these instead of enum.
-We used enum primarily for easy debug at runtime. For an example, The 
-"div_factor" field
-of "struct q_clkdiv" would always show the enumerated value which would 
-help in
-determining the configured absolute divider value rather than spending 
-time in mapping
-register bit values to absolute divider value.
->
->> +};
->> +
->> +enum q_clkdiv_state {
->> +	DISABLE = false,
->> +	ENABLE = true,
->> +};
-> Uh no. Just use bool.
-Sure. I will address in the next patch set.
->
->> +
->> +struct q_clkdiv {
->> +	struct regmap		*regmap;
->> +	struct device		*dev;
->> +
->> +	u16			base;
->> +	spinlock_t		lock;
->> +
->> +	/* clock properties */
->> +	struct clk_hw		hw;
->> +	unsigned int		cxo_hz;
-> Drop.
-cxo_hz is required to be populated at driver initialization and being 
-used at runtime
-for calculating the div value to be applied.
->
->> +	enum q_clk_div_factor	div_factor;
->> +	bool			enabled;
-> Shouldn't be needed. Read the hardware instead.
-This enabled field is required for the typical handling of set_rate in 
-qpnp_clkdiv_config_freq_div().
-**
->
->> +};
->> +
->> +static inline struct q_clkdiv *to_clkdiv(struct clk_hw *_hw)
-> _hw can just be hw?
-Sure. I will address it in next patch set.
->
->> +{
->> +	return container_of(_hw, struct q_clkdiv, hw);
->> +}
->> +
->> +static inline unsigned int div_factor_to_div(unsigned int div_factor)
->> +{
->> +	if (div_factor == Q_CLKDIV_XO_DIV_1_0)
->> +		return 1;
->> +
->> +	return 1 << (div_factor - CLK_QPNP_DIV_OFFSET);
->> +}
-> Not sure, but it may be possible to reuse the code in
-> clk-divider.c and treat this as a CLK_DIVIDER_POWER_OF_TWO?
-Sure. I will check more on this.
->
->> +
->> +static inline unsigned int div_to_div_factor(unsigned int div)
->> +{
->> +	return ilog2(div) + CLK_QPNP_DIV_OFFSET;
->> +}
->> +
->> +static int qpnp_clkdiv_masked_write(struct q_clkdiv *q_clkdiv, u16 offset,
-> Please replace instances of qpnp with spmi_pmic throughout this
-> driver.
-Sure. I will address it in next patch set.
-> Also, why do we need a wrapper around regmap APIs? Please just
-> use the APIs directly.
-Sure. I will address it in next patch set.
->> +			u8 mask, u8 val)
->> +{
->> +	int rc;
->> +
->> +	rc = regmap_update_bits(q_clkdiv->regmap, q_clkdiv->base + offset, mask,
->> +				val);
->> +	if (rc)
->> +		dev_err(q_clkdiv->dev,
->> +			"Unable to regmap_update_bits to addr=%hx, rc(%d)\n",
->> +			q_clkdiv->base + offset, rc);
->> +
->> +	return rc;
->> +}
->> +
->> +static int qpnp_clkdiv_set_enable_state(struct q_clkdiv *q_clkdiv,
->> +			enum q_clkdiv_state enable_state)
->> +{
->> +	int rc;
->> +
->> +	rc = qpnp_clkdiv_masked_write(q_clkdiv, Q_REG_EN_CTL, Q_REG_EN_MASK,
->> +				(enable_state == ENABLE) ? Q_SET_EN : 0);
->> +	if (rc)
->> +		return rc;
->> +
->> +	if (enable_state == ENABLE)
->> +		ndelay(Q_ENABLE_DELAY_NS(q_clkdiv->cxo_hz,
->> +				div_factor_to_div(q_clkdiv->div_factor)));
-> Can this factor can be precalculated at probe time based on
-> XO rate? And then we just multiply that factor with the divider
-> value to figure out how long to wait?
-Sure. I will check more on this.
->
->> +	else
->> +		ndelay(Q_DISABLE_DELAY_NS(q_clkdiv->cxo_hz,
->> +				div_factor_to_div(q_clkdiv->div_factor)));
->> +
->> +	return rc;
->> +}
->> +
->> +static int qpnp_clkdiv_config_freq_div(struct q_clkdiv *q_clkdiv,
->> +			unsigned int div)
->> +{
->> +	unsigned int div_factor;
->> +	int rc;
->> +
->> +	div_factor = div_to_div_factor(div);
->> +	if (div_factor <= 0 || div_factor >= Q_CLKDIV_MAX_ALLOWED)
->> +		return -EINVAL;
->> +
->> +	if (q_clkdiv->enabled) {
->> +		rc = qpnp_clkdiv_set_enable_state(q_clkdiv, DISABLE);
->> +		if (rc) {
->> +			dev_err(q_clkdiv->dev, "unable to disable clock, rc = %d\n",
->> +				rc);
->> +			return rc;
->> +		}
->> +	}
->> +
->> +	rc = qpnp_clkdiv_masked_write(q_clkdiv, Q_REG_DIV_CTL1,
->> +				Q_DIV_CTL1_DIV_FACTOR_MASK, div_factor);
->> +	if (rc) {
->> +		dev_err(q_clkdiv->dev, "config divider failed, rc=%d\n",
->> +			rc);
->> +		return rc;
->> +	}
->> +
->> +	q_clkdiv->div_factor = div_factor;
->> +
->> +	if (q_clkdiv->enabled) {
->> +		rc = qpnp_clkdiv_set_enable_state(q_clkdiv, ENABLE);
->> +		if (rc)
->> +			dev_err(q_clkdiv->dev, "unable to re-enable clock, rc = %d\n",
->> +				rc);
->> +	}
->> +
->> +	return rc;
->> +}
->> +
->> +static int clk_qpnp_div_enable(struct clk_hw *hw)
->> +{
->> +	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
->> +	unsigned long flags;
->> +	int rc;
->> +
->> +	spin_lock_irqsave(&q_clkdiv->lock, flags);
-> What is this locking against? Rate change?
-Yes, locking against "q_clkdiv->enabled".
->
->> +
->> +	rc =  qpnp_clkdiv_set_enable_state(q_clkdiv, ENABLE);
->> +	if (rc) {
->> +		dev_err(q_clkdiv->dev, "clk enable failed, rc=%d\n", rc);
->> +		goto fail;
->> +	}
->> +
->> +	q_clkdiv->enabled = true;
->> +
->> +fail:
->> +	spin_unlock_irqrestore(&q_clkdiv->lock, flags);
->> +	return rc;
->> +}
->> +
->> +static void clk_qpnp_div_disable(struct clk_hw *hw)
->> +{
->> +	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
->> +	unsigned long flags;
->> +	int rc;
->> +
->> +	spin_lock_irqsave(&q_clkdiv->lock, flags);
->> +
->> +	rc = qpnp_clkdiv_set_enable_state(q_clkdiv, DISABLE);
->> +	if (rc) {
->> +		dev_err(q_clkdiv->dev, "clk disable failed, rc=%d\n", rc);
->> +		goto fail;
->> +	}
->> +
->> +	q_clkdiv->enabled = false;
->> +
->> +fail:
->> +	spin_unlock_irqrestore(&q_clkdiv->lock, flags);
->> +}
->> +
->> +static long clk_qpnp_div_round_rate(struct clk_hw *hw, unsigned long rate,
->> +			unsigned long *parent_rate)
->> +{
->> +	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
->> +	unsigned long flags, new_rate;
->> +	unsigned int div, div_factor;
->> +
->> +	spin_lock_irqsave(&q_clkdiv->lock, flags);
->> +	if (rate <= 0 || rate > q_clkdiv->cxo_hz) {
-> How can rate be less than zero? It's unsigned! And if it's
-> greater than some parent rate, round_rate() should return the
-> largest rate it can support (I guess parent_rate?)
-Sure. I will address it in next patch set.
->
->> +		dev_err(q_clkdiv->dev, "invalid rate requested, rate = %lu\n",
->> +			rate);
->> +		spin_unlock_irqrestore(&q_clkdiv->lock, flags);
-> Also what are we spinlocking for?
-Seems locking is not required here. I will address it in next patch set.
->
->> +		return -EINVAL;
->> +	}
->> +
->> +	div = DIV_ROUND_UP(q_clkdiv->cxo_hz, rate);
->> +	div_factor = div_to_div_factor(div);
->> +	if (div_factor >= Q_CLKDIV_MAX_ALLOWED)
->> +		div_factor = Q_CLKDIV_MAX_ALLOWED - 1;
->> +	new_rate = q_clkdiv->cxo_hz / div_factor_to_div(div_factor);
->> +
->> +	spin_unlock_irqrestore(&q_clkdiv->lock, flags);
-> Shouldn't need any spinlock here...
-Seems locking is not required here. I will address it in next patch set.
->
->> +	return new_rate;
->> +}
->> +
->> +static unsigned long clk_qpnp_div_recalc_rate(struct clk_hw *hw,
->> +			unsigned long parent_rate)
->> +{
->> +	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
->> +	unsigned long rate, flags;
->> +
->> +	spin_lock_irqsave(&q_clkdiv->lock, flags);
->> +
->> +	rate = q_clkdiv->cxo_hz / div_factor_to_div(q_clkdiv->div_factor);
->> +
->> +	spin_unlock_irqrestore(&q_clkdiv->lock, flags);
-> Also confused about spinlock usage here.
-Seems locking is not required here. I will address it in next patch set
->
->> +	return rate;
->> +}
->> +
->> +static int clk_qpnp_div_set_rate(struct clk_hw *hw, unsigned long rate,
->> +			unsigned long parent_rate)
->> +{
->> +	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
->> +	unsigned long flags;
->> +	int rc = 0;
->> +
->> +	spin_lock_irqsave(&q_clkdiv->lock, flags);
->> +	if (rate <= 0 || rate > q_clkdiv->cxo_hz) {
->> +		dev_err(q_clkdiv->dev, "invalid rate requested, rate = %lu\n",
->> +			rate);
->> +		rc = -EINVAL;
->> +		goto fail;
->> +	}
-> Seems useless. Trust the framework won't call this op with a rate
-> that's invalid.
-I will check more on this and address in next patch set.
->
->> +
->> +	rc = qpnp_clkdiv_config_freq_div(q_clkdiv, q_clkdiv->cxo_hz / rate);
->> +	if (rc)
->> +		dev_err(q_clkdiv->dev, "clkdiv set rate(%lu) failed, rc = %d\n",
->> +			rate, rc);
->> +
->> +fail:
->> +	spin_unlock_irqrestore(&q_clkdiv->lock, flags);
->> +	return rc;
->> +}
->> +
->> +const struct clk_ops clk_qpnp_div_ops = {
-> static?
-Sure. I will address it in next patch set.
->
->> +	.enable = clk_qpnp_div_enable,
->> +	.disable = clk_qpnp_div_disable,
->> +	.set_rate = clk_qpnp_div_set_rate,
->> +	.recalc_rate = clk_qpnp_div_recalc_rate,
->> +	.round_rate = clk_qpnp_div_round_rate,
->> +};
->> +
->> +#define QPNP_CLKDIV_MAX_NAME_LEN	16
->> +
->> +static int qpnp_clkdiv_probe(struct platform_device *pdev)
->> +{
->> +	struct q_clkdiv *q_clkdiv;
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *of_node = dev->of_node;
->> +	struct clk_init_data *init;
->> +	struct clk_onecell_data *clk_data;
->> +	struct clk *clk;
->> +	unsigned int base, div, init_freq;
->> +	int rc = 0, id;
-> Leave rc unassigned.
-Sure. I will address it in next patch set
->
->> +	char *clk_name;
->> +
->> +	q_clkdiv = devm_kzalloc(dev, sizeof(*q_clkdiv), GFP_KERNEL);
->> +	if (!q_clkdiv)
->> +		return -ENOMEM;
->> +
->> +	q_clkdiv->regmap = dev_get_regmap(dev->parent, NULL);
->> +	if (!q_clkdiv->regmap) {
->> +		dev_err(dev, "Couldn't get parent's regmap\n");
->> +		return -EINVAL;
->> +	}
->> +	q_clkdiv->dev = dev;
->> +
->> +	rc = of_property_read_u32(of_node, "reg", &base);
->> +	if (rc < 0) {
->> +		dev_err(dev, "Couldn't find reg in node = %s, rc = %d\n",
->> +			of_node->full_name, rc);
->> +		return rc;
->> +	}
->> +	q_clkdiv->base = base;
->> +
->> +	/* init clock properties */
->> +	rc = of_property_read_u32(of_node, "qcom,cxo-freq", &q_clkdiv->cxo_hz);
->> +	if (rc) {
->> +		dev_err(dev, "unable to get qcom,cxo-freq property, rc = %d\n",
->> +			rc);
->> +		return rc;
->> +	}
->> +
->> +	q_clkdiv->div_factor = Q_CLKDIV_XO_DIV_1_0;
->> +	rc = of_property_read_u32(of_node, "qcom,clkdiv-init-freq", &init_freq);
->> +	if (rc) {
->> +		if (rc != -EINVAL) {
->> +			dev_err(dev, "Unable to read initial frequency value, rc=%d\n",
->> +				rc);
->> +			return rc;
->> +		}
->> +	} else {
->> +		if (init_freq <= 0 || init_freq > q_clkdiv->cxo_hz) {
->> +			dev_err(dev, "invalid initial frequency specified, rate = %u\n",
->> +				init_freq);
->> +			return -EINVAL;
->> +		}
->> +
->> +		div = DIV_ROUND_UP(q_clkdiv->cxo_hz, init_freq);
->> +		q_clkdiv->div_factor = div_to_div_factor(div);
->> +		if (q_clkdiv->div_factor >= Q_CLKDIV_MAX_ALLOWED)
->> +			q_clkdiv->div_factor = Q_CLKDIV_MAX_ALLOWED - 1;
->> +		rc = qpnp_clkdiv_config_freq_div(q_clkdiv,
->> +				div_factor_to_div(q_clkdiv->div_factor));
->> +		if (rc) {
->> +			dev_err(dev, "Config initial frequency failed, rc = %d\n",
->> +				rc);
->> +			return rc;
->> +		}
->> +	}
-> Hopefully a bunch of this code goes away.
-I will check more on this and address in next patch set.
->
->> +
->> +	init = devm_kzalloc(dev, sizeof(*init), GFP_KERNEL);
->> +	if (!init)
->> +		return -ENOMEM;
->> +
->> +	rc = of_property_read_u32(of_node, "qcom,clkdiv-id", &id);
->> +	if (rc) {
->> +		dev_err(dev, "Unable to read clkdiv node id, rc = %d\n", rc);
->> +		return rc;
->> +	}
->> +
->> +	clk_name = devm_kcalloc(dev, QPNP_CLKDIV_MAX_NAME_LEN,
->> +				sizeof(*clk_name), GFP_KERNEL);
->> +	if (!clk_name)
->> +		return -ENOMEM;
->> +	snprintf(clk_name, QPNP_CLKDIV_MAX_NAME_LEN, "qpnp_clkdiv_%d", id);
-> devm_kasprintf? Also make sure to free the name after
-> registration because we copy it over in the framework.
-Sure. I will address it in next patch set
->
->> +
->> +	init->name = clk_name;
->> +	init->ops = &clk_qpnp_div_ops;
->> +	q_clkdiv->hw.init = init;
->> +	spin_lock_init(&q_clkdiv->lock);
->> +
->> +	clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
->> +	if (!clk_data)
->> +		return -ENOMEM;
->> +
->> +	clk_data->clks = devm_kzalloc(dev, sizeof(*clk_data->clks), GFP_KERNEL);
->> +	if (!clk_data->clks)
->> +		return -ENOMEM;
->> +
->> +	clk = devm_clk_register(dev, &q_clkdiv->hw);
->> +	if (IS_ERR(clk)) {
->> +		dev_err(dev, "Unable to register qpnp div clock\n");
->> +		return PTR_ERR(clk);
->> +	}
->> +
->> +	clk_data->clk_num = 1;
->> +	clk_data->clks[0] = clk;
->> +
->> +	rc = of_clk_add_provider(of_node, of_clk_src_onecell_get, clk_data);
-> Please use the clk_hw_register() and of_clk_add_hw_provider()
-> APIs.  Also if we have only one clk it should be
-> of_clk_hw_simple_get() and have no cells in the binding. But, if
-> there are multiple of these clks, then it will be onecell.
-Sure. I will address it in next patch set
->
->> +	if (rc) {
->> +		dev_err(dev, "Unable to register qpnp div clock provider, rc = %d\n",
->> +			rc);
->> +		return rc;
->> +	}
->> +
->> +	dev_set_drvdata(dev, q_clkdiv);
-> Unused? Remove?
-Sure. I will address it in next patch set
->
->> +	dev_info(dev, "Registered %s successfully\n", clk_name);
-> No noise please.
-Sure. I will address it in next patch set
->
->> +
->> +	return rc;
->> +}
->> +
->> +static const struct of_device_id qpnp_clkdiv_match_table[] = {
->> +	{ .compatible = "qcom,qpnp-clkdiv" },
->> +	{}
->> +};
-> Add a MODULE_DEVICE_TABLE() please.
-Sure. I will address it in next patch set
->
->> +
->> +static struct platform_driver qpnp_clkdiv_driver = {
->> +	.driver		= {
->> +		.name	= "qcom,qpnp-clkdiv",
->> +		.of_match_table = qpnp_clkdiv_match_table,
->> +	},
->> +	.probe		= qpnp_clkdiv_probe,
->> +};
->> +
->> +static int __init qpnp_clkdiv_init(void)
->> +{
->> +	return platform_driver_register(&qpnp_clkdiv_driver);
->> +}
->> +module_init(qpnp_clkdiv_init);
->> +
->> +static void __exit qpnp_clkdiv_exit(void)
->> +{
->> +	return platform_driver_unregister(&qpnp_clkdiv_driver);
->> +}
->> +module_exit(qpnp_clkdiv_exit);
-> Use module_platform_driver() macro.
-Sure. I will address it in next patch set
->
-
-
---------------FACB47EF1C5B6D58E3D2D2E3
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: 7bit
-
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-  <body text="#000000" bgcolor="#FFFFFF">
-    <br>
-    <div class="moz-cite-prefix">On 7/15/2017 2:38 AM, Stephen Boyd
-      wrote:<br>
-    </div>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">On 07/13, Tirupathi Reddy wrote:
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">diff --git a/Documentation/devicetree/bindings/clock/clk-qpnp-div.txt b/Documentation/devicetree/bindings/clock/clk-qpnp-div.txt
-new file mode 100644
-index 0000000..03b7b70
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/clk-qpnp-div.txt
-@@ -0,0 +1,52 @@
-+Qualcomm Technologies, Inc. QPNP clock divider (clkdiv)
-+
-+clkdiv configures the clock frequency of a set of outputs on the PMIC.
-+These clocks are typically wired through alternate functions on
-+gpio pins.
-+
-+=======================
-+Supported Properties
-+=======================
-+
-+- compatible
-+	Usage:      required
-+	Value type: &lt;string&gt;
-+	Definition: should be "qcom,qpnp-clkdiv".
-+
-+- reg
-+	Usage:      required
-+	Value type: &lt;prop-encoded-array&gt;
-+	Definition: Addresses and sizes for the memory of this CLKDIV
-+		    peripheral.
-+
-+- qcom,cxo-freq
-+	Usage:      required
-+	Value type: &lt;u32&gt;
-+	Definition: The frequency of the crystal oscillator (CXO) clock in Hz.
-</pre>
-      </blockquote>
-      <pre wrap="">
-CXO should be a parent clk then. This could have clocks and
-clock-names properties for that and then be hooked up to
-xo_board.
-</pre>
-    </blockquote>
-    Sure. I will address in the next patch set.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+- qcom,clkdiv-id
-+	Usage:      required
-+	Value type: &lt;u32&gt;
-+	Definition: Integer value specifies the hardware identifier of this
-+		    CLKDIV peripheral.
-</pre>
-      </blockquote>
-      <pre wrap="">
-This is to name the clk? You could use clock-output-names as
-that's more standard. But this is also sort of confusing. If
-there are multiple clkdivs then it would be good to combine them
-into one device node assuming they're all next to each other.
-This would be similar to how we handle gpios and regulators. Then
-the naming is simple enough to be an incrementing number.
-</pre>
-    </blockquote>
-    Yes, multiple clkdivs present. We add sub-nodes for each clkdiv and
-    parse them inside driver as separate clock.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+- qcom,clkdiv-init-freq
-+	Usage:      optional
-+	Value type: &lt;u32&gt;
-+	Definition: Initial output frequency in Hz to configure for the CLKDIV
-+		    peripheral. The initial frequency value should be less than
-+		    or equal to CXO clock frequency and greater than or equal to
-+		    CXO_freq/64.
-</pre>
-      </blockquote>
-      <pre wrap="">
-Use assigned-clock-rates instead.
-</pre>
-    </blockquote>
-    Sure. I will address in the next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+=======
-+Example
-+=======
-+
-+qcom,clkdiv@5b00 {
-+	compatible = "qcom,qpnp-clkdiv";
-+	reg = &lt;0x5b00 0x100&gt;;
-+
-+	qcom,cxo-freq = &lt;19200000&gt;;
-+	qcom,clkdiv-id = &lt;1&gt;;
-+	qcom,clkdiv-init-freq = &lt;9600000&gt;;
-+};
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 9f6c278..c68ae96 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -196,3 +196,12 @@ config MSM_MMCC_8996
- 	  Support for the multimedia clock controller on msm8996 devices.
- 	  Say Y if you want to support multimedia devices such as display,
- 	  graphics, video encode/decode, camera, etc.
-+
-+config CLOCK_QPNP_DIV
-+	tristate "QPNP PMIC clkdiv driver"
-+	depends on COMMON_CLK_QCOM &amp;&amp; SPMI
-</pre>
-      </blockquote>
-      <pre wrap="">
-COMPILE_TEST?</pre>
-    </blockquote>
-    Sure. I will address in the next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	help
-+	  This driver supports the clkdiv functionality on the Qualcomm
-+	  Technologies, Inc. QPNP PMIC. It configures the frequency of
-</pre>
-      </blockquote>
-      <pre wrap="">
-I'm not sure we ever really call it QPNP PMIC. I see one hit from
-grep for the thermal driver. Perhaps SPMI PMIC is more
-appropriate.</pre>
-    </blockquote>
-    Sure. I will address in the next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	  clkdiv outputs on the PMIC. These clocks are typically wired
-+	  through alternate functions on gpio pins.
-diff --git a/drivers/clk/qcom/clk-qpnp-div.c b/drivers/clk/qcom/clk-qpnp-div.c
-new file mode 100644
-index 0000000..416c20f
---- /dev/null
-+++ b/drivers/clk/qcom/clk-qpnp-div.c
-@@ -0,0 +1,422 @@
-+/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include &lt;linux/clk.h&gt;
-+#include &lt;linux/clk-provider.h&gt;
-+#include &lt;linux/delay.h&gt;
-+#include &lt;linux/err.h&gt;
-+#include &lt;linux/log2.h&gt;
-+#include &lt;linux/module.h&gt;
-+#include &lt;linux/of.h&gt;
-+#include &lt;linux/platform_device.h&gt;
-+#include &lt;linux/regmap.h&gt;
-+#include &lt;linux/types.h&gt;
-</pre>
-      </blockquote>
-      <pre wrap="">
-bitops.h?</pre>
-    </blockquote>
-    Sure. I will add it in the next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+#define Q_REG_DIV_CTL1			0x43
-+#define Q_DIV_CTL1_DIV_FACTOR_MASK	GENMASK(2, 0)
-+
-+#define Q_REG_EN_CTL			0x46
-+#define Q_REG_EN_MASK			BIT(7)
-+#define Q_SET_EN			BIT(7)
-+
-+#define Q_CXO_PERIOD_NS(cxo_clk)	(NSEC_PER_SEC / cxo_clk)
-+#define Q_DIV_PERIOD_NS(cxo_clk, div)	(NSEC_PER_SEC / (cxo_clk / div))
-+#define Q_ENABLE_DELAY_NS(cxo_clk, div)	(2 * Q_CXO_PERIOD_NS(cxo_clk) + \
-+					(3 * Q_DIV_PERIOD_NS(cxo_clk, div)))
-+#define Q_DISABLE_DELAY_NS(cxo_clk, div) \
-+					(3 * Q_DIV_PERIOD_NS(cxo_clk, div))
-+
-+#define CLK_QPNP_DIV_OFFSET		1
-+
-+enum q_clk_div_factor {
-+	Q_CLKDIV_XO_DIV_1_0 = 0,
-+	Q_CLKDIV_XO_DIV_1,
-+	Q_CLKDIV_XO_DIV_2,
-+	Q_CLKDIV_XO_DIV_4,
-+	Q_CLKDIV_XO_DIV_8,
-+	Q_CLKDIV_XO_DIV_16,
-+	Q_CLKDIV_XO_DIV_32,
-+	Q_CLKDIV_XO_DIV_64,
-+	Q_CLKDIV_MAX_ALLOWED,
-</pre>
-      </blockquote>
-      <pre wrap="">
-Please make #defines for these instead of enum.</pre>
-    </blockquote>
-    We used enum primarily for easy debug at runtime. For an example,
-    The "div_factor" field<br>
-    of "struct q_clkdiv" would always show the enumerated value which
-    would help in<br>
-    determining the configured absolute divider value rather than
-    spending time in mapping<br>
-    register bit values to absolute divider value.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+};
-+
-+enum q_clkdiv_state {
-+	DISABLE = false,
-+	ENABLE = true,
-+};
-</pre>
-      </blockquote>
-      <pre wrap="">
-Uh no. Just use bool.</pre>
-    </blockquote>
-    Sure. I will address in the next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+struct q_clkdiv {
-+	struct regmap		*regmap;
-+	struct device		*dev;
-+
-+	u16			base;
-+	spinlock_t		lock;
-+
-+	/* clock properties */
-+	struct clk_hw		hw;
-+	unsigned int		cxo_hz;
-</pre>
-      </blockquote>
-      <pre wrap="">
-Drop.</pre>
-    </blockquote>
-    cxo_hz is required to be populated at driver initialization and
-    being used at runtime<br>
-    for calculating the div value to be applied.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	enum q_clk_div_factor	div_factor;
-+	bool			enabled;
-</pre>
-      </blockquote>
-      <pre wrap="">
-Shouldn't be needed. Read the hardware instead.</pre>
-    </blockquote>
-    This enabled field is required for the typical handling of set_rate
-    in qpnp_clkdiv_config_freq_div().<br>
-    <b></b>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+};
-+
-+static inline struct q_clkdiv *to_clkdiv(struct clk_hw *_hw)
-</pre>
-      </blockquote>
-      <pre wrap="">
-_hw can just be hw?</pre>
-    </blockquote>
-    Sure. I will address it in next patch set.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+{
-+	return container_of(_hw, struct q_clkdiv, hw);
-+}
-+
-+static inline unsigned int div_factor_to_div(unsigned int div_factor)
-+{
-+	if (div_factor == Q_CLKDIV_XO_DIV_1_0)
-+		return 1;
-+
-+	return 1 &lt;&lt; (div_factor - CLK_QPNP_DIV_OFFSET);
-+}
-</pre>
-      </blockquote>
-      <pre wrap="">
-Not sure, but it may be possible to reuse the code in
-clk-divider.c and treat this as a CLK_DIVIDER_POWER_OF_TWO?</pre>
-    </blockquote>
-    Sure. I will check more on this.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+static inline unsigned int div_to_div_factor(unsigned int div)
-+{
-+	return ilog2(div) + CLK_QPNP_DIV_OFFSET;
-+}
-+
-+static int qpnp_clkdiv_masked_write(struct q_clkdiv *q_clkdiv, u16 offset,
-</pre>
-      </blockquote>
-      <pre wrap="">
-Please replace instances of qpnp with spmi_pmic throughout this
-driver.
-</pre>
-    </blockquote>
-    Sure. I will address it in next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-Also, why do we need a wrapper around regmap APIs? Please just
-use the APIs directly.
-</pre>
-    </blockquote>
-    Sure. I will address it in next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+			u8 mask, u8 val)
-+{
-+	int rc;
-+
-+	rc = regmap_update_bits(q_clkdiv-&gt;regmap, q_clkdiv-&gt;base + offset, mask,
-+				val);
-+	if (rc)
-+		dev_err(q_clkdiv-&gt;dev,
-+			"Unable to regmap_update_bits to addr=%hx, rc(%d)\n",
-+			q_clkdiv-&gt;base + offset, rc);
-+
-+	return rc;
-+}
-+
-+static int qpnp_clkdiv_set_enable_state(struct q_clkdiv *q_clkdiv,
-+			enum q_clkdiv_state enable_state)
-+{
-+	int rc;
-+
-+	rc = qpnp_clkdiv_masked_write(q_clkdiv, Q_REG_EN_CTL, Q_REG_EN_MASK,
-+				(enable_state == ENABLE) ? Q_SET_EN : 0);
-+	if (rc)
-+		return rc;
-+
-+	if (enable_state == ENABLE)
-+		ndelay(Q_ENABLE_DELAY_NS(q_clkdiv-&gt;cxo_hz,
-+				div_factor_to_div(q_clkdiv-&gt;div_factor)));
-</pre>
-      </blockquote>
-      <pre wrap="">
-Can this factor can be precalculated at probe time based on
-XO rate? And then we just multiply that factor with the divider
-value to figure out how long to wait?</pre>
-    </blockquote>
-    Sure. I will check more on this.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	else
-+		ndelay(Q_DISABLE_DELAY_NS(q_clkdiv-&gt;cxo_hz,
-+				div_factor_to_div(q_clkdiv-&gt;div_factor)));
-+
-+	return rc;
-+}
-+
-+static int qpnp_clkdiv_config_freq_div(struct q_clkdiv *q_clkdiv,
-+			unsigned int div)
-+{
-+	unsigned int div_factor;
-+	int rc;
-+
-+	div_factor = div_to_div_factor(div);
-+	if (div_factor &lt;= 0 || div_factor &gt;= Q_CLKDIV_MAX_ALLOWED)
-+		return -EINVAL;
-+
-+	if (q_clkdiv-&gt;enabled) {
-+		rc = qpnp_clkdiv_set_enable_state(q_clkdiv, DISABLE);
-+		if (rc) {
-+			dev_err(q_clkdiv-&gt;dev, "unable to disable clock, rc = %d\n",
-+				rc);
-+			return rc;
-+		}
-+	}
-+
-+	rc = qpnp_clkdiv_masked_write(q_clkdiv, Q_REG_DIV_CTL1,
-+				Q_DIV_CTL1_DIV_FACTOR_MASK, div_factor);
-+	if (rc) {
-+		dev_err(q_clkdiv-&gt;dev, "config divider failed, rc=%d\n",
-+			rc);
-+		return rc;
-+	}
-+
-+	q_clkdiv-&gt;div_factor = div_factor;
-+
-+	if (q_clkdiv-&gt;enabled) {
-+		rc = qpnp_clkdiv_set_enable_state(q_clkdiv, ENABLE);
-+		if (rc)
-+			dev_err(q_clkdiv-&gt;dev, "unable to re-enable clock, rc = %d\n",
-+				rc);
-+	}
-+
-+	return rc;
-+}
-+
-+static int clk_qpnp_div_enable(struct clk_hw *hw)
-+{
-+	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
-+	unsigned long flags;
-+	int rc;
-+
-+	spin_lock_irqsave(&amp;q_clkdiv-&gt;lock, flags);
-</pre>
-      </blockquote>
-      <pre wrap="">
-What is this locking against? Rate change?</pre>
-    </blockquote>
-    Yes, locking against "q_clkdiv-&gt;enabled". <br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+	rc =  qpnp_clkdiv_set_enable_state(q_clkdiv, ENABLE);
-+	if (rc) {
-+		dev_err(q_clkdiv-&gt;dev, "clk enable failed, rc=%d\n", rc);
-+		goto fail;
-+	}
-+
-+	q_clkdiv-&gt;enabled = true;
-+
-+fail:
-+	spin_unlock_irqrestore(&amp;q_clkdiv-&gt;lock, flags);
-+	return rc;
-+}
-+
-+static void clk_qpnp_div_disable(struct clk_hw *hw)
-+{
-+	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
-+	unsigned long flags;
-+	int rc;
-+
-+	spin_lock_irqsave(&amp;q_clkdiv-&gt;lock, flags);
-+
-+	rc = qpnp_clkdiv_set_enable_state(q_clkdiv, DISABLE);
-+	if (rc) {
-+		dev_err(q_clkdiv-&gt;dev, "clk disable failed, rc=%d\n", rc);
-+		goto fail;
-+	}
-+
-+	q_clkdiv-&gt;enabled = false;
-+
-+fail:
-+	spin_unlock_irqrestore(&amp;q_clkdiv-&gt;lock, flags);
-+}
-+
-+static long clk_qpnp_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long *parent_rate)
-+{
-+	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
-+	unsigned long flags, new_rate;
-+	unsigned int div, div_factor;
-+
-+	spin_lock_irqsave(&amp;q_clkdiv-&gt;lock, flags);
-+	if (rate &lt;= 0 || rate &gt; q_clkdiv-&gt;cxo_hz) {
-</pre>
-      </blockquote>
-      <pre wrap="">
-How can rate be less than zero? It's unsigned! And if it's
-greater than some parent rate, round_rate() should return the
-largest rate it can support (I guess parent_rate?)</pre>
-    </blockquote>
-    Sure. I will address it in next patch set.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+		dev_err(q_clkdiv-&gt;dev, "invalid rate requested, rate = %lu\n",
-+			rate);
-+		spin_unlock_irqrestore(&amp;q_clkdiv-&gt;lock, flags);
-</pre>
-      </blockquote>
-      <pre wrap="">
-Also what are we spinlocking for?</pre>
-    </blockquote>
-    Seems locking is not required here. I will address it in next patch
-    set.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+		return -EINVAL;
-+	}
-+
-+	div = DIV_ROUND_UP(q_clkdiv-&gt;cxo_hz, rate);
-+	div_factor = div_to_div_factor(div);
-+	if (div_factor &gt;= Q_CLKDIV_MAX_ALLOWED)
-+		div_factor = Q_CLKDIV_MAX_ALLOWED - 1;
-+	new_rate = q_clkdiv-&gt;cxo_hz / div_factor_to_div(div_factor);
-+
-+	spin_unlock_irqrestore(&amp;q_clkdiv-&gt;lock, flags);
-</pre>
-      </blockquote>
-      <pre wrap="">
-Shouldn't need any spinlock here...</pre>
-    </blockquote>
-    Seems locking is not required here. I will address it in next patch
-    set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	return new_rate;
-+}
-+
-+static unsigned long clk_qpnp_div_recalc_rate(struct clk_hw *hw,
-+			unsigned long parent_rate)
-+{
-+	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
-+	unsigned long rate, flags;
-+
-+	spin_lock_irqsave(&amp;q_clkdiv-&gt;lock, flags);
-+
-+	rate = q_clkdiv-&gt;cxo_hz / div_factor_to_div(q_clkdiv-&gt;div_factor);
-+
-+	spin_unlock_irqrestore(&amp;q_clkdiv-&gt;lock, flags);
-</pre>
-      </blockquote>
-      <pre wrap="">
-Also confused about spinlock usage here.</pre>
-    </blockquote>
-    Seems locking is not required here. I will address it in next patch
-    set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	return rate;
-+}
-+
-+static int clk_qpnp_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long parent_rate)
-+{
-+	struct q_clkdiv *q_clkdiv = to_clkdiv(hw);
-+	unsigned long flags;
-+	int rc = 0;
-+
-+	spin_lock_irqsave(&amp;q_clkdiv-&gt;lock, flags);
-+	if (rate &lt;= 0 || rate &gt; q_clkdiv-&gt;cxo_hz) {
-+		dev_err(q_clkdiv-&gt;dev, "invalid rate requested, rate = %lu\n",
-+			rate);
-+		rc = -EINVAL;
-+		goto fail;
-+	}
-</pre>
-      </blockquote>
-      <pre wrap="">
-Seems useless. Trust the framework won't call this op with a rate
-that's invalid.</pre>
-    </blockquote>
-    I will check more on this and address in next patch set.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+	rc = qpnp_clkdiv_config_freq_div(q_clkdiv, q_clkdiv-&gt;cxo_hz / rate);
-+	if (rc)
-+		dev_err(q_clkdiv-&gt;dev, "clkdiv set rate(%lu) failed, rc = %d\n",
-+			rate, rc);
-+
-+fail:
-+	spin_unlock_irqrestore(&amp;q_clkdiv-&gt;lock, flags);
-+	return rc;
-+}
-+
-+const struct clk_ops clk_qpnp_div_ops = {
-</pre>
-      </blockquote>
-      <pre wrap="">
-static?</pre>
-    </blockquote>
-    Sure. I will address it in next patch set.
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	.enable = clk_qpnp_div_enable,
-+	.disable = clk_qpnp_div_disable,
-+	.set_rate = clk_qpnp_div_set_rate,
-+	.recalc_rate = clk_qpnp_div_recalc_rate,
-+	.round_rate = clk_qpnp_div_round_rate,
-+};
-+
-+#define QPNP_CLKDIV_MAX_NAME_LEN	16
-+
-+static int qpnp_clkdiv_probe(struct platform_device *pdev)
-+{
-+	struct q_clkdiv *q_clkdiv;
-+	struct device *dev = &amp;pdev-&gt;dev;
-+	struct device_node *of_node = dev-&gt;of_node;
-+	struct clk_init_data *init;
-+	struct clk_onecell_data *clk_data;
-+	struct clk *clk;
-+	unsigned int base, div, init_freq;
-+	int rc = 0, id;
-</pre>
-      </blockquote>
-      <pre wrap="">
-Leave rc unassigned.</pre>
-    </blockquote>
-    Sure. I will address it in next patch set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	char *clk_name;
-+
-+	q_clkdiv = devm_kzalloc(dev, sizeof(*q_clkdiv), GFP_KERNEL);
-+	if (!q_clkdiv)
-+		return -ENOMEM;
-+
-+	q_clkdiv-&gt;regmap = dev_get_regmap(dev-&gt;parent, NULL);
-+	if (!q_clkdiv-&gt;regmap) {
-+		dev_err(dev, "Couldn't get parent's regmap\n");
-+		return -EINVAL;
-+	}
-+	q_clkdiv-&gt;dev = dev;
-+
-+	rc = of_property_read_u32(of_node, "reg", &amp;base);
-+	if (rc &lt; 0) {
-+		dev_err(dev, "Couldn't find reg in node = %s, rc = %d\n",
-+			of_node-&gt;full_name, rc);
-+		return rc;
-+	}
-+	q_clkdiv-&gt;base = base;
-+
-+	/* init clock properties */
-+	rc = of_property_read_u32(of_node, "qcom,cxo-freq", &amp;q_clkdiv-&gt;cxo_hz);
-+	if (rc) {
-+		dev_err(dev, "unable to get qcom,cxo-freq property, rc = %d\n",
-+			rc);
-+		return rc;
-+	}
-+
-+	q_clkdiv-&gt;div_factor = Q_CLKDIV_XO_DIV_1_0;
-+	rc = of_property_read_u32(of_node, "qcom,clkdiv-init-freq", &amp;init_freq);
-+	if (rc) {
-+		if (rc != -EINVAL) {
-+			dev_err(dev, "Unable to read initial frequency value, rc=%d\n",
-+				rc);
-+			return rc;
-+		}
-+	} else {
-+		if (init_freq &lt;= 0 || init_freq &gt; q_clkdiv-&gt;cxo_hz) {
-+			dev_err(dev, "invalid initial frequency specified, rate = %u\n",
-+				init_freq);
-+			return -EINVAL;
-+		}
-+
-+		div = DIV_ROUND_UP(q_clkdiv-&gt;cxo_hz, init_freq);
-+		q_clkdiv-&gt;div_factor = div_to_div_factor(div);
-+		if (q_clkdiv-&gt;div_factor &gt;= Q_CLKDIV_MAX_ALLOWED)
-+			q_clkdiv-&gt;div_factor = Q_CLKDIV_MAX_ALLOWED - 1;
-+		rc = qpnp_clkdiv_config_freq_div(q_clkdiv,
-+				div_factor_to_div(q_clkdiv-&gt;div_factor));
-+		if (rc) {
-+			dev_err(dev, "Config initial frequency failed, rc = %d\n",
-+				rc);
-+			return rc;
-+		}
-+	}
-</pre>
-      </blockquote>
-      <pre wrap="">
-Hopefully a bunch of this code goes away.</pre>
-    </blockquote>
-    I will check more on this and address in next patch set.<br>
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+	init = devm_kzalloc(dev, sizeof(*init), GFP_KERNEL);
-+	if (!init)
-+		return -ENOMEM;
-+
-+	rc = of_property_read_u32(of_node, "qcom,clkdiv-id", &amp;id);
-+	if (rc) {
-+		dev_err(dev, "Unable to read clkdiv node id, rc = %d\n", rc);
-+		return rc;
-+	}
-+
-+	clk_name = devm_kcalloc(dev, QPNP_CLKDIV_MAX_NAME_LEN,
-+				sizeof(*clk_name), GFP_KERNEL);
-+	if (!clk_name)
-+		return -ENOMEM;
-+	snprintf(clk_name, QPNP_CLKDIV_MAX_NAME_LEN, "qpnp_clkdiv_%d", id);
-</pre>
-      </blockquote>
-      <pre wrap="">
-devm_kasprintf? Also make sure to free the name after
-registration because we copy it over in the framework.</pre>
-    </blockquote>
-    Sure. I will address it in next patch set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+	init-&gt;name = clk_name;
-+	init-&gt;ops = &amp;clk_qpnp_div_ops;
-+	q_clkdiv-&gt;hw.init = init;
-+	spin_lock_init(&amp;q_clkdiv-&gt;lock);
-+
-+	clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data-&gt;clks = devm_kzalloc(dev, sizeof(*clk_data-&gt;clks), GFP_KERNEL);
-+	if (!clk_data-&gt;clks)
-+		return -ENOMEM;
-+
-+	clk = devm_clk_register(dev, &amp;q_clkdiv-&gt;hw);
-+	if (IS_ERR(clk)) {
-+		dev_err(dev, "Unable to register qpnp div clock\n");
-+		return PTR_ERR(clk);
-+	}
-+
-+	clk_data-&gt;clk_num = 1;
-+	clk_data-&gt;clks[0] = clk;
-+
-+	rc = of_clk_add_provider(of_node, of_clk_src_onecell_get, clk_data);
-</pre>
-      </blockquote>
-      <pre wrap="">
-Please use the clk_hw_register() and of_clk_add_hw_provider()
-APIs.  Also if we have only one clk it should be
-of_clk_hw_simple_get() and have no cells in the binding. But, if
-there are multiple of these clks, then it will be onecell.</pre>
-    </blockquote>
-    Sure. I will address it in next patch set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	if (rc) {
-+		dev_err(dev, "Unable to register qpnp div clock provider, rc = %d\n",
-+			rc);
-+		return rc;
-+	}
-+
-+	dev_set_drvdata(dev, q_clkdiv);
-</pre>
-      </blockquote>
-      <pre wrap="">
-Unused? Remove?</pre>
-    </blockquote>
-    Sure. I will address it in next patch set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+	dev_info(dev, "Registered %s successfully\n", clk_name);
-</pre>
-      </blockquote>
-      <pre wrap="">
-No noise please.</pre>
-    </blockquote>
-    Sure. I will address it in next patch set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+	return rc;
-+}
-+
-+static const struct of_device_id qpnp_clkdiv_match_table[] = {
-+	{ .compatible = "qcom,qpnp-clkdiv" },
-+	{}
-+};
-</pre>
-      </blockquote>
-      <pre wrap="">
-Add a MODULE_DEVICE_TABLE() please.</pre>
-    </blockquote>
-    Sure. I will address it in next patch set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">+
-+static struct platform_driver qpnp_clkdiv_driver = {
-+	.driver		= {
-+		.name	= "qcom,qpnp-clkdiv",
-+		.of_match_table = qpnp_clkdiv_match_table,
-+	},
-+	.probe		= qpnp_clkdiv_probe,
-+};
-+
-+static int __init qpnp_clkdiv_init(void)
-+{
-+	return platform_driver_register(&amp;qpnp_clkdiv_driver);
-+}
-+module_init(qpnp_clkdiv_init);
-+
-+static void __exit qpnp_clkdiv_exit(void)
-+{
-+	return platform_driver_unregister(&amp;qpnp_clkdiv_driver);
-+}
-+module_exit(qpnp_clkdiv_exit);
-</pre>
-      </blockquote>
-      <pre wrap="">
-Use module_platform_driver() macro.</pre>
-    </blockquote>
-    Sure. I will address it in next patch set
-    <blockquote type="cite"
-      cite="mid:20170714210837.GK22780@codeaurora.org">
-      <pre wrap="">
-
-</pre>
-    </blockquote>
-    <br>
-  </body>
-</html>
-
---------------FACB47EF1C5B6D58E3D2D2E3--
+T24gV2VkLCAyMDE3LTA2LTIxIGF0IDIyOjE2ICswMzAwLCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6
+DQoNCkhpIFN0ZXBoZW4sIE1pY2hhZWwsDQoNCk1heWJlIHlvdSBoYXZlIGFueSBjb21tZW50cyBv
+ciByZW1hcmtzIGFib3V0IHRoaXMgcGF0Y2g/IEFuZCBpZiB5b3UNCmRvbid0IGNvdWxkIHlvdSBw
+bGVhc2UgYXBwbHkgaXQuDQoNClRoYW5rcyBhIGxvdCENCg0KPiBBWFMxMFggYm9hcmRzIG1hbmFn
+ZXMgaXQncyBjbG9ja3MgdXNpbmcgdmFyaW91cyBQTExzLiBUaGVzZSBQTEwgaGFzDQo+IHNhbWUN
+Cj4gZGl2aWRlcnMgYW5kIGNvcnJlc3BvbmRpbmcgY29udHJvbCByZWdpc3RlcnMgbWFwcGVkIHRv
+IGRpZmZlcmVudA0KPiBhZGRyZXNzZXMuDQo+IFNvIHdlIGFkZCBvbmUgY29tbW9uIGRyaXZlciBm
+b3Igc3VjaCBQTExzLg0KPiANCj4gRWFjaCBQTEwgb24gQVhTMTBYIGJvYXJkIGNvbnNpc3Qgb2Yg
+dGhyZWUgZGl2aWRlcnM6IElESVYsIEZCRElWIGFuZA0KPiBPRElWLiBPdXRwdXQgY2xvY2sgdmFs
+dWUgaXMgbWFuYWdlZCB1c2luZyB0aGVzZSBkaXZpZGVycy4NCj4gDQo+IFdlIGFkZCBwcmUtZGVm
+aW5lZCB0YWJsZXMgd2l0aCBzdXBwb3J0ZWQgcmF0ZSB2YWx1ZXMgYW5kIGFwcHJvcHJpYXRlDQo+
+IGNvbmZpZ3VyYXRpb25zIG9mIElESVYsIEZCRElWIGFuZCBPRElWIGZvciBlYWNoIHZhbHVlLg0K
+PiANCj4gQXMgb2YgdG9kYXkgd2UgYWRkIHN1cHBvcnQgZm9yIFBMTHMgdGhhdCBnZW5lcmF0ZSBj
+bG9jayBmb3IgdGhlDQo+IGZvbGxvd2luZyBkZXZpY2VzOg0KPiDCoCogQVJDIGNvcmUgb24gQVhD
+IENQVSB0aWxlcy4NCj4gwqAqIEFSQyBQR1Ugb24gQVJDIFNEUCBNYWluYm9hcmQuDQo+IGFuZCBt
+b3JlIHRvIGNvbWUgbGF0ZXIuDQo+IA0KPiBCeSB0aGlzIHBhdGNoIHdlIGFkZCBzdXBwb3J0IGZv
+ciB0d28gcGxscyAoYXJjIGNvcmUgcGxsIGFuZCBwZ3UgcGxsKSwNCj4gc28gd2UgaGFkIHRvIHVz
+ZSB0d28gZGlmZmVyZW50IGluaXQgdHlwZXM6IENMS19PRl9ERUNMQVJFIGZvciBhcmMNCj4gY29y
+ZSBwbGwgYW5kDQo+IHJlZ3VsYXIgcHJvYmluZyBmb3IgcGd1IHBsbC4NCj4gDQo+IEFja2VkLWJ5
+OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiBBY2tlZC1ieTogSm9zZSBBYnJldSA8
+am9hYnJldUBzeW5vcHN5cy5jb20+DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbml5IFBhbHRz
+ZXYgPEV1Z2VuaXkuUGFsdHNldkBzeW5vcHN5cy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFZsYWQg
+WmFraGFyb3YgPHZ6YWtoYXJAc3lub3BzeXMuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBKb3NlIEFi
+cmV1IDxqb2FicmV1QHN5bm9wc3lzLmNvbT4NCj4gLS0tDQo+IENoYW5nZXMgZm9yIHY0Og0KPiDC
+oCAtIGZpeCByZXNvdXJjZSBmcmVpbmcgYWZ0ZXIgZXJyb3IgaW4gb2ZfYXhzMTB4X3BsbF9jbGtf
+c2V0dXANCj4gwqAgLSBhZGQgYXhzMTB4KiBwcmVmaXggdG8gbWFpbiBmdW5jdGlvbnMgYW5kIHN0
+cnVjdHVyZXMNCj4gwqAgLSBzdHlsZSBmaXhpZXMNCj4gDQo+IENoYW5nZXMgZm9yIHYyLi52MzoN
+Cj4gwqAgLSByZXBsYWNlZCBjb21wbGV4IGRhdGEgc3RydWN0dXJlcyB3aXRoIHNpbXBsZSBjZmcg
+dGFibGVzDQo+IMKgIC0gcmVwbGFjZWQgbm9uLWh3IGJhc2VkIHByb3ZpZGVyIGFuZCBjbGsgcmVn
+aXN0cmF0aW9uIGZ1bmN0aW9ucw0KPiB3aXRoIGh3LWJhc2VkDQo+IMKgIC0gZml4ZWQgdHlwb3Mg
+YW5kIG1pbm9yIGNvZGUgc3R5bGluZyBpc3N1ZXMNCj4gDQo+IMKgLi4uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvY2xvY2svc25wcyxwbGwtY2xvY2sudHh0wqDCoMKgfMKgwqAyOCArKw0KPiDCoE1BSU5U
+QUlORVJTwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8wqDCoMKgNiArDQo+IMKgZHJpdmVycy9jbGsv
+YXhzMTB4L01ha2VmaWxlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgfMKgwqDCoDEgKw0KPiDCoGRyaXZlcnMvY2xrL2F4czEweC9wbGxfY2xvY2suY8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHwgMzQ0DQo+ICsrKysrKysrKysr
+KysrKysrKysrKw0KPiDCoDQgZmlsZXMgY2hhbmdlZCwgMzc5IGluc2VydGlvbnMoKykNCj4gwqBj
+cmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2Nr
+L3NucHMscGxsLQ0KPiBjbG9jay50eHQNCj4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9j
+bGsvYXhzMTB4L3BsbF9jbG9jay5jDQo+IA0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3NucHMscGxsLQ0KPiBjbG9jay50eHQgYi9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc25wcyxwbGwtDQo+IGNsb2NrLnR4dA0K
+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAwMDAwLi4xMWZlNDg3DQo+IC0tLSAv
+ZGV2L251bGwNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2Nr
+L3NucHMscGxsLWNsb2NrLnR4dA0KPiBAQCAtMCwwICsxLDI4IEBADQo+ICtCaW5kaW5nIGZvciB0
+aGUgQVhTMTBYIEdlbmVyaWMgUExMIGNsb2NrDQo+ICsNCj4gK1RoaXMgYmluZGluZyB1c2VzIHRo
+ZSBjb21tb24gY2xvY2sgYmluZGluZ1sxXS4NCj4gKw0KPiArWzFdIERvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9jbG9jay9jbG9jay1iaW5kaW5ncy50eHQNCj4gKw0KPiArUmVxdWly
+ZWQgcHJvcGVydGllczoNCj4gKy0gY29tcGF0aWJsZTogc2hvdWxkIGJlICJzbnBzLGF4czEweC08
+bmFtZT4tcGxsLWNsb2NrIg0KPiArwqDCoCJzbnBzLGF4czEweC1hcmMtcGxsLWNsb2NrIg0KPiAr
+wqDCoCJzbnBzLGF4czEweC1wZ3UtcGxsLWNsb2NrIg0KPiArLSByZWc6IHNob3VsZCBhbHdheXMg
+Y29udGFpbiAyIHBhaXJzIGFkZHJlc3MgLSBsZW5ndGg6IGZpcnN0IGZvciBQTEwNCj4gY29uZmln
+DQo+ICtyZWdpc3RlcnMgYW5kIHNlY29uZCBmb3IgY29ycmVzcG9uZGluZyBMT0NLIENHVSByZWdp
+c3Rlci4NCj4gKy0gY2xvY2tzOiBzaGFsbCBiZSB0aGUgaW5wdXQgcGFyZW50IGNsb2NrIHBoYW5k
+bGUgZm9yIHRoZSBQTEwuDQo+ICstICNjbG9jay1jZWxsczogZnJvbSBjb21tb24gY2xvY2sgYmlu
+ZGluZzsgU2hvdWxkIGFsd2F5cyBiZSBzZXQgdG8NCj4gMC4NCj4gKw0KPiArRXhhbXBsZToNCj4g
+KwlpbnB1dC1jbGs6IGlucHV0LWNsayB7DQo+ICsJCWNsb2NrLWZyZXF1ZW5jeSA9IDwzMzMzMzMz
+Mz47DQo+ICsJCWNvbXBhdGlibGUgPSAiZml4ZWQtY2xvY2siOw0KPiArCQkjY2xvY2stY2VsbHMg
+PSA8MD47DQo+ICsJfTsNCj4gKw0KPiArCWNvcmUtY2xrOiBjb3JlLWNsa0A4MCB7DQo+ICsJCWNv
+bXBhdGlibGUgPSAic25wcyxheHMxMHgtYXJjLXBsbC1jbG9jayI7DQo+ICsJCXJlZyA9IDwweDgw
+IDB4MTA+LCA8MHgxMDAgMHgxMD47DQo+ICsJCSNjbG9jay1jZWxscyA9IDwwPjsNCj4gKwkJY2xv
+Y2tzID0gPCZpbnB1dC1jbGs+Ow0KPiArCX07DQo+IGRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBi
+L01BSU5UQUlORVJTDQo+IGluZGV4IDZiNDM5NWMuLmM1MjE5ZDYgMTAwNjQ0DQo+IC0tLSBhL01B
+SU5UQUlORVJTDQo+ICsrKyBiL01BSU5UQUlORVJTDQo+IEBAIC0xMjU2MCw2ICsxMjU2MCwxMiBA
+QCBGOglhcmNoL2FyYy9wbGF0LWF4czEweA0KPiDCoEY6CWFyY2gvYXJjL2Jvb3QvZHRzL2F4Kg0K
+PiDCoEY6CURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcmMvYXhzMTAqDQo+IMKg
+DQo+ICtTWU5PUFNZUyBBUkMgU0RQIGNsb2NrIGRyaXZlcg0KPiArTToJRXVnZW5peSBQYWx0c2V2
+IDxFdWdlbml5LlBhbHRzZXZAc3lub3BzeXMuY29tPg0KPiArUzoJU3VwcG9ydGVkDQo+ICtGOglk
+cml2ZXJzL2Nsay9heHMxMHgvKg0KPiArRjoJRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2Nsb2NrL3NucHMscGxsLWNsb2NrLnR4dA0KPiArDQo+IMKgU1lTVEVNIENPTkZJR1VSQVRJ
+T04gKFNZU0NPTikNCj4gwqBNOglMZWUgSm9uZXMgPGxlZS5qb25lc0BsaW5hcm8ub3JnPg0KPiDC
+oE06CUFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2Nsay9heHMxMHgvTWFrZWZpbGUNCj4gYi9kcml2ZXJzL2Nsay9heHMxMHgvTWFrZWZpbGUNCj4g
+aW5kZXggMDE5OTZiOC4uZDc0N2RlYSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jbGsvYXhzMTB4
+L01ha2VmaWxlDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2F4czEweC9NYWtlZmlsZQ0KPiBAQCAtMSAr
+MSwyIEBADQo+IMKgb2JqLXkgKz0gaTJzX3BsbF9jbG9jay5vDQo+ICtvYmoteSArPSBwbGxfY2xv
+Y2subw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvYXhzMTB4L3BsbF9jbG9jay5jDQo+IGIv
+ZHJpdmVycy9jbGsvYXhzMTB4L3BsbF9jbG9jay5jDQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+
+IGluZGV4IDAwMDAwMDAuLjY5ZjcyYWMNCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9kcml2ZXJz
+L2Nsay9heHMxMHgvcGxsX2Nsb2NrLmMNCj4gQEAgLTAsMCArMSwzNDQgQEANCj4gKy8qDQo+ICsg
+KiBTeW5vcHN5cyBBWFMxMFggU0RQIEdlbmVyaWMgUExMIGNsb2NrIGRyaXZlcg0KPiArICoNCj4g
+KyAqIENvcHlyaWdodCAoQykgMjAxNyBTeW5vcHN5cw0KPiArICoNCj4gKyAqIFRoaXMgZmlsZSBp
+cyBsaWNlbnNlZCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYw0KPiAr
+ICogTGljZW5zZSB2ZXJzaW9uIDIuIFRoaXMgcHJvZ3JhbSBpcyBsaWNlbnNlZCAiYXMgaXMiIHdp
+dGhvdXQgYW55DQo+ICsgKiB3YXJyYW50eSBvZiBhbnkga2luZCwgd2hldGhlciBleHByZXNzIG9y
+IGltcGxpZWQuDQo+ICsgKi8NCj4gKw0KPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2Rldmlj
+ZS5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L2Ns
+ay1wcm92aWRlci5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L2RlbGF5Lmg+DQo+ICsjaW5jbHVkZSA8
+bGludXgvZXJyLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvZGV2aWNlLmg+DQo+ICsjaW5jbHVkZSA8
+bGludXgvb2ZfYWRkcmVzcy5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPg0KPiAr
+I2luY2x1ZGUgPGxpbnV4L3NsYWIuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9vZi5oPg0KPiArDQo+
+ICsvKiBQTEwgcmVnaXN0ZXJzIGFkZHJlc3NlcyAqLw0KPiArI2RlZmluZSBQTExfUkVHX0lESVYJ
+MHgwDQo+ICsjZGVmaW5lIFBMTF9SRUdfRkJESVYJMHg0DQo+ICsjZGVmaW5lIFBMTF9SRUdfT0RJ
+VgkweDgNCj4gKw0KPiArLyoNCj4gKyAqIEJpdCBmaWVsZHMgb2YgdGhlIFBMTCBJRElWL0ZCRElW
+L09ESVYgcmVnaXN0ZXJzOg0KPiArDQo+ICrCoMKgX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+IF9fX19fXw0KPiArICoN
+Cj4gfDMxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxNXzCoMKgwqDCoDE0wqDCoMKg
+wqB8wqDCoMKgMTPCoMKgwqB8wqDCoDEywqDCoHwxMcKgwqDCoMKgwqDCoMKgwqDCoDZ8NcKgwqDC
+oMKgwqDCoA0KPiDCoMKgwqAwfA0KPiArICogfC0tLS0tLS1SRVNSVkVELS0tLS0tfC1OT1VQREFU
+RS18LUJZUEFTUy18LUVER0UtfC0tSElHSFRJTUUtLXwNCj4gLS1MT1dUSU1FLS18DQo+ICsgKg0K
+PiB8X19fX19fX19fX19fX19fX19fX198X19fX19fX19fX3xfX19fX19fX3xfX19fX198X19fX19f
+X19fX19ffF9fX19fX18NCj4gX19fX3wNCj4gKyAqDQo+ICsgKiBGb2xsb3dpbmcgbWFjcm9zIGRl
+dGVybWluZSB0aGUgd2F5IG9mIGFjY2VzcyB0byB0aGVzZSByZWdpc3RlcnMNCj4gKyAqIFRoZXkg
+c2hvdWxkIGJlIHNldCB1cCBvbmx5IHVzaW5nIHRoZSBtYWNyb3MuDQo+ICsgKiByZWcgc2hvdWxk
+IGJlIGFuIHUzMiB2YXJpYWJsZS4NCj4gKyAqLw0KPiArDQo+ICsjZGVmaW5lIFBMTF9SRUdfR0VU
+X0xPVyhyZWcpCQkJXA0KPiArCSgoKHJlZykgJiAoMHgzRiA8PCAwKSkgPj4gMCkNCj4gKyNkZWZp
+bmUgUExMX1JFR19HRVRfSElHSChyZWcpCQkJXA0KPiArCSgoKHJlZykgJiAoMHgzRiA8PCA2KSkg
+Pj4gNikNCj4gKyNkZWZpbmUgUExMX1JFR19HRVRfRURHRShyZWcpCQkJXA0KPiArCSgoKHJlZykg
+JiAoQklUKDEyKSkpID8gMSA6IDApDQo+ICsjZGVmaW5lIFBMTF9SRUdfR0VUX0JZUEFTUyhyZWcp
+CQkJXA0KPiArCSgoKHJlZykgJiAoQklUKDEzKSkpID8gMSA6IDApDQo+ICsjZGVmaW5lIFBMTF9S
+RUdfR0VUX05PVVBEKHJlZykJCQlcDQo+ICsJKCgocmVnKSAmIChCSVQoMTQpKSkgPyAxIDogMCkN
+Cj4gKyNkZWZpbmUgUExMX1JFR19HRVRfUEFEKHJlZykJCQlcDQo+ICsJKCgocmVnKSAmICgweDFG
+RkZGIDw8IDE1KSkgPj4gMTUpDQo+ICsNCj4gKyNkZWZpbmUgUExMX1JFR19TRVRfTE9XKHJlZywg
+dmFsdWUpCQlcDQo+ICsJeyByZWcgfD0gKCgodmFsdWUpICYgMHgzRikgPDwgMCk7IH0NCj4gKyNk
+ZWZpbmUgUExMX1JFR19TRVRfSElHSChyZWcsIHZhbHVlKQkJXA0KPiArCXsgcmVnIHw9ICgoKHZh
+bHVlKSAmIDB4M0YpIDw8IDYpOyB9DQo+ICsjZGVmaW5lIFBMTF9SRUdfU0VUX0VER0UocmVnLCB2
+YWx1ZSkJCVwNCj4gKwl7IHJlZyB8PSAoKCh2YWx1ZSkgJiAweDAxKSA8PCAxMik7IH0NCj4gKyNk
+ZWZpbmUgUExMX1JFR19TRVRfQllQQVNTKHJlZywgdmFsdWUpCQlcDQo+ICsJeyByZWcgfD0gKCgo
+dmFsdWUpICYgMHgwMSkgPDwgMTMpOyB9DQo+ICsjZGVmaW5lIFBMTF9SRUdfU0VUX05PVVBEKHJl
+ZywgdmFsdWUpCQlcDQo+ICsJeyByZWcgfD0gKCgodmFsdWUpICYgMHgwMSkgPDwgMTQpOyB9DQo+
+ICsjZGVmaW5lIFBMTF9SRUdfU0VUX1BBRChyZWcsIHZhbHVlKQkJXA0KPiArCXsgcmVnIHw9ICgo
+KHZhbHVlKSAmIDB4MUZGRkYpIDw8IDE1KTsgfQ0KPiArDQo+ICsjZGVmaW5lIFBMTF9MT0NLCUJJ
+VCgwKQ0KPiArI2RlZmluZSBQTExfRVJST1IJQklUKDEpDQo+ICsjZGVmaW5lIFBMTF9NQVhfTE9D
+S19USU1FIDEwMCAvKiAxMDAgdXMgKi8NCj4gKw0KPiArc3RydWN0IGF4czEweF9wbGxfY2ZnIHsN
+Cj4gKwl1MzIgcmF0ZTsNCj4gKwl1MzIgaWRpdjsNCj4gKwl1MzIgZmJkaXY7DQo+ICsJdTMyIG9k
+aXY7DQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGF4czEweF9wbGxfY2ZnIGFy
+Y19wbGxfY2ZnW10gPSB7DQo+ICsJeyAzMzMzMzMzMyzCoMKgMSwgMSzCoMKgMSB9LA0KPiArCXsg
+NTAwMDAwMDAswqDCoDEsIDMwLCAyMCB9LA0KPiArCXsgNzUwMDAwMDAswqDCoDIsIDQ1LCAxMCB9
+LA0KPiArCXsgOTAwMDAwMDAswqDCoDIsIDU0LCAxMCB9LA0KPiArCXsgMTAwMDAwMDAwLCAxLCAz
+MCwgMTAgfSwNCj4gKwl7IDEyNTAwMDAwMCwgMiwgNDUsIDYgfSwNCj4gKwl7fQ0KPiArfTsNCj4g
+Kw0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBheHMxMHhfcGxsX2NmZyBwZ3VfcGxsX2NmZ1tdID0g
+ew0KPiArCXsgMjUyMDAwMDAsIDEsIDg0LCA5MCB9LA0KPiArCXsgNTAwMDAwMDAsIDEsIDEwMCwg
+NTQgfSwNCj4gKwl7IDc0MjUwMDAwLCAxLCA0NCwgMTYgfSwNCj4gKwl7fQ0KPiArfTsNCj4gKw0K
+PiArc3RydWN0IGF4czEweF9wbGxfY2xrIHsNCj4gKwlzdHJ1Y3QgY2xrX2h3IGh3Ow0KPiArCXZv
+aWQgX19pb21lbSAqYmFzZTsNCj4gKwl2b2lkIF9faW9tZW0gKmxvY2s7DQo+ICsJY29uc3Qgc3Ry
+dWN0IGF4czEweF9wbGxfY2ZnICpwbGxfY2ZnOw0KPiArCXN0cnVjdCBkZXZpY2UgKmRldjsNCj4g
+K307DQo+ICsNCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBheHMxMHhfcGxsX3dyaXRlKHN0cnVjdCBh
+eHMxMHhfcGxsX2NsayAqY2xrLCB1MzINCj4gcmVnLA0KPiArCQkJCcKgwqDCoMKgdTMyIHZhbCkN
+Cj4gK3sNCj4gKwlpb3dyaXRlMzIodmFsLCBjbGstPmJhc2UgKyByZWcpOw0KPiArfQ0KPiArDQo+
+ICtzdGF0aWMgaW5saW5lIHUzMiBheHMxMHhfcGxsX3JlYWQoc3RydWN0IGF4czEweF9wbGxfY2xr
+ICpjbGssIHUzMg0KPiByZWcpDQo+ICt7DQo+ICsJcmV0dXJuIGlvcmVhZDMyKGNsay0+YmFzZSAr
+IHJlZyk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbmxpbmUgc3RydWN0IGF4czEweF9wbGxfY2xr
+ICp0b19heHMxMHhfcGxsX2NsayhzdHJ1Y3QgY2xrX2h3DQo+ICpodykNCj4gK3sNCj4gKwlyZXR1
+cm4gY29udGFpbmVyX29mKGh3LCBzdHJ1Y3QgYXhzMTB4X3BsbF9jbGssIGh3KTsNCj4gK30NCj4g
+Kw0KPiArc3RhdGljIGlubGluZSB1MzIgYXhzMTB4X2Rpdl9nZXRfdmFsdWUodTMyIHJlZykNCj4g
+K3sNCj4gKwlpZiAoUExMX1JFR19HRVRfQllQQVNTKHJlZykpDQo+ICsJCXJldHVybiAxOw0KPiAr
+DQo+ICsJcmV0dXJuIFBMTF9SRUdfR0VUX0hJR0gocmVnKSArIFBMTF9SRUdfR0VUX0xPVyhyZWcp
+Ow0KPiArfQ0KPiArDQo+ICtzdGF0aWMgaW5saW5lIHUzMiBheHMxMHhfZW5jb2RlX2Rpdih1bnNp
+Z25lZCBpbnQgaWQsIGludCB1cGQpDQo+ICt7DQo+ICsJdTMyIGRpdiA9IDA7DQo+ICsNCj4gKwlQ
+TExfUkVHX1NFVF9MT1coZGl2LCAoaWQgJSAyID09IDApID8gaWQgPj4gMSA6IChpZCA+PiAxKSAr
+DQo+IDEpOw0KPiArCVBMTF9SRUdfU0VUX0hJR0goZGl2LCBpZCA+PiAxKTsNCj4gKwlQTExfUkVH
+X1NFVF9FREdFKGRpdiwgaWQgJSAyKTsNCj4gKwlQTExfUkVHX1NFVF9CWVBBU1MoZGl2LCBpZCA9
+PSAxID8gMSA6IDApOw0KPiArCVBMTF9SRUdfU0VUX05PVVBEKGRpdiwgIXVwZCk7DQo+ICsNCj4g
+KwlyZXR1cm4gZGl2Ow0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdW5zaWduZWQgbG9uZyBheHMxMHhf
+cGxsX3JlY2FsY19yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LA0KPiArCQkJCQnCoMKgwqDCoHVuc2ln
+bmVkIGxvbmcNCj4gcGFyZW50X3JhdGUpDQo+ICt7DQo+ICsJdTY0IHJhdGU7DQo+ICsJdTMyIGlk
+aXYsIGZiZGl2LCBvZGl2Ow0KPiArCXN0cnVjdCBheHMxMHhfcGxsX2NsayAqY2xrID0gdG9fYXhz
+MTB4X3BsbF9jbGsoaHcpOw0KPiArDQo+ICsJaWRpdiA9IGF4czEweF9kaXZfZ2V0X3ZhbHVlKGF4
+czEweF9wbGxfcmVhZChjbGssDQo+IFBMTF9SRUdfSURJVikpOw0KPiArCWZiZGl2ID0gYXhzMTB4
+X2Rpdl9nZXRfdmFsdWUoYXhzMTB4X3BsbF9yZWFkKGNsaywNCj4gUExMX1JFR19GQkRJVikpOw0K
+PiArCW9kaXYgPSBheHMxMHhfZGl2X2dldF92YWx1ZShheHMxMHhfcGxsX3JlYWQoY2xrLA0KPiBQ
+TExfUkVHX09ESVYpKTsNCj4gKw0KPiArCXJhdGUgPSAodTY0KXBhcmVudF9yYXRlICogZmJkaXY7
+DQo+ICsJZG9fZGl2KHJhdGUsIGlkaXYgKiBvZGl2KTsNCj4gKw0KPiArCXJldHVybiByYXRlOw0K
+PiArfQ0KPiArDQo+ICtzdGF0aWMgbG9uZyBheHMxMHhfcGxsX3JvdW5kX3JhdGUoc3RydWN0IGNs
+a19odyAqaHcsIHVuc2lnbmVkIGxvbmcNCj4gcmF0ZSwNCj4gKwkJCQnCoMKgdW5zaWduZWQgbG9u
+ZyAqcHJhdGUpDQo+ICt7DQo+ICsJaW50IGk7DQo+ICsJbG9uZyBiZXN0X3JhdGU7DQo+ICsJc3Ry
+dWN0IGF4czEweF9wbGxfY2xrICpjbGsgPSB0b19heHMxMHhfcGxsX2Nsayhodyk7DQo+ICsJY29u
+c3Qgc3RydWN0IGF4czEweF9wbGxfY2ZnICpwbGxfY2ZnID0gY2xrLT5wbGxfY2ZnOw0KPiArDQo+
+ICsJaWYgKHBsbF9jZmdbMF0ucmF0ZSA9PSAwKQ0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKw0K
+PiArCWJlc3RfcmF0ZSA9IHBsbF9jZmdbMF0ucmF0ZTsNCj4gKw0KPiArCWZvciAoaSA9IDE7IHBs
+bF9jZmdbaV0ucmF0ZSAhPSAwOyBpKyspIHsNCj4gKwkJaWYgKGFicyhyYXRlIC0gcGxsX2NmZ1tp
+XS5yYXRlKSA8IGFicyhyYXRlIC0NCj4gYmVzdF9yYXRlKSkNCj4gKwkJCWJlc3RfcmF0ZSA9IHBs
+bF9jZmdbaV0ucmF0ZTsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gYmVzdF9yYXRlOw0KPiArfQ0K
+PiArDQo+ICtzdGF0aWMgaW50IGF4czEweF9wbGxfc2V0X3JhdGUoc3RydWN0IGNsa19odyAqaHcs
+IHVuc2lnbmVkIGxvbmcNCj4gcmF0ZSwNCj4gKwkJCcKgwqDCoMKgwqDCoMKgdW5zaWduZWQgbG9u
+ZyBwYXJlbnRfcmF0ZSkNCj4gK3sNCj4gKwlpbnQgaTsNCj4gKwlzdHJ1Y3QgYXhzMTB4X3BsbF9j
+bGsgKmNsayA9IHRvX2F4czEweF9wbGxfY2xrKGh3KTsNCj4gKwljb25zdCBzdHJ1Y3QgYXhzMTB4
+X3BsbF9jZmcgKnBsbF9jZmcgPSBjbGstPnBsbF9jZmc7DQo+ICsNCj4gKwlmb3IgKGkgPSAwOyBw
+bGxfY2ZnW2ldLnJhdGUgIT0gMDsgaSsrKSB7DQo+ICsJCWlmIChwbGxfY2ZnW2ldLnJhdGUgPT0g
+cmF0ZSkgew0KPiArCQkJYXhzMTB4X3BsbF93cml0ZShjbGssIFBMTF9SRUdfSURJViwNCj4gKwkJ
+CQkJwqBheHMxMHhfZW5jb2RlX2RpdihwbGxfY2ZnW2kNCj4gXS5pZGl2LCAwKSk7DQo+ICsJCQlh
+eHMxMHhfcGxsX3dyaXRlKGNsaywgUExMX1JFR19GQkRJViwNCj4gKwkJCQkJwqBheHMxMHhfZW5j
+b2RlX2RpdihwbGxfY2ZnW2kNCj4gXS5mYmRpdiwgMCkpOw0KPiArCQkJYXhzMTB4X3BsbF93cml0
+ZShjbGssIFBMTF9SRUdfT0RJViwNCj4gKwkJCQkJwqBheHMxMHhfZW5jb2RlX2RpdihwbGxfY2Zn
+W2kNCj4gXS5vZGl2LCAxKSk7DQo+ICsNCj4gKwkJCS8qDQo+ICsJCQnCoCogV2FpdCB1bnRpbCBD
+R1UgcmVsb2NrcyBhbmQgY2hlY2sgZXJyb3INCj4gc3RhdHVzLg0KPiArCQkJwqAqIElmIGFmdGVy
+IHRpbWVvdXQgQ0dVIGlzIHVubG9ja2VkIHlldA0KPiByZXR1cm4gZXJyb3INCj4gKwkJCcKgKi8N
+Cj4gKwkJCXVkZWxheShQTExfTUFYX0xPQ0tfVElNRSk7DQo+ICsJCQlpZiAoIShpb3JlYWQzMihj
+bGstPmxvY2spICYgUExMX0xPQ0spKQ0KPiArCQkJCXJldHVybiAtRVRJTUVET1VUOw0KPiArDQo+
+ICsJCQlpZiAoaW9yZWFkMzIoY2xrLT5sb2NrKSAmIFBMTF9FUlJPUikNCj4gKwkJCQlyZXR1cm4g
+LUVJTlZBTDsNCj4gKw0KPiArCQkJcmV0dXJuIDA7DQo+ICsJCX0NCj4gKwl9DQo+ICsNCj4gKwlk
+ZXZfZXJyKGNsay0+ZGV2LCAiaW52YWxpZCByYXRlPSVsZCwgcGFyZW50X3JhdGU9JWxkXG4iLA0K
+PiByYXRlLA0KPiArCQkJcGFyZW50X3JhdGUpOw0KPiArCXJldHVybiAtRUlOVkFMOw0KPiArfQ0K
+PiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNsa19vcHMgYXhzMTB4X3BsbF9vcHMgPSB7DQo+
+ICsJLnJlY2FsY19yYXRlID0gYXhzMTB4X3BsbF9yZWNhbGNfcmF0ZSwNCj4gKwkucm91bmRfcmF0
+ZSA9IGF4czEweF9wbGxfcm91bmRfcmF0ZSwNCj4gKwkuc2V0X3JhdGUgPSBheHMxMHhfcGxsX3Nl
+dF9yYXRlLA0KPiArfTsNCj4gKw0KPiArc3RhdGljIGludCBheHMxMHhfcGxsX2Nsa19wcm9iZShz
+dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiArew0KPiArCXN0cnVjdCBkZXZpY2UgKmRl
+diA9ICZwZGV2LT5kZXY7DQo+ICsJY29uc3QgY2hhciAqcGFyZW50X25hbWU7DQo+ICsJc3RydWN0
+IGF4czEweF9wbGxfY2xrICpwbGxfY2xrOw0KPiArCXN0cnVjdCByZXNvdXJjZSAqbWVtOw0KPiAr
+CXN0cnVjdCBjbGtfaW5pdF9kYXRhIGluaXQgPSB7IH07DQo+ICsJaW50IHJldDsNCj4gKw0KPiAr
+CXBsbF9jbGsgPSBkZXZtX2t6YWxsb2MoZGV2LCBzaXplb2YoKnBsbF9jbGspLCBHRlBfS0VSTkVM
+KTsNCj4gKwlpZiAoIXBsbF9jbGspDQo+ICsJCXJldHVybiAtRU5PTUVNOw0KPiArDQo+ICsJbWVt
+ID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIElPUkVTT1VSQ0VfTUVNLCAwKTsNCj4gKwlw
+bGxfY2xrLT5iYXNlID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKGRldiwgbWVtKTsNCj4gKwlpZiAo
+SVNfRVJSKHBsbF9jbGstPmJhc2UpKQ0KPiArCQlyZXR1cm4gUFRSX0VSUihwbGxfY2xrLT5iYXNl
+KTsNCj4gKw0KPiArCW1lbSA9IHBsYXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNF
+X01FTSwgMSk7DQo+ICsJcGxsX2Nsay0+bG9jayA9IGRldm1faW9yZW1hcF9yZXNvdXJjZShkZXYs
+IG1lbSk7DQo+ICsJaWYgKElTX0VSUihwbGxfY2xrLT5sb2NrKSkNCj4gKwkJcmV0dXJuIFBUUl9F
+UlIocGxsX2Nsay0+bG9jayk7DQo+ICsNCj4gKwlpbml0Lm5hbWUgPSBkZXYtPm9mX25vZGUtPm5h
+bWU7DQo+ICsJaW5pdC5vcHMgPSAmYXhzMTB4X3BsbF9vcHM7DQo+ICsJcGFyZW50X25hbWUgPSBv
+Zl9jbGtfZ2V0X3BhcmVudF9uYW1lKGRldi0+b2Zfbm9kZSwgMCk7DQo+ICsJaW5pdC5wYXJlbnRf
+bmFtZXMgPSAmcGFyZW50X25hbWU7DQo+ICsJaW5pdC5udW1fcGFyZW50cyA9IDE7DQo+ICsJcGxs
+X2Nsay0+aHcuaW5pdCA9ICZpbml0Ow0KPiArCXBsbF9jbGstPmRldiA9IGRldjsNCj4gKwlwbGxf
+Y2xrLT5wbGxfY2ZnID0gb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRhKGRldik7DQo+ICsNCj4gKwlp
+ZiAoIXBsbF9jbGstPnBsbF9jZmcpIHsNCj4gKwkJZGV2X2VycihkZXYsICJObyBPRiBtYXRjaCBk
+YXRhIHByb3ZpZGVkXG4iKTsNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsJfQ0KPiArDQo+ICsJ
+cmV0ID0gZGV2bV9jbGtfaHdfcmVnaXN0ZXIoZGV2LCAmcGxsX2Nsay0+aHcpOw0KPiArCWlmIChy
+ZXQpIHsNCj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gcmVnaXN0ZXIgJXMgY2xvY2tcbiIs
+DQo+IGluaXQubmFtZSk7DQo+ICsJCXJldHVybiByZXQ7DQo+ICsJfQ0KPiArDQo+ICsJcmV0dXJu
+IG9mX2Nsa19hZGRfaHdfcHJvdmlkZXIoZGV2LT5vZl9ub2RlLA0KPiBvZl9jbGtfaHdfc2ltcGxl
+X2dldCwNCj4gKwkJCSZwbGxfY2xrLT5odyk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgYXhz
+MTB4X3BsbF9jbGtfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICt7DQo+
+ICsJb2ZfY2xrX2RlbF9wcm92aWRlcihwZGV2LT5kZXYub2Zfbm9kZSk7DQo+ICsJcmV0dXJuIDA7
+DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIF9faW5pdCBvZl9heHMxMHhfcGxsX2Nsa19zZXR1
+cChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUpDQo+ICt7DQo+ICsJY29uc3QgY2hhciAqcGFyZW50
+X25hbWU7DQo+ICsJc3RydWN0IGF4czEweF9wbGxfY2xrICpwbGxfY2xrOw0KPiArCXN0cnVjdCBj
+bGtfaW5pdF9kYXRhIGluaXQgPSB7IH07DQo+ICsJaW50IHJldDsNCj4gKw0KPiArCXBsbF9jbGsg
+PSBremFsbG9jKHNpemVvZigqcGxsX2NsayksIEdGUF9LRVJORUwpOw0KPiArCWlmICghcGxsX2Ns
+aykNCj4gKwkJcmV0dXJuOw0KPiArDQo+ICsJcGxsX2Nsay0+YmFzZSA9IG9mX2lvbWFwKG5vZGUs
+IDApOw0KPiArCWlmICghcGxsX2Nsay0+YmFzZSkgew0KPiArCQlwcl9lcnIoImZhaWxlZCB0byBt
+YXAgcGxsIGRpdiByZWdpc3RlcnNcbiIpOw0KPiArCQlnb3RvIGVycl9mcmVlX3BsbF9jbGs7DQo+
+ICsJfQ0KPiArDQo+ICsJcGxsX2Nsay0+bG9jayA9IG9mX2lvbWFwKG5vZGUsIDEpOw0KPiArCWlm
+ICghcGxsX2Nsay0+bG9jaykgew0KPiArCQlwcl9lcnIoImZhaWxlZCB0byBtYXAgcGxsIGxvY2sg
+cmVnaXN0ZXJcbiIpOw0KPiArCQlnb3RvIGVycl91bm1hcF9iYXNlOw0KPiArCX0NCj4gKw0KPiAr
+CWluaXQubmFtZSA9IG5vZGUtPm5hbWU7DQo+ICsJaW5pdC5vcHMgPSAmYXhzMTB4X3BsbF9vcHM7
+DQo+ICsJcGFyZW50X25hbWUgPSBvZl9jbGtfZ2V0X3BhcmVudF9uYW1lKG5vZGUsIDApOw0KPiAr
+CWluaXQucGFyZW50X25hbWVzID0gJnBhcmVudF9uYW1lOw0KPiArCWluaXQubnVtX3BhcmVudHMg
+PSBwYXJlbnRfbmFtZSA/IDEgOiAwOw0KPiArCXBsbF9jbGstPmh3LmluaXQgPSAmaW5pdDsNCj4g
+KwlwbGxfY2xrLT5wbGxfY2ZnID0gYXJjX3BsbF9jZmc7DQo+ICsNCj4gKwlyZXQgPSBjbGtfaHdf
+cmVnaXN0ZXIoTlVMTCwgJnBsbF9jbGstPmh3KTsNCj4gKwlpZiAocmV0KSB7DQo+ICsJCXByX2Vy
+cigiZmFpbGVkIHRvIHJlZ2lzdGVyICVzIGNsb2NrXG4iLCBub2RlLT5uYW1lKTsNCj4gKwkJZ290
+byBlcnJfdW5tYXBfbG9jazsNCj4gKwl9DQo+ICsNCj4gKwlyZXQgPSBvZl9jbGtfYWRkX2h3X3By
+b3ZpZGVyKG5vZGUsIG9mX2Nsa19od19zaW1wbGVfZ2V0LA0KPiAmcGxsX2Nsay0+aHcpOw0KPiAr
+CWlmIChyZXQpIHsNCj4gKwkJcHJfZXJyKCJmYWlsZWQgdG8gYWRkIGh3IHByb3ZpZGVyIGZvciAl
+cyBjbG9ja1xuIiwNCj4gbm9kZS0+bmFtZSk7DQo+ICsJCWdvdG8gZXJyX3VubWFwX2xvY2s7DQo+
+ICsJfQ0KPiArDQo+ICsJcmV0dXJuOw0KPiArDQo+ICtlcnJfdW5tYXBfbG9jazoNCj4gKwlpb3Vu
+bWFwKHBsbF9jbGstPmxvY2spOw0KPiArZXJyX3VubWFwX2Jhc2U6DQo+ICsJaW91bm1hcChwbGxf
+Y2xrLT5iYXNlKTsNCj4gK2Vycl9mcmVlX3BsbF9jbGs6DQo+ICsJa2ZyZWUocGxsX2Nsayk7DQo+
+ICt9DQo+ICtDTEtfT0ZfREVDTEFSRShheHMxMHhfcGxsX2Nsb2NrLCAic25wcyxheHMxMHgtYXJj
+LXBsbC1jbG9jayIsDQo+ICsJwqDCoMKgwqDCoMKgwqBvZl9heHMxMHhfcGxsX2Nsa19zZXR1cCk7
+DQo+ICsNCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGF4czEweF9wbGxfY2xr
+X2lkW10gPSB7DQo+ICsJeyAuY29tcGF0aWJsZSA9ICJzbnBzLGF4czEweC1wZ3UtcGxsLWNsb2Nr
+IiwgLmRhdGEgPQ0KPiAmcGd1X3BsbF9jZmd9LA0KPiArCXsgfSwNCj4gK307DQo+ICtNT0RVTEVf
+REVWSUNFX1RBQkxFKG9mLCBheHMxMHhfcGxsX2Nsa19pZCk7DQo+ICsNCj4gK3N0YXRpYyBzdHJ1
+Y3QgcGxhdGZvcm1fZHJpdmVyIGF4czEweF9wbGxfY2xrX2RyaXZlciA9IHsNCj4gKwkuZHJpdmVy
+ID0gew0KPiArCQkubmFtZSA9ICJheHMxMHgtcGxsLWNsb2NrIiwNCj4gKwkJLm9mX21hdGNoX3Rh
+YmxlID0gYXhzMTB4X3BsbF9jbGtfaWQsDQo+ICsJfSwNCj4gKwkucHJvYmUgPSBheHMxMHhfcGxs
+X2Nsa19wcm9iZSwNCj4gKwkucmVtb3ZlID0gYXhzMTB4X3BsbF9jbGtfcmVtb3ZlLA0KPiArfTsN
+Cj4gK2J1aWx0aW5fcGxhdGZvcm1fZHJpdmVyKGF4czEweF9wbGxfY2xrX2RyaXZlcik7DQo+ICsN
+Cj4gK01PRFVMRV9BVVRIT1IoIlZsYWQgWmFraGFyb3YgPHZ6YWtoYXJAc3lub3BzeXMuY29tPiIp
+Ow0KPiArTU9EVUxFX0RFU0NSSVBUSU9OKCJTeW5vcHN5cyBBWFMxMFggU0RQIEdlbmVyaWMgUExM
+IENsb2NrIERyaXZlciIpOw0KPiArTU9EVUxFX0xJQ0VOU0UoIkdQTCB2MiIpOw0KLS0gDQrCoEV1
+Z2VuaXkgUGFsdHNldg==
