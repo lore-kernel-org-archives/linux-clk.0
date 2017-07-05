@@ -1,89 +1,54 @@
-Return-Path: <garsilva@embeddedor.com>
-Date: Tue, 4 Jul 2017 17:36:50 -0500
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v2] clk: moxart: remove unnecessary statics
-Message-ID: <20170704223650.GA22546@embeddedgus>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 5 Jul 2017 14:17:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	geert+renesas@glider.be, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+Message-ID: <20170705211753.GV22780@codeaurora.org>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove unnecessary static on local variable _base_ in both functions
-moxart_of_pll_clk_init() and moxart_of_apb_clk_init(). Such variables
-are initialized before being used, on every execution path throughout
-the mentioned functions. The statics have no benefit and, removing
-them reduce the code size.
+On 06/28, Yoshihiro Shimoda wrote:
+> +
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +	dev_set_drvdata(dev, priv);
+> +
+> +	init.name = "rcar_usb2_clock_sel";
+> +	init.ops = &usb2_clock_sel_clock_ops;
+> +	init.flags = CLK_IS_BASIC;
 
-This issue was detected using Coccinelle and the following semantic patch:
+Please drop CLK_IS_BASIC unless you need it.
 
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
+> +	init.parent_names = NULL;
+> +	init.num_parents = 0;
+> +	priv->hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &priv->hw);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	error = of_clk_add_provider(np, of_clk_src_simple_get, clk);
 
-static T x@p;
-...
-x = <+...x...+>
+Can you use clk_hw_register() and of_clk_add_hw_provider()
+please?
 
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
-
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-
-In the following log you can see the difference in the code size. Also,
-notice that the bss segment is reduced down to zero. This log is the
-output of the size command, before and after the code change:
-
-before:
-   text    data     bss     dec     hex filename
-   1724     384     128    2236     8bc drivers/clk/clk-moxart.o
-
-after:
-   text    data     bss     dec     hex filename
-   1697     240       0    1937     791 drivers/clk/clk-moxart.o
-
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
-Changes in v2:
- Remove static on local variable _base_
- in function moxart_of_apb_clk_init()
-
- drivers/clk/clk-moxart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-index b86dac8..1f66ccb 100644
---- a/drivers/clk/clk-moxart.c
-+++ b/drivers/clk/clk-moxart.c
-@@ -18,7 +18,7 @@
- 
- static void __init moxart_of_pll_clk_init(struct device_node *node)
- {
--	static void __iomem *base;
-+	void __iomem *base;
- 	struct clk_hw *hw;
- 	struct clk *ref_clk;
- 	unsigned int mul;
-@@ -57,7 +57,7 @@ CLK_OF_DECLARE(moxart_pll_clock, "moxa,moxart-pll-clock",
- 
- static void __init moxart_of_apb_clk_init(struct device_node *node)
- {
--	static void __iomem *base;
-+	void __iomem *base;
- 	struct clk_hw *hw;
- 	struct clk *pll_clk;
- 	unsigned int div, val;
+> +	if (error)
+> +		return error;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops rcar_usb2_clock_sel_pm_ops = {
+> +	.suspend	= rcar_usb2_clock_sel_suspend,
+> +	.resume		= rcar_usb2_clock_sel_resume,
+> +};
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
