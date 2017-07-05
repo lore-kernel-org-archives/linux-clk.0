@@ -1,69 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:38557 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751446AbdGaMml (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2017 08:42:41 -0400
-Received: by mail-wm0-f48.google.com with SMTP id m85so168903248wma.1
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2017 05:42:40 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
-Date: Mon, 31 Jul 2017 14:42:33 +0200
-Message-Id: <1501504957-19476-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 5 Jul 2017 09:15:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+	geert+renesas@glider.be, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+Message-ID: <20170705141532.slvvbxh33sgwotje@rob-hp-laptop>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to support the standalone CEC Controller on the Amlogic SoCs,
-a specific CEC 32K clock must be handled in the AO domain.
+On Wed, Jun 28, 2017 at 03:28:35PM +0900, Yoshihiro Shimoda wrote:
+> R-Car USB 2.0 controller can change the clock source from an oscillator
+> to an external clock via a register. So, this patch adds support
+> the clock source selector as a clock driver.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  This patch is based on the renesas-drivers.git /
+> renesas-drivers-2017-06-27-v4.12-rc7 tag.
+> 
+>  Changes from v1:
+>   - Change this driver as a clock driver from a generic phy driver.
+>     https://patchwork.kernel.org/patch/9788697/
+>   - Remove "RFC" tag.
+> 
+>  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  54 ++++++
+>  drivers/clk/renesas/Kconfig                        |   5 +
+>  drivers/clk/renesas/Makefile                       |   1 +
+>  drivers/clk/renesas/rcar-usb2-clock-sel.c          | 205 +++++++++++++++++++++
+>  4 files changed, 265 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+>  create mode 100644 drivers/clk/renesas/rcar-usb2-clock-sel.c
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+> new file mode 100644
+> index 0000000..75ccafc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+> @@ -0,0 +1,54 @@
+> +* Renesas R-Car USB 2.0 clock selector
+> +
+> +This file provides information on what the device node for the R-Car USB 2.0
+> +clock selector.
+> +
+> +If you connect an external clock to the USB_EXTAL pin only, you should set
+> +the clock rate to "usb_extal" node only.
+> +If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this module
+> +is not needed because this is default setting. (Of course, you can set the
+> +clock rates to both "usb_extal" and "usb_xtal" nodes.
+> +
+> +Case 1: An external clock connects to R-Car SoC
+> +        +----------+   +--- R-Car ---------------------+
+> +        |External  |---|USB_EXTAL ---> all usb channels|
+> +        |clock     |   |USB_XTAL                       |
+> +        +----------+   +-------------------------------+
+> +In this case, we need this driver with "usb_extal" clock.
+> +
+> +Case 2: An oscillator connects to R-Car SoC
+> +        +----------+   +--- R-Car ---------------------+
+> +        |Oscillator|---|USB_EXTAL -+-> all usb channels|
+> +        |          |---|USB_XTAL --+                   |
+> +        +----------+   +-------------------------------+
+> +In this case, we don't need this selector.
+> +
+> +Required properties:
+> +- compatible: "renesas,r8a7795-rcar-usb2-clock-sel" if the device is a part of
+> +	      an R8A7795 SoC.
+> +              "renesas,r8a7796-rcar-usb2-clock-sel" if the device if a part of
+> +	      an R8A7796 SoC.
+> +              "renesas,rcar-gen3-usb2-clock-sel" for a generic R-Car Gen3
+> +              compatible device.
+> +
+> +              When compatible with the generic version, nodes must list the
+> +              SoC-specific version corresponding to the platform first
+> +              followed by the generic version.
+> +
+> +- reg: offset and length of the USB 2.0 clock selector register block.
+> +- clocks: A list of phandles and specifier pairs.
+> +- clock-names: Name of the clocks.
+> + - The functional clock must be "ehci_ohci"
+> + - The USB_EXTAL clock pin must be "usb_extal"
+> + - The USB_XTAL clock pin must be "usb_xtal"
+> +- #clock-cells: Must be 0
+> +
+> +Exxample (R-Car H3):
+> +
+> +        usb2_clksel: clock-controller@e6590630 {
+> +                compatible = "renesas,r8a77950-rcar-usb2-clock-sel",
+> +                             "renesas,rcar-gen3-usb2-clock-sel";
+> +                reg = <0 0xe6590630 0 0x02>;
+> +                clocks = <&cpg CPG_MOD 703>, <&usb_extal>, <&usb_xtal>;
+> +                clock-names = "ehci_ohci", "usb_extal", "usb_xtal";
 
-The CEC 32K AO Clock is a dual divider with dual counter to provide a more
-precise 32768Hz clock for the CEC subsystem from the external xtal.
+Missing #clock-cells
 
-The AO clocks management registers are spread among the AO register space,
-so this patch also adds management of these registers mappings then uses them
-for the CEC 32K AO clock management.
+With that, for the binding:
 
-This patchset :
- - updates the bindings accordingly
- - switch driver to new bindings
- - adds the CEC 32k clock
- - adds the clock binding entry
+Acked-by: Rob Herring <robh@kernel.org>
 
-The DT Update will be sent in another patchset.
-
-Changes since v2 at [2] :
- - fix round_rate invalid handling
- - enhance set_rate code thanks to Chris Moore
- - add more explicit comments thanks to Martin
-
-Changes since v1 at [1] :
- - move bindings to parent syscon node and move clkc to subnode
- - switch aoclkc to use regmap only register access
- - introduce aoclk-regmap-gate for this purpose until regmap clocks are generic
-
-[1] https://lkml.kernel.org/r/1499336663-23875-1-git-send-email-narmstrong@baylibre.com
-[2] https://lkml.kernel.org/r/1501235589-318-1-git-send-email-narmstrong@baylibre.com
-
-Neil Armstrong (4):
-  dt-bindings: clock: amlogic,gxbb-aoclkc: Update bindings
-  clk: meson: gxbb-aoclk: Switch to regmap for register access
-  dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
-  clk: meson: gxbb-aoclk: Add CEC 32k clock
-
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  22 ++-
- drivers/clk/meson/Makefile                         |   2 +-
- drivers/clk/meson/gxbb-aoclk-32k.c                 | 194 +++++++++++++++++++++
- drivers/clk/meson/gxbb-aoclk-regmap.c              |  46 +++++
- drivers/clk/meson/gxbb-aoclk.c                     |  65 ++++---
- drivers/clk/meson/gxbb-aoclk.h                     |  42 +++++
- include/dt-bindings/clock/gxbb-aoclkc.h            |   1 +
- 7 files changed, 342 insertions(+), 30 deletions(-)
- create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
- create mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
- create mode 100644 drivers/clk/meson/gxbb-aoclk.h
-
--- 
-1.9.1
-
+Rob
