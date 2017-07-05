@@ -1,41 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:59739 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751182AbdGOVAj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Jul 2017 17:00:39 -0400
-Date: Sat, 15 Jul 2017 23:00:36 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Joe Perches <joe@perches.com>
-cc: Julia Lawall <Julia.Lawall@lip6.fr>,
-        linux-arm-kernel@lists.infradead.org, keescook@chromium.org,
-        kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-omap@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH 00/11] Drop unnecessary static
-In-Reply-To: <1500151079.4457.80.camel@perches.com>
-Message-ID: <alpine.DEB.2.20.1707152300030.5105@hadrien>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr> <1500151079.4457.80.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7792: Add IMR-LX3/LSX3 clocks
+Date: Wed,  5 Jul 2017 13:54:30 +0200
+Message-Id: <1499255670-26721-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add the module clocks for the Image Renderer Light (SRAM) Extended 3
+(IMR-LX3/LSX3) Distortion Correction Engines on R-Car V2H.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v4.14.
 
-On Sat, 15 Jul 2017, Joe Perches wrote:
+ drivers/clk/renesas/r8a7792-cpg-mssr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> On Sat, 2017-07-15 at 22:07 +0200, Julia Lawall wrote:
-> > These patches fix cases where there is a static on a local variable, but
-> > the variable is initialized before any possible use.  Thus, the static has
-> > no benefit.
->
-> Nice one.
-
-Thanks.  It was suggested by Kees Cook a while ago.  There seem to be many
-opportunities.
-
-julia
+diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+index a832b9b6f7b0dde8..7f85bbf20bf782b7 100644
+--- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+@@ -118,6 +118,13 @@ static const struct mssr_mod_clk r8a7792_mod_clks[] __initconst = {
+ 	DEF_MOD("vin1",			 810,	R8A7792_CLK_ZG),
+ 	DEF_MOD("vin0",			 811,	R8A7792_CLK_ZG),
+ 	DEF_MOD("etheravb",		 812,	R8A7792_CLK_HP),
++	DEF_MOD("imr-lx3",		 821,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-1",		 822,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-0",		 823,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-5",		 825,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-4",		 826,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-3",		 827,	R8A7792_CLK_ZG),
++	DEF_MOD("imr-lsx3-2",		 828,	R8A7792_CLK_ZG),
+ 	DEF_MOD("gyro-adc",		 901,	R8A7792_CLK_P),
+ 	DEF_MOD("gpio7",		 904,	R8A7792_CLK_CP),
+ 	DEF_MOD("gpio6",		 905,	R8A7792_CLK_CP),
+-- 
+2.7.4
