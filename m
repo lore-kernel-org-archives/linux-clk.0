@@ -1,91 +1,153 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH 1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-References: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1499392668-9062-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <0f450e21-545e-b2e7-ed7c-1df4655cd7e3@gmail.com>
-Date: Sun, 9 Jul 2017 15:29:40 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 5 Jul 2017 09:43:10 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>
+Subject: Re: [PATCH v5 1/6] clk: sunxi-ng: div: Add support for fixed
+ post-divider
+Message-ID: <20170705074310.b6ycyf27htv5gkxm@flea>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <805048a548031cafc890e6ea06ee773bdfb199d0.1499197129.git-series.plaes@plaes.org>
 MIME-Version: 1.0
-In-Reply-To: <1499392668-9062-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pldjrt2krdkb5i6a"
+In-Reply-To: <805048a548031cafc890e6ea06ee773bdfb199d0.1499197129.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/07/2017 03:57 AM, Vladimir Barinov wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-> 
-> Update IDT VersaClock 5 driver to support 5P49V5925. This chip has only
-> external clock input, four fractional dividers (FODs) and five clock
-> outputs (four universal clock outputs and one reference clock output at
-> OUT0_SELB_I2C).
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+--pldjrt2krdkb5i6a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 04, 2017 at 11:04:56PM +0300, Priit Laes wrote:
+> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
+> 6 is fixed post-divider.
+>=20
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 > ---
->  drivers/clk/clk-versaclock5.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index ea7d552..88b749d 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -126,6 +126,7 @@
->  /* Supported IDT VC5 models. */
->  enum vc5_model {
->  	IDT_VC5_5P49V5923,
-> +	IDT_VC5_5P49V5925,
->  	IDT_VC5_5P49V5933,
->  	IDT_VC5_5P49V5935,
->  };
-> @@ -595,6 +596,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
->  	case IDT_VC5_5P49V5933:
->  		return (n == 0) ? 0 : 3;
->  	case IDT_VC5_5P49V5923:
-> +	case IDT_VC5_5P49V5925:
->  	case IDT_VC5_5P49V5935:
->  	default:
->  		return n;
-> @@ -785,6 +787,13 @@ static int vc5_remove(struct i2c_client *client)
->  	.flags = 0,
->  };
->  
-> +static const struct vc5_chip_info idt_5p49v5925_info = {
-> +	.model = IDT_VC5_5P49V5925,
-> +	.clk_fod_cnt = 4,
-> +	.clk_out_cnt = 5,
-> +	.flags = 0,
-> +};
+>  drivers/clk/sunxi-ng/ccu_div.c | 18 ++++++++++++++++--
+>  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
+>  2 files changed, 18 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_di=
+v.c
+> index c0e5c10..054b12a 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.c
+> +++ b/drivers/clk/sunxi-ng/ccu_div.c
+> @@ -21,6 +21,9 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_=
+internal *mux,
+>  {
+>  	struct ccu_div *cd =3D data;
+> =20
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate /=3D cd->fixed_post_div;
 > +
->  static const struct vc5_chip_info idt_5p49v5933_info = {
->  	.model = IDT_VC5_5P49V5933,
->  	.clk_fod_cnt = 2,
-> @@ -801,6 +810,7 @@ static int vc5_remove(struct i2c_client *client)
->  
->  static const struct i2c_device_id vc5_id[] = {
->  	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
-> +	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
->  	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
->  	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
->  	{ }
-> @@ -809,6 +819,7 @@ static int vc5_remove(struct i2c_client *client)
->  
->  static const struct of_device_id clk_vc5_of_match[] = {
->  	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
-> +	{ .compatible = "idt,5p49v5925", .data = &idt_5p49v5925_info },
->  	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
->  	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
->  	{ },
-> 
+>  	return divider_round_rate_parent(&cd->common.hw, parent,
+>  					 rate, parent_rate,
+>  					 cd->div.table, cd->div.width,
 
+This doesn't work.
 
--- 
-Best regards,
-Marek Vasut
+The rate formula is
+rate =3D parent / div / 6
+
+Which is equivalent to
+div =3D rate * 6 / parent
+
+You should be multiplying the rate, not dividing it (or dividing the
+parent, but then you'll also need to multiply it back after the call
+to divider_round_rate_parent).
+
+Consider this, some driver wants to set a rate of 100MHz on this
+clock. The parent is 1.2GHz, and you have your postdiv of 6.
+
+The divider we want to compute is 2, obviously.
+
+You're doing here:
+rate / 6 =3D parent / div
+
+Which means that you'll end up trying to find the divider between
+1.2GHz and 16.6666MHz, which is going to be 72.
+
+> @@ -62,8 +65,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw=
+ *hw,
+>  	parent_rate =3D ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
+>  						  parent_rate);
+> =20
+> -	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+> -				   cd->div.flags);
+> +	val =3D divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+> +				  cd->div.flags);
+> +
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		val /=3D cd->fixed_post_div;
+> +
+> +	return val;
+>  }
+> =20
+>  static int ccu_div_determine_rate(struct clk_hw *hw,
+> @@ -71,6 +79,9 @@ static int ccu_div_determine_rate(struct clk_hw *hw,
+>  {
+>  	struct ccu_div *cd =3D hw_to_ccu_div(hw);
+> =20
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		req->rate *=3D cd->fixed_post_div;
+> +
+
+I guess this is why you never really saw the issue. Combined with your
+division in ccu_div_round_rate, it produces the exact rate you were
+given as an argument.
+
+>  	return ccu_mux_helper_determine_rate(&cd->common, &cd->mux,
+>  					     req, ccu_div_round_rate, cd);
+>  }
+> @@ -89,6 +100,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigne=
+d long rate,
+>  	val =3D divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
+>  			      cd->div.flags);
+> =20
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		val /=3D cd->fixed_post_div;
+> +
+
+If you multiply the rate before calling divider_get_val, you won't
+have to do the division of the divider, with all the rounding
+weirdness it might create.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--pldjrt2krdkb5i6a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZXJiOAAoJEBx+YmzsjxAgiowP/R5LQ7KS+joicaJ8GGbQ0rvx
+lkmGQT3tXydnYtIMNNqWr6054JdWsyB4WU/uZXQHsH8AaPQ2OJrFDWEQtAYNEEVG
+YY6cSDqNu6GBQ+FWBUZgkRT1fNMKGRAA08lz6dKJk3RQNFeTZmZxgak+D90iwGz1
+/iCdGeS0Tag39GgznGpwJBaIObHtdD5nwqv+YSM1GjkErfrPpy0+HLKWx4H6E6pE
+4IvU/H1mDgMIM/MJewBBrOspEUr71HqPuuTZ7zlWDayD9r+LsuqKb0aoZqDwOyS2
+BIHTQipqxyByzhwE0qjXTu9F6iwgAFano93w8xH+/RJczs+2ZBsDDXpGDrV4kRdV
+X6R7YmRykNSGz+sUN4uCe0f0xrSF86YHkn59ir8M0YRY14KOPVIQ1FGyuxF41VPJ
+FMYJC2IgSXNL9axxsmoxz7Wna50j4UeeOXBRLqa9aqB961lz7s/Yr7Gv+r8gWyjl
+WKb3v4gCUpqnovF3lSRDYgZkFKVKuw4kHhcJlSMuq9MTjUutJqKDLo/Q6VXt3R9C
+qnPHzoFLt8gZKWVLJtrmqXZDYWuTenKmHaiORJN91p/Lmp2eWR7mXiptI9ZXtpcy
+3bBttVIcR9lAhocsGdSGpwEjhvBzxn8uTXM1jrcEWRBspKYvL/Xd4UpKWMdp0c8C
+5EM4XGGKpUxHkhBJyRvd
+=Qj7v
+-----END PGP SIGNATURE-----
+
+--pldjrt2krdkb5i6a--
