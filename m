@@ -1,96 +1,31 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH V3 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-Date: Sun,  9 Jul 2017 15:28:13 +0200
-Message-Id: <20170709132814.2339-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <0f68552ad8214115634d649ed34ea450461f9b5d.1499197129.git-series.plaes@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <0f68552ad8214115634d649ed34ea450461f9b5d.1499197129.git-series.plaes@plaes.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 5 Jul 2017 12:07:20 +0800
+Message-ID: <CAGb2v64WwzV_u5qnkiQsWeOtCY-rGcpvMqYMiwBuiuYEZeT-OA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/6] dt-bindings: List devicetree binding for the CCU
+ of Allwinner A10
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>, Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	Jonathan Liu <net147@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
-Input clock source can be taken from either external crystal or from
-external reference clock.
+On Wed, Jul 5, 2017 at 4:04 AM, Priit Laes <plaes@plaes.org> wrote:
+> Allwinner A10 is now driven by sunxi-ng CCU driver.
+>
+> Add devicetree binding for it.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Acked-by: Rob Herring <robh@kernel.org>
----
-V2: Edit the top of the DT binding document to mention VersaClock 6
-V3: Reformat the compatible entry to list one per line
----
- .../devicetree/bindings/clock/idt,versaclock5.txt  | 26 ++++++++++++++++------
- 1 file changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 53d7e50ed875..66ef0a009b95 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -1,24 +1,29 @@
--Binding for IDT VersaClock5 programmable i2c clock generator.
-+Binding for IDT VersaClock 5,6 programmable i2c clock generators.
- 
--The IDT VersaClock5 are programmable i2c clock generators providing
--from 3 to 12 output clocks.
-+The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
-+generators providing from 3 to 12 output clocks.
- 
- ==I2C device node==
- 
- Required properties:
--- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
--		"idt,5p49v5935".
-+- compatible:	shall be one of
-+		"idt,5p49v5923"
-+		"idt,5p49v5933"
-+		"idt,5p49v5935"
-+		"idt,5p49v6901"
- - reg:		i2c device address, shall be 0x68 or 0x6a.
- - #clock-cells:	from common clock binding; shall be set to 1.
- - clocks:	from common clock binding; list of parent clock handles,
--		- 5p49v5923: (required) either or both of XTAL or CLKIN
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of XTAL or CLKIN
- 					reference clock.
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present (internal
- 					Xtal used) or CLKIN reference
- 					clock.
- - clock-names:	from common clock binding; clock input names, can be
--		- 5p49v5923: (required) either or both of "xin", "clkin".
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of "xin", "clkin".
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present or "clkin".
- 
-@@ -44,6 +49,13 @@ clock specifier, the following mapping applies:
- 	3 -- OUT3
- 	4 -- OUT4
- 
-+5P49V6901:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+	3 -- OUT3
-+	4 -- OUT4
-+
- ==Example==
- 
- /* 25MHz reference crystal */
--- 
-2.11.0
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
