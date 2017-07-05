@@ -1,76 +1,61 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC 03/12] clk: qcom: support for alpha mode configuration
-Date: Thu, 27 Jul 2017 16:40:16 +0530
-Message-Id: <1501153825-5181-4-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <rnayak@codeaurora.org>
+Subject: Re: [RFC] clk: inherit display clocks enabled by bootloader
+To: Rob Clark <robdclark@gmail.com>, linux-clk@vger.kernel.org
+References: <20170704175117.8636-1-robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ Stephen Boyd <sboyd@codeaurora.org>, Archit Taneja <architt@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <fbc5b229-b48b-59bb-b217-590d9499b0ea@codeaurora.org>
+Date: Wed, 5 Jul 2017 08:57:35 +0530
+MIME-Version: 1.0
+In-Reply-To: <20170704175117.8636-1-robdclark@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The current configuration does not fully configure PLL alpha mode
-and values so this patch
 
-1. Configures PLL_ALPHA_VAL_U for PLL which supports 40 bit alpha.
-2. Adds alpha enable and alpha mode configuration support.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 5 +++++
- drivers/clk/qcom/clk-alpha-pll.h | 3 +++
- 2 files changed, 8 insertions(+)
+On 07/04/2017 11:21 PM, Rob Clark wrote:
+> The goal here is to support inheriting a display setup by bootloader,
+> although there may also be some non-display related use-cases.
+> 
+> Rough idea is to add a flag for clks and power domains that might
+> already be enabled when kernel starts, and make corresponding fixups
+> to clk enable/prepare_count and power-domain state so that these are
+> not automatically disabled late in boot.
+> 
+> If bootloader is enabling display, and kernel is using efifb before
+> real display driver is loaded (potentially from kernel module after
+> userspace starts, in a typical distro kernel), we don't want to kill
+> the clocks and power domains that are used by the display before
+> userspace starts.
+> 
+> Second part will be (*waves hands*) for drm/msm to check if display
+> related clocks are enabled when it is loaded, and if so use drm
+> atomic framework's hooks to read back hw state to sync existing
+> display state w/ software state, and skip the initial clk_enable.
+> Therefore inheriting the enable done by bootloader.
+> 
+> Obviously this should be split up into multiple patches and many
+> TODOs addressed.  But I guess this is enough for now to start
+> discussing the approach, and in particular how drm and clock/pd
+> drivers work together to handle handover from bootloader.
+> 
+> The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
+> on leaf nodes.
+> ---
+> A bit hacky right now, but display survives clk_disable_unused()
+> and genpd_power_off_unused().  It hangs just after that late in
+> boot, which I'm still debugging (might be unrelated shenanigans).
+> And haven't started on the drm/msm side of this.  But I figured
+> it was half baked enough to send out for comments/ideas, or to
+> see if anyone had some different idea about how to solve this.
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index e6cde2d..6291048 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -123,6 +123,9 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 		regmap_write(regmap, off + PLL_CONFIG_CTL_U,
- 			     config->config_ctl_hi_val);
- 
-+	if (!(pll->flags & SUPPORTS_16BIT_ALPHA))
-+		regmap_write(regmap, off + PLL_ALPHA_VAL_U, config->alpha_hi);
-+
- 	val = config->main_output_mask;
- 	val |= config->aux_output_mask;
- 	val |= config->aux2_output_mask;
-@@ -130,6 +133,8 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	val |= config->pre_div_val;
- 	val |= config->post_div_val;
- 	val |= config->vco_val;
-+	val |= config->alpha_en_mask;
-+	val |= config->alpha_mode_mask;
- 
- 	mask = config->main_output_mask;
- 	mask |= config->aux_output_mask;
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index bbd6aa9..39686db 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -59,12 +59,15 @@ struct clk_alpha_pll_postdiv {
- struct alpha_pll_config {
- 	u32 l;
- 	u32 alpha;
-+	u32 alpha_hi;
- 	u32 config_ctl_val;
- 	u32 config_ctl_hi_val;
- 	u32 main_output_mask;
- 	u32 aux_output_mask;
- 	u32 aux2_output_mask;
- 	u32 early_output_mask;
-+	u32 alpha_en_mask;
-+	u32 alpha_mode_mask;
- 	u32 pre_div_val;
- 	u32 pre_div_mask;
- 	u32 post_div_val;
+Another RFC proposed around to handle similar situations is
+https://lkml.org/lkml/2017/6/28/188
+
+That one though, I guess deals with only regulator supplies for now.
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
