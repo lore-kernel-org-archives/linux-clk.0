@@ -1,71 +1,31 @@
-Return-Path: <wens@wens.csie.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <68788c4452291977ab16168d89cb91c4611e1a41.1499197129.git-series.plaes@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <68788c4452291977ab16168d89cb91c4611e1a41.1499197129.git-series.plaes@plaes.org>
 From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 10/10] ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
-Date: Mon, 24 Jul 2017 21:59:05 +0800
-Message-Id: <20170724135905.28855-11-wens@csie.org>
-In-Reply-To: <20170724135905.28855-1-wens@csie.org>
-References: <20170724135905.28855-1-wens@csie.org>
+Date: Wed, 5 Jul 2017 12:07:07 +0800
+Message-ID: <CAGb2v64PoW5ddk_1zAw0hH=+hdhE=wX1ABL7_iQfJ2smunrzWg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] dt-bindings: List devicetree binding for the CCU
+ of Allwinner A20
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>, Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	Jonathan Liu <net147@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The H8 homlet has a micro-SD card slot connected to mmc0,
-and onboard eMMC from FORESEE, connected to mmc2.
+On Wed, Jul 5, 2017 at 4:04 AM, Priit Laes <plaes@plaes.org> wrote:
+> Allwinner A20 is now driven by sunxi-ng CCU driver.
+>
+> Add devicetree binding for it.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts   | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-index aecdeeb368ed..7afbaa4eea8d 100644
---- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-@@ -43,6 +43,7 @@
- 
- /dts-v1/;
- #include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
- 
- / {
- 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
-@@ -57,6 +58,26 @@
- 	};
- };
- 
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
--- 
-2.13.3
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
