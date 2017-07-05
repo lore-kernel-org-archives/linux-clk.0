@@ -1,38 +1,103 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47406 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751962AbdGRBRv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2017 21:17:51 -0400
-Date: Mon, 17 Jul 2017 18:17:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: dan.carpenter@oracle.com, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: mediatek: fixed static checker warning in
- clk_cpumux_get_parent call
-Message-ID: <20170718011747.GO22780@codeaurora.org>
-References: <e1f7ea2d9cc9717fce5c349bcfb81ce37306aad1.1500270942.git.sean.wang@mediatek.com>
+Return-Path: <adriana.reus@nxp.com>
+From: Adriana Reus <adriana.reus@nxp.com>
+To: "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+CC: "A.s. Dong" <aisheng.dong@nxp.com>, Andy Duan <fugang.duan@nxp.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, Fabio Estevam
+	<fabio.estevam@nxp.com>, Octavian Purdila <octavian.purdila@nxp.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Anson Huang <anson.huang@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, Leonard Crestez
+	<leonard.crestez@nxp.com>
+Subject: Re: [RFC 0/2] clk: imx7d: Uart clock set-up conflict if clk needs
+ gating on set rate or re-parent
+Date: Wed, 5 Jul 2017 09:26:52 +0000
+Message-ID: <1499246811.25314.119.camel@nxp.com>
+References: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
+	 <1499092935.2308.18.camel@pengutronix.de>
+	 <1499165817.19416.31.camel@nxp.com>
+	 <1499166096.2308.63.camel@pengutronix.de>
+In-Reply-To: <1499166096.2308.63.camel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <e1f7ea2d9cc9717fce5c349bcfb81ce37306aad1.1500270942.git.sean.wang@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/17, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Fixed the signedness bug returning '(-22)' on the return type as u8 with
-> removing the sanity checker in clk_cpumux_get_parent() since
-> clk_cpumux_set_parent() always ensures validity in clk_cpumux_get_parent()
-> got called.
-> 
-> Fixes: commit 1e17de9049da ("clk: mediatek: add missing cpu mux causing Mediatek cpufreq can't work")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+T24gTWEsIDIwMTctMDctMDQgYXQgMTM6MDEgKzAyMDAsIEx1Y2FzIFN0YWNoIHdyb3RlOg0KPiBB
+bSBEaWVuc3RhZywgZGVuIDA0LjA3LjIwMTcsIDEwOjU3ICswMDAwIHNjaHJpZWIgQWRyaWFuYSBS
+ZXVzOg0KPiA+IA0KPiA+IE9uIEx1LCAyMDE3LTA3LTAzIGF0IDE2OjQyICswMjAwLCBMdWNhcyBT
+dGFjaCB3cm90ZToNCj4gPiA+IA0KPiA+ID4gQW0gTW9udGFnLCBkZW4gMDMuMDcuMjAxNywgMTc6
+MjggKzAzMDAgc2NocmllYiBBZHJpYW5hIFJldXM6DQo+ID4gPiA+IA0KPiA+ID4gPiANCj4gPiA+
+ID4gSGkgYWxsLA0KPiA+ID4gPiANCj4gPiA+ID4gSSBhbSBjdXJyZW50bHkgdHJ5aW5nIHRvIGZp
+eCBhbiBpc3N1ZSBvY2N1cnJpbmcgd2hlbiB0cnlpbmcgdG8NCj4gPiA+ID4gc2V0DQo+ID4gPiA+
+IHRoZQ0KPiA+ID4gPiBDTEtfU0VUX1JBVEVfR0FURSBmbGFnIGZvciB0aGUgdWFydCByb290IGNs
+a3MuIFRoaXMgY2F1c2VzIHRoZQ0KPiA+ID4gPiBpbXgNCj4gPiA+ID4gc2VyaWFsDQo+ID4gPiA+
+IGRyaXZlciB0byBmYWlsIHdoZW4gc2V0dGluZyB1cCBkZXZpY2V0cmVlIHNwZWNpZmllZCBmcmVx
+dWVuY3kNCj4gPiA+ID4gb3INCj4gPiA+ID4gcGFyZW50IGJlY2F1c2UNCj4gPiA+ID4gdGhlIHVh
+cnQgY2xrIGlzIGFscmVhZHkgaW4gdXNlIGJ5IHRoZSBjY20gZHJpdmVyIHRoYXQgc3RhcnRzIHVw
+DQo+ID4gPiA+IGFsbA0KPiA+ID4gPiB1YXJ0IGNsb2Nrcw0KPiA+ID4gPiBmb3IgZWFybHljb24u
+DQo+ID4gPiA+IA0KPiA+ID4gPiBTb21lIGNvbnRleHQ6DQo+ID4gPiA+IA0KPiA+ID4gPiBUaGVy
+ZSBhcmUgdGhyZWUgbWFpbiB0eXBlcyBvZiBjbG9jayBzbGljZXMgb24gaW14N2QgY2NtOiAiQ29y
+ZQ0KPiA+ID4gPiBjbG9jayBzbGljZSIsDQo+ID4gPiA+ICJCdXMgY2xvY2sgc2xpY2UgKEFYSS9B
+SEIpIiwgYW5kICJQZXJpcGhlcmFsIGNsb2NrIHNsaWNlIi4gVmFzdA0KPiA+ID4gPiBtYWpvcml0
+eSBvZg0KPiA+ID4gPiBjbG9jayByb290cyBmYWxsIGluIHRoZSBwZXJpcGhlcmFsIHNsaWNlIGNh
+dGVnb3J5Og0KPiA+ID4gPiANCj4gPiA+ID4gwqDCoMKgwqA4OjEgbXV4IC0+IGdhdGUgLT4gZGl2
+IC0+IGRpdiAtPiBnYXRlDQo+ID4gPiA+IA0KPiA+ID4gPiBUaGUgcm9vdCBjbG9ja3MgdGhhdCBk
+ZXJpdmUgZnJvbSBwZXJpcGhlcmFsIHNsaWNlcyBhcmUgZXhwZWN0ZWQNCj4gPiA+ID4gdG8NCj4g
+PiA+ID4gYmUNCj4gPiA+ID4gZ2F0ZWQgd2hlbiBjaGFuZ2luZyBmcmVxdWVuY3kgWzBdLg0KPiA+
+ID4gPiANCj4gPiA+ID4gVGhlIGZpcnN0IHBhdGNoIG9mIHRoaXMgc2VyaWVzIHNldHMgdGhpcyB1
+cC4gKEl0IGlzIG9ubHkgYQ0KPiA+ID4gPiByZWZlcmVuY2UgcG9pbnQgZm9yDQo+ID4gPiA+IHRo
+aXMgY29udmVyc2F0aW9uLCBub3QgdG8gYmUgbWVyZ2VkIGFzIGl0IFdJUCBhbmQgbmVlZHMgbW9y
+ZQ0KPiA+ID4gPiB0ZXN0aW5nKS4NCj4gPiA+ID4gDQo+ID4gPiA+IFdoZW4gc2V0dGluZyB0aGlz
+IHVwLCB0aGUgaW14IHNlcmlhbCBkcml2ZXINCj4gPiA+ID4gKHBsYXRmb3JtX2RyaXZlcl9yZWdp
+c3RlciAtPiBvZl9jbGtfc2V0X2RlZmF1bHRzKSB3aWxsIGZhaWwNCj4gPiA+ID4gdG8gc2V0IHRo
+ZSByYXRlIG9yIHBhcmVudCBzcGVjaWZpZWQgaW4gdGhlIGRldmljZXRyZWU6DQo+ID4gPiA+IA0K
+PiA+ID4gPiDCoMKgwqDCoGlteC11YXJ0IDMwYTcwMDAwLnNlcmlhbDogY2xrX3NldF9yYXRlKCkg
+ZmFpbGVkDQo+ID4gPiA+IMKgwqDCoMKgaW14LXVhcnQ6IHByb2JlIG9mIDMwYTcwMDAwLnNlcmlh
+bCBmYWlsZWQgd2l0aCBlcnJvciAtMTYNCj4gPiA+ID4gDQo+ID4gPiA+IFRoZSByZWFzb24gZm9y
+IHRoaXMgaXMgdGhhdCB0aGUgdWFydCBjbGtzIGFyZSBhbHJlYWR5IHByZXBhcmVkDQo+ID4gPiA+
+IGFuZA0KPiA+ID4gPiBlbmFibGVkIGluDQo+ID4gPiA+IGlteDdkX2Nsb2Nrc19pbml0IGJ5IHRo
+ZSBpbXhfcmVnaXN0ZXJfdWFydF9jbG9ja3MgZnVuY3Rpb24gaWYNCj4gPiA+ID4gZWFybHljb24g
+aXMNCj4gPiA+ID4gZW5hYmxlZC4gRnVuY3Rpb25hbGl0eSBhZGRlZCBpbiBwYXRjaGVzOg0KPiA+
+ID4gPiAnY29tbWl0IDU1YWRjNjFjNTY4YWY5OTQxOWJlMWRjMDQxMmY4ZWFlMDE5YzcxZjINCj4g
+PiA+ID4gKCJjbGs6IGlteDogYWRkIGNvbW1vbiBsb2dpYyB0byBkZXRlY3QgZWFybHkgVUFSVCB1
+c2FnZSIpJw0KPiA+ID4gPiAnY29tbWl0IDFiOWFmNjhmMzI1Y2I5MWFjOWZjNjkxZjUyZDY5ZGZi
+MDgyNmFmZDcNCj4gPiA+ID4gKCJjbGs6IGlteDdkOiByZXRhaW4gZWFybHkgVUFSVCBjbG9ja3Mg
+ZHVyaW5nIGtlcm5lbCBpbml0IiknDQo+ID4gPiA+IA0KPiA+ID4gPiBPbmUgb3B0aW9uIGlzIHRv
+IHJlbW92ZSB0aGUgaW14X3JlZ2lzdGVyX3VhcnRfY2xvY2tzIGZyb20gdGhlDQo+ID4gPiA+IGNj
+bQ0KPiA+ID4gPiBkcml2ZXIgYW5kDQo+ID4gPiA+IGxlYXZlIHRoZSB1YXJ0IGNsb2NrIHNldCB1
+cCBhbmQgZW5hYmxlIGVudGlyZWx5IHRvIHRoZSBzZXJpYWwNCj4gPiA+ID4gZHJpdmVyIGFuZCBE
+VC4NCj4gPiA+ID4gVGhlIHNlY29uZCBSRkMgcGF0Y2ggZG9lcyB0aGlzIGZvciBpbXg3ZC4NCj4g
+PiA+IA0KPiA+ID4gVGhpcyBpcyBub3QgYW4gb3B0aW9uLiBUaGUgQ0NNIGhvbGRzIGEgcmVmZXJl
+bmNlIHRvIHRob3NlIGNsb2NrcywNCj4gPiA+IHNwZWNpZmljYWxseSB0byBwcmV2ZW50IHRoZW0g
+ZnJvbSBiZWluZyBkaXNhYmxlZCBiZWZvcmUgYSByZWFsDQo+ID4gPiBzZXJpYWwNCj4gPiA+IGRy
+aXZlciBpcyBib3VuZC4gSWYgdGhpcyBpc24ndCBkb25lIHlvdSBtaWdodCBlbmQgdXAgaW4gYQ0K
+PiA+ID4gc2l0dWF0aW9uDQo+ID4gPiB3aGVyZSBQTSBvciBkcml2ZXIgcHJvYmUgZGVmZXJhbCBk
+aXNhYmxlcyB0aGUgVUFSVCBjbG9jay90aGUNCj4gPiA+IHBhcmVudA0KPiA+ID4gb2YNCj4gPiA+
+IHRoaXMgY2xvY2ssIGV2ZW4gaWYgaXQgd2FzIHByZXZpb3VzbHkgZW5hYmxlZCBieSB0aGUgYm9v
+dGxvYWRlci4NCj4gPiA+IFdpdGgNCj4gPiA+IGVhcmx5Y29uIHRoaXMgbWlnaHQgbGVhZCB0byBh
+IGZ1bGwgc3lzdGVtIGhhbmcgYXQgdGhpcyBwb2ludCwNCj4gPiA+IHdoZW4NCj4gPiA+IGVhcmx5
+Y29uIHRyaWVzIHRvIGFjY2VzcyBhIGNsb2NrIGdhdGVkIFVBUlQuDQo+ID4gPiANCj4gPiA+IFJl
+Z2FyZHMsDQo+ID4gPiBMdWNhcw0KPiA+ID4gDQo+ID4gDQo+ID4gSGkgTHVjYXMsIFRoYW5rIHlv
+dSBmb3IgeW91ciByZXBseS4NCj4gPiANCj4gPiBMb29raW5nIGF0IGNsa19jb3JlX3VucHJlcGFy
+ZSBhbmQgY2xrX2NvcmVfZGlzYWJsZSB0aGV5IHNlZW0gdG8NCj4gPiByZXR1cm4NCj4gPiB3aXRo
+b3V0IGhhcmR3YXJlIGRpc2FibGluZyB0aGUgY2xvY2sgaWYgZW5hYmxlX2NvdW50IG9yDQo+ID4g
+cHJlcGFyZV9jb3VudA0KPiA+IGFyZSAwLiBTbywgZGlzYWJsaW5nIGEgYm9vdGxvYWRlciBlbmFi
+bGVkIG9ubHkgY2xvY2sgZG9lcyBub3Qgc2VlbQ0KPiA+IHRvDQo+ID4gYmUgYSBwcm9ibGVtLiBM
+ZXQgbWUga25vdyBpZiBJIG1pc3VuZGVyc3RhbmQuDQo+IA0KPiBUaGF0J3MgY29ycmVjdCwgaG93
+ZXZlciBpbWFnZSBhIHNpdHVhdGlvbiB3aGVyZSBzb21lIG90aGVyIGRyaXZlcg0KPiBwcm9iZXMN
+Cj4gdGhhdCB1c2VzIHRoZSBzYW1lIHBhcmVudCBjbG9jayBhcyB0aGUgZWFybHljb24gVUFSVCwg
+YmVmb3JlIHRoZSByZWFsDQo+IHNlcmlhbCBkcml2ZXIgaXMgdXAuIFRoaXMgZHJpdmVyIHJlcXVl
+c3RzIGFuZCBlbmFibGVzIHRoZSBwYXJlbnQNCj4gY2xvY2ssDQo+IHRoZW4gZ29lcyBpbnRvIHJ1
+bnRpbWUgc3VzcGVuZGVkIHN0YXRlLCBkaXNhYmxpbmcgdGhlIGNsb2NrLiBBcyB0aGUNCj4gY2xv
+Y2sgaGFzIGJlZW4gZW5hYmxlZCBieSB0aGlzIGRyaXZlciB3ZSBub3cgaGF2ZSB0aGUgdHJhbnNp
+dGlvbiBmcm9tDQo+IGVuYWJsZWQgdG8gZGlzYWJsZWQsIGRpc2FibGluZyB0aGUgYm9vdGxvYWRl
+ciBlbmFibGVkIGNsb2NrLg0KPiANCj4gVGhlIHNhbWUgY2FuIGhhcHBlbiB3aXRoIGRyaXZlciBw
+cm9iZSBkZWZlcmFsLg0KPiANCj4gUmVnYXJkcywNCj4gTHVjYXMNCj4gDQoNCk9rLCB0aGFua3Mg
+Zm9yIGZ1cnRoZXIgZXhwbGFpbmluZy4NClNvdW5kcyBsaWtlIHRoaXMgd291bGQgYmUgYSBnZW5l
+cmFsIHRoZW9yZXRpY2FsIGNhc2UsIG5vdA0KYm91bmQgdG8gYSBzcGVjaWZpYyBwbGF0Zm9ybSwg
+YW5kIHBvc3NpYmx5IGNvdWxkIGFwcGx5IHRvIG90aGVyDQpib29sb2FkZXItb24gY2xvY2tzLCBJ
+IGd1ZXNzLg0KDQpJIGFtIG5vdCBzdXJlIGFzIHRvIHdoYXQgYSBwcm9wZXIgc29sdXRpb24gc2hv
+dWxkIGJlLg0KV291bGQgYWRkaW5nIGxvZ2ljIGluIENsb2NrIEZyYW1ld29yayB0byBoYW5kbGUN
+CmJvb3Rsb2FkZXItb24gY2xvY2tzIGRpZmZlcmVudGx5IGJlIGFuIG9wdGlvbiA/DQoNCg0KVGhh
+bmtzLA0KQWRyaWFuYQ0KDQoNCg==
