@@ -1,98 +1,117 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from plaes.org ([188.166.43.21]:40179 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752161AbdGDUF5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Jul 2017 16:05:57 -0400
-From: Priit Laes <plaes@plaes.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>,
-        Priit Laes <plaes@plaes.org>
-Subject: [PATCH v5 0/6] ARM: sunxi: Convert sun4i/sun7i series SoCs to sunxi-ng CCU
-Date: Tue,  4 Jul 2017 23:04:55 +0300
-Message-Id: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:34430 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750778AbdGFJhv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2017 05:37:51 -0400
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, sboyd@codeaurora.org,
+        robdclark@gmail.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH V4 5/6] iommu/arm-smmu: Add support for MMU40x/500 clocks
+Date: Thu,  6 Jul 2017 15:07:04 +0530
+Message-Id: <1499333825-7658-6-git-send-email-vivek.gautam@codeaurora.org>
+In-Reply-To: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Sricharan R <sricharan@codeaurora.org>
 
-This serie brings A10 (sun4i) and A20 (sun7i) SoCs into the
-sunxi-ng world. With this patchset we now support all the clocks
-in sun4i/sun7i SoCs.
+The MMU400x/500 is the implementation of the SMMUv2
+arch specification. It is split in to two blocks
+TBU, TCU. TBU caches the page table, instantiated
+for each master locally, clocked by the TBUn_clk.
+TCU manages the address translation with PTW and has
+the programming interface as well, clocked using the
+TCU_CLK. The TBU can also be sharing the same clock
+domain as TCU, in which case both are clocked using
+the TCU_CLK.
 
-As mentioned in sun5i conversion, this is pretty much standard
-stuff as most of the required clocks were already implemented in
-the sunxi-ng framework.
+This defines the clock bindings for the same and adds
+the clock names to compatible data.
 
-In order to make cross-tree merges bisectable, device trees are
-currently using plain numbers instead of defines.
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+[vivek: clock rework and cleanup]
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ .../devicetree/bindings/iommu/arm,smmu.txt         | 24 ++++++++++++++++++++++
+ drivers/iommu/arm-smmu.c                           | 12 ++++++++++-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
 
-Changes from V4:
- - Add CLK_SET_RATE_PARENT to "sata" clock.
- - Fix postdivider support for divider clock (round_rate, determine_rate).
-
-Changes from v3:
- - Add support for fixed post-divider support for DIV clocks.
- - Fix wrong clk_ops for SATA. Spotted by Jonathan Liu.
- - Use numeric values for clock indices to make merging somewhat easier
- - Create separate sun7i/a20 specific header.
-
-Changes from v2:
- - Rename driver and relevant files to sun4i-a10-ccu.
- - Drop mmc output and sample clocks for sun4i-a10.
- - Rename CSI ISP clock to SCLK as it is called on other variants.
- - Add comment on why PLL6 is used as AHB parent.
- - Fix parents for out_a/out_b clocks.
- - Stop exporting PLL_PERIPH_SATA gate. Driver takes care of gate.
- - Rework SATA clock handling.
- - Fix ahb gate parents.
- - Simplefb clock fixes (add dependencies for HDMI/LVDS clocks).
- - Fixes for pll-ve and pll-video1 clocks pointed out by Jonathan Liu.
- - Adapt to latest upstream changes from sunxi-next.
-
-Changes from v1:
- - Drop useless comments
- - Add support for A10 / sun4i.
- - Rename driver to sunxi-a10-a20.
- - Add previously unimplemented clocks.
- - Document the audio pll hardcoded post-divider
- - Add Acked-by: Rob Herring <robh at kernel.org> on patch 4
-
-Priit Laes (6):
-  clk: sunxi-ng: div: Add support for fixed post-divider
-  clk: sunxi-ng: Add sun4i/sun7i CCU driver
-  dt-bindings: List devicetree binding for the CCU of Allwinner A20
-  dt-bindings: List devicetree binding for the CCU of Allwinner A10
-  ARM: sun7i: Convert to CCU
-  ARM: sun4i: Convert to CCU
-
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt |    2 +-
- arch/arm/boot/dts/sun4i-a10.dtsi                      |  646 +----
- arch/arm/boot/dts/sun7i-a20.dtsi                      |  719 +-----
- drivers/clk/sunxi-ng/Kconfig                          |   14 +-
- drivers/clk/sunxi-ng/Makefile                         |    1 +-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c                  | 1448 ++++++++++-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.h                  |   61 +-
- drivers/clk/sunxi-ng/ccu_div.c                        |   18 +-
- drivers/clk/sunxi-ng/ccu_div.h                        |    3 +-
- include/dt-bindings/clock/sun4i-a10-ccu.h             |  200 +-
- include/dt-bindings/clock/sun7i-a20-ccu.h             |   53 +-
- include/dt-bindings/reset/sun4i-a10-ccu.h             |   67 +-
- 12 files changed, 2021 insertions(+), 1211 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
- create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
- create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
- create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
-
-base-commit: 25b1d5e0c166759abba86cd38b5e2e5b6d833876
+diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+index 8a6ffce12af5..00331752d355 100644
+--- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
++++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+@@ -71,6 +71,26 @@ conditions.
+                   or using stream matching with #iommu-cells = <2>, and
+                   may be ignored if present in such cases.
+ 
++- clock-names:    Should be "tcu" and "iface" for "arm,mmu-400",
++                  "arm,mmu-401" and "arm,mmu-500"
++
++                  "tcu" clock is required for smmu's register access using the
++                  programming interface and ptw for downstream bus access. This
++                  clock is also used for access to the TBU connected to the
++                  master locally. Sometimes however, TBU is clocked along with
++                  the master.
++
++                  "iface" clock is required to access the TCU's programming
++                  interface, apart from the "tcu" clock.
++
++- clocks:         Phandles for respective clocks described by clock-names.
++
++- power-domains:  Phandles to SMMU's power domain specifier. This is
++                  required even if SMMU belongs to the master's power
++                  domain, as the SMMU will have to be enabled and
++                  accessed before master gets enabled and linked to its
++                  SMMU.
++
+ ** Deprecated properties:
+ 
+ - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+@@ -95,6 +115,10 @@ conditions.
+                              <0 36 4>,
+                              <0 37 4>;
+                 #iommu-cells = <1>;
++                clocks = <&gcc GCC_SMMU_CFG_CLK>,
++                         <&gcc GCC_APSS_TCU_CLK>;
++
++		clock-names = "iface", "tcu";
+         };
+ 
+         /* device with two stream IDs, 0 and 7 */
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 75567d9698ab..7bb09280fa11 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -1947,9 +1947,19 @@ struct arm_smmu_match_data {
+ ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+-ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+ ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
+ 
++static const char * const arm_mmu500_clks[] = {
++	"tcu", "iface",
++};
++
++static const struct arm_smmu_match_data arm_mmu500 = {
++	.version = ARM_SMMU_V2,
++	.model = ARM_MMU500,
++	.clks = arm_mmu500_clks,
++	.num_clks = ARRAY_SIZE(arm_mmu500_clks),
++};
++
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+ 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
 -- 
-git-series 0.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
