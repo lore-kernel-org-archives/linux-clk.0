@@ -1,108 +1,87 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1499807096.2287.3.camel@baylibre.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
- Russell King <linux@armlinux.org.uk>, Linus Walleij
- <linus.walleij@linaro.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Adriana Reus <adi.reus@gmail.com>
-Date: Tue, 11 Jul 2017 23:04:56 +0200
-In-Reply-To: <20170612194438.12298-1-jbrunet@baylibre.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, sboyd@codeaurora.org,
+        robdclark@gmail.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH V4 0/6] iommu/arm-smmu: Add runtime pm/sleep support
+Date: Thu,  6 Jul 2017 15:06:59 +0530
+Message-Id: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-06-12 at 21:44 +0200, Jerome Brunet wrote:
-> This Patchset is related the RFC [0] and the discussion around
-> CLK_SET_RATE_GATE available here [1]
-> 
-> This patchset is based on clk-next.
-> 
-> The goal of this patchset is to provide a way for consumers to inform the
-> system that they depend on the rate of the clock source and can't tolerate
-> other consumers changing the rate or causing glitches.
-> 
-> With this series there is 3 use-case:
->  - the provider is not protected: nothing changes
->  - the provider is protected by only 1 consumer (and only once), then only
->    this consumer will be able to alter the rate of the clock, as it is the
->    only one depending on it.
->  - If the provider is protected more than once, or by the provider itself,
->    the rate is basically locked and protected against reparenting.
-> 
-> The last patch provide the same functionnality for providers themself,
-> fixing CLK_SET_RATE_GATE flag (enforce clock gating along the tree)
-> 
-> qcom, at91 and ux500 are the heaviest users of this flag. If anybody having
-> one these platform could try this series, it would help build confidence
-> that the platform relying on CLK_SET_RATE_GATE (even if broken) don't get
-> any regression.
-> 
-> Changes since RFC:
->  - s/clk_protect/clk_rate_protect
->  - Request rework around core_nolock function
->  - Add clk_set_rate_protect
->  - Reword clk_rate_protect and clk_unprotect documentation
->  - Add few comments to explain the code
->  - Add 2 last patches to fix users of CLK_SET_RATE_GATE
-> 
-> Changes since v1:
->  - Add patch 4: Check if the rate would actually change before continuing, a
->    possibly in clk_set_rate.
-> 
-> Changes since v2: [2]
->  - Fix issues reported by Adriana Reus (Thanks !)
->  - Dropped patch "clk: move CLK_SET_RATE_GATE protection from prepare
->    to enable". This was broken as the protect count, like the prepare_count
->    should only be accessed under the prepare_lock.
->  - No change around bail-out code. Mike wanted to ponder a bit more on it.
->  - Patch 1 still included, could not find the clk-next-protect Mike was
->    referring to.
-> 
-> This was tested with the audio use case mentioned in [1]
-> 
-> [0]: https://lkml.kernel.org/r/20170321183330.26722-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/148942423440.82235.17188153691656009029@resonan
-> ce
-> [2]: https://lkml.kernel.org/r/20170521215958.19743-1-jbrunet@baylibre.com
-> 
-> 
+This series provides the support for turning on the arm-smmu's
+clocks/power domains using runtime pm. This is done using the
+recently introduced device links patches, which lets the symmu's
+runtime to follow the master's runtime pm, so the smmu remains
+powered only when the masters use it.
 
-Mike, Stephen,
+Took some reference from the exynos runtime patches [2].
+Tested this with MDP, GPU, and VENUS devices on apq8096-db820c board.
 
-Gentle Ping: I bet you are busy but this v3 was posted 1 month ago. 
-So far, We've add the ack of Linus (ux500).
-Quentin (at91) and KCi (some other stuff ;) ) tested the series.
+Previous version of the patchset [1].
 
-If we could add tests on qcom (and the fix i suggested after the kci run), we
-would have tested the heaviest users of CLK_SET_RATE_GATE.
+[V4]
+   * Reworked the clock handling part. We now take clock names as data
+     in the driver for supported compatible versions, and loop over them
+     to get, enable, and disable the clocks.
+   * Using qcom,msm8996 based compatibles for bindings instead of a generic
+     qcom compatible.
+   * Refactor MMU500 patch to just add the necessary clock names data and
+     corresponding bindings.
+   * Added the pm_runtime_get/put() calls in .unmap iommu op (fix added by
+     Stanimir on top of previous patch version.
+   * Added a patch to fix error path in arm_smmu_add_device()
+   * Removed patch 3/5 of V3 patch series that added qcom,smmu-v2 bindings.
 
-Please, could you let me know how to progress on this topic ?
-Thx
+[V3]
+   * Reworked the patches to keep the clocks init/enabling function
+     separately for each compatible.
 
-Regards
-Jerome
+   * Added clocks bindings for MMU40x/500.
 
+   * Added a new compatible for qcom,smmu-v2 implementation and
+     the clock bindings for the same.
 
-> Jerome Brunet (10):
->   clk: take the prepare lock out of clk_core_set_parent
->   clk: add clk_core_set_phase_nolock function
->   clk: rework calls to round and determine rate callbacks
->   clk: use round rate to bail out early in set_rate
->   clk: add support for clock protection
->   clk: add clk_set_rate_protect
->   clk: rollback set_rate_range changes on failure
->   clk: cosmetic changes to clk_summary debugfs entry
->   clk: fix incorrect usage of ENOSYS
->   clk: fix CLK_SET_RATE_GATE with clock rate protection
-> 
->  drivers/clk/clk.c            | 428 ++++++++++++++++++++++++++++++++++++----
-> ---
->  include/linux/clk-provider.h |   1 +
->  include/linux/clk.h          |  43 +++++
->  3 files changed, 402 insertions(+), 70 deletions(-)
-> 
+   * Rebased on top of 4.11-rc1
+
+[V2]
+   * Split the patches little differently.
+
+   * Addressed comments.
+
+   * Removed the patch #4 [3] from previous post
+     for arm-smmu context save restore. Planning to
+     post this separately after reworking/addressing Robin's
+     feedback.
+
+   * Reversed the sequence to disable clocks than enabling.
+     This was required for those cases where the
+     clocks are populated in a dependent order from DT.
+
+[1] https://www.spinics.net/lists/arm-kernel/msg567488.html
+[2] https://lkml.org/lkml/2016/10/20/70
+[3] https://patchwork.kernel.org/patch/9389717/
+
+Sricharan R (4):
+  iommu/arm-smmu: Add pm_runtime/sleep ops
+  iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
+  iommu/arm-smmu: Add the device_link between masters and smmu
+  iommu/arm-smmu: Add support for MMU40x/500 clocks
+
+Vivek Gautam (2):
+  iommu/arm-smmu: Fix the error path in arm_smmu_add_device
+  iommu/arm-smmu: Add support for qcom,msm8996-smmu-v2 clocks
+
+ .../devicetree/bindings/iommu/arm,smmu.txt         |  42 +++++
+ drivers/iommu/arm-smmu.c                           | 191 +++++++++++++++++++--
+ 2 files changed, 222 insertions(+), 11 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
