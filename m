@@ -1,70 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 25 Jul 2017 09:33:11 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 03/10] clk: sunxi-ng: a83t: Support new timing mode
- for mmc2 clock
-Message-ID: <20170725073311.kyfsvf4xzrzlhgp5@flea>
-References: <20170724135905.28855-1-wens@csie.org>
- <20170724135905.28855-4-wens@csie.org>
+Return-Path: <architt@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: clk-smd-rpm: Fix the initial rate of branches
+To: Georgi Djakov <georgi.djakov@linaro.org>, sboyd@codeaurora.org
+Cc: mturquette@baylibre.com, andy.gross@linaro.org,
+ bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hans Verkuil <hverkuil@xs4all.nl>
+References: <20170704123447.25552-1-georgi.djakov@linaro.org>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <1f0f3d8d-f71b-2483-40a1-ad64c437bf6a@codeaurora.org>
+Date: Thu, 6 Jul 2017 15:23:11 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jhwtdsaj52mmq6xp"
-In-Reply-To: <20170724135905.28855-4-wens@csie.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170704123447.25552-1-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 
---jhwtdsaj52mmq6xp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 24, 2017 at 09:58:58PM +0800, Chen-Yu Tsai wrote:
-> The MMC2 clock supports a new timing mode. When the new mode is active,
-> the output clock rate is halved.
->=20
-> This patch sets the feature flag for the new timing mode, and adds
-> a pre-divider based on the mode bit.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+On 07/04/2017 06:04 PM, Georgi Djakov wrote:
+> As there is no way to actually query the hardware for the current clock
+> rate, now racalc_rate() just returns the last rate that was previously
+> set. But if the rate was not set yet, we return the bogus rate of 1KHz.
+> 
+> Knowing what the rate of XO is and that some clocks are just branches of
+> it, we can do better and return that rate instead of a bogus one.
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
++Hans.
 
-Thanks!
-Maxime
+Thanks for the fix.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
+> 
+> Reported-by: Archit Taneja <architt@codeaurora.org>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>   drivers/clk/qcom/clk-smd-rpm.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index d990fe44aef3..7350a43b0573 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -116,12 +116,12 @@
+>   
+>   #define DEFINE_CLK_SMD_RPM_XO_BUFFER(_platform, _name, _active, r_id)	      \
+>   		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
+> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
+> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 19200000,		      \
+>   		QCOM_RPM_KEY_SOFTWARE_ENABLE)
+>   
+>   #define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_platform, _name, _active, r_id) \
+>   		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
+> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
+> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 19200000,		      \
+>   		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
+>   
+>   #define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
---jhwtdsaj52mmq6xp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZdvQ3AAoJEBx+YmzsjxAgSRsP/i58L7bXSeRMcVtdTWlRadeP
-2gmbj5YxbPEQohN41+g5y2bMpd7ntFBICvJ4WUupDeACJTnfdr2N8RjGU69lQcTZ
-wkFmxixdq4/KRZTFgLqMa8XaLkfH6xCgHTGMHpn9dB3IZNt3Nnxesa3pXLEPyKa8
-lNX9PQJ8Kfftw5/K4nLOkZb3x/11netZ0ocL3WmSRKsIg7bmE76Dfui2PrIuEx3T
-btdIvY+HMSEcifE3aOr+NzE9rpQo+rwD0W26Vr6nIccm8FeNXRe7PoavO81zqYJ2
-UXfoZfWizSES/3Y5AsqUp2gFhaEkrLr/jfARyfCZKsqsjK8Any+X4Ozr9zKBa0P1
-qp4stTgM97/ytoco0TAkG4AnZ3rPS7H+4uLh833XRpsBB5tkbimmBrqBg3F1VNk0
-9FxhX1hN8DkELO/QiJNSxzdoBPFSBoSz/aQo0U6p+fGX0y9tX/+cR7aENnlO/9FJ
-lJnRk0YRgiJKIjUZq53fHyHCdFJ5PBkVXaIzQjwEtuEmI5yWQs6SfoIkdeQWcsNQ
-IhZwE4Hlg4YS16OhOCuLcRK5vEi+NmpGndlZ7eHJD8xsan36AMPpfZCpZFJo8Wl5
-a3S0Aq4Kcf53rIFJBNWTtCRjl4Wl2vj/s/GsY26Dk/ZMvTc5rzVB6GQxqrhbmAQ+
-VDtW1YKj7/hvLEyEMYmr
-=5tOX
------END PGP SIGNATURE-----
-
---jhwtdsaj52mmq6xp--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
