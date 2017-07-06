@@ -1,136 +1,66 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-MIME-Version: 1.0
-Date: Thu, 20 Jul 2017 13:15:15 +0800
-From: icenowy@aosc.io
-To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>
-Subject: Re: [linux-sunxi] [PATCH v4 4/5] ARM: sunxi: h3/h5: switch
- apb0-related clocks to r_ccu
-In-Reply-To: <3299ee7dd04482f0a21752651335e223@aosc.io>
-References: <20170404095100.18649-1-icenowy@aosc.io>
- <20170404095100.18649-5-icenowy@aosc.io> <1500505173.23770.1.camel@xff.cz>
- <3299ee7dd04482f0a21752651335e223@aosc.io>
-Message-ID: <20236586042490458d0f1b8e47c5481a@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	huangtao@rock-chips.com,
+	cl@rock-chips.com,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1] clk: fractional-divider: fix up the fractional clk's jitter
+Date: Thu,  6 Jul 2017 16:28:34 +0800
+Message-Id: <1499329714-24119-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-5ZyoIDIwMTctMDctMjAgMTA6MDPvvIxpY2Vub3d5QGFvc2MuaW8g5YaZ6YGT77yaCj4g5ZyoIDIw
-MTctMDctMjAgMDY6NTnvvIxPbmTFmWVqIEppcm1hbiDlhpnpgZPvvJoKPj4gSGksCj4+IAo+PiBJ
-Y2Vub3d5IFpoZW5nIHDDrcWhZSB2IMOadCAwNC4gMDQuIDIwMTcgdiAxNzo1MCArMDgwMDoKPj4+
-IEZyb206IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+PiAKPj4+IE5vdyB3ZSBo
-YXZlIGRyaXZlciBmb3IgdGhlIFBSQ00gQ0NVLCBzd2l0Y2ggdG8gdXNlIGl0IGluc3RlYWQgb2YK
-Pj4+IG9sZC1zdHlsZSBjbG9jayBub2RlcyBmb3IgYXBiMC1yZWxhdGVkIGNsb2NrcyBpbiBzdW54
-aS1oMy1oNS5kdHNpIC4KPj4+IAo+Pj4gVGhlIG11eCAzIG9mIFJfQ0NVIGlzIHN0aWxsIHRoZSBp
-bnRlcm5hbCBvc2NpbGxhdG9yLCB3aGljaCBpcyBzYWlkIHRvIAo+Pj4gYmUKPj4+IDE2TUh6IHBs
-dXMgbWludXMgMzAlLCBhbmQgZ2V0IGEgbWVhc3VyZWQgdmFsdWUgb2YgMTVNSHp+MTZNSHogb24g
-bXkgCj4+PiB0d28KPj4+IEgzIGJvYXJkcyBhbmQgb25lIEg1IGJvYXJkLgo+PiAKPj4gVGhlcmUn
-cyBpc3N1ZSB3aXRoIHRoZSBuZXcgcl9jY3UgdGhhdCBicmVha3Mgcl9pMmMuIChubyBkZXZpY2Vz
-IGNhbiBiZQo+PiBmb3VuZCBvbiB0aGUgYnVzKS4gUmV2ZXJ0aW5nIHRoaXMgcGF0Y2ggZml4ZXMg
-dGhlIGlzc3VlIHdpdGggdGhlIEkyQwo+PiBjb250cm9sbGVyLiAoZXZlcnl0aGluZyBlbHNlIGJl
-aW5nIHRoZSBzYW1lKQo+PiAKPj4gSGVyZSdzIHRoZSBjb2RlIEknbSB1c2luZzogCj4+IGh0dHBz
-Oi8vZ2l0aHViLmNvbS9tZWdvdXMvbGludXgvY29tbWl0cy9vcmFuCj4+IGdlLXBpLTQuMTIKPj4g
-Cj4+IFRoZSBsYXN0IGNvbW1pdCBpcyB0aGUgcmV2ZXJ0Lgo+PiAKPj4gVGhlIGlzc3VlIG1hbmlm
-ZXN0cyBpdHNlbGYgYnkgbm9uLXdvcmtpbmcgRFZGUywgYmVjYXVzZSBrZXJuZWwgbGFja3MKPj4g
-YWNjZXNzIHRvIFNZODEwNkEgcmVndWxhdG9yLCBiZWNhdXNlIHJfaTJjIGRvZXNuJ3Qgd29yayB3
-aXRoIHN1bnhpLW5nCj4+IGNsb2NrIGRyaXZlciAoc3VuOGktcikuCj4+IAo+PiBSZWxldmFudCBk
-aWZmZXJlbmNlIGluIHJlZ2lzdGVycyBiZXR3ZWVuIHdvcmtpbmcvbm9uLXdvcmtpbmcgc3RhdGUg
-aXMKPj4ganVzdCB0aGlzIChkaWZmIC11KToKPj4gCj4+ICAweDAxZjAyNDAwID0gMHgwMDAwMDAw
-MAo+PiAgMHgwMWYwMjQwNCA9IDB4MDAwMDAwMDAKPj4gLTB4MDFmMDI0MDggPSAweDAwMDAwMDkx
-Cj4+ICsweDAxZjAyNDA4ID0gMHgwMDAwMDA5NSBEQVRBIHJlZ2lzdGVyIGluaXNkZSB0aGUgSTJD
-IGNvbnRyb2xsZXIKPj4gIDB4MDFmMDI0MGMgPSAweDAwMDAwMDQ0Cj4+ICAweDAxZjAyNDEwID0g
-MHgwMDAwMDBmOAo+PiAtMHgwMWYwMjQxNCA9IDB4MDAwMDAwNTkKPj4gKzB4MDFmMDI0MTQgPSAw
-eDAwMDAwMDAwIENMT0NLIHNldHVwIHJlZ2lzdGVyIGluc2lkZSB0aGUgSTJDIAo+PiBjb250cm9s
-bGVyCj4+ICAweDAxZjAyNDE4ID0gMHgwMDAwMDAwMAo+PiAgMHgwMWYwMjQxYyA9IDB4MDAwMDAw
-MDAKPj4gIDB4MDFmMDI0MjAgPSAweDAwMDAwMDNhCj4+IAo+PiBJdCBsb29rcyBsaWtlIHRoZSBu
-ZXcgc3VueGktbmcgY2xvY2sgZHJpdmVyIGNhdXNlcyB0aGUgSTJDIGRyaXZlciB0bwo+PiBub3Qg
-Y29ycmVjdGx5IGNvbmZpZ3VyZSB0aGUgQ0xPQ0sgcmVnaXN0ZXIuIEkgZG9uJ3Qga25vdyB3aHkg
-YW5kIEknbQo+PiBub3Qgc3VyZSBob3cgdG8gZGVhbCB3aXRoIHRoaXMuIEFueSBpZGVhcyB3aGF0
-IGNhbiBJIGRvIG5leHQ/Cj4+IAo+PiB0aGFuayB5b3UgYW5kIHJlZ2FyZHMsCj4+ICAgby4KPiAK
-PiBJdCBzZWVtcyB0byBiZSBhIHZlcnkgdmVyeSB2ZXJ5IHdlaXJkIHByb2JsZW0gLS0gdGhlIENQ
-VVNfQ0ZHIHJlZ2lzdGVyCj4gc2VlbXMgdG8gYmUgbm90IGFjY2Vzc2libGUgaW4gbm9uLXNlY3Vy
-ZSBtb2RlIG9uIEgzLCBhbmQgaWYgdGhlIHJfY2N1Cj4gZHJpdmVyIHJlYWRzIGl0IGEgdmFsdWUg
-b2YgMHgwIGlzIHJlYWQgb3V0ICh3aGljaCBtZWFucyB0aGF0IHRoZSBwYXJlbnQKPiBvZiBhcjEw
-MCBpcyBvc2MzMmspLCBidXQgdGhlIHJlYWwgaW5pdGlhbCB2YWx1ZSBvZiB0aGUgcmVnaXN0ZXIg
-aXMKPiAweDAwMDEwMDAwICh3aGljaCBtZWFucyB0aGUgcGFyZW50IGlzIG9zYzI0TSkuCj4gCj4g
-U28gdGhlIGJ1cyBjbG9jayBvZiByX2kyYyBpcyB3cm9uZ2x5IGNsYWltZWQgYXMgMzJrSHosIG5v
-dCAyNE1IeiwgdGhlbgo+IHRoZSByX2kyYyBmYWlscyB0byB3b3JrLgoKVGhlIHByb3RlY3Rpb24g
-dG8gQVIxMDAgcmVnaXN0ZXJzIGNhbiBiZSByZW1vdmVkIGJ5IHdyaXRpbmcgMSB0byAKMHgwMWYw
-MTVkMAooMHgxZDAgYXQgUFJDTSBtZW1vcnkgcmVnaW9uKS4KCkludGVyZXN0aW5nbHkgdGhpcyBj
-b250cm9sbGluZyByZWdpc3RlciBjYW4gYmUgd3JpdHRlbiBpbiBub24tc2VjdXJlIAp3b3JsZCwK
-c28gaXQncyBzdGlsbCBicm9rZW4gc2VjdXJlL25vbi1zZWN1cmUgZGl2aXNpb24gOy0pCgo+IAo+
-IFRoaXMgY2xvY2sgcHJvYmxlbSBkb2Vzbid0IGV4aXN0IGZvciBBNjQuCj4gCj4+IAo+Pj4gU2ln
-bmVkLW9mZi1ieTogSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4KPj4+IC0tLQo+Pj4g
-Q2hhbmdlcyBpbiB2NDoKPj4+IC0gVGVtcG9yYXJpbHkgZHJvcHBlZCB0aGUgQ0NVIGhlYWRlcnMu
-Cj4+PiBDaGFuZ2VzIGluIHYzOgo+Pj4gLSBDaGFuZ2Ugb3NjMzIwMDAgdG8gaW9zYy4KPj4+IAo+
-Pj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3N1bnhpLWgzLWg1LmR0c2kgfCA0NSAKPj4+ICsrKysrKysr
-KysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDE0IGlu
-c2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKQo+Pj4gCj4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9h
-cm0vYm9vdC9kdHMvc3VueGktaDMtaDUuZHRzaSAKPj4+IGIvYXJjaC9hcm0vYm9vdC9kdHMvc3Vu
-eGktaDMtaDUuZHRzaQo+Pj4gaW5kZXggNjY0MGViZmE2NDE5Li4xYWVlYWNiM2E4ODQgMTAwNjQ0
-Cj4+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9zdW54aS1oMy1oNS5kdHNpCj4+PiArKysgYi9h
-cmNoL2FybS9ib290L2R0cy9zdW54aS1oMy1oNS5kdHNpCj4+PiBAQCAtNjgsMzEgKzY4LDEyIEBA
-Cj4+PiAgCQkJY2xvY2stb3V0cHV0LW5hbWVzID0gIm9zYzMyayI7Cj4+PiAgCQl9Owo+Pj4gCj4+
-PiAtCQlhcGIwOiBhcGIwX2NsayB7Cj4+PiAtCQkJY29tcGF0aWJsZSA9ICJmaXhlZC1mYWN0b3It
-Y2xvY2siOwo+Pj4gKwkJaW9zYzogaW50ZXJuYWwtb3NjLWNsayB7Cj4+PiAgCQkJI2Nsb2NrLWNl
-bGxzID0gPDA+Owo+Pj4gLQkJCWNsb2NrLWRpdiA9IDwxPjsKPj4+IC0JCQljbG9jay1tdWx0ID0g
-PDE+Owo+Pj4gLQkJCWNsb2NrcyA9IDwmb3NjMjRNPjsKPj4+IC0JCQljbG9jay1vdXRwdXQtbmFt
-ZXMgPSAiYXBiMCI7Cj4+PiAtCQl9Owo+Pj4gLQo+Pj4gLQkJYXBiMF9nYXRlczogY2xrQDAxZjAx
-NDI4IHsKPj4+IC0JCQljb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW44aS1oMy1hcGIwLWdhdGVz
-LWNsayIsCj4+PiAtCQkJCSAgICAgImFsbHdpbm5lcixzdW40aS1hMTAtZ2F0ZXMtY2xrIjsKPj4+
-IC0JCQlyZWcgPSA8MHgwMWYwMTQyOCAweDQ+Owo+Pj4gLQkJCSNjbG9jay1jZWxscyA9IDwxPjsK
-Pj4+IC0JCQljbG9ja3MgPSA8JmFwYjA+Owo+Pj4gLQkJCWNsb2NrLWluZGljZXMgPSA8MD4sIDwx
-PjsKPj4+IC0JCQljbG9jay1vdXRwdXQtbmFtZXMgPSAiYXBiMF9waW8iLCAiYXBiMF9pciI7Cj4+
-PiAtCQl9Owo+Pj4gLQo+Pj4gLQkJaXJfY2xrOiBpcl9jbGtAMDFmMDE0NTQgewo+Pj4gLQkJCWNv
-bXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjRpLWExMC1tb2QwLWNsayI7Cj4+PiAtCQkJcmVnID0g
-PDB4MDFmMDE0NTQgMHg0PjsKPj4+IC0JCQkjY2xvY2stY2VsbHMgPSA8MD47Cj4+PiAtCQkJY2xv
-Y2tzID0gPCZvc2MzMms+LCA8Jm9zYzI0TT47Cj4+PiAtCQkJY2xvY2stb3V0cHV0LW5hbWVzID0g
-ImlyIjsKPj4+ICsJCQljb21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsKPj4+ICsJCQljbG9jay1m
-cmVxdWVuY3kgPSA8MTYwMDAwMDA+Owo+Pj4gKwkJCWNsb2NrLWFjY3VyYWN5ID0gPDMwMDAwMDAw
-MD47Cj4+PiArCQkJY2xvY2stb3V0cHV0LW5hbWVzID0gImlvc2MiOwo+Pj4gIAkJfTsKPj4+ICAJ
-fTsKPj4+IAo+Pj4gQEAgLTU3Niw5ICs1NTcsMTIgQEAKPj4+ICAJCQkJICAgICA8R0lDX1NQSSA0
-MSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPj4+ICAJCX07Cj4+PiAKPj4+IC0JCWFwYjBfcmVzZXQ6
-IHJlc2V0QDAxZjAxNGIwIHsKPj4+IC0JCQlyZWcgPSA8MHgwMWYwMTRiMCAweDQ+Owo+Pj4gLQkJ
-CWNvbXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjZpLWEzMS1jbG9jay1yZXNldCI7Cj4+PiArCQly
-X2NjdTogY2xvY2tAMWYwMTQwMCB7Cj4+PiArCQkJY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIsc3Vu
-NTBpLWE2NC1yLWNjdSI7Cj4+PiArCQkJcmVnID0gPDB4MDFmMDE0MDAgMHgxMDA+Owo+Pj4gKwkJ
-CWNsb2NrcyA9IDwmb3NjMjRNPiwgPCZvc2MzMms+LCA8Jmlvc2M+Owo+Pj4gKwkJCWNsb2NrLW5h
-bWVzID0gImhvc2MiLCAibG9zYyIsICJpb3NjIjsKPj4+ICsJCQkjY2xvY2stY2VsbHMgPSA8MT47
-Cj4+PiAgCQkJI3Jlc2V0LWNlbGxzID0gPDE+Owo+Pj4gIAkJfTsKPj4+IAo+Pj4gQEAgLTU4OSw5
-ICs1NzMsOSBAQAo+Pj4gCj4+PiAgCQlpcjogaXJAMDFmMDIwMDAgewo+Pj4gIAkJCWNvbXBhdGli
-bGUgPSAiYWxsd2lubmVyLHN1bjVpLWExMy1pciI7Cj4+PiAtCQkJY2xvY2tzID0gPCZhcGIwX2dh
-dGVzIDE+LCA8JmlyX2Nsaz47Cj4+PiArCQkJY2xvY2tzID0gPCZyX2NjdSA0PiwgPCZyX2NjdSAx
-MT47Cj4+PiAgCQkJY2xvY2stbmFtZXMgPSAiYXBiIiwgImlyIjsKPj4+IC0JCQlyZXNldHMgPSA8
-JmFwYjBfcmVzZXQgMT47Cj4+PiArCQkJcmVzZXRzID0gPCZyX2NjdSAwPjsKPj4+ICAJCQlpbnRl
-cnJ1cHRzID0gPEdJQ19TUEkgMzcgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4+PiAgCQkJcmVnID0g
-PDB4MDFmMDIwMDAgMHg0MD47Cj4+PiAgCQkJc3RhdHVzID0gImRpc2FibGVkIjsKPj4+IEBAIC02
-MDEsOSArNTg1LDggQEAKPj4+ICAJCQljb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW44aS1oMy1y
-LXBpbmN0cmwiOwo+Pj4gIAkJCXJlZyA9IDwweDAxZjAyYzAwIDB4NDAwPjsKPj4+ICAJCQlpbnRl
-cnJ1cHRzID0gPEdJQ19TUEkgNDUgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4+PiAtCQkJY2xvY2tz
-ID0gPCZhcGIwX2dhdGVzIDA+LCA8Jm9zYzI0TT4sIDwmb3NjMzJrPjsKPj4+ICsJCQljbG9ja3Mg
-PSA8JnJfY2N1IDM+LCA8Jm9zYzI0TT4sIDwmb3NjMzJrPjsKPj4+ICAJCQljbG9jay1uYW1lcyA9
-ICJhcGIiLCAiaG9zYyIsICJsb3NjIjsKPj4+IC0JCQlyZXNldHMgPSA8JmFwYjBfcmVzZXQgMD47
-Cj4+PiAgCQkJZ3Bpby1jb250cm9sbGVyOwo+Pj4gIAkJCSNncGlvLWNlbGxzID0gPDM+Owo+Pj4g
-IAkJCWludGVycnVwdC1jb250cm9sbGVyOwo+Pj4gLS0KPj4+IDIuMTIuMgo+Pj4gCj4+IF9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IGxpbnV4LWFybS1r
-ZXJuZWwgbWFpbGluZyBsaXN0Cj4+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-Zwo+PiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFy
-bS1rZXJuZWwKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwo+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0Cj4gbGludXgtYXJtLWtlcm5lbEBs
-aXN0cy5pbmZyYWRlYWQub3JnCj4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9saW51eC1hcm0ta2VybmVsCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+fractional divider must set that denominator is 20 times larger than
+numerator to generate precise clock frequency.
+Otherwise the CLK jitter is very big, poor quality of the clock signal.
+
+RK document description:
+3.1.9  Fractional divider usage
+To get specific frequency, clocks of I2S, SPDIF, UARTcan be generated by
+fractional divider. Generally you must set that denominator is 20 times
+larger than numerator to generate precise clock frequency. So the
+fractional divider applies only to generate low frequency clock like
+I2S, UART.
+
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/clk-fractional-divider.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index aab904618eb6..1c29d6f5ffd8 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -56,11 +56,24 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long scale;
+ 	unsigned long m, n;
+ 	u64 ret;
++	struct clk_hw *p_parent;
++	unsigned long p_rate, p_parent_rate;
+ 
+ 	if (!rate || rate >= *parent_rate)
+ 		return *parent_rate;
+ 
+ 	/*
++	 * fractional divider must set that denominator is 20 times larger than
++	 * numerator to generate precise clock frequency.
++	 */
++	p_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	if ((rate * 20 > p_rate) && (p_rate % rate != 0)) {
++		p_parent = clk_hw_get_parent(clk_hw_get_parent(hw));
++		p_parent_rate = clk_hw_get_rate(p_parent);
++		*parent_rate = p_parent_rate;
++	}
++
++	/*
+ 	 * Get rate closer to *parent_rate to guarantee there is no overflow
+ 	 * for m and n. In the result it will be the nearest rate left shifted
+ 	 * by (scale - fd->nwidth) bits.
+-- 
+1.9.1
