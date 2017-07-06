@@ -1,51 +1,33 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, wens@csie.org
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [linux-sunxi] Re: [PATCH 0/4] clk: sunxi-ng: Fix issues with fractional mode
-Date: Mon, 31 Jul 2017 18:50:11 +0200
-Message-ID: <4026156.d8uMWWFJnt@jernej-laptop>
-In-Reply-To: <CAGb2v65pH-Me6JjMYzp41NwS478azMTLBPrkJwZcho9Ay2JX1Q@mail.gmail.com>
-References: <20170730164150.26302-1-jernej.skrabec@siol.net> <CAGb2v65pH-Me6JjMYzp41NwS478azMTLBPrkJwZcho9Ay2JX1Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: jbrunet@baylibre.com, narmstrong@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
+Date: Thu,  6 Jul 2017 12:24:21 +0200
+Message-Id: <1499336663-23875-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
+References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
+This patch adds the clock binding entry for the CEC 32K AO Clock.
 
-Dne ponedeljek, 31. julij 2017 ob 07:13:34 CEST je Chen-Yu Tsai napisal(a):
-> Hi Jernej,
-> 
-> On Mon, Jul 31, 2017 at 12:41 AM, Jernej Skrabec
-> 
-> <jernej.skrabec@siol.net> wrote:
-> > During development of H3 HDMI driver, I found some issues with
-> > setting video clock rate. It turned out that clock driver decided
-> > to use fractional mode and selected right frequency, but it didn't
-> > enable it. Additionally, fractional helpers don't wait on lock.
-> 
-> What kind of resolution were you testing to actually hit this?
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ include/dt-bindings/clock/gxbb-aoclkc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-1920x1080p @ 60Hz
-
-> 
-> AFAIK the fractional mode is either 297 or 270 MHz. Even Full HD
-> 1080p60 dot clocks aren't that high. And the clk drivers should
-> try to request a matching parent clk rate. So the PLL wouldn't
-> go that high. Are you testing 4k @ 30fps?
-
-No, it is a bit more complicated than that. H3's HDMI PHY is proprietary and 
-register meanings are not known well. Because of that, I'm using values found 
-in BSP driver. Those values include pixel clock divider. BSP driver always use 
-297 MHz as a base and uses dividers in PHY to prepare right pixel clock. So 
-the case for 1080p is 297 MHz / 2 = 148.5 MHz.
-
-> 
-> As it stands, I don't think any of the existing display support
-> can go that high, so I think we're safe as far as old kernels
-> go, i.e. we don't need to Cc stable for these.
-
-Ok.
-
-Regards,
-Jernej
+diff --git a/include/dt-bindings/clock/gxbb-aoclkc.h b/include/dt-bindings/clock/gxbb-aoclkc.h
+index 3175148..9d15e22 100644
+--- a/include/dt-bindings/clock/gxbb-aoclkc.h
++++ b/include/dt-bindings/clock/gxbb-aoclkc.h
+@@ -62,5 +62,6 @@
+ #define CLKID_AO_UART1		3
+ #define CLKID_AO_UART2		4
+ #define CLKID_AO_IR_BLASTER	5
++#define CLKID_AO_CEC_32K	6
+ 
+ #endif
+-- 
+1.9.1
