@@ -1,79 +1,116 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:43560 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752143AbdGDL7q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2017 07:59:46 -0400
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-        linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-        perex@perex.cz, tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-        cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/9] clk: at91: clk-generated: remove useless divisor loop
-Date: Tue,  4 Jul 2017 13:59:19 +0200
-Message-Id: <20170704115927.32662-2-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
-References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, sboyd@codeaurora.org,
+        robdclark@gmail.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH V4 6/6] iommu/arm-smmu: Add support for qcom,msm8996-smmu-v2 clocks
+Date: Thu,  6 Jul 2017 15:07:05 +0530
+Message-Id: <1499333825-7658-7-git-send-email-vivek.gautam@codeaurora.org>
+In-Reply-To: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver requests the current clk rate of each of its parent clocks to
-decide whether a clock rate is suitable or not. It does not request
-determine_rate from a parent clock which could request a rate change in
-parent clock (i.e. there is no parent rate propagation).
+qcom,msm8996-smmu-v2 is an arm,smmu-v2 implementation with
+specific clock and power requirements. This smmu core is used
+with multiple masters on msm8996, viz. mdss, video, etc.
+Add bindings for the same.
 
-We know the rate we want (passed along req argument of the function) and
-the parent clock rate, thus we know the closest rounded divisor, we
-don't need to iterate over the available divisors to find the best one
-for a given clock.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 ---
- drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ Documentation/devicetree/bindings/iommu/arm,smmu.txt | 18 ++++++++++++++++++
+ drivers/iommu/arm-smmu.c                             | 13 +++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 07c8f701e51c..dab7002937e6 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 		    (gck->range.max && min_rate > gck->range.max))
- 			continue;
+diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+index 00331752d355..5d8e79775fae 100644
+--- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
++++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+@@ -17,6 +17,7 @@ conditions.
+                         "arm,mmu-401"
+                         "arm,mmu-500"
+                         "cavium,smmu-v2"
++                        "qcom,msm8996-smmu-v2"
  
--		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
--			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
--			tmp_diff = abs(req->rate - tmp_rate);
--
--			if (best_diff < 0 || best_diff > tmp_diff) {
--				best_rate = tmp_rate;
--				best_diff = tmp_diff;
--				req->best_parent_rate = parent_rate;
--				req->best_parent_hw = parent;
--			}
--
--			if (!best_diff || tmp_rate < req->rate)
--				break;
-+		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-+		if (!div)
-+			tmp_rate = parent_rate;
-+		else
-+			tmp_rate = parent_rate / div;
-+		tmp_diff = abs(req->rate - tmp_rate);
+                   depending on the particular implementation and/or the
+                   version of the architecture implemented.
+@@ -74,11 +75,16 @@ conditions.
+ - clock-names:    Should be "tcu" and "iface" for "arm,mmu-400",
+                   "arm,mmu-401" and "arm,mmu-500"
+ 
++                  Should be "bus", and "iface" for "qcom,msm8996-smmu-v2"
++                  implementation.
 +
-+		if (best_diff < 0 || best_diff > tmp_diff) {
-+			best_rate = tmp_rate;
-+			best_diff = tmp_diff;
-+			req->best_parent_rate = parent_rate;
-+			req->best_parent_hw = parent;
- 		}
+                   "tcu" clock is required for smmu's register access using the
+                   programming interface and ptw for downstream bus access. This
+                   clock is also used for access to the TBU connected to the
+                   master locally. Sometimes however, TBU is clocked along with
+                   the master.
++                  "bus" clock for "qcom,msm8996-smmu-v2" is requierd for downstream
++                  bus access and for the smmu ptw.
  
- 		if (!best_diff)
+                   "iface" clock is required to access the TCU's programming
+                   interface, apart from the "tcu" clock.
+@@ -161,3 +167,15 @@ conditions.
+                 iommu-map = <0 &smmu3 0 0x400>;
+                 ...
+         };
++
++	/* Qcom's arm,smmu-v2 implementation for msm8996 */
++	smmu4: iommu {
++		compatible = "qcom,msm8996-smmu-v2";
++		...
++		#iommu-cells = <1>;
++		power-domains = <&mmcc MDSS_GDSC>;
++
++		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
++			 <&mmcc SMMU_MDP_AHB_CLK>;
++		clock-names = "bus", "iface";
++	};
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 7bb09280fa11..fe8e7fd61282 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -110,6 +110,7 @@ enum arm_smmu_implementation {
+ 	GENERIC_SMMU,
+ 	ARM_MMU500,
+ 	CAVIUM_SMMUV2,
++	QCOM_MSM8996_SMMUV2,
+ };
+ 
+ /* Until ACPICA headers cover IORT rev. C */
+@@ -1960,6 +1961,17 @@ struct arm_smmu_match_data {
+ 	.num_clks = ARRAY_SIZE(arm_mmu500_clks),
+ };
+ 
++static const char * const qcom_msm8996_smmuv2_clks[] = {
++	"bus", "iface",
++};
++
++static const struct arm_smmu_match_data qcom_msm8996_smmuv2 = {
++	.version = ARM_SMMU_V2,
++	.model = QCOM_MSM8996_SMMUV2,
++	.clks = qcom_msm8996_smmuv2_clks,
++	.num_clks = ARRAY_SIZE(qcom_msm8996_smmuv2_clks),
++};
++
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+ 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
+@@ -1967,6 +1979,7 @@ struct arm_smmu_match_data {
+ 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
+ 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
+ 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
++	{ .compatible = "qcom,msm8996-smmu-v2", .data = &qcom_msm8996_smmuv2 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
 -- 
-2.11.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
