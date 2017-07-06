@@ -1,110 +1,156 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 05/10] mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
-Date: Thu, 20 Jul 2017 11:44:47 +0800
-Message-Id: <20170720034452.15920-6-wens@csie.org>
-In-Reply-To: <20170720034452.15920-1-wens@csie.org>
-References: <20170720034452.15920-1-wens@csie.org>
+Return-Path: <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH v2 6/9] clk: at91: clk-generated: make gclk determine
+ audio_pll rate
+To: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<alexandre.belloni@free-electrons.com>, <linux@armlinux.org.uk>,
+	<boris.brezillon@free-electrons.com>, <perex@perex.cz>, <tiwai@suse.com>
+CC: <cyrille.pitchen@wedev4u.fr>, <thomas.petazzoni@free-electrons.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+ <20170704115927.32662-7-quentin.schulz@free-electrons.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <ab11f002-b761-cdb4-eb0c-ce24dcb9c5d4@microchip.com>
+Date: Thu, 6 Jul 2017 17:29:22 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170704115927.32662-7-quentin.schulz@free-electrons.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: nicolas.ferre@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMC controller can support DDR52 transfers under the new timing
-mode. According to the BSP kernel, the module clock has to be double
-the card clock, regardless of the bus width. The default timings in
-the hardware can be used.
+On 04/07/2017 at 13:59, Quentin Schulz wrote:
+> This allows gclk to determine audio_pll rate and set the parent rate
+> accordingly.
+> 
+> However, there are multiple children clocks that could technically
+> change the rate of audio_pll (via gck). With the rate locking, the first
+> consumer to enable the clock will be the one definitely setting the rate
+> of the clock.
+> 
+> Since audio IPs are most likely to request the same rate, we enforce
+> that the only clks able to modify gck rate are those of audio IPs.
+> 
+> To remain consistent, we deny other clocks to be children of audio_pll.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> ---
+> 
+> v2:
+>   - added conditions for audio pll rate setting restriction for SSC and
+> I2S,
+> 
+>  drivers/clk/at91/clk-generated.c | 48 +++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 42 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index 6530a2e7e84d..87866786a6ab 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -26,6 +26,13 @@
+>  #define GENERATED_SOURCE_MAX	6
+>  #define GENERATED_MAX_DIV	255
+>  
+> +#define GCK_ID_SSC0		43
+> +#define GCK_ID_SSC1		44
+> +#define GCK_ID_I2S0		54
+> +#define GCK_ID_I2S1		55
+> +#define GCK_ID_CLASSD		59
+> +#define GCK_INDEX_DT_AUDIO_PLL	5
 
-This also reworks the code setting the internal divider, getting rid
-of a extra conditional.
+hum...
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/mmc/host/sunxi-mmc.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+> +
+>  struct clk_generated {
+>  	struct clk_hw hw;
+>  	struct regmap *regmap;
+> @@ -126,15 +133,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  {
+>  	struct clk_generated *gck = to_clk_generated(hw);
+>  	struct clk_hw *parent = NULL;
+> +	struct clk_rate_request req_parent = *req;
+>  	long best_rate = -EINVAL;
+> -	unsigned long min_rate;
+> +	unsigned long min_rate, parent_rate;
+>  	int best_diff = -1;
+>  	int i;
+> +	u32 div;
+>  
+> -	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+> -		u32 div;
+> -		unsigned long parent_rate;
+> -
+> +	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
+>  		parent = clk_hw_get_parent_by_index(hw, i);
+>  		if (!parent)
+>  			continue;
+> @@ -150,11 +156,40 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  		clk_generated_best_diff(req, parent, parent_rate, div,
+>  					&best_diff, &best_rate);
+>  
+> +		if (!best_diff)
+> +			break;
+> +	}
+> +
+> +	/*
+> +	 * The audio_pll rate can be modified, unlike the five others clocks
+> +	 * that should never be altered.
+> +	 * The audio_pll can technically be used by multiple consumers. However,
+> +	 * with the rate locking, the first consumer to enable to clock will be
+> +	 * the one definitely setting the rate of the clock.
+> +	 * Since audio IPs are most likely to request the same rate, we enforce
+> +	 * that the only clks able to modify gck rate are those of audio IPs.
+> +	 */
+> +
+> +	if (gck->id != GCK_ID_SSC0 && gck->id != GCK_ID_SSC1 &&
+> +	    gck->id != GCK_ID_I2S0 && gck->id != GCK_ID_I2S1 &&
+> +	    gck->id != GCK_ID_CLASSD)
+> +		goto end;
 
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index c8a60e43dc43..11587a69a1fd 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -755,7 +755,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- {
- 	struct mmc_host *mmc = host->mmc;
- 	long rate;
--	u32 rval, clock = ios->clock;
-+	u32 rval, clock = ios->clock, div = 1;
- 	int ret;
- 
- 	ret = sunxi_mmc_oclk_onoff(host, 0);
-@@ -768,10 +768,21 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 	if (!ios->clock)
- 		return 0;
- 
--	/* 8 bit DDR requires a higher module clock */
-+	/*
-+	 * Under the old timing mode, 8 bit DDR requires the module
-+	 * clock to be double the card clock. Under the new timing
-+	 * mode, all DDR modes require a doubled module clock.
-+	 *
-+	 * We currently only support the standard MMC DDR52 mode.
-+	 * This block should be updated once support for other DDR
-+	 * modes is added.
-+	 */
- 	if (ios->timing == MMC_TIMING_MMC_DDR52 &&
--	    ios->bus_width == MMC_BUS_WIDTH_8)
-+	    (host->use_new_timings ||
-+	     ios->bus_width == MMC_BUS_WIDTH_8)) {
-+		div = 2;
- 		clock <<= 1;
-+	}
- 
- 	if (host->use_new_timings) {
- 		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
-@@ -799,15 +810,10 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 		return ret;
- 	}
- 
--	/* clear internal divider */
-+	/* set internal divider */
- 	rval = mmc_readl(host, REG_CLKCR);
- 	rval &= ~0xff;
--	/* set internal divider for 8 bit eMMC DDR, so card clock is right */
--	if (ios->timing == MMC_TIMING_MMC_DDR52 &&
--	    ios->bus_width == MMC_BUS_WIDTH_8) {
--		rval |= 1;
--		rate >>= 1;
--	}
-+	rval |= div - 1;
- 	mmc_writel(host, REG_CLKCR, rval);
- 
- 	if (host->use_new_timings) {
-@@ -838,7 +844,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 		return ret;
- 
- 	/* And we just enabled our clock back */
--	mmc->actual_clock = rate;
-+	mmc->actual_clock = rate / div;
- 
- 	return 0;
- }
-@@ -1315,7 +1321,7 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
- 	mmc->caps	       |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
- 				  MMC_CAP_ERASE | MMC_CAP_SDIO_IRQ;
- 
--	if (host->cfg->clk_delays)
-+	if (host->cfg->clk_delays || host->use_new_timings)
- 		mmc->caps      |= MMC_CAP_1_8V_DDR;
- 
- 	ret = mmc_of_parse(mmc);
+...well... maybe for a temporary solution, but what about the next
+product that will also have such feature but without the same set of IDs?
+
+I know that the main use of this clock is the "audio" subsystem (so its
+name) but in a machine without audio needs, it can be interesting to use
+this fractional PLL for other devices that can handle a GCK (and I'm
+thinking about the SDHCI interface that then could be configured with
+maximum clock speed).
+
+> +	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
+> +	if (!parent)
+> +		goto end;
+
+Here, if the audio pll id changes in the DT, we don't retrieve the
+proper parent... And again, not very future proof.
+
+> +	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
+> +		req_parent.rate = req->rate * div;
+> +		__clk_determine_rate(parent, &req_parent);
+> +		clk_generated_best_diff(req, parent, req_parent.rate, div,
+> +					&best_diff, &best_rate);
+>  
+>  		if (!best_diff)
+>  			break;
+>  	}
+>  
+> +end:
+>  	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
+>  		 __func__, best_rate,
+>  		 __clk_get_name((req->best_parent_hw)->clk),
+> @@ -264,7 +299,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+>  	init.ops = &generated_ops;
+>  	init.parent_names = parent_names;
+>  	init.num_parents = num_parents;
+> -	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+> +		CLK_SET_RATE_PARENT;
+>  
+>  	gck->id = id;
+>  	gck->hw.init = &init;
+> 
+
+
 -- 
-2.13.2
+Nicolas Ferre
