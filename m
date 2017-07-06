@@ -1,87 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Jul 2017 15:57:29 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V2 02/10] dt-bindings: Add Spreadtrum clock binding
- documentation
-Message-ID: <20170721225729.GB2146@codeaurora.org>
-References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
- <20170711105627.20526-3-chunyan.zhang@spreadtrum.com>
+Return-Path: <vincent.legoll@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170711105627.20526-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170705211518.GU22780@codeaurora.org>
+References: <1499011768-8046-1-git-send-email-vincent.legoll@gmail.com> <20170705211518.GU22780@codeaurora.org>
+From: Vincent Legoll <vincent.legoll@gmail.com>
+Date: Thu, 6 Jul 2017 09:25:05 +0200
+Message-ID: <CAEwRq=pt=pk5YkuEqerKhLPAu9Y+jVgbWcAnJ7Sbm3b+hAHfmg@mail.gmail.com>
+Subject: Re: [PATCH] Make Common clock framework a menuconfig to ease
+ disabling it all
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linux Kernel ML <linux-kernel@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11, Chunyan Zhang wrote:
-> Introduce a new binding with its documentation for Spreadtrum clock
-> sub-framework.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  Documentation/devicetree/bindings/clock/sprd.txt | 36 ++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
-> new file mode 100644
-> index 0000000..c6f3abf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sprd.txt
-> @@ -0,0 +1,36 @@
-> +Spreadtrum Clock Binding
-> +------------------------
-> +
-> +Required properties:
-> +- compatible: must contain the following compatible:
-> +	- "sprd,sc9860-clk" (only support SC9860 for the time being)
-> +
-> +- reg:	Must contain the registers base address and length.
-> +	Clocks on most of Spreadtrum's SoCs were designed to locate in a few
-> +	different address areas, so there would be more than one items under
-> +	this property.
-> +
-> +- #clock-cells: must be 1
-> +
-> +Example:
-> +
-> +clk: clk {
+Hello,
 
-clock-controller for the node name?
+On Wed, Jul 5, 2017 at 11:15 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/02, Vincent Legoll wrote:
+>> -menu "Common Clock Framework"
+>> +menuconfig COMMON_CLK_FRAMEWORK
+>> +     tristate "Common Clock Framework"
+>>       depends on COMMON_CLK
+>
+> Wouldn't this put the clk drivers inside the drivers menu?
 
-> +	compatible = "sprd,sc9860-clk";
-> +	#clock-cells = <1>;
-> +	reg = <0 0x20000000 0 0x400>,
-> +	      <0 0x20210000 0 0x3000>,
-> +	      <0 0x402b0000 0 0x4000>,
-> +	      <0 0x402d0000 0 0x400>,
-> +	      <0 0x402e0000 0 0x4000>,
-> +	      <0 0x40400000 0 0x400>,
-> +	      <0 0x40880000 0 0x400>,
-> +	      <0 0x415e0000 0 0x400>,
-> +	      <0 0x60200000 0 0x400>,
-> +	      <0 0x61000000 0 0x400>,
-> +	      <0 0x61100000 0 0x3000>,
-> +	      <0 0x62000000 0 0x4000>,
-> +	      <0 0x62100000 0 0x4000>,
-> +	      <0 0x63000000 0 0x400>,
-> +	      <0 0x63100000 0 0x3000>,
-> +	      <0 0x70b00000 0 0x3000>;
+This does not move anything (at least I think), it just change the
+already existing submenu into a menuconfig, which you can
+choose to disable as a whole, which disable everything inside
+that menuconfig. Maybe there are side effects visible outside
+of this menu.
 
-I'm still suspecting that we need multiple nodes, for each device
-the clocks are embedded in. Mediatek SoCs have a similar design,
-and they have many nodes. Does it happen to always be in some
-fixed offset inside the different devices that use the clks?
+> Which is already quite large right now.
+
+That's right, and I'm willing to tackle at least a part of this
+problem, first by making it easier to disable whole chunks
+at once.
+
+> Plus this makes common clk
+> tristate which so far we haven't supported. No thanks.
+
+OK that was an oversight, I'll revisit later (going for the low
+hanging fruits). But this is moot anyways, you should drop
+that patch because it introduces new compile warnings on
+ARM.
+
+Sorry
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Vincent Legoll
