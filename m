@@ -1,136 +1,60 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 05/11] mmc: sunxi: Support controllers that can use both old and new timings
-Date: Fri, 14 Jul 2017 14:42:56 +0800
-Message-Id: <20170714064302.20383-6-wens@csie.org>
-In-Reply-To: <20170714064302.20383-1-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33234 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751011AbdGFJh0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2017 05:37:26 -0400
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, sboyd@codeaurora.org,
+        robdclark@gmail.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH V4 1/6] iommu/arm-smmu: Fix the error path in arm_smmu_add_device
+Date: Thu,  6 Jul 2017 15:07:00 +0530
+Message-Id: <1499333825-7658-2-git-send-email-vivek.gautam@codeaurora.org>
+In-Reply-To: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On the SoCs that introduced the new timing mode for MMC controllers,
-both the old (where the clock delays are set in the CCU) and new
-(where the clock delays are set in the MMC controller) timing modes
-are available, and we have to support them both. However there are
-two bits that control which mode is active. One is in the CCU, the
-other is in the MMC controller. The settings on both sides must be
-the same, or nothing will work.
+fwspec->iommu_priv is available only after arm_smmu_master_cfg
+instance has been allocated. We shouldn't free it before that.
+Also it's logical to free the master cfg itself without
+checking for fwspec.
 
-The CCU's get/set_phase callbacks return -ENOTSUPP when the new
-timing mode is active. This provides a way to know which mode is
-active on that side, and we can set the bit on the MMC controller
-side accordingly.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 ---
- drivers/mmc/host/sunxi-mmc.c | 34 ++++++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
+ drivers/iommu/arm-smmu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 0fb4e4c119e1..56e45c65b52d 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -22,6 +22,7 @@
- #include <linux/err.h>
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 9a45117d90de..61b1f8729a7c 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -1349,15 +1349,15 @@ static int arm_smmu_add_device(struct device *dev)
  
- #include <linux/clk.h>
-+#include <linux/clk/sunxi-ng.h>
- #include <linux/gpio.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
-@@ -259,7 +260,7 @@ struct sunxi_mmc_cfg {
- 	/* Does DATA0 needs to be masked while the clock is updated */
- 	bool mask_data0;
+ 	ret = arm_smmu_master_alloc_smes(dev);
+ 	if (ret)
+-		goto out_free;
++		goto out_cfg_free;
  
--	bool needs_new_timings;
-+	bool has_new_timings;
- };
+ 	iommu_device_link(&smmu->iommu, dev);
  
- struct sunxi_mmc_host {
-@@ -293,6 +294,9 @@ struct sunxi_mmc_host {
+ 	return 0;
  
- 	/* vqmmc */
- 	bool		vqmmc_enabled;
-+
-+	/* timings */
-+	bool		use_new_timings;
- };
- 
- static int sunxi_mmc_reset_host(struct sunxi_mmc_host *host)
-@@ -714,7 +718,7 @@ static int sunxi_mmc_clk_set_phase(struct sunxi_mmc_host *host,
- {
- 	int index;
- 
--	if (!host->cfg->clk_delays)
-+	if (host->use_new_timings)
- 		return 0;
- 
- 	/* determine delays */
-@@ -765,6 +769,15 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 	    ios->bus_width == MMC_BUS_WIDTH_8)
- 		clock <<= 1;
- 
-+	if (host->use_new_timings) {
-+		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
-+		if (ret) {
-+			dev_err(mmc_dev(mmc),
-+				"error setting new timing mode\n");
-+			return ret;
-+		}
-+	}
-+
- 	rate = clk_round_rate(host->clk_mmc, clock);
- 	if (rate < 0) {
- 		dev_err(mmc_dev(mmc), "error rounding clk to %d: %ld\n",
-@@ -793,7 +806,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 	}
- 	mmc_writel(host, REG_CLKCR, rval);
- 
--	if (host->cfg->needs_new_timings) {
-+	if (host->use_new_timings) {
- 		/* Don't touch the delay bits */
- 		rval = mmc_readl(host, REG_SD_NTSR);
- 		rval |= SDXC_2X_TIMING_MODE;
-@@ -1105,7 +1118,7 @@ static const struct sunxi_mmc_cfg sun50i_a64_cfg = {
- 	.clk_delays = NULL,
- 	.can_calibrate = true,
- 	.mask_data0 = true,
--	.needs_new_timings = true,
-+	.has_new_timings = true,
- };
- 
- static const struct sunxi_mmc_cfg sun50i_a64_emmc_cfg = {
-@@ -1262,6 +1275,19 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
- 		goto error_free_host;
- 	}
- 
-+	if (host->cfg->clk_delays && host->cfg->has_new_timings) {
-+		/*
-+		 * Supports both old and new timing modes.
-+		 * Try setting the clk to new timing mode.
-+		 */
-+		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
-+		if (!ret)
-+			host->use_new_timings = true;
-+	} else if (host->cfg->has_new_timings) {
-+		/* Supports new timing mode only */
-+		host->use_new_timings = true;
-+	}
-+
- 	mmc->ops		= &sunxi_mmc_ops;
- 	mmc->max_blk_count	= 8192;
- 	mmc->max_blk_size	= 4096;
++out_cfg_free:
++	kfree(cfg);
+ out_free:
+-	if (fwspec)
+-		kfree(fwspec->iommu_priv);
+ 	iommu_fwspec_free(dev);
+ 	return ret;
+ }
 -- 
-2.13.2
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
