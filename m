@@ -1,67 +1,49 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, Vladimir
- Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
-        <gabriel.fernandez.st@gmail.com>,
-        Arvind Yadav
-	<arvind.yadav.cs@gmail.com>
-Subject: [PATCH v6 1/3] clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
-Date: Tue, 18 Jul 2017 09:53:32 +0200
-Message-ID: <1500364414-10021-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
-References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:40911 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752392AbdGGJxs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2017 05:53:48 -0400
+Date: Fri, 7 Jul 2017 12:53:31 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: sean.wang@mediatek.com
+Cc: linux-clk@vger.kernel.org
+Subject: [bug report] clk: mediatek: add missing cpu mux causing Mediatek
+ cpufreq can't work
+Message-ID: <20170707095331.s7zlvk5hbqwgngld@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Hello Sean Wang,
 
-We need to export clk_gate_is_enabled() from clk framework, then
-to avoid compilation issue we have to rename clk_gate_is_enabled()
-in NXP LPC32xx clock driver.
+The patch 1e17de9049da: "clk: mediatek: add missing cpu mux causing
+Mediatek cpufreq can't work" from May 5, 2017, leads to the following
+static checker warning:
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/nxp/clk-lpc32xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+	drivers/clk/mediatek/clk-cpumux.c:39 clk_cpumux_get_parent()
+	warn: signedness bug returning '(-22)'
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index 5b98ff9..1cc71ad 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -903,7 +903,7 @@ static void clk_gate_disable(struct clk_hw *hw)
- 	regmap_update_bits(clk_regmap, clk->reg, mask, val);
- }
- 
--static int clk_gate_is_enabled(struct clk_hw *hw)
-+static int __clk_gate_is_enabled(struct clk_hw *hw)
- {
- 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
- 	u32 val;
-@@ -918,7 +918,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
- static const struct clk_ops lpc32xx_clk_gate_ops = {
- 	.enable = clk_gate_enable,
- 	.disable = clk_gate_disable,
--	.is_enabled = clk_gate_is_enabled,
-+	.is_enabled = __clk_gate_is_enabled,
- };
- 
- #define div_mask(width)	((1 << (width)) - 1)
--- 
-1.9.1
+drivers/clk/mediatek/clk-cpumux.c
+    27  static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+    28  {
+    29          struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
+    30          int num_parents = clk_hw_get_num_parents(hw);
+    31          unsigned int val;
+    32  
+    33          regmap_read(mux->regmap, mux->reg, &val);
+    34  
+    35          val >>= mux->shift;
+    36          val &= mux->mask;
+    37  
+    38          if (val >= num_parents)
+    39                  return -EINVAL;
+                        ^^^^^^^^^^^^^^
+Doesn't work for u8.
+
+    40  
+    41          return val;
+    42  }
+
+regards,
+dan carpenter
