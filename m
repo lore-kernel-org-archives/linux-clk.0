@@ -1,73 +1,50 @@
-Return-Path: <adriana.reus@nxp.com>
-From: Adriana Reus <adriana.reus@nxp.com>
-To: "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-CC: "A.s. Dong" <aisheng.dong@nxp.com>, Andy Duan <fugang.duan@nxp.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, Fabio Estevam
-	<fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Anson Huang <anson.huang@nxp.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>
-Subject: Re: [RFC 0/2] clk: imx7d: Uart clock set-up conflict if clk needs
- gating on set rate or re-parent
-Date: Tue, 4 Jul 2017 10:57:00 +0000
-Message-ID: <1499165817.19416.31.camel@nxp.com>
-References: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
-	 <1499092935.2308.18.camel@pengutronix.de>
-In-Reply-To: <1499092935.2308.18.camel@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <broonie@sirena.org.uk>
+Date: Fri, 7 Jul 2017 13:44:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lgirdwood@gmail.com,
+	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Message-ID: <20170707124432.b5h2ugtxsz3zqysx@sirena.org.uk>
+References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+ <20170704115927.32662-9-quentin.schulz@free-electrons.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="exdyu7fmnfly6tbs"
+In-Reply-To: <20170704115927.32662-9-quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH v2 8/9] ASoC: atmel-classd: remove aclk clock
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gTHUsIDIwMTctMDctMDMgYXQgMTY6NDIgKzAyMDAsIEx1Y2FzIFN0YWNoIHdyb3RlOg0KPiBB
-bSBNb250YWcsIGRlbiAwMy4wNy4yMDE3LCAxNzoyOCArMDMwMCBzY2hyaWViIEFkcmlhbmEgUmV1
-czoNCj4gPiANCj4gPiBIaSBhbGwsDQo+ID4gDQo+ID4gSSBhbSBjdXJyZW50bHkgdHJ5aW5nIHRv
-IGZpeCBhbiBpc3N1ZSBvY2N1cnJpbmcgd2hlbiB0cnlpbmcgdG8gc2V0DQo+ID4gdGhlDQo+ID4g
-Q0xLX1NFVF9SQVRFX0dBVEUgZmxhZyBmb3IgdGhlIHVhcnQgcm9vdCBjbGtzLiBUaGlzIGNhdXNl
-cyB0aGUgaW14DQo+ID4gc2VyaWFsDQo+ID4gZHJpdmVyIHRvIGZhaWwgd2hlbiBzZXR0aW5nIHVw
-IGRldmljZXRyZWUgc3BlY2lmaWVkIGZyZXF1ZW5jeSBvcg0KPiA+IHBhcmVudCBiZWNhdXNlDQo+
-ID4gdGhlIHVhcnQgY2xrIGlzIGFscmVhZHkgaW4gdXNlIGJ5IHRoZSBjY20gZHJpdmVyIHRoYXQg
-c3RhcnRzIHVwIGFsbA0KPiA+IHVhcnQgY2xvY2tzDQo+ID4gZm9yIGVhcmx5Y29uLg0KPiA+IA0K
-PiA+IFNvbWUgY29udGV4dDoNCj4gPiANCj4gPiBUaGVyZSBhcmUgdGhyZWUgbWFpbiB0eXBlcyBv
-ZiBjbG9jayBzbGljZXMgb24gaW14N2QgY2NtOiAiQ29yZQ0KPiA+IGNsb2NrIHNsaWNlIiwNCj4g
-PiAiQnVzIGNsb2NrIHNsaWNlIChBWEkvQUhCKSIsIGFuZCAiUGVyaXBoZXJhbCBjbG9jayBzbGlj
-ZSIuIFZhc3QNCj4gPiBtYWpvcml0eSBvZg0KPiA+IGNsb2NrIHJvb3RzIGZhbGwgaW4gdGhlIHBl
-cmlwaGVyYWwgc2xpY2UgY2F0ZWdvcnk6DQo+ID4gDQo+ID4gwqDCoMKgwqA4OjEgbXV4IC0+IGdh
-dGUgLT4gZGl2IC0+IGRpdiAtPiBnYXRlDQo+ID4gDQo+ID4gVGhlIHJvb3QgY2xvY2tzIHRoYXQg
-ZGVyaXZlIGZyb20gcGVyaXBoZXJhbCBzbGljZXMgYXJlIGV4cGVjdGVkIHRvDQo+ID4gYmUNCj4g
-PiBnYXRlZCB3aGVuIGNoYW5naW5nIGZyZXF1ZW5jeSBbMF0uDQo+ID4gDQo+ID4gVGhlIGZpcnN0
-IHBhdGNoIG9mIHRoaXMgc2VyaWVzIHNldHMgdGhpcyB1cC4gKEl0IGlzIG9ubHkgYQ0KPiA+IHJl
-ZmVyZW5jZSBwb2ludCBmb3INCj4gPiB0aGlzIGNvbnZlcnNhdGlvbiwgbm90IHRvIGJlIG1lcmdl
-ZCBhcyBpdCBXSVAgYW5kIG5lZWRzIG1vcmUNCj4gPiB0ZXN0aW5nKS4NCj4gPiANCj4gPiBXaGVu
-IHNldHRpbmcgdGhpcyB1cCwgdGhlIGlteCBzZXJpYWwgZHJpdmVyDQo+ID4gKHBsYXRmb3JtX2Ry
-aXZlcl9yZWdpc3RlciAtPiBvZl9jbGtfc2V0X2RlZmF1bHRzKSB3aWxsIGZhaWwNCj4gPiB0byBz
-ZXQgdGhlIHJhdGUgb3IgcGFyZW50IHNwZWNpZmllZCBpbiB0aGUgZGV2aWNldHJlZToNCj4gPiAN
-Cj4gPiDCoMKgwqDCoGlteC11YXJ0IDMwYTcwMDAwLnNlcmlhbDogY2xrX3NldF9yYXRlKCkgZmFp
-bGVkDQo+ID4gwqDCoMKgwqBpbXgtdWFydDogcHJvYmUgb2YgMzBhNzAwMDAuc2VyaWFsIGZhaWxl
-ZCB3aXRoIGVycm9yIC0xNg0KPiA+IA0KPiA+IFRoZSByZWFzb24gZm9yIHRoaXMgaXMgdGhhdCB0
-aGUgdWFydCBjbGtzIGFyZSBhbHJlYWR5IHByZXBhcmVkIGFuZA0KPiA+IGVuYWJsZWQgaW4NCj4g
-PiBpbXg3ZF9jbG9ja3NfaW5pdCBieSB0aGUgaW14X3JlZ2lzdGVyX3VhcnRfY2xvY2tzIGZ1bmN0
-aW9uIGlmDQo+ID4gZWFybHljb24gaXMNCj4gPiBlbmFibGVkLiBGdW5jdGlvbmFsaXR5IGFkZGVk
-IGluIHBhdGNoZXM6DQo+ID4gJ2NvbW1pdCA1NWFkYzYxYzU2OGFmOTk0MTliZTFkYzA0MTJmOGVh
-ZTAxOWM3MWYyDQo+ID4gKCJjbGs6IGlteDogYWRkIGNvbW1vbiBsb2dpYyB0byBkZXRlY3QgZWFy
-bHkgVUFSVCB1c2FnZSIpJw0KPiA+ICdjb21taXQgMWI5YWY2OGYzMjVjYjkxYWM5ZmM2OTFmNTJk
-NjlkZmIwODI2YWZkNw0KPiA+ICgiY2xrOiBpbXg3ZDogcmV0YWluIGVhcmx5IFVBUlQgY2xvY2tz
-IGR1cmluZyBrZXJuZWwgaW5pdCIpJw0KPiA+IA0KPiA+IE9uZSBvcHRpb24gaXMgdG8gcmVtb3Zl
-IHRoZSBpbXhfcmVnaXN0ZXJfdWFydF9jbG9ja3MgZnJvbSB0aGUgY2NtDQo+ID4gZHJpdmVyIGFu
-ZA0KPiA+IGxlYXZlIHRoZSB1YXJ0IGNsb2NrIHNldCB1cCBhbmQgZW5hYmxlIGVudGlyZWx5IHRv
-IHRoZSBzZXJpYWwNCj4gPiBkcml2ZXIgYW5kIERULg0KPiA+IFRoZSBzZWNvbmQgUkZDIHBhdGNo
-IGRvZXMgdGhpcyBmb3IgaW14N2QuDQo+IA0KPiBUaGlzIGlzIG5vdCBhbiBvcHRpb24uIFRoZSBD
-Q00gaG9sZHMgYSByZWZlcmVuY2UgdG8gdGhvc2UgY2xvY2tzLA0KPiBzcGVjaWZpY2FsbHkgdG8g
-cHJldmVudCB0aGVtIGZyb20gYmVpbmcgZGlzYWJsZWQgYmVmb3JlIGEgcmVhbCBzZXJpYWwNCj4g
-ZHJpdmVyIGlzIGJvdW5kLiBJZiB0aGlzIGlzbid0IGRvbmUgeW91IG1pZ2h0IGVuZCB1cCBpbiBh
-IHNpdHVhdGlvbg0KPiB3aGVyZSBQTSBvciBkcml2ZXIgcHJvYmUgZGVmZXJhbCBkaXNhYmxlcyB0
-aGUgVUFSVCBjbG9jay90aGUgcGFyZW50DQo+IG9mDQo+IHRoaXMgY2xvY2ssIGV2ZW4gaWYgaXQg
-d2FzIHByZXZpb3VzbHkgZW5hYmxlZCBieSB0aGUgYm9vdGxvYWRlci4gV2l0aA0KPiBlYXJseWNv
-biB0aGlzIG1pZ2h0IGxlYWQgdG8gYSBmdWxsIHN5c3RlbSBoYW5nIGF0IHRoaXMgcG9pbnQsIHdo
-ZW4NCj4gZWFybHljb24gdHJpZXMgdG8gYWNjZXNzIGEgY2xvY2sgZ2F0ZWQgVUFSVC4NCj4gDQo+
-IFJlZ2FyZHMsDQo+IEx1Y2FzDQo+IA0KDQpIaSBMdWNhcywgVGhhbmsgeW91IGZvciB5b3VyIHJl
-cGx5Lg0KDQpMb29raW5nIGF0IGNsa19jb3JlX3VucHJlcGFyZSBhbmQgY2xrX2NvcmVfZGlzYWJs
-ZSB0aGV5IHNlZW0gdG8gcmV0dXJuDQp3aXRob3V0IGhhcmR3YXJlIGRpc2FibGluZyB0aGUgY2xv
-Y2sgaWYgZW5hYmxlX2NvdW50IG9yIHByZXBhcmVfY291bnQNCmFyZSAwLiBTbywgZGlzYWJsaW5n
-IGEgYm9vdGxvYWRlciBlbmFibGVkIG9ubHkgY2xvY2sgZG9lcyBub3Qgc2VlbSB0bw0KYmUgYSBw
-cm9ibGVtLiBMZXQgbWUga25vdyBpZiBJIG1pc3VuZGVyc3RhbmQuDQoNCg0K
+
+--exdyu7fmnfly6tbs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jul 04, 2017 at 01:59:26PM +0200, Quentin Schulz wrote:
+> Since gclk (generated-clk) is now able to determine the rate of the
+> audio_pll, there is no need for classd to have a direct phandle to the
+> audio_pll while already having a phandle to gclk.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--exdyu7fmnfly6tbs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllfgi8ACgkQJNaLcl1U
+h9DzAQf/dC3hmT2cJGuO5WN2WUEdJi8i15jUGACz08lH+qnyfGQ2vIaHDa7Gk2Ro
+kZLHscJuR5tzN5xi16pUGAH2klyPaOQdVpNVXv+wzxvOsVKxsB0woKIVaFo/DhmM
+y8HfO6l6J09CReewm4Ij2LzXNJy+gz9lh4GYzfWnqtqjPcns1KBEmYhmAZtvX8lh
+/7Q6oZ9yeBJY3xWORvD8zv/vxof39ZbdXpRd1zb/7HYDQYnhoJlRPkn/1KtyWmAG
+1lJ1+r6Ao1DEYdfwDB3jvxdtdg8zD7H0ggRyPw9fpcwSzfBUEIzFr/7Y3hrlNfus
+nTT5B70tS9bBhc1bZ89tgaHoWT4yWQ==
+=4O/E
+-----END PGP SIGNATURE-----
+
+--exdyu7fmnfly6tbs--
