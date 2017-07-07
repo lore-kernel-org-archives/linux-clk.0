@@ -1,36 +1,69 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170723102749.17323-5-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-5-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 24 Jul 2017 11:09:29 +0800
-Message-ID: <CAGb2v64LW+GzzdKHKKEsKg+1DNnhGEUu7f9A6uCz_XKuN6RSCg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 04/10] ARM: sunxi: h3/h5: Add r_i2c I2C controller
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Ondrej Jirman <megous@megous.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <vladimir.barinov@cogentembedded.com>
+Return-Path: <vladimir.barinov@cogentembedded.com>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
+Date: Fri,  7 Jul 2017 04:57:57 +0300
+Message-Id: <1499392677-9100-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> From: Ondrej Jirman <megous@megous.com>
->
-> Allwinner H3/H5 SoCs have an I2C controller at PL GPIO bank.
->
-> Add support for it in the device tree.
->
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> [Icenowy: Change to use r_ccu and change pinmux node name]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+IDT VersaClock 5 5P49V5925 has 4 clock outputs, 4 fractional dividers.
+Input clock source can be taken only from external reference clock.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+---
+ Documentation/devicetree/bindings/clock/idt,versaclock5.txt | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+index 53d7e50..a1ad9e0 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -6,19 +6,21 @@ from 3 to 12 output clocks.
+ ==I2C device node==
+ 
+ Required properties:
+-- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
+-		"idt,5p49v5935".
++- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5925" ,
++		"idt,5p49v5933", "idt,5p49v5935".
+ - reg:		i2c device address, shall be 0x68 or 0x6a.
+ - #clock-cells:	from common clock binding; shall be set to 1.
+ - clocks:	from common clock binding; list of parent clock handles,
+-		- 5p49v5923: (required) either or both of XTAL or CLKIN
++		- 5p49v5923 and
++		- 5p49v5925: (required) either or both of XTAL or CLKIN
+ 					reference clock.
+ 		- 5p49v5933 and
+ 		- 5p49v5935: (optional) property not present (internal
+ 					Xtal used) or CLKIN reference
+ 					clock.
+ - clock-names:	from common clock binding; clock input names, can be
+-		- 5p49v5923: (required) either or both of "xin", "clkin".
++		- 5p49v5923 and
++		- 5p49v5925: (required) either or both of "xin", "clkin".
+ 		- 5p49v5933 and
+ 		- 5p49v5935: (optional) property not present or "clkin".
+ 
+@@ -37,6 +39,7 @@ clock specifier, the following mapping applies:
+ 	1 -- OUT1
+ 	2 -- OUT4
+ 
++5P49V5925 and
+ 5P49V5935:
+ 	0 -- OUT0_SEL_I2CB
+ 	1 -- OUT1
+-- 
+1.9.1
