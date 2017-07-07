@@ -1,156 +1,33 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <vladimir.barinov@cogentembedded.com>
+Return-Path: <vladimir.barinov@cogentembedded.com>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 13/18] MIPS: ingenic: Add machine info for supported boards
-Date: Sun,  2 Jul 2017 18:30:11 +0200
-Message-Id: <20170702163016.6714-14-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+	devicetree@vger.kernel.org,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 0/2] clk: vc5: Add IDT VersaClock 5P49V5925
+Date: Fri,  7 Jul 2017 04:57:03 +0300
+Message-Id: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This makes sure that 'mips_machtype' will be initialized to the SoC
-version used on the board.
+Hello,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+This adds the folowing:
+- Update IDT VersaClock 5 driver to support 5P49V5925
+- Add bindings for IDT VersaClock 5P49V5925
+
+Vladimir Barinov (2):
+[1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
+[2/2] dt: Add bindings for IDT VersaClock 5P49V5925
+
 ---
- arch/mips/Kconfig         |  1 +
- arch/mips/jz4740/Makefile |  2 +-
- arch/mips/jz4740/boards.c | 16 ++++++++++++++++
- arch/mips/jz4740/setup.c  | 34 +++++++++++++++++++++++++++++-----
- 4 files changed, 47 insertions(+), 6 deletions(-)
- create mode 100644 arch/mips/jz4740/boards.c
+This patchset is against the 'kernel/git/torvalds/linux.git' repo.
 
- v2: No change
- v3: No change
-
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 2828ecde133d..f36ffb93efd9 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -370,6 +370,7 @@ config MACH_INGENIC
- 	select BUILTIN_DTB
- 	select USE_OF
- 	select LIBFDT
-+	select MIPS_MACHINE
- 
- config LANTIQ
- 	bool "Lantiq based platforms"
-diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
-index 39d70bde8cfe..87feb246fafe 100644
---- a/arch/mips/jz4740/Makefile
-+++ b/arch/mips/jz4740/Makefile
-@@ -5,7 +5,7 @@
- # Object file lists.
- 
- obj-y += prom.o time.o reset.o setup.o \
--	platform.o timer.o
-+	platform.o timer.o boards.o
- 
- obj-$(CONFIG_MACH_JZ4740) += gpio.o
- 
-diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-new file mode 100644
-index 000000000000..a3cf64cf004a
---- /dev/null
-+++ b/arch/mips/jz4740/boards.c
-@@ -0,0 +1,16 @@
-+/*
-+ * Ingenic boards support
-+ *
-+ * Copyright 2017, Paul Cercueil <paul@crapouillou.net>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 or later
-+ * as published by the Free Software Foundation.
-+ */
-+
-+#include <asm/bootinfo.h>
-+#include <asm/mips_machine.h>
-+
-+MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-+MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
-+			"Imagination Technologies CI20", NULL);
-diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-index 6d0152321819..afd84ee966e8 100644
---- a/arch/mips/jz4740/setup.c
-+++ b/arch/mips/jz4740/setup.c
-@@ -22,6 +22,7 @@
- #include <linux/of_fdt.h>
- 
- #include <asm/bootinfo.h>
-+#include <asm/mips_machine.h>
- #include <asm/prom.h>
- 
- #include <asm/mach-jz4740/base.h>
-@@ -53,16 +54,34 @@ static void __init jz4740_detect_mem(void)
- 	add_memory_region(0, size, BOOT_MEM_RAM);
- }
- 
-+static unsigned long __init get_board_mach_type(const void *fdt)
-+{
-+	const struct mips_machine *mach;
-+
-+	for (mach = (struct mips_machine *)&__mips_machines_start;
-+			mach < (struct mips_machine *)&__mips_machines_end;
-+			mach++) {
-+		if (!fdt_node_check_compatible(fdt, 0, mach->mach_id))
-+			return mach->mach_type;
-+	}
-+
-+	return MACH_INGENIC_JZ4740;
-+}
-+
- void __init plat_mem_setup(void)
- {
- 	int offset;
- 
-+	if (!early_init_dt_scan(__dtb_start))
-+		return;
-+
- 	jz4740_reset_init();
--	__dt_setup_arch(__dtb_start);
- 
- 	offset = fdt_path_offset(__dtb_start, "/memory");
- 	if (offset < 0)
- 		jz4740_detect_mem();
-+
-+	mips_machtype = get_board_mach_type(__dtb_start);
- }
- 
- void __init device_tree_init(void)
-@@ -75,13 +94,18 @@ void __init device_tree_init(void)
- 
- const char *get_system_type(void)
- {
--	if (IS_ENABLED(CONFIG_MACH_JZ4780))
--		return "JZ4780";
--
--	return "JZ4740";
-+	return mips_get_machine_name();
- }
- 
- void __init arch_init_irq(void)
- {
- 	irqchip_init();
- }
-+
-+static int __init jz4740_machine_setup(void)
-+{
-+	mips_machine_setup();
-+
-+	return 0;
-+}
-+arch_initcall(jz4740_machine_setup);
--- 
-2.11.0
+ Documentation/devicetree/bindings/clock/idt,versaclock5.txt |   11 +++++++----
+ drivers/clk/clk-versaclock5.c                               |   11 +++++++++++
+ 2 files changed, 18 insertions(+), 4 deletions(-)
