@@ -1,379 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:36109 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751628AbdG1OJQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2017 10:09:16 -0400
-Received: by mail-wm0-f49.google.com with SMTP id t201so126849938wmt.1
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jul 2017 07:09:15 -0700 (PDT)
-Subject: Re: [PATCH v2 4/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
- <1501235589-318-5-git-send-email-narmstrong@baylibre.com>
- <CAFBinCDNU5p59CvKLoJAh0ve7JGLnTi79kBa5+SVEJ9nzeMv=g@mail.gmail.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <2c8444f5-1e01-9e8f-050c-14fe615de9bf@baylibre.com>
-Date: Fri, 28 Jul 2017 16:09:10 +0200
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 7 Jul 2017 08:56:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V2 7/8] clk: vc5: Add bindings for IDT VersaClock
+ 5P49V6901
+Message-ID: <20170707135619.l6lgvfrhqvrgu2hb@rob-hp-laptop>
+References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+ <20170701200459.11505-7-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCDNU5p59CvKLoJAh0ve7JGLnTi79kBa5+SVEJ9nzeMv=g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170701200459.11505-7-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/28/2017 12:29 PM, Martin Blumenstingl wrote:
-> Hi Neil,
+On Sat, Jul 01, 2017 at 10:04:57PM +0200, Marek Vasut wrote:
+> IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
+> Input clock source can be taken from either external crystal or from
+> external reference clock.
 > 
-> thanks for these patches, CEC support is another good step!
-
-Hi Martin,
-
-Thanks for your feedback !
-
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> ---
+> V2: Edit the top of the DT binding document to mention VersaClock 6
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.txt   | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
 > 
-> On Fri, Jul 28, 2017 at 11:53 AM, Neil Armstrong
-> <narmstrong@baylibre.com> wrote:
->> The CEC 32K AO Clock is a dual divider with dual counter to provide a more
->> precise 32768Hz clock for the CEC subsystem from the external xtal.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/clk/meson/Makefile         |   2 +-
->>  drivers/clk/meson/gxbb-aoclk-32k.c | 180 +++++++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/gxbb-aoclk.c     |  21 ++++-
->>  drivers/clk/meson/gxbb-aoclk.h     |  16 ++++
->>  4 files changed, 217 insertions(+), 2 deletions(-)
->>  create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
->>
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index de65427..b139d41 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -4,4 +4,4 @@
->>
->>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
->>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->> -obj-$(CONFIG_COMMON_CLK_GXBB)   += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o
->> +obj-$(CONFIG_COMMON_CLK_GXBB)   += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
->> diff --git a/drivers/clk/meson/gxbb-aoclk-32k.c b/drivers/clk/meson/gxbb-aoclk-32k.c
->> new file mode 100644
->> index 0000000..497cd09
->> --- /dev/null
->> +++ b/drivers/clk/meson/gxbb-aoclk-32k.c
->> @@ -0,0 +1,180 @@
->> +/*
->> + * Copyright (c) 2017 BayLibre, SAS.
->> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->> + *
->> + * SPDX-License-Identifier: GPL-2.0+
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/bitfield.h>
->> +#include <linux/regmap.h>
->> +#include "gxbb-aoclk.h"
->> +
->> +/*
->> + * The AO Domain embeds a dual/divider to generate a more precise
->> + * 32,768KHz clock for low-power suspend mode and CEC.
->> + */
->> +
->> +#define CLK_CNTL0_N1_MASK      GENMASK(11, 0)
->> +#define CLK_CNTL0_N2_MASK      GENMASK(23, 12)
->> +#define CLK_CNTL0_DUALDIV_EN   BIT(28)
->> +#define CLK_CNTL0_OUT_GATE_EN  BIT(30)
->> +#define CLK_CNTL0_IN_GATE_EN   BIT(31)
->> +
->> +#define CLK_CNTL1_M1_MASK      GENMASK(11, 0)
->> +#define CLK_CNTL1_M2_MASK      GENMASK(23, 12)
->> +#define CLK_CNTL1_BYPASS_EN    BIT(24)
->> +#define CLK_CNTL1_SELECT_OSC   BIT(27)
->> +
->> +#define PWR_CNTL_ALT_32K_SEL   GENMASK(13, 10)
->> +
->> +struct cec_32k_freq_table {
->> +       unsigned long parent_rate;
->> +       unsigned long target_rate;
->> +       bool dualdiv;
->> +       unsigned int n1;
->> +       unsigned int n2;
->> +       unsigned int m1;
->> +       unsigned int m2;
->> +};
->> +
->> +static const struct cec_32k_freq_table aoclk_cec_32k_table[] = {
->> +       [0] = {
->> +               .parent_rate = 24000000,
-> shouldn't you add a parent (XTAL) to this new clock so you could get
-> rid of this?
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> index 53d7e50ed875..115ab5f75c5d 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> @@ -1,24 +1,26 @@
+> -Binding for IDT VersaClock5 programmable i2c clock generator.
+> +Binding for IDT VersaClock 5,6 programmable i2c clock generators.
+>  
+> -The IDT VersaClock5 are programmable i2c clock generators providing
+> -from 3 to 12 output clocks.
+> +The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
+> +generators providing from 3 to 12 output clocks.
+>  
+>  ==I2C device node==
+>  
+>  Required properties:
+>  - compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
+> -		"idt,5p49v5935".
+> +		"idt,5p49v5935" , "idt,5p49v6901".
 
-It is in the clock definition in gxbb-aoclk.c.
-This table only defines the "valid" dividing values given by amlogic.
-Having 24MHz enforces we uses a 24MHz xtal as parent...
-Once we figure out/have a valid documentation, we could fill it with
-generic value and have a generic calculation.
+Please reformat to 1 per line. With that,
 
-> 
->> +               .target_rate = 32768,
->> +               .dualdiv = true,
->> +               .n1 = 733,
->> +               .n2 = 732,
->> +               .m1 = 8,
->> +               .m2 = 11,
->> +       },
->> +};
->> +
->> +/*
->> + * If CLK_CNTL0_DUALDIV_EN == 0
->> + *  - will use N1 divider only
->> + * If CLK_CNTL0_DUALDIV_EN == 1
->> + *  - hold M1 cycles of N1 divider then changes to N2
->> + *  - hold M2 cycles of N2 divider then changes to N1
->> + * Then we can get more accurate division.
->> + */
->> +static unsigned long aoclk_cec_32k_recalc_rate(struct clk_hw *hw,
->> +                                              unsigned long parent_rate)
->> +{
->> +       struct aoclk_cec_32k *cec_32k = to_aoclk_cec_32k(hw);
->> +       unsigned long n1;
->> +       u32 reg0, reg1;
->> +
->> +       regmap_read(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0, &reg0);
->> +       regmap_read(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL1, &reg1);
->> +
->> +       if (reg1 & CLK_CNTL1_BYPASS_EN)
->> +               return parent_rate;
->> +
->> +       if (reg0 & CLK_CNTL0_DUALDIV_EN) {
->> +               unsigned long n2, m1, m2, f1, f2, p1, p2;
->> +
->> +               n1 = FIELD_GET(CLK_CNTL0_N1_MASK, reg0) + 1;
->> +               n2 = FIELD_GET(CLK_CNTL0_N2_MASK, reg0) + 1;
->> +
->> +               m1 = FIELD_GET(CLK_CNTL1_M1_MASK, reg1) + 1;
->> +               m2 = FIELD_GET(CLK_CNTL1_M2_MASK, reg1) + 1;
->> +
->> +               f1 = DIV_ROUND_CLOSEST(parent_rate, n1);
->> +               f2 = DIV_ROUND_CLOSEST(parent_rate, n2);
->> +
->> +               p1 = DIV_ROUND_CLOSEST(100000000 * m1, f1 * (m1 + m2));
->> +               p2 = DIV_ROUND_CLOSEST(100000000 * m2, f2 * (m1 + m2));
->> +
->> +               return DIV_ROUND_UP(100000000, p1 + p2);
->> +       }
->> +
->> +       n1 = FIELD_GET(CLK_CNTL0_N1_MASK, reg0) + 1;
->> +
->> +       return DIV_ROUND_CLOSEST(parent_rate, n1);
->> +}
->> +
->> +static const struct cec_32k_freq_table *find_cec_32k_freq(unsigned long rate,
->> +                                                         unsigned long prate)
->> +{
->> +       int i;
->> +
->> +       for (i = 0 ; i < ARRAY_SIZE(aoclk_cec_32k_table) ; ++i)
->> +               if (aoclk_cec_32k_table[i].parent_rate == prate &&
->> +                   aoclk_cec_32k_table[i].target_rate == rate)
->> +                       return &aoclk_cec_32k_table[i];
->> +
->> +       return NULL;
->> +}
->> +
->> +static long aoclk_cec_32k_round_rate(struct clk_hw *hw, unsigned long rate,
->> +                                    unsigned long *prate)
->> +{
->> +       const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
->> +                                                                 *prate);
->> +
->> +       /* If invalid return first one */
->> +       if (!freq)
->> +               return freq[0].target_rate;
->> +
->> +       return freq->target_rate;
->> +}
->> +
->> +static int aoclk_cec_32k_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                                 unsigned long parent_rate)
->> +{
->> +       const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
->> +                                                                 parent_rate);
->> +       struct aoclk_cec_32k *cec_32k = to_aoclk_cec_32k(hw);
->> +       u32 reg = 0;
->> +
->> +       if (!freq)
->> +               return -EINVAL;
->> +
->> +       /* Disable clock */
->> +       regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
->> +                          CLK_CNTL0_IN_GATE_EN | CLK_CNTL0_OUT_GATE_EN, 0);
->> +
->> +       if (freq->dualdiv)
->> +               reg = CLK_CNTL0_DUALDIV_EN |
->> +                     FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1) |
->> +                     FIELD_PREP(CLK_CNTL0_N2_MASK, freq->n2 - 1);
->> +       else
->> +               reg = FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1);
->> +
->> +       regmap_write(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0, reg);
->> +
->> +       if (freq->dualdiv)
->> +               reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1) |
->> +                     FIELD_PREP(CLK_CNTL1_M2_MASK, freq->m2 - 1);
->> +       else
->> +               reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1);
->> +
->> +       regmap_write(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL1, reg);
->> +
->> +       /* Enable clock */
->> +       regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
->> +                          CLK_CNTL0_IN_GATE_EN, CLK_CNTL0_IN_GATE_EN);
-> based on how I understand your code the *input* clock needs to be
-> gated during rate change, so (in my opinion) it's fine to toggle it
-> here.
-> 
->> +
->> +       udelay(200);
->> +
->> +       regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
->> +                          CLK_CNTL0_OUT_GATE_EN, CLK_CNTL0_OUT_GATE_EN);
-> however, should we make the output clock configurable by implementing
-> clk_ops.enable and clk_ops.disable?
-
-Yes, but in a perfect world we should need 2 gates, one before and one after
-but it's a pain to synchronize and it's useless to have such complexity for
-s clock that will only ever be used for CEC...
-
-> 
->> +
->> +       regmap_update_bits(cec_32k->regmap, AO_CRT_CLK_CNTL1,
->> +                          CLK_CNTL1_SELECT_OSC, CLK_CNTL1_SELECT_OSC);
->> +
->> +       /* Select 32k from XTAL */
->> +       regmap_update_bits(cec_32k->regmap,
->> +                         AO_RTI_PWR_CNTL_REG0,
->> +                         PWR_CNTL_ALT_32K_SEL,
->> +                         FIELD_PREP(PWR_CNTL_ALT_32K_SEL, 4));
-> is it correct to configure the muxes after enabling the clock output?
-> also do you know about the other parents of PWR_CNTL_ALT_32K_SEL?
-
-This mux is from some alternative GPIO input lines, but this exact clock
-configuration is used by the suspend firmware...
-
-Since there is a lot of unknowns about this clock, I copied the exact
-sequence from amlogic code, but yes it should be modelized with a mux
-and a dual gate somehow. But the firmware relies on it for low-freq
-suspend mode and we won't have any other usage apart CEC under linux.
-
-IMHO I think it's safer to keep this sequence.
-
-(Anyway, it's not too late to change the clock model if we keep the
-same DT bindings)
-
-> 
->> +
->> +       return 0;
->> +}
->> +
->> +const struct clk_ops meson_aoclk_cec_32k_ops = {
->> +       .recalc_rate = aoclk_cec_32k_recalc_rate,
->> +       .round_rate = aoclk_cec_32k_round_rate,
->> +       .set_rate = aoclk_cec_32k_set_rate,
->> +};
->> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
->> index f61506c..6c161e0 100644
->> --- a/drivers/clk/meson/gxbb-aoclk.c
->> +++ b/drivers/clk/meson/gxbb-aoclk.c
->> @@ -59,6 +59,7 @@
->>  #include <linux/mfd/syscon.h>
->>  #include <linux/regmap.h>
->>  #include <linux/init.h>
->> +#include <linux/delay.h>
->>  #include <dt-bindings/clock/gxbb-aoclkc.h>
->>  #include <dt-bindings/reset/gxbb-aoclkc.h>
->>  #include "gxbb-aoclk.h"
->> @@ -105,6 +106,17 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
->>  GXBB_AO_GATE(uart2, 5);
->>  GXBB_AO_GATE(ir_blaster, 6);
->>
->> +static struct aoclk_cec_32k cec_32k_ao = {
->> +       .lock = &gxbb_aoclk_lock,
->> +       .hw.init = &(struct clk_init_data) {
->> +               .name = "cec_32k_ao",
->> +               .ops = &meson_aoclk_cec_32k_ops,
->> +               .parent_names = (const char *[]){ "xtal" },
->> +               .num_parents = 1,
->> +               .flags = CLK_IGNORE_UNUSED,
->> +       },
->> +};
->> +
->>  static unsigned int gxbb_aoclk_reset[] = {
->>         [RESET_AO_REMOTE] = 16,
->>         [RESET_AO_I2C_MASTER] = 18,
->> @@ -131,8 +143,9 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
->>                 [CLKID_AO_UART1] = &uart1_ao.hw,
->>                 [CLKID_AO_UART2] = &uart2_ao.hw,
->>                 [CLKID_AO_IR_BLASTER] = &ir_blaster_ao.hw,
->> +               [CLKID_AO_CEC_32K] = &cec_32k_ao.hw,
->>         },
->> -       .num = ARRAY_SIZE(gxbb_aoclk_gate),
->> +       .num = 7,
->>  };
->>
->>  static int gxbb_aoclkc_probe(struct platform_device *pdev)
->> @@ -172,6 +185,12 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
->>                         return ret;
->>         }
->>
->> +       /* Specific clocks */
->> +       cec_32k_ao.regmap = regmap;
->> +       ret = devm_clk_hw_register(dev, &cec_32k_ao.hw);
->> +       if (ret)
->> +               return ret;
->> +
->>         return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->>                         &gxbb_aoclk_onecell_data);
->>  }
->> diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
->> index 2e26108..e8604c8 100644
->> --- a/drivers/clk/meson/gxbb-aoclk.h
->> +++ b/drivers/clk/meson/gxbb-aoclk.h
->> @@ -9,7 +9,13 @@
->>  #define __GXBB_AOCLKC_H
->>
->>  /* AO Configuration Clock registers offsets */
->> +#define AO_RTI_PWR_CNTL_REG1   0x0c
->> +#define AO_RTI_PWR_CNTL_REG0   0x10
->>  #define AO_RTI_GEN_CNTL_REG0   0x40
->> +#define AO_OSCIN_CNTL          0x58
->> +#define AO_CRT_CLK_CNTL1       0x68
->> +#define AO_RTC_ALT_CLK_CNTL0   0x94
->> +#define AO_RTC_ALT_CLK_CNTL1   0x98
->>
->>  struct aoclk_gate_regmap {
->>         struct clk_hw hw;
->> @@ -23,4 +29,14 @@ struct aoclk_gate_regmap {
->>
->>  extern const struct clk_ops meson_aoclk_gate_regmap_ops;
->>
->> +struct aoclk_cec_32k {
->> +       struct clk_hw hw;
->> +       struct regmap *regmap;
->> +       spinlock_t *lock;
->> +};
->> +
->> +#define to_aoclk_cec_32k(_hw) container_of(_hw, struct aoclk_cec_32k, hw)
->> +
->> +extern const struct clk_ops meson_aoclk_cec_32k_ops;
->> +
->>  #endif /* __GXBB_AOCLKC_H */
->> --
->> 1.9.1
->>
->>
->> _______________________________________________
->> linux-amlogic mailing list
->> linux-amlogic@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-
+Acked-by: Rob Herring <robh@kernel.org>
