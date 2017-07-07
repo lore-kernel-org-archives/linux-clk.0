@@ -1,65 +1,83 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
+Return-Path: <vladimir.barinov@cogentembedded.com>
+Return-Path: <vladimir.barinov@cogentembedded.com>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 07/18] serial: core: Make uart_parse_options take const char* argument
-Date: Sun,  2 Jul 2017 18:30:05 +0200
-Message-Id: <20170702163016.6714-8-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+	devicetree@vger.kernel.org,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH 1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
+Date: Fri,  7 Jul 2017 04:57:48 +0300
+Message-Id: <1499392668-9062-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The pointed string is never modified from within uart_parse_options, so
-it should be marked as const in the function prototype.
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Update IDT VersaClock 5 driver to support 5P49V5925. This chip has only
+external clock input, four fractional dividers (FODs) and five clock
+outputs (four universal clock outputs and one reference clock output at
+OUT0_SELB_I2C).
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 ---
- drivers/tty/serial/serial_core.c | 5 +++--
- include/linux/serial_core.h      | 2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/clk/clk-versaclock5.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- v2: New patch in this series
- v3: No change
-
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 13bfd5dcffce..95d3770bdb37 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -1954,9 +1954,10 @@ EXPORT_SYMBOL_GPL(uart_parse_earlycon);
-  *	eg: 115200n8r
-  */
- void
--uart_parse_options(char *options, int *baud, int *parity, int *bits, int *flow)
-+uart_parse_options(const char *options, int *baud, int *parity,
-+		   int *bits, int *flow)
- {
--	char *s = options;
-+	const char *s = options;
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index ea7d552..88b749d 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -126,6 +126,7 @@
+ /* Supported IDT VC5 models. */
+ enum vc5_model {
+ 	IDT_VC5_5P49V5923,
++	IDT_VC5_5P49V5925,
+ 	IDT_VC5_5P49V5933,
+ 	IDT_VC5_5P49V5935,
+ };
+@@ -595,6 +596,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ 	case IDT_VC5_5P49V5933:
+ 		return (n == 0) ? 0 : 3;
+ 	case IDT_VC5_5P49V5923:
++	case IDT_VC5_5P49V5925:
+ 	case IDT_VC5_5P49V5935:
+ 	default:
+ 		return n;
+@@ -785,6 +787,13 @@ static int vc5_remove(struct i2c_client *client)
+ 	.flags = 0,
+ };
  
- 	*baud = simple_strtoul(s, NULL, 10);
- 	while (*s >= '0' && *s <= '9')
-diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-index 64d892f1e5cd..67f88fb53195 100644
---- a/include/linux/serial_core.h
-+++ b/include/linux/serial_core.h
-@@ -386,7 +386,7 @@ struct uart_port *uart_get_console(struct uart_port *ports, int nr,
- 				   struct console *c);
- int uart_parse_earlycon(char *p, unsigned char *iotype, resource_size_t *addr,
- 			char **options);
--void uart_parse_options(char *options, int *baud, int *parity, int *bits,
-+void uart_parse_options(const char *options, int *baud, int *parity, int *bits,
- 			int *flow);
- int uart_set_options(struct uart_port *port, struct console *co, int baud,
- 		     int parity, int bits, int flow);
++static const struct vc5_chip_info idt_5p49v5925_info = {
++	.model = IDT_VC5_5P49V5925,
++	.clk_fod_cnt = 4,
++	.clk_out_cnt = 5,
++	.flags = 0,
++};
++
+ static const struct vc5_chip_info idt_5p49v5933_info = {
+ 	.model = IDT_VC5_5P49V5933,
+ 	.clk_fod_cnt = 2,
+@@ -801,6 +810,7 @@ static int vc5_remove(struct i2c_client *client)
+ 
+ static const struct i2c_device_id vc5_id[] = {
+ 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
++	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
+ 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+ 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
+ 	{ }
+@@ -809,6 +819,7 @@ static int vc5_remove(struct i2c_client *client)
+ 
+ static const struct of_device_id clk_vc5_of_match[] = {
+ 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
++	{ .compatible = "idt,5p49v5925", .data = &idt_5p49v5925_info },
+ 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+ 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
+ 	{ },
 -- 
-2.11.0
+1.9.1
