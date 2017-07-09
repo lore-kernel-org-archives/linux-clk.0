@@ -1,46 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 18 Jul 2017 16:10:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Adriana Reus <adriana.reus@nxp.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	robh+dt@kernel.org, fabio.estevam@nxp.com, shawnguo@kernel.org,
-	anson.huang@nxp.com
-Subject: Re: [PATCH 1/2] clk: imx: imx7d: Fix parent clock for OCRAM_CLK
-Message-ID: <20170718231055.GG18179@codeaurora.org>
-References: <1500363892-1173-1-git-send-email-adriana.reus@nxp.com>
- <1500363892-1173-2-git-send-email-adriana.reus@nxp.com>
+Return-Path: <net147@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500363892-1173-2-git-send-email-adriana.reus@nxp.com>
+In-Reply-To: <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
+From: Jonathan Liu <net147@gmail.com>
+Date: Sun, 9 Jul 2017 22:25:23 +1000
+Message-ID: <CANwerB0d+2rU9gnCSKP4wwXZpzEsHXP6LtBYvxD+GnQAj6QHVQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU driver
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>, Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/18, Adriana Reus wrote:
-> The parent of OCRAM_CLK should be axi_main_root_clk
-> and not axi_post_div.
-> 
-> before:
-> 
->     axi_src                     1       1       332307692       0 0
->       axi_cg                    1       1       332307692       0 0
->         axi_pre_div             1       1       332307692       0 0
->           axi_post_div          1       1       332307692       0 0
->             ocram_clk           0       0       332307692       0 0
->             main_axi_root_clk   1       1       332307692       0 0
-> 
-> after:
-> 
->     axi_src                     1       1       332307692       0 0
->       axi_cg                    1       1       332307692       0 0
->         axi_pre_div             1       1       332307692       0 0
->           axi_post_div          1       1       332307692       0 0
->             main_axi_root_clk   1       1       332307692       0 0
->               ocram_clk         0       0       332307692       0 0
-> 
-> Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+Hi Priit,
 
-Fixes: tag?
+On 5 July 2017 at 06:04, Priit Laes <plaes@plaes.org> wrote:
+> Introduce a clock controller driver for sun4i A10 and sun7i A20
+> series SoCs.
+>
+> Signed-off-by: Priit Laes <plaes@plaes.org>
+> ---
+>  drivers/clk/sunxi-ng/Kconfig              |   14 +-
+>  drivers/clk/sunxi-ng/Makefile             |    1 +-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.c      | 1448 ++++++++++++++++++++++-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   61 +-
+>  include/dt-bindings/clock/sun4i-a10-ccu.h |  200 +++-
+>  include/dt-bindings/clock/sun7i-a20-ccu.h |   53 +-
+>  include/dt-bindings/reset/sun4i-a10-ccu.h |   67 +-
+>  7 files changed, 1844 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
+>  create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
+>  create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
+>
+[snip]
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> new file mode 100644
+> index 0000000..49052b7
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+[snip]
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +static const char *const hdmi_parents[] = { "pll-video0", "pll-video0-2x",
+> +                                           "pll-video1", "pll-video1-2x" };
+> +static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+> +                                0x150, 0, 4, 24, 2, BIT(31), 0);
+
+hdmi_parents is in the wrong order. The correct order is "pll-video0",
+"pll-video1", "pll-video0-2x", "pll-video1-2x".
+
+Regards,
+Jonathan
