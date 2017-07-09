@@ -1,66 +1,89 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 10 Jul 2017 18:29:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Darren Hart <dvhart@infradead.org>, Carlo Caione <carlo@caione.org>
-Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+Return-Path: <vladimir.barinov@cogentembedded.com>
+Return-Path: <vladimir.barinov@cogentembedded.com>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	linux@endlessm.com,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
-Message-ID: <20170711012908.GO22780@codeaurora.org>
-References: <20170710203801.17496-1-carlo@caione.org>
- <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
- <20170710235403.GB25390@fury>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170710235403.GB25390@fury>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v2 1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
+Date: Sun,  9 Jul 2017 20:39:57 +0300
+Message-Id: <1499621997-12965-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/10, Darren Hart wrote:
-> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra wrote:
-> > 2017-07-10 22:38 GMT+02:00 Carlo Caione <carlo@caione.org>:
-> > >         pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
-> > >         spin_lock_init(&pclk->lock);
-> > >
-> > > +       if (plt_clk_is_enabled(&pclk->hw))
-> > > +               init.flags |= CLK_IGNORE_UNUSED;
+From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-Can you add a comment to the effect of why we're adding ignore
-unused here? That will make it clearer when reading the code a
-year from now why we're not turning these clks off by default and
-also allow us to recall why it isn't marked as a critical clk.
+Update IDT VersaClock 5 driver to support 5P49V5925. This chip has only
+external clock input, four fractional dividers (FODs) and five clock
+outputs (four universal clock outputs and one reference clock output at
+OUT0_SELB_I2C).
 
-Probably, we want some sort of handoff mechanism here so that the
-clk is left on until a driver comes into the picture and acquires
-a handle to this clk?
+Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+---
+Changes in version 2:
+- rebased against patch:
+  [V3,8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
 
-> > > +
-> > >         ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
-> > >         if (ret) {
-> > >                 pclk = ERR_PTR(ret);
-> > > --
-> > > 2.13.2
-> > >
-> > 
-> > It also fixes the issue introduced in commit 282a4e4 ("platform/x86:
-> > Enable Atom PMC platform clocks") that causes no audio on Baytrail.
-> > 
-> > Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
-> Excellent, thank you Enric. Pierre, any objections to this going in to
-> 4.13 now and stable back to 4.12?
-> 
+ drivers/clk/clk-versaclock5.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-You mean v4.11? That's when commit 282a4e4 was released.
-Typically we punt these sorts of things to the next release
-because it isn't a regression in the release that's being worked
-on (i.e. it wasn't introduced in this merge window), but in this
-case it seems like a small enough patch plus it's a bother to
-keep it out of the release to make it alright to merge now.
-
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index c894db2..1808a55 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -129,6 +129,7 @@
+ /* Supported IDT VC5 models. */
+ enum vc5_model {
+ 	IDT_VC5_5P49V5923,
++	IDT_VC5_5P49V5925,
+ 	IDT_VC5_5P49V5933,
+ 	IDT_VC5_5P49V5935,
+ 	IDT_VC6_5P49V6901,
+@@ -686,6 +687,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ 	case IDT_VC5_5P49V5933:
+ 		return (n == 0) ? 0 : 3;
+ 	case IDT_VC5_5P49V5923:
++	case IDT_VC5_5P49V5925:
+ 	case IDT_VC5_5P49V5935:
+ 	case IDT_VC6_5P49V6901:
+ 	default:
+@@ -911,6 +913,13 @@ static int vc5_remove(struct i2c_client *client)
+ 	.flags = 0,
+ };
+ 
++static const struct vc5_chip_info idt_5p49v5925_info = {
++	.model = IDT_VC5_5P49V5925,
++	.clk_fod_cnt = 4,
++	.clk_out_cnt = 5,
++	.flags = 0,
++};
++
+ static const struct vc5_chip_info idt_5p49v5933_info = {
+ 	.model = IDT_VC5_5P49V5933,
+ 	.clk_fod_cnt = 2,
+@@ -934,6 +943,7 @@ static int vc5_remove(struct i2c_client *client)
+ 
+ static const struct i2c_device_id vc5_id[] = {
+ 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
++	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
+ 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+ 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
+ 	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
+@@ -943,6 +953,7 @@ static int vc5_remove(struct i2c_client *client)
+ 
+ static const struct of_device_id clk_vc5_of_match[] = {
+ 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
++	{ .compatible = "idt,5p49v5925", .data = &idt_5p49v5925_info },
+ 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+ 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
+ 	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
