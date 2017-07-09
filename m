@@ -1,51 +1,44 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 08/10] ARM: dts: sun8i: a83t: Add pingroup for 8-bit eMMC on mmc2
-Date: Mon, 24 Jul 2017 21:59:03 +0800
-Message-Id: <20170724135905.28855-9-wens@csie.org>
-In-Reply-To: <20170724135905.28855-1-wens@csie.org>
-References: <20170724135905.28855-1-wens@csie.org>
+Return-Path: <vladimir.barinov@cogentembedded.com>
+Return-Path: <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
+To: Marek Vasut <marek.vasut@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+References: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1499392677-9100-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <57a23b45-9514-00c0-aa92-00a54d68ad2e@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Message-ID: <3e9d24f7-e9e1-7b30-ff66-6a942074350d@cogentembedded.com>
+Date: Sun, 9 Jul 2017 20:38:28 +0300
+MIME-Version: 1.0
+In-Reply-To: <57a23b45-9514-00c0-aa92-00a54d68ad2e@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc2 can support 8-bit eMMC chips, with a dedicated reset line.
+On 09.07.2017 16:31, Marek Vasut wrote:
+> On 07/07/2017 03:57 AM, Vladimir Barinov wrote:
+>> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+>>
+>> IDT VersaClock 5 5P49V5925 has 4 clock outputs
+> In 1/2 you said it has 4 FODs and 5 outputs (and it does have 5 outputs,
+> 4 from FODs and 1 I2C_OUTB).
+That was a copy typo. Thank you for pointing to this.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+>
+>> , 4 fractional dividers.
+>> Input clock source can be taken only from external reference clock.
+>>
+>> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> You might want to rebase this on top of and retest against [1], there
+> are 8 patches in total fixing some stuff and adding VC6 support.
+>
+> [1] https://patchwork.kernel.org/patch/9831797/
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 21ab668abfac..d9b4372dbdf3 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -271,6 +271,15 @@
- 				bias-pull-up;
- 			};
- 
-+			mmc2_8bit_emmc_pins: mmc2-8bit-emmc-pins {
-+				pins = "PC5", "PC6", "PC8", "PC9",
-+				       "PC10", "PC11", "PC12", "PC13",
-+				       "PC14", "PC15", "PC16";
-+				function = "mmc2";
-+				drive-strength = <30>;
-+				bias-pull-up;
-+			};
-+
- 			spdif_tx_pin: spdif-tx-pin {
- 				pins = "PE18";
- 				function = "spdif";
--- 
-2.13.3
+I've  tested your patch series with ULCB board and HDMI display.
+I will rebase 5P49V5925 patches on top of them.
+
+Regards,
+Vladimir
