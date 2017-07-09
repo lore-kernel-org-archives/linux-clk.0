@@ -1,177 +1,91 @@
-Return-Path: <zhang.lyra@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH 1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+References: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1499392668-9062-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <0f450e21-545e-b2e7-ed7c-1df4655cd7e3@gmail.com>
+Date: Sun, 9 Jul 2017 15:29:40 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170630192228.GO22780@codeaurora.org>
-References: <20170618015855.27738-1-chunyan.zhang@spreadtrum.com>
- <20170618015855.27738-8-chunyan.zhang@spreadtrum.com> <20170620013710.GJ4493@codeaurora.org>
- <CAAfSe-sMy3aM9=LwpVivvHKy4hVw3GEd3U-hZe17pXM5fJRxPg@mail.gmail.com>
- <20170630014452.GL22780@codeaurora.org> <CAAfSe-smKqgd42jDAGDA=NtYvRZExNanU7fHrRkT4W-WH-2=ug@mail.gmail.com>
- <20170630192228.GO22780@codeaurora.org>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Mon, 3 Jul 2017 15:41:33 +0800
-Message-ID: <CAAfSe-sw669n2ZwpWpeCDw0S46Pg94xaWZFcSbEE6TYKg2JbLg@mail.gmail.com>
-Subject: Re: [PATCH V1 7/9] clk: sprd: add adjustable pll support
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>, Geng Ren <geng.ren@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1499392668-9062-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 1 July 2017 at 03:22, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/30, Chunyan Zhang wrote:
->> Hi Stephen,
->>
->> On 30 June 2017 at 09:44, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 06/22, Chunyan Zhang wrote:
->> >> On 20 June 2017 at 09:37, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> >> > On 06/18, Chunyan Zhang wrote:
->> >> >> +     pll->factors[member].width
->> >> >> +
->> >> >> +#define pmask(pll, member)                                   \
->> >> >> +     ((pwidth(pll, member)) ?                                \
->> >> >> +     GENMASK(pwidth(pll, member) + pshift(pll, member) - 1,  \
->> >> >> +     pshift(pll, member)) : 0)
->> >> >> +
->> >> >> +#define pinternal(pll, cfg, member)  \
->> >> >> +     (cfg[pindex(pll, member)] & pmask(pll, member))
->> >> >> +
->> >> >> +#define pinternal_val(pll, cfg, member)      \
->> >> >> +     (pinternal(pll, cfg, member) >> pshift(pll, member))
->> >> >> +
->> >> >> +static unsigned long pll_get_refin_rate(struct ccu_pll *pll)
->> >> >
->> >> > pll could be const?
->> >>
->> >> What this function returns is a factor used to calculate the pll rate
->> >> later, I will rename this function in the next iterator.
->> >>
->> >
->> > Rename is fine, but pll can still be marked const?
->>
->> Oh, sorry I misunderstood :)
->> You mean mark the input parameter "pll" const, right?
->
-> Yes.
->
->> >> >> +
->> >> >> +static int ccu_pll_helper_set_rate(struct ccu_pll *pll,
->> >> >> +                                unsigned long rate,
->> >> >> +                                unsigned long parent_rate)
->> >> >> +{
->> >> >> +     u32 mask, shift, width, ibias_val, index, kint, nint;
->> >> >> +     u32 reg_num = pll->regs[0], i = 0;
->> >> >> +     unsigned long refin, fvco = rate;
->> >> >> +     struct reg_cfg *cfg;
->> >> >> +
->> >> >> +     cfg = kcalloc(reg_num, sizeof(*cfg), GFP_KERNEL);
->> >> >> +     if (!cfg)
->> >> >> +             return -ENOMEM;
->> >> >> +
->> >> >> +     refin = pll_get_refin_rate(pll);
->> >> >> +
->> >> >> +     mask = pmask(pll, PLL_PREDIV);
->> >> >> +     index = pindex(pll, PLL_PREDIV);
->> >> >> +     width = pwidth(pll, PLL_PREDIV);
->> >> >> +     if (width && (ccu_pll_readl(pll, index) & mask))
->> >> >> +             refin = refin * 2;
->> >> >> +
->> >> >> +     mask = pmask(pll, PLL_POSTDIV);
->> >> >> +     index = pindex(pll, PLL_POSTDIV);
->> >> >> +     width = pwidth(pll, PLL_POSTDIV);
->> >> >> +     cfg[index].msk = mask;
->> >> >> +     if (width && ((pll->fflag == 1 && fvco <= pll->fvco) ||
->> >> >> +                   (pll->fflag == 0 && fvco > pll->fvco)))
->> >> >> +             cfg[index].val |= mask;
->> >> >> +
->> >> >> +     if (width && fvco <= pll->fvco)
->> >> >> +             fvco = fvco * 2;
->> >> >> +
->> >> >> +     mask = pmask(pll, PLL_DIV_S);
->> >> >> +     index = pindex(pll, PLL_DIV_S);
->> >> >> +     cfg[index].val |= mask;
->> >> >> +     cfg[index].msk |= mask;
->> >> >> +
->> >> >> +     mask = pmask(pll, PLL_SDM_EN);
->> >> >> +     index = pindex(pll, PLL_SDM_EN);
->> >> >> +     cfg[index].val |= mask;
->> >> >> +     cfg[index].msk |= mask;
->> >> >> +
->> >> >> +     nint  = fvco/(refin * CCU_PLL_1M);
->> >> >> +
->> >> >> +     mask = pmask(pll, PLL_NINT);
->> >> >> +     index = pindex(pll, PLL_NINT);
->> >> >> +     shift = pshift(pll, PLL_NINT);
->> >> >> +     cfg[index].val |= (nint << shift) & mask;
->> >> >> +     cfg[index].msk |= mask;
->> >> >> +
->> >> >> +     mask = pmask(pll, PLL_KINT);
->> >> >> +     index = pindex(pll, PLL_KINT);
->> >> >> +     width = pwidth(pll, PLL_KINT);
->> >> >> +     shift = pshift(pll, PLL_KINT);
->> >> >> +#ifndef CONFIG_64BIT
->> >> >> +     i = width < 21 ? 0 : i - 21;
->> >> >> +#endif
->> >> >
->> >> > What's this? Why do we depend on CONFIG_64BIT?
->> >>
->> >> On 32-bit SoCs, the largest width we can support is limited due to the
->> >> limitation of calculation precision.
->> >
->> > Does the hardware width change? Still not clear to me what's
->> > going on here.
->>
->> I heard from my colleague, that because the calculation precision on
->> Spreadtrum's 32-bit SoCs is different from on 64-bit SoCs,  when the
->> width of the value of PLL_KINT is larger than 21, the value is too
->> large to be multiplied on 32-bit Spreadtrum's SoCs.
->
-> It sounds like you're saying that the clk hardware is not
-> changing, but the sizeof(long) is different on 64-bit and 32-bit
-> CPUs so you've added this ifndef here for that.
->
+On 07/07/2017 03:57 AM, Vladimir Barinov wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> 
+> Update IDT VersaClock 5 driver to support 5P49V5925. This chip has only
+> external clock input, four fractional dividers (FODs) and five clock
+> outputs (four universal clock outputs and one reference clock output at
+> OUT0_SELB_I2C).
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
 
-I finally figure out that this #ifndef is indeed not needed, thanks to
-your querying :)
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 
-They told me that on Spreadtrum's 32-bit SoCs, only 20-bit of PLL_KINT
-is used and 3-bit is reserved in order to keep in line with the PLLs
-on 64-bit SoC.
-And we can get the same effect only if we define PLL with the specific
-'width' and 'shift' for PLL_KINT.
+> ---
+>  drivers/clk/clk-versaclock5.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> index ea7d552..88b749d 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -126,6 +126,7 @@
+>  /* Supported IDT VC5 models. */
+>  enum vc5_model {
+>  	IDT_VC5_5P49V5923,
+> +	IDT_VC5_5P49V5925,
+>  	IDT_VC5_5P49V5933,
+>  	IDT_VC5_5P49V5935,
+>  };
+> @@ -595,6 +596,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+>  	case IDT_VC5_5P49V5933:
+>  		return (n == 0) ? 0 : 3;
+>  	case IDT_VC5_5P49V5923:
+> +	case IDT_VC5_5P49V5925:
+>  	case IDT_VC5_5P49V5935:
+>  	default:
+>  		return n;
+> @@ -785,6 +787,13 @@ static int vc5_remove(struct i2c_client *client)
+>  	.flags = 0,
+>  };
+>  
+> +static const struct vc5_chip_info idt_5p49v5925_info = {
+> +	.model = IDT_VC5_5P49V5925,
+> +	.clk_fod_cnt = 4,
+> +	.clk_out_cnt = 5,
+> +	.flags = 0,
+> +};
+> +
+>  static const struct vc5_chip_info idt_5p49v5933_info = {
+>  	.model = IDT_VC5_5P49V5933,
+>  	.clk_fod_cnt = 2,
+> @@ -801,6 +810,7 @@ static int vc5_remove(struct i2c_client *client)
+>  
+>  static const struct i2c_device_id vc5_id[] = {
+>  	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
+> +	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
+>  	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+>  	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
+>  	{ }
+> @@ -809,6 +819,7 @@ static int vc5_remove(struct i2c_client *client)
+>  
+>  static const struct of_device_id clk_vc5_of_match[] = {
+>  	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
+> +	{ .compatible = "idt,5p49v5925", .data = &idt_5p49v5925_info },
+>  	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+>  	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
+>  	{ },
+> 
 
-I'll remove this statement and 'i' from here and
-sprd_pll_helper_recalc_rate() function.
 
->>
->> i = width < 21 ? 0 : i - 20;
->>
->> Here ' i ' is used to adjust 'shift' rather than 'width'  like below (
->> wrote the code back for convenience of understanding)
->>
->> +       kint = DIV_ROUND_CLOSEST(((fvco - refin * nint * CCU_PLL_1M)/10000) *
->> +       ((mask >> (shift + i)) + 1), refin * 100) << i;
->>
->
-> Having the types for all these variables would also be helpful.
->
->   u32 mask, shift, width, kint, nint;
->   unsigned long refin, fvco;
->
-> Why don't we do 64-bit math here instead of 32-bit math? And use
-> DIV_ROUND_CLOSEST_ULL?
-
-Agree, we should use 64-bit math, will address this.
-
-Thanks,
-Chunyan
-
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+-- 
+Best regards,
+Marek Vasut
