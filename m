@@ -1,101 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:44240 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbdGMN5X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2017 09:57:23 -0400
-MIME-Version: 1.0
-In-Reply-To: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
- <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Thu, 13 Jul 2017 19:27:20 +0530
-Message-ID: <CAFp+6iFdogDfKbwWta3AMGu2GuZ9NaR+Dv373N7LwwrF5cFYwQ@mail.gmail.com>
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Sricharan R <sricharan@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, robin.murphy@arm.com
-Cc: joro@8bytes.org, "robh+dt" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Clark <robdclark@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        architt@codeaurora.org,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V3 1/8] clk: vc5: Prevent division by zero on unconfigured outputs
+Date: Sun,  9 Jul 2017 15:28:07 +0200
+Message-Id: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 13, 2017 at 11:05 AM, Sricharan R <sricharan@codeaurora.org> wrote:
-> Hi Vivek,
->
-> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
->> Hi Stephen,
->>
->>
->> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->>> On 07/06, Vivek Gautam wrote:
->>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->>>>                    size_t size)
->>>>   {
->>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->>>> +    size_t ret;
->>>>         if (!ops)
->>>>           return 0;
->>>>   -    return ops->unmap(ops, iova, size);
->>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
->>> Can these map/unmap ops be called from an atomic context? I seem
->>> to recall that being a problem before.
->>
->> That's something which was dropped in the following patch merged in master:
->> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
->>
->> Looks like we don't  need locks here anymore?
->
->  Apart from the locking, wonder why a explicit pm_runtime is needed
->  from unmap. Somehow looks like some path in the master using that
->  should have enabled the pm ?
+In case the initial values of the FOD registers are not configured in
+the OTP or by the bootloader, it is possible that the FOD registers
+will contain zeroes. The code in vc5_fod_recalc_rate() immediately
+feeds the FOD divider value obtained from the FOD registers into the
+div64_u64() and if the FOD divider value is zero, triggers division
+by zero exception.
 
-Right, the master should have done a runtime_get(), and with
-device links the iommu will also resume.
+Check if the FOD divider value is zero and return the frequency of
+the FOD output as 0 Hz if it is so. This prevents the division by
+zero exception.
 
-The master will call the unmap when it is attached to the iommu
-and therefore the iommu should be in resume state.
-We shouldn't have an unmap without the master attached anyways.
-Will investigate this further if we need the pm_runtime() calls
-around unmap or not.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+V2: None
+V3: None
+---
+ drivers/clk/clk-versaclock5.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards
-Vivek
-
->
-> Regards,
->  Sricharan
->
-> --
-> "QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
->
-> ---
-> This email has been checked for viruses by Avast antivirus software.
-> https://www.avast.com/antivirus
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index ea7d552a2f2b..60bf4afb51bd 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw *hw,
+ 	div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
+ 		  (od_frc[2] << 6) | (od_frc[3] >> 2);
+ 
++	/* Avoid division by zero if the output is not configured. */
++	if ((div_int == 0) && (div_frc == 0))
++		return 0;
++
+ 	/* The PLL divider has 12 integer bits and 30 fractional bits */
+ 	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + div_frc);
+ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
