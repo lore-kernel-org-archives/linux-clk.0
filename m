@@ -1,85 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:48548 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750964AbdGZAsc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2017 20:48:32 -0400
-Date: Tue, 25 Jul 2017 17:48:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
- bindings
-Message-ID: <20170726004830.GI2146@codeaurora.org>
-References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
- <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
- <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
- <20170721204439.GJ19878@codeaurora.org>
- <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
- <1500897650.2401.1.camel@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500897650.2401.1.camel@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V3 8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
+Date: Sun,  9 Jul 2017 15:28:14 +0200
+Message-Id: <20170709132814.2339-8-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/24, Jerome Brunet wrote:
-> On Mon, 2017-07-24 at 13:47 +0200, Neil Armstrong wrote:
-> > 
-> > Hi Rob, Stephen,
-> > 
-> > Thanks for your feedback, but on these Amlogic platforms, the AO register bank
-> > is
-> > filled with interleaved registers used for various purposes.
-> > 
-> > For instance, the first 1k of registers are :
-> > 
-> > 0-c RTI_STATUS
-> > c-14 RTI_PWR_CNTL
-> > 14-1c PIN_MUX
-> > 1c RTI_STATUS
-> > 24-30 GPIO
-> > 30 JTAG_CONFIG
-> > 34 WD
-> > 38-40 CPU_CTRL
-> > 40 RTI_GEN_CTRL
-> > 44 CPU_CTRL
-> > 4c-58 TIMER
-> > 58 OSCIN
-> > 60 AHB2DDR
-> > ...
-> > 
-> > 
-> > And so on, and the clock related registers are split among this space.
-> > 
-> > For sure, this could be declared as an system controller node, but this would
-> > imply completely
-> > re-designing the actual clock driver and drop the actual bindings.
-> > (and with re-writting the clock gate code to use regmap registers access)
+Update IDT VersaClock 5 driver to support IDT VersaClock 6 5P49V6901.
+This chip has two clock inputs (external XTAL or external CLKIN), four
+fractional dividers (FODs) and five clock outputs (four universal clock
+outputs and one reference clock output at OUT0_SELB_I2C).
 
-I'm not suggesting a sycon node or binding usage here. There's an
-"always on" hw block here that could be implemented as an MFD
-driver that binds and creates a clk subdevice and whatever else
-is sitting in here. Those subdevices could be informed of the
-register base by knowing their parent driver is an MFD with a
-certain driver data structure inside and then get at an __iomem
-pointer through the parent's driver data. Or they could use a
-regmap approach and rewrite a bunch of code. Or there could be
-just a clk driver that binds to this node for now until a later
-time that other features are needed.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+V2: - Reword the commit message to explicitly mention the VC5 driver
+      and the added support for VC6.
+    - Mention VC6 in Kconfig
+V3: None
+---
+ drivers/clk/Kconfig           |  6 +++---
+ drivers/clk/clk-versaclock5.c | 11 +++++++++++
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-> 
-> Maybe it is time to investigate having the regmap clock from qcom available to
-> every other platform ?
-
-I think we have regmap clk duplicated a couple times in the
-drivers/clk/ directory now. Not sure how this is related, except
-for that there looks to be a desire to use a syscon binding here
-and that forces regmap on drivers?
-
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index d406b087553f..99adcb0d799c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -210,14 +210,14 @@ config COMMON_CLK_OXNAS
+ 	  Support for the OXNAS SoC Family clocks.
+ 
+ config COMMON_CLK_VC5
+-	tristate "Clock driver for IDT VersaClock5 devices"
++	tristate "Clock driver for IDT VersaClock 5,6 devices"
+ 	depends on I2C
+ 	depends on OF
+ 	select REGMAP_I2C
+ 	help
+ 	---help---
+-	  This driver supports the IDT VersaClock5 programmable clock
+-	  generator.
++	  This driver supports the IDT VersaClock 5 and VersaClock 6
++	  programmable clock generators.
+ 
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index d0406b62133a..c894db298cbd 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -131,6 +131,7 @@ enum vc5_model {
+ 	IDT_VC5_5P49V5923,
+ 	IDT_VC5_5P49V5933,
+ 	IDT_VC5_5P49V5935,
++	IDT_VC6_5P49V6901,
+ };
+ 
+ /* Structure to describe features of a particular VC5 model */
+@@ -686,6 +687,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ 		return (n == 0) ? 0 : 3;
+ 	case IDT_VC5_5P49V5923:
+ 	case IDT_VC5_5P49V5935:
++	case IDT_VC6_5P49V6901:
+ 	default:
+ 		return n;
+ 	}
+@@ -923,10 +925,18 @@ static const struct vc5_chip_info idt_5p49v5935_info = {
+ 	.flags = VC5_HAS_INTERNAL_XTAL,
+ };
+ 
++static const struct vc5_chip_info idt_5p49v6901_info = {
++	.model = IDT_VC6_5P49V6901,
++	.clk_fod_cnt = 4,
++	.clk_out_cnt = 5,
++	.flags = VC5_HAS_PFD_FREQ_DBL,
++};
++
+ static const struct i2c_device_id vc5_id[] = {
+ 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
+ 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+ 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
++	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, vc5_id);
+@@ -935,6 +945,7 @@ static const struct of_device_id clk_vc5_of_match[] = {
+ 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
+ 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+ 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
++	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
