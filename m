@@ -1,63 +1,49 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 7 Jul 2017 08:56:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 7/8] clk: vc5: Add bindings for IDT VersaClock
- 5P49V6901
-Message-ID: <20170707135619.l6lgvfrhqvrgu2hb@rob-hp-laptop>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
- <20170701200459.11505-7-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170701200459.11505-7-marek.vasut+renesas@gmail.com>
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V3 2/8] clk: vc5: Fix trivial typo
+Date: Sun,  9 Jul 2017 15:28:08 +0200
+Message-Id: <20170709132814.2339-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jul 01, 2017 at 10:04:57PM +0200, Marek Vasut wrote:
-> IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
-> Input clock source can be taken from either external crystal or from
-> external reference clock.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> ---
-> V2: Edit the top of the DT binding document to mention VersaClock 6
-> ---
->  .../devicetree/bindings/clock/idt,versaclock5.txt   | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> index 53d7e50ed875..115ab5f75c5d 100644
-> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> @@ -1,24 +1,26 @@
-> -Binding for IDT VersaClock5 programmable i2c clock generator.
-> +Binding for IDT VersaClock 5,6 programmable i2c clock generators.
->  
-> -The IDT VersaClock5 are programmable i2c clock generators providing
-> -from 3 to 12 output clocks.
-> +The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
-> +generators providing from 3 to 12 output clocks.
->  
->  ==I2C device node==
->  
->  Required properties:
->  - compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
-> -		"idt,5p49v5935".
-> +		"idt,5p49v5935" , "idt,5p49v6901".
+Fix trivial typo in vc5_clk_out_unprepare() , s/Enable/Disable/ .
 
-Please reformat to 1 per line. With that,
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+V2: None
+V3: None
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 60bf4afb51bd..d835d48cf14d 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -520,7 +520,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
+ 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 
+-	/* Enable the clock buffer */
++	/* Disable the clock buffer */
+ 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+ 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
+ }
+-- 
+2.11.0
