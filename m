@@ -1,82 +1,167 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH] clk: si5351: Apply PLL soft reset before enabling the
- outputs
-To: Stephen Boyd <sboyd@codeaurora.org>, Sergej Sawazki <sergej@taudac.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, ce3a@gmx.de,
- Rabeeh Khoury <rabeeh@solid-run.com>, Russell King <linux@armlinux.org.uk>
-References: <1501010261-7130-1-git-send-email-sergej@taudac.com>
- <20170726011112.GK2146@codeaurora.org>
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Message-ID: <5b9c2982-c376-ce39-e3aa-09c0feefd63c@gmail.com>
-Date: Wed, 26 Jul 2017 06:43:05 +0200
-In-Reply-To: <20170726011112.GK2146@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexey Firago <alexey_firago@mentor.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V3 6/8] clk: vc5: Add support for the input frequency doubler
+Date: Sun,  9 Jul 2017 15:28:12 +0200
+Message-Id: <20170709132814.2339-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26.07.2017 03:11, Stephen Boyd wrote:
-> On 07/25, Sergej Sawazki wrote:
->> The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
->> before enabling the outputs [1]. This is required to get a deterministic
->> phase relationship between the output clocks.
->>
->> Without the PLL reset, the phase offset beween the clocks is unpredictable.
->>
->> References:
->> [1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
->>     Figure 12 ("I2C Programming Procedure")
->>
->> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
->> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
->> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
->> ---
-> 
-> This is similar to commit 6dc669a22c77 (clk: si5351: Add PLL soft
-> reset, 2015-11-20)? But I think that commit was causing some
-> problem for Russell King and there was going to be a patch to
-> change it but nothing has materialized on the list. Unless this
-> is that patch?
+The VersaClock 6 has an input frequency doubler between the input
+clock mux and the predivider. Add new capability flag and support
+for this frequency doubler block into the driver.
 
-Sergej, Stephen,
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+on Salvator-XS with the display LVDS output.
+---
+V2: None
+V3: None
+---
+ drivers/clk/clk-versaclock5.c | 78 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 77 insertions(+), 1 deletion(-)
 
-resetting both PLLs in this driver will not happen as it does have
-an influence on the other PLL and all clocks on it.
-
-I understand that some of the functions of the clk gen will not be
-available with this driver but it is not the use case of this driver.
-
-So, NAK on this one.
-
-The patch you are talking about is still pending but I think I just
-send it in a few days.
-
-Sebastian
-
-> Does the other reset in this driver need to be removed? At the
-> least, it may be a good idea to combine the two places where
-> CLK_POWERDOWN is cleared to also have this reset part.
-> 
->>  drivers/clk/clk-si5351.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
->> index 255d0fe..6cca425 100644
->> --- a/drivers/clk/clk-si5351.c
->> +++ b/drivers/clk/clk-si5351.c
->> @@ -905,6 +905,15 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
->>  
->>  	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
->>  			SI5351_CLK_POWERDOWN, 0);
->> +
->> +	/*
->> +	 * Reset the PLLs before enabling the outputs to get a deterministic
->> +	 * phase relationship between the output clocks. Otherwise, the phase
->> +	 * offset beween the clocks is unpredictable.
->> +	 */
->> +	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
->> +			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
->> +
->>  	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
->>  			(1 << hwdata->num), 0);
->>  	return 0;
-> 
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 453c9f721b78..d0406b62133a 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -57,6 +57,7 @@
+ #define VC5_PRIM_SRC_SHDN			0x10
+ #define VC5_PRIM_SRC_SHDN_EN_XTAL		BIT(7)
+ #define VC5_PRIM_SRC_SHDN_EN_CLKIN		BIT(6)
++#define VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ	BIT(3)
+ #define VC5_PRIM_SRC_SHDN_SP			BIT(1)
+ #define VC5_PRIM_SRC_SHDN_EN_GBL_SHDN		BIT(0)
+ 
+@@ -122,6 +123,8 @@
+ /* flags to describe chip features */
+ /* chip has built-in oscilator */
+ #define VC5_HAS_INTERNAL_XTAL	BIT(0)
++/* chip has PFD requency doubler */
++#define VC5_HAS_PFD_FREQ_DBL	BIT(1)
+ 
+ /* Supported IDT VC5 models. */
+ enum vc5_model {
+@@ -157,6 +160,7 @@ struct vc5_driver_data {
+ 	struct clk		*pin_clkin;
+ 	unsigned char		clk_mux_ins;
+ 	struct clk_hw		clk_mux;
++	struct clk_hw		clk_mul;
+ 	struct clk_hw		clk_pfd;
+ 	struct vc5_hw_data	clk_pll;
+ 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+@@ -167,6 +171,10 @@ static const char * const vc5_mux_names[] = {
+ 	"mux"
+ };
+ 
++static const char * const vc5_dbl_names[] = {
++	"dbl"
++};
++
+ static const char * const vc5_pfd_names[] = {
+ 	"pfd"
+ };
+@@ -264,6 +272,54 @@ static const struct clk_ops vc5_mux_ops = {
+ 	.get_parent	= vc5_mux_get_parent,
+ };
+ 
++static unsigned long vc5_dbl_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct vc5_driver_data *vc5 =
++		container_of(hw, struct vc5_driver_data, clk_mul);
++	unsigned int premul;
++
++	regmap_read(vc5->regmap, VC5_PRIM_SRC_SHDN, &premul);
++	if (premul & VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ)
++		parent_rate *= 2;
++
++	return parent_rate;
++}
++
++static long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *parent_rate)
++{
++	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
++		return rate;
++	else
++		return -EINVAL;
++}
++
++static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct vc5_driver_data *vc5 =
++		container_of(hw, struct vc5_driver_data, clk_mul);
++	u32 mask;
++
++	if ((parent_rate * 2) == rate)
++		mask = VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ;
++	else
++		mask = 0;
++
++	regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN,
++			   VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ,
++			   mask);
++
++	return 0;
++}
++
++static const struct clk_ops vc5_dbl_ops = {
++	.recalc_rate	= vc5_dbl_recalc_rate,
++	.round_rate	= vc5_dbl_round_rate,
++	.set_rate	= vc5_dbl_set_rate,
++};
++
+ static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
+ 					 unsigned long parent_rate)
+ {
+@@ -706,12 +762,32 @@ static int vc5_probe(struct i2c_client *client,
+ 		goto err_clk;
+ 	}
+ 
++	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
++		/* Register frequency doubler */
++		memset(&init, 0, sizeof(init));
++		init.name = vc5_dbl_names[0];
++		init.ops = &vc5_dbl_ops;
++		init.flags = CLK_SET_RATE_PARENT;
++		init.parent_names = vc5_mux_names;
++		init.num_parents = 1;
++		vc5->clk_mul.init = &init;
++		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
++		if (ret) {
++			dev_err(&client->dev, "unable to register %s\n",
++				init.name);
++			goto err_clk;
++		}
++	}
++
+ 	/* Register PFD */
+ 	memset(&init, 0, sizeof(init));
+ 	init.name = vc5_pfd_names[0];
+ 	init.ops = &vc5_pfd_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = vc5_mux_names;
++	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL)
++		init.parent_names = vc5_dbl_names;
++	else
++		init.parent_names = vc5_mux_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_pfd.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
+-- 
+2.11.0
