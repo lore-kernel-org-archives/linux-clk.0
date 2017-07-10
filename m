@@ -1,102 +1,121 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-References: <20170710203801.17496-1-carlo@caione.org>
- <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
- <20170710235403.GB25390@fury>
- <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
- <1500904960.29303.204.camel@linux.intel.com>
- <d92350f4-8bb3-85cb-4c2b-a44ab794c29a@linux.intel.com>
- <CAFqH_52ZaQ=JP==wAgsa3FKLZi0N4+PCMdYUBBL-nvKkoLDKMA@mail.gmail.com>
- <20eea5c5-9f95-3273-97f6-193c56fe59fb@linux.intel.com>
- <CAFqH_528K-gG5=acNVheYX659UmEyO-5mzM5xxGfZThKyE=m+A@mail.gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Darren Hart <dvhart@infradead.org>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>, linux@endlessm.com,
- Carlo Caione <carlo@endlessm.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <f8aacc91-412d-5f38-5118-59b2955fd9b3@linux.intel.com>
-Date: Mon, 24 Jul 2017 18:44:20 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 9 Jul 2017 22:37:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: joro@8bytes.org, robin.murphy@arm.com, mark.rutland@arm.com,
+        will.deacon@arm.com, m.szyprowski@samsung.com,
+        sboyd@codeaurora.org, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V4 5/6] iommu/arm-smmu: Add support for MMU40x/500 clocks
+Message-ID: <20170710033755.fq36tl26hr42s5j2@rob-hp-laptop>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-6-git-send-email-vivek.gautam@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAFqH_528K-gG5=acNVheYX659UmEyO-5mzM5xxGfZThKyE=m+A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1499333825-7658-6-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7/24/17 6:33 PM, Enric Balletbo Serra wrote:
-> Hi,
->
-> 2017-07-24 18:26 GMT+02:00 Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com>:
->> On 7/24/17 5:02 PM, Enric Balletbo Serra wrote:
->>>
->>> 2017-07-24 16:07 GMT+02:00 Pierre-Louis Bossart
->>> <pierre-louis.bossart@linux.intel.com>:
->>>>
->>>> On 7/24/17 4:02 PM, Andy Shevchenko wrote:
->>>>>
->>>>>
->>>>> On Mon, 2017-07-24 at 15:49 +0200, Pierre-Louis Bossart wrote:
->>>>>>
->>>>>>
->>>>>> On 7/11/17 1:54 AM, Darren Hart wrote:
->>>>>>>
->>>>>>>
->>>>>>> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra
->>>>>>> wrote:
->>>>>
->>>>>
->>>>>
->>>>>>>> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Excellent, thank you Enric. Pierre, any objections to this going in
->>>>>>> to
->>>>>>> 4.13 now and stable back to 4.12?
->>>>>>
->>>>>>
->>>>>>
->>>>>> I saw an update of this patch being merged while I was away on an
->>>>>> extended summer break, but out of curiosity what was the problem with
->>>>>> no
->>>>>> audio on Baytrail? the code was added precisely to add support for
->>>>>> 19.2
->>>>>> MHz on Baytrail and finally solve audio issues. I have no reports of
->>>>>> broken functionality with this 282a4e4 commit... Enric, do you have a
->>>>>> bugzilla or pointers?
->>>>>
->>>>>
->>>>>
->>>>> TL;DR: We should respect firmware settings before blindly shut down
->>>>> "unused" resources. (We used to have similar stuff in GPIO/pinctrl
->>>>> driver for direct IRQ pins, where we shut up the pins which are used
->>>>> directly by IOAPIC)
->>>>
->>>>
->>>>
->>>> I wasn't arguing against those patches, just curious as to which
->>>> platforms
->>>> were broken by setting pmc_plat_3 blindly in the driver.
->>>>
->>>
->>> After your patch the clock framework disables the required clocks
->>> because the driver does not request then and audio stopped to
->>> work.This is not the solution as is the codec who *must* request these
->>> clocks. We should implement this in the codec driver.. But now, at
->>> least, if firmware enables the clocks audio continues working on
->>> Baytrail.
->>
->>
->> Clocks are not enabled/managed in any of the BIOSes I've seen for Baytrail,
->> are you talking about a Chromebook by any chance with the legacy non-DPCM
->> byt-max98080 driver?
->>
->
-> Yes the issue is with a Chromebook with the legacy byt-max98080 driver.
+On Thu, Jul 06, 2017 at 03:07:04PM +0530, Vivek Gautam wrote:
+> From: Sricharan R <sricharan@codeaurora.org>
+> 
+> The MMU400x/500 is the implementation of the SMMUv2
+> arch specification. It is split in to two blocks
+> TBU, TCU. TBU caches the page table, instantiated
+> for each master locally, clocked by the TBUn_clk.
+> TCU manages the address translation with PTW and has
+> the programming interface as well, clocked using the
+> TCU_CLK. The TBU can also be sharing the same clock
+> domain as TCU, in which case both are clocked using
+> the TCU_CLK.
 
-ah, yes I never tested on those (couldn't make the device boot).
-We may be able to do more simplifications, in machine drivers I test for 
-Baytrail vs. Cherrytrail to manage the clocks at the kernel level, but 
-maybe I should just look at what the firmware does and use the kernel 
-clock management as a fallback.
+No TBU clock below. When is it shared or not? If that's an integration 
+option then the binding should always have a TBU clock with the same 
+parent as the TCU_CLK.
+
+> This defines the clock bindings for the same and adds
+> the clock names to compatible data.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> [vivek: clock rework and cleanup]
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  .../devicetree/bindings/iommu/arm,smmu.txt         | 24 ++++++++++++++++++++++
+>  drivers/iommu/arm-smmu.c                           | 12 ++++++++++-
+>  2 files changed, 35 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> index 8a6ffce12af5..00331752d355 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> @@ -71,6 +71,26 @@ conditions.
+>                    or using stream matching with #iommu-cells = <2>, and
+>                    may be ignored if present in such cases.
+>  
+> +- clock-names:    Should be "tcu" and "iface" for "arm,mmu-400",
+> +                  "arm,mmu-401" and "arm,mmu-500"
+> +
+> +                  "tcu" clock is required for smmu's register access using the
+> +                  programming interface and ptw for downstream bus access. This
+> +                  clock is also used for access to the TBU connected to the
+> +                  master locally. Sometimes however, TBU is clocked along with
+> +                  the master.
+> +
+> +                  "iface" clock is required to access the TCU's programming
+> +                  interface, apart from the "tcu" clock.
+> +
+> +- clocks:         Phandles for respective clocks described by clock-names.
+> +
+> +- power-domains:  Phandles to SMMU's power domain specifier. This is
+> +                  required even if SMMU belongs to the master's power
+> +                  domain, as the SMMU will have to be enabled and
+> +                  accessed before master gets enabled and linked to its
+> +                  SMMU.
+> +
+>  ** Deprecated properties:
+>  
+>  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+> @@ -95,6 +115,10 @@ conditions.
+>                               <0 36 4>,
+>                               <0 37 4>;
+>                  #iommu-cells = <1>;
+> +                clocks = <&gcc GCC_SMMU_CFG_CLK>,
+> +                         <&gcc GCC_APSS_TCU_CLK>;
+> +
+> +		clock-names = "iface", "tcu";
+>          };
+>  
+>          /* device with two stream IDs, 0 and 7 */
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 75567d9698ab..7bb09280fa11 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -1947,9 +1947,19 @@ struct arm_smmu_match_data {
+>  ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
+>  ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+>  ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+> -ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+>  ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
+>  
+> +static const char * const arm_mmu500_clks[] = {
+> +	"tcu", "iface",
+> +};
+> +
+> +static const struct arm_smmu_match_data arm_mmu500 = {
+> +	.version = ARM_SMMU_V2,
+> +	.model = ARM_MMU500,
+> +	.clks = arm_mmu500_clks,
+> +	.num_clks = ARRAY_SIZE(arm_mmu500_clks),
+> +};
+> +
+>  static const struct of_device_id arm_smmu_of_match[] = {
+>  	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+>  	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
