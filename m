@@ -1,176 +1,47 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v4 6/9] clk: at91: clk-generated: make gclk determine
- audio_pll rate
-To: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<alexandre.belloni@free-electrons.com>, <linux@armlinux.org.uk>,
-	<boris.brezillon@free-electrons.com>, <perex@perex.cz>, <tiwai@suse.com>
-CC: <cyrille.pitchen@wedev4u.fr>, <thomas.petazzoni@free-electrons.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
- <4ccbc456b4812f4e91cc446914759781e6933a48.1500968090.git-series.quentin.schulz@free-electrons.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <a3a01f76-11b8-34cb-824d-329e7acdfaf5@microchip.com>
-Date: Tue, 25 Jul 2017 17:37:37 +0200
+Return-Path: <oliver@schinagl.nl>
+Subject: Re: [linux-sunxi] [PATCH v5 6/6] ARM: sun4i: Convert to CCU
+To: plaes@plaes.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <796d0ecb0fe0204891387910b8222bfa43a93326.1499197129.git-series.plaes@plaes.org>
+Cc: linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>
+From: Olliver Schinagl <oliver@schinagl.nl>
+Message-ID: <c52b7297-76c6-1f87-e87d-149a3f469bef@schinagl.nl>
+Date: Mon, 10 Jul 2017 13:44:18 +0200
 MIME-Version: 1.0
-In-Reply-To: <4ccbc456b4812f4e91cc446914759781e6933a48.1500968090.git-series.quentin.schulz@free-electrons.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+In-Reply-To: <796d0ecb0fe0204891387910b8222bfa43a93326.1499197129.git-series.plaes@plaes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/07/2017 at 09:37, Quentin Schulz wrote:
-> This allows gclk to determine audio_pll rate and set the parent rate
-> accordingly.
-> 
-> However, there are multiple children clocks that could technically
-> change the rate of audio_pll (via gck). With the rate locking, the first
-> consumer to enable the clock will be the one definitely setting the rate
-> of the clock.
-> 
-> Since audio IPs are most likely to request the same rate, we enforce
-> that the only clks able to modify gck rate are those of audio IPs.
-> 
-> To remain consistent, we deny other clocks to be children of audio_pll.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Hi Pritt,
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
+On 04-07-17 22:05, Priit Laes wrote:
+> Convert sun4i-a10.dtsi to new CCU driver.
+>
+> Tested on Gemei G9 tablet.
+>
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 > ---
->  drivers/clk/at91/clk-generated.c | 63 +++++++++++++++++++++++++++++----
->  1 file changed, 57 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index 7260e49..3348136 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -26,6 +26,13 @@
->  #define GENERATED_SOURCE_MAX	6
->  #define GENERATED_MAX_DIV	255
->  
-> +#define GCK_ID_SSC0		43
-> +#define GCK_ID_SSC1		44
-> +#define GCK_ID_I2S0		54
-> +#define GCK_ID_I2S1		55
-> +#define GCK_ID_CLASSD		59
-> +#define GCK_INDEX_DT_AUDIO_PLL	5
-> +
->  struct clk_generated {
->  	struct clk_hw hw;
->  	struct regmap *regmap;
-> @@ -34,6 +41,7 @@ struct clk_generated {
->  	u32 id;
->  	u32 gckdiv;
->  	u8 parent_id;
-> +	bool audio_pll_allowed;
->  };
->  
->  #define to_clk_generated(hw) \
-> @@ -126,15 +134,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  {
->  	struct clk_generated *gck = to_clk_generated(hw);
->  	struct clk_hw *parent = NULL;
-> +	struct clk_rate_request req_parent = *req;
->  	long best_rate = -EINVAL;
-> -	unsigned long min_rate;
-> +	unsigned long min_rate, parent_rate;
->  	int best_diff = -1;
->  	int i;
-> +	u32 div;
->  
-> -	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-> -		u32 div;
-> -		unsigned long parent_rate;
-> -
-> +	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
->  		parent = clk_hw_get_parent_by_index(hw, i);
->  		if (!parent)
->  			continue;
-> @@ -150,11 +157,38 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  		clk_generated_best_diff(req, parent, parent_rate, div,
->  					&best_diff, &best_rate);
->  
-> +		if (!best_diff)
-> +			break;
-> +	}
-> +
-> +	/*
-> +	 * The audio_pll rate can be modified, unlike the five others clocks
-> +	 * that should never be altered.
-> +	 * The audio_pll can technically be used by multiple consumers. However,
-> +	 * with the rate locking, the first consumer to enable to clock will be
-> +	 * the one definitely setting the rate of the clock.
-> +	 * Since audio IPs are most likely to request the same rate, we enforce
-> +	 * that the only clks able to modify gck rate are those of audio IPs.
-> +	 */
-> +
-> +	if (!gck->audio_pll_allowed)
-> +		goto end;
-> +
-> +	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
-> +	if (!parent)
-> +		goto end;
-> +
-> +	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
-> +		req_parent.rate = req->rate * div;
-> +		__clk_determine_rate(parent, &req_parent);
-> +		clk_generated_best_diff(req, parent, req_parent.rate, div,
-> +					&best_diff, &best_rate);
->  
->  		if (!best_diff)
->  			break;
->  	}
->  
-> +end:
->  	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
->  		 __func__, best_rate,
->  		 __clk_get_name((req->best_parent_hw)->clk),
-> @@ -264,7 +298,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
->  	init.ops = &generated_ops;
->  	init.parent_names = parent_names;
->  	init.num_parents = num_parents;
-> -	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
-> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
-> +		CLK_SET_RATE_PARENT;
->  
->  	gck->id = id;
->  	gck->hw.init = &init;
-> @@ -296,6 +331,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
->  	struct device_node *gcknp;
->  	struct clk_range range = CLK_RANGE(0, 0);
->  	struct regmap *regmap;
-> +	struct clk_generated *gck;
->  
->  	num_parents = of_clk_get_parent_count(np);
->  	if (num_parents == 0 || num_parents > GENERATED_SOURCE_MAX)
-> @@ -327,6 +363,21 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
->  		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock, name,
->  						  parent_names, num_parents,
->  						  id, &range);
-> +
-> +		gck = to_clk_generated(hw);
-> +
-> +		if (of_device_is_compatible(np,
-> +					    "atmel,sama5d2-clk-generated")) {
-> +			if (gck->id == GCK_ID_SSC0 || gck->id == GCK_ID_SSC1 ||
-> +			    gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
-> +			    gck->id == GCK_ID_CLASSD)
-> +				gck->audio_pll_allowed = true;
-> +			else
-> +				gck->audio_pll_allowed = false;
-> +		} else {
-> +			gck->audio_pll_allowed = false;
-> +		}
-> +
->  		if (IS_ERR(hw))
->  			continue;
->  
-> 
+>  arch/arm/boot/dts/sun4i-a10.dtsi | 646 +++-----------------------------
+>  1 file changed, 73 insertions(+), 573 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+> index 41c2579..fc23c41 100644
+> --- a/arch/arm/boot/dts/sun4i-a10.dtsi
+> +++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+> @@ -45,7 +45,6 @@
+>
+>  #include <dt-bindings/thermal/thermal.h>
+>
+> -#include <dt-bindings/clock/sun4i-a10-pll2.h>
+>  #include <dt-bindings/dma/sun4i-a10.h>
 
+I think the same includes are missing here as well?
 
--- 
-Nicolas Ferre
+Olliver
