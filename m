@@ -1,166 +1,214 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:52012 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750819AbdGNTgf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jul 2017 15:36:35 -0400
-Date: Fri, 14 Jul 2017 20:36:38 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Rob Clark <robdclark@gmail.com>
-Cc: Sricharan R <sricharan@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-Message-ID: <20170714193637.GI26488@arm.com>
-References: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
- <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
- <60a56ae6-ed9d-57cd-130f-5bd9d32d4d58@codeaurora.org>
- <CAF6AEGvDpRChNQAzqgRFwaQcH=4JCwfKcvj2GQGgQOnO2_A1sg@mail.gmail.com>
- <20170714170743.GA26488@arm.com>
- <CAF6AEGtMiVJvSrPXmQppM2NwS3fsXM8Vep3g0PwQK7SH4N=3xQ@mail.gmail.com>
- <20170714180615.GC26488@arm.com>
- <CAF6AEGubgNiq5fJ9LaBULvW3450iY4-u0ecpp_a6xyMvRx9kug@mail.gmail.com>
- <20170714190113.GE26488@arm.com>
- <CAF6AEGsjPQa_CviY4w-uEvH95rC6VkR+u7s7knVxTDW_8V-t_Q@mail.gmail.com>
+Return-Path: <oliver@schinagl.nl>
+Subject: Re: [linux-sunxi] [PATCH v5 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU
+ driver
+To: plaes@plaes.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
+Cc: linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>
+From: Olliver Schinagl <oliver@schinagl.nl>
+Message-ID: <5099cd90-e019-8a65-38e5-02b3c939a7a8@schinagl.nl>
+Date: Mon, 10 Jul 2017 11:45:32 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAF6AEGsjPQa_CviY4w-uEvH95rC6VkR+u7s7knVxTDW_8V-t_Q@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 14, 2017 at 03:34:42PM -0400, Rob Clark wrote:
-> On Fri, Jul 14, 2017 at 3:01 PM, Will Deacon <will.deacon@arm.com> wrote:
-> > On Fri, Jul 14, 2017 at 02:25:45PM -0400, Rob Clark wrote:
-> >> On Fri, Jul 14, 2017 at 2:06 PM, Will Deacon <will.deacon@arm.com> wrote:
-> >> > On Fri, Jul 14, 2017 at 01:42:13PM -0400, Rob Clark wrote:
-> >> >> On Fri, Jul 14, 2017 at 1:07 PM, Will Deacon <will.deacon@arm.com> wrote:
-> >> >> > On Thu, Jul 13, 2017 at 10:55:10AM -0400, Rob Clark wrote:
-> >> >> >> On Thu, Jul 13, 2017 at 9:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
-> >> >> >> > Hi,
-> >> >> >> >
-> >> >> >> > On 7/13/2017 5:20 PM, Rob Clark wrote:
-> >> >> >> >> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
-> >> >> >> >>> Hi Vivek,
-> >> >> >> >>>
-> >> >> >> >>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
-> >> >> >> >>>> Hi Stephen,
-> >> >> >> >>>>
-> >> >> >> >>>>
-> >> >> >> >>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
-> >> >> >> >>>>> On 07/06, Vivek Gautam wrote:
-> >> >> >> >>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
-> >> >> >> >>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
-> >> >> >> >>>>>>                    size_t size)
-> >> >> >> >>>>>>   {
-> >> >> >> >>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
-> >> >> >> >>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> >> >> >> >>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
-> >> >> >> >>>>>> +    size_t ret;
-> >> >> >> >>>>>>         if (!ops)
-> >> >> >> >>>>>>           return 0;
-> >> >> >> >>>>>>   -    return ops->unmap(ops, iova, size);
-> >> >> >> >>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
-> >> >> >> >>>>> Can these map/unmap ops be called from an atomic context? I seem
-> >> >> >> >>>>> to recall that being a problem before.
-> >> >> >> >>>>
-> >> >> >> >>>> That's something which was dropped in the following patch merged in master:
-> >> >> >> >>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
-> >> >> >> >>>>
-> >> >> >> >>>> Looks like we don't  need locks here anymore?
-> >> >> >> >>>
-> >> >> >> >>>  Apart from the locking, wonder why a explicit pm_runtime is needed
-> >> >> >> >>>  from unmap. Somehow looks like some path in the master using that
-> >> >> >> >>>  should have enabled the pm ?
-> >> >> >> >>>
-> >> >> >> >>
-> >> >> >> >> Yes, there are a bunch of scenarios where unmap can happen with
-> >> >> >> >> disabled master (but not in atomic context).  On the gpu side we
-> >> >> >> >> opportunistically keep a buffer mapping until the buffer is freed
-> >> >> >> >> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
-> >> >> >> >> an exported dmabuf while some other driver holds a reference to it
-> >> >> >> >> (which can be dropped when the v4l2 device is suspended).
-> >> >> >> >>
-> >> >> >> >> Since unmap triggers tbl flush which touches iommu regs, the iommu
-> >> >> >> >> driver *definitely* needs a pm_runtime_get_sync().
-> >> >> >> >
-> >> >> >> >  Ok, with that being the case, there are two things here,
-> >> >> >> >
-> >> >> >> >  1) If the device links are still intact at these places where unmap is called,
-> >> >> >> >     then pm_runtime from the master would setup the all the clocks. That would
-> >> >> >> >     avoid reintroducing the locking indirectly here.
-> >> >> >> >
-> >> >> >> >  2) If not, then doing it here is the only way. But for both cases, since
-> >> >> >> >     the unmap can be called from atomic context, resume handler here should
-> >> >> >> >     avoid doing clk_prepare_enable , instead move the clk_prepare to the init.
-> >> >> >> >
-> >> >> >>
-> >> >> >> I do kinda like the approach Marek suggested.. of deferring the tlb
-> >> >> >> flush until resume.  I'm wondering if we could combine that with
-> >> >> >> putting the mmu in a stalled state when we suspend (and not resume the
-> >> >> >> mmu until after the pending tlb flush)?
-> >> >> >
-> >> >> > I'm not sure that a stalled state is what we're after here, because we need
-> >> >> > to take care to prevent any table walks if we've freed the underlying pages.
-> >> >> > What we could try to do is disable the SMMU (put into global bypass) and
-> >> >> > invalidate the TLB when performing a suspend operation, then we just ignore
-> >> >> > invalidation whilst the clocks are stopped and, on resume, enable the SMMU
-> >> >> > again.
-> >> >>
-> >> >> wouldn't stalled just block any memory transactions by device(s) using
-> >> >> the context bank?  Putting it in bypass isn't really a good thing if
-> >> >> there is any chance the device can sneak in a memory access before
-> >> >> we've taking it back out of bypass (ie. makes gpu a giant userspace
-> >> >> controlled root hole).
-> >> >
-> >> > If it doesn't deadlock, then yes, it will stall transactions. However, that
-> >> > doesn't mean it necessarily prevents page table walks.
-> >>
-> >> btw, I guess the concern about pagetable walk is that the unmap could
-> >> have removed some sub-level of the pt that the tlb walk would hit?
-> >> Would deferring freeing those pages help?
-> >
-> > Could do, but it sounds like a lot of complication that I think we can fix
-> > by making the suspend operation put the SMMU into a "clean" state.
-> >
-> >> > Instead of bypass, we
-> >> > could configure all the streams to terminate, but this race still worries me
-> >> > somewhat. I thought that the SMMU would only be suspended if all of its
-> >> > masters were suspended, so if the GPU wants to come out of suspend then the
-> >> > SMMU should be resumed first.
-> >>
-> >> I believe this should be true.. on the gpu side, I'm mostly trying to
-> >> avoid having to power the gpu back on to free buffers.  (On the v4l2
-> >> side, somewhere in the core videobuf code would also need to be made
-> >> to wrap it's dma_unmap_sg() with pm_runtime_get/put()..)
-> >
-> > Right, and we shouldn't have to resume it if we suspend it in a clean state,
-> > with the TLBs invalidated.
-> >
-> 
-> I guess if the device_link() stuff ensured the attached device
-> (gpu/etc) was suspended before suspending the iommu, then I guess I
-> can't see how temporarily putting the iommu in bypass would be a
-> problem.  I haven't looked at the device_link() stuff too closely, but
-> iommu being resumed first and suspended last seems like the only thing
-> that would make sense.  I'm mostly just nervous about iommu in bypass
-> vs gpu since userspace has so much control over what address gpu
-> writes to / reads from, so getting it wrong w/ the iommu would be a
-> rather bad thing ;-)
+Hi Pleas,
 
-Right, but we can also configure it to terminate if you don't want bypass.
+again, but this time with content :)
 
-Will
+On 04-07-17 22:04, Priit Laes wrote:
+> Introduce a clock controller driver for sun4i A10 and sun7i A20
+> series SoCs.
+>
+> Signed-off-by: Priit Laes <plaes@plaes.org>
+> ---
+>  drivers/clk/sunxi-ng/Kconfig              |   14 +-
+>  drivers/clk/sunxi-ng/Makefile             |    1 +-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.c      | 1448 ++++++++++++++++++++++-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   61 +-
+>  include/dt-bindings/clock/sun4i-a10-ccu.h |  200 +++-
+>  include/dt-bindings/clock/sun7i-a20-ccu.h |   53 +-
+>  include/dt-bindings/reset/sun4i-a10-ccu.h |   67 +-
+>  7 files changed, 1844 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
+>  create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
+>  create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
+>
+> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> index 7342928..381cc32 100644
+> --- a/drivers/clk/sunxi-ng/Kconfig
+> +++ b/drivers/clk/sunxi-ng/Kconfig
+> @@ -11,6 +11,19 @@ config SUN50I_A64_CCU
+>  	default ARM64 && ARCH_SUNXI
+>  	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+>
+> +config SUNXI_A10_CCU
+I understand why you say sunXi here (it's support for both sun4i and 
+sun7i) but then why A10, as it also supports the A20.
+
+I guess the CCU is identical on the A20 and the A10, right? Thus would 
+it not be sensible to just call it sun4i_ccu (like we do for sun5i_ccu 
+below?
+
+> +	bool "Support for the Allwinner A10/A20 CCU"
+> +	select SUNXI_CCU_DIV
+> +	select SUNXI_CCU_MULT
+> +	select SUNXI_CCU_NK
+> +	select SUNXI_CCU_NKM
+> +	select SUNXI_CCU_NM
+> +	select SUNXI_CCU_MP
+> +	select SUNXI_CCU_PHASE
+> +	default MACH_SUN4I
+> +	default MACH_SUN7I
+> +	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
+> +
+>  config SUN5I_CCU
+>  	bool "Support for the Allwinner sun5i family CCM"
+>  	default MACH_SUN5I
+> @@ -57,4 +70,5 @@ config SUN8I_R_CCU
+>  	bool "Support for Allwinner SoCs' PRCM CCUs"
+>  	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
+>
+> +
+oops?
+
+>  endif
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index 0c45fa5..01e958c 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -21,6 +21,7 @@ lib-$(CONFIG_SUNXI_CCU)		+= ccu_mp.o
+>  obj-$(CONFIG_SUN50I_A64_CCU)	+= ccu-sun50i-a64.o
+>  obj-$(CONFIG_SUN5I_CCU)		+= ccu-sun5i.o
+>  obj-$(CONFIG_SUN6I_A31_CCU)	+= ccu-sun6i-a31.o
+> +obj-$(CONFIG_SUNXI_A10_CCU)	+= ccu-sun4i-a10.o
+>  obj-$(CONFIG_SUN8I_A23_CCU)	+= ccu-sun8i-a23.o
+>  obj-$(CONFIG_SUN8I_A33_CCU)	+= ccu-sun8i-a33.o
+>  obj-$(CONFIG_SUN8I_A83T_CCU)	+= ccu-sun8i-a83t.o
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> new file mode 100644
+> index 0000000..49052b7
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+
+<snip>
+
+> +static const char *const apb1_parents[] = { "hosc", "pll-periph", "osc32k" };
+> +static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", apb1_parents, 0x058,
+> +			     0, 5,	/* M */
+> +			     16, 2,	/* P */
+> +			     24, 2,	/* mux */
+> +			     0);
+> +
+> +/* Not present on A20 */
+> +static SUNXI_CCU_GATE(axi_dram_clk,	"axi-dram",	"ahb",
+> +		      0x05c, BIT(31), 0);
+
+Same here I guess, two defines make this a bit more readable.
+> +
+> +static SUNXI_CCU_GATE(ahb_otg_clk,	"ahb-otg",	"ahb",
+> +		      0x060, BIT(0), 0);
+> +static SUNXI_CCU_GATE(ahb_ehci0_clk,	"ahb-ehci0",	"ahb",
+> +		      0x060, BIT(1), 0);
+> +static SUNXI_CCU_GATE(ahb_ohci0_clk,	"ahb-ohci0",	"ahb",
+> +		      0x060, BIT(2), 0);
+> +static SUNXI_CCU_GATE(ahb_ehci1_clk,	"ahb-ehci1",	"ahb",
+> +		      0x060, BIT(3), 0);
+> +static SUNXI_CCU_GATE(ahb_ohci1_clk,	"ahb-ohci1",	"ahb",
+> +		      0x060, BIT(4), 0);
+> +static SUNXI_CCU_GATE(ahb_ss_clk,	"ahb-ss",	"ahb",
+> +		      0x060, BIT(5), 0);
+> +static SUNXI_CCU_GATE(ahb_dma_clk,	"ahb-dma",	"ahb",
+> +		      0x060, BIT(6), 0);
+> +static SUNXI_CCU_GATE(ahb_bist_clk,	"ahb-bist",	"ahb",
+> +		      0x060, BIT(7), 0);
+> +static SUNXI_CCU_GATE(ahb_mmc0_clk,	"ahb-mmc0",	"ahb",
+> +		      0x060, BIT(8), 0);
+> +static SUNXI_CCU_GATE(ahb_mmc1_clk,	"ahb-mmc1",	"ahb",
+> +		      0x060, BIT(9), 0);
+> +static SUNXI_CCU_GATE(ahb_mmc2_clk,	"ahb-mmc2",	"ahb",
+> +		      0x060, BIT(10), 0);
+> +static SUNXI_CCU_GATE(ahb_mmc3_clk,	"ahb-mmc3",	"ahb",
+> +		      0x060, BIT(11), 0);
+> +static SUNXI_CCU_GATE(ahb_ms_clk,	"ahb-ms",	"ahb",
+> +		      0x060, BIT(12), 0);
+> +static SUNXI_CCU_GATE(ahb_nand_clk,	"ahb-nand",	"ahb",
+> +		      0x060, BIT(13), 0);
+> +static SUNXI_CCU_GATE(ahb_sdram_clk,	"ahb-sdram",	"ahb",
+> +		      0x060, BIT(14), CLK_IS_CRITICAL);
+
+<snip>
+
+> +static struct ccu_reset_map sun7i_a20_ccu_resets[] = {
+> +	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
+> +	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
+> +	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
+> +	[RST_GPS]		= { 0x0d0, BIT(0) },
+> +	[RST_DE_BE0]		= { 0x104, BIT(30) },
+> +	[RST_DE_BE1]		= { 0x108, BIT(30) },
+> +	[RST_DE_FE0]		= { 0x10c, BIT(30) },
+> +	[RST_DE_FE1]		= { 0x110, BIT(30) },
+> +	[RST_DE_MP]		= { 0x114, BIT(30) },
+> +	[RST_TCON0]		= { 0x118, BIT(30) },
+> +	[RST_TCON1]		= { 0x11c, BIT(30) },
+You are missing the TV encoder reset:
++      [RST_TVE0]              = { 0x118, BIT(29) },
++      [RST_TVE1]              = { 0x11c, BIT(29) },
+
+(to match your table i did not use defines :p)
+
+> +	[RST_CSI0]		= { 0x134, BIT(30) },
+> +	[RST_CSI1]		= { 0x138, BIT(30) },
+> +	[RST_VE]		= { 0x13c, BIT(0) },
+> +	[RST_ACE]		= { 0x148, BIT(16) },
+> +	[RST_LVDS]		= { 0x14c, BIT(0) },
+> +	[RST_GPU]		= { 0x154, BIT(30) },
+> +	[RST_HDMI_H]		= { 0x170, BIT(0) },
+> +	[RST_HDMI_SYS]		= { 0x170, BIT(1) },
+> +	[RST_HDMI_AUDIO_DMA]	= { 0x170, BIT(2) },
+> +};
+
+<snip>
+
+> +#ifndef _DT_BINDINGS_RST_SUN4I_A10_H
+> +#define _DT_BINDINGS_RST_SUN4I_A10_H
+> +
+> +#define	RST_USB_PHY0		1
+> +#define	RST_USB_PHY1		2
+> +#define	RST_USB_PHY2		3
+> +#define	RST_GPS			4
+> +#define	RST_DE_BE0		5
+> +#define	RST_DE_BE1		6
+> +#define	RST_DE_FE0		7
+> +#define	RST_DE_FE1		8
+> +#define	RST_DE_MP		9
+> +#define	RST_TCON0		10
+> +#define	RST_TCON1		11
+
+Also here the TV encoder.
+
++#define RST_TVE0              21
++#define RST_TVE1              22
+
+> +#define	RST_CSI0		12
+> +#define	RST_CSI1		13
+> +#define	RST_VE			14
+> +#define	RST_ACE			15
+> +#define	RST_LVDS		16
+> +#define	RST_GPU			17
+> +#define	RST_HDMI_H		18
+> +#define	RST_HDMI_SYS		19
+> +#define	RST_HDMI_AUDIO_DMA	20
+> +
+> +#endif /* DT_BINDINGS_RST_SUN4I_A10_H */
+>
