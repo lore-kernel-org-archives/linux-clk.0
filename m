@@ -1,72 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:36703 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752107AbdGXIxw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 04:53:52 -0400
-Received: by mail-pf0-f181.google.com with SMTP id z129so4961151pfb.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2017 01:53:52 -0700 (PDT)
-Date: Mon, 24 Jul 2017 14:23:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner
- SoCs
-Message-ID: <20170724085349.GT352@vireshk-i7>
-References: <20170723102749.17323-1-icenowy@aosc.io>
- <20170723102749.17323-8-icenowy@aosc.io>
+Return-Path: <oliver@schinagl.nl>
+Subject: Re: [linux-sunxi] [PATCH v5 5/6] ARM: sun7i: Convert to CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <2ff8930c51b90a0bb875ecc6c4737f44b3314e7f.1499197129.git-series.plaes@plaes.org>
+ <4091e67f-6207-26ef-85f1-e9ff509dd3b7@schinagl.nl>
+ <20170710115519.sddpeyvbxq5llunf@flea>
+Cc: plaes@plaes.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+ Russell King <linux@armlinux.org.uk>, Philipp Zabel
+ <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Jonathan Liu <net147@gmail.com>
+From: Olliver Schinagl <oliver@schinagl.nl>
+Message-ID: <6e8b7b1d-c14c-d5fa-a9ef-71dae239fd64@schinagl.nl>
+Date: Mon, 10 Jul 2017 14:24:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170723102749.17323-8-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170710115519.sddpeyvbxq5llunf@flea>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23-07-17, 18:27, Icenowy Zheng wrote:
-> Some new Allwinner SoCs get supported in the kernel after the
-> compatibles are added to cpufreq-dt-platdev driver.
-> 
-> Add their compatible strings in the cpufreq-dt-platdev driver.
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index 2eb40d46d357..c3851453e84a 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
->  	{ .compatible = "allwinner,sun8i-a23", },
->  	{ .compatible = "allwinner,sun8i-a33", },
->  	{ .compatible = "allwinner,sun8i-a83t", },
-> +	{ .compatible = "allwinner,sun8i-h2-plus", },
->  	{ .compatible = "allwinner,sun8i-h3", },
-> +	{ .compatible = "allwinner,sun8i-v3s", },
-> +	{ .compatible = "allwinner,sun50i-a64", },
-> +	{ .compatible = "allwinner,sun50i-h5", },
->  
->  	{ .compatible = "apm,xgene-shadowcat", },
->  
-> @@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
->  	{ .compatible = "marvell,pxa250", },
->  	{ .compatible = "marvell,pxa270", },
->  
-> +	{ .compatible = "nextthing,gr8", },
-> +
->  	{ .compatible = "samsung,exynos3250", },
->  	{ .compatible = "samsung,exynos4210", },
->  	{ .compatible = "samsung,exynos4212", },
+Hi Maxime,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+On 10-07-17 13:55, Maxime Ripard wrote:
+> On Mon, Jul 10, 2017 at 01:23:51PM +0200, Olliver Schinagl wrote:
+>> Hi Pleas,
+>>
+>> On 04-07-17 22:05, Priit Laes wrote:
+>>> Convert sun7i-a20.dtsi to new CCU driver.
+>>>
+>>> Tested on Cubietruck.
+>>>
+>>> Signed-off-by: Priit Laes <plaes@plaes.org>
+>>> ---
+>>>  arch/arm/boot/dts/sun7i-a20.dtsi | 719 +++-----------------------------
+>>>  1 file changed, 84 insertions(+), 635 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+>>> index 96bee77..a5ca5a8 100644
+>>> --- a/arch/arm/boot/dts/sun7i-a20.dtsi
+>>> +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+>>> @@ -46,8 +46,6 @@
+>>>
+>>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>  #include <dt-bindings/thermal/thermal.h>
+>>> -
+>>> -#include <dt-bindings/clock/sun4i-a10-pll2.h>
+>>>  #include <dt-bindings/dma/sun4i-a10.h>
+>> I had to add these includes here to make this all work:
+>
+> That's unlikely, none of the defines are used in this patch.
+>
 
--- 
-viresh
+My appologies you are right. I needed to add them to get this ontop of 
+your DRM stack working for the A20. I looked at my local diff and 
+responded a bit overeagerly probably. Nice catch!
+
+Olliver
+
+> Maxime
+>
