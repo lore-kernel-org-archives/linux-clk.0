@@ -1,86 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:23171 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751205AbdGMDPx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 23:15:53 -0400
-Message-ID: <1499915747.16278.30.camel@mtkswgap22>
-Subject: Re: [PATCH] clk: mediatek: fixed static checker warning in
- clk_cpumux_get_parent call
-From: Sean Wang <sean.wang@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <dan.carpenter@oracle.com>, <linux-mediatek@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date: Thu, 13 Jul 2017 11:15:47 +0800
-In-Reply-To: <20170712231726.GQ22780@codeaurora.org>
-References: <59fd4aa684632f1d9d2e7573a95bc42850e81690.1499701486.git.sean.wang@mediatek.com>
-         <20170712231726.GQ22780@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 10 Jul 2017 13:18:47 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH 0/2] clk: qcom: Add RPM clocks for msm8996
+Message-ID: <20170710201847.GL22780@codeaurora.org>
+References: <1490175566-4084-1-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1490175566-4084-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-07-12 at 16:17 -0700, Stephen Boyd wrote:
-> On 07/11, sean.wang@mediatek.com wrote:
-> > diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-> > index edd8e69..c6a3a1a 100644
-> > --- a/drivers/clk/mediatek/clk-cpumux.c
-> > +++ b/drivers/clk/mediatek/clk-cpumux.c
-> > @@ -27,7 +27,6 @@ static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
-> >  static u8 clk_cpumux_get_parent(struct clk_hw *hw)
-> >  {
-> >  	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-> > -	int num_parents = clk_hw_get_num_parents(hw);
-> >  	unsigned int val;
-> >  
-> >  	regmap_read(mux->regmap, mux->reg, &val);
-> > @@ -35,17 +34,18 @@ static u8 clk_cpumux_get_parent(struct clk_hw *hw)
-> >  	val >>= mux->shift;
-> >  	val &= mux->mask;
-> >  
-> > -	if (val >= num_parents)
-> > -		return -EINVAL;
-> > -
+On 03/22, Rajendra Nayak wrote:
+> This patchset adds all the RPM clocks on msm8996 platforms,
+> while at it, we also remove some of the RCGs from the GCC
+> driver as they are controlled by RPM and hence should not
+> be part of GCC.
 > 
-> Yeah we really need to fix the get_parent() op to return a
-> clk_hw pointer instead. Time for another migration plan...
+> Series depends on Bjorns patches which add support for glink
+> on msm8996
+> https://www.spinics.net/lists/linux-wireless/msg160393.html
+> http://www.spinics.net/lists/devicetree/msg168445.html
 > 
+> Rajendra Nayak (2):
+>   clk: qcom: clk-smd-rpm: add msm8996 rpmclks
+>   clk: qcom: gcc-msm8996: Remove RPM controlled clocks
 
-Agreed
+The first patch looks ok, but the second patch is quite scary. So
+far we haven't hooked up the bus RPM clks into the clk tree quite
+like that. I suppose if everything works fine though it should be
+OK.
 
-Using clk_hw pointer as returned type is better
+One case I can think of is when we're enabling branch clks that
+are children of some RPM controlled bus clk. Right now in the
+downstream kernel we don't enable the RPM clk in this case.
+Instead, we rely on the bus driver to make sure the bus is
+enabled. And for things like suspend, I'm not sure if drivers are
+calling clk_disable() and unprepare on their branches, so we may
+be leaving them on in the downstream kernel and relying on the
+bus driver dropping requests to explicitly turn things off. I
+suppose this is OK though, because those drivers are broken if
+they exist.
 
-otherwise, core driver strongly depends on raw value from hardware  
+Also, probe deferal may be an issue, where we hand out branch
+clks to drivers before the RPM is up and ready. If an enable
+appears on an orphan things get confusing. We should merge that
+probe defer orphan series too.
 
-which easily breaks core driver's logic
-
-> >  	return val;
-> >  }
-> >  
-> >  static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
-> >  {
-> >  	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-> > +	int num_parents = clk_hw_get_num_parents(hw);
-> >  	u32 mask, val;
-> >  
-> > +	if (index >= num_parents)
-> > +		return -EINVAL;
-> 
-> When would we call this function with an invalid index? The
-> framework should be making sure to only call it with an index
-> that's valid. So perhaps this hunk can be left out?
-> 
-
-O.K. the hunk will be left out
-
-core driver handles everything well when the appropriate number of
-parents is registered.
-
-
-
-
-
-
-
-> 
-
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
