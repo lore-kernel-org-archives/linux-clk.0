@@ -1,33 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Jul 2017 13:34:14 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/4] clk: renesas: Add r8a77995 CPG Core Clock Definitions
-Message-ID: <20170721203414.GD19878@codeaurora.org>
-References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
- <1500554409-22423-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500554409-22423-2-git-send-email-geert+renesas@glider.be>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux@armlinux.org.uk,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/2] add the reset controller to the Meson8b clkc
+Date: Wed, 12 Jul 2017 00:49:37 +0200
+Message-Id: <20170711224939.26267-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/20, Geert Uytterhoeven wrote:
-> Add all R-Car D3 Clock Pulse Generator Core Clock Outputs, as listed
-> in Table 8.2f ("List of Clocks [R-Car D3]") of the R-Car Series, 3rd
-> Generation Hardware User's Manual (Rev. 0.55, Jun. 30, 2017).
-> 
-> Note that internal CPG clocks (S0, S1, S2, S3, S1C, S3C, SDSRC, and
-> SSPSRC) are not included, as they are used as internal clock sources
-> only, and never referenced from DT.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: devicetree@vger.kernel.org
-> ---
+This registers the four CPU (soft) reset lines (one for each CPU core)
+provided by the clock controller's HHI_SYS_CPU_CLK_CNTL0 register.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+This is the first preparation step for SMP and CPU hotplug support on
+Meson8/Meson8b/Meson8m2.
+
+The reset controller part of the meson8b clock controller has to be
+registered early (which I did through CLK_OF_DECLARE_DRIVER), because
+the secondary cores are started *very* early in the boot process (and
+meson8b_clkc_probe is invoked long after we need the reset controller
+to be available for booting the secondary CPU cores).
+
+The user of the reset-controller (= the patches which enable SMP and
+CPU hotplug support) will follow in the next days. I decided to split
+this because the SMP series will probably consist of 6 patches alone
+(and may need to go through two separate trees).
+
+
+Martin Blumenstingl (2):
+  clk: meson: meson8b: register the built-in reset controller
+  ARM: dts: meson: mark the clock controller also as reset controller
+
+ .../bindings/clock/amlogic,meson8b-clkc.txt        |   7 +-
+ arch/arm/boot/dts/meson8.dtsi                      |   1 +
+ arch/arm/boot/dts/meson8b.dtsi                     |   1 +
+ drivers/clk/meson/Kconfig                          |   1 +
+ drivers/clk/meson/meson8b.c                        | 109 ++++++++++++++++++---
+ drivers/clk/meson/meson8b.h                        |   1 +
+ 6 files changed, 107 insertions(+), 13 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.2
