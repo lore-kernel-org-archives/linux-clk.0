@@ -1,53 +1,37 @@
-Return-Path: <wens@csie.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 10 Jul 2017 21:53:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
+Message-ID: <20170711025323.xdzgp7jsuvfb5u5o@rob-hp-laptop>
+References: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1499622005-13003-1-git-send-email-vladimir.barinov@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20170724135905.28855-1-wens@csie.org>
-References: <20170724135905.28855-1-wens@csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 26 Jul 2017 22:09:41 +0800
-Message-ID: <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC controllers
-To: Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1499622005-13003-1-git-send-email-vladimir.barinov@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> Hi everyone,
->
-> This is v3 of my MMC controller support series.
->
+On Sun, Jul 09, 2017 at 08:40:05PM +0300, Vladimir Barinov wrote:
+> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> 
+> IDT VersaClock 5 5P49V5925 has 5 clock outputs, 4 fractional dividers.
+> Input clock source can be taken only from external reference clock.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+> ---
+> Changes in version 2:
+> - fixed typo in patch header: VC5 has 5 clock outputs
+> - rebased against patch:
+>   [V3,7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
+> 
+>  Documentation/devicetree/bindings/clock/idt,versaclock5.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-[...]
-
-> Chen-Yu Tsai (10):
->   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
->   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
->     switching
->   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
->   mmc: sunxi: Support controllers that can use both old and new timings
->   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
->   mmc: sunxi: Add support for A83T eMMC (MMC2)
-
-So this series seems to be ready for inclusion, unless Ulf has further
-concerns about the clk usage.
-
-The first mmc patch have build time dependencies on the first clk patch.
-Shall we put the clk patch on a separate immutable branch for both trees
-to pull? Or we could just merge everything through the mmc tree? I don't
-think we'll touch this part of the sunxi-ng clk driver for the remainder
-of this cycle.
-
-
-Regards
-ChenYu
-
-
->   ARM: dts: sun8i: a83t: Add MMC controller device nodes
->   ARM: dts: sun8i: a83t: Add pingroup for 8-bit eMMC on mmc2
->   ARM: dts: sun8i: a83t: cubietruck-plus: Enable micro-SD card and eMMC
->   ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
+Acked-by: Rob Herring <robh@kernel.org>
