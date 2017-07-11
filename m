@@ -1,66 +1,103 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V2 01/10] drivers: move clock common macros out from vendor directories
+Date: Tue, 11 Jul 2017 18:56:18 +0800
+Message-ID: <20170711105627.20526-2-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-In-Reply-To: <20170714064302.20383-5-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-5-wens@csie.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 17 Jul 2017 12:37:41 +0200
-Message-ID: <CAPDyKFq0xgZCuow41-VsN+5bORt_pBAqZ_ZAajWG-TcCPxvRSA@mail.gmail.com>
-Subject: Re: [PATCH 04/11] mmc: sunxi: Keep default timing phase settings for
- new timing mode
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"# 4.0+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-+stable
+These macros are used by more than one SoC vendor platforms, avoid to
+have many copies of these code, this patch moves them to the common
+clock directory which every clock drivers can access to.
 
-On 14 July 2017 at 08:42, Chen-Yu Tsai <wens@csie.org> wrote:
-> The register for the "new timing mode" also has bit fields for setting
-> output and sample timing phases. According to comments in Allwinner's
-> BSP kernel, the default values are good enough.
->
-> Keep the default values already in the hardware when setting new timing
-> mode, instead of overwriting the whole register.
->
-> Fixes: 9a37e53e451e ("mmc: sunxi: Enable the new timings for the A64 MMC
->                       controllers")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/clk_common.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 drivers/clk/clk_common.h
 
-Thanks, applied for fixes and added a stable tag.
-
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/host/sunxi-mmc.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> index d6fa2214aaae..0fb4e4c119e1 100644
-> --- a/drivers/mmc/host/sunxi-mmc.c
-> +++ b/drivers/mmc/host/sunxi-mmc.c
-> @@ -793,8 +793,12 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
->         }
->         mmc_writel(host, REG_CLKCR, rval);
->
-> -       if (host->cfg->needs_new_timings)
-> -               mmc_writel(host, REG_SD_NTSR, SDXC_2X_TIMING_MODE);
-> +       if (host->cfg->needs_new_timings) {
-> +               /* Don't touch the delay bits */
-> +               rval = mmc_readl(host, REG_SD_NTSR);
-> +               rval |= SDXC_2X_TIMING_MODE;
-> +               mmc_writel(host, REG_SD_NTSR, rval);
-> +       }
->
->         ret = sunxi_mmc_clk_set_phase(host, ios, rate);
->         if (ret)
-> --
-> 2.13.2
->
+diff --git a/drivers/clk/clk_common.h b/drivers/clk/clk_common.h
+new file mode 100644
+index 0000000..21e93d2
+--- /dev/null
++++ b/drivers/clk/clk_common.h
+@@ -0,0 +1,60 @@
++/*
++ * drivers/clk/clk_common.h
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _CLK_COMMON_H_
++#define _CLK_COMMON_H_
++
++#include <linux/clk-provider.h>
++
++#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= (const char *[]) { _parent },	\
++		.num_parents	= 1,				\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
++	(&(struct clk_init_data) {				\
++		.flags		= _flags,			\
++		.name		= _name,			\
++		.parent_names	= _parents,			\
++		.num_parents	= ARRAY_SIZE(_parents),		\
++		.ops		= _ops,				\
++	})
++
++#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)     \
++	(&(struct clk_init_data) {                      \
++		.flags          = _flags,               \
++		.name           = _name,                \
++		.parent_names   = NULL,                 \
++		.num_parents    = 0,                    \
++		.ops            = _ops,                 \
++	})
++
++#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
++			_div, _mult, _flags)				\
++	struct clk_fixed_factor _struct = {				\
++		.div		= _div,					\
++		.mult		= _mult,				\
++		.hw.init	= CLK_HW_INIT(_name,			\
++					      _parent,			\
++					      &clk_fixed_factor_ops,	\
++					      _flags),			\
++	}
++
++#define CLK_FIXED_RATE(_struct, _name, _flags,				\
++		       _fixed_rate, _fixed_accuracy)			\
++	struct clk_fixed_rate _struct = {				\
++		.fixed_rate	= _fixed_rate,				\
++		.fixed_accuracy	= _fixed_accuracy,			\
++		.hw.init	= CLK_HW_INIT_NO_PARENT(_name,		\
++					  &clk_fixed_rate_ops,		\
++							_flags),	\
++	}
++
++#endif /* _CLK_COMMON_H_ */
+-- 
+2.7.4
