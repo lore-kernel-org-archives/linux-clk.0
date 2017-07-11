@@ -1,100 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:36033 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753747AbdGXMAw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 08:00:52 -0400
-Received: by mail-wr0-f172.google.com with SMTP id y43so105177343wrd.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2017 05:00:52 -0700 (PDT)
-Message-ID: <1500897650.2401.1.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
- bindings
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Mon, 24 Jul 2017 14:00:50 +0200
-In-Reply-To: <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
-References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
-         <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
-         <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
-         <20170721204439.GJ19878@codeaurora.org>
-         <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 10 Jul 2017 18:29:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Darren Hart <dvhart@infradead.org>, Carlo Caione <carlo@caione.org>
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	linux@endlessm.com,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Carlo Caione <carlo@endlessm.com>
+Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
+Message-ID: <20170711012908.GO22780@codeaurora.org>
+References: <20170710203801.17496-1-carlo@caione.org>
+ <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
+ <20170710235403.GB25390@fury>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170710235403.GB25390@fury>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-07-24 at 13:47 +0200, Neil Armstrong wrote:
-> On 07/21/2017 10:44 PM, Stephen Boyd wrote:
-> > On 07/09, Rob Herring wrote:
-> > > On Thu, Jul 06, 2017 at 12:24:23PM +0200, Neil Armstrong wrote:
-> > > > On the first revision of the bindings, only the gates + resets were
-> > > > known
-> > > > in the AO Clock HW, but more registers used to configures AO clock are
-> > > > known
-> > > > to be spread among the AO register space.
-> > > > This patch adds these registers to the Ao Clock bindings with direct
-> > > > access
-> > > > and shared extcon access.
-> > > > 
-> > > > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> > > > ---
-> > > >  .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt         | 11
-> > > > +++++++++--
-> > > >  1 file changed, 9 insertions(+), 2 deletions(-)
-> > > 
-> > > This looks like the binding might be too specific with a reg list of 
-> > > single registers, and you should define a system controller node 
-> > > instead. Depends on what else is in the "A0" block.
-> > > 
+On 07/10, Darren Hart wrote:
+> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra wrote:
+> > 2017-07-10 22:38 GMT+02:00 Carlo Caione <carlo@caione.org>:
+> > >         pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
+> > >         spin_lock_init(&pclk->lock);
+> > >
+> > > +       if (plt_clk_is_enabled(&pclk->hw))
+> > > +               init.flags |= CLK_IGNORE_UNUSED;
+
+Can you add a comment to the effect of why we're adding ignore
+unused here? That will make it clearer when reading the code a
+year from now why we're not turning these clks off by default and
+also allow us to recall why it isn't marked as a critical clk.
+
+Probably, we want some sort of handoff mechanism here so that the
+clk is left on until a driver comes into the picture and acquires
+a handle to this clk?
+
+> > > +
+> > >         ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
+> > >         if (ret) {
+> > >                 pclk = ERR_PTR(ret);
+> > > --
+> > > 2.13.2
+> > >
 > > 
-> > Agreed. Why can't we expand the size in DT and then access the
-> > registers directly in the driver. Hopefully it keeps working to
-> > apply the dts patch without the driver patch too (and
-> > vice-versa), because the kernel can only make a mapping as small
-> > as a page which would cover these newly added reg properties
-> > anyway.
+> > It also fixes the issue introduced in commit 282a4e4 ("platform/x86:
+> > Enable Atom PMC platform clocks") that causes no audio on Baytrail.
 > > 
+> > Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > 
-> Hi Rob, Stephen,
+> Excellent, thank you Enric. Pierre, any objections to this going in to
+> 4.13 now and stable back to 4.12?
 > 
-> Thanks for your feedback, but on these Amlogic platforms, the AO register bank
-> is
-> filled with interleaved registers used for various purposes.
-> 
-> For instance, the first 1k of registers are :
-> 
-> 0-c RTI_STATUS
-> c-14 RTI_PWR_CNTL
-> 14-1c PIN_MUX
-> 1c RTI_STATUS
-> 24-30 GPIO
-> 30 JTAG_CONFIG
-> 34 WD
-> 38-40 CPU_CTRL
-> 40 RTI_GEN_CTRL
-> 44 CPU_CTRL
-> 4c-58 TIMER
-> 58 OSCIN
-> 60 AHB2DDR
-> ...
-> 
-> 
-> And so on, and the clock related registers are split among this space.
-> 
-> For sure, this could be declared as an system controller node, but this would
-> imply completely
-> re-designing the actual clock driver and drop the actual bindings.
-> (and with re-writting the clock gate code to use regmap registers access)
 
-Maybe it is time to investigate having the regmap clock from qcom available to
-every other platform ?
+You mean v4.11? That's when commit 282a4e4 was released.
+Typically we punt these sorts of things to the next release
+because it isn't a regression in the release that's being worked
+on (i.e. it wasn't introduced in this merge window), but in this
+case it seems like a small enough patch plus it's a bother to
+keep it out of the release to make it alright to merge now.
 
-> 
-> Anyway, I'm open to suggestions...
-> 
-> Neil
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
