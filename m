@@ -1,88 +1,94 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 26 Jul 2017 21:45:22 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC
- controllers
-Message-ID: <20170726194522.7d64f7c2danrknfi@flea>
-References: <20170724135905.28855-1-wens@csie.org>
- <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V2 10/10] arm64: dts: add clocks for SC9860
+Date: Tue, 11 Jul 2017 18:56:27 +0800
+Message-ID: <20170711105627.20526-11-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="t4p4sc5v3likqkxq"
-In-Reply-To: <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Now we have clock driver, so add clock devicetree data for SC9860.
 
---t4p4sc5v3likqkxq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ arch/arm64/boot/dts/sprd/sc9860.dtsi | 22 ++++++++++++++++++++++
+ arch/arm64/boot/dts/sprd/whale2.dtsi |  3 +--
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
-On Wed, Jul 26, 2017 at 10:09:41PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> > Hi everyone,
-> >
-> > This is v3 of my MMC controller support series.
-> >
->=20
-> [...]
->=20
-> > Chen-Yu Tsai (10):
-> >   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
-> >   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
-> >     switching
-> >   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
-> >   mmc: sunxi: Support controllers that can use both old and new timings
-> >   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
-> >   mmc: sunxi: Add support for A83T eMMC (MMC2)
->=20
-> So this series seems to be ready for inclusion, unless Ulf has further
-> concerns about the clk usage.
->=20
-> The first mmc patch have build time dependencies on the first clk patch.
-> Shall we put the clk patch on a separate immutable branch for both trees
-> to pull? Or we could just merge everything through the mmc tree? I don't
-> think we'll touch this part of the sunxi-ng clk driver for the remainder
-> of this cycle.
-
-I guess the easiest would be for it to go through Ulf tree, unless he
-says otherwise of course :)
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---t4p4sc5v3likqkxq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZePFSAAoJEBx+YmzsjxAgJJEQAMAPkqxIgWt5zhdvRBodODdm
-r8UKPzetUTraLKvZ1U8hzOQ5jMlEAC8hjWO+RNcwE6xp9/uQaqBXrMLiZFEAe8HQ
-6+rwxwtEjO9y9DrYC7EWS1pv7NoewULPIjhXBMHcb7EhpSo+Yy9UHF4iy2/EzJcl
-AWAP1nVPGlyzcCUbG1Ace2WH+1PWjpkz9HXJHxVcRqJtOx7TkQrhZFKwXCMDmyYJ
-K8P+wexUpDF7eAlZ5ZMkwmzmIA6qYRSTl5kM3y0iHIv1QI2ypMXAPupw9UondAE+
-KAJzWR0fzq9hh+bf63onGA4z5xc1h8ULDAPaOUsEIvhlUsWNcNP8FP3ZRyP/HflC
-MvRjUgFUmtCaREjXHUzSivkPoATm4tWp4nxX8tKzhANJFBwfRf0MsneMaOgKuHgl
-de7CTGPEDmqumyZU8n7d/lyrmpESFFadF1E4BSDnMgxnLAWsjQvt9C2KYcRi8Mbv
-wLT5c7ezeaoyE0ubsLJrqHTx/Z3VbrCK4U2aXKLLk2OjKbmJyr9xAoTmOl+rPCQx
-eDLxzk03P84VqXpprSDtaPlEowyhEncdpKzSIiA7lFEedT0No0pJ90hOXWQBW2zC
-udU5tzD9yDlTD/jnF+X67T8ixNYv0jWWId/7UfeRuEqYzVVy9b4p1PpAdnKBbepj
-C6VA8IuvJreF7bkpdIO9
-=VcM4
------END PGP SIGNATURE-----
-
---t4p4sc5v3likqkxq--
+diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+index 7b7d8ce..8d3f549 100644
+--- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sprd,sc9860-clk.h>
+ #include "whale2.dtsi"
+ 
+ / {
+@@ -183,6 +184,27 @@
+ 	};
+ 
+ 	soc {
++		clk: clk {
++			compatible = "sprd,sc9860-clk";
++			#clock-cells = <1>;
++			reg = <0 0x20000000 0 0x400>,
++			      <0 0x20210000 0 0x3000>,
++			      <0 0x402b0000 0 0x4000>,
++			      <0 0x402d0000 0 0x400>,
++			      <0 0x402e0000 0 0x4000>,
++			      <0 0x40400000 0 0x400>,
++			      <0 0x40880000 0 0x400>,
++			      <0 0x415e0000 0 0x400>,
++			      <0 0x60200000 0 0x400>,
++			      <0 0x61000000 0 0x400>,
++			      <0 0x61100000 0 0x3000>,
++			      <0 0x62000000 0 0x4000>,
++			      <0 0x62100000 0 0x4000>,
++			      <0 0x63000000 0 0x400>,
++			      <0 0x63100000 0 0x3000>,
++			      <0 0x70b00000 0 0x3000>;
++		};
++
+ 		funnel@10001000 { /* SoC Funnel */
+ 			compatible = "arm,coresight-funnel", "arm,primecell";
+ 			reg = <0 0x10001000 0 0x1000>;
+diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
+index 7c217c5..a4f376e 100644
+--- a/arch/arm64/boot/dts/sprd/whale2.dtsi
++++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
+@@ -59,13 +59,12 @@
+ 				status = "disabled";
+ 			};
+ 		};
+-
+ 	};
+ 
+ 	ext_26m: ext-26m {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <26000000>;
+-		clock-output-names = "ext_26m";
++		clock-output-names = "ext-26m";
+ 	};
+ };
+-- 
+2.7.4
