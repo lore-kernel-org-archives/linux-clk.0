@@ -1,70 +1,67 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 03/18] clk: ingenic: support PLLs with no bypass bit
-Date: Sun,  2 Jul 2017 18:30:01 +0200
-Message-Id: <20170702163016.6714-4-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:64311 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752333AbdGKCoA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2017 22:44:00 -0400
+From: <sean.wang@mediatek.com>
+To: <sboyd@codeaurora.org>, <dan.carpenter@oracle.com>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH] clk: mediatek: fixed static checker warning in clk_cpumux_get_parent call
+Date: Tue, 11 Jul 2017 10:43:51 +0800
+Message-ID: <59fd4aa684632f1d9d2e7573a95bc42850e81690.1499701486.git.sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The second PLL of the JZ4770 does not have a bypass bit.
-This commit makes it possible to support it with the current common CGU
-code.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Fixed the signedness bug returning '(-22)' on the return type as u8 with
+moving the sanity checker into clk_cpumux_set_parent() to ensure always
+validity in clk_cpumux_get_parent() got called.
+
+Fixes: commit 1e17de9049da ("clk: mediatek: add missing cpu mux causing Mediatek cpufreq can't work")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/clk/ingenic/cgu.c | 3 ++-
- drivers/clk/ingenic/cgu.h | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-cpumux.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- v2: No change
- v3: No change
-
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index eb9002ccf3fc..75b083ba294c 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -100,7 +100,8 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	n += pll_info->n_offset;
- 	od_enc = ctl >> pll_info->od_shift;
- 	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
--	bypass = !!(ctl & BIT(pll_info->bypass_bit));
-+	bypass = !pll_info->no_bypass_bit &&
-+		 !!(ctl & BIT(pll_info->bypass_bit));
- 	enable = !!(ctl & BIT(pll_info->enable_bit));
+diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+index edd8e69..c6a3a1a 100644
+--- a/drivers/clk/mediatek/clk-cpumux.c
++++ b/drivers/clk/mediatek/clk-cpumux.c
+@@ -27,7 +27,6 @@ static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
+ static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+ {
+ 	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
+-	int num_parents = clk_hw_get_num_parents(hw);
+ 	unsigned int val;
  
- 	if (bypass)
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index da448b0cac18..21420b455985 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -48,6 +48,7 @@
-  * @bypass_bit: the index of the bypass bit in the PLL control register
-  * @enable_bit: the index of the enable bit in the PLL control register
-  * @stable_bit: the index of the stable bit in the PLL control register
-+ * @no_bypass_bit: if set, the PLL has no bypass functionality
-  */
- struct ingenic_cgu_pll_info {
- 	unsigned reg;
-@@ -58,6 +59,7 @@ struct ingenic_cgu_pll_info {
- 	u8 bypass_bit;
- 	u8 enable_bit;
- 	u8 stable_bit;
-+	bool no_bypass_bit;
- };
+ 	regmap_read(mux->regmap, mux->reg, &val);
+@@ -35,17 +34,18 @@ static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+ 	val >>= mux->shift;
+ 	val &= mux->mask;
  
- /**
+-	if (val >= num_parents)
+-		return -EINVAL;
+-
+ 	return val;
+ }
+ 
+ static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
++	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 mask, val;
+ 
++	if (index >= num_parents)
++		return -EINVAL;
++
+ 	val = index << mux->shift;
+ 	mask = mux->mask << mux->shift;
+ 
 -- 
-2.11.0
+2.7.4
+
