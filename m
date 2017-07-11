@@ -1,87 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, sboyd@codeaurora.org,
-        robdclark@gmail.com, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH V4 0/6] iommu/arm-smmu: Add runtime pm/sleep support
-Date: Thu,  6 Jul 2017 15:06:59 +0530
-Message-Id: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V2 00/10] add clock driver for Spreadtrum platforms
+Date: Tue, 11 Jul 2017 18:56:17 +0800
+Message-ID: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series provides the support for turning on the arm-smmu's
-clocks/power domains using runtime pm. This is done using the
-recently introduced device links patches, which lets the symmu's
-runtime to follow the master's runtime pm, so the smmu remains
-powered only when the masters use it.
+This is a rewrite of Spreadtrum's original clock driver[1] according to the
+comments[2] from Stephen Boyd.
 
-Took some reference from the exynos runtime patches [2].
-Tested this with MDP, GPU, and VENUS devices on apq8096-db820c board.
+This series adds Spreadtrum clock support together with its binding
+documentation and devicetree data.
 
-Previous version of the patchset [1].
+Any comments would be greatly appreciated.
 
-[V4]
-   * Reworked the clock handling part. We now take clock names as data
-     in the driver for supported compatible versions, and loop over them
-     to get, enable, and disable the clocks.
-   * Using qcom,msm8996 based compatibles for bindings instead of a generic
-     qcom compatible.
-   * Refactor MMU500 patch to just add the necessary clock names data and
-     corresponding bindings.
-   * Added the pm_runtime_get/put() calls in .unmap iommu op (fix added by
-     Stanimir on top of previous patch version.
-   * Added a patch to fix error path in arm_smmu_add_device()
-   * Removed patch 3/5 of V3 patch series that added qcom,smmu-v2 bindings.
+Thanks,
+Chunyan
 
-[V3]
-   * Reworked the patches to keep the clocks init/enabling function
-     separately for each compatible.
+Changes from V1 (https://lkml.org/lkml/2017/6/17/356):
+* Address Stephen's comments:
+  - Switch to use platform device driver instead of the DT probing mechanism.
+  - Move the common clock macro out from vendor directory, but need to remove those
+    overlap code from other vendors (such as sunxi-ng) once this gets merged.
+  - Add support to be built as a module.
+  - Add 'sprd_' prefix for all spin locks used in these drivers.
+  - Mark input parameter of sprd_x with const.
+  - Remove unreasonable dependencies to CONFIG_64BIT.
+  - Add readl() after writing the same register.
+  - Remove CLK_IS_BASIC which is no longer used.
+  - Remove unnecessary CLK_IGNORE_UNUSED when defining a clock.
+  - Change to expose all clock index.
+  - Use clk_ instead of ccu.
+  - Add Kconfig for sprd clocks.
+  - Move the fixed clocks out from the soc node.
+  - Switch to use 64-bit math in pll driver instead of 32-bit math.
+* Revise binding documentation according to dt modification.
+* Rename sc9860.c to sc9860-clk.c
 
-   * Added clocks bindings for MMU40x/500.
 
-   * Added a new compatible for qcom,smmu-v2 implementation and
-     the clock bindings for the same.
+[1] https://lwn.net/Articles/722739/
+[2] https://www.spinics.net/lists/arm-kernel/msg582017.html
 
-   * Rebased on top of 4.11-rc1
 
-[V2]
-   * Split the patches little differently.
+Chunyan Zhang (10):
+  drivers: move clock common macros out from vendor directories
+  dt-bindings: Add Spreadtrum clock binding documentation
+  clk: sprd: Add common infrastructure
+  clk: sprd: add gate clock support
+  clk: sprd: add mux clock support
+  clk: sprd: add divider clock support
+  clk: sprd: add composite clock support
+  clk: sprd: add adjustable pll support
+  clk: sprd: add clocks support for SC9860
+  arm64: dts: add clocks for SC9860
 
-   * Addressed comments.
-
-   * Removed the patch #4 [3] from previous post
-     for arm-smmu context save restore. Planning to
-     post this separately after reworking/addressing Robin's
-     feedback.
-
-   * Reversed the sequence to disable clocks than enabling.
-     This was required for those cases where the
-     clocks are populated in a dependent order from DT.
-
-[1] https://www.spinics.net/lists/arm-kernel/msg567488.html
-[2] https://lkml.org/lkml/2016/10/20/70
-[3] https://patchwork.kernel.org/patch/9389717/
-
-Sricharan R (4):
-  iommu/arm-smmu: Add pm_runtime/sleep ops
-  iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
-  iommu/arm-smmu: Add the device_link between masters and smmu
-  iommu/arm-smmu: Add support for MMU40x/500 clocks
-
-Vivek Gautam (2):
-  iommu/arm-smmu: Fix the error path in arm_smmu_add_device
-  iommu/arm-smmu: Add support for qcom,msm8996-smmu-v2 clocks
-
- .../devicetree/bindings/iommu/arm,smmu.txt         |  42 +++++
- drivers/iommu/arm-smmu.c                           | 191 +++++++++++++++++++--
- 2 files changed, 222 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/clock/sprd.txt |   36 +
+ arch/arm64/boot/dts/sprd/sc9860.dtsi             |   22 +
+ arch/arm64/boot/dts/sprd/whale2.dtsi             |    3 +-
+ drivers/clk/Kconfig                              |    1 +
+ drivers/clk/Makefile                             |    1 +
+ drivers/clk/clk_common.h                         |   60 +
+ drivers/clk/sprd/Kconfig                         |   14 +
+ drivers/clk/sprd/Makefile                        |   11 +
+ drivers/clk/sprd/common.c                        |   83 ++
+ drivers/clk/sprd/common.h                        |   56 +
+ drivers/clk/sprd/composite.c                     |   64 +
+ drivers/clk/sprd/composite.h                     |   47 +
+ drivers/clk/sprd/div.c                           |   98 ++
+ drivers/clk/sprd/div.h                           |   77 +
+ drivers/clk/sprd/gate.c                          |  104 ++
+ drivers/clk/sprd/gate.h                          |   58 +
+ drivers/clk/sprd/mux.c                           |   86 ++
+ drivers/clk/sprd/mux.h                           |   63 +
+ drivers/clk/sprd/pll.c                           |  236 +++
+ drivers/clk/sprd/pll.h                           |  133 ++
+ drivers/clk/sprd/sc9860-clk.c                    | 1726 ++++++++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9860-clk.h      |  375 +++++
+ 22 files changed, 3352 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+ create mode 100644 drivers/clk/clk_common.h
+ create mode 100644 drivers/clk/sprd/Kconfig
+ create mode 100644 drivers/clk/sprd/Makefile
+ create mode 100644 drivers/clk/sprd/common.c
+ create mode 100644 drivers/clk/sprd/common.h
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
+ create mode 100644 drivers/clk/sprd/div.c
+ create mode 100644 drivers/clk/sprd/div.h
+ create mode 100644 drivers/clk/sprd/gate.c
+ create mode 100644 drivers/clk/sprd/gate.h
+ create mode 100644 drivers/clk/sprd/mux.c
+ create mode 100644 drivers/clk/sprd/mux.h
+ create mode 100644 drivers/clk/sprd/pll.c
+ create mode 100644 drivers/clk/sprd/pll.h
+ create mode 100644 drivers/clk/sprd/sc9860-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9860-clk.h
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
