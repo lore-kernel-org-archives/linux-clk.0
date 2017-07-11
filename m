@@ -1,53 +1,269 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:34052 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750952AbdGZUHS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2017 16:07:18 -0400
-Received: by mail-wr0-f175.google.com with SMTP id 12so135975448wrb.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2017 13:07:17 -0700 (PDT)
-Message-ID: <1501099634.2401.37.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
- bindings
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Wed, 26 Jul 2017 22:07:14 +0200
-In-Reply-To: <20170726004830.GI2146@codeaurora.org>
-References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
-         <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
-         <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
-         <20170721204439.GJ19878@codeaurora.org>
-         <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
-         <1500897650.2401.1.camel@baylibre.com>
-         <20170726004830.GI2146@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robdclark@gmail.com>
+Return-Path: <robdclark@gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	viresh.kumar@linaro.org,
+	Rob Clark <robdclark@gmail.com>
+Subject: [RFC 1/3] clk: inherit display clocks enabled by bootloader
+Date: Tue, 11 Jul 2017 14:20:06 -0400
+Message-Id: <20170711182008.28298-2-robdclark@gmail.com>
+In-Reply-To: <20170711182008.28298-1-robdclark@gmail.com>
+References: <20170711182008.28298-1-robdclark@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-07-25 at 17:48 -0700, Stephen Boyd wrote:
-> > 
-> > Maybe it is time to investigate having the regmap clock from qcom available
-> > to
-> > every other platform ?
-> 
-> I think we have regmap clk duplicated a couple times in the
-> drivers/clk/ directory now.
+The goal here is to support inheriting a display setup by bootloader,
+although there may also be some non-display related use-cases.
 
-Which is why we may start thinking of common and generic "regmap" compatible
-solution in the CCF, at least for things like gates, dividers and muxes
+Rough idea is to add a flag for clks and power domains that might
+already be enabled when kernel starts, and make corresponding fixups
+to clk enable/prepare_count and power-domain state so that these are
+not automatically disabled late in boot.
 
-The approach used in qcom with regmap clocks could be a candidate for this,
-don't you think ?
+If bootloader is enabling display, and kernel is using efifb before
+real display driver is loaded (potentially from kernel module after
+userspace starts, in a typical distro kernel), we don't want to kill
+the clocks and power domains that are used by the display before
+userspace starts.
 
-> Not sure how this is related, except
-> for that there looks to be a desire to use a syscon binding here
-> and that forces regmap on drivers?
+Second part is for drm/msm to check if display related clocks are
+enabled when it is loaded, and if so read back hw state to sync
+existing display state w/ software state, and skip the initial
+clk_enable's and otherwise fixing up clk/regulator/etc ref counts
+(skipping the normal display-enable codepaths), therefore inheriting
+the enable done by bootloader.
 
-Syscon has been created exactly for this case where you want to create an mfd
-just for sharing a register region between several, otherwise well separated,
-devices, isn't it ?
+Obviously this should be split up into multiple patches and many
+TODOs addressed.  But I guess this is enough for now to start
+discussing the approach, and in particular how drm and clock/pd
+drivers work together to handle handover from bootloader.
+
+The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
+on leaf nodes.
+---
+ drivers/clk/clk.c              | 18 ++++++++++++++++++
+ drivers/clk/qcom/common.c      | 28 ++++++++++++++++++++++++++++
+ drivers/clk/qcom/gcc-msm8916.c | 15 ++++++++-------
+ drivers/clk/qcom/gdsc.c        |  6 ++++++
+ drivers/clk/qcom/gdsc.h        |  1 +
+ include/linux/clk-provider.h   |  1 +
+ include/linux/clk.h            |  9 +++++++++
+ 7 files changed, 71 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fc58c52a26b4..7c84e8d6e816 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -796,6 +796,24 @@ static void clk_disable_unused_subtree(struct clk_core *core)
+ 		clk_core_disable_unprepare(core->parent);
+ }
+ 
++/* clock and it's parents are already prepared/enabled from bootloader,
++ * so simply record the fact.
++ */
++static void __clk_inherit_enabled(struct clk_core *core)
++{
++	core->enable_count++;
++	core->prepare_count++;
++if (core->hw->init->name) // XXX hack.. something funny with xo/xo_board..
++	if (core->parent)
++		__clk_inherit_enabled(core->parent);
++}
++
++void clk_inherit_enabled(struct clk *clk)
++{
++	__clk_inherit_enabled(clk->core);
++}
++EXPORT_SYMBOL_GPL(clk_inherit_enabled);
++
+ static bool clk_ignore_unused;
+ static int __init clk_ignore_unused_setup(char *__unused)
+ {
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index d523991c945f..90b698c910d0 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -11,6 +11,7 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/export.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+@@ -258,6 +259,33 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		return ret;
+ 
++	/* Check which of clocks that we inherit state from bootloader
++	 * are enabled, and fixup enable/prepare state (as well as that
++	 * of it's parents).
++	 *
++	 * TODO can we assume that parents coming from another clk
++	 * driver are already registered?
++	 */
++	for (i = 0; i < num_clks; i++) {
++		struct clk_hw *hw;
++
++		if (!rclks[i])
++			continue;
++
++		hw = &rclks[i]->hw;
++
++		if (!(hw->init->flags & CLK_INHERIT_BOOTLOADER))
++			continue;
++
++		if (!clk_is_enabled_regmap(hw))
++			continue;
++
++		dev_dbg(dev, "%s is enabled from bootloader!\n",
++			  hw->init->name);
++
++		clk_inherit_enabled(hw->clk);
++	}
++
+ 	reset = &cc->reset;
+ 	reset->rcdev.of_node = dev->of_node;
+ 	reset->rcdev.ops = &qcom_reset_ops;
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 2cfe7000fc60..c939d33f6377 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -2468,7 +2468,7 @@ static struct clk_branch gcc_mdss_ahb_clk = {
+ 				"pcnoc_bfdcd_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2485,7 +2485,7 @@ static struct clk_branch gcc_mdss_axi_clk = {
+ 				"system_noc_bfdcd_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2502,7 +2502,7 @@ static struct clk_branch gcc_mdss_byte0_clk = {
+ 				"byte0_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2519,7 +2519,7 @@ static struct clk_branch gcc_mdss_esc0_clk = {
+ 				"esc0_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2536,7 +2536,7 @@ static struct clk_branch gcc_mdss_mdp_clk = {
+ 				"mdp_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2553,7 +2553,7 @@ static struct clk_branch gcc_mdss_pclk0_clk = {
+ 				"pclk0_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2570,7 +2570,7 @@ static struct clk_branch gcc_mdss_vsync_clk = {
+ 				"vsync_clk_src",
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -3060,6 +3060,7 @@ static struct gdsc mdss_gdsc = {
+ 		.name = "mdss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = INHERIT_BL,
+ };
+ 
+ static struct gdsc jpeg_gdsc = {
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a4f3580587b7..440d819b2d9d 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -291,6 +291,12 @@ static int gdsc_init(struct gdsc *sc)
+ 	if ((sc->flags & VOTABLE) && on)
+ 		gdsc_enable(&sc->pd);
+ 
++	if ((sc->flags & INHERIT_BL) && on) {
++		pr_debug("gdsc: %s is enabled from bootloader!\n", sc->pd.name);
++		gdsc_enable(&sc->pd);
++		sc->pd.flags |= GENPD_FLAG_ALWAYS_ON;
++	}
++
+ 	if (on || (sc->pwrsts & PWRSTS_RET))
+ 		gdsc_force_mem_on(sc);
+ 	else
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 39648348e5ec..3b5e64b060c2 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -53,6 +53,7 @@ struct gdsc {
+ #define VOTABLE		BIT(0)
+ #define CLAMP_IO	BIT(1)
+ #define HW_CTRL		BIT(2)
++#define INHERIT_BL	BIT(3)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c59c62571e4f..4d5505f92329 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -35,6 +35,7 @@
+ #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
+ /* parents need enable during gate/ungate, set rate and re-parent */
+ #define CLK_OPS_PARENT_ENABLE	BIT(12)
++#define CLK_INHERIT_BOOTLOADER	BIT(13) /* clk may be enabled from bootloader */
+ 
+ struct clk;
+ struct clk_hw;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 91bd464f4c9b..461991fc57e2 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -391,6 +391,15 @@ void clk_disable(struct clk *clk);
+ void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks);
+ 
+ /**
++ * clk_inherit_enabled - update the enable/prepare count of a clock and it's
++ * parents for clock enabled by bootloader.
++ *
++ * Intended to be used by clock drivers to inform the clk core of a clock
++ * that is already running.
++ */
++void clk_inherit_enabled(struct clk *clk);
++
++/**
+  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
+  *		  This is only valid once the clock source has been enabled.
+  * @clk: clock source
+-- 
+2.13.0
