@@ -1,105 +1,176 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Wed, 26 Jul 2017 15:16:16 +0800
-In-Reply-To: <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
-References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-11-icenowy@aosc.io> <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
+Return-Path: <Chunyan.Zhang@spreadtrum.com>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang
+	<xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai
+	<orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan
+ Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V2 07/10] clk: sprd: add composite clock support
+Date: Tue, 11 Jul 2017 18:56:24 +0800
+Message-ID: <20170711105627.20526-8-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A regulator to Orange Pi PC
-To: Chen-Yu Tsai <wens@csie.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Ondrej Jirman <megous@megous.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch introduced composite driveri for Spreadtrum's SoCs. The
+functions of this composite clock simply consist of divider and
+mux clocks.
 
+Original-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
+ drivers/clk/sprd/Makefile    |  1 +
+ drivers/clk/sprd/composite.c | 64 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/composite.h | 47 ++++++++++++++++++++++++++++++++
+ 3 files changed, 112 insertions(+)
+ create mode 100644 drivers/clk/sprd/composite.c
+ create mode 100644 drivers/clk/sprd/composite.h
 
-于 2017年7月26日 GMT+08:00 下午3:08:06, Chen-Yu Tsai <wens@csie.org> 写到:
->On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> From: Ondrej Jirman <megous@megous.com>
->>
->> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
->> Orange Pi PC, then set the power supply of the ARM cores to this
->> regulator, in order to enable DVFS.
->>
->> Signed-off-by: Ondrej Jirman <megous@megous.com>
->> [Icenowy: Enable DVFS in this patch, slight changes and change commit
->>  message]
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->> index 998b60f8d295..d855f8b6254e 100644
->> --- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->> +++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->> @@ -98,6 +98,10 @@
->>         status = "okay";
->>  };
->>
->> +&cpu0 {
->> +       cpu-supply = <&reg_sy8106a>;
->> +};
->> +
->>  &ehci0 {
->>         status = "okay";
->>  };
->> @@ -160,6 +164,21 @@
->>         };
->>  };
->>
->> +&r_i2c {
->> +       status = "okay";
->> +
->> +       reg_sy8106a: regulator@65 {
->> +               compatible = "silergy,sy8106a";
->> +               reg = <0x65>;
->> +               regulator-name = "vdd-cpux";
->> +               regulator-min-microvolt = <1000000>;
->
->According to the H3 datasheet, the minimum voltage is 1.1V, not 1V.
-
-But the Armbian OPP table for H3 contains several
-OPP under 1.1V...
-
->
->Otherwse
->
->> +               regulator-max-microvolt = <1400000>;
->> +               regulator-ramp-delay = <200>;
->
->Is this an actual constraint of the SoC? Or is it a characteristic
->of the regulator? If it is the latter, it belongs in the driver.
->AFAIK the regulator supports varying the ramp delay (slew rate).
->
->ChenYu
->
->> +               regulator-boot-on;
->> +               regulator-always-on;
->> +       };
->> +};
->> +
->>  &r_pio {
->>         leds_r_opc: led_pins@0 {
->>                 pins = "PL10";
->> --
->> 2.13.0
->>
->> --
->> You received this message because you are subscribed to the Google
->Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it,
->send an email to linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index 80e6039..2262e76 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -4,3 +4,4 @@ clk-sprd-y	+= common.o
+ clk-sprd-y	+= gate.o
+ clk-sprd-y	+= mux.o
+ clk-sprd-y	+= div.o
++clk-sprd-y	+= composite.o
+diff --git a/drivers/clk/sprd/composite.c b/drivers/clk/sprd/composite.c
+new file mode 100644
+index 0000000..25b045d
+--- /dev/null
++++ b/drivers/clk/sprd/composite.c
+@@ -0,0 +1,64 @@
++/*
++ * Spreadtrum composite clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#include <linux/clk-provider.h>
++
++#include "composite.h"
++
++DEFINE_SPINLOCK(sprd_comp_lock);
++EXPORT_SYMBOL_GPL(sprd_comp_lock);
++
++static long sprd_comp_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_round_rate(&cc->common, &cc->div,
++					 rate, parent_rate);
++}
++
++static unsigned long sprd_comp_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_recalc_rate(&cc->common, &cc->div, parent_rate);
++}
++
++static int sprd_comp_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_div_helper_set_rate(&cc->common, &cc->div,
++				       rate, parent_rate);
++}
++
++static u8 sprd_comp_get_parent(struct clk_hw *hw)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_get_parent(&cc->common, &cc->mux);
++}
++
++static int sprd_comp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sprd_comp *cc = hw_to_sprd_comp(hw);
++
++	return sprd_mux_helper_set_parent(&cc->common, &cc->mux, index);
++}
++
++const struct clk_ops sprd_comp_ops = {
++	.get_parent	= sprd_comp_get_parent,
++	.set_parent	= sprd_comp_set_parent,
++
++	.round_rate	= sprd_comp_round_rate,
++	.recalc_rate	= sprd_comp_recalc_rate,
++	.set_rate	= sprd_comp_set_rate,
++};
++EXPORT_SYMBOL_GPL(sprd_comp_ops);
+diff --git a/drivers/clk/sprd/composite.h b/drivers/clk/sprd/composite.h
+new file mode 100644
+index 0000000..f5ca0c9
+--- /dev/null
++++ b/drivers/clk/sprd/composite.h
+@@ -0,0 +1,47 @@
++/*
++ * Spreadtrum composite clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef _SPRD_COMPOSITE_H_
++#define _SPRD_COMPOSITE_H_
++
++#include "common.h"
++#include "mux.h"
++#include "div.h"
++
++struct sprd_comp {
++	struct sprd_mux_internal	mux;
++	struct sprd_div_internal	div;
++	struct sprd_clk_common	common;
++};
++
++#define SPRD_COMP_CLK(_struct, _name, _parent, _reg, _table,		\
++			_mshift, _mwidth, _dshift, _dwidth, _flags)	\
++	struct sprd_comp _struct = {					\
++		.mux	= _SPRD_MUX_CLK(_mshift, _mwidth, _table),	\
++		.div	= _SPRD_DIV_CLK(_dshift, _dwidth),		\
++		.common = {						\
++			 .reg		= _reg,				\
++			 .lock		= &sprd_comp_lock,		\
++			 .hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++							      _parent,	\
++							&sprd_comp_ops,	\
++							      _flags),	\
++			 }						\
++	}
++
++static inline struct sprd_comp *hw_to_sprd_comp(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_comp, common);
++}
++
++extern const struct clk_ops sprd_comp_ops;
++extern spinlock_t sprd_comp_lock;
++
++#endif /* _SPRD_COMPOSITE_H_ */
+-- 
+2.7.4
