@@ -1,28 +1,38 @@
-Return-Path: <wens@csie.org>
+Return-Path: <carlo@endlessm.com>
 MIME-Version: 1.0
-In-Reply-To: <805048a548031cafc890e6ea06ee773bdfb199d0.1499197129.git-series.plaes@plaes.org>
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
- <805048a548031cafc890e6ea06ee773bdfb199d0.1499197129.git-series.plaes@plaes.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 5 Jul 2017 12:06:47 +0800
-Message-ID: <CAGb2v677TzO7fWF6YU4o5J4_EJ8cWLWHFzkW4ZU9FCptGjgJ=Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/6] clk: sunxi-ng: div: Add support for fixed post-divider
-To: Priit Laes <plaes@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	Jonathan Liu <net147@gmail.com>
+In-Reply-To: <20170711012908.GO22780@codeaurora.org>
+References: <20170710203801.17496-1-carlo@caione.org> <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
+ <20170710235403.GB25390@fury> <20170711012908.GO22780@codeaurora.org>
+From: Carlo Caione <carlo@endlessm.com>
+Date: Tue, 11 Jul 2017 10:09:59 +0200
+Message-ID: <CAL9uMOE2FAVynV-Q0Vq450igmQMMr2LfS87-izrmSZXC1a0ARQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Darren Hart <dvhart@infradead.org>, Carlo Caione <carlo@caione.org>,
+	Enric Balletbo Serra <eballetbo@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Linux Upstreaming Team <linux@endlessm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 5, 2017 at 4:04 AM, Priit Laes <plaes@plaes.org> wrote:
-> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-> 6 is fixed post-divider.
+On Tue, Jul 11, 2017 at 3:29 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/10, Darren Hart wrote:
+>> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra wrote:
+>> > 2017-07-10 22:38 GMT+02:00 Carlo Caione <carlo@caione.org>:
+>> > >         pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
+>> > >         spin_lock_init(&pclk->lock);
+>> > >
+>> > > +       if (plt_clk_is_enabled(&pclk->hw))
+>> > > +               init.flags |= CLK_IGNORE_UNUSED;
 >
-> Signed-off-by: Priit Laes <plaes@plaes.org>
+> Can you add a comment to the effect of why we're adding ignore
+> unused here? That will make it clearer when reading the code a
+> year from now why we're not turning these clks off by default and
+> also allow us to recall why it isn't marked as a critical clk.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+This is actually a good point. Probably here we want to mark the clock
+as CLK_IS_CRITICAL instead of CLK_IGNORE_UNUSED.
+Michael, any preference here?
+
+-- 
+Carlo Caione  |  +39.340.80.30.096  |  Endless
