@@ -1,283 +1,236 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 14/18] MIPS: ingenic: Initial JZ4770 support
-Date: Sun,  2 Jul 2017 18:30:12 +0200
-Message-Id: <20170702163016.6714-15-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+        Ben Li <ben.li@spreadtrum.com>,
+        Orson Zhai <orson.zhai@spreadtrum.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Subject: [PATCH V2 06/10] clk: sprd: add divider clock support
+Date: Tue, 11 Jul 2017 18:56:23 +0800
+Message-ID: <20170711105627.20526-7-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Provide just enough bits (clocks, clocksource, uart) to allow a kernel
-to boot on the JZ4770 SoC to a initramfs userspace.
+This is a feature that can also be found in sprd composite clocks,
+provide a bunch of helpers that can be reused later on.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Original-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 ---
- arch/mips/boot/dts/ingenic/jz4770.dtsi | 210 +++++++++++++++++++++++++++++++++
- arch/mips/jz4740/Kconfig               |   6 +
- arch/mips/jz4740/time.c                |   2 +-
- 3 files changed, 217 insertions(+), 1 deletion(-)
- create mode 100644 arch/mips/boot/dts/ingenic/jz4770.dtsi
+ drivers/clk/sprd/Makefile |  1 +
+ drivers/clk/sprd/div.c    | 98 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sprd/div.h    | 77 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
+ create mode 100644 drivers/clk/sprd/div.c
+ create mode 100644 drivers/clk/sprd/div.h
 
- v2: No change
- v3: No change
-
-diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
+index cee36b5..80e6039 100644
+--- a/drivers/clk/sprd/Makefile
++++ b/drivers/clk/sprd/Makefile
+@@ -3,3 +3,4 @@ obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
+ clk-sprd-y	+= common.o
+ clk-sprd-y	+= gate.o
+ clk-sprd-y	+= mux.o
++clk-sprd-y	+= div.o
+diff --git a/drivers/clk/sprd/div.c b/drivers/clk/sprd/div.c
 new file mode 100644
-index 000000000000..d8d0a741ff5d
+index 0000000..8ba6642
 --- /dev/null
-+++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-@@ -0,0 +1,210 @@
-+#include <dt-bindings/clock/jz4770-cgu.h>
++++ b/drivers/clk/sprd/div.c
+@@ -0,0 +1,98 @@
++/*
++ * Spreadtrum divider clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
 +
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	compatible = "ingenic,jz4770";
++#include <linux/clk-provider.h>
 +
-+	cpuintc: interrupt-controller {
-+		#address-cells = <0>;
-+		#interrupt-cells = <1>;
-+		interrupt-controller;
-+		compatible = "mti,cpu-interrupt-controller";
-+	};
++#include "div.h"
 +
-+	intc: interrupt-controller@10001000 {
-+		compatible = "ingenic,jz4770-intc";
-+		reg = <0x10001000 0x40>;
++DEFINE_SPINLOCK(sprd_div_lock);
++EXPORT_SYMBOL_GPL(sprd_div_lock);
 +
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
++long sprd_div_helper_round_rate(struct sprd_clk_common *common,
++				const struct sprd_div_internal *div,
++				unsigned long rate,
++				unsigned long *parent_rate)
++{
++	return divider_round_rate(&common->hw, rate, parent_rate,
++				  NULL, div->width, 0);
++}
++EXPORT_SYMBOL_GPL(sprd_div_helper_round_rate);
 +
-+		interrupt-parent = <&cpuintc>;
-+		interrupts = <2>;
-+	};
++static long sprd_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct sprd_div *cd = hw_to_sprd_div(hw);
 +
-+	ext: ext {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+	};
++	return sprd_div_helper_round_rate(&cd->common, &cd->div,
++					  rate, parent_rate);
++}
 +
-+	osc32k: osc32k {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
++unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
++					  const struct sprd_div_internal *div,
++					  unsigned long parent_rate)
++{
++	unsigned long val;
++	u32 reg;
 +
-+	cgu: jz4770-cgu@10000000 {
-+		compatible = "ingenic,jz4770-cgu";
-+		reg = <0x10000000 0x100>;
++	reg = sprd_clk_readl(common);
++	val = reg >> div->shift;
++	val &= (1 << div->width) - 1;
 +
-+		clocks = <&ext>, <&osc32k>;
-+		clock-names = "ext", "osc32k";
++	return divider_recalc_rate(&common->hw, parent_rate, val, NULL, 0);
++}
++EXPORT_SYMBOL_GPL(sprd_div_helper_recalc_rate);
 +
-+		#clock-cells = <1>;
-+	};
++static unsigned long sprd_div_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct sprd_div *cd = hw_to_sprd_div(hw);
 +
-+	pinctrl: pin-controller@10010000 {
-+		compatible = "ingenic,jz4770-pinctrl";
-+		reg = <0x10010000 0x600>;
++	return sprd_div_helper_recalc_rate(&cd->common, &cd->div, parent_rate);
++}
 +
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
++			     const struct sprd_div_internal *div,
++			     unsigned long rate,
++			     unsigned long parent_rate)
++{
++	unsigned long flags;
++	unsigned long val;
++	u32 reg;
 +
-+		gpa: gpio@0 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <0>;
++	val = divider_get_val(rate, parent_rate, NULL,
++			      div->width, 0);
 +
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 0 32>;
-+			#gpio-cells = <2>;
++	spin_lock_irqsave(common->lock, flags);
 +
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
++	reg = sprd_clk_readl(common);
++	reg &= ~GENMASK(div->width + div->shift - 1, div->shift);
 +
-+			interrupt-parent = <&intc>;
-+			interrupts = <17>;
-+		};
++	sprd_clk_writel(reg | (val << div->shift), common);
 +
-+		gpb: gpio@1 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <1>;
++	spin_unlock_irqrestore(common->lock, flags);
 +
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 32 32>;
-+			#gpio-cells = <2>;
++	return 0;
 +
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
++}
++EXPORT_SYMBOL_GPL(sprd_div_helper_set_rate);
 +
-+			interrupt-parent = <&intc>;
-+			interrupts = <16>;
-+		};
++static int sprd_div_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct sprd_div *cd = hw_to_sprd_div(hw);
 +
-+		gpc: gpio@2 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <2>;
++	return sprd_div_helper_set_rate(&cd->common, &cd->div,
++					rate, parent_rate);
++}
 +
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 64 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <15>;
-+		};
-+
-+		gpd: gpio@3 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <3>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 96 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <14>;
-+		};
-+
-+		gpe: gpio@4 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <4>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 128 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <13>;
-+		};
-+
-+		gpf: gpio@5 {
-+			compatible = "ingenic,jz4770-gpio";
-+			reg = <5>;
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 160 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <12>;
-+		};
-+	};
-+
-+	uart0: serial@10030000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10030000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART0>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <5>;
-+
-+		status = "disabled";
-+	};
-+
-+	uart1: serial@10031000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10031000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART1>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <4>;
-+
-+		status = "disabled";
-+	};
-+
-+	uart2: serial@10032000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10032000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART2>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <3>;
-+
-+		status = "disabled";
-+	};
-+
-+	uart3: serial@10033000 {
-+		compatible = "ingenic,jz4770-uart";
-+		reg = <0x10033000 0x100>;
-+
-+		clocks = <&ext>, <&cgu JZ4770_CLK_UART3>;
-+		clock-names = "baud", "module";
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <2>;
-+
-+		status = "disabled";
-+	};
-+
-+	uhc: uhc@13430000 {
-+		compatible = "generic-ohci";
-+		reg = <0x13430000 0x1000>;
-+
-+		clocks = <&cgu JZ4770_CLK_UHC>, <&cgu JZ4770_CLK_UHC_PHY>;
-+		assigned-clocks = <&cgu JZ4770_CLK_UHC>;
-+		assigned-clock-rates = <48000000>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <20>;
-+
-+		status = "disabled";
-+	};
++const struct clk_ops sprd_div_ops = {
++	.recalc_rate = sprd_div_recalc_rate,
++	.round_rate = sprd_div_round_rate,
++	.set_rate = sprd_div_set_rate,
 +};
-diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
-index 36f82017695d..922850503271 100644
---- a/arch/mips/jz4740/Kconfig
-+++ b/arch/mips/jz4740/Kconfig
-@@ -17,6 +17,12 @@ config MACH_JZ4740
- 	bool
- 	select SYS_HAS_CPU_MIPS32_R1
- 
-+config MACH_JZ4770
-+	bool
-+	select MIPS_CPU_SCACHE
-+	select SYS_HAS_CPU_MIPS32_R2
-+	select SYS_SUPPORTS_HIGHMEM
++EXPORT_SYMBOL_GPL(sprd_div_ops);
+diff --git a/drivers/clk/sprd/div.h b/drivers/clk/sprd/div.h
+new file mode 100644
+index 0000000..128348e
+--- /dev/null
++++ b/drivers/clk/sprd/div.h
+@@ -0,0 +1,77 @@
++/*
++ * Spreadtrum divider clock driver
++ *
++ * Copyright (C) 2017 Spreadtrum, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
 +
- config MACH_JZ4780
- 	bool
- 	select MIPS_CPU_SCACHE
-diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
-index bb1ad5119da4..2ca9160f642a 100644
---- a/arch/mips/jz4740/time.c
-+++ b/arch/mips/jz4740/time.c
-@@ -113,7 +113,7 @@ static struct clock_event_device jz4740_clockevent = {
- #ifdef CONFIG_MACH_JZ4740
- 	.irq = JZ4740_IRQ_TCU0,
- #endif
--#ifdef CONFIG_MACH_JZ4780
-+#if defined(CONFIG_MACH_JZ4770) || defined(CONFIG_MACH_JZ4780)
- 	.irq = JZ4780_IRQ_TCU2,
- #endif
- };
++#ifndef _SPRD_DIV_H_
++#define _SPRD_DIV_H_
++
++#include "common.h"
++
++/**
++ * struct sprd_div_internal - Internal divider description
++ * @shift: Bit offset of the divider in its register
++ * @width: Width of the divider field in its register
++ *
++ * That structure represents a single divider, and is meant to be
++ * embedded in other structures representing the various clock
++ * classes.
++ */
++struct sprd_div_internal {
++	u8	shift;
++	u8	width;
++};
++
++#define _SPRD_DIV_CLK(_shift, _width)	\
++	{				\
++		.shift	= _shift,	\
++		.width	= _width,	\
++	}
++
++struct sprd_div {
++	struct sprd_div_internal	div;
++	struct sprd_clk_common	common;
++};
++
++#define SPRD_DIV_CLK(_struct, _name, _parent, _reg,			\
++			_shift, _width, _flags)				\
++	struct sprd_div _struct = {					\
++		.div	= _SPRD_DIV_CLK(_shift, _width),		\
++		.common	= {						\
++			.reg		= _reg,				\
++			.lock		= &sprd_div_lock,		\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &sprd_div_ops,	\
++						      _flags),		\
++		}							\
++	}
++
++static inline struct sprd_div *hw_to_sprd_div(const struct clk_hw *hw)
++{
++	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
++
++	return container_of(common, struct sprd_div, common);
++}
++
++long sprd_div_helper_round_rate(struct sprd_clk_common *common,
++				const struct sprd_div_internal *div,
++				unsigned long rate,
++				unsigned long *parent_rate);
++
++unsigned long sprd_div_helper_recalc_rate(struct sprd_clk_common *common,
++					  const struct sprd_div_internal *div,
++					  unsigned long parent_rate);
++
++int sprd_div_helper_set_rate(const struct sprd_clk_common *common,
++			     const struct sprd_div_internal *div,
++			     unsigned long rate,
++			     unsigned long parent_rate);
++
++extern const struct clk_ops sprd_div_ops;
++extern spinlock_t sprd_div_lock;
++
++#endif /* _SPRD_DIV_H_ */
 -- 
-2.11.0
+2.7.4
