@@ -1,63 +1,60 @@
-Return-Path: <dvhart@infradead.org>
-Date: Thu, 13 Jul 2017 08:54:48 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Carlo Caione <carlo@caione.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, pierre-louis.bossart@linux.intel.com,
-	sboyd@codeaurora.org, linux@endlessm.com, eballetbo@gmail.com,
-	Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH v2] clk: x86: Do not gate clocks enabled by the firmware
-Message-ID: <20170713155448.GD15146@fury>
-References: <20170713094213.2775-1-carlo@caione.org>
- <1499940374.22624.370.camel@linux.intel.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Suman Anna <s-anna@ti.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Dave Gerlach <d-gerlach@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH] dt-bindings: clock: ti-sci: Fix incorrect usage of headers
+Date: Tue, 11 Jul 2017 17:36:15 -0500
+Message-ID: <20170711223615.29398-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1499940374.22624.370.camel@linux.intel.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 13, 2017 at 01:06:14PM +0300, Andy Shevchenko wrote:
-> On Thu, 2017-07-13 at 11:42 +0200, Carlo Caione wrote:
-> > From: Carlo Caione <carlo@endlessm.com>
-> > 
-> > Read the enable register to determine if the clock is already in use
-> > by
-> > the firmware. In this case avoid gating the clock.
-> > 
-> 
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> I suppose it should go via clock tree.
-> 
-> > Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > Signed-off-by: Carlo Caione <carlo@endlessm.com>
-> > ---
-> >  drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-
-> > atom.c
-> > index 2b60577703ef..3c73d2e564ca 100644
-> > --- a/drivers/clk/x86/clk-pmc-atom.c
-> > +++ b/drivers/clk/x86/clk-pmc-atom.c
-> > @@ -185,6 +185,13 @@ static struct clk_plt *plt_clk_register(struct
-> > platform_device *pdev, int id,
-> >  	pclk->reg = base + PMC_CLK_CTL_OFFSET + id *
-> > PMC_CLK_CTL_SIZE;
-> >  	spin_lock_init(&pclk->lock);
-> >  
-> > +	/*
-> > +	 * If the clock was already enabled by the firmware mark is a
-> > critical
+The clock consumer usage description was erroneously referring to
+couple of dt-binding headers that are no longer valid. The definition
+and/or usage of these headers is incorrect and the only file present
+at the moment, dt-bindings/soc/k2g.h is also being cleaned up. The
+examples in this binding were updated properly, but the update to
+description was missed out. So, fix this.
 
-Nit... I think this should read... "mark it as critical" ?
+Fixes: 8f306cfe4383 ("Documentation: dt: Add TI SCI clock driver")
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+Hi Stephen,
 
-> > +	 * to avoid it being gated by the clock framework if no
-> > driver owns it
+Looks like this was missed during the update/repost of the ti-sci-clk
+driver/binding. FYI, Santosh is going to pickup the header file cleanup
+patch https://patchwork.kernel.org/patch/9741279/ for the next merge
+window.
 
-owns it.
+regards
+Suman
 
-Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
+ Documentation/devicetree/bindings/clock/ti,sci-clk.txt | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+index 1e884c40ab50..4e59dc6b1778 100644
+--- a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
++++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+@@ -14,10 +14,9 @@ Required properties:
+ - compatible: Must be "ti,k2g-sci-clk"
+ - #clock-cells: Shall be 2.
+   In clock consumers, this cell represents the device ID and clock ID
+-  exposed by the PM firmware. The assignments can be found in the header
+-  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
+-  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
+-  is the SoC involved, for example 'k2g'.
++  exposed by the PM firmware. The list of valid values for the device IDs
++  and clocks IDs for 66AK2G SoC are documented at
++  http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data
+ 
+ Examples:
+ --------
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.13.1
