@@ -1,65 +1,62 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 25 Jul 2017 09:35:28 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 08/10] ARM: dts: sun8i: a83t: Add pingroup for 8-bit
- eMMC on mmc2
-Message-ID: <20170725073528.7f7xzqxummibrnaj@flea>
-References: <20170724135905.28855-1-wens@csie.org>
- <20170724135905.28855-9-wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Jul 2017 19:02:33 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v3 07/10] clk: rollback set_rate_range changes on failure
+Message-ID: <20170712020233.GV22780@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-8-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4hbezhkubijb5jmm"
-In-Reply-To: <20170724135905.28855-9-wens@csie.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170612194438.12298-8-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06/12, Jerome Brunet wrote:
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
---4hbezhkubijb5jmm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There should be some commit text here describing the problem.
+Also a Fixes: tag and please put this earlier in the series.
 
-On Mon, Jul 24, 2017 at 09:59:03PM +0800, Chen-Yu Tsai wrote:
-> mmc2 can support 8-bit eMMC chips, with a dedicated reset line.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/clk.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index d91236e70a04..253f1d3f0971 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1864,6 +1864,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate_protect);
+>  int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+>  {
+>  	int ret = 0;
+> +	unsigned int old_min, old_max;
+>  
+>  	if (!clk)
+>  		return 0;
+> @@ -1881,9 +1882,16 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+>  		clk_core_rate_unprotect(clk->core);
+>  
+>  	if (min != clk->min_rate || max != clk->max_rate) {
+> +		old_min = clk->min_rate;
+> +		old_max = clk->max_rate;
+>  		clk->min_rate = min;
+>  		clk->max_rate = max;
+>  		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
+> +		if (ret) {
+> +			/* undo changes */
+> +			clk->min_rate = old_min;
+> +			clk->max_rate = old_max;
+> +		}
+>  	}
+>  
+>  	if (clk->protect_count)
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---4hbezhkubijb5jmm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZdvTAAAoJEBx+YmzsjxAg3AgQAIp3+ytHYUq+nmkz4hzEBvkA
-JifuWeT0mkkXSiEIPHXFpHOL+rGoQvORMS4AQHpF6JmFzO8SKcWdyd22QHpNUT9O
-M8uzFrFCc/K5wayYQx2iWGjbx26lyV8QpASqvIJC4h6mS3z8xxifzyHYnyk5FRBN
-Ukq6l+HuxEfVRD6JX7F44Oxh3Ol/c/8VgWbugcowXS8xtCX3v3MUrH/1IAWsGjCB
-w69mAGQjI8EL4K+7t2Z0420mauEzmVWimDxf0Low4Jc0iozNW6hkSCBDj3/k/LrV
-jwe6h9eROlhoNEue0SHYR/0CXlNDHkT9H7S1YI2MXWO1QkN0YQlUKNz7qiAOsOXJ
-SQVWQgoxy7jJXG1TOdseIxA+UOClrFmmCstsgOEchN55HWfxjmHvTC1zL/4tPqC9
-WRl+dvfYrdx99idNfc4dLFJExut43csiNFC3HP85V4Mwc12DtEsKmfwUqxkmKhxc
-+bHhFgMeTlkFuvjvBmKxu8oJ6ZiRm1hcD5Ua6eVPHhVyQw1cyJzJ2bm+fE1ZwxFg
-xaghW4xliD2Fcm/+lP4ODr5Hu5/vTnxONmpb8QqCz6QjSnfDtMQl9OHc9cLIF//f
-lOsT6v80GJz4IRqpAx9nuwgdoyAwa3y58acZdNOmu8IbZR7KF9jxNBDgkn0B0LkB
-8seHccsrssslfg1SIBBj
-=8Q4k
------END PGP SIGNATURE-----
-
---4hbezhkubijb5jmm--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
