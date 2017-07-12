@@ -1,80 +1,60 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Wed, 19 Jul 2017 11:00:33 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk
-	<linux-clk@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>, "Paulius
- Zaleckas" <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Hans Ulli Kroll
-	<ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, "Joel
- Stanley" <joel@jms.id.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH] clk: gemini: Fix reset regression
-Message-ID: <20170719080033.GD1002@tbergstrom-lnx.Nvidia.com>
-References: <20170711122601.17745-1-linus.walleij@linaro.org>
- <1499874682.6374.57.camel@pengutronix.de>
- <CACRpkda3ZW4rQTwg8Y63uzzupCZAtTP6jv1ppsTXHuDDy0y8og@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57286 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751150AbdGLXB7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 19:01:59 -0400
+Date: Wed, 12 Jul 2017 16:01:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V4 2/6] iommu/arm-smmu: Add pm_runtime/sleep ops
+Message-ID: <20170712230152.GC22780@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225821.GB22780@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CACRpkda3ZW4rQTwg8Y63uzzupCZAtTP6jv1ppsTXHuDDy0y8og@mail.gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170712225821.GB22780@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 18, 2017 at 11:49:44AM +0200, Linus Walleij wrote:
-> On Wed, Jul 12, 2017 at 5:51 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+On 07/12, Stephen Boyd wrote:
+> On 07/06, Vivek Gautam wrote:
+> > From: Sricharan R <sricharan@codeaurora.org>
+> > 
+> > The smmu needs to be functional only when the respective
+> > master's using it are active. The device_link feature
+> > helps to track such functional dependencies, so that the
+> > iommu gets powered when the master device enables itself
+> > using pm_runtime. So by adapting the smmu driver for
+> > runtime pm, above said dependency can be addressed.
+> > 
+> > This patch adds the pm runtime/sleep callbacks to the
+> > driver and also the functions to parse the smmu clocks
+> > from DT and enable them in resume/suspend.
+> > 
+> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> > Signed-off-by: Archit Taneja <architt@codeaurora.org>
+> > [vivek: Clock rework to loop over clock names data]
+> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > ---
 > 
-> > From fab3a9a697e9797ba1c24874d7c43c09dd812e77 Mon Sep 17 00:00:00 2001
-> > From: Philipp Zabel <p.zabel@pengutronix.de>
-> > Date: Wed, 12 Jul 2017 17:29:28 +0200
-> > Subject: [PATCH] reset: make (de)assert report succeess for self-deasserting
-> >  reset drivers
-> >
-> > By now there are drivers using shared reset controls and (de)assert
-> > calls on platforms with self-deasserting reset lines and thus reset
-> > drivers that do not implement .assert() and .deassert().
-> > As long as the initial state of the reset line is deasserted, there
-> > is no reason for a reset_control_assert call to return an error for
-> > shared reset controls, or for a reset_control_deassert call to return
-> > an error for either shared or exclusive reset controls: after a call
-> > to reset_control_deassert the reset line is guaranteed to be deasserted,
-> > and after a call to reset_control_assert it is valid for the reset
-> > line to stay deasserted for shared reset controls.
-> >
-> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> General comment, we have a bulk clk API now, but I guess we
+> failed to add the clk_bulk_prepare_enable() API that could be
+> used here. Perhaps you can add that API and then use it here to
+> reduce lines of code.
 > 
-> This patch makes all kind of sense, and I follow your
-> reasoning.
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> In the back of my head I was thinking that the deassert/assert
-> pair matches a certain SoC driver design pattern I have seen
-> around:
-> 
-> When a driver use an IP block it enables the clock and takes
-> the block out of reset.
-> 
-> When it stops using it, it asserts reset and disables the clock.
-> 
-> This is not entirely self-evident, for example why is reset asserted
-> across say insmod/rmmod/insmod. Just disabling the clock would
-> be OK, I guess, in most cases. It is just one of those "dances"
-> that developers do, as if to clear the desk or something.
-> 
-> But I guess there must be cases where doing things in another way
-> creates problems or power leaks.
-> 
-> I would surely like to understand, from a silicon perspective, why
-> drivers are so often written like this. I could think of things like
-> little automata and gates inside the silicon that need to be reset
-> to minimize off-power consumption but I have no clue if it is
-> really so.
 
-At least doing it this way guarantees the hardware is in its initial state
-before the driver starts doing anything with it. Otherwise you would have
-to ensure the hw init sequence in the driver works for any hw state. That
-seems more complicated to me than just making sure it works correctly when
-the hw is in its initial stat, especially when there are DMA engines involved.
+Bjorn just sent a patch for that API an hour ago.
 
-Peter.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
