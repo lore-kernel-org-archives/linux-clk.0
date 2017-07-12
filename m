@@ -1,78 +1,100 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 11/18] MIPS: ingenic: Use common cmdline handling code
-Date: Sun,  2 Jul 2017 18:30:09 +0200
-Message-Id: <20170702163016.6714-12-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 12 Jul 2017 16:05:36 -0700
+From: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Jose.Abreu@synopsys.com" <Jose.Abreu@synopsys.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH v4] clk: axs10x: introduce AXS10X pll driver
+Message-ID: <20170712230536.GE22780@codeaurora.org>
+References: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
+ <20170712052535.GY22780@codeaurora.org>
+ <1499846503.9320.1.camel@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1499846503.9320.1.camel@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Burton <paul.burton@imgtec.com>
+On 07/12, Eugeniy Paltsev wrote:
+> On Tue, 2017-07-11 at 22:25 -0700, Stephen Boyd wrote:
+> > On 06/21, Eugeniy Paltsev wrote:
+> > > AXS10X boards manages it's clocks using various PLLs. These PLL has
+> > > same
+> > > dividers and corresponding control registers mapped to different
+> > > addresses.
+> > > So we add one common driver for such PLLs.
+> > > 
+> > > Each PLL on AXS10X board consist of three dividers: IDIV, FBDIV and
+> > > ODIV. Output clock value is managed using these dividers.
+> > > 
+> > > We add pre-defined tables with supported rate values and
+> > > appropriate
+> > > configurations of IDIV, FBDIV and ODIV for each value.
+> > > 
+> > > As of today we add support for PLLs that generate clock for the
+> > > following devices:
+> > >  * ARC core on AXC CPU tiles.
+> > >  * ARC PGU on ARC SDP Mainboard.
+> > > and more to come later.
+> > > 
+> > > By this patch we add support for two plls (arc core pll and pgu
+> > > pll),
+> > > so we had to use two different init types: CLK_OF_DECLARE for arc
+> > > core pll and
+> > > regular probing for pgu pll.
+> > > 
+> > > Acked-by: Rob Herring <robh@kernel.org>
+> > > Acked-by: Jose Abreu <joabreu@synopsys.com>
+> > > 
+> > > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> > > Signed-off-by: Vlad Zakharov <vzakhar@synopsys.com>
+> > > Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+> > 
+> > Sorry this missed the cutoff for new code for v4.13. Should be in
+> > clk-next next week though.
+> > 
+> > > +}
+> > > +
+> > > +static inline struct axs10x_pll_clk *to_axs10x_pll_clk(struct
+> > > clk_hw *hw)
+> > > +{
+> > > +	return container_of(hw, struct axs10x_pll_clk, hw);
+> > > +}
+> > > +
+> > > +static inline u32 axs10x_div_get_value(u32 reg)
+> > > +{
+> > > +	if (PLL_REG_GET_BYPASS(reg))
+> > > +		return 1;
+> > > +
+> > > +	return PLL_REG_GET_HIGH(reg) + PLL_REG_GET_LOW(reg);
+> > > +}
+> > > +
+> > > +static inline u32 axs10x_encode_div(unsigned int id, int upd)
+> > > +{
+> > > +	u32 div = 0;
+> > > +
+> > > +	PLL_REG_SET_LOW(div, (id % 2 == 0) ? id >> 1 : (id >> 1) +
+> > > 1);
+> > > +	PLL_REG_SET_HIGH(div, id >> 1);
+> > > +	PLL_REG_SET_EDGE(div, id % 2);
+> > > +	PLL_REG_SET_BYPASS(div, id == 1 ? 1 : 0);
+> > > +	PLL_REG_SET_NOUPD(div, !upd);
+> > 
+> > So sparse complains here about a "dubious !x & y". Perhaps this
+> > can be changed to
+> > 
+> > 	PLL_REG_SET_NOUPD(div, upd == 0 ? 1 : 0);
+> > 
+> > That way sparse doesn't complain. I can make the change when
+> > applying if you agree.
+> 
+> Sure, thanks a lot.
+> 
 
-jz4740_init_cmdline appends all arguments from argv (in fw_arg1) to
-arcs_cmdline, up to argc (in fw_arg0). The common code in
-fw_init_cmdline will do the exact same thing when run on a system where
-fw_arg0 isn't a pointer to kseg0 (it'll also set _fw_envp but we don't
-use it). Remove the custom implementation & use the generic code.
+Ok. Applied to clk-next.
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
----
- arch/mips/jz4740/prom.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
-
- v2: No change
- v3: No change
-
-diff --git a/arch/mips/jz4740/prom.c b/arch/mips/jz4740/prom.c
-index 47e857194ce6..a62dd8e6ecf9 100644
---- a/arch/mips/jz4740/prom.c
-+++ b/arch/mips/jz4740/prom.c
-@@ -20,33 +20,13 @@
- #include <linux/serial_reg.h>
- 
- #include <asm/bootinfo.h>
-+#include <asm/fw/fw.h>
- #include <asm/mach-jz4740/base.h>
- 
--static __init void jz4740_init_cmdline(int argc, char *argv[])
--{
--	unsigned int count = COMMAND_LINE_SIZE - 1;
--	int i;
--	char *dst = &(arcs_cmdline[0]);
--	char *src;
--
--	for (i = 1; i < argc && count; ++i) {
--		src = argv[i];
--		while (*src && count) {
--			*dst++ = *src++;
--			--count;
--		}
--		*dst++ = ' ';
--	}
--	if (i > 1)
--		--dst;
--
--	*dst = 0;
--}
--
- void __init prom_init(void)
- {
--	jz4740_init_cmdline((int)fw_arg0, (char **)fw_arg1);
- 	mips_machtype = MACH_INGENIC_JZ4740;
-+	fw_init_cmdline();
- }
- 
- void __init prom_free_prom_memory(void)
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
