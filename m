@@ -1,71 +1,87 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 21 Jul 2017 09:21:16 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 05/10] mmc: sunxi: Support MMC DDR52 transfer mode
- with new timing mode
-Message-ID: <20170721072116.bub4fxqq2zg6kj3t@flea>
-References: <20170720034452.15920-1-wens@csie.org>
- <20170720034452.15920-6-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:11278 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752762AbdGLPVh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 11:21:37 -0400
+Subject: Re: [PATCH] dt-bindings: clock: ti-sci: Fix incorrect usage of
+ headers
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Dave Gerlach <d-gerlach@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20170711223615.29398-1-s-anna@ti.com>
+ <20170712010923.GP22780@codeaurora.org>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <539129c3-8214-4e0d-0e97-7c6784a9b2b5@ti.com>
+Date: Wed, 12 Jul 2017 10:21:10 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="l5oxp2yqvksnbrtt"
-In-Reply-To: <20170720034452.15920-6-wens@csie.org>
+In-Reply-To: <20170712010923.GP22780@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 07/11/2017 08:09 PM, Stephen Boyd wrote:
+> On 07/11, Suman Anna wrote:
+>> The clock consumer usage description was erroneously referring to
+>> couple of dt-binding headers that are no longer valid. The definition
+>> and/or usage of these headers is incorrect and the only file present
+>> at the moment, dt-bindings/soc/k2g.h is also being cleaned up. The
+>> examples in this binding were updated properly, but the update to
+>> description was missed out. So, fix this.
+>>
+>> Fixes: 8f306cfe4383 ("Documentation: dt: Add TI SCI clock driver")
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>> Hi Stephen,
+>>
+>> Looks like this was missed during the update/repost of the ti-sci-clk
+>> driver/binding. FYI, Santosh is going to pickup the header file cleanup
+>> patch https://patchwork.kernel.org/patch/9741279/ for the next merge
+>> window.
+> 
+> I'll let Rob apply this as it is purely a binding document update.
 
---l5oxp2yqvksnbrtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, thanks.
 
-On Thu, Jul 20, 2017 at 11:44:47AM +0800, Chen-Yu Tsai wrote:
-> The MMC controller can support DDR52 transfers under the new timing
-> mode. According to the BSP kernel, the module clock has to be double
-> the card clock, regardless of the bus width. The default timings in
-> the hardware can be used.
->=20
-> This also reworks the code setting the internal divider, getting rid
-> of a extra conditional.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> 
+>>
+>> regards
+>> Suman
+>>
+>>  Documentation/devicetree/bindings/clock/ti,sci-clk.txt | 7 +++----
+>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>> index 1e884c40ab50..4e59dc6b1778 100644
+>> --- a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>> @@ -14,10 +14,9 @@ Required properties:
+>>  - compatible: Must be "ti,k2g-sci-clk"
+>>  - #clock-cells: Shall be 2.
+>>    In clock consumers, this cell represents the device ID and clock ID
+>> -  exposed by the PM firmware. The assignments can be found in the header
+>> -  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
+>> -  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
+>> -  is the SoC involved, for example 'k2g'.
+>> +  exposed by the PM firmware. The list of valid values for the device IDs
+>> +  and clocks IDs for 66AK2G SoC are documented at
+>> +  http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data
+>>  
+> 
+> I hope the weblink doesn't die in the future. Why can't we copy
+> it into the binding document here for safe keeping?
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Yeah, the weblink will be maintained, it explains our TI-SCI protocol
+information and we also have couple more references to it. I don't think
+the values themselves do not belong to any binding and they are specific
+to each SoC. We have initially added them to dt-bindings header files,
+but since those files are not really leveraged by any drivers and only
+provided macro usage in DTS files, they are being cleaned up. DT nodes
+will directly use the required values instead.
 
-Thanks!
-Maxime
+regards
+Suman
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---l5oxp2yqvksnbrtt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZcatsAAoJEBx+YmzsjxAguAQP/0owG1JJY5X7ZD3YjLUKIm++
-aVme4gnLzYBBspbvx5rPmnBIw9rfog0tfUcmDPCnD5FaEKkOefsAjwyzchMn0j0X
-SMGuIVOHHOXYuNVFKvYVK3XIfEqRIRPaAXPHReruhFUXEN2vLbwd2Tt8PRxfbuRK
-pyN3Cui9Ab2pIzrLOqXMV38dK62zwa8m9wiB+R/cQUU2aqY6++jjcKr7IWkTlxdY
-3y6aFpkI0IWQ5gHloa1BTE05XIkcTsyOsfvcSEBqOQQmrThrIXc39d7QQajQjM1a
-ZFzv+T/m75nwuDTtGY+2h+BfljKLTwgsWRMDVVTKcyQdX+gNgzQhjY7vylmBRTRz
-/0vWXYDcSJW0k5FVfhJrPTs0h/tTJiy2ix36bp+rWTQHpkLyyyg7sUhp1Kd+tXlR
-GJhvjZqMU0NAX3xEhYd70WgeYAj55Oy7U3pBpJaAHUzJUjc+gk8p3PE1rJ7e1MaC
-laLD2a1GH4Aa15otjqNYVQS333CRACHHOKldgBal01QOznjuiIE8shcw82KZUKIA
-TBTQTIoQYZYIfnhGW8cXKUTdwh6bE21WQQo1KQzMpThLlmEj1v+buJfNHu7W6oZF
-FzGBFTd+o8MFCKen4r6ZG3DuSEpxy267xS5luFJoc5JmKWhPTOfLMWU/tPqUN+GH
-qF2HlLParXwGTxvUrjRD
-=0twz
------END PGP SIGNATURE-----
-
---l5oxp2yqvksnbrtt--
