@@ -1,50 +1,55 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com
-Cc: wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 2/4] clk: sunxi-ng: multiplier: Fix fractional mode
-Date: Sun, 30 Jul 2017 18:41:48 +0200
-Message-Id: <20170730164150.26302-3-jernej.skrabec@siol.net>
-In-Reply-To: <20170730164150.26302-1-jernej.skrabec@siol.net>
-References: <20170730164150.26302-1-jernej.skrabec@siol.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Jul 2017 18:22:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v3 02/10] clk: add clk_core_set_phase_nolock function
+Message-ID: <20170712012212.GS22780@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-3-jbrunet@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170612194438.12298-3-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Driver for multiplier clock is missing a call to
-ccu_frac_helper_enable() when fractional mode is selected.
+On 06/12, Jerome Brunet wrote:
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f5c371532509..dceaf0ff23db 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_set_parent);
+>  
+> +static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+> +{
+> +	int ret = -EINVAL;
+> +
+> +	if (!core)
+> +		return 0;
 
-Add a call to ccu_frac_helper_enable().
+Same comment about lockdep assertion applies here.
 
-Fixes: d77e8135b340 ("clk: sunxi-ng: multiplier: Add fractional support")
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu_mult.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> +
+> +	trace_clk_set_phase(core, degrees);
+> +
+> +	if (core->ops->set_phase)
+> +		ret = core->ops->set_phase(core->hw, degrees);
+> +
+> +	trace_clk_set_phase_complete(core, degrees);
+> +
+> +	return ret;
+> +}
+> +
+>  /**
+>   * clk_set_phase - adjust the phase shift of a clock signal
+>   * @clk: clock signal source
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index 20d0300867f2..ee5e96222cb2 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -111,10 +111,13 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	u32 reg;
- 
--	if (ccu_frac_helper_has_rate(&cm->common, &cm->frac, rate))
-+	if (ccu_frac_helper_has_rate(&cm->common, &cm->frac, rate)) {
-+		ccu_frac_helper_enable(&cm->common, &cm->frac);
-+
- 		return ccu_frac_helper_set_rate(&cm->common, &cm->frac, rate);
--	else
-+	} else {
- 		ccu_frac_helper_disable(&cm->common, &cm->frac);
-+	}
- 
- 	parent_rate = ccu_mux_helper_apply_prediv(&cm->common, &cm->mux, -1,
- 						  parent_rate);
 -- 
-2.13.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
