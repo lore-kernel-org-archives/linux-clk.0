@@ -1,44 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:39254 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbdGZHPH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2017 03:15:07 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 12 Jul 2017 15:58:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V4 2/6] iommu/arm-smmu: Add pm_runtime/sleep ops
+Message-ID: <20170712225821.GB22780@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170723102749.17323-6-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-6-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 26 Jul 2017 15:14:43 +0800
-Message-ID: <CAGb2v66jK+iAbKVsv6=4tb0470KBdwU+AHjWDnWwKKTY+U+W6g@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 05/10] clk: sunxi-ng: h3: gate then ungate
- PLL CPU clk after rate change
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
->
-> This patch utilizes the new PLL clk notifier to gate then ungate the
-> PLL CPU clock after rate changes. This should prevent any system hangs
-> resulting from cpufreq changes to the clk.
->
-> Reported-by: Ondrej Jirman <megous@megous.com>
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> Tested-by: Icenowy Zheng <icenowy@aosc.io>
+On 07/06, Vivek Gautam wrote:
+> From: Sricharan R <sricharan@codeaurora.org>
+> 
+> The smmu needs to be functional only when the respective
+> master's using it are active. The device_link feature
+> helps to track such functional dependencies, so that the
+> iommu gets powered when the master device enables itself
+> using pm_runtime. So by adapting the smmu driver for
+> runtime pm, above said dependency can be addressed.
+> 
+> This patch adds the pm runtime/sleep callbacks to the
+> driver and also the functions to parse the smmu clocks
+> from DT and enable them in resume/suspend.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Archit Taneja <architt@codeaurora.org>
+> [vivek: Clock rework to loop over clock names data]
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
 
-This is missing
+General comment, we have a bulk clk API now, but I guess we
+failed to add the clk_bulk_prepare_enable() API that could be
+used here. Perhaps you can add that API and then use it here to
+reduce lines of code.
 
-Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
-
-ChenYu
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
