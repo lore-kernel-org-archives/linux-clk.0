@@ -1,62 +1,103 @@
-Return-Path: <Eugeniy.Paltsev@synopsys.com>
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Jose.Abreu@synopsys.com" <Jose.Abreu@synopsys.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH v4] clk: axs10x: introduce AXS10X pll driver
-Date: Wed, 12 Jul 2017 08:01:43 +0000
-Message-ID: <1499846503.9320.1.camel@synopsys.com>
-References: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
-	 <20170712052535.GY22780@codeaurora.org>
-In-Reply-To: <20170712052535.GY22780@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 12 Jul 2017 16:08:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH] clk: gemini: Fix reset regression
+Message-ID: <20170712230832.GF22780@codeaurora.org>
+References: <20170711122601.17745-1-linus.walleij@linaro.org>
+ <1499874682.6374.57.camel@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1499874682.6374.57.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gVHVlLCAyMDE3LTA3LTExIGF0IDIyOjI1IC0wNzAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
-IE9uIDA2LzIxLCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6DQo+ID4gQVhTMTBYIGJvYXJkcyBtYW5h
-Z2VzIGl0J3MgY2xvY2tzIHVzaW5nIHZhcmlvdXMgUExMcy4gVGhlc2UgUExMIGhhcw0KPiA+IHNh
-bWUNCj4gPiBkaXZpZGVycyBhbmQgY29ycmVzcG9uZGluZyBjb250cm9sIHJlZ2lzdGVycyBtYXBw
-ZWQgdG8gZGlmZmVyZW50DQo+ID4gYWRkcmVzc2VzLg0KPiA+IFNvIHdlIGFkZCBvbmUgY29tbW9u
-IGRyaXZlciBmb3Igc3VjaCBQTExzLg0KPiA+IA0KPiA+IEVhY2ggUExMIG9uIEFYUzEwWCBib2Fy
-ZCBjb25zaXN0IG9mIHRocmVlIGRpdmlkZXJzOiBJRElWLCBGQkRJViBhbmQNCj4gPiBPRElWLiBP
-dXRwdXQgY2xvY2sgdmFsdWUgaXMgbWFuYWdlZCB1c2luZyB0aGVzZSBkaXZpZGVycy4NCj4gPiAN
-Cj4gPiBXZSBhZGQgcHJlLWRlZmluZWQgdGFibGVzIHdpdGggc3VwcG9ydGVkIHJhdGUgdmFsdWVz
-IGFuZA0KPiA+IGFwcHJvcHJpYXRlDQo+ID4gY29uZmlndXJhdGlvbnMgb2YgSURJViwgRkJESVYg
-YW5kIE9ESVYgZm9yIGVhY2ggdmFsdWUuDQo+ID4gDQo+ID4gQXMgb2YgdG9kYXkgd2UgYWRkIHN1
-cHBvcnQgZm9yIFBMTHMgdGhhdCBnZW5lcmF0ZSBjbG9jayBmb3IgdGhlDQo+ID4gZm9sbG93aW5n
-IGRldmljZXM6DQo+ID4gwqAqIEFSQyBjb3JlIG9uIEFYQyBDUFUgdGlsZXMuDQo+ID4gwqAqIEFS
-QyBQR1Ugb24gQVJDIFNEUCBNYWluYm9hcmQuDQo+ID4gYW5kIG1vcmUgdG8gY29tZSBsYXRlci4N
-Cj4gPiANCj4gPiBCeSB0aGlzIHBhdGNoIHdlIGFkZCBzdXBwb3J0IGZvciB0d28gcGxscyAoYXJj
-IGNvcmUgcGxsIGFuZCBwZ3UNCj4gPiBwbGwpLA0KPiA+IHNvIHdlIGhhZCB0byB1c2UgdHdvIGRp
-ZmZlcmVudCBpbml0IHR5cGVzOiBDTEtfT0ZfREVDTEFSRSBmb3IgYXJjDQo+ID4gY29yZSBwbGwg
-YW5kDQo+ID4gcmVndWxhciBwcm9iaW5nIGZvciBwZ3UgcGxsLg0KPiA+IA0KPiA+IEFja2VkLWJ5
-OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiA+IEFja2VkLWJ5OiBKb3NlIEFicmV1
-IDxqb2FicmV1QHN5bm9wc3lzLmNvbT4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbml5
-IFBhbHRzZXYgPEV1Z2VuaXkuUGFsdHNldkBzeW5vcHN5cy5jb20+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogVmxhZCBaYWtoYXJvdiA8dnpha2hhckBzeW5vcHN5cy5jb20+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogSm9zZSBBYnJldSA8am9hYnJldUBzeW5vcHN5cy5jb20+DQo+IA0KPiBTb3JyeSB0aGlzIG1p
-c3NlZCB0aGUgY3V0b2ZmIGZvciBuZXcgY29kZSBmb3IgdjQuMTMuIFNob3VsZCBiZSBpbg0KPiBj
-bGstbmV4dCBuZXh0IHdlZWsgdGhvdWdoLg0KPiANCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGlj
-IGlubGluZSBzdHJ1Y3QgYXhzMTB4X3BsbF9jbGsgKnRvX2F4czEweF9wbGxfY2xrKHN0cnVjdA0K
-PiA+IGNsa19odyAqaHcpDQo+ID4gK3sNCj4gPiArCXJldHVybiBjb250YWluZXJfb2YoaHcsIHN0
-cnVjdCBheHMxMHhfcGxsX2NsaywgaHcpOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW5s
-aW5lIHUzMiBheHMxMHhfZGl2X2dldF92YWx1ZSh1MzIgcmVnKQ0KPiA+ICt7DQo+ID4gKwlpZiAo
-UExMX1JFR19HRVRfQllQQVNTKHJlZykpDQo+ID4gKwkJcmV0dXJuIDE7DQo+ID4gKw0KPiA+ICsJ
-cmV0dXJuIFBMTF9SRUdfR0VUX0hJR0gocmVnKSArIFBMTF9SRUdfR0VUX0xPVyhyZWcpOw0KPiA+
-ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIHUzMiBheHMxMHhfZW5jb2RlX2Rpdih1bnNp
-Z25lZCBpbnQgaWQsIGludCB1cGQpDQo+ID4gK3sNCj4gPiArCXUzMiBkaXYgPSAwOw0KPiA+ICsN
-Cj4gPiArCVBMTF9SRUdfU0VUX0xPVyhkaXYsIChpZCAlIDIgPT0gMCkgPyBpZCA+PiAxIDogKGlk
-ID4+IDEpICsNCj4gPiAxKTsNCj4gPiArCVBMTF9SRUdfU0VUX0hJR0goZGl2LCBpZCA+PiAxKTsN
-Cj4gPiArCVBMTF9SRUdfU0VUX0VER0UoZGl2LCBpZCAlIDIpOw0KPiA+ICsJUExMX1JFR19TRVRf
-QllQQVNTKGRpdiwgaWQgPT0gMSA/IDEgOiAwKTsNCj4gPiArCVBMTF9SRUdfU0VUX05PVVBEKGRp
-diwgIXVwZCk7DQo+IA0KPiBTbyBzcGFyc2UgY29tcGxhaW5zIGhlcmUgYWJvdXQgYSAiZHViaW91
-cyAheCAmIHkiLiBQZXJoYXBzIHRoaXMNCj4gY2FuIGJlIGNoYW5nZWQgdG8NCj4gDQo+IAlQTExf
-UkVHX1NFVF9OT1VQRChkaXYsIHVwZCA9PSAwID8gMSA6IDApOw0KPiANCj4gVGhhdCB3YXkgc3Bh
-cnNlIGRvZXNuJ3QgY29tcGxhaW4uIEkgY2FuIG1ha2UgdGhlIGNoYW5nZSB3aGVuDQo+IGFwcGx5
-aW5nIGlmIHlvdSBhZ3JlZS4NCg0KU3VyZSwgdGhhbmtzIGEgbG90Lg0KDQotLSANCsKgRXVnZW5p
-eSBQYWx0c2V2
+On 07/12, Philipp Zabel wrote:
+> Hi Linus,
+> 
+> On Tue, 2017-07-11 at 14:26 +0200, Linus Walleij wrote:
+> > commit e2860e1f62f2 ("serial: 8250_of: Add reset support")
+> > introduced reset support for the 8250_of driver.
+> > 
+> > However it unconditionally uses the assert/deassert pair to
+> > deassert reset on the device at probe and assert it at
+> > remove. This does not work with systems that have a
+> > self-deasserting reset controller, such as Gemini, that
+> > recently added a reset controller.
+> > 
+> > As a result, the console will not probe on the Gemini with
+> > this message:
+> > 
+> > Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+> > of_serial: probe of 42000000.serial failed with error -524
+> > 
+> > This (-ENOTSUPP) is the error code returned by the
+> > deassert() operation on self-deasserting reset controllers.
+> > 
+> > To work around this, implement dummy .assert() and
+> > .deassert() operations in the Gemini combined clock and
+> > reset controller. This fixes the issue on this system.
+> >
+> > Cc: Joel Stanley <joel@jms.id.au>
+> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: linux-serial@vger.kernel.org
+> > Fixes: e2860e1f62f2 ("serial: 8250_of: Add reset support")
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > ---
+> > This is the solution suggested by Philipp, I think.
+> 
+> It is what I suggested, yes, but now that I see it before me, I don't
+> think this is the proper solution either. Reason below:
+> 
+> > ---
+> >  drivers/clk/clk-gemini.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+> > index c391a49aaaff..b4cf2f699a21 100644
+> > --- a/drivers/clk/clk-gemini.c
+> > +++ b/drivers/clk/clk-gemini.c
+> > @@ -237,6 +237,18 @@ static int gemini_reset(struct reset_controller_dev *rcdev,
+> >  			    BIT(GEMINI_RESET_CPU1) | BIT(id));
+> >  }
+> >  
+> > +static int gemini_reset_assert(struct reset_controller_dev *rcdev,
+> > +			       unsigned long id)
+> > +{
+> > +	return 0;
+> 
+> This is valid behaviour for shared reset controls, as sharing users
+> don't mind whether the reset line is actually asserted after this call,
+> they just allow it.
+> 
+> For an exclusive reset control this should return an error though, as
+> the caller would expect the reset line to be asserted after this call.
+> Unfortunately the core does not provide information whether the reset
+> control is shared or exclusive to the reset drivers, and it could be
+> argued that the drivers shouldn't have to care. I suppose I'll have to
+> handle this in the core, after all. What do you think of the attached
+> patch?
+> 
+> Otherwise, as a regression fix, I think this would be ok. There isn't
+> going to be any driver on the Gemini platform that requests an exclusive
+> reset control and then calls reset_control_assert, expecting the reset
+> line to stay asserted.
+> 
+> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+
+I'll queue this up for clk-fixes once -rc1 is out.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
