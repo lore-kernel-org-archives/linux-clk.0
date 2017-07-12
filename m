@@ -1,75 +1,54 @@
-Return-Path: <sergej@taudac.com>
-Subject: Re: [PATCH] clk: si5351: Apply PLL soft reset before enabling the
- outputs
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Stephen Boyd <sboyd@codeaurora.org>, jacob@teenage.engineering,
- Russell King <linux@armlinux.org.uk>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- Rabeeh Khoury <rabeeh@solid-run.com>
-References: <1501010261-7130-1-git-send-email-sergej@taudac.com>
- <20170726011112.GK2146@codeaurora.org>
- <5b9c2982-c376-ce39-e3aa-09c0feefd63c@gmail.com>
-From: Sergej Sawazki <sergej@taudac.com>
-Message-ID: <d1639d35-9f1c-6e9a-7182-e4895d057c13@taudac.com>
-Date: Thu, 27 Jul 2017 01:29:17 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 12 Jul 2017 15:54:59 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+Message-ID: <20170712225459.GZ22780@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <5b9c2982-c376-ce39-e3aa-09c0feefd63c@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry for the HTML stuff in my previous message, please ignore it.
+On 07/06, Vivek Gautam wrote:
+> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>  static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>  			     size_t size)
+>  {
+> -	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+> +	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> +	struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+> +	size_t ret;
+>  
+>  	if (!ops)
+>  		return 0;
+>  
+> -	return ops->unmap(ops, iova, size);
+> +	pm_runtime_get_sync(smmu_domain->smmu->dev);
 
-Am 26.07.2017 um 06:43 schrieb Sebastian Hesselbarth:
-> On 26.07.2017 03:11, Stephen Boyd wrote:
->> On 07/25, Sergej Sawazki wrote:
->>> The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
->>> before enabling the outputs [1]. This is required to get a deterministic
->>> phase relationship between the output clocks.
->>>
->>> Without the PLL reset, the phase offset beween the clocks is unpredictable.
->>>
->>> References:
->>> [1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
->>>     Figure 12 ("I2C Programming Procedure")
->>>
->>> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
->>> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
->>> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
->>> ---
->> This is similar to commit 6dc669a22c77 (clk: si5351: Add PLL soft
->> reset, 2015-11-20)? But I think that commit was causing some
->> problem for Russell King and there was going to be a patch to
->> change it but nothing has materialized on the list. Unless this
->> is that patch?
-> Sergej, Stephen,
-> 
-> resetting both PLLs in this driver will not happen as it does have
-> an influence on the other PLL and all clocks on it.
-> 
-> I understand that some of the functions of the clk gen will not be
-> available with this driver but it is not the use case of this driver.
-> 
-> So, NAK on this one.
-> 
-> The patch you are talking about is still pending but I think I just
-> send it in a few days.
-> 
-> Sebastian
-> 
+Can these map/unmap ops be called from an atomic context? I seem
+to recall that being a problem before.
 
-Sebastian, Stephen,
 
-On my setup, the Si5351 provides audio bit and frame clocks. Without
-resetting the PLLs before enabling the output clocks the phase offset
-between the clocks is unpredictable, the clocks are not aligned, this
-corrupts the audio stream.
+> +	ret = ops->unmap(ops, iova, size);
+> +	pm_runtime_put_sync(smmu_domain->smmu->dev);
+> +
+> +	return ret;
+>  }
+>  
+>  static phys_addr_t arm_smmu_iova_to_phys_hard(struct iommu_domain *domain,
 
-I agree, resetting both PLLs is not a good idea. Only one PLL should
-be resetted (the one that the output clocks are connected to).
-
-I am not changing the rates, I am only enabling/disabling the outputs
-and changing the clkin source. So resetting the PLL in set_rate() does
-not help me.
-
-Sergej
- 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
