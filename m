@@ -1,72 +1,86 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
- Dirk Behme <dirk.behme@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Dirk Behme <dirk.behme@de.bosch.com>,
- Linux PM list <linux-pm@vger.kernel.org>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Kevin Hilman <khilman@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk: renesas:
- cpg-mssr: Add interface for critical core clocks)
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
- <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
- <20170630202453.eh6vaehkap3as4np@pengutronix.de>
- <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
- <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
- <8d255a76-babe-312d-15b3-3474969f2410@arm.com>
- <20170704073137.GG14819@tbergstrom-lnx.Nvidia.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <c1a323ee-a4ca-4f8d-b57a-398b7318694d@arm.com>
-Date: Tue, 4 Jul 2017 09:49:25 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Jul 2017 18:21:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v3 01/10] clk: take the prepare lock out of
+ clk_core_set_parent
+Message-ID: <20170712012120.GR22780@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-2-jbrunet@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20170704073137.GG14819@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170612194438.12298-2-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06/12, Jerome Brunet wrote:
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index fc58c52a26b4..f5c371532509 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1787,7 +1787,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_has_parent);
+>  
+> -static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+> +static int clk_core_set_parent_nolock(struct clk_core *core,
+> +				      struct clk_core *parent)
+>  {
+>  	int ret = 0;
+>  	int p_index = 0;
+> @@ -1796,23 +1797,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+>  	if (!core)
+>  		return 0;
+>  
+> -	/* prevent racing with updates to the clock topology */
+> -	clk_prepare_lock();
 
+Please add a lockdep assertion as we have in other places in this
+file so that callers can't mess up calling the nolock function
+without the lock held themselves.
 
-On 04/07/17 08:31, Peter De Schrijver wrote:
-> On Mon, Jul 03, 2017 at 10:17:22AM +0100, Sudeep Holla wrote:
->>
->>
->> On 01/07/17 19:14, Uwe Kleine-König wrote:
->>> Hello,
->>>
->>> On Sat, Jul 01, 2017 at 07:02:48AM +0200, Dirk Behme wrote:
->>
->> [...]
->>
->>>>
->>>>
->>>> The other problem is security related. If, at all, you have to do it the
->>>> other way around, then:
->>>>
->>>> Make Linux a consumer of the other CPU's (trusted/trustzone/whatever
->>>> secured) OS clock driver.
->>
->> Yes, that's better and is getting common on newer platforms. They have
->> separate M-class(or even low A-class e.g. A5/A7) processors to handle
->> all the system management.
->>
->> The new ARM SCMI specification[0][1] is designed to standardize the
->> interface. It covers the clocks in clock protocol.
->>
-> 
-> Yes, however this doesn't exist on older SoCs which still have multiple CPU's
-> 
+> -
+>  	if (core->parent == parent)
+> -		goto out;
+> +		return 0;
+>  
+>  	/* verify ops for for multi-parent clks */
+> -	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+> -		ret = -ENOSYS;
+> -		goto out;
+> -	}
+> +	if ((core->num_parents > 1) && (!core->ops->set_parent))
 
-Agreed. But if someone is fixing/adding support in Linux as well as in
-the other OS running on those cores, why not consider this interface
-instead of trying to generalize something which will invariably SoC
-specific.
+Nitpick: drop the extra parenthesis here.
+
+> +		return -ENOSYS;
+>  
+>  	/* check that we are allowed to re-parent if the clock is in use */
+> -	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
+> -		ret = -EBUSY;
+> -		goto out;
+> -	}
+> +	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
+> +		return -EBUSY;
+>  
+>  	/* try finding the new parent index */
+>  	if (parent) {
+> @@ -1820,8 +1814,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
+>  		if (p_index < 0) {
+>  			pr_debug("%s: clk %s can not be parent of clk %s\n",
+>  					__func__, parent->name, core->name);
+> -			ret = p_index;
+> -			goto out;
+> +			return p_index;
+>  		}
+>  		p_rate = parent->rate;
+>  	}
+
 -- 
-Regards,
-Sudeep
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
