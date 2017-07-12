@@ -1,66 +1,92 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: cw00.choi@samsung.com, krzk@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5420: The EPLL rate table corrections
-Date: Fri, 21 Jul 2017 13:19:50 +0200
-Message-id: <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
-References: <CGME20170721112008epcas5p1eb75e4eb00d1dbad130460d2cbc0ce0c@epcas5p1.samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Jul 2017 19:00:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v3 04/10] clk: use round rate to bail out early in
+ set_rate
+Message-ID: <20170712020041.GU22780@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-5-jbrunet@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170612194438.12298-5-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch fixes values of the EPLL K coefficient and changes
-the EPLL output frequency values to match exactly what is
-possible to achieve with given M, P, S, K coefficients.
-This allows to avoid rounding errors and unexpected frequency
-being set with clk_set_rate(), due to recalc_rate returning
-different values than the PLL rate specified in the
-exynos5420_epll_24mhz_tbl table. E.g. this prevents a case
-where two consecutive clk_set_rate() calls with same argument
-result in different PLL output frequency.
+On 06/12, Jerome Brunet wrote:
+> The current implementation of clk_core_set_rate_nolock bails out early if
 
-The PLL output frequencies have been calculated with formula:
+Add () to functions please.
 
-f = fxtal * (M * 2^16 + K) / (P * 2^S) / 2^16
+> the requested rate is exactly the same as the one set. It should bail out
+> if the request would not result in rate a change.  This important when
 
-where fxtal = 24000000.
+s/in rate a change/in a rate change/
+s/This important/This is important/
 
-Fixes: 9842452acd ("clk: samsung: exynos542x: Add EPLL rate table")
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+> rate is not exactly what is requested, which is fairly common with PLLs.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 0748a0b..9a6476a 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1283,16 +1283,16 @@ static void __init exynos5420_clk_sleep_init(void) {}
- static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
- 	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
- 	PLL_36XX_RATE(400000000U, 200, 3, 2, 0),
--	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
--	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
-+	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
-+	PLL_36XX_RATE(361267218U, 301, 5, 2, 3671),
- 	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
--	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
--	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
--	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
-+	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
-+	PLL_36XX_RATE(180633609U, 301, 5, 3, 3671),
-+	PLL_36XX_RATE(131072006U, 131, 3, 3, 4719),
- 	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
--	PLL_36XX_RATE(65536000U, 131, 3, 4, 4719),
--	PLL_36XX_RATE(49152000U, 197, 3, 5, 25690),
--	PLL_36XX_RATE(32768000U, 131, 3, 5, 4719),
-+	PLL_36XX_RATE( 65536003U, 131, 3, 4, 4719),
-+	PLL_36XX_RATE( 49152000U, 197, 3, 5, -25690),
-+	PLL_36XX_RATE( 32768001U, 131, 3, 5, 4719),
- };
- 
- static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+s/rate/the rate/
+
+> 
+> Ex: provider able to give any rate with steps of 100Hz
+>  - 1st consumer request 48000Hz and gets it.
+>  - 2nd consumer request 48010Hz as well. If we were to perform the usual
+>    mechanism, we would get 48000Hz as well. The clock would not change so
+>    there is no point performing any checks to make sure the clock can
+>    change, we know it won't.
+
+I think Peter reported a similar problem as to what you're
+describing. Can you further explain a problem situation that this
+patch is fixing based on that thread (I can find the link if
+needed)? Some of this series if fixing rate constraints actually,
+so please Cc him on future patch sets.
+
+> 
+> This is important to prepare the addition of the clock protection
+> mechanism
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/clk.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 8cc4672414be..163cb9832f10 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1570,15 +1570,34 @@ static void clk_change_rate(struct clk_core *core)
+>  		clk_change_rate(core->new_child);
+>  }
+>  
+> +static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
+> +						     unsigned long req_rate)
+> +{
+> +	int ret;
+> +	struct clk_rate_request req;
+> +
+> +	if (!core)
+> +		return 0;
+
+This is impossible because the only call site checks for core
+being NULL already.
+
+> +
+> +	clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
+> +	req.rate = req_rate;
+> +
+> +	ret = clk_core_round_rate_nolock(core, &req);
+> +
+> +	return ret ? 0 : req.rate;
+
+What if the return value is negative? We should bail the set rate
+call instead of continuing on?
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
