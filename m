@@ -1,105 +1,86 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@caione.org,
-	narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-clk@vger.kernel.org,
-	robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux@armlinux.org.uk,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 1/3] dt-bindings: clock: meson8b: describe the embedded reset controller
-Date: Fri, 28 Jul 2017 23:13:11 +0200
-Message-Id: <20170728211313.10603-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
-References: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Jul 2017 18:16:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Adriana Reus <adi.reus@gmail.com>
+Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
+Message-ID: <20170712011604.GQ22780@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
+ <1497955822.7387.3.camel@baylibre.com>
+ <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
+ <1497961950.7387.7.camel@baylibre.com>
+ <1498050903.7387.12.camel@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1498050903.7387.12.camel@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Amlogic Meson8/Meson8b/Meson8m2 clock controller provides some reset
-lines. These are used for example to boot the secondary CPU cores.
+On 06/21, Jerome Brunet wrote:
+> 
+> I managed to have a run on kci - based on v4.12-rc6:
+> https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-10-ge
+> a373ddef830/
+> 
+> There was no build regression but kci did find one boot regression on qcom
+> platforms:
+> * qcom-apq8064-cm-qs600
+> * qcom-apq8064-ifc6410
+> 
+> it seems the problem is coming from the clock used by the mmc driver
+> (drivers/mmc/host/mmci.c)
+> 
+> the driver does following sequence:
+> * get_clk
+> * prepare_enable
+> * get_rate
+> * set_rate
+> * ...
+> 
+> with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has CLK_SET_RATE_PARENT
+> flag so it will transmit the request to its parent.
+> The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
+> 
+> This can't work with sequence above. The flag was clearly bypassed before, so I
+> think it would be best to remove CLK_SET_RATE_GATE from the SDCx_src clocks
+> 
+> Stephen, would you agree ?
+> 
+> There was an issue with the chip board as well but this particular board has not
+> been very reliable in this lab lately. It has failed on several other job.
+> 
 
-This patch describes the reset controller which is embedded into the
-clock controller on these SoCs.
-A header file is provided which provides preprocessor macros for each
-reset line (to make the .dts files easier to read).
+Yes the flag was never working before and we've been ignoring the
+subtle problems that it causes to change the rate while the clk
+is enabled. On these older SoCs, all the clks marked with
+CLK_SET_RATE_GATE need to implement something to forcibly disable
+all child clks across the rate change. That is the hardware
+recommended procedure.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../bindings/clock/amlogic,meson8b-clkc.txt        |  9 +++++++-
- .../dt-bindings/reset/amlogic,meson8b-clkc-reset.h | 27 ++++++++++++++++++++++
- 2 files changed, 35 insertions(+), 1 deletion(-)
- create mode 100644 include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h
+So something like
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-index 606da38c0959..c858fd64f680 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-@@ -16,18 +16,25 @@ Required Properties:
- 	   mapped region.
- 
- - #clock-cells: should be 1.
-+- #reset-cells: should be 1.
- 
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume. All available clocks are defined as
- preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
- used in device tree sources.
- 
-+Similarly a preprocessor macro for each reset line is defined in
-+dt-bindings/reset/amlogic,meson8b-clkc-reset.h (which can be used from the
-+device tree sources).
-+
-+
- Example: Clock controller node:
- 
- 	clkc: clock-controller@c1104000 {
--		#clock-cells = <1>;
- 		compatible = "amlogic,meson8b-clkc";
- 		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
- 	};
- 
- 
-diff --git a/include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h b/include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h
-new file mode 100644
-index 000000000000..1f1b56e57346
---- /dev/null
-+++ b/include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (c) 2017 Martin Blumenstingl <martin.blumenstingl@googlemail.com>.
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+#ifndef _DT_BINDINGS_AMLOGIC_MESON8B_CLKC_RESET_H
-+#define _DT_BINDINGS_AMLOGIC_MESON8B_CLKC_RESET_H
-+
-+#define CLKC_RESET_L2_CACHE_SOFT_RESET				0
-+#define CLKC_RESET_AXI_64_TO_128_BRIDGE_A5_SOFT_RESET		1
-+#define CLKC_RESET_SCU_SOFT_RESET				2
-+#define CLKC_RESET_CPU0_SOFT_RESET				3
-+#define CLKC_RESET_CPU1_SOFT_RESET				4
-+#define CLKC_RESET_CPU2_SOFT_RESET				5
-+#define CLKC_RESET_CPU3_SOFT_RESET				6
-+#define CLKC_RESET_A5_GLOBAL_RESET				7
-+#define CLKC_RESET_A5_AXI_SOFT_RESET				8
-+#define CLKC_RESET_A5_ABP_SOFT_RESET				9
-+#define CLKC_RESET_AXI_64_TO_128_BRIDGE_MMC_SOFT_RESET		10
-+#define CLKC_RESET_VID_CLK_CNTL_SOFT_RESET			11
-+#define CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_POST		12
-+#define CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_PRE		13
-+#define CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_POST		14
-+#define CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_PRE			15
-+
-+#endif /* _DT_BINDINGS_AMLOGIC_MESON8B_CLKC_RESET_H */
+	get_clk
+	prepare_enable
+	get_rate
+	set_rate
+	 call ->set_rate() op
+	 forcibly disable children of rcgs
+	 actually change the rate of rcg
+	 forcibly enable all children that were disabled
+
+and have that happen under one big spinlock local to the qcom
+driver I suppose so that enable/disable can't leak into the rate
+change. Fun! I'll make an attempt at implementing the right
+solution tomorrow/tonight. Of course, we can remove the flag from
+qcom drivers if it's blocking this series.
+
 -- 
-2.13.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
