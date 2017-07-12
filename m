@@ -1,168 +1,82 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
-	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
-	<ping.bai@nxp.com>
-Subject: [PATCH V2 06/10] clk: imx: add composite clk support
-Date: Thu, 13 Jul 2017 19:47:11 +0800
-Message-ID: <1499946435-7177-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Jul 2017 22:25:35 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org, Jose.Abreu@synopsys.com,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v4] clk: axs10x: introduce AXS10X pll driver
+Message-ID: <20170712052535.GY22780@codeaurora.org>
+References: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170621191626.32248-1-Eugeniy.Paltsev@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The imx composite clk is designed for Peripheral Clock Control (PCC)
-module observed in IMX ULP SoC series. e.g. i.MX7ULP.
+On 06/21, Eugeniy Paltsev wrote:
+> AXS10X boards manages it's clocks using various PLLs. These PLL has same
+> dividers and corresponding control registers mapped to different addresses.
+> So we add one common driver for such PLLs.
+> 
+> Each PLL on AXS10X board consist of three dividers: IDIV, FBDIV and
+> ODIV. Output clock value is managed using these dividers.
+> 
+> We add pre-defined tables with supported rate values and appropriate
+> configurations of IDIV, FBDIV and ODIV for each value.
+> 
+> As of today we add support for PLLs that generate clock for the
+> following devices:
+>  * ARC core on AXC CPU tiles.
+>  * ARC PGU on ARC SDP Mainboard.
+> and more to come later.
+> 
+> By this patch we add support for two plls (arc core pll and pgu pll),
+> so we had to use two different init types: CLK_OF_DECLARE for arc core pll and
+> regular probing for pgu pll.
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Jose Abreu <joabreu@synopsys.com>
+> 
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> Signed-off-by: Vlad Zakharov <vzakhar@synopsys.com>
+> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 
-NOTE pcc can only be operated when clk is gated.
+Sorry this missed the cutoff for new code for v4.13. Should be in
+clk-next next week though.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> +}
+> +
+> +static inline struct axs10x_pll_clk *to_axs10x_pll_clk(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct axs10x_pll_clk, hw);
+> +}
+> +
+> +static inline u32 axs10x_div_get_value(u32 reg)
+> +{
+> +	if (PLL_REG_GET_BYPASS(reg))
+> +		return 1;
+> +
+> +	return PLL_REG_GET_HIGH(reg) + PLL_REG_GET_LOW(reg);
+> +}
+> +
+> +static inline u32 axs10x_encode_div(unsigned int id, int upd)
+> +{
+> +	u32 div = 0;
+> +
+> +	PLL_REG_SET_LOW(div, (id % 2 == 0) ? id >> 1 : (id >> 1) + 1);
+> +	PLL_REG_SET_HIGH(div, id >> 1);
+> +	PLL_REG_SET_EDGE(div, id % 2);
+> +	PLL_REG_SET_BYPASS(div, id == 1 ? 1 : 0);
+> +	PLL_REG_SET_NOUPD(div, !upd);
 
----
-ChangeLog:
-v1->v2:
- * remove an unneeded blank line change
- * use clk_hw_register
----
- drivers/clk/imx/Makefile        |  1 +
- drivers/clk/imx/clk-composite.c | 90 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h           |  6 +++
- 3 files changed, 97 insertions(+)
- create mode 100644 drivers/clk/imx/clk-composite.c
+So sparse complains here about a "dubious !x & y". Perhaps this
+can be changed to
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index ea4ef27..bf001ce 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -3,6 +3,7 @@ obj-y += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
-+	clk-composite.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
- 	clk-gate-exclusive.o \
-diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
-new file mode 100644
-index 0000000..78b891e
---- /dev/null
-+++ b/drivers/clk/imx/clk-composite.c
-@@ -0,0 +1,90 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ *
-+ * The code contained herein is licensed under the GNU General Public
-+ * License. You may obtain a copy of the GNU General Public License
-+ * Version 2 or later at the following locations:
-+ *
-+ * http://www.opensource.org/licenses/gpl-license.html
-+ * http://www.gnu.org/copyleft/gpl.html
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+
-+#define PCG_PCS_SHIFT	24
-+#define PCG_PCS_MASK	0x7
-+#define PCG_CGC_SHIFT	30
-+#define PCG_FRAC_SHIFT	3
-+#define PCG_FRAC_WIDTH	1
-+#define PCG_FRAC_MASK	BIT(3)
-+#define PCG_PCD_SHIFT	0
-+#define PCG_PCD_WIDTH	3
-+#define PCG_PCD_MASK	0x7
-+
-+struct clk_hw *imx_clk_composite(const char *name,
-+			      const char * const *parent_names,
-+			      int num_parents, bool mux_present,
-+			      bool rate_present, bool gate_present,
-+			      void __iomem *reg)
-+{
-+	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
-+	struct clk_fractional_divider *fd = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_mux *mux = NULL;
-+	struct clk_hw *hw;
-+
-+	if (mux_present) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+		mux_hw = &mux->hw;
-+		mux->reg = reg;
-+		mux->shift = PCG_PCS_SHIFT;
-+		mux->mask = PCG_PCS_MASK;
-+	}
-+
-+	if (rate_present) {
-+		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+		if (!fd) {
-+			kfree(mux);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		fd_hw = &fd->hw;
-+		fd->reg = reg;
-+		fd->mshift = PCG_FRAC_SHIFT;
-+		fd->mwidth = PCG_FRAC_WIDTH;
-+		fd->mmask  = PCG_FRAC_MASK;
-+		fd->nshift = PCG_PCD_SHIFT;
-+		fd->nwidth = PCG_PCD_WIDTH;
-+		fd->nmask = PCG_PCD_MASK;
-+		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
-+	}
-+
-+	if (gate_present) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate) {
-+			kfree(mux);
-+			kfree(fd);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		gate_hw = &gate->hw;
-+		gate->reg = reg;
-+		gate->bit_idx = PCG_CGC_SHIFT;
-+	}
-+
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux_hw, &clk_mux_ops, fd_hw,
-+				       &clk_fractional_divider_ops, gate_hw,
-+				       &clk_gate_ops, CLK_SET_RATE_GATE |
-+				       CLK_SET_PARENT_GATE);
-+	if (IS_ERR(hw)) {
-+		kfree(mux);
-+		kfree(fd);
-+		kfree(gate);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index cf3ea92..702faba 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -70,6 +70,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
- 			     const char **parent_names, int num_parents);
- 
-+struct clk_hw *imx_clk_composite(const char *name,
-+				 const char * const *parent_names,
-+				 int num_parents, bool mux_present,
-+				 bool rate_present, bool gate_present,
-+				 void __iomem *reg);
-+
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
+	PLL_REG_SET_NOUPD(div, upd == 0 ? 1 : 0);
+
+That way sparse doesn't complain. I can make the change when
+applying if you agree.
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
