@@ -1,98 +1,56 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 16/18] MIPS: JZ4770: Workaround for corrupted DMA transfers
-Date: Sun,  2 Jul 2017 18:30:14 +0200
-Message-Id: <20170702163016.6714-17-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 13 Jul 2017 14:56:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@baylibre.com, andy.gross@linaro.org, architt@codeaurora.org,
+	hverkuil@xs4all.nl, bjorn.andersson@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: clk-smd-rpm: Fix the reported rate of
+ branches
+Message-ID: <20170713180332.GC22780@codeaurora.org>
+References: <20170712231413.GP22780@codeaurora.org>
+ <20170713133224.753-1-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170713133224.753-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Maarten ter Huurne <maarten@treewalker.org>
+On 07/13, Georgi Djakov wrote:
+> As there is no way to actually query the hardware for the current clock
+> rate, now racalc_rate() just returns the last rate that was previously
+> set. But if the rate was not set yet, we return the bogus rate of 1000Hz.
+> 
+> The branch clocks actually have the same rate as their parent (xo_board),
+> so just return this rate.
+> 
+> Reported-by: Archit Taneja <architt@codeaurora.org>
+> Fixes: 00f64b58874e ("clk: qcom: Add support for SMD-RPM Clocks")
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  drivers/clk/qcom/clk-smd-rpm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index d990fe44aef3..b45782657ca9 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -364,6 +364,10 @@ static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
+>  {
+>  	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
+>  
+> +	/* Return the parent rate for branches */
+> +	if (r->branch)
+> +		return parent_rate;
+> +
 
-We have seen MMC DMA transfers read corrupted data from SDRAM when
-a burst interval ends at physical address 0x10000000. To avoid this
-problem, we remove the final page of low memory from the memory map.
+What's parent_rate here though? 0? I don't see where we parent
+the branch clks to anything.
 
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
----
- arch/mips/jz4740/setup.c | 24 ++++++++++++++++++++++++
- arch/mips/kernel/setup.c |  8 ++++++++
- 2 files changed, 32 insertions(+)
+And we should really just remove the recalc_rate() op for
+branches entirely so that we don't have to call down into the
+driver to find out something we could have known in the core.
 
- v2: No change
- v3: No change
-
-diff --git a/arch/mips/jz4740/setup.c b/arch/mips/jz4740/setup.c
-index afd84ee966e8..6948b133a15d 100644
---- a/arch/mips/jz4740/setup.c
-+++ b/arch/mips/jz4740/setup.c
-@@ -23,6 +23,7 @@
- 
- #include <asm/bootinfo.h>
- #include <asm/mips_machine.h>
-+#include <asm/page.h>
- #include <asm/prom.h>
- 
- #include <asm/mach-jz4740/base.h>
-@@ -102,6 +103,29 @@ void __init arch_init_irq(void)
- 	irqchip_init();
- }
- 
-+/*
-+ * We have seen MMC DMA transfers read corrupted data from SDRAM when a burst
-+ * interval ends at physical address 0x10000000. To avoid this problem, we
-+ * remove the final page of low memory from the memory map.
-+ */
-+void __init jz4770_reserve_unsafe_for_dma(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < boot_mem_map.nr_map; i++) {
-+		struct boot_mem_map_entry *entry = boot_mem_map.map + i;
-+
-+		if (entry->type != BOOT_MEM_RAM)
-+			continue;
-+
-+		if (entry->addr + entry->size != 0x10000000)
-+			continue;
-+
-+		entry->size -= PAGE_SIZE;
-+		break;
-+	}
-+}
-+
- static int __init jz4740_machine_setup(void)
- {
- 	mips_machine_setup();
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 89785600fde4..cccfd7ba89fe 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -838,6 +838,14 @@ static void __init arch_mem_init(char **cmdline_p)
- 
- 	parse_early_param();
- 
-+#ifdef CONFIG_MACH_JZ4770
-+	if (current_cpu_type() == CPU_JZRISC &&
-+				mips_machtype == MACH_INGENIC_JZ4770) {
-+		extern void __init jz4770_reserve_unsafe_for_dma(void);
-+		jz4770_reserve_unsafe_for_dma();
-+	}
-+#endif
-+
- 	if (usermem) {
- 		pr_info("User-defined physical RAM map:\n");
- 		print_memory_map();
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
