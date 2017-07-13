@@ -1,67 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:52078 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753968AbdGNOXK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Jul 2017 10:23:10 -0400
-Date: Fri, 14 Jul 2017 16:23:07 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Fix error return code in
- cpg_sd_clock_recalc_rate
-Message-ID: <20170714142307.5iyfvje7pkm3b6w5@ninjato>
-References: <20170713210656.31911-1-wsa+renesas@sang-engineering.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>
+Subject: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
+Date: Thu, 13 Jul 2017 16:02:31 +0200
+Message-ID: <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
+References: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="devwsyjdoctrvvw5"
-In-Reply-To: <20170713210656.31911-1-wsa+renesas@sang-engineering.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
---devwsyjdoctrvvw5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch exposes clk_gate_ops::is_enabled as functions
+that can be directly called and assigned in places like this so
+we don't need wrapper functions that do nothing besides forward
+the call.
 
-On Thu, Jul 13, 2017 at 11:06:56PM +0200, Wolfram Sang wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->=20
-> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
-> error occurs, but -EINVAL is returned. This patch fixes it.
->=20
-> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 s=
-upport code")
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Sugested by Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-gate.c       | 2 +-
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-I just saw that Kaneko-san posted this patch as well:
-
-https://patchwork.kernel.org/patch/9688509/
-
-Please pick his patch, I'll add my Rev-by there.
-
-
---devwsyjdoctrvvw5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllo08cACgkQFA3kzBSg
-KbZ6bw//ZV/byUt4Z7ASswdrcVUDNu1WP6x/eBECCAoDPoVlkKRPLqhMjozkyx+a
-kIrT+mKjUqyCh1UcMwZ18UfAS0IacvmbXJcyD10bK31UQjJAe4y2OWsr3P4jqyJm
-ucHXAEHxlkLGAMD+T07NxeTld38lblO1esGE0DcOgXMBbFzLhmdixH4kbYhC4WWC
-dQF6KT2ZErdPA9eoVaUIyHEDECWMa9l+SwCQsKFKtLBGMUm/hi7MtA9XLgp2YRXa
-j02GtCiSK5CwDopJjl0higLhMx1vGKxby+TIrk3jzP/zKys4Zj7qRXwR5dYuhZUZ
-oNqXtWyTkUo4vqXBuNQgspMOlmMNUr8PxrF+F8TlFMIReC0MNDGQ3yzphKVgv831
-1JHG+4vkKZP5grR7CEUYFXRz4Qu2bpDekz1YfNsiESknKE6oeNFIg0naHrQPzcBZ
-bm6/AS0QAU1sM88gkwKStQALwxf4ijBLDKbQoCL/v4ClR2h60jPlmyUL9px9DTOq
-QYiDAe8PvSpDCi9Lu+i8cZKWdBvwImWIvyh/jQ9/1AjiRP9VOmQlU4Ylr5mR2jJZ
-m08gJhsr9Xo53ckHELKjgOx0ZfOYE8/N/f0xJ/s7KmYgGIhT/yiRrB977jpE6oBM
-GSisYZXiIfXsMNKdXNkfKNf23FgLD08YgECCwud2nQwMQmvtczY=
-=6fMn
------END PGP SIGNATURE-----
-
---devwsyjdoctrvvw5--
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 4e0c054a..e27e28f 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+ 	clk_gate_endisable(hw, 0);
+ }
+ 
+-static int clk_gate_is_enabled(struct clk_hw *hw)
++int clk_gate_is_enabled(struct clk_hw *hw)
+ {
+ 	u32 reg;
+ 	struct clk_gate *gate = to_clk_gate(hw);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c59c625..e9587ab 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+ 		u8 clk_gate_flags, spinlock_t *lock);
+ void clk_unregister_gate(struct clk *clk);
+ void clk_hw_unregister_gate(struct clk_hw *hw);
++int clk_gate_is_enabled(struct clk_hw *hw);
+ 
+ struct clk_div_table {
+ 	unsigned int	val;
+-- 
+1.9.1
