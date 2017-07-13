@@ -1,40 +1,86 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 9 Jul 2017 20:02:03 -0500
-From: Rob Herring <robh@kernel.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 7/9] ASoC: atmel-classd: remove aclk clock from DT
- binding
-Message-ID: <20170710010203.u54wtave2a3x2ke6@rob-hp-laptop>
-References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
- <20170704115927.32662-8-quentin.schulz@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:23171 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751205AbdGMDPx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 23:15:53 -0400
+Message-ID: <1499915747.16278.30.camel@mtkswgap22>
+Subject: Re: [PATCH] clk: mediatek: fixed static checker warning in
+ clk_cpumux_get_parent call
+From: Sean Wang <sean.wang@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <dan.carpenter@oracle.com>, <linux-mediatek@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Date: Thu, 13 Jul 2017 11:15:47 +0800
+In-Reply-To: <20170712231726.GQ22780@codeaurora.org>
+References: <59fd4aa684632f1d9d2e7573a95bc42850e81690.1499701486.git.sean.wang@mediatek.com>
+         <20170712231726.GQ22780@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170704115927.32662-8-quentin.schulz@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 04, 2017 at 01:59:25PM +0200, Quentin Schulz wrote:
-> Since gclk (generated-clk) is now able to determine the rate of the
-> audio_pll, there is no need for classd to have a direct phandle to the
-> audio_pll while already having a phandle to gclk.
+On Wed, 2017-07-12 at 16:17 -0700, Stephen Boyd wrote:
+> On 07/11, sean.wang@mediatek.com wrote:
+> > diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+> > index edd8e69..c6a3a1a 100644
+> > --- a/drivers/clk/mediatek/clk-cpumux.c
+> > +++ b/drivers/clk/mediatek/clk-cpumux.c
+> > @@ -27,7 +27,6 @@ static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
+> >  static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+> >  {
+> >  	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
+> > -	int num_parents = clk_hw_get_num_parents(hw);
+> >  	unsigned int val;
+> >  
+> >  	regmap_read(mux->regmap, mux->reg, &val);
+> > @@ -35,17 +34,18 @@ static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+> >  	val >>= mux->shift;
+> >  	val &= mux->mask;
+> >  
+> > -	if (val >= num_parents)
+> > -		return -EINVAL;
+> > -
 > 
-> This binding is used by no board in mainline so it is safe to be
-> modified.
+> Yeah we really need to fix the get_parent() op to return a
+> clk_hw pointer instead. Time for another migration plan...
 > 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> ---
-> 
-> added in v2
-> 
->  Documentation/devicetree/bindings/sound/atmel-classd.txt | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Agreed
+
+Using clk_hw pointer as returned type is better
+
+otherwise, core driver strongly depends on raw value from hardware  
+
+which easily breaks core driver's logic
+
+> >  	return val;
+> >  }
+> >  
+> >  static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
+> >  {
+> >  	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
+> > +	int num_parents = clk_hw_get_num_parents(hw);
+> >  	u32 mask, val;
+> >  
+> > +	if (index >= num_parents)
+> > +		return -EINVAL;
+> 
+> When would we call this function with an invalid index? The
+> framework should be making sure to only call it with an index
+> that's valid. So perhaps this hunk can be left out?
+> 
+
+O.K. the hunk will be left out
+
+core driver handles everything well when the appropriate number of
+parents is registered.
+
+
+
+
+
+
+
+> 
+
+
