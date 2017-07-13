@@ -1,68 +1,92 @@
-Return-Path: <plaes@plaes.org>
-Date: Thu, 13 Jul 2017 19:12:21 +0000
-From: Priit Laes <plaes@plaes.org>
-To: Jonathan Liu <net147@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v5 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU driver
-Message-ID: <20170713191221.GA22375@plaes.org>
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
- <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
- <CANwerB0d+2rU9gnCSKP4wwXZpzEsHXP6LtBYvxD+GnQAj6QHVQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <CANwerB0d+2rU9gnCSKP4wwXZpzEsHXP6LtBYvxD+GnQAj6QHVQ@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:47987 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbdGMHtm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2017 03:49:42 -0400
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+        linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+        perex@perex.cz, tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+        cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/9] add support for Sama5d2 audio PLLs and enable ClassD
+Date: Thu, 13 Jul 2017 09:49:18 +0200
+Message-Id: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 09, 2017 at 10:25:23PM +1000, Jonathan Liu wrote:
-> Hi Priit,
-> 
-> On 5 July 2017 at 06:04, Priit Laes <plaes@plaes.org> wrote:
-> > Introduce a clock controller driver for sun4i A10 and sun7i A20
-> > series SoCs.
-> >
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > ---
-> >  drivers/clk/sunxi-ng/Kconfig              |   14 +-
-> >  drivers/clk/sunxi-ng/Makefile             |    1 +-
-> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c      | 1448 ++++++++++++++++++++++-
-> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   61 +-
-> >  include/dt-bindings/clock/sun4i-a10-ccu.h |  200 +++-
-> >  include/dt-bindings/clock/sun7i-a20-ccu.h |   53 +-
-> >  include/dt-bindings/reset/sun4i-a10-ccu.h |   67 +-
-> >  7 files changed, 1844 insertions(+)
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
-> >  create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
-> >  create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
-> >  create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
-> >
-> [snip]
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> > new file mode 100644
-> > index 0000000..49052b7
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> [snip]
-> 
-> > +static const char *const hdmi_parents[] = { "pll-video0", "pll-video0-2x",
-> > +                                           "pll-video1", "pll-video1-2x" };
-> > +static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
-> > +                                0x150, 0, 4, 24, 2, BIT(31), 0);
-> 
-> hdmi_parents is in the wrong order. The correct order is "pll-video0",
-> "pll-video1", "pll-video0-2x", "pll-video1-2x".
+This patch series adds support for the audio PLLs and enables ClassD that
+can be found in ATMEL Sama5d2 SoC.
 
-Ugh.. I'm really sorry.
+There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
+FRAC can output between 620 and 700MHz and only multiply the rate of its
+parent. The two audio PLLs then divide the FRAC rate to best match the
+asked rate.
 
-Päikest,
-Priit
+I basically took an old patch series posted by Nicolas on December, 6th
+2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
+sent on July, 15th 2015.
+
+I also fixed the function used to compute the divisors, removed useless
+spinlocks and added a range to the audio frac PLL to stay within vendor's
+supported range. Clocks that are children of gclk (generated-clk) are now
+able to propagate rate to the audio PLL clocks when needed.
+
+However, there are multiple children clocks that could technically
+change the rate of audio_pll (via gck). With the rate locking introduced
+in Jerome Brunet's patch series[5], the first consumer to enable the clock
+will be the one definitely setting the rate of the clock. Without the rate
+locking, the last consumer to set the rate will be able to mess with the
+rate.
+Since audio IPs are most likely to request the same rate, we enforce
+that the only clks able to modify gck rate are those of audio IPs.
+
+To remain consistent, we deny other clocks to be children of audio_pll.
+
+Thanks,
+Quentin
+
+[1] https://patchwork.kernel.org/patch/9462351/
+[2] https://patchwork.kernel.org/patch/9462347/
+[3] https://patchwork.kernel.org/patch/9462349/
+[4] https://www.spinics.net/lists/arm-kernel/msg436120.html
+[5] http://www.spinics.net/lists/linux-clk/msg17927.html
+
+Cyrille Pitchen (2):
+  ARM: dts: at91: sama5d2: add classd nodes
+  ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+
+Quentin Schulz (7):
+  clk: at91: clk-generated: remove useless divisor loop
+  clk: at91: add audio plls to the compatible list in DT binding
+  clk: at91: add audio pll clock drivers
+  clk: at91: clk-generated: create function to find best_diff
+  clk: at91: clk-generated: make gclk determine audio_pll rate
+  ASoC: atmel-classd: remove aclk clock from DT binding
+  ASoC: atmel-classd: remove aclk clock
+
+ .../devicetree/bindings/clock/at91-clock.txt       |  10 +
+ .../devicetree/bindings/sound/atmel-classd.txt     |   9 +-
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  16 ++
+ arch/arm/boot/dts/sama5d2.dtsi                     |  39 +++-
+ arch/arm/mach-at91/Kconfig                         |   4 +
+ drivers/clk/at91/Makefile                          |   2 +
+ drivers/clk/at91/clk-audio-pll-pad.c               | 206 ++++++++++++++++++
+ drivers/clk/at91/clk-audio-pll-pmc.c               | 174 +++++++++++++++
+ drivers/clk/at91/clk-audio-pll.c                   | 239 +++++++++++++++++++++
+ drivers/clk/at91/clk-generated.c                   | 101 +++++++--
+ include/linux/clk/at91_pmc.h                       |  25 +++
+ sound/soc/atmel/atmel-classd.c                     |  47 ++--
+ 12 files changed, 813 insertions(+), 59 deletions(-)
+ create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
+ create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
+ create mode 100644 drivers/clk/at91/clk-audio-pll.c
+
+-- 
+2.11.0
+
