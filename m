@@ -1,220 +1,107 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
- mark.rutland@arm.com, will.deacon@arm.com, m.szyprowski@samsung.com,
- sboyd@codeaurora.org, robdclark@gmail.com,
- iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH V4 2/6] iommu/arm-smmu: Add pm_runtime/sleep ops
-Date: Thu,  6 Jul 2017 15:07:01 +0530
-Message-Id: <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
-In-Reply-To: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Rob Clark <robdclark@gmail.com>
+Cc: Sricharan R <sricharan@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <4f2b6272-d938-767f-6ea3-0b515374d1a1@samsung.com>
+Date: Thu, 13 Jul 2017 14:23:54 +0200
+MIME-version: 1.0
+In-reply-to: <CAF6AEGsfDewRUHLUbFKT1Q+8U2BkmFMHo4ZBSwSGspU3ktUY8g@mail.gmail.com>
+Content-type: text/plain; charset=utf-8; format=flowed
 References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
- stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
- sricharan@codeaurora.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org>
+ <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+ <CGME20170713115036epcas1p250113e9009dbf92487d258a90fffc66a@epcas1p2.samsung.com>
+ <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+ <939f8745-6f72-522c-1216-70e424740b62@samsung.com>
+ <CAF6AEGsfDewRUHLUbFKT1Q+8U2BkmFMHo4ZBSwSGspU3ktUY8g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sricharan R <sricharan@codeaurora.org>
+Hi Rob,
 
-The smmu needs to be functional only when the respective
-master's using it are active. The device_link feature
-helps to track such functional dependencies, so that the
-iommu gets powered when the master device enables itself
-using pm_runtime. So by adapting the smmu driver for
-runtime pm, above said dependency can be addressed.
+On 2017-07-13 14:10, Rob Clark wrote:
+> On Thu, Jul 13, 2017 at 8:02 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 2017-07-13 13:50, Rob Clark wrote:
+>>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org>
+>>> wrote:
+>>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>>>>> On 07/06, Vivek Gautam wrote:
+>>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain
+>>>>>>> *domain, unsigned long iova,
+>>>>>>>     static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned
+>>>>>>> long iova,
+>>>>>>>                      size_t size)
+>>>>>>>     {
+>>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>>>>> +    size_t ret;
+>>>>>>>           if (!ops)
+>>>>>>>             return 0;
+>>>>>>>     -    return ops->unmap(ops, iova, size);
+>>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>>>>> Can these map/unmap ops be called from an atomic context? I seem
+>>>>>> to recall that being a problem before.
+>>>>> That's something which was dropped in the following patch merged in
+>>>>> master:
+>>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>>>>
+>>>>> Looks like we don't  need locks here anymore?
+>>>>    Apart from the locking, wonder why a explicit pm_runtime is needed
+>>>>    from unmap. Somehow looks like some path in the master using that
+>>>>    should have enabled the pm ?
+>>>>
+>>> Yes, there are a bunch of scenarios where unmap can happen with
+>>> disabled master (but not in atomic context).  On the gpu side we
+>>> opportunistically keep a buffer mapping until the buffer is freed
+>>> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
+>>> an exported dmabuf while some other driver holds a reference to it
+>>> (which can be dropped when the v4l2 device is suspended).
+>>>
+>>> Since unmap triggers tbl flush which touches iommu regs, the iommu
+>>> driver *definitely* needs a pm_runtime_get_sync().
+>>
+>> Afair unmap might be called from atomic context as well, for example as
+>> a result of dma_unmap_page(). In exynos IOMMU I simply check the runtime
+>> PM state of IOMMU device. TLB flush is performed only when IOMMU is in
+>> active
+>> state. If it is suspended, I assume that the IOMMU controller's context
+>> is already lost and its respective power domain might be already turned off,
+>> so there is no point in touching IOMMU registers.
+>>
+> that seems like an interesting approach.. although I wonder if there
+> can be some race w/ new device memory access once clks are enabled
+> before tlb flush completes?  That would be rather bad, since this
+> approach is letting the backing pages of memory be freed before tlb
+> flush.
 
-This patch adds the pm runtime/sleep callbacks to the
-driver and also the functions to parse the smmu clocks
-from DT and enable them in resume/suspend.
+Exynos IOMMU has spinlock for ensuring that there is no race between PM 
+runtime
+suspend and unmap/tlb flush.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Archit Taneja <architt@codeaurora.org>
-[vivek: Clock rework to loop over clock names data]
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- drivers/iommu/arm-smmu.c | 95 +++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 94 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 61b1f8729a7c..bfe613f8939c 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -48,6 +48,7 @@
- #include <linux/of_iommu.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- 
-@@ -196,6 +197,9 @@ struct arm_smmu_device {
- 	u32				num_global_irqs;
- 	u32				num_context_irqs;
- 	unsigned int			*irqs;
-+	int                             num_clks;
-+	struct clk                      **clocks;
-+	const char * const		*clk_names;
- 
- 	u32				cavium_id_base; /* Specific to Cavium */
- 
-@@ -272,6 +276,32 @@ static void parse_driver_options(struct arm_smmu_device *smmu)
- 	} while (arm_smmu_options[++i].opt);
- }
- 
-+static int arm_smmu_enable_clocks(struct arm_smmu_device *smmu)
-+{
-+	int i, ret = 0;
-+
-+	for (i = 0; i < smmu->num_clks; ++i) {
-+		ret = clk_prepare_enable(smmu->clocks[i]);
-+		if (ret) {
-+			dev_err(smmu->dev, "Couldn't enable %s clock\n",
-+				smmu->clk_names[i]);
-+			while (i--)
-+				clk_disable_unprepare(smmu->clocks[i]);
-+			break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static void arm_smmu_disable_clocks(struct arm_smmu_device *smmu)
-+{
-+	int i = smmu->num_clks;
-+
-+	while (i--)
-+		clk_disable_unprepare(smmu->clocks[i]);
-+}
-+
- static struct device_node *dev_get_dev_node(struct device *dev)
- {
- 	if (dev_is_pci(dev)) {
-@@ -1626,6 +1656,36 @@ static int arm_smmu_id_size_to_bits(int size)
- 	}
- }
- 
-+static int arm_smmu_init_clocks(struct arm_smmu_device *smmu)
-+{
-+	int i, err;
-+	struct device *dev = smmu->dev;
-+
-+	if (smmu->num_clks < 1)
-+		return 0;
-+
-+	smmu->clocks = devm_kcalloc(dev, smmu->num_clks,
-+				    sizeof(*smmu->clocks), GFP_KERNEL);
-+	if (!smmu->clocks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < smmu->num_clks; i++) {
-+		const char *cname = smmu->clk_names[i];
-+		struct clk *c = devm_clk_get(dev, cname);
-+
-+		if (IS_ERR(c)) {
-+			err = PTR_ERR(c);
-+			if (err != -EPROBE_DEFER)
-+				dev_err(dev, "Couldn't get clock: %s", cname);
-+
-+			return err;
-+		}
-+		smmu->clocks[i] = c;
-+	}
-+
-+	return 0;
-+}
-+
- static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
- {
- 	unsigned long size;
-@@ -1833,10 +1893,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
- struct arm_smmu_match_data {
- 	enum arm_smmu_arch_version version;
- 	enum arm_smmu_implementation model;
-+	const char * const *clks;
-+	int num_clks;
- };
- 
- #define ARM_SMMU_MATCH_DATA(name, ver, imp)	\
--static struct arm_smmu_match_data name = { .version = ver, .model = imp }
-+static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
- 
- ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
-@@ -1937,6 +1999,8 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
- 	data = of_device_get_match_data(dev);
- 	smmu->version = data->version;
- 	smmu->model = data->model;
-+	smmu->clk_names = data->clks;
-+	smmu->num_clks = data->num_clks;
- 
- 	parse_driver_options(smmu);
- 
-@@ -2035,6 +2099,10 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		smmu->irqs[i] = irq;
- 	}
- 
-+	err = arm_smmu_init_clocks(smmu);
-+	if (err)
-+		return err;
-+
- 	err = arm_smmu_device_cfg_probe(smmu);
- 	if (err)
- 		return err;
-@@ -2120,10 +2188,35 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
-+static int arm_smmu_resume(struct device *dev)
-+{
-+	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-+
-+	return arm_smmu_enable_clocks(smmu);
-+}
-+
-+static int arm_smmu_suspend(struct device *dev)
-+{
-+	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-+
-+	arm_smmu_disable_clocks(smmu);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops arm_smmu_pm_ops = {
-+	SET_RUNTIME_PM_OPS(arm_smmu_suspend, arm_smmu_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
-+};
-+
- static struct platform_driver arm_smmu_driver = {
- 	.driver	= {
- 		.name		= "arm-smmu",
- 		.of_match_table	= of_match_ptr(arm_smmu_of_match),
-+		.pm = &arm_smmu_pm_ops,
- 	},
- 	.probe	= arm_smmu_device_probe,
- 	.remove	= arm_smmu_device_remove,
+Best regards
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
