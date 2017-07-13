@@ -1,188 +1,42 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 02/11] clk: sunxi-ng: Add interface to query or configure MMC timing modes.
-Date: Fri, 14 Jul 2017 14:42:53 +0800
-Message-Id: <20170714064302.20383-3-wens@csie.org>
-In-Reply-To: <20170714064302.20383-1-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org>
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk bulk prepare enable
+Date: Thu, 13 Jul 2017 15:23:24 -0700
+Message-Id: <20170713222324.19223-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Starting with the A83T SoC, Allwinner introduced a new timing mode for
-its MMC clocks. The new mode changes how the MMC controller sample and
-output clocks are delayed to match chip and board specifics. There are
-two controls for this, one on the CCU side controlling how the clocks
-behave, and one in the MMC controller controlling what inputs to take
-and how to route them.
+The following changes since commit 618aee02e2f57042f4cdeab228caf631e524b281:
 
-In the old mode, the MMC clock had 2 child clocks providing the output
-and sample clocks, which could be delayed by a number of clock cycles
-measured from the MMC clock's parent.
+  clk: add managed version of clk_bulk_get (2017-06-02 15:37:49 -0700)
 
-With the new mode, the 2 delay clocks are no longer active. Instead,
-the delays and associated controls are moved into the MMC controller.
-The output of the MMC clock is also halved.
+are available in the git repository at:
 
-The difference in how things are wired between the modes means that the
-clock controls and the MMC controls must match. To achieve this in a
-clear, explicit way, we introduce two functions for the MMC driver to
-use: one queries the hardware for the current mode set, and the other
-allows the MMC driver to request a mode.
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-bulk-get-prep-enable
 
-With newer SoCs such as the A64, the old mode is all but removed. Hence
-we support two variations, one where the mode can be toggled, and the
-other where the clock is fixed in the new mode.
+for you to fetch changes up to 3c48d86cc959309ee168fb87737a8cb3f97c5224:
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/Makefile         |  1 +
- drivers/clk/sunxi-ng/ccu_common.h     |  2 +
- drivers/clk/sunxi-ng/ccu_mmc_timing.c | 73 +++++++++++++++++++++++++++++++++++
- include/linux/clk/sunxi-ng.h          | 20 ++++++++++
- 4 files changed, 96 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
- create mode 100644 include/linux/clk/sunxi-ng.h
+  clk: Provide bulk prepare_enable disable_unprepare variants (2017-07-12 23:50:53 -0700)
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 0c45fa50283d..45a5910379a5 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -1,5 +1,6 @@
- # Common objects
- lib-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
-+lib-$(CONFIG_SUNXI_CCU)		+= ccu_mmc_timing.o
- lib-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
- 
- # Base clock types
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index d6fdd7a789aa..88981e7fd978 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -23,6 +23,8 @@
- #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
- #define CCU_FEATURE_ALL_PREDIV		BIT(4)
- #define CCU_FEATURE_LOCK_REG		BIT(5)
-+#define CCU_FEATURE_MMC_TIMING_SWITCH	BIT(6)
-+#define CCU_FEATURE_MMC_ALWAYS_NEW	BIT(7)
- 
- struct device_node;
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_mmc_timing.c b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
-new file mode 100644
-index 000000000000..f236a56abf48
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
-@@ -0,0 +1,73 @@
-+/*
-+ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk/sunxi-ng.h>
-+
-+#include "ccu_common.h"
-+
-+#define CCU_MMC_NEW_TIMING_MODE		BIT(30)
-+
-+/**
-+ * sunxi_ccu_set_mmc_timing_mode: Configure the MMC clock timing mode
-+ * @clk: clock to be configured
-+ * @new_mode: true for new timing mode introduced in A83T and later
-+ *
-+ * Returns 0 on success, -ENOTSUPP if the clock does not support
-+ * switching modes.
-+ */
-+int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct ccu_common *cm = hw_to_ccu_common(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
-+		return -ENOTSUPP;
-+
-+	spin_lock_irqsave(cm->lock, flags);
-+
-+	val = readl(cm->base + cm->reg);
-+	if (new_mode)
-+		val |= CCU_MMC_NEW_TIMING_MODE;
-+	else
-+		val &= ~CCU_MMC_NEW_TIMING_MODE;
-+	writel(val, cm->base + cm->reg);
-+
-+	spin_unlock_irqrestore(cm->lock, flags);
-+
-+	return 0;
-+}
-+
-+/**
-+ * sunxi_ccu_set_mmc_timing_mode: Get the current MMC clock timing mode
-+ * @clk: clock to query
-+ *
-+ * Returns 0 if the clock is in old timing mode, > 0 if it is in
-+ * new timing mode, and -ENOTSUPP if the clock does not support
-+ * this function.
-+ */
-+int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct ccu_common *cm = hw_to_ccu_common(hw);
-+
-+	if (cm->features & CCU_FEATURE_MMC_ALWAYS_NEW)
-+		return 1;
-+
-+	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
-+		return -ENOTSUPP;
-+
-+	return !!(readl(cm->base + cm->reg) & CCU_MMC_NEW_TIMING_MODE);
-+}
-diff --git a/include/linux/clk/sunxi-ng.h b/include/linux/clk/sunxi-ng.h
-new file mode 100644
-index 000000000000..f1bd321fc264
---- /dev/null
-+++ b/include/linux/clk/sunxi-ng.h
-@@ -0,0 +1,20 @@
-+/*
-+ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _LINUX_CLK_SUNXI_NG_H_
-+#define _LINUX_CLK_SUNXI_NG_H_
-+
-+int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode);
-+int sunxi_ccu_get_mmc_timing_mode(struct clk *clk);
-+
-+#endif
+----------------------------------------------------------------
+Small patch to add a clk_bulk_prepare_enable() and
+clk_bulk_disable_unprepare() API to the newly introduced
+clk bulk APIs.
+
+----------------------------------------------------------------
+
+It would be good to get this into the -rc1 so that other driver
+trees can use it for code targeted for the next merge window.
+
+Bjorn Andersson (1):
+      clk: Provide bulk prepare_enable disable_unprepare variants
+
+ include/linux/clk.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
 -- 
-2.13.2
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
