@@ -1,98 +1,166 @@
-Return-Path: <absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Sun, 30 Jul 2017 18:27:35 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, andy.gross@linaro.org, david.brown@linaro.org,
- rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [RFC 01/12] clk: qcom: support for register offsets from rcg2
- clock node
-In-Reply-To: <20170728175522.GF2146@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
- <1501153825-5181-2-git-send-email-absahu@codeaurora.org>
- <4b660d7f-17ba-e5a6-3f48-13eeb1d9f02c@codeaurora.org>
- <115a73ba35bd764b4842060bac1050b4@codeaurora.org>
- <20170728175522.GF2146@codeaurora.org>
-Message-ID: <3a7dde1470c65b5c6fa066581c46589c@codeaurora.org>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 8/9] ASoC: atmel-classd: remove aclk clock
+Date: Thu, 13 Jul 2017 09:49:26 +0200
+Message-Id: <20170713074927.10882-9-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-07-28 23:25, Stephen Boyd wrote:
-> On 07/28, Abhishek Sahu wrote:
->> On 2017-07-28 00:14, Stephen Boyd wrote:
->> >
->> >It looks like the two UBI clks that messed this up don't have an MN
->> >counter, so instead of doing this maddness, just add a flag like
->> 
->>  I have given example for one of the RCG. IPQ8074 have more clocks for
->>  which the offsets are not continuous and some of the clocks have
->>  mn counter also (NSS Crypto and PCIE AUX)
->> 
->>  GCC_NSS_UBI0_CMD_RCGR 0x1868100
->>  GCC_NSS_UBI0_CFG_RCGR 0x1868108
->>  GCC_NSS_UBI1_CMD_RCGR 0x1868120
->>  GCC_NSS_UBI1_CFG_RCGR 0x1868128
->> 
->>  GCC_NSS_CRYPTO_CMD_RCGR 0x1868140
->>  GCC_NSS_CRYPTO_CFG_RCGR 0x1868148
->>  GCC_NSS_CRYPTO_M 0x186814C
->>  GCC_NSS_CRYPTO_N 0x1868150
->>  GCC_NSS_CRYPTO_D 0x1868154
->> 
->>  GCC_PCIE0_AUX_CMD_RCGR	0x1875020
->>  GCC_PCIE0_AUX_CFG_RCGR	0x1875028
->>  GCC_PCIE0_AUX_M 0x187502C
->>  GCC_PCIE0_AUX_N 0x1875030
->>  GCC_PCIE0_AUX_D 0x1875034
->> 
->>  GCC_PCIE0_AXI_CMD_RCGR 0x1875050
->>  GCC_PCIE0_AXI_CFG_RCGR 0x1875058
->> 
->>  Similarly for PCIE1 also.
-> 
-> Wow. This is awful. Please make sure this never happens again. I
-> will go yell at someone as well.
-> 
+Since gclk (generated-clk) is now able to determine the rate of the
+audio_pll, there is no need for classd to have a direct phandle to the
+audio_pll while already having a phandle to gclk.
 
-  Yes. We also yelled badly at HW team for this and raised
-  the HW bug before tapeout itself but they didn't fix by
-  saying that this change will be risky and can have side
-  effects.
+Thus, remove all mentions to aclk in classd driver and update macros and
+variable names.
 
->> 
->> >m_is_cfg and then make a rcg2_crmd() function that checks this flag and
->> >returns cmd_rcg + CFG_REG or cmd_rgcr + M_REG depending on the flag. We
->> 
->>  The original idea was to make this generic so in future for all the
->> cases
->>  it will work. If we can make function and since some clocks have MN
->>  counter, so could we make function for CMD reg itself instead of
->> CFG reg.
-> 
-> I understand the idea. We don't want it to happen again in the
-> future though, so let's not make it easy to support in the future
-> with some register map thing. Hardware people should follow the
-> rules and stop messing with the register layout!
-> 
->>  For this, pass cmd_rcgr as + 4 from GCC driver and when this flag
->> is set
->>  then do minus 4 for all CMD_REG
->> 
-> 
-> Ok. That's a good solution.
-> 
-> Just to be clear, let's have a flag like 'cmd_reg_is_wrong' (feel
-> free to think of a better name) and then have the places where we
-> access CMD_REG subtract that by 4, again with some special
-> macro/function, and then have the IPQ gcc driver specify the
-> cmd_rcgr as the real register + 4. Then the other hardcoded
-> offsets can all be the same and the few places that we access
-> CMD_REG we can subtract 4 to get the true location. And put all
-> that under an ifdef in some macro, so that we don't care about
-> this problem at all if we're not compiling this broken hardware
-> driver.
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+---
 
-  Sure. Same plan here and I will do the same.
+added in v2:
+  - split from bigger patch with audio PLLs and DT binding,
+  - updated all variables and macros named ACLK to GCLK,
+
+ sound/soc/atmel/atmel-classd.c | 47 +++++++++++++-----------------------------
+ 1 file changed, 14 insertions(+), 33 deletions(-)
+
+diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
+index b7ef8c59b49a..be6b775b6f46 100644
+--- a/sound/soc/atmel/atmel-classd.c
++++ b/sound/soc/atmel/atmel-classd.c
+@@ -32,7 +32,6 @@ struct atmel_classd {
+ 	struct regmap *regmap;
+ 	struct clk *pclk;
+ 	struct clk *gclk;
+-	struct clk *aclk;
+ 	int irq;
+ 	const struct atmel_classd_pdata *pdata;
+ };
+@@ -330,11 +329,6 @@ static int atmel_classd_codec_dai_startup(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
+-	int ret;
+-
+-	ret = clk_prepare_enable(dd->aclk);
+-	if (ret)
+-		return ret;
+ 
+ 	return clk_prepare_enable(dd->gclk);
+ }
+@@ -357,31 +351,31 @@ static int atmel_classd_codec_dai_digital_mute(struct snd_soc_dai *codec_dai,
+ 	return 0;
+ }
+ 
+-#define CLASSD_ACLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
+-#define CLASSD_ACLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
++#define CLASSD_GCLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
++#define CLASSD_GCLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
+ 
+ static struct {
+ 	int rate;
+ 	int sample_rate;
+ 	int dsp_clk;
+-	unsigned long aclk_rate;
++	unsigned long gclk_rate;
+ } const sample_rates[] = {
+ 	{ 8000,  CLASSD_INTPMR_FRAME_8K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 16000, CLASSD_INTPMR_FRAME_16K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 32000, CLASSD_INTPMR_FRAME_32K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 48000, CLASSD_INTPMR_FRAME_48K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 96000, CLASSD_INTPMR_FRAME_96K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 22050, CLASSD_INTPMR_FRAME_22K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
+ 	{ 44100, CLASSD_INTPMR_FRAME_44K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
+ 	{ 88200, CLASSD_INTPMR_FRAME_88K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
+ };
+ 
+ static int
+@@ -410,13 +404,12 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	dev_dbg(codec->dev,
+-		"Selected SAMPLE_RATE of %dHz, ACLK_RATE of %ldHz\n",
+-		sample_rates[best].rate, sample_rates[best].aclk_rate);
++		"Selected SAMPLE_RATE of %dHz, GCLK_RATE of %ldHz\n",
++		sample_rates[best].rate, sample_rates[best].gclk_rate);
+ 
+ 	clk_disable_unprepare(dd->gclk);
+-	clk_disable_unprepare(dd->aclk);
+ 
+-	ret = clk_set_rate(dd->aclk, sample_rates[best].aclk_rate);
++	ret = clk_set_rate(dd->gclk, sample_rates[best].gclk_rate);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -426,10 +419,6 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	snd_soc_update_bits(codec, CLASSD_INTPMR, mask, val);
+ 
+-	ret = clk_prepare_enable(dd->aclk);
+-	if (ret)
+-		return ret;
+-
+ 	return clk_prepare_enable(dd->gclk);
+ }
+ 
+@@ -441,7 +430,6 @@ atmel_classd_codec_dai_shutdown(struct snd_pcm_substream *substream,
+ 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
+ 
+ 	clk_disable_unprepare(dd->gclk);
+-	clk_disable_unprepare(dd->aclk);
+ }
+ 
+ static int atmel_classd_codec_dai_prepare(struct snd_pcm_substream *substream,
+@@ -596,13 +584,6 @@ static int atmel_classd_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	dd->aclk = devm_clk_get(dev, "aclk");
+-	if (IS_ERR(dd->aclk)) {
+-		ret = PTR_ERR(dd->aclk);
+-		dev_err(dev, "failed to get audio clock: %d\n", ret);
+-		return ret;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	io_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(io_base)) {
+-- 
+2.11.0
