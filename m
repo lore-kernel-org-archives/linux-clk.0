@@ -1,97 +1,80 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1501088747.2401.27.camel@baylibre.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>, Kevin
- Hilman <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..."
- <linux-amlogic@lists.infradead.org>, Russell King <linux@armlinux.org.uk>,
- Boris Brezillon <boris.brezillon@free-electrons.com>, Adriana Reus
- <adi.reus@gmail.com>
-Date: Wed, 26 Jul 2017 19:05:47 +0200
-In-Reply-To: <20170712011604.GQ22780@codeaurora.org>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
-	 <1497955822.7387.3.camel@baylibre.com>
-	 <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
-	 <1497961950.7387.7.camel@baylibre.com>
-	 <1498050903.7387.12.camel@baylibre.com>
-	 <20170712011604.GQ22780@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>
+Subject: [PATCH v5 0/2] clk: stm32h7: Add stm32h743 clock driver
+Date: Thu, 13 Jul 2017 16:02:30 +0200
+Message-ID: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-07-11 at 18:16 -0700, Stephen Boyd wrote:
-> On 06/21, Jerome Brunet wrote:
-> > 
-> > I managed to have a run on kci - based on v4.12-rc6:
-> > https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-1
-> > 0-ge
-> > a373ddef830/
-> > 
-> > There was no build regression but kci did find one boot regression on qcom
-> > platforms:
-> > * qcom-apq8064-cm-qs600
-> > * qcom-apq8064-ifc6410
-> > 
-> > it seems the problem is coming from the clock used by the mmc driver
-> > (drivers/mmc/host/mmci.c)
-> > 
-> > the driver does following sequence:
-> > * get_clk
-> > * prepare_enable
-> > * get_rate
-> > * set_rate
-> > * ...
-> > 
-> > with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has
-> > CLK_SET_RATE_PARENT
-> > flag so it will transmit the request to its parent.
-> > The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
-> > 
-> > This can't work with sequence above. The flag was clearly bypassed before,
-> > so I
-> > think it would be best to remove CLK_SET_RATE_GATE from the SDCx_src clocks
-> > 
-> > Stephen, would you agree ?
-> > 
-> > There was an issue with the chip board as well but this particular board has
-> > not
-> > been very reliable in this lab lately. It has failed on several other job.
-> > 
-> 
-> Yes the flag was never working before and we've been ignoring the
-> subtle problems that it causes to change the rate while the clk
-> is enabled. On these older SoCs, all the clks marked with
-> CLK_SET_RATE_GATE need to implement something to forcibly disable
-> all child clks across the rate change. That is the hardware
-> recommended procedure.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Seems that HW has been doing fine w/o recommended procedure so far ;)
+v5:
+  - return bool instead int for enable_power_domain_write_protection()
+  - add comment to explain use of CLK_OF_DECLARE_DRIVER()
+  - add comment to explain why we can't use read_poll_timeout()
+  - expose clk_gate_ops::is_enabled
+  - use of __clk_mux_determine_rate & clk_gate_is_enabled to avoid wrapper
+	function.
 
-> 
-> So something like
-> 
-> 	get_clk
-> 	prepare_enable
-> 	get_rate
-> 	set_rate
-> 	 call ->set_rate() op
-> 	 forcibly disable children of rcgs
-> 	 actually change the rate of rcg
-> 	 forcibly enable all children that were disabled
-> 
-> and have that happen under one big spinlock local to the qcom
-> driver I suppose so that enable/disable can't leak into the rate
-> change. Fun! I'll make an attempt at implementing the right
-> solution tomorrow/tonight. Of course, we can remove the flag from
-> qcom drivers if it's blocking this series.
-> 
+v4:
+  - rename lock into stm32rcc_lock
+  - don't use clk_readl() 
+  - remove useless parentheses with GENMASK
+  - fix parents of timer_x clocks
+  - suppress pll configuration from DT
+  - fix kbuild warning
 
-Yeah, it is probably blocking the series.
+v3:
+  - fix compatible string "stm32h7-pll" into "st,stm32h7-pll"
+  - fix bad parent name for mco2 clock
+  - set CLK_SET_RATE_PARENT for ltdc clock
+  - set CLK_IGNORE_UNUSED for pll1
+  - disable power domain write protection on disable ops if needed
 
-In the following mail, I've only replied where I wanted to discuss a bit more.
-For everything else, please consider the comments agreed and the modifications
-done as requested.
+
+v2:
+  - rename compatible string "stm32,pll" into "stm32h7-pll"
+  - suppress "st,pllrge" property
+  - suppress "st, frac-status" property
+  - change management of "st,frac"  property
+	0 : enable 0 pll integer mode 
+	other values : enable pll in fractional mode (value is
+	the fractional factor)
+
+Gabriel Fernandez (2):
+  clk: gate: expose clk_gate_ops::is_enabled
+  clk: stm32h7: Add stm32h743 clock driver
+
+ .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   81 ++
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-gate.c                             |    2 +-
+ drivers/clk/clk-stm32h7.c                          | 1522 ++++++++++++++++++++
+ include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
+ include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
+ include/linux/clk-provider.h                       |    1 +
+ 7 files changed, 1907 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32h7.c
+ create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
+ create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
+
+-- 
+1.9.1
