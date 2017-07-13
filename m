@@ -1,185 +1,286 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 04/18] clk: ingenic: Add code to enable/disable PLLs
-Date: Sun,  2 Jul 2017 18:30:02 +0200
-Message-Id: <20170702163016.6714-5-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
+	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
+	<ping.bai@nxp.com>
+Subject: [PATCH V2 05/10] clk: imx: add pfdv2 support
+Date: Thu, 13 Jul 2017 19:47:10 +0800
+Message-ID: <1499946435-7177-6-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit permits the PLLs to be dynamically enabled and disabled when
-their children clocks are enabled and disabled.
+The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
+Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+NOTE pfdv2 can only be operated when clk is gated.
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
 ---
- drivers/clk/ingenic/cgu.c | 89 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 74 insertions(+), 15 deletions(-)
+ChangeLog:
+v1->v2:
+ * change to readl_poll_timeout
+ * add pfd lock to protect share reg access between rate and enable/disable
+   operations and multiple pfd instances.
+ * use clk_hw_register
+---
+ drivers/clk/imx/Makefile    |   3 +-
+ drivers/clk/imx/clk-pfdv2.c | 207 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h       |   3 +
+ 3 files changed, 212 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
 
- v2: No change
- v3: No change
-
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index 75b083ba294c..08613b803b14 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -107,9 +107,6 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	if (bypass)
- 		return parent_rate;
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 1e308e2..ea4ef27 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -11,7 +11,8 @@ obj-y += \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+ 	clk-pllv4.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-pfdv2.o
  
--	if (!enable)
--		return 0;
--
- 	for (od = 0; od < pll_info->od_max; od++) {
- 		if (pll_info->od_encoding[od] == od_enc)
- 			break;
-@@ -153,17 +150,25 @@ ingenic_pll_calc(const struct ingenic_cgu_clk_info *clk_info,
- 	return div_u64((u64)parent_rate * m, n * od);
- }
- 
--static long
--ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
--		       unsigned long *prate)
-+static inline const struct ingenic_cgu_clk_info *to_clk_info(
-+		struct ingenic_clk *ingenic_clk)
- {
--	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info;
- 
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 	BUG_ON(clk_info->type != CGU_CLK_PLL);
- 
-+	return clk_info;
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
+new file mode 100644
+index 0000000..5421bdf
+--- /dev/null
++++ b/drivers/clk/imx/clk-pfdv2.c
+@@ -0,0 +1,207 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++
++/**
++ * struct clk_pfdv2 - IMX PFD clock
++ * @clk_hw:	clock source
++ * @reg:	PFD register address
++ * @gate_bit:	Gate bit offset
++ * @vld_bit:	Valid bit offset
++ * @frac_off:	PLL Fractional Divider offset
++ */
++
++struct clk_pfdv2 {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	u8		gate_bit;
++	u8		vld_bit;
++	u8		frac_off;
++};
++
++#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
++
++#define CLK_PFDV2_FRAC_MASK 0x3f
++
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static DEFINE_SPINLOCK(pfd_lock);
++
++static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
++{
++	u32 val;
++
++	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
++				  0, LOCK_TIMEOUT_US);
 +}
 +
-+static long
-+ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
-+		       unsigned long *prate)
++static int clk_pfdv2_enable(struct clk_hw *hw)
 +{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
 +
- 	return ingenic_pll_calc(clk_info, req_rate, *prate, NULL, NULL, NULL);
- }
- 
-@@ -171,19 +176,14 @@ static int
- ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 		     unsigned long parent_rate)
- {
--	const unsigned timeout = 100;
- 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
--	const struct ingenic_cgu_clk_info *clk_info;
--	const struct ingenic_cgu_pll_info *pll_info;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
- 	unsigned long rate, flags;
--	unsigned m, n, od, i;
-+	unsigned int m, n, od;
- 	u32 ctl;
- 
--	clk_info = &cgu->clock_info[ingenic_clk->idx];
--	BUG_ON(clk_info->type != CGU_CLK_PLL);
--	pll_info = &clk_info->pll;
--
- 	rate = ingenic_pll_calc(clk_info, req_rate, parent_rate,
- 			       &m, &n, &od);
- 	if (rate != req_rate)
-@@ -202,6 +202,26 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	ctl &= ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
- 	ctl |= pll_info->od_encoding[od - 1] << pll_info->od_shift;
- 
-+	writel(ctl, cgu->base + pll_info->reg);
-+	spin_unlock_irqrestore(&cgu->lock, flags);
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++
++	return clk_pfdv2_wait(pfd);
++}
++
++static void clk_pfdv2_disable(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val |= pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++}
++
++static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	u64 tmp = parent_rate;
++	u8 frac;
++
++	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
++		& CLK_PFDV2_FRAC_MASK;
++
++	if (!frac) {
++		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
++			 clk_hw_get_name(hw));
++		return 0;
++	}
++
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *prate)
++{
++	u64 tmp = *prate;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	tmp = *prate;
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static int clk_pfdv2_is_enabled(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++
++	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
++		return 0;
++
++	return 1;
++}
++
++static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u64 tmp = parent_rate;
++	u32 val;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
++	val |= frac << pfd->frac_off;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
 +
 +	return 0;
 +}
 +
-+static int ingenic_pll_enable(struct clk_hw *hw)
++static const struct clk_ops clk_pfdv2_ops = {
++	.enable		= clk_pfdv2_enable,
++	.disable	= clk_pfdv2_disable,
++	.recalc_rate	= clk_pfdv2_recalc_rate,
++	.round_rate	= clk_pfdv2_round_rate,
++	.set_rate	= clk_pfdv2_set_rate,
++	.is_enabled     = clk_pfdv2_is_enabled,
++};
++
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx)
 +{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
-+	const unsigned int timeout = 100;
-+	unsigned long flags;
-+	unsigned int i;
-+	u32 ctl;
++	struct clk_init_data init;
++	struct clk_pfdv2 *pfd;
++	struct clk_hw *hw;
++	int ret;
 +
-+	spin_lock_irqsave(&cgu->lock, flags);
-+	ctl = readl(cgu->base + pll_info->reg);
++	WARN_ON(idx > 3);
 +
- 	ctl &= ~BIT(pll_info->bypass_bit);
- 	ctl |= BIT(pll_info->enable_bit);
- 
-@@ -223,10 +243,48 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	return 0;
- }
- 
-+static void ingenic_pll_disable(struct clk_hw *hw)
-+{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
-+	unsigned long flags;
-+	u32 ctl;
++	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
++	if (!pfd)
++		return ERR_PTR(-ENOMEM);
 +
-+	spin_lock_irqsave(&cgu->lock, flags);
-+	ctl = readl(cgu->base + pll_info->reg);
++	pfd->reg = reg;
++	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
++	pfd->vld_bit = pfd->gate_bit - 1;
++	pfd->frac_off = idx * 8;
 +
-+	ctl &= ~BIT(pll_info->enable_bit);
++	init.name = name;
++	init.ops = &clk_pfdv2_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
 +
-+	writel(ctl, cgu->base + pll_info->reg);
-+	spin_unlock_irqrestore(&cgu->lock, flags);
++	pfd->hw.init = &init;
++
++	hw = &pfd->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pfd);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
 +}
-+
-+static int ingenic_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-+	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-+	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
-+	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
-+	unsigned long flags;
-+	u32 ctl;
-+
-+	spin_lock_irqsave(&cgu->lock, flags);
-+	ctl = readl(cgu->base + pll_info->reg);
-+	spin_unlock_irqrestore(&cgu->lock, flags);
-+
-+	return !!(ctl & BIT(pll_info->enable_bit));
-+}
-+
- static const struct clk_ops ingenic_pll_ops = {
- 	.recalc_rate = ingenic_pll_recalc_rate,
- 	.round_rate = ingenic_pll_round_rate,
- 	.set_rate = ingenic_pll_set_rate,
-+
-+	.enable = ingenic_pll_enable,
-+	.disable = ingenic_pll_disable,
-+	.is_enabled = ingenic_pll_is_enabled,
- };
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 132c89f..cf3ea92 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -59,6 +59,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
  
- /*
-@@ -601,6 +659,7 @@ static int ingenic_register_clock(struct ingenic_cgu *cgu, unsigned idx)
- 		}
- 	} else if (caps & CGU_CLK_PLL) {
- 		clk_init.ops = &ingenic_pll_ops;
-+		clk_init.flags |= CLK_SET_RATE_GATE;
- 
- 		caps &= ~CGU_CLK_PLL;
- 
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx);
++
+ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 				 void __iomem *reg, u8 shift, u8 width,
+ 				 void __iomem *busy_reg, u8 busy_shift);
 -- 
-2.11.0
+2.7.4
