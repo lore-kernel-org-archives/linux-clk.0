@@ -1,180 +1,71 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:41940 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752282AbdGBQam (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2017 12:30:42 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 18/18] MIPS: ingenic: Initial GCW Zero support
-Date: Sun,  2 Jul 2017 18:30:16 +0200
-Message-Id: <20170702163016.6714-19-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+Received: from smtp.codeaurora.org ([198.145.29.96]:47206 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbdGMFgJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2017 01:36:09 -0400
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, stanimir.varbanov@linaro.org,
+        architt@codeaurora.org, linux-arm-kernel@lists.infradead.org
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org>
+ <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+Date: Thu, 13 Jul 2017 11:05:59 +0530
+MIME-Version: 1.0
+In-Reply-To: <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The GCW Zero (http://www.gcw-zero.com) is a retro-gaming focused
-handheld game console, successfully kickstarted in ~2012, running Linux.
+Hi Vivek,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/Makefile |  1 +
- arch/mips/boot/dts/ingenic/gcw0.dts | 60 +++++++++++++++++++++++++++++++++++++
- arch/mips/configs/gcw0_defconfig    | 28 +++++++++++++++++
- arch/mips/jz4740/Kconfig            |  4 +++
- arch/mips/jz4740/boards.c           |  1 +
- 5 files changed, 94 insertions(+)
- create mode 100644 arch/mips/boot/dts/ingenic/gcw0.dts
- create mode 100644 arch/mips/configs/gcw0_defconfig
+On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+> Hi Stephen,
+> 
+> 
+> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>> On 07/06, Vivek Gautam wrote:
+>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>>                    size_t size)
+>>>   {
+>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>> +    size_t ret;
+>>>         if (!ops)
+>>>           return 0;
+>>>   -    return ops->unmap(ops, iova, size);
+>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>> Can these map/unmap ops be called from an atomic context? I seem
+>> to recall that being a problem before.
+> 
+> That's something which was dropped in the following patch merged in master:
+> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+> 
+> Looks like we don't  need locks here anymore?
 
- v2: No change
- v3: No change
+ Apart from the locking, wonder why a explicit pm_runtime is needed
+ from unmap. Somehow looks like some path in the master using that
+ should have enabled the pm ?
 
-diff --git a/arch/mips/boot/dts/ingenic/Makefile b/arch/mips/boot/dts/ingenic/Makefile
-index f2b864f07850..f64ad1c27a28 100644
---- a/arch/mips/boot/dts/ingenic/Makefile
-+++ b/arch/mips/boot/dts/ingenic/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_JZ4740_QI_LB60)	+= qi_lb60.dtb
-+dtb-$(CONFIG_JZ4770_GCW0)	+= gcw0.dtb
- dtb-$(CONFIG_JZ4780_CI20)	+= ci20.dtb
- 
- obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
-new file mode 100644
-index 000000000000..9c9a0137ccdf
---- /dev/null
-+++ b/arch/mips/boot/dts/ingenic/gcw0.dts
-@@ -0,0 +1,60 @@
-+/dts-v1/;
-+
-+#include "jz4770.dtsi"
-+
-+/ {
-+	compatible = "gcw,zero", "ingenic,jz4770";
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:57600n8";
-+	};
-+
-+	board {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		ranges = <>;
-+
-+		otg_phy: otg-phy {
-+			compatible = "usb-nop-xceiv";
-+			clocks = <&cgu JZ4770_CLK_OTG_PHY>;
-+			clock-names = "main_clk";
-+		};
-+	};
-+};
-+
-+&ext {
-+	clock-frequency = <12000000>;
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&cgu {
-+	/* Put high-speed peripherals under PLL1, such that we can change the
-+	 * PLL0 frequency on demand without having to suspend peripherals.
-+	 * We use a rate of 432 MHz, which is the least common multiple of
-+	 * 27 MHz (required by TV encoder) and 48 MHz (required by USB host).
-+	 */
-+	assigned-clocks =
-+		<&cgu JZ4770_CLK_PLL1>,
-+		<&cgu JZ4770_CLK_UHC>;
-+	assigned-clock-parents =
-+		<0>,
-+		<&cgu JZ4770_CLK_PLL1>;
-+	assigned-clock-rates =
-+		<432000000>;
-+};
-+
-+&uhc {
-+	/* The WiFi module is connected to the UHC. */
-+	status = "okay";
-+};
-diff --git a/arch/mips/configs/gcw0_defconfig b/arch/mips/configs/gcw0_defconfig
-new file mode 100644
-index 000000000000..471497033855
---- /dev/null
-+++ b/arch/mips/configs/gcw0_defconfig
-@@ -0,0 +1,28 @@
-+CONFIG_MACH_INGENIC=y
-+CONFIG_JZ4770_GCW0=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_BOUNCE is not set
-+CONFIG_PREEMPT_VOLUNTARY=y
-+# CONFIG_SECCOMP is not set
-+CONFIG_CROSS_COMPILE="mipsel-gcw0-linux-uclibc-"
-+CONFIG_NO_HZ_IDLE=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_EMBEDDED=y
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_SUSPEND is not set
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_NETDEVICES=y
-+CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_INGENIC=y
-+CONFIG_USB=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_OHCI_HCD_PLATFORM=y
-+CONFIG_NOP_USB_XCEIV=y
-+CONFIG_TMPFS=y
-diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
-index 922850503271..db270653fe8c 100644
---- a/arch/mips/jz4740/Kconfig
-+++ b/arch/mips/jz4740/Kconfig
-@@ -7,6 +7,10 @@ config JZ4740_QI_LB60
- 	bool "Qi Hardware Ben NanoNote"
- 	select MACH_JZ4740
- 
-+config JZ4770_GCW0
-+	bool "Game Consoles Worldwide GCW Zero"
-+	select MACH_JZ4770
-+
- config JZ4780_CI20
- 	bool "MIPS Creator CI20"
- 	select MACH_JZ4780
-diff --git a/arch/mips/jz4740/boards.c b/arch/mips/jz4740/boards.c
-index a3cf64cf004a..98a4d8e68cf0 100644
---- a/arch/mips/jz4740/boards.c
-+++ b/arch/mips/jz4740/boards.c
-@@ -12,5 +12,6 @@
- #include <asm/mips_machine.h>
- 
- MIPS_MACHINE(MACH_INGENIC_JZ4740, "qi,lb60", "Qi Hardware Ben Nanonote", NULL);
-+MIPS_MACHINE(MACH_INGENIC_JZ4770, "gcw,zero", "GCW Zero", NULL);
- MIPS_MACHINE(MACH_INGENIC_JZ4780, "img,ci20",
- 			"Imagination Technologies CI20", NULL);
+Regards,
+ Sricharan
+
 -- 
-2.11.0
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
 
