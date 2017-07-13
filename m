@@ -1,75 +1,168 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 21 Jul 2017 09:20:39 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 04/10] mmc: sunxi: Support controllers that can use
- both old and new timings
-Message-ID: <20170721072039.qsko2vtradiosdqk@flea>
-References: <20170720034452.15920-1-wens@csie.org>
- <20170720034452.15920-5-wens@csie.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
+	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
+	<ping.bai@nxp.com>
+Subject: [PATCH V2 06/10] clk: imx: add composite clk support
+Date: Thu, 13 Jul 2017 19:47:11 +0800
+Message-ID: <1499946435-7177-7-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5aoxigudzrnhotcx"
-In-Reply-To: <20170720034452.15920-5-wens@csie.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+The imx composite clk is designed for Peripheral Clock Control (PCC)
+module observed in IMX ULP SoC series. e.g. i.MX7ULP.
 
---5aoxigudzrnhotcx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+NOTE pcc can only be operated when clk is gated.
 
-On Thu, Jul 20, 2017 at 11:44:46AM +0800, Chen-Yu Tsai wrote:
-> On the SoCs that introduced the new timing mode for MMC controllers,
-> both the old (where the clock delays are set in the CCU) and new
-> (where the clock delays are set in the MMC controller) timing modes
-> are available, and we have to support them both. However there are
-> two bits that control which mode is active. One is in the CCU, the
-> other is in the MMC controller. The settings on both sides must be
-> the same, or nothing will work.
->=20
-> The sunxi-ng clock driver provides an API to query and set the
-> active timing mode. At probe time, we try to set the active mode
-> to the "new timing mode". If it succeeds, we can then use the MMC
-> controller in the new mode. If not, we fall back to the old mode.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ChangeLog:
+v1->v2:
+ * remove an unneeded blank line change
+ * use clk_hw_register
+---
+ drivers/clk/imx/Makefile        |  1 +
+ drivers/clk/imx/clk-composite.c | 90 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h           |  6 +++
+ 3 files changed, 97 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-composite.c
 
-Thanks!
-Maxime
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---5aoxigudzrnhotcx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZcatHAAoJEBx+YmzsjxAgqloP+waQe7R4Dc6Vlas65wb477oh
-5EHgIaFnZWnBoLQkhzDLsjJvetnn1+PcnmlOW8YKkLQsHdLE2WYgUeFnYdH0Pzh0
-ulikYxaHsUg/lIHHnLpCPJrOSNjUZ4a5Gy4n5TqTCo5/DBNwNb67Jyc+LzsuY+/N
-PmYcgAOfspmbWP8F4GEqgdhknlFkDOwz8LP/FH2XKbkWxwqepZoEHZJrk7D7Bi1n
-ehDingd2znlz6xepT4qVBWSZB4L5knEMeuYA1FAiQkgMlelBucNk5y8y1d3W6JHI
-dR6Y5jGxyJLm6Y8lL2yhoMEBpxb//20tz/FQjOKuPBiX8zIze0HXda+GhQjcJ5Eo
-R0YfEoVrvuni49pvtQ/lsyzK2svMXfdwSE+J6C0+WjRCyxsvDgIjm6obDroTscCA
-dRu9NmC0zFjB4mKcMm4A/olCF3HL814viz88t69Czt1cfbH0UouBe1+58hSlpaA0
-0e0YJ3Ryn/WMdR34iAwyAWddPrCBXTr9RQye7f9gu2NL6UNKPbczBhNrHV4ecymE
-tNAYSiRJOCc0CM6mJQWCR4GJ2vlSGkys0asI1KzfyfA3nnvzGiG9YKyapMqYWWxl
-TJHPT6/Y8N/fyXte6D6cd9YCy0LOOqQhl/NWFlG69ylMdInNSGgNT1piWnI+8rN0
-Ak5UG2JBsQmY6kMgfgv5
-=E3cZ
------END PGP SIGNATURE-----
-
---5aoxigudzrnhotcx--
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index ea4ef27..bf001ce 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -3,6 +3,7 @@ obj-y += \
+ 	clk.o \
+ 	clk-busy.o \
+ 	clk-cpu.o \
++	clk-composite.o \
+ 	clk-fixup-div.o \
+ 	clk-fixup-mux.o \
+ 	clk-gate-exclusive.o \
+diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+new file mode 100644
+index 0000000..78b891e
+--- /dev/null
++++ b/drivers/clk/imx/clk-composite.c
+@@ -0,0 +1,90 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/slab.h>
++
++#define PCG_PCS_SHIFT	24
++#define PCG_PCS_MASK	0x7
++#define PCG_CGC_SHIFT	30
++#define PCG_FRAC_SHIFT	3
++#define PCG_FRAC_WIDTH	1
++#define PCG_FRAC_MASK	BIT(3)
++#define PCG_PCD_SHIFT	0
++#define PCG_PCD_WIDTH	3
++#define PCG_PCD_MASK	0x7
++
++struct clk_hw *imx_clk_composite(const char *name,
++			      const char * const *parent_names,
++			      int num_parents, bool mux_present,
++			      bool rate_present, bool gate_present,
++			      void __iomem *reg)
++{
++	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
++	struct clk_fractional_divider *fd = NULL;
++	struct clk_gate *gate = NULL;
++	struct clk_mux *mux = NULL;
++	struct clk_hw *hw;
++
++	if (mux_present) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++		mux_hw = &mux->hw;
++		mux->reg = reg;
++		mux->shift = PCG_PCS_SHIFT;
++		mux->mask = PCG_PCS_MASK;
++	}
++
++	if (rate_present) {
++		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
++		if (!fd) {
++			kfree(mux);
++			return ERR_PTR(-ENOMEM);
++		}
++		fd_hw = &fd->hw;
++		fd->reg = reg;
++		fd->mshift = PCG_FRAC_SHIFT;
++		fd->mwidth = PCG_FRAC_WIDTH;
++		fd->mmask  = PCG_FRAC_MASK;
++		fd->nshift = PCG_PCD_SHIFT;
++		fd->nwidth = PCG_PCD_WIDTH;
++		fd->nmask = PCG_PCD_MASK;
++		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
++	}
++
++	if (gate_present) {
++		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++		if (!gate) {
++			kfree(mux);
++			kfree(fd);
++			return ERR_PTR(-ENOMEM);
++		}
++		gate_hw = &gate->hw;
++		gate->reg = reg;
++		gate->bit_idx = PCG_CGC_SHIFT;
++	}
++
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++				       mux_hw, &clk_mux_ops, fd_hw,
++				       &clk_fractional_divider_ops, gate_hw,
++				       &clk_gate_ops, CLK_SET_RATE_GATE |
++				       CLK_SET_PARENT_GATE);
++	if (IS_ERR(hw)) {
++		kfree(mux);
++		kfree(fd);
++		kfree(gate);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index cf3ea92..702faba 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -70,6 +70,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+ 			     const char **parent_names, int num_parents);
+ 
++struct clk_hw *imx_clk_composite(const char *name,
++				 const char * const *parent_names,
++				 int num_parents, bool mux_present,
++				 bool rate_present, bool gate_present,
++				 void __iomem *reg);
++
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
+-- 
+2.7.4
