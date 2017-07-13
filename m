@@ -1,104 +1,132 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Wed, 26 Jul 2017 13:44:20 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-Cc: icenowy@aosc.io, wens@csie.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A
- regulator to Orange Pi PC
-Message-ID: <20170726114420.ipirqgbluqmggcjy@flea>
-References: <20170723102749.17323-1-icenowy@aosc.io>
- <20170723102749.17323-11-icenowy@aosc.io>
- <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
- <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
- <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
- <82507f40a1ddba8517cf09f51d3afa33@aosc.io>
- <1501064628.14577.1.camel@megous.com>
+Return-Path: <plaes@plaes.org>
+Date: Thu, 13 Jul 2017 19:23:58 +0000
+From: Priit Laes <plaes@plaes.org>
+To: Olliver Schinagl <oliver@schinagl.nl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v5 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU
+ driver
+Message-ID: <20170713192358.GB22375@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
+ <5099cd90-e019-8a65-38e5-02b3c939a7a8@schinagl.nl>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tpwlf6xvobw3hsae"
-In-Reply-To: <1501064628.14577.1.camel@megous.com>
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <5099cd90-e019-8a65-38e5-02b3c939a7a8@schinagl.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, Jul 10, 2017 at 11:45:32AM +0200, Olliver Schinagl wrote:
+> Hi Pleas,
+> 
+> again, but this time with content :)
+> 
+> On 04-07-17 22:04, Priit Laes wrote:
+> >Introduce a clock controller driver for sun4i A10 and sun7i A20
+> >series SoCs.
 
---tpwlf6xvobw3hsae
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ ... ]
 
-Hi,
+> >+++ b/drivers/clk/sunxi-ng/Kconfig
+> >@@ -11,6 +11,19 @@ config SUN50I_A64_CCU
+> > 	default ARM64 && ARCH_SUNXI
+> > 	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> >
+> >+config SUNXI_A10_CCU
+> I understand why you say sunXi here (it's support for both sun4i and sun7i)
+> but then why A10, as it also supports the A20.
+> 
+> I guess the CCU is identical on the A20 and the A10, right? Thus would it
+> not be sensible to just call it sun4i_ccu (like we do for sun5i_ccu below?
 
-On Wed, Jul 26, 2017 at 12:23:48PM +0200, Ond=C5=99ej Jirman wrote:
-> Hi,
->=20
-> icenowy@aosc.io p=C3=AD=C5=A1e v St 26. 07. 2017 v 15:36 +0800:
-> >=20
-> > > > >=20
-> > > > > Otherwse
-> > > > >=20
-> > > > > > +               regulator-max-microvolt =3D <1400000>;
-> > > > > > +               regulator-ramp-delay =3D <200>;
-> > > > >=20
-> > > > > Is this an actual constraint of the SoC? Or is it a characteristic
-> > > > > of the regulator? If it is the latter, it belongs in the driver.
-> > > > > AFAIK the regulator supports varying the ramp delay (slew rate).
-> >=20
-> > I don't know...
-> >=20
-> > Maybe I should ask Ondrej?
->=20
-> It is probably neither.
->=20
-> It is used to calculate a delay inserted by the kernel between setting
-> a new target voltage over I2C and changing the frequency of the CPU.
-> The actual delay is calculated by the difference between previous and
-> the new voltage.
->=20
-> I don't remember seeing anything in the datasheet of the regulator.
-> This is just some low value that works.
->=20
-> It would probably be dependent on the capacitance on the output of the
-> regulator, actual load (which varies), etc. So it is a board specific
-> value. One could measure it with an oscilloscope if there's a need to
-> optimize this.
+No, it's not identical.
 
-If this is a reasonable default, then this should be in the
-driver. You can't expect anyone to properly calculate a ramp delay and
-have access to both a scope and the CPU power lines.
+> >+	bool "Support for the Allwinner A10/A20 CCU"
+> >+	select SUNXI_CCU_DIV
+> >+	select SUNXI_CCU_MULT
+> >+	select SUNXI_CCU_NK
+> >+	select SUNXI_CCU_NKM
+> >+	select SUNXI_CCU_NM
+> >+	select SUNXI_CCU_MP
+> >+	select SUNXI_CCU_PHASE
+> >+	default MACH_SUN4I
+> >+	default MACH_SUN7I
+> >+	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
+> >+
+> > config SUN5I_CCU
+> > 	bool "Support for the Allwinner sun5i family CCM"
+> > 	default MACH_SUN5I
+> >@@ -57,4 +70,5 @@ config SUN8I_R_CCU
+> > 	bool "Support for Allwinner SoCs' PRCM CCUs"
+> > 	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
+> >
+> >+
+> oops?
 
-Maxime
+OK
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> 
+> >new file mode 100644
+> >index 0000000..49052b7
+> >--- /dev/null
+> >+++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> 
+> <snip>
+> 
+> >+static const char *const apb1_parents[] = { "hosc", "pll-periph", "osc32k" };
+> >+static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", apb1_parents, 0x058,
+> >+			     0, 5,	/* M */
+> >+			     16, 2,	/* P */
+> >+			     24, 2,	/* mux */
+> >+			     0);
+> >+
+> >+/* Not present on A20 */
+> >+static SUNXI_CCU_GATE(axi_dram_clk,	"axi-dram",	"ahb",
+> >+		      0x05c, BIT(31), 0);
+> 
+> Same here I guess, two defines make this a bit more readable.
 
---tpwlf6xvobw3hsae
-Content-Type: application/pgp-signature; name="signature.asc"
+You mean SUN4I_CCU_GATE? and SUN7I_CCU_GATE defines?
+I don't think it makes things more readable...
 
------BEGIN PGP SIGNATURE-----
+> >+
+> >+static SUNXI_CCU_GATE(ahb_otg_clk,	"ahb-otg",	"ahb",
+...
+> >+		      0x060, BIT(14), CLK_IS_CRITICAL);
+> 
+> <snip>
+> 
+> >+static struct ccu_reset_map sun7i_a20_ccu_resets[] = {
+> >+	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
+> >+	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
+> >+	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
+> >+	[RST_GPS]		= { 0x0d0, BIT(0) },
+> >+	[RST_DE_BE0]		= { 0x104, BIT(30) },
+> >+	[RST_DE_BE1]		= { 0x108, BIT(30) },
+> >+	[RST_DE_FE0]		= { 0x10c, BIT(30) },
+> >+	[RST_DE_FE1]		= { 0x110, BIT(30) },
+> >+	[RST_DE_MP]		= { 0x114, BIT(30) },
+> >+	[RST_TCON0]		= { 0x118, BIT(30) },
+> >+	[RST_TCON1]		= { 0x11c, BIT(30) },
+> You are missing the TV encoder reset:
+> +      [RST_TVE0]              = { 0x118, BIT(29) },
+> +      [RST_TVE1]              = { 0x11c, BIT(29) },
+> 
+> (to match your table i did not use defines :p)
 
-iQIcBAEBAgAGBQJZeICUAAoJEBx+YmzsjxAgnDgP/jvGHNkgGXAkd3SWUgBf3Rqk
-4rOyU+/OnTtKBYWImQ+PYHGvL5dNTJtGRIzRVGaL50ZjUT8GbMTaUOrwJu51c3kP
-Psbt2w4TQCrjbw/Qe/KoePCPsI9nT6JWnAsdYSQTiN0M9FUF6JQBS6dxSjeBpP6s
-sY+1ogf5qlQf/Pe5FNkeNgmuVC03Pthsl68Ua13X0YSjIsjEFNrnExDGhG8W9ZVW
-MLcOTTNjpwMLdLUUWOa44RI1ud/x/h1ejyOArbRBiwoDNG66y2cwEBojjHXYMNu+
-LScMmvq6dICFRsOGd71aUNm57NiW5T1lKLuWfL0uOXLMZmnOuwyAJtIt983dfEJt
-xkRjjaBmY+nfTNZsZwzp/5dfLS/btHKig676oeHVbHuTy+qVJqTni9oKKhKQxfFw
-7WJ5RpYo7/DcQDf6G2mSrh1iKp9ypA4Y2Olz+orECuGkjAWvO138BgIXRwNkxlQZ
-5RMIPyzRxiCmndaxSF3Jp6OFtGUGlPhH2Wxv3TwDRteOWELlmEC2MDVM1tUDy8pl
-o6qVuPzJU/dntWYg7DovJLcVxQDSDKuyJQLIun1dCgKE+erdMuDxh+1wwuiKoCnt
-S8FL+K0VZG+hVHM9fwVX47TijDI+FORTnZFYjIUutWJv/CN/tN+svrPi11+PgO5k
-P+OodljiTEvlm/sOqeoh
-=qLeE
------END PGP SIGNATURE-----
+Where did you get this information?
+This is not present in any datasheets I have:
+  * A10 - 1.50
+  * A20 - 1.4
 
---tpwlf6xvobw3hsae--
+[...]
+
+Päikest,
+Priit Laes
