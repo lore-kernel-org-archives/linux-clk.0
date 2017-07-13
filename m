@@ -1,102 +1,68 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 17 Jul 2017 12:13:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, khilman@baylibre.com,
-	carlo@caione.org, narmstrong@baylibre.com, jbrunet@baylibre.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux@armlinux.org.uk, mark.rutland@arm.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org
-Subject: Re: [PATCH 1/2] clk: meson: meson8b: register the built-in reset
- controller
-Message-ID: <20170717171329.nddlcslge6u33noc@rob-hp-laptop>
-References: <20170711224939.26267-1-martin.blumenstingl@googlemail.com>
- <20170711224939.26267-2-martin.blumenstingl@googlemail.com>
+Return-Path: <plaes@plaes.org>
+Date: Thu, 13 Jul 2017 19:12:21 +0000
+From: Priit Laes <plaes@plaes.org>
+To: Jonathan Liu <net147@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v5 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU driver
+Message-ID: <20170713191221.GA22375@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
+ <CANwerB0d+2rU9gnCSKP4wwXZpzEsHXP6LtBYvxD+GnQAj6QHVQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170711224939.26267-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <CANwerB0d+2rU9gnCSKP4wwXZpzEsHXP6LtBYvxD+GnQAj6QHVQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 12, 2017 at 12:49:38AM +0200, Martin Blumenstingl wrote:
-> The clock controller has a reset controller embedded. A large part of
-> the HHI_SYS_CPU_CLK_CNTL0 register contains reset bits. However, most of
-> them are only used by u-boot (as these are probably dangerous to use
-> when Linux is running).
-
-u-boot reads DT's. The DT should be defined for the h/w, not what you 
-want for Linux today.
-
-> Bits 27:24 are interesting though: these are the CPUx core soft reset
-> bits (bit 24 = CPU0 soft reset, bit 25 = CPU1 ...).
+On Sun, Jul 09, 2017 at 10:25:23PM +1000, Jonathan Liu wrote:
+> Hi Priit,
 > 
-> This patch implements a reset controller for these bits. The reset
-> controller itself is registered early (through CLK_OF_DECLARE_DRIVER)
-> because it is neede very early in the boot process (to start the
-> secondary CPU cores).
+> On 5 July 2017 at 06:04, Priit Laes <plaes@plaes.org> wrote:
+> > Introduce a clock controller driver for sun4i A10 and sun7i A20
+> > series SoCs.
+> >
+> > Signed-off-by: Priit Laes <plaes@plaes.org>
+> > ---
+> >  drivers/clk/sunxi-ng/Kconfig              |   14 +-
+> >  drivers/clk/sunxi-ng/Makefile             |    1 +-
+> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c      | 1448 ++++++++++++++++++++++-
+> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   61 +-
+> >  include/dt-bindings/clock/sun4i-a10-ccu.h |  200 +++-
+> >  include/dt-bindings/clock/sun7i-a20-ccu.h |   53 +-
+> >  include/dt-bindings/reset/sun4i-a10-ccu.h |   67 +-
+> >  7 files changed, 1844 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> >  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
+> >  create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
+> >  create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
+> >  create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
+> >
+> [snip]
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> > new file mode 100644
+> > index 0000000..49052b7
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> [snip]
 > 
-> Other reset bits in the HHI_SYS_CPU_CLK_CNTL0 register, which are not
-> implemented by this patch (as these may never be used from within the
-> Linux kernel - and I don't want to add dead code):
-> - bit 30: L2 cache soft reset
-> - bit 29: AXI64to128 bridge (A5-to-MMC) soft reset (A5 interface)
-> - bit 28: SCU soft reset
-> - bit 18: A5 Global Reset
-> - bit 17: A5 AXI Soft Reset
-> - bit 16: A5 APB Soft Reset
-> - bit 15: GEN_DIV_SOFT_RESET
-> - bit 14: SOFT_RESET
+> > +static const char *const hdmi_parents[] = { "pll-video0", "pll-video0-2x",
+> > +                                           "pll-video1", "pll-video1-2x" };
+> > +static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+> > +                                0x150, 0, 4, 24, 2, BIT(31), 0);
 > 
-> All information was taken from the public S805 Datasheet and Amlogic's
-> vendor GPL kernel sources. This patch is based on an earlier version
-> submitted by Carlo Caione.
-> 
-> Suggested-by: Carlo Caione <carlo@endlessm.com>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  .../bindings/clock/amlogic,meson8b-clkc.txt        |   7 +-
+> hdmi_parents is in the wrong order. The correct order is "pll-video0",
+> "pll-video1", "pll-video0-2x", "pll-video1-2x".
 
-It's preferred to split bindings to a separate patch. Given all the 
-commentary about Linux, I'd suggest you do that here (so the Linux 
-details are gone from the binding patch).
+Ugh.. I'm really sorry.
 
->  drivers/clk/meson/Kconfig                          |   1 +
->  drivers/clk/meson/meson8b.c                        | 109 ++++++++++++++++++---
->  drivers/clk/meson/meson8b.h                        |   1 +
->  4 files changed, 105 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> index 606da38c0959..6f444e3867a0 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> @@ -16,18 +16,23 @@ Required Properties:
->  	   mapped region.
->  
->  - #clock-cells: should be 1.
-> +- #reset-cells: should be 1.
->  
->  Each clock is assigned an identifier and client nodes can use this identifier
->  to specify the clock which they consume. All available clocks are defined as
->  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
->  used in device tree sources.
->  
-> +The clock controller provides a (soft) reset line for each CPU core. Valid
-> +reset lines are 0, 1, 2 and 3 (one for each CPU core).
-
-I suspect you would have different numbering if you enumerate all the 
-possible resets. Is it just this one register that has reset bits? If 
-so, I'd suggest using the bit position as the cell values. If not, well, 
-just enumerate them all.
-
-> +
->  Example: Clock controller node:
->  
->  	clkc: clock-controller@c1104000 {
-> -		#clock-cells = <1>;
->  		compatible = "amlogic,meson8b-clkc";
->  		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
-> +		#clock-cells = <1>;
-> +		#reset-cells = <1>;
->  	};
->  
->  
+Päikest,
+Priit
