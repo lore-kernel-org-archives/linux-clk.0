@@ -1,88 +1,72 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org,
-	vivek.gautam@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 5/5] clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
-Date: Thu, 20 Jul 2017 10:18:19 +0530
-Message-Id: <1500526099-9935-6-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36242 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751018AbdGMJuv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Jul 2017 05:50:51 -0400
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, m.szyprowski@samsung.com, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org>
+ <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <20170713064843.GX22780@codeaurora.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a8fcaac6-98f8-6cf0-486f-7fa0f216f665@arm.com>
+Date: Thu, 13 Jul 2017 10:50:45 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170713064843.GX22780@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-With support added to control clocks associated with a gdsc from within
-the gdsc driver, associate all mmagic clock instances with the respective
-mmagic gdscs so devices inside these mmagic domains do not have to control
-them individually.
+On 13/07/17 07:48, Stephen Boyd wrote:
+> On 07/13, Vivek Gautam wrote:
+>> Hi Stephen,
+>>
+>>
+>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>> On 07/06, Vivek Gautam wrote:
+>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>>>>  static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>>>  			     size_t size)
+>>>>  {
+>>>> -	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>> +	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>> +	struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>> +	size_t ret;
+>>>>  	if (!ops)
+>>>>  		return 0;
+>>>> -	return ops->unmap(ops, iova, size);
+>>>> +	pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>> Can these map/unmap ops be called from an atomic context? I seem
+>>> to recall that being a problem before.
+>>
+>> That's something which was dropped in the following patch merged in master:
+>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>
+>> Looks like we don't  need locks here anymore?
+>>
+> 
+> While removing the spinlock around the map/unmap path may be one
+> thing, I'm not sure that's all of them. Is there a path from an
+> atomic DMA allocation (GFP_ATOMIC sort of thing) mapped into an
+> IOMMU for a device that can eventually get down to here and
+> attempt to turn a clk on?
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8996.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Yes, in the DMA path map/unmap will frequently be called from IRQ
+handlers (think e.g. network packets). The whole point of removing the
+lock was to allow multiple maps/unmaps to execute in parallel (since we
+know they will be safely operating on different areas of the pagetable).
+AFAICS this change is going to largely reintroduce that bottleneck via
+dev->power_lock, which is anything but what we want :(
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 352394d..9d2d34b 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -2902,6 +2902,13 @@ enum {
- 	.pd = {
- 		.name = "mmagic_video",
- 	},
-+	.clk_hws = {
-+		&mmss_mmagic_ahb_clk.clkr.hw,
-+		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
-+		&mmagic_video_axi_clk.clkr.hw,
-+		&mmagic_video_noc_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 4,
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
- };
-@@ -2912,6 +2919,13 @@ enum {
- 	.pd = {
- 		.name = "mmagic_mdss",
- 	},
-+	.clk_hws = {
-+		&mmss_mmagic_ahb_clk.clkr.hw,
-+		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
-+		&mmagic_mdss_axi_clk.clkr.hw,
-+		&mmagic_mdss_noc_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 4,
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
- };
-@@ -2922,6 +2936,13 @@ enum {
- 	.pd = {
- 		.name = "mmagic_camss",
- 	},
-+	.clk_hws = {
-+		&mmss_mmagic_ahb_clk.clkr.hw,
-+		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
-+		&mmagic_camss_axi_clk.clkr.hw,
-+		&mmagic_camss_noc_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 4,
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
- };
-@@ -3056,6 +3077,11 @@ enum {
- 	.pd = {
- 		.name = "gpu_gx",
- 	},
-+	.clk_hws = {
-+		&mmss_mmagic_ahb_clk.clkr.hw,
-+		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 2,
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = CLAMP_IO,
- };
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Robin.
