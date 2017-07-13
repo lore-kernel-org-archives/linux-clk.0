@@ -1,202 +1,96 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 01/10] clk: sunxi-ng: Add interface to query or configure MMC timing modes.
-Date: Thu, 20 Jul 2017 11:44:43 +0800
-Message-Id: <20170720034452.15920-2-wens@csie.org>
-In-Reply-To: <20170720034452.15920-1-wens@csie.org>
-References: <20170720034452.15920-1-wens@csie.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
+	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
+	<ping.bai@nxp.com>
+Subject: [PATCH V2 03/10] clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+Date: Thu, 13 Jul 2017 19:47:08 +0800
+Message-ID: <1499946435-7177-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Starting with the A83T SoC, Allwinner introduced a new timing mode for
-its MMC clocks. The new mode changes how the MMC controller sample and
-output clocks are delayed to match chip and board specifics. There are
-two controls for this, one on the CCU side controlling how the clocks
-behave, and one in the MMC controller controlling what inputs to take
-and how to route them.
+Adding CLK_FRAC_DIVIDER_ZERO_BASED flag to indicate the numerator and
+denominator value in register are start from 0.
 
-In the old mode, the MMC clock had 2 child clocks providing the output
-and sample clocks, which could be delayed by a number of clock cycles
-measured from the MMC clock's parent.
+This can be used to support frac dividers like below:
+Divider output clock = Divider input clock x [(frac +1) / (div +1)]
+where frac/div in register is:
+000b - Divide by 1.
+001b - Divide by 2.
+010b - Divide by 3.
 
-With the new mode, the 2 delay clocks are no longer active. Instead,
-the delays and associated controls are moved into the MMC controller.
-The output of the MMC clock is also halved.
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-The difference in how things are wired between the modes means that the
-clock controls and the MMC controls must match. To achieve this in a
-clear, explicit way, we introduce two functions for the MMC driver to
-use: one queries the hardware for the current mode set, and the other
-allows the MMC driver to request a mode.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/Makefile         |  1 +
- drivers/clk/sunxi-ng/ccu_common.h     |  5 +++
- drivers/clk/sunxi-ng/ccu_mmc_timing.c | 73 +++++++++++++++++++++++++++++++++++
- include/linux/clk/sunxi-ng.h          | 35 +++++++++++++++++
- 4 files changed, 114 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
- create mode 100644 include/linux/clk/sunxi-ng.h
+ChangeLog:
+v1->v2:
+ * improve comments suggested by Stephen
+---
+ drivers/clk/clk-fractional-divider.c | 10 ++++++++++
+ include/linux/clk-provider.h         |  8 ++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 0c45fa50283d..45a5910379a5 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -1,5 +1,6 @@
- # Common objects
- lib-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
-+lib-$(CONFIG_SUNXI_CCU)		+= ccu_mmc_timing.o
- lib-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index aab9046..455bec5 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -40,6 +40,11 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ 	m = (val & fd->mmask) >> fd->mshift;
+ 	n = (val & fd->nmask) >> fd->nshift;
  
- # Base clock types
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index d6fdd7a789aa..1e2761c53f06 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -23,6 +23,11 @@
- #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
- #define CCU_FEATURE_ALL_PREDIV		BIT(4)
- #define CCU_FEATURE_LOCK_REG		BIT(5)
-+#define CCU_FEATURE_MMC_TIMING_SWITCH	BIT(6)
-+#define CCU_FEATURE_MMC_ALWAYS_NEW	BIT(7)
++	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
++		m++;
++		n++;
++	}
 +
-+/* MMC timing mode switch bit */
-+#define CCU_MMC_NEW_TIMING_MODE		BIT(30)
+ 	if (!n || !m)
+ 		return parent_rate;
  
- struct device_node;
+@@ -91,6 +96,11 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+ 			&m, &n);
  
-diff --git a/drivers/clk/sunxi-ng/ccu_mmc_timing.c b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
-new file mode 100644
-index 000000000000..c5e86061c613
---- /dev/null
-+++ b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
-@@ -0,0 +1,73 @@
-+/*
-+ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
++	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
++		m--;
++		n--;
++	}
++
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
+ 	else
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index efaf5cf..4568a12 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -563,6 +563,12 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+  * @lock:	register lock
+  *
+  * Clock with adjustable fractional divider affecting its output frequency.
 + *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++ * Flags:
++ * CLK_FRAC_DIVIDER_ZERO_BASED - by default the numerator and denominator
++ *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
++ *	is set then the numerator and denominator are both the value read
++ *	plus one.
+  */
+ struct clk_fractional_divider {
+ 	struct clk_hw	hw;
+@@ -579,6 +585,8 @@ struct clk_fractional_divider {
+ 
+ #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
+ 
++#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
 +
-+#include <linux/clk-provider.h>
-+#include <linux/clk/sunxi-ng.h>
-+
-+#include "ccu_common.h"
-+
-+/**
-+ * sunxi_ccu_set_mmc_timing_mode: Configure the MMC clock timing mode
-+ * @clk: clock to be configured
-+ * @new_mode: true for new timing mode introduced in A83T and later
-+ *
-+ * Returns 0 on success, -ENOTSUPP if the clock does not support
-+ * switching modes.
-+ */
-+int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct ccu_common *cm = hw_to_ccu_common(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
-+		return -ENOTSUPP;
-+
-+	spin_lock_irqsave(cm->lock, flags);
-+
-+	val = readl(cm->base + cm->reg);
-+	if (new_mode)
-+		val |= CCU_MMC_NEW_TIMING_MODE;
-+	else
-+		val &= ~CCU_MMC_NEW_TIMING_MODE;
-+	writel(val, cm->base + cm->reg);
-+
-+	spin_unlock_irqrestore(cm->lock, flags);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sunxi_ccu_set_mmc_timing_mode);
-+
-+/**
-+ * sunxi_ccu_set_mmc_timing_mode: Get the current MMC clock timing mode
-+ * @clk: clock to query
-+ *
-+ * Returns 0 if the clock is in old timing mode, > 0 if it is in
-+ * new timing mode, and -ENOTSUPP if the clock does not support
-+ * this function.
-+ */
-+int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct ccu_common *cm = hw_to_ccu_common(hw);
-+
-+	if (cm->features & CCU_FEATURE_MMC_ALWAYS_NEW)
-+		return 1;
-+
-+	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
-+		return -ENOTSUPP;
-+
-+	return !!(readl(cm->base + cm->reg) & CCU_MMC_NEW_TIMING_MODE);
-+}
-+EXPORT_SYMBOL_GPL(sunxi_ccu_get_mmc_timing_mode);
-diff --git a/include/linux/clk/sunxi-ng.h b/include/linux/clk/sunxi-ng.h
-new file mode 100644
-index 000000000000..990f760f70e5
---- /dev/null
-+++ b/include/linux/clk/sunxi-ng.h
-@@ -0,0 +1,35 @@
-+/*
-+ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _LINUX_CLK_SUNXI_NG_H_
-+#define _LINUX_CLK_SUNXI_NG_H_
-+
-+#include <linux/errno.h>
-+
-+#ifdef CONFIG_SUNXI_CCU
-+int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode);
-+int sunxi_ccu_get_mmc_timing_mode(struct clk *clk);
-+#else
-+static inline int sunxi_ccu_set_mmc_timing_mode(struct clk *clk,
-+						bool new_mode)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
-+{
-+	return -ENOTSUPP;
-+}
-+#endif
-+
-+#endif
+ extern const struct clk_ops clk_fractional_divider_ops;
+ struct clk *clk_register_fractional_divider(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
 -- 
-2.13.2
+2.7.4
