@@ -1,86 +1,113 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:34041 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755411AbdGXLrs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 07:47:48 -0400
-Received: by mail-wr0-f172.google.com with SMTP id 12so105257866wrb.1
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2017 04:47:48 -0700 (PDT)
-Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
- bindings
-To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
-Cc: jbrunet@baylibre.com, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
- <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
- <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
- <20170721204439.GJ19878@codeaurora.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
-Date: Mon, 24 Jul 2017 13:47:12 +0200
+Received: from smtp.codeaurora.org ([198.145.29.96]:46480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751200AbdGMOBo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2017 10:01:44 -0400
 MIME-Version: 1.0
-In-Reply-To: <20170721204439.GJ19878@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAFp+6iFdogDfKbwWta3AMGu2GuZ9NaR+Dv373N7LwwrF5cFYwQ@mail.gmail.com>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org> <CAFp+6iFdogDfKbwWta3AMGu2GuZ9NaR+Dv373N7LwwrF5cFYwQ@mail.gmail.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Date: Thu, 13 Jul 2017 19:31:41 +0530
+Message-ID: <CAFp+6iGr_WwhDTygc3Z7pmRJe704PAo_T_XLYvu-=f01cmnumA@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Sricharan R <sricharan@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, robin.murphy@arm.com,
+        Rob Clark <robdclark@gmail.com>
+Cc: joro@8bytes.org, "robh+dt" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        iommu@lists.linux-foundation.org,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        architt@codeaurora.org,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/21/2017 10:44 PM, Stephen Boyd wrote:
-> On 07/09, Rob Herring wrote:
->> On Thu, Jul 06, 2017 at 12:24:23PM +0200, Neil Armstrong wrote:
->>> On the first revision of the bindings, only the gates + resets were known
->>> in the AO Clock HW, but more registers used to configures AO clock are known
->>> to be spread among the AO register space.
->>> This patch adds these registers to the Ao Clock bindings with direct access
->>> and shared extcon access.
+On Thu, Jul 13, 2017 at 7:27 PM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> On Thu, Jul 13, 2017 at 11:05 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> Hi Vivek,
+>>
+>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>>> Hi Stephen,
 >>>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>> ---
->>>  .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt         | 11 +++++++++--
->>>  1 file changed, 9 insertions(+), 2 deletions(-)
+>>>
+>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>>> On 07/06, Vivek Gautam wrote:
+>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>>>>                    size_t size)
+>>>>>   {
+>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>>> +    size_t ret;
+>>>>>         if (!ops)
+>>>>>           return 0;
+>>>>>   -    return ops->unmap(ops, iova, size);
+>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>>> Can these map/unmap ops be called from an atomic context? I seem
+>>>> to recall that being a problem before.
+>>>
+>>> That's something which was dropped in the following patch merged in master:
+>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>>
+>>> Looks like we don't  need locks here anymore?
 >>
->> This looks like the binding might be too specific with a reg list of 
->> single registers, and you should define a system controller node 
->> instead. Depends on what else is in the "A0" block.
+>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>>  from unmap. Somehow looks like some path in the master using that
+>>  should have enabled the pm ?
+>
+> Right, the master should have done a runtime_get(), and with
+> device links the iommu will also resume.
+>
+> The master will call the unmap when it is attached to the iommu
+> and therefore the iommu should be in resume state.
+> We shouldn't have an unmap without the master attached anyways.
+> Will investigate this further if we need the pm_runtime() calls
+> around unmap or not.
+
+My apologies. My email client didn't update the thread. So please ignore
+this comment.
+
+>
+> Best regards
+> Vivek
+>
 >>
-> 
-> Agreed. Why can't we expand the size in DT and then access the
-> registers directly in the driver. Hopefully it keeps working to
-> apply the dts patch without the driver patch too (and
-> vice-versa), because the kernel can only make a mapping as small
-> as a page which would cover these newly added reg properties
-> anyway.
-> 
-
-Hi Rob, Stephen,
-
-Thanks for your feedback, but on these Amlogic platforms, the AO register bank is
-filled with interleaved registers used for various purposes.
-
-For instance, the first 1k of registers are :
-
-0-c RTI_STATUS
-c-14 RTI_PWR_CNTL
-14-1c PIN_MUX
-1c RTI_STATUS
-24-30 GPIO
-30 JTAG_CONFIG
-34 WD
-38-40 CPU_CTRL
-40 RTI_GEN_CTRL
-44 CPU_CTRL
-4c-58 TIMER
-58 OSCIN
-60 AHB2DDR
-...
+>> Regards,
+>>  Sricharan
+>>
+>> --
+>> "QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>>
+>> ---
+>> This email has been checked for viruses by Avast antivirus software.
+>> https://www.avast.com/antivirus
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 
 
-And so on, and the clock related registers are split among this space.
 
-For sure, this could be declared as an system controller node, but this would imply completely
-re-designing the actual clock driver and drop the actual bindings.
-(and with re-writting the clock gate code to use regmap registers access)
-
-Anyway, I'm open to suggestions...
-
-Neil
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
