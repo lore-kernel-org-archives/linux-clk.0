@@ -1,53 +1,80 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
 To: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
 	robh+dt@kernel.org,
 	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	cl@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 2/2] dt-bindings: add documentation for rk3126 clock
-Date: Mon, 31 Jul 2017 18:42:08 +0800
-Message-Id: <1501497728-7805-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com>
-References: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com>
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 7/9] ASoC: atmel-classd: remove aclk clock from DT binding
+Date: Thu, 13 Jul 2017 09:49:25 +0200
+Message-Id: <20170713074927.10882-8-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This add bindings documentation for rk3126 SoCs.
+Since gclk (generated-clk) is now able to determine the rate of the
+audio_pll, there is no need for classd to have a direct phandle to the
+audio_pll while already having a phandle to gclk.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+This binding is used by no board in mainline so it is safe to be
+modified.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-index 455a9a00a623..25098fa8595f 100644
---- a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-@@ -1,12 +1,12 @@
--* Rockchip RK3128 Clock and Reset Unit
-+* Rockchip RK3128/RK3126 Clock and Reset Unit
+added in v2
+
+ Documentation/devicetree/bindings/sound/atmel-classd.txt | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/atmel-classd.txt b/Documentation/devicetree/bindings/sound/atmel-classd.txt
+index 549e701cb7a1..898551076382 100644
+--- a/Documentation/devicetree/bindings/sound/atmel-classd.txt
++++ b/Documentation/devicetree/bindings/sound/atmel-classd.txt
+@@ -13,13 +13,11 @@ Required properties:
+ 	Must be "tx".
+ - clock-names
+ 	Tuple listing input clock names.
+-	Required elements: "pclk", "gclk" and "aclk".
++	Required elements: "pclk" and "gclk".
+ - clocks
+ 	Please refer to clock-bindings.txt.
+ - assigned-clocks
+ 	Should be <&classd_gclk>.
+-- assigned-clock-parents
+-	Should be <&audio_pll_pmc>.
  
--The RK3128 clock controller generates and supplies clock to various
-+The RK3128/RK3126 clock controller generates and supplies clock to various
- controllers within the SoC and also implements a reset controller for SoC
- peripherals.
+ Optional properties:
+ - pinctrl-names, pinctrl-0
+@@ -45,10 +43,9 @@ classd: classd@fc048000 {
+ 			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
+ 			| AT91_XDMAC_DT_PERID(47))>;
+ 		dma-names = "tx";
+-		clocks = <&classd_clk>, <&classd_gclk>, <&audio_pll_pmc>;
+-		clock-names = "pclk", "gclk", "aclk";
++		clocks = <&classd_clk>, <&classd_gclk>;
++		clock-names = "pclk", "gclk";
+ 		assigned-clocks = <&classd_gclk>;
+-		assigned-clock-parents = <&audio_pll_pmc>;
  
- Required Properties:
- 
--- compatible: should be "rockchip,rk3128-cru"
-+- compatible: should be "rockchip,rk3128-cru", "rockchip,rk3126-cru"
- - reg: physical base address of the controller and length of memory mapped
-   region.
- - #clock-cells: should be 1.
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_classd_default>;
 -- 
-1.9.1
+2.11.0
