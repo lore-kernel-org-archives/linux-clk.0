@@ -1,56 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:12713 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751370AbdGXOHk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Jul 2017 10:07:40 -0400
-Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo Serra <eballetbo@gmail.com>
-References: <20170710203801.17496-1-carlo@caione.org>
- <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
- <20170710235403.GB25390@fury>
- <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
- <1500904960.29303.204.camel@linux.intel.com>
-Cc: Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        linux@endlessm.com, Carlo Caione <carlo@endlessm.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <d92350f4-8bb3-85cb-4c2b-a44ab794c29a@linux.intel.com>
-Date: Mon, 24 Jul 2017 16:07:34 +0200
-MIME-Version: 1.0
-In-Reply-To: <1500904960.29303.204.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v3 4/9] ARM: dts: at91: sama5d2: add classd nodes
+Date: Thu, 13 Jul 2017 09:49:22 +0200
+Message-Id: <20170713074927.10882-5-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7/24/17 4:02 PM, Andy Shevchenko wrote:
-> On Mon, 2017-07-24 at 15:49 +0200, Pierre-Louis Bossart wrote:
->> On 7/11/17 1:54 AM, Darren Hart wrote:
->>> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra
->>> wrote:
->
->>>> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>
->>> Excellent, thank you Enric. Pierre, any objections to this going in
->>> to
->>> 4.13 now and stable back to 4.12?
->>
->> I saw an update of this patch being merged while I was away on an
->> extended summer break, but out of curiosity what was the problem with
->> no
->> audio on Baytrail? the code was added precisely to add support for
->> 19.2
->> MHz on Baytrail and finally solve audio issues. I have no reports of
->> broken functionality with this 282a4e4 commit... Enric, do you have a
->> bugzilla or pointers?
->
-> TL;DR: We should respect firmware settings before blindly shut down
-> "unused" resources. (We used to have similar stuff in GPIO/pinctrl
-> driver for direct IRQ pins, where we shut up the pins which are used
-> directly by IOAPIC)
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-I wasn't arguing against those patches, just curious as to which 
-platforms were broken by setting pmc_plat_3 blindly in the driver.
+This patch adds nodes for the classd device and its generated clock.
 
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ arch/arm/boot/dts/sama5d2.dtsi | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index cc06da394366..a564cd1ba327 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -494,6 +494,24 @@
+ 					clocks = <&plla>;
+ 				};
+ 
++				audio_pll_frac: audiopll_fracck {
++					compatible = "atmel,sama5d2-clk-audio-pll-frac";
++					#clock-cells = <0>;
++					clocks = <&main>;
++				};
++
++				audio_pll_pad: audiopll_padck {
++					compatible = "atmel,sama5d2-clk-audio-pll-pad";
++					#clock-cells = <0>;
++					clocks = <&audio_pll_frac>;
++				};
++
++				audio_pll_pmc: audiopll_pmcck {
++					compatible = "atmel,sama5d2-clk-audio-pll-pmc";
++					#clock-cells = <0>;
++					clocks = <&audio_pll_frac>;
++				};
++
+ 				utmi: utmick {
+ 					compatible = "atmel,at91sam9x5-clk-utmi";
+ 					#clock-cells = <0>;
+@@ -895,7 +913,7 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					interrupt-parent = <&pmc>;
+-					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
++					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
+ 
+ 					sdmmc0_gclk: sdmmc0_gclk {
+ 						#clock-cells = <0>;
+@@ -951,6 +969,12 @@
+ 						reg = <57>;
+ 						atmel,clk-output-range = <0 80000000>;
+ 					};
++
++					classd_gclk: classd_gclk {
++						#clock-cells = <0>;
++						reg = <59>;
++						atmel,clk-output-range = <0 100000000>;
++					};
+ 				};
+ 			};
+ 
+@@ -1406,6 +1430,19 @@
+ 				status = "okay";
+ 			};
+ 
++			classd: classd@fc048000 {
++				compatible = "atmel,sama5d2-classd";
++				reg = <0xfc048000 0x100>;
++				interrupts = <59 IRQ_TYPE_LEVEL_HIGH 7>;
++				dmas = <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(47))>;
++				dma-names = "tx";
++				clocks = <&classd_clk>, <&classd_gclk>;
++				clock-names = "pclk", "gclk";
++				status = "disabled";
++			};
++
+ 			can1: can@fc050000 {
+ 				compatible = "bosch,m_can";
+ 				reg = <0xfc050000 0x4000>, <0x210000 0x4000>;
+-- 
+2.11.0
