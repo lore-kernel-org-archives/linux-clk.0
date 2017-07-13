@@ -1,84 +1,103 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v4 1/9] clk: at91: clk-generated: remove useless divisor
- loop
-To: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<alexandre.belloni@free-electrons.com>, <linux@armlinux.org.uk>,
-	<boris.brezillon@free-electrons.com>, <perex@perex.cz>, <tiwai@suse.com>
-CC: <cyrille.pitchen@wedev4u.fr>, <thomas.petazzoni@free-electrons.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
- <b9d92004d22f745e8acde0599359d67538c006a9.1500968090.git-series.quentin.schulz@free-electrons.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <4bffddd0-cf9d-8f68-204a-f754f7f384d5@microchip.com>
-Date: Tue, 25 Jul 2017 17:28:02 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Rob Clark <robdclark@gmail.com>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org>
+ <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+ <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <60a56ae6-ed9d-57cd-130f-5bd9d32d4d58@codeaurora.org>
+Date: Thu, 13 Jul 2017 19:23:02 +0530
 MIME-Version: 1.0
-In-Reply-To: <b9d92004d22f745e8acde0599359d67538c006a9.1500968090.git-series.quentin.schulz@free-electrons.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+In-Reply-To: <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/07/2017 at 09:37, Quentin Schulz wrote:
-> The driver requests the current clk rate of each of its parent clocks to
-> decide whether a clock rate is suitable or not. It does not request
-> determine_rate from a parent clock which could request a rate change in
-> parent clock (i.e. there is no parent rate propagation).
-> 
-> We know the rate we want (passed along req argument of the function) and
-> the parent clock rate, thus we know the closest rounded divisor, we
-> don't need to iterate over the available divisors to find the best one
-> for a given clock.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Hi,
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+On 7/13/2017 5:20 PM, Rob Clark wrote:
+> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> Hi Vivek,
+>>
+>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>>> Hi Stephen,
+>>>
+>>>
+>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>>> On 07/06, Vivek Gautam wrote:
+>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>>>>                    size_t size)
+>>>>>   {
+>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>>> +    size_t ret;
+>>>>>         if (!ops)
+>>>>>           return 0;
+>>>>>   -    return ops->unmap(ops, iova, size);
+>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>>> Can these map/unmap ops be called from an atomic context? I seem
+>>>> to recall that being a problem before.
+>>>
+>>> That's something which was dropped in the following patch merged in master:
+>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>>
+>>> Looks like we don't  need locks here anymore?
+>>
+>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>>  from unmap. Somehow looks like some path in the master using that
+>>  should have enabled the pm ?
+>>
+> 
+> Yes, there are a bunch of scenarios where unmap can happen with
+> disabled master (but not in atomic context).  On the gpu side we
+> opportunistically keep a buffer mapping until the buffer is freed
+> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
+> an exported dmabuf while some other driver holds a reference to it
+> (which can be dropped when the v4l2 device is suspended).
+> 
+> Since unmap triggers tbl flush which touches iommu regs, the iommu
+> driver *definitely* needs a pm_runtime_get_sync().
 
-> ---
->  drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
->  1 file changed, 12 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index f0b7ae9..ef4b4e0 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  		    (gck->range.max && min_rate > gck->range.max))
->  			continue;
->  
-> -		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
-> -			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
-> -			tmp_diff = abs(req->rate - tmp_rate);
-> -
-> -			if (best_diff < 0 || best_diff > tmp_diff) {
-> -				best_rate = tmp_rate;
-> -				best_diff = tmp_diff;
-> -				req->best_parent_rate = parent_rate;
-> -				req->best_parent_hw = parent;
-> -			}
-> -
-> -			if (!best_diff || tmp_rate < req->rate)
-> -				break;
-> +		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-> +		if (!div)
-> +			tmp_rate = parent_rate;
-> +		else
-> +			tmp_rate = parent_rate / div;
-> +		tmp_diff = abs(req->rate - tmp_rate);
-> +
-> +		if (best_diff < 0 || best_diff > tmp_diff) {
-> +			best_rate = tmp_rate;
-> +			best_diff = tmp_diff;
-> +			req->best_parent_rate = parent_rate;
-> +			req->best_parent_hw = parent;
->  		}
->  
->  		if (!best_diff)
-> 
+ Ok, with that being the case, there are two things here,
+
+ 1) If the device links are still intact at these places where unmap is called,
+    then pm_runtime from the master would setup the all the clocks. That would
+    avoid reintroducing the locking indirectly here.
+
+ 2) If not, then doing it here is the only way. But for both cases, since
+    the unmap can be called from atomic context, resume handler here should
+    avoid doing clk_prepare_enable , instead move the clk_prepare to the init.
+
+Regards,
+ Sricharan
 
 
 -- 
-Nicolas Ferre
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
