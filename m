@@ -1,56 +1,78 @@
-Return-Path: <andy.tang@nxp.com>
-From: Andy Tang <andy.tang@nxp.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>, "Rob
- Herring" <robh@kernel.org>
-Subject: RE: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
-Date: Mon, 24 Jul 2017 01:20:53 +0000
-Message-ID: <HE1PR0402MB28281436E64A12EBA944602AF3BB0@HE1PR0402MB2828.eurprd04.prod.outlook.com>
-References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
- <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop>
- <DB6PR0402MB2837EB5F759C39616BF8A904F3210@DB6PR0402MB2837.eurprd04.prod.outlook.com>
- <20170721220323.GN19878@codeaurora.org>
-In-Reply-To: <20170721220323.GN19878@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v3 9/9] ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+Date: Thu, 13 Jul 2017 09:49:27 +0200
+Message-Id: <20170713074927.10882-10-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-> -----Original Message-----
-> From: sboyd@codeaurora.org [mailto:sboyd@codeaurora.org]
-> Sent: Saturday, July 22, 2017 6:03 AM
-> To: Andy Tang <andy.tang@nxp.com>
-> Cc: mturquette@baylibre.com; mark.rutland@arm.com; linux-
-> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Scott Wood
-> <oss@buserror.net>; Rob Herring <robh@kernel.org>
-> Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
->=20
-> On 03/09, Y.T. Tang wrote:
-> > Hi Michael and Stephen,
-> >
-> > This patch set was acked by Rob Herring. Do you have any comments on
-> them?
-> >
-> > BTW:  Scott should stay in author, do I need to resend them with author
-> changed or you can change it when applying?
-> >
->=20
-> Please resend these two patches.
+This patch adds the pin muxing for classd and enables it.
 
-Those two patches have been merged several months ago. No need to resend.
-Thanks.
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Regards,
-Andy
-
->=20
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
-> Linux Foundation Collaborative Project
+diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+index 2e2c3d1a1fa2..e92b030ca45a 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+@@ -355,6 +355,14 @@
+ 					bias-pull-up;
+ 				};
+ 
++				pinctrl_classd_default: classd_default {
++					pinmux = <PIN_PB1__CLASSD_R0>,
++						 <PIN_PB2__CLASSD_R1>,
++						 <PIN_PB3__CLASSD_R2>,
++						 <PIN_PB4__CLASSD_R3>;
++					bias-pull-up;
++				};
++
+ 				pinctrl_flx0_default: flx0_default {
+ 					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
+ 						 <PIN_PB29__FLEXCOM0_IO1>;
+@@ -488,6 +496,14 @@
+ 
+ 			};
+ 
++			classd: classd@fc048000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_classd_default>;
++				atmel,pwm-type = "diff";
++				atmel,non-overlap-time = <10>;
++				status = "okay";
++			};
++
+ 			can1: can@fc050000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can1_default>;
+-- 
+2.11.0
