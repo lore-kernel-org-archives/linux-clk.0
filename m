@@ -1,61 +1,80 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 03/10] clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
-Date: Thu, 20 Jul 2017 11:44:45 +0800
-Message-Id: <20170720034452.15920-4-wens@csie.org>
-In-Reply-To: <20170720034452.15920-1-wens@csie.org>
-References: <20170720034452.15920-1-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 13 Jul 2017 07:50:31 -0400
+Message-ID: <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMC2 clock supports a new timing mode. When the new mode is active,
-the output clock rate is halved.
+On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+> Hi Vivek,
+>
+> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>> Hi Stephen,
+>>
+>>
+>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>> On 07/06, Vivek Gautam wrote:
+>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>>>                    size_t size)
+>>>>   {
+>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>> +    size_t ret;
+>>>>         if (!ops)
+>>>>           return 0;
+>>>>   -    return ops->unmap(ops, iova, size);
+>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>> Can these map/unmap ops be called from an atomic context? I seem
+>>> to recall that being a problem before.
+>>
+>> That's something which was dropped in the following patch merged in master:
+>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>
+>> Looks like we don't  need locks here anymore?
+>
+>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>  from unmap. Somehow looks like some path in the master using that
+>  should have enabled the pm ?
+>
 
-This patch sets the feature flag for the new timing mode, and adds
-a pre-divider based on the mode bit.
+Yes, there are a bunch of scenarios where unmap can happen with
+disabled master (but not in atomic context).  On the gpu side we
+opportunistically keep a buffer mapping until the buffer is freed
+(which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
+an exported dmabuf while some other driver holds a reference to it
+(which can be dropped when the v4l2 device is suspended).
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Since unmap triggers tbl flush which touches iommu regs, the iommu
+driver *definitely* needs a pm_runtime_get_sync().
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-index 947f9f6e05d2..c5656e4f2a38 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-@@ -418,14 +418,13 @@ static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1-sample", "mmc1",
- static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1-output", "mmc1",
- 		       0x08c, 8, 3, 0);
- 
--/* TODO Support MMC2 clock's new timing mode. */
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
--				  0x090,
--				  0, 4,		/* M */
--				  16, 2,	/* P */
--				  24, 2,	/* mux */
--				  BIT(31),	/* gate */
--				  0);
-+static SUNXI_CCU_MP_MMC_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
-+				      0x090,
-+				      0, 4,	/* M */
-+				      16, 2,	/* P */
-+				      24, 2,	/* mux */
-+				      BIT(31),	/* gate */
-+				      CLK_GET_RATE_NOCACHE);
- 
- static SUNXI_CCU_PHASE(mmc2_sample_clk, "mmc2-sample", "mmc2",
- 		       0x090, 20, 3, 0);
--- 
-2.13.2
+BR,
+-R
