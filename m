@@ -1,42 +1,195 @@
-Return-Path: <arndbergmann@gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
+	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
+	<ping.bai@nxp.com>
+Subject: [PATCH V2 09/10] clk: imx: implement new clk_hw based APIs
+Date: Thu, 13 Jul 2017 19:47:14 +0800
+Message-ID: <1499946435-7177-10-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20170731113832.26490-1-jbrunet@baylibre.com>
-References: <20170731113832.26490-1-jbrunet@baylibre.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 31 Jul 2017 16:05:02 +0200
-Message-ID: <CAK8P3a28nb8QsJC8V4+SJM0gz70BDOv8jAczRWoCF+HfvkwJfA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] clk: meson: expose clk ids
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 31, 2017 at 1:38 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> In previous cycles, concerns have been raised about the way clocks are
-> exposed for the meson clock controller, only when validated and required
-> in DT.
->
-> Instead, this patchset expose all the known clocks which may be needed in
-> DT later on. The clocks left out are internal clocks which should never be
-> used directly in DT. These are mostly internal muxes and dividers of
-> composite clocks.
->
-> While this should reduce the patch flow on the related header files, It
-> won't stop it completely. There are still many clocks we don't know about
-> yet. We tend discover a few in every cycle.
->
-> This patchset depends on these fixes [0] to avoid issues when adding new
-> clk ids.
->
-> [0]: https://lkml.kernel.org/r/20170727161755.10393-1-jbrunet@baylibre.com
+Clock providers are recommended to use the new struct clk_hw based API,
+so implement IMX clk_hw based provider helpers functions to the new
+approach.
 
-Thanks a lot!
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
- Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+ChangeLog:
+v1->v2:  new patches
+---
+ drivers/clk/imx/clk.c | 22 ++++++++++++++++++
+ drivers/clk/imx/clk.h | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 84 insertions(+)
+
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index a634b11..0474306 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -17,6 +17,16 @@ void __init imx_check_clocks(struct clk *clks[], unsigned int count)
+ 			       i, PTR_ERR(clks[i]));
+ }
+ 
++void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
++{
++	unsigned int i;
++
++	for (i = 0; i < count; i++)
++		if (IS_ERR(clks[i]))
++			pr_err("i.MX clk %u: register failed with %ld\n",
++			       i, PTR_ERR(clks[i]));
++}
++
+ static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
+ {
+ 	struct of_phandle_args phandle;
+@@ -48,6 +58,18 @@ struct clk * __init imx_obtain_fixed_clock(
+ 	return clk;
+ }
+ 
++struct clk_hw * __init imx_obtain_fixed_clk_hw(struct device_node *np,
++					       const char *name)
++{
++	struct clk *clk;
++
++	clk = of_clk_get_by_name(np, name);
++	if (IS_ERR(clk))
++		return ERR_PTR(-ENOENT);
++
++	return __clk_get_hw(clk);
++}
++
+ /*
+  * This fixups the register CCM_CSCMR1 write value.
+  * The write/read/divider values of the aclk_podf field
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 2646cc3..b5ad15f 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -7,6 +7,7 @@
+ extern spinlock_t imx_ccm_lock;
+ 
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
++void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
+ void imx_register_uart_clocks(struct clk ** const clks[]);
+ 
+ extern void imx_cscmr1_fixup(u32 *val);
+@@ -53,6 +54,9 @@ struct clk *clk_register_gate2(struct device *dev, const char *name,
+ struct clk * imx_obtain_fixed_clock(
+ 			const char *name, unsigned long rate);
+ 
++struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
++				       const char *name);
++
+ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
+ 
+@@ -89,6 +93,16 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
++{
++	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
++}
++
++static inline struct clk_hw *imx_get_clk_hw_fixed(const char *name, int rate)
++{
++	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
++}
++
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+ 			u8 shift, u8 width, const char * const *parents,
+ 			int num_parents)
+@@ -112,6 +126,15 @@ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_divider(const char *name,
++						const char *parent,
++						void __iomem *reg, u8 shift,
++						u8 width)
++{
++	return clk_hw_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,
++				       reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_divider_flags(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift, u8 width,
+ 		unsigned long flags)
+@@ -120,6 +143,15 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_divider_flags(const char *name,
++						   const char *parent,
++						   void __iomem *reg, u8 shift,
++						   u8 width, unsigned long flags)
++{
++	return clk_hw_register_divider(NULL, name, parent, flags,
++				       reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift, u8 width)
+ {
+@@ -135,6 +167,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
+ 			shift, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_gate(const char *name, const char *parent,
++					     void __iomem *reg, u8 shift)
++{
++	return clk_hw_register_gate(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++				    shift, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+@@ -207,6 +246,17 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_mux2(const char *name, void __iomem *reg,
++					     u8 shift, u8 width,
++					     const char * const *parents,
++					     int num_parents)
++{
++	return clk_hw_register_mux(NULL, name, parents, num_parents,
++				   CLK_SET_RATE_NO_REPARENT |
++				   CLK_OPS_PARENT_ENABLE,
++				   reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 			void __iomem *reg, u8 shift, u8 width,
+ 			const char * const *parents, int num_parents,
+@@ -217,6 +267,18 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 			&imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_mux_flags(const char *name,
++						  void __iomem *reg, u8 shift,
++						  u8 width,
++						  const char * const *parents,
++						  int num_parents,
++						  unsigned long flags)
++{
++	return clk_hw_register_mux(NULL, name, parents, num_parents,
++				   flags | CLK_SET_RATE_NO_REPARENT,
++				   reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
+-- 
+2.7.4
