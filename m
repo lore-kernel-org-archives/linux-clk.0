@@ -1,60 +1,138 @@
-Return-Path: <eballetbo@gmail.com>
+Return-Path: <oliver@schinagl.nl>
+Subject: Re: [linux-sunxi] [PATCH v5 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU
+ driver
+To: Priit Laes <plaes@plaes.org>
+References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+ <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
+ <5099cd90-e019-8a65-38e5-02b3c939a7a8@schinagl.nl>
+ <20170713192358.GB22375@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Jonathan Liu <net147@gmail.com>
+From: Olliver Schinagl <oliver@schinagl.nl>
+Message-ID: <d178101c-bcc7-3914-481e-1edc4f5d7b60@schinagl.nl>
+Date: Thu, 13 Jul 2017 21:46:57 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170127002344.GZ8801@codeaurora.org>
-References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <1485194865-10400-5-git-send-email-pierre-louis.bossart@linux.intel.com> <20170127002344.GZ8801@codeaurora.org>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Mon, 10 Jul 2017 12:19:23 +0200
-Message-ID: <CAFqH_52JO5eWa9sZk+1OcmfFjsydLk+ajajqTnLprSJfCCSM7g@mail.gmail.com>
-Subject: Re: [PATCH v8 4/5] platform/x86: Enable Atom PMC platform clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, linux-clk@vger.kernel.org,
-	x86@kernel.org, platform-driver-x86@vger.kernel.org,
-	Darren Hart <dvhart@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>, Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20170713192358.GB22375@plaes.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+Hey Priit,
 
-2017-01-27 1:23 GMT+01:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 01/23, Pierre-Louis Bossart wrote:
->> From: Irina Tirdea <irina.tirdea@intel.com>
+On 07/13/17 21:23, Priit Laes wrote:
+> On Mon, Jul 10, 2017 at 11:45:32AM +0200, Olliver Schinagl wrote:
+>> Hi Pleas,
 >>
->> The BayTrail and CherryTrail platforms provide platform clocks
->> through their Power Management Controller (PMC).
+>> again, but this time with content :)
 >>
->> The SoC supports up to 6 clocks (PMC_PLT_CLK[0..5]) with a
->> frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
->> and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
->> are available for general system use, where appropriate. For example,
->> the usage for platform clocks suggested in the datasheet is the
->> following:
->>   PLT_CLK[0..2] - Camera
->>   PLT_CLK[3] - Audio Codec
->>   PLT_CLK[4] -
->>   PLT_CLK[5] - COMMs
->>
->> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
->> ---
+>> On 04-07-17 22:04, Priit Laes wrote:
+>>> Introduce a clock controller driver for sun4i A10 and sun7i A20
+>>> series SoCs.
+> [ ... ]
 >
-> Applied to clk-next
+>>> +++ b/drivers/clk/sunxi-ng/Kconfig
+>>> @@ -11,6 +11,19 @@ config SUN50I_A64_CCU
+>>> 	default ARM64 && ARCH_SUNXI
+>>> 	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+>>>
+>>> +config SUNXI_A10_CCU
+>> I understand why you say sunXi here (it's support for both sun4i and sun7i)
+>> but then why A10, as it also supports the A20.
+>>
+>> I guess the CCU is identical on the A20 and the A10, right? Thus would it
+>> not be sensible to just call it sun4i_ccu (like we do for sun5i_ccu below?
+> No, it's not identical.
+But then saying SUNXI_A10_CCU is not correct? Since it is not identical
+on the A20? So what does the A10 stand for?
 >
+>>> +	bool "Support for the Allwinner A10/A20 CCU"
+>>> +	select SUNXI_CCU_DIV
+>>> +	select SUNXI_CCU_MULT
+>>> +	select SUNXI_CCU_NK
+>>> +	select SUNXI_CCU_NKM
+>>> +	select SUNXI_CCU_NM
+>>> +	select SUNXI_CCU_MP
+>>> +	select SUNXI_CCU_PHASE
+>>> +	default MACH_SUN4I
+>>> +	default MACH_SUN7I
+>>> +	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
+>>> +
+>>> config SUN5I_CCU
+>>> 	bool "Support for the Allwinner sun5i family CCM"
+>>> 	default MACH_SUN5I
+>>> @@ -57,4 +70,5 @@ config SUN8I_R_CCU
+>>> 	bool "Support for Allwinner SoCs' PRCM CCUs"
+>>> 	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
+>>>
+>>> +
+>> oops?
+> OK
+>
+>>> new file mode 100644
+>>> index 0000000..49052b7
+>>> --- /dev/null
+>>> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+>> <snip>
+>>
+>>> +static const char *const apb1_parents[] = { "hosc", "pll-periph", "osc32k" };
+>>> +static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", apb1_parents, 0x058,
+>>> +			     0, 5,	/* M */
+>>> +			     16, 2,	/* P */
+>>> +			     24, 2,	/* mux */
+>>> +			     0);
+>>> +
+>>> +/* Not present on A20 */
+>>> +static SUNXI_CCU_GATE(axi_dram_clk,	"axi-dram",	"ahb",
+>>> +		      0x05c, BIT(31), 0);
+>> Same here I guess, two defines make this a bit more readable.
+> You mean SUN4I_CCU_GATE? and SUN7I_CCU_GATE defines?
+> I don't think it makes things more readable...
+you think 0x05c and BIT(31) are easier to read? I'll do a pop quiz in 6
+months from now and see if you remember :p
+>
+>>> +
+>>> +static SUNXI_CCU_GATE(ahb_otg_clk,	"ahb-otg",	"ahb",
+> ...
+>>> +		      0x060, BIT(14), CLK_IS_CRITICAL);
+>> <snip>
+>>
+>>> +static struct ccu_reset_map sun7i_a20_ccu_resets[] = {
+>>> +	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
+>>> +	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
+>>> +	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
+>>> +	[RST_GPS]		= { 0x0d0, BIT(0) },
+>>> +	[RST_DE_BE0]		= { 0x104, BIT(30) },
+>>> +	[RST_DE_BE1]		= { 0x108, BIT(30) },
+>>> +	[RST_DE_FE0]		= { 0x10c, BIT(30) },
+>>> +	[RST_DE_FE1]		= { 0x110, BIT(30) },
+>>> +	[RST_DE_MP]		= { 0x114, BIT(30) },
+>>> +	[RST_TCON0]		= { 0x118, BIT(30) },
+>>> +	[RST_TCON1]		= { 0x11c, BIT(30) },
+>> You are missing the TV encoder reset:
+>> +      [RST_TVE0]              = { 0x118, BIT(29) },
+>> +      [RST_TVE1]              = { 0x11c, BIT(29) },
+>>
+>> (to match your table i did not use defines :p)
+> Where did you get this information?
+> This is not present in any datasheets I have:
+>   * A10 - 1.50
+>   * A20 - 1.4
+It is actually from the A13. In the A13 all the other bits match up. We
+know from both that TCON0 is at 0x118 with its reset at BIT(30) and
+TCON1 has its reset 0x11c. From the A13 datasheet we gather that TCON(0)
+and TV(0) are at 0x118 with RST_TV on BIT(31) and thus it is only
+logical that that for the TVE1 we have the rest at 0x11c.
 
-I just noticed that I need to revert this patch on kernel 4.12 to get
-audio working again on my Acer C200 (Baytrail). Any clue on what could
-be wrong?
-
-Thanks in advance,
- Enric
-
-
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+But this is writing from the top of my head, I think we can also find it
+in the 3.4 sources if I recall correctly.
+>
+> [...]
+>
+> Päikest,
+> Priit Laes
