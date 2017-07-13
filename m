@@ -1,77 +1,186 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 06/10] mmc: sunxi: Add support for A83T eMMC (MMC2)
-Date: Thu, 20 Jul 2017 11:44:48 +0800
-Message-Id: <20170720034452.15920-7-wens@csie.org>
-In-Reply-To: <20170720034452.15920-1-wens@csie.org>
-References: <20170720034452.15920-1-wens@csie.org>
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 6/9] clk: at91: clk-generated: make gclk determine audio_pll rate
+Date: Thu, 13 Jul 2017 09:49:24 +0200
+Message-Id: <20170713074927.10882-7-quentin.schulz@free-electrons.com>
+In-Reply-To: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
-different. It supports a wider 8-bit bus, has a dedicated controllable
-reset pin for eMMC, and a "new timing mode" which is supposed to deliver
-better signals and thus better performance.
+This allows gclk to determine audio_pll rate and set the parent rate
+accordingly.
 
-Add a compatible for this one to use the new timing mode not found in the
-other controllers.
+However, there are multiple children clocks that could technically
+change the rate of audio_pll (via gck). With the rate locking, the first
+consumer to enable the clock will be the one definitely setting the rate
+of the clock.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Since audio IPs are most likely to request the same rate, we enforce
+that the only clks able to modify gck rate are those of audio IPs.
+
+To remain consistent, we deny other clocks to be children of audio_pll.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
- drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
- 2 files changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-index 7d53a799f140..63b57e2a10fb 100644
---- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-@@ -12,6 +12,7 @@ Required properties:
-    * "allwinner,sun4i-a10-mmc"
-    * "allwinner,sun5i-a13-mmc"
-    * "allwinner,sun7i-a20-mmc"
-+   * "allwinner,sun8i-a83t-emmc"
-    * "allwinner,sun9i-a80-mmc"
-    * "allwinner,sun50i-a64-emmc"
-    * "allwinner,sun50i-a64-mmc"
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 11587a69a1fd..de187ed77040 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1117,6 +1117,13 @@ static const struct sunxi_mmc_cfg sun7i_a20_cfg = {
- 	.can_calibrate = false,
+v3:
+  - added a flag per generated clock to know which one is allowed to
+modify audio_pll rate,
+  - set the flag in setup function depending on the compatible and the
+clock ID,
+
+v2:
+  - added conditions for audio pll rate setting restriction for SSC and
+I2S,
+
+ drivers/clk/at91/clk-generated.c | 63 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 57 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 7260e498e059..33481368740e 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -26,6 +26,13 @@
+ #define GENERATED_SOURCE_MAX	6
+ #define GENERATED_MAX_DIV	255
+ 
++#define GCK_ID_SSC0		43
++#define GCK_ID_SSC1		44
++#define GCK_ID_I2S0		54
++#define GCK_ID_I2S1		55
++#define GCK_ID_CLASSD		59
++#define GCK_INDEX_DT_AUDIO_PLL	5
++
+ struct clk_generated {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -34,6 +41,7 @@ struct clk_generated {
+ 	u32 id;
+ 	u32 gckdiv;
+ 	u8 parent_id;
++	bool audio_pll_allowed;
  };
  
-+static const struct sunxi_mmc_cfg sun8i_a83t_emmc_cfg = {
-+	.idma_des_size_bits = 16,
-+	.clk_delays = sunxi_mmc_clk_delays,
-+	.can_calibrate = false,
-+	.has_timings_switch = true,
-+};
+ #define to_clk_generated(hw) \
+@@ -126,15 +134,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+ 	struct clk_hw *parent = NULL;
++	struct clk_rate_request req_parent = *req;
+ 	long best_rate = -EINVAL;
+-	unsigned long min_rate;
++	unsigned long min_rate, parent_rate;
+ 	int best_diff = -1;
+ 	int i;
++	u32 div;
+ 
+-	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+-		u32 div;
+-		unsigned long parent_rate;
+-
++	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+@@ -150,11 +157,38 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 		clk_generated_best_diff(req, parent, parent_rate, div,
+ 					&best_diff, &best_rate);
+ 
++		if (!best_diff)
++			break;
++	}
 +
- static const struct sunxi_mmc_cfg sun9i_a80_cfg = {
- 	.idma_des_size_bits = 16,
- 	.clk_delays = sun9i_mmc_clk_delays,
-@@ -1141,6 +1148,7 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
- 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
- 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
- 	{ .compatible = "allwinner,sun7i-a20-mmc", .data = &sun7i_a20_cfg },
-+	{ .compatible = "allwinner,sun8i-a83t-emmc", .data = &sun8i_a83t_emmc_cfg },
- 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
++	/*
++	 * The audio_pll rate can be modified, unlike the five others clocks
++	 * that should never be altered.
++	 * The audio_pll can technically be used by multiple consumers. However,
++	 * with the rate locking, the first consumer to enable to clock will be
++	 * the one definitely setting the rate of the clock.
++	 * Since audio IPs are most likely to request the same rate, we enforce
++	 * that the only clks able to modify gck rate are those of audio IPs.
++	 */
++
++	if (!gck->audio_pll_allowed)
++		goto end;
++
++	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
++	if (!parent)
++		goto end;
++
++	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
++		req_parent.rate = req->rate * div;
++		__clk_determine_rate(parent, &req_parent);
++		clk_generated_best_diff(req, parent, req_parent.rate, div,
++					&best_diff, &best_rate);
+ 
+ 		if (!best_diff)
+ 			break;
+ 	}
+ 
++end:
+ 	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
+ 		 __func__, best_rate,
+ 		 __clk_get_name((req->best_parent_hw)->clk),
+@@ -264,7 +298,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 	init.ops = &generated_ops;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+-	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
++	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
++		CLK_SET_RATE_PARENT;
+ 
+ 	gck->id = id;
+ 	gck->hw.init = &init;
+@@ -296,6 +331,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 	struct device_node *gcknp;
+ 	struct clk_range range = CLK_RANGE(0, 0);
+ 	struct regmap *regmap;
++	struct clk_generated *gck;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents == 0 || num_parents > GENERATED_SOURCE_MAX)
+@@ -327,6 +363,21 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock, name,
+ 						  parent_names, num_parents,
+ 						  id, &range);
++
++		gck = to_clk_generated(hw);
++
++		if (of_device_is_compatible(np,
++					    "atmel,sama5d2-clk-generated")) {
++			if (gck->id == GCK_ID_SSC0 || gck->id == GCK_ID_SSC1 ||
++			    gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
++			    gck->id == GCK_ID_CLASSD)
++				gck->audio_pll_allowed = true;
++			else
++				gck->audio_pll_allowed = false;
++		} else {
++			gck->audio_pll_allowed = false;
++		}
++
+ 		if (IS_ERR(hw))
+ 			continue;
+ 
 -- 
-2.13.2
+2.11.0
