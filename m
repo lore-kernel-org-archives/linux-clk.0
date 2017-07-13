@@ -1,74 +1,61 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/9] clk: at91: add audio plls to the compatible list in DT binding
-Date: Tue,  4 Jul 2017 13:59:20 +0200
-Message-Id: <20170704115927.32662-3-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
-References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 12 Jul 2017 23:48:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, will.deacon@arm.com,
+        m.szyprowski@samsung.com, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
+        stanimir.varbanov@linaro.org, architt@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+Message-ID: <20170713064843.GX22780@codeaurora.org>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org>
+ <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This new clock driver set allows to have a fractional divided clock that
-would generate a precise clock particularly suitable for audio
-applications.
+On 07/13, Vivek Gautam wrote:
+> Hi Stephen,
+> 
+> 
+> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+> >On 07/06, Vivek Gautam wrote:
+> >>@@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+> >>  static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+> >>  			     size_t size)
+> >>  {
+> >>-	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+> >>+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> >>+	struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+> >>+	size_t ret;
+> >>  	if (!ops)
+> >>  		return 0;
+> >>-	return ops->unmap(ops, iova, size);
+> >>+	pm_runtime_get_sync(smmu_domain->smmu->dev);
+> >Can these map/unmap ops be called from an atomic context? I seem
+> >to recall that being a problem before.
+> 
+> That's something which was dropped in the following patch merged in master:
+> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+> 
+> Looks like we don't  need locks here anymore?
+> 
 
-The main audio pll clock has two children clocks: one that is connected
-to the PMC, the other that can directly drive a pad. As these two routes
-have different enable bits and different dividers and divider formulas,
-they are handled by two different drivers.
+While removing the spinlock around the map/unmap path may be one
+thing, I'm not sure that's all of them. Is there a path from an
+atomic DMA allocation (GFP_ATOMIC sort of thing) mapped into an
+IOMMU for a device that can eventually get down to here and
+attempt to turn a clk on?
 
-This adds the audio plls (frac, pad and pmc) to the compatible list of
-at91 clocks in DT binding.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-
-added in v2:
-  - split from big patch with pll drivers and dt-binding
-
- Documentation/devicetree/bindings/clock/at91-clock.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-index 5f3ad65daf69..51c259a92d02 100644
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-@@ -81,6 +81,16 @@ Required properties:
- 	"atmel,sama5d2-clk-generated":
- 		at91 generated clock
- 
-+	"atmel,sama5d2-clk-audio-pll-frac":
-+		at91 audio fractional pll
-+
-+	"atmel,sama5d2-clk-audio-pll-pad":
-+		at91 audio pll CLK_AUDIO output pin
-+
-+	"atmel,sama5d2-clk-audio-pll-pmc"
-+		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
-+		and can be used by peripheral clock or generic clock
-+
- Required properties for SCKC node:
- - reg : defines the IO memory reserved for the SCKC.
- - #size-cells : shall be 0 (reg is used to encode clk id).
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
