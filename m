@@ -1,86 +1,110 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 11 Jul 2017 18:16:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Adriana Reus <adi.reus@gmail.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-Message-ID: <20170712011604.GQ22780@codeaurora.org>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
- <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
- <1497955822.7387.3.camel@baylibre.com>
- <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
- <1497961950.7387.7.camel@baylibre.com>
- <1498050903.7387.12.camel@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34364 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751868AbdGMMKZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2017 08:10:25 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1498050903.7387.12.camel@baylibre.com>
+In-Reply-To: <939f8745-6f72-522c-1216-70e424740b62@samsung.com>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org> <CGME20170713115036epcas1p250113e9009dbf92487d258a90fffc66a@epcas1p2.samsung.com>
+ <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com> <939f8745-6f72-522c-1216-70e424740b62@samsung.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 13 Jul 2017 08:10:22 -0400
+Message-ID: <CAF6AEGsfDewRUHLUbFKT1Q+8U2BkmFMHo4ZBSwSGspU3ktUY8g@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sricharan R <sricharan@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/21, Jerome Brunet wrote:
-> 
-> I managed to have a run on kci - based on v4.12-rc6:
-> https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-10-ge
-> a373ddef830/
-> 
-> There was no build regression but kci did find one boot regression on qcom
-> platforms:
-> * qcom-apq8064-cm-qs600
-> * qcom-apq8064-ifc6410
-> 
-> it seems the problem is coming from the clock used by the mmc driver
-> (drivers/mmc/host/mmci.c)
-> 
-> the driver does following sequence:
-> * get_clk
-> * prepare_enable
-> * get_rate
-> * set_rate
-> * ...
-> 
-> with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has CLK_SET_RATE_PARENT
-> flag so it will transmit the request to its parent.
-> The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
-> 
-> This can't work with sequence above. The flag was clearly bypassed before, so I
-> think it would be best to remove CLK_SET_RATE_GATE from the SDCx_src clocks
-> 
-> Stephen, would you agree ?
-> 
-> There was an issue with the chip board as well but this particular board has not
-> been very reliable in this lab lately. It has failed on several other job.
-> 
+On Thu, Jul 13, 2017 at 8:02 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hi All,
+>
+> On 2017-07-13 13:50, Rob Clark wrote:
+>>
+>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org>
+>> wrote:
+>>>
+>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>>>>
+>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>>>>
+>>>>> On 07/06, Vivek Gautam wrote:
+>>>>>>
+>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain
+>>>>>> *domain, unsigned long iova,
+>>>>>>    static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned
+>>>>>> long iova,
+>>>>>>                     size_t size)
+>>>>>>    {
+>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>>>> +    size_t ret;
+>>>>>>          if (!ops)
+>>>>>>            return 0;
+>>>>>>    -    return ops->unmap(ops, iova, size);
+>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>>>>
+>>>>> Can these map/unmap ops be called from an atomic context? I seem
+>>>>> to recall that being a problem before.
+>>>>
+>>>> That's something which was dropped in the following patch merged in
+>>>> master:
+>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>>>
+>>>> Looks like we don't  need locks here anymore?
+>>>
+>>>   Apart from the locking, wonder why a explicit pm_runtime is needed
+>>>   from unmap. Somehow looks like some path in the master using that
+>>>   should have enabled the pm ?
+>>>
+>> Yes, there are a bunch of scenarios where unmap can happen with
+>> disabled master (but not in atomic context).  On the gpu side we
+>> opportunistically keep a buffer mapping until the buffer is freed
+>> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
+>> an exported dmabuf while some other driver holds a reference to it
+>> (which can be dropped when the v4l2 device is suspended).
+>>
+>> Since unmap triggers tbl flush which touches iommu regs, the iommu
+>> driver *definitely* needs a pm_runtime_get_sync().
+>
+>
+> Afair unmap might be called from atomic context as well, for example as
+> a result of dma_unmap_page(). In exynos IOMMU I simply check the runtime
+> PM state of IOMMU device. TLB flush is performed only when IOMMU is in
+> active
+> state. If it is suspended, I assume that the IOMMU controller's context
+> is already lost and its respective power domain might be already turned off,
+> so there is no point in touching IOMMU registers.
+>
 
-Yes the flag was never working before and we've been ignoring the
-subtle problems that it causes to change the rate while the clk
-is enabled. On these older SoCs, all the clks marked with
-CLK_SET_RATE_GATE need to implement something to forcibly disable
-all child clks across the rate change. That is the hardware
-recommended procedure.
+that seems like an interesting approach.. although I wonder if there
+can be some race w/ new device memory access once clks are enabled
+before tlb flush completes?  That would be rather bad, since this
+approach is letting the backing pages of memory be freed before tlb
+flush.
 
-So something like
-
-	get_clk
-	prepare_enable
-	get_rate
-	set_rate
-	 call ->set_rate() op
-	 forcibly disable children of rcgs
-	 actually change the rate of rcg
-	 forcibly enable all children that were disabled
-
-and have that happen under one big spinlock local to the qcom
-driver I suppose so that enable/disable can't leak into the rate
-change. Fun! I'll make an attempt at implementing the right
-solution tomorrow/tonight. Of course, we can remove the flag from
-qcom drivers if it's blocking this series.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+BR,
+-R
