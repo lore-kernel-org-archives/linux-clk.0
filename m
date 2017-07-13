@@ -1,106 +1,75 @@
-Return-Path: <adriana.reus@nxp.com>
-From: Adriana Reus <adriana.reus@nxp.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	fabio.estevam@nxp.com,
-	shawnguo@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	anson.huang@nxp.com,
-	linux-clk@vger.kernel.org,
-	Adriana Reus <adriana.reus@nxp.com>
-Subject: [PATCH V2 2/2] clk: imx: imx7d: Remove ARM_M0 clock
-Date: Thu, 20 Jul 2017 18:06:42 +0300
-Message-Id: <1500563202-375-3-git-send-email-adriana.reus@nxp.com>
-In-Reply-To: <1500563202-375-1-git-send-email-adriana.reus@nxp.com>
-References: <1500563202-375-1-git-send-email-adriana.reus@nxp.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
+To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, daniel.thompson@linaro.org,
+ andrea.merello@gmail.com, radoslaw.pietrzyk@gmail.com,
+ Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, amelie.delaunay@st.com,
+ olivier.bideau@st.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
+ linux-arm-kernel@lists.infradead.org, ludovic.barre@st.com
+References: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
+ <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <efa06f77-7b0e-9902-dbf1-c76d3203b813@gmail.com>
+Date: Thu, 13 Jul 2017 10:22:15 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: adriana.reus@nxp.com
+In-Reply-To: <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-IMX7d does not have an M0 Core and this particular
-clock doesn't seem connected to anything else.
-Remove this entry from the CCM driver.
+On 07/13/2017 07:02 AM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch exposes clk_gate_ops::is_enabled as functions
+> that can be directly called and assigned in places like this so
+> we don't need wrapper functions that do nothing besides forward
+> the call.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Sugested by Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/clk-gate.c       | 2 +-
+>  include/linux/clk-provider.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+> index 4e0c054a..e27e28f 100644
+> --- a/drivers/clk/clk-gate.c
+> +++ b/drivers/clk/clk-gate.c
+> @@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+>  	clk_gate_endisable(hw, 0);
+>  }
+>  
+> -static int clk_gate_is_enabled(struct clk_hw *hw)
+> +int clk_gate_is_enabled(struct clk_hw *hw)
+>  {
+>  	u32 reg;
+>  	struct clk_gate *gate = to_clk_gate(hw);
 
-Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
----
- Changes since v1:
- - left defines alone as to not break potential raw value
-   usage. Removed entries from the driver only and added comments
-   to mark the unused defines.
+Don't you need to add an EXPORT_SYMBOL_GPL(clk_gate_is_enabled) as well
+in case this gets used by modules?
 
- drivers/clk/imx/clk-imx7d.c             | 9 ---------
- include/dt-bindings/clock/imx7d-clock.h | 8 ++++----
- 2 files changed, 4 insertions(+), 13 deletions(-)
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index c59c625..e9587ab 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+>  		u8 clk_gate_flags, spinlock_t *lock);
+>  void clk_unregister_gate(struct clk *clk);
+>  void clk_hw_unregister_gate(struct clk_hw *hw);
+> +int clk_gate_is_enabled(struct clk_hw *hw);
+>  
+>  struct clk_div_table {
+>  	unsigned int	val;
+> 
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 10f6a10..6fc2e3f 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -54,11 +54,6 @@ static const char *arm_m4_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
- 	"pll_usb_main_clk", };
- 
--static const char *arm_m0_sel[] = { "osc", "pll_sys_main_120m_clk",
--	"pll_enet_125m_clk", "pll_sys_pfd2_135m_clk",
--	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
--	"pll_usb_main_clk", };
--
- static const char *axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd5_clk",
- 	"pll_audio_post_div", "pll_video_main_clk", "pll_sys_pfd7_clk", };
-@@ -510,7 +505,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_SRC] = imx_clk_mux2("arm_a7_src", base + 0x8000, 24, 3, arm_a7_sel, ARRAY_SIZE(arm_a7_sel));
- 	clks[IMX7D_ARM_M4_ROOT_SRC] = imx_clk_mux2("arm_m4_src", base + 0x8080, 24, 3, arm_m4_sel, ARRAY_SIZE(arm_m4_sel));
--	clks[IMX7D_ARM_M0_ROOT_SRC] = imx_clk_mux2("arm_m0_src", base + 0x8100, 24, 3, arm_m0_sel, ARRAY_SIZE(arm_m0_sel));
- 	clks[IMX7D_MAIN_AXI_ROOT_SRC] = imx_clk_mux2("axi_src", base + 0x8800, 24, 3, axi_sel, ARRAY_SIZE(axi_sel));
- 	clks[IMX7D_DISP_AXI_ROOT_SRC] = imx_clk_mux2("disp_axi_src", base + 0x8880, 24, 3, disp_axi_sel, ARRAY_SIZE(disp_axi_sel));
- 	clks[IMX7D_ENET_AXI_ROOT_SRC] = imx_clk_mux2("enet_axi_src", base + 0x8900, 24, 3, enet_axi_sel, ARRAY_SIZE(enet_axi_sel));
-@@ -582,7 +576,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_CG] = imx_clk_gate3("arm_a7_cg", "arm_a7_src", base + 0x8000, 28);
- 	clks[IMX7D_ARM_M4_ROOT_CG] = imx_clk_gate3("arm_m4_cg", "arm_m4_src", base + 0x8080, 28);
--	clks[IMX7D_ARM_M0_ROOT_CG] = imx_clk_gate3("arm_m0_cg", "arm_m0_src", base + 0x8100, 28);
- 	clks[IMX7D_MAIN_AXI_ROOT_CG] = imx_clk_gate3("axi_cg", "axi_src", base + 0x8800, 28);
- 	clks[IMX7D_DISP_AXI_ROOT_CG] = imx_clk_gate3("disp_axi_cg", "disp_axi_src", base + 0x8880, 28);
- 	clks[IMX7D_ENET_AXI_ROOT_CG] = imx_clk_gate3("enet_axi_cg", "enet_axi_src", base + 0x8900, 28);
-@@ -721,7 +714,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_DIV] = imx_clk_divider2("arm_a7_div", "arm_a7_cg", base + 0x8000, 0, 3);
- 	clks[IMX7D_ARM_M4_ROOT_DIV] = imx_clk_divider2("arm_m4_div", "arm_m4_cg", base + 0x8080, 0, 3);
--	clks[IMX7D_ARM_M0_ROOT_DIV] = imx_clk_divider2("arm_m0_div", "arm_m0_cg", base + 0x8100, 0, 3);
- 	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
- 	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
- 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
-@@ -793,7 +785,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk", "arm_a7_div", base + 0x4000, 0);
- 	clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk", "arm_m4_div", base + 0x4010, 0);
--	clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk", "arm_m0_div", base + 0x4020, 0);
- 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
- 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
- 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index de62a83..e2f99ae 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -80,10 +80,10 @@
- #define IMX7D_ARM_M4_ROOT_SRC		67
- #define IMX7D_ARM_M4_ROOT_CG		68
- #define IMX7D_ARM_M4_ROOT_DIV		69
--#define IMX7D_ARM_M0_ROOT_CLK		70
--#define IMX7D_ARM_M0_ROOT_SRC		71
--#define IMX7D_ARM_M0_ROOT_CG		72
--#define IMX7D_ARM_M0_ROOT_DIV		73
-+#define IMX7D_ARM_M0_ROOT_CLK		70	/* unused */
-+#define IMX7D_ARM_M0_ROOT_SRC		71	/* unused */
-+#define IMX7D_ARM_M0_ROOT_CG		72	/* unused */
-+#define IMX7D_ARM_M0_ROOT_DIV		73	/* unused */
- #define IMX7D_MAIN_AXI_ROOT_CLK		74
- #define IMX7D_MAIN_AXI_ROOT_SRC		75
- #define IMX7D_MAIN_AXI_ROOT_CG		76
+
 -- 
-2.7.4
+Florian
