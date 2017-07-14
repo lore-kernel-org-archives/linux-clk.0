@@ -1,71 +1,136 @@
-Return-Path: <oliver@schinagl.nl>
-Subject: Re: [linux-sunxi] [PATCH v5 5/6] ARM: sun7i: Convert to CCU
-To: plaes@plaes.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
- <2ff8930c51b90a0bb875ecc6c4737f44b3314e7f.1499197129.git-series.plaes@plaes.org>
-Cc: linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>
-From: Olliver Schinagl <oliver@schinagl.nl>
-Message-ID: <4091e67f-6207-26ef-85f1-e9ff509dd3b7@schinagl.nl>
-Date: Mon, 10 Jul 2017 13:23:51 +0200
-MIME-Version: 1.0
-In-Reply-To: <2ff8930c51b90a0bb875ecc6c4737f44b3314e7f.1499197129.git-series.plaes@plaes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 05/11] mmc: sunxi: Support controllers that can use both old and new timings
+Date: Fri, 14 Jul 2017 14:42:56 +0800
+Message-Id: <20170714064302.20383-6-wens@csie.org>
+In-Reply-To: <20170714064302.20383-1-wens@csie.org>
+References: <20170714064302.20383-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Pleas,
+On the SoCs that introduced the new timing mode for MMC controllers,
+both the old (where the clock delays are set in the CCU) and new
+(where the clock delays are set in the MMC controller) timing modes
+are available, and we have to support them both. However there are
+two bits that control which mode is active. One is in the CCU, the
+other is in the MMC controller. The settings on both sides must be
+the same, or nothing will work.
 
-On 04-07-17 22:05, Priit Laes wrote:
-> Convert sun7i-a20.dtsi to new CCU driver.
->
-> Tested on Cubietruck.
->
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  arch/arm/boot/dts/sun7i-a20.dtsi | 719 +++-----------------------------
->  1 file changed, 84 insertions(+), 635 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-> index 96bee77..a5ca5a8 100644
-> --- a/arch/arm/boot/dts/sun7i-a20.dtsi
-> +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-> @@ -46,8 +46,6 @@
->
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/thermal/thermal.h>
-> -
-> -#include <dt-bindings/clock/sun4i-a10-pll2.h>
->  #include <dt-bindings/dma/sun4i-a10.h>
-I had to add these includes here to make this all work:
+The CCU's get/set_phase callbacks return -ENOTSUPP when the new
+timing mode is active. This provides a way to know which mode is
+active on that side, and we can set the bit on the MMC controller
+side accordingly.
 
-+ #include <dt-bindings/clock/sun4i-a10-ccu.h>
-+ #include <dt-bindings/clock/sun7i-a20-ccu.h>
-   #include <dt-bindings/interrupt-controller/arm-gic.h>
-+ #include <dt-bindings/reset/sun4i-a10-ccu.h>
-   #include <dt-bindings/thermal/thermal.h>
-   #include <dt-bindings/dma/sun4i-a10.h>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/mmc/host/sunxi-mmc.c | 34 ++++++++++++++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 4 deletions(-)
 
-Olliver
-
->
->  / {
-> @@ -66,9 +64,10 @@
->  			compatible = "allwinner,simple-framebuffer",
->  				     "simple-framebuffer";
->  			allwinner,pipeline = "de_be0-lcd0-hdmi";
-> -			clocks = <&ahb_gates 36>, <&ahb_gates 43>,
-> -				 <&ahb_gates 44>, <&de_be0_clk>,
-> -				 <&tcon0_ch1_clk>, <&dram_gates 26>;
-> +			clocks = <&ccu 56>, <&ccu 60>,
-> +				 <&ccu 62>, <&ccu 144>,
-> +				 <&ccu 155>, <&ccu 140>,
-> +				 <&ccu 164>;
->  			status = "disabled";
->
-<snip>
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 0fb4e4c119e1..56e45c65b52d 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -22,6 +22,7 @@
+ #include <linux/err.h>
+ 
+ #include <linux/clk.h>
++#include <linux/clk/sunxi-ng.h>
+ #include <linux/gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+@@ -259,7 +260,7 @@ struct sunxi_mmc_cfg {
+ 	/* Does DATA0 needs to be masked while the clock is updated */
+ 	bool mask_data0;
+ 
+-	bool needs_new_timings;
++	bool has_new_timings;
+ };
+ 
+ struct sunxi_mmc_host {
+@@ -293,6 +294,9 @@ struct sunxi_mmc_host {
+ 
+ 	/* vqmmc */
+ 	bool		vqmmc_enabled;
++
++	/* timings */
++	bool		use_new_timings;
+ };
+ 
+ static int sunxi_mmc_reset_host(struct sunxi_mmc_host *host)
+@@ -714,7 +718,7 @@ static int sunxi_mmc_clk_set_phase(struct sunxi_mmc_host *host,
+ {
+ 	int index;
+ 
+-	if (!host->cfg->clk_delays)
++	if (host->use_new_timings)
+ 		return 0;
+ 
+ 	/* determine delays */
+@@ -765,6 +769,15 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ 	    ios->bus_width == MMC_BUS_WIDTH_8)
+ 		clock <<= 1;
+ 
++	if (host->use_new_timings) {
++		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
++		if (ret) {
++			dev_err(mmc_dev(mmc),
++				"error setting new timing mode\n");
++			return ret;
++		}
++	}
++
+ 	rate = clk_round_rate(host->clk_mmc, clock);
+ 	if (rate < 0) {
+ 		dev_err(mmc_dev(mmc), "error rounding clk to %d: %ld\n",
+@@ -793,7 +806,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ 	}
+ 	mmc_writel(host, REG_CLKCR, rval);
+ 
+-	if (host->cfg->needs_new_timings) {
++	if (host->use_new_timings) {
+ 		/* Don't touch the delay bits */
+ 		rval = mmc_readl(host, REG_SD_NTSR);
+ 		rval |= SDXC_2X_TIMING_MODE;
+@@ -1105,7 +1118,7 @@ static const struct sunxi_mmc_cfg sun50i_a64_cfg = {
+ 	.clk_delays = NULL,
+ 	.can_calibrate = true,
+ 	.mask_data0 = true,
+-	.needs_new_timings = true,
++	.has_new_timings = true,
+ };
+ 
+ static const struct sunxi_mmc_cfg sun50i_a64_emmc_cfg = {
+@@ -1262,6 +1275,19 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
+ 		goto error_free_host;
+ 	}
+ 
++	if (host->cfg->clk_delays && host->cfg->has_new_timings) {
++		/*
++		 * Supports both old and new timing modes.
++		 * Try setting the clk to new timing mode.
++		 */
++		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
++		if (!ret)
++			host->use_new_timings = true;
++	} else if (host->cfg->has_new_timings) {
++		/* Supports new timing mode only */
++		host->use_new_timings = true;
++	}
++
+ 	mmc->ops		= &sunxi_mmc_ops;
+ 	mmc->max_blk_count	= 8192;
+ 	mmc->max_blk_size	= 4096;
+-- 
+2.13.2
