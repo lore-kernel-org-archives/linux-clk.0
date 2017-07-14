@@ -1,64 +1,76 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170714064302.20383-5-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-5-wens@csie.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 14 Jul 2017 11:16:41 +0200
-Message-ID: <CAPDyKFoOsp7ATFY-0N4ExVWQb=z1kCJqowLv7g7CSBK4jWVj_A@mail.gmail.com>
-Subject: Re: [PATCH 04/11] mmc: sunxi: Keep default timing phase settings for
- new timing mode
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 07/11] mmc: sunxi: Add support for A83T eMMC (MMC2)
+Date: Fri, 14 Jul 2017 14:42:58 +0800
+Message-Id: <20170714064302.20383-8-wens@csie.org>
+In-Reply-To: <20170714064302.20383-1-wens@csie.org>
+References: <20170714064302.20383-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14 July 2017 at 08:42, Chen-Yu Tsai <wens@csie.org> wrote:
-> The register for the "new timing mode" also has bit fields for setting
-> output and sample timing phases. According to comments in Allwinner's
-> BSP kernel, the default values are good enough.
->
-> Keep the default values already in the hardware when setting new timing
-> mode, instead of overwriting the whole register.
->
-> Fixes: 9a37e53e451e ("mmc: sunxi: Enable the new timings for the A64 MMC
->                       controllers")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
+different. It supports a wider 8-bit bus, has a dedicated controllable
+reset pin for eMMC, and a "new timing mode" which is supposed to deliver
+better signals and thus better performance.
 
-It looks like this change doesn't depend on anything else? Do you want
-me to pick it up for fixes and adding stable tag?
+Add a compatible for this one to use the new timing mode not found in the
+other controllers.
 
-Kind regards
-Uffe
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
+ drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-> ---
->  drivers/mmc/host/sunxi-mmc.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> index d6fa2214aaae..0fb4e4c119e1 100644
-> --- a/drivers/mmc/host/sunxi-mmc.c
-> +++ b/drivers/mmc/host/sunxi-mmc.c
-> @@ -793,8 +793,12 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
->         }
->         mmc_writel(host, REG_CLKCR, rval);
->
-> -       if (host->cfg->needs_new_timings)
-> -               mmc_writel(host, REG_SD_NTSR, SDXC_2X_TIMING_MODE);
-> +       if (host->cfg->needs_new_timings) {
-> +               /* Don't touch the delay bits */
-> +               rval = mmc_readl(host, REG_SD_NTSR);
-> +               rval |= SDXC_2X_TIMING_MODE;
-> +               mmc_writel(host, REG_SD_NTSR, rval);
-> +       }
->
->         ret = sunxi_mmc_clk_set_phase(host, ios, rate);
->         if (ret)
-> --
-> 2.13.2
->
+diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+index 7d53a799f140..63b57e2a10fb 100644
+--- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+@@ -12,6 +12,7 @@ Required properties:
+    * "allwinner,sun4i-a10-mmc"
+    * "allwinner,sun5i-a13-mmc"
+    * "allwinner,sun7i-a20-mmc"
++   * "allwinner,sun8i-a83t-emmc"
+    * "allwinner,sun9i-a80-mmc"
+    * "allwinner,sun50i-a64-emmc"
+    * "allwinner,sun50i-a64-mmc"
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 7b6f5f49620e..e70065dbd50e 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -1113,6 +1113,13 @@ static const struct sunxi_mmc_cfg sun7i_a20_cfg = {
+ 	.can_calibrate = false,
+ };
+ 
++static const struct sunxi_mmc_cfg sun8i_a83t_emmc_cfg = {
++	.idma_des_size_bits = 16,
++	.clk_delays = sunxi_mmc_clk_delays,
++	.can_calibrate = false,
++	.has_new_timings = true,
++};
++
+ static const struct sunxi_mmc_cfg sun9i_a80_cfg = {
+ 	.idma_des_size_bits = 16,
+ 	.clk_delays = sun9i_mmc_clk_delays,
+@@ -1137,6 +1144,7 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
+ 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
+ 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
+ 	{ .compatible = "allwinner,sun7i-a20-mmc", .data = &sun7i_a20_cfg },
++	{ .compatible = "allwinner,sun8i-a83t-emmc", .data = &sun8i_a83t_emmc_cfg },
+ 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
+-- 
+2.13.2
