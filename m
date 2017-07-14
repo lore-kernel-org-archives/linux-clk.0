@@ -1,103 +1,65 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V2 01/10] drivers: move clock common macros out from vendor directories
-Date: Tue, 11 Jul 2017 18:56:18 +0800
-Message-ID: <20170711105627.20526-2-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
-References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <carlo@endlessm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170713155448.GD15146@fury>
+References: <20170713094213.2775-1-carlo@caione.org> <1499940374.22624.370.camel@linux.intel.com>
+ <20170713155448.GD15146@fury>
+From: Carlo Caione <carlo@endlessm.com>
+Date: Fri, 14 Jul 2017 10:19:03 +0200
+Message-ID: <CAL9uMOE_7Ve2zKwSCZv39JrFaTbX8ry_eZ24sJg+vNXFM0TOiw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: x86: Do not gate clocks enabled by the firmware
+To: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Linux Upstreaming Team <linux@endlessm.com>, Enric Balletbo Serra <eballetbo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-These macros are used by more than one SoC vendor platforms, avoid to
-have many copies of these code, this patch moves them to the common
-clock directory which every clock drivers can access to.
+On Thu, Jul 13, 2017 at 5:54 PM, Darren Hart <dvhart@infradead.org> wrote:
+> On Thu, Jul 13, 2017 at 01:06:14PM +0300, Andy Shevchenko wrote:
+>> On Thu, 2017-07-13 at 11:42 +0200, Carlo Caione wrote:
+>> > From: Carlo Caione <carlo@endlessm.com>
+>> >
+>> > Read the enable register to determine if the clock is already in use
+>> > by
+>> > the firmware. In this case avoid gating the clock.
+>> >
+>>
+>> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>
+>> I suppose it should go via clock tree.
+>>
+>> > Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> > Signed-off-by: Carlo Caione <carlo@endlessm.com>
+>> > ---
+>> >  drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
+>> >  1 file changed, 7 insertions(+)
+>> >
+>> > diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-
+>> > atom.c
+>> > index 2b60577703ef..3c73d2e564ca 100644
+>> > --- a/drivers/clk/x86/clk-pmc-atom.c
+>> > +++ b/drivers/clk/x86/clk-pmc-atom.c
+>> > @@ -185,6 +185,13 @@ static struct clk_plt *plt_clk_register(struct
+>> > platform_device *pdev, int id,
+>> >     pclk->reg = base + PMC_CLK_CTL_OFFSET + id *
+>> > PMC_CLK_CTL_SIZE;
+>> >     spin_lock_init(&pclk->lock);
+>> >
+>> > +   /*
+>> > +    * If the clock was already enabled by the firmware mark is a
+>> > critical
+>
+> Nit... I think this should read... "mark it as critical" ?
+>
+>> > +    * to avoid it being gated by the clock framework if no
+>> > driver owns it
+>
+> owns it.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/clk_common.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 drivers/clk/clk_common.h
+Ooops. Yeah, submitting a v3 with better spelling and your ACKs.
 
-diff --git a/drivers/clk/clk_common.h b/drivers/clk/clk_common.h
-new file mode 100644
-index 0000000..21e93d2
---- /dev/null
-+++ b/drivers/clk/clk_common.h
-@@ -0,0 +1,60 @@
-+/*
-+ * drivers/clk/clk_common.h
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _CLK_COMMON_H_
-+#define _CLK_COMMON_H_
-+
-+#include <linux/clk-provider.h>
-+
-+#define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_names	= (const char *[]) { _parent },	\
-+		.num_parents	= 1,				\
-+		.ops		= _ops,				\
-+	})
-+
-+#define CLK_HW_INIT_PARENTS(_name, _parents, _ops, _flags)	\
-+	(&(struct clk_init_data) {				\
-+		.flags		= _flags,			\
-+		.name		= _name,			\
-+		.parent_names	= _parents,			\
-+		.num_parents	= ARRAY_SIZE(_parents),		\
-+		.ops		= _ops,				\
-+	})
-+
-+#define CLK_HW_INIT_NO_PARENT(_name, _ops, _flags)     \
-+	(&(struct clk_init_data) {                      \
-+		.flags          = _flags,               \
-+		.name           = _name,                \
-+		.parent_names   = NULL,                 \
-+		.num_parents    = 0,                    \
-+		.ops            = _ops,                 \
-+	})
-+
-+#define CLK_FIXED_FACTOR(_struct, _name, _parent,			\
-+			_div, _mult, _flags)				\
-+	struct clk_fixed_factor _struct = {				\
-+		.div		= _div,					\
-+		.mult		= _mult,				\
-+		.hw.init	= CLK_HW_INIT(_name,			\
-+					      _parent,			\
-+					      &clk_fixed_factor_ops,	\
-+					      _flags),			\
-+	}
-+
-+#define CLK_FIXED_RATE(_struct, _name, _flags,				\
-+		       _fixed_rate, _fixed_accuracy)			\
-+	struct clk_fixed_rate _struct = {				\
-+		.fixed_rate	= _fixed_rate,				\
-+		.fixed_accuracy	= _fixed_accuracy,			\
-+		.hw.init	= CLK_HW_INIT_NO_PARENT(_name,		\
-+					  &clk_fixed_rate_ops,		\
-+							_flags),	\
-+	}
-+
-+#endif /* _CLK_COMMON_H_ */
+Thanks,
+
 -- 
-2.7.4
+Carlo Caione  |  +39.340.80.30.096  |  Endless
