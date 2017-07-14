@@ -1,68 +1,168 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 19 Jul 2017 11:19:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Message-ID: <20170719101946.keezbqmlrgt3waq6@sirena.org.uk>
-References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
- <b3b59278-8c7f-b3d1-e143-7f013ac0b873@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34074 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750917AbdGNTjY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2017 15:39:24 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gqzpn77cdxumuk2p"
-In-Reply-To: <b3b59278-8c7f-b3d1-e143-7f013ac0b873@free-electrons.com>
-Subject: Re: [PATCH v3 0/9] add support for Sama5d2 audio PLLs and enable
- ClassD
+In-Reply-To: <20170714193637.GI26488@arm.com>
+References: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+ <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+ <60a56ae6-ed9d-57cd-130f-5bd9d32d4d58@codeaurora.org> <CAF6AEGvDpRChNQAzqgRFwaQcH=4JCwfKcvj2GQGgQOnO2_A1sg@mail.gmail.com>
+ <20170714170743.GA26488@arm.com> <CAF6AEGtMiVJvSrPXmQppM2NwS3fsXM8Vep3g0PwQK7SH4N=3xQ@mail.gmail.com>
+ <20170714180615.GC26488@arm.com> <CAF6AEGubgNiq5fJ9LaBULvW3450iY4-u0ecpp_a6xyMvRx9kug@mail.gmail.com>
+ <20170714190113.GE26488@arm.com> <CAF6AEGsjPQa_CviY4w-uEvH95rC6VkR+u7s7knVxTDW_8V-t_Q@mail.gmail.com>
+ <20170714193637.GI26488@arm.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 14 Jul 2017 15:39:20 -0400
+Message-ID: <CAF6AEGtw-bgK6hfFOHRtO0z6o2zxpvjERTX4i=HzioE69G8kAw@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Will Deacon <will.deacon@arm.com>
+Cc: Sricharan R <sricharan@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Jul 14, 2017 at 3:36 PM, Will Deacon <will.deacon@arm.com> wrote:
+> On Fri, Jul 14, 2017 at 03:34:42PM -0400, Rob Clark wrote:
+>> On Fri, Jul 14, 2017 at 3:01 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> > On Fri, Jul 14, 2017 at 02:25:45PM -0400, Rob Clark wrote:
+>> >> On Fri, Jul 14, 2017 at 2:06 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> >> > On Fri, Jul 14, 2017 at 01:42:13PM -0400, Rob Clark wrote:
+>> >> >> On Fri, Jul 14, 2017 at 1:07 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> >> >> > On Thu, Jul 13, 2017 at 10:55:10AM -0400, Rob Clark wrote:
+>> >> >> >> On Thu, Jul 13, 2017 at 9:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> >> >> >> > Hi,
+>> >> >> >> >
+>> >> >> >> > On 7/13/2017 5:20 PM, Rob Clark wrote:
+>> >> >> >> >> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> >> >> >> >>> Hi Vivek,
+>> >> >> >> >>>
+>> >> >> >> >>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>> >> >> >> >>>> Hi Stephen,
+>> >> >> >> >>>>
+>> >> >> >> >>>>
+>> >> >> >> >>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>> >> >> >> >>>>> On 07/06, Vivek Gautam wrote:
+>> >> >> >> >>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>> >> >> >> >>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>> >> >> >> >>>>>>                    size_t size)
+>> >> >> >> >>>>>>   {
+>> >> >> >> >>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>> >> >> >> >>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>> >> >> >> >>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>> >> >> >> >>>>>> +    size_t ret;
+>> >> >> >> >>>>>>         if (!ops)
+>> >> >> >> >>>>>>           return 0;
+>> >> >> >> >>>>>>   -    return ops->unmap(ops, iova, size);
+>> >> >> >> >>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>> >> >> >> >>>>> Can these map/unmap ops be called from an atomic context? I seem
+>> >> >> >> >>>>> to recall that being a problem before.
+>> >> >> >> >>>>
+>> >> >> >> >>>> That's something which was dropped in the following patch merged in master:
+>> >> >> >> >>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>> >> >> >> >>>>
+>> >> >> >> >>>> Looks like we don't  need locks here anymore?
+>> >> >> >> >>>
+>> >> >> >> >>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>> >> >> >> >>>  from unmap. Somehow looks like some path in the master using that
+>> >> >> >> >>>  should have enabled the pm ?
+>> >> >> >> >>>
+>> >> >> >> >>
+>> >> >> >> >> Yes, there are a bunch of scenarios where unmap can happen with
+>> >> >> >> >> disabled master (but not in atomic context).  On the gpu side we
+>> >> >> >> >> opportunistically keep a buffer mapping until the buffer is freed
+>> >> >> >> >> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
+>> >> >> >> >> an exported dmabuf while some other driver holds a reference to it
+>> >> >> >> >> (which can be dropped when the v4l2 device is suspended).
+>> >> >> >> >>
+>> >> >> >> >> Since unmap triggers tbl flush which touches iommu regs, the iommu
+>> >> >> >> >> driver *definitely* needs a pm_runtime_get_sync().
+>> >> >> >> >
+>> >> >> >> >  Ok, with that being the case, there are two things here,
+>> >> >> >> >
+>> >> >> >> >  1) If the device links are still intact at these places where unmap is called,
+>> >> >> >> >     then pm_runtime from the master would setup the all the clocks. That would
+>> >> >> >> >     avoid reintroducing the locking indirectly here.
+>> >> >> >> >
+>> >> >> >> >  2) If not, then doing it here is the only way. But for both cases, since
+>> >> >> >> >     the unmap can be called from atomic context, resume handler here should
+>> >> >> >> >     avoid doing clk_prepare_enable , instead move the clk_prepare to the init.
+>> >> >> >> >
+>> >> >> >>
+>> >> >> >> I do kinda like the approach Marek suggested.. of deferring the tlb
+>> >> >> >> flush until resume.  I'm wondering if we could combine that with
+>> >> >> >> putting the mmu in a stalled state when we suspend (and not resume the
+>> >> >> >> mmu until after the pending tlb flush)?
+>> >> >> >
+>> >> >> > I'm not sure that a stalled state is what we're after here, because we need
+>> >> >> > to take care to prevent any table walks if we've freed the underlying pages.
+>> >> >> > What we could try to do is disable the SMMU (put into global bypass) and
+>> >> >> > invalidate the TLB when performing a suspend operation, then we just ignore
+>> >> >> > invalidation whilst the clocks are stopped and, on resume, enable the SMMU
+>> >> >> > again.
+>> >> >>
+>> >> >> wouldn't stalled just block any memory transactions by device(s) using
+>> >> >> the context bank?  Putting it in bypass isn't really a good thing if
+>> >> >> there is any chance the device can sneak in a memory access before
+>> >> >> we've taking it back out of bypass (ie. makes gpu a giant userspace
+>> >> >> controlled root hole).
+>> >> >
+>> >> > If it doesn't deadlock, then yes, it will stall transactions. However, that
+>> >> > doesn't mean it necessarily prevents page table walks.
+>> >>
+>> >> btw, I guess the concern about pagetable walk is that the unmap could
+>> >> have removed some sub-level of the pt that the tlb walk would hit?
+>> >> Would deferring freeing those pages help?
+>> >
+>> > Could do, but it sounds like a lot of complication that I think we can fix
+>> > by making the suspend operation put the SMMU into a "clean" state.
+>> >
+>> >> > Instead of bypass, we
+>> >> > could configure all the streams to terminate, but this race still worries me
+>> >> > somewhat. I thought that the SMMU would only be suspended if all of its
+>> >> > masters were suspended, so if the GPU wants to come out of suspend then the
+>> >> > SMMU should be resumed first.
+>> >>
+>> >> I believe this should be true.. on the gpu side, I'm mostly trying to
+>> >> avoid having to power the gpu back on to free buffers.  (On the v4l2
+>> >> side, somewhere in the core videobuf code would also need to be made
+>> >> to wrap it's dma_unmap_sg() with pm_runtime_get/put()..)
+>> >
+>> > Right, and we shouldn't have to resume it if we suspend it in a clean state,
+>> > with the TLBs invalidated.
+>> >
+>>
+>> I guess if the device_link() stuff ensured the attached device
+>> (gpu/etc) was suspended before suspending the iommu, then I guess I
+>> can't see how temporarily putting the iommu in bypass would be a
+>> problem.  I haven't looked at the device_link() stuff too closely, but
+>> iommu being resumed first and suspended last seems like the only thing
+>> that would make sense.  I'm mostly just nervous about iommu in bypass
+>> vs gpu since userspace has so much control over what address gpu
+>> writes to / reads from, so getting it wrong w/ the iommu would be a
+>> rather bad thing ;-)
+>
+> Right, but we can also configure it to terminate if you don't want bypass.
+>
 
---gqzpn77cdxumuk2p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ok, terminate wfm
 
-On Wed, Jul 19, 2017 at 08:28:17AM +0200, Quentin Schulz wrote:
-> Hi all,
->=20
-> It's been almost a week with no comments on this patch set, so kindly
-> pinging.
-
-Please don't top post, reply in line with needed context.  This allows
-readers to readily follow the flow of conversation and understand what
-you are talking about and also helps ensure that everything in the
-discussion is being addressed.
-
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, though there are some other maintainers who like them - if in
-doubt look at how patches for the subsystem are normally handled.
-
---gqzpn77cdxumuk2p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllvMj4ACgkQJNaLcl1U
-h9CtMQf/TXKy0m4fKgwWz6+mZZpEKf/S41ay2VDZ2dunxlQqp3fV4bTUNrGPBS0X
-8XpSP2s2AO2ma6/cV5WYfPSEIrhFUq0EHRs5KyuqEYc4vySDIQS+cTVOiBO+Qygv
-EXZFzrT55rTqjrQXAVXwRkKZVnYzk8rNSi6LUYlPaDGNv2gnL2HOPAzkPcm0DmUr
-YcmYDe7tBm7SKjFYscs2WNB7u/JneXhEYZd+3Mv8D8JOMFUmn9hB8+vjFlrAAapA
-KJsvFS4UE3vr9A7r4fFUcw5CfdzToe2aCPPZiLnxdi4Z473ET6uf6esQdn6793Bh
-FZltcca0lRhwV6AM5sbCH1r13RMWWw==
-=PivX
------END PGP SIGNATURE-----
-
---gqzpn77cdxumuk2p--
+BR,
+-R
