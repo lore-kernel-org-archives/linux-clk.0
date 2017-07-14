@@ -13,66 +13,84 @@ Cc: Chen-Yu Tsai <wens@csie.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 06/10] mmc: sunxi: Add support for A83T eMMC (MMC2)
-Date: Mon, 24 Jul 2017 21:59:01 +0800
-Message-Id: <20170724135905.28855-7-wens@csie.org>
-In-Reply-To: <20170724135905.28855-1-wens@csie.org>
-References: <20170724135905.28855-1-wens@csie.org>
+Subject: [PATCH 01/11] ARM: dts: sun8i: a83t: Switch to CCU device tree binding macros
+Date: Fri, 14 Jul 2017 14:42:52 +0800
+Message-Id: <20170714064302.20383-2-wens@csie.org>
+In-Reply-To: <20170714064302.20383-1-wens@csie.org>
+References: <20170714064302.20383-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
-different. It supports a wider 8-bit bus, has a dedicated controllable
-reset pin for eMMC, and a "new timing mode" which is supposed to deliver
-better signals and thus better performance.
-
-Add a compatible for this one to use the new timing mode not found in the
-other controllers.
+Now that the CCU device tree binding headers have been merged, we can
+use the properly named macros in the device tree, instead of raw
+numbers.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
- drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
- 2 files changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-index 7d53a799f140..63b57e2a10fb 100644
---- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-@@ -12,6 +12,7 @@ Required properties:
-    * "allwinner,sun4i-a10-mmc"
-    * "allwinner,sun5i-a13-mmc"
-    * "allwinner,sun7i-a20-mmc"
-+   * "allwinner,sun8i-a83t-emmc"
-    * "allwinner,sun9i-a80-mmc"
-    * "allwinner,sun50i-a64-emmc"
-    * "allwinner,sun50i-a64-mmc"
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 11587a69a1fd..de187ed77040 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1117,6 +1117,13 @@ static const struct sunxi_mmc_cfg sun7i_a20_cfg = {
- 	.can_calibrate = false,
- };
+This patch is included as it is a pre-requisite to the other device
+tree changes in this series. It is however independent, and should
+be applied as a fix for 4.13-rc, not for -next, and preferably sooner
+than later.
+
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 21439d0aa55d..beed05e10a3b 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -44,7 +44,9 @@
  
-+static const struct sunxi_mmc_cfg sun8i_a83t_emmc_cfg = {
-+	.idma_des_size_bits = 16,
-+	.clk_delays = sunxi_mmc_clk_delays,
-+	.can_calibrate = false,
-+	.has_timings_switch = true,
-+};
-+
- static const struct sunxi_mmc_cfg sun9i_a80_cfg = {
- 	.idma_des_size_bits = 16,
- 	.clk_delays = sun9i_mmc_clk_delays,
-@@ -1141,6 +1148,7 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
- 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
- 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
- 	{ .compatible = "allwinner,sun7i-a20-mmc", .data = &sun7i_a20_cfg },
-+	{ .compatible = "allwinner,sun8i-a83t-emmc", .data = &sun8i_a83t_emmc_cfg },
- 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
++#include <dt-bindings/clock/sun8i-a83t-ccu.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
++#include <dt-bindings/reset/sun8i-a83t-ccu.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -175,8 +177,8 @@
+ 			compatible = "allwinner,sun8i-a83t-dma";
+ 			reg = <0x01c02000 0x1000>;
+ 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&ccu 21>;
+-			resets = <&ccu 7>;
++			clocks = <&ccu CLK_BUS_DMA>;
++			resets = <&ccu RST_BUS_DMA>;
+ 			#dma-cells = <1>;
+ 		};
+ 
+@@ -195,7 +197,7 @@
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
++			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc16Md512>;
+ 			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+@@ -247,8 +249,8 @@
+ 				     "allwinner,sun8i-h3-spdif";
+ 			reg = <0x01c21000 0x400>;
+ 			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&ccu 44>, <&ccu 76>;
+-			resets = <&ccu 32>;
++			clocks = <&ccu CLK_BUS_SPDIF>, <&ccu CLK_SPDIF>;
++			resets = <&ccu RST_BUS_SPDIF>;
+ 			clock-names = "apb", "spdif";
+ 			dmas = <&dma 2>;
+ 			dma-names = "tx";
+@@ -263,8 +265,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 53>;
+-			resets = <&ccu 40>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
-2.13.3
+2.13.2
