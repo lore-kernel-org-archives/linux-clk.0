@@ -1,85 +1,51 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <plaes@plaes.org>
+From: Priit Laes <plaes@plaes.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC 11/12] clk: qcom: add read-only alpha pll post divider operations
-Date: Thu, 27 Jul 2017 16:40:24 +0530
-Message-Id: <1501153825-5181-12-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>,
+	Priit Laes <plaes@plaes.org>
+Subject: [PATCH v6 4/6] dt-bindings: List devicetree binding for the CCU of Allwinner A10
+Date: Fri, 14 Jul 2017 17:49:26 +0300
+Message-Id: <4f4fe9818784e72de423a34c6e40344153c46eb9.1500043741.git-series.plaes@plaes.org>
+In-Reply-To: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+In-Reply-To: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the divider settings are preconfigured and should not
-be changed by the clock framework during frequency change. This
-patch adds the read-only divider operation for QCOM alpha pll
-post divider which is equivalent to generic divider operations in
-'commit 79c6ab509558 ("clk: divider: add CLK_DIVIDER_READ_ONLY flag")'.
+Allwinner A10 is now driven by sunxi-ng CCU driver.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Add devicetree binding for it.
+
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 25 +++++++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  1 +
- 2 files changed, 26 insertions(+)
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index e37a3ab..c3f5435 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -737,6 +737,25 @@ static long clk_alpha_pll_huayra_round_rate(struct clk_hw *hw,
- 				  pll->width, CLK_DIVIDER_POWER_OF_TWO);
- }
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 81d0fa4..429168d 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
  
-+static long
-+clk_alpha_pll_postdiv_round_ro_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long *prate)
-+{
-+	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
-+	u32 ctl, div;
-+
-+	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
-+
-+	ctl >>= PLL_POST_DIV_SHIFT;
-+	ctl &= BIT(pll->width) - 1;
-+	div = 1 << fls(ctl);
-+
-+	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)
-+		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), div * rate);
-+
-+	return DIV_ROUND_UP_ULL((u64)*prate, div);
-+}
-+
- static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
- 					  unsigned long parent_rate)
- {
-@@ -757,3 +776,9 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.set_rate = clk_alpha_pll_postdiv_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ops);
-+
-+const struct clk_ops clk_alpha_pll_postdiv_ro_ops = {
-+	.round_rate = clk_alpha_pll_postdiv_round_ro_rate,
-+	.recalc_rate = clk_alpha_pll_postdiv_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ro_ops);
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 891d14b..7138d03 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -109,6 +109,7 @@ struct alpha_pll_config {
- extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
- extern const struct clk_ops clk_alpha_pll_huayra_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_ops;
-+extern const struct clk_ops clk_alpha_pll_postdiv_ro_ops;
- 
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config);
+ Required properties :
+ - compatible: must contain one of the following compatibles:
++		- "allwinner,sun4i-a10-ccu"
+ 		- "allwinner,sun6i-a31-ccu"
+ 		- "allwinner,sun7i-a20-ccu"
+ 		- "allwinner,sun8i-a23-ccu"
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+git-series 0.9.1
