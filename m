@@ -1,90 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:34194 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751474AbdGZMmc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Jul 2017 08:42:32 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 13 Jul 2017 18:16:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
+	devicetree@vger.kernel.org, amelie.delaunay@st.com,
+	olivier.bideau@st.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
+	linux-arm-kernel@lists.infradead.org, ludovic.barre@st.com
+Subject: Re: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
+Message-ID: <20170714011610.GF22780@codeaurora.org>
+References: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
+ <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
+ <efa06f77-7b0e-9902-dbf1-c76d3203b813@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 26 Jul 2017 20:42:23 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, wens@csie.org,
-        Mark Brown <broonie@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A
- regulator to Orange Pi PC
-In-Reply-To: <20170726114420.ipirqgbluqmggcjy@flea>
-References: <20170723102749.17323-1-icenowy@aosc.io>
- <20170723102749.17323-11-icenowy@aosc.io>
- <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
- <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
- <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
- <82507f40a1ddba8517cf09f51d3afa33@aosc.io>
- <1501064628.14577.1.camel@megous.com> <20170726114420.ipirqgbluqmggcjy@flea>
-Message-ID: <5d25fc45c7beb2e3958f16fd741f0620@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <efa06f77-7b0e-9902-dbf1-c76d3203b813@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-07-26 19:44，Maxime Ripard 写道：
-> Hi,
+On 07/13, Florian Fainelli wrote:
+> On 07/13/2017 07:02 AM, gabriel.fernandez@st.com wrote:
+> > From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> > 
+> > This patch exposes clk_gate_ops::is_enabled as functions
+> > that can be directly called and assigned in places like this so
+> > we don't need wrapper functions that do nothing besides forward
+> > the call.
+> > 
+> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> > Sugested by Stephen Boyd <sboyd@codeaurora.org>
+> > ---
+> >  drivers/clk/clk-gate.c       | 2 +-
+> >  include/linux/clk-provider.h | 1 +
+> >  2 files changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+> > index 4e0c054a..e27e28f 100644
+> > --- a/drivers/clk/clk-gate.c
+> > +++ b/drivers/clk/clk-gate.c
+> > @@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+> >  	clk_gate_endisable(hw, 0);
+> >  }
+> >  
+> > -static int clk_gate_is_enabled(struct clk_hw *hw)
+> > +int clk_gate_is_enabled(struct clk_hw *hw)
+> >  {
+> >  	u32 reg;
+> >  	struct clk_gate *gate = to_clk_gate(hw);
 > 
-> On Wed, Jul 26, 2017 at 12:23:48PM +0200, Ondřej Jirman wrote:
->> Hi,
->> 
->> icenowy@aosc.io píše v St 26. 07. 2017 v 15:36 +0800:
->> >
->> > > > >
->> > > > > Otherwse
->> > > > >
->> > > > > > +               regulator-max-microvolt = <1400000>;
->> > > > > > +               regulator-ramp-delay = <200>;
->> > > > >
->> > > > > Is this an actual constraint of the SoC? Or is it a characteristic
->> > > > > of the regulator? If it is the latter, it belongs in the driver.
->> > > > > AFAIK the regulator supports varying the ramp delay (slew rate).
->> >
->> > I don't know...
->> >
->> > Maybe I should ask Ondrej?
->> 
->> It is probably neither.
->> 
->> It is used to calculate a delay inserted by the kernel between setting
->> a new target voltage over I2C and changing the frequency of the CPU.
->> The actual delay is calculated by the difference between previous and
->> the new voltage.
->> 
->> I don't remember seeing anything in the datasheet of the regulator.
->> This is just some low value that works.
->> 
->> It would probably be dependent on the capacitance on the output of the
->> regulator, actual load (which varies), etc. So it is a board specific
->> value. One could measure it with an oscilloscope if there's a need to
->> optimize this.
-> 
-> If this is a reasonable default, then this should be in the
-> driver. You can't expect anyone to properly calculate a ramp delay and
-> have access to both a scope and the CPU power lines.
+> Don't you need to add an EXPORT_SYMBOL_GPL(clk_gate_is_enabled) as well
+> in case this gets used by modules?
 
-It seems that in regulator_desc structure a default value of ramp delay
-can be set, and the ones specified in dt can override it.
+It would be needed in the future if someone uses it from a
+module. The only user in this patch series looks to be builtin
+only. I can add it when applying the patch if there aren't other
+comments on the series.
 
-So just add .ramp_delay = 200 in the driver's regulator_desc part?
-
-Should a comment be added that explains it's only an experienced value
-on Allwinner H3/H5 boards VDD-CPUX usage?
-
-> 
-> Maxime
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
