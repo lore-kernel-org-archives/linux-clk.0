@@ -1,65 +1,84 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH 06/14] clk: tegra: Fix T210 effective NDIV calculation
-Date: Tue, 25 Jul 2017 13:34:07 +0300
-Message-ID: <1500978856-5981-7-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 03/11] clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
+Date: Fri, 14 Jul 2017 14:42:54 +0800
+Message-Id: <20170714064302.20383-4-wens@csie.org>
+In-Reply-To: <20170714064302.20383-1-wens@csie.org>
+References: <20170714064302.20383-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+The MMC2 clock supports a new timing mode. When the new mode is active,
+the output clock rate is halved.
 
-Don't take the fractional part into account to calculate the effective
-NDIV if fractional ndiv is not enabled.
+This patch sets the feature flag for the new timing mode, and adds
+a pre-divider based on the mode bit.
 
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 38 +++++++++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index dc4a813..a4d7d94 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -241,6 +241,9 @@
- #define PLL_SDM_COEFF BIT(13)
- #define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
- #define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
-+/* This macro returns ndiv effective scaled to SDM range */
-+#define sdin_get_n_eff(cfg)	((cfg)->n * PLL_SDM_COEFF + ((cfg)->sdm_data ? \
-+		(PLL_SDM_COEFF/2 + sdin_data_to_din((cfg)->sdm_data)) : 0))
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index 947f9f6e05d2..ee6688e9b361 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -418,14 +418,36 @@ static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1-sample", "mmc1",
+ static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1-output", "mmc1",
+ 		       0x08c, 8, 3, 0);
  
- /* Tegra CPU clock and reset control regs */
- #define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
-@@ -1288,8 +1291,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
- 			s -= PLL_SDM_COEFF / 2;
- 			cfg->sdm_data = sdin_din_to_data(s);
- 		}
--		cfg->output_rate *= cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
--					sdin_data_to_din(cfg->sdm_data);
-+		cfg->output_rate *= sdin_get_n_eff(cfg);
- 		cfg->output_rate /= p * cfg->m * PLL_SDM_COEFF;
- 	} else {
- 		cfg->output_rate *= cfg->n;
-@@ -1314,8 +1316,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
-  */
- static void tegra210_clk_pll_set_gain(struct tegra_clk_pll_freq_table *cfg)
- {
--	cfg->n = cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
--			sdin_data_to_din(cfg->sdm_data);
-+	cfg->n = sdin_get_n_eff(cfg);
- 	cfg->m *= PLL_SDM_COEFF;
- }
+-/* TODO Support MMC2 clock's new timing mode. */
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
+-				  0x090,
+-				  0, 4,		/* M */
+-				  16, 2,	/* P */
+-				  24, 2,	/* mux */
+-				  BIT(31),	/* gate */
+-				  0);
++/*
++ * MMC2 supports both old and new timing modes. When the new timing
++ * mode is active, the output clock rate is halved by two. Here we
++ * treat it as a variable pre-divider. Note that the pre-divider is
++ * _not_ included in the possible factors during a set clock rate
++ * operation. It is only read out.
++ */
++static const struct ccu_mux_var_prediv mmc2_new_timing_predivs[] = {
++	{ .index = 0, .shift = 30, .width = 1 },
++	{ .index = 1, .shift = 30, .width = 1 },
++};
++static struct ccu_mp mmc2_clk = {
++	.enable = BIT(31),
++	.m      = _SUNXI_CCU_DIV(0, 4),
++	.p      = _SUNXI_CCU_DIV(16, 2),
++	.mux    = {
++		.shift  = 24,
++		.width  = 2,
++		.var_predivs    = mmc2_new_timing_predivs,
++		.n_var_predivs  = ARRAY_SIZE(mmc2_new_timing_predivs),
++	},
++	.common         = {
++		.reg            = 0x090,
++		.features	= CCU_FEATURE_MMC_TIMING_SWITCH,
++		.hw.init        = CLK_HW_INIT_PARENTS("mmc2",
++						      mod0_default_parents,
++						      &ccu_mp_ops,
++						      CLK_GET_RATE_NOCACHE),
++	},
++};
  
+ static SUNXI_CCU_PHASE(mmc2_sample_clk, "mmc2-sample", "mmc2",
+ 		       0x090, 20, 3, 0);
 -- 
-1.9.1
+2.13.2
