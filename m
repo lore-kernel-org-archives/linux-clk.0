@@ -1,85 +1,114 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com,
-	krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
-	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Subject: [PATCH 3/3] clk: samsung: exynos542x: Enable clock rate propagation
- up to the EPLL
-Date: Fri, 21 Jul 2017 18:36:44 +0200
-Message-id: <1500655004-29816-3-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-References: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-	<CGME20170721163755epcas1p2bfa1025557002ae5f89309aecd64c411@epcas1p2.samsung.com>
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <CAGb2v64gjLSdb83fR9OCZthtgMQz-UkmMhT9OmJkq3Xp6mJ-aA@mail.gmail.com>
+References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-6-wens@csie.org>
+ <CAPDyKFoLTXJ10EJRfPPggJBg8bh9BpdwTnew-WL0G7LpnO43Pg@mail.gmail.com> <CAGb2v64gjLSdb83fR9OCZthtgMQz-UkmMhT9OmJkq3Xp6mJ-aA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 14 Jul 2017 11:57:35 +0200
+Message-ID: <CAPDyKFqe1hFmfWziu04fW=cQa0EGvT11YzuJ0f-eHy6+u7vutQ@mail.gmail.com>
+Subject: Re: [PATCH 05/11] mmc: sunxi: Support controllers that can use both
+ old and new timings
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-CLK_SET_RATE_PARENT flag is added to the clocks between the EPLL
-and the audio subsystem clock controller so that the EPLL's output
-frequency can be set indirectly with clk_set_rate() on a leaf clock.
-That should be safe as EPLL is normally only used to generate clock
-for the audio subsystem.
-With this change we can avoid passing the EPPL clock to the ASoC
-machine driver.
+On 14 July 2017 at 11:40, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Fri, Jul 14, 2017 at 5:26 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 14 July 2017 at 08:42, Chen-Yu Tsai <wens@csie.org> wrote:
+>>> On the SoCs that introduced the new timing mode for MMC controllers,
+>>> both the old (where the clock delays are set in the CCU) and new
+>>> (where the clock delays are set in the MMC controller) timing modes
+>>> are available, and we have to support them both. However there are
+>>> two bits that control which mode is active. One is in the CCU, the
+>>> other is in the MMC controller. The settings on both sides must be
+>>> the same, or nothing will work.
+>>>
+>>> The CCU's get/set_phase callbacks return -ENOTSUPP when the new
+>>> timing mode is active. This provides a way to know which mode is
+>>> active on that side, and we can set the bit on the MMC controller
+>>> side accordingly.
+>
+> Argh... I forgot to update the commit log... :(
+>
+>>>
+>>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>>> ---
+>>>  drivers/mmc/host/sunxi-mmc.c | 34 ++++++++++++++++++++++++++++++----
+>>>  1 file changed, 30 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+>>> index 0fb4e4c119e1..56e45c65b52d 100644
+>>> --- a/drivers/mmc/host/sunxi-mmc.c
+>>> +++ b/drivers/mmc/host/sunxi-mmc.c
+>>> @@ -22,6 +22,7 @@
+>>>  #include <linux/err.h>
+>>>
+>>>  #include <linux/clk.h>
+>>> +#include <linux/clk/sunxi-ng.h>
+>>
+>> I don't like this. This looks like an SoC specific hack.
+>>
+>>>  #include <linux/gpio.h>
+>>>  #include <linux/platform_device.h>
+>>>  #include <linux/spinlock.h>
+>>> @@ -259,7 +260,7 @@ struct sunxi_mmc_cfg {
+>>>         /* Does DATA0 needs to be masked while the clock is updated */
+>>>         bool mask_data0;
+>>>
+>>> -       bool needs_new_timings;
+>>> +       bool has_new_timings;
+>>>  };
+>>>
+>>>  struct sunxi_mmc_host {
+>>> @@ -293,6 +294,9 @@ struct sunxi_mmc_host {
+>>>
+>>>         /* vqmmc */
+>>>         bool            vqmmc_enabled;
+>>> +
+>>> +       /* timings */
+>>> +       bool            use_new_timings;
+>>>  };
+>>>
+>>>  static int sunxi_mmc_reset_host(struct sunxi_mmc_host *host)
+>>> @@ -714,7 +718,7 @@ static int sunxi_mmc_clk_set_phase(struct sunxi_mmc_host *host,
+>>>  {
+>>>         int index;
+>>>
+>>> -       if (!host->cfg->clk_delays)
+>>> +       if (host->use_new_timings)
+>>>                 return 0;
+>>>
+>>>         /* determine delays */
+>>> @@ -765,6 +769,15 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+>>>             ios->bus_width == MMC_BUS_WIDTH_8)
+>>>                 clock <<= 1;
+>>>
+>>> +       if (host->use_new_timings) {
+>>> +               ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
+>>
+>> Can't this be solved through some other generic API/interface?
+>
+> The old discussion is here: https://lkml.org/lkml/2017/5/5/77
+>
+> It is possible to piggy back on existing API, but as Maxime mentioned
+> back in the discussion, it is confusing.
+>
+> IIRC Mike said (via Maxime) an SoC specific call was the easy way
+> to handle this. I don't think there's anything generic about this.
+> Even if you could have a _set_mode callback for the clks, the modes
+> would be SoC specific anyway.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Right. But it would benefit that we can keep drivers generic, as they
+are using generic APIs/interfaces. I prefer that.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 5ae9364..2560196 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -537,8 +537,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 
- 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
- 			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
--	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
--							SRC_TOP7, 20, 2),
-+	MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
-+			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
- 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
- 
-@@ -547,8 +547,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_aclk432_cam", mout_group6_5800_p, SRC_TOP8, 24, 2),
- 	MUX(0, "mout_aclk432_scaler", mout_group6_5800_p, SRC_TOP8, 28, 2),
- 
--	MUX(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
--							SRC_TOP9, 8, 1),
-+	MUX_F(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
-+			SRC_TOP9, 8, 1, CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "mout_user_aclk550_cam", mout_group15_5800_p,
- 							SRC_TOP9, 16, 1),
- 	MUX(0, "mout_user_aclkfl1_550_cam", mout_group13_5800_p,
-@@ -591,7 +591,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
- 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
--			SRC_MASK_TOP7, 20, 0, 0),
-+			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
- };
- 
- static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
-@@ -633,7 +633,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 
- static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
--			SRC_MASK_TOP7, 20, 0, 0),
-+			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
- };
- 
- static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
-@@ -713,7 +713,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
- 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
- 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
--	MUX(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
-+	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
-+			CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
- 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
- 
--- 
-1.9.1
+Anyway, let me try to dig up the earlier discussion.
+
+Kind regards
+Uffe
