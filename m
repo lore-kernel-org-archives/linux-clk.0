@@ -1,59 +1,188 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner SoCs
-Date: Sun, 23 Jul 2017 18:27:46 +0800
-Message-Id: <20170723102749.17323-8-icenowy@aosc.io>
-In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 02/11] clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+Date: Fri, 14 Jul 2017 14:42:53 +0800
+Message-Id: <20170714064302.20383-3-wens@csie.org>
+In-Reply-To: <20170714064302.20383-1-wens@csie.org>
+References: <20170714064302.20383-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some new Allwinner SoCs get supported in the kernel after the
-compatibles are added to cpufreq-dt-platdev driver.
+Starting with the A83T SoC, Allwinner introduced a new timing mode for
+its MMC clocks. The new mode changes how the MMC controller sample and
+output clocks are delayed to match chip and board specifics. There are
+two controls for this, one on the CCU side controlling how the clocks
+behave, and one in the MMC controller controlling what inputs to take
+and how to route them.
 
-Add their compatible strings in the cpufreq-dt-platdev driver.
+In the old mode, the MMC clock had 2 child clocks providing the output
+and sample clocks, which could be delayed by a number of clock cycles
+measured from the MMC clock's parent.
 
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+With the new mode, the 2 delay clocks are no longer active. Instead,
+the delays and associated controls are moved into the MMC controller.
+The output of the MMC clock is also halved.
+
+The difference in how things are wired between the modes means that the
+clock controls and the MMC controls must match. To achieve this in a
+clear, explicit way, we introduce two functions for the MMC driver to
+use: one queries the hardware for the current mode set, and the other
+allows the MMC driver to request a mode.
+
+With newer SoCs such as the A64, the old mode is all but removed. Hence
+we support two variations, one where the mode can be toggled, and the
+other where the clock is fixed in the new mode.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/sunxi-ng/Makefile         |  1 +
+ drivers/clk/sunxi-ng/ccu_common.h     |  2 +
+ drivers/clk/sunxi-ng/ccu_mmc_timing.c | 73 +++++++++++++++++++++++++++++++++++
+ include/linux/clk/sunxi-ng.h          | 20 ++++++++++
+ 4 files changed, 96 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
+ create mode 100644 include/linux/clk/sunxi-ng.h
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 2eb40d46d357..c3851453e84a 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
- 	{ .compatible = "allwinner,sun8i-a23", },
- 	{ .compatible = "allwinner,sun8i-a33", },
- 	{ .compatible = "allwinner,sun8i-a83t", },
-+	{ .compatible = "allwinner,sun8i-h2-plus", },
- 	{ .compatible = "allwinner,sun8i-h3", },
-+	{ .compatible = "allwinner,sun8i-v3s", },
-+	{ .compatible = "allwinner,sun50i-a64", },
-+	{ .compatible = "allwinner,sun50i-h5", },
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 0c45fa50283d..45a5910379a5 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -1,5 +1,6 @@
+ # Common objects
+ lib-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
++lib-$(CONFIG_SUNXI_CCU)		+= ccu_mmc_timing.o
+ lib-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
  
- 	{ .compatible = "apm,xgene-shadowcat", },
+ # Base clock types
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index d6fdd7a789aa..88981e7fd978 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -23,6 +23,8 @@
+ #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
+ #define CCU_FEATURE_ALL_PREDIV		BIT(4)
+ #define CCU_FEATURE_LOCK_REG		BIT(5)
++#define CCU_FEATURE_MMC_TIMING_SWITCH	BIT(6)
++#define CCU_FEATURE_MMC_ALWAYS_NEW	BIT(7)
  
-@@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
- 	{ .compatible = "marvell,pxa250", },
- 	{ .compatible = "marvell,pxa270", },
+ struct device_node;
  
-+	{ .compatible = "nextthing,gr8", },
+diff --git a/drivers/clk/sunxi-ng/ccu_mmc_timing.c b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+new file mode 100644
+index 000000000000..f236a56abf48
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+@@ -0,0 +1,73 @@
++/*
++ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
- 	{ .compatible = "samsung,exynos3250", },
- 	{ .compatible = "samsung,exynos4210", },
- 	{ .compatible = "samsung,exynos4212", },
++#include <linux/clk-provider.h>
++#include <linux/clk/sunxi-ng.h>
++
++#include "ccu_common.h"
++
++#define CCU_MMC_NEW_TIMING_MODE		BIT(30)
++
++/**
++ * sunxi_ccu_set_mmc_timing_mode: Configure the MMC clock timing mode
++ * @clk: clock to be configured
++ * @new_mode: true for new timing mode introduced in A83T and later
++ *
++ * Returns 0 on success, -ENOTSUPP if the clock does not support
++ * switching modes.
++ */
++int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++	unsigned long flags;
++	u32 val;
++
++	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
++		return -ENOTSUPP;
++
++	spin_lock_irqsave(cm->lock, flags);
++
++	val = readl(cm->base + cm->reg);
++	if (new_mode)
++		val |= CCU_MMC_NEW_TIMING_MODE;
++	else
++		val &= ~CCU_MMC_NEW_TIMING_MODE;
++	writel(val, cm->base + cm->reg);
++
++	spin_unlock_irqrestore(cm->lock, flags);
++
++	return 0;
++}
++
++/**
++ * sunxi_ccu_set_mmc_timing_mode: Get the current MMC clock timing mode
++ * @clk: clock to query
++ *
++ * Returns 0 if the clock is in old timing mode, > 0 if it is in
++ * new timing mode, and -ENOTSUPP if the clock does not support
++ * this function.
++ */
++int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++
++	if (cm->features & CCU_FEATURE_MMC_ALWAYS_NEW)
++		return 1;
++
++	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
++		return -ENOTSUPP;
++
++	return !!(readl(cm->base + cm->reg) & CCU_MMC_NEW_TIMING_MODE);
++}
+diff --git a/include/linux/clk/sunxi-ng.h b/include/linux/clk/sunxi-ng.h
+new file mode 100644
+index 000000000000..f1bd321fc264
+--- /dev/null
++++ b/include/linux/clk/sunxi-ng.h
+@@ -0,0 +1,20 @@
++/*
++ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _LINUX_CLK_SUNXI_NG_H_
++#define _LINUX_CLK_SUNXI_NG_H_
++
++int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode);
++int sunxi_ccu_get_mmc_timing_mode(struct clk *clk);
++
++#endif
 -- 
-2.13.0
+2.13.2
