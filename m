@@ -1,563 +1,147 @@
-Return-Path: <p.zabel@pengutronix.de>
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Alan Tull <atull@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Ben Skeggs <bskeggs@redhat.com>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Bin Liu <b-liu@ti.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Chen Feng <puck.chen@hisilicon.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	David Airlie <airlied@linux.ie>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Hartmut Knaack <knaack.h@gmx.de>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Jiri Slaby <jslaby@suse.com>,
-	Joachim Eastwood <manabian@gmail.com>,
-	John Youn <johnyoun@synopsys.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Kalle Valo <kvalo@qca.qualcomm.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Marc Dietrich <marvin24@gmx.de>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Moritz Fischer <moritz.fischer@ettus.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Peter Chen <Peter.Chen@nxp.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-	Philippe Cornu <philippe.cornu@st.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Rakesh Iyer <riyer@nvidia.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Richard Weinberger <richard@nod.at>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Rongrong Zou <zourongrong@gmail.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Stanimir Varbanov <svarbanov@mm-sol.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Tejun Heo <tj@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Xinliang Liu <z.liuxinliang@hisilicon.com>,
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-	Yannick Fertre <yannick.fertre@st.com>,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	alsa-devel@alsa-project.org,
-	ath10k@lists.infradead.org,
-	devel@driverdev.osuosl.org,
-	dmaengine@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-mips@linux-mips.org,
-	linux-mmc@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	nouveau@lists.freedesktop.org
-Subject: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Wed, 19 Jul 2017 17:25:04 +0200
-Message-Id: <20170719152646.25903-1-p.zabel@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35002 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751133AbdGNSZt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2017 14:25:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170714180615.GC26488@arm.com>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org> <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+ <60a56ae6-ed9d-57cd-130f-5bd9d32d4d58@codeaurora.org> <CAF6AEGvDpRChNQAzqgRFwaQcH=4JCwfKcvj2GQGgQOnO2_A1sg@mail.gmail.com>
+ <20170714170743.GA26488@arm.com> <CAF6AEGtMiVJvSrPXmQppM2NwS3fsXM8Vep3g0PwQK7SH4N=3xQ@mail.gmail.com>
+ <20170714180615.GC26488@arm.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 14 Jul 2017 14:25:45 -0400
+Message-ID: <CAF6AEGubgNiq5fJ9LaBULvW3450iY4-u0ecpp_a6xyMvRx9kug@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Will Deacon <will.deacon@arm.com>
+Cc: Sricharan R <sricharan@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The reset control API has two modes: exclusive access, where the driver
-expects to have full and immediate control over the state of the reset
-line, and shared (clock-like) access, where drivers only request reset
-deassertion while active, but don't care about the state of the reset line
-while inactive.
+On Fri, Jul 14, 2017 at 2:06 PM, Will Deacon <will.deacon@arm.com> wrote:
+> On Fri, Jul 14, 2017 at 01:42:13PM -0400, Rob Clark wrote:
+>> On Fri, Jul 14, 2017 at 1:07 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> > On Thu, Jul 13, 2017 at 10:55:10AM -0400, Rob Clark wrote:
+>> >> On Thu, Jul 13, 2017 at 9:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> >> > Hi,
+>> >> >
+>> >> > On 7/13/2017 5:20 PM, Rob Clark wrote:
+>> >> >> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> >> >>> Hi Vivek,
+>> >> >>>
+>> >> >>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>> >> >>>> Hi Stephen,
+>> >> >>>>
+>> >> >>>>
+>> >> >>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>> >> >>>>> On 07/06, Vivek Gautam wrote:
+>> >> >>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>> >> >>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>> >> >>>>>>                    size_t size)
+>> >> >>>>>>   {
+>> >> >>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>> >> >>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>> >> >>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>> >> >>>>>> +    size_t ret;
+>> >> >>>>>>         if (!ops)
+>> >> >>>>>>           return 0;
+>> >> >>>>>>   -    return ops->unmap(ops, iova, size);
+>> >> >>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>> >> >>>>> Can these map/unmap ops be called from an atomic context? I seem
+>> >> >>>>> to recall that being a problem before.
+>> >> >>>>
+>> >> >>>> That's something which was dropped in the following patch merged in master:
+>> >> >>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>> >> >>>>
+>> >> >>>> Looks like we don't  need locks here anymore?
+>> >> >>>
+>> >> >>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>> >> >>>  from unmap. Somehow looks like some path in the master using that
+>> >> >>>  should have enabled the pm ?
+>> >> >>>
+>> >> >>
+>> >> >> Yes, there are a bunch of scenarios where unmap can happen with
+>> >> >> disabled master (but not in atomic context).  On the gpu side we
+>> >> >> opportunistically keep a buffer mapping until the buffer is freed
+>> >> >> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
+>> >> >> an exported dmabuf while some other driver holds a reference to it
+>> >> >> (which can be dropped when the v4l2 device is suspended).
+>> >> >>
+>> >> >> Since unmap triggers tbl flush which touches iommu regs, the iommu
+>> >> >> driver *definitely* needs a pm_runtime_get_sync().
+>> >> >
+>> >> >  Ok, with that being the case, there are two things here,
+>> >> >
+>> >> >  1) If the device links are still intact at these places where unmap is called,
+>> >> >     then pm_runtime from the master would setup the all the clocks. That would
+>> >> >     avoid reintroducing the locking indirectly here.
+>> >> >
+>> >> >  2) If not, then doing it here is the only way. But for both cases, since
+>> >> >     the unmap can be called from atomic context, resume handler here should
+>> >> >     avoid doing clk_prepare_enable , instead move the clk_prepare to the init.
+>> >> >
+>> >>
+>> >> I do kinda like the approach Marek suggested.. of deferring the tlb
+>> >> flush until resume.  I'm wondering if we could combine that with
+>> >> putting the mmu in a stalled state when we suspend (and not resume the
+>> >> mmu until after the pending tlb flush)?
+>> >
+>> > I'm not sure that a stalled state is what we're after here, because we need
+>> > to take care to prevent any table walks if we've freed the underlying pages.
+>> > What we could try to do is disable the SMMU (put into global bypass) and
+>> > invalidate the TLB when performing a suspend operation, then we just ignore
+>> > invalidation whilst the clocks are stopped and, on resume, enable the SMMU
+>> > again.
+>>
+>> wouldn't stalled just block any memory transactions by device(s) using
+>> the context bank?  Putting it in bypass isn't really a good thing if
+>> there is any chance the device can sneak in a memory access before
+>> we've taking it back out of bypass (ie. makes gpu a giant userspace
+>> controlled root hole).
+>
+> If it doesn't deadlock, then yes, it will stall transactions. However, that
+> doesn't mean it necessarily prevents page table walks.
 
-Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-reset lines") started to transition the reset control request API calls
-to explicitly state whether the driver needs exclusive or shared reset
-control behavior.
+btw, I guess the concern about pagetable walk is that the unmap could
+have removed some sub-level of the pt that the tlb walk would hit?
+Would deferring freeing those pages help?
 
-This series converts all drivers that currently implicitly request
-exclusive reset controls to the corresponding explicit API call. It is,
-for the most part, generated from the following semantic patch:
+> Instead of bypass, we
+> could configure all the streams to terminate, but this race still worries me
+> somewhat. I thought that the SMMU would only be suspended if all of its
+> masters were suspended, so if the GPU wants to come out of suspend then the
+> SMMU should be resumed first.
 
-@@
-expression rstc, dev, id;
-@@
--rstc = reset_control_get(dev, id);
-+rstc = reset_control_get_exclusive(dev, id);
-@@
-expression rstc, dev, id;
-@@
--rstc = reset_control_get_optional(dev, id);
-+rstc = reset_control_get_optional_exclusive(dev, id);
-@@
-expression rstc, node, id;
-@@
--rstc = of_reset_control_get(node, id);
-+rstc = of_reset_control_get_exclusive(node, id);
-@@
-expression rstc, node, index;
-@@
--rstc = of_reset_control_get_by_index(node, index);
-+rstc = of_reset_control_get_exclusive_by_index(node, index);
-@@
-expression rstc, dev, id;
-@@
--rstc = devm_reset_control_get(dev, id);
-+rstc = devm_reset_control_get_exclusive(dev, id);
-@@
-expression rstc, dev, id;
-@@
--rstc = devm_reset_control_get_optional(dev, id);
-+rstc = devm_reset_control_get_optional_exclusive(dev, id);
-@@
-expression rstc, dev, index;
-@@
--rstc = devm_reset_control_get_by_index(dev, index);
-+rstc = devm_reset_control_get_exclusive_by_index(dev, index);
+I believe this should be true.. on the gpu side, I'm mostly trying to
+avoid having to power the gpu back on to free buffers.  (On the v4l2
+side, somewhere in the core videobuf code would also need to be made
+to wrap it's dma_unmap_sg() with pm_runtime_get/put()..)
 
-After all driver patches are applied, the temporary transition helpers
-can be removed.
+BR,
+-R
 
-regards
-Philipp
-
-Philipp Zabel (102):
-  ARM: rockchip: explicitly request exclusive reset control
-  ARM: socfpga: explicitly request exclusive reset control
-  MIPS: pci-mt7620: explicitly request exclusive reset control
-  ahci: st: explicitly request exclusive reset control
-  ata: sata_gemini: explicitly request exclusive reset control
-  ata: ahci_tegra: explicitly request exclusive reset control
-  bus: sunxi-rsb: explicitly request exclusive reset control
-  bus: tegra-gmi: explicitly request exclusive reset control
-  clk: sunxi: explicitly request exclusive reset control
-  clk: tegra: explicitly request exclusive reset control
-  clocksource/drivers/timer-stm32: explicitly request exclusive reset
-    control
-  clocksource/drivers/sun5i: explicitly request exclusive reset control
-  crypto: rockchip: explicitly request exclusive reset control
-  crypto: sun4i-ss - request exclusive reset control
-  PM / devfreq: tegra: explicitly request exclusive reset control
-  dmaengine: stm32-dma: explicitly request exclusive reset control
-  dmaengine: sun6i: explicitly request exclusive reset control
-  dmaengine: tegra-apb: explicitly request exclusive reset control
-  drm: kirin: explicitly request exclusive reset control
-  drm/nouveau/tegra: explicitly request exclusive reset control
-  drm/rockchip: explicitly request exclusive reset control
-  drm/sti: explicitly request exclusive reset control
-  drm/stm: explicitly request exclusive reset control
-  drm/sun4i: explicitly request exclusive reset control
-  drm/tegra: explicitly request exclusive reset control
-  gpu: host1x: explicitly request exclusive reset control
-  i2c: mv64xxx: explicitly request exclusive reset control
-  i2c: stm32f4: explicitly request exclusive reset control
-  i2c: sun6i-pw2i: explicitly request exclusive reset control
-  i2c: tegra: explicitly request exclusive reset control
-  iio: adc: rockchip_saradc: explicitly request exclusive reset control
-  iio: dac: stm32-dac-core: explicitly request exclusive reset control
-  Input: tegra-kbc - request exclusive reset control
-  coda: explicitly request exclusive reset control
-  st-rc: explicitly request exclusive reset control
-  stm32-dcmi: explicitly request exclusive reset control
-  rc: sunxi-cir: explicitly request exclusive reset control
-  mmc: dw_mmc: explicitly request exclusive reset control
-  mmc: sdhci-st: explicitly request exclusive reset control
-  mmc: sunxi: explicitly request exclusive reset control
-  mmc: tegra: explicitly request exclusive reset control
-  mtd: nand: sunxi: explicitly request exclusive reset control
-  mtd: spi-nor: stm32-quadspi: explicitly request exclusive reset
-    control
-  net: dsa: mt7530: explicitly request exclusive reset control
-  net: ethernet: hisi_femac: explicitly request exclusive reset control
-  net: ethernet: hix5hd2_gmac: explicitly request exclusive reset
-    control
-  net: stmmac: explicitly request exclusive reset control
-  net: stmmac: dwc-qos: explicitly request exclusive reset control
-  ath10k: explicitly request exclusive reset control
-  nvmem: lpc18xx-eeprom: explicitly request exclusive reset control
-  PCI: dwc: pcie-qcom: explicitly request exclusive reset control
-  PCI: imx6: explicitly request exclusive reset control
-  PCI: tegra: explicitly request exclusive reset control
-  PCI: rockchip: explicitly request exclusive reset control
-  phy: berlin-usb: explicitly request exclusive reset control
-  PCI: mediatek: explicitly request exclusive reset control
-  phy: qcom-usb-hs: explicitly request exclusive reset control
-  phy: rockchip-pcie: explicitly request exclusive reset control
-  phy: rockchip-typec: explicitly request exclusive reset control
-  phy: rockchip-usb: explicitly request exclusive reset control
-  phy: sun4i-usb: explicitly request exclusive reset control
-  phy: sun9i-usb: explicitly request exclusive reset control
-  phy: tegra: explicitly request exclusive reset control
-  phy: qcom-qmp: explicitly request exclusive reset control
-  phy: qcom-qusb2: explicitly request exclusive reset control
-  pinctrl: stm32: explicitly request exclusive reset control
-  pinctrl: sunxi: explicitly request exclusive reset control
-  pinctrl: tegra: explicitly request exclusive reset control
-  pwm: hibvt: explicitly request exclusive reset control
-  pwm: tegra: explicitly request exclusive reset control
-  remoteproc/keystone: explicitly request exclusive reset control
-  remoteproc: qcom: explicitly request exclusive reset control
-  remoteproc: st: explicitly request exclusive reset control
-  soc: mediatek: PMIC wrap: explicitly request exclusive reset control
-  soc/tegra: pmc: explicitly request exclusive reset control
-  spi: stm32: explicitly request exclusive reset control
-  spi: sun6i: explicitly request exclusive reset control
-  spi: tegra20-slink: explicitly request exclusive reset control
-  spi: tegra114: explicitly request exclusive reset control
-  spi: tegra20-sflash: explicitly request exclusive reset control
-  staging: nvec: explicitly request exclusive reset control
-  thermal: rockchip: explicitly request exclusive reset control
-  thermal: tegra: explicitly request exclusive reset control
-  serial: 8250_dw: explicitly request exclusive reset control
-  serial: tegra: explicitly request exclusive reset control
-  usb: chipidea: msm: explicitly request exclusive reset control
-  usb: dwc2: explicitly request exclusive reset control
-  usb: host: ehci-tegra: explicitly request exclusive reset control
-  usb: host: xhci-tegra: explicitly request exclusive reset control
-  usb: musb: sunxi: explicitly request exclusive reset control
-  usb: phy: msm: explicitly request exclusive reset control
-  usb: phy: qcom-8x16-usb: explicitly request exclusive reset control
-  watchdog: asm9260: explicitly request exclusive reset control
-  watchdog: mt7621: explicitly request exclusive reset control
-  watchdog: rt2880: explicitly request exclusive reset control
-  watchdog: zx2967: explicitly request exclusive reset control
-  ASoC: img: explicitly request exclusive reset control
-  ASoC: stm32: explicitly request exclusive reset control
-  ASoC: sun4i: explicitly request exclusive reset control
-  ASoC: tegra: explicitly request exclusive reset control
-  Documentation: devres: add explicit exclusive/shared reset control
-    request calls
-  reset: finish transition to explicit exclusive reset control requests
-
- Documentation/driver-model/devres.txt              |  7 ++-
- arch/arm/mach-rockchip/platsmp.c                   |  2 +-
- arch/mips/pci/pci-mt7620.c                         |  2 +-
- drivers/ata/ahci_st.c                              |  6 +--
- drivers/ata/ahci_tegra.c                           |  8 ++--
- drivers/ata/sata_gemini.c                          |  4 +-
- drivers/bus/sunxi-rsb.c                            |  2 +-
- drivers/bus/tegra-gmi.c                            |  2 +-
- drivers/clk/sunxi/clk-sun9i-mmc.c                  |  2 +-
- drivers/clk/tegra/clk-dfll.c                       |  2 +-
- drivers/clocksource/timer-stm32.c                  |  2 +-
- drivers/clocksource/timer-sun5i.c                  |  2 +-
- drivers/crypto/rockchip/rk3288_crypto.c            |  2 +-
- drivers/crypto/sunxi-ss/sun4i-ss-core.c            |  3 +-
- drivers/devfreq/tegra-devfreq.c                    |  2 +-
- drivers/dma/stm32-dma.c                            |  2 +-
- drivers/dma/sun6i-dma.c                            |  2 +-
- drivers/dma/tegra20-apb-dma.c                      |  2 +-
- drivers/fpga/altera-hps2fpga.c                     |  3 +-
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c    |  2 +-
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |  2 +-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  2 +-
- drivers/gpu/drm/rockchip/cdn-dp-core.c             |  8 ++--
- drivers/gpu/drm/rockchip/dw-mipi-dsi.c             |  2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  4 +-
- drivers/gpu/drm/sti/sti_hdmi.c                     |  2 +-
- drivers/gpu/drm/sti/sti_hqvdp.c                    |  2 +-
- drivers/gpu/drm/sti/sti_tvout.c                    |  2 +-
- drivers/gpu/drm/stm/ltdc.c                         |  2 +-
- drivers/gpu/drm/sun4i/sun4i_backend.c              |  4 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  2 +-
- drivers/gpu/drm/sun4i/sun4i_tv.c                   |  2 +-
- drivers/gpu/drm/sun4i/sun6i_drc.c                  |  2 +-
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  2 +-
- drivers/gpu/drm/tegra/dc.c                         |  2 +-
- drivers/gpu/drm/tegra/dpaux.c                      |  3 +-
- drivers/gpu/drm/tegra/dsi.c                        |  2 +-
- drivers/gpu/drm/tegra/gr3d.c                       |  6 +--
- drivers/gpu/drm/tegra/hdmi.c                       |  2 +-
- drivers/gpu/drm/tegra/sor.c                        |  2 +-
- drivers/gpu/host1x/dev.c                           |  2 +-
- drivers/i2c/busses/i2c-mv64xxx.c                   |  2 +-
- drivers/i2c/busses/i2c-stm32f4.c                   |  2 +-
- drivers/i2c/busses/i2c-sun6i-p2wi.c                |  2 +-
- drivers/i2c/busses/i2c-tegra.c                     |  2 +-
- drivers/iio/adc/rockchip_saradc.c                  |  3 +-
- drivers/iio/dac/stm32-dac-core.c                   |  2 +-
- drivers/input/keyboard/tegra-kbc.c                 |  2 +-
- drivers/media/platform/coda/coda-common.c          |  3 +-
- drivers/media/platform/stm32/stm32-dcmi.c          |  2 +-
- drivers/media/rc/st_rc.c                           |  2 +-
- drivers/media/rc/sunxi-cir.c                       |  2 +-
- drivers/mmc/host/dw_mmc.c                          |  2 +-
- drivers/mmc/host/sdhci-st.c                        |  2 +-
- drivers/mmc/host/sdhci-tegra.c                     |  3 +-
- drivers/mmc/host/sunxi-mmc.c                       |  3 +-
- drivers/mtd/nand/sunxi_nand.c                      |  2 +-
- drivers/mtd/spi-nor/stm32-quadspi.c                |  2 +-
- drivers/net/dsa/mt7530.c                           |  3 +-
- drivers/net/ethernet/hisilicon/hisi_femac.c        |  4 +-
- drivers/net/ethernet/hisilicon/hix5hd2_gmac.c      |  6 +--
- .../ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c    |  2 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |  3 +-
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  4 +-
- drivers/net/wireless/ath/ath10k/ahb.c              | 15 ++++---
- drivers/nvmem/lpc18xx_eeprom.c                     |  2 +-
- drivers/pci/dwc/pci-imx6.c                         |  7 +--
- drivers/pci/dwc/pcie-qcom.c                        | 40 +++++++++--------
- drivers/pci/host/pci-tegra.c                       |  6 +--
- drivers/pci/host/pcie-mediatek.c                   |  2 +-
- drivers/pci/host/pcie-rockchip.c                   | 15 ++++---
- drivers/phy/allwinner/phy-sun4i-usb.c              |  2 +-
- drivers/phy/allwinner/phy-sun9i-usb.c              |  4 +-
- drivers/phy/marvell/phy-berlin-usb.c               |  2 +-
- drivers/phy/qualcomm/phy-qcom-qmp.c                |  4 +-
- drivers/phy/qualcomm/phy-qcom-qusb2.c              |  3 +-
- drivers/phy/qualcomm/phy-qcom-usb-hs.c             |  3 +-
- drivers/phy/rockchip/phy-rockchip-pcie.c           |  2 +-
- drivers/phy/rockchip/phy-rockchip-typec.c          |  6 +--
- drivers/phy/rockchip/phy-rockchip-usb.c            |  2 +-
- drivers/phy/tegra/xusb-tegra210.c                  |  4 +-
- drivers/phy/tegra/xusb.c                           |  2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c              |  2 +-
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c        |  2 +-
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c        |  2 +-
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c         |  2 +-
- drivers/pwm/pwm-hibvt.c                            |  2 +-
- drivers/pwm/pwm-tegra.c                            |  2 +-
- drivers/remoteproc/keystone_remoteproc.c           |  2 +-
- drivers/remoteproc/qcom_q6v5_pil.c                 |  3 +-
- drivers/remoteproc/st_remoteproc.c                 |  6 ++-
- drivers/reset/core.c                               |  2 +-
- drivers/soc/mediatek/mtk-pmic-wrap.c               |  5 ++-
- drivers/soc/tegra/pmc.c                            |  2 +-
- drivers/spi/spi-stm32.c                            |  2 +-
- drivers/spi/spi-sun6i.c                            |  2 +-
- drivers/spi/spi-tegra114.c                         |  2 +-
- drivers/spi/spi-tegra20-sflash.c                   |  2 +-
- drivers/spi/spi-tegra20-slink.c                    |  2 +-
- drivers/staging/nvec/nvec.c                        |  2 +-
- drivers/thermal/rockchip_thermal.c                 |  3 +-
- drivers/thermal/tegra/soctherm.c                   |  3 +-
- drivers/tty/serial/8250/8250_dw.c                  |  2 +-
- drivers/tty/serial/serial-tegra.c                  |  2 +-
- drivers/usb/chipidea/ci_hdrc_msm.c                 |  2 +-
- drivers/usb/dwc2/platform.c                        |  3 +-
- drivers/usb/host/ehci-tegra.c                      |  5 ++-
- drivers/usb/host/xhci-tegra.c                      |  6 ++-
- drivers/usb/musb/sunxi.c                           |  2 +-
- drivers/usb/phy/phy-msm-usb.c                      |  4 +-
- drivers/usb/phy/phy-qcom-8x16-usb.c                |  2 +-
- drivers/watchdog/asm9260_wdt.c                     |  2 +-
- drivers/watchdog/mt7621_wdt.c                      |  2 +-
- drivers/watchdog/rt2880_wdt.c                      |  2 +-
- drivers/watchdog/zx2967_wdt.c                      |  2 +-
- include/linux/reset.h                              | 50 ----------------------
- sound/soc/img/img-i2s-in.c                         |  2 +-
- sound/soc/img/img-i2s-out.c                        |  2 +-
- sound/soc/img/img-parallel-out.c                   |  2 +-
- sound/soc/img/img-spdif-in.c                       |  2 +-
- sound/soc/img/img-spdif-out.c                      |  2 +-
- sound/soc/stm/stm32_i2s.c                          |  2 +-
- sound/soc/stm/stm32_sai.c                          |  2 +-
- sound/soc/stm/stm32_spdifrx.c                      |  2 +-
- sound/soc/sunxi/sun4i-codec.c                      |  3 +-
- sound/soc/sunxi/sun4i-i2s.c                        |  2 +-
- sound/soc/sunxi/sun4i-spdif.c                      |  3 +-
- sound/soc/tegra/tegra30_ahub.c                     |  4 +-
- 128 files changed, 226 insertions(+), 235 deletions(-)
-
--- 
-2.11.0
-
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: "Emilio López" <emilio@elopez.com.ar>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Alan Tull <atull@kernel.org>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Bin Liu <b-liu@ti.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Chen Feng <puck.chen@hisilicon.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: David Airlie <airlied@linux.ie>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Hartmut Knaack <knaack.h@gmx.de>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Joachim Eastwood <manabian@gmail.com>
-Cc: John Youn <johnyoun@synopsys.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Marc Dietrich <marvin24@gmx.de>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Mark Yao <mark.yao@rock-chips.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Moritz Fischer <moritz.fischer@ettus.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Peter Chen <Peter.Chen@nxp.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: Philippe Cornu <philippe.cornu@st.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Rakesh Iyer <riyer@nvidia.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Rongrong Zou <zourongrong@gmail.com>
-Cc: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Salil Mehta <salil.mehta@huawei.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Vincent Abriou <vincent.abriou@st.com>
-Cc: Vinod Koul <vinod.koul@intel.com>
-Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
-Cc: Xinwei Kong <kong.kongxinwei@hisilicon.com>
-Cc: Yannick Fertre <yannick.fertre@st.com>
-Cc: Yisen Zhuang <yisen.zhuang@huawei.com>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: alsa-devel@alsa-project.org
-Cc: ath10k@lists.infradead.org
-Cc: devel@driverdev.osuosl.org
-Cc: dmaengine@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-fpga@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org
-Cc: linux-ide@vger.kernel.org
-Cc: linux-iio@vger.kernel.org
-Cc: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-media@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-mmc@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-pwm@vger.kernel.org
-Cc: linux-remoteproc@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-spi@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
-Cc: linux-watchdog@vger.kernel.org
-Cc: linux-wireless@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: nouveau@lists.freedesktop.org
+> It would be helpful if somebody could figure out exactly what can race with
+> the suspend/resume calls here.
+>
+> Will
