@@ -1,74 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 00/10] A trial to Allwinner H3 DVFS support
-Date: Sun, 23 Jul 2017 18:27:39 +0800
-Message-Id: <20170723102749.17323-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <wsa@the-dreams.de>
+Date: Fri, 14 Jul 2017 16:25:59 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: clk: renesas: rcar-gen3: Fix error return code in
+ cpg_sd_clock_recalc_rate
+Message-ID: <20170714142559.p6xp6dp4whlqcr5n@ninjato>
+References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dxvska6c26goqwhg"
+In-Reply-To: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is a trial for DVFS support for Allwinner H3 SoC,
-considering two kinds of adjustable regulators used on H3 boards:
-SY8106A I2C-controlled regulator and SY8113B regulator (controllable
-by GPIO with some special designs on the board).
 
-PATCH 1 and PATCH 2 are for the SY8106A regulator, then PATCH 3 and
-PATCH 4 are for the r_i2c bus, which is used by boards with SY8106A
-to communicate with the regulator.
+--dxvska6c26goqwhg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-PATCH 5 and 6 are CCU fixes for H3 DVFS.
+On Thu, Apr 20, 2017 at 02:46:33AM +0900, Yoshihiro Kaneko wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>=20
+> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
+> error occurs, but -EINVAL is returned. This patch fixes it.
+>=20
+> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 s=
+upport code")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-PATCH 7 is adding new compatible strings to the cpufreq-dt driver.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-PATCH 8 adds the opp-v2 table for H3 SoC (without OPPs higher than
-1.008GHz).
 
-PATCH 9 and 10 finally adds DVFS support for two boards, Orange Pi
-Zero (SY8113B) and Orange Pi PC (SY8106A).
+--dxvska6c26goqwhg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tested on these boards mentioned.
+-----BEGIN PGP SIGNATURE-----
 
-PATCH 9 and 10 finally adds DVFS support for two boards, Orange Pi
-Zero (SY8113B) and Orange Pi PC (SY8106A).
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllo1HcACgkQFA3kzBSg
+KbbCbQ/9GVsmsx99cpPZGaQhm1PHL9MXDjXxSI3VdyijhL4bjqAGbFVzXGjzS+LF
+Bjdsqn9WfC18YbTeXKPdGdgtQFbuRiHnUTsBsB5g9zu1CJjQDJMEN0aGHJjkXKxx
+gZl6VkYMlbA3Nal6I53Ls0rElrYjWocsnV/RuUmDBYswSfLPXPJAkh3S0EG3pNw7
+3OWD0oDsozOQUvHupqRmtJZ+Mh6hTPplV1TpcYBKtHFTWn9yLIKEPq35GGD8pZX0
+Hl1t/zh/D12FnoOo6eqwTtord7RbmTLik9qa9iN2dpIXD7lfubglNqYqc64NQaMn
+PBgGZ4J/hODUDs7MNjeZ9VT/3q/kViy6JuCLu/c5R3nHjcYsZq+By3x98A0876+L
+lgtQ9x5MACCMGFciB/KyMLohN8lrtRZfb1Z3WlyBaGW5FvahpPBp5BiA7/Sg+g2D
+wkNPCcLDOAsl2+XUtzjMPSeZf1G+s9HRI3Wm16/jv48TGPMP8mBtCsJ3ZqzXZJ2i
+NF/U1ChRVYgWl1e1FjCZDf0h0bmfFtVfuXlyOtYII3TymxEZYIENhhThBy7Vbguo
+lm3xxaSK49+UACCNQSKda71DYKVTChb1XdLCxgxsnmNraVQi5YtKf9AOTJR0w6hd
+l/chmC4h5WCwtvGgKCZpJ3XmLHrYB6bp7I3i3tu52WqamB7Gt0o=
+=aXxB
+-----END PGP SIGNATURE-----
 
-Tested on these boards mentioned.
-
-Chen-Yu Tsai (1):
-  clk: sunxi-ng: h3: gate then ungate PLL CPU clk after rate change
-
-Icenowy Zheng (4):
-  clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3
-  cpufreq: dt: Add support for some new Allwinner SoCs
-  ARM: sun8i: h3: add operating-points-v2 table for CPU
-  ARM: sun8i: h2+: add SY8113B regulator used by Orange Pi Zero board
-
-Ondrej Jirman (5):
-  dt-bindings: add binding for the SY8160A voltage regulator
-  regulator: add support for SY8106A regulator
-  ARM: sunxi: h3/h5: Add r_i2c pinmux node
-  ARM: sunxi: h3/h5: Add r_i2c I2C controller
-  ARM: dts: sun8i: Add SY8106A regulator to Orange Pi PC
-
- .../bindings/regulator/sy8106a-regulator.txt       |  21 +++
- arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts  |  21 +++
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  19 +++
- arch/arm/boot/dts/sun8i-h3.dtsi                    |  38 ++++-
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  19 +++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  13 +-
- drivers/cpufreq/cpufreq-dt-platdev.c               |   6 +
- drivers/regulator/Kconfig                          |   8 +-
- drivers/regulator/Makefile                         |   2 +-
- drivers/regulator/sy8106a-regulator.c              | 163 +++++++++++++++++++++
- 10 files changed, 306 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
- create mode 100644 drivers/regulator/sy8106a-regulator.c
-
--- 
-2.13.0
+--dxvska6c26goqwhg--
