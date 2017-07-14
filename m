@@ -1,49 +1,93 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: mturquette@baylibre.com,
+Return-Path: <plaes@plaes.org>
+From: Priit Laes <plaes@plaes.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-clk@vger.kernel.org,
-	dvhart@infradead.org,
-	pierre-louis.bossart@linux.intel.com,
-	sboyd@codeaurora.org,
-	linux@endlessm.com,
-	eballetbo@gmail.com,
-	andriy.shevchenko@linux.intel.com
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2] clk: x86: Do not gate clocks enabled by the firmware
-Date: Thu, 13 Jul 2017 11:42:13 +0200
-Message-Id: <20170713094213.2775-1-carlo@caione.org>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>,
+	Priit Laes <plaes@plaes.org>
+Subject: [PATCH v6 1/6] clk: sunxi-ng: div: Add support for fixed post-divider
+Date: Fri, 14 Jul 2017 17:49:23 +0300
+Message-Id: <946794e97ae2c36cd67c272099e8236a589efc28.1500043741.git-series.plaes@plaes.org>
+In-Reply-To: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+In-Reply-To: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
+6 is fixed post-divider.
 
-Read the enable register to determine if the clock is already in use by
-the firmware. In this case avoid gating the clock.
-
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
+Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/sunxi-ng/ccu_div.c | 15 +++++++++++++--
+ drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index 2b60577703ef..3c73d2e564ca 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -185,6 +185,13 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
- 	pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
- 	spin_lock_init(&pclk->lock);
+diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+index c0e5c10..744502a 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.c
++++ b/drivers/clk/sunxi-ng/ccu_div.c
+@@ -21,6 +21,9 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
+ {
+ 	struct ccu_div *cd = data;
  
-+	/*
-+	 * If the clock was already enabled by the firmware mark is a critical
-+	 * to avoid it being gated by the clock framework if no driver owns it
-+	 */
-+	if (plt_clk_is_enabled(&pclk->hw))
-+		init.flags |= CLK_IS_CRITICAL;
++	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate *= cd->fixed_post_div;
 +
- 	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
- 	if (ret) {
- 		pclk = ERR_PTR(ret);
+ 	return divider_round_rate_parent(&cd->common.hw, parent,
+ 					 rate, parent_rate,
+ 					 cd->div.table, cd->div.width,
+@@ -62,8 +65,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
+ 	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
+ 						  parent_rate);
+ 
+-	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+-				   cd->div.flags);
++	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
++				  cd->div.flags);
++
++	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		val /= cd->fixed_post_div;
++
++	return val;
+ }
+ 
+ static int ccu_div_determine_rate(struct clk_hw *hw,
+@@ -86,6 +94,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
+ 						  parent_rate);
+ 
++	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
++		rate *= cd->fixed_post_div;
++
+ 	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
+ 			      cd->div.flags);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index 08d0744..f3a5028 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -86,9 +86,10 @@ struct ccu_div_internal {
+ struct ccu_div {
+ 	u32			enable;
+ 
+-	struct ccu_div_internal		div;
++	struct ccu_div_internal	div;
+ 	struct ccu_mux_internal	mux;
+ 	struct ccu_common	common;
++	unsigned int		fixed_post_div;
+ };
+ 
+ #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
 -- 
-2.13.2
+git-series 0.9.1
