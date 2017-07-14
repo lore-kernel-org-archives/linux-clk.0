@@ -1,57 +1,51 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>,
-	linux-clk@vger.kernel.org (open list:CLK API),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: Provide bulk prepare_enable disable_unprepare variants
-Date: Wed, 12 Jul 2017 15:04:16 -0700
-Message-Id: <20170712220416.31785-1-bjorn.andersson@linaro.org>
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	dvhart@infradead.org,
+	pierre-louis.bossart@linux.intel.com,
+	sboyd@codeaurora.org,
+	linux@endlessm.com,
+	eballetbo@gmail.com,
+	andriy.shevchenko@linux.intel.com
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
+Date: Fri, 14 Jul 2017 10:23:56 +0200
+Message-Id: <20170714082356.28117-1-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This extends the existing set of bulk helpers with prepare_enable and
-disable_unprepare variants.
+From: Carlo Caione <carlo@endlessm.com>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Read the enable register to determine if the clock is already in use by
+the firmware. In this case avoid gating the clock.
+
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
 ---
- include/linux/clk.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 91bd464f4c9b..12c96d94d1fa 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -657,6 +657,28 @@ static inline void clk_disable_unprepare(struct clk *clk)
- 	clk_unprepare(clk);
- }
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index 2b60577703ef..be8d821ce625 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -185,6 +185,13 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
+ 	pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
+ 	spin_lock_init(&pclk->lock);
  
-+static inline int clk_bulk_prepare_enable(int num_clks,
-+					  struct clk_bulk_data *clks)
-+{
-+	int ret;
++	/*
++	 * If the clock was already enabled by the firmware mark it as critical
++	 * to avoid it being gated by the clock framework if no driver owns it.
++	 */
++	if (plt_clk_is_enabled(&pclk->hw))
++		init.flags |= CLK_IS_CRITICAL;
 +
-+	ret = clk_bulk_prepare(num_clks, clks);
-+	if (ret)
-+		return ret;
-+	ret = clk_bulk_enable(num_clks, clks);
-+	if (ret)
-+		clk_bulk_unprepare(num_clks, clks);
-+
-+	return ret;
-+}
-+
-+static inline void clk_bulk_disable_unprepare(int num_clks,
-+					      struct clk_bulk_data *clks)
-+{
-+	clk_bulk_disable(num_clks, clks);
-+	clk_bulk_unprepare(num_clks, clks);
-+}
-+
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk *of_clk_get(struct device_node *np, int index);
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+ 	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
+ 	if (ret) {
+ 		pclk = ERR_PTR(ret);
 -- 
-2.12.0
+2.13.2
