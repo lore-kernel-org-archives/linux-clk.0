@@ -1,65 +1,73 @@
-Return-Path: <carlo@endlessm.com>
-MIME-Version: 1.0
-In-Reply-To: <20170713155448.GD15146@fury>
-References: <20170713094213.2775-1-carlo@caione.org> <1499940374.22624.370.camel@linux.intel.com>
- <20170713155448.GD15146@fury>
-From: Carlo Caione <carlo@endlessm.com>
-Date: Fri, 14 Jul 2017 10:19:03 +0200
-Message-ID: <CAL9uMOE_7Ve2zKwSCZv39JrFaTbX8ry_eZ24sJg+vNXFM0TOiw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: x86: Do not gate clocks enabled by the firmware
-To: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Linux Upstreaming Team <linux@endlessm.com>, Enric Balletbo Serra <eballetbo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: keescook@chromium.org,
+	kernel-janitors@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 02/11] clk: moxart: Drop unnecessary static
+Date: Sat, 15 Jul 2017 22:07:37 +0200
+Message-Id: <1500149266-32357-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 13, 2017 at 5:54 PM, Darren Hart <dvhart@infradead.org> wrote:
-> On Thu, Jul 13, 2017 at 01:06:14PM +0300, Andy Shevchenko wrote:
->> On Thu, 2017-07-13 at 11:42 +0200, Carlo Caione wrote:
->> > From: Carlo Caione <carlo@endlessm.com>
->> >
->> > Read the enable register to determine if the clock is already in use
->> > by
->> > the firmware. In this case avoid gating the clock.
->> >
->>
->> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>
->> I suppose it should go via clock tree.
->>
->> > Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> > Signed-off-by: Carlo Caione <carlo@endlessm.com>
->> > ---
->> >  drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
->> >  1 file changed, 7 insertions(+)
->> >
->> > diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-
->> > atom.c
->> > index 2b60577703ef..3c73d2e564ca 100644
->> > --- a/drivers/clk/x86/clk-pmc-atom.c
->> > +++ b/drivers/clk/x86/clk-pmc-atom.c
->> > @@ -185,6 +185,13 @@ static struct clk_plt *plt_clk_register(struct
->> > platform_device *pdev, int id,
->> >     pclk->reg = base + PMC_CLK_CTL_OFFSET + id *
->> > PMC_CLK_CTL_SIZE;
->> >     spin_lock_init(&pclk->lock);
->> >
->> > +   /*
->> > +    * If the clock was already enabled by the firmware mark is a
->> > critical
->
-> Nit... I think this should read... "mark it as critical" ?
->
->> > +    * to avoid it being gated by the clock framework if no
->> > driver owns it
->
-> owns it.
+Drop static on a local variable, when the variable is initialized before
+any possible use.  Thus, the static has no benefit.
 
-Ooops. Yeah, submitting a v3 with better spelling and your ACKs.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+@bad exists@
+position p;
+identifier x;
+type T;
+@@
+static T x@p;
+...
+x = <+...x...+>
 
--- 
-Carlo Caione  |  +39.340.80.30.096  |  Endless
+@@
+identifier x;
+expression e;
+type T;
+position p != bad.p;
+@@
+-static
+ T x@p;
+ ... when != x
+     when strict
+?x = e;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+These patches are all independent of each other.
+
+ drivers/clk/clk-moxart.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
+--- a/drivers/clk/clk-moxart.c
++++ b/drivers/clk/clk-moxart.c
+@@ -18,7 +18,7 @@
+ 
+ static void __init moxart_of_pll_clk_init(struct device_node *node)
+ {
+-	static void __iomem *base;
++	void __iomem *base;
+ 	struct clk_hw *hw;
+ 	struct clk *ref_clk;
+ 	unsigned int mul;
+@@ -57,7 +57,7 @@ CLK_OF_DECLARE(moxart_pll_clock, "moxa,m
+ 
+ static void __init moxart_of_apb_clk_init(struct device_node *node)
+ {
+-	static void __iomem *base;
++	void __iomem *base;
+ 	struct clk_hw *hw;
+ 	struct clk *pll_clk;
+ 	unsigned int div, val;
