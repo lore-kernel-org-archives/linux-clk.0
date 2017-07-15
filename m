@@ -1,33 +1,48 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 00/11] Drop unnecessary static
+Date: Sat, 15 Jul 2017 22:07:35 +0200
+Message-Id: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-fbdev@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+ keescook@chromium.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
+ linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <20170730164150.26302-2-jernej.skrabec@siol.net>
-References: <20170730164150.26302-1-jernej.skrabec@siol.net> <20170730164150.26302-2-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 31 Jul 2017 12:54:53 +0800
-Message-ID: <CAGb2v65mVyS+4k+o70mBEOqDq2+4xrrEZex8BSLy83xZDsQKAw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: sunxi-ng: Fix fractional mode for N-M clocks
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 31, 2017 at 12:41 AM, Jernej Skrabec
-<jernej.skrabec@siol.net> wrote:
-> N-M factor clock driver is missing a call to ccu_frac_helper_enable()
-> when fractional mode is used. Additionally, most SoCs require that M
-> factor must be set to 0 when fractional mode is used.
->
-> Without this patch, clock keeps the old value and clk_set_rate() returns
-> without error.
->
-> Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
-> CC: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+These patches fix cases where there is a static on a local variable, but
+the variable is initialized before any possible use.  Thus, the static has
+no benefit.
 
-Queued as a fix for 4.13.
+---
 
-ChenYu
+ drivers/ata/sata_gemini.c                     |    2 +-
+ drivers/clk/clk-moxart.c                      |    4 ++--
+ drivers/clk/mmp/clk.c                         |    2 +-
+ drivers/iio/orientation/hid-sensor-rotation.c |    2 +-
+ drivers/irqchip/irq-digicolor.c               |    2 +-
+ drivers/irqchip/irq-gic-realview.c            |    2 +-
+ drivers/irqchip/irq-mips-cpu.c                |    2 +-
+ drivers/mfd/max8925-i2c.c                     |    2 +-
+ drivers/mfd/twl4030-irq.c                     |    2 +-
+ drivers/mtd/maps/physmap_of_versatile.c       |    2 +-
+ drivers/video/fbdev/da8xx-fb.c                |    2 +-
+ 11 files changed, 12 insertions(+), 12 deletions(-)
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
