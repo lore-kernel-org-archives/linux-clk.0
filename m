@@ -1,50 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Jul 2017 10:02:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v2 4/5] clk: qcom: gcc-msm8996: Mark
- gcc_mmss_noc_cfg_ahb_clk as a critical clock
-Message-ID: <20170728170236.GE2146@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-5-git-send-email-rnayak@codeaurora.org>
- <20170727225130.GQ2146@codeaurora.org>
- <319a0d15-354b-946b-da27-41d56fa0bb21@codeaurora.org>
- <20170728164058.GC2146@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:48645 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751293AbdGQROt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2017 13:14:49 -0400
+Subject: Re: [PATCH] dt-bindings: clock: ti-sci: Fix incorrect usage of
+ headers
+To: Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Suman Anna <s-anna@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Dave Gerlach <d-gerlach@ti.com>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20170711223615.29398-1-s-anna@ti.com>
+ <20170712010923.GP22780@codeaurora.org>
+ <20170717170457.4pkb6qaa3qbept5n@rob-hp-laptop>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Message-ID: <eeda0027-259b-4494-42d6-4f380d230134@oracle.com>
+Date: Mon, 17 Jul 2017 10:14:49 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170728164058.GC2146@codeaurora.org>
+In-Reply-To: <20170717170457.4pkb6qaa3qbept5n@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/28, Stephen Boyd wrote:
-> On 07/28, Rajendra Nayak wrote:
-> > 
-> > On 07/28/2017 04:21 AM, Stephen Boyd wrote:
-> > > On 07/20, Rajendra Nayak wrote:
-> > >> we have gcc_mmss_noc_cfg_ahb_clk marked with a CLK_IGNORE_UNUSED. While
-> > >> this can prevent it from being disabled while its unused, it does not
-> > >> prevent it from being disabled when a child derived from the clock calls
-> > >> an explicit enable/disable.
-> > > 
-> > > Do you mean the config_noc_clk_src is being disabled? Who is
-> > 
-> > I think the issue I saw was after I switched the parent from
-> > config_noc_clk_src to the RPM controlled cnoc_clk. That had to
-> > be kept voted, else some other ahb clock derived from it being
-> > disabled was causing the vote on cnoc_clk to be dropped.
+On 7/17/2017 10:04 AM, Rob Herring wrote:
+> On Tue, Jul 11, 2017 at 06:09:23PM -0700, Stephen Boyd wrote:
+>> On 07/11, Suman Anna wrote:
+>>> The clock consumer usage description was erroneously referring to
+>>> couple of dt-binding headers that are no longer valid. The definition
+>>> and/or usage of these headers is incorrect and the only file present
+>>> at the moment, dt-bindings/soc/k2g.h is also being cleaned up. The
+>>> examples in this binding were updated properly, but the update to
+>>> description was missed out. So, fix this.
+>>>
+>>> Fixes: 8f306cfe4383 ("Documentation: dt: Add TI SCI clock driver")
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> ---
+>>> Hi Stephen,
+>>>
+>>> Looks like this was missed during the update/repost of the ti-sci-clk
+>>> driver/binding. FYI, Santosh is going to pickup the header file cleanup
+>>> patch https://patchwork.kernel.org/patch/9741279/ for the next merge
+>>> window.
+>>
+>> I'll let Rob apply this as it is purely a binding document update.
 > 
-> Hmm ok. Maybe we have some sort of bus driver vote from the
-> multimedia clk driver in downstream code? Let me check.
+> Applied.
 > 
-
-Ah I was looking at the mmss file when I should have been looking
-at the gcc file. I see it downstream too, where we call
-clk_prepare_enable() during gcc boot. This patch looks fine.
-Eventually, it would make more sense to have this handled by the
-bus driver, but until we get there this is fine.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks Rob !!
