@@ -1,175 +1,72 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	cl@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2] clk: rockchip: rk3128: modify rk3128 clk driver to support rk3126
-Date: Tue, 25 Jul 2017 17:42:50 +0800
-Message-Id: <1500975770-25046-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 17 Jul 2017 11:14:44 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/11] mmc: sunxi: Keep default timing phase settings for
+ new timing mode
+Message-ID: <20170717091444.7yd2rcx3qdx35rmf@flea>
+References: <20170714064302.20383-1-wens@csie.org>
+ <20170714064302.20383-5-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nhfrmnkkstzxktmp"
+In-Reply-To: <20170714064302.20383-5-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-rk3128 and rk3126 have some gate registers describe differences.
-So need to make some distinctions.
-The RK3126 and RK3128 Same clock description we move it to
-the common clock branches.
-And the different clks description use the own clock branches.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3128.c | 69 +++++++++++++++++++++++++++++++--------
- 1 file changed, 55 insertions(+), 14 deletions(-)
+--nhfrmnkkstzxktmp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-index e243f2eae68f..62d7854e4b87 100644
---- a/drivers/clk/rockchip/clk-rk3128.c
-+++ b/drivers/clk/rockchip/clk-rk3128.c
-@@ -201,7 +201,7 @@ enum rk3128_plls {
- 	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS);
- 
--static struct rockchip_clk_branch rk3128_clk_branches[] __initdata = {
-+static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	/*
- 	 * Clock-Architecture Diagram 1
- 	 */
-@@ -459,10 +459,6 @@ enum rk3128_plls {
- 			RK2928_CLKSEL_CON(2), 14, 2, MFLAGS, 8, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(10), 15, GFLAGS),
- 
--	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_sclk_sfc_src_p, 0,
--			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
--			RK2928_CLKGATE_CON(3), 15, GFLAGS),
--
- 	COMPOSITE_NOMUX(PCLK_PMU_PRE, "pclk_pmu_pre", "cpll", 0,
- 			RK2928_CLKSEL_CON(29), 8, 6, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 0, GFLAGS),
-@@ -495,7 +491,6 @@ enum rk3128_plls {
- 	GATE(ACLK_DMAC, "aclk_dmac", "aclk_peri", 0, RK2928_CLKGATE_CON(5), 1, GFLAGS),
- 	GATE(0, "aclk_peri_niu", "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 15, GFLAGS),
- 	GATE(0, "aclk_cpu_to_peri", "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 2, GFLAGS),
--	GATE(HCLK_GPS, "hclk_gps", "aclk_peri", 0, RK2928_CLKGATE_CON(3), 14, GFLAGS),
- 
- 	GATE(HCLK_I2S_8CH, "hclk_i2s_8ch", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 4, GFLAGS),
- 	GATE(0, "hclk_peri_matrix", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 0, GFLAGS),
-@@ -541,7 +536,6 @@ enum rk3128_plls {
- 	GATE(0, "hclk_rom", "hclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 6, GFLAGS),
- 	GATE(HCLK_CRYPTO, "hclk_crypto", "hclk_cpu", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
- 
--	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8, GFLAGS),
- 	GATE(PCLK_ACODEC, "pclk_acodec", "pclk_cpu", 0, RK2928_CLKGATE_CON(5), 14, GFLAGS),
- 	GATE(0, "pclk_ddrupctl", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 7, GFLAGS),
- 	GATE(0, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 4, GFLAGS),
-@@ -561,6 +555,21 @@ enum rk3128_plls {
- 	MMC(SCLK_EMMC_SAMPLE,  "emmc_sample",  "sclk_emmc",  RK3228_EMMC_CON1,  0),
- };
- 
-+static struct rockchip_clk_branch rk3126_clk_branches[] __initdata = {
-+	GATE(0, "pclk_stimer", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
-+	GATE(0, "pclk_s_efuse", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
-+	GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 8, GFLAGS),
-+};
-+
-+static struct rockchip_clk_branch rk3128_clk_branches[] __initdata = {
-+	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_sclk_sfc_src_p, 0,
-+			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
-+			RK2928_CLKGATE_CON(3), 15, GFLAGS),
-+
-+	GATE(HCLK_GPS, "hclk_gps", "aclk_peri", 0, RK2928_CLKGATE_CON(3), 14, GFLAGS),
-+	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8, GFLAGS),
-+};
-+
- static const char *const rk3128_critical_clocks[] __initconst = {
- 	"aclk_cpu",
- 	"hclk_cpu",
-@@ -570,7 +579,7 @@ enum rk3128_plls {
- 	"pclk_peri",
- };
- 
--static void __init rk3128_clk_init(struct device_node *np)
-+static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
- {
- 	struct rockchip_clk_provider *ctx;
- 	void __iomem *reg_base;
-@@ -578,23 +587,21 @@ static void __init rk3128_clk_init(struct device_node *np)
- 	reg_base = of_iomap(np, 0);
- 	if (!reg_base) {
- 		pr_err("%s: could not map cru region\n", __func__);
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
- 
- 	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
- 	if (IS_ERR(ctx)) {
- 		pr_err("%s: rockchip clk init failed\n", __func__);
- 		iounmap(reg_base);
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
- 
- 	rockchip_clk_register_plls(ctx, rk3128_pll_clks,
- 				   ARRAY_SIZE(rk3128_pll_clks),
- 				   RK3128_GRF_SOC_STATUS0);
--	rockchip_clk_register_branches(ctx, rk3128_clk_branches,
--				  ARRAY_SIZE(rk3128_clk_branches));
--	rockchip_clk_protect_critical(rk3128_critical_clocks,
--				      ARRAY_SIZE(rk3128_critical_clocks));
-+	rockchip_clk_register_branches(ctx, common_clk_branches,
-+				  ARRAY_SIZE(common_clk_branches));
- 
- 	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
- 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
-@@ -606,6 +613,40 @@ static void __init rk3128_clk_init(struct device_node *np)
- 
- 	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
- 
-+	return ctx;
-+}
-+
-+static void __init rk3126_clk_init(struct device_node *np)
-+{
-+	struct rockchip_clk_provider *ctx;
-+
-+	ctx = rk3128_common_clk_init(np);
-+	if (IS_ERR(ctx))
-+		return;
-+
-+	rockchip_clk_register_branches(ctx, rk3126_clk_branches,
-+				       ARRAY_SIZE(rk3126_clk_branches));
-+	rockchip_clk_protect_critical(rk3128_critical_clocks,
-+				      ARRAY_SIZE(rk3128_critical_clocks));
-+
-+	rockchip_clk_of_add_provider(np, ctx);
-+}
-+
-+CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
-+
-+static void __init rk3128_clk_init(struct device_node *np)
-+{
-+	struct rockchip_clk_provider *ctx;
-+
-+	ctx = rk3128_common_clk_init(np);
-+	if (IS_ERR(ctx))
-+		return;
-+
-+	rockchip_clk_register_branches(ctx, rk3128_clk_branches,
-+				       ARRAY_SIZE(rk3128_clk_branches));
-+	rockchip_clk_protect_critical(rk3128_critical_clocks,
-+				      ARRAY_SIZE(rk3128_critical_clocks));
-+
- 	rockchip_clk_of_add_provider(np, ctx);
- }
- 
--- 
-1.9.1
+On Fri, Jul 14, 2017 at 02:42:55PM +0800, Chen-Yu Tsai wrote:
+> The register for the "new timing mode" also has bit fields for setting
+> output and sample timing phases. According to comments in Allwinner's
+> BSP kernel, the default values are good enough.
+>=20
+> Keep the default values already in the hardware when setting new timing
+> mode, instead of overwriting the whole register.
+>=20
+> Fixes: 9a37e53e451e ("mmc: sunxi: Enable the new timings for the A64 MMC
+> 		      controllers")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--nhfrmnkkstzxktmp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZbIAEAAoJEBx+YmzsjxAgdRMP/1nMO7KkZEks6LKP/YUj7j2O
+281pm4DHwCM7A/I5uzYez1SMky6CKoAzuYx77/uz9KZxLpX6rUOwxHCiSQl8+W86
+l1R1lD/dLovOVepWF1qpEvB/dc2u2wk0cqwgwsEcVVlFJsSQoZ9V+0amLZ7sSpnH
+J6pRJByrXvkG7jbp58gyVUUD5ifYIPruoobp3sUY/SFlPqsVWaC7VntuevFpe7M6
+yY25VNK8S3WOPaY6tZtexvrBmRkJuuTCvtMNYy0/DX8wWqzB+Z3DepiQqs4mcoqi
+kaRj9o19pUzrXUdf9hWzuPZ6DSGtgHAyAWiGX0NZpFY6CSJRQ7IEIDYmTv3GtWjx
+TNQ9mC3NE+NNSaZEJD2S3knvXKqzb+/wjB3rZmKU5x/UmMewvM7BM0Rl7eW4U9se
+3EC+8iGVwcW72h3/iW8QppCj0TGlDQFrhXRnkSmOlVJO2L5ttdBcLBYWnb6Hgbhw
+FCvjGlHzDadPPx0PQX/CdlXCzA8JhwmcG+Zt6Iq5jmiwMiuu6EKrWtqv3C7P3WnG
+Wk+sb1dYudjFzqrUs2x53a0vt2tIpkz8N9AEiS1QuH18jmoM/bkA8SXlio1lrTEU
+d7oPxJCZKetMWjrpm5xDgQSgIS8Hrl8Hcn3dN7tmJRyuRyx3GKrZ4aLvEmjM6xBx
+g/7fxpKQfOgn/YcBri4a
+=PpY+
+-----END PGP SIGNATURE-----
+
+--nhfrmnkkstzxktmp--
