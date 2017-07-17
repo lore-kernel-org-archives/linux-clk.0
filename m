@@ -1,39 +1,102 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH 3/8] clk: vc5: Do not warn about disabled output buffer
- input muxes
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20170629101851.23972-1-marek.vasut@gmail.com>
- <20170629101851.23972-3-marek.vasut@gmail.com>
- <20170630192647.GQ22780@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
- Alexey Firago <alexey_firago@mentor.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-renesas-soc@vger.kernel.org
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <203e6712-bcf1-8b4f-46d4-33cb3108c21b@gmail.com>
-Date: Sat, 1 Jul 2017 22:00:12 +0200
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 17 Jul 2017 12:13:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+	carlo@caione.org, narmstrong@baylibre.com, jbrunet@baylibre.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux@armlinux.org.uk, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [PATCH 1/2] clk: meson: meson8b: register the built-in reset
+ controller
+Message-ID: <20170717171329.nddlcslge6u33noc@rob-hp-laptop>
+References: <20170711224939.26267-1-martin.blumenstingl@googlemail.com>
+ <20170711224939.26267-2-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170630192647.GQ22780@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170711224939.26267-2-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/30/2017 09:26 PM, Stephen Boyd wrote:
-> On 06/29, Marek Vasut wrote:
->> @@ -549,6 +552,7 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
->>  
->>  	dev_warn(&vc5->client->dev,
->>  		 "Invalid clock output configuration (%02x)\n", src);
->> +
->>  	return 0;
->>  }
->>  
-> 
-> Please drop this hunk as it isn't relevant to the patch.
-> 
-Done in V2, thanks.
+On Wed, Jul 12, 2017 at 12:49:38AM +0200, Martin Blumenstingl wrote:
+> The clock controller has a reset controller embedded. A large part of
+> the HHI_SYS_CPU_CLK_CNTL0 register contains reset bits. However, most of
+> them are only used by u-boot (as these are probably dangerous to use
+> when Linux is running).
 
--- 
-Best regards,
-Marek Vasut
+u-boot reads DT's. The DT should be defined for the h/w, not what you 
+want for Linux today.
+
+> Bits 27:24 are interesting though: these are the CPUx core soft reset
+> bits (bit 24 = CPU0 soft reset, bit 25 = CPU1 ...).
+> 
+> This patch implements a reset controller for these bits. The reset
+> controller itself is registered early (through CLK_OF_DECLARE_DRIVER)
+> because it is neede very early in the boot process (to start the
+> secondary CPU cores).
+> 
+> Other reset bits in the HHI_SYS_CPU_CLK_CNTL0 register, which are not
+> implemented by this patch (as these may never be used from within the
+> Linux kernel - and I don't want to add dead code):
+> - bit 30: L2 cache soft reset
+> - bit 29: AXI64to128 bridge (A5-to-MMC) soft reset (A5 interface)
+> - bit 28: SCU soft reset
+> - bit 18: A5 Global Reset
+> - bit 17: A5 AXI Soft Reset
+> - bit 16: A5 APB Soft Reset
+> - bit 15: GEN_DIV_SOFT_RESET
+> - bit 14: SOFT_RESET
+> 
+> All information was taken from the public S805 Datasheet and Amlogic's
+> vendor GPL kernel sources. This patch is based on an earlier version
+> submitted by Carlo Caione.
+> 
+> Suggested-by: Carlo Caione <carlo@endlessm.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  .../bindings/clock/amlogic,meson8b-clkc.txt        |   7 +-
+
+It's preferred to split bindings to a separate patch. Given all the 
+commentary about Linux, I'd suggest you do that here (so the Linux 
+details are gone from the binding patch).
+
+>  drivers/clk/meson/Kconfig                          |   1 +
+>  drivers/clk/meson/meson8b.c                        | 109 ++++++++++++++++++---
+>  drivers/clk/meson/meson8b.h                        |   1 +
+>  4 files changed, 105 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> index 606da38c0959..6f444e3867a0 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> @@ -16,18 +16,23 @@ Required Properties:
+>  	   mapped region.
+>  
+>  - #clock-cells: should be 1.
+> +- #reset-cells: should be 1.
+>  
+>  Each clock is assigned an identifier and client nodes can use this identifier
+>  to specify the clock which they consume. All available clocks are defined as
+>  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+>  used in device tree sources.
+>  
+> +The clock controller provides a (soft) reset line for each CPU core. Valid
+> +reset lines are 0, 1, 2 and 3 (one for each CPU core).
+
+I suspect you would have different numbering if you enumerate all the 
+possible resets. Is it just this one register that has reset bits? If 
+so, I'd suggest using the bit position as the cell values. If not, well, 
+just enumerate them all.
+
+> +
+>  Example: Clock controller node:
+>  
+>  	clkc: clock-controller@c1104000 {
+> -		#clock-cells = <1>;
+>  		compatible = "amlogic,meson8b-clkc";
+>  		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+>  	};
+>  
+>  
