@@ -1,76 +1,39 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 17 Jul 2017 13:51:26 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 07/11] mmc: sunxi: Add support for A83T eMMC (MMC2)
-Date: Fri, 14 Jul 2017 14:42:58 +0800
-Message-Id: <20170714064302.20383-8-wens@csie.org>
-In-Reply-To: <20170714064302.20383-1-wens@csie.org>
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 07/11] mmc: sunxi: Add support for A83T eMMC (MMC2)
+Message-ID: <20170717185126.rrhriqckjextpaxj@rob-hp-laptop>
 References: <20170714064302.20383-1-wens@csie.org>
+ <20170714064302.20383-8-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170714064302.20383-8-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
-different. It supports a wider 8-bit bus, has a dedicated controllable
-reset pin for eMMC, and a "new timing mode" which is supposed to deliver
-better signals and thus better performance.
+On Fri, Jul 14, 2017 at 02:42:58PM +0800, Chen-Yu Tsai wrote:
+> The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
+> different. It supports a wider 8-bit bus, has a dedicated controllable
+> reset pin for eMMC, and a "new timing mode" which is supposed to deliver
+> better signals and thus better performance.
+> 
+> Add a compatible for this one to use the new timing mode not found in the
+> other controllers.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
 
-Add a compatible for this one to use the new timing mode not found in the
-other controllers.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
- drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
- 2 files changed, 9 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-index 7d53a799f140..63b57e2a10fb 100644
---- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-@@ -12,6 +12,7 @@ Required properties:
-    * "allwinner,sun4i-a10-mmc"
-    * "allwinner,sun5i-a13-mmc"
-    * "allwinner,sun7i-a20-mmc"
-+   * "allwinner,sun8i-a83t-emmc"
-    * "allwinner,sun9i-a80-mmc"
-    * "allwinner,sun50i-a64-emmc"
-    * "allwinner,sun50i-a64-mmc"
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 7b6f5f49620e..e70065dbd50e 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1113,6 +1113,13 @@ static const struct sunxi_mmc_cfg sun7i_a20_cfg = {
- 	.can_calibrate = false,
- };
- 
-+static const struct sunxi_mmc_cfg sun8i_a83t_emmc_cfg = {
-+	.idma_des_size_bits = 16,
-+	.clk_delays = sunxi_mmc_clk_delays,
-+	.can_calibrate = false,
-+	.has_new_timings = true,
-+};
-+
- static const struct sunxi_mmc_cfg sun9i_a80_cfg = {
- 	.idma_des_size_bits = 16,
- 	.clk_delays = sun9i_mmc_clk_delays,
-@@ -1137,6 +1144,7 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
- 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
- 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
- 	{ .compatible = "allwinner,sun7i-a20-mmc", .data = &sun7i_a20_cfg },
-+	{ .compatible = "allwinner,sun8i-a83t-emmc", .data = &sun8i_a83t_emmc_cfg },
- 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
--- 
-2.13.2
+>  drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
+>  2 files changed, 9 insertions(+)
