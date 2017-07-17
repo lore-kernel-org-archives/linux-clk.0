@@ -1,158 +1,131 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com
-Subject: Re: [PATCH v1] clk: rockchip: rk3128: modify rk3128 clk driver to support rk3126
-Date: Tue, 25 Jul 2017 10:07:02 +0200
-Message-ID: <2781955.2VuQGUX9V5@diego>
-In-Reply-To: <1500966996-5660-1-git-send-email-zhangqing@rock-chips.com>
-References: <1500966996-5660-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 17 Jul 2017 11:14:02 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 03/11] clk: sunxi-ng: a83t: Support new timing mode for
+ mmc2 clock
+Message-ID: <20170717091402.3qb3fhdyhfbv6t66@flea>
+References: <20170714064302.20383-1-wens@csie.org>
+ <20170714064302.20383-4-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="om4kxkl4nhgdhtcm"
+In-Reply-To: <20170714064302.20383-4-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
 
-Am Dienstag, 25. Juli 2017, 15:16:36 CEST schrieb Elaine Zhang:
-> rk3128 and rk3126 have some gate registers describe differences.
-> So need to make some distinctions.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+--om4kxkl4nhgdhtcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Jul 14, 2017 at 02:42:54PM +0800, Chen-Yu Tsai wrote:
+> The MMC2 clock supports a new timing mode. When the new mode is active,
+> the output clock rate is halved.
+>=20
+> This patch sets the feature flag for the new timing mode, and adds
+> a pre-divider based on the mode bit.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  drivers/clk/rockchip/clk-rk3128.c      | 59
-> +++++++++++++++++++++++++++++++--- include/dt-bindings/clock/rk3128-cru.h |
->  3 ++
->  2 files changed, 57 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3128.c
-> b/drivers/clk/rockchip/clk-rk3128.c index e243f2eae68f..0039b8940900 100644
-> --- a/drivers/clk/rockchip/clk-rk3128.c
-> +++ b/drivers/clk/rockchip/clk-rk3128.c
-> @@ -459,9 +459,8 @@ enum rk3128_plls {
->  			RK2928_CLKSEL_CON(2), 14, 2, MFLAGS, 8, 5, DFLAGS,
->  			RK2928_CLKGATE_CON(10), 15, GFLAGS),
-> 
-> -	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_sclk_sfc_src_p, 0,
-> -			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
-> -			RK2928_CLKGATE_CON(3), 15, GFLAGS),
-> +	COMPOSITE_NOGATE(0, "sclk_sfc_src", mux_sclk_sfc_src_p, 0,
-> +			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS),
-> 
->  	COMPOSITE_NOMUX(PCLK_PMU_PRE, "pclk_pmu_pre", "cpll", 0,
->  			RK2928_CLKSEL_CON(29), 8, 6, DFLAGS,
-> @@ -495,7 +494,6 @@ enum rk3128_plls {
->  	GATE(ACLK_DMAC, "aclk_dmac", "aclk_peri", 0, RK2928_CLKGATE_CON(5), 1,
-> GFLAGS), GATE(0, "aclk_peri_niu", "aclk_peri", CLK_IGNORE_UNUSED,
-> RK2928_CLKGATE_CON(9), 15, GFLAGS), GATE(0, "aclk_cpu_to_peri",
-> "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 2, GFLAGS),
-> -	GATE(HCLK_GPS, "hclk_gps", "aclk_peri", 0, RK2928_CLKGATE_CON(3), 14,
-> GFLAGS),
-> 
->  	GATE(HCLK_I2S_8CH, "hclk_i2s_8ch", "hclk_peri", 0, RK2928_CLKGATE_CON(7),
-> 4, GFLAGS), GATE(0, "hclk_peri_matrix", "hclk_peri", CLK_IGNORE_UNUSED,
-> RK2928_CLKGATE_CON(4), 0, GFLAGS), @@ -541,7 +539,6 @@ enum rk3128_plls {
->  	GATE(0, "hclk_rom", "hclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5),
-> 6, GFLAGS), GATE(HCLK_CRYPTO, "hclk_crypto", "hclk_cpu", 0,
-> RK2928_CLKGATE_CON(3), 5, GFLAGS),
-> 
-> -	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8,
-> GFLAGS), GATE(PCLK_ACODEC, "pclk_acodec", "pclk_cpu", 0,
-> RK2928_CLKGATE_CON(5), 14, GFLAGS), GATE(0, "pclk_ddrupctl", "pclk_cpu",
-> CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 7, GFLAGS), GATE(0, "pclk_grf",
-> "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 4, GFLAGS), @@ -574,6
-> +571,7 @@ static void __init rk3128_clk_init(struct device_node *np) {
->  	struct rockchip_clk_provider *ctx;
->  	void __iomem *reg_base;
-> +	struct clk *clk;
-> 
->  	reg_base = of_iomap(np, 0);
->  	if (!reg_base) {
-> @@ -593,6 +591,57 @@ static void __init rk3128_clk_init(struct device_node
-> *np) RK3128_GRF_SOC_STATUS0);
->  	rockchip_clk_register_branches(ctx, rk3128_clk_branches,
->  				  ARRAY_SIZE(rk3128_clk_branches));
-> +
-> +	if (of_machine_is_compatible("rockchip,rk3128")) {
-> +		clk = clk_register_gate(NULL, "sclk_sfc", "sclk_sfc_src", 0,
-> +				ctx->reg_base + RK2928_CLKGATE_CON(3), 15, GFLAGS, &ctx->lock);
-> +		if (IS_ERR(clk))
-> +			pr_warn("%s: could not register clock sclk_sfc: %ld\n",
-> +				__func__, PTR_ERR(clk));
-> +		else
-> +			rockchip_clk_add_lookup(ctx, clk, SCLK_SFC);
-> +
+>  drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 38 +++++++++++++++++++++++++++--=
+------
+>  1 file changed, 30 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng=
+/ccu-sun8i-a83t.c
+> index 947f9f6e05d2..ee6688e9b361 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+> @@ -418,14 +418,36 @@ static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1-sampl=
+e", "mmc1",
+>  static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1-output", "mmc1",
+>  		       0x08c, 8, 3, 0);
+> =20
+> -/* TODO Support MMC2 clock's new timing mode. */
+> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
+> -				  0x090,
+> -				  0, 4,		/* M */
+> -				  16, 2,	/* P */
+> -				  24, 2,	/* mux */
+> -				  BIT(31),	/* gate */
+> -				  0);
+> +/*
+> + * MMC2 supports both old and new timing modes. When the new timing
+> + * mode is active, the output clock rate is halved by two. Here we
+> + * treat it as a variable pre-divider. Note that the pre-divider is
+> + * _not_ included in the possible factors during a set clock rate
+> + * operation. It is only read out.
+> + */
+> +static const struct ccu_mux_var_prediv mmc2_new_timing_predivs[] =3D {
+> +	{ .index =3D 0, .shift =3D 30, .width =3D 1 },
+> +	{ .index =3D 1, .shift =3D 30, .width =3D 1 },
+> +};
+> +static struct ccu_mp mmc2_clk =3D {
+> +	.enable =3D BIT(31),
+> +	.m      =3D _SUNXI_CCU_DIV(0, 4),
+> +	.p      =3D _SUNXI_CCU_DIV(16, 2),
+> +	.mux    =3D {
+> +		.shift  =3D 24,
+> +		.width  =3D 2,
+> +		.var_predivs    =3D mmc2_new_timing_predivs,
+> +		.n_var_predivs  =3D ARRAY_SIZE(mmc2_new_timing_predivs),
+> +	},
+> +	.common         =3D {
+> +		.reg            =3D 0x090,
+> +		.features	=3D CCU_FEATURE_MMC_TIMING_SWITCH,
+> +		.hw.init        =3D CLK_HW_INIT_PARENTS("mmc2",
+> +						      mod0_default_parents,
+> +						      &ccu_mp_ops,
+> +						      CLK_GET_RATE_NOCACHE),
+> +	},
+> +};
 
-Instead of having this in (hard to read) open code, could you look at how
-rk3066/rk3188 does that please?
+Treating the new bit seems a bit of a hack to me. It only works
+because we're not evaluating the various pre-dividers during a
+determine_rate (and set_rate), but it might change in the future, and
+we will break all our eMMC controllers then.
 
-I.e. have the differences in separate tables (common clocks stay in the same 
-table of course) and then use a real rockchip,rk3128-cru / rockchip,rk3126-cru 
-clock init to use the correct set of clock tables.
+Since they're quite special, I was thinking about creating a new MMC
+clock type? We're going to use it on a number of SoCs, and we'll be
+able to model it properly, without crippling the regular and generic
+MP clocks.
 
+Maxime
 
-Thanks
-Heiko
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> +		clk = clk_register_gate(NULL, "hclk_gps", "aclk_peri", 0,
-> +				ctx->reg_base + RK2928_CLKGATE_CON(3), 14, GFLAGS, &ctx->lock);
-> +		if (IS_ERR(clk))
-> +			pr_warn("%s: could not register clock hclk_gps: %ld\n",
-> +				__func__, PTR_ERR(clk));
-> +		else
-> +			rockchip_clk_add_lookup(ctx, clk, HCLK_GPS);
-> +
-> +		clk = clk_register_gate(NULL, "pclk_hdmi", "pclk_cpu", 0,
-> +				ctx->reg_base + RK2928_CLKGATE_CON(3), 8, GFLAGS, &ctx->lock);
-> +		if (IS_ERR(clk))
-> +			pr_warn("%s: could not register clock pclk_hdmi: %ld\n",
-> +				__func__, PTR_ERR(clk));
-> +		else
-> +			rockchip_clk_add_lookup(ctx, clk, PCLK_HDMI);
-> +	} else {
-> +		clk = clk_register_gate(NULL, "pclk_stimer", "pclk_cpu",
-> CLK_IGNORE_UNUSED, +				ctx->reg_base + RK2928_CLKGATE_CON(3), 15, 
-GFLAGS,
-> &ctx->lock); +		if (IS_ERR(clk))
-> +			pr_warn("%s: could not register clock pclk_stimer: %ld\n",
-> +				__func__, PTR_ERR(clk));
-> +		else
-> +			rockchip_clk_add_lookup(ctx, clk, PCLK_STIMER);
-> +
-> +		clk = clk_register_gate(NULL, "pclk_s_efuse", "pclk_cpu",
-> CLK_IGNORE_UNUSED, +				ctx->reg_base + RK2928_CLKGATE_CON(3), 14, 
-GFLAGS,
-> &ctx->lock); +		if (IS_ERR(clk))
-> +			pr_warn("%s: could not register clock pclk_s_efuse: %ld\n",
-> +				__func__, PTR_ERR(clk));
-> +		else
-> +			rockchip_clk_add_lookup(ctx, clk, PCLK_S_EFUSE);
-> +
-> +		clk = clk_register_gate(NULL, "pclk_sgrf", "pclk_cpu", 
-CLK_IGNORE_UNUSED,
-> +				ctx->reg_base + RK2928_CLKGATE_CON(3), 8, GFLAGS, &ctx->lock); +		
-if
-> (IS_ERR(clk))
-> +			pr_warn("%s: could not register clock pclk_sgrf: %ld\n",
-> +				__func__, PTR_ERR(clk));
-> +		else
-> +			rockchip_clk_add_lookup(ctx, clk, PCLK_SGRF);
-> +	}
-> +
->  	rockchip_clk_protect_critical(rk3128_critical_clocks,
->  				      ARRAY_SIZE(rk3128_critical_clocks));
-> 
-> diff --git a/include/dt-bindings/clock/rk3128-cru.h
-> b/include/dt-bindings/clock/rk3128-cru.h index 92894f4306cf..0451c9c42375
-> 100644
-> --- a/include/dt-bindings/clock/rk3128-cru.h
-> +++ b/include/dt-bindings/clock/rk3128-cru.h
-> @@ -125,6 +125,9 @@
->  #define PCLK_GMAC		367
->  #define PCLK_PMU_PRE		368
->  #define PCLK_SIM_CARD		369
-> +#define PCLK_STIMER		370
-> +#define PCLK_S_EFUSE		371
-> +#define PCLK_SGRF		372
-> 
->  /* hclk gates */
->  #define HCLK_SPDIF		440
+--om4kxkl4nhgdhtcm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZbH/aAAoJEBx+YmzsjxAg+tQP/102WYi/Phzgvr9gh9Q4GQ6S
+w7TH3zyjrJMqjWyXccGyInKG+kskFE2jujssGvoO23nTBGbudo61Z1rcT5ejtgMG
+otiwLQU9VmQYyJuoqSmAuFyXECYg4bqTln64ksDsN7OZJ7O9xsm44TeHQ6PhlhhN
+VwsNuJUETaNQ6XuKVydPoFe5pLAy/aSwAzOBz3iUwAtrDzFY5D2wF5svDxkfKCtp
+LNoxwGTuJMbQH4fQIMFFP+m2DHiEfE106ttO19cM3Vny12+koL6hk30pJ8bO3S9E
+DDn9U+d+vpfpHVK1OsEqqyPZH//iDLzHmmYfZBMDP+Ev21OdfFp0khAanIoF8jPE
+LSsQgvE5ReMz8EdR8dxBIzSCBSdheDeNY3knTZGnd7dZxEkyTsj4OEkzd+zTtArF
+8NG7sZ86ryS3mwcM7JdTUU37FI5rwPSZbStluy97SDUsfMlrJUCHLnGl77z/zrBy
+kwWPgkYNBIwJqc+b8ewyLRCqbcq8JUMc/iNo8bd5+CkC7XrUfXZo/11XaG6N2th+
+x06MCrldbhzKpLiGshrjz2v5WpEMGUgWcvL11jB5oTxVn6ngbUcc2hB85C2nyA34
+HsWg40mRkz4LFnJ7QcWXbM0h2jYpkMmT1azYwPiPhj5a+buKTrS2Djb7EnuE6MQi
+KiF6OqRQ4LV2Vkpx5YZt
+=ffHv
+-----END PGP SIGNATURE-----
+
+--om4kxkl4nhgdhtcm--
