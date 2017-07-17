@@ -1,51 +1,82 @@
-Return-Path: <plaes@plaes.org>
-From: Priit Laes <plaes@plaes.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>,
-	Priit Laes <plaes@plaes.org>
-Subject: [PATCH v6 3/6] dt-bindings: List devicetree binding for the CCU of Allwinner A20
-Date: Fri, 14 Jul 2017 17:49:25 +0300
-Message-Id: <aa7b3671a3a14ba0b3540621aa8f9b52f942e55a.1500043741.git-series.plaes@plaes.org>
-In-Reply-To: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
-References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
-In-Reply-To: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
-References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170717091801.GA2129@katana>
+References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
+ <20170714142559.p6xp6dp4whlqcr5n@ninjato> <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
+ <20170717091801.GA2129@katana>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jul 2017 12:18:39 +0200
+Message-ID: <CAMuHMdVhuN1ozEmtDJnn63rvktE7Aj4FACzweaJzCMzP1q8BKw@mail.gmail.com>
+Subject: Re: clk: renesas: rcar-gen3: Fix error return code in cpg_sd_clock_recalc_rate
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A20 is now driven by sunxi-ng CCU driver.
+Hi Wolfram,
 
-Add devicetree binding for it.
+On Mon, Jul 17, 2017 at 11:18 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> >> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
+>> >> error occurs, but -EINVAL is returned. This patch fixes it.
+>> >>
+>> >> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code")
+>> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> >> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> >
+>> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>
+>> Why is it desirable to return 0 if an error occurs? Because the return type is
+>> unsigned long?
+>
+> Yes, I'd think so. Instead of an arbitrary high, kind-of-random, number, just
+> return 0 which also indicates that something unexpected happened? Also, all
+> other drivers return zero in an error case (did some quick coccinelle
+> grepping before).
 
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
- 1 file changed, 1 insertion(+)
+OK.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index df9fad5..81d0fa4 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -4,6 +4,7 @@ Allwinner Clock Control Unit Binding
- Required properties :
- - compatible: must contain one of the following compatibles:
- 		- "allwinner,sun6i-a31-ccu"
-+		- "allwinner,sun7i-a20-ccu"
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
- 		- "allwinner,sun8i-a83t-ccu"
--- 
-git-series 0.9.1
+>> Is this routine allowed to fail? I don't see any handling of zero by
+>> its callers.
+>
+> From clk-provider.h:
+>
+>  * @recalc_rate Recalculate the rate of this clock, by querying hardware. The
+>  *              parent rate is an input parameter.  It is up to the caller to
+>  *              ensure that the prepare_mutex is held across this call.
+>  *              Returns the calculated rate.  Optional, but recommended - if
+>  *              this op is not set then clock rate will be initialized to 0.
+>
+> What would be the benefit of keeping -EINVAL in an unsigned long?
+
+I do not mean that -EINVAL is correct. Obviously it isn't. But blindly
+replacing -EINVAL by zero may not be the right solution neither.
+
+If recalc_rate cannot return an error value, perhaps there is a good reason
+for that?
+
+I see there's a similar check in cpg_sd_clock_enable(), so the clock also
+cannot be enabled if this condition is met?
+
+When does this happen? If the firmware leaves a invalid/unsupported setting
+in the register? If we can't recover from that, perhaps the clock's probe
+should just fail instead?
+
+It looks like the only writer of that field is cpg_sd_clock_set_rate(),
+which always writes a valid/supported value. Is it guaranteed that this
+function is always called first?
+If yes, the checks can just be removed instead?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
