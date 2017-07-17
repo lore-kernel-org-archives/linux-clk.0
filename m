@@ -1,101 +1,120 @@
-Return-Path: <wens@csie.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 17 Jul 2017 10:54:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>
+Subject: Re: [PATCH v6 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU driver
+Message-ID: <20170717085449.runn4azmedh2kgwy@flea>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+ <f03e50040dc2d3dc3edd6be071510feeb953161d.1500043741.git-series.plaes@plaes.org>
 MIME-Version: 1.0
-In-Reply-To: <20170717091402.3qb3fhdyhfbv6t66@flea>
-References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-4-wens@csie.org>
- <20170717091402.3qb3fhdyhfbv6t66@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 17 Jul 2017 18:12:35 +0800
-Message-ID: <CAGb2v67Ofdr9zL=o82F6-90meYZGaYtr_zy7y-OeBH30n1gERQ@mail.gmail.com>
-Subject: Re: [PATCH 03/11] clk: sunxi-ng: a83t: Support new timing mode for
- mmc2 clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sjgiboxosfyvjiw2"
+In-Reply-To: <f03e50040dc2d3dc3edd6be071510feeb953161d.1500043741.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 17, 2017 at 5:14 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Fri, Jul 14, 2017 at 02:42:54PM +0800, Chen-Yu Tsai wrote:
->> The MMC2 clock supports a new timing mode. When the new mode is active,
->> the output clock rate is halved.
->>
->> This patch sets the feature flag for the new timing mode, and adds
->> a pre-divider based on the mode bit.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 38 +++++++++++++++++++++++++++--------
->>  1 file changed, 30 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
->> index 947f9f6e05d2..ee6688e9b361 100644
->> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
->> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
->> @@ -418,14 +418,36 @@ static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1-sample", "mmc1",
->>  static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1-output", "mmc1",
->>                      0x08c, 8, 3, 0);
->>
->> -/* TODO Support MMC2 clock's new timing mode. */
->> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
->> -                               0x090,
->> -                               0, 4,         /* M */
->> -                               16, 2,        /* P */
->> -                               24, 2,        /* mux */
->> -                               BIT(31),      /* gate */
->> -                               0);
->> +/*
->> + * MMC2 supports both old and new timing modes. When the new timing
->> + * mode is active, the output clock rate is halved by two. Here we
->> + * treat it as a variable pre-divider. Note that the pre-divider is
->> + * _not_ included in the possible factors during a set clock rate
->> + * operation. It is only read out.
->> + */
->> +static const struct ccu_mux_var_prediv mmc2_new_timing_predivs[] = {
->> +     { .index = 0, .shift = 30, .width = 1 },
->> +     { .index = 1, .shift = 30, .width = 1 },
->> +};
->> +static struct ccu_mp mmc2_clk = {
->> +     .enable = BIT(31),
->> +     .m      = _SUNXI_CCU_DIV(0, 4),
->> +     .p      = _SUNXI_CCU_DIV(16, 2),
->> +     .mux    = {
->> +             .shift  = 24,
->> +             .width  = 2,
->> +             .var_predivs    = mmc2_new_timing_predivs,
->> +             .n_var_predivs  = ARRAY_SIZE(mmc2_new_timing_predivs),
->> +     },
->> +     .common         = {
->> +             .reg            = 0x090,
->> +             .features       = CCU_FEATURE_MMC_TIMING_SWITCH,
->> +             .hw.init        = CLK_HW_INIT_PARENTS("mmc2",
->> +                                                   mod0_default_parents,
->> +                                                   &ccu_mp_ops,
->> +                                                   CLK_GET_RATE_NOCACHE),
->> +     },
->> +};
->
-> Treating the new bit seems a bit of a hack to me. It only works
-> because we're not evaluating the various pre-dividers during a
-> determine_rate (and set_rate), but it might change in the future, and
-> we will break all our eMMC controllers then.
->
-> Since they're quite special, I was thinking about creating a new MMC
-> clock type? We're going to use it on a number of SoCs, and we'll be
-> able to model it properly, without crippling the regular and generic
-> MP clocks.
 
-Yes that should be doable. I could put them in the same file and
-reuse all the existing MP clocks stuff by wrapping them in new
-functions that check the timing mode bit.
+--sjgiboxosfyvjiw2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Would that work for you?
+Hi,
 
-ChenYu
+On Fri, Jul 14, 2017 at 05:49:24PM +0300, Priit Laes wrote:
+> Introduce a clock controller driver for sun4i A10 and sun7i A20
+> series SoCs.
+>=20
+> Signed-off-by: Priit Laes <plaes@plaes.org>
+> ---
+>  drivers/clk/sunxi-ng/Kconfig              |   13 +-
+>  drivers/clk/sunxi-ng/Makefile             |    1 +-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.c      | 1454 ++++++++++++++++++++++-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   61 +-
+>  include/dt-bindings/clock/sun4i-a10-ccu.h |  200 +++-
+>  include/dt-bindings/clock/sun7i-a20-ccu.h |   53 +-
+>  include/dt-bindings/reset/sun4i-a10-ccu.h |   69 +-
+>  7 files changed, 1851 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
+>  create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
+>  create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
+>=20
+> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> index 7342928..1b5cea9 100644
+> --- a/drivers/clk/sunxi-ng/Kconfig
+> +++ b/drivers/clk/sunxi-ng/Kconfig
+> @@ -11,6 +11,19 @@ config SUN50I_A64_CCU
+>  	default ARM64 && ARCH_SUNXI
+>  	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> =20
+> +config SUNXI_A10_CCU
+> +	bool "Support for the Allwinner A10/A20 CCU"
+> +	select SUNXI_CCU_DIV
+> +	select SUNXI_CCU_MULT
+> +	select SUNXI_CCU_NK
+> +	select SUNXI_CCU_NKM
+> +	select SUNXI_CCU_NM
+> +	select SUNXI_CCU_MP
+> +	select SUNXI_CCU_PHASE
+> +	default MACH_SUN4I
+> +	default MACH_SUN7I
+> +	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
+
+I'm a bit late on this one, but I agree with Olliver, it should be
+called SUN4I_A10. This is what we do for all the other symbols (and it
+should be ordered as such).
+
+> +
+>  config SUN5I_CCU
+>  	bool "Support for the Allwinner sun5i family CCM"
+>  	default MACH_SUN5I
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index 0c45fa5..01e958c 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -21,6 +21,7 @@ lib-$(CONFIG_SUNXI_CCU)		+=3D ccu_mp.o
+>  obj-$(CONFIG_SUN50I_A64_CCU)	+=3D ccu-sun50i-a64.o
+>  obj-$(CONFIG_SUN5I_CCU)		+=3D ccu-sun5i.o
+>  obj-$(CONFIG_SUN6I_A31_CCU)	+=3D ccu-sun6i-a31.o
+> +obj-$(CONFIG_SUNXI_A10_CCU)	+=3D ccu-sun4i-a10.o
+
+The ordering is wrong here too.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--sjgiboxosfyvjiw2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZbHtZAAoJEBx+YmzsjxAgyxYQAKwnTPBdXUUn/NBuimajqmXf
+SjcNVD7NOsuk6WKWlsrZXnjTnexfxdlIHyfiTj2dF+4uxZdsihpLQ5lnwput8afF
+esaF9MTqHvTfLrjUgnyZn3Qm6AqpOR93FZ+67YH3Ybj7GAaBX/50H5GrtNtHjXs+
+V7mz+aiMT+2QcgUS5kMAZ5WTYL3o9lsVe8aN4HeCLB83flntUTaX8yipKEm7kz2k
+cPca4KouGHkf7G9wm+N7jK+e0PKQg4goixE2hud+2he/qOFws/hsg9mn0pIhrWZg
+uYY4O+/4BQkaOX6qNhn3hj+kmsa8ulb4BfMEW+4DrAb+ASzO07dhQ9/KVv32Okms
+wbN1888Ha34kfhCnyGbRrmRWFDI6RNYmMiioBrO5LH4W6rn/6/bk+HVK8FJ51pAq
+6/qPMiPtZfJNaMlRgGo1ip1hGAj9ulwh+e3Ea0hF4lfIhEpXzjuzjIzxob+Qi+Lf
+sOMmRIzsUFQZ7yPL1KjLnvq9osHaMsoYIwtrw3LR3uZPUV6J4K2grw1h+e95SHSm
+TNXXmyKgg8ds3BG9HdFMmVICA/SITjxGzaUfwLG3c8qfEx3LOhYR/EUHkdYBXg2+
+hOUWROtE2HYTLBa9aFbMxizY2GJrkTz2Mjoa76CeAqYg6nNKjF2zKS1sIMb75vTg
+GCYZ0SFB+/g+XMCSxGiF
+=GB0P
+-----END PGP SIGNATURE-----
+
+--sjgiboxosfyvjiw2--
