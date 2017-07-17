@@ -1,42 +1,145 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 02/14] clk: tegra: Enable PLL_SS for Tegra210
-Date: Tue, 25 Jul 2017 13:34:03 +0300
-Message-ID: <1500978856-5981-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: Allow compile-testing of all (sub)drivers
+Date: Mon, 17 Jul 2017 14:04:03 +0200
+Message-Id: <1500293043-14654-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure the pll_ss ops are compiled even when only building for Tegra210.
+Enable compile-testing of the remaining clock drivers and subdrivers,
+now dummies are available for of_clk_get_from_provider(),
+of_device_compatible_match(), and rcar_rst_read_mode_pins(), and the
+CPG/MSSR driver core has been converted from of_match_node() to
+of_device_get_match_data().
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Reviewed-by: Shreshtha Sahu <ssahu@nvidia.com>
-Tested-by: Shreshtha Sahu <ssahu@nvidia.com>
-Reviewed-by: Jon Mayo <jmayo@nvidia.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/tegra/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+To be queued in clk-renesas-for-v4.14.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index e9bdb16..fbd8726 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2255,7 +2255,7 @@ struct clk *
- }
- #endif
+ drivers/clk/renesas/Kconfig | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 78d1df9112ba3932..85526ca3920229c8 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -34,94 +34,94 @@ config CLK_EMEV2
+ 	bool "Emma Mobile EV2 clock support" if COMPILE_TEST
  
--#if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
-+#if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC) || defined(CONFIG_ARCH_TEGRA_210_SOC)
- static const struct clk_ops tegra_clk_pllss_ops = {
- 	.is_enabled = clk_pll_is_enabled,
- 	.enable = clk_pll_enable,
+ config CLK_RZA1
+-	bool
++	bool "RZ/A1H clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 
+ config CLK_R8A73A4
+-	bool
++	bool "R-Mobile APE6 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7740
+-	bool
++	bool "R-Mobile A1 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7743
+-	bool
++	bool "RZ/G1M clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2_CPG
+ 
+ config CLK_R8A7745
+-	bool
++	bool "RZ/G1E clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2_CPG
+ 
+ config CLK_R8A7778
+-	bool
++	bool "R-Car M1A clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 
+ config CLK_R8A7779
+-	bool
++	bool "R-Car H1 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 
+ config CLK_R8A7790
+-	bool
++	bool "R-Car H2 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7791
+-	bool
++	bool "R-Car M2-W/N clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7792
+-	bool
++	bool "R-Car V2H clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 
+ config CLK_R8A7794
+-	bool
++	bool "R-Car E2 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
+ 	select CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7795
+-	bool
++	bool "R-Car H3 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+ 
+ config CLK_R8A7796
+-	bool
++	bool "R-Car M3-W clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+ 
+ config CLK_SH73A0
+-	bool
++	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
+ 
+ 
+ # Family
+ config CLK_RCAR_GEN2
+-	bool
++	bool "R-Car Gen2 legacy clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_RCAR_GEN2_CPG
+-	bool
++	bool "R-Car Gen2 CPG clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
+ 
+ config CLK_RCAR_GEN3_CPG
+-	bool
++	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
+ 
+ 
+ # Generic
+ config CLK_RENESAS_CPG_MSSR
+-	bool
++	bool "CPG/MSSR clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_RENESAS_CPG_MSTP
+-	bool
++	bool "MSTP clock support" if COMPILE_TEST
+ 
+ config CLK_RENESAS_DIV6
+ 	bool "DIV6 clock support" if COMPILE_TEST
 -- 
-1.9.1
+2.7.4
