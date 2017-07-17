@@ -1,168 +1,170 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34074 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750917AbdGNTjY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2017 15:39:24 -0400
+Return-Path: <rnayak@codeaurora.org>
+Subject: Re: [RFC 1/3] clk: inherit display clocks enabled by bootloader
+To: Rob Clark <robdclark@gmail.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Archit Taneja <architt@codeaurora.org>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+References: <20170711182008.28298-1-robdclark@gmail.com>
+ <20170711182008.28298-2-robdclark@gmail.com>
+ <0da0ad07-2af2-5993-81c9-a232a67af455@codeaurora.org>
+ <CAF6AEGv-UN3EMYFWkHypBP8EYh7Q9jN71nsniqZBXGphA9oSGQ@mail.gmail.com>
+From: "Nayak, Rajendra" <rnayak@codeaurora.org>
+Message-ID: <f0053867-f077-35c2-fcae-a3e8730077eb@codeaurora.org>
+Date: Mon, 17 Jul 2017 15:07:33 +0530
 MIME-Version: 1.0
-In-Reply-To: <20170714193637.GI26488@arm.com>
-References: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
- <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
- <60a56ae6-ed9d-57cd-130f-5bd9d32d4d58@codeaurora.org> <CAF6AEGvDpRChNQAzqgRFwaQcH=4JCwfKcvj2GQGgQOnO2_A1sg@mail.gmail.com>
- <20170714170743.GA26488@arm.com> <CAF6AEGtMiVJvSrPXmQppM2NwS3fsXM8Vep3g0PwQK7SH4N=3xQ@mail.gmail.com>
- <20170714180615.GC26488@arm.com> <CAF6AEGubgNiq5fJ9LaBULvW3450iY4-u0ecpp_a6xyMvRx9kug@mail.gmail.com>
- <20170714190113.GE26488@arm.com> <CAF6AEGsjPQa_CviY4w-uEvH95rC6VkR+u7s7knVxTDW_8V-t_Q@mail.gmail.com>
- <20170714193637.GI26488@arm.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 14 Jul 2017 15:39:20 -0400
-Message-ID: <CAF6AEGtw-bgK6hfFOHRtO0z6o2zxpvjERTX4i=HzioE69G8kAw@mail.gmail.com>
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Will Deacon <will.deacon@arm.com>
-Cc: Sricharan R <sricharan@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAF6AEGv-UN3EMYFWkHypBP8EYh7Q9jN71nsniqZBXGphA9oSGQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 14, 2017 at 3:36 PM, Will Deacon <will.deacon@arm.com> wrote:
-> On Fri, Jul 14, 2017 at 03:34:42PM -0400, Rob Clark wrote:
->> On Fri, Jul 14, 2017 at 3:01 PM, Will Deacon <will.deacon@arm.com> wrote:
->> > On Fri, Jul 14, 2017 at 02:25:45PM -0400, Rob Clark wrote:
->> >> On Fri, Jul 14, 2017 at 2:06 PM, Will Deacon <will.deacon@arm.com> wrote:
->> >> > On Fri, Jul 14, 2017 at 01:42:13PM -0400, Rob Clark wrote:
->> >> >> On Fri, Jul 14, 2017 at 1:07 PM, Will Deacon <will.deacon@arm.com> wrote:
->> >> >> > On Thu, Jul 13, 2017 at 10:55:10AM -0400, Rob Clark wrote:
->> >> >> >> On Thu, Jul 13, 2017 at 9:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
->> >> >> >> > Hi,
->> >> >> >> >
->> >> >> >> > On 7/13/2017 5:20 PM, Rob Clark wrote:
->> >> >> >> >> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
->> >> >> >> >>> Hi Vivek,
->> >> >> >> >>>
->> >> >> >> >>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
->> >> >> >> >>>> Hi Stephen,
->> >> >> >> >>>>
->> >> >> >> >>>>
->> >> >> >> >>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->> >> >> >> >>>>> On 07/06, Vivek Gautam wrote:
->> >> >> >> >>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->> >> >> >> >>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->> >> >> >> >>>>>>                    size_t size)
->> >> >> >> >>>>>>   {
->> >> >> >> >>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->> >> >> >> >>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->> >> >> >> >>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->> >> >> >> >>>>>> +    size_t ret;
->> >> >> >> >>>>>>         if (!ops)
->> >> >> >> >>>>>>           return 0;
->> >> >> >> >>>>>>   -    return ops->unmap(ops, iova, size);
->> >> >> >> >>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
->> >> >> >> >>>>> Can these map/unmap ops be called from an atomic context? I seem
->> >> >> >> >>>>> to recall that being a problem before.
->> >> >> >> >>>>
->> >> >> >> >>>> That's something which was dropped in the following patch merged in master:
->> >> >> >> >>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
->> >> >> >> >>>>
->> >> >> >> >>>> Looks like we don't  need locks here anymore?
->> >> >> >> >>>
->> >> >> >> >>>  Apart from the locking, wonder why a explicit pm_runtime is needed
->> >> >> >> >>>  from unmap. Somehow looks like some path in the master using that
->> >> >> >> >>>  should have enabled the pm ?
->> >> >> >> >>>
->> >> >> >> >>
->> >> >> >> >> Yes, there are a bunch of scenarios where unmap can happen with
->> >> >> >> >> disabled master (but not in atomic context).  On the gpu side we
->> >> >> >> >> opportunistically keep a buffer mapping until the buffer is freed
->> >> >> >> >> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
->> >> >> >> >> an exported dmabuf while some other driver holds a reference to it
->> >> >> >> >> (which can be dropped when the v4l2 device is suspended).
->> >> >> >> >>
->> >> >> >> >> Since unmap triggers tbl flush which touches iommu regs, the iommu
->> >> >> >> >> driver *definitely* needs a pm_runtime_get_sync().
->> >> >> >> >
->> >> >> >> >  Ok, with that being the case, there are two things here,
->> >> >> >> >
->> >> >> >> >  1) If the device links are still intact at these places where unmap is called,
->> >> >> >> >     then pm_runtime from the master would setup the all the clocks. That would
->> >> >> >> >     avoid reintroducing the locking indirectly here.
->> >> >> >> >
->> >> >> >> >  2) If not, then doing it here is the only way. But for both cases, since
->> >> >> >> >     the unmap can be called from atomic context, resume handler here should
->> >> >> >> >     avoid doing clk_prepare_enable , instead move the clk_prepare to the init.
->> >> >> >> >
->> >> >> >>
->> >> >> >> I do kinda like the approach Marek suggested.. of deferring the tlb
->> >> >> >> flush until resume.  I'm wondering if we could combine that with
->> >> >> >> putting the mmu in a stalled state when we suspend (and not resume the
->> >> >> >> mmu until after the pending tlb flush)?
->> >> >> >
->> >> >> > I'm not sure that a stalled state is what we're after here, because we need
->> >> >> > to take care to prevent any table walks if we've freed the underlying pages.
->> >> >> > What we could try to do is disable the SMMU (put into global bypass) and
->> >> >> > invalidate the TLB when performing a suspend operation, then we just ignore
->> >> >> > invalidation whilst the clocks are stopped and, on resume, enable the SMMU
->> >> >> > again.
->> >> >>
->> >> >> wouldn't stalled just block any memory transactions by device(s) using
->> >> >> the context bank?  Putting it in bypass isn't really a good thing if
->> >> >> there is any chance the device can sneak in a memory access before
->> >> >> we've taking it back out of bypass (ie. makes gpu a giant userspace
->> >> >> controlled root hole).
->> >> >
->> >> > If it doesn't deadlock, then yes, it will stall transactions. However, that
->> >> > doesn't mean it necessarily prevents page table walks.
->> >>
->> >> btw, I guess the concern about pagetable walk is that the unmap could
->> >> have removed some sub-level of the pt that the tlb walk would hit?
->> >> Would deferring freeing those pages help?
->> >
->> > Could do, but it sounds like a lot of complication that I think we can fix
->> > by making the suspend operation put the SMMU into a "clean" state.
->> >
->> >> > Instead of bypass, we
->> >> > could configure all the streams to terminate, but this race still worries me
->> >> > somewhat. I thought that the SMMU would only be suspended if all of its
->> >> > masters were suspended, so if the GPU wants to come out of suspend then the
->> >> > SMMU should be resumed first.
->> >>
->> >> I believe this should be true.. on the gpu side, I'm mostly trying to
->> >> avoid having to power the gpu back on to free buffers.  (On the v4l2
->> >> side, somewhere in the core videobuf code would also need to be made
->> >> to wrap it's dma_unmap_sg() with pm_runtime_get/put()..)
->> >
->> > Right, and we shouldn't have to resume it if we suspend it in a clean state,
->> > with the TLBs invalidated.
->> >
+
+
+On 7/14/2017 4:13 PM, Rob Clark wrote:
+> On Fri, Jul 14, 2017 at 12:52 AM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
+>> Hi Rob,
 >>
->> I guess if the device_link() stuff ensured the attached device
->> (gpu/etc) was suspended before suspending the iommu, then I guess I
->> can't see how temporarily putting the iommu in bypass would be a
->> problem.  I haven't looked at the device_link() stuff too closely, but
->> iommu being resumed first and suspended last seems like the only thing
->> that would make sense.  I'm mostly just nervous about iommu in bypass
->> vs gpu since userspace has so much control over what address gpu
->> writes to / reads from, so getting it wrong w/ the iommu would be a
->> rather bad thing ;-)
->
-> Right, but we can also configure it to terminate if you don't want bypass.
->
+>> On 07/11/2017 11:50 PM, Rob Clark wrote:
+>>> The goal here is to support inheriting a display setup by bootloader,
+>>> although there may also be some non-display related use-cases.
+>>>
+>>> Rough idea is to add a flag for clks and power domains that might
+>>> already be enabled when kernel starts, and make corresponding fixups
+>>> to clk enable/prepare_count and power-domain state so that these are
+>>> not automatically disabled late in boot.
+>>>
+>>> If bootloader is enabling display, and kernel is using efifb before
+>>> real display driver is loaded (potentially from kernel module after
+>>> userspace starts, in a typical distro kernel), we don't want to kill
+>>> the clocks and power domains that are used by the display before
+>>> userspace starts.
+>>>
+>>> Second part is for drm/msm to check if display related clocks are
+>>> enabled when it is loaded, and if so read back hw state to sync
+>>> existing display state w/ software state, and skip the initial
+>>> clk_enable's and otherwise fixing up clk/regulator/etc ref counts
+>>> (skipping the normal display-enable codepaths), therefore inheriting
+>>> the enable done by bootloader.
+>>>
+>>> Obviously this should be split up into multiple patches and many
+>>> TODOs addressed.  But I guess this is enough for now to start
+>>> discussing the approach, and in particular how drm and clock/pd
+>>> drivers work together to handle handover from bootloader.
+>>>
+>>> The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
+>>> on leaf nodes.
+>>> ---
+>>
+>> []..
+>>
+>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+>>> index d523991c945f..90b698c910d0 100644
+>>> --- a/drivers/clk/qcom/common.c
+>>> +++ b/drivers/clk/qcom/common.c
+>>> @@ -11,6 +11,7 @@
+>>>    * GNU General Public License for more details.
+>>>    */
+>>>
+>>> +#include <linux/clk.h>
+>>>   #include <linux/export.h>
+>>>   #include <linux/module.h>
+>>>   #include <linux/regmap.h>
+>>> @@ -258,6 +259,33 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>>>        if (ret)
+>>>                return ret;
+>>>
+>>> +     /* Check which of clocks that we inherit state from bootloader
+>>> +      * are enabled, and fixup enable/prepare state (as well as that
+>>> +      * of it's parents).
+>>> +      *
+>>> +      * TODO can we assume that parents coming from another clk
+>>> +      * driver are already registered?
+>>> +      */
+>>> +     for (i = 0; i < num_clks; i++) {
+>>> +             struct clk_hw *hw;
+>>> +
+>>> +             if (!rclks[i])
+>>> +                     continue;
+>>> +
+>>> +             hw = &rclks[i]->hw;
+>>> +
+>>> +             if (!(hw->init->flags & CLK_INHERIT_BOOTLOADER))
+>>> +                     continue;
+>>> +
+>>> +             if (!clk_is_enabled_regmap(hw))
+>>> +                     continue;
+>>> +
+>>> +             dev_dbg(dev, "%s is enabled from bootloader!\n",
+>>> +                       hw->init->name);
+>>> +
+>>> +             clk_inherit_enabled(hw->clk);
+>>
+>> how about just calling a clk_prepare_enable(hw->clk) instead of adding a new API?
+>> The flag could also be something qcom specific and then we avoid having to add
+>> anything in generic CCF code and its all handled in the qcom clock drivers.
+> 
+> Hmm, I could try that..  I *guess* it doesn't hurt to enable an
+> already enabled clk..
 
-ok, terminate wfm
+yes, ideally it shouldn't hurt.
 
-BR,
--R
+> 
+> beyond that, I wonder if this is something that other platforms would
+> want, so maybe I should be doing the check for enabled in CCF core?
+> If not, making this a qcom specific flag makes sense.
+
+I think most previous attempts to solve this were done trying to keep
+it very generic and they didn't go too far.
+So I was thinking maybe we could deal with it within qcom drivers for
+now, and if others come up with something similar, then look to
+consolidate at a generic CCF level.
+
+> 
+>>> +     }
+>>> +
+>>>        reset = &cc->reset;
+>>>        reset->rcdev.of_node = dev->of_node;
+>>>        reset->rcdev.ops = &qcom_reset_ops;
+>>
+>> [] ..
+>>
+>>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>>> index a4f3580587b7..440d819b2d9d 100644
+>>> --- a/drivers/clk/qcom/gdsc.c
+>>> +++ b/drivers/clk/qcom/gdsc.c
+>>> @@ -291,6 +291,12 @@ static int gdsc_init(struct gdsc *sc)
+>>>        if ((sc->flags & VOTABLE) && on)
+>>>                gdsc_enable(&sc->pd);
+>>>
+>>> +     if ((sc->flags & INHERIT_BL) && on) {
+>>> +             pr_debug("gdsc: %s is enabled from bootloader!\n", sc->pd.name);
+>>> +             gdsc_enable(&sc->pd);
+>>> +             sc->pd.flags |= GENPD_FLAG_ALWAYS_ON;
+>>
+>> Would this not prevent the powerdomain from ever getting disabled?
+> 
+> Yeah, this is a hack, because I couldn't figure out something better.
+> The problem is that gdsc/powerdomain doesn't have it's own
+> enable_count but this is tracked at the device level (afaict.. maybe
+> I'm miss-understanding something).  I guess we could add our own
+> enable_count within gdsc?  Suggestions welcome, since I don't know
+> these parts of the code so well.
+
+One way to deal with it would be to tell the genpd core, that the gdsc
+isn't really enabled, so it does not go ahead and disable it thinking
+its unused.
+
+Once the display driver comes up, it runtime enables/disables it.
+I am guessing, if the bootloader turns on the gdsc, there will also
+be a kernel driver to handle it.
+
+So I am basically saying,
+         if ((sc->flags & INHERIT_BL) && on)
+                 on = !on; /* Prevent genpd from thinking its unsued */
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
