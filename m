@@ -1,54 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.139]:46669 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751717AbdHABMo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2017 21:12:44 -0400
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, cl@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 2/2] dt-bindings: add documentation for rk3126 clock
-Date: Tue,  1 Aug 2017 09:17:04 +0800
-Message-Id: <1501550224-6875-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1501550224-6875-1-git-send-email-zhangqing@rock-chips.com>
-References: <1501550224-6875-1-git-send-email-zhangqing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wsa@the-dreams.de>
+Date: Mon, 17 Jul 2017 12:25:24 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: clk: renesas: rcar-gen3: Fix error return code in
+ cpg_sd_clock_recalc_rate
+Message-ID: <20170717102524.vk2qdpjmzmyplknx@ninjato>
+References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
+ <20170714142559.p6xp6dp4whlqcr5n@ninjato>
+ <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
+ <20170717091801.GA2129@katana>
+ <CAMuHMdVhuN1ozEmtDJnn63rvktE7Aj4FACzweaJzCMzP1q8BKw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="s7rxevo65pchyjnj"
+In-Reply-To: <CAMuHMdVhuN1ozEmtDJnn63rvktE7Aj4FACzweaJzCMzP1q8BKw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This add bindings documentation for rk3126 SoCs.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-index 455a9a00a623..6f8744fd301b 100644
---- a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-@@ -1,12 +1,14 @@
--* Rockchip RK3128 Clock and Reset Unit
-+* Rockchip RK3126/RK3128 Clock and Reset Unit
- 
--The RK3128 clock controller generates and supplies clock to various
-+The RK3126/RK3128 clock controller generates and supplies clock to various
- controllers within the SoC and also implements a reset controller for SoC
- peripherals.
- 
- Required Properties:
- 
--- compatible: should be "rockchip,rk3128-cru"
-+- compatible: should be "rockchip,rk3126-cru" or "rockchip,rk3128-cru"
-+  "rockchip,rk3126-cru" - controller compatible with RK3126 SoC.
-+  "rockchip,rk3128-cru" - controller compatible with RK3128 SoC.
- - reg: physical base address of the controller and length of memory mapped
-   region.
- - #clock-cells: should be 1.
--- 
-1.9.1
+--s7rxevo65pchyjnj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> I do not mean that -EINVAL is correct. Obviously it isn't. But blindly
+> replacing -EINVAL by zero may not be the right solution neither.
+
+Okay, it may not be perfect but it is definately better :)
+
+
+--s7rxevo65pchyjnj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllskJAACgkQFA3kzBSg
+KbaG3xAAr2dRfq93nv17LfqR5MCDeQiqk7JpQXFWIGPk+cWt6vkT3DUCbV3Q1Ack
+pA6M+AF7wNH94w7XSJ2R2wtZW5FDk1KSwNXnPO1NiqFp1yrsIC8b8iZ1HHNZfiVc
+VQjdrb89qykUEuF9YHLSUrH2CpIUuceHrbFzXycwIHMRNhcOicwHXGjscKVA99OD
+r4sd7VVf3mDcVcYKi8peFStRNLe2ZYAKpRres/fJDjSC+iDbg0aquv/qpjmZms0T
++2u/t5NrgZT35s/5zVoKQIZKXKruARrdzVuRwzZRXd16oT2eCTdwn/lJtYUJNCLt
+Ugqwr3k1cklJFxCYtDjhv9ZmIIcbK0dn/kI8qQVOvk1GLWNsIemZAs3RNqYWhxmc
+pWdCgG7Bh3n7XV4gRGXq3m/EGIbGjaloelchtNMuZmVUUqoOgUGgfuNOSAANS4xX
+VYtX3GFWJNANQ3l9PCR98C9SHCpG7lEbndBLlcDYNVhv7n3TtqBnMhYXuqZeRQ9T
+/Ut/Akf4TD7snIhMmWigDIosoKICvkDqO7jSrS2bZzmfeTU8nb2iwK957KG3+IcX
+5I9qiPAxRjCGZdDZFN7bPxT2q17+DbG7vTWWUZGHt+g8VokP3EGPRiamKXRXDcdo
+OXagy9X5YUY6EO/TUjJl5xeMN7n+wzb/3pA8WCLAkL690+f/MKc=
+=QEoA
+-----END PGP SIGNATURE-----
+
+--s7rxevo65pchyjnj--
