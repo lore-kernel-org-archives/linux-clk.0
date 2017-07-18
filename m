@@ -1,56 +1,60 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Jul 2017 15:51:30 -0700
+Date: Tue, 18 Jul 2017 15:52:03 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v2 4/5] clk: qcom: gcc-msm8996: Mark
- gcc_mmss_noc_cfg_ahb_clk as a critical clock
-Message-ID: <20170727225130.GQ2146@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-5-git-send-email-rnayak@codeaurora.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
+	gabriel.fernandez.st@gmail.com,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH v6 2/3] clk: gate: expose clk_gate_ops::is_enabled
+Message-ID: <20170718225203.GD18179@codeaurora.org>
+References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
+ <1500364414-10021-3-git-send-email-gabriel.fernandez@st.com>
+ <55bc0f3f-67ed-a15f-5b71-d87044fd5237@mleia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500526099-9935-5-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <55bc0f3f-67ed-a15f-5b71-d87044fd5237@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/20, Rajendra Nayak wrote:
-> we have gcc_mmss_noc_cfg_ahb_clk marked with a CLK_IGNORE_UNUSED. While
-> this can prevent it from being disabled while its unused, it does not
-> prevent it from being disabled when a child derived from the clock calls
-> an explicit enable/disable.
+On 07/18, Vladimir Zapolskiy wrote:
+> On 07/18/2017 10:53 AM, gabriel.fernandez@st.com wrote:
+> > From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> >  }
+> > +EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
+> >  
+> >  const struct clk_ops clk_gate_ops = {
+> >  	.enable = clk_gate_enable,
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index c59c625..e9587ab 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+> >  		u8 clk_gate_flags, spinlock_t *lock);
+> >  void clk_unregister_gate(struct clk *clk);
+> >  void clk_hw_unregister_gate(struct clk_hw *hw);
+> > +int clk_gate_is_enabled(struct clk_hw *hw);
+> 
+> Here the prefix does not reflect the type of its argument, it might be
+> acceptable for a veiled function, but it is not wanted for the exported
+> function. Something like clk_hw_gate_is_enabled() is expected here, but
+> again, let's firstly come to an agreement, that the export is needed.
+> 
 
-Do you mean the config_noc_clk_src is being disabled? Who is
-getting this clk? The bus driver? In the downstream sources I
-don't even see this clk exposed, so maybe we should just remove
-support for it instead.
-
-> Mark this with a CLK_IS_CRITICAL and remove the CLK_IGNORE_UNUSED flag
-> so its never disabled.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/qcom/gcc-msm8996.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-> index 8abc200..8872985 100644
-> --- a/drivers/clk/qcom/gcc-msm8996.c
-> +++ b/drivers/clk/qcom/gcc-msm8996.c
-> @@ -1333,7 +1333,7 @@ enum {
->  			.name = "gcc_mmss_noc_cfg_ahb_clk",
->  			.parent_names = (const char *[]){ "config_noc_clk_src" },
->  			.num_parents = 1,
-> -			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->  			.ops = &clk_branch2_ops,
->  		},
->  	},
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+I'd prefer clk_gate_is_enabled() as it's not a struct
+clk_hw_gate, it's a struct clk_gate and there isn't any
+requirement for function names to reflect the type of the
+argument. That's what we have type analysis for.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
