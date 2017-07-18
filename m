@@ -1,58 +1,85 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com,
-	krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
-	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Subject: [PATCH 2/3] clk: samsung: Add CLK_SET_RATE_PARENT to some AUDSS CLK
- CON clocks
-Date: Fri, 21 Jul 2017 18:36:43 +0200
-Message-id: <1500655004-29816-2-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-References: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
-	<CGME20170721163751epcas1p2fd6ba68507923b767c043b38249535e8@epcas1p2.samsung.com>
+Return-Path: <vz@mleia.com>
+Subject: Re: [PATCH v6 2/3] clk: gate: expose clk_gate_ops::is_enabled
+To: gabriel.fernandez@st.com
+References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
+ <1500364414-10021-3-git-send-email-gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, daniel.thompson@linaro.org,
+ andrea.merello@gmail.com, radoslaw.pietrzyk@gmail.com,
+ Lee Jones <lee.jones@linaro.org>, Sylvain Lemieux <slemieux.tyco@gmail.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
+ gabriel.fernandez.st@gmail.com, Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <55bc0f3f-67ed-a15f-5b71-d87044fd5237@mleia.com>
+Date: Tue, 18 Jul 2017 22:53:31 +0300
+MIME-Version: 1.0
+In-Reply-To: <1500364414-10021-3-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This allows clk rate propagation up to the clock tree so EPLL
-can be reprogrammed indirectly when setting rate of the Audio
-Subsystem clocks.
-The advantage is that sound machine driver can operate only
-on the leaf clocks rather than explicitly re-configuring
-the root clock (EPLL).
+On 07/18/2017 10:53 AM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch exposes clk_gate_ops::is_enabled as functions
+> that can be directly called and assigned in places like this so
+> we don't need wrapper functions that do nothing besides forward
+> the call.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Sugested by Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/clk-gate.c       | 3 ++-
+>  include/linux/clk-provider.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+> index 4e0c054a..dd82485 100644
+> --- a/drivers/clk/clk-gate.c
+> +++ b/drivers/clk/clk-gate.c
+> @@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+>  	clk_gate_endisable(hw, 0);
+>  }
+>  
+> -static int clk_gate_is_enabled(struct clk_hw *hw)
+> +int clk_gate_is_enabled(struct clk_hw *hw)
+>  {
+>  	u32 reg;
+>  	struct clk_gate *gate = to_clk_gate(hw);
+> @@ -101,6 +101,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
+>  
+>  	return reg ? 1 : 0;
+>  }
+> +EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
+>  
+>  const struct clk_ops clk_gate_ops = {
+>  	.enable = clk_gate_enable,
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index c59c625..e9587ab 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+>  		u8 clk_gate_flags, spinlock_t *lock);
+>  void clk_unregister_gate(struct clk *clk);
+>  void clk_hw_unregister_gate(struct clk_hw *hw);
+> +int clk_gate_is_enabled(struct clk_hw *hw);
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos-audss.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Here the prefix does not reflect the type of its argument, it might be
+acceptable for a veiled function, but it is not wanted for the exported
+function. Something like clk_hw_gate_is_enabled() is expected here, but
+again, let's firstly come to an agreement, that the export is needed.
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 1fab56f..b117783 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -180,7 +180,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	}
- 	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
- 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
--				CLK_SET_RATE_NO_REPARENT,
-+				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
- 
- 	cdclk = devm_clk_get(&pdev->dev, "cdclk");
-@@ -195,11 +195,11 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
- 
- 	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(NULL, "dout_srp",
--				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
--				0, &lock);
-+				"mout_audss", CLK_SET_RATE_PARENT,
-+				reg_base + ASS_CLK_DIV, 0, 4, 0, &lock);
- 
- 	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
--				"dout_aud_bus", "dout_srp", 0,
-+				"dout_aud_bus", "dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
- 
- 	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(NULL, "dout_i2s",
--- 
-1.9.1
+>  
+>  struct clk_div_table {
+>  	unsigned int	val;
+> 
+
+--
+With best wishes,
+Vladimir
