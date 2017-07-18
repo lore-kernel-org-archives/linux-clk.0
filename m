@@ -1,77 +1,69 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Sun, 2 Jul 2017 11:23:36 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	kernel@pengutronix.de
-Subject: Re: Clocks used by another OS/CPU (was: Re: [RFC PATCH] clk:
- renesas: cpg-mssr: Add interface for critical core clocks)
-Message-ID: <20170702092336.uxwl23kyd4koxclj@pengutronix.de>
-References: <CAMuHMdW9+CNTTOVO4SRRUxuz3ajLbY2j1uG8b_RpHX52NPwXrQ@mail.gmail.com>
- <CAL_JsqKGrZeR7z80beY_XEjqd5fEQQwPxusJ1FADoALgNE3fEg@mail.gmail.com>
- <20170630202453.eh6vaehkap3as4np@pengutronix.de>
- <8d86a9aa-1928-6b52-1487-d5fb9dae17f4@gmail.com>
- <20170701181408.yuocymwtj5dgt74d@pengutronix.de>
- <6098d579-f206-5a23-bbfc-ac13e0448479@gmail.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <6098d579-f206-5a23-bbfc-ac13e0448479@gmail.com>
+In-Reply-To: <1499874682.6374.57.camel@pengutronix.de>
+References: <20170711122601.17745-1-linus.walleij@linaro.org> <1499874682.6374.57.camel@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 18 Jul 2017 11:49:44 +0200
+Message-ID: <CACRpkda3ZW4rQTwg8Y63uzzupCZAtTP6jv1ppsTXHuDDy0y8og@mail.gmail.com>
+Subject: Re: [PATCH] clk: gemini: Fix reset regression
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>,
+	Joel Stanley <joel@jms.id.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Dirk,
+On Wed, Jul 12, 2017 at 5:51 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 
-On Sun, Jul 02, 2017 at 07:48:41AM +0200, Dirk Behme wrote:
-> > On my machine (Udoo Neo, A9 + M4) the A9 is the primary CPU that is
-> > started by the bootrom. If I want the M4 being the primary device I'd
-> > need support in the bootloader to wait long enough (i.e. until the M4 is
-> > up) before letting the A9 jump into Linux. Managable I'd say. This way
-> > would even make sense if the M4 runs a rt critical OS that shouldn't be
-> > forced to wait on the non-rt A9 to enable a clk.
-> 
-> 
-> Overall, assuming that the issue we are discussing here can be solved quite
-> easily in hardware (a set of clock registers for each CPU/OS domain,
-> connected cleverly to effectively control each clock, with access protection
-> for each set of registers) I tend to think that for a SoC supposed to run
-> different OS on different cores this is a missing hardware feature (bug?).
+> From fab3a9a697e9797ba1c24874d7c43c09dd812e77 Mon Sep 17 00:00:00 2001
+> From: Philipp Zabel <p.zabel@pengutronix.de>
+> Date: Wed, 12 Jul 2017 17:29:28 +0200
+> Subject: [PATCH] reset: make (de)assert report succeess for self-deasserting
+>  reset drivers
+>
+> By now there are drivers using shared reset controls and (de)assert
+> calls on platforms with self-deasserting reset lines and thus reset
+> drivers that do not implement .assert() and .deassert().
+> As long as the initial state of the reset line is deasserted, there
+> is no reason for a reset_control_assert call to return an error for
+> shared reset controls, or for a reset_control_deassert call to return
+> an error for either shared or exclusive reset controls: after a call
+> to reset_control_deassert the reset line is guaranteed to be deasserted,
+> and after a call to reset_control_assert it is valid for the reset
+> line to stay deasserted for shared reset controls.
+>
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-So you want to enable bits for your CAN clock, one in each cpu's domain.
+This patch makes all kind of sense, and I follow your
+reasoning.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-I'd say that is a nice idea that a hardware engineer might be proud to
-pick up but that results in more headache than fun for the software
-colleague.
+In the back of my head I was thinking that the deassert/assert
+pair matches a certain SoC driver design pattern I have seen
+around:
 
-There are several problems that come immediately to mind:
+When a driver use an IP block it enables the clock and takes
+the block out of reset.
 
- - You can switch of a clk because you don't need it on, or because you
-   need it off. I guess you want to have the clock on if at least one
-   cpu wants it on. So you take away the freedom from the other cpu to
-   force the clock off. (Yeah, the currently available clk framework
-   doesn't allow that either.)
- - What if cpu 0 sets the parent of the can clk to pll2 but cpu 1 wants
-   it set to pll1? How does cpu 1 notice the change?
- - On off might be relatively easy, what about clk dividers? cpu 0 sets
-   2 which cpu 1 sets 6.
+When it stops using it, it asserts reset and disables the clock.
 
-That convinces me that the disadvantages of having two views on the clk
-core have more weight and you really want a single view and share that
-by software.
+This is not entirely self-evident, for example why is reset asserted
+across say insmod/rmmod/insmod. Just disabling the clock would
+be OK, I guess, in most cases. It is just one of those "dances"
+that developers do, as if to clear the desk or something.
 
-Best regards
-Uwe
+But I guess there must be cases where doing things in another way
+creates problems or power leaks.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+I would surely like to understand, from a silicon perspective, why
+drivers are so often written like this. I could think of things like
+little automata and gates inside the silicon that need to be reset
+to minimize off-power consumption but I have no clue if it is
+really so.
+
+Yours,
+Linus Walleij
