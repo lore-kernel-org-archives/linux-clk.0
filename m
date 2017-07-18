@@ -1,51 +1,151 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:48645 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbdGQROt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2017 13:14:49 -0400
-Subject: Re: [PATCH] dt-bindings: clock: ti-sci: Fix incorrect usage of
- headers
-To: Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Suman Anna <s-anna@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20170711223615.29398-1-s-anna@ti.com>
- <20170712010923.GP22780@codeaurora.org>
- <20170717170457.4pkb6qaa3qbept5n@rob-hp-laptop>
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Message-ID: <eeda0027-259b-4494-42d6-4f380d230134@oracle.com>
-Date: Mon, 17 Jul 2017 10:14:49 -0700
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 18 Jul 2017 16:47:58 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 03/11] clk: sunxi-ng: a83t: Support new timing mode for
+ mmc2 clock
+Message-ID: <20170718144758.os7yy6saulb65gam@flea>
+References: <20170714064302.20383-1-wens@csie.org>
+ <20170714064302.20383-4-wens@csie.org>
+ <20170717091402.3qb3fhdyhfbv6t66@flea>
+ <CAGb2v67Ofdr9zL=o82F6-90meYZGaYtr_zy7y-OeBH30n1gERQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170717170457.4pkb6qaa3qbept5n@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d6rflvqdhkw7nwh6"
+In-Reply-To: <CAGb2v67Ofdr9zL=o82F6-90meYZGaYtr_zy7y-OeBH30n1gERQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7/17/2017 10:04 AM, Rob Herring wrote:
-> On Tue, Jul 11, 2017 at 06:09:23PM -0700, Stephen Boyd wrote:
->> On 07/11, Suman Anna wrote:
->>> The clock consumer usage description was erroneously referring to
->>> couple of dt-binding headers that are no longer valid. The definition
->>> and/or usage of these headers is incorrect and the only file present
->>> at the moment, dt-bindings/soc/k2g.h is also being cleaned up. The
->>> examples in this binding were updated properly, but the update to
->>> description was missed out. So, fix this.
->>>
->>> Fixes: 8f306cfe4383 ("Documentation: dt: Add TI SCI clock driver")
->>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>> ---
->>> Hi Stephen,
->>>
->>> Looks like this was missed during the update/repost of the ti-sci-clk
->>> driver/binding. FYI, Santosh is going to pickup the header file cleanup
->>> patch https://patchwork.kernel.org/patch/9741279/ for the next merge
->>> window.
->>
->> I'll let Rob apply this as it is purely a binding document update.
-> 
-> Applied.
-> 
-Thanks Rob !!
+
+--d6rflvqdhkw7nwh6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 17, 2017 at 06:12:35PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Jul 17, 2017 at 5:14 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Hi,
+> >
+> > On Fri, Jul 14, 2017 at 02:42:54PM +0800, Chen-Yu Tsai wrote:
+> >> The MMC2 clock supports a new timing mode. When the new mode is active,
+> >> the output clock rate is halved.
+> >>
+> >> This patch sets the feature flag for the new timing mode, and adds
+> >> a pre-divider based on the mode bit.
+> >>
+> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 38 ++++++++++++++++++++++++++=
++--------
+> >>  1 file changed, 30 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi=
+-ng/ccu-sun8i-a83t.c
+> >> index 947f9f6e05d2..ee6688e9b361 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+> >> @@ -418,14 +418,36 @@ static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1-sa=
+mple", "mmc1",
+> >>  static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1-output", "mmc1",
+> >>                      0x08c, 8, 3, 0);
+> >>
+> >> -/* TODO Support MMC2 clock's new timing mode. */
+> >> -static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_pare=
+nts,
+> >> -                               0x090,
+> >> -                               0, 4,         /* M */
+> >> -                               16, 2,        /* P */
+> >> -                               24, 2,        /* mux */
+> >> -                               BIT(31),      /* gate */
+> >> -                               0);
+> >> +/*
+> >> + * MMC2 supports both old and new timing modes. When the new timing
+> >> + * mode is active, the output clock rate is halved by two. Here we
+> >> + * treat it as a variable pre-divider. Note that the pre-divider is
+> >> + * _not_ included in the possible factors during a set clock rate
+> >> + * operation. It is only read out.
+> >> + */
+> >> +static const struct ccu_mux_var_prediv mmc2_new_timing_predivs[] =3D {
+> >> +     { .index =3D 0, .shift =3D 30, .width =3D 1 },
+> >> +     { .index =3D 1, .shift =3D 30, .width =3D 1 },
+> >> +};
+> >> +static struct ccu_mp mmc2_clk =3D {
+> >> +     .enable =3D BIT(31),
+> >> +     .m      =3D _SUNXI_CCU_DIV(0, 4),
+> >> +     .p      =3D _SUNXI_CCU_DIV(16, 2),
+> >> +     .mux    =3D {
+> >> +             .shift  =3D 24,
+> >> +             .width  =3D 2,
+> >> +             .var_predivs    =3D mmc2_new_timing_predivs,
+> >> +             .n_var_predivs  =3D ARRAY_SIZE(mmc2_new_timing_predivs),
+> >> +     },
+> >> +     .common         =3D {
+> >> +             .reg            =3D 0x090,
+> >> +             .features       =3D CCU_FEATURE_MMC_TIMING_SWITCH,
+> >> +             .hw.init        =3D CLK_HW_INIT_PARENTS("mmc2",
+> >> +                                                   mod0_default_paren=
+ts,
+> >> +                                                   &ccu_mp_ops,
+> >> +                                                   CLK_GET_RATE_NOCAC=
+HE),
+> >> +     },
+> >> +};
+> >
+> > Treating the new bit seems a bit of a hack to me. It only works
+> > because we're not evaluating the various pre-dividers during a
+> > determine_rate (and set_rate), but it might change in the future, and
+> > we will break all our eMMC controllers then.
+> >
+> > Since they're quite special, I was thinking about creating a new MMC
+> > clock type? We're going to use it on a number of SoCs, and we'll be
+> > able to model it properly, without crippling the regular and generic
+> > MP clocks.
+>=20
+> Yes that should be doable. I could put them in the same file and
+> reuse all the existing MP clocks stuff by wrapping them in new
+> functions that check the timing mode bit.
+>=20
+> Would that work for you?
+
+Yep, it does.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--d6rflvqdhkw7nwh6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZbh+eAAoJEBx+YmzsjxAgYzUQALmJsQfE5j1Lzlfzc+2qF+sL
+J/ngdYRK5zhKPf/6txw7zWXSIWm9GAHmnett+4ZQMfvg7D2pr757FzlvzVM1syLw
+V1kAy1GNIPc8SgzQLvwNCQq9pYLxyQLHW2iqFUuNKravbU5CILRkXAvgVVNKnftO
+VAAVCLWPyYqpjsipzUJRqKBKEwQpZlTRpHaDpx8oV8vjDuV2fR8syDU+8qeR2fkN
+1R0zpIXYMQIzxl7z0/+ibaST91iAVcQ/JK1RZXzL1s6UfDK+i4+NJ4POA202B2VE
+GD0wk8c4BJ3Rxo1iPypD5nX+H9CSfQh+jlDX6xMONO83Qld6uahEp1acDnO6e0CJ
+4xx4dxn3aYQ6N6GzyNNgjU/EEIPqhMSZbEdqw/5hvetebAYJ9uVa2r9OVWdHkcv9
+tzpFVYNK+mI/5wcXWMuQNCa2SeyPr4X9WzKu1vidNT/8oTblND/wRRB1+wR+wNDM
+lEJGAgFDhRkP6+loIsCPZ5h2SwVc8XKn35oS/2n4qEpM4DOTWyL04fR/J32ULc1C
+LNsh66GiGCGD0QPH1RaKGgiHJKqlsnh5YoTbSrPPjsUkDXTVT/lnFE77HJ8qc+I9
+ZDyIlcpCSyhTl2dTTh4PiIYp+qn9yuFwFWBy2fwKn/bv0PGgCsUWPGk2KcBuHWg5
+IN5e4OGYLs1tqUYZ0X0w
+=RUB8
+-----END PGP SIGNATURE-----
+
+--d6rflvqdhkw7nwh6--
