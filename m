@@ -1,86 +1,169 @@
-Return-Path: <yoshihiro.shimoda.uh@renesas.com>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
- clock selector PHY
-Date: Tue, 25 Jul 2017 04:00:00 +0000
-Message-ID: <TY1PR06MB099296645252A10FC497EDB5D8B80@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
- <TY1PR06MB09928B28AAA01C47471B6969D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAMuHMdWkSqNdzDNTyvHvGaG-Tw2md_aGHSWh7jXVyoBYMJ8m7w@mail.gmail.com>
- <TY1PR06MB09927528BA504E1E758BD935D8BB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAMuHMdWqLTdw7k5Qwu92j37tcDn463T-MOQzff314=bCRyznzA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWqLTdw7k5Qwu92j37tcDn463T-MOQzff314=bCRyznzA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 18 Jul 2017 16:10:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Adriana Reus <adriana.reus@nxp.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	robh+dt@kernel.org, fabio.estevam@nxp.com, shawnguo@kernel.org,
+	anson.huang@nxp.com
+Subject: Re: [PATCH 2/2] clk: imx: imx7d: Remove ARM_M0 clock
+Message-ID: <20170718231041.GF18179@codeaurora.org>
+References: <1500363892-1173-1-git-send-email-adriana.reus@nxp.com>
+ <1500363892-1173-3-git-send-email-adriana.reus@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1500363892-1173-3-git-send-email-adriana.reus@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEdl
-ZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBNb25kYXksIEp1bHkgMjQsIDIwMTcgOTo1OSBQTQ0K
-PiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBNb24sIEp1bCAyNCwgMjAxNyBhdCAxMjoz
-MyBQTSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMu
-Y29tPiB3cm90ZToNCj4gPj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuDQo+ID4+IFNlbnQ6IFdl
-ZG5lc2RheSwgSnVseSA1LCAyMDE3IDk6MjIgUE0NCj4gPj4gT24gV2VkLCBKdWwgNSwgMjAxNyBh
-dCAxOjU3IFBNLCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA+PiA8eW9zaGloaXJvLnNoaW1vZGEudWhA
-cmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+PiBGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4g
-Pj4gPj4gU2VudDogV2VkbmVzZGF5LCBKdWx5IDUsIDIwMTcgNzowOSBQTQ0KPiA+PiA+PiBPbiBX
-ZWQsIEp1biAyOCwgMjAxNyBhdCA4OjI4IEFNLCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA+PiA+PiA8
-eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+PiA+IFItQ2Fy
-IFVTQiAyLjAgY29udHJvbGxlciBjYW4gY2hhbmdlIHRoZSBjbG9jayBzb3VyY2UgZnJvbSBhbiBv
-c2NpbGxhdG9yDQo+ID4+ID4+ID4gdG8gYW4gZXh0ZXJuYWwgY2xvY2sgdmlhIGEgcmVnaXN0ZXIu
-IFNvLCB0aGlzIHBhdGNoIGFkZHMgc3VwcG9ydA0KPiA+PiA+PiA+IHRoZSBjbG9jayBzb3VyY2Ug
-c2VsZWN0b3IgYXMgYSBjbG9jayBkcml2ZXIuDQo+ID4+DQo+ID4+ID4+ID4gLS0tIC9kZXYvbnVs
-bA0KPiA+PiA+PiA+ICsrKyBiL2RyaXZlcnMvY2xrL3JlbmVzYXMvcmNhci11c2IyLWNsb2NrLXNl
-bC5jDQo+ID4+DQo+ID4+ID4+ID4gKy8qIFNpbmNlIHRoaXMgZHJpdmVyIG5lZWRzIG90aGVyIGNj
-ZiBkcml2ZXJzLCB0aGlzIHVzZXMgc3Vic3lzX2luaXRjYWxsX3N5bmMgKi8NCj4gPj4gPj4gPiAr
-c3Vic3lzX2luaXRjYWxsX3N5bmMocmNhcl91c2IyX2Nsb2NrX3NlbF9pbml0KTsNCj4gPj4gPj4N
-Cj4gPj4gPj4gSSBzdXBwb3NlIHRoaXMgaXMgYSB3b3JrYXJvdW5kIGZvciB0aGUgbGFjayBvZiBw
-cm9iZSBkZWZlcnJhbCBzdXBwb3J0IGluIHRoZQ0KPiA+PiA+PiBVU0Igc3Vic3lzdGVtPw0KPiA+
-PiA+DQo+ID4+ID4gVGhpcyBpcyBteSBmYXVsdC4gSSBhZGRlZCAicG93ZXItZG9tYWlucyIgcHJv
-cGVydHkgaW50byB0aGlzIGRldmljZSdzIG5vZGUuDQo+ID4+ID4gQWZ0ZXIgSSByZW1vdmUgdGhl
-IHBvd2VyLWRvbWFpbnMgbGlrZSB0aGUgY3BnIG5vZGUsIHRoaXMgZHJpdmVyIGNhbiB1c2Ugc3Vi
-c3lzX2luaXRjYWxsKCkNCj4gPj4gPiBpbnN0ZWFkIG9mIHN1YnN5c19pbml0Y2FsbF9zeW5jKCku
-DQo+ID4+DQo+ID4+IERvZXMgdGhlIGNsb2NrIHNlbCBtb2R1bGUgcmVxdWlyZXMgdGhlIGZ1bmN0
-aW9uYWwgY2xvY2sgImVoY2lfb2hjaSIgdG8gYmUNCj4gPj4gcnVubmluZyBiZWZvcmUgeW91IGNh
-biBhY2Nlc3MgaXRzIHJlZ2lzdGVycz8NCj4gPj4gSWYgeWVzLCBJIHRoaW5rIHRoZXJlIHNob3Vs
-ZCBiZSBhICJwb3dlci1kb21haW5zIiBwcm9wZXJ0eS4NCj4gPg0KPiA+IFllcy4gQnV0Li4uDQo+
-ID4NCj4gPj4gVGhlbiwgeW91IGNhbiBzaW1wbGlmeSB0aGUgY29kZSBieSBjYWxsaW5nDQo+ID4+
-DQo+ID4+ICAgICAgICAgcG1fcnVudGltZV9lbmFibGUoZGV2KTsNCj4gPj4gICAgICAgICBwbV9y
-dW50aW1lX2dldF9zeW5jKGRldik7DQo+ID4+DQo+ID4+IGFuZCByZW1vdmUgdGhlIGV4cGxpY2l0
-IGhhbmRsaW5nIG9mIHRoZSBmdW5jdGlvbmFsIGNsb2NrLg0KPiA+Pg0KPiA+PiBUaGF0IGRvZXMg
-bm90IHNvbHZlIHByb2JlIGRlZmVycmFsIGhhbmRsaW5nIGluIHRoZSBVU0Igc3Vic3lzdGVtLCB0
-aG91Z2guDQo+ID4NCj4gPiBJIGFkZGVkIGEgZGVidWcgbWVzc2FnZSBhdCBlbmQgb2YgY3BnX21z
-c3JfcHJvYmUoKSwgYW5kIGlmIEkgdXNlZCBzdWJzeXNfaW5pdGNhbGwoKSBvbg0KPiA+IHJjYXIt
-dXNiMi1jbG9jay1zZWwgZHJpdmVyLCBrZXJuZWwgbG9nIG91dHB1dCBiZWxvdzoNCj4gPiA9PT09
-PT09PT09PT09PT09PT09PT09PT0NCj4gPiBbICAgIDAuMjcyNTQ3XSByY2FyLXVzYjItY2xvY2st
-c2VsIGU2NTkwNjMwLmNsb2NrLWNvbnRyb2xsZXI6IHByb2JlIGRlZmVycmFsIG5vdCBzdXBwb3J0
-ZWQNCj4gPiBbICAgIDAuMjczOTQ0XSAgLS0tLS0tLS0tLS0tLS0tLS0gY3BnX21zc3JfcHJvYmU6
-IHByb2JlZCENCj4gPiA9PT09PT09PT09PT09PT09PT09PT09PT0NCj4gPiBTbywgaXQgc2VlbXMg
-dGhlIHJlbmVzYXMtY3BnLW1zc3IuYyBkb2Vzbid0IHNvbHZlIHByb2JlIGRlZmVycmFsIGhhbmRs
-aW5nLg0KPiA+IChUaGUgZHJpdmVyIHJlbmVzYXMtY3BnLW1zc3IuYyB1c2VzIHBsYXRmb3JtX2Ry
-aXZlcl9wcm9iZSgpIGZvciBub3cuKQ0KPiA+DQo+ID4gU28sIElJVUMsIHRoaXMgcmNhci11c2Iy
-LWNsb2NrLXNlbCBkcml2ZXIgY2Fubm90IHVzZSBzdWJzeXNfaW5pdGNhbGwoKS4NCj4gPiBPciwg
-c2hvdWxkIHdlIG1vZGlmeSB0aGUgcmVuZXNhcy1jcGctbXNzci5jIHNvbWVob3c/DQo+IA0KPiBE
-cml2ZXJzIHNob3VsZCBhdm9pZCB1c2luZyBzdWJzeXNfaW5pdGNhbGwoKS4NCj4gV2h5IGRvIHlv
-dSB1c2UgYSBzdWJzeXNfaW5pdGNhbGwoKT8gVG8gYXZvaWQgcHJvYmUgZGVmZXJyYWwgaW4gdGhl
-IFVTQg0KPiBzdXNieXN0ZW0/DQoNCk9oLCB0aGlzIGlzIG15IGZhdWx0Lg0KSSBoYWQgYXNzdW1l
-ZCBhIGNsb2NrIGRyaXZlciBzaG91bGQgdXNlIHN1YnN5c19pbml0Y2FsbCgpLi4uDQpMaWtlIGNs
-ay1maXhlZC1yYXRlLmMsIHdlIGNhbiB1c2UgYnVpbHRpbl9wbGF0Zm9ybV9kcml2ZXIgaW4gZ2Vu
-ZXJhbC4NCg0KPiBXaGF0IGhhcHBlbnMgaWYgdGhlIHJjYXItdXNiMi1jbG9jay1zZWwgdXNlcyBi
-dWlsdGluX3BsYXRmb3JtX2RyaXZlcigpPw0KDQpJIHRyaWVkIGl0IHRvZGF5LCBhbmQgdGhlbiB0
-aGUgcmNhci11c2IyLWNsb2NrLXNlbCB3b3JrcyA6KQ0KU28sIEkgd2lsbCBzdWJtaXQgdjMgcGF0
-Y2guDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gR3J7b2V0amUsZWV0
-aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4g
-R2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAt
-LSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3
-aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVu
-IEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNv
-bWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0g
-TGludXMgVG9ydmFsZHMNCg==
+On 07/18, Adriana Reus wrote:
+> IMX7d does not have an M0 Core and this particular
+> clock doesn't seem connected to anything else.
+> Remove this entry from the CCM driver and fix index
+> for the remaining clocks.
+> 
+> Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+[...]
+> +#define IMX7D_GPT2_ROOT_DIV		305
+> +#define IMX7D_GPT3_ROOT_CLK		306
+> +#define IMX7D_GPT3_ROOT_SRC		307
+> +#define IMX7D_GPT3_ROOT_CG		308
+> +#define IMX7D_GPT3_ROOT_DIV		309
+> +#define IMX7D_GPT4_ROOT_CLK		310
+> +#define IMX7D_GPT4_ROOT_SRC		311
+> +#define IMX7D_GPT4_ROOT_CG		312
+> +#define IMX7D_GPT4_ROOT_DIV		313
+> +#define IMX7D_TRACE_ROOT_CLK		314
+> +#define IMX7D_TRACE_ROOT_SRC		315
+> +#define IMX7D_TRACE_ROOT_CG		316
+> +#define IMX7D_TRACE_ROOT_DIV		317
+> +#define IMX7D_WDOG1_ROOT_CLK		318
+> +#define IMX7D_WDOG_ROOT_SRC		319
+> +#define IMX7D_WDOG_ROOT_CG		320
+> +#define IMX7D_WDOG_ROOT_DIV		321
+> +#define IMX7D_CSI_MCLK_ROOT_CLK		322
+> +#define IMX7D_CSI_MCLK_ROOT_SRC		323
+> +#define IMX7D_CSI_MCLK_ROOT_CG		324
+> +#define IMX7D_CSI_MCLK_ROOT_DIV		325
+> +#define IMX7D_AUDIO_MCLK_ROOT_CLK	326
+> +#define IMX7D_AUDIO_MCLK_ROOT_SRC	327
+> +#define IMX7D_AUDIO_MCLK_ROOT_CG	328
+> +#define IMX7D_AUDIO_MCLK_ROOT_DIV	329
+> +#define IMX7D_WRCLK_ROOT_CLK		330
+> +#define IMX7D_WRCLK_ROOT_SRC		331
+> +#define IMX7D_WRCLK_ROOT_CG		332
+> +#define IMX7D_WRCLK_ROOT_DIV		333
+> +#define IMX7D_CLKO1_ROOT_SRC		334
+> +#define IMX7D_CLKO1_ROOT_CG		335
+> +#define IMX7D_CLKO1_ROOT_DIV		336
+> +#define IMX7D_CLKO2_ROOT_SRC		337
+> +#define IMX7D_CLKO2_ROOT_CG		338
+> +#define IMX7D_CLKO2_ROOT_DIV		339
+> +#define IMX7D_MAIN_AXI_ROOT_PRE_DIV	340
+> +#define IMX7D_DISP_AXI_ROOT_PRE_DIV	341
+> +#define IMX7D_ENET_AXI_ROOT_PRE_DIV	342
+> +#define IMX7D_NAND_USDHC_BUS_ROOT_PRE_DIV 343
+> +#define IMX7D_AHB_CHANNEL_ROOT_PRE_DIV	344
+> +#define IMX7D_USB_HSIC_ROOT_PRE_DIV	345
+> +#define IMX7D_PCIE_CTRL_ROOT_PRE_DIV	346
+> +#define IMX7D_PCIE_PHY_ROOT_PRE_DIV	347
+> +#define IMX7D_EPDC_PIXEL_ROOT_PRE_DIV	348
+> +#define IMX7D_LCDIF_PIXEL_ROOT_PRE_DIV	349
+> +#define IMX7D_MIPI_DSI_ROOT_PRE_DIV	350
+> +#define IMX7D_MIPI_CSI_ROOT_PRE_DIV	351
+> +#define IMX7D_MIPI_DPHY_ROOT_PRE_DIV	352
+> +#define IMX7D_SAI1_ROOT_PRE_DIV		353
+> +#define IMX7D_SAI2_ROOT_PRE_DIV		354
+> +#define IMX7D_SAI3_ROOT_PRE_DIV		355
+> +#define IMX7D_SPDIF_ROOT_PRE_DIV	356
+> +#define IMX7D_ENET1_REF_ROOT_PRE_DIV	357
+> +#define IMX7D_ENET1_TIME_ROOT_PRE_DIV	358
+> +#define IMX7D_ENET2_REF_ROOT_PRE_DIV	359
+> +#define IMX7D_ENET2_TIME_ROOT_PRE_DIV	360
+> +#define IMX7D_ENET_PHY_REF_ROOT_PRE_DIV 361
+> +#define IMX7D_EIM_ROOT_PRE_DIV		362
+> +#define IMX7D_NAND_ROOT_PRE_DIV		363
+> +#define IMX7D_QSPI_ROOT_PRE_DIV		364
+> +#define IMX7D_USDHC1_ROOT_PRE_DIV	365
+> +#define IMX7D_USDHC2_ROOT_PRE_DIV	366
+> +#define IMX7D_USDHC3_ROOT_PRE_DIV	367
+> +#define IMX7D_CAN1_ROOT_PRE_DIV		368
+> +#define IMX7D_CAN2_ROOT_PRE_DIV		369
+> +#define IMX7D_I2C1_ROOT_PRE_DIV		370
+> +#define IMX7D_I2C2_ROOT_PRE_DIV		371
+> +#define IMX7D_I2C3_ROOT_PRE_DIV		372
+> +#define IMX7D_I2C4_ROOT_PRE_DIV		373
+> +#define IMX7D_UART1_ROOT_PRE_DIV	374
+> +#define IMX7D_UART2_ROOT_PRE_DIV	375
+> +#define IMX7D_UART3_ROOT_PRE_DIV	376
+> +#define IMX7D_UART4_ROOT_PRE_DIV	377
+> +#define IMX7D_UART5_ROOT_PRE_DIV	378
+> +#define IMX7D_UART6_ROOT_PRE_DIV	379
+> +#define IMX7D_UART7_ROOT_PRE_DIV	380
+> +#define IMX7D_ECSPI1_ROOT_PRE_DIV	381
+> +#define IMX7D_ECSPI2_ROOT_PRE_DIV	382
+> +#define IMX7D_ECSPI3_ROOT_PRE_DIV	383
+> +#define IMX7D_ECSPI4_ROOT_PRE_DIV	384
+> +#define IMX7D_PWM1_ROOT_PRE_DIV		385
+> +#define IMX7D_PWM2_ROOT_PRE_DIV		386
+> +#define IMX7D_PWM3_ROOT_PRE_DIV		387
+> +#define IMX7D_PWM4_ROOT_PRE_DIV		388
+> +#define IMX7D_FLEXTIMER1_ROOT_PRE_DIV	389
+> +#define IMX7D_FLEXTIMER2_ROOT_PRE_DIV	390
+> +#define IMX7D_SIM1_ROOT_PRE_DIV		391
+> +#define IMX7D_SIM2_ROOT_PRE_DIV		392
+> +#define IMX7D_GPT1_ROOT_PRE_DIV		393
+> +#define IMX7D_GPT2_ROOT_PRE_DIV		394
+> +#define IMX7D_GPT3_ROOT_PRE_DIV		395
+> +#define IMX7D_GPT4_ROOT_PRE_DIV		396
+> +#define IMX7D_TRACE_ROOT_PRE_DIV	397
+> +#define IMX7D_WDOG_ROOT_PRE_DIV		398
+> +#define IMX7D_CSI_MCLK_ROOT_PRE_DIV	399
+> +#define IMX7D_AUDIO_MCLK_ROOT_PRE_DIV	400
+> +#define IMX7D_WRCLK_ROOT_PRE_DIV	401
+> +#define IMX7D_CLKO1_ROOT_PRE_DIV	402
+> +#define IMX7D_CLKO2_ROOT_PRE_DIV	403
+> +#define IMX7D_DRAM_PHYM_ALT_ROOT_PRE_DIV 404
+> +#define IMX7D_DRAM_ALT_ROOT_PRE_DIV	405
+> +#define IMX7D_LVDS1_IN_CLK		406
+> +#define IMX7D_LVDS1_OUT_SEL		407
+> +#define IMX7D_LVDS1_OUT_CLK		408
+> +#define IMX7D_CLK_DUMMY			409
+> +#define IMX7D_GPT_3M_CLK		410
+> +#define IMX7D_OCRAM_CLK			411
+> +#define IMX7D_OCRAM_S_CLK		412
+> +#define IMX7D_WDOG2_ROOT_CLK		413
+> +#define IMX7D_WDOG3_ROOT_CLK		414
+> +#define IMX7D_WDOG4_ROOT_CLK		415
+> +#define IMX7D_SDMA_CORE_CLK		416
+> +#define IMX7D_USB1_MAIN_480M_CLK	417
+> +#define IMX7D_USB_CTRL_CLK		418
+> +#define IMX7D_USB_PHY1_CLK		419
+> +#define IMX7D_USB_PHY2_CLK		420
+> +#define IMX7D_IPG_ROOT_CLK		421
+> +#define IMX7D_SAI1_IPG_CLK		422
+> +#define IMX7D_SAI2_IPG_CLK		423
+> +#define IMX7D_SAI3_IPG_CLK		424
+> +#define IMX7D_PLL_AUDIO_TEST_DIV	425
+> +#define IMX7D_PLL_AUDIO_POST_DIV	426
+> +#define IMX7D_PLL_VIDEO_TEST_DIV	427
+> +#define IMX7D_PLL_VIDEO_POST_DIV	428
+> +#define IMX7D_MU_ROOT_CLK		429
+> +#define IMX7D_SEMA4_HS_ROOT_CLK		430
+> +#define IMX7D_PLL_DRAM_TEST_DIV		431
+> +#define IMX7D_ADC_ROOT_CLK		432
+> +#define IMX7D_CLK_ARM			433
+> +#define IMX7D_CKIL			434
+> +#define IMX7D_OCOTP_CLK			435
+> +#define IMX7D_NAND_RAWNAND_CLK		436
+> +#define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 437
+> +#define IMX7D_CLK_END			438
+>  #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+
+Are any of these defines being used already? Please just leave
+the numbers intact and make the ones that don't exist go to
+/dev/null in the driver. That way, we don't break some ABI where
+people were expecting raw numbers to work still.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
