@@ -1,116 +1,219 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, sboyd@codeaurora.org,
-        robdclark@gmail.com, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH V4 6/6] iommu/arm-smmu: Add support for qcom,msm8996-smmu-v2 clocks
-Date: Thu,  6 Jul 2017 15:07:05 +0530
-Message-Id: <1499333825-7658-7-git-send-email-vivek.gautam@codeaurora.org>
-In-Reply-To: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <vz@mleia.com>
+Subject: Re: [PATCH v6 3/3] clk: stm32h7: Add stm32h743 clock driver
+To: gabriel.fernandez@st.com
+References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
+ <1500364414-10021-4-git-send-email-gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, daniel.thompson@linaro.org,
+ andrea.merello@gmail.com, radoslaw.pietrzyk@gmail.com,
+ Lee Jones <lee.jones@linaro.org>, Sylvain Lemieux <slemieux.tyco@gmail.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
+ gabriel.fernandez.st@gmail.com, Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <f8d47ea1-446a-f714-94ce-a819ed9256a3@mleia.com>
+Date: Tue, 18 Jul 2017 23:19:34 +0300
+MIME-Version: 1.0
+In-Reply-To: <1500364414-10021-4-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-qcom,msm8996-smmu-v2 is an arm,smmu-v2 implementation with
-specific clock and power requirements. This smmu core is used
-with multiple masters on msm8996, viz. mdss, video, etc.
-Add bindings for the same.
+Hello Gabriel,
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- Documentation/devicetree/bindings/iommu/arm,smmu.txt | 18 ++++++++++++++++++
- drivers/iommu/arm-smmu.c                             | 13 +++++++++++++
- 2 files changed, 31 insertions(+)
+On 07/18/2017 10:53 AM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch enables clocks for STM32H743 boards.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> for MFD changes:
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> 
+> for DT-Bindings
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   81 ++
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/clk-stm32h7.c                          | 1522 ++++++++++++++++++++
+>  include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
+>  include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
+>  5 files changed, 1905 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+>  create mode 100644 drivers/clk/clk-stm32h7.c
+>  create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
+>  create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+> new file mode 100644
+> index 0000000..e41e4ac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+> @@ -0,0 +1,81 @@
+> +STMicroelectronics STM32H7 Reset and Clock Controller
+> +=====================================================
+> +
+> +The RCC IP is both a reset and a clock controller.
+> +
+> +Please refer to clock-bindings.txt for common clock controller binding usage.
+> +Please also refer to reset.txt for common reset controller binding usage.
+> +
+> +Required properties:
+> +- compatible: Should be:
+> +  "st,stm32h743-rcc"
+> +
+> +- reg: should be register base and length as documented in the
+> +  datasheet
+> +
+> +- #reset-cells: 1, see below
+> +
+> +- #clock-cells : from common clock binding; shall be set to 1
+> +
+> +- clocks: External oscillator clock phandle
+> +  - high speed external clock signal (HSE)
+> +  - low speed external clock signal (LSE)
+> +  - external I2S clock (I2S_CKIN)
+> +
+> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
+> +  write protection (RTC clock).
+> +
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 00331752d355..5d8e79775fae 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -17,6 +17,7 @@ conditions.
-                         "arm,mmu-401"
-                         "arm,mmu-500"
-                         "cavium,smmu-v2"
-+                        "qcom,msm8996-smmu-v2"
- 
-                   depending on the particular implementation and/or the
-                   version of the architecture implemented.
-@@ -74,11 +75,16 @@ conditions.
- - clock-names:    Should be "tcu" and "iface" for "arm,mmu-400",
-                   "arm,mmu-401" and "arm,mmu-500"
- 
-+                  Should be "bus", and "iface" for "qcom,msm8996-smmu-v2"
-+                  implementation.
-+
-                   "tcu" clock is required for smmu's register access using the
-                   programming interface and ptw for downstream bus access. This
-                   clock is also used for access to the TBU connected to the
-                   master locally. Sometimes however, TBU is clocked along with
-                   the master.
-+                  "bus" clock for "qcom,msm8996-smmu-v2" is requierd for downstream
-+                  bus access and for the smmu ptw.
- 
-                   "iface" clock is required to access the TCU's programming
-                   interface, apart from the "tcu" clock.
-@@ -161,3 +167,15 @@ conditions.
-                 iommu-map = <0 &smmu3 0 0x400>;
-                 ...
-         };
-+
-+	/* Qcom's arm,smmu-v2 implementation for msm8996 */
-+	smmu4: iommu {
-+		compatible = "qcom,msm8996-smmu-v2";
-+		...
-+		#iommu-cells = <1>;
-+		power-domains = <&mmcc MDSS_GDSC>;
-+
-+		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-+			 <&mmcc SMMU_MDP_AHB_CLK>;
-+		clock-names = "bus", "iface";
-+	};
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 7bb09280fa11..fe8e7fd61282 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -110,6 +110,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_MSM8996_SMMUV2,
- };
- 
- /* Until ACPICA headers cover IORT rev. C */
-@@ -1960,6 +1961,17 @@ struct arm_smmu_match_data {
- 	.num_clks = ARRAY_SIZE(arm_mmu500_clks),
- };
- 
-+static const char * const qcom_msm8996_smmuv2_clks[] = {
-+	"bus", "iface",
-+};
-+
-+static const struct arm_smmu_match_data qcom_msm8996_smmuv2 = {
-+	.version = ARM_SMMU_V2,
-+	.model = QCOM_MSM8996_SMMUV2,
-+	.clks = qcom_msm8996_smmuv2_clks,
-+	.num_clks = ARRAY_SIZE(qcom_msm8996_smmuv2_clks),
-+};
-+
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
- 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
-@@ -1967,6 +1979,7 @@ struct arm_smmu_match_data {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,msm8996-smmu-v2", .data = &qcom_msm8996_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+please make a clear decision if "st,syscfg" property is mandatory or not.
+>From the driver code this property is optional, and the clock driver
+is expected to work properly, if the property is omitted. Do I miss
+anything?
+
+> diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
+> new file mode 100644
+> index 0000000..2608c40
+> --- /dev/null
+> +++ b/drivers/clk/clk-stm32h7.c
+
+[snip]
+
+> +static const char * const ltdc_src[] = {"pll3_r"};
+> +
+> +/* Power domain helper */
+> +static inline void disable_power_domain_write_protection(void)
+> +{
+> +	if (pdrm)
+> +		regmap_update_bits(pdrm, 0x00, (1 << 8), (1 << 8));
+> +}
+> +
+> +static inline void enable_power_domain_write_protection(void)
+> +{
+> +	if (pdrm)
+> +		regmap_update_bits(pdrm, 0x00, (1 << 8), (0 << 8));
+
+(0 << 8) is zero.
+
+> +}
+
+IMHO a version below is better:
+
+static inline void enable_power_domain_write_protection(bool enable)
+{
+	if (pdrm)
+		regmap_update_bits(pdrm, 0x00, BIT(8), enable ? 0x0: BIT(8));
+}
+
+> +
+> +static inline bool is_enable_power_domain_write_protection(void)
+
+is_enabled_...
+
+> +{
+> +	if (pdrm) {
+> +		u32 val;
+> +
+> +		regmap_read(pdrm, 0x00, &val);
+> +
+> +		return !(val & 0x100);
+> +	}
+> +	return 0;
+> +}
+
+Please replace (1 << 8) and 0x100 all above with a macro or at least
+BIT(8).
+
+> +
+> +/* Gate clock with ready bit and backup domain management */
+> +struct stm32_ready_gate {
+> +	struct	clk_gate gate;
+> +	u8	bit_rdy;
+> +	u8	backup_domain;
+> +};
+> +
+> +#define to_ready_gate_clk(_rgate) container_of(_rgate, struct stm32_ready_gate,\
+> +		gate)
+> +
+> +#define RGATE_TIMEOUT 10000
+> +
+> +static int ready_gate_clk_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_gate *gate = to_clk_gate(hw);
+> +	struct stm32_ready_gate *rgate = to_ready_gate_clk(gate);
+> +	int dbp_status;
+> +	int bit_status;
+> +	unsigned int timeout = RGATE_TIMEOUT;
+> +
+> +	if (clk_gate_ops.is_enabled(hw))
+> +		return 0;
+> +
+> +	dbp_status = is_enable_power_domain_write_protection();
+> +
+> +	if (rgate->backup_domain && dbp_status)
+> +		disable_power_domain_write_protection();
+> +
+> +	clk_gate_ops.enable(hw);
+> +
+> +	/* We can't use readl_poll_timeout() because we can blocked if
+> +	 * someone enables this clock before clocksource changes.
+> +	 * Only jiffies counter is available. Jiffies are incremented by
+> +	 * interruptions and enable op does not allow to be interrupted.
+> +	 */
+> +	do {
+> +		bit_status = !(readl(gate->reg) & BIT(rgate->bit_rdy));
+> +
+> +		if (bit_status)
+> +			udelay(100);
+> +
+> +	} while (bit_status && --timeout);
+> +
+> +	if (rgate->backup_domain && dbp_status)
+> +		enable_power_domain_write_protection();
+> +
+> +	return bit_status;
+> +}
+
+I'm not convinced that the repetitive lockless pattern
+
+	dbp_status = is_enable_power_domain_write_protection();
+	if (dbp_status)
+		disable_power_domain_write_protection();
+
+	do_something();
+
+	if (dbp_status)
+		enable_power_domain_write_protection();
+
+is correct in a concurrent environment.
+
+You still have a risk of running do_something() *after* a call of
+enable_power_domain_write_protection().
+
+The best option for you is either to switch to ordinary power domains
+and use their API or to move the driver to use regmaps, and at least
+in the latter case you don't need to wrap your code by CCF code (!),
+and as a result you don't need to export truly internal to CCF function
+clk_gate_is_enabled().
+
+--
+With best wishes,
+Vladimir
