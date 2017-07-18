@@ -1,72 +1,66 @@
-Return-Path: <yoshihiro.shimoda.uh@renesas.com>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
- clock selector PHY
-Date: Mon, 24 Jul 2017 10:15:32 +0000
-Message-ID: <TY1PR06MB099263CA5AAEF5ECA6E16E9BD8BB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20170705211753.GV22780@codeaurora.org>
-In-Reply-To: <20170705211753.GV22780@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 17 Jul 2017 18:30:26 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: moxart: remove unnecessary statics
+Message-ID: <20170718013026.GR22780@codeaurora.org>
+References: <20170704223650.GA22546@embeddedgus>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170704223650.GA22546@embeddedgus>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen-san,
+On 07/04, Gustavo A. R. Silva wrote:
+> Remove unnecessary static on local variable _base_ in both functions
+> moxart_of_pll_clk_init() and moxart_of_apb_clk_init(). Such variables
+> are initialized before being used, on every execution path throughout
+> the mentioned functions. The statics have no benefit and, removing
+> them reduce the code size.
+> 
+> This issue was detected using Coccinelle and the following semantic patch:
+> 
+> @bad exists@
+> position p;
+> identifier x;
+> type T;
+> @@
+> 
+> static T x@p;
+> ...
+> x = <+...x...+>
+> 
+> @@
+> identifier x;
+> expression e;
+> type T;
+> position p != bad.p;
+> @@
+> 
+> -static
+>  T x@p;
+>  ... when != x
+>      when strict
+> ?x = e;
+> 
+> In the following log you can see the difference in the code size. Also,
+> notice that the bss segment is reduced down to zero. This log is the
+> output of the size command, before and after the code change:
+> 
+> before:
+>    text    data     bss     dec     hex filename
+>    1724     384     128    2236     8bc drivers/clk/clk-moxart.o
+> 
+> after:
+>    text    data     bss     dec     hex filename
+>    1697     240       0    1937     791 drivers/clk/clk-moxart.o
+> 
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> ---
 
-Thank you for your comments!
+Applied to clk-next
 
-> From: Stephen Boyd
-> Sent: Thursday, July 6, 2017 6:18 AM
->=20
-> On 06/28, Yoshihiro Shimoda wrote:
-> > +
-> > +
-> > +	platform_set_drvdata(pdev, priv);
-> > +	dev_set_drvdata(dev, priv);
-> > +
-> > +	init.name =3D "rcar_usb2_clock_sel";
-> > +	init.ops =3D &usb2_clock_sel_clock_ops;
-> > +	init.flags =3D CLK_IS_BASIC;
->=20
-> Please drop CLK_IS_BASIC unless you need it.
-
-I got it.
-
-> > +	init.parent_names =3D NULL;
-> > +	init.num_parents =3D 0;
-> > +	priv->hw.init =3D &init;
-> > +
-> > +	clk =3D clk_register(NULL, &priv->hw);
-> > +	if (IS_ERR(clk))
-> > +		return PTR_ERR(clk);
-> > +
-> > +	error =3D of_clk_add_provider(np, of_clk_src_simple_get, clk);
->=20
-> Can you use clk_hw_register() and of_clk_add_hw_provider()
-> please?
-
-I could use of_clk_add_hw_provider().
-
-Best regards,
-Yoshihiro Shimoda
-
-> > +	if (error)
-> > +		return error;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct dev_pm_ops rcar_usb2_clock_sel_pm_ops =3D {
-> > +	.suspend	=3D rcar_usb2_clock_sel_suspend,
-> > +	.resume		=3D rcar_usb2_clock_sel_resume,
-> > +};
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
