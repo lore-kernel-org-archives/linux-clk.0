@@ -1,214 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.19]:63330 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752509AbdGJMZT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Jul 2017 08:25:19 -0400
-From: Ingo van Lil <inguin@gmx.de>
-To: linux-kernel@vger.kernel.org
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@atmel.com>,
-        linux-clk@vger.kernel.org, Ingo van Lil <inguin@gmx.de>
-Subject: [PATCH] clk: at91: utmi: Support configurable multipliers
-Date: Mon, 10 Jul 2017 14:24:09 +0200
-Message-Id: <20170710122409.3017-1-inguin@gmx.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ore@pengutronix.de>
+Subject: Re: [PATCH v6 0/6] provide power off support for iMX6 with external
+ PMIC
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
+ Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
+ Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring
+ <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Leonard Crestez <leonard.crestez@nxp.com>
+References: <20170620140910.7568-1-o.rempel@pengutronix.de>
+From: Oleksij Rempel <ore@pengutronix.de>
+Message-ID: <c64ce8db-eea6-3709-9c97-fda16e93481a@pengutronix.de>
+Date: Tue, 18 Jul 2017 06:53:54 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170620140910.7568-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The AT91 UTMI clock is a PLL generating the 480 MHz USB clock.
-Originally, this PLL always had a fixed x40 multiplier, thus requiring
-a 12 MHz input clock. Recent SOCs (sama5d2 and sama5d3) have a special
-function register for configuring this multiplier, allowing to use
-different main clock frequencies.
+Hallo all,
 
-Signed-off-by: Ingo van Lil <inguin@gmx.de>
----
- drivers/clk/at91/clk-utmi.c  | 105 +++++++++++++++++++++++++++++++++++++++++--
- include/soc/at91/atmel-sfr.h |   2 +
- 2 files changed, 104 insertions(+), 3 deletions(-)
+Here Gentle Ping to the Old King
 
-diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-index aadabd9..d41c38b 100644
---- a/drivers/clk/at91/clk-utmi.c
-+++ b/drivers/clk/at91/clk-utmi.c
-@@ -14,14 +14,29 @@
- #include <linux/of.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-+#include <soc/at91/atmel-sfr.h>
- 
- #include "pmc.h"
- 
-+/* default multiplier for SOCs that do not allow configuration via SFR */
- #define UTMI_FIXED_MUL		40
- 
-+/* supported multiplier settings for SOCs that allow configuration via SFR */
-+struct utmi_multipliers {
-+	const char *sfr_compatible_name;
-+	u8 multipliers[4];
-+};
-+
-+static const struct utmi_multipliers utmi_multipliers[] = {
-+	{ "atmel,sama5d2-sfr", { 40, 30, 20, 40 } },
-+	{ "atmel,sama5d3-sfr", { 40, 30, 20, 10 } },
-+};
-+
- struct clk_utmi {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-+	struct regmap *sfr_regmap;
-+	const u8 *multipliers;
- };
- 
- #define to_clk_utmi(hw) container_of(hw, struct clk_utmi, hw)
-@@ -66,8 +81,67 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
- static unsigned long clk_utmi_recalc_rate(struct clk_hw *hw,
- 					  unsigned long parent_rate)
- {
--	/* UTMI clk is a fixed clk multiplier */
--	return parent_rate * UTMI_FIXED_MUL;
-+	struct clk_utmi *utmi = to_clk_utmi(hw);
-+	u8 mul = UTMI_FIXED_MUL;
-+
-+	if (utmi->sfr_regmap && utmi->multipliers) {
-+		u32 regval;
-+		regmap_read(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM, &regval);
-+		mul = utmi->multipliers[regval & AT91_UTMICKTRIM_FREQ_MASK];
-+	}
-+
-+	return parent_rate * mul;
-+}
-+
-+static long clk_utmi_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct clk_utmi *utmi = to_clk_utmi(hw);
-+	unsigned long bestrate = 0;
-+	int bestdiff = -1;
-+	int i;
-+
-+	if (!utmi->sfr_regmap || !utmi->multipliers)
-+		return *parent_rate * UTMI_FIXED_MUL;
-+
-+	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-+		unsigned long tmprate = *parent_rate * utmi->multipliers[i];
-+		int tmpdiff;
-+
-+		if (tmprate < rate)
-+			continue;
-+
-+		tmpdiff = tmprate - rate;
-+		if (bestdiff < 0 || bestdiff > tmpdiff) {
-+			bestrate = tmprate;
-+			bestdiff = tmpdiff;
-+		}
-+
-+		if (!bestdiff)
-+			break;
-+	}
-+
-+	return bestrate;
-+}
-+
-+static int clk_utmi_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct clk_utmi *utmi = to_clk_utmi(hw);
-+	int i;
-+
-+	if (!utmi->sfr_regmap || !utmi->multipliers)
-+		return rate == parent_rate * UTMI_FIXED_MUL ? 0 : -EINVAL;
-+
-+	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-+		if (rate == parent_rate * utmi->multipliers[i]) {
-+			regmap_update_bits(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM,
-+					   AT91_UTMICKTRIM_FREQ_MASK, i);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
- }
- 
- static const struct clk_ops utmi_ops = {
-@@ -75,10 +149,13 @@ static const struct clk_ops utmi_ops = {
- 	.unprepare = clk_utmi_unprepare,
- 	.is_prepared = clk_utmi_is_prepared,
- 	.recalc_rate = clk_utmi_recalc_rate,
-+	.round_rate = clk_utmi_round_rate,
-+	.set_rate = clk_utmi_set_rate,
- };
- 
- static struct clk_hw * __init
- at91_clk_register_utmi(struct regmap *regmap,
-+		       struct regmap *sfr_regmap, const u8 *multipliers,
- 		       const char *name, const char *parent_name)
- {
- 	struct clk_utmi *utmi;
-@@ -98,6 +175,8 @@ at91_clk_register_utmi(struct regmap *regmap,
- 
- 	utmi->hw.init = &init;
- 	utmi->regmap = regmap;
-+	utmi->sfr_regmap = sfr_regmap;
-+	utmi->multipliers = multipliers;
- 
- 	hw = &utmi->hw;
- 	ret = clk_hw_register(NULL, &utmi->hw);
-@@ -115,6 +194,9 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
- 	const char *parent_name;
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct regmap *sfr_regmap;
-+	const u8 *multipliers = NULL;
-+	size_t i;
- 
- 	parent_name = of_clk_get_parent_name(np, 0);
- 
-@@ -124,7 +206,24 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
- 
--	hw = at91_clk_register_utmi(regmap, name, parent_name);
-+	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-+		sfr_regmap = syscon_regmap_lookup_by_compatible(
-+			utmi_multipliers[i].sfr_compatible_name);
-+		if (!IS_ERR(sfr_regmap)) {
-+			pr_debug("clk-utmi: found sfr node: %s\n",
-+				 utmi_multipliers[i].sfr_compatible_name);
-+			multipliers = utmi_multipliers[i].multipliers;
-+			break;
-+		}
-+	}
-+
-+	if (IS_ERR(sfr_regmap)) {
-+		pr_debug("clk-utmi: failed to find sfr node\n");
-+		sfr_regmap = NULL;
-+	}
-+
-+	hw = at91_clk_register_utmi(regmap, sfr_regmap, multipliers,
-+				    name, parent_name);
- 	if (IS_ERR(hw))
- 		return;
- 
-diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
-index 506ea8f..763948e 100644
---- a/include/soc/at91/atmel-sfr.h
-+++ b/include/soc/at91/atmel-sfr.h
-@@ -17,6 +17,7 @@
- /* 0x08 ~ 0x0c: Reserved */
- #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
- #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
-+#define AT91_SFR_UTMICKTRIM	0x30	/* UTMI Clock Trimming Register */
- #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
- 
- /* Field definitions */
-@@ -28,5 +29,6 @@
- 					 AT91_OHCIICR_SUSPEND_B | \
- 					 AT91_OHCIICR_SUSPEND_C)
- 
-+#define AT91_UTMICKTRIM_FREQ_MASK	0x03
- 
- #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
--- 
-2.9.4
+DT is already ACKed.
 
+On 20.06.2017 16:09, Oleksij Rempel wrote:
+> This patch series is providing power off support for Freescale/NXP iMX6 based
+> boards with external power management integrated circuit (PMIC).
+>
+> changes:
+> v6:
+>  - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
+>  - fix "MPIC_STBY_REQ" typo in the comment.
+>
+> v5:
+>  - remove useless includes from pm-imx6.c patch
+>  - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
+>    patch
+>
+> v4:
+>  - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
+>    patch
+>  - add Acked-by to "ARM: imx6q: provide documentation for new ..."
+>    patch
+>
+> v3:
+>  - set pm_power_off_prepare = NULL on .remove.
+>  - documentation and spelling fixes.
+>  - use %pf instead of lookup_symbol_name.
+>
+> Oleksij Rempel (6):
+>   ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
+>     property
+>   ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
+>     is set
+>   kernel/reboot.c: export pm_power_off_prepare
+>   regulator: pfuze100: add fsl,pmic-stby-poweroff property
+>   regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+>   ARM: dts: imx6: RIoTboard provide standby on power off option
+>
+>  .../devicetree/bindings/clock/imx6q-clock.txt      |  8 ++
+>  .../devicetree/bindings/regulator/pfuze100.txt     |  7 ++
+>  arch/arm/boot/dts/imx6dl-riotboard.dts             |  5 ++
+>  arch/arm/mach-imx/pm-imx6.c                        | 25 ++++++
+>  drivers/regulator/pfuze100-regulator.c             | 92 ++++++++++++++++++++++
+>  kernel/reboot.c                                    |  1 +
+>  6 files changed, 138 insertions(+)
+>
