@@ -1,71 +1,67 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner SoCs
-Date: Mon, 24 Jul 2017 13:46:15 +0200
-Message-ID: <2436327.OLdY8skjMP@aspire.rjw.lan>
-In-Reply-To: <20170724085349.GT352@vireshk-i7>
-References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-8-icenowy@aosc.io> <20170724085349.GT352@vireshk-i7>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [PATCH v6 1/3] clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
+Date: Tue, 18 Jul 2017 09:53:32 +0200
+Message-ID: <1500364414-10021-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
+References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, July 24, 2017 02:23:49 PM Viresh Kumar wrote:
-> On 23-07-17, 18:27, Icenowy Zheng wrote:
-> > Some new Allwinner SoCs get supported in the kernel after the
-> > compatibles are added to cpufreq-dt-platdev driver.
-> > 
-> > Add their compatible strings in the cpufreq-dt-platdev driver.
-> > 
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > ---
-> >  drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > index 2eb40d46d357..c3851453e84a 100644
-> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > @@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
-> >  	{ .compatible = "allwinner,sun8i-a23", },
-> >  	{ .compatible = "allwinner,sun8i-a33", },
-> >  	{ .compatible = "allwinner,sun8i-a83t", },
-> > +	{ .compatible = "allwinner,sun8i-h2-plus", },
-> >  	{ .compatible = "allwinner,sun8i-h3", },
-> > +	{ .compatible = "allwinner,sun8i-v3s", },
-> > +	{ .compatible = "allwinner,sun50i-a64", },
-> > +	{ .compatible = "allwinner,sun50i-h5", },
-> >  
-> >  	{ .compatible = "apm,xgene-shadowcat", },
-> >  
-> > @@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
-> >  	{ .compatible = "marvell,pxa250", },
-> >  	{ .compatible = "marvell,pxa270", },
-> >  
-> > +	{ .compatible = "nextthing,gr8", },
-> > +
-> >  	{ .compatible = "samsung,exynos3250", },
-> >  	{ .compatible = "samsung,exynos4210", },
-> >  	{ .compatible = "samsung,exynos4212", },
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-OK
+We need to export clk_gate_is_enabled() from clk framework, then
+to avoid compilation issue we have to rename clk_gate_is_enabled()
+in NXP LPC32xx clock driver.
 
-I'm assuming this will go in via arm-soc along with the rest of the series.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Rafael
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 5b98ff9..1cc71ad 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -903,7 +903,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+ 	regmap_update_bits(clk_regmap, clk->reg, mask, val);
+ }
+ 
+-static int clk_gate_is_enabled(struct clk_hw *hw)
++static int __clk_gate_is_enabled(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
+ 	u32 val;
+@@ -918,7 +918,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
+ static const struct clk_ops lpc32xx_clk_gate_ops = {
+ 	.enable = clk_gate_enable,
+ 	.disable = clk_gate_disable,
+-	.is_enabled = clk_gate_is_enabled,
++	.is_enabled = __clk_gate_is_enabled,
+ };
+ 
+ #define div_mask(width)	((1 << (width)) - 1)
+-- 
+1.9.1
