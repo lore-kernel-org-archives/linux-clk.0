@@ -1,161 +1,61 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v4 8/9] ASoC: atmel-classd: remove aclk clock
-To: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<alexandre.belloni@free-electrons.com>, <linux@armlinux.org.uk>,
-	<boris.brezillon@free-electrons.com>, <perex@perex.cz>, <tiwai@suse.com>
-CC: <cyrille.pitchen@wedev4u.fr>, <thomas.petazzoni@free-electrons.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
- <645aa35fec4a2384ca2f3039615ee6598602f9e2.1500968090.git-series.quentin.schulz@free-electrons.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <97863fa5-06aa-598b-050f-4454c720420a@microchip.com>
-Date: Tue, 25 Jul 2017 17:40:14 +0200
-MIME-Version: 1.0
-In-Reply-To: <645aa35fec4a2384ca2f3039615ee6598602f9e2.1500968090.git-series.quentin.schulz@free-electrons.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1500387910.9510.22.camel@pengutronix.de>
+Subject: Re: Coupled clk/reset
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Joel Stanley <joel@jms.id.au>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, Ryan Chen <ryan_chen@aspeedtech.com>,  Linus
+ Walleij <linus.walleij@linaro.org>, Andrew Jeffery <andrew@aj.id.au>,
+ Jeremy Kerr <jk@ozlabs.org>
+Date: Tue, 18 Jul 2017 16:25:10 +0200
+In-Reply-To: <1500375379.2865.114.camel@kernel.crashing.org>
+References: 
+	<CACPK8XdXxfxngzhSxyPb=OKcEv+3Up8ve-2WtpETpXvXe_av5w@mail.gmail.com>
+	 <1500375379.2865.114.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/07/2017 at 09:37, Quentin Schulz wrote:
-> Since gclk (generated-clk) is now able to determine the rate of the
-> audio_pll, there is no need for classd to have a direct phandle to the
-> audio_pll while already having a phandle to gclk.
-> 
-> Thus, remove all mentions to aclk in classd driver and update macros and
-> variable names.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
+On Tue, 2017-07-18 at 20:56 +1000, Benjamin Herrenschmidt wrote:
+[...]
+> My gut feeling is that I would have a single driver exposing both clock
+> and reset interfaces.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Agreed.
 
-> ---
->  sound/soc/atmel/atmel-classd.c | 47 ++++++++++-------------------------
->  1 file changed, 14 insertions(+), 33 deletions(-)
+> It keeps a "reset state" for each device.
 > 
-> diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
-> index b7ef8c5..be6b775 100644
-> --- a/sound/soc/atmel/atmel-classd.c
-> +++ b/sound/soc/atmel/atmel-classd.c
-> @@ -32,7 +32,6 @@ struct atmel_classd {
->  	struct regmap *regmap;
->  	struct clk *pclk;
->  	struct clk *gclk;
-> -	struct clk *aclk;
->  	int irq;
->  	const struct atmel_classd_pdata *pdata;
->  };
-> @@ -330,11 +329,6 @@ static int atmel_classd_codec_dai_startup(struct snd_pcm_substream *substream,
->  {
->  	struct snd_soc_pcm_runtime *rtd = substream->private_data;
->  	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(dd->aclk);
-> -	if (ret)
-> -		return ret;
->  
->  	return clk_prepare_enable(dd->gclk);
->  }
-> @@ -357,31 +351,31 @@ static int atmel_classd_codec_dai_digital_mute(struct snd_soc_dai *codec_dai,
->  	return 0;
->  }
->  
-> -#define CLASSD_ACLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
-> -#define CLASSD_ACLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
-> +#define CLASSD_GCLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
-> +#define CLASSD_GCLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
->  
->  static struct {
->  	int rate;
->  	int sample_rate;
->  	int dsp_clk;
-> -	unsigned long aclk_rate;
-> +	unsigned long gclk_rate;
->  } const sample_rates[] = {
->  	{ 8000,  CLASSD_INTPMR_FRAME_8K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
->  	{ 16000, CLASSD_INTPMR_FRAME_16K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
->  	{ 32000, CLASSD_INTPMR_FRAME_32K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
->  	{ 48000, CLASSD_INTPMR_FRAME_48K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
->  	{ 96000, CLASSD_INTPMR_FRAME_96K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
->  	{ 22050, CLASSD_INTPMR_FRAME_22K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
->  	{ 44100, CLASSD_INTPMR_FRAME_44K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
->  	{ 88200, CLASSD_INTPMR_FRAME_88K,
-> -	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-> +	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
->  };
->  
->  static int
-> @@ -410,13 +404,12 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
->  	}
->  
->  	dev_dbg(codec->dev,
-> -		"Selected SAMPLE_RATE of %dHz, ACLK_RATE of %ldHz\n",
-> -		sample_rates[best].rate, sample_rates[best].aclk_rate);
-> +		"Selected SAMPLE_RATE of %dHz, GCLK_RATE of %ldHz\n",
-> +		sample_rates[best].rate, sample_rates[best].gclk_rate);
->  
->  	clk_disable_unprepare(dd->gclk);
-> -	clk_disable_unprepare(dd->aclk);
->  
-> -	ret = clk_set_rate(dd->aclk, sample_rates[best].aclk_rate);
-> +	ret = clk_set_rate(dd->gclk, sample_rates[best].gclk_rate);
->  	if (ret)
->  		return ret;
->  
-> @@ -426,10 +419,6 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
->  
->  	snd_soc_update_bits(codec, CLASSD_INTPMR, mask, val);
->  
-> -	ret = clk_prepare_enable(dd->aclk);
-> -	if (ret)
-> -		return ret;
-> -
->  	return clk_prepare_enable(dd->gclk);
->  }
->  
-> @@ -441,7 +430,6 @@ atmel_classd_codec_dai_shutdown(struct snd_pcm_substream *substream,
->  	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
->  
->  	clk_disable_unprepare(dd->gclk);
-> -	clk_disable_unprepare(dd->aclk);
->  }
->  
->  static int atmel_classd_codec_dai_prepare(struct snd_pcm_substream *substream,
-> @@ -596,13 +584,6 @@ static int atmel_classd_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	dd->aclk = devm_clk_get(dev, "aclk");
-> -	if (IS_ERR(dd->aclk)) {
-> -		ret = PTR_ERR(dd->aclk);
-> -		dev_err(dev, "failed to get audio clock: %d\n", ret);
-> -		return ret;
-> -	}
-> -
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	io_base = devm_ioremap_resource(dev, res);
->  	if (IS_ERR(io_base)) {
+> The reset API just changes that internal (SW) state, and adjusts the HW
+> reset if and only if the clock is on.
 > 
+> When the clock is turned off, we force the reset, disable the clock.
+> 
+> When the clock is turned on, we force the reset if not already set,
+> enable the clock, then only lift the reset if the "user" reset is
+> not asserted.
 
+Please let's not do this. If a reset line is controlled by the clocks
+like this, I'd rather not have it exported via the reset API at the same
+time.
+Both shared and exclusive reset control API are incompatible with
+another controlling instance forcing the reset line into asserted state:
+the exclusive reset API promises full control over the reset line, and
+the shared reset API guarantees deassertion while requested (just like
+the clk API can't be used to force-disable a clock).
 
--- 
-Nicolas Ferre
+> That being said, I think for the aspeed SoC, the argument could be made
+> that we don't actually need a reset driver. We yet have to encounter a
+> single device that needs to control it's own reset line for anything
+> other than enabling/disabling its clock/IP block.
+> 
+> So I suspect sticking to just a clock API that does the underlying
+> reset manipulations as needed is sufficient and we can "upgrade" to the
+> above proposal if it ends up being needed (which I doubt).
+
+I agree with hiding the whole mechanism in the clock driver. If that
+can't be done in the clock driver, I would prefer to give control to the
+IP block drivers instead.
+
+regards
+Philipp
