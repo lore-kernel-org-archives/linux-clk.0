@@ -1,85 +1,63 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-References: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1499392677-9100-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <57a23b45-9514-00c0-aa92-00a54d68ad2e@gmail.com>
-Date: Sun, 9 Jul 2017 15:31:38 +0200
+Return-Path: <adriana.reus@nxp.com>
+From: Adriana Reus <adriana.reus@nxp.com>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	fabio.estevam@nxp.com,
+	shawnguo@kernel.org,
+	anson.huang@nxp.com,
+	Adriana Reus <adriana.reus@nxp.com>
+Subject: [PATCH 1/2] clk: imx: imx7d: Fix parent clock for OCRAM_CLK
+Date: Tue, 18 Jul 2017 10:44:51 +0300
+Message-Id: <1500363892-1173-2-git-send-email-adriana.reus@nxp.com>
+In-Reply-To: <1500363892-1173-1-git-send-email-adriana.reus@nxp.com>
+References: <1500363892-1173-1-git-send-email-adriana.reus@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1499392677-9100-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: adriana.reus@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/07/2017 03:57 AM, Vladimir Barinov wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-> 
-> IDT VersaClock 5 5P49V5925 has 4 clock outputs
+The parent of OCRAM_CLK should be axi_main_root_clk
+and not axi_post_div.
 
-In 1/2 you said it has 4 FODs and 5 outputs (and it does have 5 outputs,
-4 from FODs and 1 I2C_OUTB).
+before:
 
->, 4 fractional dividers.
-> Input clock source can be taken only from external reference clock.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+    axi_src                     1       1       332307692       0 0
+      axi_cg                    1       1       332307692       0 0
+        axi_pre_div             1       1       332307692       0 0
+          axi_post_div          1       1       332307692       0 0
+            ocram_clk           0       0       332307692       0 0
+            main_axi_root_clk   1       1       332307692       0 0
 
-You might want to rebase this on top of and retest against [1], there
-are 8 patches in total fixing some stuff and adding VC6 support.
+after:
 
-[1] https://patchwork.kernel.org/patch/9831797/
+    axi_src                     1       1       332307692       0 0
+      axi_cg                    1       1       332307692       0 0
+        axi_pre_div             1       1       332307692       0 0
+          axi_post_div          1       1       332307692       0 0
+            main_axi_root_clk   1       1       332307692       0 0
+              ocram_clk         0       0       332307692       0 0
 
-> ---
->  Documentation/devicetree/bindings/clock/idt,versaclock5.txt | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> index 53d7e50..a1ad9e0 100644
-> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> @@ -6,19 +6,21 @@ from 3 to 12 output clocks.
->  ==I2C device node==
->  
->  Required properties:
-> -- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
-> -		"idt,5p49v5935".
-> +- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5925" ,
-> +		"idt,5p49v5933", "idt,5p49v5935".
->  - reg:		i2c device address, shall be 0x68 or 0x6a.
->  - #clock-cells:	from common clock binding; shall be set to 1.
->  - clocks:	from common clock binding; list of parent clock handles,
-> -		- 5p49v5923: (required) either or both of XTAL or CLKIN
-> +		- 5p49v5923 and
-> +		- 5p49v5925: (required) either or both of XTAL or CLKIN
->  					reference clock.
->  		- 5p49v5933 and
->  		- 5p49v5935: (optional) property not present (internal
->  					Xtal used) or CLKIN reference
->  					clock.
->  - clock-names:	from common clock binding; clock input names, can be
-> -		- 5p49v5923: (required) either or both of "xin", "clkin".
-> +		- 5p49v5923 and
-> +		- 5p49v5925: (required) either or both of "xin", "clkin".
->  		- 5p49v5933 and
->  		- 5p49v5935: (optional) property not present or "clkin".
->  
-> @@ -37,6 +39,7 @@ clock specifier, the following mapping applies:
->  	1 -- OUT1
->  	2 -- OUT4
->  
-> +5P49V5925 and
->  5P49V5935:
->  	0 -- OUT0_SEL_I2CB
->  	1 -- OUT1
-> 
+Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 3da1218..10f6a10 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -797,7 +797,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
+ 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
+ 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+-	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
++	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "main_axi_root_clk", base + 0x4110, 0);
+ 	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
+ 	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
 -- 
-Best regards,
-Marek Vasut
+2.7.4
