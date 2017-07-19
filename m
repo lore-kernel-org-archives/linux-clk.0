@@ -1,85 +1,38 @@
-Return-Path: <vz@mleia.com>
-Subject: Re: [PATCH v6 2/3] clk: gate: expose clk_gate_ops::is_enabled
-To: gabriel.fernandez@st.com
-References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
- <1500364414-10021-3-git-send-email-gabriel.fernandez@st.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Russell King <linux@armlinux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, daniel.thompson@linaro.org,
- andrea.merello@gmail.com, radoslaw.pietrzyk@gmail.com,
- Lee Jones <lee.jones@linaro.org>, Sylvain Lemieux <slemieux.tyco@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
- gabriel.fernandez.st@gmail.com, Arvind Yadav <arvind.yadav.cs@gmail.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <55bc0f3f-67ed-a15f-5b71-d87044fd5237@mleia.com>
-Date: Tue, 18 Jul 2017 22:53:31 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:33026 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753139AbdGSHxM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2017 03:53:12 -0400
 MIME-Version: 1.0
-In-Reply-To: <1500364414-10021-3-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170718164407.22998-2-wsa+renesas@sang-engineering.com>
+References: <20170718164407.22998-1-wsa+renesas@sang-engineering.com> <20170718164407.22998-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Jul 2017 09:53:11 +0200
+Message-ID: <CAMuHMdW8Qcay5NpExsVrXfMOZq0-2Hxrg3v42egBASMY0V_tcQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] clk: renesas: rcar-gen3-cpg: drop superfluous variable
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/18/2017 10:53 AM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch exposes clk_gate_ops::is_enabled as functions
-> that can be directly called and assigned in places like this so
-> we don't need wrapper functions that do nothing besides forward
-> the call.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Sugested by Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/clk-gate.c       | 3 ++-
->  include/linux/clk-provider.h | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-> index 4e0c054a..dd82485 100644
-> --- a/drivers/clk/clk-gate.c
-> +++ b/drivers/clk/clk-gate.c
-> @@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
->  	clk_gate_endisable(hw, 0);
->  }
->  
-> -static int clk_gate_is_enabled(struct clk_hw *hw)
-> +int clk_gate_is_enabled(struct clk_hw *hw)
->  {
->  	u32 reg;
->  	struct clk_gate *gate = to_clk_gate(hw);
-> @@ -101,6 +101,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
->  
->  	return reg ? 1 : 0;
->  }
-> +EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
->  
->  const struct clk_ops clk_gate_ops = {
->  	.enable = clk_gate_enable,
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index c59c625..e9587ab 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
->  		u8 clk_gate_flags, spinlock_t *lock);
->  void clk_unregister_gate(struct clk *clk);
->  void clk_hw_unregister_gate(struct clk_hw *hw);
-> +int clk_gate_is_enabled(struct clk_hw *hw);
+On Tue, Jul 18, 2017 at 6:44 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> 'rate' is not used, so we can use 'parent_rate' directly.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Here the prefix does not reflect the type of its argument, it might be
-acceptable for a veiled function, but it is not wanted for the exported
-function. Something like clk_hw_gate_is_enabled() is expected here, but
-again, let's firstly come to an agreement, that the export is needed.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-4.14.
 
->  
->  struct clk_div_table {
->  	unsigned int	val;
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --
-With best wishes,
-Vladimir
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
