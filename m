@@ -1,80 +1,48 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH v2 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-References: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1499622005-13003-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <42b395eb-075f-54b8-cb16-7eba9c7ef186@gmail.com>
-Date: Sun, 9 Jul 2017 19:42:58 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:38099 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751548AbdGSH6B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2017 03:58:01 -0400
 MIME-Version: 1.0
-In-Reply-To: <1499622005-13003-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
+References: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Jul 2017 09:57:59 +0200
+Message-ID: <CAMuHMdU+Sgk_TGDqGRfOVHy6cByw1au0cBzmK_t_zTS00Fu2OA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] clk: renesas: rcar-gen3-cpg: refactor accessing
+ the SD div table
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/09/2017 07:40 PM, Vladimir Barinov wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-> 
-> IDT VersaClock 5 5P49V5925 has 5 clock outputs, 4 fractional dividers.
-> Input clock source can be taken only from external reference clock.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+Hi Wolfram,
 
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+On Tue, Jul 18, 2017 at 6:44 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Here is a patch series trying to implement the conclusions about accessing the
+> SD divider table, coming from this discussion [1]. Patch 1 is a tiny, yet
+> seperate cleanup. Patch 2 is the bulk of the work doing the checks only when needed.
+> I think the code looks much better now.
+>
+> I tested this on a Salvator-X (R-Car M3-W) with highspeed and UHS SD cards. I
+> could access them and checksum files. I also did not notice any performance
+> regressions. There are also no WARNings in the boot log.
+>
+> Please let me know if this is what you had in mind and if you can think of
+> other ways of testing this change.
 
-> ---
-> Changes in version 2:
-> - fixed typo in patch header: VC5 has 5 clock outputs
-> - rebased against patch:
->   [V3,7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-> 
->  Documentation/devicetree/bindings/clock/idt,versaclock5.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> index 66ef0a0..05a245c 100644
-> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> @@ -8,6 +8,7 @@ generators providing from 3 to 12 output clocks.
->  Required properties:
->  - compatible:	shall be one of
->  		"idt,5p49v5923"
-> +		"idt,5p49v5925"
->  		"idt,5p49v5933"
->  		"idt,5p49v5935"
->  		"idt,5p49v6901"
-> @@ -15,6 +16,7 @@ Required properties:
->  - #clock-cells:	from common clock binding; shall be set to 1.
->  - clocks:	from common clock binding; list of parent clock handles,
->  		- 5p49v5923 and
-> +		  5p49v5925 and
->  		  5p49v6901: (required) either or both of XTAL or CLKIN
->  					reference clock.
->  		- 5p49v5933 and
-> @@ -23,6 +25,7 @@ Required properties:
->  					clock.
->  - clock-names:	from common clock binding; clock input names, can be
->  		- 5p49v5923 and
-> +		  5p49v5925 and
->  		  5p49v6901: (required) either or both of "xin", "clkin".
->  		- 5p49v5933 and
->  		- 5p49v5935: (optional) property not present or "clkin".
-> @@ -42,6 +45,7 @@ clock specifier, the following mapping applies:
->  	1 -- OUT1
->  	2 -- OUT4
->  
-> +5P49V5925 and
->  5P49V5935:
->  	0 -- OUT0_SEL_I2CB
->  	1 -- OUT1
-> 
+Thank you, looks great!
 
+Gr{oetje,eeting}s,
 
--- 
-Best regards,
-Marek Vasut
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
