@@ -1,41 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Jul 2017 09:40:58 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v2 4/5] clk: qcom: gcc-msm8996: Mark
- gcc_mmss_noc_cfg_ahb_clk as a critical clock
-Message-ID: <20170728164058.GC2146@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-5-git-send-email-rnayak@codeaurora.org>
- <20170727225130.GQ2146@codeaurora.org>
- <319a0d15-354b-946b-da27-41d56fa0bb21@codeaurora.org>
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 009/102] clk: sunxi: explicitly request exclusive reset control
+Date: Wed, 19 Jul 2017 17:25:13 +0200
+Message-Id: <20170719152646.25903-10-p.zabel@pengutronix.de>
+In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <319a0d15-354b-946b-da27-41d56fa0bb21@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/28, Rajendra Nayak wrote:
-> 
-> On 07/28/2017 04:21 AM, Stephen Boyd wrote:
-> > On 07/20, Rajendra Nayak wrote:
-> >> we have gcc_mmss_noc_cfg_ahb_clk marked with a CLK_IGNORE_UNUSED. While
-> >> this can prevent it from being disabled while its unused, it does not
-> >> prevent it from being disabled when a child derived from the clock calls
-> >> an explicit enable/disable.
-> > 
-> > Do you mean the config_noc_clk_src is being disabled? Who is
-> 
-> I think the issue I saw was after I switched the parent from
-> config_noc_clk_src to the RPM controlled cnoc_clk. That had to
-> be kept voted, else some other ahb clock derived from it being
-> disabled was causing the vote on cnoc_clk to be dropped.
+Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+reset lines") started to transition the reset control request API calls
+to explicitly state whether the driver needs exclusive or shared reset
+control behavior. Convert all drivers requesting exclusive resets to the
+explicit API call so the temporary transition helpers can be removed.
 
-Hmm ok. Maybe we have some sort of bus driver vote from the
-multimedia clk driver in downstream code? Let me check.
+No functional changes.
 
+Cc: "Emilio López" <emilio@elopez.com.ar>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/clk/sunxi/clk-sun9i-mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
+index 6041bdba2e971..a1a634253d6f2 100644
+--- a/drivers/clk/sunxi/clk-sun9i-mmc.c
++++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
+@@ -124,7 +124,7 @@ static int sun9i_a80_mmc_config_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(data->clk);
+ 	}
+ 
+-	data->reset = devm_reset_control_get(&pdev->dev, NULL);
++	data->reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 	if (IS_ERR(data->reset)) {
+ 		dev_err(&pdev->dev, "Could not get reset control\n");
+ 		return PTR_ERR(data->reset);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
