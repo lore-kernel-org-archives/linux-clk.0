@@ -1,110 +1,85 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
-Date: Sat,  1 Jul 2017 22:04:58 +0200
-Message-Id: <20170701200459.11505-8-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170717091747.kcrlifbp7meihszm@flea>
+References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-6-wens@csie.org>
+ <20170717091747.kcrlifbp7meihszm@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 19 Jul 2017 16:59:23 +0800
+Message-ID: <CAGb2v67VmdfrMNLFH=6hhbGAHr15e0q4toDUbJ17d3exS3maFw@mail.gmail.com>
+Subject: Re: [PATCH 05/11] mmc: sunxi: Support controllers that can use both
+ old and new timings
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Update IDT VersaClock 5 driver to support IDT VersaClock 6 5P49V6901.
-This chip has two clock inputs (external XTAL or external CLKIN), four
-fractional dividers (FODs) and five clock outputs (four universal clock
-outputs and one reference clock output at OUT0_SELB_I2C).
+On Mon, Jul 17, 2017 at 5:17 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Fri, Jul 14, 2017 at 02:42:56PM +0800, Chen-Yu Tsai wrote:
+>> On the SoCs that introduced the new timing mode for MMC controllers,
+>> both the old (where the clock delays are set in the CCU) and new
+>> (where the clock delays are set in the MMC controller) timing modes
+>> are available, and we have to support them both. However there are
+>> two bits that control which mode is active. One is in the CCU, the
+>> other is in the MMC controller. The settings on both sides must be
+>> the same, or nothing will work.
+>>
+>> The CCU's get/set_phase callbacks return -ENOTSUPP when the new
+>> timing mode is active. This provides a way to know which mode is
+>> active on that side, and we can set the bit on the MMC controller
+>> side accordingly.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  drivers/mmc/host/sunxi-mmc.c | 34 ++++++++++++++++++++++++++++++----
+>>  1 file changed, 30 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+>> index 0fb4e4c119e1..56e45c65b52d 100644
+>> --- a/drivers/mmc/host/sunxi-mmc.c
+>> +++ b/drivers/mmc/host/sunxi-mmc.c
+>> @@ -22,6 +22,7 @@
+>>  #include <linux/err.h>
+>>
+>>  #include <linux/clk.h>
+>> +#include <linux/clk/sunxi-ng.h>
+>>  #include <linux/gpio.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/spinlock.h>
+>> @@ -259,7 +260,7 @@ struct sunxi_mmc_cfg {
+>>       /* Does DATA0 needs to be masked while the clock is updated */
+>>       bool mask_data0;
+>>
+>> -     bool needs_new_timings;
+>> +     bool has_new_timings;
+>
+> I think we should have both, it's a bit different. Newer SoCs like the
+> A64 can only operate using new timings, while the older ones can
+> operate in both modes.
+>
+> In one case, we're forced to use it, in the other one it's a
+> policy. We should differentiate both cases.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
----
-V2: - Reword the commit message to explicitly mention the VC5 driver
-      and the added support for VC6.
-    - Mention VC6 in Kconfig
----
- drivers/clk/Kconfig           |  6 +++---
- drivers/clk/clk-versaclock5.c | 11 +++++++++++
- 2 files changed, 14 insertions(+), 3 deletions(-)
+For the A64's case, the limit is implied by not having any clk_delays.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index d406b087553f..99adcb0d799c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -210,14 +210,14 @@ config COMMON_CLK_OXNAS
- 	  Support for the OXNAS SoC Family clocks.
- 
- config COMMON_CLK_VC5
--	tristate "Clock driver for IDT VersaClock5 devices"
-+	tristate "Clock driver for IDT VersaClock 5,6 devices"
- 	depends on I2C
- 	depends on OF
- 	select REGMAP_I2C
- 	help
- 	---help---
--	  This driver supports the IDT VersaClock5 programmable clock
--	  generator.
-+	  This driver supports the IDT VersaClock 5 and VersaClock 6
-+	  programmable clock generators.
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index d0406b62133a..c894db298cbd 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -131,6 +131,7 @@ enum vc5_model {
- 	IDT_VC5_5P49V5923,
- 	IDT_VC5_5P49V5933,
- 	IDT_VC5_5P49V5935,
-+	IDT_VC6_5P49V6901,
- };
- 
- /* Structure to describe features of a particular VC5 model */
-@@ -686,6 +687,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 		return (n == 0) ? 0 : 3;
- 	case IDT_VC5_5P49V5923:
- 	case IDT_VC5_5P49V5935:
-+	case IDT_VC6_5P49V6901:
- 	default:
- 		return n;
- 	}
-@@ -923,10 +925,18 @@ static const struct vc5_chip_info idt_5p49v5935_info = {
- 	.flags = VC5_HAS_INTERNAL_XTAL,
- };
- 
-+static const struct vc5_chip_info idt_5p49v6901_info = {
-+	.model = IDT_VC6_5P49V6901,
-+	.clk_fod_cnt = 4,
-+	.clk_out_cnt = 5,
-+	.flags = VC5_HAS_PFD_FREQ_DBL,
-+};
-+
- static const struct i2c_device_id vc5_id[] = {
- 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
- 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
- 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
-+	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, vc5_id);
-@@ -935,6 +945,7 @@ static const struct of_device_id clk_vc5_of_match[] = {
- 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
- 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
- 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
-+	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
--- 
-2.11.0
+But yes, I'll keep "needs_new_timings", and rename the new option to
+"has_timing_switch" to make things clearer.
+
+ChenYu
+
+>
+> Looks good otherwise, thanks!
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
