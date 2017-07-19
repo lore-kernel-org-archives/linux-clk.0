@@ -1,59 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Jul 2017 16:14:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, andy.gross@linaro.org, architt@codeaurora.org,
-	bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: clk-smd-rpm: Fix the initial rate of branches
-Message-ID: <20170712231413.GP22780@codeaurora.org>
-References: <20170704123447.25552-1-georgi.djakov@linaro.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1500451115.30067.1.camel@mtksdaap41>
+Subject: Re: [PATCH] clk: Convert to using %pOF instead of full_name
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Alexandre Torgue <alexandre.torgue@st.com>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, <linux-omap@vger.kernel.org>, Emilio
+ =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Russell King <linux@armlinux.org.uk>,
+	<linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+	<linux-tegra@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding
+	<thierry.reding@gmail.com>, <linux-mediatek@lists.infradead.org>, "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>, <linux-renesas-soc@vger.kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard
+	<maxime.ripard@free-electrons.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Date: Wed, 19 Jul 2017 15:58:35 +0800
+In-Reply-To: <20170718214339.7774-12-robh@kernel.org>
+References: <20170718214339.7774-12-robh@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170704123447.25552-1-georgi.djakov@linaro.org>
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/04, Georgi Djakov wrote:
-> As there is no way to actually query the hardware for the current clock
-> rate, now racalc_rate() just returns the last rate that was previously
-> set. But if the rate was not set yet, we return the bogus rate of 1KHz.
+On Tue, 2017-07-18 at 16:42 -0500, Rob Herring wrote:
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
 > 
-> Knowing what the rate of XO is and that some clocks are just branches of
-> it, we can do better and return that rate instead of a bogus one.
-> 
-> Reported-by: Archit Taneja <architt@codeaurora.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > ---
->  drivers/clk/qcom/clk-smd-rpm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index d990fe44aef3..7350a43b0573 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -116,12 +116,12 @@
->  
->  #define DEFINE_CLK_SMD_RPM_XO_BUFFER(_platform, _name, _active, r_id)	      \
->  		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
-> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
-> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 19200000,		      \
->  		QCOM_RPM_KEY_SOFTWARE_ENABLE)
->  
->  #define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_platform, _name, _active, r_id) \
->  		__DEFINE_CLK_SMD_RPM_BRANCH(_platform, _name, _active,	      \
-> -		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000,			      \
-> +		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 19200000,		      \
->  		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
->  
->  #define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
+>  drivers/clk/mediatek/clk-cpumux.c    |  2 +-
+>  drivers/clk/mediatek/clk-mtk.c       |  2 +-
+>  drivers/clk/mediatek/reset.c         |  2 +-
 
-Also, it would be better if these were children of the xo_board
-clk. That way we don't have to specify a rate at all, just take
-the rate from the parent (xo_board) and then things look correct
-regardless of the board configuration.
+For clk/mediatek:
+Acked-by: James Liao <jamesjj.liao@mediatek.com>
 
-So I'll drop this patch from clk-next for now.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+
+James
