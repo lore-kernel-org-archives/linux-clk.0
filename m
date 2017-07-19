@@ -1,41 +1,41 @@
-Return-Path: <>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-Cc: geert+renesas@glider.be,
-	linux-renesas-soc@vger.kernel.org,
-	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] clk: renesas: r8a7796: Add USB3.0 clock
-Date: Wed, 26 Jul 2017 20:23:39 +0900
-Message-Id: <1501068219-3834-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35281 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752760AbdGSI17 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2017 04:27:59 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170718164407.22998-3-wsa+renesas@sang-engineering.com>
+References: <20170718164407.22998-1-wsa+renesas@sang-engineering.com> <20170718164407.22998-3-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Jul 2017 10:27:57 +0200
+Message-ID: <CAMuHMdXxe9L15a289GP4bFP28gkotS0Hu2ngu5DHTgfpQyA4qA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] clk: renesas: rcar-gen3-cpg.c: refactor checks
+ for accessing the div table
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+On Tue, Jul 18, 2017 at 6:44 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Do the checks for accessing the SD divider table only when the rate gets
+> updated, namely on init and set_rate. In all other cases, reuse the last
+> value. This simplifies code, runtime load, and error reporting.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This patch adds USB3.0-IF0 clock for R8A7796 SoC.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.14.
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index acc6d0f..eaaf663 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -138,6 +138,7 @@ enum clk_ids {
- 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("pcie1",		 318,	R8A7796_CLK_S3D1),
- 	DEF_MOD("pcie0",		 319,	R8A7796_CLK_S3D1),
-+	DEF_MOD("usb3-if0",		 328,	R8A7796_CLK_S3D1),
- 	DEF_MOD("usb-dmac0",		 330,	R8A7796_CLK_S3D1),
- 	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
- 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
