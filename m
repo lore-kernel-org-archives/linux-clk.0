@@ -1,54 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:48767 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752853AbdGXODi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Jul 2017 10:03:38 -0400
-Message-ID: <1500904960.29303.204.camel@linux.intel.com>
-Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        linux@endlessm.com, Carlo Caione <carlo@endlessm.com>
-Date: Mon, 24 Jul 2017 17:02:40 +0300
-In-Reply-To: <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
-References: <20170710203801.17496-1-carlo@caione.org>
-         <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
-         <20170710235403.GB25390@fury>
-         <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vz@mleia.com>
+Subject: Re: [PATCH v6 2/3] clk: gate: expose clk_gate_ops::is_enabled
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
+ <1500364414-10021-3-git-send-email-gabriel.fernandez@st.com>
+ <55bc0f3f-67ed-a15f-5b71-d87044fd5237@mleia.com>
+ <20170718225203.GD18179@codeaurora.org>
+Cc: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Nicolas Pitre
+ <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ daniel.thompson@linaro.org, andrea.merello@gmail.com,
+ radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
+ Sylvain Lemieux <slemieux.tyco@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, ludovic.barre@st.com, olivier.bideau@st.com,
+ amelie.delaunay@st.com, gabriel.fernandez.st@gmail.com,
+ Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <1ed5052f-7d42-b57f-d12f-5ea003a2c5a9@mleia.com>
+Date: Wed, 19 Jul 2017 03:25:44 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170718225203.GD18179@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-07-24 at 15:49 +0200, Pierre-Louis Bossart wrote:
-> On 7/11/17 1:54 AM, Darren Hart wrote:
-> > On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra
-> > wrote:
-
-> > > Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > 
-> > Excellent, thank you Enric. Pierre, any objections to this going in
-> > to
-> > 4.13 now and stable back to 4.12?
+On 07/19/2017 01:52 AM, Stephen Boyd wrote:
+> On 07/18, Vladimir Zapolskiy wrote:
+>> On 07/18/2017 10:53 AM, gabriel.fernandez@st.com wrote:
+>>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>  }
+>>> +EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
+>>>  
+>>>  const struct clk_ops clk_gate_ops = {
+>>>  	.enable = clk_gate_enable,
+>>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+>>> index c59c625..e9587ab 100644
+>>> --- a/include/linux/clk-provider.h
+>>> +++ b/include/linux/clk-provider.h
+>>> @@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+>>>  		u8 clk_gate_flags, spinlock_t *lock);
+>>>  void clk_unregister_gate(struct clk *clk);
+>>>  void clk_hw_unregister_gate(struct clk_hw *hw);
+>>> +int clk_gate_is_enabled(struct clk_hw *hw);
+>>
+>> Here the prefix does not reflect the type of its argument, it might be
+>> acceptable for a veiled function, but it is not wanted for the exported
+>> function. Something like clk_hw_gate_is_enabled() is expected here, but
+>> again, let's firstly come to an agreement, that the export is needed.
+>>
 > 
-> I saw an update of this patch being merged while I was away on an 
-> extended summer break, but out of curiosity what was the problem with
-> no 
-> audio on Baytrail? the code was added precisely to add support for
-> 19.2 
-> MHz on Baytrail and finally solve audio issues. I have no reports of 
-> broken functionality with this 282a4e4 commit... Enric, do you have a 
-> bugzilla or pointers?
+> I'd prefer clk_gate_is_enabled() as it's not a struct clk_hw_gate,
+> it's a struct clk_gate
 
-TL;DR: We should respect firmware settings before blindly shut down
-"unused" resources. (We used to have similar stuff in GPIO/pinctrl
-driver for direct IRQ pins, where we shut up the pins which are used
-directly by IOAPIC)
+Formally it's a 'struct clk_hw', and 'struct clk_hw_gate' does not exist.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> and there isn't any requirement for function names to reflect the type
+> of the argument. That's what we have type analysis for.
+
+Sure, a function name can be selected arbitrary, however because in this
+particular case type analysis operates on 'struct clk_hw', it would fail
+to separate 'struct clk_gate' from 'struct clk_divider', a little hint
+in the naming may be helpful.
+
+I don't insist on my preference, of course your acceptance is sufficient.
+
+--
+With best wishes,
+Vladimir
