@@ -1,43 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Jul 2017 16:10:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V3 5/8] clk: vc5: Split clock input mux and predivider
-Message-ID: <20170712231025.GK22780@codeaurora.org>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
- <20170709132814.2339-5-marek.vasut+renesas@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [PATCH v7 0/3] clk: stm32h7: Add stm32h743 clock driver
+Date: Wed, 19 Jul 2017 16:25:41 +0200
+Message-ID: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170709132814.2339-5-marek.vasut+renesas@gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/09, Marek Vasut wrote:
-> Split the VC5 clock input mux and the predivider to more accurately
-> model the hardware and fix the previously incorrect assumption that
-> both the OUT_SEL_I2CB and the PLL are fed from the predivider.
-> 
-> It is in fact the clock input mux output which is directly feeding
-> the clock into the OUT_SEL_I2CB output, while the clock input mux
-> output first passes through the predivider before it is fed into
-> the PLL.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> on Salvator-XS with the display LVDS output.
-> ---
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Applied to clk-next
+v6:
+  - rename clk_gate_is_enabled() in nxp lpc32xx driver.
+  - add EXPORT_SYMBOL_GPL(clk_gate_is_enabled)
+
+v5:
+  - return bool instead int for enable_power_domain_write_protection()
+  - add comment to explain use of CLK_OF_DECLARE_DRIVER()
+  - add comment to explain why we can't use read_poll_timeout()
+  - expose clk_gate_ops::is_enabled
+  - use of __clk_mux_determine_rate & clk_gate_is_enabled to avoid wrapper
+	function.
+
+v4:
+  - rename lock into stm32rcc_lock
+  - don't use clk_readl() 
+  - remove useless parentheses with GENMASK
+  - fix parents of timer_x clocks
+  - suppress pll configuration from DT
+  - fix kbuild warning
+
+v3:
+  - fix compatible string "stm32h7-pll" into "st,stm32h7-pll"
+  - fix bad parent name for mco2 clock
+  - set CLK_SET_RATE_PARENT for ltdc clock
+  - set CLK_IGNORE_UNUSED for pll1
+  - disable power domain write protection on disable ops if needed
+
+
+v2:
+  - rename compatible string "stm32,pll" into "stm32h7-pll"
+  - suppress "st,pllrge" property
+  - suppress "st, frac-status" property
+  - change management of "st,frac"  property
+	0 : enable 0 pll integer mode 
+	other values : enable pll in fractional mode (value is
+	the fractional factor)
+
+Gabriel Fernandez (3):
+  clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
+  clk: gate: expose clk_gate_ops::is_enabled
+  clk: stm32h7: Add stm32h743 clock driver
+
+ .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   82 ++
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-gate.c                             |    3 +-
+ drivers/clk/clk-stm32h7.c                          | 1409 ++++++++++++++++++++
+ drivers/clk/nxp/clk-lpc32xx.c                      |   12 +-
+ include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
+ include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
+ include/linux/clk-provider.h                       |    1 +
+ 8 files changed, 1802 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32h7.c
+ create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
+ create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
