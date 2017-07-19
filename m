@@ -1,49 +1,55 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Jul 2017 09:42:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH v2 1/5] arm64: qcom: Select PM_GENERIC_DOMAINS
-Message-ID: <20170728164259.GD2146@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-2-git-send-email-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500526099-9935-2-git-send-email-rnayak@codeaurora.org>
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 010/102] clk: tegra: explicitly request exclusive reset control
+Date: Wed, 19 Jul 2017 17:25:14 +0200
+Message-Id: <20170719152646.25903-11-p.zabel@pengutronix.de>
+In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/20, Rajendra Nayak wrote:
-> Enable PM_GENERIC_DOMAINS for 64-bit qualcomm platforms. This is required
-> to ensure devices which are dependent on some gdscs (powerdomains) to be
-> powered on before they can be probed, work as expected.
-> 
-> CC: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+reset lines") started to transition the reset control request API calls
+to explicitly state whether the driver needs exclusive or shared reset
+control behavior. Convert all drivers requesting exclusive resets to the
+explicit API call so the temporary transition helpers can be removed.
 
-Maybe Andy can ack this? It's ARCH_QCOM specific anyway.
+No functional changes.
 
->  arch/arm64/Kconfig.platforms | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index f5f0c81..e3de82d 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -133,6 +133,8 @@ config ARCH_QCOM
->  	bool "Qualcomm Platforms"
->  	select GPIOLIB
->  	select PINCTRL
-> +	select PM
-> +	select PM_GENERIC_DOMAINS
->  	help
->  	  This enables support for the ARMv8 based Qualcomm chipsets.
->  
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/clk/tegra/clk-dfll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 2c44aeb0b97c7..bada64cf5392a 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1631,7 +1631,7 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 		return PTR_ERR(td->vdd_reg);
+ 	}
+ 
+-	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
++	td->dvco_rst = devm_reset_control_get_exclusive(td->dev, "dvco");
+ 	if (IS_ERR(td->dvco_rst)) {
+ 		dev_err(td->dev, "couldn't get dvco reset\n");
+ 		return PTR_ERR(td->dvco_rst);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
