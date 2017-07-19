@@ -1,74 +1,102 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC 00/12] Misc patches for QCOM clocks
-Date: Thu, 27 Jul 2017 16:40:13 +0530
-Message-Id: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH v3 0/9] add support for Sama5d2 audio PLLs and enable
+ ClassD
+To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+ linux@armlinux.org.uk, boris.brezillon@free-electrons.com, perex@perex.cz,
+ tiwai@suse.com
+Cc: cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Message-ID: <b3b59278-8c7f-b3d1-e143-7f013ac0b873@free-electrons.com>
+Date: Wed, 19 Jul 2017 08:28:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series does the miscellaneous changes in different
-types of Qualcomm clock nodes which are required for IPQ8074 SoC.
-Following are the major changes in IPQ8074 for which the existing
-code does not have support.
+Hi all,
 
-1. Some of the IPQ8074 RCG2 has CFG_RCGR at offset 8 from
-   CMD_RCGR instead of offset 4. Following are the register
-   offsets of UBI RCG2 in Qualcomm IPQ8074.
+It's been almost a week with no comments on this patch set, so kindly
+pinging.
 
-	GCC_NSS_UBI0_CMD_RCGR: 0x1868100
-	GCC_NSS_UBI0_CFG_RCGR: 0x1868108
+Thanks,
+Quentin
 
-2. It uses Brammo and Huayra PLL’s for which the support is
-   not available in existing alpha PLL code.
-3. Its APSS and UBI PLL offsets are different although both
-   are Huayra PLLs.
-4. Some of the its divider should not be changed during
-   frequency change.
-
-These code changes are generic and it can be used by other
-Qualcomm SoCs.  The major change is taking the register offsets
-from PLL and RCG2 clock node.  Since this patch series is
-touching common code so this has been raised as RFC.
-
-Abhishek Sahu (12):
-  clk: qcom: support for register offsets from rcg2 clock node
-  clk: qcom: flag for 64 bit CONFIG_CTL
-  clk: qcom: support for alpha mode configuration
-  clk: qcom: use offset from alpha pll node
-  clk: qcom: fix 16 bit alpha support calculation
-  Clk: qcom: support for dynamic updating the PLL
-  clk: qcom: add flag for VCO operation
-  clk: qcom: support for Huayra PLL
-  clk: qcom: support for Brammo PLL
-  clk: qcom: add read-only divider operations
-  clk: qcom: add read-only alpha pll post divider operations
-  clk: qcom: add parent map for regmap mux
-
- drivers/clk/qcom/clk-alpha-pll.c      | 464 +++++++++++++++++++++++++++-------
- drivers/clk/qcom/clk-alpha-pll.h      |  49 +++-
- drivers/clk/qcom/clk-rcg.h            |  21 +-
- drivers/clk/qcom/clk-rcg2.c           |  78 +++---
- drivers/clk/qcom/clk-regmap-divider.c |  29 +++
- drivers/clk/qcom/clk-regmap-divider.h |   1 +
- drivers/clk/qcom/clk-regmap-mux.c     |   6 +
- drivers/clk/qcom/clk-regmap-mux.h     |   2 +
- drivers/clk/qcom/common.h             |  11 +-
- drivers/clk/qcom/gcc-ipq8074.c        |   6 +-
- drivers/clk/qcom/gcc-msm8994.c        |  12 +-
- drivers/clk/qcom/gcc-msm8996.c        |  12 +-
- drivers/clk/qcom/mmcc-msm8996.c       |  48 ++--
- 13 files changed, 574 insertions(+), 165 deletions(-)
+On 13/07/2017 09:49, Quentin Schulz wrote:
+> This patch series adds support for the audio PLLs and enables ClassD that
+> can be found in ATMEL Sama5d2 SoC.
+> 
+> There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
+> FRAC can output between 620 and 700MHz and only multiply the rate of its
+> parent. The two audio PLLs then divide the FRAC rate to best match the
+> asked rate.
+> 
+> I basically took an old patch series posted by Nicolas on December, 6th
+> 2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
+> sent on July, 15th 2015.
+> 
+> I also fixed the function used to compute the divisors, removed useless
+> spinlocks and added a range to the audio frac PLL to stay within vendor's
+> supported range. Clocks that are children of gclk (generated-clk) are now
+> able to propagate rate to the audio PLL clocks when needed.
+> 
+> However, there are multiple children clocks that could technically
+> change the rate of audio_pll (via gck). With the rate locking introduced
+> in Jerome Brunet's patch series[5], the first consumer to enable the clock
+> will be the one definitely setting the rate of the clock. Without the rate
+> locking, the last consumer to set the rate will be able to mess with the
+> rate.
+> Since audio IPs are most likely to request the same rate, we enforce
+> that the only clks able to modify gck rate are those of audio IPs.
+> 
+> To remain consistent, we deny other clocks to be children of audio_pll.
+> 
+> Thanks,
+> Quentin
+> 
+> [1] https://patchwork.kernel.org/patch/9462351/
+> [2] https://patchwork.kernel.org/patch/9462347/
+> [3] https://patchwork.kernel.org/patch/9462349/
+> [4] https://www.spinics.net/lists/arm-kernel/msg436120.html
+> [5] http://www.spinics.net/lists/linux-clk/msg17927.html
+> 
+> Cyrille Pitchen (2):
+>   ARM: dts: at91: sama5d2: add classd nodes
+>   ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+> 
+> Quentin Schulz (7):
+>   clk: at91: clk-generated: remove useless divisor loop
+>   clk: at91: add audio plls to the compatible list in DT binding
+>   clk: at91: add audio pll clock drivers
+>   clk: at91: clk-generated: create function to find best_diff
+>   clk: at91: clk-generated: make gclk determine audio_pll rate
+>   ASoC: atmel-classd: remove aclk clock from DT binding
+>   ASoC: atmel-classd: remove aclk clock
+> 
+>  .../devicetree/bindings/clock/at91-clock.txt       |  10 +
+>  .../devicetree/bindings/sound/atmel-classd.txt     |   9 +-
+>  arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  16 ++
+>  arch/arm/boot/dts/sama5d2.dtsi                     |  39 +++-
+>  arch/arm/mach-at91/Kconfig                         |   4 +
+>  drivers/clk/at91/Makefile                          |   2 +
+>  drivers/clk/at91/clk-audio-pll-pad.c               | 206 ++++++++++++++++++
+>  drivers/clk/at91/clk-audio-pll-pmc.c               | 174 +++++++++++++++
+>  drivers/clk/at91/clk-audio-pll.c                   | 239 +++++++++++++++++++++
+>  drivers/clk/at91/clk-generated.c                   | 101 +++++++--
+>  include/linux/clk/at91_pmc.h                       |  25 +++
+>  sound/soc/atmel/atmel-classd.c                     |  47 ++--
+>  12 files changed, 813 insertions(+), 59 deletions(-)
+>  create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
+>  create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
+>  create mode 100644 drivers/clk/at91/clk-audio-pll.c
+> 
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Quentin Schulz, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
