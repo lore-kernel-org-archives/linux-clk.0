@@ -1,80 +1,81 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 7/9] ASoC: atmel-classd: remove aclk clock from DT binding
-Date: Thu, 13 Jul 2017 09:49:25 +0200
-Message-Id: <20170713074927.10882-8-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
-References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [PATCH v7 2/3] clk: gate: expose clk_gate_ops::is_enabled
+Date: Wed, 19 Jul 2017 16:25:43 +0200
+Message-ID: <1500474344-9832-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
+References: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Since gclk (generated-clk) is now able to determine the rate of the
-audio_pll, there is no need for classd to have a direct phandle to the
-audio_pll while already having a phandle to gclk.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This binding is used by no board in mainline so it is safe to be
-modified.
+This patch exposes clk_gate_ops::is_enabled as functions
+that can be directly called and assigned in places like this so
+we don't need wrapper functions that do nothing besides forward
+the call.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Sugested by Stephen Boyd <sboyd@codeaurora.org>
 ---
+ drivers/clk/clk-gate.c       | 3 ++-
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-added in v2
-
- Documentation/devicetree/bindings/sound/atmel-classd.txt | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/atmel-classd.txt b/Documentation/devicetree/bindings/sound/atmel-classd.txt
-index 549e701cb7a1..898551076382 100644
---- a/Documentation/devicetree/bindings/sound/atmel-classd.txt
-+++ b/Documentation/devicetree/bindings/sound/atmel-classd.txt
-@@ -13,13 +13,11 @@ Required properties:
- 	Must be "tx".
- - clock-names
- 	Tuple listing input clock names.
--	Required elements: "pclk", "gclk" and "aclk".
-+	Required elements: "pclk" and "gclk".
- - clocks
- 	Please refer to clock-bindings.txt.
- - assigned-clocks
- 	Should be <&classd_gclk>.
--- assigned-clock-parents
--	Should be <&audio_pll_pmc>.
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 4e0c054a..dd82485 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+ 	clk_gate_endisable(hw, 0);
+ }
  
- Optional properties:
- - pinctrl-names, pinctrl-0
-@@ -45,10 +43,9 @@ classd: classd@fc048000 {
- 			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
- 			| AT91_XDMAC_DT_PERID(47))>;
- 		dma-names = "tx";
--		clocks = <&classd_clk>, <&classd_gclk>, <&audio_pll_pmc>;
--		clock-names = "pclk", "gclk", "aclk";
-+		clocks = <&classd_clk>, <&classd_gclk>;
-+		clock-names = "pclk", "gclk";
- 		assigned-clocks = <&classd_gclk>;
--		assigned-clock-parents = <&audio_pll_pmc>;
+-static int clk_gate_is_enabled(struct clk_hw *hw)
++int clk_gate_is_enabled(struct clk_hw *hw)
+ {
+ 	u32 reg;
+ 	struct clk_gate *gate = to_clk_gate(hw);
+@@ -101,6 +101,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
  
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_classd_default>;
+ 	return reg ? 1 : 0;
+ }
++EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
+ 
+ const struct clk_ops clk_gate_ops = {
+ 	.enable = clk_gate_enable,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c59c625..e9587ab 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+ 		u8 clk_gate_flags, spinlock_t *lock);
+ void clk_unregister_gate(struct clk *clk);
+ void clk_hw_unregister_gate(struct clk_hw *hw);
++int clk_gate_is_enabled(struct clk_hw *hw);
+ 
+ struct clk_div_table {
+ 	unsigned int	val;
 -- 
-2.11.0
+1.9.1
