@@ -1,84 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:57402 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751615AbdGaX1y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 31 Jul 2017 19:27:54 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: Andy Yan <andy.yan@rock-chips.com>, devicetree@vger.kernel.org,
-        shawn.lin@rock-chips.com, zhangqing@rock-chips.com,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/14] clk: rockchip: add more clk ids for rv1108
-Date: Tue, 01 Aug 2017 01:27:45 +0200
-Message-ID: <3065556.yAAG1ix4ad@phil>
-In-Reply-To: <1501495602-21351-1-git-send-email-andy.yan@rock-chips.com>
-References: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com> <1501495602-21351-1-git-send-email-andy.yan@rock-chips.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 19 Jul 2017 11:00:33 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk
+	<linux-clk@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>, "Paulius
+ Zaleckas" <paulius.zaleckas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Hans Ulli Kroll
+	<ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, "Joel
+ Stanley" <joel@jms.id.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH] clk: gemini: Fix reset regression
+Message-ID: <20170719080033.GD1002@tbergstrom-lnx.Nvidia.com>
+References: <20170711122601.17745-1-linus.walleij@linaro.org>
+ <1499874682.6374.57.camel@pengutronix.de>
+ <CACRpkda3ZW4rQTwg8Y63uzzupCZAtTP6jv1ppsTXHuDDy0y8og@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CACRpkda3ZW4rQTwg8Y63uzzupCZAtTP6jv1ppsTXHuDDy0y8og@mail.gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andy,
-
-Am Montag, 31. Juli 2017, 18:06:42 CEST schrieb Andy Yan:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
+On Tue, Jul 18, 2017 at 11:49:44AM +0200, Linus Walleij wrote:
+> On Wed, Jul 12, 2017 at 5:51 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 > 
-> Added the missing clock ids, make the clock more complete.
+> > From fab3a9a697e9797ba1c24874d7c43c09dd812e77 Mon Sep 17 00:00:00 2001
+> > From: Philipp Zabel <p.zabel@pengutronix.de>
+> > Date: Wed, 12 Jul 2017 17:29:28 +0200
+> > Subject: [PATCH] reset: make (de)assert report succeess for self-deasserting
+> >  reset drivers
+> >
+> > By now there are drivers using shared reset controls and (de)assert
+> > calls on platforms with self-deasserting reset lines and thus reset
+> > drivers that do not implement .assert() and .deassert().
+> > As long as the initial state of the reset line is deasserted, there
+> > is no reason for a reset_control_assert call to return an error for
+> > shared reset controls, or for a reset_control_deassert call to return
+> > an error for either shared or exclusive reset controls: after a call
+> > to reset_control_deassert the reset line is guaranteed to be deasserted,
+> > and after a call to reset_control_assert it is valid for the reset
+> > line to stay deasserted for shared reset controls.
+> >
+> > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 > 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> This patch makes all kind of sense, and I follow your
+> reasoning.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> In the back of my head I was thinking that the deassert/assert
+> pair matches a certain SoC driver design pattern I have seen
+> around:
+> 
+> When a driver use an IP block it enables the clock and takes
+> the block out of reset.
+> 
+> When it stops using it, it asserts reset and disables the clock.
+> 
+> This is not entirely self-evident, for example why is reset asserted
+> across say insmod/rmmod/insmod. Just disabling the clock would
+> be OK, I guess, in most cases. It is just one of those "dances"
+> that developers do, as if to clear the desk or something.
+> 
+> But I guess there must be cases where doing things in another way
+> creates problems or power leaks.
+> 
+> I would surely like to understand, from a silicon perspective, why
+> drivers are so often written like this. I could think of things like
+> little automata and gates inside the silicon that need to be reset
+> to minimize off-power consumption but I have no clue if it is
+> really so.
 
-this clock-id patch is way to overloaded. Please split into 3 parts:
+At least doing it this way guarantees the hardware is in its initial state
+before the driver starts doing anything with it. Otherwise you would have
+to ensure the hw init sequence in the driver works for any hw state. That
+seems more complicated to me than just making sure it works correctly when
+the hw is in its initial stat, especially when there are DMA engines involved.
 
-- completely new clock-ids
-- changes to existing clock-ids
-  This also needs a very good reasoning, as such constant ids are
-  considered part of api and should not change to prevent breakage
-  with old devicetrees. So please double-check if the rename is really
-  necessary.
-- cosmetics ... aka the indentation stuff
-
-[...]
-
->  /* aclk gates */
->  #define ACLK_DMAC			192
-> -#define ACLK_PRE			193
-> +#define ACLK_BUS			193
-
-This is one such case where you need a very good reason
-
-[...]
-
-> @@ -59,18 +120,30 @@
->  #define PCLK_I2C2			261
->  #define PCLK_I2C3			262
->  #define PCLK_SPI			263
-> -#define PCLK_SFC			264
-
-why is this clock going away?
-
->  #define PCLK_UART0			265
->  #define PCLK_UART1			266
->  #define PCLK_UART2			267
->  #define PCLK_TSADC			268
-> -#define PCLK_PWM			269
-> +#define PCLK_PWM1			269
-
-In your pwm patch, all blocks use the same clocks, so
-this rename should be unnecessary
-
-
->  /* hclk gates */
->  #define HCLK_I2S0_8CH			320
-> -#define HCLK_I2S1_8CH			321
-> +#define HCLK_I2S1_2CH			321
-
-Again reasoning required (that i2s1 has 2 channels
-but not 8 should be ok for that)
-
->  #define HCLK_I2S2_2CH			322
->  #define HCLK_NANDC			323
->  #define HCLK_SDMMC			324
-
-Heiko
+Peter.
