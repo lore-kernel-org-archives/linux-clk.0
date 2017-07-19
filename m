@@ -1,51 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Jul 2017 18:24:24 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARC: clk: introduce HSDKv1 pll driver
-Message-ID: <20170728012424.GY2146@codeaurora.org>
-References: <20170714153128.8945-1-Eugeniy.Paltsev@synopsys.com>
- <3d1bddbb-aaf5-ca5a-614a-5a84900feadc@synopsys.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH] clk: Convert to using %pOF instead of full_name
+To: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, =?UTF-8?Q?Emilio_L=c3=b3pez?=
+ <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Tero Kristo <t-kristo@ti.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20170718214339.7774-12-robh@kernel.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <2fd832a5-ec78-7563-8349-4321db745767@gmail.com>
+Date: Wed, 19 Jul 2017 12:24:58 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3d1bddbb-aaf5-ca5a-614a-5a84900feadc@synopsys.com>
+In-Reply-To: <20170718214339.7774-12-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/27, Vineet Gupta wrote:
-> Hi Stephen,
-> 
-> On 07/14/2017 09:01 PM, Eugeniy Paltsev wrote:
-> >HSDKv1 boards manages it's clocks using various PLLs. These PLL has same
-> >dividers and corresponding control registers mapped to different addresses.
-> >So we add one common driver for such PLLs.
-> >
-> >Each PLL on HSDK board consist of three dividers: IDIV, FBDIV and
-> >ODIV. Output clock value is managed using these dividers.
-> >
-> >We add pre-defined tables with supported rate values and appropriate
-> >configurations of IDIV, FBDIV and ODIV for each value.
-> >
-> >As of today we add support for PLLs that generate clock for the
-> >HSDKv1 arc cpus, system, ddr, AXI tunnel and hdmi.
-> >
-> >By this patch we add support for several plls (arc cpus pll and others),
-> >so we had to use two different init types: CLK_OF_DECLARE for arc cpus pll
-> >and regular probing for others plls.
-> >
-> >Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> 
-> Gentle ping, any chance you could look at this sometime.
-> 
-> Thx,
 
-Yes it's in the queue. Probably get to it tomorrow.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 07/18/2017 11:42 PM, Rob Herring wrote:
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: "Emilio López" <emilio@elopez.com.ar>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> ---
+>   drivers/clk/berlin/bg2.c             |  3 +--
+>   drivers/clk/berlin/bg2q.c            |  7 +++----
+>   drivers/clk/clk-asm9260.c            |  4 ++--
+>   drivers/clk/clk-conf.c               | 16 ++++++++--------
+>   drivers/clk/clk-moxart.c             | 12 ++++++------
+>   drivers/clk/clk-qoriq.c              |  7 +++----
+>   drivers/clk/clk-stm32f4.c            |  4 ++--
+>   drivers/clk/clk-xgene.c              | 15 ++++++---------
+>   drivers/clk/clk.c                    |  4 ++--
+>   drivers/clk/clkdev.c                 |  4 ++--
+>   drivers/clk/mediatek/clk-cpumux.c    |  2 +-
+>   drivers/clk/mediatek/clk-mtk.c       |  2 +-
+>   drivers/clk/mediatek/reset.c         |  2 +-
+
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+For the mediatek parts.
+
+Thanks,
+Matthias
