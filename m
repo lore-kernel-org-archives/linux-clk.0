@@ -1,91 +1,42 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com,
-	narmstrong@baylibre.com
-Subject: [PATCH v2 1/4] dt-bindings: clock: amlogic,
- gxbb-aoclkc: Update bindings
-Date: Fri, 28 Jul 2017 11:53:06 +0200
-Message-Id: <1501235589-318-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
-References: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Sender: joel.stan@gmail.com
+In-Reply-To: <1500412458.2865.121.camel@kernel.crashing.org>
+References: <CACPK8XdXxfxngzhSxyPb=OKcEv+3Up8ve-2WtpETpXvXe_av5w@mail.gmail.com>
+ <1500386760.9510.9.camel@pengutronix.de> <1500412458.2865.121.camel@kernel.crashing.org>
+From: Joel Stanley <joel@jms.id.au>
+Date: Wed, 19 Jul 2017 12:38:16 +0930
+Message-ID: <CACPK8XckGZanBQ4ZwrWyEv05ho8jdZ2hZMH5pP0Zv2a9tcGJjw@mail.gmail.com>
+Subject: Re: Coupled clk/reset
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Andrew Jeffery <andrew@aj.id.au>, Jeremy Kerr <jk@ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On the first revision of the bindings, only the gates + resets were known
-in the AO Clock HW, but more registers used to configures AO clock are known
-to be spread among the AO register space.
-This patch adds a parent node for the entire system control zone for the AO
-domain then moves the clock controller as a subnode of the system control
-node.
+On Wed, Jul 19, 2017 at 6:44 AM, Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+> On Tue, 2017-07-18 at 16:06 +0200, Philipp Zabel wrote:
+>> If this is some special treatment for a single IP block, I'd just open
+>> code this in the driver:
+>>         reset_control_assert(rstc);
+>>         usleep_range(100, 200);
+>>         clk_prepare_enable(clk);
+>>         usleep_range(10000, 20000);
+>>         reset_control_deassert(rstc);
+>>
+>> If this is a common pattern needed for multiple clocks, you could
+>> investigate hiding this in the clock driver and not export the resets to
+>> the 'engine' driver at all.
+>
+> Right, it's a common pattern for all the IP blocks in that SoC. I agree
+> with your proposal, it would keep things simpler.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+Thanks Philipp and Ben. I'll go ahead with a clock driver that does
+the right things, and drop the reset controller parts.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index a55d31b..64884ed 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -5,9 +5,11 @@ controllers within the Always-On part of the SoC.
- 
- Required Properties:
- 
--- compatible: should be "amlogic,gxbb-aoclkc"
--- reg: physical base address of the clock controller and length of memory
--       mapped region.
-+- compatible: value should be different for each SoC family as :
-+	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
-+	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
-+	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
-+	followed by the common "amlogic,meson-gx-aoclkc"
- 
- - #clock-cells: should be 1.
- 
-@@ -23,14 +25,22 @@ to specify the reset which they consume. All available resets are defined as
- preprocessor macros in the dt-bindings/reset/gxbb-aoclkc.h header and can be
- used in device tree sources.
- 
-+Parent node should have the following properties :
-+- compatible: "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd"
-+- reg: base address and size of the AO system control register space.
-+
- Example: AO Clock controller node:
- 
--	clkc_AO: clock-controller@040 {
--		compatible = "amlogic,gxbb-aoclkc";
--		reg = <0x0 0x040 0x0 0x4>;
-+ao_sysctrl: sys-ctrl@0 {
-+	compatible = "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd";
-+	reg =  <0x0 0x0 0x0 0x100>;
-+
-+	clkc_AO: clock-controller {
-+		compatible = "amlogic,meson-gxbb-aoclkc", "amlogic,meson-gx-aoclkc";
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
- 	};
-+};
- 
- Example: UART controller node that consumes the clock and reset generated
-   by the clock controller:
--- 
-1.9.1
+Cheers,
 
-
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+Joel
