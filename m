@@ -1,269 +1,202 @@
-Return-Path: <robdclark@gmail.com>
-Return-Path: <robdclark@gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	viresh.kumar@linaro.org,
-	Rob Clark <robdclark@gmail.com>
-Subject: [RFC 1/3] clk: inherit display clocks enabled by bootloader
-Date: Tue, 11 Jul 2017 14:20:06 -0400
-Message-Id: <20170711182008.28298-2-robdclark@gmail.com>
-In-Reply-To: <20170711182008.28298-1-robdclark@gmail.com>
-References: <20170711182008.28298-1-robdclark@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 01/10] clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+Date: Thu, 20 Jul 2017 11:44:43 +0800
+Message-Id: <20170720034452.15920-2-wens@csie.org>
+In-Reply-To: <20170720034452.15920-1-wens@csie.org>
+References: <20170720034452.15920-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The goal here is to support inheriting a display setup by bootloader,
-although there may also be some non-display related use-cases.
+Starting with the A83T SoC, Allwinner introduced a new timing mode for
+its MMC clocks. The new mode changes how the MMC controller sample and
+output clocks are delayed to match chip and board specifics. There are
+two controls for this, one on the CCU side controlling how the clocks
+behave, and one in the MMC controller controlling what inputs to take
+and how to route them.
 
-Rough idea is to add a flag for clks and power domains that might
-already be enabled when kernel starts, and make corresponding fixups
-to clk enable/prepare_count and power-domain state so that these are
-not automatically disabled late in boot.
+In the old mode, the MMC clock had 2 child clocks providing the output
+and sample clocks, which could be delayed by a number of clock cycles
+measured from the MMC clock's parent.
 
-If bootloader is enabling display, and kernel is using efifb before
-real display driver is loaded (potentially from kernel module after
-userspace starts, in a typical distro kernel), we don't want to kill
-the clocks and power domains that are used by the display before
-userspace starts.
+With the new mode, the 2 delay clocks are no longer active. Instead,
+the delays and associated controls are moved into the MMC controller.
+The output of the MMC clock is also halved.
 
-Second part is for drm/msm to check if display related clocks are
-enabled when it is loaded, and if so read back hw state to sync
-existing display state w/ software state, and skip the initial
-clk_enable's and otherwise fixing up clk/regulator/etc ref counts
-(skipping the normal display-enable codepaths), therefore inheriting
-the enable done by bootloader.
+The difference in how things are wired between the modes means that the
+clock controls and the MMC controls must match. To achieve this in a
+clear, explicit way, we introduce two functions for the MMC driver to
+use: one queries the hardware for the current mode set, and the other
+allows the MMC driver to request a mode.
 
-Obviously this should be split up into multiple patches and many
-TODOs addressed.  But I guess this is enough for now to start
-discussing the approach, and in particular how drm and clock/pd
-drivers work together to handle handover from bootloader.
-
-The CLK_INHERIT_BOOTLOADER and related gsdc flag should only be set
-on leaf nodes.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk.c              | 18 ++++++++++++++++++
- drivers/clk/qcom/common.c      | 28 ++++++++++++++++++++++++++++
- drivers/clk/qcom/gcc-msm8916.c | 15 ++++++++-------
- drivers/clk/qcom/gdsc.c        |  6 ++++++
- drivers/clk/qcom/gdsc.h        |  1 +
- include/linux/clk-provider.h   |  1 +
- include/linux/clk.h            |  9 +++++++++
- 7 files changed, 71 insertions(+), 7 deletions(-)
+ drivers/clk/sunxi-ng/Makefile         |  1 +
+ drivers/clk/sunxi-ng/ccu_common.h     |  5 +++
+ drivers/clk/sunxi-ng/ccu_mmc_timing.c | 73 +++++++++++++++++++++++++++++++++++
+ include/linux/clk/sunxi-ng.h          | 35 +++++++++++++++++
+ 4 files changed, 114 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
+ create mode 100644 include/linux/clk/sunxi-ng.h
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fc58c52a26b4..7c84e8d6e816 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -796,6 +796,24 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 		clk_core_disable_unprepare(core->parent);
- }
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 0c45fa50283d..45a5910379a5 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -1,5 +1,6 @@
+ # Common objects
+ lib-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
++lib-$(CONFIG_SUNXI_CCU)		+= ccu_mmc_timing.o
+ lib-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
  
-+/* clock and it's parents are already prepared/enabled from bootloader,
-+ * so simply record the fact.
-+ */
-+static void __clk_inherit_enabled(struct clk_core *core)
-+{
-+	core->enable_count++;
-+	core->prepare_count++;
-+if (core->hw->init->name) // XXX hack.. something funny with xo/xo_board..
-+	if (core->parent)
-+		__clk_inherit_enabled(core->parent);
-+}
+ # Base clock types
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index d6fdd7a789aa..1e2761c53f06 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -23,6 +23,11 @@
+ #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
+ #define CCU_FEATURE_ALL_PREDIV		BIT(4)
+ #define CCU_FEATURE_LOCK_REG		BIT(5)
++#define CCU_FEATURE_MMC_TIMING_SWITCH	BIT(6)
++#define CCU_FEATURE_MMC_ALWAYS_NEW	BIT(7)
 +
-+void clk_inherit_enabled(struct clk *clk)
-+{
-+	__clk_inherit_enabled(clk->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_inherit_enabled);
-+
- static bool clk_ignore_unused;
- static int __init clk_ignore_unused_setup(char *__unused)
- {
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index d523991c945f..90b698c910d0 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -11,6 +11,7 @@
-  * GNU General Public License for more details.
-  */
++/* MMC timing mode switch bit */
++#define CCU_MMC_NEW_TIMING_MODE		BIT(30)
  
-+#include <linux/clk.h>
- #include <linux/export.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
-@@ -258,6 +259,33 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 	if (ret)
- 		return ret;
+ struct device_node;
  
-+	/* Check which of clocks that we inherit state from bootloader
-+	 * are enabled, and fixup enable/prepare state (as well as that
-+	 * of it's parents).
-+	 *
-+	 * TODO can we assume that parents coming from another clk
-+	 * driver are already registered?
-+	 */
-+	for (i = 0; i < num_clks; i++) {
-+		struct clk_hw *hw;
-+
-+		if (!rclks[i])
-+			continue;
-+
-+		hw = &rclks[i]->hw;
-+
-+		if (!(hw->init->flags & CLK_INHERIT_BOOTLOADER))
-+			continue;
-+
-+		if (!clk_is_enabled_regmap(hw))
-+			continue;
-+
-+		dev_dbg(dev, "%s is enabled from bootloader!\n",
-+			  hw->init->name);
-+
-+		clk_inherit_enabled(hw->clk);
-+	}
-+
- 	reset = &cc->reset;
- 	reset->rcdev.of_node = dev->of_node;
- 	reset->rcdev.ops = &qcom_reset_ops;
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 2cfe7000fc60..c939d33f6377 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2468,7 +2468,7 @@ static struct clk_branch gcc_mdss_ahb_clk = {
- 				"pcnoc_bfdcd_clk_src",
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2485,7 +2485,7 @@ static struct clk_branch gcc_mdss_axi_clk = {
- 				"system_noc_bfdcd_clk_src",
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2502,7 +2502,7 @@ static struct clk_branch gcc_mdss_byte0_clk = {
- 				"byte0_clk_src",
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2519,7 +2519,7 @@ static struct clk_branch gcc_mdss_esc0_clk = {
- 				"esc0_clk_src",
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2536,7 +2536,7 @@ static struct clk_branch gcc_mdss_mdp_clk = {
- 				"mdp_clk_src",
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2553,7 +2553,7 @@ static struct clk_branch gcc_mdss_pclk0_clk = {
- 				"pclk0_clk_src",
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2570,7 +2570,7 @@ static struct clk_branch gcc_mdss_vsync_clk = {
- 				"vsync_clk_src",
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_INHERIT_BOOTLOADER,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -3060,6 +3060,7 @@ static struct gdsc mdss_gdsc = {
- 		.name = "mdss",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = INHERIT_BL,
- };
- 
- static struct gdsc jpeg_gdsc = {
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a4f3580587b7..440d819b2d9d 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -291,6 +291,12 @@ static int gdsc_init(struct gdsc *sc)
- 	if ((sc->flags & VOTABLE) && on)
- 		gdsc_enable(&sc->pd);
- 
-+	if ((sc->flags & INHERIT_BL) && on) {
-+		pr_debug("gdsc: %s is enabled from bootloader!\n", sc->pd.name);
-+		gdsc_enable(&sc->pd);
-+		sc->pd.flags |= GENPD_FLAG_ALWAYS_ON;
-+	}
-+
- 	if (on || (sc->pwrsts & PWRSTS_RET))
- 		gdsc_force_mem_on(sc);
- 	else
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 39648348e5ec..3b5e64b060c2 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -53,6 +53,7 @@ struct gdsc {
- #define VOTABLE		BIT(0)
- #define CLAMP_IO	BIT(1)
- #define HW_CTRL		BIT(2)
-+#define INHERIT_BL	BIT(3)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c59c62571e4f..4d5505f92329 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -35,6 +35,7 @@
- #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
- /* parents need enable during gate/ungate, set rate and re-parent */
- #define CLK_OPS_PARENT_ENABLE	BIT(12)
-+#define CLK_INHERIT_BOOTLOADER	BIT(13) /* clk may be enabled from bootloader */
- 
- struct clk;
- struct clk_hw;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 91bd464f4c9b..461991fc57e2 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -391,6 +391,15 @@ void clk_disable(struct clk *clk);
- void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks);
- 
- /**
-+ * clk_inherit_enabled - update the enable/prepare count of a clock and it's
-+ * parents for clock enabled by bootloader.
+diff --git a/drivers/clk/sunxi-ng/ccu_mmc_timing.c b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+new file mode 100644
+index 000000000000..c5e86061c613
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+@@ -0,0 +1,73 @@
++/*
++ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
 + *
-+ * Intended to be used by clock drivers to inform the clk core of a clock
-+ * that is already running.
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
-+void clk_inherit_enabled(struct clk *clk);
++
++#include <linux/clk-provider.h>
++#include <linux/clk/sunxi-ng.h>
++
++#include "ccu_common.h"
 +
 +/**
-  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
-  *		  This is only valid once the clock source has been enabled.
-  * @clk: clock source
++ * sunxi_ccu_set_mmc_timing_mode: Configure the MMC clock timing mode
++ * @clk: clock to be configured
++ * @new_mode: true for new timing mode introduced in A83T and later
++ *
++ * Returns 0 on success, -ENOTSUPP if the clock does not support
++ * switching modes.
++ */
++int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++	unsigned long flags;
++	u32 val;
++
++	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
++		return -ENOTSUPP;
++
++	spin_lock_irqsave(cm->lock, flags);
++
++	val = readl(cm->base + cm->reg);
++	if (new_mode)
++		val |= CCU_MMC_NEW_TIMING_MODE;
++	else
++		val &= ~CCU_MMC_NEW_TIMING_MODE;
++	writel(val, cm->base + cm->reg);
++
++	spin_unlock_irqrestore(cm->lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(sunxi_ccu_set_mmc_timing_mode);
++
++/**
++ * sunxi_ccu_set_mmc_timing_mode: Get the current MMC clock timing mode
++ * @clk: clock to query
++ *
++ * Returns 0 if the clock is in old timing mode, > 0 if it is in
++ * new timing mode, and -ENOTSUPP if the clock does not support
++ * this function.
++ */
++int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++
++	if (cm->features & CCU_FEATURE_MMC_ALWAYS_NEW)
++		return 1;
++
++	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
++		return -ENOTSUPP;
++
++	return !!(readl(cm->base + cm->reg) & CCU_MMC_NEW_TIMING_MODE);
++}
++EXPORT_SYMBOL_GPL(sunxi_ccu_get_mmc_timing_mode);
+diff --git a/include/linux/clk/sunxi-ng.h b/include/linux/clk/sunxi-ng.h
+new file mode 100644
+index 000000000000..990f760f70e5
+--- /dev/null
++++ b/include/linux/clk/sunxi-ng.h
+@@ -0,0 +1,35 @@
++/*
++ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _LINUX_CLK_SUNXI_NG_H_
++#define _LINUX_CLK_SUNXI_NG_H_
++
++#include <linux/errno.h>
++
++#ifdef CONFIG_SUNXI_CCU
++int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode);
++int sunxi_ccu_get_mmc_timing_mode(struct clk *clk);
++#else
++static inline int sunxi_ccu_set_mmc_timing_mode(struct clk *clk,
++						bool new_mode)
++{
++	return -ENOTSUPP;
++}
++
++static inline int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
++{
++	return -ENOTSUPP;
++}
++#endif
++
++#endif
 -- 
-2.13.0
+2.13.2
