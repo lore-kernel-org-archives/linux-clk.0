@@ -1,78 +1,95 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 08/18] serial: 8250_ingenic: Add support for the JZ4770 SoC
-Date: Sun,  2 Jul 2017 18:30:06 +0200
-Message-Id: <20170702163016.6714-9-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/4] clk: renesas: Add r8a77995 CPG Core Clock Definitions
+Date: Thu, 20 Jul 2017 14:40:06 +0200
+Message-Id: <1500554409-22423-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The JZ4770 SoC's UART is no different from the other JZ SoCs, so this
-commit simply adds the ingenic,jz4770-uart compatible string.
+Add all R-Car D3 Clock Pulse Generator Core Clock Outputs, as listed
+in Table 8.2f ("List of Clocks [R-Car D3]") of the R-Car Series, 3rd
+Generation Hardware User's Manual (Rev. 0.55, Jun. 30, 2017).
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Rob Herring <robh@kernel.org>
+Note that internal CPG clocks (S0, S1, S2, S3, S1C, S3C, SDSRC, and
+SSPSRC) are not included, as they are used as internal clock sources
+only, and never referenced from DT.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org
 ---
- Documentation/devicetree/bindings/serial/ingenic,uart.txt | 8 ++++++--
- drivers/tty/serial/8250/8250_ingenic.c                    | 5 +++++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ include/dt-bindings/clock/r8a77995-cpg-mssr.h | 57 +++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a77995-cpg-mssr.h
 
- v2: List one compatible entry per line
- v3: No change
-
-diff --git a/Documentation/devicetree/bindings/serial/ingenic,uart.txt b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
-index 02cb7fe59cb7..c3c6406d5cfe 100644
---- a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
-+++ b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
-@@ -1,8 +1,12 @@
- * Ingenic SoC UART
- 
- Required properties:
--- compatible : "ingenic,jz4740-uart", "ingenic,jz4760-uart",
--	"ingenic,jz4775-uart" or "ingenic,jz4780-uart"
-+- compatible : One of:
-+  - "ingenic,jz4740-uart",
-+  - "ingenic,jz4760-uart",
-+  - "ingenic,jz4770-uart",
-+  - "ingenic,jz4775-uart",
-+  - "ingenic,jz4780-uart".
- - reg : offset and length of the register set for the device.
- - interrupts : should contain uart interrupt.
- - clocks : phandles to the module & baud clocks.
-diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-index 4d9dc10e265c..b31b2ca552d1 100644
---- a/drivers/tty/serial/8250/8250_ingenic.c
-+++ b/drivers/tty/serial/8250/8250_ingenic.c
-@@ -133,6 +133,10 @@ EARLYCON_DECLARE(jz4740_uart, ingenic_early_console_setup);
- OF_EARLYCON_DECLARE(jz4740_uart, "ingenic,jz4740-uart",
- 		    ingenic_early_console_setup);
- 
-+EARLYCON_DECLARE(jz4770_uart, ingenic_early_console_setup);
-+OF_EARLYCON_DECLARE(jz4770_uart, "ingenic,jz4770-uart",
-+		    ingenic_early_console_setup);
+diff --git a/include/dt-bindings/clock/r8a77995-cpg-mssr.h b/include/dt-bindings/clock/r8a77995-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..4e8ae3dee5901b01
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a77995-cpg-mssr.h
+@@ -0,0 +1,57 @@
++/*
++ * Copyright (C) 2017 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A77995_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A77995_CPG_MSSR_H__
 +
- EARLYCON_DECLARE(jz4775_uart, ingenic_early_console_setup);
- OF_EARLYCON_DECLARE(jz4775_uart, "ingenic,jz4775-uart",
- 		    ingenic_early_console_setup);
-@@ -327,6 +331,7 @@ static const struct ingenic_uart_config jz4780_uart_config = {
- static const struct of_device_id of_match[] = {
- 	{ .compatible = "ingenic,jz4740-uart", .data = &jz4740_uart_config },
- 	{ .compatible = "ingenic,jz4760-uart", .data = &jz4760_uart_config },
-+	{ .compatible = "ingenic,jz4770-uart", .data = &jz4760_uart_config },
- 	{ .compatible = "ingenic,jz4775-uart", .data = &jz4760_uart_config },
- 	{ .compatible = "ingenic,jz4780-uart", .data = &jz4780_uart_config },
- 	{ /* sentinel */ }
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a77995 CPG Core Clocks */
++#define R8A77995_CLK_Z2			0
++#define R8A77995_CLK_ZG			1
++#define R8A77995_CLK_ZTR		2
++#define R8A77995_CLK_ZT			3
++#define R8A77995_CLK_ZX			4
++#define R8A77995_CLK_S0D1		5
++#define R8A77995_CLK_S1D1		6
++#define R8A77995_CLK_S1D2		7
++#define R8A77995_CLK_S1D4		8
++#define R8A77995_CLK_S2D1		9
++#define R8A77995_CLK_S2D2		10
++#define R8A77995_CLK_S2D4		11
++#define R8A77995_CLK_S3D1		12
++#define R8A77995_CLK_S3D2		13
++#define R8A77995_CLK_S3D4		14
++#define R8A77995_CLK_S1D4C		15
++#define R8A77995_CLK_S3D1C		16
++#define R8A77995_CLK_S3D2C		17
++#define R8A77995_CLK_S3D4C		18
++#define R8A77995_CLK_LB			19
++#define R8A77995_CLK_CL			20
++#define R8A77995_CLK_ZB3		21
++#define R8A77995_CLK_ZB3D2		22
++#define R8A77995_CLK_CR			23
++#define R8A77995_CLK_CRD2		24
++#define R8A77995_CLK_SD0H		25
++#define R8A77995_CLK_SD0		26
++#define R8A77995_CLK_SSP2		27
++#define R8A77995_CLK_SSP1		28
++#define R8A77995_CLK_RPC		29
++#define R8A77995_CLK_RPCD2		30
++#define R8A77995_CLK_ZA2		31
++#define R8A77995_CLK_ZA8		32
++#define R8A77995_CLK_Z2D		33
++#define R8A77995_CLK_CANFD		34
++#define R8A77995_CLK_MSO		35
++#define R8A77995_CLK_R			36
++#define R8A77995_CLK_OSC		37
++#define R8A77995_CLK_LV0		38
++#define R8A77995_CLK_LV1		39
++#define R8A77995_CLK_CP			40
++
++#endif /* __DT_BINDINGS_CLOCK_R8A77995_CPG_MSSR_H__ */
 -- 
-2.11.0
+2.7.4
