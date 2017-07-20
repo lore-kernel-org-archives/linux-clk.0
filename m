@@ -1,69 +1,159 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
-        <gabriel.fernandez.st@gmail.com>
-Subject: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
-Date: Thu, 13 Jul 2017 16:02:31 +0200
-Message-ID: <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
-References: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] clk: renesas: rcar-gen3: Add divider support for PLL1 and PLL3
+Date: Thu, 20 Jul 2017 14:40:07 +0200
+Message-Id: <1500554409-22423-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On some R-Car Gen3 SoCs (e.g. R-Car D3), PLL1 and PLL3 use a divider
+value different from one.  Extend struct rcar_gen3_cpg_pll_config to handle
+this.  As all multipliers and dividers are small, table size increase
+can be kept limited by storing them in u8s instead of unsigned ints,
+which saves ca. 0.5 KiB for a generic kernel.
 
-This patch exposes clk_gate_ops::is_enabled as functions
-that can be directly called and assigned in places like this so
-we don't need wrapper functions that do nothing besides forward
-the call.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Sugested by Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk-gate.c       | 2 +-
- include/linux/clk-provider.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 34 +++++++++++++++++-----------------
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 34 +++++++++++++++++-----------------
+ drivers/clk/renesas/rcar-gen3-cpg.c    |  2 ++
+ drivers/clk/renesas/rcar-gen3-cpg.h    |  8 +++++---
+ 4 files changed, 41 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 4e0c054a..e27e28f 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
- 	clk_gate_endisable(hw, 0);
- }
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index c091a8e024b88d32..762b2f8824f118de 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -305,23 +305,23 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
+ 					 (((md) & BIT(17)) >> 17))
  
--static int clk_gate_is_enabled(struct clk_hw *hw)
-+int clk_gate_is_enabled(struct clk_hw *hw)
- {
- 	u32 reg;
- 	struct clk_gate *gate = to_clk_gate(hw);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c59c625..e9587ab 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 		u8 clk_gate_flags, spinlock_t *lock);
- void clk_unregister_gate(struct clk *clk);
- void clk_hw_unregister_gate(struct clk_hw *hw);
-+int clk_gate_is_enabled(struct clk_hw *hw);
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+-	/* EXTAL div	PLL1 mult	PLL3 mult */
+-	{ 1,		192,		192,	},
+-	{ 1,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 1,		192,		192,	},
+-	{ 1,		160,		160,	},
+-	{ 1,		160,		106,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 1,		160,		160,	},
+-	{ 1,		128,		128,	},
+-	{ 1,		128,		84,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 1,		128,		128,	},
+-	{ 2,		192,		192,	},
+-	{ 2,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 2,		192,		192,	},
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
++	{ 1,		192,	1,	192,	1,	},
++	{ 1,		192,	1,	128,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 1,		192,	1,	192,	1,	},
++	{ 1,		160,	1,	160,	1,	},
++	{ 1,		160,	1,	106,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 1,		160,	1,	160,	1,	},
++	{ 1,		128,	1,	128,	1,	},
++	{ 1,		128,	1,	84,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 1,		128,	1,	128,	1,	},
++	{ 2,		192,	1,	192,	1,	},
++	{ 2,		192,	1,	128,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 2,		192,	1,	192,	1,	},
+ };
  
- struct clk_div_table {
- 	unsigned int	val;
+ static const struct soc_device_attribute r8a7795es1[] __initconst = {
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index acc6d0f153e1b233..22ba3c497aba9701 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -277,23 +277,23 @@ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
+ 					 (((md) & BIT(17)) >> 17))
+ 
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+-	/* EXTAL div	PLL1 mult	PLL3 mult */
+-	{ 1,		192,		192,	},
+-	{ 1,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 1,		192,		192,	},
+-	{ 1,		160,		160,	},
+-	{ 1,		160,		106,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 1,		160,		160,	},
+-	{ 1,		128,		128,	},
+-	{ 1,		128,		84,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 1,		128,		128,	},
+-	{ 2,		192,		192,	},
+-	{ 2,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
+-	{ 2,		192,		192,	},
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
++	{ 1,		192,	1,	192,	1,	},
++	{ 1,		192,	1,	128,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 1,		192,	1,	192,	1,	},
++	{ 1,		160,	1,	160,	1,	},
++	{ 1,		160,	1,	106,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 1,		160,	1,	160,	1,	},
++	{ 1,		128,	1,	128,	1,	},
++	{ 1,		128,	1,	84,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 1,		128,	1,	128,	1,	},
++	{ 2,		192,	1,	192,	1,	},
++	{ 2,		192,	1,	128,	1,	},
++	{ 0, /* Prohibited setting */			},
++	{ 2,		192,	1,	192,	1,	},
+ };
+ 
+ static int __init r8a7796_cpg_mssr_init(struct device *dev)
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index d4d27cf6110d385f..3f922fea9671fb4c 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -296,6 +296,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 
+ 	case CLK_TYPE_GEN3_PLL1:
+ 		mult = cpg_pll_config->pll1_mult;
++		div = cpg_pll_config->pll1_div;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_PLL2:
+@@ -313,6 +314,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 
+ 	case CLK_TYPE_GEN3_PLL3:
+ 		mult = cpg_pll_config->pll3_mult;
++		div = cpg_pll_config->pll3_div;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_PLL4:
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 073be54b5d038ae3..4eaf02955580a938 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -26,9 +26,11 @@ enum rcar_gen3_clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
+ 
+ struct rcar_gen3_cpg_pll_config {
+-	unsigned int extal_div;
+-	unsigned int pll1_mult;
+-	unsigned int pll3_mult;
++	u8 extal_div;
++	u8 pll1_mult;
++	u8 pll1_div;
++	u8 pll3_mult;
++	u8 pll3_div;
+ };
+ 
+ #define CPG_RCKCR	0x240
 -- 
-1.9.1
+2.7.4
