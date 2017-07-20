@@ -1,60 +1,73 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57286 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751150AbdGLXB7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 19:01:59 -0400
-Date: Wed, 12 Jul 2017 16:01:52 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V4 2/6] iommu/arm-smmu: Add pm_runtime/sleep ops
-Message-ID: <20170712230152.GC22780@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225821.GB22780@codeaurora.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53950 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934643AbdGTMhR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2017 08:37:17 -0400
+Date: Thu, 20 Jul 2017 13:37:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Oleksij Rempel <ore@pengutronix.de>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        devicetree@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        kernel@pengutronix.de, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Message-ID: <20170720123701.d5zyhbevyic3odxk@sirena.org.uk>
+References: <20170620140910.7568-1-o.rempel@pengutronix.de>
+ <c64ce8db-eea6-3709-9c97-fda16e93481a@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170712225821.GB22780@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ha7ewm5ymxmzzapa"
+In-Reply-To: <c64ce8db-eea6-3709-9c97-fda16e93481a@pengutronix.de>
+Subject: Re: [PATCH v6 0/6] provide power off support for iMX6 with external
+ PMIC
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/12, Stephen Boyd wrote:
-> On 07/06, Vivek Gautam wrote:
-> > From: Sricharan R <sricharan@codeaurora.org>
-> > 
-> > The smmu needs to be functional only when the respective
-> > master's using it are active. The device_link feature
-> > helps to track such functional dependencies, so that the
-> > iommu gets powered when the master device enables itself
-> > using pm_runtime. So by adapting the smmu driver for
-> > runtime pm, above said dependency can be addressed.
-> > 
-> > This patch adds the pm runtime/sleep callbacks to the
-> > driver and also the functions to parse the smmu clocks
-> > from DT and enable them in resume/suspend.
-> > 
-> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> > Signed-off-by: Archit Taneja <architt@codeaurora.org>
-> > [vivek: Clock rework to loop over clock names data]
-> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > ---
-> 
-> General comment, we have a bulk clk API now, but I guess we
-> failed to add the clk_bulk_prepare_enable() API that could be
-> used here. Perhaps you can add that API and then use it here to
-> reduce lines of code.
-> 
 
-Bjorn just sent a patch for that API an hour ago.
+--ha7ewm5ymxmzzapa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Tue, Jul 18, 2017 at 06:53:54AM +0200, Oleksij Rempel wrote:
+> Hallo all,
+>=20
+> Here Gentle Ping to the Old King
+>=20
+> DT is already ACKed.
+
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
+
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, though there are some other maintainers who like them - if in
+doubt look at how patches for the subsystem are normally handled.
+
+--ha7ewm5ymxmzzapa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllwo+wACgkQJNaLcl1U
+h9BaWgf8Dd+2GB8489Rn903Eedz3w5oQIll96IExlYdYQMJJCPhoEyb5PkQQpGJr
+K+vkLCCZgfrsWVmBZP9x/HqtZVIl5wZgT5gSWCsOmN9X05STUHGc19FiFAmw89/W
+HQ8TmbWNWLl2HJVYTUKqubYkQYTiU1hDAywMFhtCpDOEv1f2bg1w8mPddoprY3qx
+uSGliuCCY+N3px90DtMRqwZFiy68cqsEqxwacJuBLCVin+pwNEbQeVdbuw45HMTn
+1icKRfPWDifRxgwuoJAQw3znb2CePASnoy8+LF8e35Rfcw/OypvaghnyKcrfhIs3
+CkV6dfX75RqHo+tlw5+doLxwJWKgXg==
+=a+rz
+-----END PGP SIGNATURE-----
+
+--ha7ewm5ymxmzzapa--
