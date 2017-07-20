@@ -1,48 +1,102 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 00/11] Drop unnecessary static
-Date: Sat, 15 Jul 2017 22:07:35 +0200
-Message-Id: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-fbdev@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
- keescook@chromium.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
- linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 07/10] ARM: dts: sun8i: a83t: Add MMC controller device nodes
+Date: Thu, 20 Jul 2017 11:44:49 +0800
+Message-Id: <20170720034452.15920-8-wens@csie.org>
+In-Reply-To: <20170720034452.15920-1-wens@csie.org>
+References: <20170720034452.15920-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-These patches fix cases where there is a static on a local variable, but
-the variable is initialized before any possible use.  Thus, the static has
-no benefit.
+The A83T has 3 MMC controllers. The third one is a bit special, as it
+supports a wider 8-bit bus, and a "new timing mode".
 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 59 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
- drivers/ata/sata_gemini.c                     |    2 +-
- drivers/clk/clk-moxart.c                      |    4 ++--
- drivers/clk/mmp/clk.c                         |    2 +-
- drivers/iio/orientation/hid-sensor-rotation.c |    2 +-
- drivers/irqchip/irq-digicolor.c               |    2 +-
- drivers/irqchip/irq-gic-realview.c            |    2 +-
- drivers/irqchip/irq-mips-cpu.c                |    2 +-
- drivers/mfd/max8925-i2c.c                     |    2 +-
- drivers/mfd/twl4030-irq.c                     |    2 +-
- drivers/mtd/maps/physmap_of_versatile.c       |    2 +-
- drivers/video/fbdev/da8xx-fb.c                |    2 +-
- 11 files changed, 12 insertions(+), 12 deletions(-)
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index beed05e10a3b..21ab668abfac 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -182,6 +182,65 @@
+ 			#dma-cells = <1>;
+ 		};
+ 
++		mmc0: mmc@1c0f000 {
++			compatible = "allwinner,sun8i-a83t-mmc",
++				     "allwinner,sun7i-a20-mmc";
++			reg = <0x01c0f000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC0>,
++				 <&ccu CLK_MMC0>,
++				 <&ccu CLK_MMC0_OUTPUT>,
++				 <&ccu CLK_MMC0_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC0>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc1: mmc@1c10000 {
++			compatible = "allwinner,sun8i-a83t-mmc",
++				     "allwinner,sun7i-a20-mmc";
++			reg = <0x01c10000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC1>,
++				 <&ccu CLK_MMC1>,
++				 <&ccu CLK_MMC1_OUTPUT>,
++				 <&ccu CLK_MMC1_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC1>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc2: mmc@1c11000 {
++			compatible = "allwinner,sun8i-a83t-emmc";
++			reg = <0x01c11000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC2>,
++				 <&ccu CLK_MMC2>,
++				 <&ccu CLK_MMC2_OUTPUT>,
++				 <&ccu CLK_MMC2_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC2>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		ccu: clock@1c20000 {
+ 			compatible = "allwinner,sun8i-a83t-ccu";
+ 			reg = <0x01c20000 0x400>;
+-- 
+2.13.2
