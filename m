@@ -1,44 +1,88 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Wed, 19 Jul 2017 11:10:26 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Joel Stanley <joel@jms.id.au>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, Benjamin Herrenschmidt
-	<benh@kernel.crashing.org>, Andrew Jeffery <andrew@aj.id.au>, Jeremy Kerr
-	<jk@ozlabs.org>
-Subject: Re: Coupled clk/reset
-Message-ID: <20170719081026.GE1002@tbergstrom-lnx.Nvidia.com>
-References: <CACPK8XdXxfxngzhSxyPb=OKcEv+3Up8ve-2WtpETpXvXe_av5w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <CACPK8XdXxfxngzhSxyPb=OKcEv+3Up8ve-2WtpETpXvXe_av5w@mail.gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 5/5] clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
+Date: Thu, 20 Jul 2017 10:18:19 +0530
+Message-Id: <1500526099-9935-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 18, 2017 at 07:53:09PM +0930, Joel Stanley wrote:
-> Hello!
-> 
-> I'm taking a stab at a clk and reset driver for the Aspeed SoCs. I've
-> used the Gemini driver for inspiration so far, which looks to be a
-> good fit for the clock gating and important clocks (those we need in
-> order to get the uart and timer source going).
-> 
-> One tricky bit is the datasheet specifies the following for enabling
-> an IP block ('engine'), whenever the engine is started from the
-> clocked stopped state:
-> 
->  1. Enable engine reset
->  2. Delay 100us
->  3. Enable clock
->  4. Delay 10ms
->  5. Disable engine reset
-> 
+With support added to control clocks associated with a gdsc from within
+the gdsc driver, associate all mmagic clock instances with the respective
+mmagic gdscs so devices inside these mmagic domains do not have to control
+them individually.
 
-This is a pretty standard sequence. The reset is synchronous, so the module
-clock needs to be running for the reset toggling to take effect. And it takes
-some time for the reset propagate through all the logic, hence the second
-delay, although 10ms seems large to me.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/mmcc-msm8996.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Peter.
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 352394d..9d2d34b 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -2902,6 +2902,13 @@ enum {
+ 	.pd = {
+ 		.name = "mmagic_video",
+ 	},
++	.clk_hws = {
++		&mmss_mmagic_ahb_clk.clkr.hw,
++		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
++		&mmagic_video_axi_clk.clkr.hw,
++		&mmagic_video_noc_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 4,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = VOTABLE,
+ };
+@@ -2912,6 +2919,13 @@ enum {
+ 	.pd = {
+ 		.name = "mmagic_mdss",
+ 	},
++	.clk_hws = {
++		&mmss_mmagic_ahb_clk.clkr.hw,
++		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
++		&mmagic_mdss_axi_clk.clkr.hw,
++		&mmagic_mdss_noc_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 4,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = VOTABLE,
+ };
+@@ -2922,6 +2936,13 @@ enum {
+ 	.pd = {
+ 		.name = "mmagic_camss",
+ 	},
++	.clk_hws = {
++		&mmss_mmagic_ahb_clk.clkr.hw,
++		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
++		&mmagic_camss_axi_clk.clkr.hw,
++		&mmagic_camss_noc_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 4,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = VOTABLE,
+ };
+@@ -3056,6 +3077,11 @@ enum {
+ 	.pd = {
+ 		.name = "gpu_gx",
+ 	},
++	.clk_hws = {
++		&mmss_mmagic_ahb_clk.clkr.hw,
++		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 2,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = CLAMP_IO,
+ };
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
