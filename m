@@ -1,117 +1,100 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
 	linux-arm-kernel@lists.infradead.org,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH v4 4/9] ARM: dts: at91: sama5d2: add classd nodes
-Date: Tue, 25 Jul 2017 09:37:05 +0200
-Message-Id: <57ca6c418774e826584f0308d064dec8139c04d2.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 2/5] clk: Add clk_hw_get_clk() helper API to be used by clk providers
+Date: Thu, 20 Jul 2017 10:18:16 +0530
+Message-Id: <1500526099-9935-3-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+As we move towards a cleaner split to have clock providers use clk_hw
+for all clock operations, while consumers operate on the (per-user)
+struct clk handles, we still have cases where in a clock provider
+might want to call into high level clk apis which only operate on a
+struct clk handle.
+To facilitate such needs, have a clk_hw_get_clk() api which can be
+used from within clock providers to get access to struct clk handles.
 
-This patch adds nodes for the classd device and its generated clock.
-
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- arch/arm/boot/dts/sama5d2.dtsi | 39 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c            | 39 +++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  5 +++++
+ 2 files changed, 44 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 534ee6f..38d2216 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -505,6 +505,24 @@
- 					clocks = <&plla>;
- 				};
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index fc58c52..c9bbfb3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -186,6 +186,45 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_name);
  
-+				audio_pll_frac: audiopll_fracck {
-+					compatible = "atmel,sama5d2-clk-audio-pll-frac";
-+					#clock-cells = <0>;
-+					clocks = <&main>;
-+				};
++struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *dev_id,
++			   const char *con_id)
++{
++	return __clk_create_clk(hw, dev_id, con_id);
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_clk);
 +
-+				audio_pll_pad: audiopll_padck {
-+					compatible = "atmel,sama5d2-clk-audio-pll-pad";
-+					#clock-cells = <0>;
-+					clocks = <&audio_pll_frac>;
-+				};
++void clk_hw_put_clk(struct clk *clk)
++{
++	__clk_free_clk(clk);
++}
++EXPORT_SYMBOL_GPL(clk_hw_put_clk);
 +
-+				audio_pll_pmc: audiopll_pmcck {
-+					compatible = "atmel,sama5d2-clk-audio-pll-pmc";
-+					#clock-cells = <0>;
-+					clocks = <&audio_pll_frac>;
-+				};
++static void devm_clk_hw_put(struct device *dev, void *res)
++{
++	clk_hw_put_clk(*(struct clk **)res);
++}
 +
- 				utmi: utmick {
- 					compatible = "atmel,at91sam9x5-clk-utmi";
- 					#clock-cells = <0>;
-@@ -906,7 +924,7 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					interrupt-parent = <&pmc>;
--					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
-+					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
- 
- 					sdmmc0_gclk: sdmmc0_gclk {
- 						#clock-cells = <0>;
-@@ -967,6 +985,12 @@
- 						reg = <57>;
- 						atmel,clk-output-range = <0 80000000>;
- 					};
++struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
++				const char *con_id)
++{
++	struct clk **ptr, *clk;
 +
-+					classd_gclk: classd_gclk {
-+						#clock-cells = <0>;
-+						reg = <59>;
-+						atmel,clk-output-range = <0 100000000>;
-+					};
- 				};
- 			};
- 
-@@ -1444,6 +1468,19 @@
- 				status = "okay";
- 			};
- 
-+			classd: classd@fc048000 {
-+				compatible = "atmel,sama5d2-classd";
-+				reg = <0xfc048000 0x100>;
-+				interrupts = <59 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(47))>;
-+				dma-names = "tx";
-+				clocks = <&classd_clk>, <&classd_gclk>;
-+				clock-names = "pclk", "gclk";
-+				status = "disabled";
-+			};
++	ptr = devres_alloc(devm_clk_hw_put, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
 +
- 			can1: can@fc050000 {
- 				compatible = "bosch,m_can";
- 				reg = <0xfc050000 0x4000>, <0x210000 0x4000>;
++	clk = clk_hw_get_clk(hw, dev_name(dev), con_id);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL_GPL(devm_clk_hw_get_clk);
++
+ struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return !clk ? NULL : clk->core->hw;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c59c625..c85bfed 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -730,6 +730,11 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ /* helper functions */
+ const char *__clk_get_name(const struct clk *clk);
+ const char *clk_hw_get_name(const struct clk_hw *hw);
++struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *dev_id,
++			   const char *con_id);
++void clk_hw_put_clk(struct clk *clk);
++struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
++				const char *con_id);
+ struct clk_hw *__clk_get_hw(struct clk *clk);
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
 -- 
-git-series 0.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
