@@ -1,64 +1,141 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:36344 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750704AbdGLXRa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 19:17:30 -0400
-Date: Wed, 12 Jul 2017 16:17:26 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: sean.wang@mediatek.com
-Cc: dan.carpenter@oracle.com, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mediatek: fixed static checker warning in
- clk_cpumux_get_parent call
-Message-ID: <20170712231726.GQ22780@codeaurora.org>
-References: <59fd4aa684632f1d9d2e7573a95bc42850e81690.1499701486.git.sean.wang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <59fd4aa684632f1d9d2e7573a95bc42850e81690.1499701486.git.sean.wang@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 04/10] mmc: sunxi: Support controllers that can use both old and new timings
+Date: Thu, 20 Jul 2017 11:44:46 +0800
+Message-Id: <20170720034452.15920-5-wens@csie.org>
+In-Reply-To: <20170720034452.15920-1-wens@csie.org>
+References: <20170720034452.15920-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11, sean.wang@mediatek.com wrote:
-> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-> index edd8e69..c6a3a1a 100644
-> --- a/drivers/clk/mediatek/clk-cpumux.c
-> +++ b/drivers/clk/mediatek/clk-cpumux.c
-> @@ -27,7 +27,6 @@ static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
->  static u8 clk_cpumux_get_parent(struct clk_hw *hw)
->  {
->  	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-> -	int num_parents = clk_hw_get_num_parents(hw);
->  	unsigned int val;
->  
->  	regmap_read(mux->regmap, mux->reg, &val);
-> @@ -35,17 +34,18 @@ static u8 clk_cpumux_get_parent(struct clk_hw *hw)
->  	val >>= mux->shift;
->  	val &= mux->mask;
->  
-> -	if (val >= num_parents)
-> -		return -EINVAL;
-> -
+On the SoCs that introduced the new timing mode for MMC controllers,
+both the old (where the clock delays are set in the CCU) and new
+(where the clock delays are set in the MMC controller) timing modes
+are available, and we have to support them both. However there are
+two bits that control which mode is active. One is in the CCU, the
+other is in the MMC controller. The settings on both sides must be
+the same, or nothing will work.
 
-Yeah we really need to fix the get_parent() op to return a
-clk_hw pointer instead. Time for another migration plan...
+The sunxi-ng clock driver provides an API to query and set the
+active timing mode. At probe time, we try to set the active mode
+to the "new timing mode". If it succeeds, we can then use the MMC
+controller in the new mode. If not, we fall back to the old mode.
 
->  	return val;
->  }
->  
->  static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-> +	int num_parents = clk_hw_get_num_parents(hw);
->  	u32 mask, val;
->  
-> +	if (index >= num_parents)
-> +		return -EINVAL;
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/mmc/host/sunxi-mmc.c | 45 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 43 insertions(+), 2 deletions(-)
 
-When would we call this function with an invalid index? The
-framework should be making sure to only call it with an index
-that's valid. So perhaps this hunk can be left out?
-
-
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 0fb4e4c119e1..c8a60e43dc43 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -22,6 +22,7 @@
+ #include <linux/err.h>
+ 
+ #include <linux/clk.h>
++#include <linux/clk/sunxi-ng.h>
+ #include <linux/gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+@@ -259,7 +260,11 @@ struct sunxi_mmc_cfg {
+ 	/* Does DATA0 needs to be masked while the clock is updated */
+ 	bool mask_data0;
+ 
++	/* hardware only supports new timing mode */
+ 	bool needs_new_timings;
++
++	/* hardware can switch between old and new timing modes */
++	bool has_timings_switch;
+ };
+ 
+ struct sunxi_mmc_host {
+@@ -293,6 +298,9 @@ struct sunxi_mmc_host {
+ 
+ 	/* vqmmc */
+ 	bool		vqmmc_enabled;
++
++	/* timings */
++	bool		use_new_timings;
+ };
+ 
+ static int sunxi_mmc_reset_host(struct sunxi_mmc_host *host)
+@@ -714,7 +722,7 @@ static int sunxi_mmc_clk_set_phase(struct sunxi_mmc_host *host,
+ {
+ 	int index;
+ 
+-	if (!host->cfg->clk_delays)
++	if (host->use_new_timings)
+ 		return 0;
+ 
+ 	/* determine delays */
+@@ -765,6 +773,15 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ 	    ios->bus_width == MMC_BUS_WIDTH_8)
+ 		clock <<= 1;
+ 
++	if (host->use_new_timings) {
++		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
++		if (ret) {
++			dev_err(mmc_dev(mmc),
++				"error setting new timing mode\n");
++			return ret;
++		}
++	}
++
+ 	rate = clk_round_rate(host->clk_mmc, clock);
+ 	if (rate < 0) {
+ 		dev_err(mmc_dev(mmc), "error rounding clk to %d: %ld\n",
+@@ -793,7 +810,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ 	}
+ 	mmc_writel(host, REG_CLKCR, rval);
+ 
+-	if (host->cfg->needs_new_timings) {
++	if (host->use_new_timings) {
+ 		/* Don't touch the delay bits */
+ 		rval = mmc_readl(host, REG_SD_NTSR);
+ 		rval |= SDXC_2X_TIMING_MODE;
+@@ -1262,6 +1279,30 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
+ 		goto error_free_host;
+ 	}
+ 
++	if (host->cfg->has_timings_switch) {
++		/*
++		 * Supports both old and new timing modes.
++		 * Try setting the clk to new timing mode.
++		 */
++		sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
++
++		/* And check the result */
++		ret = sunxi_ccu_get_mmc_timing_mode(host->clk_mmc);
++		if (ret < 0) {
++			/*
++			 * For whatever reason we were not able to get
++			 * the current active mode. Default to old mode.
++			 */
++			dev_warn(&pdev->dev, "MMC clk timing mode unknown\n");
++			host->use_new_timings = false;
++		} else {
++			host->use_new_timings = !!ret;
++		}
++	} else if (host->cfg->needs_new_timings) {
++		/* Supports new timing mode only */
++		host->use_new_timings = true;
++	}
++
+ 	mmc->ops		= &sunxi_mmc_ops;
+ 	mmc->max_blk_count	= 8192;
+ 	mmc->max_blk_size	= 4096;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.2
