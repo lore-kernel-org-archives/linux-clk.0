@@ -1,104 +1,45 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 3 Jul 2017 16:02:45 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- mark.rutland@arm.com, nicolas.ferre@microchip.com,
- alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, thomas.petazzoni@free-electrons.com
-Subject: Re: [PATCH 4/6] clk: at91: clk-generated: create function to find
- best_diff
-Message-ID: <20170703160245.1481942e@bbrezillon>
-In-Reply-To: <20170623090059.8371-5-quentin.schulz@free-electrons.com>
-References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
-	<20170623090059.8371-5-quentin.schulz@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 4/5] clk: qcom: gcc-msm8996: Mark gcc_mmss_noc_cfg_ahb_clk as a critical clock
+Date: Thu, 20 Jul 2017 10:18:18 +0530
+Message-Id: <1500526099-9935-5-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 23 Jun 2017 11:00:57 +0200
-Quentin Schulz <quentin.schulz@free-electrons.com> wrote:
+we have gcc_mmss_noc_cfg_ahb_clk marked with a CLK_IGNORE_UNUSED. While
+this can prevent it from being disabled while its unused, it does not
+prevent it from being disabled when a child derived from the clock calls
+an explicit enable/disable.
+Mark this with a CLK_IS_CRITICAL and remove the CLK_IGNORE_UNUSED flag
+so its never disabled.
 
-> The way to find the best_diff and do the appropriate process afterwards
-> can be re-used.
-> 
-> This patch prepares the driver for an upcoming patch that will allow
-> clk_generated to determine the rate of the audio_pll.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> ---
->  drivers/clk/at91/clk-generated.c | 41 ++++++++++++++++++++++++++--------------
->  1 file changed, 27 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index dab7002937e6..6530a2e7e84d 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -99,15 +99,36 @@ clk_generated_recalc_rate(struct clk_hw *hw,
->  	return DIV_ROUND_CLOSEST(parent_rate, gck->gckdiv + 1);
->  }
->  
-> +static void clk_generated_best_diff(struct clk_rate_request *req,
-> +				    struct clk_hw *parent,
-> +				    unsigned long parent_rate, u32 div,
-> +				    int *best_diff, long *best_rate)
-> +{
-> +	unsigned long tmp_rate;
-> +	int tmp_diff;
-> +
-> +	if (!div)
-> +		tmp_rate = parent_rate;
-> +	else
-> +		tmp_rate = parent_rate / div;
-> +	tmp_diff = abs(req->rate - tmp_rate);
-> +
-> +	if (*best_diff < 0 || *best_diff > tmp_diff) {
-> +		*best_rate = tmp_rate;
-> +		*best_diff = tmp_diff;
-> +		req->best_parent_rate = parent_rate;
-> +		req->best_parent_hw = parent;
-> +	}
-> +}
-> +
->  static int clk_generated_determine_rate(struct clk_hw *hw,
->  					struct clk_rate_request *req)
->  {
->  	struct clk_generated *gck = to_clk_generated(hw);
->  	struct clk_hw *parent = NULL;
->  	long best_rate = -EINVAL;
-> -	unsigned long tmp_rate, min_rate;
-> +	unsigned long min_rate;
->  	int best_diff = -1;
-> -	int tmp_diff;
->  	int i;
->  
->  	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-> @@ -125,18 +146,10 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  			continue;
->  
->  		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-> -		if (!div)
-> -			tmp_rate = parent_rate;
-> -		else
-> -			tmp_rate = parent_rate / div;
-> -		tmp_diff = abs(req->rate - tmp_rate);
-> -
-> -		if (best_diff < 0 || best_diff > tmp_diff) {
-> -			best_rate = tmp_rate;
-> -			best_diff = tmp_diff;
-> -			req->best_parent_rate = parent_rate;
-> -			req->best_parent_hw = parent;
-> -		}
-> +
-> +		clk_generated_best_diff(req, parent, parent_rate, div,
-> +					&best_diff, &best_rate);
-> +
->  
->  		if (!best_diff)
->  			break;
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 8abc200..8872985 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -1333,7 +1333,7 @@ enum {
+ 			.name = "gcc_mmss_noc_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "config_noc_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
