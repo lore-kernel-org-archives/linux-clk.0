@@ -13,72 +13,65 @@ Cc: Chen-Yu Tsai <wens@csie.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: [PATCH 03/11] clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
-Date: Fri, 14 Jul 2017 14:42:54 +0800
-Message-Id: <20170714064302.20383-4-wens@csie.org>
-In-Reply-To: <20170714064302.20383-1-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org>
+Subject: [PATCH v2 06/10] mmc: sunxi: Add support for A83T eMMC (MMC2)
+Date: Thu, 20 Jul 2017 11:44:48 +0800
+Message-Id: <20170720034452.15920-7-wens@csie.org>
+In-Reply-To: <20170720034452.15920-1-wens@csie.org>
+References: <20170720034452.15920-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMC2 clock supports a new timing mode. When the new mode is active,
-the output clock rate is halved.
+The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
+different. It supports a wider 8-bit bus, has a dedicated controllable
+reset pin for eMMC, and a "new timing mode" which is supposed to deliver
+better signals and thus better performance.
 
-This patch sets the feature flag for the new timing mode, and adds
-a pre-divider based on the mode bit.
+Add a compatible for this one to use the new timing mode not found in the
+other controllers.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 38 +++++++++++++++++++++++++++--------
- 1 file changed, 30 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
+ drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-index 947f9f6e05d2..ee6688e9b361 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-@@ -418,14 +418,36 @@ static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1-sample", "mmc1",
- static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1-output", "mmc1",
- 		       0x08c, 8, 3, 0);
+diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+index 7d53a799f140..63b57e2a10fb 100644
+--- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+@@ -12,6 +12,7 @@ Required properties:
+    * "allwinner,sun4i-a10-mmc"
+    * "allwinner,sun5i-a13-mmc"
+    * "allwinner,sun7i-a20-mmc"
++   * "allwinner,sun8i-a83t-emmc"
+    * "allwinner,sun9i-a80-mmc"
+    * "allwinner,sun50i-a64-emmc"
+    * "allwinner,sun50i-a64-mmc"
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 11587a69a1fd..de187ed77040 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -1117,6 +1117,13 @@ static const struct sunxi_mmc_cfg sun7i_a20_cfg = {
+ 	.can_calibrate = false,
+ };
  
--/* TODO Support MMC2 clock's new timing mode. */
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
--				  0x090,
--				  0, 4,		/* M */
--				  16, 2,	/* P */
--				  24, 2,	/* mux */
--				  BIT(31),	/* gate */
--				  0);
-+/*
-+ * MMC2 supports both old and new timing modes. When the new timing
-+ * mode is active, the output clock rate is halved by two. Here we
-+ * treat it as a variable pre-divider. Note that the pre-divider is
-+ * _not_ included in the possible factors during a set clock rate
-+ * operation. It is only read out.
-+ */
-+static const struct ccu_mux_var_prediv mmc2_new_timing_predivs[] = {
-+	{ .index = 0, .shift = 30, .width = 1 },
-+	{ .index = 1, .shift = 30, .width = 1 },
++static const struct sunxi_mmc_cfg sun8i_a83t_emmc_cfg = {
++	.idma_des_size_bits = 16,
++	.clk_delays = sunxi_mmc_clk_delays,
++	.can_calibrate = false,
++	.has_timings_switch = true,
 +};
-+static struct ccu_mp mmc2_clk = {
-+	.enable = BIT(31),
-+	.m      = _SUNXI_CCU_DIV(0, 4),
-+	.p      = _SUNXI_CCU_DIV(16, 2),
-+	.mux    = {
-+		.shift  = 24,
-+		.width  = 2,
-+		.var_predivs    = mmc2_new_timing_predivs,
-+		.n_var_predivs  = ARRAY_SIZE(mmc2_new_timing_predivs),
-+	},
-+	.common         = {
-+		.reg            = 0x090,
-+		.features	= CCU_FEATURE_MMC_TIMING_SWITCH,
-+		.hw.init        = CLK_HW_INIT_PARENTS("mmc2",
-+						      mod0_default_parents,
-+						      &ccu_mp_ops,
-+						      CLK_GET_RATE_NOCACHE),
-+	},
-+};
- 
- static SUNXI_CCU_PHASE(mmc2_sample_clk, "mmc2-sample", "mmc2",
- 		       0x090, 20, 3, 0);
++
+ static const struct sunxi_mmc_cfg sun9i_a80_cfg = {
+ 	.idma_des_size_bits = 16,
+ 	.clk_delays = sun9i_mmc_clk_delays,
+@@ -1141,6 +1148,7 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
+ 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
+ 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
+ 	{ .compatible = "allwinner,sun7i-a20-mmc", .data = &sun7i_a20_cfg },
++	{ .compatible = "allwinner,sun8i-a83t-emmc", .data = &sun8i_a83t_emmc_cfg },
+ 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
 -- 
 2.13.2
