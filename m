@@ -1,133 +1,135 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 3 Jul 2017 16:19:05 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- mark.rutland@arm.com, nicolas.ferre@microchip.com,
- alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, thomas.petazzoni@free-electrons.com, Cyrille
- Pitchen <cyrille.pitchen@wedev4u.fr>
-Subject: Re: [PATCH 5/6] clk: at91: clk-generated: make gclk determine
- audio_pll rate
-Message-ID: <20170703161905.5f994151@bbrezillon>
-In-Reply-To: <20170623090059.8371-6-quentin.schulz@free-electrons.com>
-References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
- <20170623090059.8371-6-quentin.schulz@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1500555312.2354.75.camel@pengutronix.de>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Prashant
+ Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen
+ <Peter.Chen@nxp.com>,  Linus Walleij <linus.walleij@linaro.org>,
+ dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>,  Rakesh
+ Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ linux-clk@vger.kernel.org,  Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang
+ <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo
+ Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri
+ Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>,
+ Guenter Roeck <linux@roeck-us.net>, Ohad Ben-Cohen <ohad@wizery.com>,
+ linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,  Vincent
+ Abriou <vincent.abriou@st.com>, Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  linux-usb@vger.kernel.org,
+ linux-wireless@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+ linux-spi@vger.kernel.org, linux-crypto@vger.kernel.org,  Tejun Heo
+ <tj@kernel.org>, alsa-devel@alsa-project.org, linux-doc@vger.kernel.org,
+ David Airlie <airlied@linux.ie>, nouveau@lists.freedesktop.org, Philippe
+ Cornu <philippe.cornu@st.com>, Kalle Valo <kvalo@qca.qualcomm.com>, Laxman
+ Dewangan <ldewangan@nvidia.com>, Corentin Labbe
+ <clabbe.montjoie@gmail.com>,  linux-i2c@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Lars-Peter Clausen <lars@metafoo.de>,
+  Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Jon Hunter <jonathanh@nvidia.com>,
+ linux-rockchip@lists.infradead.org, MyungJoo Ham
+ <myungjoo.ham@samsung.com>, Ben Skeggs <bskeggs@redhat.com>, Yisen Zhuang
+ <yisen.zhuang@huawei.com>, linux-media@vger.kernel.org, Richard Zhu
+ <hongxing.zhu@nxp.com>, Alexandre Torgue <alexandre.torgue@st.com>, Mathias
+ Nyman <mathias.nyman@intel.com>, linux-arm-msm@vger.kernel.org, Joachim
+ Eastwood <manabian@gmail.com>, linux-gpio@vger.kernel.org,
+ linux-mips@linux-mips.org,  Bjorn Helgaas <bhelgaas@google.com>, Giuseppe
+ Cavallaro <peppe.cavallaro@st.com>,  linux-arm-kernel@lists.infradead.org,
+ Patrice Chotard <patrice.chotard@st.com>,  Stanimir Varbanov
+ <svarbanov@mm-sol.com>, Kyungmin Park <kyungmin.park@samsung.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Hartmut Knaack <knaack.h@gmx.de>,
+ Jonathan Cameron <jic23@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ linux-iio@vger.kernel.org, linux-pci@vger.kernel.org, Shawn Lin
+ <shawn.lin@rock-chips.com>, linux-tegra@vger.kernel.org,
+ linux-mtd@lists.infradead.org, Benjamin Gaignard
+ <benjamin.gaignard@linaro.org>,  Florian Fainelli <f.fainelli@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Xinwei Kong
+ <kong.kongxinwei@hisilicon.com>,  ath10k@lists.infradead.org, Kishon Vijay
+ Abraham I <kishon@ti.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, Chen Feng
+ <puck.chen@hisilicon.com>, Mark Brown <broonie@kernel.org>, Dan Williams
+ <dan.j.williams@intel.com>, Felipe Balbi <balbi@kernel.org>, Salil Mehta
+ <salil.mehta@huawei.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-mmc@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Thierry
+ Reding <thierry.reding@gmail.com>, Cyrille Pitchen
+ <cyrille.pitchen@wedev4u.fr>,  Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Brian Norris
+ <computersforpeace@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ linux-remoteproc@vger.kernel.org, Bjorn Andersson
+ <bjorn.andersson@linaro.org>,  linux-ide@vger.kernel.org, Lee Jones
+ <lee.jones@linaro.org>,  devel@driverdev.osuosl.org, Yannick Fertre
+ <yannick.fertre@st.com>, Ryder Lee <ryder.lee@mediatek.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Richard Weinberger <richard@nod.at>, Jaehoon
+ Chung <jh80.chung@samsung.com>, Marek Vasut <marek.vasut@gmail.com>,
+ linux-serial@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Alan Tull
+ <atull@kernel.org>, John Youn <johnyoun@synopsys.com>, Eduardo Valentin
+ <edubezval@gmail.com>, dmaengine@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, Matthias Brugger
+ <matthias.bgg@gmail.com>,  Mark Yao <mark.yao@rock-chips.com>, Moritz
+ Fischer <moritz.fischer@ettus.com>, Vivien Didelot
+ <vivien.didelot@savoirfairelinux.com>, netdev@vger.kernel.org, Peter De
+ Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, Vinod Koul <vinod.koul@intel.com>,
+ Rongrong Zou <zourongrong@gmail.com>, linux-fpga@vger.kernel.org, David
+ Woodhouse <dwmw2@infradead.org>, Lucas Stach <l.stach@pengutronix.de>
+Date: Thu, 20 Jul 2017 14:55:12 +0200
+In-Reply-To: <20170720123640.43c2ce01@windsurf>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+	 <20170719211515.46a1196c@windsurf>
+	 <1500543415.2354.37.camel@pengutronix.de>
+	 <20170720123640.43c2ce01@windsurf>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 23 Jun 2017 11:00:58 +0200
-Quentin Schulz <quentin.schulz@free-electrons.com> wrote:
+Hi Thomas,
 
-> This allows gclk to determine audio_pll rate and set the parent rate
-> accordingly.
+On Thu, 2017-07-20 at 12:36 +0200, Thomas Petazzoni wrote:
+> Hello,
 > 
-> However, there are multiple children clocks that could technically
-> change the rate of audio_pll. Since the clock rate is usually critical
-> for IPs, it isn't a good idea to have multiple clocks changing audio_pll
-> clock rate. There isn't any rate locking system for the moment, thus
-> we enforce that classd_gclk be the only one allowed to change audio_pll
-> rate. To remain consistent, we deny other clocks to be children of
-> audio_pll so classd_gclk altering audio_pll rate does not impact any
-> other device.
+> On Thu, 20 Jul 2017 11:36:55 +0200, Philipp Zabel wrote:
 > 
-> This needs to be re-worked once we have a rate locking system so two
-> clocks could be children of the same clock and be sure the clock rate
-> isn't changed by one or the other.
+> > > I don't know if it has been discussed in the past, so forgive me if it
+> > > has been. Have you considered adding a "int flags" argument to the
+> > > existing reset_control_get_*() functions, rather than introducing
+> > > separate exclusive variants ?
+> > > 
+> > > Indeed, with a "int flags" argument you could in the future add more
+> > > variants/behaviors without actually multiplying the number of
+> > > functions. Something like the "flags" argument for request_irq() for
+> > > example.  
+> > 
+> > I can't find the discussion right now, but I remember we had talked
+> > about this in the past.
+> > Behind the scenes, all the inline API functions already call common
+> > entry points with flags (well, currently separate bool parameters for
+> > shared and optional).
+> > One reason against exposing those as an int flags in the user facing API
+> > is the possibility to accidentally provide a wrong value.
 > 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> ---
->  drivers/clk/at91/clk-generated.c | 41 ++++++++++++++++++++++++++++++++++------
->  1 file changed, 35 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index 6530a2e7e84d..e66ee735a569 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -26,6 +26,9 @@
->  #define GENERATED_SOURCE_MAX	6
->  #define GENERATED_MAX_DIV	255
->  
-> +#define GCK_ID_CLASSD		59
-> +#define GCK_INDEX_DT_AUDIO_PLL	5
-> +
->  struct clk_generated {
->  	struct clk_hw hw;
->  	struct regmap *regmap;
-> @@ -126,15 +129,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  {
->  	struct clk_generated *gck = to_clk_generated(hw);
->  	struct clk_hw *parent = NULL;
-> +	struct clk_rate_request req_parent = *req;
->  	long best_rate = -EINVAL;
-> -	unsigned long min_rate;
-> +	unsigned long min_rate, parent_rate;
->  	int best_diff = -1;
->  	int i;
-> +	u32 div;
->  
-> -	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-> -		u32 div;
-> -		unsigned long parent_rate;
-> -
-> +	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
->  		parent = clk_hw_get_parent_by_index(hw, i);
->  		if (!parent)
->  			continue;
-> @@ -150,11 +152,37 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  		clk_generated_best_diff(req, parent, parent_rate, div,
->  					&best_diff, &best_rate);
->  
-> +		if (!best_diff)
-> +			break;
-> +	}
-> +
-> +	/*
-> +	 * The audio_pll rate can be modified unlike the five others clocks that
-> +	 * should never be altered.
-> +	 * The audio_pll can technically be used by multiple consumers. However,
-> +	 * they all are likely to want to modify its rate while the rate is
-> +	 * critical for each one. Since we do not have a rate locking for the
-> +	 * moment, let classd_gclk be the only consumer of the audio_pll clock.
-> +	 */
-> +
-> +	if (gck->id != GCK_ID_CLASSD)
-> +		goto end;
+> This is a quite strange argument. You could also accidentally use the
+> wrong variant of the function, just like you could use the wrong flag.
 
-As discussed on IRC with Nicolas and Cyrille, it seems we have other
-potential users of the audio-pll: SSC and I2S. Can you extend the test
-to let these GCK clks take the audio-pll?
+You can't accidentally use no flag at all or a completely bogus value
+with the "plethora of inline functions" variant.
 
-> +
-> +	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
-> +	if (!parent)
-> +		goto end;
-> +
-> +	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
-> +		req_parent.rate = req->rate * div;
-> +		__clk_determine_rate(parent, &req_parent);
-> +		clk_generated_best_diff(req, parent, req_parent.rate, div,
-> +					&best_diff, &best_rate);
->  
->  		if (!best_diff)
->  			break;
->  	}
->  
-> +end:
->  	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
->  		 __func__, best_rate,
->  		 __clk_get_name((req->best_parent_hw)->clk),
-> @@ -264,7 +292,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
->  	init.ops = &generated_ops;
->  	init.parent_names = parent_names;
->  	init.num_parents = num_parents;
-> -	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
-> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
-> +		CLK_SET_RATE_PARENT;
->  
->  	gck->id = id;
->  	gck->hw.init = &init;
+> Once again, the next time you have another parameter for those reset
+> functions, beyond the exclusive/shared variant, you will multiply again
+> by two the number of functions ? You already have the  exclusive/shared
+> and optional/mandatory variants, so 4 variants. When you'll add a new
+> parameter, you'll have 8 variants. Doesn't seem really good.
+
+I'd rather avoid adding more variants, if possible. The complexity
+increases regardless of whether the API is expressed as a bunch of
+functions or as a single function with a bunch of flags.
+
+> What about reset_control_get(struct device *, const char *, int flags)
+> to replace all those variants ?
+
+While I like how this looks, unfortunately (devm_)reset_control_get
+already exists without the flags, so we can't change to that with a
+gentle transition.
+
+regards
+Philipp
