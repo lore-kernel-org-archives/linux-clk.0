@@ -1,68 +1,77 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-MIME-Version: 1.0
-In-Reply-To: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Wed, 26 Jul 2017 20:17:27 +0530
-Message-ID: <CAFp+6iFZw3B4N5kj0Ff_4oCfRqwfdMSUwdcfpbEtnWjCCrZffg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] clk: qcom: gdsc: Add support for clk control
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 09/10] ARM: dts: sun8i: a83t: cubietruck-plus: Enable micro-SD card and eMMC
+Date: Thu, 20 Jul 2017 11:44:51 +0800
+Message-Id: <20170720034452.15920-10-wens@csie.org>
+In-Reply-To: <20170720034452.15920-1-wens@csie.org>
+References: <20170720034452.15920-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 20, 2017 at 10:18 AM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> This series allows clocks associated with GDSCs to be controlled
-> along with the powerdomains. To start with, some of the mmagic
-> clocks are assocaited with the mmagic gdscs on msm8996 so the
-> devices in these mmagic domains (vidc, mdss, their smmu instances etc)
-> don't have to put these in their resp. DT bindings.
->
-> changes in v2:
-> * Fixed review comments from Stan
-> * Added mmagic clocks needed by gpu
+Now that we support the MMC controllers on the A83T SoC, we can enable
+them on some boards.
 
-Tested the series on db820c with necessary iommu and display/gpu
-patches.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts | 27 ++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Tested-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-
-
-Regards
-Vivek
-
->
-> Rajendra Nayak (5):
->   arm64: qcom: Select PM_GENERIC_DOMAINS
->   clk: Add clk_hw_get_clk() helper API to be used by clk providers
->   clk: qcom: gdsc: Add support to control associated clks
->   clk: qcom: gcc-msm8996: Mark gcc_mmss_noc_cfg_ahb_clk as a critical
->     clock
->   clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
->
->  arch/arm64/Kconfig.platforms    |  2 ++
->  drivers/clk/clk.c               | 39 +++++++++++++++++++++++++++
->  drivers/clk/qcom/gcc-msm8996.c  |  2 +-
->  drivers/clk/qcom/gdsc.c         | 60 +++++++++++++++++++++++++++++++++++++++--
->  drivers/clk/qcom/gdsc.h         |  8 ++++++
->  drivers/clk/qcom/mmcc-msm8996.c | 26 ++++++++++++++++++
->  include/linux/clk-provider.h    |  5 ++++
->  7 files changed, 139 insertions(+), 3 deletions(-)
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+index cff33454fc24..163ddf8868b5 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+@@ -83,6 +83,13 @@
+ 		};
+ 	};
+ 
++	reg_vcc3v3: vcc3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "On-board SPDIF";
+@@ -102,6 +109,26 @@
+ 	};
+ };
+ 
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <4>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
+ &spdif {
+ 	status = "okay";
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.2
