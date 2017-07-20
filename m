@@ -1,50 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 12 Jul 2017 15:58:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V4 2/6] iommu/arm-smmu: Add pm_runtime/sleep ops
-Message-ID: <20170712225821.GB22780@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
+Return-Path: <adriana.reus@nxp.com>
+From: Adriana Reus <adriana.reus@nxp.com>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	fabio.estevam@nxp.com,
+	shawnguo@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	anson.huang@nxp.com,
+	linux-clk@vger.kernel.org,
+	Adriana Reus <adriana.reus@nxp.com>
+Subject: [PATCH V2 1/2] clk: imx: imx7d: Fix parent clock for OCRAM_CLK
+Date: Thu, 20 Jul 2017 18:06:41 +0300
+Message-Id: <1500563202-375-2-git-send-email-adriana.reus@nxp.com>
+In-Reply-To: <1500563202-375-1-git-send-email-adriana.reus@nxp.com>
+References: <1500563202-375-1-git-send-email-adriana.reus@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: adriana.reus@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06, Vivek Gautam wrote:
-> From: Sricharan R <sricharan@codeaurora.org>
-> 
-> The smmu needs to be functional only when the respective
-> master's using it are active. The device_link feature
-> helps to track such functional dependencies, so that the
-> iommu gets powered when the master device enables itself
-> using pm_runtime. So by adapting the smmu driver for
-> runtime pm, above said dependency can be addressed.
-> 
-> This patch adds the pm runtime/sleep callbacks to the
-> driver and also the functions to parse the smmu clocks
-> from DT and enable them in resume/suspend.
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Archit Taneja <architt@codeaurora.org>
-> [vivek: Clock rework to loop over clock names data]
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> ---
+The parent of OCRAM_CLK should be axi_main_root_clk
+and not axi_post_div.
 
-General comment, we have a bulk clk API now, but I guess we
-failed to add the clk_bulk_prepare_enable() API that could be
-used here. Perhaps you can add that API and then use it here to
-reduce lines of code.
+before:
 
+    axi_src                     1       1       332307692       0 0
+      axi_cg                    1       1       332307692       0 0
+        axi_pre_div             1       1       332307692       0 0
+          axi_post_div          1       1       332307692       0 0
+            ocram_clk           0       0       332307692       0 0
+            main_axi_root_clk   1       1       332307692       0 0
+
+after:
+
+    axi_src                     1       1       332307692       0 0
+      axi_cg                    1       1       332307692       0 0
+        axi_pre_div             1       1       332307692       0 0
+          axi_post_div          1       1       332307692       0 0
+            main_axi_root_clk   1       1       332307692       0 0
+              ocram_clk         0       0       332307692       0 0
+
+Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
+Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
+---
+ Changes since v1:
+  - added Fixes tag
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 3da1218..10f6a10 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -797,7 +797,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
+ 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
+ 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+-	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
++	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "main_axi_root_clk", base + 0x4110, 0);
+ 	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
+ 	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
