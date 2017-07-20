@@ -1,64 +1,45 @@
-Return-Path: <Julia.Lawall@lip6.fr>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: keescook@chromium.org,
-	kernel-janitors@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] clk: mmp: Drop unnecessary static
-Date: Sat, 15 Jul 2017 22:07:36 +0200
-Message-Id: <1500149266-32357-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+	linux-arm-kernel@lists.infradead.org,
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 0/5] clk: qcom: gdsc: Add support for clk control
+Date: Thu, 20 Jul 2017 10:18:14 +0530
+Message-Id: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Drop static on a local variable, when the variable is initialized before
-any possible use.  Thus, the static has no benefit.
+This series allows clocks associated with GDSCs to be controlled
+along with the powerdomains. To start with, some of the mmagic
+clocks are assocaited with the mmagic gdscs on msm8996 so the
+devices in these mmagic domains (vidc, mdss, their smmu instances etc)
+don't have to put these in their resp. DT bindings.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+changes in v2:
+* Fixed review comments from Stan
+* Added mmagic clocks needed by gpu
 
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
-static T x@p;
-...
-x = <+...x...+>
+Rajendra Nayak (5):
+  arm64: qcom: Select PM_GENERIC_DOMAINS
+  clk: Add clk_hw_get_clk() helper API to be used by clk providers
+  clk: qcom: gdsc: Add support to control associated clks
+  clk: qcom: gcc-msm8996: Mark gcc_mmss_noc_cfg_ahb_clk as a critical
+    clock
+  clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
 
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
+ arch/arm64/Kconfig.platforms    |  2 ++
+ drivers/clk/clk.c               | 39 +++++++++++++++++++++++++++
+ drivers/clk/qcom/gcc-msm8996.c  |  2 +-
+ drivers/clk/qcom/gdsc.c         | 60 +++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/qcom/gdsc.h         |  8 ++++++
+ drivers/clk/qcom/mmcc-msm8996.c | 26 ++++++++++++++++++
+ include/linux/clk-provider.h    |  5 ++++
+ 7 files changed, 139 insertions(+), 3 deletions(-)
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-These patches are all independent of each other.
-
- drivers/clk/mmp/clk.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/clk/mmp/clk.c b/drivers/clk/mmp/clk.c
---- a/drivers/clk/mmp/clk.c
-+++ b/drivers/clk/mmp/clk.c
-@@ -9,7 +9,7 @@
- void mmp_clk_init(struct device_node *np, struct mmp_clk_unit *unit,
- 		int nr_clks)
- {
--	static struct clk **clk_table;
-+	struct clk **clk_table;
- 
- 	clk_table = kcalloc(nr_clks, sizeof(struct clk *), GFP_KERNEL);
- 	if (!clk_table)
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
