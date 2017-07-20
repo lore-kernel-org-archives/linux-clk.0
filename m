@@ -1,55 +1,61 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/8] clk: vc5: Prevent division by zero on unconfigured outputs
-Date: Sat,  1 Jul 2017 22:04:51 +0200
-Message-Id: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 03/10] clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
+Date: Thu, 20 Jul 2017 11:44:45 +0800
+Message-Id: <20170720034452.15920-4-wens@csie.org>
+In-Reply-To: <20170720034452.15920-1-wens@csie.org>
+References: <20170720034452.15920-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-In case the initial values of the FOD registers are not configured in
-the OTP or by the bootloader, it is possible that the FOD registers
-will contain zeroes. The code in vc5_fod_recalc_rate() immediately
-feeds the FOD divider value obtained from the FOD registers into the
-div64_u64() and if the FOD divider value is zero, triggers division
-by zero exception.
+The MMC2 clock supports a new timing mode. When the new mode is active,
+the output clock rate is halved.
 
-Check if the FOD divider value is zero and return the frequency of
-the FOD output as 0 Hz if it is so. This prevents the division by
-zero exception.
+This patch sets the feature flag for the new timing mode, and adds
+a pre-divider based on the mode bit.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk-versaclock5.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index ea7d552a2f2b..60bf4afb51bd 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -426,6 +426,10 @@ static unsigned long vc5_fod_recalc_rate(struct clk_hw *hw,
- 	div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
- 		  (od_frc[2] << 6) | (od_frc[3] >> 2);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index 947f9f6e05d2..c5656e4f2a38 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -418,14 +418,13 @@ static SUNXI_CCU_PHASE(mmc1_sample_clk, "mmc1-sample", "mmc1",
+ static SUNXI_CCU_PHASE(mmc1_output_clk, "mmc1-output", "mmc1",
+ 		       0x08c, 8, 3, 0);
  
-+	/* Avoid division by zero if the output is not configured. */
-+	if ((div_int == 0) && (div_frc == 0))
-+		return 0;
-+
- 	/* The PLL divider has 12 integer bits and 30 fractional bits */
- 	return div64_u64((u64)f_in << 24ULL, ((u64)div_int << 24ULL) + div_frc);
- }
+-/* TODO Support MMC2 clock's new timing mode. */
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
+-				  0x090,
+-				  0, 4,		/* M */
+-				  16, 2,	/* P */
+-				  24, 2,	/* mux */
+-				  BIT(31),	/* gate */
+-				  0);
++static SUNXI_CCU_MP_MMC_WITH_MUX_GATE(mmc2_clk, "mmc2", mod0_default_parents,
++				      0x090,
++				      0, 4,	/* M */
++				      16, 2,	/* P */
++				      24, 2,	/* mux */
++				      BIT(31),	/* gate */
++				      CLK_GET_RATE_NOCACHE);
+ 
+ static SUNXI_CCU_PHASE(mmc2_sample_clk, "mmc2-sample", "mmc2",
+ 		       0x090, 20, 3, 0);
 -- 
-2.11.0
+2.13.2
