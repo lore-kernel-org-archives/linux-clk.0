@@ -1,72 +1,139 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36242 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751018AbdGMJuv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Jul 2017 05:50:51 -0400
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org>
- <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
- <20170713064843.GX22780@codeaurora.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <a8fcaac6-98f8-6cf0-486f-7fa0f216f665@arm.com>
-Date: Thu, 13 Jul 2017 10:50:45 +0100
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Vladimir Zapolskiy <vz@mleia.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
+        "radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones
+	<lee.jones@linaro.org>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        "Olivier
+ BIDEAU" <olivier.bideau@st.com>,
+        Amelie DELAUNAY <amelie.delaunay@st.com>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
+        "Arvind
+ Yadav" <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH v7 3/3] clk: stm32h7: Add stm32h743 clock driver
+Date: Thu, 20 Jul 2017 08:31:45 +0000
+Message-ID: <11c37627-a39b-7f2d-d0d4-af312eac8668@st.com>
+References: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
+ <1500474344-9832-4-git-send-email-gabriel.fernandez@st.com>
+ <d999fc79-7b14-da8e-965f-371cf4352dd1@mleia.com>
+In-Reply-To: <d999fc79-7b14-da8e-965f-371cf4352dd1@mleia.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20170713064843.GX22780@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13/07/17 07:48, Stephen Boyd wrote:
-> On 07/13, Vivek Gautam wrote:
->> Hi Stephen,
->>
->>
->> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->>> On 07/06, Vivek Gautam wrote:
->>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->>>>  static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->>>>  			     size_t size)
->>>>  {
->>>> -	struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->>>> +	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->>>> +	struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->>>> +	size_t ret;
->>>>  	if (!ops)
->>>>  		return 0;
->>>> -	return ops->unmap(ops, iova, size);
->>>> +	pm_runtime_get_sync(smmu_domain->smmu->dev);
->>> Can these map/unmap ops be called from an atomic context? I seem
->>> to recall that being a problem before.
->>
->> That's something which was dropped in the following patch merged in master:
->> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
->>
->> Looks like we don't  need locks here anymore?
->>
-> 
-> While removing the spinlock around the map/unmap path may be one
-> thing, I'm not sure that's all of them. Is there a path from an
-> atomic DMA allocation (GFP_ATOMIC sort of thing) mapped into an
-> IOMMU for a device that can eventually get down to here and
-> attempt to turn a clk on?
-
-Yes, in the DMA path map/unmap will frequently be called from IRQ
-handlers (think e.g. network packets). The whole point of removing the
-lock was to allow multiple maps/unmaps to execute in parallel (since we
-know they will be safely operating on different areas of the pagetable).
-AFAICS this change is going to largely reintroduce that bottleneck via
-dev->power_lock, which is anything but what we want :(
-
-Robin.
+SGkgVmxhZGltaXIsDQoNCg0KT24gMDcvMTkvMjAxNyAxMToyMCBQTSwgVmxhZGltaXIgWmFwb2xz
+a2l5IHdyb3RlOg0KPiBIZWxsbyBHYWJyaWVsLA0KPg0KPiBPbiAwNy8xOS8yMDE3IDA1OjI1IFBN
+LCBnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20gd3JvdGU6DQo+PiBGcm9tOiBHYWJyaWVsIEZlcm5h
+bmRleiA8Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4NCj4+IFRoaXMgcGF0Y2ggZW5hYmxl
+cyBjbG9ja3MgZm9yIFNUTTMySDc0MyBib2FyZHMuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogR2Fi
+cmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+DQo+PiBmb3IgTUZE
+IGNoYW5nZXM6DQo+PiBBY2tlZC1ieTogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4N
+Cj4+DQo+PiBmb3IgRFQtQmluZGluZ3MNCj4+IEFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBr
+ZXJuZWwub3JnPg0KPj4gLS0tDQo+PiAgIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N0
+LHN0bTMyaDctcmNjLnR4dCAgIHwgICA4MiArKw0KPiBJJ2xsIHByb3ZpZGUgc29tZSByZXZpZXcg
+Y29tbWVudHMgYWJvdXQgZGV2aWNlIHRyZWUgYmluZGluZ3Mgb25seS4NCj4NCj4+ICAgZHJpdmVy
+cy9jbGsvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAxICsNCj4+
+ICAgZHJpdmVycy9jbGsvY2xrLXN0bTMyaDcuYyAgICAgICAgICAgICAgICAgICAgICAgICAgfCAx
+NDA5ICsrKysrKysrKysrKysrKysrKysrDQo+PiAgIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2sv
+c3RtMzJoNy1jbGtzLmggICAgICAgICAgIHwgIDE2NSArKysNCj4+ICAgaW5jbHVkZS9kdC1iaW5k
+aW5ncy9tZmQvc3RtMzJoNy1yY2MuaCAgICAgICAgICAgICAgfCAgMTM2ICsrDQo+PiAgIDUgZmls
+ZXMgY2hhbmdlZCwgMTc5MyBpbnNlcnRpb25zKCspDQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBE
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc3Qsc3RtMzJoNy1yY2MudHh0
+DQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9jbGstc3RtMzJoNy5jDQo+PiAg
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3N0bTMyaDctY2xr
+cy5oDQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL21mZC9zdG0z
+Mmg3LXJjYy5oDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9jbG9jay9zdCxzdG0zMmg3LXJjYy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvY2xvY2svc3Qsc3RtMzJoNy1yY2MudHh0DQo+PiBuZXcgZmlsZSBtb2RlIDEw
+MDY0NA0KPj4gaW5kZXggMDAwMDAwMC4uNDQyYzUwYw0KPj4gLS0tIC9kZXYvbnVsbA0KPj4gKysr
+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N0LHN0bTMyaDctcmNj
+LnR4dA0KPj4gQEAgLTAsMCArMSw4MiBAQA0KPj4gK1NUTWljcm9lbGVjdHJvbmljcyBTVE0zMkg3
+IFJlc2V0IGFuZCBDbG9jayBDb250cm9sbGVyDQo+PiArPT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCj4+ICsNCj4+ICtUaGUgUkNDIElQIGlzIGJv
+dGggYSByZXNldCBhbmQgYSBjbG9jayBjb250cm9sbGVyLg0KPj4gKw0KPj4gK1BsZWFzZSByZWZl
+ciB0byBjbG9jay1iaW5kaW5ncy50eHQgZm9yIGNvbW1vbiBjbG9jayBjb250cm9sbGVyIGJpbmRp
+bmcgdXNhZ2UuDQo+PiArUGxlYXNlIGFsc28gcmVmZXIgdG8gcmVzZXQudHh0IGZvciBjb21tb24g
+cmVzZXQgY29udHJvbGxlciBiaW5kaW5nIHVzYWdlLg0KPj4gKw0KPj4gK1JlcXVpcmVkIHByb3Bl
+cnRpZXM6DQo+PiArLSBjb21wYXRpYmxlOiBTaG91bGQgYmU6DQo+PiArICAic3Qsc3RtMzJoNzQz
+LXJjYyINCj4+ICsNCj4+ICstIHJlZzogc2hvdWxkIGJlIHJlZ2lzdGVyIGJhc2UgYW5kIGxlbmd0
+aCBhcyBkb2N1bWVudGVkIGluIHRoZQ0KPj4gKyAgZGF0YXNoZWV0DQo+PiArDQo+PiArLSAjcmVz
+ZXQtY2VsbHM6IDEsIHNlZSBiZWxvdw0KPj4gKw0KPj4gKy0gI2Nsb2NrLWNlbGxzIDogZnJvbSBj
+b21tb24gY2xvY2sgYmluZGluZzsgc2hhbGwgYmUgc2V0IHRvIDENCj4+ICsNCj4+ICstIGNsb2Nr
+czogRXh0ZXJuYWwgb3NjaWxsYXRvciBjbG9jayBwaGFuZGxlDQo+PiArICAtIGhpZ2ggc3BlZWQg
+ZXh0ZXJuYWwgY2xvY2sgc2lnbmFsIChIU0UpDQo+PiArICAtIGxvdyBzcGVlZCBleHRlcm5hbCBj
+bG9jayBzaWduYWwgKExTRSkNCj4+ICsgIC0gZXh0ZXJuYWwgSTJTIGNsb2NrIChJMlNfQ0tJTikN
+Cj4+ICsNCj4+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPj4gKy0gc3Qsc3lzY2ZnOiBwaGFuZGxl
+IGZvciBwd3JjZmcsIG1hbmRhdG9yeSB0byBkaXNhYmxlL2VuYWJsZSBiYWNrdXAgZG9tYWluDQo+
+PiArICB3cml0ZSBwcm90ZWN0aW9uIChSVEMgY2xvY2spLg0KPj4gKw0KPj4gK0V4YW1wbGU6DQo+
+PiArDQo+PiArCXJjYzogcmNjQDU4MDI0NDAwIHsNCj4gJ3JjYycgYXMgYSBnZW5lcmljIGRldmlj
+ZSBub2RlIG5hbWUgaXMgYXdrd2FyZC4NCj4NCj4gSSBiZWxpZXZlIHRoZSBtYWluIGZ1bmN0aW9u
+IG9mIHRoZSBkZXZpY2UgaXMgY2xvY2sgY29udHJvbGxlciAodW5saWtlbHkNCj4gYSBnZW5lcmlj
+IHJlc2V0IGNvbnRyb2xsZXIgY2FuIGJlIGNvbnZlcnRlZCBpbnRvIGEgY2xvY2sgY29udHJvbGxl
+ciksDQo+IHRoZSBsb2NhdGlvbnMgb2YgdGhlIGRvY3VtZW50IGFuZCBkZXZpY2UgZHJpdmVyIGFs
+c28gaW5kaWNhdGUgdGhhdA0KPiBwcmltYXJpbHkgaXQgaXMgYSBjbG9jayBjb250cm9sbGVyLCBz
+byBJIHN1Z2dlc3QgdG8gcmVwbGFjZSBkZXZpY2Ugbm9kZQ0KPiBuYW1lIHdpdGggJ2Nsb2NrLWNv
+bnRyb2xsZXInIGxpa2UgYmVsb3c6DQpJIHByZWZlciB0byBrZWVwIHJjYyBub2RlIG5hbWUsIHRv
+IGJlIGNvaGVyZW50IHdpdGggdGhlIG90aGVyIFNUIA0KcGxhdGZvcm1zIChTVE0zMkY0L0Y3KQ0K
+PiAJcmNjOiBjbG9jay1jb250cm9sbGVyQDU4MDI0NDAwIHsNCj4NCj4+ICsJCSNyZXNldC1jZWxs
+cyA9IDwxPjsNCj4+ICsJCSNjbG9jay1jZWxscyA9IDwyPg0KPiBNaXNzaW5nIHRyYWlsaW5nIHNl
+bWljb2xvbiAgICAgICBeXl4NCm9rDQo+IE15IHJlY29tbWVuZGF0aW9uIGlzIHRvIG1vdmUgI3Jl
+c2V0LWNlbGxzIGFuZCAjY2xvY2stY2VsbHMgcHJvcGVydGllcw0KPiBkb3duIGFmdGVyICdyZWcn
+IG9yICdjbG9ja3MnIHByb3BlcnR5IGluIHRoZSBsaXN0Lg0Kb2sNCj4NCj4+ICsJCWNvbXBhdGli
+bGUgPSAic3Qsc3RtMzJoNzQzLXJjYyIsICJzdCxzdG0zMi1yY2MiOw0KPj4gKwkJcmVnID0gPDB4
+NTgwMjQ0MDAgMHg0MDA+Ow0KPj4gKwkJY2xvY2tzID0gPCZjbGtfaHNlPiwgPCZjbGtfbHNlPiwg
+PCZjbGtfaTJzX2NraW4+Ow0KPj4gKw0KPj4gKwkJc3Qsc3lzY2ZnID0gPCZwd3JjZmc+Ow0KPj4g
+Kw0KPj4gKwkJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+PiArCQkjc2l6ZS1jZWxscyA9IDwwPjsN
+Cj4gUGxlYXNlIGRyb3AgI2FkZHJlc3MtY2VsbHMgYW5kICNzaXplLWNlbGxzIHByb3BlcnRpZXMg
+Y29tcGxldGVseSwgZnJvbQ0KPiB0aGUgZG9jdW1lbnQgdGhlIGRldmljZSBub2RlIGRvZXMgbm90
+IGRlZmluZSBhbnkgY2hpbGRyZW4gc3Vibm9kZXMuDQpvaw0KPj4gKwl9Ow0KPj4gKw0KPj4gK1Ro
+ZSBwZXJpcGhlcmFsIGNsb2NrIGNvbnN1bWVyIHNob3VsZCBzcGVjaWZ5IHRoZSBkZXNpcmVkIGNs
+b2NrIGJ5DQo+PiAraGF2aW5nIHRoZSBjbG9jayBJRCBpbiBpdHMgImNsb2NrcyIgcGhhbmRsZSBj
+ZWxsLg0KPj4gKw0KPj4gK0FsbCBhdmFpbGFibGUgY2xvY2tzIGFyZSBkZWZpbmVkIGFzIHByZXBy
+b2Nlc3NvciBtYWNyb3MgaW4NCj4+ICtkdC1iaW5kaW5ncy9jbG9jay9zdG0zMmg3LWNsa3MuaCBo
+ZWFkZXIgYW5kIGNhbiBiZSB1c2VkIGluIGRldmljZQ0KPj4gK3RyZWUgc291cmNlcy4NCj4+ICsN
+Cj4+ICtFeGFtcGxlOg0KPj4gKw0KPj4gKwkJdGltZXI1OiB0aW1lckA0MDAwMGMwMCB7DQo+PiAr
+CQkJY29tcGF0aWJsZSA9ICJzdCxzdG0zMi10aW1lciI7DQo+PiArCQkJcmVnID0gPDB4NDAwMDBj
+MDAgMHg0MDA+Ow0KPj4gKwkJCWludGVycnVwdHMgPSA8NTA+Ow0KPj4gKwkJCWNsb2NrcyA9IDwm
+cmNjIFRJTTVfQ0s+Ow0KPj4gKw0KPiBQbGVhc2UgcmVtb3RlIHRoZSBlbXB0eSBsaW5lIGFib3Zl
+Lg0Kb2sNCj4+ICsJCX07DQo+PiArDQo+PiArU3BlY2lmeWluZyBzb2Z0cmVzZXQgY29udHJvbCBv
+ZiBkZXZpY2VzDQo+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+
+PiArDQo+PiArRGV2aWNlIG5vZGVzIHNob3VsZCBzcGVjaWZ5IHRoZSByZXNldCBjaGFubmVsIHJl
+cXVpcmVkIGluIHRoZWlyICJyZXNldHMiDQo+PiArcHJvcGVydHksIGNvbnRhaW5pbmcgYSBwaGFu
+ZGxlIHRvIHRoZSByZXNldCBkZXZpY2Ugbm9kZSBhbmQgYW4gaW5kZXggc3BlY2lmeWluZw0KPj4g
+K3doaWNoIGNoYW5uZWwgdG8gdXNlLg0KPj4gK1RoZSBpbmRleCBpcyB0aGUgYml0IG51bWJlciB3
+aXRoaW4gdGhlIFJDQyByZWdpc3RlcnMgYmFuaywgc3RhcnRpbmcgZnJvbSBSQ0MNCj4+ICtiYXNl
+IGFkZHJlc3MuDQo+PiArSXQgaXMgY2FsY3VsYXRlZCBhczogaW5kZXggPSByZWdpc3Rlcl9vZmZz
+ZXQgLyA0ICogMzIgKyBiaXRfb2Zmc2V0Lg0KPj4gK1doZXJlIGJpdF9vZmZzZXQgaXMgdGhlIGJp
+dCBvZmZzZXQgd2l0aGluIHRoZSByZWdpc3Rlci4NCj4+ICsNCj4+ICtGb3IgZXhhbXBsZSwgZm9y
+IENSQyByZXNldDoNCj4+ICsgIGNyYyA9IEFIQjRSU1RSX29mZnNldCAvIDQgKiAzMiArIENSQ1JT
+VF9iaXRfb2Zmc2V0ID0gMHg4OCAvIDQgKiAzMiArIDE5ID0gMTEwNw0KPj4gKw0KPj4gK0FsbCBh
+dmFpbGFibGUgcHJlcHJvY2Vzc29yIG1hY3JvcyBmb3IgcmVzZXQgYXJlIGRlZmluZWQgZHQtYmlu
+ZGluZ3MvL21mZC9zdG0zMmg3LXJjYy5oDQo+IERvdWJsZSBzbGFzaGVzIC0tLS0tLS0tLS0+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF5eXl4NCm9rDQo+IEkgaGF2
+ZSBkb3VidHMgaWYgaXQgaXMgcGVybWl0dGVkIHRvIGFkZCBzb3VyY2UgcGF0aHMgaW50byB0aGUg
+ZGV2aWNlDQo+IHRyZWUgYmluZGluZ3MgZG9jdW1lbnRhdGlvbiwgYmVjYXVzZSBzdWNoIGluZm9y
+bWF0aW9uIGlzIHNwZWNpZmljIHRvDQo+IHRoZSBMaW51eCBzb3VyY2UgY29kZS4NCj4NCj4gUm9i
+LCBjYW4geW91IGNsYXJpZnkgcGxlYXNlPw0KPg0KPj4gK2hlYWRlciBhbmQgY2FuIGJlIHVzZWQg
+aW4gZGV2aWNlIHRyZWUgc291cmNlcy4NCj4+ICsNCj4+ICtleGFtcGxlOg0KPiBGb3IgdW5pZmlj
+YXRpb24sIHBsZWFzZSBjYXBpdGFsaXplIGl0OiAnRXhhbXBsZTonDQpvaw0KPj4gKw0KPj4gKwl0
+aW1lcjIgew0KPj4gKwkJcmVzZXRzCT0gPCZyY2MgU1RNMzJIN19BUEIxTF9SRVNFVChUSU0yKT47
+DQo+PiArCX07DQo+IC0tDQo+IFdpdGggYmVzdCB3aXNoZXMsDQo+IFZsYWRpbWlyDQpCZXN0IFJl
+Z2FyZHMNCkdhYnJpZWwNCg==
