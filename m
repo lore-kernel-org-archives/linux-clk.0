@@ -1,139 +1,122 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
-	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
-	<ping.bai@nxp.com>
-Subject: [PATCH V2 08/10] clk: imx: make mux parent strings const
-Date: Thu, 13 Jul 2017 19:47:13 +0800
-Message-ID: <1499946435-7177-9-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Date: Thu, 20 Jul 2017 16:21:11 +0800
+From: icenowy@aosc.io
+To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>
+Subject: Re: [linux-sunxi] [PATCH v4 4/5] ARM: sunxi: h3/h5: switch
+ apb0-related clocks to r_ccu
+In-Reply-To: <1500505173.23770.1.camel@xff.cz>
+References: <20170404095100.18649-1-icenowy@aosc.io>
+ <20170404095100.18649-5-icenowy@aosc.io> <1500505173.23770.1.camel@xff.cz>
+Message-ID: <a934bb1292328400004e58c886ccd693@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
-
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
-
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
- of type 'const char * const*'
-...
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
----
-ChangeLog:
-v1->v2: no changes
----
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 5cc9959..097625c 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static struct clk_ops clk_busy_mux_ops = {
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index c9b327e..44817c1 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
- };
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 702faba..2646cc3 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -68,7 +68,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
- 
- struct clk_hw *imx_clk_composite(const char *name,
- 				 const char * const *parent_names,
-@@ -81,7 +81,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void (*fixup)(u32 *val));
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
- 
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -90,7 +90,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- }
- 
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -189,7 +190,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- }
- 
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -197,7 +199,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -205,8 +208,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
--- 
-2.7.4
+5ZyoIDIwMTctMDctMjAgMDY6NTnvvIxPbmTFmWVqIEppcm1hbiDlhpnpgZPvvJoKPiBIaSwKPiAK
+PiBJY2Vub3d5IFpoZW5nIHDDrcWhZSB2IMOadCAwNC4gMDQuIDIwMTcgdiAxNzo1MCArMDgwMDoK
+Pj4gRnJvbTogSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4KPj4gCj4+IE5vdyB3ZSBo
+YXZlIGRyaXZlciBmb3IgdGhlIFBSQ00gQ0NVLCBzd2l0Y2ggdG8gdXNlIGl0IGluc3RlYWQgb2YK
+Pj4gb2xkLXN0eWxlIGNsb2NrIG5vZGVzIGZvciBhcGIwLXJlbGF0ZWQgY2xvY2tzIGluIHN1bnhp
+LWgzLWg1LmR0c2kgLgo+PiAKPj4gVGhlIG11eCAzIG9mIFJfQ0NVIGlzIHN0aWxsIHRoZSBpbnRl
+cm5hbCBvc2NpbGxhdG9yLCB3aGljaCBpcyBzYWlkIHRvIAo+PiBiZQo+PiAxNk1IeiBwbHVzIG1p
+bnVzIDMwJSwgYW5kIGdldCBhIG1lYXN1cmVkIHZhbHVlIG9mIDE1TUh6fjE2TUh6IG9uIG15IAo+
+PiB0d28KPj4gSDMgYm9hcmRzIGFuZCBvbmUgSDUgYm9hcmQuCj4gCj4gVGhlcmUncyBpc3N1ZSB3
+aXRoIHRoZSBuZXcgcl9jY3UgdGhhdCBicmVha3Mgcl9pMmMuIChubyBkZXZpY2VzIGNhbiBiZQo+
+IGZvdW5kIG9uIHRoZSBidXMpLiBSZXZlcnRpbmcgdGhpcyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUg
+d2l0aCB0aGUgSTJDCj4gY29udHJvbGxlci4gKGV2ZXJ5dGhpbmcgZWxzZSBiZWluZyB0aGUgc2Ft
+ZSkKPiAKPiBIZXJlJ3MgdGhlIGNvZGUgSSdtIHVzaW5nOiBodHRwczovL2dpdGh1Yi5jb20vbWVn
+b3VzL2xpbnV4L2NvbW1pdHMvb3Jhbgo+IGdlLXBpLTQuMTIKPiAKPiBUaGUgbGFzdCBjb21taXQg
+aXMgdGhlIHJldmVydC4KPiAKPiBUaGUgaXNzdWUgbWFuaWZlc3RzIGl0c2VsZiBieSBub24td29y
+a2luZyBEVkZTLCBiZWNhdXNlIGtlcm5lbCBsYWNrcwo+IGFjY2VzcyB0byBTWTgxMDZBIHJlZ3Vs
+YXRvciwgYmVjYXVzZSByX2kyYyBkb2Vzbid0IHdvcmsgd2l0aCBzdW54aS1uZwo+IGNsb2NrIGRy
+aXZlciAoc3VuOGktcikuCj4gCj4gUmVsZXZhbnQgZGlmZmVyZW5jZSBpbiByZWdpc3RlcnMgYmV0
+d2VlbiB3b3JraW5nL25vbi13b3JraW5nIHN0YXRlIGlzCj4ganVzdCB0aGlzIChkaWZmIC11KToK
+PiAKPiAgMHgwMWYwMjQwMCA9IDB4MDAwMDAwMDAKPiAgMHgwMWYwMjQwNCA9IDB4MDAwMDAwMDAK
+PiAtMHgwMWYwMjQwOCA9IDB4MDAwMDAwOTEKPiArMHgwMWYwMjQwOCA9IDB4MDAwMDAwOTUgREFU
+QSByZWdpc3RlciBpbmlzZGUgdGhlIEkyQyBjb250cm9sbGVyCj4gIDB4MDFmMDI0MGMgPSAweDAw
+MDAwMDQ0Cj4gIDB4MDFmMDI0MTAgPSAweDAwMDAwMGY4Cj4gLTB4MDFmMDI0MTQgPSAweDAwMDAw
+MDU5Cj4gKzB4MDFmMDI0MTQgPSAweDAwMDAwMDAwIENMT0NLIHNldHVwIHJlZ2lzdGVyIGluc2lk
+ZSB0aGUgSTJDIGNvbnRyb2xsZXIKPiAgMHgwMWYwMjQxOCA9IDB4MDAwMDAwMDAKPiAgMHgwMWYw
+MjQxYyA9IDB4MDAwMDAwMDAKPiAgMHgwMWYwMjQyMCA9IDB4MDAwMDAwM2EKPiAKPiBJdCBsb29r
+cyBsaWtlIHRoZSBuZXcgc3VueGktbmcgY2xvY2sgZHJpdmVyIGNhdXNlcyB0aGUgSTJDIGRyaXZl
+ciB0bwo+IG5vdCBjb3JyZWN0bHkgY29uZmlndXJlIHRoZSBDTE9DSyByZWdpc3Rlci4gSSBkb24n
+dCBrbm93IHdoeSBhbmQgSSdtCj4gbm90IHN1cmUgaG93IHRvIGRlYWwgd2l0aCB0aGlzLiBBbnkg
+aWRlYXMgd2hhdCBjYW4gSSBkbyBuZXh0PwoKQ291bGQgeW91IGFwcGx5IHRoZSBwYXRjaGVzIGF0
+IFsxXSBhbmQgWzJdIHRvIFUtQm9vdCBhbmQgcmUtdHJ5IHdpdGgKcl9jY3U/IFRoZXkgc3dpdGNo
+ZWQgdGhlIENQVXMgY2xvY2sgb2Ygcl9jY3UgdG8gbm9uLXNlY3VyZSBtb2RlLCB3aGljaAptYWtl
+cyBpdCBwb3NzaWJsZSB0byBiZSBhY2Nlc3NlZCBmcm9tIHRoZSBrZXJuZWwgcnVubmluZyBpbiBu
+b24tc2VjdXJlLgoKSSB0aGluayB0aGVzZSBwYXRjaGVzIGNhbiBzb2x2ZSB0aGlzIHByb2JsZW0u
+CgpbMV0gaHR0cHM6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC83OTE0MTQvClsyXSBodHRw
+czovL3BhdGNod29yay5vemxhYnMub3JnL3BhdGNoLzc5MTQxNS8KCj4gCj4gdGhhbmsgeW91IGFu
+ZCByZWdhcmRzLAo+ICAgby4KPiAKPj4gU2lnbmVkLW9mZi1ieTogSWNlbm93eSBaaGVuZyA8aWNl
+bm93eUBhb3NjLnh5ej4KPj4gLS0tCj4+IENoYW5nZXMgaW4gdjQ6Cj4+IC0gVGVtcG9yYXJpbHkg
+ZHJvcHBlZCB0aGUgQ0NVIGhlYWRlcnMuCj4+IENoYW5nZXMgaW4gdjM6Cj4+IC0gQ2hhbmdlIG9z
+YzMyMDAwIHRvIGlvc2MuCj4+IAo+PiAgYXJjaC9hcm0vYm9vdC9kdHMvc3VueGktaDMtaDUuZHRz
+aSB8IDQ1IAo+PiArKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+PiAgMSBm
+aWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKQo+PiAKPj4gZGlm
+ZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bnhpLWgzLWg1LmR0c2kgCj4+IGIvYXJjaC9h
+cm0vYm9vdC9kdHMvc3VueGktaDMtaDUuZHRzaQo+PiBpbmRleCA2NjQwZWJmYTY0MTkuLjFhZWVh
+Y2IzYTg4NCAxMDA2NDQKPj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvc3VueGktaDMtaDUuZHRz
+aQo+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9zdW54aS1oMy1oNS5kdHNpCj4+IEBAIC02OCwz
+MSArNjgsMTIgQEAKPj4gIAkJCWNsb2NrLW91dHB1dC1uYW1lcyA9ICJvc2MzMmsiOwo+PiAgCQl9
+Owo+PiAKPj4gLQkJYXBiMDogYXBiMF9jbGsgewo+PiAtCQkJY29tcGF0aWJsZSA9ICJmaXhlZC1m
+YWN0b3ItY2xvY2siOwo+PiArCQlpb3NjOiBpbnRlcm5hbC1vc2MtY2xrIHsKPj4gIAkJCSNjbG9j
+ay1jZWxscyA9IDwwPjsKPj4gLQkJCWNsb2NrLWRpdiA9IDwxPjsKPj4gLQkJCWNsb2NrLW11bHQg
+PSA8MT47Cj4+IC0JCQljbG9ja3MgPSA8Jm9zYzI0TT47Cj4+IC0JCQljbG9jay1vdXRwdXQtbmFt
+ZXMgPSAiYXBiMCI7Cj4+IC0JCX07Cj4+IC0KPj4gLQkJYXBiMF9nYXRlczogY2xrQDAxZjAxNDI4
+IHsKPj4gLQkJCWNvbXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjhpLWgzLWFwYjAtZ2F0ZXMtY2xr
+IiwKPj4gLQkJCQkgICAgICJhbGx3aW5uZXIsc3VuNGktYTEwLWdhdGVzLWNsayI7Cj4+IC0JCQly
+ZWcgPSA8MHgwMWYwMTQyOCAweDQ+Owo+PiAtCQkJI2Nsb2NrLWNlbGxzID0gPDE+Owo+PiAtCQkJ
+Y2xvY2tzID0gPCZhcGIwPjsKPj4gLQkJCWNsb2NrLWluZGljZXMgPSA8MD4sIDwxPjsKPj4gLQkJ
+CWNsb2NrLW91dHB1dC1uYW1lcyA9ICJhcGIwX3BpbyIsICJhcGIwX2lyIjsKPj4gLQkJfTsKPj4g
+LQo+PiAtCQlpcl9jbGs6IGlyX2Nsa0AwMWYwMTQ1NCB7Cj4+IC0JCQljb21wYXRpYmxlID0gImFs
+bHdpbm5lcixzdW40aS1hMTAtbW9kMC1jbGsiOwo+PiAtCQkJcmVnID0gPDB4MDFmMDE0NTQgMHg0
+PjsKPj4gLQkJCSNjbG9jay1jZWxscyA9IDwwPjsKPj4gLQkJCWNsb2NrcyA9IDwmb3NjMzJrPiwg
+PCZvc2MyNE0+Owo+PiAtCQkJY2xvY2stb3V0cHV0LW5hbWVzID0gImlyIjsKPj4gKwkJCWNvbXBh
+dGlibGUgPSAiZml4ZWQtY2xvY2siOwo+PiArCQkJY2xvY2stZnJlcXVlbmN5ID0gPDE2MDAwMDAw
+PjsKPj4gKwkJCWNsb2NrLWFjY3VyYWN5ID0gPDMwMDAwMDAwMD47Cj4+ICsJCQljbG9jay1vdXRw
+dXQtbmFtZXMgPSAiaW9zYyI7Cj4+ICAJCX07Cj4+ICAJfTsKPj4gCj4+IEBAIC01NzYsOSArNTU3
+LDEyIEBACj4+ICAJCQkJICAgICA8R0lDX1NQSSA0MSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPj4g
+IAkJfTsKPj4gCj4+IC0JCWFwYjBfcmVzZXQ6IHJlc2V0QDAxZjAxNGIwIHsKPj4gLQkJCXJlZyA9
+IDwweDAxZjAxNGIwIDB4ND47Cj4+IC0JCQljb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW42aS1h
+MzEtY2xvY2stcmVzZXQiOwo+PiArCQlyX2NjdTogY2xvY2tAMWYwMTQwMCB7Cj4+ICsJCQljb21w
+YXRpYmxlID0gImFsbHdpbm5lcixzdW41MGktYTY0LXItY2N1IjsKPj4gKwkJCXJlZyA9IDwweDAx
+ZjAxNDAwIDB4MTAwPjsKPj4gKwkJCWNsb2NrcyA9IDwmb3NjMjRNPiwgPCZvc2MzMms+LCA8Jmlv
+c2M+Owo+PiArCQkJY2xvY2stbmFtZXMgPSAiaG9zYyIsICJsb3NjIiwgImlvc2MiOwo+PiArCQkJ
+I2Nsb2NrLWNlbGxzID0gPDE+Owo+PiAgCQkJI3Jlc2V0LWNlbGxzID0gPDE+Owo+PiAgCQl9Owo+
+PiAKPj4gQEAgLTU4OSw5ICs1NzMsOSBAQAo+PiAKPj4gIAkJaXI6IGlyQDAxZjAyMDAwIHsKPj4g
+IAkJCWNvbXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjVpLWExMy1pciI7Cj4+IC0JCQljbG9ja3Mg
+PSA8JmFwYjBfZ2F0ZXMgMT4sIDwmaXJfY2xrPjsKPj4gKwkJCWNsb2NrcyA9IDwmcl9jY3UgND4s
+IDwmcl9jY3UgMTE+Owo+PiAgCQkJY2xvY2stbmFtZXMgPSAiYXBiIiwgImlyIjsKPj4gLQkJCXJl
+c2V0cyA9IDwmYXBiMF9yZXNldCAxPjsKPj4gKwkJCXJlc2V0cyA9IDwmcl9jY3UgMD47Cj4+ICAJ
+CQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMzcgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4+ICAJCQly
+ZWcgPSA8MHgwMWYwMjAwMCAweDQwPjsKPj4gIAkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cj4+IEBA
+IC02MDEsOSArNTg1LDggQEAKPj4gIAkJCWNvbXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjhpLWgz
+LXItcGluY3RybCI7Cj4+ICAJCQlyZWcgPSA8MHgwMWYwMmMwMCAweDQwMD47Cj4+ICAJCQlpbnRl
+cnJ1cHRzID0gPEdJQ19TUEkgNDUgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4+IC0JCQljbG9ja3Mg
+PSA8JmFwYjBfZ2F0ZXMgMD4sIDwmb3NjMjRNPiwgPCZvc2MzMms+Owo+PiArCQkJY2xvY2tzID0g
+PCZyX2NjdSAzPiwgPCZvc2MyNE0+LCA8Jm9zYzMyaz47Cj4+ICAJCQljbG9jay1uYW1lcyA9ICJh
+cGIiLCAiaG9zYyIsICJsb3NjIjsKPj4gLQkJCXJlc2V0cyA9IDwmYXBiMF9yZXNldCAwPjsKPj4g
+IAkJCWdwaW8tY29udHJvbGxlcjsKPj4gIAkJCSNncGlvLWNlbGxzID0gPDM+Owo+PiAgCQkJaW50
+ZXJydXB0LWNvbnRyb2xsZXI7Cj4+IC0tCj4+IDIuMTIuMgo+PiAKPiBfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGlu
+ZyBsaXN0Cj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCj4gaHR0cDovL2xp
+c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2Vy
+bmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
+cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVs
+Cg==
