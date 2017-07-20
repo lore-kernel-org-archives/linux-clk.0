@@ -1,77 +1,91 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH 12/14] clk: tegra: Fix T210 PLLRE registration
-Date: Tue, 25 Jul 2017 13:34:13 +0300
-Message-ID: <1500978856-5981-13-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] clk: renesas: rcar-gen3: Add support for SCCG/Clean peripheral clocks
+Date: Thu, 20 Jul 2017 14:40:08 +0200
+Message-Id: <1500554409-22423-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+On R-Car Gen3 SoCs with a Spread Spectrum Clock Generator (e.g. R-Car
+D3), a peripheral clock divider has been added, to select between clean
+and spread spectrum parents.
 
-Switched Tegra210 PLLRE registration to common PLL ops instead of special
-PLLRE ops used on previous Tegra chips. The latter ops do not follow
-chip specific PLL frequency table, and do not apply chip specific rate
-calculation method.
+Add a new clock type to the R-Car Gen3 driver core to handle this.
+To avoid increasing the size of struct cpg_core_clk, both parents and
+dividers are stored in the existing parent resp. div fields.
 
-Removed unnecessary default rate setting that duplicates h/w reset
-state, and is overwritten by clock initialization, anyway.
-
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Reviewed-by: Jon Mayo <jmayo@nvidia.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/tegra/clk-pll.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 20 +++++++++++++++++++-
+ drivers/clk/renesas/rcar-gen3-cpg.h |  7 +++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c6bce4a..7c369e2 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2355,7 +2355,6 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 			  struct tegra_clk_pll_params *pll_params,
- 			  spinlock_t *lock, unsigned long parent_rate)
- {
--	u32 val;
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk;
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 3f922fea9671fb4c..9511058165475dd7 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -272,7 +272,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 	unsigned int div = 1;
+ 	u32 value;
  
-@@ -2369,26 +2368,8 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
+-	parent = clks[core->parent];
++	parent = clks[core->parent & 0xffff];	/* CLK_TYPE_PE uses high bits */
+ 	if (IS_ERR(parent))
+ 		return ERR_CAST(parent);
  
--	/* program minimum rate by default */
--
--	val = pll_readl_base(pll);
--	if (val & PLL_BASE_ENABLE)
--		WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
--				BIT(pll_params->iddq_bit_idx));
--	else {
--		val = 0x4 << divm_shift(pll);
--		val |= 0x41 << divn_shift(pll);
--		pll_writel_base(val, pll);
--	}
--
--	/* disable lock override */
--
--	val = pll_readl_misc(pll);
--	val &= ~BIT(29);
--	pll_writel_misc(val, pll);
--
- 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
--				      &tegra_clk_pllre_ops);
-+				      &tegra_clk_pll_ops);
- 	if (IS_ERR(clk))
- 		kfree(pll);
+@@ -355,6 +355,24 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 			parent = clks[cpg_clk_extalr];
+ 		break;
  
++	case CLK_TYPE_GEN3_PE:
++		/*
++		 * Peripheral clock with a fixed divider, selectable between
++		 * clean and spread spectrum parents using MD12
++		 */
++		if (cpg_mode & BIT(12)) {
++			/* Clean */
++			div = core->div & 0xffff;
++		} else {
++			/* SCCG */
++			parent = clks[core->parent >> 16];
++			if (IS_ERR(parent))
++				return ERR_CAST(parent);
++			div = core->div >> 16;
++		}
++		mult = 1;
++		break;
++
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 4eaf02955580a938..d756ef8b78eb6c02 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -20,11 +20,18 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_PLL4,
+ 	CLK_TYPE_GEN3_SD,
+ 	CLK_TYPE_GEN3_R,
++	CLK_TYPE_GEN3_PE,
+ };
+ 
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
+ 
++#define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
++		    _div_clean) \
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
++		 (_parent_sscg) << 16 | (_parent_clean),	\
++		 .div = (_div_sscg) << 16 | (_div_clean))
++
+ struct rcar_gen3_cpg_pll_config {
+ 	u8 extal_div;
+ 	u8 pll1_mult;
 -- 
-1.9.1
+2.7.4
