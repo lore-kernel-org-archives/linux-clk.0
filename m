@@ -1,78 +1,106 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	linux-clk@vger.kernel.org,
+Return-Path: <adriana.reus@nxp.com>
+From: Adriana Reus <adriana.reus@nxp.com>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: robh+dt@kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 7/9] ASoC: atmel-classd: remove aclk clock from DT binding
-Date: Tue,  4 Jul 2017 13:59:25 +0200
-Message-Id: <20170704115927.32662-8-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
-References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+	fabio.estevam@nxp.com,
+	shawnguo@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	anson.huang@nxp.com,
+	linux-clk@vger.kernel.org,
+	Adriana Reus <adriana.reus@nxp.com>
+Subject: [PATCH V2 2/2] clk: imx: imx7d: Remove ARM_M0 clock
+Date: Thu, 20 Jul 2017 18:06:42 +0300
+Message-Id: <1500563202-375-3-git-send-email-adriana.reus@nxp.com>
+In-Reply-To: <1500563202-375-1-git-send-email-adriana.reus@nxp.com>
+References: <1500563202-375-1-git-send-email-adriana.reus@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: adriana.reus@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Since gclk (generated-clk) is now able to determine the rate of the
-audio_pll, there is no need for classd to have a direct phandle to the
-audio_pll while already having a phandle to gclk.
+IMX7d does not have an M0 Core and this particular
+clock doesn't seem connected to anything else.
+Remove this entry from the CCM driver.
 
-This binding is used by no board in mainline so it is safe to be
-modified.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
 ---
+ Changes since v1:
+ - left defines alone as to not break potential raw value
+   usage. Removed entries from the driver only and added comments
+   to mark the unused defines.
 
-added in v2
+ drivers/clk/imx/clk-imx7d.c             | 9 ---------
+ include/dt-bindings/clock/imx7d-clock.h | 8 ++++----
+ 2 files changed, 4 insertions(+), 13 deletions(-)
 
- Documentation/devicetree/bindings/sound/atmel-classd.txt | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/atmel-classd.txt b/Documentation/devicetree/bindings/sound/atmel-classd.txt
-index 549e701cb7a1..898551076382 100644
---- a/Documentation/devicetree/bindings/sound/atmel-classd.txt
-+++ b/Documentation/devicetree/bindings/sound/atmel-classd.txt
-@@ -13,13 +13,11 @@ Required properties:
- 	Must be "tx".
- - clock-names
- 	Tuple listing input clock names.
--	Required elements: "pclk", "gclk" and "aclk".
-+	Required elements: "pclk" and "gclk".
- - clocks
- 	Please refer to clock-bindings.txt.
- - assigned-clocks
- 	Should be <&classd_gclk>.
--- assigned-clock-parents
--	Should be <&audio_pll_pmc>.
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 10f6a10..6fc2e3f 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -54,11 +54,6 @@ static const char *arm_m4_sel[] = { "osc", "pll_sys_main_240m_clk",
+ 	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
+ 	"pll_usb_main_clk", };
  
- Optional properties:
- - pinctrl-names, pinctrl-0
-@@ -45,10 +43,9 @@ classd: classd@fc048000 {
- 			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
- 			| AT91_XDMAC_DT_PERID(47))>;
- 		dma-names = "tx";
--		clocks = <&classd_clk>, <&classd_gclk>, <&audio_pll_pmc>;
--		clock-names = "pclk", "gclk", "aclk";
-+		clocks = <&classd_clk>, <&classd_gclk>;
-+		clock-names = "pclk", "gclk";
- 		assigned-clocks = <&classd_gclk>;
--		assigned-clock-parents = <&audio_pll_pmc>;
+-static const char *arm_m0_sel[] = { "osc", "pll_sys_main_120m_clk",
+-	"pll_enet_125m_clk", "pll_sys_pfd2_135m_clk",
+-	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
+-	"pll_usb_main_clk", };
+-
+ static const char *axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
+ 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd5_clk",
+ 	"pll_audio_post_div", "pll_video_main_clk", "pll_sys_pfd7_clk", };
+@@ -510,7 +505,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
  
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_classd_default>;
+ 	clks[IMX7D_ARM_A7_ROOT_SRC] = imx_clk_mux2("arm_a7_src", base + 0x8000, 24, 3, arm_a7_sel, ARRAY_SIZE(arm_a7_sel));
+ 	clks[IMX7D_ARM_M4_ROOT_SRC] = imx_clk_mux2("arm_m4_src", base + 0x8080, 24, 3, arm_m4_sel, ARRAY_SIZE(arm_m4_sel));
+-	clks[IMX7D_ARM_M0_ROOT_SRC] = imx_clk_mux2("arm_m0_src", base + 0x8100, 24, 3, arm_m0_sel, ARRAY_SIZE(arm_m0_sel));
+ 	clks[IMX7D_MAIN_AXI_ROOT_SRC] = imx_clk_mux2("axi_src", base + 0x8800, 24, 3, axi_sel, ARRAY_SIZE(axi_sel));
+ 	clks[IMX7D_DISP_AXI_ROOT_SRC] = imx_clk_mux2("disp_axi_src", base + 0x8880, 24, 3, disp_axi_sel, ARRAY_SIZE(disp_axi_sel));
+ 	clks[IMX7D_ENET_AXI_ROOT_SRC] = imx_clk_mux2("enet_axi_src", base + 0x8900, 24, 3, enet_axi_sel, ARRAY_SIZE(enet_axi_sel));
+@@ -582,7 +576,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_ARM_A7_ROOT_CG] = imx_clk_gate3("arm_a7_cg", "arm_a7_src", base + 0x8000, 28);
+ 	clks[IMX7D_ARM_M4_ROOT_CG] = imx_clk_gate3("arm_m4_cg", "arm_m4_src", base + 0x8080, 28);
+-	clks[IMX7D_ARM_M0_ROOT_CG] = imx_clk_gate3("arm_m0_cg", "arm_m0_src", base + 0x8100, 28);
+ 	clks[IMX7D_MAIN_AXI_ROOT_CG] = imx_clk_gate3("axi_cg", "axi_src", base + 0x8800, 28);
+ 	clks[IMX7D_DISP_AXI_ROOT_CG] = imx_clk_gate3("disp_axi_cg", "disp_axi_src", base + 0x8880, 28);
+ 	clks[IMX7D_ENET_AXI_ROOT_CG] = imx_clk_gate3("enet_axi_cg", "enet_axi_src", base + 0x8900, 28);
+@@ -721,7 +714,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_ARM_A7_ROOT_DIV] = imx_clk_divider2("arm_a7_div", "arm_a7_cg", base + 0x8000, 0, 3);
+ 	clks[IMX7D_ARM_M4_ROOT_DIV] = imx_clk_divider2("arm_m4_div", "arm_m4_cg", base + 0x8080, 0, 3);
+-	clks[IMX7D_ARM_M0_ROOT_DIV] = imx_clk_divider2("arm_m0_div", "arm_m0_cg", base + 0x8100, 0, 3);
+ 	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
+ 	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
+ 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
+@@ -793,7 +785,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk", "arm_a7_div", base + 0x4000, 0);
+ 	clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk", "arm_m4_div", base + 0x4010, 0);
+-	clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk", "arm_m0_div", base + 0x4020, 0);
+ 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
+ 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
+ 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index de62a83..e2f99ae 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -80,10 +80,10 @@
+ #define IMX7D_ARM_M4_ROOT_SRC		67
+ #define IMX7D_ARM_M4_ROOT_CG		68
+ #define IMX7D_ARM_M4_ROOT_DIV		69
+-#define IMX7D_ARM_M0_ROOT_CLK		70
+-#define IMX7D_ARM_M0_ROOT_SRC		71
+-#define IMX7D_ARM_M0_ROOT_CG		72
+-#define IMX7D_ARM_M0_ROOT_DIV		73
++#define IMX7D_ARM_M0_ROOT_CLK		70	/* unused */
++#define IMX7D_ARM_M0_ROOT_SRC		71	/* unused */
++#define IMX7D_ARM_M0_ROOT_CG		72	/* unused */
++#define IMX7D_ARM_M0_ROOT_DIV		73	/* unused */
+ #define IMX7D_MAIN_AXI_ROOT_CLK		74
+ #define IMX7D_MAIN_AXI_ROOT_SRC		75
+ #define IMX7D_MAIN_AXI_ROOT_CG		76
 -- 
-2.11.0
+2.7.4
