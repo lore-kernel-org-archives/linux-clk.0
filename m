@@ -1,113 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46480 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751200AbdGMOBo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2017 10:01:44 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAFp+6iFdogDfKbwWta3AMGu2GuZ9NaR+Dv373N7LwwrF5cFYwQ@mail.gmail.com>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
- <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org> <CAFp+6iFdogDfKbwWta3AMGu2GuZ9NaR+Dv373N7LwwrF5cFYwQ@mail.gmail.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Thu, 13 Jul 2017 19:31:41 +0530
-Message-ID: <CAFp+6iGr_WwhDTygc3Z7pmRJe704PAo_T_XLYvu-=f01cmnumA@mail.gmail.com>
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Sricharan R <sricharan@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, robin.murphy@arm.com,
-        Rob Clark <robdclark@gmail.com>
-Cc: joro@8bytes.org, "robh+dt" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        iommu@lists.linux-foundation.org,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        architt@codeaurora.org,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 10/10] ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
+Date: Thu, 20 Jul 2017 11:44:52 +0800
+Message-Id: <20170720034452.15920-11-wens@csie.org>
+In-Reply-To: <20170720034452.15920-1-wens@csie.org>
+References: <20170720034452.15920-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 13, 2017 at 7:27 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> On Thu, Jul 13, 2017 at 11:05 AM, Sricharan R <sricharan@codeaurora.org> wrote:
->> Hi Vivek,
->>
->> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
->>> Hi Stephen,
->>>
->>>
->>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->>>> On 07/06, Vivek Gautam wrote:
->>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->>>>>                    size_t size)
->>>>>   {
->>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->>>>> +    size_t ret;
->>>>>         if (!ops)
->>>>>           return 0;
->>>>>   -    return ops->unmap(ops, iova, size);
->>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
->>>> Can these map/unmap ops be called from an atomic context? I seem
->>>> to recall that being a problem before.
->>>
->>> That's something which was dropped in the following patch merged in master:
->>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
->>>
->>> Looks like we don't  need locks here anymore?
->>
->>  Apart from the locking, wonder why a explicit pm_runtime is needed
->>  from unmap. Somehow looks like some path in the master using that
->>  should have enabled the pm ?
->
-> Right, the master should have done a runtime_get(), and with
-> device links the iommu will also resume.
->
-> The master will call the unmap when it is attached to the iommu
-> and therefore the iommu should be in resume state.
-> We shouldn't have an unmap without the master attached anyways.
-> Will investigate this further if we need the pm_runtime() calls
-> around unmap or not.
+The H8 homlet has a micro-SD card slot connected to mmc0,
+and onboard eMMC from FORESEE, connected to mmc2.
 
-My apologies. My email client didn't update the thread. So please ignore
-this comment.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts   | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
->
-> Best regards
-> Vivek
->
->>
->> Regards,
->>  Sricharan
->>
->> --
->> "QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
->>
->> ---
->> This email has been checked for viruses by Avast antivirus software.
->> https://www.avast.com/antivirus
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-
-
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+index aecdeeb368ed..7afbaa4eea8d 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+@@ -43,6 +43,7 @@
+ 
+ /dts-v1/;
+ #include "sun8i-a83t.dtsi"
++#include "sunxi-common-regulators.dtsi"
+ 
+ / {
+ 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
+@@ -57,6 +58,26 @@
+ 	};
+ };
+ 
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>;
++	vmmc-supply = <&reg_vcc3v0>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	bus-width = <4>;
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
++	vmmc-supply = <&reg_vcc3v0>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.2
