@@ -1,42 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Jul 2017 11:54:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 21 Jul 2017 09:21:41 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
-Message-ID: <20170727185406.GN2146@codeaurora.org>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
- <20170726013746.GM2146@codeaurora.org>
- <20170726082728.GD26726@tbergstrom-lnx.Nvidia.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 06/10] mmc: sunxi: Add support for A83T eMMC (MMC2)
+Message-ID: <20170721072141.uxvp7c6c5s64akdp@flea>
+References: <20170720034452.15920-1-wens@csie.org>
+ <20170720034452.15920-7-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170726082728.GD26726@tbergstrom-lnx.Nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wmny666cvwncqeiy"
+In-Reply-To: <20170720034452.15920-7-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/26, Peter De Schrijver wrote:
-> On Tue, Jul 25, 2017 at 06:37:46PM -0700, Stephen Boyd wrote:
-> > On 07/25, Peter De Schrijver wrote:
-> > > A number of smaller fixes and simplifications for the Tegra clock
-> > > implementation.
-> > 
-> > Any of these need fixes tags so they can be backported to stable
-> > trees? Also, everyone is on To: line, so not sure who is supposed
-> 
-> I will have a look. For some of them a backport might be useful.
-> 
-> > to pick these up. Me? That's fine if so.
-> > 
-> 
-> That would be the easiest I think.
-> 
 
-Ok. I'll wait for you to reply with tags unless you didn't find
-any?
+--wmny666cvwncqeiy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Thu, Jul 20, 2017 at 11:44:48AM +0800, Chen-Yu Tsai wrote:
+> The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
+> different. It supports a wider 8-bit bus, has a dedicated controllable
+> reset pin for eMMC, and a "new timing mode" which is supposed to deliver
+> better signals and thus better performance.
+>=20
+> Add a compatible for this one to use the new timing mode not found in the
+> other controllers.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--wmny666cvwncqeiy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZcauFAAoJEBx+YmzsjxAgcf0P/0We3BnYu0uVelHU1TBqvhLs
+D+O+G/ugJ6mI93Mqc+rrlGlHKXcpi96og+Rh4W7ZxuI5/2kK1+ScHalyYjLWDQuD
+I2bi8sfWb3fJCColFhgTfet/mIZaNewqcz1N/ziJnUpZdqYapWeewNHdNbnXXWsQ
+NK0jq9YHcgMJQF0Fn1pp2gOAdVpOA7jBfX2YPRNY+8rDvI+48mh3GB/OrHM7l033
+r+7ZFvRdqhCge7wRQAQMN3+Pm/2zXA+VcQc+sjrHGLIIJq0kpJXOJpP7kpQj9zF7
+eqItmU8q2ArqcfNNBbGsF7iMGTLY1L6hY0gt7suA2iQMFdjmbdwhsvMqclGvOw/+
+NtHz7dreoV17T8QII2AOZ+9S4z9gp7Bed+sDS475d4g81aqSQYJchSoA/YA3fDb/
+LoONePc2a9Wk/apOGxQk/QjZ7GFdiutQ05k3ZlnrO3t5YZOa+FZTplerXoBSSEH6
+NRi+G2ddlDijOASRdJ5j6TLZpLGc9cvVmqDN6f5b9rkT6cAEU7B+WJvvAG4JtbOz
+zdaF3rtCRREIfhIB5lUPeZZF215CzsdMuy8/fhzCV4U+/kWx9NUt1wOuFfh9BRmQ
+oeALELdzj8uRbUES2sLl5s6o3JbpsMBEzKcP1IhTMn2pCtFPKv43Q7L9WqZ8JAcz
++uKcftQ1X4d2qIrYDO+/
+=nDLZ
+-----END PGP SIGNATURE-----
+
+--wmny666cvwncqeiy--
