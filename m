@@ -1,28 +1,32 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 13 Jul 2017 10:50:48 -0700
+Date: Fri, 21 Jul 2017 13:34:21 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tirupathi Reddy <tirupath@codeaurora.org>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org
-Subject: Re: [PATCH V1]: clk: qcom: support qpnp clock divider configuration
-Message-ID: <20170713175048.GB22780@codeaurora.org>
-References: <1499945536-18281-1-git-send-email-tirupath@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: renesas: rcar-gen3: Add support for SCCG/Clean
+ peripheral clocks
+Message-ID: <20170721203421.GF19878@codeaurora.org>
+References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+ <1500554409-22423-4-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1499945536-18281-1-git-send-email-tirupath@codeaurora.org>
+In-Reply-To: <1500554409-22423-4-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/13, Tirupathi Reddy wrote:
-> This patch adds a new device driver for configuring the clkdiv module
-> presents on the Qualcomm QPNP PMIC. The driver configures the frequency
-> of clkdiv outputs. The driver provides callback functions for different
-> clock operations and register the clkdiv module to clock framework.
+On 07/20, Geert Uytterhoeven wrote:
+> On R-Car Gen3 SoCs with a Spread Spectrum Clock Generator (e.g. R-Car
+> D3), a peripheral clock divider has been added, to select between clean
+> and spread spectrum parents.
 > 
+> Add a new clock type to the R-Car Gen3 driver core to handle this.
+> To avoid increasing the size of struct cpg_core_clk, both parents and
+> dividers are stored in the existing parent resp. div fields.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Please don't send cover letters for single patches.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
