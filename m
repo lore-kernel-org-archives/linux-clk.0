@@ -1,89 +1,69 @@
-Return-Path: <eballetbo@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20eea5c5-9f95-3273-97f6-193c56fe59fb@linux.intel.com>
-References: <20170710203801.17496-1-carlo@caione.org> <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
- <20170710235403.GB25390@fury> <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
- <1500904960.29303.204.camel@linux.intel.com> <d92350f4-8bb3-85cb-4c2b-a44ab794c29a@linux.intel.com>
- <CAFqH_52ZaQ=JP==wAgsa3FKLZi0N4+PCMdYUBBL-nvKkoLDKMA@mail.gmail.com> <20eea5c5-9f95-3273-97f6-193c56fe59fb@linux.intel.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Mon, 24 Jul 2017 18:33:20 +0200
-Message-ID: <CAFqH_528K-gG5=acNVheYX659UmEyO-5mzM5xxGfZThKyE=m+A@mail.gmail.com>
-Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Darren Hart <dvhart@infradead.org>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, linux@endlessm.com,
-	Carlo Caione <carlo@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com,
+	krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
+	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Subject: [PATCH 1/3] clk: samsung: Fix mau_epll clock definition for
+ exynos5422
+Date: Fri, 21 Jul 2017 18:36:42 +0200
+Message-id: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170721163709epcas5p11c27574e84ceebbb3387ffeb3f402043@epcas5p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Parent clock of the MAU_EPLL gate clock on exynos5422 is
+"mout_user_mau_epll", not "mout_mau_epll_clk". This change
+only affects exynos5422/5800.
 
-2017-07-24 18:26 GMT+02:00 Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com>:
-> On 7/24/17 5:02 PM, Enric Balletbo Serra wrote:
->>
->> 2017-07-24 16:07 GMT+02:00 Pierre-Louis Bossart
->> <pierre-louis.bossart@linux.intel.com>:
->>>
->>> On 7/24/17 4:02 PM, Andy Shevchenko wrote:
->>>>
->>>>
->>>> On Mon, 2017-07-24 at 15:49 +0200, Pierre-Louis Bossart wrote:
->>>>>
->>>>>
->>>>> On 7/11/17 1:54 AM, Darren Hart wrote:
->>>>>>
->>>>>>
->>>>>> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra
->>>>>> wrote:
->>>>
->>>>
->>>>
->>>>>>> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>>>>
->>>>>>
->>>>>>
->>>>>> Excellent, thank you Enric. Pierre, any objections to this going in
->>>>>> to
->>>>>> 4.13 now and stable back to 4.12?
->>>>>
->>>>>
->>>>>
->>>>> I saw an update of this patch being merged while I was away on an
->>>>> extended summer break, but out of curiosity what was the problem with
->>>>> no
->>>>> audio on Baytrail? the code was added precisely to add support for
->>>>> 19.2
->>>>> MHz on Baytrail and finally solve audio issues. I have no reports of
->>>>> broken functionality with this 282a4e4 commit... Enric, do you have a
->>>>> bugzilla or pointers?
->>>>
->>>>
->>>>
->>>> TL;DR: We should respect firmware settings before blindly shut down
->>>> "unused" resources. (We used to have similar stuff in GPIO/pinctrl
->>>> driver for direct IRQ pins, where we shut up the pins which are used
->>>> directly by IOAPIC)
->>>
->>>
->>>
->>> I wasn't arguing against those patches, just curious as to which
->>> platforms
->>> were broken by setting pmc_plat_3 blindly in the driver.
->>>
->>
->> After your patch the clock framework disables the required clocks
->> because the driver does not request then and audio stopped to
->> work.This is not the solution as is the codec who *must* request these
->> clocks. We should implement this in the codec driver.. But now, at
->> least, if firmware enables the clocks audio continues working on
->> Baytrail.
->
->
-> Clocks are not enabled/managed in any of the BIOSes I've seen for Baytrail,
-> are you talking about a Chromebook by any chance with the legacy non-DPCM
-> byt-max98080 driver?
->
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Yes the issue is with a Chromebook with the legacy byt-max98080 driver.
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 9a6476a..5ae9364 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -590,6 +590,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 				GATE_BUS_TOP, 24, 0, 0),
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+ 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
++	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
++			SRC_MASK_TOP7, 20, 0, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+@@ -629,6 +631,11 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 			"mout_aclk400_wcore_bpll", DIV_TOP0, 16, 3),
+ };
+ 
++static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
++	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
++			SRC_MASK_TOP7, 20, 0, 0),
++};
++
+ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+ 	MUX(0, "mout_user_pclk66_gpio", mout_user_pclk66_gpio_p,
+ 			SRC_TOP7, 4, 1),
+@@ -1001,9 +1008,6 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
+ 			SRC_MASK_TOP2, 24, CLK_IS_CRITICAL, 0),
+ 
+-	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+-			SRC_MASK_TOP7, 20, 0, 0),
+-
+ 	/* sclk */
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "dout_uart0",
+ 		GATE_TOP_SCLK_PERIC, 0, CLK_SET_RATE_PARENT, 0),
+@@ -1440,6 +1444,8 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 				ARRAY_SIZE(exynos5420_mux_clks));
+ 		samsung_clk_register_div(ctx, exynos5420_div_clks,
+ 				ARRAY_SIZE(exynos5420_div_clks));
++		samsung_clk_register_gate(ctx, exynos5420_gate_clks,
++				ARRAY_SIZE(exynos5420_gate_clks));
+ 	} else {
+ 		samsung_clk_register_fixed_factor(
+ 				ctx, exynos5800_fixed_factor_clks,
+-- 
+1.9.1
