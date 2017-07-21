@@ -1,60 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.136]:46355 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbdGaKEi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2017 06:04:38 -0400
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de
-Cc: devicetree@vger.kernel.org, linus.walleij@linaro.org,
-        mturquette@baylibre.com, linux-gpio@vger.kernel.org,
-        sboyd@codeaurora.org, broonie@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wsa@the-dreams.de, linux-rockchip@lists.infradead.org,
-        robh+dt@kernel.org, linux-i2c@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-spi@vger.kernel.org,
-        zhangqing@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH 00/14] Support more devices on rockchip rv1108
-Date: Mon, 31 Jul 2017 18:04:09 +0800
-Message-Id: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org,
+	Wan ZongShun <mcuos.com@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexandre Bailon <abailon@baylibre.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/3] ARM: w90x900: normalize clk API
+Date: Fri, 21 Jul 2017 17:22:48 +0200
+Message-Id: <20170721152250.3310552-4-arnd@arndb.de>
+In-Reply-To: <20170721152250.3310552-1-arnd@arndb.de>
+References: <20170721152250.3310552-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+w90x900 still provides its own variant of the clk API rather than using
+the generic COMMON_CLK API. This generally works, but it causes some link
+errors with drivers using the clk_set_rate, clk_get_parent, clk_set_parent
+or clk_round_rate functions when a platform lacks those interfaces.
 
-This series try to support i2c/spi/pwm/saradc/pmic/watchdog and
-the full clk tree on rockchip rv1108 soc.
+This adds empty stub implementations for each of them, and I don't even
+try to do something useful here but instead just print a WARN() message
+to make it obvious what is going on if they ever end up being called.
 
+The drivers that call these won't be used on these platforms (otherwise
+we'd get a link error today), so the added code is harmless bloat and
+will warn about accidental use.
 
-Andy Yan (12):
-  pinctrl: rockchip: add input schmitt support for rv1108
-  dt-bindings: i2c: rk3x: add support for rv1108
-  i2c: rk3x: add support for rv1108
-  ARM: dts: rockchip: add i2c dt node for rv1108
-  spi: rockchip: add compatible string for rv1108 spi
-  ARM: dts: rockchip: add spi dt node for rv1108
-  ARM: dts: rockchip: add pwm dt node for rv1108
-  ARM: dts: rockchip: add watchdog dt node for rv1108
-  ARM: dts: rockchip: add saradc support for rv1108
-  ARM: dts: rockchip: add pwm backlight for rv1108 evb
-  ARM: dts: rockchip: add pmic rk805 dt node for rv1108 evb
-  ARM: dts: rockchip: add accelerometer bma250e dt node for rv1108 evb
+A while ago there was a proposal to change w90x900 to use the common-clk
+implementation, which would be the way it should be handled properly.
 
-Elaine Zhang (2):
-  clk: rockchip: add more clk ids for rv1108
-  clk: rockchip: support more clks for rv1108
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-w90x900/clock.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
- Documentation/devicetree/bindings/i2c/i2c-rk3x.txt |   1 +
- .../devicetree/bindings/spi/spi-rockchip.txt       |   1 +
- arch/arm/boot/dts/rv1108-evb.dts                   | 158 +++++++
- arch/arm/boot/dts/rv1108.dtsi                      | 249 ++++++++++
- drivers/clk/rockchip/clk-rv1108.c                  | 513 ++++++++++++++++-----
- drivers/i2c/busses/i2c-rk3x.c                      |   9 +
- drivers/pinctrl/pinctrl-rockchip.c                 |  31 ++
- drivers/spi/spi-rockchip.c                         |   1 +
- include/dt-bindings/clock/rv1108-cru.h             | 128 ++++-
- 9 files changed, 964 insertions(+), 127 deletions(-)
-
+diff --git a/arch/arm/mach-w90x900/clock.c b/arch/arm/mach-w90x900/clock.c
+index ac6fd1a2cb59..3f93fac98d97 100644
+--- a/arch/arm/mach-w90x900/clock.c
++++ b/arch/arm/mach-w90x900/clock.c
+@@ -93,3 +93,32 @@ void nuc900_subclk_enable(struct clk *clk, int enable)
+ 
+ 	__raw_writel(clken, W90X900_VA_CLKPWR + SUBCLK);
+ }
++
++/* dummy functions, should not be called */
++long clk_round_rate(struct clk *clk, unsigned long rate)
++{
++	WARN_ON(clk);
++	return 0;
++}
++EXPORT_SYMBOL(clk_round_rate);
++
++int clk_set_rate(struct clk *clk, unsigned long rate)
++{
++	WARN_ON(clk);
++	return 0;
++}
++EXPORT_SYMBOL(clk_set_rate);
++
++int clk_set_parent(struct clk *clk, struct clk *parent)
++{
++	WARN_ON(clk);
++	return 0;
++}
++EXPORT_SYMBOL(clk_set_parent);
++
++struct clk *clk_get_parent(struct clk *clk)
++{
++	WARN_ON(clk);
++	return NULL;
++}
++EXPORT_SYMBOL(clk_get_parent);
 -- 
-2.7.4
-
-
+2.9.0
