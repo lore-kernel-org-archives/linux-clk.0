@@ -1,70 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:53126 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751853AbdGXDIJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2017 23:08:09 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Jul 2017 15:03:23 -0700
+From: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
+To: "Y.T. Tang" <andy.tang@nxp.com>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Scott Wood <oss@buserror.net>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
+Message-ID: <20170721220323.GN19878@codeaurora.org>
+References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+ <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop>
+ <DB6PR0402MB2837EB5F759C39616BF8A904F3210@DB6PR0402MB2837.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20170723102749.17323-4-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-4-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 24 Jul 2017 11:07:45 +0800
-Message-ID: <CAGb2v67CFxsPYFVUfbUKzidVrPHFkZL10FxvhbC_RN0pvYtbfA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 03/10] ARM: sunxi: h3/h5: Add r_i2c pinmux node
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Ondrej Jirman <megous@megous.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <DB6PR0402MB2837EB5F759C39616BF8A904F3210@DB6PR0402MB2837.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> From: Ondrej Jirman <megous@megous.com>
->
-> H3/H5 SoCs contain an I2C controller optionally available
-> on the PL0 and PL1 pins. This patch adds pinmux configuration
-> for this controller.
->
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> [Icenowy: change commit message and node name]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  arch/arm/boot/dts/sunxi-h3-h5.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> index 6f2162608006..b240099bc865 100644
-> --- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> +++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> @@ -639,6 +639,11 @@
->                                 pins = "PL11";
->                                 function = "s_cir_rx";
->                         };
-> +
-> +                       r_i2c_pins: r-i2c {
-> +                               pins = "PL0", "PL1";
-> +                               function = "s_twi";
+On 03/09, Y.T. Tang wrote:
+> Hi Michael and Stephen,
+> 
+> This patch set was acked by Rob Herring. Do you have any comments on them?
+> 
+> BTW:  Scott should stay in author, do I need to resend them with author changed or you can change it when applying?
+> 
 
-Can we fix the pinctrl driver to use standard names first? :(
+Please resend these two patches.
 
-ChenYu
-
-> +                       };
->                 };
->         };
->  };
-> --
-> 2.13.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
