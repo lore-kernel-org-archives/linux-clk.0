@@ -1,73 +1,93 @@
-Return-Path: <Julia.Lawall@lip6.fr>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: keescook@chromium.org,
-	kernel-janitors@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] clk: moxart: Drop unnecessary static
-Date: Sat, 15 Jul 2017 22:07:37 +0200
-Message-Id: <1500149266-32357-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1500149266-32357-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170721071810.7nlwdzqno56cdax3@flea>
+References: <20170720034452.15920-1-wens@csie.org> <20170720034452.15920-2-wens@csie.org>
+ <20170721071810.7nlwdzqno56cdax3@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 21 Jul 2017 15:23:15 +0800
+Message-ID: <CAGb2v66zbRGvttnP9Ho61WMJEOa1atb_nZ5rsLNeV2LwsCRa3w@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] clk: sunxi-ng: Add interface to query or
+ configure MMC timing modes.
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Drop static on a local variable, when the variable is initialized before
-any possible use.  Thus, the static has no benefit.
+On Fri, Jul 21, 2017 at 3:18 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Thu, Jul 20, 2017 at 11:44:43AM +0800, Chen-Yu Tsai wrote:
+>> Starting with the A83T SoC, Allwinner introduced a new timing mode for
+>> its MMC clocks. The new mode changes how the MMC controller sample and
+>> output clocks are delayed to match chip and board specifics. There are
+>> two controls for this, one on the CCU side controlling how the clocks
+>> behave, and one in the MMC controller controlling what inputs to take
+>> and how to route them.
+>>
+>> In the old mode, the MMC clock had 2 child clocks providing the output
+>> and sample clocks, which could be delayed by a number of clock cycles
+>> measured from the MMC clock's parent.
+>>
+>> With the new mode, the 2 delay clocks are no longer active. Instead,
+>> the delays and associated controls are moved into the MMC controller.
+>> The output of the MMC clock is also halved.
+>>
+>> The difference in how things are wired between the modes means that the
+>> clock controls and the MMC controls must match. To achieve this in a
+>> clear, explicit way, we introduce two functions for the MMC driver to
+>> use: one queries the hardware for the current mode set, and the other
+>> allows the MMC driver to request a mode.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  drivers/clk/sunxi-ng/Makefile         |  1 +
+>>  drivers/clk/sunxi-ng/ccu_common.h     |  5 +++
+>>  drivers/clk/sunxi-ng/ccu_mmc_timing.c | 73 +++++++++++++++++++++++++++++++++++
+>>  include/linux/clk/sunxi-ng.h          | 35 +++++++++++++++++
+>>  4 files changed, 114 insertions(+)
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
+>>  create mode 100644 include/linux/clk/sunxi-ng.h
+>>
+>> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+>> index 0c45fa50283d..45a5910379a5 100644
+>> --- a/drivers/clk/sunxi-ng/Makefile
+>> +++ b/drivers/clk/sunxi-ng/Makefile
+>> @@ -1,5 +1,6 @@
+>>  # Common objects
+>>  lib-$(CONFIG_SUNXI_CCU)              += ccu_common.o
+>> +lib-$(CONFIG_SUNXI_CCU)              += ccu_mmc_timing.o
+>>  lib-$(CONFIG_SUNXI_CCU)              += ccu_reset.o
+>>
+>>  # Base clock types
+>> diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+>> index d6fdd7a789aa..1e2761c53f06 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_common.h
+>> +++ b/drivers/clk/sunxi-ng/ccu_common.h
+>> @@ -23,6 +23,11 @@
+>>  #define CCU_FEATURE_FIXED_POSTDIV    BIT(3)
+>>  #define CCU_FEATURE_ALL_PREDIV               BIT(4)
+>>  #define CCU_FEATURE_LOCK_REG         BIT(5)
+>> +#define CCU_FEATURE_MMC_TIMING_SWITCH        BIT(6)
+>> +#define CCU_FEATURE_MMC_ALWAYS_NEW   BIT(7)
+>
+> Didn't we agree on removing that flag?
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Indeed. I thought I had finished the cleanup. But apparently I didn't.
+Sorry about that.
 
-// <smpl>
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
-static T x@p;
-...
-x = <+...x...+>
+ChenYu
 
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-These patches are all independent of each other.
-
- drivers/clk/clk-moxart.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
---- a/drivers/clk/clk-moxart.c
-+++ b/drivers/clk/clk-moxart.c
-@@ -18,7 +18,7 @@
- 
- static void __init moxart_of_pll_clk_init(struct device_node *node)
- {
--	static void __iomem *base;
-+	void __iomem *base;
- 	struct clk_hw *hw;
- 	struct clk *ref_clk;
- 	unsigned int mul;
-@@ -57,7 +57,7 @@ CLK_OF_DECLARE(moxart_pll_clock, "moxa,m
- 
- static void __init moxart_of_apb_clk_init(struct device_node *node)
- {
--	static void __iomem *base;
-+	void __iomem *base;
- 	struct clk_hw *hw;
- 	struct clk *pll_clk;
- 	unsigned int div, val;
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
