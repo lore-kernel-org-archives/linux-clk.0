@@ -1,67 +1,157 @@
-Return-Path: <rnayak@codeaurora.org>
-Subject: Re: [PATCH v2 4/5] clk: qcom: gcc-msm8996: Mark
- gcc_mmss_noc_cfg_ahb_clk as a critical clock
-To: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+Subject: Re: [PATCH v2 3/5] clk: qcom: gdsc: Add support to control associated
+ clks
+To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@codeaurora.org,
+ mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, stanimir.varbanov@linaro.org,
+ vivek.gautam@codeaurora.org
 References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-5-git-send-email-rnayak@codeaurora.org>
- <20170727225130.GQ2146@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <319a0d15-354b-946b-da27-41d56fa0bb21@codeaurora.org>
-Date: Fri, 28 Jul 2017 13:28:18 +0530
+ <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <d89fd662-08bb-fdf5-75a0-4af528f6fa70@linaro.org>
+Date: Fri, 21 Jul 2017 11:29:30 +0300
 MIME-Version: 1.0
-In-Reply-To: <20170727225130.GQ2146@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Rajendra,
 
-On 07/28/2017 04:21 AM, Stephen Boyd wrote:
-> On 07/20, Rajendra Nayak wrote:
->> we have gcc_mmss_noc_cfg_ahb_clk marked with a CLK_IGNORE_UNUSED. While
->> this can prevent it from being disabled while its unused, it does not
->> prevent it from being disabled when a child derived from the clock calls
->> an explicit enable/disable.
-> 
-> Do you mean the config_noc_clk_src is being disabled? Who is
+few small comments to get code closer to perfection...
 
-I think the issue I saw was after I switched the parent from
-config_noc_clk_src to the RPM controlled cnoc_clk. That had to
-be kept voted, else some other ahb clock derived from it being
-disabled was causing the vote on cnoc_clk to be dropped.
+On 07/20/2017 07:48 AM, Rajendra Nayak wrote:
+> The devices within a gdsc power domain, quite often have additional
+> clocks to be turned on/off along with the power domain itself.
+> Add support for this by specifying a list of clk_hw pointers
+> per gdsc which would be the clocks turned on/off along with the
+> powerdomain on/off callbacks.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++--
+>  drivers/clk/qcom/gdsc.h |  8 +++++++
+>  2 files changed, 66 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index a4f3580..7e7c051 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -12,6 +12,8 @@
+>   */
+>  
+>  #include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/jiffies.h>
+> @@ -21,6 +23,7 @@
+>  #include <linux/regmap.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+> +#include "common.h"
+>  #include "gdsc.h"
+>  
+>  #define PWR_ON_MASK		BIT(31)
+> @@ -166,6 +169,29 @@ static inline void gdsc_assert_clamp_io(struct gdsc *sc)
+>  			   GMEM_CLAMP_IO_MASK, 1);
+>  }
+>  
+> +static inline int gdsc_clk_enable(struct gdsc *sc)
 
-> getting this clk? The bus driver? In the downstream sources I
-> don't even see this clk exposed, so maybe we should just remove
-> support for it instead.
-> 
->> Mark this with a CLK_IS_CRITICAL and remove the CLK_IGNORE_UNUSED flag
->> so its never disabled.
->>
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> ---
->>  drivers/clk/qcom/gcc-msm8996.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
->> index 8abc200..8872985 100644
->> --- a/drivers/clk/qcom/gcc-msm8996.c
->> +++ b/drivers/clk/qcom/gcc-msm8996.c
->> @@ -1333,7 +1333,7 @@ enum {
->>  			.name = "gcc_mmss_noc_cfg_ahb_clk",
->>  			.parent_names = (const char *[]){ "config_noc_clk_src" },
->>  			.num_parents = 1,
->> -			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->>  			.ops = &clk_branch2_ops,
->>  		},
->>  	},
->> -- 
->> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
->> of Code Aurora Forum, hosted by The Linux Foundation
->>
-> 
+I think the compiler is smart enough so 'inline' can dropped here and below.
+
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < sc->clk_count; i++) {
+> +		ret = clk_prepare_enable(sc->clks[i]);
+> +		if (ret) {
+> +			for (i--; i >= 0; i--)
+> +				clk_disable_unprepare(sc->clks[i]);
+> +			return ret;
+> +		}
+> +	}
+
+blank line please.
+
+> +	return 0;
+> +}
+> +
+> +static inline void gdsc_clk_disable(struct gdsc *sc)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < sc->clk_count; i++)
+> +		clk_disable_unprepare(sc->clks[i]);
+
+can we disable clocks in reverse order, not sure that will make any
+sense but I've seen issues with some of the clocks in the past.
+
+> +}
+> +
+>  static int gdsc_enable(struct generic_pm_domain *domain)
+>  {
+>  	struct gdsc *sc = domain_to_gdsc(domain);
+> @@ -193,6 +219,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>  	 */
+>  	udelay(1);
+>  
+> +	ret = gdsc_clk_enable(sc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Turn on HW trigger mode if supported */
+>  	if (sc->flags & HW_CTRL) {
+>  		ret = gdsc_hwctrl(sc, true);
+> @@ -241,6 +271,8 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  			return ret;
+>  	}
+>  
+> +	gdsc_clk_disable(sc);
+> +
+>  	if (sc->pwrsts & PWRSTS_OFF)
+>  		gdsc_clear_mem_on(sc);
+>  
+> @@ -254,7 +286,27 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> -static int gdsc_init(struct gdsc *sc)
+> +static inline int gdsc_clk_get(struct device *dev, struct gdsc *sc)
+> +{
+> +	if (sc->clk_count) {
+
+could you inverse the logic
+
+if (!sc->clk_count)
+	return 0;
+
+> +		int i;
+> +
+> +		sc->clks = devm_kcalloc(dev, sc->clk_count, sizeof(*sc->clks),
+> +					GFP_KERNEL);
+> +		if (!sc->clks)
+> +			return -ENOMEM;
+> +
+> +		for (i = 0; i < sc->clk_count; i++) {
+> +			sc->clks[i] = devm_clk_hw_get_clk(dev, sc->clk_hws[i],
+> +							  NULL);
+> +			if (IS_ERR(sc->clks[i]))
+> +				return PTR_ERR(sc->clks[i]);
+> +		}
+> +	}
+
+add blank line please
+
+> +	return 0;
+> +}
+> +
+
+I will make some tests with venus driver on mainline soon.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+regards,
+Stan
