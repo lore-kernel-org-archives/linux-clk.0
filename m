@@ -1,126 +1,46 @@
-Return-Path: <ce3a@gmx.de>
-From: Sergej Sawazki <ce3a@gmx.de>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-Subject: [PATCH v2] clk: si5351: Do not enable parent clocks on probe
-Date: Tue, 25 Jul 2017 20:32:11 +0200
-Message-Id: <1501007531-5521-1-git-send-email-ce3a@gmx.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Jul 2017 14:41:57 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <ce3a@gmx.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH] clk: si5351: Do not enable parent clocks on probe
+Message-ID: <20170721214157.GK19878@codeaurora.org>
+References: <1486239477-24720-1-git-send-email-ce3a@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1486239477-24720-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The si5351 driver should not prepare or enable other clocks in the tree on
-probe. Let the clients decide when to prepare or enable the clocks.
+On 02/04, Sergej Sawazki wrote:
+> The si5351 driver should not, by default, enable other clocks in
+> the tree. Let the clients decide when to enable the clocks.
+> 
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+> ---
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
----
-Changes in v2:
- * Remove also the prepare
+I'll bite after many months.
 
- drivers/clk/clk-si5351.c | 28 ++++++++--------------------
- 1 file changed, 8 insertions(+), 20 deletions(-)
+>  drivers/clk/clk-si5351.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index b051db4..f9eb590 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -1442,9 +1442,9 @@ static int si5351_i2c_probe(struct i2c_client *client,
+>  	}
+>  
+>  	if (!IS_ERR(drvdata->pxtal))
+> -		clk_prepare_enable(drvdata->pxtal);
+> +		clk_prepare(drvdata->pxtal);
+>  	if (!IS_ERR(drvdata->pclkin))
+> -		clk_prepare_enable(drvdata->pclkin);
+> +		clk_prepare(drvdata->pclkin);
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 2492442..255d0fe 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1439,11 +1439,6 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		}
- 	}
- 
--	if (!IS_ERR(drvdata->pxtal))
--		clk_prepare_enable(drvdata->pxtal);
--	if (!IS_ERR(drvdata->pclkin))
--		clk_prepare_enable(drvdata->pclkin);
--
- 	/* register xtal input clock gate */
- 	memset(&init, 0, sizeof(init));
- 	init.name = si5351_input_names[0];
-@@ -1458,7 +1453,7 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	ret = devm_clk_hw_register(&client->dev, &drvdata->xtal);
- 	if (ret) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
-+		return ret;
- 	}
- 
- 	/* register clkin input clock gate */
-@@ -1476,7 +1471,7 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (ret) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			goto err_clk;
-+			return ret;
- 		}
- 	}
- 
-@@ -1498,7 +1493,7 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	ret = devm_clk_hw_register(&client->dev, &drvdata->pll[0].hw);
- 	if (ret) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
-+		return ret;
- 	}
- 
- 	/* register PLLB or VXCO (Si5351B) */
-@@ -1522,7 +1517,7 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	ret = devm_clk_hw_register(&client->dev, &drvdata->pll[1].hw);
- 	if (ret) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
-+		return ret;
- 	}
- 
- 	/* register clk multisync and clk out divider */
-@@ -1541,7 +1536,7 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 
- 	if (WARN_ON(!drvdata->msynth || !drvdata->clkout)) {
- 		ret = -ENOMEM;
--		goto err_clk;
-+		return ret;
- 	}
- 
- 	for (n = 0; n < num_clocks; n++) {
-@@ -1561,7 +1556,7 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (ret) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			goto err_clk;
-+			return ret;
- 		}
- 	}
- 
-@@ -1589,7 +1584,7 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (ret) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			goto err_clk;
-+			return ret;
- 		}
- 
- 		/* set initial clkout rate */
-@@ -1608,17 +1603,10 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 				     drvdata);
- 	if (ret) {
- 		dev_err(&client->dev, "unable to add clk provider\n");
--		goto err_clk;
-+		return ret;
- 	}
- 
- 	return 0;
--
--err_clk:
--	if (!IS_ERR(drvdata->pxtal))
--		clk_disable_unprepare(drvdata->pxtal);
--	if (!IS_ERR(drvdata->pclkin))
--		clk_disable_unprepare(drvdata->pclkin);
--	return ret;
- }
- 
- static const struct i2c_device_id si5351_i2c_ids[] = {
+Why isn't the prepare also removed?
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
