@@ -1,76 +1,103 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/8] clk: vc5: Configure the output buffer input mux on prepare
-Date: Sat,  1 Jul 2017 22:04:54 +0200
-Message-Id: <20170701200459.11505-4-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+Return-Path: <nsekhar@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH 03/12] ARM: normalize clk API for older platforms
+To: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+        Hartley
+ Sweeten <hsweeten@visionengravers.com>,
+        Alexander Sverdlin
+	<alexander.sverdlin@gmail.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian
+ Zhuang <haojian.zhuang@gmail.com>,
+        Wan ZongShun <mcuos.com@gmail.com>
+CC: <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Masahiro Yamada
+	<yamada.masahiro@socionext.com>,
+        Dmitry Eremin-Solenikov
+	<dbaryshkov@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20170720154616.3250481-1-arnd@arndb.de>
+ <20170720155132.3250812-1-arnd@arndb.de>
+Message-ID: <b26930f6-3c57-7931-7f74-d0e07adb9cd7@ti.com>
+Date: Fri, 21 Jul 2017 13:35:51 +0530
+MIME-Version: 1.0
+In-Reply-To: <20170720155132.3250812-1-arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-Once the .prepare() callback of the output buffer is called, the
-output buffer input mux must be set to either input from FOD or
-input from previous output, it cannot be set to Disabled anymore
-or the output won't work.
+Hi Arnd,
 
-Default to the input from FOD if the output buffer input mux was
-Disabled and the .prepare() was called on it.
+On Thursday 20 July 2017 09:20 PM, Arnd Bergmann wrote:
+> Six ARM platforms still provide their own variant of the clk API
+> rather than using the generic COMMON_CLK API. This generally works,
+> but it causes some link errors with drivers using the clk_set_rate,
+> clk_get_parent, clk_set_parent or clk_round_rate functions when
+> a platform lacks those interfaces.
+> 
+> OMAP1 implements the whole set already, but davinci, ep93xx, mmp,
+> sa1100 and w90x900 all lack at least one of the functions.
+> 
+> This adds empty stub implementations for each of them, and I
+> don't even try to do something useful here but instead just
+> print a WARN() message to make it obvious what is going on
+> if they ever end up being called.
+> 
+> The drivers that call these won't be used on these platforms
+> (otherwise we'd get a link error today), so the added code is harmless
+> bloat and will warn about accidental use.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-davinci/clock.c |  6 ++++++
+>  arch/arm/mach-ep93xx/clock.c  | 21 +++++++++++++++++++++
+>  arch/arm/mach-mmp/clock.c     | 22 ++++++++++++++++++++++
+>  arch/arm/mach-sa1100/clock.c  | 29 +++++++++++++++++++++++++++++
+>  arch/arm/mach-w90x900/clock.c | 29 +++++++++++++++++++++++++++++
+>  5 files changed, 107 insertions(+)
+> 
+> diff --git a/arch/arm/mach-davinci/clock.c b/arch/arm/mach-davinci/clock.c
+> index f5dce9b4e617..89586779526c 100644
+> --- a/arch/arm/mach-davinci/clock.c
+> +++ b/arch/arm/mach-davinci/clock.c
+> @@ -218,6 +218,12 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+>  }
+>  EXPORT_SYMBOL(clk_set_parent);
+>  
+> +struct clk *clk_get_parent(struct clk *clk)
+> +{
+> +	return clk->parent;
+> +}
+> +EXPORT_SYMBOL(clk_get_parent);
 
-Note that we do not set the output buffer input mux back to Disabled
-in the .unprepare() callback as there is no obvious benefit of doing
-so. We disable the entire output buffer in the .unprepare() callback
-already.
+For mach-davinci change:
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
----
- drivers/clk/clk-versaclock5.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Acked-by: Sekhar Nori <nsekhar@ti.com>
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 248689d89632..7bdfd34e8280 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -507,6 +507,25 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- {
- 	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
- 	struct vc5_driver_data *vc5 = hwdata->vc5;
-+	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
-+			VC5_OUT_DIV_CONTROL_SEL_EXT |
-+			VC5_OUT_DIV_CONTROL_EN_FOD;
-+	unsigned int src;
-+	int ret;
-+
-+	/*
-+	 * If the input mux is disabled, enable it first and
-+	 * select source from matching FOD.
-+	 */
-+	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
-+	if ((src & mask) == 0) {
-+		src = VC5_OUT_DIV_CONTROL_RESET | VC5_OUT_DIV_CONTROL_EN_FOD;
-+		ret = regmap_update_bits(vc5->regmap,
-+					 VC5_OUT_DIV_CONTROL(hwdata->num),
-+					 mask | VC5_OUT_DIV_CONTROL_RESET, src);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	/* Enable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
--- 
-2.11.0
+> +
+>  int clk_register(struct clk *clk)
+>  {
+>  	if (clk == NULL || IS_ERR(clk))
+> diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-ep93xx/clock.c
+> index 39ef3b613912..c1c91fc6e178 100644
+> --- a/arch/arm/mach-ep93xx/clock.c
+> +++ b/arch/arm/mach-ep93xx/clock.c
+> @@ -323,6 +323,27 @@ unsigned long clk_get_rate(struct clk *clk)
+>  }
+>  EXPORT_SYMBOL(clk_get_rate);
+>  
+> +long clk_round_rate(struct clk *clk, unsigned long rate)
+> +{
+> +	WARN_ON(clk);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(clk_round_rate);
+
+Its probably better to WARN_ON_ONCE(). Also, since NULL clk is valid, it
+should be probably be WARN_ON_ONCE(1).
+
+Thanks,
+Sekhar
