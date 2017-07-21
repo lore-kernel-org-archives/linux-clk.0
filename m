@@ -1,42 +1,33 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Jul 2017 13:34:14 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk bulk prepare enable
-Date: Thu, 13 Jul 2017 15:23:24 -0700
-Message-Id: <20170713222324.19223-1-sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: renesas: Add r8a77995 CPG Core Clock Definitions
+Message-ID: <20170721203414.GD19878@codeaurora.org>
+References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
+ <1500554409-22423-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1500554409-22423-2-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 618aee02e2f57042f4cdeab228caf631e524b281:
+On 07/20, Geert Uytterhoeven wrote:
+> Add all R-Car D3 Clock Pulse Generator Core Clock Outputs, as listed
+> in Table 8.2f ("List of Clocks [R-Car D3]") of the R-Car Series, 3rd
+> Generation Hardware User's Manual (Rev. 0.55, Jun. 30, 2017).
+> 
+> Note that internal CPG clocks (S0, S1, S2, S3, S1C, S3C, SDSRC, and
+> SSPSRC) are not included, as they are used as internal clock sources
+> only, and never referenced from DT.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: devicetree@vger.kernel.org
+> ---
 
-  clk: add managed version of clk_bulk_get (2017-06-02 15:37:49 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-bulk-get-prep-enable
-
-for you to fetch changes up to 3c48d86cc959309ee168fb87737a8cb3f97c5224:
-
-  clk: Provide bulk prepare_enable disable_unprepare variants (2017-07-12 23:50:53 -0700)
-
-----------------------------------------------------------------
-Small patch to add a clk_bulk_prepare_enable() and
-clk_bulk_disable_unprepare() API to the newly introduced
-clk bulk APIs.
-
-----------------------------------------------------------------
-
-It would be good to get this into the -rc1 so that other driver
-trees can use it for code targeted for the next merge window.
-
-Bjorn Andersson (1):
-      clk: Provide bulk prepare_enable disable_unprepare variants
-
- include/linux/clk.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
