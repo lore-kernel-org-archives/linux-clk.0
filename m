@@ -1,78 +1,79 @@
-Return-Path: <Nicolas.Ferre@microchip.com>
-Subject: Re: [PATCH v4 7/9] ASoC: atmel-classd: remove aclk clock from DT
- binding
-To: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<alexandre.belloni@free-electrons.com>, <linux@armlinux.org.uk>,
-	<boris.brezillon@free-electrons.com>, <perex@perex.cz>, <tiwai@suse.com>
-CC: <cyrille.pitchen@wedev4u.fr>, <thomas.petazzoni@free-electrons.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
- <db5404c2be1d59603dd3770c5f95a065fe4c321f.1500968090.git-series.quentin.schulz@free-electrons.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <d78d2769-5e05-b1e7-dec8-9b2c86ee3459@microchip.com>
-Date: Tue, 25 Jul 2017 17:38:19 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Jul 2017 13:37:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre TORGUE <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	"daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+	"andrea.merello@gmail.com" <andrea.merello@gmail.com>,
+	"radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Ludovic BARRE <ludovic.barre@st.com>,
+	Olivier BIDEAU <olivier.bideau@st.com>,
+	Amelie DELAUNAY <amelie.delaunay@st.com>,
+	"gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH v7 3/3] clk: stm32h7: Add stm32h743 clock driver
+Message-ID: <20170721203712.GH19878@codeaurora.org>
+References: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
+ <1500474344-9832-4-git-send-email-gabriel.fernandez@st.com>
+ <d999fc79-7b14-da8e-965f-371cf4352dd1@mleia.com>
+ <11c37627-a39b-7f2d-d0d4-af312eac8668@st.com>
+ <c5264416-754b-6ec8-f9fb-3b0ac2ba3a58@mleia.com>
 MIME-Version: 1.0
-In-Reply-To: <db5404c2be1d59603dd3770c5f95a065fe4c321f.1500968090.git-series.quentin.schulz@free-electrons.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: nicolas.ferre@microchip.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c5264416-754b-6ec8-f9fb-3b0ac2ba3a58@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/07/2017 at 09:37, Quentin Schulz wrote:
-> Since gclk (generated-clk) is now able to determine the rate of the
-> audio_pll, there is no need for classd to have a direct phandle to the
-> audio_pll while already having a phandle to gclk.
+On 07/20, Vladimir Zapolskiy wrote:
+> Hi Gabriel,
 > 
-> This binding is used by no board in mainline so it is safe to be
-> modified.
+> On 07/20/2017 11:31 AM, Gabriel FERNANDEZ wrote:
+> > Hi Vladimir,
+> > 
+> > 
+> > On 07/19/2017 11:20 PM, Vladimir Zapolskiy wrote:
+> >> Hello Gabriel,
+> >>
+> >> On 07/19/2017 05:25 PM, gabriel.fernandez@st.com wrote:
+> >>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> >>> +
+> >>> +	rcc: rcc@58024400 {
+> >> 'rcc' as a generic device node name is awkward.
+> >>
+> >> I believe the main function of the device is clock controller (unlikely
+> >> a generic reset controller can be converted into a clock controller),
+> >> the locations of the document and device driver also indicate that
+> >> primarily it is a clock controller, so I suggest to replace device node
+> >> name with 'clock-controller' like below:
+> > I prefer to keep rcc node name, to be coherent with the other ST 
+> > platforms (STM32F4/F7)
 > 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+> the thing is, a device node name is expected to comply with ePAPR or
+> the devicetree specification, which says
+> 
+> 	The name of a node should be somewhat generic, reflecting
+> 	the function of the device and not its precise programming model.
+> 
+> If devicetree and CCF maintainers are fine with 'rcc', I won't object,
+> my role is just to emphasize the found issue and recommend to use another
+> and more common name 'clock-controller', it is a simple and fortunately
+> backward compatible change to other ST platforms as well.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
-> ---
->  Documentation/devicetree/bindings/sound/atmel-classd.txt |  9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/atmel-classd.txt b/Documentation/devicetree/bindings/sound/atmel-classd.txt
-> index 549e701..8985510 100644
-> --- a/Documentation/devicetree/bindings/sound/atmel-classd.txt
-> +++ b/Documentation/devicetree/bindings/sound/atmel-classd.txt
-> @@ -13,13 +13,11 @@ Required properties:
->  	Must be "tx".
->  - clock-names
->  	Tuple listing input clock names.
-> -	Required elements: "pclk", "gclk" and "aclk".
-> +	Required elements: "pclk" and "gclk".
->  - clocks
->  	Please refer to clock-bindings.txt.
->  - assigned-clocks
->  	Should be <&classd_gclk>.
-> -- assigned-clock-parents
-> -	Should be <&audio_pll_pmc>.
->  
->  Optional properties:
->  - pinctrl-names, pinctrl-0
-> @@ -45,10 +43,9 @@ classd: classd@fc048000 {
->  			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
->  			| AT91_XDMAC_DT_PERID(47))>;
->  		dma-names = "tx";
-> -		clocks = <&classd_clk>, <&classd_gclk>, <&audio_pll_pmc>;
-> -		clock-names = "pclk", "gclk", "aclk";
-> +		clocks = <&classd_clk>, <&classd_gclk>;
-> +		clock-names = "pclk", "gclk";
->  		assigned-clocks = <&classd_gclk>;
-> -		assigned-clock-parents = <&audio_pll_pmc>;
->  
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&pinctrl_classd_default>;
-> 
-
+Yes. It should be generic so clock-controller or
+clock-reset-controller is appropriate here.
 
 -- 
-Nicolas Ferre
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
