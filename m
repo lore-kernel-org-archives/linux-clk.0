@@ -1,63 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:52678 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752461AbdGLWzt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 18:55:49 -0400
-Date: Wed, 12 Jul 2017 15:55:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V4 4/6] iommu/arm-smmu: Add the device_link between
- masters and smmu
-Message-ID: <20170712225547.GA22780@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-5-git-send-email-vivek.gautam@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1499333825-7658-5-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com,
+	krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
+	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Subject: [PATCH 3/3] clk: samsung: exynos542x: Enable clock rate propagation
+ up to the EPLL
+Date: Fri, 21 Jul 2017 18:36:44 +0200
+Message-id: <1500655004-29816-3-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
+References: <1500655004-29816-1-git-send-email-s.nawrocki@samsung.com>
+	<CGME20170721163755epcas1p2bfa1025557002ae5f89309aecd64c411@epcas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06, Vivek Gautam wrote:
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index ddbfa8ab69e6..75567d9698ab 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -1348,6 +1348,7 @@ static int arm_smmu_add_device(struct device *dev)
->  	struct arm_smmu_device *smmu;
->  	struct arm_smmu_master_cfg *cfg;
->  	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
-> +	struct device_link *link = NULL;
+CLK_SET_RATE_PARENT flag is added to the clocks between the EPLL
+and the audio subsystem clock controller so that the EPLL's output
+frequency can be set indirectly with clk_set_rate() on a leaf clock.
+That should be safe as EPLL is normally only used to generate clock
+for the audio subsystem.
+With this change we can avoid passing the EPPL clock to the ASoC
+machine driver.
 
-Unnecessary initialization?
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
->  	int i, ret;
->  
->  	if (using_legacy_binding) {
-> @@ -1403,6 +1404,16 @@ static int arm_smmu_add_device(struct device *dev)
->  
->  	pm_runtime_put_sync(smmu->dev);
->  
-> +	/*
-> +	 * Establish the link between smmu and master, so that the
-> +	 * smmu gets runtime enabled/disabled as per the master's
-> +	 * needs.
-> +	 */
-> +	link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
-> +	if (!link)
-> +		dev_warn(smmu->dev, "Unable to create device link between %s and %s\n",
-> +			 dev_name(smmu->dev), dev_name(dev));
-> +
->  	return 0;
->  
-
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 5ae9364..2560196 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -537,8 +537,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 
+ 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+ 			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
+-	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
+-							SRC_TOP7, 20, 2),
++	MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
++			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
+ 	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
+ 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
+ 
+@@ -547,8 +547,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	MUX(0, "mout_aclk432_cam", mout_group6_5800_p, SRC_TOP8, 24, 2),
+ 	MUX(0, "mout_aclk432_scaler", mout_group6_5800_p, SRC_TOP8, 28, 2),
+ 
+-	MUX(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
+-							SRC_TOP9, 8, 1),
++	MUX_F(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
++			SRC_TOP9, 8, 1, CLK_SET_RATE_PARENT, 0),
+ 	MUX(0, "mout_user_aclk550_cam", mout_group15_5800_p,
+ 							SRC_TOP9, 16, 1),
+ 	MUX(0, "mout_user_aclkfl1_550_cam", mout_group13_5800_p,
+@@ -591,7 +591,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+ 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+-			SRC_MASK_TOP7, 20, 0, 0),
++			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+@@ -633,7 +633,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 
+ static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+-			SRC_MASK_TOP7, 20, 0, 0),
++			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+@@ -713,7 +713,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
+ 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
+ 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+-	MUX(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
++	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
++			CLK_SET_RATE_PARENT, 0),
+ 	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
+ 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
