@@ -1,41 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35281 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbdGSI17 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2017 04:27:59 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Jul 2017 15:21:06 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lgirdwood@gmail.com, broonie@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/9] clk: at91: add audio plls to the compatible list
+ in DT binding
+Message-ID: <20170721222106.GP19878@codeaurora.org>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+ <20170713074927.10882-3-quentin.schulz@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20170718164407.22998-3-wsa+renesas@sang-engineering.com>
-References: <20170718164407.22998-1-wsa+renesas@sang-engineering.com> <20170718164407.22998-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 19 Jul 2017 10:27:57 +0200
-Message-ID: <CAMuHMdXxe9L15a289GP4bFP28gkotS0Hu2ngu5DHTgfpQyA4qA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] clk: renesas: rcar-gen3-cpg.c: refactor checks
- for accessing the div table
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170713074927.10882-3-quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 18, 2017 at 6:44 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Do the checks for accessing the SD divider table only when the rate gets
-> updated, namely on init and set_rate. In all other cases, reuse the last
-> value. This simplifies code, runtime load, and error reporting.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 07/13, Quentin Schulz wrote:
+> This new clock driver set allows to have a fractional divided clock that
+> would generate a precise clock particularly suitable for audio
+> applications.
+> 
+> The main audio pll clock has two children clocks: one that is connected
+> to the PMC, the other that can directly drive a pad. As these two routes
+> have different enable bits and different dividers and divider formulas,
+> they are handled by two different drivers.
+> 
+> This adds the audio plls (frac, pad and pmc) to the compatible list of
+> at91 clocks in DT binding.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> 
+> added in v2:
+>   - split from big patch with pll drivers and dt-binding
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.14.
+Subject seems wrong. Should have "bindings" somewhere?
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
