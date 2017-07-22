@@ -1,29 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:49918 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751867AbdGaL0S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 31 Jul 2017 07:26:18 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: linus.walleij@linaro.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 03/14] pinctrl: rockchip: add input schmitt support for rv1108
-Date: Mon, 31 Jul 2017 13:26:11 +0200
-Message-ID: <17667109.HATuc3212V@diego>
-In-Reply-To: <1501495822-21503-1-git-send-email-andy.yan@rock-chips.com>
-References: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com> <1501495822-21503-1-git-send-email-andy.yan@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-clk@vger.kernel.org,
+	robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux@armlinux.org.uk,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 3/3] ARM: dts: meson: mark the clock controller also as reset controller
+Date: Sat, 22 Jul 2017 20:58:07 +0200
+Message-Id: <20170722185807.10504-4-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170722185807.10504-1-martin.blumenstingl@googlemail.com>
+References: <20170722185807.10504-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 31. Juli 2017, 18:10:22 CEST schrieb Andy Yan:
-> Some pins like i2c SCL/SDA need the schmitt input function
-> to avoid crosstalk problems.
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+The clock controller provides a few reset lines as well. Add the
+#reset-cells property so we can pass the CPU soft reset lines to their
+corresponding CPU cores.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ arch/arm/boot/dts/meson8.dtsi  | 1 +
+ arch/arm/boot/dts/meson8b.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 6fe6a159e960..b98d44fde6b6 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -168,6 +168,7 @@
+ &cbus {
+ 	clkc: clock-controller@4000 {
+ 		#clock-cells = <1>;
++		#reset-cells = <1>;
+ 		compatible = "amlogic,meson8-clkc";
+ 		reg = <0x8000 0x4>, <0x4000 0x460>;
+ 	};
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 8fce13844b0c..bc278da7df0d 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -119,6 +119,7 @@
+ &cbus {
+ 	clkc: clock-controller@4000 {
+ 		#clock-cells = <1>;
++		#reset-cells = <1>;
+ 		compatible = "amlogic,meson8b-clkc";
+ 		reg = <0x8000 0x4>, <0x4000 0x460>;
+ 	};
+-- 
+2.13.3
