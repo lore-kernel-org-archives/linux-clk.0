@@ -1,28 +1,101 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Jul 2017 15:02:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yuantian Tang <andy.tang@nxp.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: qoriq: add pll clock to clock lookup table
-Message-ID: <20170721220201.GM19878@codeaurora.org>
-References: <1491445283-13053-1-git-send-email-andy.tang@nxp.com>
- <1491445283-13053-2-git-send-email-andy.tang@nxp.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [PATCH v8 0/3] clk: stm32h7: Add stm32h743 clock driver
+Date: Sat, 22 Jul 2017 14:01:07 +0200
+Message-ID: <1500724870-9071-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491445283-13053-2-git-send-email-andy.tang@nxp.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06, Yuantian Tang wrote:
-> Register each PLL and its division clocks to clock
-> lookup table to facilitate the clock look up for
-> clock consumer.
-> 
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> ---
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Applied to clk-next
+v8:
+  - Documentation remarks from Valdimir:
+	- rename 'rcc' node name into 'reset-clock-controller'
+	- delete source paths into the device tree bindings documentation
+	- other cosmetic changes
+v7:
+  - Documentation: put 'st,syscfg' phandle in optional section
+  - rename nxp gate op with lpc32xx_ prefix
+  - Suppress useless code to disable/enable backup domain write protection
+    (backup domaine write is disable at the init and never enabled)
+
+v6:
+  - rename clk_gate_is_enabled() in nxp lpc32xx driver.
+  - add EXPORT_SYMBOL_GPL(clk_gate_is_enabled)
+
+v5:
+  - return bool instead int for enable_power_domain_write_protection()
+  - add comment to explain use of CLK_OF_DECLARE_DRIVER()
+  - add comment to explain why we can't use read_poll_timeout()
+  - expose clk_gate_ops::is_enabled
+  - use of __clk_mux_determine_rate & clk_gate_is_enabled to avoid wrapper
+	function.
+
+v4:
+  - rename lock into stm32rcc_lock
+  - don't use clk_readl() 
+  - remove useless parentheses with GENMASK
+  - fix parents of timer_x clocks
+  - suppress pll configuration from DT
+  - fix kbuild warning
+
+v3:
+  - fix compatible string "stm32h7-pll" into "st,stm32h7-pll"
+  - fix bad parent name for mco2 clock
+  - set CLK_SET_RATE_PARENT for ltdc clock
+  - set CLK_IGNORE_UNUSED for pll1
+  - disable power domain write protection on disable ops if needed
+
+
+v2:
+  - rename compatible string "stm32,pll" into "stm32h7-pll"
+  - suppress "st,pllrge" property
+  - suppress "st, frac-status" property
+  - change management of "st,frac"  property
+	0 : enable 0 pll integer mode 
+	other values : enable pll in fractional mode (value is
+	the fractional factor)
+
+Gabriel Fernandez (3):
+  clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
+  clk: gate: expose clk_gate_ops::is_enabled
+  clk: stm32h7: Add stm32h743 clock driver
+
+ .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   71 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-gate.c                             |    3 +-
+ drivers/clk/clk-stm32h7.c                          | 1410 ++++++++++++++++++++
+ drivers/clk/nxp/clk-lpc32xx.c                      |   12 +-
+ include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
+ include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
+ include/linux/clk-provider.h                       |    1 +
+ 8 files changed, 1792 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32h7.c
+ create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
+ create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
