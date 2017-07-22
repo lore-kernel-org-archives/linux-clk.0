@@ -1,48 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 21 Jul 2017 13:44:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
- bindings
-Message-ID: <20170721204439.GJ19878@codeaurora.org>
-References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
- <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
- <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-clk@vger.kernel.org,
+	robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux@armlinux.org.uk,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 1/3] dt-bindings: clock: meson8b: describe the embedded reset controller
+Date: Sat, 22 Jul 2017 20:58:05 +0200
+Message-Id: <20170722185807.10504-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170722185807.10504-1-martin.blumenstingl@googlemail.com>
+References: <20170722185807.10504-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/09, Rob Herring wrote:
-> On Thu, Jul 06, 2017 at 12:24:23PM +0200, Neil Armstrong wrote:
-> > On the first revision of the bindings, only the gates + resets were known
-> > in the AO Clock HW, but more registers used to configures AO clock are known
-> > to be spread among the AO register space.
-> > This patch adds these registers to the Ao Clock bindings with direct access
-> > and shared extcon access.
-> > 
-> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> > ---
-> >  .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt         | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> This looks like the binding might be too specific with a reg list of 
-> single registers, and you should define a system controller node 
-> instead. Depends on what else is in the "A0" block.
-> 
+The Amlogic Meson8/Meson8b/Meson8m2 clock controller provides some reset
+lines. These are used for example to boot the secondary CPU cores.
 
-Agreed. Why can't we expand the size in DT and then access the
-registers directly in the driver. Hopefully it keeps working to
-apply the dts patch without the driver patch too (and
-vice-versa), because the kernel can only make a mapping as small
-as a page which would cover these newly added reg properties
-anyway.
+This patch describes the reset controller which is embedded into the
+clock controller on these SoCs.
 
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+index 606da38c0959..e1af4764114d 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+@@ -16,18 +16,24 @@ Required Properties:
+ 	   mapped region.
+ 
+ - #clock-cells: should be 1.
++- #reset-cells: should be 1.
+ 
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume. All available clocks are defined as
+ preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+ used in device tree sources.
++This is also valid for the reset lines provided by the clock controller: a
++preprocessor macro for each reset line is defined (in the same header file as
++the clock identifiers).
++
+ 
+ Example: Clock controller node:
+ 
+ 	clkc: clock-controller@c1104000 {
+-		#clock-cells = <1>;
+ 		compatible = "amlogic,meson8b-clkc";
+ 		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.3
