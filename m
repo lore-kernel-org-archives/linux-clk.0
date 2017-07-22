@@ -1,79 +1,94 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Wed, 26 Jul 2017 11:25:06 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alex Frid <afrid@nvidia.com>
-Subject: Re: [PATCH] clk: Don't write error code into divider register
-Message-ID: <20170726082506.GC26726@tbergstrom-lnx.Nvidia.com>
-References: <1500977920-5533-1-git-send-email-pdeschrijver@nvidia.com>
- <20170726003208.GF2146@codeaurora.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [PATCH v8 1/3] clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
+Date: Sat, 22 Jul 2017 14:01:08 +0200
+Message-ID: <1500724870-9071-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1500724870-9071-1-git-send-email-gabriel.fernandez@st.com>
+References: <1500724870-9071-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20170726003208.GF2146@codeaurora.org>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 25, 2017 at 05:32:08PM -0700, Stephen Boyd wrote:
-> On 07/25, Peter De Schrijver wrote:
-> > From: Alex Frid <afrid@nvidia.com>
-> > 
-> > Add a check for error returned by divider value calculation to avoid
-> > writing error code into hw register.
-> > 
-> > Signed-off-by: Alex Frid <afrid@nvidia.com>
-> > Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > Reviewed-by: Jon Mayo <jmayo@nvidia.com>
-> > ---
-> 
-> Fixes: bca9690b9426 ("clk: divider: Make generic for usage elsewhere")
-> 
-> perhaps?
-> 
-> Also, curious how this got triggered? Presumably round_rate would
-> have failed before a set_rate call with something invalid came
-> through so that's why nobody has reported anything so far.
-> 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-I don't really know. Aleks do you remember?
+We need to export clk_gate_is_enabled() from clk framework, then
+to avoid compilation issue we have to rename clk_gate_is_enabled()
+in NXP LPC32xx clock driver.
+We changed all gate op with 'lpc32xx_' prefix:
+lpc32xx_clk_gate_enable(),
+lpc32xx_clk_gate_disable(),
+lpc32xx_clk_gate_is_enabled().
 
-> >  drivers/clk/clk-divider.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > index 9bb472c..4ed516c 100644
-> > --- a/drivers/clk/clk-divider.c
-> > +++ b/drivers/clk/clk-divider.c
-> > @@ -385,12 +385,14 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-> >  				unsigned long parent_rate)
-> >  {
-> >  	struct clk_divider *divider = to_clk_divider(hw);
-> > -	unsigned int value;
-> > +	int value;
-> >  	unsigned long flags = 0;
-> >  	u32 val;
-> >  
-> >  	value = divider_get_val(rate, parent_rate, divider->table,
-> >  				divider->width, divider->flags);
-> > +	if (value < 0)
-> 
-> Perhaps value should be an s32 if we're doing a writel with it
-> shifted so much. And then, we could declare it as a u32 and test
-> it with
-> 
-> 	if ((s32)value < 0)
-> 
-> to see if there was an error. Sort of annoying that we've limited
-> the available space of divider_get_val() by combining the value
-> with the error code number space. We may want to not do that in
-> case people have huge dividers.
-> 
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Yes. It would have been better to return the divider in a separate variable.
-There seem to be few users though, only 6.
-
-Peter.
-
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 5b98ff9..7b359af 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -885,7 +885,7 @@ static unsigned long clk_usb_i2c_recalc_rate(struct clk_hw *hw,
+ 	.recalc_rate = clk_usb_i2c_recalc_rate,
+ };
+ 
+-static int clk_gate_enable(struct clk_hw *hw)
++static int lpc32xx_clk_gate_enable(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
+ 	u32 mask = BIT(clk->bit_idx);
+@@ -894,7 +894,7 @@ static int clk_gate_enable(struct clk_hw *hw)
+ 	return regmap_update_bits(clk_regmap, clk->reg, mask, val);
+ }
+ 
+-static void clk_gate_disable(struct clk_hw *hw)
++static void lpc32xx_clk_gate_disable(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
+ 	u32 mask = BIT(clk->bit_idx);
+@@ -903,7 +903,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+ 	regmap_update_bits(clk_regmap, clk->reg, mask, val);
+ }
+ 
+-static int clk_gate_is_enabled(struct clk_hw *hw)
++static int lpc32xx_clk_gate_is_enabled(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
+ 	u32 val;
+@@ -916,9 +916,9 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
+ }
+ 
+ static const struct clk_ops lpc32xx_clk_gate_ops = {
+-	.enable = clk_gate_enable,
+-	.disable = clk_gate_disable,
+-	.is_enabled = clk_gate_is_enabled,
++	.enable = lpc32xx_clk_gate_enable,
++	.disable = lpc32xx_clk_gate_disable,
++	.is_enabled = lpc32xx_clk_gate_is_enabled,
+ };
+ 
+ #define div_mask(width)	((1 << (width)) - 1)
+-- 
+1.9.1
