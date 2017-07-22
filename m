@@ -1,100 +1,81 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org,
-	vivek.gautam@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 2/5] clk: Add clk_hw_get_clk() helper API to be used by clk providers
-Date: Thu, 20 Jul 2017 10:18:16 +0530
-Message-Id: <1500526099-9935-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [PATCH v8 2/3] clk: gate: expose clk_gate_ops::is_enabled
+Date: Sat, 22 Jul 2017 14:01:09 +0200
+Message-ID: <1500724870-9071-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1500724870-9071-1-git-send-email-gabriel.fernandez@st.com>
+References: <1500724870-9071-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-As we move towards a cleaner split to have clock providers use clk_hw
-for all clock operations, while consumers operate on the (per-user)
-struct clk handles, we still have cases where in a clock provider
-might want to call into high level clk apis which only operate on a
-struct clk handle.
-To facilitate such needs, have a clk_hw_get_clk() api which can be
-used from within clock providers to get access to struct clk handles.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+This patch exposes clk_gate_ops::is_enabled as functions
+that can be directly called and assigned in places like this so
+we don't need wrapper functions that do nothing besides forward
+the call.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk.c            | 39 +++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  5 +++++
- 2 files changed, 44 insertions(+)
+ drivers/clk/clk-gate.c       | 3 ++-
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fc58c52..c9bbfb3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -186,6 +186,45 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 4e0c054a..dd82485 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+ 	clk_gate_endisable(hw, 0);
  }
- EXPORT_SYMBOL_GPL(clk_hw_get_name);
  
-+struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *dev_id,
-+			   const char *con_id)
-+{
-+	return __clk_create_clk(hw, dev_id, con_id);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_clk);
-+
-+void clk_hw_put_clk(struct clk *clk)
-+{
-+	__clk_free_clk(clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_put_clk);
-+
-+static void devm_clk_hw_put(struct device *dev, void *res)
-+{
-+	clk_hw_put_clk(*(struct clk **)res);
-+}
-+
-+struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
-+				const char *con_id)
-+{
-+	struct clk **ptr, *clk;
-+
-+	ptr = devres_alloc(devm_clk_hw_put, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk = clk_hw_get_clk(hw, dev_name(dev), con_id);
-+	if (!IS_ERR(clk)) {
-+		*ptr = clk;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return clk;
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_hw_get_clk);
-+
- struct clk_hw *__clk_get_hw(struct clk *clk)
+-static int clk_gate_is_enabled(struct clk_hw *hw)
++int clk_gate_is_enabled(struct clk_hw *hw)
  {
- 	return !clk ? NULL : clk->core->hw;
+ 	u32 reg;
+ 	struct clk_gate *gate = to_clk_gate(hw);
+@@ -101,6 +101,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
+ 
+ 	return reg ? 1 : 0;
+ }
++EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
+ 
+ const struct clk_ops clk_gate_ops = {
+ 	.enable = clk_gate_enable,
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c59c625..c85bfed 100644
+index c59c625..e9587ab 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -730,6 +730,11 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
- /* helper functions */
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
-+struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *dev_id,
-+			   const char *con_id);
-+void clk_hw_put_clk(struct clk *clk);
-+struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
-+				const char *con_id);
- struct clk_hw *__clk_get_hw(struct clk *clk);
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+@@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
+ 		u8 clk_gate_flags, spinlock_t *lock);
+ void clk_unregister_gate(struct clk *clk);
+ void clk_hw_unregister_gate(struct clk_hw *hw);
++int clk_gate_is_enabled(struct clk_hw *hw);
+ 
+ struct clk_div_table {
+ 	unsigned int	val;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
