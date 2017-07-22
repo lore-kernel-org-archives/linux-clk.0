@@ -1,169 +1,319 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 18 Jul 2017 16:10:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Adriana Reus <adriana.reus@nxp.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	robh+dt@kernel.org, fabio.estevam@nxp.com, shawnguo@kernel.org,
-	anson.huang@nxp.com
-Subject: Re: [PATCH 2/2] clk: imx: imx7d: Remove ARM_M0 clock
-Message-ID: <20170718231041.GF18179@codeaurora.org>
-References: <1500363892-1173-1-git-send-email-adriana.reus@nxp.com>
- <1500363892-1173-3-git-send-email-adriana.reus@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500363892-1173-3-git-send-email-adriana.reus@nxp.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-clk@vger.kernel.org,
+	robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux@armlinux.org.uk,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 2/3] clk: meson: meson8b: register the built-in reset controller
+Date: Sat, 22 Jul 2017 20:58:06 +0200
+Message-Id: <20170722185807.10504-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170722185807.10504-1-martin.blumenstingl@googlemail.com>
+References: <20170722185807.10504-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/18, Adriana Reus wrote:
-> IMX7d does not have an M0 Core and this particular
-> clock doesn't seem connected to anything else.
-> Remove this entry from the CCM driver and fix index
-> for the remaining clocks.
-> 
-> Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
-[...]
-> +#define IMX7D_GPT2_ROOT_DIV		305
-> +#define IMX7D_GPT3_ROOT_CLK		306
-> +#define IMX7D_GPT3_ROOT_SRC		307
-> +#define IMX7D_GPT3_ROOT_CG		308
-> +#define IMX7D_GPT3_ROOT_DIV		309
-> +#define IMX7D_GPT4_ROOT_CLK		310
-> +#define IMX7D_GPT4_ROOT_SRC		311
-> +#define IMX7D_GPT4_ROOT_CG		312
-> +#define IMX7D_GPT4_ROOT_DIV		313
-> +#define IMX7D_TRACE_ROOT_CLK		314
-> +#define IMX7D_TRACE_ROOT_SRC		315
-> +#define IMX7D_TRACE_ROOT_CG		316
-> +#define IMX7D_TRACE_ROOT_DIV		317
-> +#define IMX7D_WDOG1_ROOT_CLK		318
-> +#define IMX7D_WDOG_ROOT_SRC		319
-> +#define IMX7D_WDOG_ROOT_CG		320
-> +#define IMX7D_WDOG_ROOT_DIV		321
-> +#define IMX7D_CSI_MCLK_ROOT_CLK		322
-> +#define IMX7D_CSI_MCLK_ROOT_SRC		323
-> +#define IMX7D_CSI_MCLK_ROOT_CG		324
-> +#define IMX7D_CSI_MCLK_ROOT_DIV		325
-> +#define IMX7D_AUDIO_MCLK_ROOT_CLK	326
-> +#define IMX7D_AUDIO_MCLK_ROOT_SRC	327
-> +#define IMX7D_AUDIO_MCLK_ROOT_CG	328
-> +#define IMX7D_AUDIO_MCLK_ROOT_DIV	329
-> +#define IMX7D_WRCLK_ROOT_CLK		330
-> +#define IMX7D_WRCLK_ROOT_SRC		331
-> +#define IMX7D_WRCLK_ROOT_CG		332
-> +#define IMX7D_WRCLK_ROOT_DIV		333
-> +#define IMX7D_CLKO1_ROOT_SRC		334
-> +#define IMX7D_CLKO1_ROOT_CG		335
-> +#define IMX7D_CLKO1_ROOT_DIV		336
-> +#define IMX7D_CLKO2_ROOT_SRC		337
-> +#define IMX7D_CLKO2_ROOT_CG		338
-> +#define IMX7D_CLKO2_ROOT_DIV		339
-> +#define IMX7D_MAIN_AXI_ROOT_PRE_DIV	340
-> +#define IMX7D_DISP_AXI_ROOT_PRE_DIV	341
-> +#define IMX7D_ENET_AXI_ROOT_PRE_DIV	342
-> +#define IMX7D_NAND_USDHC_BUS_ROOT_PRE_DIV 343
-> +#define IMX7D_AHB_CHANNEL_ROOT_PRE_DIV	344
-> +#define IMX7D_USB_HSIC_ROOT_PRE_DIV	345
-> +#define IMX7D_PCIE_CTRL_ROOT_PRE_DIV	346
-> +#define IMX7D_PCIE_PHY_ROOT_PRE_DIV	347
-> +#define IMX7D_EPDC_PIXEL_ROOT_PRE_DIV	348
-> +#define IMX7D_LCDIF_PIXEL_ROOT_PRE_DIV	349
-> +#define IMX7D_MIPI_DSI_ROOT_PRE_DIV	350
-> +#define IMX7D_MIPI_CSI_ROOT_PRE_DIV	351
-> +#define IMX7D_MIPI_DPHY_ROOT_PRE_DIV	352
-> +#define IMX7D_SAI1_ROOT_PRE_DIV		353
-> +#define IMX7D_SAI2_ROOT_PRE_DIV		354
-> +#define IMX7D_SAI3_ROOT_PRE_DIV		355
-> +#define IMX7D_SPDIF_ROOT_PRE_DIV	356
-> +#define IMX7D_ENET1_REF_ROOT_PRE_DIV	357
-> +#define IMX7D_ENET1_TIME_ROOT_PRE_DIV	358
-> +#define IMX7D_ENET2_REF_ROOT_PRE_DIV	359
-> +#define IMX7D_ENET2_TIME_ROOT_PRE_DIV	360
-> +#define IMX7D_ENET_PHY_REF_ROOT_PRE_DIV 361
-> +#define IMX7D_EIM_ROOT_PRE_DIV		362
-> +#define IMX7D_NAND_ROOT_PRE_DIV		363
-> +#define IMX7D_QSPI_ROOT_PRE_DIV		364
-> +#define IMX7D_USDHC1_ROOT_PRE_DIV	365
-> +#define IMX7D_USDHC2_ROOT_PRE_DIV	366
-> +#define IMX7D_USDHC3_ROOT_PRE_DIV	367
-> +#define IMX7D_CAN1_ROOT_PRE_DIV		368
-> +#define IMX7D_CAN2_ROOT_PRE_DIV		369
-> +#define IMX7D_I2C1_ROOT_PRE_DIV		370
-> +#define IMX7D_I2C2_ROOT_PRE_DIV		371
-> +#define IMX7D_I2C3_ROOT_PRE_DIV		372
-> +#define IMX7D_I2C4_ROOT_PRE_DIV		373
-> +#define IMX7D_UART1_ROOT_PRE_DIV	374
-> +#define IMX7D_UART2_ROOT_PRE_DIV	375
-> +#define IMX7D_UART3_ROOT_PRE_DIV	376
-> +#define IMX7D_UART4_ROOT_PRE_DIV	377
-> +#define IMX7D_UART5_ROOT_PRE_DIV	378
-> +#define IMX7D_UART6_ROOT_PRE_DIV	379
-> +#define IMX7D_UART7_ROOT_PRE_DIV	380
-> +#define IMX7D_ECSPI1_ROOT_PRE_DIV	381
-> +#define IMX7D_ECSPI2_ROOT_PRE_DIV	382
-> +#define IMX7D_ECSPI3_ROOT_PRE_DIV	383
-> +#define IMX7D_ECSPI4_ROOT_PRE_DIV	384
-> +#define IMX7D_PWM1_ROOT_PRE_DIV		385
-> +#define IMX7D_PWM2_ROOT_PRE_DIV		386
-> +#define IMX7D_PWM3_ROOT_PRE_DIV		387
-> +#define IMX7D_PWM4_ROOT_PRE_DIV		388
-> +#define IMX7D_FLEXTIMER1_ROOT_PRE_DIV	389
-> +#define IMX7D_FLEXTIMER2_ROOT_PRE_DIV	390
-> +#define IMX7D_SIM1_ROOT_PRE_DIV		391
-> +#define IMX7D_SIM2_ROOT_PRE_DIV		392
-> +#define IMX7D_GPT1_ROOT_PRE_DIV		393
-> +#define IMX7D_GPT2_ROOT_PRE_DIV		394
-> +#define IMX7D_GPT3_ROOT_PRE_DIV		395
-> +#define IMX7D_GPT4_ROOT_PRE_DIV		396
-> +#define IMX7D_TRACE_ROOT_PRE_DIV	397
-> +#define IMX7D_WDOG_ROOT_PRE_DIV		398
-> +#define IMX7D_CSI_MCLK_ROOT_PRE_DIV	399
-> +#define IMX7D_AUDIO_MCLK_ROOT_PRE_DIV	400
-> +#define IMX7D_WRCLK_ROOT_PRE_DIV	401
-> +#define IMX7D_CLKO1_ROOT_PRE_DIV	402
-> +#define IMX7D_CLKO2_ROOT_PRE_DIV	403
-> +#define IMX7D_DRAM_PHYM_ALT_ROOT_PRE_DIV 404
-> +#define IMX7D_DRAM_ALT_ROOT_PRE_DIV	405
-> +#define IMX7D_LVDS1_IN_CLK		406
-> +#define IMX7D_LVDS1_OUT_SEL		407
-> +#define IMX7D_LVDS1_OUT_CLK		408
-> +#define IMX7D_CLK_DUMMY			409
-> +#define IMX7D_GPT_3M_CLK		410
-> +#define IMX7D_OCRAM_CLK			411
-> +#define IMX7D_OCRAM_S_CLK		412
-> +#define IMX7D_WDOG2_ROOT_CLK		413
-> +#define IMX7D_WDOG3_ROOT_CLK		414
-> +#define IMX7D_WDOG4_ROOT_CLK		415
-> +#define IMX7D_SDMA_CORE_CLK		416
-> +#define IMX7D_USB1_MAIN_480M_CLK	417
-> +#define IMX7D_USB_CTRL_CLK		418
-> +#define IMX7D_USB_PHY1_CLK		419
-> +#define IMX7D_USB_PHY2_CLK		420
-> +#define IMX7D_IPG_ROOT_CLK		421
-> +#define IMX7D_SAI1_IPG_CLK		422
-> +#define IMX7D_SAI2_IPG_CLK		423
-> +#define IMX7D_SAI3_IPG_CLK		424
-> +#define IMX7D_PLL_AUDIO_TEST_DIV	425
-> +#define IMX7D_PLL_AUDIO_POST_DIV	426
-> +#define IMX7D_PLL_VIDEO_TEST_DIV	427
-> +#define IMX7D_PLL_VIDEO_POST_DIV	428
-> +#define IMX7D_MU_ROOT_CLK		429
-> +#define IMX7D_SEMA4_HS_ROOT_CLK		430
-> +#define IMX7D_PLL_DRAM_TEST_DIV		431
-> +#define IMX7D_ADC_ROOT_CLK		432
-> +#define IMX7D_CLK_ARM			433
-> +#define IMX7D_CKIL			434
-> +#define IMX7D_OCOTP_CLK			435
-> +#define IMX7D_NAND_RAWNAND_CLK		436
-> +#define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 437
-> +#define IMX7D_CLK_END			438
->  #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+The clock controller also includes some reset lines. This patch
+implements a reset controller to assert and de-assert these resets.
+The reset controller itself is registered early (through
+CLK_OF_DECLARE_DRIVER) because it is needed very early in the boot
+process (to start the secondary CPU cores).
 
-Are any of these defines being used already? Please just leave
-the numbers intact and make the ones that don't exist go to
-/dev/null in the driver. That way, we don't break some ABI where
-people were expecting raw numbers to work still.
+According to the public S805 datasheet there are two more reset bits
+in the HHI_SYS_CPU_CLK_CNTL0 register, which are not implemented by
+this patch (as these seem to be unused in Amlogic's vendor Linux kernel
+sources and their u-boot tree):
+- bit 15: GEN_DIV_SOFT_RESET
+- bit 14: SOFT_RESET
 
+All information was taken from the public S805 Datasheet and Amlogic's
+vendor GPL kernel sources. This patch is based on an earlier version
+submitted by Carlo Caione.
+
+Suggested-by: Carlo Caione <carlo@endlessm.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/Kconfig   |   1 +
+ drivers/clk/meson/meson8b.c | 159 ++++++++++++++++++++++++++++++++++++++++----
+ drivers/clk/meson/meson8b.h |  25 ++++++-
+ 3 files changed, 172 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 5588f75a8414..d2d0174a6eca 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -6,6 +6,7 @@ config COMMON_CLK_AMLOGIC
+ config COMMON_CLK_MESON8B
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
++	select RESET_CONTROLLER
+ 	help
+ 	  Support for the clock controller on AmLogic S802 (Meson8),
+ 	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index bb3f1de876b1..0f853057885c 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -25,6 +25,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
+ #include <linux/init.h>
+ 
+ #include "clkc.h"
+@@ -32,6 +34,13 @@
+ 
+ static DEFINE_SPINLOCK(clk_lock);
+ 
++static void __iomem *clk_base;
++
++struct meson8b_clk_reset {
++	struct reset_controller_dev reset;
++	void __iomem *base;
++};
++
+ static const struct pll_rate_table sys_pll_rate_table[] = {
+ 	PLL_RATE(312000000, 52, 1, 2),
+ 	PLL_RATE(336000000, 56, 1, 2),
+@@ -690,20 +699,114 @@ static struct clk_divider *const meson8b_clk_dividers[] = {
+ 	&meson8b_mpeg_clk_div,
+ };
+ 
++static const struct meson8b_clk_reset_line {
++	u32 reg;
++	u8 bit_idx;
++} meson8b_clk_reset_bits[] = {
++	[RESETID_L2_CACHE_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 30
++	},
++	[RESETID_AXI_64_TO_128_BRIDGE_A5_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 29
++	},
++	[RESETID_SCU_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 28
++	},
++	[RESETID_CPU3_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 27
++	},
++	[RESETID_CPU2_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 26
++	},
++	[RESETID_CPU1_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 25
++	},
++	[RESETID_CPU0_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 24
++	},
++	[RESETID_A5_GLOBAL_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 18
++	},
++	[RESETID_A5_AXI_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 17
++	},
++	[RESETID_A5_ABP_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 16
++	},
++	[RESETID_AXI_64_TO_128_BRIDGE_MMC_SOFT_RESET] = {
++		.reg = HHI_SYS_CPU_CLK_CNTL1, .bit_idx = 30
++	},
++	[RESETID_VID_CLK_CNTL_SOFT_RESET] = {
++		.reg = HHI_VID_CLK_CNTL, .bit_idx = 15
++	},
++	[RESETID_VID_DIVIDER_CNTL_SOFT_RESET_POST] = {
++		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 7
++	},
++	[RESETID_VID_DIVIDER_CNTL_SOFT_RESET_PRE] = {
++		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 3
++	},
++	[RESETID_VID_DIVIDER_CNTL_RESET_N_POST] = {
++		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 1
++	},
++	[RESETID_VID_DIVIDER_CNTL_RESET_N_PRE] = {
++		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 0
++	},
++};
++
++static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
++				    unsigned long id, bool assert)
++{
++	struct meson8b_clk_reset *meson8b_clk_reset =
++		container_of(rcdev, struct meson8b_clk_reset, reset);
++	unsigned long flags;
++	const struct meson8b_clk_reset_line *reset;
++	u32 val;
++
++	if (id >= ARRAY_SIZE(meson8b_clk_reset_bits))
++		return -EINVAL;
++
++	reset = &meson8b_clk_reset_bits[id];
++
++	spin_lock_irqsave(&clk_lock, flags);
++
++	val = readl(meson8b_clk_reset->base + reset->reg);
++	if (assert)
++		val |= BIT(reset->bit_idx);
++	else
++		val &= ~BIT(reset->bit_idx);
++	writel(val, meson8b_clk_reset->base + reset->reg);
++
++	spin_unlock_irqrestore(&clk_lock, flags);
++
++	return 0;
++}
++
++static int meson8b_clk_reset_assert(struct reset_controller_dev *rcdev,
++				     unsigned long id)
++{
++	return meson8b_clk_reset_update(rcdev, id, true);
++}
++
++static int meson8b_clk_reset_deassert(struct reset_controller_dev *rcdev,
++				       unsigned long id)
++{
++	return meson8b_clk_reset_update(rcdev, id, false);
++}
++
++static const struct reset_control_ops meson8b_clk_reset_ops = {
++	.assert = meson8b_clk_reset_assert,
++	.deassert = meson8b_clk_reset_deassert,
++};
++
+ static int meson8b_clkc_probe(struct platform_device *pdev)
+ {
+-	void __iomem *clk_base;
+ 	int ret, clkid, i;
+ 	struct clk_hw *parent_hw;
+ 	struct clk *parent_clk;
+ 	struct device *dev = &pdev->dev;
+ 
+-	/*  Generic clocks and PLLs */
+-	clk_base = of_iomap(dev->of_node, 1);
+-	if (!clk_base) {
+-		pr_err("%s: Unable to map clk base\n", __func__);
++	if (!clk_base)
+ 		return -ENXIO;
+-	}
+ 
+ 	/* Populate base address for PLLs */
+ 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
+@@ -743,7 +846,7 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 		/* FIXME convert to devm_clk_register */
+ 		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[clkid]);
+ 		if (ret)
+-			goto iounmap;
++			return ret;
+ 	}
+ 
+ 	/*
+@@ -766,15 +869,11 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for cpu_clk\n",
+ 				__func__);
+-		goto iounmap;
++		return ret;
+ 	}
+ 
+ 	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+ 			&meson8b_hw_onecell_data);
+-
+-iounmap:
+-	iounmap(clk_base);
+-	return ret;
+ }
+ 
+ static const struct of_device_id meson8b_clkc_match_table[] = {
+@@ -793,3 +892,39 @@ static struct platform_driver meson8b_driver = {
+ };
+ 
+ builtin_platform_driver(meson8b_driver);
++
++static void __init meson8b_clkc_reset_init(struct device_node *np)
++{
++	struct meson8b_clk_reset *rstc;
++	int ret;
++
++	/* Generic clocks, PLLs and some of the reset-bits */
++	clk_base = of_iomap(np, 1);
++	if (!clk_base) {
++		pr_err("%s: Unable to map clk base\n", __func__);
++		return;
++	}
++
++	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
++	if (!rstc)
++		return;
++
++	/* Reset Controller */
++	rstc->base = clk_base;
++	rstc->reset.ops = &meson8b_clk_reset_ops;
++	rstc->reset.nr_resets = ARRAY_SIZE(meson8b_clk_reset_bits);
++	rstc->reset.of_node = np;
++	ret = reset_controller_register(&rstc->reset);
++	if (ret) {
++		pr_err("%s: Failed to register clkc reset controller: %d\n",
++		       __func__, ret);
++		return;
++	}
++}
++
++CLK_OF_DECLARE_DRIVER(meson8_clkc, "amlogic,meson8-clkc",
++		      meson8b_clkc_reset_init);
++CLK_OF_DECLARE_DRIVER(meson8b_clkc, "amlogic,meson8b-clkc",
++		      meson8b_clkc_reset_init);
++CLK_OF_DECLARE_DRIVER(meson8m2_clkc, "amlogic,meson8m2-clkc",
++		      meson8b_clkc_reset_init);
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index a687e02547dc..5f4d8e49dd4d 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -37,6 +37,9 @@
+ #define HHI_GCLK_AO			0x154 /* 0x55 offset in data sheet */
+ #define HHI_SYS_CPU_CLK_CNTL1		0x15c /* 0x57 offset in data sheet */
+ #define HHI_MPEG_CLK_CNTL		0x174 /* 0x5d offset in data sheet */
++#define HHI_VID_CLK_CNTL		0x17c /* 0x5f offset in data sheet */
++#define HHI_VID_DIVIDER_CNTL		0x198 /* 0x66 offset in data sheet */
++#define HHI_SYS_CPU_CLK_CNTL0		0x19c /* 0x67 offset in data sheet */
+ #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
+ #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
+ #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
+@@ -163,7 +166,27 @@
+ 
+ #define CLK_NR_CLKS		96
+ 
+-/* include the CLKIDs that have been made part of the stable DT binding */
++#define RESETID_L2_CACHE_SOFT_RESET				0
++#define RESETID_AXI_64_TO_128_BRIDGE_A5_SOFT_RESET		1
++#define RESETID_SCU_SOFT_RESET					2
++#define RESETID_CPU0_SOFT_RESET					3
++#define RESETID_CPU1_SOFT_RESET					4
++#define RESETID_CPU2_SOFT_RESET					5
++#define RESETID_CPU3_SOFT_RESET					6
++#define RESETID_A5_GLOBAL_RESET					7
++#define RESETID_A5_AXI_SOFT_RESET				8
++#define RESETID_A5_ABP_SOFT_RESET				9
++#define RESETID_AXI_64_TO_128_BRIDGE_MMC_SOFT_RESET		10
++#define RESETID_VID_CLK_CNTL_SOFT_RESET				11
++#define RESETID_VID_DIVIDER_CNTL_SOFT_RESET_POST		12
++#define RESETID_VID_DIVIDER_CNTL_SOFT_RESET_PRE			13
++#define RESETID_VID_DIVIDER_CNTL_RESET_N_POST			14
++#define RESETID_VID_DIVIDER_CNTL_RESET_N_PRE			15
++
++/*
++ * include the CLKID and RESETID that have
++ * been made part of the stable DT binding
++ */
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ 
+ #endif /* __MESON8B_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.3
