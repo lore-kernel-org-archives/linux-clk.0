@@ -1,72 +1,28 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Ondrej Jirman <megous@megous.com>,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 10/10] ARM: dts: sun8i: Add SY8106A regulator to Orange Pi PC
-Date: Sun, 23 Jul 2017 18:27:49 +0800
-Message-Id: <20170723102749.17323-11-icenowy@aosc.io>
-In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170721161935.18411-1-maxime.ripard@free-electrons.com>
+References: <20170721161935.18411-1-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 22 Jul 2017 10:23:19 +0800
+Message-ID: <CAGb2v64AmFA7qHgTK6+w147-vb0Mv6uh5xx5MXy5jVfKNX_WVg@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Add clk_set_rate_parent to the CPU clock
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Ondrej Jirman <megous@megous.com>
+On Sat, Jul 22, 2017 at 12:19 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The current CPU clock is missing the option to change the rate of its
+> parents, leading to improper rates calculated by cpufreq, and eventually
+> crashes.
+>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> Reported-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
-Orange Pi PC, then set the power supply of the ARM cores to this
-regulator, in order to enable DVFS.
-
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-[Icenowy: Enable DVFS in this patch, slight changes and change commit
- message]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-index 998b60f8d295..d855f8b6254e 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
-@@ -98,6 +98,10 @@
- 	status = "okay";
- };
- 
-+&cpu0 {
-+	cpu-supply = <&reg_sy8106a>;
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -160,6 +164,21 @@
- 	};
- };
- 
-+&r_i2c {
-+	status = "okay";
-+
-+	reg_sy8106a: regulator@65 {
-+		compatible = "silergy,sy8106a";
-+		reg = <0x65>;
-+		regulator-name = "vdd-cpux";
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1400000>;
-+		regulator-ramp-delay = <200>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
- &r_pio {
- 	leds_r_opc: led_pins@0 {
- 		pins = "PL10";
--- 
-2.13.0
+Acked-by: Chen-Yu Tsai <wens@csie.org>
