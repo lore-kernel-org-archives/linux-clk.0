@@ -1,165 +1,74 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 8/9] ASoC: atmel-classd: remove aclk clock
-Date: Tue,  4 Jul 2017 13:59:26 +0200
-Message-Id: <20170704115927.32662-9-quentin.schulz@free-electrons.com>
-In-Reply-To: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
-References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
+	robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux@armlinux.org.uk,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/3] add the reset controller to the Meson8b clkc
+Date: Sat, 22 Jul 2017 20:58:04 +0200
+Message-Id: <20170722185807.10504-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since gclk (generated-clk) is now able to determine the rate of the
-audio_pll, there is no need for classd to have a direct phandle to the
-audio_pll while already having a phandle to gclk.
+This registers the known (soft) reset lines provided by the clock
+controller's registers.
 
-Thus, remove all mentions to aclk in classd driver and update macros and
-variable names.
+This is the first preparation step for SMP and CPU hotplug support on
+Meson8/Meson8b/Meson8m2. Booting the secondary cores on these SoCs
+requires asserting and de-asserting a reset line (one for each CPU
+core). These reset lines are provided by the clock controller.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
----
+The reset controller part of the meson8b clock controller has to be
+registered early (which I did through CLK_OF_DECLARE_DRIVER), because
+the secondary cores are started *very* early in the boot process (and
+meson8b_clkc_probe is invoked long after we need the reset controller
+to be available for booting the secondary CPU cores).
 
-added in v2:
-  - split from bigger patch with audio PLLs and DT binding,
-  - updated all variables and macros named ACLK to GCLK,
+The user of the reset-controller (= the patches which enable SMP and
+CPU hotplug support) will follow in the next days. I decided to split
+this because the SMP series will probably consist of 6 patches alone
+(and may need to go through two separate trees).
 
- sound/soc/atmel/atmel-classd.c | 47 +++++++++++++-----------------------------
- 1 file changed, 14 insertions(+), 33 deletions(-)
 
-diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
-index b7ef8c59b49a..be6b775b6f46 100644
---- a/sound/soc/atmel/atmel-classd.c
-+++ b/sound/soc/atmel/atmel-classd.c
-@@ -32,7 +32,6 @@ struct atmel_classd {
- 	struct regmap *regmap;
- 	struct clk *pclk;
- 	struct clk *gclk;
--	struct clk *aclk;
- 	int irq;
- 	const struct atmel_classd_pdata *pdata;
- };
-@@ -330,11 +329,6 @@ static int atmel_classd_codec_dai_startup(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
--	int ret;
--
--	ret = clk_prepare_enable(dd->aclk);
--	if (ret)
--		return ret;
- 
- 	return clk_prepare_enable(dd->gclk);
- }
-@@ -357,31 +351,31 @@ static int atmel_classd_codec_dai_digital_mute(struct snd_soc_dai *codec_dai,
- 	return 0;
- }
- 
--#define CLASSD_ACLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
--#define CLASSD_ACLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
-+#define CLASSD_GCLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
-+#define CLASSD_GCLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
- 
- static struct {
- 	int rate;
- 	int sample_rate;
- 	int dsp_clk;
--	unsigned long aclk_rate;
-+	unsigned long gclk_rate;
- } const sample_rates[] = {
- 	{ 8000,  CLASSD_INTPMR_FRAME_8K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 16000, CLASSD_INTPMR_FRAME_16K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 32000, CLASSD_INTPMR_FRAME_32K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 48000, CLASSD_INTPMR_FRAME_48K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 96000, CLASSD_INTPMR_FRAME_96K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 22050, CLASSD_INTPMR_FRAME_22K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- 	{ 44100, CLASSD_INTPMR_FRAME_44K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- 	{ 88200, CLASSD_INTPMR_FRAME_88K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- };
- 
- static int
-@@ -410,13 +404,12 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	dev_dbg(codec->dev,
--		"Selected SAMPLE_RATE of %dHz, ACLK_RATE of %ldHz\n",
--		sample_rates[best].rate, sample_rates[best].aclk_rate);
-+		"Selected SAMPLE_RATE of %dHz, GCLK_RATE of %ldHz\n",
-+		sample_rates[best].rate, sample_rates[best].gclk_rate);
- 
- 	clk_disable_unprepare(dd->gclk);
--	clk_disable_unprepare(dd->aclk);
- 
--	ret = clk_set_rate(dd->aclk, sample_rates[best].aclk_rate);
-+	ret = clk_set_rate(dd->gclk, sample_rates[best].gclk_rate);
- 	if (ret)
- 		return ret;
- 
-@@ -426,10 +419,6 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
- 
- 	snd_soc_update_bits(codec, CLASSD_INTPMR, mask, val);
- 
--	ret = clk_prepare_enable(dd->aclk);
--	if (ret)
--		return ret;
--
- 	return clk_prepare_enable(dd->gclk);
- }
- 
-@@ -441,7 +430,6 @@ atmel_classd_codec_dai_shutdown(struct snd_pcm_substream *substream,
- 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
- 
- 	clk_disable_unprepare(dd->gclk);
--	clk_disable_unprepare(dd->aclk);
- }
- 
- static int atmel_classd_codec_dai_prepare(struct snd_pcm_substream *substream,
-@@ -596,13 +584,6 @@ static int atmel_classd_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	dd->aclk = devm_clk_get(dev, "aclk");
--	if (IS_ERR(dd->aclk)) {
--		ret = PTR_ERR(dd->aclk);
--		dev_err(dev, "failed to get audio clock: %d\n", ret);
--		return ret;
--	}
--
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	io_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(io_base)) {
+Changes since v1 at [0]:
+- updated cover letter description as we are now registering more than
+  four reset lines
+- split patch #1 into a dt-binding and clk driver patch
+- slightly reworded the dt-binding documentation so it's now clear that
+  the reset identifiers are preprocessor macros in
+  dt-bindings/clock/meson8b-clkc.h (v1 of this series didn't have these
+  macros at all)
+- patch #2 (previously part of patch #1) now registers all known reset
+  lines (see [1] and [2] for the results of my detective work)
+- patch #3 is untouched
+
+
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004283.html
+[1] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004330.html
+[2] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004347.html
+
+
+Martin Blumenstingl (3):
+  dt-bindings: clock: meson8b: describe the embedded reset controller
+  clk: meson: meson8b: register the built-in reset controller
+  ARM: dts: meson: mark the clock controller also as reset controller
+
+ .../bindings/clock/amlogic,meson8b-clkc.txt        |   8 +-
+ arch/arm/boot/dts/meson8.dtsi                      |   1 +
+ arch/arm/boot/dts/meson8b.dtsi                     |   1 +
+ drivers/clk/meson/Kconfig                          |   1 +
+ drivers/clk/meson/meson8b.c                        | 159 +++++++++++++++++++--
+ drivers/clk/meson/meson8b.h                        |  25 +++-
+ 6 files changed, 181 insertions(+), 14 deletions(-)
+
 -- 
-2.11.0
+2.13.3
