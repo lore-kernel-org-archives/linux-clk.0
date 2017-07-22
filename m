@@ -1,170 +1,157 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC 05/12] clk: qcom: fix 16 bit alpha support calculation
-Date: Thu, 27 Jul 2017 16:40:18 +0530
-Message-Id: <1501153825-5181-6-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAFBinCC5+5wwOckWsrTdNeio+t31TrfRAsaMbrOEP-qZgtEOmg@mail.gmail.com>
+References: <20170711224939.26267-1-martin.blumenstingl@googlemail.com>
+ <20170711224939.26267-2-martin.blumenstingl@googlemail.com>
+ <20170717171329.nddlcslge6u33noc@rob-hp-laptop> <CAFBinCC5+5wwOckWsrTdNeio+t31TrfRAsaMbrOEP-qZgtEOmg@mail.gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 22 Jul 2017 20:30:44 +0200
+Message-ID: <CAFBinCDw8sqHdprZ2Bb-0iXSsN27Kzx+=6kZeqYZjSPRiFUFEA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: meson: meson8b: register the built-in reset controller
+To: Rob Herring <robh@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, khilman@baylibre.com, carlo@caione.org,
+	narmstrong@baylibre.com, jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org, arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The alpha value calculation function has been written for
-40 bit alpha which is not coming properly for 16 bit alpha.
+On Tue, Jul 18, 2017 at 12:22 AM, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+> Hi Rob,
+>
+> On Mon, Jul 17, 2017 at 7:13 PM, Rob Herring <robh@kernel.org> wrote:
+>> On Wed, Jul 12, 2017 at 12:49:38AM +0200, Martin Blumenstingl wrote:
+>>> The clock controller has a reset controller embedded. A large part of
+>>> the HHI_SYS_CPU_CLK_CNTL0 register contains reset bits. However, most of
+>>> them are only used by u-boot (as these are probably dangerous to use
+>>> when Linux is running).
+>>
+>> u-boot reads DT's. The DT should be defined for the h/w, not what you
+>> want for Linux today.
+> OK, that matches with your comment regarding splitting the patch below
+>
+>>> Bits 27:24 are interesting though: these are the CPUx core soft reset
+>>> bits (bit 24 = CPU0 soft reset, bit 25 = CPU1 ...).
+>>>
+>>> This patch implements a reset controller for these bits. The reset
+>>> controller itself is registered early (through CLK_OF_DECLARE_DRIVER)
+>>> because it is neede very early in the boot process (to start the
+>>> secondary CPU cores).
+>>>
+>>> Other reset bits in the HHI_SYS_CPU_CLK_CNTL0 register, which are not
+>>> implemented by this patch (as these may never be used from within the
+>>> Linux kernel - and I don't want to add dead code):
+>>> - bit 30: L2 cache soft reset
+>>> - bit 29: AXI64to128 bridge (A5-to-MMC) soft reset (A5 interface)
+>>> - bit 28: SCU soft reset
+>>> - bit 18: A5 Global Reset
+>>> - bit 17: A5 AXI Soft Reset
+>>> - bit 16: A5 APB Soft Reset
+>>> - bit 15: GEN_DIV_SOFT_RESET
+>>> - bit 14: SOFT_RESET
+>>>
+>>> All information was taken from the public S805 Datasheet and Amlogic's
+>>> vendor GPL kernel sources. This patch is based on an earlier version
+>>> submitted by Carlo Caione.
+>>>
+>>> Suggested-by: Carlo Caione <carlo@endlessm.com>
+>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>> ---
+>>>  .../bindings/clock/amlogic,meson8b-clkc.txt        |   7 +-
+>>
+>> It's preferred to split bindings to a separate patch. Given all the
+>> commentary about Linux, I'd suggest you do that here (so the Linux
+>> details are gone from the binding patch).
+> you are right - I'll split this into a dt-bindings and a clk driver
+> patch and keep the commit messages appropriate for each patch
+>
+>>>  drivers/clk/meson/Kconfig                          |   1 +
+>>>  drivers/clk/meson/meson8b.c                        | 109 ++++++++++++++++++---
+>>>  drivers/clk/meson/meson8b.h                        |   1 +
+>>>  4 files changed, 105 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+>>> index 606da38c0959..6f444e3867a0 100644
+>>> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+>>> @@ -16,18 +16,23 @@ Required Properties:
+>>>          mapped region.
+>>>
+>>>  - #clock-cells: should be 1.
+>>> +- #reset-cells: should be 1.
+>>>
+>>>  Each clock is assigned an identifier and client nodes can use this identifier
+>>>  to specify the clock which they consume. All available clocks are defined as
+>>>  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+>>>  used in device tree sources.
+>>>
+>>> +The clock controller provides a (soft) reset line for each CPU core. Valid
+>>> +reset lines are 0, 1, 2 and 3 (one for each CPU core).
+>>
+>> I suspect you would have different numbering if you enumerate all the
+>> possible resets. Is it just this one register that has reset bits? If
+>> so, I'd suggest using the bit position as the cell values. If not, well,
+>> just enumerate them all.
+> there are more resets in this register area:
+> - "AXI64to128 bridge (A5-to-MMC) soft reset (MMC interface)": bit 30
+> in HHI_SYS_CPU_CLK_CNTL1
+> - SOFT_RESET: bit 15 in HHI_VID_CLK_CNTL
+> - some more bits with "reset" in their name (CLK_DIV_RESET = bit 17 in
+> HHI_VID_CLK_DIV, and four more in HHI_VID_DIVIDER_CNTL:
+> SOFT_RESET_POST, SOFT_RESET_PRE, RESET_N_POST, RESET_N_PRE)
+>
+> Carlo's original patch added #defines (RST_CORE0...RST_CORE3) for each
+> CPU reset bit.
+> Arnd (I CC'ed him in this mail) suggested to skip the defines, see [0]
+> - which is what I did with this patch.
+>
+> by looking at Amlogic's u-boot sources I can see that the following
+> reset bits are used:
+> - bits 30:28 and 18:16 from HHI_SYS_CPU_CLK_CNTL0 and bit 30 from
+> HHI_SYS_CPU_CLK_CNTL1 are used during Meson8b system suspend/wakeup
+> from suspend
+> - the four resets from HHI_VID_DIVIDER_CNTL are used to setup the "vid PLL div"
+>
+> that leaves the following reset bits unused (hidden somewhere deep in the code):
+> - HHI_VID_CLK_CNTL bit 15 is used in Meson6's u-boot code - but only
+> in some #if 0'ed blocks
+> - SOFT_RESET: bit 15 in HHI_VID_CLK_CNTL
+I actually found two "consumers" in Amlogic's Linux kernel sources -
+they are writing 0x88001 and 0x80003
+these nice magic numbers (found for example in
+arch/arm/mach-meson8b/include/mach/tvregs.h) assert and de-assert the
+reset line (bit 15 = 0x8000)
+it also seems that I listed this bit twice (no idea why though)
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 58 +++++++++++++++++++++++-----------------
- 1 file changed, 34 insertions(+), 24 deletions(-)
+anyway, this bit will be part of the next version of this patch
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index ef24c80..3a7ec42 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -45,8 +45,11 @@
-  * Even though 40 bits are present, use only 32 for ease of calculation.
-  */
- #define ALPHA_REG_BITWIDTH	40
-+#define ALPHA_REG_16BIT_WIDTH	16
- #define ALPHA_BITWIDTH		32
--#define ALPHA_16BIT_MASK	0xffff
-+
-+#define pll_alpha_width(pll)  (pll->flags & SUPPORTS_16BIT_ALPHA ?	\
-+			       ALPHA_REG_16BIT_WIDTH : ALPHA_REG_BITWIDTH)
- 
- #define pll_mode(pll)		(pll->base + pll->offsets[ALPHA_PLL_MODE])
- #define pll_l(pll)		(pll->base + pll->offsets[ALPHA_PLL_L_VAL])
-@@ -316,13 +319,16 @@ static void clk_alpha_pll_disable(struct clk_hw *hw)
- 	regmap_update_bits(pll->clkr.regmap, pll_mode(pll), mask, 0);
- }
- 
--static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
-+static unsigned long
-+alpha_pll_calc_rate(u64 prate, u32 l, u32 a, u32 alpha_width)
- {
--	return (prate * l) + ((prate * a) >> ALPHA_BITWIDTH);
-+	return (prate * l) + ((prate * a) >>
-+		(alpha_width > ALPHA_BITWIDTH ? ALPHA_BITWIDTH : alpha_width));
- }
- 
- static unsigned long
--alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a)
-+alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
-+		     u32 alpha_width)
- {
- 	u64 remainder;
- 	u64 quotient;
-@@ -337,14 +343,16 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
- 	}
- 
- 	/* Upper ALPHA_BITWIDTH bits of Alpha */
--	quotient = remainder << ALPHA_BITWIDTH;
-+	quotient = remainder << (alpha_width > ALPHA_BITWIDTH ?
-+				 ALPHA_BITWIDTH : alpha_width);
-+
- 	remainder = do_div(quotient, prate);
- 
- 	if (remainder)
- 		quotient++;
- 
- 	*a = quotient;
--	return alpha_pll_calc_rate(prate, *l, *a);
-+	return alpha_pll_calc_rate(prate, *l, *a, alpha_width);
- }
- 
- static const struct pll_vco *
-@@ -363,26 +371,26 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
- static unsigned long
- clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- {
--	u32 l, low, high, ctl;
--	u64 a = 0, prate = parent_rate;
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	u32 l, low, high, ctl, alpha_width = pll_alpha_width(pll);
-+	u64 a = 0, prate = parent_rate;
- 
- 	regmap_read(pll->clkr.regmap, pll_l(pll), &l);
- 
- 	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
- 	if (ctl & PLL_ALPHA_EN) {
- 		regmap_read(pll->clkr.regmap, pll_alpha(pll), &low);
--		if (pll->flags & SUPPORTS_16BIT_ALPHA) {
--			a = low & ALPHA_16BIT_MASK;
--		} else {
-+		if (alpha_width > ALPHA_BITWIDTH) {
- 			regmap_read(pll->clkr.regmap, pll_alpha_u(pll),
- 				    &high);
--			a = (u64)high << 32 | low;
--			a >>= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
-+			a = (u64)high << ALPHA_BITWIDTH | low;
-+			a >>= alpha_width - ALPHA_BITWIDTH;
-+		} else {
-+			a = low;
- 		}
- 	}
- 
--	return alpha_pll_calc_rate(prate, l, a);
-+	return alpha_pll_calc_rate(prate, l, a, alpha_width);
- }
- 
- static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -390,10 +398,10 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	const struct pll_vco *vco;
--	u32 l;
-+	u32 l, alpha_width = pll_alpha_width(pll);
- 	u64 a;
- 
--	rate = alpha_pll_round_rate(rate, prate, &l, &a);
-+	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
- 	vco = alpha_pll_find_vco(pll, rate);
- 	if (!vco) {
- 		pr_err("alpha pll not in a valid vco range\n");
-@@ -402,14 +410,16 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	regmap_write(pll->clkr.regmap, pll_l(pll), l);
- 
--	if (pll->flags & SUPPORTS_16BIT_ALPHA) {
--		regmap_write(pll->clkr.regmap, pll_alpha(pll),
--			     a & ALPHA_16BIT_MASK);
--	} else {
--		a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
--		regmap_write(pll->clkr.regmap, pll_alpha_u(pll), a >> 32);
-+	if (alpha_width > ALPHA_BITWIDTH) {
-+		a <<= (alpha_width - ALPHA_BITWIDTH);
-+		regmap_update_bits(pll->clkr.regmap, pll_alpha_u(pll),
-+				   GENMASK(0, alpha_width - ALPHA_BITWIDTH - 1),
-+				   a >> ALPHA_BITWIDTH);
- 	}
- 
-+	regmap_update_bits(pll->clkr.regmap, pll_alpha(pll),
-+			   GENMASK(0, alpha_width - 1), a);
-+
- 	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
- 			   PLL_VCO_MASK << PLL_VCO_SHIFT,
- 			   vco->val << PLL_VCO_SHIFT);
-@@ -424,11 +434,11 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				     unsigned long *prate)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
--	u32 l;
-+	u32 l, alpha_width = pll_alpha_width(pll);
- 	u64 a;
- 	unsigned long min_freq, max_freq;
- 
--	rate = alpha_pll_round_rate(rate, *prate, &l, &a);
-+	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
- 	if (alpha_pll_find_vco(pll, rate))
- 		return rate;
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> - bit 15:14 in HHI_SYS_CPU_CLK_CNTL0
+these really seem to be unused, so my next patch version will not contain these
+
+> so if you want I can add more reset bits I found to the driver and
+> introduce a #define for each reset.
+> I guess this would be find for Arnd as well (please speak up if it isn't).
+> however, I would only do this for the reset bits for which I could
+> find a consumer in Amlogic's vendor GPL kernel/u-boot code (as there's
+> not a lot documentation available, and I don't like guessing register
+> bit purposes based on a 12-character description from a stripped down
+> version of the SoC datasheet).
+>
+>>> +
+>>>  Example: Clock controller node:
+>>>
+>>>       clkc: clock-controller@c1104000 {
+>>> -             #clock-cells = <1>;
+>>>               compatible = "amlogic,meson8b-clkc";
+>>>               reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
+>>> +             #clock-cells = <1>;
+>>> +             #reset-cells = <1>;
+>>>       };
+>>>
+>>>
+>
+> Regards,
+> Martin
+>
+> [0] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/390397.html
