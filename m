@@ -1,44 +1,138 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	Sergej Sawazki <sergej@taudac.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-Subject: [RFC PATCH v1] clk: si5351: Rename internal plls to avoid name collisions
-Date: Tue, 25 Jul 2017 23:21:02 +0200
-Message-Id: <1501017662-9239-1-git-send-email-sergej@taudac.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Vladimir Zapolskiy <vz@mleia.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
+        "radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones
+	<lee.jones@linaro.org>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        Ludovic BARRE <ludovic.barre@st.com>,
+        "Olivier
+ BIDEAU" <olivier.bideau@st.com>,
+        Amelie DELAUNAY <amelie.delaunay@st.com>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
+        "Arvind
+ Yadav" <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH v7 3/3] clk: stm32h7: Add stm32h743 clock driver
+Date: Sat, 22 Jul 2017 11:58:10 +0000
+Message-ID: <ea79cb25-a926-4f62-5696-c50485fd6ff3@st.com>
+References: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
+ <1500474344-9832-4-git-send-email-gabriel.fernandez@st.com>
+ <d999fc79-7b14-da8e-965f-371cf4352dd1@mleia.com>
+In-Reply-To: <d999fc79-7b14-da8e-965f-371cf4352dd1@mleia.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This drivers probe fails due to a clock name collision if a clock named
-'plla' or 'pllb' is already registered when registering this drivers
-internal plls.
-
-Fix it by renaming internal plls to avoid name collisions.
-
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Signed-off-by: Sergej Sawazki <sergej@taudac.com>
----
-Issue observed on a RaspberryPi with kernel version 4.9.24-v7+, the clock tree
-contains clocks named 'plla' and 'pllb'.
-
- drivers/clk/clk-si5351.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 6cca425..2866dcd 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -72,7 +72,7 @@ static const char * const si5351_input_names[] = {
- 	"xtal", "clkin"
- };
- static const char * const si5351_pll_names[] = {
--	"plla", "pllb", "vxco"
-+	"si5351_plla", "si5351_pllb", "si5351_vxco"
- };
- static const char * const si5351_msynth_names[] = {
- 	"ms0", "ms1", "ms2", "ms3", "ms4", "ms5", "ms6", "ms7"
--- 
-2.7.4
+DQoNCk9uIDA3LzE5LzIwMTcgMTE6MjAgUE0sIFZsYWRpbWlyIFphcG9sc2tpeSB3cm90ZToNCj4g
+SGVsbG8gR2FicmllbCwNCj4NCj4gT24gMDcvMTkvMjAxNyAwNToyNSBQTSwgZ2FicmllbC5mZXJu
+YW5kZXpAc3QuY29tIHdyb3RlOg0KPj4gRnJvbTogR2FicmllbCBGZXJuYW5kZXogPGdhYnJpZWwu
+ZmVybmFuZGV6QHN0LmNvbT4NCj4+DQo+PiBUaGlzIHBhdGNoIGVuYWJsZXMgY2xvY2tzIGZvciBT
+VE0zMkg3NDMgYm9hcmRzLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEdhYnJpZWwgRmVybmFuZGV6
+IDxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+DQo+Pg0KPj4gZm9yIE1GRCBjaGFuZ2VzOg0KPj4g
+QWNrZWQtYnk6IExlZSBKb25lcyA8bGVlLmpvbmVzQGxpbmFyby5vcmc+DQo+Pg0KPj4gZm9yIERU
+LUJpbmRpbmdzDQo+PiBBY2tlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4+
+IC0tLQ0KPj4gICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zdCxzdG0zMmg3LXJjYy50
+eHQgICB8ICAgODIgKysNCj4gSSdsbCBwcm92aWRlIHNvbWUgcmV2aWV3IGNvbW1lbnRzIGFib3V0
+IGRldmljZSB0cmVlIGJpbmRpbmdzIG9ubHkuDQo+DQo+PiBIaSBkcml2ZXJzL2Nsay9NYWtlZmls
+ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgIDEgKw0KPj4gICBkcml2ZXJzL2Ns
+ay9jbGstc3RtMzJoNy5jICAgICAgICAgICAgICAgICAgICAgICAgICB8IDE0MDkgKysrKysrKysr
+KysrKysrKysrKysNCj4+ICAgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zdG0zMmg3LWNsa3Mu
+aCAgICAgICAgICAgfCAgMTY1ICsrKw0KPj4gICBpbmNsdWRlL2R0LWJpbmRpbmdzL21mZC9zdG0z
+Mmg3LXJjYy5oICAgICAgICAgICAgICB8ICAxMzYgKysNCj4+ICAgNSBmaWxlcyBjaGFuZ2VkLCAx
+NzkzIGluc2VydGlvbnMoKykNCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zdCxzdG0zMmg3LXJjYy50eHQNCj4+ICAgY3JlYXRl
+IG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL2Nsay1zdG0zMmg3LmMNCj4+ICAgY3JlYXRlIG1vZGUg
+MTAwNjQ0IGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RtMzJoNy1jbGtzLmgNCj4+ICAgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGluZ3MvbWZkL3N0bTMyaDctcmNjLmgNCj4+
+DQo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2Nr
+L3N0LHN0bTMyaDctcmNjLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9j
+bG9jay9zdCxzdG0zMmg3LXJjYy50eHQNCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+PiBpbmRl
+eCAwMDAwMDAwLi40NDJjNTBjDQo+PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc3Qsc3RtMzJoNy1yY2MudHh0DQo+PiBAQCAt
+MCwwICsxLDgyIEBADQo+PiArU1RNaWNyb2VsZWN0cm9uaWNzIFNUTTMySDcgUmVzZXQgYW5kIENs
+b2NrIENvbnRyb2xsZXINCj4+ICs9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PQ0KPj4gKw0KPj4gK1RoZSBSQ0MgSVAgaXMgYm90aCBhIHJlc2V0IGFu
+ZCBhIGNsb2NrIGNvbnRyb2xsZXIuDQo+PiArDQo+PiArUGxlYXNlIHJlZmVyIHRvIGNsb2NrLWJp
+bmRpbmdzLnR4dCBmb3IgY29tbW9uIGNsb2NrIGNvbnRyb2xsZXIgYmluZGluZyB1c2FnZS4NCj4+
+ICtQbGVhc2UgYWxzbyByZWZlciB0byByZXNldC50eHQgZm9yIGNvbW1vbiByZXNldCBjb250cm9s
+bGVyIGJpbmRpbmcgdXNhZ2UuDQo+PiArDQo+PiArUmVxdWlyZWQgcHJvcGVydGllczoNCj4+ICst
+IGNvbXBhdGlibGU6IFNob3VsZCBiZToNCj4+ICsgICJzdCxzdG0zMmg3NDMtcmNjIg0KPj4gKw0K
+Pj4gKy0gcmVnOiBzaG91bGQgYmUgcmVnaXN0ZXIgYmFzZSBhbmQgbGVuZ3RoIGFzIGRvY3VtZW50
+ZWQgaW4gdGhlDQo+PiArICBkYXRhc2hlZXQNCj4+ICsNCj4+ICstICNyZXNldC1jZWxsczogMSwg
+c2VlIGJlbG93DQo+PiArDQo+PiArLSAjY2xvY2stY2VsbHMgOiBmcm9tIGNvbW1vbiBjbG9jayBi
+aW5kaW5nOyBzaGFsbCBiZSBzZXQgdG8gMQ0KPj4gKw0KPj4gKy0gY2xvY2tzOiBFeHRlcm5hbCBv
+c2NpbGxhdG9yIGNsb2NrIHBoYW5kbGUNCj4+ICsgIC0gaGlnaCBzcGVlZCBleHRlcm5hbCBjbG9j
+ayBzaWduYWwgKEhTRSkNCj4+ICsgIC0gbG93IHNwZWVkIGV4dGVybmFsIGNsb2NrIHNpZ25hbCAo
+TFNFKQ0KPj4gKyAgLSBleHRlcm5hbCBJMlMgY2xvY2sgKEkyU19DS0lOKQ0KPj4gKw0KPj4gK09w
+dGlvbmFsIHByb3BlcnRpZXM6DQo+PiArLSBzdCxzeXNjZmc6IHBoYW5kbGUgZm9yIHB3cmNmZywg
+bWFuZGF0b3J5IHRvIGRpc2FibGUvZW5hYmxlIGJhY2t1cCBkb21haW4NCj4+ICsgIHdyaXRlIHBy
+b3RlY3Rpb24gKFJUQyBjbG9jaykuDQo+PiArDQo+PiArRXhhbXBsZToNCj4+ICsNCj4+ICsJcmNj
+OiByY2NANTgwMjQ0MDAgew0KPiAncmNjJyBhcyBhIGdlbmVyaWMgZGV2aWNlIG5vZGUgbmFtZSBp
+cyBhd2t3YXJkLg0KPg0KPiBJIGJlbGlldmUgdGhlIG1haW4gZnVuY3Rpb24gb2YgdGhlIGRldmlj
+ZSBpcyBjbG9jayBjb250cm9sbGVyICh1bmxpa2VseQ0KPiBhIGdlbmVyaWMgcmVzZXQgY29udHJv
+bGxlciBjYW4gYmUgY29udmVydGVkIGludG8gYSBjbG9jayBjb250cm9sbGVyKSwNCj4gdGhlIGxv
+Y2F0aW9ucyBvZiB0aGUgZG9jdW1lbnQgYW5kIGRldmljZSBkcml2ZXIgYWxzbyBpbmRpY2F0ZSB0
+aGF0DQo+IHByaW1hcmlseSBpdCBpcyBhIGNsb2NrIGNvbnRyb2xsZXIsIHNvIEkgc3VnZ2VzdCB0
+byByZXBsYWNlIGRldmljZSBub2RlDQo+IG5hbWUgd2l0aCAnY2xvY2stY29udHJvbGxlcicgbGlr
+ZSBiZWxvdzoNCj4NCj4gCXJjYzogY2xvY2stY29udHJvbGxlckA1ODAyNDQwMCB7DQo+DQo+PiAr
+CQkjcmVzZXQtY2VsbHMgPSA8MT47DQo+PiArCQkjY2xvY2stY2VsbHMgPSA8Mj4NCj4gTWlzc2lu
+ZyB0cmFpbGluZyBzZW1pY29sb24gICAgICAgXl5eDQo+DQo+IE15IHJlY29tbWVuZGF0aW9uIGlz
+IHRvIG1vdmUgI3Jlc2V0LWNlbGxzIGFuZCAjY2xvY2stY2VsbHMgcHJvcGVydGllcw0KPiBkb3du
+IGFmdGVyICdyZWcnIG9yICdjbG9ja3MnIHByb3BlcnR5IGluIHRoZSBsaXN0Lg0KPg0KPj4gKwkJ
+Y29tcGF0aWJsZSA9ICJzdCxzdG0zMmg3NDMtcmNjIiwgInN0LHN0bTMyLXJjYyI7DQo+PiArCQly
+ZWcgPSA8MHg1ODAyNDQwMCAweDQwMD47DQo+PiArCQljbG9ja3MgPSA8JmNsa19oc2U+LCA8JmNs
+a19sc2U+LCA8JmNsa19pMnNfY2tpbj47DQo+PiArDQo+PiArCQlzdCxzeXNjZmcgPSA8JnB3cmNm
+Zz47DQo+PiArDQo+PiArCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsNCj4+ICsJCSNzaXplLWNlbGxz
+ID0gPDA+Ow0KPiBQbGVhc2UgZHJvcCAjYWRkcmVzcy1jZWxscyBhbmQgI3NpemUtY2VsbHMgcHJv
+cGVydGllcyBjb21wbGV0ZWx5LCBmcm9tDQo+IHRoZSBkb2N1bWVudCB0aGUgZGV2aWNlIG5vZGUg
+ZG9lcyBub3QgZGVmaW5lIGFueSBjaGlsZHJlbiBzdWJub2Rlcy4NCj4NCj4+ICsJfTsNCj4+ICsN
+Cj4+ICtUaGUgcGVyaXBoZXJhbCBjbG9jayBjb25zdW1lciBzaG91bGQgc3BlY2lmeSB0aGUgZGVz
+aXJlZCBjbG9jayBieQ0KPj4gK2hhdmluZyB0aGUgY2xvY2sgSUQgaW4gaXRzICJjbG9ja3MiIHBo
+YW5kbGUgY2VsbC4NCj4+ICsNCj4+ICtBbGwgYXZhaWxhYmxlIGNsb2NrcyBhcmUgZGVmaW5lZCBh
+cyBwcmVwcm9jZXNzb3IgbWFjcm9zIGluDQo+PiArZHQtYmluZGluZ3MvY2xvY2svc3RtMzJoNy1j
+bGtzLmggaGVhZGVyIGFuZCBjYW4gYmUgdXNlZCBpbiBkZXZpY2UNCj4+ICt0cmVlIHNvdXJjZXMu
+DQo+PiArDQo+PiArRXhhbXBsZToNCj4+ICsNCj4+ICsJCXRpbWVyNTogdGltZXJANDAwMDBjMDAg
+ew0KPj4gKwkJCWNvbXBhdGlibGUgPSAic3Qsc3RtMzItdGltZXIiOw0KPj4gKwkJCXJlZyA9IDww
+eDQwMDAwYzAwIDB4NDAwPjsNCj4+ICsJCQlpbnRlcnJ1cHRzID0gPDUwPjsNCj4+ICsJCQljbG9j
+a3MgPSA8JnJjYyBUSU01X0NLPjsNCj4+ICsNCj4gUGxlYXNlIHJlbW90ZSB0aGUgZW1wdHkgbGlu
+ZSBhYm92ZS4NCj4NCj4+ICsJCX07DQo+PiArDQo+PiArU3BlY2lmeWluZyBzb2Z0cmVzZXQgY29u
+dHJvbCBvZiBkZXZpY2VzDQo+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09DQo+PiArDQo+PiArRGV2aWNlIG5vZGVzIHNob3VsZCBzcGVjaWZ5IHRoZSByZXNldCBjaGFu
+bmVsIHJlcXVpcmVkIGluIHRoZWlyICJyZXNldHMiDQo+PiArcHJvcGVydHksIGNvbnRhaW5pbmcg
+YSBwaGFuZGxlIHRvIHRoZSByZXNldCBkZXZpY2Ugbm9kZSBhbmQgYW4gaW5kZXggc3BlY2lmeWlu
+Zw0KPj4gK3doaWNoIGNoYW5uZWwgdG8gdXNlLg0KPj4gK1RoZSBpbmRleCBpcyB0aGUgYml0IG51
+bWJlciB3aXRoaW4gdGhlIFJDQyByZWdpc3RlcnMgYmFuaywgc3RhcnRpbmcgZnJvbSBSQ0MNCj4+
+ICtiYXNlIGFkZHJlc3MuDQo+PiArSXQgaXMgY2FsY3VsYXRlZCBhczogaW5kZXggPSByZWdpc3Rl
+cl9vZmZzZXQgLyA0ICogMzIgKyBiaXRfb2Zmc2V0Lg0KPj4gK1doZXJlIGJpdF9vZmZzZXQgaXMg
+dGhlIGJpdCBvZmZzZXQgd2l0aGluIHRoZSByZWdpc3Rlci4NCj4+ICsNCj4+ICtGb3IgZXhhbXBs
+ZSwgZm9yIENSQyByZXNldDoNCj4+ICsgIGNyYyA9IEFIQjRSU1RSX29mZnNldCAvIDQgKiAzMiAr
+IENSQ1JTVF9iaXRfb2Zmc2V0ID0gMHg4OCAvIDQgKiAzMiArIDE5ID0gMTEwNw0KPj4gKw0KPj4g
+K0FsbCBhdmFpbGFibGUgcHJlcHJvY2Vzc29yIG1hY3JvcyBmb3IgcmVzZXQgYXJlIGRlZmluZWQg
+ZHQtYmluZGluZ3MvL21mZC9zdG0zMmg3LXJjYy5oDQo+IERvdWJsZSBzbGFzaGVzIC0tLS0tLS0t
+LS0+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF5eXl4NCj4NCj4g
+SSBoYXZlIGRvdWJ0cyBpZiBpdCBpcyBwZXJtaXR0ZWQgdG8gYWRkIHNvdXJjZSBwYXRocyBpbnRv
+IHRoZSBkZXZpY2UNCj4gdHJlZSBiaW5kaW5ncyBkb2N1bWVudGF0aW9uLCBiZWNhdXNlIHN1Y2gg
+aW5mb3JtYXRpb24gaXMgc3BlY2lmaWMgdG8NCj4gdGhlIExpbnV4IHNvdXJjZSBjb2RlLg0KPg0K
+PiBSb2IsIGNhbiB5b3UgY2xhcmlmeSBwbGVhc2U/DQppIHdpbGwgc3VwcHJlc3MgaXQsIGl0J3Mg
+bm90IGEgcHJvYmxlbQ0KDQpNYW55IFRoYW5rcyBWbGFkaW1pcg0KDQoNCj4+ICtoZWFkZXIgYW5k
+IGNhbiBiZSB1c2VkIGluIGRldmljZSB0cmVlIHNvdXJjZXMuDQo+PiArDQo+PiArZXhhbXBsZToN
+Cj4gRm9yIHVuaWZpY2F0aW9uLCBwbGVhc2UgY2FwaXRhbGl6ZSBpdDogJ0V4YW1wbGU6Jw0KPg0K
+Pj4gKw0KPj4gKwl0aW1lcjIgew0KPj4gKwkJcmVzZXRzCT0gPCZyY2MgU1RNMzJIN19BUEIxTF9S
+RVNFVChUSU0yKT47DQo+PiArCX07DQo+IC0tDQo+IFdpdGggYmVzdCB3aXNoZXMsDQo+IFZsYWRp
+bWlyDQo=
