@@ -1,83 +1,72 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexandre Bailon <abailon@baylibre.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] ARM: sa1100: normalize clk API
-Date: Fri, 21 Jul 2017 17:22:47 +0200
-Message-Id: <20170721152250.3310552-3-arnd@arndb.de>
-In-Reply-To: <20170721152250.3310552-1-arnd@arndb.de>
-References: <20170721152250.3310552-1-arnd@arndb.de>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Ondrej Jirman <megous@megous.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 10/10] ARM: dts: sun8i: Add SY8106A regulator to Orange Pi PC
+Date: Sun, 23 Jul 2017 18:27:49 +0800
+Message-Id: <20170723102749.17323-11-icenowy@aosc.io>
+In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-sa1100 provides its own variant of the clk API rather than using the
-generic COMMON_CLK API. This generally works, but it causes some link
-errors with drivers using the clk_set_rate, clk_get_parent, clk_set_parent
-or clk_round_rate functions when a platform lacks those interfaces.
+From: Ondrej Jirman <megous@megous.com>
 
-This adds trivial stub implementations for each of them, based on
-the behavior of the COMMON_CLK implementation:
+Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
+Orange Pi PC, then set the power supply of the ARM cores to this
+regulator, in order to enable DVFS.
 
-- set_rate() and set_parent() report success without doing anything
-- round_rate() returns the clk rate
-- get_parent() returns NULL.
-
-This adds the minimal bloat and should do the right thing for
-the simple clock hardware in this SoC.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+[Icenowy: Enable DVFS in this patch, slight changes and change commit
+ message]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/mach-sa1100/clock.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm/mach-sa1100/clock.c b/arch/arm/mach-sa1100/clock.c
-index 0db46895c82a..7d52cd97d96e 100644
---- a/arch/arm/mach-sa1100/clock.c
-+++ b/arch/arm/mach-sa1100/clock.c
-@@ -35,6 +35,31 @@ struct clk clk_##_name = {				\
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+index 998b60f8d295..d855f8b6254e 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+@@ -98,6 +98,10 @@
+ 	status = "okay";
+ };
  
- static DEFINE_SPINLOCK(clocks_lock);
++&cpu0 {
++	cpu-supply = <&reg_sy8106a>;
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -160,6 +164,21 @@
+ 	};
+ };
  
-+/* Dummy clk routine to build generic kernel parts that may be using them */
-+long clk_round_rate(struct clk *clk, unsigned long rate)
-+{
-+	return clk_get_rate(clk);
-+}
-+EXPORT_SYMBOL(clk_round_rate);
++&r_i2c {
++	status = "okay";
 +
-+int clk_set_rate(struct clk *clk, unsigned long rate)
-+{
-+	return 0;
-+}
-+EXPORT_SYMBOL(clk_set_rate);
++	reg_sy8106a: regulator@65 {
++		compatible = "silergy,sy8106a";
++		reg = <0x65>;
++		regulator-name = "vdd-cpux";
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1400000>;
++		regulator-ramp-delay = <200>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
 +
-+int clk_set_parent(struct clk *clk, struct clk *parent)
-+{
-+	return 0;
-+}
-+EXPORT_SYMBOL(clk_set_parent);
-+
-+struct clk *clk_get_parent(struct clk *clk)
-+{
-+	return NULL;
-+}
-+EXPORT_SYMBOL(clk_get_parent);
-+
- static void clk_gpio27_enable(struct clk *clk)
- {
- 	/*
+ &r_pio {
+ 	leds_r_opc: led_pins@0 {
+ 		pins = "PL10";
 -- 
-2.9.0
+2.13.0
