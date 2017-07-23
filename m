@@ -1,223 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V2 04/10] clk: sprd: add gate clock support
-Date: Tue, 11 Jul 2017 18:56:21 +0800
-Message-ID: <20170711105627.20526-5-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
-References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 08/10] ARM: sun8i: h3: add operating-points-v2 table for CPU
+Date: Sun, 23 Jul 2017 18:27:47 +0800
+Message-Id: <20170723102749.17323-9-icenowy@aosc.io>
+In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on the Spreadtrum's SoCs are just simple gates. Add
-support for those clocks.
+The CPU on Allwinner H3 can do dynamic frequency scaling.
 
-Original-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Add a DVFS table based on the one tweaked by Armbian developers, which
+are proven to work stably on BSP kernels.
+
+Frequencies higher than 1008MHz are temporarily dropped in the table, as
+they may lead to over voltage on boards without proper regulator
+settings or over temperature on boards with proper regulator settings.
+They will be added back once regulator settings are ready and thermal
+sensor driver is merged.
+
+In order to satisfy all different regulators (SY8106A which is 50mV per
+level, SY8113B which have two states: 1.1V and 1.3V, and some board with
+non-tweakable regulators), all the OPPs are defined with a range which has
+the target value as the minimum allowed value, and 1.3V (the highest
+VDD-CPUX voltage suggested by the datasheet) as the maximum allowed value.
+It's proven to work well with a board with SY8113B.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/sprd/Makefile |   1 +
- drivers/clk/sprd/gate.c   | 104 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/sprd/gate.h   |  58 ++++++++++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 drivers/clk/sprd/gate.c
- create mode 100644 drivers/clk/sprd/gate.h
+ arch/arm/boot/dts/sun8i-h3.dtsi | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index 74f4b80..8cd5592 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_SPRD_COMMON_CLK)	+= clk-sprd.o
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index b36f9f423c39..a0cee17fe44b 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -43,32 +43,68 @@
+ #include "sunxi-h3-h5.dtsi"
  
- clk-sprd-y	+= common.o
-+clk-sprd-y	+= gate.o
-diff --git a/drivers/clk/sprd/gate.c b/drivers/clk/sprd/gate.c
-new file mode 100644
-index 0000000..aa56b2b
---- /dev/null
-+++ b/drivers/clk/sprd/gate.c
-@@ -0,0 +1,104 @@
-+/*
-+ * Spreadtrum gate clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
+ / {
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+#include <linux/clk-provider.h>
++		opp@480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			opp-microvolt = <980000 980000 1300000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
 +
-+#include "gate.h"
++		opp@648000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1020000 1020000 1300000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
 +
-+DEFINE_SPINLOCK(sprd_gate_lock);
-+EXPORT_SYMBOL_GPL(sprd_gate_lock);
++		opp@912000000 {
++			opp-hz = /bits/ 64 <960000000>;
++			opp-microvolt = <1080000 1080000 1300000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
 +
-+static void sprd_gate_endisable(const struct sprd_gate *sg, u32 en)
-+{
-+	const struct sprd_clk_common *common = &sg->common;
-+	unsigned long flags = 0;
-+	u32 reg;
-+	int set = sg->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++		opp@1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1140000 1140000 1300000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++	};
 +
-+	set ^= en;
-+
-+	spin_lock_irqsave(common->lock, flags);
-+
-+	reg = sprd_clk_readl(common);
-+
-+	if (set)
-+		reg |= sg->op_bit;
-+	else
-+		reg &= ~sg->op_bit;
-+
-+	sprd_clk_writel(reg, common);
-+
-+	spin_unlock_irqrestore(common->lock, flags);
-+}
-+
-+static void clk_sc_gate_endisable(const struct sprd_gate *sg, u32 en)
-+{
-+	const struct sprd_clk_common *common = &sg->common;
-+	unsigned long flags = 0;
-+	int set = sg->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	u32 offset;
-+
-+	set ^= en;
-+
-+	/*
-+	 * Each set/clear gate clock has three registers:
-+	 * common->reg			- base register
-+	 * common->reg + offset		- set register
-+	 * common->reg + 2 * offset	- clear register
-+	 */
-+	offset = set ? sg->sc_offset : sg->sc_offset * 2;
-+
-+	spin_lock_irqsave(common->lock, flags);
-+	sprd_clk_writel_offset(sg->op_bit, common, offset);
-+	spin_unlock_irqrestore(common->lock, flags);
-+}
-+
-+static void sprd_gate_disable(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+
-+	if (sg->sc_offset)
-+		clk_sc_gate_endisable(sg, 0);
-+	else
-+		sprd_gate_endisable(sg, 0);
-+}
-+
-+static int sprd_gate_enable(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+
-+	if (sg->sc_offset)
-+		clk_sc_gate_endisable(sg, 1);
-+	else
-+		sprd_gate_endisable(sg, 1);
-+
-+	return 0;
-+}
-+
-+static int sprd_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct sprd_gate *sg = hw_to_sprd_gate(hw);
-+	struct sprd_clk_common *common = &sg->common;
-+	u32 reg;
-+
-+	reg = sprd_clk_readl(common);
-+
-+	if (sg->flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= sg->op_bit;
-+
-+	reg &= sg->op_bit;
-+
-+	return reg ? 1 : 0;
-+}
-+
-+const struct clk_ops sprd_gate_ops = {
-+	.disable	= sprd_gate_disable,
-+	.enable		= sprd_gate_enable,
-+	.is_enabled	= sprd_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(sprd_gate_ops);
-diff --git a/drivers/clk/sprd/gate.h b/drivers/clk/sprd/gate.h
-new file mode 100644
-index 0000000..7fb4e49
---- /dev/null
-+++ b/drivers/clk/sprd/gate.h
-@@ -0,0 +1,58 @@
-+/*
-+ * Spreadtrum gate clock driver
-+ *
-+ * Copyright (C) 2017 Spreadtrum, Inc.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#ifndef _SPRD_GATE_H_
-+#define _SPRD_GATE_H_
-+
-+#include "common.h"
-+
-+struct sprd_gate {
-+	u32			op_bit;
-+	u16			flags;
-+	u16			sc_offset;
-+
-+	struct sprd_clk_common	common;
-+};
-+
-+#define SPRD_GATE_CLK(_struct, _name, _parent, _reg, _sc_offset,	\
-+		      _op_bit, _flags, _gate_flags)			\
-+	struct sprd_gate _struct = {					\
-+		.op_bit		= _op_bit,				\
-+		.sc_offset	= _sc_offset,				\
-+		.flags		= _gate_flags,				\
-+		.common	= {						\
-+			.reg		= _reg,				\
-+			.lock		= &sprd_gate_lock,		\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &sprd_gate_ops,	\
-+						      _flags),		\
-+		}							\
-+	}
-+
-+static inline struct sprd_gate *hw_to_sprd_gate(const struct clk_hw *hw)
-+{
-+	struct sprd_clk_common *common = hw_to_sprd_clk_common(hw);
-+
-+	return container_of(common, struct sprd_gate, common);
-+}
-+
-+static inline void sprd_clk_writel_offset(u32 val,
-+	const struct sprd_clk_common *common, u32 offset)
-+{
-+	writel(val, common->base + common->reg + offset);
-+}
-+
-+void sprd_gate_helper_disable(struct sprd_clk_common *common, u32 gate);
-+int sprd_gate_helper_enable(struct sprd_clk_common *common, u32 gate);
-+int sprd_gate_helper_is_enabled(struct sprd_clk_common *common, u32 gate);
-+
-+extern const struct clk_ops sprd_gate_ops;
-+extern spinlock_t sprd_gate_lock;
-+
-+#endif /* _SPRD_GATE_H_ */
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			reg = <0>;
++			clocks = <&ccu CLK_CPUX>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <0x2>;
+ 		};
+ 
+ 		cpu@1 {
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			reg = <1>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu@2 {
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			reg = <2>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu@3 {
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			reg = <3>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 	};
+ 
 -- 
-2.7.4
+2.13.0
