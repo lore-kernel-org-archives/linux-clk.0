@@ -1,60 +1,66 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-Subject: Re: [PATCH v3 3/9] clk: at91: add audio pll clock drivers
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mark.rutland@arm.com, boris.brezillon@free-electrons.com,
- alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, mturquette@baylibre.com, tiwai@suse.com,
- linux-clk@vger.kernel.org, lgirdwood@gmail.com,
- Nicolas Ferre <nicolas.ferre@atmel.com>, robh+dt@kernel.org,
- alexandre.belloni@free-electrons.com, broonie@kernel.org,
- cyrille.pitchen@wedev4u.fr, linux@armlinux.org.uk, perex@perex.cz,
- thomas.petazzoni@free-electrons.com, linux-arm-kernel@lists.infradead.org
-References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
- <20170713074927.10882-4-quentin.schulz@free-electrons.com>
- <20170721222029.GO19878@codeaurora.org>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-Message-ID: <5f6fd25b-8f99-8dec-39b6-0e7677675c24@free-electrons.com>
-Date: Tue, 25 Jul 2017 13:30:29 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170721222029.GO19878@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:59330 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755333AbdGWK2u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 23 Jul 2017 06:28:50 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH 05/10] clk: sunxi-ng: h3: gate then ungate PLL CPU clk after rate change
+Date: Sun, 23 Jul 2017 18:27:44 +0800
+Message-Id: <20170723102749.17323-6-icenowy@aosc.io>
+In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+From: Chen-Yu Tsai <wens@csie.org>
 
-I forgot to answer one of your questions:
+This patch utilizes the new PLL clk notifier to gate then ungate the
+PLL CPU clock after rate changes. This should prevent any system hangs
+resulting from cpufreq changes to the clk.
 
-On 22/07/2017 00:20, Stephen Boyd wrote:
-> On 07/13, Quentin Schulz wrote:
->> diff --git a/drivers/clk/at91/clk-audio-pll-pad.c b/drivers/clk/at91/clk-audio-pll-pad.c
->> new file mode 100644
->> index 000000000000..10dd6d625696
->> --- /dev/null
->> +++ b/drivers/clk/at91/clk-audio-pll-pad.c
-[...]
->> +}
->> +
->> +CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_pad_setup,
->> +	       "atmel,sama5d2-clk-audio-pll-pad",
->> +	       of_sama5d2_clk_audio_pll_pad_setup);
-> 
-> We can't have a device driver for this?
-> 
+Reported-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-I tried to work on that but the device does not get probed because the
-parent node (pmc) does not register its children. We would need to
-modify the DT to add such a support and break DT compat.
-
-As we are speaking about getting rid of clk subnodes (c.f. Rob and
-Alexandre answers on the first version of this patch series:
-https://patchwork.kernel.org/patch/9805991/) in favor of a clock
-controller node that would break the DT compat as well, IMHO it would be
-best to break the DT compat as few times as possible and thus, rework
-this driver once we switch to a clock controller node.
-
-Thanks,
-Quentin
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 62e4f0d2b2fc..406d0aac9fd6 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -1103,6 +1103,13 @@ static const struct sunxi_ccu_desc sun50i_h5_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_h5_ccu_resets),
+ };
+ 
++static struct ccu_pll_nb sun8i_h3_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
++
+ static struct ccu_mux_nb sun8i_h3_cpu_nb = {
+ 	.common		= &cpux_clk.common,
+ 	.cm		= &cpux_clk.mux,
+@@ -1130,6 +1137,10 @@ static void __init sunxi_h3_h5_ccu_init(struct device_node *node,
+ 
+ 	sunxi_ccu_probe(node, reg, desc);
+ 
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun8i_h3_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
+ 	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+ 				  &sun8i_h3_cpu_nb);
+ }
 -- 
-Quentin Schulz, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.13.0
+
