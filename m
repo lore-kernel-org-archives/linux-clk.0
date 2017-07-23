@@ -1,57 +1,49 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 04/11] mmc: sunxi: Keep default timing phase settings for new timing mode
-Date: Fri, 14 Jul 2017 14:42:55 +0800
-Message-Id: <20170714064302.20383-5-wens@csie.org>
-In-Reply-To: <20170714064302.20383-1-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:59363 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755333AbdGWK3F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 23 Jul 2017 06:29:05 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 06/10] clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3
+Date: Sun, 23 Jul 2017 18:27:45 +0800
+Message-Id: <20170723102749.17323-7-icenowy@aosc.io>
+In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The register for the "new timing mode" also has bit fields for setting
-output and sample timing phases. According to comments in Allwinner's
-BSP kernel, the default values are good enough.
+The CPUX clock, which is the main clock of the ARM core on Allwinner H3,
+can be adjusted by changing the frequency of the PLL_CPUX clock.
 
-Keep the default values already in the hardware when setting new timing
-mode, instead of overwriting the whole register.
+Allowing setting parent clock for the CPUX clock, thus the PLL_CPUX
+clock can be adjusted when adjusting the CPUX clock.
 
-Fixes: 9a37e53e451e ("mmc: sunxi: Enable the new timings for the A64 MMC
-		      controllers")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/mmc/host/sunxi-mmc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index d6fa2214aaae..0fb4e4c119e1 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -793,8 +793,12 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 	}
- 	mmc_writel(host, REG_CLKCR, rval);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 406d0aac9fd6..4cdbc88f2783 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -135,7 +135,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
+ static const char * const cpux_parents[] = { "osc32k", "osc24M",
+ 					     "pll-cpux" , "pll-cpux" };
+ static SUNXI_CCU_MUX(cpux_clk, "cpux", cpux_parents,
+-		     0x050, 16, 2, CLK_IS_CRITICAL);
++		     0x050, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT);
  
--	if (host->cfg->needs_new_timings)
--		mmc_writel(host, REG_SD_NTSR, SDXC_2X_TIMING_MODE);
-+	if (host->cfg->needs_new_timings) {
-+		/* Don't touch the delay bits */
-+		rval = mmc_readl(host, REG_SD_NTSR);
-+		rval |= SDXC_2X_TIMING_MODE;
-+		mmc_writel(host, REG_SD_NTSR, rval);
-+	}
+ static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
  
- 	ret = sunxi_mmc_clk_set_phase(host, ios, rate);
- 	if (ret)
 -- 
-2.13.2
+2.13.0
+
