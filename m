@@ -1,51 +1,59 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 08/10] ARM: dts: sun8i: a83t: Add pingroup for 8-bit eMMC on mmc2
-Date: Thu, 20 Jul 2017 11:44:50 +0800
-Message-Id: <20170720034452.15920-9-wens@csie.org>
-In-Reply-To: <20170720034452.15920-1-wens@csie.org>
-References: <20170720034452.15920-1-wens@csie.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner SoCs
+Date: Sun, 23 Jul 2017 18:27:46 +0800
+Message-Id: <20170723102749.17323-8-icenowy@aosc.io>
+In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc2 can support 8-bit eMMC chips, with a dedicated reset line.
+Some new Allwinner SoCs get supported in the kernel after the
+compatibles are added to cpufreq-dt-platdev driver.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Add their compatible strings in the cpufreq-dt-platdev driver.
+
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 21ab668abfac..d9b4372dbdf3 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -271,6 +271,15 @@
- 				bias-pull-up;
- 			};
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 2eb40d46d357..c3851453e84a 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
+ 	{ .compatible = "allwinner,sun8i-a23", },
+ 	{ .compatible = "allwinner,sun8i-a33", },
+ 	{ .compatible = "allwinner,sun8i-a83t", },
++	{ .compatible = "allwinner,sun8i-h2-plus", },
+ 	{ .compatible = "allwinner,sun8i-h3", },
++	{ .compatible = "allwinner,sun8i-v3s", },
++	{ .compatible = "allwinner,sun50i-a64", },
++	{ .compatible = "allwinner,sun50i-h5", },
  
-+			mmc2_8bit_emmc_pins: mmc2-8bit-emmc-pins {
-+				pins = "PC5", "PC6", "PC8", "PC9",
-+				       "PC10", "PC11", "PC12", "PC13",
-+				       "PC14", "PC15", "PC16";
-+				function = "mmc2";
-+				drive-strength = <30>;
-+				bias-pull-up;
-+			};
+ 	{ .compatible = "apm,xgene-shadowcat", },
+ 
+@@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
+ 	{ .compatible = "marvell,pxa250", },
+ 	{ .compatible = "marvell,pxa270", },
+ 
++	{ .compatible = "nextthing,gr8", },
 +
- 			spdif_tx_pin: spdif-tx-pin {
- 				pins = "PE18";
- 				function = "spdif";
+ 	{ .compatible = "samsung,exynos3250", },
+ 	{ .compatible = "samsung,exynos4210", },
+ 	{ .compatible = "samsung,exynos4212", },
 -- 
-2.13.2
+2.13.0
