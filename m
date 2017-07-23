@@ -1,195 +1,156 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
-	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
-	<ping.bai@nxp.com>
-Subject: [PATCH V2 09/10] clk: imx: implement new clk_hw based APIs
-Date: Thu, 13 Jul 2017 19:47:14 +0800
-Message-ID: <1499946435-7177-10-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 02/10] regulator: add support for SY8106A regulator
+Date: Sun, 23 Jul 2017 18:27:41 +0800
+Message-Id: <20170723102749.17323-3-icenowy@aosc.io>
+In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Ondrej Jirman <megous@megous.com>, devicetree@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock providers are recommended to use the new struct clk_hw based API,
-so implement IMX clk_hw based provider helpers functions to the new
-approach.
-
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
----
-ChangeLog:
-v1->v2:  new patches
----
- drivers/clk/imx/clk.c | 22 ++++++++++++++++++
- drivers/clk/imx/clk.h | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
-
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index a634b11..0474306 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -17,6 +17,16 @@ void __init imx_check_clocks(struct clk *clks[], unsigned int count)
- 			       i, PTR_ERR(clks[i]));
- }
- 
-+void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (IS_ERR(clks[i]))
-+			pr_err("i.MX clk %u: register failed with %ld\n",
-+			       i, PTR_ERR(clks[i]));
-+}
-+
- static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
- {
- 	struct of_phandle_args phandle;
-@@ -48,6 +58,18 @@ struct clk * __init imx_obtain_fixed_clock(
- 	return clk;
- }
- 
-+struct clk_hw * __init imx_obtain_fixed_clk_hw(struct device_node *np,
-+					       const char *name)
-+{
-+	struct clk *clk;
-+
-+	clk = of_clk_get_by_name(np, name);
-+	if (IS_ERR(clk))
-+		return ERR_PTR(-ENOENT);
-+
-+	return __clk_get_hw(clk);
-+}
-+
- /*
-  * This fixups the register CCM_CSCMR1 write value.
-  * The write/read/divider values of the aclk_podf field
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 2646cc3..b5ad15f 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -7,6 +7,7 @@
- extern spinlock_t imx_ccm_lock;
- 
- void imx_check_clocks(struct clk *clks[], unsigned int count);
-+void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
- void imx_register_uart_clocks(struct clk ** const clks[]);
- 
- extern void imx_cscmr1_fixup(u32 *val);
-@@ -53,6 +54,9 @@ struct clk *clk_register_gate2(struct device *dev, const char *name,
- struct clk * imx_obtain_fixed_clock(
- 			const char *name, unsigned long rate);
- 
-+struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
-+				       const char *name);
-+
- struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
- 
-@@ -89,6 +93,16 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
-+{
-+	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
-+}
-+
-+static inline struct clk_hw *imx_get_clk_hw_fixed(const char *name, int rate)
-+{
-+	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
-+}
-+
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
- 			u8 shift, u8 width, const char * const *parents,
- 			int num_parents)
-@@ -112,6 +126,15 @@ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_divider(const char *name,
-+						const char *parent,
-+						void __iomem *reg, u8 shift,
-+						u8 width)
-+{
-+	return clk_hw_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,
-+				       reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_divider_flags(const char *name,
- 		const char *parent, void __iomem *reg, u8 shift, u8 width,
- 		unsigned long flags)
-@@ -120,6 +143,15 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_divider_flags(const char *name,
-+						   const char *parent,
-+						   void __iomem *reg, u8 shift,
-+						   u8 width, unsigned long flags)
-+{
-+	return clk_hw_register_divider(NULL, name, parent, flags,
-+				       reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift, u8 width)
- {
-@@ -135,6 +167,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
- 			shift, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_gate(const char *name, const char *parent,
-+					     void __iomem *reg, u8 shift)
-+{
-+	return clk_hw_register_gate(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+				    shift, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
-@@ -207,6 +246,17 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_mux2(const char *name, void __iomem *reg,
-+					     u8 shift, u8 width,
-+					     const char * const *parents,
-+					     int num_parents)
-+{
-+	return clk_hw_register_mux(NULL, name, parents, num_parents,
-+				   CLK_SET_RATE_NO_REPARENT |
-+				   CLK_OPS_PARENT_ENABLE,
-+				   reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_mux_flags(const char *name,
- 			void __iomem *reg, u8 shift, u8 width,
- 			const char * const *parents, int num_parents,
-@@ -217,6 +267,18 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
- 			&imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_mux_flags(const char *name,
-+						  void __iomem *reg, u8 shift,
-+						  u8 width,
-+						  const char * const *parents,
-+						  int num_parents,
-+						  unsigned long flags)
-+{
-+	return clk_hw_register_mux(NULL, name, parents, num_parents,
-+				   flags | CLK_SET_RATE_NO_REPARENT,
-+				   reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- struct clk *imx_clk_cpu(const char *name, const char *parent_name,
- 		struct clk *div, struct clk *mux, struct clk *pll,
- 		struct clk *step);
--- 
-2.7.4
+RnJvbTogT25kcmVqIEppcm1hbiA8bWVnb3VzQG1lZ291cy5jb20+CgpTWTgxMDZBIGlzIGFuIEky
+QyBhdHRhY2hlZCBzaW5nbGUgb3V0cHV0IHJlZ3VsYXRvciBtYWRlIGJ5IFNpbGVyZ3kgQ29ycCwK
+d2hpY2ggaXMgdXNlZCBvbiBzZXZlcmFsIEFsbHdpbm5lciBIMy9INSBTQkNzIHRvIGNvbnRyb2wg
+dGhlIHBvd2VyCnN1cHBseSBvZiB0aGUgQVJNIGNvcmVzLgoKQWRkIGEgZHJpdmVyIGZvciBpdC4K
+ClNpZ25lZC1vZmYtYnk6IE9uZHJlaiBKaXJtYW4gPG1lZ291c0BtZWdvdXMuY29tPgpbSWNlbm93
+eTogQ2hhbmdlIGNvbW1pdCBtZXNzYWdlXQpTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxp
+Y2Vub3d5QGFvc2MuaW8+Ci0tLQogZHJpdmVycy9yZWd1bGF0b3IvS2NvbmZpZyAgICAgICAgICAg
+ICB8ICAgOCArLQogZHJpdmVycy9yZWd1bGF0b3IvTWFrZWZpbGUgICAgICAgICAgICB8ICAgMiAr
+LQogZHJpdmVycy9yZWd1bGF0b3Ivc3k4MTA2YS1yZWd1bGF0b3IuYyB8IDE2MyArKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrCiAzIGZpbGVzIGNoYW5nZWQsIDE3MSBpbnNlcnRpb25z
+KCspLCAyIGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcmVndWxhdG9y
+L3N5ODEwNmEtcmVndWxhdG9yLmMKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3JlZ3VsYXRvci9LY29u
+ZmlnIGIvZHJpdmVycy9yZWd1bGF0b3IvS2NvbmZpZwppbmRleCA5OWI5MzYyMzMxYjUuLjFlZmE3
+M2UxOGQwNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9yZWd1bGF0b3IvS2NvbmZpZworKysgYi9kcml2
+ZXJzL3JlZ3VsYXRvci9LY29uZmlnCkBAIC03NjQsNiArNzY0LDEzIEBAIGNvbmZpZyBSRUdVTEFU
+T1JfU1RXNDgxWF9WTU1DCiAJICBUaGlzIGRyaXZlciBzdXBwb3J0cyB0aGUgaW50ZXJuYWwgVk1N
+QyByZWd1bGF0b3IgaW4gdGhlIFNUdzQ4MXgKIAkgIFBNSUMgY2hpcHMuCiAKK2NvbmZpZyBSRUdV
+TEFUT1JfU1k4MTA2QQorCXRyaXN0YXRlICJTaWxlcmd5IFNZODEwNkEgcmVndWxhdG9yIgorCWRl
+cGVuZHMgb24gSTJDICYmIChPRiB8fCBDT01QSUxFX1RFU1QpCisJc2VsZWN0IFJFR01BUF9JMkMK
+KwloZWxwCisJICBUaGlzIGRyaXZlciBzdXBwb3J0cyBTWTgxMDZBIHNpbmdsZSBvdXRwdXQgcmVn
+dWxhdG9yLgorCiBjb25maWcgUkVHVUxBVE9SX1RQUzUxNjMyCiAJdHJpc3RhdGUgIlRJIFRQUzUx
+NjMyIFBvd2VyIFJlZ3VsYXRvciIKIAlkZXBlbmRzIG9uIEkyQwpAQCAtOTM4LDQgKzk0NSwzIEBA
+IGNvbmZpZyBSRUdVTEFUT1JfV004OTk0CiAJICBXTTg5OTQgQ09ERUMuCiAKIGVuZGlmCi0KZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvcmVndWxhdG9yL01ha2VmaWxlIGIvZHJpdmVycy9yZWd1bGF0b3Iv
+TWFrZWZpbGUKaW5kZXggOTViMWU4NmFlNjkyLi5mNTEyMDI1MmY4NmEgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvcmVndWxhdG9yL01ha2VmaWxlCisrKyBiL2RyaXZlcnMvcmVndWxhdG9yL01ha2VmaWxl
+CkBAIC05NSw2ICs5NSw3IEBAIG9iai0kKENPTkZJR19SRUdVTEFUT1JfUzJNUFMxMSkgKz0gczJt
+cHMxMS5vCiBvYmotJChDT05GSUdfUkVHVUxBVE9SX1M1TTg3NjcpICs9IHM1bTg3Njcubwogb2Jq
+LSQoQ09ORklHX1JFR1VMQVRPUl9TS1k4MTQ1MikgKz0gc2t5ODE0NTItcmVndWxhdG9yLm8KIG9i
+ai0kKENPTkZJR19SRUdVTEFUT1JfU1RXNDgxWF9WTU1DKSArPSBzdHc0ODF4LXZtbWMubworb2Jq
+LSQoQ09ORklHX1JFR1VMQVRPUl9TWTgxMDZBKSArPSBzeTgxMDZhLXJlZ3VsYXRvci5vCiBvYmot
+JChDT05GSUdfUkVHVUxBVE9SX1RJX0FCQikgKz0gdGktYWJiLXJlZ3VsYXRvci5vCiBvYmotJChD
+T05GSUdfUkVHVUxBVE9SX1RQUzYxMDVYKSArPSB0cHM2MTA1eC1yZWd1bGF0b3Iubwogb2JqLSQo
+Q09ORklHX1JFR1VMQVRPUl9UUFM2MjM2MCkgKz0gdHBzNjIzNjAtcmVndWxhdG9yLm8KQEAgLTEy
+MCw1ICsxMjEsNCBAQCBvYmotJChDT05GSUdfUkVHVUxBVE9SX1dNODM1MCkgKz0gd204MzUwLXJl
+Z3VsYXRvci5vCiBvYmotJChDT05GSUdfUkVHVUxBVE9SX1dNODQwMCkgKz0gd204NDAwLXJlZ3Vs
+YXRvci5vCiBvYmotJChDT05GSUdfUkVHVUxBVE9SX1dNODk5NCkgKz0gd204OTk0LXJlZ3VsYXRv
+ci5vCiAKLQogY2NmbGFncy0kKENPTkZJR19SRUdVTEFUT1JfREVCVUcpICs9IC1EREVCVUcKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvcmVndWxhdG9yL3N5ODEwNmEtcmVndWxhdG9yLmMgYi9kcml2ZXJz
+L3JlZ3VsYXRvci9zeTgxMDZhLXJlZ3VsYXRvci5jCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4
+IDAwMDAwMDAwMDAwMC4uMWRmODg5ZjY4YjNkCi0tLSAvZGV2L251bGwKKysrIGIvZHJpdmVycy9y
+ZWd1bGF0b3Ivc3k4MTA2YS1yZWd1bGF0b3IuYwpAQCAtMCwwICsxLDE2MyBAQAorLyoKKyAqIHN5
+ODEwNmEtcmVndWxhdG9yLmMgLSBSZWd1bGF0b3IgZGV2aWNlIGRyaXZlciBmb3IgU1k4MTA2QQor
+ICoKKyAqIENvcHlyaWdodCAoQykgMjAxNiBPbmTFmWVqIEppcm1hbiA8bWVnb3VzQG1lZ291cy5j
+b20+CisgKgorICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0
+cmlidXRlIGl0IGFuZC9vcgorICogbW9kaWZ5IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05V
+IExpYnJhcnkgR2VuZXJhbCBQdWJsaWMKKyAqIExpY2Vuc2UgYXMgcHVibGlzaGVkIGJ5IHRoZSBG
+cmVlIFNvZnR3YXJlIEZvdW5kYXRpb247IGVpdGhlcgorICogdmVyc2lvbiAyIG9mIHRoZSBMaWNl
+bnNlLCBvciAoYXQgeW91ciBvcHRpb24pIGFueSBsYXRlciB2ZXJzaW9uLgorICoKKyAqIFRoaXMg
+cHJvZ3JhbSBpcyBkaXN0cmlidXRlZCBpbiB0aGUgaG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVs
+LAorICogYnV0IFdJVEhPVVQgQU5ZIFdBUlJBTlRZOyB3aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQg
+d2FycmFudHkgb2YKKyAqIE1FUkNIQU5UQUJJTElUWSBvciBGSVRORVNTIEZPUiBBIFBBUlRJQ1VM
+QVIgUFVSUE9TRS4gIFNlZSB0aGUgR05VCisgKiBMaWJyYXJ5IEdlbmVyYWwgUHVibGljIExpY2Vu
+c2UgZm9yIG1vcmUgZGV0YWlscy4KKyAqLworCisjaW5jbHVkZSA8bGludXgvZXJyLmg+CisjaW5j
+bHVkZSA8bGludXgvaTJjLmg+CisjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+CisjaW5jbHVkZSA8
+bGludXgvcmVnbWFwLmg+CisjaW5jbHVkZSA8bGludXgvcmVndWxhdG9yL2RyaXZlci5oPgorI2lu
+Y2x1ZGUgPGxpbnV4L3JlZ3VsYXRvci9vZl9yZWd1bGF0b3IuaD4KKworI2RlZmluZSBTWTgxMDZB
+X1JFR19WT1VUMV9TRUwJCTB4MDEKKyNkZWZpbmUgU1k4MTA2QV9SRUdfVk9VVF9DT00JCTB4MDIK
+KyNkZWZpbmUgU1k4MTA2QV9SRUdfVk9VVDFfU0VMX01BU0sJMHg3ZgorI2RlZmluZSBTWTgxMDZB
+X0RJU0FCTEVfUkVHCQlCSVQoMCkKKyNkZWZpbmUgU1k4MTA2QV9HT19CSVQJCQlCSVQoNykKKwor
+c3RydWN0IHN5ODEwNmEgeworCXN0cnVjdCByZWd1bGF0b3JfZGV2ICpyZGV2OworCXN0cnVjdCBy
+ZWdtYXAgKnJlZ21hcDsKK307CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcmVnbWFwX2NvbmZpZyBz
+eTgxMDZhX3JlZ21hcF9jb25maWcgPSB7CisJLnJlZ19iaXRzID0gOCwKKwkudmFsX2JpdHMgPSA4
+LAorfTsKKworc3RhdGljIGludCBzeTgxMDZhX3NldF92b2x0YWdlX3NlbChzdHJ1Y3QgcmVndWxh
+dG9yX2RldiAqcmRldiwgdW5zaWduZWQgaW50IHNlbCkKK3sKKwkvKiBXZSB1c2Ugb3VyIHNldF92
+b2x0YWdlX3NlbCBpbiBvcmRlciB0byBhdm9pZCB1bm5lY2Vzc2FyeSBJMkMKKwkgKiBjaGF0dGVy
+LCBiZWNhdXNlIHRoZSByZWd1bGF0b3JfZ2V0X3ZvbHRhZ2Vfc2VsX3JlZ21hcCB1c2luZworCSAq
+IGFwcGx5X2JpdCB3b3VsZCBwZXJmb3JtIDQgdW5uZWNlc3NhcnkgdHJhbnNmZXJzIGluc3RlYWQg
+b2Ygb25lLAorCSAqIGluY3JlYXNpbmcgdGhlIGNoYW5jZSBvZiBlcnJvci4KKwkgKi8KKwlyZXR1
+cm4gcmVnbWFwX3dyaXRlKHJkZXYtPnJlZ21hcCwgcmRldi0+ZGVzYy0+dnNlbF9yZWcsCisJCQkg
+ICAgc2VsIHwgU1k4MTA2QV9HT19CSVQpOworfQorCitzdGF0aWMgY29uc3Qgc3RydWN0IHJlZ3Vs
+YXRvcl9vcHMgc3k4MTA2YV9vcHMgPSB7CisJLmlzX2VuYWJsZWQgPSByZWd1bGF0b3JfaXNfZW5h
+YmxlZF9yZWdtYXAsCisJLnNldF92b2x0YWdlX3NlbCA9IHN5ODEwNmFfc2V0X3ZvbHRhZ2Vfc2Vs
+LAorCS5zZXRfdm9sdGFnZV90aW1lX3NlbCA9IHJlZ3VsYXRvcl9zZXRfdm9sdGFnZV90aW1lX3Nl
+bCwKKwkuZ2V0X3ZvbHRhZ2Vfc2VsID0gcmVndWxhdG9yX2dldF92b2x0YWdlX3NlbF9yZWdtYXAs
+CisJLmxpc3Rfdm9sdGFnZSA9IHJlZ3VsYXRvcl9saXN0X3ZvbHRhZ2VfbGluZWFyLAorfTsKKwor
+LyogRGVmYXVsdCBsaW1pdHMgbWVhc3VyZWQgaW4gbWlsbGl2b2x0cyBhbmQgbWlsbGlhbXBzICov
+CisjZGVmaW5lIFNZODEwNkFfTUlOX01WCQk2ODAKKyNkZWZpbmUgU1k4MTA2QV9NQVhfTVYJCTE5
+NTAKKyNkZWZpbmUgU1k4MTA2QV9TVEVQX01WCQkxMAorCitzdGF0aWMgY29uc3Qgc3RydWN0IHJl
+Z3VsYXRvcl9kZXNjIHN5ODEwNmFfcmVnID0geworCS5uYW1lID0gIlNZODEwNkEiLAorCS5pZCA9
+IDAsCisJLm9wcyA9ICZzeTgxMDZhX29wcywKKwkudHlwZSA9IFJFR1VMQVRPUl9WT0xUQUdFLAor
+CS5uX3ZvbHRhZ2VzID0gKChTWTgxMDZBX01BWF9NViAtIFNZODEwNkFfTUlOX01WKSAvIFNZODEw
+NkFfU1RFUF9NVikgKyAxLAorCS5taW5fdVYgPSAoU1k4MTA2QV9NSU5fTVYgKiAxMDAwKSwKKwku
+dVZfc3RlcCA9IChTWTgxMDZBX1NURVBfTVYgKiAxMDAwKSwKKwkudnNlbF9yZWcgPSBTWTgxMDZB
+X1JFR19WT1VUMV9TRUwsCisJLnZzZWxfbWFzayA9IFNZODEwNkFfUkVHX1ZPVVQxX1NFTF9NQVNL
+LAorCS5lbmFibGVfcmVnID0gU1k4MTA2QV9SRUdfVk9VVF9DT00sCisJLmVuYWJsZV9tYXNrID0g
+U1k4MTA2QV9ESVNBQkxFX1JFRywKKwkuZGlzYWJsZV92YWwgPSBTWTgxMDZBX0RJU0FCTEVfUkVH
+LAorCS5lbmFibGVfaXNfaW52ZXJ0ZWQgPSAxLAorCS5vd25lciA9IFRISVNfTU9EVUxFLAorfTsK
+KworLyoKKyAqIEkyQyBkcml2ZXIgaW50ZXJmYWNlIGZ1bmN0aW9ucworICovCitzdGF0aWMgaW50
+IHN5ODEwNmFfaTJjX3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50ICppMmMsCisJCQkgICAgY29uc3Qg
+c3RydWN0IGkyY19kZXZpY2VfaWQgKmlkKQoreworCXN0cnVjdCBzeTgxMDZhICpjaGlwOworCXN0
+cnVjdCBkZXZpY2UgKmRldiA9ICZpMmMtPmRldjsKKwlzdHJ1Y3QgcmVndWxhdG9yX2RldiAqcmRl
+diA9IE5VTEw7CisJc3RydWN0IHJlZ3VsYXRvcl9jb25maWcgY29uZmlnID0geyB9OworCXVuc2ln
+bmVkIGludCBzZWxlY3RvcjsKKwlpbnQgZXJyb3I7CisKKwljaGlwID0gZGV2bV9remFsbG9jKCZp
+MmMtPmRldiwgc2l6ZW9mKHN0cnVjdCBzeTgxMDZhKSwgR0ZQX0tFUk5FTCk7CisJaWYgKCFjaGlw
+KQorCQlyZXR1cm4gLUVOT01FTTsKKworCWNoaXAtPnJlZ21hcCA9IGRldm1fcmVnbWFwX2luaXRf
+aTJjKGkyYywgJnN5ODEwNmFfcmVnbWFwX2NvbmZpZyk7CisJaWYgKElTX0VSUihjaGlwLT5yZWdt
+YXApKSB7CisJCWVycm9yID0gUFRSX0VSUihjaGlwLT5yZWdtYXApOworCQlkZXZfZXJyKCZpMmMt
+PmRldiwgIkZhaWxlZCB0byBhbGxvY2F0ZSByZWdpc3RlciBtYXA6ICVkXG4iLAorCQkJZXJyb3Ip
+OworCQlyZXR1cm4gZXJyb3I7CisJfQorCisJY29uZmlnLmRldiA9ICZpMmMtPmRldjsKKwljb25m
+aWcucmVnbWFwID0gY2hpcC0+cmVnbWFwOworCWNvbmZpZy5kcml2ZXJfZGF0YSA9IGNoaXA7CisK
+Kwljb25maWcub2Zfbm9kZSA9IGRldi0+b2Zfbm9kZTsKKwljb25maWcuaW5pdF9kYXRhID0gb2Zf
+Z2V0X3JlZ3VsYXRvcl9pbml0X2RhdGEoZGV2LCBkZXYtPm9mX25vZGUsCisJCQkJCQkgICAgICAm
+c3k4MTA2YV9yZWcpOworCisJaWYgKCFjb25maWcuaW5pdF9kYXRhKQorCQlyZXR1cm4gLUVOT01F
+TTsKKworCS8qIFByb2JlIHJlZ3VsYXRvciAqLworCWVycm9yID0gcmVnbWFwX3JlYWQoY2hpcC0+
+cmVnbWFwLCBTWTgxMDZBX1JFR19WT1VUMV9TRUwsICZzZWxlY3Rvcik7CisJaWYgKGVycm9yKSB7
+CisJCWRldl9lcnIoJmkyYy0+ZGV2LCAiRmFpbGVkIHRvIHJlYWQgdm9sdGFnZSBhdCBwcm9iZSB0
+aW1lOiAlZFxuIiwgZXJyb3IpOworCQlyZXR1cm4gZXJyb3I7CisJfQorCisJcmRldiA9IGRldm1f
+cmVndWxhdG9yX3JlZ2lzdGVyKCZpMmMtPmRldiwgJnN5ODEwNmFfcmVnLCAmY29uZmlnKTsKKwlp
+ZiAoSVNfRVJSKHJkZXYpKSB7CisJCWVycm9yID0gUFRSX0VSUihyZGV2KTsKKwkJZGV2X2Vycigm
+aTJjLT5kZXYsICJGYWlsZWQgdG8gcmVnaXN0ZXIgU1k4MTA2QSByZWd1bGF0b3I6ICVkXG4iLCBl
+cnJvcik7CisJCXJldHVybiBlcnJvcjsKKwl9CisKKwljaGlwLT5yZGV2ID0gcmRldjsKKworCWky
+Y19zZXRfY2xpZW50ZGF0YShpMmMsIGNoaXApOworCisJcmV0dXJuIDA7Cit9CisKK3N0YXRpYyBj
+b25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHN5ODEwNmFfaTJjX29mX21hdGNoW10gPSB7CisJeyAu
+Y29tcGF0aWJsZSA9ICJzaWxlcmd5LHN5ODEwNmEiIH0sCisJeyB9LAorfTsKK01PRFVMRV9ERVZJ
+Q0VfVEFCTEUob2YsIHN5ODEwNmFfaTJjX29mX21hdGNoKTsKKworc3RhdGljIGNvbnN0IHN0cnVj
+dCBpMmNfZGV2aWNlX2lkIHN5ODEwNmFfaTJjX2lkW10gPSB7CisJeyAic3k4MTA2YSIsIDAgfSwK
+Kwl7IH0sCit9OworTU9EVUxFX0RFVklDRV9UQUJMRShpMmMsIHN5ODEwNmFfaTJjX2lkKTsKKwor
+c3RhdGljIHN0cnVjdCBpMmNfZHJpdmVyIHN5ODEwNmFfcmVndWxhdG9yX2RyaXZlciA9IHsKKwku
+ZHJpdmVyID0geworCQkubmFtZSA9ICJzeTgxMDZhIiwKKwkJLm9mX21hdGNoX3RhYmxlCT0gb2Zf
+bWF0Y2hfcHRyKHN5ODEwNmFfaTJjX29mX21hdGNoKSwKKwl9LAorCS5wcm9iZSA9IHN5ODEwNmFf
+aTJjX3Byb2JlLAorCS5pZF90YWJsZSA9IHN5ODEwNmFfaTJjX2lkLAorfTsKKworbW9kdWxlX2ky
+Y19kcml2ZXIoc3k4MTA2YV9yZWd1bGF0b3JfZHJpdmVyKTsKKworTU9EVUxFX0FVVEhPUigiT25k
+xZllaiBKaXJtYW4gPG1lZ291c0BtZWdvdXMuY29tPiIpOworTU9EVUxFX0RFU0NSSVBUSU9OKCJS
+ZWd1bGF0b3IgZGV2aWNlIGRyaXZlciBmb3IgU2lsZXJneSBTWTgxMDZBIik7CitNT0RVTEVfTElD
+RU5TRSgiR1BMIHYyIik7Ci0tIAoyLjEzLjAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
+cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
