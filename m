@@ -1,60 +1,74 @@
-Return-Path: <absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Sun, 30 Jul 2017 18:34:51 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, andy.gross@linaro.org, david.brown@linaro.org,
- rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [RFC 02/12] clk: qcom: flag for 64 bit CONFIG_CTL
-In-Reply-To: <20170728183321.GG2146@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
- <1501153825-5181-3-git-send-email-absahu@codeaurora.org>
- <20170728183321.GG2146@codeaurora.org>
-Message-ID: <e976eedc7c835f92c1f5d19f6a2911a1@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 00/10] A trial to Allwinner H3 DVFS support
+Date: Sun, 23 Jul 2017 18:27:39 +0800
+Message-Id: <20170723102749.17323-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-07-29 00:03, Stephen Boyd wrote:
-> On 07/27, Abhishek Sahu wrote:
->> diff --git a/drivers/clk/qcom/clk-alpha-pll.c 
->> b/drivers/clk/qcom/clk-alpha-pll.c
->> index 47a1da3..e6cde2d 100644
->> --- a/drivers/clk/qcom/clk-alpha-pll.c
->> +++ b/drivers/clk/qcom/clk-alpha-pll.c
->> @@ -118,7 +118,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll 
->> *pll, struct regmap *regmap,
->>  	regmap_write(regmap, off + PLL_L_VAL, config->l);
->>  	regmap_write(regmap, off + PLL_ALPHA_VAL, config->alpha);
->>  	regmap_write(regmap, off + PLL_CONFIG_CTL, config->config_ctl_val);
->> -	regmap_write(regmap, off + PLL_CONFIG_CTL_U, 
->> config->config_ctl_hi_val);
->> +
->> +	if (pll->flags & SUPPORTS_64BIT_CONFIG_CTL)
->> +		regmap_write(regmap, off + PLL_CONFIG_CTL_U,
->> +			     config->config_ctl_hi_val);
-> 
-> Is there a hole there? I mean a RAZ/WI register so we can just
-> keep writing it and not care?
+This patchset is a trial for DVFS support for Allwinner H3 SoC,
+considering two kinds of adjustable regulators used on H3 boards:
+SY8106A I2C-controlled regulator and SY8113B regulator (controllable
+by GPIO with some special designs on the board).
 
-  We don't have hole for most of the alpha PLL. The offset for
-  CONFIG_CTL itself is not same for all types of Alpha PLL
-  and the same is being handled in patch 4 of this patch
-  series.
+PATCH 1 and PATCH 2 are for the SY8106A regulator, then PATCH 3 and
+PATCH 4 are for the r_i2c bus, which is used by boards with SY8106A
+to communicate with the regulator.
 
-  Spark PLL
-  CONFIG_CTL	0x18
-  TEST_CTL	0x1C
-  TEST_CTL_U	0x20
+PATCH 5 and 6 are CCU fixes for H3 DVFS.
 
-  Brammo PLL
-  CONFIG_CTL	0x18
-  TEST_CTL	0x1C
-  PLL_STATUS     0x24
+PATCH 7 is adding new compatible strings to the cpufreq-dt driver.
 
-  Hyuara PLL
-  CONFIG_CTL	0x14
-  CONFIG_CTL_U	0x18
-  TEST_CTL       0x1c
+PATCH 8 adds the opp-v2 table for H3 SoC (without OPPs higher than
+1.008GHz).
+
+PATCH 9 and 10 finally adds DVFS support for two boards, Orange Pi
+Zero (SY8113B) and Orange Pi PC (SY8106A).
+
+Tested on these boards mentioned.
+
+PATCH 9 and 10 finally adds DVFS support for two boards, Orange Pi
+Zero (SY8113B) and Orange Pi PC (SY8106A).
+
+Tested on these boards mentioned.
+
+Chen-Yu Tsai (1):
+  clk: sunxi-ng: h3: gate then ungate PLL CPU clk after rate change
+
+Icenowy Zheng (4):
+  clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3
+  cpufreq: dt: Add support for some new Allwinner SoCs
+  ARM: sun8i: h3: add operating-points-v2 table for CPU
+  ARM: sun8i: h2+: add SY8113B regulator used by Orange Pi Zero board
+
+Ondrej Jirman (5):
+  dt-bindings: add binding for the SY8160A voltage regulator
+  regulator: add support for SY8106A regulator
+  ARM: sunxi: h3/h5: Add r_i2c pinmux node
+  ARM: sunxi: h3/h5: Add r_i2c I2C controller
+  ARM: dts: sun8i: Add SY8106A regulator to Orange Pi PC
+
+ .../bindings/regulator/sy8106a-regulator.txt       |  21 +++
+ arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts  |  21 +++
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  19 +++
+ arch/arm/boot/dts/sun8i-h3.dtsi                    |  38 ++++-
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  19 +++
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  13 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   6 +
+ drivers/regulator/Kconfig                          |   8 +-
+ drivers/regulator/Makefile                         |   2 +-
+ drivers/regulator/sy8106a-regulator.c              | 163 +++++++++++++++++++++
+ 10 files changed, 306 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
+ create mode 100644 drivers/regulator/sy8106a-regulator.c
+
+-- 
+2.13.0
