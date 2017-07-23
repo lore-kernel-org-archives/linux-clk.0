@@ -1,89 +1,78 @@
-Return-Path: <vladimir.barinov@cogentembedded.com>
-Return-Path: <vladimir.barinov@cogentembedded.com>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v2 1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
-Date: Sun,  9 Jul 2017 20:39:57 +0300
-Message-Id: <1499621997-12965-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 01/10] dt-bindings: add binding for the SY8160A voltage
+ regulator
+Date: Sun, 23 Jul 2017 18:27:40 +0800
+Message-Id: <20170723102749.17323-2-icenowy@aosc.io>
+In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Ondrej Jirman <megous@megous.com>, devicetree@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+From: Ondrej Jirman <megous@megous.com>
 
-Update IDT VersaClock 5 driver to support 5P49V5925. This chip has only
-external clock input, four fractional dividers (FODs) and five clock
-outputs (four universal clock outputs and one reference clock output at
-OUT0_SELB_I2C).
+SY8106A is an I2C-controlled adjustable voltage regulator made by
+Silergy Corp.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+Add its device tree binding.
+
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+[Icenowy: Change commit message]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
-Changes in version 2:
-- rebased against patch:
-  [V3,8/8] clk: vc5: Add support for IDT VersaClock 5P49V6901
+ .../bindings/regulator/sy8106a-regulator.txt        | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
 
- drivers/clk/clk-versaclock5.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index c894db2..1808a55 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -129,6 +129,7 @@
- /* Supported IDT VC5 models. */
- enum vc5_model {
- 	IDT_VC5_5P49V5923,
-+	IDT_VC5_5P49V5925,
- 	IDT_VC5_5P49V5933,
- 	IDT_VC5_5P49V5935,
- 	IDT_VC6_5P49V6901,
-@@ -686,6 +687,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 	case IDT_VC5_5P49V5933:
- 		return (n == 0) ? 0 : 3;
- 	case IDT_VC5_5P49V5923:
-+	case IDT_VC5_5P49V5925:
- 	case IDT_VC5_5P49V5935:
- 	case IDT_VC6_5P49V6901:
- 	default:
-@@ -911,6 +913,13 @@ static int vc5_remove(struct i2c_client *client)
- 	.flags = 0,
- };
- 
-+static const struct vc5_chip_info idt_5p49v5925_info = {
-+	.model = IDT_VC5_5P49V5925,
-+	.clk_fod_cnt = 4,
-+	.clk_out_cnt = 5,
-+	.flags = 0,
-+};
+diff --git a/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
+new file mode 100644
+index 000000000000..1e623a34b1cb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
+@@ -0,0 +1,21 @@
++SY8106A Voltage regulator
 +
- static const struct vc5_chip_info idt_5p49v5933_info = {
- 	.model = IDT_VC5_5P49V5933,
- 	.clk_fod_cnt = 2,
-@@ -934,6 +943,7 @@ static int vc5_remove(struct i2c_client *client)
- 
- static const struct i2c_device_id vc5_id[] = {
- 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
-+	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
- 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
- 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
- 	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
-@@ -943,6 +953,7 @@ static int vc5_remove(struct i2c_client *client)
- 
- static const struct of_device_id clk_vc5_of_match[] = {
- 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
-+	{ .compatible = "idt,5p49v5925", .data = &idt_5p49v5925_info },
- 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
- 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
- 	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
++Required properties:
++- compatible: Must be "silergy,sy8106a"
++- reg: I2C slave address - must be <0x65>
++
++Any property defined as part of the core regulator binding, defined in
++regulator.txt, can also be used.
++
++Example:
++
++	sy8106a {
++		compatible = "silergy,sy8106a";
++		reg = <0x65>;
++		regulator-name = "sy8106a-vdd";
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1400000>;
++		regulator-ramp-delay = <200>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
 -- 
-1.9.1
+2.13.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
