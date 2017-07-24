@@ -1,34 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.132]:53238 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751784AbdGaKhk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2017 06:37:40 -0400
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, cl@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 0/2] clk: rockchip: support clk drivers for RK3126 SoC.
-Date: Mon, 31 Jul 2017 18:42:06 +0800
-Message-Id: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 08/10] ARM: dts: sun8i: a83t: Add pingroup for 8-bit eMMC on mmc2
+Date: Mon, 24 Jul 2017 21:59:03 +0800
+Message-Id: <20170724135905.28855-9-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-changed in V3:
-add documentation for rk3126 clock
+mmc2 can support 8-bit eMMC chips, with a dedicated reset line.
 
-Elaine Zhang (2):
-  clk: rockchip: rk3128: modify rk3128 clk driver to support rk3126
-  dt-bindings: add documentation for rk3126 clock
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- .../bindings/clock/rockchip,rk3128-cru.txt         |  6 +-
- drivers/clk/rockchip/clk-rk3128.c                  | 69 +++++++++++++++++-----
- 2 files changed, 58 insertions(+), 17 deletions(-)
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 21ab668abfac..d9b4372dbdf3 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -271,6 +271,15 @@
+ 				bias-pull-up;
+ 			};
+ 
++			mmc2_8bit_emmc_pins: mmc2-8bit-emmc-pins {
++				pins = "PC5", "PC6", "PC8", "PC9",
++				       "PC10", "PC11", "PC12", "PC13",
++				       "PC14", "PC15", "PC16";
++				function = "mmc2";
++				drive-strength = <30>;
++				bias-pull-up;
++			};
++
+ 			spdif_tx_pin: spdif-tx-pin {
+ 				pins = "PE18";
+ 				function = "spdif";
 -- 
-1.9.1
-
-
+2.13.3
