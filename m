@@ -1,158 +1,69 @@
-Return-Path: <absahu@codeaurora.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 24 Jul 2017 11:37:26 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Add clk_set_rate_parent to the CPU
+ clock
+Message-ID: <20170724093726.u3qpvocb7m6fujfx@flea>
+References: <20170721161935.18411-1-maxime.ripard@free-electrons.com>
+ <CAGb2v64AmFA7qHgTK6+w147-vb0Mv6uh5xx5MXy5jVfKNX_WVg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Sun, 30 Jul 2017 18:56:20 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org, mturquette@baylibre.com
-Cc: andy.gross@linaro.org, david.brown@linaro.org, rnayak@codeaurora.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 04/12] clk: qcom: use offset from alpha pll node
-In-Reply-To: <1501153825-5181-5-git-send-email-absahu@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
- <1501153825-5181-5-git-send-email-absahu@codeaurora.org>
-Message-ID: <976cafe0058c671f141a8af533762dff@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vhgnvp6ofk5ewxwe"
+In-Reply-To: <CAGb2v64AmFA7qHgTK6+w147-vb0Mv6uh5xx5MXy5jVfKNX_WVg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-07-27 16:40, Abhishek Sahu wrote:
-> Alpha PLL is a generic name used for Qualcomm PLL’s which uses L
-> and Alpha values for configuring the integer and fractional part.
-> Qualcomm SoC’s use different types of Alpha PLL’s for which basic
-> software configuration part is common. These PLL’s will have same
-> basic registers like PLL_MODE, L_VAL, ALPHA_VAL but some of the
-> register offsets are different in each PLL type.
-> Also, the offsets are not same in different instances of same
-> type of PLL in some cases so it’s better to get the offsets
-> from PLL node itself instead of hardcoding it.
-> 
-> This patch adds the support for giving the PLL offsets array in
-> PLL node itself and uses the same for calculating the offsets.
-> Now, this offsets array will be mandatory for all alpha PLL nodes.
-> This patch provides the default array of offsets which driver can use
-> in case where the PLL offsets are same. Some of the existing
-> Qualcomm SoC’s uses the alpha PLL nodes so this patch added the
-> default offsets in its nodes.
-> 
 
-  Did more analysis for this patch. Following are the
-  offsets comparison of different types of Alpha PLL
-  being used in different QCOM chips.
+--vhgnvp6ofk5ewxwe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Offsets                   Pious  Spark   Brammo  Huayra   Fabia  APSS 
-PLL
+On Sat, Jul 22, 2017 at 10:23:19AM +0800, Chen-Yu Tsai wrote:
+> On Sat, Jul 22, 2017 at 12:19 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The current CPU clock is missing the option to change the rate of its
+> > parents, leading to improper rates calculated by cpufreq, and eventually
+> > crashes.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> > Reported-by: Kevin Hilman <khilman@baylibre.com>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-  ALPHA_MODE                0x00   0x00    0x00    0x00     0x00  0x00
-  ALPHA_L_VAL               0x04   0x04    0x04    0x04     0x04  0x08
-  ALPHA_ALPHA_VAL           0x08   0x08    0x08    0x08     0x38  0x10
-  ALPHA_ALPHA_VAL_U         0x0c   0x0c    0x0c    NA       NA    NA
-  ALPHA_PLL_USER_CTL        0x10   0x10    0x10    0x10     0x0c  0x18
-  ALPHA_PLL_USER_CTL_U      0x14   0x14    NA      NA       0x10  NA
-  ALPHA_CONFIG_CTL          0x18   0x18    0x18    0x14     0x14  0x20
-  ALPHA_CONFIG_CTL_U        NA     NA      NA      0x18     0x18  0x24
-  ALPHA_TEST_CTL            0x1c   0x1c    0x1c    0x1c     0x1c  0x30
-  ALPHA_TEST_CTL_U          0x20   0x20    NA      0x20     0x20  0x34
-  ALPHA_STATUS              0x24   0x24    0x24    0x24     0x24  0x28
+Applied as a fix, thanks!
+Maxime
 
-  where
-  APPS PLL is Huayra PLL and being used in IPQ8074 and MSM8953
-  MSM8994 uses Pious PLL
-  MSM8996 uses Spark and Huayra PLL
-  IPQ8074 uses Spark, Brammo and Huayra PLL
-  MSM8998 uses Fabia PLL
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 129 
-> ++++++++++++++++++++-------------------
->  drivers/clk/qcom/clk-alpha-pll.h |  28 +++++++--
->  drivers/clk/qcom/gcc-ipq8074.c   |   6 +-
->  drivers/clk/qcom/gcc-msm8994.c   |  12 ++--
->  drivers/clk/qcom/gcc-msm8996.c   |  12 ++--
->  drivers/clk/qcom/mmcc-msm8996.c  |  48 ++++++++++-----
->  6 files changed, 141 insertions(+), 94 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c 
-> b/drivers/clk/qcom/clk-alpha-pll.c
-> index 6291048..ef24c80 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -20,7 +20,6 @@
->  #include "clk-alpha-pll.h"
->  #include "common.h"
-> 
-> -#define PLL_MODE		0x00
->  # define PLL_OUTCTRL		BIT(0)
->  # define PLL_BYPASSNL		BIT(1)
->  # define PLL_RESET_N		BIT(2)
-> @@ -36,25 +35,12 @@
->  # define PLL_ACTIVE_FLAG	BIT(30)
->  # define PLL_LOCK_DET		BIT(31)
-> 
-> -#define PLL_L_VAL		0x04
-> -#define PLL_ALPHA_VAL		0x08
-> -#define PLL_ALPHA_VAL_U		0x0c
-> -
-> -#define PLL_USER_CTL		0x10
->  # define PLL_POST_DIV_SHIFT	8
->  # define PLL_POST_DIV_MASK	0xf
->  # define PLL_ALPHA_EN		BIT(24)
->  # define PLL_VCO_SHIFT		20
->  # define PLL_VCO_MASK		0x3
-> 
-> -#define PLL_USER_CTL_U		0x14
-> -
-> -#define PLL_CONFIG_CTL		0x18
-> -#define PLL_CONFIG_CTL_U	0x20
-> -#define PLL_TEST_CTL		0x1c
-> -#define PLL_TEST_CTL_U		0x20
-> -#define PLL_STATUS		0x24
-> -
->  /*
->   * Even though 40 bits are present, use only 32 for ease of 
-> calculation.
->   */
-> @@ -62,27 +48,51 @@
->  #define ALPHA_BITWIDTH		32
->  #define ALPHA_16BIT_MASK	0xffff
-> 
-> +#define pll_mode(pll)		(pll->base + pll->offsets[ALPHA_PLL_MODE])
-> +#define pll_l(pll)		(pll->base + pll->offsets[ALPHA_PLL_L_VAL])
-> +#define pll_alpha(pll)		(pll->base + 
-> pll->offsets[ALPHA_PLL_ALPHA_VAL])
-> +#define pll_alpha_u(pll)	(pll->base + 
-> pll->offsets[ALPHA_PLL_ALPHA_VAL_U])
-> +#define pll_user_ctl(pll)	(pll->base + 
-> pll->offsets[ALPHA_PLL_USER_CTL])
-> +#define pll_user_ctl_u(pll)	(pll->base + 
-> pll->offsets[ALPHA_PLL_USER_CTL_U])
-> +#define pll_cfg_ctl(pll)	(pll->base + 
-> pll->offsets[ALPHA_PLL_CONFIG_CTL])
-> +#define pll_test_ctl(pll)	(pll->base + 
-> pll->offsets[ALPHA_PLL_TEST_CTL])
-> +#define pll_test_ctl_u(pll)	(pll->base + 
-> pll->offsets[ALPHA_PLL_TEST_CTL_U])
-> +#define pll_status(pll)		(pll->base + pll->offsets[ALPHA_PLL_STATUS])
-> +#define pll_cfg_ctl_u(pll)	(pll->base + 
-> pll->offsets[ALPHA_PLL_CONFIG_CTL_U])
-> +
->  #define to_clk_alpha_pll(_hw) container_of(to_clk_regmap(_hw), \
->  					   struct clk_alpha_pll, clkr)
-> 
->  #define to_clk_alpha_pll_postdiv(_hw) container_of(to_clk_regmap(_hw), 
-> \
->  					   struct clk_alpha_pll_postdiv, clkr)
-> 
-> +const u8 alpha_pll_offsets[] = {
-> +	[ALPHA_PLL_MODE] = 0x00,
-> +	[ALPHA_PLL_L_VAL] = 0x04,
-> +	[ALPHA_PLL_ALPHA_VAL] = 0x08,
-> +	[ALPHA_PLL_ALPHA_VAL_U] = 0x0c,
-> +	[ALPHA_PLL_USER_CTL] = 0x10,
-> +	[ALPHA_PLL_USER_CTL_U] = 0x14,
-> +	[ALPHA_PLL_CONFIG_CTL] = 0x18,
-> +	[ALPHA_PLL_TEST_CTL] = 0x1c,
-> +	[ALPHA_PLL_TEST_CTL_U] = 0x20,
-> +	[ALPHA_PLL_STATUS] = 0x24,
-> +};
-> +
+--vhgnvp6ofk5ewxwe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZdb/WAAoJEBx+YmzsjxAgs3cQAJ0O8XvXEfcoIdCARkAsDpQc
+YE6zynBPDMnQ5aXqcjILUEDHCOzKBpAYg+maghAKGGl1DhB/dltI4Ek4puBFnHy7
+HWg8CMDyGlfgTdInx9PHnfizE2p4Eg0s9xRTj5YTxtNhyJ0H3n2/D//6CCpIVLYg
+fMWGO3jdNiafGiCtXKTV2N1vxTe1ELgU0Z9+etk2e+PJL7Z3fzdE8aiZoCrcsePP
+zP0thLo6jIw14muH0B+cq6/5kJID78QkTVFQxQQt//9jEvb/zfWlC19+TR2DvmBR
+ErGLOcekSB3xbT5iKQxnvpo45fgG4TQ9RnIzev4RWrbxa8mj++w0Jmf6JMTdYkXp
+AbYoYJAGPqzTGZUz8s95oze0RP2aiszvWvGF5iQjUBRsQAIboUr5HKFlisU2K+kn
+0YuWOA3bgOB9MDa1vNqLTzo93elmf5AXFJBEV0x7k6sFRsetBU/CMyx/1+2X7N4N
+CEEl4KJGE61pZQO1FpovEBxA4QKzgvhcKcLnNVTvWTysDR+yKEv1IhAgPHvUgW81
+/26Y2InoeDYntwYsIuqGY2cq+ZGc5V9AsV3gsG/grsggttIHTV8+FNLqqjopj/1+
+F4ciMPBWvnZWnGkBpm4f5i8xxb0zsUNxJkyVXgs0A45ZB/QcpLlrGSRyEiwBj+6x
+ZJkd5zguBlnHdbWifrUX
+=bZax
+-----END PGP SIGNATURE-----
+
+--vhgnvp6ofk5ewxwe--
