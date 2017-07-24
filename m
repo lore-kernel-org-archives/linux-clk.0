@@ -1,75 +1,70 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
-To: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, daniel.thompson@linaro.org,
- andrea.merello@gmail.com, radoslaw.pietrzyk@gmail.com,
- Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, amelie.delaunay@st.com,
- olivier.bideau@st.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
- linux-arm-kernel@lists.infradead.org, ludovic.barre@st.com
-References: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
- <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <efa06f77-7b0e-9902-dbf1-c76d3203b813@gmail.com>
-Date: Thu, 13 Jul 2017 10:22:15 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:53126 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbdGXDIJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2017 23:08:09 -0400
 MIME-Version: 1.0
-In-Reply-To: <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170723102749.17323-4-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-4-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 24 Jul 2017 11:07:45 +0800
+Message-ID: <CAGb2v67CFxsPYFVUfbUKzidVrPHFkZL10FxvhbC_RN0pvYtbfA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 03/10] ARM: sunxi: h3/h5: Add r_i2c pinmux node
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/13/2017 07:02 AM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch exposes clk_gate_ops::is_enabled as functions
-> that can be directly called and assigned in places like this so
-> we don't need wrapper functions that do nothing besides forward
-> the call.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Sugested by Stephen Boyd <sboyd@codeaurora.org>
+On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Ondrej Jirman <megous@megous.com>
+>
+> H3/H5 SoCs contain an I2C controller optionally available
+> on the PL0 and PL1 pins. This patch adds pinmux configuration
+> for this controller.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> [Icenowy: change commit message and node name]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->  drivers/clk/clk-gate.c       | 2 +-
->  include/linux/clk-provider.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-> index 4e0c054a..e27e28f 100644
-> --- a/drivers/clk/clk-gate.c
-> +++ b/drivers/clk/clk-gate.c
-> @@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
->  	clk_gate_endisable(hw, 0);
->  }
->  
-> -static int clk_gate_is_enabled(struct clk_hw *hw)
-> +int clk_gate_is_enabled(struct clk_hw *hw)
->  {
->  	u32 reg;
->  	struct clk_gate *gate = to_clk_gate(hw);
+>  arch/arm/boot/dts/sunxi-h3-h5.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+> index 6f2162608006..b240099bc865 100644
+> --- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+> +++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+> @@ -639,6 +639,11 @@
+>                                 pins = "PL11";
+>                                 function = "s_cir_rx";
+>                         };
+> +
+> +                       r_i2c_pins: r-i2c {
+> +                               pins = "PL0", "PL1";
+> +                               function = "s_twi";
 
-Don't you need to add an EXPORT_SYMBOL_GPL(clk_gate_is_enabled) as well
-in case this gets used by modules?
+Can we fix the pinctrl driver to use standard names first? :(
 
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index c59c625..e9587ab 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
->  		u8 clk_gate_flags, spinlock_t *lock);
->  void clk_unregister_gate(struct clk *clk);
->  void clk_hw_unregister_gate(struct clk_hw *hw);
-> +int clk_gate_is_enabled(struct clk_hw *hw);
->  
->  struct clk_div_table {
->  	unsigned int	val;
-> 
+ChenYu
 
-
--- 
-Florian
+> +                       };
+>                 };
+>         };
+>  };
+> --
+> 2.13.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
