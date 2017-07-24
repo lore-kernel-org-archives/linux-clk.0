@@ -1,45 +1,72 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH 07/14] clk: tegra: Add TEGRA_PERIPH_ON_APB flag to I2C
-Date: Tue, 25 Jul 2017 13:34:08 +0300
-Message-ID: <1500978856-5981-8-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+Date: Mon, 24 Jul 2017 10:15:32 +0000
+Message-ID: <TY1PR06MB099263CA5AAEF5ECA6E16E9BD8BB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20170705211753.GV22780@codeaurora.org>
+In-Reply-To: <20170705211753.GV22780@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+Hi Stephen-san,
 
-I2C controllers are also on the APB bus and therefor need this flag to handle
-resets correctly.
+Thank you for your comments!
 
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra-periph.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> From: Stephen Boyd
+> Sent: Thursday, July 6, 2017 6:18 AM
+>=20
+> On 06/28, Yoshihiro Shimoda wrote:
+> > +
+> > +
+> > +	platform_set_drvdata(pdev, priv);
+> > +	dev_set_drvdata(dev, priv);
+> > +
+> > +	init.name =3D "rcar_usb2_clock_sel";
+> > +	init.ops =3D &usb2_clock_sel_clock_ops;
+> > +	init.flags =3D CLK_IS_BASIC;
+>=20
+> Please drop CLK_IS_BASIC unless you need it.
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 294bfe4..848255c 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -216,7 +216,8 @@
- 			     _clk_num, _clk_id)			\
- 	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,\
- 			30, MASK(2), 0, 0, 16, 0, TEGRA_DIVIDER_ROUND_UP,\
--			_clk_num, 0, _clk_id, _parents##_idx, 0, NULL)
-+			_clk_num, TEGRA_PERIPH_ON_APB, _clk_id, \
-+			_parents##_idx, 0, NULL)
- 
- #define XUSB(_name, _parents, _offset, \
- 			     _clk_num, _gate_flags, _clk_id)	 \
--- 
-1.9.1
+I got it.
+
+> > +	init.parent_names =3D NULL;
+> > +	init.num_parents =3D 0;
+> > +	priv->hw.init =3D &init;
+> > +
+> > +	clk =3D clk_register(NULL, &priv->hw);
+> > +	if (IS_ERR(clk))
+> > +		return PTR_ERR(clk);
+> > +
+> > +	error =3D of_clk_add_provider(np, of_clk_src_simple_get, clk);
+>=20
+> Can you use clk_hw_register() and of_clk_add_hw_provider()
+> please?
+
+I could use of_clk_add_hw_provider().
+
+Best regards,
+Yoshihiro Shimoda
+
+> > +	if (error)
+> > +		return error;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct dev_pm_ops rcar_usb2_clock_sel_pm_ops =3D {
+> > +	.suspend	=3D rcar_usb2_clock_sel_suspend,
+> > +	.resume		=3D rcar_usb2_clock_sel_resume,
+> > +};
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
