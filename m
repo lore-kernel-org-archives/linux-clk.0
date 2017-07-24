@@ -1,157 +1,111 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH v2 3/5] clk: qcom: gdsc: Add support to control associated
- clks
-To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, stanimir.varbanov@linaro.org,
- vivek.gautam@codeaurora.org
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <d89fd662-08bb-fdf5-75a0-4af528f6fa70@linaro.org>
-Date: Fri, 21 Jul 2017 11:29:30 +0300
-MIME-Version: 1.0
-In-Reply-To: <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 05/10] mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
+Date: Mon, 24 Jul 2017 21:59:00 +0800
+Message-Id: <20170724135905.28855-6-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rajendra,
+The MMC controller can support DDR52 transfers under the new timing
+mode. According to the BSP kernel, the module clock has to be double
+the card clock, regardless of the bus width. The default timings in
+the hardware can be used.
 
-few small comments to get code closer to perfection...
+This also reworks the code setting the internal divider, getting rid
+of a extra conditional.
 
-On 07/20/2017 07:48 AM, Rajendra Nayak wrote:
-> The devices within a gdsc power domain, quite often have additional
-> clocks to be turned on/off along with the power domain itself.
-> Add support for this by specifying a list of clk_hw pointers
-> per gdsc which would be the clocks turned on/off along with the
-> powerdomain on/off callbacks.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/qcom/gdsc.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++--
->  drivers/clk/qcom/gdsc.h |  8 +++++++
->  2 files changed, 66 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index a4f3580..7e7c051 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -12,6 +12,8 @@
->   */
->  
->  #include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/jiffies.h>
-> @@ -21,6 +23,7 @@
->  #include <linux/regmap.h>
->  #include <linux/reset-controller.h>
->  #include <linux/slab.h>
-> +#include "common.h"
->  #include "gdsc.h"
->  
->  #define PWR_ON_MASK		BIT(31)
-> @@ -166,6 +169,29 @@ static inline void gdsc_assert_clamp_io(struct gdsc *sc)
->  			   GMEM_CLAMP_IO_MASK, 1);
->  }
->  
-> +static inline int gdsc_clk_enable(struct gdsc *sc)
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/mmc/host/sunxi-mmc.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-I think the compiler is smart enough so 'inline' can dropped here and below.
-
-> +{
-> +	int i, ret;
-> +
-> +	for (i = 0; i < sc->clk_count; i++) {
-> +		ret = clk_prepare_enable(sc->clks[i]);
-> +		if (ret) {
-> +			for (i--; i >= 0; i--)
-> +				clk_disable_unprepare(sc->clks[i]);
-> +			return ret;
-> +		}
-> +	}
-
-blank line please.
-
-> +	return 0;
-> +}
-> +
-> +static inline void gdsc_clk_disable(struct gdsc *sc)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < sc->clk_count; i++)
-> +		clk_disable_unprepare(sc->clks[i]);
-
-can we disable clocks in reverse order, not sure that will make any
-sense but I've seen issues with some of the clocks in the past.
-
-> +}
-> +
->  static int gdsc_enable(struct generic_pm_domain *domain)
->  {
->  	struct gdsc *sc = domain_to_gdsc(domain);
-> @@ -193,6 +219,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
->  	 */
->  	udelay(1);
->  
-> +	ret = gdsc_clk_enable(sc);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Turn on HW trigger mode if supported */
->  	if (sc->flags & HW_CTRL) {
->  		ret = gdsc_hwctrl(sc, true);
-> @@ -241,6 +271,8 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->  			return ret;
->  	}
->  
-> +	gdsc_clk_disable(sc);
-> +
->  	if (sc->pwrsts & PWRSTS_OFF)
->  		gdsc_clear_mem_on(sc);
->  
-> @@ -254,7 +286,27 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->  	return 0;
->  }
->  
-> -static int gdsc_init(struct gdsc *sc)
-> +static inline int gdsc_clk_get(struct device *dev, struct gdsc *sc)
-> +{
-> +	if (sc->clk_count) {
-
-could you inverse the logic
-
-if (!sc->clk_count)
-	return 0;
-
-> +		int i;
-> +
-> +		sc->clks = devm_kcalloc(dev, sc->clk_count, sizeof(*sc->clks),
-> +					GFP_KERNEL);
-> +		if (!sc->clks)
-> +			return -ENOMEM;
-> +
-> +		for (i = 0; i < sc->clk_count; i++) {
-> +			sc->clks[i] = devm_clk_hw_get_clk(dev, sc->clk_hws[i],
-> +							  NULL);
-> +			if (IS_ERR(sc->clks[i]))
-> +				return PTR_ERR(sc->clks[i]);
-> +		}
-> +	}
-
-add blank line please
-
-> +	return 0;
-> +}
-> +
-
-I will make some tests with venus driver on mainline soon.
-
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index c8a60e43dc43..11587a69a1fd 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -755,7 +755,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ {
+ 	struct mmc_host *mmc = host->mmc;
+ 	long rate;
+-	u32 rval, clock = ios->clock;
++	u32 rval, clock = ios->clock, div = 1;
+ 	int ret;
+ 
+ 	ret = sunxi_mmc_oclk_onoff(host, 0);
+@@ -768,10 +768,21 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ 	if (!ios->clock)
+ 		return 0;
+ 
+-	/* 8 bit DDR requires a higher module clock */
++	/*
++	 * Under the old timing mode, 8 bit DDR requires the module
++	 * clock to be double the card clock. Under the new timing
++	 * mode, all DDR modes require a doubled module clock.
++	 *
++	 * We currently only support the standard MMC DDR52 mode.
++	 * This block should be updated once support for other DDR
++	 * modes is added.
++	 */
+ 	if (ios->timing == MMC_TIMING_MMC_DDR52 &&
+-	    ios->bus_width == MMC_BUS_WIDTH_8)
++	    (host->use_new_timings ||
++	     ios->bus_width == MMC_BUS_WIDTH_8)) {
++		div = 2;
+ 		clock <<= 1;
++	}
+ 
+ 	if (host->use_new_timings) {
+ 		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
+@@ -799,15 +810,10 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ 		return ret;
+ 	}
+ 
+-	/* clear internal divider */
++	/* set internal divider */
+ 	rval = mmc_readl(host, REG_CLKCR);
+ 	rval &= ~0xff;
+-	/* set internal divider for 8 bit eMMC DDR, so card clock is right */
+-	if (ios->timing == MMC_TIMING_MMC_DDR52 &&
+-	    ios->bus_width == MMC_BUS_WIDTH_8) {
+-		rval |= 1;
+-		rate >>= 1;
+-	}
++	rval |= div - 1;
+ 	mmc_writel(host, REG_CLKCR, rval);
+ 
+ 	if (host->use_new_timings) {
+@@ -838,7 +844,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
+ 		return ret;
+ 
+ 	/* And we just enabled our clock back */
+-	mmc->actual_clock = rate;
++	mmc->actual_clock = rate / div;
+ 
+ 	return 0;
+ }
+@@ -1315,7 +1321,7 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
+ 	mmc->caps	       |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
+ 				  MMC_CAP_ERASE | MMC_CAP_SDIO_IRQ;
+ 
+-	if (host->cfg->clk_delays)
++	if (host->cfg->clk_delays || host->use_new_timings)
+ 		mmc->caps      |= MMC_CAP_1_8V_DDR;
+ 
+ 	ret = mmc_of_parse(mmc);
 -- 
-regards,
-Stan
+2.13.3
