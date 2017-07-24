@@ -1,152 +1,137 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 25 Jul 2017 17:20:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH v3 3/9] clk: at91: add audio pll clock drivers
-Message-ID: <20170726002016.GE2146@codeaurora.org>
-References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
- <20170713074927.10882-4-quentin.schulz@free-electrons.com>
- <20170721222029.GO19878@codeaurora.org>
- <859d2f48-a987-afda-1e9d-02930e4fad7d@free-electrons.com>
+Return-Path: <yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+Date: Mon, 24 Jul 2017 10:13:04 +0000
+Message-ID: <TY1PR06MB0992A6CD9B43399DF1A7B2B8D8BB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20170705141532.slvvbxh33sgwotje@rob-hp-laptop>
+In-Reply-To: <20170705141532.slvvbxh33sgwotje@rob-hp-laptop>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <859d2f48-a987-afda-1e9d-02930e4fad7d@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/24, Quentin Schulz wrote:
-> Hi Stephen,
-> 
-> On 22/07/2017 00:20, Stephen Boyd wrote:
-> > On 07/13, Quentin Schulz wrote:
-> >> diff --git a/drivers/clk/at91/clk-audio-pll-pad.c b/drivers/clk/at91/clk-audio-pll-pad.c
-> >> new file mode 100644
-> >> index 000000000000..10dd6d625696
-> >> --- /dev/null
-> >> +++ b/drivers/clk/at91/clk-audio-pll-pad.c
-> >> +	struct regmap *regmap;
-> >> +	const char *parent_name;
-> >> +	const char *name = np->name;
-> >> +	int ret;
-> >> +
-> >> +	parent_name = of_clk_get_parent_name(np, 0);
-> >> +
-> >> +	of_property_read_string(np, "clock-output-names", &name);
-> >> +
-> >> +	regmap = syscon_node_to_regmap(of_get_parent(np));
-> >> +	if (IS_ERR(regmap))
-> >> +		return;
-> >> +
-> >> +	apad_ck = kzalloc(sizeof(*apad_ck), GFP_KERNEL);
-> >> +	if (!apad_ck)
-> >> +		return;
-> >> +
-> >> +	init.name = name;
-> >> +	init.ops = &audio_pll_pad_ops;
-> >> +	init.parent_names = (parent_name ? &parent_name : NULL);
-> > 
-> > Use of_clk_parent_fill()?
-> > 
-> 
-> [Deleting `parent_name = of_clk_get_parent_name(np, 0);`]
-> [Deleting `init.parent_names = (parent_name ? &parent_name : NULL);`]
-> 
-> + const char *parent_names[1];
-> [...]
-> + of_clk_parent_fill(np, parent_names, 1);
-> + init.parent_names = parent_names;
-> 
-> Is it what you're asking?
-> 
+Hi Rob,
 
-Yes.
+> -----Original Message-----
+> From: Rob Herring
+> Sent: Wednesday, July 5, 2017 11:16 PM
+>=20
+> On Wed, Jun 28, 2017 at 03:28:35PM +0900, Yoshihiro Shimoda wrote:
+> > R-Car USB 2.0 controller can change the clock source from an oscillator
+> > to an external clock via a register. So, this patch adds support
+> > the clock source selector as a clock driver.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  This patch is based on the renesas-drivers.git /
+> > renesas-drivers-2017-06-27-v4.12-rc7 tag.
+> >
+> >  Changes from v1:
+> >   - Change this driver as a clock driver from a generic phy driver.
+> >     https://patchwork.kernel.org/patch/9788697/
+> >   - Remove "RFC" tag.
+> >
+> >  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  54 ++++++
+> >  drivers/clk/renesas/Kconfig                        |   5 +
+> >  drivers/clk/renesas/Makefile                       |   1 +
+> >  drivers/clk/renesas/rcar-usb2-clock-sel.c          | 205 +++++++++++++=
+++++++++
+> >  4 files changed, 265 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rca=
+r-usb2-clock-sel.txt
+> >  create mode 100644 drivers/clk/renesas/rcar-usb2-clock-sel.c
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-=
+clock-sel.txt
+> b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+> > new file mode 100644
+> > index 0000000..75ccafc
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-s=
+el.txt
+> > @@ -0,0 +1,54 @@
+> > +* Renesas R-Car USB 2.0 clock selector
+> > +
+> > +This file provides information on what the device node for the R-Car U=
+SB 2.0
+> > +clock selector.
+> > +
+> > +If you connect an external clock to the USB_EXTAL pin only, you should=
+ set
+> > +the clock rate to "usb_extal" node only.
+> > +If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this =
+module
+> > +is not needed because this is default setting. (Of course, you can set=
+ the
+> > +clock rates to both "usb_extal" and "usb_xtal" nodes.
+> > +
+> > +Case 1: An external clock connects to R-Car SoC
+> > +        +----------+   +--- R-Car ---------------------+
+> > +        |External  |---|USB_EXTAL ---> all usb channels|
+> > +        |clock     |   |USB_XTAL                       |
+> > +        +----------+   +-------------------------------+
+> > +In this case, we need this driver with "usb_extal" clock.
+> > +
+> > +Case 2: An oscillator connects to R-Car SoC
+> > +        +----------+   +--- R-Car ---------------------+
+> > +        |Oscillator|---|USB_EXTAL -+-> all usb channels|
+> > +        |          |---|USB_XTAL --+                   |
+> > +        +----------+   +-------------------------------+
+> > +In this case, we don't need this selector.
+> > +
+> > +Required properties:
+> > +- compatible: "renesas,r8a7795-rcar-usb2-clock-sel" if the device is a=
+ part of
+> > +	      an R8A7795 SoC.
+> > +              "renesas,r8a7796-rcar-usb2-clock-sel" if the device if a=
+ part of
+> > +	      an R8A7796 SoC.
+> > +              "renesas,rcar-gen3-usb2-clock-sel" for a generic R-Car G=
+en3
+> > +              compatible device.
+> > +
+> > +              When compatible with the generic version, nodes must lis=
+t the
+> > +              SoC-specific version corresponding to the platform first
+> > +              followed by the generic version.
+> > +
+> > +- reg: offset and length of the USB 2.0 clock selector register block.
+> > +- clocks: A list of phandles and specifier pairs.
+> > +- clock-names: Name of the clocks.
+> > + - The functional clock must be "ehci_ohci"
+> > + - The USB_EXTAL clock pin must be "usb_extal"
+> > + - The USB_XTAL clock pin must be "usb_xtal"
+> > +- #clock-cells: Must be 0
+> > +
+> > +Exxample (R-Car H3):
+> > +
+> > +        usb2_clksel: clock-controller@e6590630 {
+> > +                compatible =3D "renesas,r8a77950-rcar-usb2-clock-sel",
+> > +                             "renesas,rcar-gen3-usb2-clock-sel";
+> > +                reg =3D <0 0xe6590630 0 0x02>;
+> > +                clocks =3D <&cpg CPG_MOD 703>, <&usb_extal>, <&usb_xta=
+l>;
+> > +                clock-names =3D "ehci_ohci", "usb_extal", "usb_xtal";
+>=20
+> Missing #clock-cells
 
-> >> +	init.num_parents = 1;
-> >> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
-> >> +		CLK_SET_RATE_PARENT;
-> >> +
-> >> +	apad_ck->hw.init = &init;
-> >> +	apad_ck->regmap = regmap;
-> >> +
-> >> +	ret = clk_hw_register(NULL, &apad_ck->hw);
-> >> +	if (ret)
-> >> +		kfree(apad_ck);
-> >> +	else
-> >> +		of_clk_add_hw_provider(np, of_clk_hw_simple_get, &apad_ck->hw);
-> > 
-> > Maybe we should make this register sequence a helper function.
-> > Seems common.
-> > 
-> 
-> I can put such an helper in an header if this is what you meant.
+Oops, I will fix it.
 
-No big deal either way.
+> With that, for the binding:
+>=20
+> Acked-by: Rob Herring <robh@kernel.org>
 
-> [...]
-> >> +static long clk_audio_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> >> +				     unsigned long *parent_rate)
-> >> +{
-> >> +	long best_rate = -EINVAL;
-> >> +	unsigned long fracr, nd;
-> >> +	int ret;
-> >> +
-> >> +	pr_debug("A PLL: %s, rate = %lu (parent_rate = %lu)\n", __func__, rate,
-> >> +		 *parent_rate);
-> >> +
-> >> +	if (rate < AUDIO_PLL_FOUT_MIN)
-> >> +		rate = AUDIO_PLL_FOUT_MIN;
-> >> +	else if (rate > AUDIO_PLL_FOUT_MAX)
-> >> +		rate = AUDIO_PLL_FOUT_MAX;
-> > 
-> > Use clamp. Also, did you want to use determine_rate callback and
-> > clamp the requested rate range?
-> > 
-> 
-> Didn't know this one, thanks!
-> 
-> I want determine_rate to return a valid rate for the pll so I clamp the
-> requested rate range in this one. In set_rate, I just tell the user that
-> any requested rate outside of the valid range is invalid. Does that
-> answer your question?
+Thank you for your Acked-by!
 
-I meant to use the determine rate op here instead of round_rate.
-That way, the min/max ranges can be updated here and the core
-should figure out that something went out of range. Of course,
-the rounded rate needs to be clamped still, but the ranges could
-be expressed back as well.
+Best regards,
+Yoshihiro Shimoda
 
-> 
-> [...]
-> >> +static void __init of_sama5d2_clk_audio_pll_setup(struct device_node *np)
-> >> +{
-> >> +	struct clk_audio_frac *fck;
-> >> +	struct clk_init_data init;
-> >> +	struct regmap *regmap;
-> >> +	const char *parent_name;
-> >> +	const char *name = np->name;
-> >> +	int ret;
-> >> +
-> >> +	parent_name = of_clk_get_parent_name(np, 0);
-> >> +
-> >> +	of_property_read_string(np, "clock-output-names", &name);
-> > 
-> > Any way to not rely on clock-output-names?
-> > 
-> 
-> I guess we could use the name of the DT node (as it's done in the
-> variable initialization block above) and not override it by
-> clock-output-names?
-
-If that works, sure.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Rob
