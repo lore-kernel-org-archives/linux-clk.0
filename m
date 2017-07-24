@@ -1,96 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp4-g21.free.fr ([212.27.42.4]:1758 "EHLO smtp4-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752066AbdG2IEp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 29 Jul 2017 04:04:45 -0400
-Subject: Re: [PATCH v2 4/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
-To: Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
- <1501235589-318-5-git-send-email-narmstrong@baylibre.com>
-From: Chris Moore <moore@free.fr>
-Message-ID: <389b0cd5-4c93-e043-9c55-02bd56f590cf@free.fr>
-Date: Sat, 29 Jul 2017 10:04:39 +0200
+Return-Path: <eballetbo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1501235589-318-5-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <d92350f4-8bb3-85cb-4c2b-a44ab794c29a@linux.intel.com>
+References: <20170710203801.17496-1-carlo@caione.org> <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
+ <20170710235403.GB25390@fury> <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
+ <1500904960.29303.204.camel@linux.intel.com> <d92350f4-8bb3-85cb-4c2b-a44ab794c29a@linux.intel.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Mon, 24 Jul 2017 17:02:58 +0200
+Message-ID: <CAFqH_52ZaQ=JP==wAgsa3FKLZi0N4+PCMdYUBBL-nvKkoLDKMA@mail.gmail.com>
+Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Darren Hart <dvhart@infradead.org>,
+	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, linux@endlessm.com,
+	Carlo Caione <carlo@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+2017-07-24 16:07 GMT+02:00 Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com>:
+> On 7/24/17 4:02 PM, Andy Shevchenko wrote:
+>>
+>> On Mon, 2017-07-24 at 15:49 +0200, Pierre-Louis Bossart wrote:
+>>>
+>>> On 7/11/17 1:54 AM, Darren Hart wrote:
+>>>>
+>>>> On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra
+>>>> wrote:
+>>
+>>
+>>>>> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>>>
+>>>>
+>>>> Excellent, thank you Enric. Pierre, any objections to this going in
+>>>> to
+>>>> 4.13 now and stable back to 4.12?
+>>>
+>>>
+>>> I saw an update of this patch being merged while I was away on an
+>>> extended summer break, but out of curiosity what was the problem with
+>>> no
+>>> audio on Baytrail? the code was added precisely to add support for
+>>> 19.2
+>>> MHz on Baytrail and finally solve audio issues. I have no reports of
+>>> broken functionality with this 282a4e4 commit... Enric, do you have a
+>>> bugzilla or pointers?
+>>
+>>
+>> TL;DR: We should respect firmware settings before blindly shut down
+>> "unused" resources. (We used to have similar stuff in GPIO/pinctrl
+>> driver for direct IRQ pins, where we shut up the pins which are used
+>> directly by IOAPIC)
+>
+>
+> I wasn't arguing against those patches, just curious as to which platforms
+> were broken by setting pmc_plat_3 blindly in the driver.
+>
 
-Sorry I forgot to reply to all in my previous post :(
-I hope this corrects things.
+After your patch the clock framework disables the required clocks
+because the driver does not request then and audio stopped to
+work.This is not the solution as is the codec who *must* request these
+clocks. We should implement this in the codec driver.. But now, at
+least, if firmware enables the clocks audio continues working on
+Baytrail.
 
-Le 28/07/2017 à 11:53, Neil Armstrong a écrit :
-
-[snip]
-
-> +static long aoclk_cec_32k_round_rate(struct clk_hw *hw, unsigned long 
-> rate,
-> +                     unsigned long *prate)
-> +{
-> +    const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
-> +                                  *prate);
-> +
-> +    /* If invalid return first one */
-> +    if (!freq)
-> +        return freq[0].target_rate;
-
-Wouldn't this dereference a null pointer (or am I being stupid this 
-morning)?
-
-> +
-> +    return freq->target_rate;
-> +}
-> +
-> +static int aoclk_cec_32k_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                  unsigned long parent_rate)
-> +{
-> +    const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
-> +                                  parent_rate);
-> +    struct aoclk_cec_32k *cec_32k = to_aoclk_cec_32k(hw);
-> +    u32 reg = 0;
-> +
-> +    if (!freq)
-> +        return -EINVAL;
-> +
-> +    /* Disable clock */
-> +    regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
-> +               CLK_CNTL0_IN_GATE_EN | CLK_CNTL0_OUT_GATE_EN, 0);
-> +
-> +    if (freq->dualdiv)
-> +        reg = CLK_CNTL0_DUALDIV_EN |
-> +              FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1) |
-> +              FIELD_PREP(CLK_CNTL0_N2_MASK, freq->n2 - 1);
-> +    else
-> +        reg = FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1);
-> +
-
-Suggestion:
-
-+    reg = FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1);
-+    if (freq->dualdiv)
-+        reg |= CLK_CNTL0_DUALDIV_EN |
-+               FIELD_PREP(CLK_CNTL0_N2_MASK, freq->n2 - 1);
-
-is shorter but maybe generates the same code.
-
-> + regmap_write(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0, reg);
-> +
-> +    if (freq->dualdiv)
-> +        reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1) |
-> +              FIELD_PREP(CLK_CNTL1_M2_MASK, freq->m2 - 1);
-> +    else
-> +        reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1);
-> +
-
-Idem:
-
-+    reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1);
-+    if (freq->dualdiv)
-+        reg |= FIELD_PREP(CLK_CNTL1_M2_MASK, freq->m2 - 1);
-
-Cheers,
-Chris
+Regards,
+ Enric
