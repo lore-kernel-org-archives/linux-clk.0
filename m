@@ -1,132 +1,71 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-MIME-Version: 1.0
-Date: Thu, 20 Jul 2017 10:19:11 +0800
-From: icenowy@aosc.io
-To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>
-Subject: Re: [linux-sunxi] [PATCH v4 4/5] ARM: sunxi: h3/h5: switch
- apb0-related clocks to r_ccu
-In-Reply-To: <3299ee7dd04482f0a21752651335e223@aosc.io>
-References: <20170404095100.18649-1-icenowy@aosc.io>
- <20170404095100.18649-5-icenowy@aosc.io> <1500505173.23770.1.camel@xff.cz>
- <3299ee7dd04482f0a21752651335e223@aosc.io>
-Message-ID: <2acca1ac65eea751651743c76ec6ede7@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 10/10] ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
+Date: Mon, 24 Jul 2017 21:59:05 +0800
+Message-Id: <20170724135905.28855-11-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-5ZyoIDIwMTctMDctMjAgMTA6MDPvvIxpY2Vub3d5QGFvc2MuaW8g5YaZ6YGT77yaCj4g5ZyoIDIw
-MTctMDctMjAgMDY6NTnvvIxPbmTFmWVqIEppcm1hbiDlhpnpgZPvvJoKPj4gSGksCj4+IAo+PiBJ
-Y2Vub3d5IFpoZW5nIHDDrcWhZSB2IMOadCAwNC4gMDQuIDIwMTcgdiAxNzo1MCArMDgwMDoKPj4+
-IEZyb206IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+PiAKPj4+IE5vdyB3ZSBo
-YXZlIGRyaXZlciBmb3IgdGhlIFBSQ00gQ0NVLCBzd2l0Y2ggdG8gdXNlIGl0IGluc3RlYWQgb2YK
-Pj4+IG9sZC1zdHlsZSBjbG9jayBub2RlcyBmb3IgYXBiMC1yZWxhdGVkIGNsb2NrcyBpbiBzdW54
-aS1oMy1oNS5kdHNpIC4KPj4+IAo+Pj4gVGhlIG11eCAzIG9mIFJfQ0NVIGlzIHN0aWxsIHRoZSBp
-bnRlcm5hbCBvc2NpbGxhdG9yLCB3aGljaCBpcyBzYWlkIHRvIAo+Pj4gYmUKPj4+IDE2TUh6IHBs
-dXMgbWludXMgMzAlLCBhbmQgZ2V0IGEgbWVhc3VyZWQgdmFsdWUgb2YgMTVNSHp+MTZNSHogb24g
-bXkgCj4+PiB0d28KPj4+IEgzIGJvYXJkcyBhbmQgb25lIEg1IGJvYXJkLgo+PiAKPj4gVGhlcmUn
-cyBpc3N1ZSB3aXRoIHRoZSBuZXcgcl9jY3UgdGhhdCBicmVha3Mgcl9pMmMuIChubyBkZXZpY2Vz
-IGNhbiBiZQo+PiBmb3VuZCBvbiB0aGUgYnVzKS4gUmV2ZXJ0aW5nIHRoaXMgcGF0Y2ggZml4ZXMg
-dGhlIGlzc3VlIHdpdGggdGhlIEkyQwo+PiBjb250cm9sbGVyLiAoZXZlcnl0aGluZyBlbHNlIGJl
-aW5nIHRoZSBzYW1lKQo+PiAKPj4gSGVyZSdzIHRoZSBjb2RlIEknbSB1c2luZzogCj4+IGh0dHBz
-Oi8vZ2l0aHViLmNvbS9tZWdvdXMvbGludXgvY29tbWl0cy9vcmFuCj4+IGdlLXBpLTQuMTIKPj4g
-Cj4+IFRoZSBsYXN0IGNvbW1pdCBpcyB0aGUgcmV2ZXJ0Lgo+PiAKPj4gVGhlIGlzc3VlIG1hbmlm
-ZXN0cyBpdHNlbGYgYnkgbm9uLXdvcmtpbmcgRFZGUywgYmVjYXVzZSBrZXJuZWwgbGFja3MKPj4g
-YWNjZXNzIHRvIFNZODEwNkEgcmVndWxhdG9yLCBiZWNhdXNlIHJfaTJjIGRvZXNuJ3Qgd29yayB3
-aXRoIHN1bnhpLW5nCj4+IGNsb2NrIGRyaXZlciAoc3VuOGktcikuCj4+IAo+PiBSZWxldmFudCBk
-aWZmZXJlbmNlIGluIHJlZ2lzdGVycyBiZXR3ZWVuIHdvcmtpbmcvbm9uLXdvcmtpbmcgc3RhdGUg
-aXMKPj4ganVzdCB0aGlzIChkaWZmIC11KToKPj4gCj4+ICAweDAxZjAyNDAwID0gMHgwMDAwMDAw
-MAo+PiAgMHgwMWYwMjQwNCA9IDB4MDAwMDAwMDAKPj4gLTB4MDFmMDI0MDggPSAweDAwMDAwMDkx
-Cj4+ICsweDAxZjAyNDA4ID0gMHgwMDAwMDA5NSBEQVRBIHJlZ2lzdGVyIGluaXNkZSB0aGUgSTJD
-IGNvbnRyb2xsZXIKPj4gIDB4MDFmMDI0MGMgPSAweDAwMDAwMDQ0Cj4+ICAweDAxZjAyNDEwID0g
-MHgwMDAwMDBmOAo+PiAtMHgwMWYwMjQxNCA9IDB4MDAwMDAwNTkKPj4gKzB4MDFmMDI0MTQgPSAw
-eDAwMDAwMDAwIENMT0NLIHNldHVwIHJlZ2lzdGVyIGluc2lkZSB0aGUgSTJDIAo+PiBjb250cm9s
-bGVyCj4+ICAweDAxZjAyNDE4ID0gMHgwMDAwMDAwMAo+PiAgMHgwMWYwMjQxYyA9IDB4MDAwMDAw
-MDAKPj4gIDB4MDFmMDI0MjAgPSAweDAwMDAwMDNhCj4+IAo+PiBJdCBsb29rcyBsaWtlIHRoZSBu
-ZXcgc3VueGktbmcgY2xvY2sgZHJpdmVyIGNhdXNlcyB0aGUgSTJDIGRyaXZlciB0bwo+PiBub3Qg
-Y29ycmVjdGx5IGNvbmZpZ3VyZSB0aGUgQ0xPQ0sgcmVnaXN0ZXIuIEkgZG9uJ3Qga25vdyB3aHkg
-YW5kIEknbQo+PiBub3Qgc3VyZSBob3cgdG8gZGVhbCB3aXRoIHRoaXMuIEFueSBpZGVhcyB3aGF0
-IGNhbiBJIGRvIG5leHQ/Cj4+IAo+PiB0aGFuayB5b3UgYW5kIHJlZ2FyZHMsCj4+ICAgby4KPiAK
-PiBJdCBzZWVtcyB0byBiZSBhIHZlcnkgdmVyeSB2ZXJ5IHdlaXJkIHByb2JsZW0gLS0gdGhlIENQ
-VVNfQ0ZHIHJlZ2lzdGVyCj4gc2VlbXMgdG8gYmUgbm90IGFjY2Vzc2libGUgaW4gbm9uLXNlY3Vy
-ZSBtb2RlIG9uIEgzLCBhbmQgaWYgdGhlIHJfY2N1Cj4gZHJpdmVyIHJlYWRzIGl0IGEgdmFsdWUg
-b2YgMHgwIGlzIHJlYWQgb3V0ICh3aGljaCBtZWFucyB0aGF0IHRoZSBwYXJlbnQKPiBvZiBhcjEw
-MCBpcyBvc2MzMmspLCBidXQgdGhlIHJlYWwgaW5pdGlhbCB2YWx1ZSBvZiB0aGUgcmVnaXN0ZXIg
-aXMKPiAweDAwMDEwMDAwICh3aGljaCBtZWFucyB0aGUgcGFyZW50IGlzIG9zYzI0TSkuCj4gCj4g
-U28gdGhlIGJ1cyBjbG9jayBvZiByX2kyYyBpcyB3cm9uZ2x5IGNsYWltZWQgYXMgMzJrSHosIG5v
-dCAyNE1IeiwgdGhlbgo+IHRoZSByX2kyYyBmYWlscyB0byB3b3JrLgo+IAo+IFRoaXMgY2xvY2sg
-cHJvYmxlbSBkb2Vzbid0IGV4aXN0IGZvciBBNjQuCgpINSBkb2Vzbid0IGhhdmUgdGhpcyBpc3N1
-ZSBlaXRoZXIuCgo+IAo+PiAKPj4+IFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPGljZW5v
-d3lAYW9zYy54eXo+Cj4+PiAtLS0KPj4+IENoYW5nZXMgaW4gdjQ6Cj4+PiAtIFRlbXBvcmFyaWx5
-IGRyb3BwZWQgdGhlIENDVSBoZWFkZXJzLgo+Pj4gQ2hhbmdlcyBpbiB2MzoKPj4+IC0gQ2hhbmdl
-IG9zYzMyMDAwIHRvIGlvc2MuCj4+PiAKPj4+ICBhcmNoL2FybS9ib290L2R0cy9zdW54aS1oMy1o
-NS5kdHNpIHwgNDUgCj4+PiArKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
-Pj4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAzMSBkZWxldGlvbnMoLSkKPj4+
-IAo+Pj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bnhpLWgzLWg1LmR0c2kgCj4+
-PiBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bnhpLWgzLWg1LmR0c2kKPj4+IGluZGV4IDY2NDBlYmZh
-NjQxOS4uMWFlZWFjYjNhODg0IDEwMDY0NAo+Pj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvc3Vu
-eGktaDMtaDUuZHRzaQo+Pj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3VueGktaDMtaDUuZHRz
-aQo+Pj4gQEAgLTY4LDMxICs2OCwxMiBAQAo+Pj4gIAkJCWNsb2NrLW91dHB1dC1uYW1lcyA9ICJv
-c2MzMmsiOwo+Pj4gIAkJfTsKPj4+IAo+Pj4gLQkJYXBiMDogYXBiMF9jbGsgewo+Pj4gLQkJCWNv
-bXBhdGlibGUgPSAiZml4ZWQtZmFjdG9yLWNsb2NrIjsKPj4+ICsJCWlvc2M6IGludGVybmFsLW9z
-Yy1jbGsgewo+Pj4gIAkJCSNjbG9jay1jZWxscyA9IDwwPjsKPj4+IC0JCQljbG9jay1kaXYgPSA8
-MT47Cj4+PiAtCQkJY2xvY2stbXVsdCA9IDwxPjsKPj4+IC0JCQljbG9ja3MgPSA8Jm9zYzI0TT47
-Cj4+PiAtCQkJY2xvY2stb3V0cHV0LW5hbWVzID0gImFwYjAiOwo+Pj4gLQkJfTsKPj4+IC0KPj4+
-IC0JCWFwYjBfZ2F0ZXM6IGNsa0AwMWYwMTQyOCB7Cj4+PiAtCQkJY29tcGF0aWJsZSA9ICJhbGx3
-aW5uZXIsc3VuOGktaDMtYXBiMC1nYXRlcy1jbGsiLAo+Pj4gLQkJCQkgICAgICJhbGx3aW5uZXIs
-c3VuNGktYTEwLWdhdGVzLWNsayI7Cj4+PiAtCQkJcmVnID0gPDB4MDFmMDE0MjggMHg0PjsKPj4+
-IC0JCQkjY2xvY2stY2VsbHMgPSA8MT47Cj4+PiAtCQkJY2xvY2tzID0gPCZhcGIwPjsKPj4+IC0J
-CQljbG9jay1pbmRpY2VzID0gPDA+LCA8MT47Cj4+PiAtCQkJY2xvY2stb3V0cHV0LW5hbWVzID0g
-ImFwYjBfcGlvIiwgImFwYjBfaXIiOwo+Pj4gLQkJfTsKPj4+IC0KPj4+IC0JCWlyX2NsazogaXJf
-Y2xrQDAxZjAxNDU0IHsKPj4+IC0JCQljb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW40aS1hMTAt
-bW9kMC1jbGsiOwo+Pj4gLQkJCXJlZyA9IDwweDAxZjAxNDU0IDB4ND47Cj4+PiAtCQkJI2Nsb2Nr
-LWNlbGxzID0gPDA+Owo+Pj4gLQkJCWNsb2NrcyA9IDwmb3NjMzJrPiwgPCZvc2MyNE0+Owo+Pj4g
-LQkJCWNsb2NrLW91dHB1dC1uYW1lcyA9ICJpciI7Cj4+PiArCQkJY29tcGF0aWJsZSA9ICJmaXhl
-ZC1jbG9jayI7Cj4+PiArCQkJY2xvY2stZnJlcXVlbmN5ID0gPDE2MDAwMDAwPjsKPj4+ICsJCQlj
-bG9jay1hY2N1cmFjeSA9IDwzMDAwMDAwMDA+Owo+Pj4gKwkJCWNsb2NrLW91dHB1dC1uYW1lcyA9
-ICJpb3NjIjsKPj4+ICAJCX07Cj4+PiAgCX07Cj4+PiAKPj4+IEBAIC01NzYsOSArNTU3LDEyIEBA
-Cj4+PiAgCQkJCSAgICAgPEdJQ19TUEkgNDEgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4+PiAgCQl9
-Owo+Pj4gCj4+PiAtCQlhcGIwX3Jlc2V0OiByZXNldEAwMWYwMTRiMCB7Cj4+PiAtCQkJcmVnID0g
-PDB4MDFmMDE0YjAgMHg0PjsKPj4+IC0JCQljb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW42aS1h
-MzEtY2xvY2stcmVzZXQiOwo+Pj4gKwkJcl9jY3U6IGNsb2NrQDFmMDE0MDAgewo+Pj4gKwkJCWNv
-bXBhdGlibGUgPSAiYWxsd2lubmVyLHN1bjUwaS1hNjQtci1jY3UiOwo+Pj4gKwkJCXJlZyA9IDww
-eDAxZjAxNDAwIDB4MTAwPjsKPj4+ICsJCQljbG9ja3MgPSA8Jm9zYzI0TT4sIDwmb3NjMzJrPiwg
-PCZpb3NjPjsKPj4+ICsJCQljbG9jay1uYW1lcyA9ICJob3NjIiwgImxvc2MiLCAiaW9zYyI7Cj4+
-PiArCQkJI2Nsb2NrLWNlbGxzID0gPDE+Owo+Pj4gIAkJCSNyZXNldC1jZWxscyA9IDwxPjsKPj4+
-ICAJCX07Cj4+PiAKPj4+IEBAIC01ODksOSArNTczLDkgQEAKPj4+IAo+Pj4gIAkJaXI6IGlyQDAx
-ZjAyMDAwIHsKPj4+ICAJCQljb21wYXRpYmxlID0gImFsbHdpbm5lcixzdW41aS1hMTMtaXIiOwo+
-Pj4gLQkJCWNsb2NrcyA9IDwmYXBiMF9nYXRlcyAxPiwgPCZpcl9jbGs+Owo+Pj4gKwkJCWNsb2Nr
-cyA9IDwmcl9jY3UgND4sIDwmcl9jY3UgMTE+Owo+Pj4gIAkJCWNsb2NrLW5hbWVzID0gImFwYiIs
-ICJpciI7Cj4+PiAtCQkJcmVzZXRzID0gPCZhcGIwX3Jlc2V0IDE+Owo+Pj4gKwkJCXJlc2V0cyA9
-IDwmcl9jY3UgMD47Cj4+PiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDM3IElSUV9UWVBFX0xF
-VkVMX0hJR0g+Owo+Pj4gIAkJCXJlZyA9IDwweDAxZjAyMDAwIDB4NDA+Owo+Pj4gIAkJCXN0YXR1
-cyA9ICJkaXNhYmxlZCI7Cj4+PiBAQCAtNjAxLDkgKzU4NSw4IEBACj4+PiAgCQkJY29tcGF0aWJs
-ZSA9ICJhbGx3aW5uZXIsc3VuOGktaDMtci1waW5jdHJsIjsKPj4+ICAJCQlyZWcgPSA8MHgwMWYw
-MmMwMCAweDQwMD47Cj4+PiAgCQkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDQ1IElSUV9UWVBFX0xF
-VkVMX0hJR0g+Owo+Pj4gLQkJCWNsb2NrcyA9IDwmYXBiMF9nYXRlcyAwPiwgPCZvc2MyNE0+LCA8
-Jm9zYzMyaz47Cj4+PiArCQkJY2xvY2tzID0gPCZyX2NjdSAzPiwgPCZvc2MyNE0+LCA8Jm9zYzMy
-az47Cj4+PiAgCQkJY2xvY2stbmFtZXMgPSAiYXBiIiwgImhvc2MiLCAibG9zYyI7Cj4+PiAtCQkJ
-cmVzZXRzID0gPCZhcGIwX3Jlc2V0IDA+Owo+Pj4gIAkJCWdwaW8tY29udHJvbGxlcjsKPj4+ICAJ
-CQkjZ3Bpby1jZWxscyA9IDwzPjsKPj4+ICAJCQlpbnRlcnJ1cHQtY29udHJvbGxlcjsKPj4+IC0t
-Cj4+PiAyLjEyLjIKPj4+IAo+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwo+PiBsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAo+PiBsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPj4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCj4gCj4gX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
-bGlzdAo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IGh0dHA6Ly9saXN0
-cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5l
-bCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
-Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+The H8 homlet has a micro-SD card slot connected to mmc0,
+and onboard eMMC from FORESEE, connected to mmc2.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts   | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+index aecdeeb368ed..7afbaa4eea8d 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+@@ -43,6 +43,7 @@
+ 
+ /dts-v1/;
+ #include "sun8i-a83t.dtsi"
++#include "sunxi-common-regulators.dtsi"
+ 
+ / {
+ 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
+@@ -57,6 +58,26 @@
+ 	};
+ };
+ 
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>;
++	vmmc-supply = <&reg_vcc3v0>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	bus-width = <4>;
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
++	vmmc-supply = <&reg_vcc3v0>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
+-- 
+2.13.3
