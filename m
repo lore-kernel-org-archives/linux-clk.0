@@ -1,78 +1,71 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 3 Jul 2017 15:58:34 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- mark.rutland@arm.com, nicolas.ferre@microchip.com,
- alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, thomas.petazzoni@free-electrons.com
-Subject: Re: [PATCH 1/6] clk: at91: clk-generated: remove useless divisor
- loop
-Message-ID: <20170703155834.4de2a304@bbrezillon>
-In-Reply-To: <20170623090059.8371-2-quentin.schulz@free-electrons.com>
-References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
-	<20170623090059.8371-2-quentin.schulz@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner SoCs
+Date: Mon, 24 Jul 2017 13:46:15 +0200
+Message-ID: <2436327.OLdY8skjMP@aspire.rjw.lan>
+In-Reply-To: <20170724085349.GT352@vireshk-i7>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-8-icenowy@aosc.io> <20170724085349.GT352@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 23 Jun 2017 11:00:54 +0200
-Quentin Schulz <quentin.schulz@free-electrons.com> wrote:
-
-> The driver requests the current clk rate of each of its parent clocks to
-> decide whether a clock rate is suitable or not. It does not request
-> determine_rate from a parent clock which could request a rate change in
-> parent clock (i.e. there is no parent rate propagation).
+On Monday, July 24, 2017 02:23:49 PM Viresh Kumar wrote:
+> On 23-07-17, 18:27, Icenowy Zheng wrote:
+> > Some new Allwinner SoCs get supported in the kernel after the
+> > compatibles are added to cpufreq-dt-platdev driver.
+> > 
+> > Add their compatible strings in the cpufreq-dt-platdev driver.
+> > 
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > ---
+> >  drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > index 2eb40d46d357..c3851453e84a 100644
+> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > @@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
+> >  	{ .compatible = "allwinner,sun8i-a23", },
+> >  	{ .compatible = "allwinner,sun8i-a33", },
+> >  	{ .compatible = "allwinner,sun8i-a83t", },
+> > +	{ .compatible = "allwinner,sun8i-h2-plus", },
+> >  	{ .compatible = "allwinner,sun8i-h3", },
+> > +	{ .compatible = "allwinner,sun8i-v3s", },
+> > +	{ .compatible = "allwinner,sun50i-a64", },
+> > +	{ .compatible = "allwinner,sun50i-h5", },
+> >  
+> >  	{ .compatible = "apm,xgene-shadowcat", },
+> >  
+> > @@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
+> >  	{ .compatible = "marvell,pxa250", },
+> >  	{ .compatible = "marvell,pxa270", },
+> >  
+> > +	{ .compatible = "nextthing,gr8", },
+> > +
+> >  	{ .compatible = "samsung,exynos3250", },
+> >  	{ .compatible = "samsung,exynos4210", },
+> >  	{ .compatible = "samsung,exynos4212", },
 > 
-> We know the rate we want (passed along req argument of the function) and
-> the parent clock rate, thus we know the closest rounded divisor, we
-> don't need to iterate over the available divisors to find the best one
-> for a given clock.
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 > 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> ---
->  drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
->  1 file changed, 12 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index 07c8f701e51c..dab7002937e6 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  		    (gck->range.max && min_rate > gck->range.max))
->  			continue;
->  
-> -		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
-> -			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
-> -			tmp_diff = abs(req->rate - tmp_rate);
-> -
-> -			if (best_diff < 0 || best_diff > tmp_diff) {
-> -				best_rate = tmp_rate;
-> -				best_diff = tmp_diff;
-> -				req->best_parent_rate = parent_rate;
-> -				req->best_parent_hw = parent;
-> -			}
-> -
-> -			if (!best_diff || tmp_rate < req->rate)
-> -				break;
-> +		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-> +		if (!div)
-> +			tmp_rate = parent_rate;
-> +		else
-> +			tmp_rate = parent_rate / div;
-> +		tmp_diff = abs(req->rate - tmp_rate);
-> +
-> +		if (best_diff < 0 || best_diff > tmp_diff) {
-> +			best_rate = tmp_rate;
-> +			best_diff = tmp_diff;
-> +			req->best_parent_rate = parent_rate;
-> +			req->best_parent_hw = parent;
->  		}
->  
->  		if (!best_diff)
+
+OK
+
+I'm assuming this will go in via arm-soc along with the rest of the series.
+
+Thanks,
+Rafael
