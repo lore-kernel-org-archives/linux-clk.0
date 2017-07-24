@@ -1,99 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Jul 2017 09:37:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v2 3/5] clk: qcom: gdsc: Add support to control
- associated clks
-Message-ID: <20170728163753.GB2146@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
- <20170727230259.GR2146@codeaurora.org>
- <b1db092a-edd8-76e9-f1d2-91bf123638d7@codeaurora.org>
+Return-Path: <andy.tang@nxp.com>
+From: Andy Tang <andy.tang@nxp.com>
+To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>, "Rob
+ Herring" <robh@kernel.org>
+Subject: RE: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
+Date: Mon, 24 Jul 2017 01:20:53 +0000
+Message-ID: <HE1PR0402MB28281436E64A12EBA944602AF3BB0@HE1PR0402MB2828.eurprd04.prod.outlook.com>
+References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+ <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop>
+ <DB6PR0402MB2837EB5F759C39616BF8A904F3210@DB6PR0402MB2837.eurprd04.prod.outlook.com>
+ <20170721220323.GN19878@codeaurora.org>
+In-Reply-To: <20170721220323.GN19878@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <b1db092a-edd8-76e9-f1d2-91bf123638d7@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/28, Rajendra Nayak wrote:
-> 
-> 
-> On 07/28/2017 04:32 AM, Stephen Boyd wrote:
-> > On 07/20, Rajendra Nayak wrote:
-> > 
-> >> +		clk_disable_unprepare(sc->clks[i]);
-> >> +}
-> >> +
-> >>  static int gdsc_enable(struct generic_pm_domain *domain)
-> >>  {
-> >>  	struct gdsc *sc = domain_to_gdsc(domain);
-> >> @@ -193,6 +219,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
-> >>  	 */
-> >>  	udelay(1);
-> >>  
-> >> +	ret = gdsc_clk_enable(sc);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >>  	/* Turn on HW trigger mode if supported */
-> >>  	if (sc->flags & HW_CTRL) {
-> >>  		ret = gdsc_hwctrl(sc, true);
-> >> @@ -241,6 +271,8 @@ static int gdsc_disable(struct generic_pm_domain *domain)
-> >>  			return ret;
-> >>  	}
-> >>  
-> >> +	gdsc_clk_disable(sc);
-> > 
-> > Can we call sleeping APIs (i.e. prepare/unprepare) from within
-> > the power domains? I thought that didn't work generically because
-> > someone could set their runtime PM configuration to be atomic
-> > context friendly. Is there some way we can block that from
-> > happening if we hook up a power domain that is no longer safe to
-> > call from atomic context?
-> 
-> hmm, I don't see a way to do that. Perhaps we could prepare/unprepare
-> these as part of the pm_domain attach/detach to a device and then
-> only enable/disable them as part of the gdsc_enable/disable?
-> 
+Hi,
 
-The problem there is if we keep these clks prepared while the
-domain is attached to a device I don't see how we can ever turn
-off the XO clk and achieve XO shutdown in low power modes. A pm
-domain is basically never detached, right? This is where we need
-different power levels in PM domains if I understand correctly.
+> -----Original Message-----
+> From: sboyd@codeaurora.org [mailto:sboyd@codeaurora.org]
+> Sent: Saturday, July 22, 2017 6:03 AM
+> To: Andy Tang <andy.tang@nxp.com>
+> Cc: mturquette@baylibre.com; mark.rutland@arm.com; linux-
+> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Scott Wood
+> <oss@buserror.net>; Rob Herring <robh@kernel.org>
+> Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
+>=20
+> On 03/09, Y.T. Tang wrote:
+> > Hi Michael and Stephen,
+> >
+> > This patch set was acked by Rob Herring. Do you have any comments on
+> them?
+> >
+> > BTW:  Scott should stay in author, do I need to resend them with author
+> changed or you can change it when applying?
+> >
+>=20
+> Please resend these two patches.
 
-> > 
-> > This concerns me if we do probe defer on orphan clks. We may get
-> > into some situation where the gdsc is setup by a clk driver that
-> > is trying to probe before some parent clk has registered for the
-> > clks we're "getting" here. For example, this could easily happen
-> > if we insert XO into the tree at the top and everything defers.
-> > 
-> > I suppose this is not a problem because in this case we don't
-> > have any clk here that could be orphaned even if RPM clks are
-> > inserted into the clk tree for XO? I mean to say that we won't
-> > get into a probe defer due to orphan clk loop. I'm always afraid
-> > someone will make hardware that send a clk from one controller to
-> > another and then back again (we did that with pcie) and then
-> > we'll be unable to get out of the defer loop because we'll be
-> > deferred on orphan status.
-> 
-> Yes, we would probably run into these issues with probe defer for
-> orphan clks. One way to handle it could be to decouple the probing
-> of the clocks and powerdomain parts of the controller. Like the clock
-> driver can probe and then register a dummy device for powerdomains
-> (like is done for tsens on 8960) so it could probe independently?
-> 
+Those two patches have been merged several months ago. No need to resend.
+Thanks.
 
-Well is it a problem right now? I think we're OK here because we
-don't have a "cycle" between clk providers in the clk provider
-hierarchy. Can we clk_get() during attach and then fail attach if
-we can't get clks at that point? If this works, we have a backup
-plan should something go wrong, but we can ignore this concern
-for now until it becomes a real problem.
+Regards,
+Andy
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>=20
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
+> Linux Foundation Collaborative Project
