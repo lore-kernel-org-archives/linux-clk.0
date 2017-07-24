@@ -1,161 +1,78 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jul 2017 12:09:00 +0200
-Message-ID: <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
- clock selector PHY
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 06/10] mmc: sunxi: Add support for A83T eMMC (MMC2)
+Date: Mon, 24 Jul 2017 21:59:01 +0800
+Message-Id: <20170724135905.28855-7-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simoda-san,
+The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
+different. It supports a wider 8-bit bus, has a dedicated controllable
+reset pin for eMMC, and a "new timing mode" which is supposed to deliver
+better signals and thus better performance.
 
-On Wed, Jun 28, 2017 at 8:28 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> R-Car USB 2.0 controller can change the clock source from an oscillator
-> to an external clock via a register. So, this patch adds support
-> the clock source selector as a clock driver.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add a compatible for this one to use the new timing mode not found in the
+other controllers.
 
-Thanks for your patch!
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
+ drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-
-> +static void usb2_clock_sel_enable_extal_only(struct usb2_clock_sel_priv *priv)
-> +{
-> +       u16 val = readw(priv->base + USB20_CLKSET0);
-> +
-> +       pr_debug("%s: enter %d %d %x\n", __func__,
-> +                priv->extal, priv->xtal, val);
-> +
-> +       if (priv->extal && !priv->xtal && val != CLKSET0_EXTAL_ONLY)
-> +               writew(CLKSET0_EXTAL_ONLY, priv->base + USB20_CLKSET0);
-> +}
-> +
-> +static void usb2_clock_sel_disable_extal_only(struct usb2_clock_sel_priv *priv)
-> +{
-> +       if (priv->extal && !priv->xtal)
-> +               writew(CLKSET0_PRIVATE, priv->base + USB20_CLKSET0);
-> +}
-> +
-> +static int usb2_clock_sel_enable(struct clk_hw *hw)
-> +{
-> +       usb2_clock_sel_enable_extal_only(to_priv(hw));
-> +
-> +       return 0;
-> +}
-> +
-> +static void usb2_clock_sel_disable(struct clk_hw *hw)
-> +{
-> +       usb2_clock_sel_disable_extal_only(to_priv(hw));
-> +}
-> +
-> +/*
-> + * This module seems a mux, but this driver assumes a gate because
-> + * ehci/ohci platform drivers don't support clk_set_parent() for now.
-> + * If this driver acts as a gate, ehci/ohci-platform drivers don't need
-> + * any modification.
-> + */
-> +static const struct clk_ops usb2_clock_sel_clock_ops = {
-> +       .enable = usb2_clock_sel_enable,
-> +       .disable = usb2_clock_sel_disable,
-> +};
-
-So you do "smart muxing" in the enable routine above?
-
-> +static int __init rcar_usb2_clock_sel_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *np = dev->of_node;
-> +       struct usb2_clock_sel_priv *priv;
-> +       struct resource *res;
-> +       struct clk *clk;
-> +       struct clk_init_data init;
-> +       int error;
-> +
-> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       priv->base = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(priv->base))
-> +               return PTR_ERR(priv->base);
-> +
-> +       priv->ehci_clk = devm_clk_get(dev, "ehci_ohci");
-> +       if (!IS_ERR(priv->ehci_clk)) {
-> +               error = clk_prepare_enable(priv->ehci_clk);
-> +               if (error)
-> +                       return error;
-> +       }
-> +
-> +       clk = devm_clk_get(dev, "usb_extal");
-> +       if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
-> +               priv->extal = !!clk_get_rate(clk);
-> +               clk_disable_unprepare(clk);
-> +       }
-> +       clk = devm_clk_get(dev, "usb_xtal");
-> +       if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
-> +               priv->xtal = !!clk_get_rate(clk);
-> +               clk_disable_unprepare(clk);
-> +       }
-> +
-> +       if (!priv->extal && !priv->extal) {
-> +               dev_err(dev, "This driver needs usb_extal or usb_xtal\n");
-> +               return -ENOENT;
-
-Perhaps enabled clocks should be disabled on error?
-
-> +       }
-> +
-> +       platform_set_drvdata(pdev, priv);
-> +       dev_set_drvdata(dev, priv);
-> +
-> +       init.name = "rcar_usb2_clock_sel";
-> +       init.ops = &usb2_clock_sel_clock_ops;
-> +       init.flags = CLK_IS_BASIC;
-> +       init.parent_names = NULL;
-> +       init.num_parents = 0;
-> +       priv->hw.init = &init;
-> +
-> +       clk = clk_register(NULL, &priv->hw);
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
-
-Likewise.
-
-> +       error = of_clk_add_provider(np, of_clk_src_simple_get, clk);
-> +       if (error)
-> +               return error;
-> +
-> +       return 0;
-
-return of_clk_add_provider(np, of_clk_src_simple_get, clk);
-
-> +/* Since this driver needs other ccf drivers, this uses subsys_initcall_sync */
-> +subsys_initcall_sync(rcar_usb2_clock_sel_init);
-
-I suppose this is a workaround for the lack of probe deferral support in the
-USB subsystem?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+index 7d53a799f140..63b57e2a10fb 100644
+--- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+@@ -12,6 +12,7 @@ Required properties:
+    * "allwinner,sun4i-a10-mmc"
+    * "allwinner,sun5i-a13-mmc"
+    * "allwinner,sun7i-a20-mmc"
++   * "allwinner,sun8i-a83t-emmc"
+    * "allwinner,sun9i-a80-mmc"
+    * "allwinner,sun50i-a64-emmc"
+    * "allwinner,sun50i-a64-mmc"
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 11587a69a1fd..de187ed77040 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -1117,6 +1117,13 @@ static const struct sunxi_mmc_cfg sun7i_a20_cfg = {
+ 	.can_calibrate = false,
+ };
+ 
++static const struct sunxi_mmc_cfg sun8i_a83t_emmc_cfg = {
++	.idma_des_size_bits = 16,
++	.clk_delays = sunxi_mmc_clk_delays,
++	.can_calibrate = false,
++	.has_timings_switch = true,
++};
++
+ static const struct sunxi_mmc_cfg sun9i_a80_cfg = {
+ 	.idma_des_size_bits = 16,
+ 	.clk_delays = sun9i_mmc_clk_delays,
+@@ -1141,6 +1148,7 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
+ 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
+ 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
+ 	{ .compatible = "allwinner,sun7i-a20-mmc", .data = &sun7i_a20_cfg },
++	{ .compatible = "allwinner,sun8i-a83t-emmc", .data = &sun8i_a83t_emmc_cfg },
+ 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
+-- 
+2.13.3
