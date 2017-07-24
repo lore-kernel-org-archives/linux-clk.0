@@ -1,51 +1,100 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:36033 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753747AbdGXMAw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 08:00:52 -0400
+Received: by mail-wr0-f172.google.com with SMTP id y43so105177343wrd.3
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2017 05:00:52 -0700 (PDT)
+Message-ID: <1500897650.2401.1.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
+ bindings
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 0/2] clk: meson: expose clk ids
-Date: Mon, 31 Jul 2017 13:38:30 +0200
-Message-Id: <20170731113832.26490-1-jbrunet@baylibre.com>
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date: Mon, 24 Jul 2017 14:00:50 +0200
+In-Reply-To: <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
+References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
+         <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
+         <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
+         <20170721204439.GJ19878@codeaurora.org>
+         <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In previous cycles, concerns have been raised about the way clocks are
-exposed for the meson clock controller, only when validated and required
-in DT.
+On Mon, 2017-07-24 at 13:47 +0200, Neil Armstrong wrote:
+> On 07/21/2017 10:44 PM, Stephen Boyd wrote:
+> > On 07/09, Rob Herring wrote:
+> > > On Thu, Jul 06, 2017 at 12:24:23PM +0200, Neil Armstrong wrote:
+> > > > On the first revision of the bindings, only the gates + resets were
+> > > > known
+> > > > in the AO Clock HW, but more registers used to configures AO clock are
+> > > > known
+> > > > to be spread among the AO register space.
+> > > > This patch adds these registers to the Ao Clock bindings with direct
+> > > > access
+> > > > and shared extcon access.
+> > > > 
+> > > > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> > > > ---
+> > > >  .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt         | 11
+> > > > +++++++++--
+> > > >  1 file changed, 9 insertions(+), 2 deletions(-)
+> > > 
+> > > This looks like the binding might be too specific with a reg list of 
+> > > single registers, and you should define a system controller node 
+> > > instead. Depends on what else is in the "A0" block.
+> > > 
+> > 
+> > Agreed. Why can't we expand the size in DT and then access the
+> > registers directly in the driver. Hopefully it keeps working to
+> > apply the dts patch without the driver patch too (and
+> > vice-versa), because the kernel can only make a mapping as small
+> > as a page which would cover these newly added reg properties
+> > anyway.
+> > 
+> 
+> Hi Rob, Stephen,
+> 
+> Thanks for your feedback, but on these Amlogic platforms, the AO register bank
+> is
+> filled with interleaved registers used for various purposes.
+> 
+> For instance, the first 1k of registers are :
+> 
+> 0-c RTI_STATUS
+> c-14 RTI_PWR_CNTL
+> 14-1c PIN_MUX
+> 1c RTI_STATUS
+> 24-30 GPIO
+> 30 JTAG_CONFIG
+> 34 WD
+> 38-40 CPU_CTRL
+> 40 RTI_GEN_CTRL
+> 44 CPU_CTRL
+> 4c-58 TIMER
+> 58 OSCIN
+> 60 AHB2DDR
+> ...
+> 
+> 
+> And so on, and the clock related registers are split among this space.
+> 
+> For sure, this could be declared as an system controller node, but this would
+> imply completely
+> re-designing the actual clock driver and drop the actual bindings.
+> (and with re-writting the clock gate code to use regmap registers access)
 
-Instead, this patchset expose all the known clocks which may be needed in
-DT later on. The clocks left out are internal clocks which should never be
-used directly in DT. These are mostly internal muxes and dividers of
-composite clocks.
+Maybe it is time to investigate having the regmap clock from qcom available to
+every other platform ?
 
-While this should reduce the patch flow on the related header files, It
-won't stop it completely. There are still many clocks we don't know about
-yet. We tend discover a few in every cycle.
+> 
+> Anyway, I'm open to suggestions...
+> 
+> Neil
 
-This patchset depends on these fixes [0] to avoid issues when adding new
-clk ids.
-
-[0]: https://lkml.kernel.org/r/20170727161755.10393-1-jbrunet@baylibre.com
-
-Jerome Brunet (2):
-  clk: meson8b: expose every clock in the bindings
-  clk: meson-gxbb: expose almost every clock in the bindings
-
- drivers/clk/meson/gxbb.h                 | 117 ++-----------------------------
- drivers/clk/meson/meson8b.h              | 103 ++-------------------------
- include/dt-bindings/clock/gxbb-clkc.h    |  60 ++++++++++++++++
- include/dt-bindings/clock/meson8b-clkc.h |  70 ++++++++++++++++++
- 4 files changed, 141 insertions(+), 209 deletions(-)
-
--- 
-2.9.4
