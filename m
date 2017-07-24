@@ -1,66 +1,78 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v2] clk: qcom: clk-smd-rpm: Fix the reported rate of
- branches
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, andy.gross@linaro.org, architt@codeaurora.org,
- hverkuil@xs4all.nl, bjorn.andersson@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20170712231413.GP22780@codeaurora.org>
- <20170713133224.753-1-georgi.djakov@linaro.org>
- <20170713180332.GC22780@codeaurora.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <08a12dcd-bd96-cd81-66e1-17502cb15cee@linaro.org>
-Date: Fri, 14 Jul 2017 16:01:33 +0300
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20170713180332.GC22780@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Mon, 24 Jul 2017 11:09:08 +0800
+From: icenowy@aosc.io
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>
+Subject: Re: [linux-sunxi] [PATCH 03/10] ARM: sunxi: h3/h5: Add r_i2c pinmux
+ node
+In-Reply-To: <CAGb2v67CFxsPYFVUfbUKzidVrPHFkZL10FxvhbC_RN0pvYtbfA@mail.gmail.com>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+ <20170723102749.17323-4-icenowy@aosc.io>
+ <CAGb2v67CFxsPYFVUfbUKzidVrPHFkZL10FxvhbC_RN0pvYtbfA@mail.gmail.com>
+Message-ID: <c2afc3c3786536fe240b3c89ed7f5f3f@aosc.io>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/14/2017 12:56 AM, Stephen Boyd wrote:
-> On 07/13, Georgi Djakov wrote:
->> As there is no way to actually query the hardware for the current clock
->> rate, now racalc_rate() just returns the last rate that was previously
->> set. But if the rate was not set yet, we return the bogus rate of 1000Hz.
->>
->> The branch clocks actually have the same rate as their parent (xo_board),
->> so just return this rate.
->>
->> Reported-by: Archit Taneja <architt@codeaurora.org>
->> Fixes: 00f64b58874e ("clk: qcom: Add support for SMD-RPM Clocks")
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+在 2017-07-24 11:07，Chen-Yu Tsai 写道：
+> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> From: Ondrej Jirman <megous@megous.com>
+>> 
+>> H3/H5 SoCs contain an I2C controller optionally available
+>> on the PL0 and PL1 pins. This patch adds pinmux configuration
+>> for this controller.
+>> 
+>> Signed-off-by: Ondrej Jirman <megous@megous.com>
+>> [Icenowy: change commit message and node name]
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 >> ---
->>  drivers/clk/qcom/clk-smd-rpm.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
->> index d990fe44aef3..b45782657ca9 100644
->> --- a/drivers/clk/qcom/clk-smd-rpm.c
->> +++ b/drivers/clk/qcom/clk-smd-rpm.c
->> @@ -364,6 +364,10 @@ static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
->>  {
->>  	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
->>  
->> +	/* Return the parent rate for branches */
->> +	if (r->branch)
->> +		return parent_rate;
+>>  arch/arm/boot/dts/sunxi-h3-h5.dtsi | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>> 
+>> diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi 
+>> b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+>> index 6f2162608006..b240099bc865 100644
+>> --- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+>> +++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+>> @@ -639,6 +639,11 @@
+>>                                 pins = "PL11";
+>>                                 function = "s_cir_rx";
+>>                         };
 >> +
+>> +                       r_i2c_pins: r-i2c {
+>> +                               pins = "PL0", "PL1";
+>> +                               function = "s_twi";
 > 
-> What's parent_rate here though? 0? I don't see where we parent
-> the branch clks to anything.
+> Can we fix the pinctrl driver to use standard names first? :(
 
-Its 19.2MHz as xo_board is a fixed-clock in DT. We use the
-__DEFINE_CLK_SMD_RPM_BRANCH macro to define all the branch clks
-and this macro sets their parent name to "xo_board". Sorry for
-not explaining this earlier.
+Oh good problem.
 
-> And we should really just remove the recalc_rate() op for
-> branches entirely so that we don't have to call down into the
-> driver to find out something we could have known in the core.
+Let me fix it.
 
-Yes this would be better. I agree. Will remove recalc/round_rate
-ops for the branch clks.
-
-Thanks,
-Georgi
+> 
+> ChenYu
+> 
+>> +                       };
+>>                 };
+>>         };
+>>  };
+>> --
+>> 2.13.0
+>> 
+>> --
+>> You received this message because you are subscribed to the Google 
+>> Groups "linux-sunxi" group.
+>> To unsubscribe from this group and stop receiving emails from it, send 
+>> an email to linux-sunxi+unsubscribe@googlegroups.com.
+>> For more options, visit https://groups.google.com/d/optout.
