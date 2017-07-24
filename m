@@ -1,71 +1,93 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 21 Jul 2017 09:21:41 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 06/10] mmc: sunxi: Add support for A83T eMMC (MMC2)
-Message-ID: <20170721072141.uxvp7c6c5s64akdp@flea>
-References: <20170720034452.15920-1-wens@csie.org>
- <20170720034452.15920-7-wens@csie.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wmny666cvwncqeiy"
-In-Reply-To: <20170720034452.15920-7-wens@csie.org>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <TY1PR06MB09927528BA504E1E758BD935D8BB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
+ <TY1PR06MB09928B28AAA01C47471B6969D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAMuHMdWkSqNdzDNTyvHvGaG-Tw2md_aGHSWh7jXVyoBYMJ8m7w@mail.gmail.com> <TY1PR06MB09927528BA504E1E758BD935D8BB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Jul 2017 14:58:44 +0200
+Message-ID: <CAMuHMdWqLTdw7k5Qwu92j37tcDn463T-MOQzff314=bCRyznzA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Shimoda-san,
 
---wmny666cvwncqeiy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 24, 2017 at 12:33 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: Geert Uytterhoeven
+>> Sent: Wednesday, July 5, 2017 9:22 PM
+>> On Wed, Jul 5, 2017 at 1:57 PM, Yoshihiro Shimoda
+>> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> >> From: Geert Uytterhoeven
+>> >> Sent: Wednesday, July 5, 2017 7:09 PM
+>> >> On Wed, Jun 28, 2017 at 8:28 AM, Yoshihiro Shimoda
+>> >> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> >> > R-Car USB 2.0 controller can change the clock source from an oscillator
+>> >> > to an external clock via a register. So, this patch adds support
+>> >> > the clock source selector as a clock driver.
+>>
+>> >> > --- /dev/null
+>> >> > +++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+>>
+>> >> > +/* Since this driver needs other ccf drivers, this uses subsys_initcall_sync */
+>> >> > +subsys_initcall_sync(rcar_usb2_clock_sel_init);
+>> >>
+>> >> I suppose this is a workaround for the lack of probe deferral support in the
+>> >> USB subsystem?
+>> >
+>> > This is my fault. I added "power-domains" property into this device's node.
+>> > After I remove the power-domains like the cpg node, this driver can use subsys_initcall()
+>> > instead of subsys_initcall_sync().
+>>
+>> Does the clock sel module requires the functional clock "ehci_ohci" to be
+>> running before you can access its registers?
+>> If yes, I think there should be a "power-domains" property.
+>
+> Yes. But...
+>
+>> Then, you can simplify the code by calling
+>>
+>>         pm_runtime_enable(dev);
+>>         pm_runtime_get_sync(dev);
+>>
+>> and remove the explicit handling of the functional clock.
+>>
+>> That does not solve probe deferral handling in the USB subsystem, though.
+>
+> I added a debug message at end of cpg_mssr_probe(), and if I used subsys_initcall() on
+> rcar-usb2-clock-sel driver, kernel log output below:
+> ========================
+> [    0.272547] rcar-usb2-clock-sel e6590630.clock-controller: probe deferral not supported
+> [    0.273944]  ----------------- cpg_mssr_probe: probed!
+> ========================
+> So, it seems the renesas-cpg-mssr.c doesn't solve probe deferral handling.
+> (The driver renesas-cpg-mssr.c uses platform_driver_probe() for now.)
+>
+> So, IIUC, this rcar-usb2-clock-sel driver cannot use subsys_initcall().
+> Or, should we modify the renesas-cpg-mssr.c somehow?
 
-On Thu, Jul 20, 2017 at 11:44:48AM +0800, Chen-Yu Tsai wrote:
-> The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
-> different. It supports a wider 8-bit bus, has a dedicated controllable
-> reset pin for eMMC, and a "new timing mode" which is supposed to deliver
-> better signals and thus better performance.
->=20
-> Add a compatible for this one to use the new timing mode not found in the
-> other controllers.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+Drivers should avoid using subsys_initcall().
+Why do you use a subsys_initcall()? To avoid probe deferral in the USB
+susbystem?
+What happens if the rcar-usb2-clock-sel uses builtin_platform_driver()?
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Gr{oetje,eeting}s,
 
-Thanks!
-Maxime
+                        Geert
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---wmny666cvwncqeiy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZcauFAAoJEBx+YmzsjxAgcf0P/0We3BnYu0uVelHU1TBqvhLs
-D+O+G/ugJ6mI93Mqc+rrlGlHKXcpi96og+Rh4W7ZxuI5/2kK1+ScHalyYjLWDQuD
-I2bi8sfWb3fJCColFhgTfet/mIZaNewqcz1N/ziJnUpZdqYapWeewNHdNbnXXWsQ
-NK0jq9YHcgMJQF0Fn1pp2gOAdVpOA7jBfX2YPRNY+8rDvI+48mh3GB/OrHM7l033
-r+7ZFvRdqhCge7wRQAQMN3+Pm/2zXA+VcQc+sjrHGLIIJq0kpJXOJpP7kpQj9zF7
-eqItmU8q2ArqcfNNBbGsF7iMGTLY1L6hY0gt7suA2iQMFdjmbdwhsvMqclGvOw/+
-NtHz7dreoV17T8QII2AOZ+9S4z9gp7Bed+sDS475d4g81aqSQYJchSoA/YA3fDb/
-LoONePc2a9Wk/apOGxQk/QjZ7GFdiutQ05k3ZlnrO3t5YZOa+FZTplerXoBSSEH6
-NRi+G2ddlDijOASRdJ5j6TLZpLGc9cvVmqDN6f5b9rkT6cAEU7B+WJvvAG4JtbOz
-zdaF3rtCRREIfhIB5lUPeZZF215CzsdMuy8/fhzCV4U+/kWx9NUt1wOuFfh9BRmQ
-oeALELdzj8uRbUES2sLl5s6o3JbpsMBEzKcP1IhTMn2pCtFPKv43Q7L9WqZ8JAcz
-+uKcftQ1X4d2qIrYDO+/
-=nDLZ
------END PGP SIGNATURE-----
-
---wmny666cvwncqeiy--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
