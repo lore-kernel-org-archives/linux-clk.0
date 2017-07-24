@@ -1,49 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:59363 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755333AbdGWK3F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 Jul 2017 06:29:05 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>,
+Return-Path: <linux-pm-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170723102749.17323-7-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-7-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 24 Jul 2017 11:10:56 +0800
+Message-ID: <CAGb2v66bFjcB6CwNM+QDAqUxETqE6XX1UWKwqM_XAt6dOsjhLA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 06/10] clk: sunxi-ng: allow set parent clock
+ (PLL_CPUX) for CPUX clock on H3
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 06/10] clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3
-Date: Sun, 23 Jul 2017 18:27:45 +0800
-Message-Id: <20170723102749.17323-7-icenowy@aosc.io>
-In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPUX clock, which is the main clock of the ARM core on Allwinner H3,
-can be adjusted by changing the frequency of the PLL_CPUX clock.
+On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> The CPUX clock, which is the main clock of the ARM core on Allwinner H3,
+> can be adjusted by changing the frequency of the PLL_CPUX clock.
+>
+> Allowing setting parent clock for the CPUX clock, thus the PLL_CPUX
+> clock can be adjusted when adjusting the CPUX clock.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Allowing setting parent clock for the CPUX clock, thus the PLL_CPUX
-clock can be adjusted when adjusting the CPUX clock.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 406d0aac9fd6..4cdbc88f2783 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -135,7 +135,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
- static const char * const cpux_parents[] = { "osc32k", "osc24M",
- 					     "pll-cpux" , "pll-cpux" };
- static SUNXI_CCU_MUX(cpux_clk, "cpux", cpux_parents,
--		     0x050, 16, 2, CLK_IS_CRITICAL);
-+		     0x050, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
- 
--- 
-2.13.0
-
+Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
