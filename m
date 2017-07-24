@@ -1,145 +1,198 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: Allow compile-testing of all (sub)drivers
-Date: Mon, 17 Jul 2017 14:04:03 +0200
-Message-Id: <1500293043-14654-1-git-send-email-geert+renesas@glider.be>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 01/10] clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+Date: Mon, 24 Jul 2017 21:58:56 +0800
+Message-Id: <20170724135905.28855-2-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable compile-testing of the remaining clock drivers and subdrivers,
-now dummies are available for of_clk_get_from_provider(),
-of_device_compatible_match(), and rcar_rst_read_mode_pins(), and the
-CPG/MSSR driver core has been converted from of_match_node() to
-of_device_get_match_data().
+Starting with the A83T SoC, Allwinner introduced a new timing mode for
+its MMC clocks. The new mode changes how the MMC controller sample and
+output clocks are delayed to match chip and board specifics. There are
+two controls for this, one on the CCU side controlling how the clocks
+behave, and one in the MMC controller controlling what inputs to take
+and how to route them.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+In the old mode, the MMC clock had 2 child clocks providing the output
+and sample clocks, which could be delayed by a number of clock cycles
+measured from the MMC clock's parent.
+
+With the new mode, the 2 delay clocks are no longer active. Instead,
+the delays and associated controls are moved into the MMC controller.
+The output of the MMC clock is also halved.
+
+The difference in how things are wired between the modes means that the
+clock controls and the MMC controls must match. To achieve this in a
+clear, explicit way, we introduce two functions for the MMC driver to
+use: one queries the hardware for the current mode set, and the other
+allows the MMC driver to request a mode.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-To be queued in clk-renesas-for-v4.14.
+ drivers/clk/sunxi-ng/Makefile         |  1 +
+ drivers/clk/sunxi-ng/ccu_common.h     |  4 ++
+ drivers/clk/sunxi-ng/ccu_mmc_timing.c | 70 +++++++++++++++++++++++++++++++++++
+ include/linux/clk/sunxi-ng.h          | 35 ++++++++++++++++++
+ 4 files changed, 110 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
+ create mode 100644 include/linux/clk/sunxi-ng.h
 
- drivers/clk/renesas/Kconfig | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 78d1df9112ba3932..85526ca3920229c8 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -34,94 +34,94 @@ config CLK_EMEV2
- 	bool "Emma Mobile EV2 clock support" if COMPILE_TEST
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 0c45fa50283d..45a5910379a5 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -1,5 +1,6 @@
+ # Common objects
+ lib-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
++lib-$(CONFIG_SUNXI_CCU)		+= ccu_mmc_timing.o
+ lib-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
  
- config CLK_RZA1
--	bool
-+	bool "RZ/A1H clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
+ # Base clock types
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index d6fdd7a789aa..cadd1a9f93b6 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -23,6 +23,10 @@
+ #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
+ #define CCU_FEATURE_ALL_PREDIV		BIT(4)
+ #define CCU_FEATURE_LOCK_REG		BIT(5)
++#define CCU_FEATURE_MMC_TIMING_SWITCH	BIT(6)
++
++/* MMC timing mode switch bit */
++#define CCU_MMC_NEW_TIMING_MODE		BIT(30)
  
- config CLK_R8A73A4
--	bool
-+	bool "R-Mobile APE6 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
+ struct device_node;
  
- config CLK_R8A7740
--	bool
-+	bool "R-Mobile A1 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7743
--	bool
-+	bool "RZ/G1M clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2_CPG
- 
- config CLK_R8A7745
--	bool
-+	bool "RZ/G1E clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2_CPG
- 
- config CLK_R8A7778
--	bool
-+	bool "R-Car M1A clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 
- config CLK_R8A7779
--	bool
-+	bool "R-Car H1 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 
- config CLK_R8A7790
--	bool
-+	bool "R-Car H2 clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7791
--	bool
-+	bool "R-Car M2-W/N clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7792
--	bool
-+	bool "R-Car V2H clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 
- config CLK_R8A7794
--	bool
-+	bool "R-Car E2 clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
- 	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
- 
- config CLK_R8A7795
--	bool
-+	bool "R-Car H3 clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN3_CPG
- 
- config CLK_R8A7796
--	bool
-+	bool "R-Car M3-W clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN3_CPG
- 
- config CLK_SH73A0
--	bool
-+	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
- 
- 
- # Family
- config CLK_RCAR_GEN2
--	bool
-+	bool "R-Car Gen2 legacy clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 	select CLK_RENESAS_DIV6
- 
- config CLK_RCAR_GEN2_CPG
--	bool
-+	bool "R-Car Gen2 CPG clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSSR
- 
- config CLK_RCAR_GEN3_CPG
--	bool
-+	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSSR
- 
- 
- # Generic
- config CLK_RENESAS_CPG_MSSR
--	bool
-+	bool "CPG/MSSR clock support" if COMPILE_TEST
- 	select CLK_RENESAS_DIV6
- 
- config CLK_RENESAS_CPG_MSTP
--	bool
-+	bool "MSTP clock support" if COMPILE_TEST
- 
- config CLK_RENESAS_DIV6
- 	bool "DIV6 clock support" if COMPILE_TEST
+diff --git a/drivers/clk/sunxi-ng/ccu_mmc_timing.c b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+new file mode 100644
+index 000000000000..f9869f7353c0
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu_mmc_timing.c
+@@ -0,0 +1,70 @@
++/*
++ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clk/sunxi-ng.h>
++
++#include "ccu_common.h"
++
++/**
++ * sunxi_ccu_set_mmc_timing_mode: Configure the MMC clock timing mode
++ * @clk: clock to be configured
++ * @new_mode: true for new timing mode introduced in A83T and later
++ *
++ * Returns 0 on success, -ENOTSUPP if the clock does not support
++ * switching modes.
++ */
++int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++	unsigned long flags;
++	u32 val;
++
++	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
++		return -ENOTSUPP;
++
++	spin_lock_irqsave(cm->lock, flags);
++
++	val = readl(cm->base + cm->reg);
++	if (new_mode)
++		val |= CCU_MMC_NEW_TIMING_MODE;
++	else
++		val &= ~CCU_MMC_NEW_TIMING_MODE;
++	writel(val, cm->base + cm->reg);
++
++	spin_unlock_irqrestore(cm->lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(sunxi_ccu_set_mmc_timing_mode);
++
++/**
++ * sunxi_ccu_set_mmc_timing_mode: Get the current MMC clock timing mode
++ * @clk: clock to query
++ *
++ * Returns 0 if the clock is in old timing mode, > 0 if it is in
++ * new timing mode, and -ENOTSUPP if the clock does not support
++ * this function.
++ */
++int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
++{
++	struct clk_hw *hw = __clk_get_hw(clk);
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++
++	if (!(cm->features & CCU_FEATURE_MMC_TIMING_SWITCH))
++		return -ENOTSUPP;
++
++	return !!(readl(cm->base + cm->reg) & CCU_MMC_NEW_TIMING_MODE);
++}
++EXPORT_SYMBOL_GPL(sunxi_ccu_get_mmc_timing_mode);
+diff --git a/include/linux/clk/sunxi-ng.h b/include/linux/clk/sunxi-ng.h
+new file mode 100644
+index 000000000000..990f760f70e5
+--- /dev/null
++++ b/include/linux/clk/sunxi-ng.h
+@@ -0,0 +1,35 @@
++/*
++ * Copyright (c) 2017 Chen-Yu Tsai. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _LINUX_CLK_SUNXI_NG_H_
++#define _LINUX_CLK_SUNXI_NG_H_
++
++#include <linux/errno.h>
++
++#ifdef CONFIG_SUNXI_CCU
++int sunxi_ccu_set_mmc_timing_mode(struct clk *clk, bool new_mode);
++int sunxi_ccu_get_mmc_timing_mode(struct clk *clk);
++#else
++static inline int sunxi_ccu_set_mmc_timing_mode(struct clk *clk,
++						bool new_mode)
++{
++	return -ENOTSUPP;
++}
++
++static inline int sunxi_ccu_get_mmc_timing_mode(struct clk *clk)
++{
++	return -ENOTSUPP;
++}
++#endif
++
++#endif
 -- 
-2.7.4
+2.13.3
