@@ -1,59 +1,36 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@caione.org,
-	narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-clk@vger.kernel.org,
-	robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux@armlinux.org.uk,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 3/3] ARM: dts: meson: mark the clock controller also as reset controller
-Date: Fri, 28 Jul 2017 23:13:13 +0200
-Message-Id: <20170728211313.10603-4-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
-References: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170723102749.17323-5-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-5-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 24 Jul 2017 11:09:29 +0800
+Message-ID: <CAGb2v64LW+GzzdKHKKEsKg+1DNnhGEUu7f9A6uCz_XKuN6RSCg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 04/10] ARM: sunxi: h3/h5: Add r_i2c I2C controller
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock controller provides a few reset lines as well. Add the
-corresponding CPU cores.
+On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Ondrej Jirman <megous@megous.com>
+>
+> Allwinner H3/H5 SoCs have an I2C controller at PL GPIO bank.
+>
+> Add support for it in the device tree.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> [Icenowy: Change to use r_ccu and change pinmux node name]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm/boot/dts/meson8.dtsi  | 1 +
- arch/arm/boot/dts/meson8b.dtsi | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
-index 6fe6a159e960..b98d44fde6b6 100644
---- a/arch/arm/boot/dts/meson8.dtsi
-+++ b/arch/arm/boot/dts/meson8.dtsi
-@@ -168,6 +168,7 @@
- &cbus {
- 	clkc: clock-controller@4000 {
- 		#clock-cells = <1>;
-+		#reset-cells = <1>;
- 		compatible = "amlogic,meson8-clkc";
- 		reg = <0x8000 0x4>, <0x4000 0x460>;
- 	};
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index 8fce13844b0c..bc278da7df0d 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -119,6 +119,7 @@
- &cbus {
- 	clkc: clock-controller@4000 {
- 		#clock-cells = <1>;
-+		#reset-cells = <1>;
- 		compatible = "amlogic,meson8b-clkc";
- 		reg = <0x8000 0x4>, <0x4000 0x460>;
- 	};
--- 
-2.13.3
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
