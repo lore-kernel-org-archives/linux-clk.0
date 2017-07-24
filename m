@@ -1,102 +1,421 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v3 0/3] add the reset controller to the Meson8b clkc
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, khilman@baylibre.com, carlo@caione.org,
- linux-clk@vger.kernel.org, robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com,
- mturquette@baylibre.com, sboyd@codeaurora.org
-References: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
- <1501489667.6834.1.camel@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <655f0326-df03-a810-9010-13148aee2db5@baylibre.com>
-Date: Mon, 31 Jul 2017 13:59:36 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:54322 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751605AbdGXGSA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 02:18:00 -0400
 MIME-Version: 1.0
-In-Reply-To: <1501489667.6834.1.camel@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <dce1ffc444edd9de64326e85152ee555@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-3-icenowy@aosc.io>
+ <CAGb2v640bB27M_Xd4r-oQ=acgfpHEwoV2tSk3vH0VZc7R-de6w@mail.gmail.com>
+ <a40cabec7eb7f4ae7bb35c4e3e6d3795@aosc.io> <CAGb2v65k3V74MepvFnOF7DRdhyOsSR+6Bgh5Vaf4U2bJ=9=qjg@mail.gmail.com>
+ <dce1ffc444edd9de64326e85152ee555@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 24 Jul 2017 14:17:35 +0800
+Message-ID: <CAGb2v67XLNeAYFZ2yEFA9DQszfDgjXxFEKnVicL2UGhrJPqYgQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 02/10] regulator: add support for SY8106A regulator
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Ondrej Jirman <megous@megous.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Carlo Caione <carlo@caione.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/31/2017 10:27 AM, Jerome Brunet wrote:
-> On Fri, 2017-07-28 at 23:13 +0200, Martin Blumenstingl wrote:
->> This registers the known (soft) reset lines provided by the clock
->> controller's registers.
+On Mon, Jul 24, 2017 at 11:38 AM,  <icenowy@aosc.io> wrote:
+> 在 2017-07-24 11:33，Chen-Yu Tsai 写道：
 >>
->> This is the first preparation step for SMP and CPU hotplug support on
->> Meson8/Meson8b/Meson8m2. Booting the secondary cores on these SoCs
->> requires asserting and de-asserting a reset line (one for each CPU
->> core). These reset lines are provided by the clock controller.
+>> On Mon, Jul 24, 2017 at 11:18 AM,  <icenowy@aosc.io> wrote:
+>>>
+>>> 在 2017-07-24 11:03，Chen-Yu Tsai 写道：
+>>>>
+>>>>
+>>>> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>>>>
+>>>>>
+>>>>> From: Ondrej Jirman <megous@megous.com>
+>>>>>
+>>>>> SY8106A is an I2C attached single output regulator made by Silergy
+>>>>> Corp,
+>>>>> which is used on several Allwinner H3/H5 SBCs to control the power
+>>>>> supply of the ARM cores.
+>>>>>
+>>>>> Add a driver for it.
+>>>>>
+>>>>> Signed-off-by: Ondrej Jirman <megous@megous.com>
+>>>>> [Icenowy: Change commit message]
+>>>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>>>> ---
+>>>>>  drivers/regulator/Kconfig             |   8 +-
+>>>>>  drivers/regulator/Makefile            |   2 +-
+>>>>>  drivers/regulator/sy8106a-regulator.c | 163
+>>>>> ++++++++++++++++++++++++++++++++++
+>>>>>  3 files changed, 171 insertions(+), 2 deletions(-)
+>>>>>  create mode 100644 drivers/regulator/sy8106a-regulator.c
+>>>>>
+>>>>> diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+>>>>> index 99b9362331b5..1efa73e18d07 100644
+>>>>> --- a/drivers/regulator/Kconfig
+>>>>> +++ b/drivers/regulator/Kconfig
+>>>>> @@ -764,6 +764,13 @@ config REGULATOR_STW481X_VMMC
+>>>>>           This driver supports the internal VMMC regulator in the
+>>>>> STw481x
+>>>>>           PMIC chips.
+>>>>>
+>>>>> +config REGULATOR_SY8106A
+>>>>> +       tristate "Silergy SY8106A regulator"
+>>>>> +       depends on I2C && (OF || COMPILE_TEST)
+>>>>> +       select REGMAP_I2C
+>>>>> +       help
+>>>>> +         This driver supports SY8106A single output regulator.
+>>>>> +
+>>>>>  config REGULATOR_TPS51632
+>>>>>         tristate "TI TPS51632 Power Regulator"
+>>>>>         depends on I2C
+>>>>> @@ -938,4 +945,3 @@ config REGULATOR_WM8994
+>>>>>           WM8994 CODEC.
+>>>>>
+>>>>>  endif
+>>>>> -
+>>>>> diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+>>>>> index 95b1e86ae692..f5120252f86a 100644
+>>>>> --- a/drivers/regulator/Makefile
+>>>>> +++ b/drivers/regulator/Makefile
+>>>>> @@ -95,6 +95,7 @@ obj-$(CONFIG_REGULATOR_S2MPS11) += s2mps11.o
+>>>>>  obj-$(CONFIG_REGULATOR_S5M8767) += s5m8767.o
+>>>>>  obj-$(CONFIG_REGULATOR_SKY81452) += sky81452-regulator.o
+>>>>>  obj-$(CONFIG_REGULATOR_STW481X_VMMC) += stw481x-vmmc.o
+>>>>> +obj-$(CONFIG_REGULATOR_SY8106A) += sy8106a-regulator.o
+>>>>>  obj-$(CONFIG_REGULATOR_TI_ABB) += ti-abb-regulator.o
+>>>>>  obj-$(CONFIG_REGULATOR_TPS6105X) += tps6105x-regulator.o
+>>>>>  obj-$(CONFIG_REGULATOR_TPS62360) += tps62360-regulator.o
+>>>>> @@ -120,5 +121,4 @@ obj-$(CONFIG_REGULATOR_WM8350) +=
+>>>>> wm8350-regulator.o
+>>>>>  obj-$(CONFIG_REGULATOR_WM8400) += wm8400-regulator.o
+>>>>>  obj-$(CONFIG_REGULATOR_WM8994) += wm8994-regulator.o
+>>>>>
+>>>>> -
+>>>>>  ccflags-$(CONFIG_REGULATOR_DEBUG) += -DDEBUG
+>>>>> diff --git a/drivers/regulator/sy8106a-regulator.c
+>>>>> b/drivers/regulator/sy8106a-regulator.c
+>>>>> new file mode 100644
+>>>>> index 000000000000..1df889f68b3d
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/regulator/sy8106a-regulator.c
+>>>>> @@ -0,0 +1,163 @@
+>>>>> +/*
+>>>>> + * sy8106a-regulator.c - Regulator device driver for SY8106A
+>>>>> + *
+>>>>> + * Copyright (C) 2016 Ondřej Jirman <megous@megous.com>
+>>>>> + *
+>>>>> + * This program is free software; you can redistribute it and/or
+>>>>> + * modify it under the terms of the GNU Library General Public
+>>>>> + * License as published by the Free Software Foundation; either
+>>>>> + * version 2 of the License, or (at your option) any later version.
+>>>>> + *
+>>>>> + * This program is distributed in the hope that it will be useful,
+>>>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+>>>>> + * Library General Public License for more details.
+>>>>> + */
+>>>>> +
+>>>>> +#include <linux/err.h>
+>>>>> +#include <linux/i2c.h>
+>>>>> +#include <linux/module.h>
+>>>>> +#include <linux/regmap.h>
+>>>>> +#include <linux/regulator/driver.h>
+>>>>> +#include <linux/regulator/of_regulator.h>
+>>>>> +
+>>>>> +#define SY8106A_REG_VOUT1_SEL          0x01
+>>>>> +#define SY8106A_REG_VOUT_COM           0x02
+>>>>> +#define SY8106A_REG_VOUT1_SEL_MASK     0x7f
+>>>>> +#define SY8106A_DISABLE_REG            BIT(0)
+>>>>> +#define SY8106A_GO_BIT                 BIT(7)
+>>>>> +
+>>>>> +struct sy8106a {
+>>>>> +       struct regulator_dev *rdev;
+>>>>> +       struct regmap *regmap;
+>>>>> +};
+>>>>> +
+>>>>> +static const struct regmap_config sy8106a_regmap_config = {
+>>>>> +       .reg_bits = 8,
+>>>>> +       .val_bits = 8,
+>>>>> +};
+>>>>> +
+>>>>> +static int sy8106a_set_voltage_sel(struct regulator_dev *rdev,
+>>>>> unsigned
+>>>>> int sel)
+>>>>> +{
+>>>>> +       /* We use our set_voltage_sel in order to avoid unnecessary I2C
+>>>>> +        * chatter, because the regulator_get_voltage_sel_regmap using
+>>>>> +        * apply_bit would perform 4 unnecessary transfers instead of
+>>>>> one,
+>>>>> +        * increasing the chance of error.
+>>>>> +        */
+>>>>> +       return regmap_write(rdev->regmap, rdev->desc->vsel_reg,
+>>>>> +                           sel | SY8106A_GO_BIT);
+>>>>
+>>>>
+>>>>
+>>>> There should also be an explanation of what the "go bit" does.
+>>>> In this case it enables control of the voltage over I2C.
+>>>>
+>>>>> +}
+>>>>> +
+>>>>> +static const struct regulator_ops sy8106a_ops = {
+>>>>> +       .is_enabled = regulator_is_enabled_regmap,
+>>>>> +       .set_voltage_sel = sy8106a_set_voltage_sel,
+>>>>> +       .set_voltage_time_sel = regulator_set_voltage_time_sel,
+>>>>> +       .get_voltage_sel = regulator_get_voltage_sel_regmap,
+>>>>> +       .list_voltage = regulator_list_voltage_linear,
+>>>>
+>>>>
+>>>>
+>>>> No enable/disable ops?
+>>>>
+>>>>> +};
+>>>>> +
+>>>>> +/* Default limits measured in millivolts and milliamps */
+>>>>> +#define SY8106A_MIN_MV         680
+>>>>> +#define SY8106A_MAX_MV         1950
+>>>>> +#define SY8106A_STEP_MV                10
+>>>>> +
+>>>>> +static const struct regulator_desc sy8106a_reg = {
+>>>>> +       .name = "SY8106A",
+>>>>> +       .id = 0,
+>>>>> +       .ops = &sy8106a_ops,
+>>>>> +       .type = REGULATOR_VOLTAGE,
+>>>>> +       .n_voltages = ((SY8106A_MAX_MV - SY8106A_MIN_MV) /
+>>>>> SY8106A_STEP_MV) + 1,
+>>>>> +       .min_uV = (SY8106A_MIN_MV * 1000),
+>>>>> +       .uV_step = (SY8106A_STEP_MV * 1000),
+>>>>> +       .vsel_reg = SY8106A_REG_VOUT1_SEL,
+>>>>> +       .vsel_mask = SY8106A_REG_VOUT1_SEL_MASK,
+>>>>> +       .enable_reg = SY8106A_REG_VOUT_COM,
+>>>>> +       .enable_mask = SY8106A_DISABLE_REG,
+>>>>> +       .disable_val = SY8106A_DISABLE_REG,
+>>>>> +       .enable_is_inverted = 1,
+>>>>
+>>>>
+>>>>
+>>>> As the regulator core helpers currently are, there is no way to disable
+>>>> this regulator. regulator_disable_regmap looks like:
+>>>
+>>>
+>>>
+>>> By reading the current code, I think removing the disable_val variable
+>>> will
+>>> just make it work -- when enabling, the enable_reg will be set to
+>>> disable_val
+>>> (as enable_is_inverted is 1), and disable_val is defaultly 0; when
+>>> disabling,
+>>> the enable_reg will be set to enable_mask (fallbacked from enable_val,
+>>> which
+>>> is also the default value 0), and the regulator successfully get
+>>> disabled.
 >>
->> The reset controller part of the meson8b clock controller has to be
->> registered early (which I did through CLK_OF_DECLARE_DRIVER), because
->> the secondary cores are started *very* early in the boot process (and
->> meson8b_clkc_probe is invoked long after we need the reset controller
->> to be available for booting the secondary CPU cores).
 >>
->> The user of the reset-controller (= the patches which enable SMP and
->> CPU hotplug support) will follow in the next days. I decided to split
->> this because the SMP series will probably consist of 6 patches alone
->> (and may need to go through two separate trees).
+>> (Gmail is wrapping the lines :( )
 >>
->> Changes since v2 at [3]:
->> - move the reset line preprocessor defines into a separate file
->>   (affects patch #1 as this header file is part of the dt-binding)
->> - rename the reset line preprocessor macros from RESETID_ to
->>   CLKC_RESET_ to clearly indicate that these are provided by the
->>   clock controller (unlike the preprocessor macros for the reset
->>   lines in the standlone reset controller, which start with RESET_)
->> - updated patch #2 due to the changes mentioned above
->> - added Neil's Reviewed-by to all patches
->>
->> Changes since v1 at [0]:
->> - updated cover letter description as we are now registering more than
->>   four reset lines
->> - split patch #1 into a dt-binding and clk driver patch
->> - slightly reworded the dt-binding documentation so it's now clear that
->>   the reset identifiers are preprocessor macros in
->>   dt-bindings/clock/meson8b-clkc.h (v1 of this series didn't have these
->>   macros at all)
->> - patch #2 (previously part of patch #1) now registers all known reset
->>   lines (see [1] and [2] for the results of my detective work)
->> - patch #3 is untouched
->>
->>
->> [0] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004283.html
->> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004330.html
->> [2] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004347.html
->> [3] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004352.html
->>
->>
->> Martin Blumenstingl (3):
->>   dt-bindings: clock: meson8b: describe the embedded reset controller
->>   clk: meson: meson8b: register the built-in reset controller
->>   ARM: dts: meson: mark the clock controller also as reset controller
->>
->>  .../bindings/clock/amlogic,meson8b-clkc.txt        |   9 +-
->>  arch/arm/boot/dts/meson8.dtsi                      |   1 +
->>  arch/arm/boot/dts/meson8b.dtsi                     |   1 +
->>  drivers/clk/meson/Kconfig                          |   1 +
->>  drivers/clk/meson/meson8b.c                        | 159 +++++++++++++++++++-
->> -
->>  drivers/clk/meson/meson8b.h                        |   9 +-
->>  .../dt-bindings/reset/amlogic,meson8b-clkc-reset.h |  27 ++++
->>  7 files changed, 193 insertions(+), 14 deletions(-)
->>  create mode 100644 include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h
->>
-> 
-> Series looks good to me overall.
-> 
-> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
-> Just one thing, which is not an issue really, I wonder if the dt-bindings
-> documentation and the bindings them-self should be in separate patches ? 
-> 
+>> enable_mask is set to SY8106A_DISABLE_REG, which equals disable_val here,
+>> which is not 0. This is correct, as it is the bit mask passed to
+>> regmap_update_bits. So no, it does not work.
+>
+>
+> From my personal understanding of the code, the behavior of
+> enable_is_inverted
+> is that switch the roles of enable_val and disable_val, so if
+> enable_is_inverted is set, the regulator_disable_regmap function will write
+> enable_val (if it's 0, fallback to enable_mask) to the register, and
+> regulator_enable_regmap will write disable_val.
+>
+> Maybe this design is used to ensure enable_val (then fallback to
+> enable_mask)
+> is not 0.
 
-Hi Martin,
+I think the changes needed to the core are probably too invasive, i.e.
+affect too many other drivers, to be worth doing. Especially since we
+won't really be using enable/disable much, as the regulator supplies
+the CPU cores.
 
-Anyway it's OK for me, I've applied patches 1 & 2 on the clk-meson's next branches.
+For now, lets just remove the enable/disable related fields, and leave
+a TODO note citing the possibly required changes to the core instead.
+You haven't assigned the callbacks anyway.
 
-Kevin, patch 3 is all yours !
+ChenYu
 
-Thanks,
-Neil
+>
+>
+>>
+>> It seems quite a lot of drivers depend on this fallback behavior though.
+>>
+>> ChenYu
+>>
+>>>
+>>>>
+>>>>         if (rdev->desc->enable_is_inverted) {
+>>>>                 val = rdev->desc->enable_val;
+>>>>                 if (!val)
+>>>>                         val = rdev->desc->enable_mask;
+>>>>         } else {
+>>>>                 val = rdev->desc->disable_val;
+>>>>         }
+>>>>
+>>>>         return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
+>>>>                                   rdev->desc->enable_mask, val);
+>>>>
+>>>> Note the fallback to enable_mask if enable_val is not set. The enable
+>>>> helper has a similar structure. This regulator uses an enable value
+>>>> of 0, and disable value of 1, it is impossible to get it right. As
+>>>> it is now, it doesn't really make sense to me.
+>>>>
+>>>> The code was introduced in ca5d1b3524b4 ("regulator: helpers: Modify
+>>>> helpers enabling multi-bit control"). I wonder if it was an unintended
+>>>> consequence of the change? (original author CC-ed)
+>>>>
+>>>>> +       .owner = THIS_MODULE,
+>>>>> +};
+>>>>> +
+>>>>> +/*
+>>>>> + * I2C driver interface functions
+>>>>> + */
+>>>>> +static int sy8106a_i2c_probe(struct i2c_client *i2c,
+>>>>> +                           const struct i2c_device_id *id)
+>>>>> +{
+>>>>> +       struct sy8106a *chip;
+>>>>> +       struct device *dev = &i2c->dev;
+>>>>> +       struct regulator_dev *rdev = NULL;
+>>>>> +       struct regulator_config config = { };
+>>>>> +       unsigned int selector;
+>>>>> +       int error;
+>>>>> +
+>>>>> +       chip = devm_kzalloc(&i2c->dev, sizeof(struct sy8106a),
+>>>>> GFP_KERNEL);
+>>>>> +       if (!chip)
+>>>>> +               return -ENOMEM;
+>>>>> +
+>>>>> +       chip->regmap = devm_regmap_init_i2c(i2c,
+>>>>> &sy8106a_regmap_config);
+>>>>> +       if (IS_ERR(chip->regmap)) {
+>>>>> +               error = PTR_ERR(chip->regmap);
+>>>>> +               dev_err(&i2c->dev, "Failed to allocate register map:
+>>>>> %d\n",
+>>>>> +                       error);
+>>>>> +               return error;
+>>>>> +       }
+>>>>> +
+>>>>> +       config.dev = &i2c->dev;
+>>>>> +       config.regmap = chip->regmap;
+>>>>> +       config.driver_data = chip;
+>>>>> +
+>>>>> +       config.of_node = dev->of_node;
+>>>>> +       config.init_data = of_get_regulator_init_data(dev,
+>>>>> dev->of_node,
+>>>>> +                                                     &sy8106a_reg);
+>>>>> +
+>>>>> +       if (!config.init_data)
+>>>>> +               return -ENOMEM;
+>>>>> +
+>>>>> +       /* Probe regulator */
+>>>>> +       error = regmap_read(chip->regmap, SY8106A_REG_VOUT1_SEL,
+>>>>> &selector);
+>>>>> +       if (error) {
+>>>>> +               dev_err(&i2c->dev, "Failed to read voltage at probe
+>>>>> time:
+>>>>> %d\n", error);
+>>>>> +               return error;
+>>>>> +       }
+>>>>> +
+>>>>> +       rdev = devm_regulator_register(&i2c->dev, &sy8106a_reg,
+>>>>> &config);
+>>>>> +       if (IS_ERR(rdev)) {
+>>>>> +               error = PTR_ERR(rdev);
+>>>>> +               dev_err(&i2c->dev, "Failed to register SY8106A
+>>>>> regulator:
+>>>>> %d\n", error);
+>>>>> +               return error;
+>>>>> +       }
+>>>>> +
+>>>>> +       chip->rdev = rdev;
+>>>>> +
+>>>>> +       i2c_set_clientdata(i2c, chip);
+>>>>> +
+>>>>> +       return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static const struct of_device_id sy8106a_i2c_of_match[] = {
+>>>>> +       { .compatible = "silergy,sy8106a" },
+>>>>> +       { },
+>>>>> +};
+>>>>> +MODULE_DEVICE_TABLE(of, sy8106a_i2c_of_match);
+>>>>> +
+>>>>> +static const struct i2c_device_id sy8106a_i2c_id[] = {
+>>>>> +       { "sy8106a", 0 },
+>>>>> +       { },
+>>>>> +};
+>>>>> +MODULE_DEVICE_TABLE(i2c, sy8106a_i2c_id);
+>>>>> +
+>>>>> +static struct i2c_driver sy8106a_regulator_driver = {
+>>>>> +       .driver = {
+>>>>> +               .name = "sy8106a",
+>>>>> +               .of_match_table = of_match_ptr(sy8106a_i2c_of_match),
+>>>>> +       },
+>>>>> +       .probe = sy8106a_i2c_probe,
+>>>>> +       .id_table = sy8106a_i2c_id,
+>>>>> +};
+>>>>> +
+>>>>> +module_i2c_driver(sy8106a_regulator_driver);
+>>>>> +
+>>>>> +MODULE_AUTHOR("Ondřej Jirman <megous@megous.com>");
+>>>>> +MODULE_DESCRIPTION("Regulator device driver for Silergy SY8106A");
+>>>>> +MODULE_LICENSE("GPL v2");
+>>>>
+>>>>
+>>>>
+>>>> This should be "GPL", to match what the license at the very top says.
+>>>>
+>>>> Regards
+>>>> ChenYu
+>>>>
+>>>>> --
+>>>>> 2.13.0
+>>>>>
+>>>>> --
+>>>>> You received this message because you are subscribed to the Google
+>>>>> Groups
+>>>>> "linux-sunxi" group.
+>>>>> To unsubscribe from this group and stop receiving emails from it, send
+>>>>> an
+>>>>> email to linux-sunxi+unsubscribe@googlegroups.com.
+>>>>> For more options, visit https://groups.google.com/d/optout.
+>>>>
+>>>>
+>>>>
+>>>> _______________________________________________
+>>>> linux-arm-kernel mailing list
+>>>> linux-arm-kernel@lists.infradead.org
+>>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>>
+>>>
+>>>
+>>> --
+>>> You received this message because you are subscribed to the Google Groups
+>>> "linux-sunxi" group.
+>>> To unsubscribe from this group and stop receiving emails from it, send an
+>>> email to linux-sunxi+unsubscribe@googlegroups.com.
+>>> For more options, visit https://groups.google.com/d/optout.
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
