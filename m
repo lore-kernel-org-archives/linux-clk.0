@@ -1,401 +1,210 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:34172 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752494AbdG1UsK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jul 2017 16:48:10 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2c8444f5-1e01-9e8f-050c-14fe615de9bf@baylibre.com>
-References: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
- <1501235589-318-5-git-send-email-narmstrong@baylibre.com> <CAFBinCDNU5p59CvKLoJAh0ve7JGLnTi79kBa5+SVEJ9nzeMv=g@mail.gmail.com>
- <2c8444f5-1e01-9e8f-050c-14fe615de9bf@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 28 Jul 2017 22:47:49 +0200
-Message-ID: <CAFBinCBevei8Ozc3vsJpjq+N+d3WJ32L84OjKHvPtgy5qo_VAA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <7984ef64-fb6d-52f6-26bf-00a685a3efc5@codeaurora.org>
+References: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
+ <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+ <60a56ae6-ed9d-57cd-130f-5bd9d32d4d58@codeaurora.org> <CAF6AEGvDpRChNQAzqgRFwaQcH=4JCwfKcvj2GQGgQOnO2_A1sg@mail.gmail.com>
+ <20170714170743.GA26488@arm.com> <CAF6AEGtMiVJvSrPXmQppM2NwS3fsXM8Vep3g0PwQK7SH4N=3xQ@mail.gmail.com>
+ <20170714180615.GC26488@arm.com> <CAF6AEGubgNiq5fJ9LaBULvW3450iY4-u0ecpp_a6xyMvRx9kug@mail.gmail.com>
+ <20170714190113.GE26488@arm.com> <CAF6AEGsjPQa_CviY4w-uEvH95rC6VkR+u7s7knVxTDW_8V-t_Q@mail.gmail.com>
+ <20170714193637.GI26488@arm.com> <CAF6AEGtw-bgK6hfFOHRtO0z6o2zxpvjERTX4i=HzioE69G8kAw@mail.gmail.com>
+ <6cd287bb-25c0-a7bd-8d3c-a63b9da0fd25@codeaurora.org> <7984ef64-fb6d-52f6-26bf-00a685a3efc5@codeaurora.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Date: Mon, 24 Jul 2017 21:01:33 +0530
+Message-ID: <CAFp+6iFfu2-qrDDim7fzKKLqMcSVMmOr7esqBZ-xEeLTOOTNLA@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Neil,
+Hi,
 
-On Fri, Jul 28, 2017 at 4:09 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> On 07/28/2017 12:29 PM, Martin Blumenstingl wrote:
->> Hi Neil,
+On Mon, Jul 17, 2017 at 5:58 PM, Sricharan R <sricharan@codeaurora.org> wrote:
+> Hi,
+>
+> On 7/17/2017 5:16 PM, Sricharan R wrote:
+>> Hi,
 >>
->> thanks for these patches, CEC support is another good step!
->
-> Hi Martin,
->
-> Thanks for your feedback !
->
+>> On 7/15/2017 1:09 AM, Rob Clark wrote:
+>>> On Fri, Jul 14, 2017 at 3:36 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>>> On Fri, Jul 14, 2017 at 03:34:42PM -0400, Rob Clark wrote:
+>>>>> On Fri, Jul 14, 2017 at 3:01 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>>>>> On Fri, Jul 14, 2017 at 02:25:45PM -0400, Rob Clark wrote:
+>>>>>>> On Fri, Jul 14, 2017 at 2:06 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>>>>>>> On Fri, Jul 14, 2017 at 01:42:13PM -0400, Rob Clark wrote:
+>>>>>>>>> On Fri, Jul 14, 2017 at 1:07 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>>>>>>>>> On Thu, Jul 13, 2017 at 10:55:10AM -0400, Rob Clark wrote:
+>>>>>>>>>>> On Thu, Jul 13, 2017 at 9:53 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>>>>>>>>>>>> Hi,
+>>>>>>>>>>>>
+>>>>>>>>>>>> On 7/13/2017 5:20 PM, Rob Clark wrote:
+>>>>>>>>>>>>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>>>>>>>>>>>>>> Hi Vivek,
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>>>>>>>>>>>>>>> Hi Stephen,
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>>>>>>>>>>>>>>> On 07/06, Vivek Gautam wrote:
+>>>>>>>>>>>>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>>>>>>>>>>>>>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>>>>>>>>>>>>>>>>                    size_t size)
+>>>>>>>>>>>>>>>>>   {
+>>>>>>>>>>>>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>>>>>>>>>>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>>>>>>>>>>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>>>>>>>>>>>>>>> +    size_t ret;
+>>>>>>>>>>>>>>>>>         if (!ops)
+>>>>>>>>>>>>>>>>>           return 0;
+>>>>>>>>>>>>>>>>>   -    return ops->unmap(ops, iova, size);
+>>>>>>>>>>>>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>>>>>>>>>>>>>>> Can these map/unmap ops be called from an atomic context? I seem
+>>>>>>>>>>>>>>>> to recall that being a problem before.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> That's something which was dropped in the following patch merged in master:
+>>>>>>>>>>>>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Looks like we don't  need locks here anymore?
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>>>>>>>>>>>>>>  from unmap. Somehow looks like some path in the master using that
+>>>>>>>>>>>>>>  should have enabled the pm ?
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Yes, there are a bunch of scenarios where unmap can happen with
+>>>>>>>>>>>>> disabled master (but not in atomic context).  On the gpu side we
+>>>>>>>>>>>>> opportunistically keep a buffer mapping until the buffer is freed
+>>>>>>>>>>>>> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
+>>>>>>>>>>>>> an exported dmabuf while some other driver holds a reference to it
+>>>>>>>>>>>>> (which can be dropped when the v4l2 device is suspended).
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Since unmap triggers tbl flush which touches iommu regs, the iommu
+>>>>>>>>>>>>> driver *definitely* needs a pm_runtime_get_sync().
+>>>>>>>>>>>>
+>>>>>>>>>>>>  Ok, with that being the case, there are two things here,
+>>>>>>>>>>>>
+>>>>>>>>>>>>  1) If the device links are still intact at these places where unmap is called,
+>>>>>>>>>>>>     then pm_runtime from the master would setup the all the clocks. That would
+>>>>>>>>>>>>     avoid reintroducing the locking indirectly here.
+>>>>>>>>>>>>
+>>>>>>>>>>>>  2) If not, then doing it here is the only way. But for both cases, since
+>>>>>>>>>>>>     the unmap can be called from atomic context, resume handler here should
+>>>>>>>>>>>>     avoid doing clk_prepare_enable , instead move the clk_prepare to the init.
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> I do kinda like the approach Marek suggested.. of deferring the tlb
+>>>>>>>>>>> flush until resume.  I'm wondering if we could combine that with
+>>>>>>>>>>> putting the mmu in a stalled state when we suspend (and not resume the
+>>>>>>>>>>> mmu until after the pending tlb flush)?
+>>>>>>>>>>
+>>>>>>>>>> I'm not sure that a stalled state is what we're after here, because we need
+>>>>>>>>>> to take care to prevent any table walks if we've freed the underlying pages.
+>>>>>>>>>> What we could try to do is disable the SMMU (put into global bypass) and
+>>>>>>>>>> invalidate the TLB when performing a suspend operation, then we just ignore
+>>>>>>>>>> invalidation whilst the clocks are stopped and, on resume, enable the SMMU
+>>>>>>>>>> again.
+>>>>>>>>>
+>>>>>>>>> wouldn't stalled just block any memory transactions by device(s) using
+>>>>>>>>> the context bank?  Putting it in bypass isn't really a good thing if
+>>>>>>>>> there is any chance the device can sneak in a memory access before
+>>>>>>>>> we've taking it back out of bypass (ie. makes gpu a giant userspace
+>>>>>>>>> controlled root hole).
+>>>>>>>>
+>>>>>>>> If it doesn't deadlock, then yes, it will stall transactions. However, that
+>>>>>>>> doesn't mean it necessarily prevents page table walks.
+>>>>>>>
+>>>>>>> btw, I guess the concern about pagetable walk is that the unmap could
+>>>>>>> have removed some sub-level of the pt that the tlb walk would hit?
+>>>>>>> Would deferring freeing those pages help?
+>>>>>>
+>>>>>> Could do, but it sounds like a lot of complication that I think we can fix
+>>>>>> by making the suspend operation put the SMMU into a "clean" state.
+>>>>>>
+>>>>>>>> Instead of bypass, we
+>>>>>>>> could configure all the streams to terminate, but this race still worries me
+>>>>>>>> somewhat. I thought that the SMMU would only be suspended if all of its
+>>>>>>>> masters were suspended, so if the GPU wants to come out of suspend then the
+>>>>>>>> SMMU should be resumed first.
+>>>>>>>
+>>>>>>> I believe this should be true.. on the gpu side, I'm mostly trying to
+>>>>>>> avoid having to power the gpu back on to free buffers.  (On the v4l2
+>>>>>>> side, somewhere in the core videobuf code would also need to be made
+>>>>>>> to wrap it's dma_unmap_sg() with pm_runtime_get/put()..)
+>>>>>>
+>>>>>> Right, and we shouldn't have to resume it if we suspend it in a clean state,
+>>>>>> with the TLBs invalidated.
+>>>>>>
+>>>>>
+>>>>> I guess if the device_link() stuff ensured the attached device
+>>>>> (gpu/etc) was suspended before suspending the iommu, then I guess I
+>>>>> can't see how temporarily putting the iommu in bypass would be a
+>>>>> problem.  I haven't looked at the device_link() stuff too closely, but
+>>>>> iommu being resumed first and suspended last seems like the only thing
+>>>>> that would make sense.  I'm mostly just nervous about iommu in bypass
+>>>>> vs gpu since userspace has so much control over what address gpu
+>>>>> writes to / reads from, so getting it wrong w/ the iommu would be a
+>>>>> rather bad thing ;-)
+>>>>
+>>>> Right, but we can also configure it to terminate if you don't want bypass.
+>>>>
+>>>
 >>
->> On Fri, Jul 28, 2017 at 11:53 AM, Neil Armstrong
->> <narmstrong@baylibre.com> wrote:
->>> The CEC 32K AO Clock is a dual divider with dual counter to provide a more
->>> precise 32768Hz clock for the CEC subsystem from the external xtal.
->>>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>> ---
->>>  drivers/clk/meson/Makefile         |   2 +-
->>>  drivers/clk/meson/gxbb-aoclk-32k.c | 180 +++++++++++++++++++++++++++++++++++++
->>>  drivers/clk/meson/gxbb-aoclk.c     |  21 ++++-
->>>  drivers/clk/meson/gxbb-aoclk.h     |  16 ++++
->>>  4 files changed, 217 insertions(+), 2 deletions(-)
->>>  create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
->>>
->>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->>> index de65427..b139d41 100644
->>> --- a/drivers/clk/meson/Makefile
->>> +++ b/drivers/clk/meson/Makefile
->>> @@ -4,4 +4,4 @@
->>>
->>>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
->>>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->>> -obj-$(CONFIG_COMMON_CLK_GXBB)   += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o
->>> +obj-$(CONFIG_COMMON_CLK_GXBB)   += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
->>> diff --git a/drivers/clk/meson/gxbb-aoclk-32k.c b/drivers/clk/meson/gxbb-aoclk-32k.c
->>> new file mode 100644
->>> index 0000000..497cd09
->>> --- /dev/null
->>> +++ b/drivers/clk/meson/gxbb-aoclk-32k.c
->>> @@ -0,0 +1,180 @@
->>> +/*
->>> + * Copyright (c) 2017 BayLibre, SAS.
->>> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->>> + *
->>> + * SPDX-License-Identifier: GPL-2.0+
->>> + */
->>> +
->>> +#include <linux/clk-provider.h>
->>> +#include <linux/bitfield.h>
->>> +#include <linux/regmap.h>
->>> +#include "gxbb-aoclk.h"
->>> +
->>> +/*
->>> + * The AO Domain embeds a dual/divider to generate a more precise
->>> + * 32,768KHz clock for low-power suspend mode and CEC.
->>> + */
->>> +
->>> +#define CLK_CNTL0_N1_MASK      GENMASK(11, 0)
->>> +#define CLK_CNTL0_N2_MASK      GENMASK(23, 12)
->>> +#define CLK_CNTL0_DUALDIV_EN   BIT(28)
->>> +#define CLK_CNTL0_OUT_GATE_EN  BIT(30)
->>> +#define CLK_CNTL0_IN_GATE_EN   BIT(31)
->>> +
->>> +#define CLK_CNTL1_M1_MASK      GENMASK(11, 0)
->>> +#define CLK_CNTL1_M2_MASK      GENMASK(23, 12)
->>> +#define CLK_CNTL1_BYPASS_EN    BIT(24)
->>> +#define CLK_CNTL1_SELECT_OSC   BIT(27)
->>> +
->>> +#define PWR_CNTL_ALT_32K_SEL   GENMASK(13, 10)
->>> +
->>> +struct cec_32k_freq_table {
->>> +       unsigned long parent_rate;
->>> +       unsigned long target_rate;
->>> +       bool dualdiv;
->>> +       unsigned int n1;
->>> +       unsigned int n2;
->>> +       unsigned int m1;
->>> +       unsigned int m2;
->>> +};
->>> +
->>> +static const struct cec_32k_freq_table aoclk_cec_32k_table[] = {
->>> +       [0] = {
->>> +               .parent_rate = 24000000,
->> shouldn't you add a parent (XTAL) to this new clock so you could get
->> rid of this?
+>>  But one thing here is, with devicelinks in picture, iommu suspend/resume
+>>  is called along with the master. That means, we can end up cleaning even
+>>  active entries on the suspend path ?, if suspend is going to
+>>  put the smmu in to a clean state every time. So if the master's are following
+>>  the pm_runtime sequence before a dma_map/unmap operation, that seems better.
+>>
 >
-> It is in the clock definition in gxbb-aoclk.c.
-> This table only defines the "valid" dividing values given by amlogic.
-> Having 24MHz enforces we uses a 24MHz xtal as parent...
-> Once we figure out/have a valid documentation, we could fill it with
-> generic value and have a generic calculation.
-ah, I missed that. in this case I guess it's fine
+>  Also, for the usecase of unmap being done from master's like GPU while it is already
+>  suspended, then following the Marek's approach of checking for the smmu state while
+>  in unmap and defer the TLB flush till resume seems correct way. All of the above
+>  true if we want to use device_link.
 
->>
->>> +               .target_rate = 32768,
->>> +               .dualdiv = true,
->>> +               .n1 = 733,
->>> +               .n2 = 732,
->>> +               .m1 = 8,
->>> +               .m2 = 11,
->>> +       },
->>> +};
->>> +
->>> +/*
->>> + * If CLK_CNTL0_DUALDIV_EN == 0
->>> + *  - will use N1 divider only
->>> + * If CLK_CNTL0_DUALDIV_EN == 1
->>> + *  - hold M1 cycles of N1 divider then changes to N2
->>> + *  - hold M2 cycles of N2 divider then changes to N1
->>> + * Then we can get more accurate division.
->>> + */
->>> +static unsigned long aoclk_cec_32k_recalc_rate(struct clk_hw *hw,
->>> +                                              unsigned long parent_rate)
->>> +{
->>> +       struct aoclk_cec_32k *cec_32k = to_aoclk_cec_32k(hw);
->>> +       unsigned long n1;
->>> +       u32 reg0, reg1;
->>> +
->>> +       regmap_read(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0, &reg0);
->>> +       regmap_read(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL1, &reg1);
->>> +
->>> +       if (reg1 & CLK_CNTL1_BYPASS_EN)
->>> +               return parent_rate;
->>> +
->>> +       if (reg0 & CLK_CNTL0_DUALDIV_EN) {
->>> +               unsigned long n2, m1, m2, f1, f2, p1, p2;
->>> +
->>> +               n1 = FIELD_GET(CLK_CNTL0_N1_MASK, reg0) + 1;
->>> +               n2 = FIELD_GET(CLK_CNTL0_N2_MASK, reg0) + 1;
->>> +
->>> +               m1 = FIELD_GET(CLK_CNTL1_M1_MASK, reg1) + 1;
->>> +               m2 = FIELD_GET(CLK_CNTL1_M2_MASK, reg1) + 1;
->>> +
->>> +               f1 = DIV_ROUND_CLOSEST(parent_rate, n1);
->>> +               f2 = DIV_ROUND_CLOSEST(parent_rate, n2);
->>> +
->>> +               p1 = DIV_ROUND_CLOSEST(100000000 * m1, f1 * (m1 + m2));
->>> +               p2 = DIV_ROUND_CLOSEST(100000000 * m2, f2 * (m1 + m2));
->>> +
->>> +               return DIV_ROUND_UP(100000000, p1 + p2);
->>> +       }
->>> +
->>> +       n1 = FIELD_GET(CLK_CNTL0_N1_MASK, reg0) + 1;
->>> +
->>> +       return DIV_ROUND_CLOSEST(parent_rate, n1);
->>> +}
->>> +
->>> +static const struct cec_32k_freq_table *find_cec_32k_freq(unsigned long rate,
->>> +                                                         unsigned long prate)
->>> +{
->>> +       int i;
->>> +
->>> +       for (i = 0 ; i < ARRAY_SIZE(aoclk_cec_32k_table) ; ++i)
->>> +               if (aoclk_cec_32k_table[i].parent_rate == prate &&
->>> +                   aoclk_cec_32k_table[i].target_rate == rate)
->>> +                       return &aoclk_cec_32k_table[i];
->>> +
->>> +       return NULL;
->>> +}
->>> +
->>> +static long aoclk_cec_32k_round_rate(struct clk_hw *hw, unsigned long rate,
->>> +                                    unsigned long *prate)
->>> +{
->>> +       const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
->>> +                                                                 *prate);
->>> +
->>> +       /* If invalid return first one */
->>> +       if (!freq)
->>> +               return freq[0].target_rate;
->>> +
->>> +       return freq->target_rate;
->>> +}
->>> +
->>> +static int aoclk_cec_32k_set_rate(struct clk_hw *hw, unsigned long rate,
->>> +                                 unsigned long parent_rate)
->>> +{
->>> +       const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
->>> +                                                                 parent_rate);
->>> +       struct aoclk_cec_32k *cec_32k = to_aoclk_cec_32k(hw);
->>> +       u32 reg = 0;
->>> +
->>> +       if (!freq)
->>> +               return -EINVAL;
->>> +
->>> +       /* Disable clock */
->>> +       regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
->>> +                          CLK_CNTL0_IN_GATE_EN | CLK_CNTL0_OUT_GATE_EN, 0);
->>> +
->>> +       if (freq->dualdiv)
->>> +               reg = CLK_CNTL0_DUALDIV_EN |
->>> +                     FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1) |
->>> +                     FIELD_PREP(CLK_CNTL0_N2_MASK, freq->n2 - 1);
->>> +       else
->>> +               reg = FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1);
->>> +
->>> +       regmap_write(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0, reg);
->>> +
->>> +       if (freq->dualdiv)
->>> +               reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1) |
->>> +                     FIELD_PREP(CLK_CNTL1_M2_MASK, freq->m2 - 1);
->>> +       else
->>> +               reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1);
->>> +
->>> +       regmap_write(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL1, reg);
->>> +
->>> +       /* Enable clock */
->>> +       regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
->>> +                          CLK_CNTL0_IN_GATE_EN, CLK_CNTL0_IN_GATE_EN);
->> based on how I understand your code the *input* clock needs to be
->> gated during rate change, so (in my opinion) it's fine to toggle it
->> here.
->>
->>> +
->>> +       udelay(200);
->>> +
->>> +       regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
->>> +                          CLK_CNTL0_OUT_GATE_EN, CLK_CNTL0_OUT_GATE_EN);
->> however, should we make the output clock configurable by implementing
->> clk_ops.enable and clk_ops.disable?
->
-> Yes, but in a perfect world we should need 2 gates, one before and one after
-> but it's a pain to synchronize and it's useless to have such complexity for
-> s clock that will only ever be used for CEC...
-the reason why I asked is the case where someone doesn't want to use
-HDMI (some people on IRC were asking how to reclaim the memory which
-is reserved for the framebuffer). I'm not sure if it would be good to
-keep at least the output disabled for that case.
-on the other hand one has to be careful then: I don't know if the
-suspend firmware re-enables this clock (else we need to make sure that
-we don't disable this clock during suspend).
-I'll leave it up to you whether you want to change it or not (if we
-really need it we can still implement these callbacks later).
+This sounds like a plan.
+I have a WIP version in which we will just check in 'unmap' if the mmu is
+already suspended. If yes, then we save the unmap request (domain, iova)
+and defer this request.
+On resume, we check the pending tlb flush requests, and call unmap.
 
->>
->>> +
->>> +       regmap_update_bits(cec_32k->regmap, AO_CRT_CLK_CNTL1,
->>> +                          CLK_CNTL1_SELECT_OSC, CLK_CNTL1_SELECT_OSC);
->>> +
->>> +       /* Select 32k from XTAL */
->>> +       regmap_update_bits(cec_32k->regmap,
->>> +                         AO_RTI_PWR_CNTL_REG0,
->>> +                         PWR_CNTL_ALT_32K_SEL,
->>> +                         FIELD_PREP(PWR_CNTL_ALT_32K_SEL, 4));
->> is it correct to configure the muxes after enabling the clock output?
->> also do you know about the other parents of PWR_CNTL_ALT_32K_SEL?
->
-> This mux is from some alternative GPIO input lines, but this exact clock
-> configuration is used by the suspend firmware...
->
-> Since there is a lot of unknowns about this clock, I copied the exact
-> sequence from amlogic code, but yes it should be modelized with a mux
-> and a dual gate somehow. But the firmware relies on it for low-freq
-> suspend mode and we won't have any other usage apart CEC under linux.
->
-> IMHO I think it's safer to keep this sequence.
-if you have to re-spin this due to whatever reason: could you please
-add a comment with that information (that this matches what the
-suspend firmware does and that there's currently no documentation
-available -> that should prevent people from messing with these
-registers)
+I will give a try for the venus use-case.
 
-> (Anyway, it's not too late to change the clock model if we keep the
-> same DT bindings)
-indeed, that is basically the reason why I'm asking: if we have to
-consider something now to keep the DT bindings stable then we should
-look into it.
+Regards
+Vivek
 
->>
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +const struct clk_ops meson_aoclk_cec_32k_ops = {
->>> +       .recalc_rate = aoclk_cec_32k_recalc_rate,
->>> +       .round_rate = aoclk_cec_32k_round_rate,
->>> +       .set_rate = aoclk_cec_32k_set_rate,
->>> +};
->>> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
->>> index f61506c..6c161e0 100644
->>> --- a/drivers/clk/meson/gxbb-aoclk.c
->>> +++ b/drivers/clk/meson/gxbb-aoclk.c
->>> @@ -59,6 +59,7 @@
->>>  #include <linux/mfd/syscon.h>
->>>  #include <linux/regmap.h>
->>>  #include <linux/init.h>
->>> +#include <linux/delay.h>
->>>  #include <dt-bindings/clock/gxbb-aoclkc.h>
->>>  #include <dt-bindings/reset/gxbb-aoclkc.h>
->>>  #include "gxbb-aoclk.h"
->>> @@ -105,6 +106,17 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
->>>  GXBB_AO_GATE(uart2, 5);
->>>  GXBB_AO_GATE(ir_blaster, 6);
->>>
->>> +static struct aoclk_cec_32k cec_32k_ao = {
->>> +       .lock = &gxbb_aoclk_lock,
->>> +       .hw.init = &(struct clk_init_data) {
->>> +               .name = "cec_32k_ao",
->>> +               .ops = &meson_aoclk_cec_32k_ops,
->>> +               .parent_names = (const char *[]){ "xtal" },
->>> +               .num_parents = 1,
->>> +               .flags = CLK_IGNORE_UNUSED,
->>> +       },
->>> +};
->>> +
->>>  static unsigned int gxbb_aoclk_reset[] = {
->>>         [RESET_AO_REMOTE] = 16,
->>>         [RESET_AO_I2C_MASTER] = 18,
->>> @@ -131,8 +143,9 @@ static int gxbb_aoclk_do_reset(struct reset_controller_dev *rcdev,
->>>                 [CLKID_AO_UART1] = &uart1_ao.hw,
->>>                 [CLKID_AO_UART2] = &uart2_ao.hw,
->>>                 [CLKID_AO_IR_BLASTER] = &ir_blaster_ao.hw,
->>> +               [CLKID_AO_CEC_32K] = &cec_32k_ao.hw,
->>>         },
->>> -       .num = ARRAY_SIZE(gxbb_aoclk_gate),
->>> +       .num = 7,
->>>  };
->>>
->>>  static int gxbb_aoclkc_probe(struct platform_device *pdev)
->>> @@ -172,6 +185,12 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
->>>                         return ret;
->>>         }
->>>
->>> +       /* Specific clocks */
->>> +       cec_32k_ao.regmap = regmap;
->>> +       ret = devm_clk_hw_register(dev, &cec_32k_ao.hw);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>>         return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->>>                         &gxbb_aoclk_onecell_data);
->>>  }
->>> diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
->>> index 2e26108..e8604c8 100644
->>> --- a/drivers/clk/meson/gxbb-aoclk.h
->>> +++ b/drivers/clk/meson/gxbb-aoclk.h
->>> @@ -9,7 +9,13 @@
->>>  #define __GXBB_AOCLKC_H
->>>
->>>  /* AO Configuration Clock registers offsets */
->>> +#define AO_RTI_PWR_CNTL_REG1   0x0c
->>> +#define AO_RTI_PWR_CNTL_REG0   0x10
->>>  #define AO_RTI_GEN_CNTL_REG0   0x40
->>> +#define AO_OSCIN_CNTL          0x58
->>> +#define AO_CRT_CLK_CNTL1       0x68
->>> +#define AO_RTC_ALT_CLK_CNTL0   0x94
->>> +#define AO_RTC_ALT_CLK_CNTL1   0x98
->>>
->>>  struct aoclk_gate_regmap {
->>>         struct clk_hw hw;
->>> @@ -23,4 +29,14 @@ struct aoclk_gate_regmap {
->>>
->>>  extern const struct clk_ops meson_aoclk_gate_regmap_ops;
->>>
->>> +struct aoclk_cec_32k {
->>> +       struct clk_hw hw;
->>> +       struct regmap *regmap;
->>> +       spinlock_t *lock;
->>> +};
->>> +
->>> +#define to_aoclk_cec_32k(_hw) container_of(_hw, struct aoclk_cec_32k, hw)
->>> +
->>> +extern const struct clk_ops meson_aoclk_cec_32k_ops;
->>> +
->>>  #endif /* __GXBB_AOCLKC_H */
->>> --
->>> 1.9.1
->>>
->>>
->>> _______________________________________________
->>> linux-amlogic mailing list
->>> linux-amlogic@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+>
+> Regards,
+>  Sricharan
+>
+> --
+> "QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>
+> ---
+> This email has been checked for viruses by Avast antivirus software.
+> https://www.avast.com/antivirus
 >
 
-Regards,
-Martin
+
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
