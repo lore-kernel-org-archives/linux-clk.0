@@ -1,41 +1,86 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 08/14] clk: tegra: change post IDDQ release delay to 5us
-Date: Tue, 25 Jul 2017 13:34:09 +0300
-Message-ID: <1500978856-5981-9-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:34041 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755411AbdGXLrs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 07:47:48 -0400
+Received: by mail-wr0-f172.google.com with SMTP id 12so105257866wrb.1
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2017 04:47:48 -0700 (PDT)
+Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
+ bindings
+To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
+Cc: jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
+ <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
+ <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
+ <20170721204439.GJ19878@codeaurora.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
+Date: Mon, 24 Jul 2017 13:47:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <20170721204439.GJ19878@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Increase delay after PLL IDDQ release to 5us per PLL specifications.
+On 07/21/2017 10:44 PM, Stephen Boyd wrote:
+> On 07/09, Rob Herring wrote:
+>> On Thu, Jul 06, 2017 at 12:24:23PM +0200, Neil Armstrong wrote:
+>>> On the first revision of the bindings, only the gates + resets were known
+>>> in the AO Clock HW, but more registers used to configures AO clock are known
+>>> to be spread among the AO register space.
+>>> This patch adds these registers to the Ao Clock bindings with direct access
+>>> and shared extcon access.
+>>>
+>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>>> ---
+>>>  .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt         | 11 +++++++++--
+>>>  1 file changed, 9 insertions(+), 2 deletions(-)
+>>
+>> This looks like the binding might be too specific with a reg list of 
+>> single registers, and you should define a system controller node 
+>> instead. Depends on what else is in the "A0" block.
+>>
+> 
+> Agreed. Why can't we expand the size in DT and then access the
+> registers directly in the driver. Hopefully it keeps working to
+> apply the dts patch without the driver patch too (and
+> vice-versa), because the kernel can only make a mapping as small
+> as a page which would cover these newly added reg properties
+> anyway.
+> 
 
-based on work by Alex Frid <afrid@nvidia.com>
+Hi Rob, Stephen,
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your feedback, but on these Amlogic platforms, the AO register bank is
+filled with interleaved registers used for various purposes.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 1c36b8a..695ccb4 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -363,7 +363,7 @@ static void _clk_pll_enable(struct clk_hw *hw)
- 		val = pll_readl(pll->params->iddq_reg, pll);
- 		val &= ~BIT(pll->params->iddq_bit_idx);
- 		pll_writel(val, pll->params->iddq_reg, pll);
--		udelay(2);
-+		udelay(5);
- 	}
- 
- 	if (pll->params->reset_reg) {
--- 
-1.9.1
+For instance, the first 1k of registers are :
+
+0-c RTI_STATUS
+c-14 RTI_PWR_CNTL
+14-1c PIN_MUX
+1c RTI_STATUS
+24-30 GPIO
+30 JTAG_CONFIG
+34 WD
+38-40 CPU_CTRL
+40 RTI_GEN_CTRL
+44 CPU_CTRL
+4c-58 TIMER
+58 OSCIN
+60 AHB2DDR
+...
+
+
+And so on, and the clock related registers are split among this space.
+
+For sure, this could be declared as an system controller node, but this would imply completely
+re-designing the actual clock driver and drop the actual bindings.
+(and with re-writting the clock gate code to use regmap registers access)
+
+Anyway, I'm open to suggestions...
+
+Neil
