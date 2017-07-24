@@ -1,55 +1,77 @@
-Return-Path: <p.zabel@pengutronix.de>
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 010/102] clk: tegra: explicitly request exclusive reset control
-Date: Wed, 19 Jul 2017 17:25:14 +0200
-Message-Id: <20170719152646.25903-11-p.zabel@pengutronix.de>
-In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 09/10] ARM: dts: sun8i: a83t: cubietruck-plus: Enable micro-SD card and eMMC
+Date: Mon, 24 Jul 2017 21:59:04 +0800
+Message-Id: <20170724135905.28855-10-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-reset lines") started to transition the reset control request API calls
-to explicitly state whether the driver needs exclusive or shared reset
-control behavior. Convert all drivers requesting exclusive resets to the
-explicit API call so the temporary transition helpers can be removed.
+Now that we support the MMC controllers on the A83T SoC, we can enable
+them on some boards.
 
-No functional changes.
-
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/tegra/clk-dfll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts | 27 ++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 2c44aeb0b97c7..bada64cf5392a 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1631,7 +1631,7 @@ int tegra_dfll_register(struct platform_device *pdev,
- 		return PTR_ERR(td->vdd_reg);
- 	}
+diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+index cff33454fc24..163ddf8868b5 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+@@ -83,6 +83,13 @@
+ 		};
+ 	};
  
--	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
-+	td->dvco_rst = devm_reset_control_get_exclusive(td->dev, "dvco");
- 	if (IS_ERR(td->dvco_rst)) {
- 		dev_err(td->dev, "couldn't get dvco reset\n");
- 		return PTR_ERR(td->dvco_rst);
++	reg_vcc3v3: vcc3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "On-board SPDIF";
+@@ -102,6 +109,26 @@
+ 	};
+ };
+ 
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <4>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
+ &spdif {
+ 	status = "okay";
+ };
 -- 
-2.11.0
+2.13.3
