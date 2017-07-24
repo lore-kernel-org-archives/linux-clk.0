@@ -1,153 +1,176 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 5/8] clk: vc5: Split clock input mux and predivider
-Date: Sun,  9 Jul 2017 15:28:11 +0200
-Message-Id: <20170709132814.2339-5-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 02/10] clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes switching
+Date: Mon, 24 Jul 2017 21:58:57 +0800
+Message-Id: <20170724135905.28855-3-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Split the VC5 clock input mux and the predivider to more accurately
-model the hardware and fix the previously incorrect assumption that
-both the OUT_SEL_I2CB and the PLL are fed from the predivider.
+All of our MMC clocks are of the MP clock type. A few MMC clocks on some
+SoCs, such as MMC2 on the A83T, support new/old timing mode switching.
 
-It is in fact the clock input mux output which is directly feeding
-the clock into the OUT_SEL_I2CB output, while the clock input mux
-output first passes through the predivider before it is fed into
-the PLL.
+>From a clock rate point of view, when the new timing mode is active. the
+output clock rate is halved.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
+This patch adds a special wrapper class of clocks, MP_MMC, around the
+generic MP type clocks. The rate related callbacks in ccu_mp_mmc_ops
+for this class look at the timing mode bit and apply the /2 post-divider
+when needed, before passing it through to the generic class ops,
+ccu_mp_ops.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-V2: None
-V3: None
----
- drivers/clk/clk-versaclock5.c | 46 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+ drivers/clk/sunxi-ng/ccu_mp.c | 80 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_mp.h | 30 ++++++++++++++++
+ 2 files changed, 110 insertions(+)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 7bdfd34e8280..453c9f721b78 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -157,6 +157,7 @@ struct vc5_driver_data {
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
-+	struct clk_hw		clk_pfd;
- 	struct vc5_hw_data	clk_pll;
- 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
- 	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
-@@ -166,6 +167,10 @@ static const char * const vc5_mux_names[] = {
- 	"mux"
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index b917ad7a386c..688855e7dc8c 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -172,3 +172,83 @@ const struct clk_ops ccu_mp_ops = {
+ 	.recalc_rate	= ccu_mp_recalc_rate,
+ 	.set_rate	= ccu_mp_set_rate,
  };
- 
-+static const char * const vc5_pfd_names[] = {
-+	"pfd"
-+};
 +
- static const char * const vc5_pll_names[] = {
- 	"pll"
- };
-@@ -254,11 +259,16 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
- }
- 
--static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
-+static const struct clk_ops vc5_mux_ops = {
-+	.set_parent	= vc5_mux_set_parent,
-+	.get_parent	= vc5_mux_get_parent,
-+};
++/*
++ * Support for MMC timing mode switching
++ *
++ * The MMC clocks on some SoCs support switching between old and
++ * new timing modes. A platform specific API is provided to query
++ * and set the timing mode on supported SoCs.
++ *
++ * In addition, a special class of ccu_mp_ops is provided, which
++ * takes in to account the timing mode switch. When the new timing
++ * mode is active, the clock output rate is halved. This new class
++ * is a wrapper around the generic ccu_mp_ops. When clock rates
++ * are passed through to ccu_mp_ops callbacks, they are doubled
++ * if the new timing mode bit is set, to account for the post
++ * divider. Conversely, when clock rates are passed back, they
++ * are halved if the mode bit is set.
++ */
 +
-+static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
- 					 unsigned long parent_rate)
- {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned int prediv, div;
- 
- 	regmap_read(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV, &prediv);
-@@ -276,7 +286,7 @@ static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
- 		return parent_rate / VC5_REF_DIVIDER_REF_DIV(div);
- }
- 
--static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
-+static long vc5_pfd_round_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long *parent_rate)
- {
- 	unsigned long idiv;
-@@ -296,11 +306,11 @@ static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return *parent_rate / idiv;
- }
- 
--static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-+static int vc5_pfd_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
- {
- 	struct vc5_driver_data *vc5 =
--		container_of(hw, struct vc5_driver_data, clk_mux);
-+		container_of(hw, struct vc5_driver_data, clk_pfd);
- 	unsigned long idiv;
- 	u8 div;
- 
-@@ -328,12 +338,10 @@ static int vc5_mux_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
--static const struct clk_ops vc5_mux_ops = {
--	.set_parent	= vc5_mux_set_parent,
--	.get_parent	= vc5_mux_get_parent,
--	.recalc_rate	= vc5_mux_recalc_rate,
--	.round_rate	= vc5_mux_round_rate,
--	.set_rate	= vc5_mux_set_rate,
-+static const struct clk_ops vc5_pfd_ops = {
-+	.recalc_rate	= vc5_pfd_recalc_rate,
-+	.round_rate	= vc5_pfd_round_rate,
-+	.set_rate	= vc5_pfd_set_rate,
- };
- 
- /*
-@@ -698,12 +706,26 @@ static int vc5_probe(struct i2c_client *client,
- 		goto err_clk;
- 	}
- 
-+	/* Register PFD */
-+	memset(&init, 0, sizeof(init));
-+	init.name = vc5_pfd_names[0];
-+	init.ops = &vc5_pfd_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = vc5_mux_names;
-+	init.num_parents = 1;
-+	vc5->clk_pfd.init = &init;
-+	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
-+	if (ret) {
-+		dev_err(&client->dev, "unable to register %s\n", init.name);
-+		goto err_clk;
++static unsigned long ccu_mp_mmc_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	unsigned long rate = ccu_mp_recalc_rate(hw, parent_rate);
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++	u32 val = readl(cm->base + cm->reg);
++
++	if (val & CCU_MMC_NEW_TIMING_MODE)
++		return rate / 2;
++	return rate;
++}
++
++static int ccu_mp_mmc_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
++{
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++	u32 val = readl(cm->base + cm->reg);
++	int ret;
++
++	/* adjust the requested clock rate */
++	if (val & CCU_MMC_NEW_TIMING_MODE) {
++		req->rate *= 2;
++		req->min_rate *= 2;
++		req->max_rate *= 2;
 +	}
 +
- 	/* Register PLL */
- 	memset(&init, 0, sizeof(init));
- 	init.name = vc5_pll_names[0];
- 	init.ops = &vc5_pll_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
--	init.parent_names = vc5_mux_names;
-+	init.parent_names = vc5_pfd_names;
- 	init.num_parents = 1;
- 	vc5->clk_pll.num = 0;
- 	vc5->clk_pll.vc5 = vc5;
++	ret = ccu_mp_determine_rate(hw, req);
++
++	/* re-adjust the requested clock rate back */
++	if (val & CCU_MMC_NEW_TIMING_MODE) {
++		req->rate /= 2;
++		req->min_rate /= 2;
++		req->max_rate /= 2;
++	}
++
++	return ret;
++}
++
++static int ccu_mp_mmc_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct ccu_common *cm = hw_to_ccu_common(hw);
++	u32 val = readl(cm->base + cm->reg);
++
++	if (val & CCU_MMC_NEW_TIMING_MODE)
++		rate *= 2;
++
++	return ccu_mp_set_rate(hw, rate, parent_rate);
++}
++
++const struct clk_ops ccu_mp_mmc_ops = {
++	.disable	= ccu_mp_disable,
++	.enable		= ccu_mp_enable,
++	.is_enabled	= ccu_mp_is_enabled,
++
++	.get_parent	= ccu_mp_get_parent,
++	.set_parent	= ccu_mp_set_parent,
++
++	.determine_rate	= ccu_mp_mmc_determine_rate,
++	.recalc_rate	= ccu_mp_mmc_recalc_rate,
++	.set_rate	= ccu_mp_mmc_set_rate,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+index 915625e97d98..aaef11d747ea 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.h
++++ b/drivers/clk/sunxi-ng/ccu_mp.h
+@@ -14,6 +14,7 @@
+ #ifndef _CCU_MP_H_
+ #define _CCU_MP_H_
+ 
++#include <linux/bitops.h>
+ #include <linux/clk-provider.h>
+ 
+ #include "ccu_common.h"
+@@ -74,4 +75,33 @@ static inline struct ccu_mp *hw_to_ccu_mp(struct clk_hw *hw)
+ 
+ extern const struct clk_ops ccu_mp_ops;
+ 
++/*
++ * Special class of M-P clock that supports MMC timing modes
++ *
++ * Since the MMC clock registers all follow the same layout, we can
++ * simplify the macro for this particular case. In addition, as
++ * switching modes also affects the output clock rate, we need to
++ * have CLK_GET_RATE_NOCACHE for all these types of clocks.
++ */
++
++#define SUNXI_CCU_MP_MMC_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++				       _flags)				\
++	struct ccu_mp _struct = {					\
++		.enable	= BIT(31),					\
++		.m	= _SUNXI_CCU_DIV(0, 4),				\
++		.p	= _SUNXI_CCU_DIV(16, 2),			\
++		.mux	= _SUNXI_CCU_MUX(24, 2),			\
++		.common	= {						\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_MMC_TIMING_SWITCH, \
++			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++							      _parents, \
++							      &ccu_mp_mmc_ops, \
++							      CLK_GET_RATE_NOCACHE | \
++							      _flags),	\
++		}							\
++	}
++
++extern const struct clk_ops ccu_mp_mmc_ops;
++
+ #endif /* _CCU_MP_H_ */
 -- 
-2.11.0
+2.13.3
