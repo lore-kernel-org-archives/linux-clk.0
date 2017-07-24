@@ -1,114 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Jul 2017 15:44:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Adriana Reus <adi.reus@gmail.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-Message-ID: <20170727224459.GO2146@codeaurora.org>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
- <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
- <1497955822.7387.3.camel@baylibre.com>
- <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
- <1497961950.7387.7.camel@baylibre.com>
- <1498050903.7387.12.camel@baylibre.com>
- <20170712011604.GQ22780@codeaurora.org>
- <1501088747.2401.27.camel@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53872 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754004AbdGXPEH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 11:04:07 -0400
+Date: Mon, 24 Jul 2017 16:03:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Carlo Caione <carlo@caione.org>
+Message-ID: <20170724150344.4zq6md7eidxzikot@sirena.org.uk>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+ <20170723102749.17323-3-icenowy@aosc.io>
+ <CAGb2v640bB27M_Xd4r-oQ=acgfpHEwoV2tSk3vH0VZc7R-de6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1501088747.2401.27.camel@baylibre.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a5gqoojor2ovbyeh"
+In-Reply-To: <CAGb2v640bB27M_Xd4r-oQ=acgfpHEwoV2tSk3vH0VZc7R-de6w@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 02/10] regulator: add support for SY8106A
+ regulator
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/26, Jerome Brunet wrote:
-> On Tue, 2017-07-11 at 18:16 -0700, Stephen Boyd wrote:
-> > On 06/21, Jerome Brunet wrote:
-> > > 
-> > > I managed to have a run on kci - based on v4.12-rc6:
-> > > https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-1
-> > > 0-ge
-> > > a373ddef830/
-> > > 
-> > > There was no build regression but kci did find one boot regression on qcom
-> > > platforms:
-> > > * qcom-apq8064-cm-qs600
-> > > * qcom-apq8064-ifc6410
-> > > 
-> > > it seems the problem is coming from the clock used by the mmc driver
-> > > (drivers/mmc/host/mmci.c)
-> > > 
-> > > the driver does following sequence:
-> > > * get_clk
-> > > * prepare_enable
-> > > * get_rate
-> > > * set_rate
-> > > * ...
-> > > 
-> > > with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has
-> > > CLK_SET_RATE_PARENT
-> > > flag so it will transmit the request to its parent.
-> > > The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
-> > > 
-> > > This can't work with sequence above. The flag was clearly bypassed before,
-> > > so I
-> > > think it would be best to remove CLK_SET_RATE_GATE from the SDCx_src clocks
-> > > 
-> > > Stephen, would you agree ?
-> > > 
-> > > There was an issue with the chip board as well but this particular board has
-> > > not
-> > > been very reliable in this lab lately. It has failed on several other job.
-> > > 
-> > 
-> > Yes the flag was never working before and we've been ignoring the
-> > subtle problems that it causes to change the rate while the clk
-> > is enabled. On these older SoCs, all the clks marked with
-> > CLK_SET_RATE_GATE need to implement something to forcibly disable
-> > all child clks across the rate change. That is the hardware
-> > recommended procedure.
-> 
-> Seems that HW has been doing fine w/o recommended procedure so far ;)
 
-Dubious at best. There's only light testing with upstream kernels
-on these SoCs, and probably "doing fine" is more like "nobody has
-reported a problem" in this case.
+--a5gqoojor2ovbyeh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> > 
-> > So something like
-> > 
-> > 	get_clk
-> > 	prepare_enable
-> > 	get_rate
-> > 	set_rate
-> > 	 call ->set_rate() op
-> > 	 forcibly disable children of rcgs
-> > 	 actually change the rate of rcg
-> > 	 forcibly enable all children that were disabled
-> > 
-> > and have that happen under one big spinlock local to the qcom
-> > driver I suppose so that enable/disable can't leak into the rate
-> > change. Fun! I'll make an attempt at implementing the right
-> > solution tomorrow/tonight. Of course, we can remove the flag from
-> > qcom drivers if it's blocking this series.
-> > 
-> 
-> Yeah, it is probably blocking the series.
-> 
-> In the following mail, I've only replied where I wanted to discuss a bit more.
-> For everything else, please consider the comments agreed and the modifications
-> done as requested.
-> 
+On Mon, Jul 24, 2017 at 11:03:24AM +0800, Chen-Yu Tsai wrote:
+> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> > From: Ondrej Jirman <megous@megous.com>
+> >
+> > SY8106A is an I2C attached single output regulator made by Silergy Corp,
+> > which is used on several Allwinner H3/H5 SBCs to control the power
+> > supply of the ARM cores.
+> >
+> > Add a driver for it.
 
-Ok. Good that we can move forward in some way so this is not a
-blocker. I've almost completed writing the qcom code to force
-clks on and off so it will be resolved one way or the other soon.
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--a5gqoojor2ovbyeh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAll2DE8ACgkQJNaLcl1U
+h9C7VQf/b2DahQnbjczBxvmBFmwk1A8Le9WlFIQQJYSR21dEV+dDRZQlZwlM3MFK
+afh47eY0s2UqyXAdV2ttiq+SC6jt5IBYapAGHwIek4NZuUYX8swdyb1rSFRHd4Ca
+W+jQl1myU6TjYdJHM8daAxcWRRtDL3A9R03gyZgKyuqfUOBwf7R40zm46NIUTaQ8
+oHNnMP7ZkB8U0adyXD5r0pl/Iflt9ONzvzUQs4t33FJcwhIY7/vV6BNmHT4814D4
+t/j2Vs5Z5kVuN+R954Z9ibt4aM+lIOrEyMYzUS1vBP/AIY6QrXJFKnr4jeu00u4M
+c/cIHZgtIUuTFp2uN7D4i5PrCS4Feg==
+=NI9S
+-----END PGP SIGNATURE-----
+
+--a5gqoojor2ovbyeh--
