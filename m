@@ -1,55 +1,54 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1500386760.9510.9.camel@pengutronix.de>
-Subject: Re: Coupled clk/reset
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Joel Stanley <joel@jms.id.au>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Ryan Chen
- <ryan_chen@aspeedtech.com>, Linus Walleij <linus.walleij@linaro.org>,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>, Andrew Jeffery
- <andrew@aj.id.au>, Jeremy Kerr <jk@ozlabs.org>
-Date: Tue, 18 Jul 2017 16:06:00 +0200
-In-Reply-To: <CACPK8XdXxfxngzhSxyPb=OKcEv+3Up8ve-2WtpETpXvXe_av5w@mail.gmail.com>
-References: 
-	<CACPK8XdXxfxngzhSxyPb=OKcEv+3Up8ve-2WtpETpXvXe_av5w@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:48767 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752853AbdGXODi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Jul 2017 10:03:38 -0400
+Message-ID: <1500904960.29303.204.camel@linux.intel.com>
+Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        linux@endlessm.com, Carlo Caione <carlo@endlessm.com>
+Date: Mon, 24 Jul 2017 17:02:40 +0300
+In-Reply-To: <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
+References: <20170710203801.17496-1-carlo@caione.org>
+         <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
+         <20170710235403.GB25390@fury>
+         <1ac00dd5-038c-7ef7-44e7-4c95fea8042d@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Joel,
+On Mon, 2017-07-24 at 15:49 +0200, Pierre-Louis Bossart wrote:
+> On 7/11/17 1:54 AM, Darren Hart wrote:
+> > On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra
+> > wrote:
 
-On Tue, 2017-07-18 at 19:53 +0930, Joel Stanley wrote:
-> Hello!
+> > > Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > 
+> > Excellent, thank you Enric. Pierre, any objections to this going in
+> > to
+> > 4.13 now and stable back to 4.12?
 > 
-> I'm taking a stab at a clk and reset driver for the Aspeed SoCs. I've
-> used the Gemini driver for inspiration so far, which looks to be a
-> good fit for the clock gating and important clocks (those we need in
-> order to get the uart and timer source going).
-> 
-> One tricky bit is the datasheet specifies the following for enabling
-> an IP block ('engine'), whenever the engine is started from the
-> clocked stopped state:
-> 
->  1. Enable engine reset
->  2. Delay 100us
->  3. Enable clock
->  4. Delay 10ms
->  5. Disable engine reset
->
-> How does this dance fit into the reset/clock framework? I need to show
-> that there is this dependency when enabling a clock.
+> I saw an update of this patch being merged while I was away on an 
+> extended summer break, but out of curiosity what was the problem with
+> no 
+> audio on Baytrail? the code was added precisely to add support for
+> 19.2 
+> MHz on Baytrail and finally solve audio issues. I have no reports of 
+> broken functionality with this 282a4e4 commit... Enric, do you have a 
+> bugzilla or pointers?
 
-If this is some special treatment for a single IP block, I'd just open
-code this in the driver:
-	reset_control_assert(rstc);
-	usleep_range(100, 200);
-	clk_prepare_enable(clk);
-	usleep_range(10000, 20000);
-	reset_control_deassert(rstc);
+TL;DR: We should respect firmware settings before blindly shut down
+"unused" resources. (We used to have similar stuff in GPIO/pinctrl
+driver for direct IRQ pins, where we shut up the pins which are used
+directly by IOAPIC)
 
-If this is a common pattern needed for multiple clocks, you could
-investigate hiding this in the clock driver and not export the resets to
-the 'engine' driver at all.
-
-regards
-Philipp
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
