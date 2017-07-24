@@ -1,122 +1,319 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 19 Jul 2017 08:23:01 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: Re: [PATCH] clk: Convert to using %pOF instead of full_name
-Message-ID: <20170719062301.bextqsjufe7gjozt@flea>
-References: <20170718214339.7774-12-robh@kernel.org>
+Return-Path: <quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH v3 3/9] clk: at91: add audio pll clock drivers
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+ lgirdwood@gmail.com, broonie@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
+ boris.brezillon@free-electrons.com, perex@perex.cz, tiwai@suse.com,
+ cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+ <20170713074927.10882-4-quentin.schulz@free-electrons.com>
+ <20170721222029.GO19878@codeaurora.org>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Message-ID: <859d2f48-a987-afda-1e9d-02930e4fad7d@free-electrons.com>
+Date: Mon, 24 Jul 2017 10:37:33 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="l25m4zfpvpydcgma"
-In-Reply-To: <20170718214339.7774-12-robh@kernel.org>
+In-Reply-To: <20170721222029.GO19878@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Stephen,
 
---l25m4zfpvpydcgma
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 22/07/2017 00:20, Stephen Boyd wrote:
+> On 07/13, Quentin Schulz wrote:
+>> diff --git a/drivers/clk/at91/clk-audio-pll-pad.c b/drivers/clk/at91/clk-audio-pll-pad.c
+>> new file mode 100644
+>> index 000000000000..10dd6d625696
+>> --- /dev/null
+>> +++ b/drivers/clk/at91/clk-audio-pll-pad.c
+>> @@ -0,0 +1,206 @@
+>> +/*
+>> + *  Copyright (C) 2016 Atmel Corporation,
+>> + *                     Nicolas Ferre <nicolas.ferre@atmel.com>
+>> + *  Copyright (C) 2017 Free Electrons,
+>> + *		       Quentin Schulz <quentin.schulz@free-electrons.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + *
+>> + */
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clkdev.h>
+> 
+> Used?
+> 
 
-On Tue, Jul 18, 2017 at 04:42:52PM -0500, Rob Herring wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> ---
->  drivers/clk/berlin/bg2.c             |  3 +--
->  drivers/clk/berlin/bg2q.c            |  7 +++----
->  drivers/clk/clk-asm9260.c            |  4 ++--
->  drivers/clk/clk-conf.c               | 16 ++++++++--------
->  drivers/clk/clk-moxart.c             | 12 ++++++------
->  drivers/clk/clk-qoriq.c              |  7 +++----
->  drivers/clk/clk-stm32f4.c            |  4 ++--
->  drivers/clk/clk-xgene.c              | 15 ++++++---------
->  drivers/clk/clk.c                    |  4 ++--
->  drivers/clk/clkdev.c                 |  4 ++--
->  drivers/clk/mediatek/clk-cpumux.c    |  2 +-
->  drivers/clk/mediatek/clk-mtk.c       |  2 +-
->  drivers/clk/mediatek/reset.c         |  2 +-
->  drivers/clk/renesas/clk-mstp.c       |  2 +-
->  drivers/clk/renesas/clk-rcar-gen2.c  |  3 +--
->  drivers/clk/sunxi-ng/ccu-sun5i.c     |  3 +--
->  drivers/clk/sunxi-ng/ccu-sun6i-a31.c |  3 +--
->  drivers/clk/sunxi-ng/ccu-sun8i-a23.c |  3 +--
->  drivers/clk/sunxi-ng/ccu-sun8i-a33.c |  3 +--
->  drivers/clk/sunxi-ng/ccu-sun8i-h3.c  |  3 +--
->  drivers/clk/sunxi-ng/ccu-sun8i-r.c   |  3 +--
->  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c |  3 +--
->  drivers/clk/sunxi/clk-sunxi.c        | 17 +++++++----------
+Not really, I need slab.h for kzalloc tough which was included by clkdev.
 
-For the sunxi and sunxi-ng clocks:
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+[...]
+>> +static int clk_audio_pll_pad_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +				      unsigned long parent_rate)
+>> +{
+>> +	struct clk_audio_pad *apad_ck = to_clk_audio_pad(hw);
+>> +	u8 tmp_div;
+>> +
+>> +	pr_debug("A PLL/PAD: %s, rate = %lu (parent_rate = %lu)\n", __func__,
+>> +		 rate, parent_rate);
+>> +
+>> +	if (!rate)
+>> +		return -EINVAL;
+> 
+> This happens?
+> 
 
-Thanks!
-Maxime
+I don't know, but it's better to do this quick check rather than being
+exposed to a division by zero IMHO. Nothing in clk_ops states that the
+rate given to set_rate is non-zero, so I made sure this can't happen.
 
---=20
-Maxime Ripard, Free Electrons
+>> +
+>> +	tmp_div = parent_rate / rate;
+>> +	if (tmp_div % 3 == 0) {
+>> +		apad_ck->qdaudio = tmp_div / 3;
+>> +		apad_ck->div = 3;
+>> +	} else {
+>> +		apad_ck->qdaudio = tmp_div / 2;
+>> +		apad_ck->div = 2;
+>> +	}[...]
+>> +static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
+>> +{
+>> +	struct clk_audio_pad *apad_ck;
+>> +	struct clk_init_data init;
+> 
+> Best to initialize to { } just in case we add something later.
+> 
+
+ACK.
+
+>> +	struct regmap *regmap;
+>> +	const char *parent_name;
+>> +	const char *name = np->name;
+>> +	int ret;
+>> +
+>> +	parent_name = of_clk_get_parent_name(np, 0);
+>> +
+>> +	of_property_read_string(np, "clock-output-names", &name);
+>> +
+>> +	regmap = syscon_node_to_regmap(of_get_parent(np));
+>> +	if (IS_ERR(regmap))
+>> +		return;
+>> +
+>> +	apad_ck = kzalloc(sizeof(*apad_ck), GFP_KERNEL);
+>> +	if (!apad_ck)
+>> +		return;
+>> +
+>> +	init.name = name;
+>> +	init.ops = &audio_pll_pad_ops;
+>> +	init.parent_names = (parent_name ? &parent_name : NULL);
+> 
+> Use of_clk_parent_fill()?
+> 
+
+[Deleting `parent_name = of_clk_get_parent_name(np, 0);`]
+[Deleting `init.parent_names = (parent_name ? &parent_name : NULL);`]
+
++ const char *parent_names[1];
+[...]
++ of_clk_parent_fill(np, parent_names, 1);
++ init.parent_names = parent_names;
+
+Is it what you're asking?
+
+>> +	init.num_parents = 1;
+>> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+>> +		CLK_SET_RATE_PARENT;
+>> +
+>> +	apad_ck->hw.init = &init;
+>> +	apad_ck->regmap = regmap;
+>> +
+>> +	ret = clk_hw_register(NULL, &apad_ck->hw);
+>> +	if (ret)
+>> +		kfree(apad_ck);
+>> +	else
+>> +		of_clk_add_hw_provider(np, of_clk_hw_simple_get, &apad_ck->hw);
+> 
+> Maybe we should make this register sequence a helper function.
+> Seems common.
+> 
+
+I can put such an helper in an header if this is what you meant.
+
+>> +}
+>> +
+>> +CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_pad_setup,
+>> +	       "atmel,sama5d2-clk-audio-pll-pad",
+>> +	       of_sama5d2_clk_audio_pll_pad_setup);
+> 
+> We can't have a device driver for this?
+> 
+
+Could you elaborate please?
+
+>> diff --git a/drivers/clk/at91/clk-audio-pll-pmc.c b/drivers/clk/at91/clk-audio-pll-pmc.c
+>> new file mode 100644
+>> index 000000000000..7b0847ed7a4b
+>> --- /dev/null
+>> +++ b/drivers/clk/at91/clk-audio-pll-pmc.c
+[...]
+>> +static int clk_audio_pll_pmc_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +				      unsigned long parent_rate)
+>> +{
+>> +	struct clk_audio_pmc *apmc_ck = to_clk_audio_pmc(hw);
+>> +
+>> +	if (!rate)
+>> +		return -EINVAL;
+>> +
+>> +	pr_debug("A PLL/PMC: %s, rate = %lu (parent_rate = %lu)\n", __func__,
+>> +		 rate, parent_rate);
+>> +
+>> +	apmc_ck->qdpmc = parent_rate / rate - 1;
+> 
+> Hopefully rate isn't 1 or that goes undefined.
+> 
+
+Thanks to operator precedence, the only check to do is rate != 0 (done
+few lines above). Division has precedence over substraction.
+
+[...]
+>> +static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
+>> +{
+>> +	struct clk_audio_pmc *apmc_ck;
+>> +	struct clk_init_data init;
+>> +	struct regmap *regmap;
+>> +	const char *parent_name;
+>> +	const char *name = np->name;
+>> +	int ret;
+>> +
+>> +	parent_name = of_clk_get_parent_name(np, 0);
+>> +
+>> +	of_property_read_string(np, "clock-output-names", &name);
+>> +
+>> +	regmap = syscon_node_to_regmap(of_get_parent(np));
+>> +	if (IS_ERR(regmap))
+>> +		return;
+>> +
+>> +	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
+>> +	if (!apmc_ck)
+>> +		return;
+>> +
+>> +	init.name = name;
+>> +	init.ops = &audio_pll_pmc_ops;
+>> +	init.parent_names = (parent_name ? &parent_name : NULL);
+> 
+> This feels repetitive.
+> 
+>> +	init.num_parents = 1;
+>> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+>> +		CLK_SET_RATE_PARENT;
+>> +
+>> +	apmc_ck->hw.init = &init;
+>> +	apmc_ck->regmap = regmap;
+>> +
+>> +	ret = clk_hw_register(NULL, &apmc_ck->hw);
+>> +	if (ret)
+>> +		kfree(apmc_ck);
+>> +	else
+>> +		of_clk_add_hw_provider(np, of_clk_hw_simple_get, &apmc_ck->hw);
+>> +}
+>> +
+>> +CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_pmc_setup,
+>> +	       "atmel,sama5d2-clk-audio-pll-pmc",
+>> +	       of_sama5d2_clk_audio_pll_pmc_setup);
+> 
+> Very
+> 
+
+Basically, both share almost the same code but have different formulae
+for the rate.
+
+>> diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
+>> new file mode 100644
+>> index 000000000000..efc2cb58da85
+>> --- /dev/null
+>> +++ b/drivers/clk/at91/clk-audio-pll.c
+[...]
+>> +static unsigned long clk_audio_pll_fout(unsigned long parent_rate,
+>> +					unsigned long nd, unsigned long fracr)
+>> +{
+>> +	unsigned long long fr = (unsigned long long)parent_rate *
+>> +						(unsigned long long)fracr;
+> 
+> We only need one cast here?
+> 
+
+Indeed, I'll remove the casting of fracr.
+
+[...]
+>> +static long clk_audio_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +				     unsigned long *parent_rate)
+>> +{
+>> +	long best_rate = -EINVAL;
+>> +	unsigned long fracr, nd;
+>> +	int ret;
+>> +
+>> +	pr_debug("A PLL: %s, rate = %lu (parent_rate = %lu)\n", __func__, rate,
+>> +		 *parent_rate);
+>> +
+>> +	if (rate < AUDIO_PLL_FOUT_MIN)
+>> +		rate = AUDIO_PLL_FOUT_MIN;
+>> +	else if (rate > AUDIO_PLL_FOUT_MAX)
+>> +		rate = AUDIO_PLL_FOUT_MAX;
+> 
+> Use clamp. Also, did you want to use determine_rate callback and
+> clamp the requested rate range?
+> 
+
+Didn't know this one, thanks!
+
+I want determine_rate to return a valid rate for the pll so I clamp the
+requested rate range in this one. In set_rate, I just tell the user that
+any requested rate outside of the valid range is invalid. Does that
+answer your question?
+
+[...]
+>> +static void __init of_sama5d2_clk_audio_pll_setup(struct device_node *np)
+>> +{
+>> +	struct clk_audio_frac *fck;
+>> +	struct clk_init_data init;
+>> +	struct regmap *regmap;
+>> +	const char *parent_name;
+>> +	const char *name = np->name;
+>> +	int ret;
+>> +
+>> +	parent_name = of_clk_get_parent_name(np, 0);
+>> +
+>> +	of_property_read_string(np, "clock-output-names", &name);
+> 
+> Any way to not rely on clock-output-names?
+> 
+
+I guess we could use the name of the DT node (as it's done in the
+variable initialization block above) and not override it by
+clock-output-names?
+
+>> +
+>> +	regmap = syscon_node_to_regmap(of_get_parent(np));
+>> +	if (IS_ERR(regmap))
+>> +		return;
+>> +
+>> +	fck = kzalloc(sizeof(*fck), GFP_KERNEL);
+> 
+> This variable name looks like f*ck, perhaps name it something
+> else. frac?
+
+Sure.
+
+[...]
+
+Thanks,
+Quentin
+
+-- 
+Quentin Schulz, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
-
---l25m4zfpvpydcgma
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZbvrFAAoJEBx+YmzsjxAgYCIQAIG0Ck1n/kBpT7SJHMICc1Pk
-JvosVmqrSK8FMljtVqFNa7wTxpbhiwtkWPBfFrvvv4lNN/9eyCFsJjlkjFYmPj9z
-EtIQNMK6gZVRWSD+apOrPbOz8PPpnW5g7IyZhKrzc2XTw5ypsGO+Uz0pbYfG1oui
-b+YODRsG/GFA9M4JG3pM0WCBFzoC3Je1PMo27jOjxWO7E0VeJWQVVkqXShw1rZaV
-QEz3EhYZ79x+Wn7kV6L3jxRG6oljmJRKuqVqOiHoMgfM6oSOcuDTrhse/JfBqkoT
-p1FummTm0I+1LcztAiqGQWePjS2dIYluueX3OdCsANfd8/OHwGdKPzcyQ0cOIR3o
-o3s2udAKdQI8CWl2SEbUp9qyTwF+CjkAzICcY5RF05iHdL2WrAbbZ3G6MHjNQC39
-/Y2mfVZ5iRv+Crtuue+uytZ6xbKb7sp5j0+SQwYaPi+vmnONQK+tiPPgTxi0deaD
-Wt+8+2YovasnYHSMBfN4DtIEbESRN3vnEYUiTbg5NYqTrVNw6SeqIbwhIMYFEM7f
-kn1SvLfqcDdMq4qQd3cguiKKEJnCAlh4JtO3wWPocJNA73J7SgaM8tmPoQNQ+6V/
-2y7hSSjLNh1Is6o888H58cjQ0DNnTHDWOhezIk9Y7jVtVyEj/dPoZ1MJL9j5miQt
-si9tNGjJSr2RAVVdbnYk
-=PpBl
------END PGP SIGNATURE-----
-
---l25m4zfpvpydcgma--
