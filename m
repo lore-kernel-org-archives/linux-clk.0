@@ -1,33 +1,102 @@
-Return-Path: <vladimir.barinov@cogentembedded.com>
-Return-Path: <vladimir.barinov@cogentembedded.com>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 0/2] clk: vc5: Add IDT VersaClock 5P49V5925
-Date: Fri,  7 Jul 2017 04:57:03 +0300
-Message-Id: <1499392623-9011-1-git-send-email-vladimir.barinov@cogentembedded.com>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 07/10] ARM: dts: sun8i: a83t: Add MMC controller device nodes
+Date: Mon, 24 Jul 2017 21:59:02 +0800
+Message-Id: <20170724135905.28855-8-wens@csie.org>
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+The A83T has 3 MMC controllers. The third one is a bit special, as it
+supports a wider 8-bit bus, and a "new timing mode".
 
-This adds the folowing:
-- Update IDT VersaClock 5 driver to support 5P49V5925
-- Add bindings for IDT VersaClock 5P49V5925
-
-Vladimir Barinov (2):
-[1/2] clk: vc5: Add support for IDT VersaClock 5P49V5925
-[2/2] dt: Add bindings for IDT VersaClock 5P49V5925
-
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-This patchset is against the 'kernel/git/torvalds/linux.git' repo.
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 59 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
- Documentation/devicetree/bindings/clock/idt,versaclock5.txt |   11 +++++++----
- drivers/clk/clk-versaclock5.c                               |   11 +++++++++++
- 2 files changed, 18 insertions(+), 4 deletions(-)
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index beed05e10a3b..21ab668abfac 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -182,6 +182,65 @@
+ 			#dma-cells = <1>;
+ 		};
+ 
++		mmc0: mmc@1c0f000 {
++			compatible = "allwinner,sun8i-a83t-mmc",
++				     "allwinner,sun7i-a20-mmc";
++			reg = <0x01c0f000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC0>,
++				 <&ccu CLK_MMC0>,
++				 <&ccu CLK_MMC0_OUTPUT>,
++				 <&ccu CLK_MMC0_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC0>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc1: mmc@1c10000 {
++			compatible = "allwinner,sun8i-a83t-mmc",
++				     "allwinner,sun7i-a20-mmc";
++			reg = <0x01c10000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC1>,
++				 <&ccu CLK_MMC1>,
++				 <&ccu CLK_MMC1_OUTPUT>,
++				 <&ccu CLK_MMC1_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC1>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc2: mmc@1c11000 {
++			compatible = "allwinner,sun8i-a83t-emmc";
++			reg = <0x01c11000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC2>,
++				 <&ccu CLK_MMC2>,
++				 <&ccu CLK_MMC2_OUTPUT>,
++				 <&ccu CLK_MMC2_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC2>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		ccu: clock@1c20000 {
+ 			compatible = "allwinner,sun8i-a83t-ccu";
+ 			reg = <0x01c20000 0x400>;
+-- 
+2.13.3
