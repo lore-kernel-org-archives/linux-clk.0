@@ -1,39 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Jul 2017 11:34:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: mturquette@baylibre.com, andy.gross@linaro.org, david.brown@linaro.org,
-	rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 06/12] Clk: qcom: support for dynamic updating the PLL
-Message-ID: <20170728183428.GH2146@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
- <1501153825-5181-7-git-send-email-absahu@codeaurora.org>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 00/14] Fixes for Tegra clocks
+Date: Tue, 25 Jul 2017 13:34:01 +0300
+Message-ID: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1501153825-5181-7-git-send-email-absahu@codeaurora.org>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/27, Abhishek Sahu wrote:
-> Some of the Alpha PLL’s support dynamic update in which the
-> frequency can be changed dynamically without turning off the PLL.
-> 
-> This dynamic update requires the following sequence
-> 
-> 1. Write the desired values to pll_l_val and pll_alpha_val.
-> 2. Toggle pll_latch_input from low to high.
-> 3. Wait for pll_ack_latch to transition from low to high.
->    The new L and alpha values have been latched. It make
->    take some time for the PLL to fully settle with these
->    new values.
-> 4. Pull pll_latch_input low.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+A number of smaller fixes and simplifications for the Tegra clock
+implementation.
 
-I think Rajendra has a similar patch that was sent. Is this the
-same? Can you please look on the list and find it and compare?
+Alex Frid (7):
+  clk: tegra: Fix T210 effective NDIV calculation
+  clk: tegra: Add TEGRA_PERIPH_ON_APB flag to I2C
+  clk: tegra: Re-factor T210 PLLX registration
+  clk: tegra: Update T210 PLLSS (D2/DP) registration
+  clk: tegra: Fix T210 PLLRE registration
+  clk: tegra: Correct Tegra210 UTMIPLL poweron delay
+  clk: tegra: Fix Tegra210 PLLU initialization
+
+Peter De Schrijver (7):
+  clk: tegra: fix SS control on PLL enable/disable
+  clk: tegra: Enable PLL_SS for Tegra210
+  clk: tegra: disable SSC for PLL_D2
+  clk: tegra210: remove non-existing VFIR clock
+  clk: tegra: Init cfg structure in _get_pll_mnp
+  clk: tegra: change post IDDQ release delay to 5us
+  clk: tegra: don't warn for pll_d2 defaults unnecessarily
+
+ drivers/clk/tegra/clk-pll.c              | 159 ++++++++-----------------------
+ drivers/clk/tegra/clk-tegra-periph.c     |   3 +-
+ drivers/clk/tegra/clk-tegra-super-gen4.c |  11 ++-
+ drivers/clk/tegra/clk-tegra210.c         |  32 ++++---
+ drivers/clk/tegra/clk.h                  |   6 --
+ 5 files changed, 67 insertions(+), 144 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
