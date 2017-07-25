@@ -1,44 +1,66 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	stanimir.varbanov@linaro.org,
-	vivek.gautam@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v2 1/5] arm64: qcom: Select PM_GENERIC_DOMAINS
-Date: Thu, 20 Jul 2017 10:18:15 +0530
-Message-Id: <1500526099-9935-2-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Message-ID: <5976F963.5050200@baylibre.com>
+Date: Tue, 25 Jul 2017 09:55:15 +0200
+From: Neil Armstrong <narmstrong@baylibre.com>
+MIME-Version: 1.0
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+ carlo@caione.org, jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+ robh+dt@kernel.org
+CC: devicetree@vger.kernel.org, linux@armlinux.org.uk,
+ mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: meson8b: describe the embedded
+ reset controller
+References: <20170722185807.10504-1-martin.blumenstingl@googlemail.com> <20170722185807.10504-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170722185807.10504-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable PM_GENERIC_DOMAINS for 64-bit qualcomm platforms. This is required
-to ensure devices which are dependent on some gdscs (powerdomains) to be
-powered on before they can be probed, work as expected.
 
-CC: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- arch/arm64/Kconfig.platforms | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index f5f0c81..e3de82d 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -133,6 +133,8 @@ config ARCH_QCOM
- 	bool "Qualcomm Platforms"
- 	select GPIOLIB
- 	select PINCTRL
-+	select PM
-+	select PM_GENERIC_DOMAINS
- 	help
- 	  This enables support for the ARMv8 based Qualcomm chipsets.
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Le 22/07/2017 20:58, Martin Blumenstingl a écrit :
+> The Amlogic Meson8/Meson8b/Meson8m2 clock controller provides some reset
+> lines. These are used for example to boot the secondary CPU cores.
+> 
+> This patch describes the reset controller which is embedded into the
+> clock controller on these SoCs.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> index 606da38c0959..e1af4764114d 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> @@ -16,18 +16,24 @@ Required Properties:
+>  	   mapped region.
+>  
+>  - #clock-cells: should be 1.
+> +- #reset-cells: should be 1.
+>  
+>  Each clock is assigned an identifier and client nodes can use this identifier
+>  to specify the clock which they consume. All available clocks are defined as
+>  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+>  used in device tree sources.
+> +This is also valid for the reset lines provided by the clock controller: a
+> +preprocessor macro for each reset line is defined (in the same header file as
+> +the clock identifiers).
+> +
+>  
+>  Example: Clock controller node:
+>  
+>  	clkc: clock-controller@c1104000 {
+> -		#clock-cells = <1>;
+>  		compatible = "amlogic,meson8b-clkc";
+>  		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+>  	};
+>  
+>  
+> 
+
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
