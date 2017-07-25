@@ -1,38 +1,86 @@
-Return-Path: <mka@google.com>
-Return-Path: <mka@google.com>
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] clk: sunxi-ng: Fix header guard of ccu-sun8i-r.h
-Date: Wed, 26 Jul 2017 14:02:21 -0700
-Message-Id: <20170726210221.173968-1-mka@chromium.org>
+Return-Path: <yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+Date: Tue, 25 Jul 2017 04:00:00 +0000
+Message-ID: <TY1PR06MB099296645252A10FC497EDB5D8B80@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1498631315-15730-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdV1QvFAD3h7u0rL3-hx6OMRmxdvcj_jUo-ewdCHmcU0fQ@mail.gmail.com>
+ <TY1PR06MB09928B28AAA01C47471B6969D8D40@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAMuHMdWkSqNdzDNTyvHvGaG-Tw2md_aGHSWh7jXVyoBYMJ8m7w@mail.gmail.com>
+ <TY1PR06MB09927528BA504E1E758BD935D8BB0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAMuHMdWqLTdw7k5Qwu92j37tcDn463T-MOQzff314=bCRyznzA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWqLTdw7k5Qwu92j37tcDn463T-MOQzff314=bCRyznzA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove trailing extra underscore in definition of _CCU_SUN8I_R_H
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.h b/drivers/clk/sunxi-ng/ccu-sun8i-r.h
-index a7a407f12b56..fb01bffb929d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.h
-@@ -13,7 +13,7 @@
-  */
- 
- #ifndef _CCU_SUN8I_R_H
--#define _CCU_SUN8I_R_H_
-+#define _CCU_SUN8I_R_H
- 
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/reset/sun8i-r-ccu.h>
--- 
-2.14.0.rc0.400.g1c36432dff-goog
+SGkgR2VlcnQtc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEdl
+ZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBNb25kYXksIEp1bHkgMjQsIDIwMTcgOTo1OSBQTQ0K
+PiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBNb24sIEp1bCAyNCwgMjAxNyBhdCAxMjoz
+MyBQTSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMu
+Y29tPiB3cm90ZToNCj4gPj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuDQo+ID4+IFNlbnQ6IFdl
+ZG5lc2RheSwgSnVseSA1LCAyMDE3IDk6MjIgUE0NCj4gPj4gT24gV2VkLCBKdWwgNSwgMjAxNyBh
+dCAxOjU3IFBNLCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA+PiA8eW9zaGloaXJvLnNoaW1vZGEudWhA
+cmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+PiBGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4g
+Pj4gPj4gU2VudDogV2VkbmVzZGF5LCBKdWx5IDUsIDIwMTcgNzowOSBQTQ0KPiA+PiA+PiBPbiBX
+ZWQsIEp1biAyOCwgMjAxNyBhdCA4OjI4IEFNLCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA+PiA+PiA8
+eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+PiA+IFItQ2Fy
+IFVTQiAyLjAgY29udHJvbGxlciBjYW4gY2hhbmdlIHRoZSBjbG9jayBzb3VyY2UgZnJvbSBhbiBv
+c2NpbGxhdG9yDQo+ID4+ID4+ID4gdG8gYW4gZXh0ZXJuYWwgY2xvY2sgdmlhIGEgcmVnaXN0ZXIu
+IFNvLCB0aGlzIHBhdGNoIGFkZHMgc3VwcG9ydA0KPiA+PiA+PiA+IHRoZSBjbG9jayBzb3VyY2Ug
+c2VsZWN0b3IgYXMgYSBjbG9jayBkcml2ZXIuDQo+ID4+DQo+ID4+ID4+ID4gLS0tIC9kZXYvbnVs
+bA0KPiA+PiA+PiA+ICsrKyBiL2RyaXZlcnMvY2xrL3JlbmVzYXMvcmNhci11c2IyLWNsb2NrLXNl
+bC5jDQo+ID4+DQo+ID4+ID4+ID4gKy8qIFNpbmNlIHRoaXMgZHJpdmVyIG5lZWRzIG90aGVyIGNj
+ZiBkcml2ZXJzLCB0aGlzIHVzZXMgc3Vic3lzX2luaXRjYWxsX3N5bmMgKi8NCj4gPj4gPj4gPiAr
+c3Vic3lzX2luaXRjYWxsX3N5bmMocmNhcl91c2IyX2Nsb2NrX3NlbF9pbml0KTsNCj4gPj4gPj4N
+Cj4gPj4gPj4gSSBzdXBwb3NlIHRoaXMgaXMgYSB3b3JrYXJvdW5kIGZvciB0aGUgbGFjayBvZiBw
+cm9iZSBkZWZlcnJhbCBzdXBwb3J0IGluIHRoZQ0KPiA+PiA+PiBVU0Igc3Vic3lzdGVtPw0KPiA+
+PiA+DQo+ID4+ID4gVGhpcyBpcyBteSBmYXVsdC4gSSBhZGRlZCAicG93ZXItZG9tYWlucyIgcHJv
+cGVydHkgaW50byB0aGlzIGRldmljZSdzIG5vZGUuDQo+ID4+ID4gQWZ0ZXIgSSByZW1vdmUgdGhl
+IHBvd2VyLWRvbWFpbnMgbGlrZSB0aGUgY3BnIG5vZGUsIHRoaXMgZHJpdmVyIGNhbiB1c2Ugc3Vi
+c3lzX2luaXRjYWxsKCkNCj4gPj4gPiBpbnN0ZWFkIG9mIHN1YnN5c19pbml0Y2FsbF9zeW5jKCku
+DQo+ID4+DQo+ID4+IERvZXMgdGhlIGNsb2NrIHNlbCBtb2R1bGUgcmVxdWlyZXMgdGhlIGZ1bmN0
+aW9uYWwgY2xvY2sgImVoY2lfb2hjaSIgdG8gYmUNCj4gPj4gcnVubmluZyBiZWZvcmUgeW91IGNh
+biBhY2Nlc3MgaXRzIHJlZ2lzdGVycz8NCj4gPj4gSWYgeWVzLCBJIHRoaW5rIHRoZXJlIHNob3Vs
+ZCBiZSBhICJwb3dlci1kb21haW5zIiBwcm9wZXJ0eS4NCj4gPg0KPiA+IFllcy4gQnV0Li4uDQo+
+ID4NCj4gPj4gVGhlbiwgeW91IGNhbiBzaW1wbGlmeSB0aGUgY29kZSBieSBjYWxsaW5nDQo+ID4+
+DQo+ID4+ICAgICAgICAgcG1fcnVudGltZV9lbmFibGUoZGV2KTsNCj4gPj4gICAgICAgICBwbV9y
+dW50aW1lX2dldF9zeW5jKGRldik7DQo+ID4+DQo+ID4+IGFuZCByZW1vdmUgdGhlIGV4cGxpY2l0
+IGhhbmRsaW5nIG9mIHRoZSBmdW5jdGlvbmFsIGNsb2NrLg0KPiA+Pg0KPiA+PiBUaGF0IGRvZXMg
+bm90IHNvbHZlIHByb2JlIGRlZmVycmFsIGhhbmRsaW5nIGluIHRoZSBVU0Igc3Vic3lzdGVtLCB0
+aG91Z2guDQo+ID4NCj4gPiBJIGFkZGVkIGEgZGVidWcgbWVzc2FnZSBhdCBlbmQgb2YgY3BnX21z
+c3JfcHJvYmUoKSwgYW5kIGlmIEkgdXNlZCBzdWJzeXNfaW5pdGNhbGwoKSBvbg0KPiA+IHJjYXIt
+dXNiMi1jbG9jay1zZWwgZHJpdmVyLCBrZXJuZWwgbG9nIG91dHB1dCBiZWxvdzoNCj4gPiA9PT09
+PT09PT09PT09PT09PT09PT09PT0NCj4gPiBbICAgIDAuMjcyNTQ3XSByY2FyLXVzYjItY2xvY2st
+c2VsIGU2NTkwNjMwLmNsb2NrLWNvbnRyb2xsZXI6IHByb2JlIGRlZmVycmFsIG5vdCBzdXBwb3J0
+ZWQNCj4gPiBbICAgIDAuMjczOTQ0XSAgLS0tLS0tLS0tLS0tLS0tLS0gY3BnX21zc3JfcHJvYmU6
+IHByb2JlZCENCj4gPiA9PT09PT09PT09PT09PT09PT09PT09PT0NCj4gPiBTbywgaXQgc2VlbXMg
+dGhlIHJlbmVzYXMtY3BnLW1zc3IuYyBkb2Vzbid0IHNvbHZlIHByb2JlIGRlZmVycmFsIGhhbmRs
+aW5nLg0KPiA+IChUaGUgZHJpdmVyIHJlbmVzYXMtY3BnLW1zc3IuYyB1c2VzIHBsYXRmb3JtX2Ry
+aXZlcl9wcm9iZSgpIGZvciBub3cuKQ0KPiA+DQo+ID4gU28sIElJVUMsIHRoaXMgcmNhci11c2Iy
+LWNsb2NrLXNlbCBkcml2ZXIgY2Fubm90IHVzZSBzdWJzeXNfaW5pdGNhbGwoKS4NCj4gPiBPciwg
+c2hvdWxkIHdlIG1vZGlmeSB0aGUgcmVuZXNhcy1jcGctbXNzci5jIHNvbWVob3c/DQo+IA0KPiBE
+cml2ZXJzIHNob3VsZCBhdm9pZCB1c2luZyBzdWJzeXNfaW5pdGNhbGwoKS4NCj4gV2h5IGRvIHlv
+dSB1c2UgYSBzdWJzeXNfaW5pdGNhbGwoKT8gVG8gYXZvaWQgcHJvYmUgZGVmZXJyYWwgaW4gdGhl
+IFVTQg0KPiBzdXNieXN0ZW0/DQoNCk9oLCB0aGlzIGlzIG15IGZhdWx0Lg0KSSBoYWQgYXNzdW1l
+ZCBhIGNsb2NrIGRyaXZlciBzaG91bGQgdXNlIHN1YnN5c19pbml0Y2FsbCgpLi4uDQpMaWtlIGNs
+ay1maXhlZC1yYXRlLmMsIHdlIGNhbiB1c2UgYnVpbHRpbl9wbGF0Zm9ybV9kcml2ZXIgaW4gZ2Vu
+ZXJhbC4NCg0KPiBXaGF0IGhhcHBlbnMgaWYgdGhlIHJjYXItdXNiMi1jbG9jay1zZWwgdXNlcyBi
+dWlsdGluX3BsYXRmb3JtX2RyaXZlcigpPw0KDQpJIHRyaWVkIGl0IHRvZGF5LCBhbmQgdGhlbiB0
+aGUgcmNhci11c2IyLWNsb2NrLXNlbCB3b3JrcyA6KQ0KU28sIEkgd2lsbCBzdWJtaXQgdjMgcGF0
+Y2guDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gR3J7b2V0amUsZWV0
+aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4g
+R2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAt
+LSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3
+aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVu
+IEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNv
+bWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0g
+TGludXMgVG9ydmFsZHMNCg==
