@@ -1,56 +1,69 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 3/8] clk: vc5: Do not warn about disabled output buffer input muxes
-Date: Sat,  1 Jul 2017 22:04:53 +0200
-Message-Id: <20170701200459.11505-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alex Frid <afrid@nvidia.com>
+Subject: [PATCH 14/14] clk: tegra: Fix Tegra210 PLLU initialization
+Date: Tue, 25 Jul 2017 13:34:15 +0300
+Message-ID: <1500978856-5981-15-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The output buffer input mux can be configured in either of three
-states -- disabled, input from FOD, input from previous output.
-If the output buffer input mux is set to disabled, the code in
-vc5_clk_out_get_parent() would consider this an invalid setting
-and warn about it, which is not necessarily the case.
+From: Alex Frid <afrid@nvidia.com>
 
-In case the output buffer input mux is disabled, default to input
-from FOD to have some parent and don't print the warning.
+- Added necessary delays in PLLU enable sequence during initialization
+- Applied PLLU lock to all secondary gates (PLLU_48M and PLLU_60M were
+missing).
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
+Signed-off-by: Alex Frid <afrid@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
-V2: Drop chunk adding useless newline
----
- drivers/clk/clk-versaclock5.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index d835d48cf14d..248689d89632 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -541,6 +541,9 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
- 	regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
- 	src &= mask;
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index fd04b0e..6d7a613 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2554,6 +2554,7 @@ static int tegra210_enable_pllu(void)
+ 	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
+ 	reg &= ~BIT(pllu.params->iddq_bit_idx);
+ 	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
++	udelay(5);
  
-+	if (src == 0)	/* Input mux set to DISABLED */
-+		return 0;
-+
- 	if ((src & fodclkmask) == VC5_OUT_DIV_CONTROL_EN_FOD)
- 		return 0;
+ 	reg = readl_relaxed(clk_base + PLLU_BASE);
+ 	reg &= ~GENMASK(20, 0);
+@@ -2561,6 +2562,7 @@ static int tegra210_enable_pllu(void)
+ 	reg |= fentry->n << 8;
+ 	reg |= fentry->p << 16;
+ 	writel(reg, clk_base + PLLU_BASE);
++	udelay(1);
+ 	reg |= PLL_ENABLE;
+ 	writel(reg, clk_base + PLLU_BASE);
+ 
+@@ -2800,14 +2802,14 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 	/* PLLU_60M */
+ 	clk = clk_register_gate(NULL, "pll_u_60M", "pll_u_out2",
+ 				CLK_SET_RATE_PARENT, clk_base + PLLU_BASE,
+-				23, 0, NULL);
++				23, 0, &pll_u_lock);
+ 	clk_register_clkdev(clk, "pll_u_60M", NULL);
+ 	clks[TEGRA210_CLK_PLL_U_60M] = clk;
+ 
+ 	/* PLLU_48M */
+ 	clk = clk_register_gate(NULL, "pll_u_48M", "pll_u_out1",
+ 				CLK_SET_RATE_PARENT, clk_base + PLLU_BASE,
+-				25, 0, NULL);
++				25, 0, &pll_u_lock);
+ 	clk_register_clkdev(clk, "pll_u_48M", NULL);
+ 	clks[TEGRA210_CLK_PLL_U_48M] = clk;
  
 -- 
-2.11.0
+1.9.1
