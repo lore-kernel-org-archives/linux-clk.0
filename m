@@ -1,57 +1,110 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH] clk: Don't write error code into divider register
-Date: Tue, 25 Jul 2017 13:18:40 +0300
-Message-ID: <1500977920-5533-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH v4 5/9] clk: at91: clk-generated: create function to find
+ best_diff
+To: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<alexandre.belloni@free-electrons.com>, <linux@armlinux.org.uk>,
+	<boris.brezillon@free-electrons.com>, <perex@perex.cz>, <tiwai@suse.com>
+CC: <cyrille.pitchen@wedev4u.fr>, <thomas.petazzoni@free-electrons.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+ <8fe980cd3343111a57bd1b099beaaf51b95396d4.1500968090.git-series.quentin.schulz@free-electrons.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <f384980c-6a01-6879-e60c-d261fb4ae388@microchip.com>
+Date: Tue, 25 Jul 2017 17:33:50 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <8fe980cd3343111a57bd1b099beaaf51b95396d4.1500968090.git-series.quentin.schulz@free-electrons.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: nicolas.ferre@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+On 25/07/2017 at 09:37, Quentin Schulz wrote:
+> The way to find the best_diff and do the appropriate process afterwards
+> can be re-used.
+> 
+> This patch prepares the driver for an upcoming patch that will allow
+> clk_generated to determine the rate of the audio_pll.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Add a check for error returned by divider value calculation to avoid
-writing error code into hw register.
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Reviewed-by: Jon Mayo <jmayo@nvidia.com>
----
- drivers/clk/clk-divider.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> ---
+>  drivers/clk/at91/clk-generated.c | 41 +++++++++++++++++++++------------
+>  1 file changed, 27 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index ef4b4e0..7260e49 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -99,15 +99,36 @@ clk_generated_recalc_rate(struct clk_hw *hw,
+>  	return DIV_ROUND_CLOSEST(parent_rate, gck->gckdiv + 1);
+>  }
+>  
+> +static void clk_generated_best_diff(struct clk_rate_request *req,
+> +				    struct clk_hw *parent,
+> +				    unsigned long parent_rate, u32 div,
+> +				    int *best_diff, long *best_rate)
+> +{
+> +	unsigned long tmp_rate;
+> +	int tmp_diff;
+> +
+> +	if (!div)
+> +		tmp_rate = parent_rate;
+> +	else
+> +		tmp_rate = parent_rate / div;
+> +	tmp_diff = abs(req->rate - tmp_rate);
+> +
+> +	if (*best_diff < 0 || *best_diff > tmp_diff) {
+> +		*best_rate = tmp_rate;
+> +		*best_diff = tmp_diff;
+> +		req->best_parent_rate = parent_rate;
+> +		req->best_parent_hw = parent;
+> +	}
+> +}
+> +
+>  static int clk_generated_determine_rate(struct clk_hw *hw,
+>  					struct clk_rate_request *req)
+>  {
+>  	struct clk_generated *gck = to_clk_generated(hw);
+>  	struct clk_hw *parent = NULL;
+>  	long best_rate = -EINVAL;
+> -	unsigned long tmp_rate, min_rate;
+> +	unsigned long min_rate;
+>  	int best_diff = -1;
+> -	int tmp_diff;
+>  	int i;
+>  
+>  	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+> @@ -125,18 +146,10 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  			continue;
+>  
+>  		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
+> -		if (!div)
+> -			tmp_rate = parent_rate;
+> -		else
+> -			tmp_rate = parent_rate / div;
+> -		tmp_diff = abs(req->rate - tmp_rate);
+> -
+> -		if (best_diff < 0 || best_diff > tmp_diff) {
+> -			best_rate = tmp_rate;
+> -			best_diff = tmp_diff;
+> -			req->best_parent_rate = parent_rate;
+> -			req->best_parent_hw = parent;
+> -		}
+> +
+> +		clk_generated_best_diff(req, parent, parent_rate, div,
+> +					&best_diff, &best_rate);
+> +
+>  
+>  		if (!best_diff)
+>  			break;
+> 
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 9bb472c..4ed516c 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -385,12 +385,14 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long parent_rate)
- {
- 	struct clk_divider *divider = to_clk_divider(hw);
--	unsigned int value;
-+	int value;
- 	unsigned long flags = 0;
- 	u32 val;
- 
- 	value = divider_get_val(rate, parent_rate, divider->table,
- 				divider->width, divider->flags);
-+	if (value < 0)
-+		return value;
- 
- 	if (divider->lock)
- 		spin_lock_irqsave(divider->lock, flags);
-@@ -403,7 +405,7 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 		val = clk_readl(divider->reg);
- 		val &= ~(div_mask(divider->width) << divider->shift);
- 	}
--	val |= value << divider->shift;
-+	val |= (u32)value << divider->shift;
- 	clk_writel(val, divider->reg);
- 
- 	if (divider->lock)
+
 -- 
-1.9.1
+Nicolas Ferre
