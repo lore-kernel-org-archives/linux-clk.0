@@ -1,61 +1,80 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 18 Jul 2017 15:52:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
-	gabriel.fernandez.st@gmail.com,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: Re: [PATCH v6 2/3] clk: gate: expose clk_gate_ops::is_enabled
-Message-ID: <20170718225203.GD18179@codeaurora.org>
-References: <1500364414-10021-1-git-send-email-gabriel.fernandez@st.com>
- <1500364414-10021-3-git-send-email-gabriel.fernandez@st.com>
- <55bc0f3f-67ed-a15f-5b71-d87044fd5237@mleia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55bc0f3f-67ed-a15f-5b71-d87044fd5237@mleia.com>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: [PATCH v4 9/9] ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+Date: Tue, 25 Jul 2017 09:37:10 +0200
+Message-Id: <f2f55956879fd7e80cf0fb72ba743f8c5cb28fcc.1500968090.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/18, Vladimir Zapolskiy wrote:
-> On 07/18/2017 10:53 AM, gabriel.fernandez@st.com wrote:
-> > From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> >  }
-> > +EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
-> >  
-> >  const struct clk_ops clk_gate_ops = {
-> >  	.enable = clk_gate_enable,
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index c59c625..e9587ab 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
-> >  		u8 clk_gate_flags, spinlock_t *lock);
-> >  void clk_unregister_gate(struct clk *clk);
-> >  void clk_hw_unregister_gate(struct clk_hw *hw);
-> > +int clk_gate_is_enabled(struct clk_hw *hw);
-> 
-> Here the prefix does not reflect the type of its argument, it might be
-> acceptable for a veiled function, but it is not wanted for the exported
-> function. Something like clk_hw_gate_is_enabled() is expected here, but
-> again, let's firstly come to an agreement, that the export is needed.
-> 
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-I'd prefer clk_gate_is_enabled() as it's not a struct
-clk_hw_gate, it's a struct clk_gate and there isn't any
-requirement for function names to reflect the type of the
-argument. That's what we have type analysis for.
+This patch adds the pin muxing for classd and enables it.
 
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+index 6eec8dc..c7e9ccf 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+@@ -355,6 +355,14 @@
+ 					bias-pull-up;
+ 				};
+ 
++				pinctrl_classd_default: classd_default {
++					pinmux = <PIN_PB1__CLASSD_R0>,
++						 <PIN_PB2__CLASSD_R1>,
++						 <PIN_PB3__CLASSD_R2>,
++						 <PIN_PB4__CLASSD_R3>;
++					bias-pull-up;
++				};
++
+ 				pinctrl_flx0_default: flx0_default {
+ 					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
+ 						 <PIN_PB29__FLEXCOM0_IO1>;
+@@ -488,6 +496,14 @@
+ 
+ 			};
+ 
++			classd: classd@fc048000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_classd_default>;
++				atmel,pwm-type = "diff";
++				atmel,non-overlap-time = <10>;
++				status = "okay";
++			};
++
+ 			can1: can@fc050000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can1_default>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
