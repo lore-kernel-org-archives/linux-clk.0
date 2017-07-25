@@ -1,51 +1,60 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	dvhart@infradead.org,
-	pierre-louis.bossart@linux.intel.com,
-	sboyd@codeaurora.org,
-	linux@endlessm.com,
-	eballetbo@gmail.com,
-	andriy.shevchenko@linux.intel.com
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
-Date: Fri, 14 Jul 2017 10:23:56 +0200
-Message-Id: <20170714082356.28117-1-carlo@caione.org>
+Return-Path: <quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH v3 3/9] clk: at91: add audio pll clock drivers
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mark.rutland@arm.com, boris.brezillon@free-electrons.com,
+ alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mturquette@baylibre.com, tiwai@suse.com,
+ linux-clk@vger.kernel.org, lgirdwood@gmail.com,
+ Nicolas Ferre <nicolas.ferre@atmel.com>, robh+dt@kernel.org,
+ alexandre.belloni@free-electrons.com, broonie@kernel.org,
+ cyrille.pitchen@wedev4u.fr, linux@armlinux.org.uk, perex@perex.cz,
+ thomas.petazzoni@free-electrons.com, linux-arm-kernel@lists.infradead.org
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+ <20170713074927.10882-4-quentin.schulz@free-electrons.com>
+ <20170721222029.GO19878@codeaurora.org>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Message-ID: <5f6fd25b-8f99-8dec-39b6-0e7677675c24@free-electrons.com>
+Date: Tue, 25 Jul 2017 13:30:29 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170721222029.GO19878@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+Hi Stephen,
 
-Read the enable register to determine if the clock is already in use by
-the firmware. In this case avoid gating the clock.
+I forgot to answer one of your questions:
 
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
----
- drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 22/07/2017 00:20, Stephen Boyd wrote:
+> On 07/13, Quentin Schulz wrote:
+>> diff --git a/drivers/clk/at91/clk-audio-pll-pad.c b/drivers/clk/at91/clk-audio-pll-pad.c
+>> new file mode 100644
+>> index 000000000000..10dd6d625696
+>> --- /dev/null
+>> +++ b/drivers/clk/at91/clk-audio-pll-pad.c
+[...]
+>> +}
+>> +
+>> +CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_pad_setup,
+>> +	       "atmel,sama5d2-clk-audio-pll-pad",
+>> +	       of_sama5d2_clk_audio_pll_pad_setup);
+> 
+> We can't have a device driver for this?
+> 
 
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index 2b60577703ef..be8d821ce625 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -185,6 +185,13 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
- 	pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
- 	spin_lock_init(&pclk->lock);
- 
-+	/*
-+	 * If the clock was already enabled by the firmware mark it as critical
-+	 * to avoid it being gated by the clock framework if no driver owns it.
-+	 */
-+	if (plt_clk_is_enabled(&pclk->hw))
-+		init.flags |= CLK_IS_CRITICAL;
-+
- 	ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
- 	if (ret) {
- 		pclk = ERR_PTR(ret);
+I tried to work on that but the device does not get probed because the
+parent node (pmc) does not register its children. We would need to
+modify the DT to add such a support and break DT compat.
+
+As we are speaking about getting rid of clk subnodes (c.f. Rob and
+Alexandre answers on the first version of this patch series:
+https://patchwork.kernel.org/patch/9805991/) in favor of a clock
+controller node that would break the DT compat as well, IMHO it would be
+best to break the DT compat as few times as possible and thus, rework
+this driver once we switch to a clock controller node.
+
+Thanks,
+Quentin
 -- 
-2.13.2
+Quentin Schulz, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
