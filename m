@@ -1,77 +1,163 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 10/11] ARM: dts: sun8i: a83t: cubietruck-plus: Enable micro-SD card and eMMC
-Date: Fri, 14 Jul 2017 14:43:01 +0800
-Message-Id: <20170714064302.20383-11-wens@csie.org>
-In-Reply-To: <20170714064302.20383-1-wens@csie.org>
-References: <20170714064302.20383-1-wens@csie.org>
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v4 8/9] ASoC: atmel-classd: remove aclk clock
+Date: Tue, 25 Jul 2017 09:37:09 +0200
+Message-Id: <645aa35fec4a2384ca2f3039615ee6598602f9e2.1500968090.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we support the MMC controllers on the A83T SoC, we can enable
-them on some boards.
+Since gclk (generated-clk) is now able to determine the rate of the
+audio_pll, there is no need for classd to have a direct phandle to the
+audio_pll while already having a phandle to gclk.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Thus, remove all mentions to aclk in classd driver and update macros and
+variable names.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts | 27 ++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ sound/soc/atmel/atmel-classd.c | 47 ++++++++++-------------------------
+ 1 file changed, 14 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
-index cff33454fc24..163ddf8868b5 100644
---- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
-@@ -83,6 +83,13 @@
- 		};
- 	};
+diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
+index b7ef8c5..be6b775 100644
+--- a/sound/soc/atmel/atmel-classd.c
++++ b/sound/soc/atmel/atmel-classd.c
+@@ -32,7 +32,6 @@ struct atmel_classd {
+ 	struct regmap *regmap;
+ 	struct clk *pclk;
+ 	struct clk *gclk;
+-	struct clk *aclk;
+ 	int irq;
+ 	const struct atmel_classd_pdata *pdata;
+ };
+@@ -330,11 +329,6 @@ static int atmel_classd_codec_dai_startup(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
+-	int ret;
+-
+-	ret = clk_prepare_enable(dd->aclk);
+-	if (ret)
+-		return ret;
  
-+	reg_vcc3v3: vcc3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
- 	sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,name = "On-board SPDIF";
-@@ -102,6 +109,26 @@
- 	};
+ 	return clk_prepare_enable(dd->gclk);
+ }
+@@ -357,31 +351,31 @@ static int atmel_classd_codec_dai_digital_mute(struct snd_soc_dai *codec_dai,
+ 	return 0;
+ }
+ 
+-#define CLASSD_ACLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
+-#define CLASSD_ACLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
++#define CLASSD_GCLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
++#define CLASSD_GCLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
+ 
+ static struct {
+ 	int rate;
+ 	int sample_rate;
+ 	int dsp_clk;
+-	unsigned long aclk_rate;
++	unsigned long gclk_rate;
+ } const sample_rates[] = {
+ 	{ 8000,  CLASSD_INTPMR_FRAME_8K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 16000, CLASSD_INTPMR_FRAME_16K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 32000, CLASSD_INTPMR_FRAME_32K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 48000, CLASSD_INTPMR_FRAME_48K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 96000, CLASSD_INTPMR_FRAME_96K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
+ 	{ 22050, CLASSD_INTPMR_FRAME_22K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
+ 	{ 44100, CLASSD_INTPMR_FRAME_44K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
+ 	{ 88200, CLASSD_INTPMR_FRAME_88K,
+-	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
++	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
  };
  
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
- &spdif {
- 	status = "okay";
- };
+ static int
+@@ -410,13 +404,12 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	dev_dbg(codec->dev,
+-		"Selected SAMPLE_RATE of %dHz, ACLK_RATE of %ldHz\n",
+-		sample_rates[best].rate, sample_rates[best].aclk_rate);
++		"Selected SAMPLE_RATE of %dHz, GCLK_RATE of %ldHz\n",
++		sample_rates[best].rate, sample_rates[best].gclk_rate);
+ 
+ 	clk_disable_unprepare(dd->gclk);
+-	clk_disable_unprepare(dd->aclk);
+ 
+-	ret = clk_set_rate(dd->aclk, sample_rates[best].aclk_rate);
++	ret = clk_set_rate(dd->gclk, sample_rates[best].gclk_rate);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -426,10 +419,6 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	snd_soc_update_bits(codec, CLASSD_INTPMR, mask, val);
+ 
+-	ret = clk_prepare_enable(dd->aclk);
+-	if (ret)
+-		return ret;
+-
+ 	return clk_prepare_enable(dd->gclk);
+ }
+ 
+@@ -441,7 +430,6 @@ atmel_classd_codec_dai_shutdown(struct snd_pcm_substream *substream,
+ 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
+ 
+ 	clk_disable_unprepare(dd->gclk);
+-	clk_disable_unprepare(dd->aclk);
+ }
+ 
+ static int atmel_classd_codec_dai_prepare(struct snd_pcm_substream *substream,
+@@ -596,13 +584,6 @@ static int atmel_classd_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	dd->aclk = devm_clk_get(dev, "aclk");
+-	if (IS_ERR(dd->aclk)) {
+-		ret = PTR_ERR(dd->aclk);
+-		dev_err(dev, "failed to get audio clock: %d\n", ret);
+-		return ret;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	io_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(io_base)) {
 -- 
-2.13.2
+git-series 0.9.1
