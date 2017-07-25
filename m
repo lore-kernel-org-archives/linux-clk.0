@@ -1,39 +1,77 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 17 Jul 2017 13:51:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 07/11] mmc: sunxi: Add support for A83T eMMC (MMC2)
-Message-ID: <20170717185126.rrhriqckjextpaxj@rob-hp-laptop>
-References: <20170714064302.20383-1-wens@csie.org>
- <20170714064302.20383-8-wens@csie.org>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alex Frid <afrid@nvidia.com>
+Subject: [PATCH 12/14] clk: tegra: Fix T210 PLLRE registration
+Date: Tue, 25 Jul 2017 13:34:13 +0300
+Message-ID: <1500978856-5981-13-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170714064302.20383-8-wens@csie.org>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 14, 2017 at 02:42:58PM +0800, Chen-Yu Tsai wrote:
-> The third MMC controller (MMC2) on the Allwinner A83T SoC is slightly
-> different. It supports a wider 8-bit bus, has a dedicated controllable
-> reset pin for eMMC, and a "new timing mode" which is supposed to deliver
-> better signals and thus better performance.
-> 
-> Add a compatible for this one to use the new timing mode not found in the
-> other controllers.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/mmc/sunxi-mmc.txt | 1 +
+From: Alex Frid <afrid@nvidia.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Switched Tegra210 PLLRE registration to common PLL ops instead of special
+PLLRE ops used on previous Tegra chips. The latter ops do not follow
+chip specific PLL frequency table, and do not apply chip specific rate
+calculation method.
 
->  drivers/mmc/host/sunxi-mmc.c                        | 8 ++++++++
->  2 files changed, 9 insertions(+)
+Removed unnecessary default rate setting that duplicates h/w reset
+state, and is overwritten by clock initialization, anyway.
+
+Signed-off-by: Alex Frid <afrid@nvidia.com>
+Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Reviewed-by: Jon Mayo <jmayo@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index c6bce4a..7c369e2 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -2355,7 +2355,6 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 			  struct tegra_clk_pll_params *pll_params,
+ 			  spinlock_t *lock, unsigned long parent_rate)
+ {
+-	u32 val;
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk;
+ 
+@@ -2369,26 +2368,8 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+ 
+-	/* program minimum rate by default */
+-
+-	val = pll_readl_base(pll);
+-	if (val & PLL_BASE_ENABLE)
+-		WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
+-				BIT(pll_params->iddq_bit_idx));
+-	else {
+-		val = 0x4 << divm_shift(pll);
+-		val |= 0x41 << divn_shift(pll);
+-		pll_writel_base(val, pll);
+-	}
+-
+-	/* disable lock override */
+-
+-	val = pll_readl_misc(pll);
+-	val &= ~BIT(29);
+-	pll_writel_misc(val, pll);
+-
+ 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+-				      &tegra_clk_pllre_ops);
++				      &tegra_clk_pll_ops);
+ 	if (IS_ERR(clk))
+ 		kfree(pll);
+ 
+-- 
+1.9.1
