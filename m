@@ -1,110 +1,66 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 18 Jul 2017 16:16:14 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: "Nayak, Rajendra" <rnayak@codeaurora.org>
-Cc: Rob Clark <robdclark@gmail.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 25 Jul 2017 09:38:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [RFC 1/3] clk: inherit display clocks enabled by bootloader
-Message-ID: <20170718231614.GH18179@codeaurora.org>
-References: <20170711182008.28298-1-robdclark@gmail.com>
- <20170711182008.28298-2-robdclark@gmail.com>
- <0da0ad07-2af2-5993-81c9-a232a67af455@codeaurora.org>
- <CAF6AEGv-UN3EMYFWkHypBP8EYh7Q9jN71nsniqZBXGphA9oSGQ@mail.gmail.com>
- <f0053867-f077-35c2-fcae-a3e8730077eb@codeaurora.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 09/10] ARM: dts: sun8i: a83t: cubietruck-plus: Enable
+ micro-SD card and eMMC
+Message-ID: <20170725073849.f3c6kee4s3bsspta@flea>
+References: <20170724135905.28855-1-wens@csie.org>
+ <20170724135905.28855-10-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f0053867-f077-35c2-fcae-a3e8730077eb@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="32vs6hzgjww7f5ku"
+In-Reply-To: <20170724135905.28855-10-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/17, Nayak, Rajendra wrote:
-> 
-> 
-> On 7/14/2017 4:13 PM, Rob Clark wrote:
-> >On Fri, Jul 14, 2017 at 12:52 AM, Rajendra Nayak <rnayak@codeaurora.org> wrote:
-> >>Hi Rob,
-> >>
-> >>On 07/11/2017 11:50 PM, Rob Clark wrote:
-> >>
-> >>>diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> >>>index d523991c945f..90b698c910d0 100644
-> >>>--- a/drivers/clk/qcom/common.c
-> >>>+++ b/drivers/clk/qcom/common.c
-> >>>@@ -11,6 +11,7 @@
-> >>>   * GNU General Public License for more details.
-> >>>   */
-> >>>
-> >>>+#include <linux/clk.h>
-> >>>  #include <linux/export.h>
-> >>>  #include <linux/module.h>
-> >>>  #include <linux/regmap.h>
-> >>>@@ -258,6 +259,33 @@ int qcom_cc_really_probe(struct platform_device *pdev,
-> >>>       if (ret)
-> >>>               return ret;
-> >>>
-> >>>+     /* Check which of clocks that we inherit state from bootloader
-> >>>+      * are enabled, and fixup enable/prepare state (as well as that
-> >>>+      * of it's parents).
-> >>>+      *
-> >>>+      * TODO can we assume that parents coming from another clk
-> >>>+      * driver are already registered?
-> >>>+      */
-> >>>+     for (i = 0; i < num_clks; i++) {
-> >>>+             struct clk_hw *hw;
-> >>>+
-> >>>+             if (!rclks[i])
-> >>>+                     continue;
-> >>>+
-> >>>+             hw = &rclks[i]->hw;
-> >>>+
-> >>>+             if (!(hw->init->flags & CLK_INHERIT_BOOTLOADER))
-> >>>+                     continue;
-> >>>+
-> >>>+             if (!clk_is_enabled_regmap(hw))
-> >>>+                     continue;
-> >>>+
-> >>>+             dev_dbg(dev, "%s is enabled from bootloader!\n",
-> >>>+                       hw->init->name);
-> >>>+
-> >>>+             clk_inherit_enabled(hw->clk);
-> >>
-> >>how about just calling a clk_prepare_enable(hw->clk) instead of adding a new API?
-> >>The flag could also be something qcom specific and then we avoid having to add
-> >>anything in generic CCF code and its all handled in the qcom clock drivers.
-> >
-> >Hmm, I could try that..  I *guess* it doesn't hurt to enable an
-> >already enabled clk..
-> 
-> yes, ideally it shouldn't hurt.
 
-It hurts when you enable a PLL when it's already enabled. I
-recall having to add code specifically for this reason to avoid
-enabling a PLL that is already enabled out of the bootloader. But
-that's because the enable sequence for a PLL is multiple writes
-that first keep the output off and then turn it back on after
-things stabilize. For RCGs this isn't the case.
+--32vs6hzgjww7f5ku
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> >
-> >beyond that, I wonder if this is something that other platforms would
-> >want, so maybe I should be doing the check for enabled in CCF core?
-> >If not, making this a qcom specific flag makes sense.
-> 
-> I think most previous attempts to solve this were done trying to keep
-> it very generic and they didn't go too far.
-> So I was thinking maybe we could deal with it within qcom drivers for
-> now, and if others come up with something similar, then look to
-> consolidate at a generic CCF level.
+On Mon, Jul 24, 2017 at 09:59:04PM +0800, Chen-Yu Tsai wrote:
+> Now that we support the MMC controllers on the A83T SoC, we can enable
+> them on some boards.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-We know that other SoC vendors need handoff features as well, so
-there will definitely be a point where we need to consolidate at
-the framework level. Working something up that works for qcom
-would be good to try out though to find edge cases, etc.
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--32vs6hzgjww7f5ku
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZdvWJAAoJEBx+YmzsjxAgA+4P/3WqwM2jDyKDNKBIpYEUJuZJ
+bg4y64N5VyHsw7iqaNJlP5QCWp3HPT8IYdyD0gThu9ojM18K2BrMhfzdXSCia1f/
+qXlYdDl+kP9A6Cp6sf2gmf/IqzjLgPxICUbazix75NJu4Lg4vdS+BjJfJf8g07PS
+vL2gkyLYXGEr6w7nPFtmpAaFqodGD9nN5nPRKK1LI5ods1XXiEskLE2YWsupdb5a
+RmEPkyakemAXpiQnaB8miq6Co8J9Vtbo2LTbaz24PPzCag7Xj7BYcBrRIjWMM5Gt
+7NiK75M+y4jwi81AG8oPAg3kJdyYE4C4viRiBVUCAtl7CcRhlqz7+MJoaesx5m6k
+8M13IWUkvmFvOGPNB2K+Uj2ue/vzakgMiWZagbCwhlwHLSV0/8w2ngOCWwpvNcQK
+nHV7vtOAbbEioMabsQRqOdXg1AWsbM67z85iwXrrVu3QI0M+6ggnnzkzK8p0/sJ3
+3GLW41fz6Rg81YnopcQ4f/6cNrBj68c+ZCLoB/9VL2NQF6ABuW73WW3nHi4MpvIR
+k75sfhoHRP+Upl4/9V/ggyHS6Oa9GNWJTnOQA4IwjpVnXodtwZ4lbP+UrI6xzMys
+ks8XyGOoLLwclHy5cNmZ2/hc5epw6MtU4Nsq/bN8ZALl9C2gNYJyfSNxOSALqwwW
+wXoJFBnoB9HcbhEaLOtP
+=okvz
+-----END PGP SIGNATURE-----
+
+--32vs6hzgjww7f5ku--
