@@ -1,163 +1,141 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v4 8/9] ASoC: atmel-classd: remove aclk clock
-Date: Tue, 25 Jul 2017 09:37:09 +0200
-Message-Id: <645aa35fec4a2384ca2f3039615ee6598602f9e2.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alex Frid <afrid@nvidia.com>
+Subject: [PATCH 10/14] clk: tegra: Re-factor T210 PLLX registration
+Date: Tue, 25 Jul 2017 13:34:11 +0300
+Message-ID: <1500978856-5981-11-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Since gclk (generated-clk) is now able to determine the rate of the
-audio_pll, there is no need for classd to have a direct phandle to the
-audio_pll while already having a phandle to gclk.
+From: Alex Frid <afrid@nvidia.com>
 
-Thus, remove all mentions to aclk in classd driver and update macros and
-variable names.
+Tegra210 PLLX uses the same sequences than then PLLC instances. So there
+is no need to have a special registration function and ops struct for it.
+Simplify the code by changing all references to the Tegra210 PLLX
+registration function to the Tegra210 PLLC registration function and
+avoid duplicate functionality.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Mark Brown <broonie@kernel.org>
+Based on work by Alex Frid <afrid@nvidia.com>
+
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- sound/soc/atmel/atmel-classd.c | 47 ++++++++++-------------------------
- 1 file changed, 14 insertions(+), 33 deletions(-)
+ drivers/clk/tegra/clk-pll.c              | 40 --------------------------------
+ drivers/clk/tegra/clk-tegra-super-gen4.c | 11 +++++++--
+ drivers/clk/tegra/clk-tegra210.c         |  2 +-
+ drivers/clk/tegra/clk.h                  |  6 -----
+ 4 files changed, 10 insertions(+), 49 deletions(-)
 
-diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
-index b7ef8c5..be6b775 100644
---- a/sound/soc/atmel/atmel-classd.c
-+++ b/sound/soc/atmel/atmel-classd.c
-@@ -32,7 +32,6 @@ struct atmel_classd {
- 	struct regmap *regmap;
- 	struct clk *pclk;
- 	struct clk *gclk;
--	struct clk *aclk;
- 	int irq;
- 	const struct atmel_classd_pdata *pdata;
- };
-@@ -330,11 +329,6 @@ static int atmel_classd_codec_dai_startup(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
--	int ret;
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 695ccb4..02f34e6 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -2610,46 +2610,6 @@ struct clk *tegra_clk_register_pllc_tegra210(const char *name,
+ 	return clk;
+ }
+ 
+-struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
+-			const char *parent_name, void __iomem *clk_base,
+-			void __iomem *pmc, unsigned long flags,
+-			struct tegra_clk_pll_params *pll_params,
+-			spinlock_t *lock)
+-{
+-	struct tegra_clk_pll *pll;
+-	struct clk *clk, *parent;
+-	unsigned long parent_rate;
 -
--	ret = clk_prepare_enable(dd->aclk);
--	if (ret)
--		return ret;
- 
- 	return clk_prepare_enable(dd->gclk);
- }
-@@ -357,31 +351,31 @@ static int atmel_classd_codec_dai_digital_mute(struct snd_soc_dai *codec_dai,
- 	return 0;
- }
- 
--#define CLASSD_ACLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
--#define CLASSD_ACLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
-+#define CLASSD_GCLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
-+#define CLASSD_GCLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
- 
- static struct {
- 	int rate;
- 	int sample_rate;
- 	int dsp_clk;
--	unsigned long aclk_rate;
-+	unsigned long gclk_rate;
- } const sample_rates[] = {
- 	{ 8000,  CLASSD_INTPMR_FRAME_8K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 16000, CLASSD_INTPMR_FRAME_16K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 32000, CLASSD_INTPMR_FRAME_32K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 48000, CLASSD_INTPMR_FRAME_48K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 96000, CLASSD_INTPMR_FRAME_96K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 22050, CLASSD_INTPMR_FRAME_22K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- 	{ 44100, CLASSD_INTPMR_FRAME_44K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- 	{ 88200, CLASSD_INTPMR_FRAME_88K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- };
- 
- static int
-@@ -410,13 +404,12 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	dev_dbg(codec->dev,
--		"Selected SAMPLE_RATE of %dHz, ACLK_RATE of %ldHz\n",
--		sample_rates[best].rate, sample_rates[best].aclk_rate);
-+		"Selected SAMPLE_RATE of %dHz, GCLK_RATE of %ldHz\n",
-+		sample_rates[best].rate, sample_rates[best].gclk_rate);
- 
- 	clk_disable_unprepare(dd->gclk);
--	clk_disable_unprepare(dd->aclk);
- 
--	ret = clk_set_rate(dd->aclk, sample_rates[best].aclk_rate);
-+	ret = clk_set_rate(dd->gclk, sample_rates[best].gclk_rate);
- 	if (ret)
- 		return ret;
- 
-@@ -426,10 +419,6 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
- 
- 	snd_soc_update_bits(codec, CLASSD_INTPMR, mask, val);
- 
--	ret = clk_prepare_enable(dd->aclk);
--	if (ret)
--		return ret;
--
- 	return clk_prepare_enable(dd->gclk);
- }
- 
-@@ -441,7 +430,6 @@ atmel_classd_codec_dai_shutdown(struct snd_pcm_substream *substream,
- 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
- 
- 	clk_disable_unprepare(dd->gclk);
--	clk_disable_unprepare(dd->aclk);
- }
- 
- static int atmel_classd_codec_dai_prepare(struct snd_pcm_substream *substream,
-@@ -596,13 +584,6 @@ static int atmel_classd_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	dd->aclk = devm_clk_get(dev, "aclk");
--	if (IS_ERR(dd->aclk)) {
--		ret = PTR_ERR(dd->aclk);
--		dev_err(dev, "failed to get audio clock: %d\n", ret);
--		return ret;
+-	parent = __clk_lookup(parent_name);
+-	if (!parent) {
+-		WARN(1, "parent clk %s of %s must be registered first\n",
+-			name, parent_name);
+-		return ERR_PTR(-EINVAL);
 -	}
 -
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	io_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(io_base)) {
+-	if (!pll_params->pdiv_tohw)
+-		return ERR_PTR(-EINVAL);
+-
+-	parent_rate = clk_get_rate(parent);
+-
+-	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+-
+-	if (pll_params->adjust_vco)
+-		pll_params->vco_min = pll_params->adjust_vco(pll_params,
+-							     parent_rate);
+-
+-	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+-	if (IS_ERR(pll))
+-		return ERR_CAST(pll);
+-
+-	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+-				      &tegra_clk_pll_ops);
+-	if (IS_ERR(clk))
+-		kfree(pll);
+-
+-	return clk;
+-}
+-
+ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+ 				const char *parent_name, void __iomem *clk_base,
+ 				unsigned long flags,
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
+index 474de0f..4f6fd30 100644
+--- a/drivers/clk/tegra/clk-tegra-super-gen4.c
++++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
+@@ -232,8 +232,15 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
+ 	if (!dt_clk)
+ 		return;
+ 
+-	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
+-			pmc_base, CLK_IGNORE_UNUSED, params, NULL);
++#if defined(CONFIG_ARCH_TEGRA_210_SOC)
++	if (gen_info->gen == gen5)
++		clk = tegra_clk_register_pllc_tegra210("pll_x", "pll_ref",
++			clk_base, pmc_base, CLK_IGNORE_UNUSED, params, NULL);
++	else
++#endif
++		clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
++				pmc_base, CLK_IGNORE_UNUSED, params, NULL);
++
+ 	*dt_clk = clk;
+ 
+ 	/* PLLX_OUT0 */
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 1e470ca..4fa7ab3 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2701,7 +2701,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 	struct clk *clk;
+ 
+ 	/* PLLC */
+-	clk = tegra_clk_register_pllxc_tegra210("pll_c", "pll_ref", clk_base,
++	clk = tegra_clk_register_pllc_tegra210("pll_c", "pll_ref", clk_base,
+ 			pmc, 0, &pll_c_params, NULL);
+ 	if (!WARN_ON(IS_ERR(clk)))
+ 		clk_register_clkdev(clk, "pll_c", NULL);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 945b070..872f118 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -362,12 +362,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 			    struct tegra_clk_pll_params *pll_params,
+ 			    spinlock_t *lock);
+ 
+-struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
+-			const char *parent_name, void __iomem *clk_base,
+-			void __iomem *pmc, unsigned long flags,
+-			struct tegra_clk_pll_params *pll_params,
+-			spinlock_t *lock);
+-
+ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
+ 			   void __iomem *clk_base, void __iomem *pmc,
+ 			   unsigned long flags,
 -- 
-git-series 0.9.1
+1.9.1
