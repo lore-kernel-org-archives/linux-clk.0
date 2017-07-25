@@ -1,70 +1,136 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57292 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750857AbdGMD5x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 23:57:53 -0400
-Subject: Re: [PATCH V4 2/6] iommu/arm-smmu: Add pm_runtime/sleep ops
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-3-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225821.GB22780@codeaurora.org>
- <20170712230152.GC22780@codeaurora.org>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <a370a10d-a526-373d-e23c-366090e22718@codeaurora.org>
-Date: Thu, 13 Jul 2017 09:27:44 +0530
+Return-Path: <zhang.lyra@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170712230152.GC22780@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170721225729.GB2146@codeaurora.org>
+References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+ <20170711105627.20526-3-chunyan.zhang@spreadtrum.com> <20170721225729.GB2146@codeaurora.org>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Tue, 25 Jul 2017 18:27:05 +0800
+Message-ID: <CAAfSe-v9sv90WZLJsBUB_S3pLXsjM4z31YBs=xxY1Ak0bXkMDQ@mail.gmail.com>
+Subject: Re: [PATCH V2 02/10] dt-bindings: Add Spreadtrum clock binding documentation
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>, Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
+	Ben Li <ben.li@spreadtrum.com>, Orson Zhai <orson.zhai@spreadtrum.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Stephen,
 
-
-On 07/13/2017 04:31 AM, Stephen Boyd wrote:
-> On 07/12, Stephen Boyd wrote:
->> On 07/06, Vivek Gautam wrote:
->>> From: Sricharan R <sricharan@codeaurora.org>
->>>
->>> The smmu needs to be functional only when the respective
->>> master's using it are active. The device_link feature
->>> helps to track such functional dependencies, so that the
->>> iommu gets powered when the master device enables itself
->>> using pm_runtime. So by adapting the smmu driver for
->>> runtime pm, above said dependency can be addressed.
->>>
->>> This patch adds the pm runtime/sleep callbacks to the
->>> driver and also the functions to parse the smmu clocks
->>> from DT and enable them in resume/suspend.
->>>
->>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>> Signed-off-by: Archit Taneja <architt@codeaurora.org>
->>> [vivek: Clock rework to loop over clock names data]
->>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> ---
->> General comment, we have a bulk clk API now, but I guess we
->> failed to add the clk_bulk_prepare_enable() API that could be
->> used here. Perhaps you can add that API and then use it here to
->> reduce lines of code.
-
-Sure, will use the bulk clock APIs to handle the clocks.
-
-Best regards
-Vivek
-
+On 22 July 2017 at 06:57, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/11, Chunyan Zhang wrote:
+>> Introduce a new binding with its documentation for Spreadtrum clock
+>> sub-framework.
 >>
-> Bjorn just sent a patch for that API an hour ago.
+>> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+>> ---
+>>  Documentation/devicetree/bindings/clock/sprd.txt | 36 ++++++++++++++++++++++++
+>>  1 file changed, 36 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/sprd.txt b/Documentation/devicetree/bindings/clock/sprd.txt
+>> new file mode 100644
+>> index 0000000..c6f3abf
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/sprd.txt
+>> @@ -0,0 +1,36 @@
+>> +Spreadtrum Clock Binding
+>> +------------------------
+>> +
+>> +Required properties:
+>> +- compatible: must contain the following compatible:
+>> +     - "sprd,sc9860-clk" (only support SC9860 for the time being)
+>> +
+>> +- reg:       Must contain the registers base address and length.
+>> +     Clocks on most of Spreadtrum's SoCs were designed to locate in a few
+>> +     different address areas, so there would be more than one items under
+>> +     this property.
+>> +
+>> +- #clock-cells: must be 1
+>> +
+>> +Example:
+>> +
+>> +clk: clk {
 >
+> clock-controller for the node name?
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Ah, sorry I forgot to address this.
 
+>
+>> +     compatible = "sprd,sc9860-clk";
+>> +     #clock-cells = <1>;
+>> +     reg = <0 0x20000000 0 0x400>,
+>> +           <0 0x20210000 0 0x3000>,
+>> +           <0 0x402b0000 0 0x4000>,
+>> +           <0 0x402d0000 0 0x400>,
+>> +           <0 0x402e0000 0 0x4000>,
+>> +           <0 0x40400000 0 0x400>,
+>> +           <0 0x40880000 0 0x400>,
+>> +           <0 0x415e0000 0 0x400>,
+>> +           <0 0x60200000 0 0x400>,
+>> +           <0 0x61000000 0 0x400>,
+>> +           <0 0x61100000 0 0x3000>,
+>> +           <0 0x62000000 0 0x4000>,
+>> +           <0 0x62100000 0 0x4000>,
+>> +           <0 0x63000000 0 0x400>,
+>> +           <0 0x63100000 0 0x3000>,
+>> +           <0 0x70b00000 0 0x3000>;
+>
+> I'm still suspecting that we need multiple nodes, for each device
+> the clocks are embedded in. Mediatek SoCs have a similar design,
+> and they have many nodes. Does it happen to always be in some
+> fixed offset inside the different devices that use the clks?
+
+Unfortunately clock design on SC9860 is not the case.
+
+>From the device tree file [1] which we're using internally, we can see
+there're 9 ranges of clocks are located on the same address area with
+syscons, they respectively are:
+        <0 0x20210000 0 0x3000>,
+        <0 0x402b0000 0 0x4000>,
+        <0 0x402e0000 0 0x4000>,
+        <0 0x40400000 0 0x400>,
+        <0 0x415e0000 0 0x400>,
+        <0 0x61100000 0 0x3000>,
+        <0 0x62100000 0 0x4000>,
+        <0 0x63100000 0 0x3000>,
+        <0 0x70b00000 0 0x3000>;
+
+others ranges (listed below) are only for clocks, neither same with
+any devices nor syscons:
+
+        <0 0x20000000 0 0x400>,  is for AP (application processor) clocks
+        <0 0x402d0000 0 0x400>,  is for AON prediv clocks
+        <0 0x40880000 0 0x400>,
+        <0 0x60200000 0 0x400>,  is for GPU clocks
+        <0 0x61000000 0 0x400>,  is for VSP clocks
+        <0 0x62000000 0 0x4000>,is for camera clocks
+        <0 0x63000000 0 0x400>,  is for display clocks
+
+Let's see dcam as an example.
+The dcam device is on 0x6220 0000 [2], while dcam clocks are on 0x6200
+0000, and also some dcam clocks are on 0x6210 0000 which is the same
+address area with a syscon called 'cam_ahb_controller' [3].
+
+I can separate them into multiple nodes, and then there will be 16
+clock nodes in dt, isn't it too much?
+
+Which solution do you think is better for our case?
+
+
+Thanks,
+Chunyan
+
+
+[1] https://github.com/sprdlinux/kernel/blob/sp9860g-1h10/arch/arm64/boot/dts/sprd/whale.dtsi#L29
+[2] https://github.com/sprdlinux/kernel/blob/sp9860g-1h10/arch/arm64/boot/dts/sprd/sc9850s.dtsi#L372
+[3] https://github.com/sprdlinux/kernel/blob/sp9860g-1h10/arch/arm64/boot/dts/sprd/whale.dtsi#L71
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
