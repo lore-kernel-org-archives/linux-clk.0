@@ -1,55 +1,43 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: meson: gxbb: fix protection against undefined clks
-Date: Thu, 27 Jul 2017 18:17:55 +0200
-Message-Id: <20170727161755.10393-3-jbrunet@baylibre.com>
-In-Reply-To: <20170727161755.10393-1-jbrunet@baylibre.com>
-References: <20170727161755.10393-1-jbrunet@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 05/14] clk: tegra: Init cfg structure in _get_pll_mnp
+Date: Tue, 25 Jul 2017 13:34:06 +0300
+Message-ID: <1500978856-5981-6-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-gxbb clock driver gracefully handles case where the clkid is defined but
-the clock hw pointer is not provided, as long as it is not at the end of
-the hw_onecell_data array.
+Not all fields are read from the hw depending on the PLL type. Make sure
+the other fields are 0 by clearing the structure beforehand to prevent
+users such as the rate re-calculation code from using bogus values.
 
-This patch ensure that the last entries are defined as well to handle
-this particular case.
+Based on work by  Alex Frid <afrid@nvidia.com>
 
-Fixes: a70c6e06ed7c ("clk: meson: gxbb: protect against holes in the onecell_data array")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/meson/gxbb.c | 2 ++
+ drivers/clk/tegra/clk-pll.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index a897ea45327c..8409d86cda24 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1183,6 +1183,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
- 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
- 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
-+		[NR_CLKS]		    = NULL,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -1305,6 +1306,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
- 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
- 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
-+		[NR_CLKS]		    = NULL,
- 	},
- 	.num = NR_CLKS,
- };
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index fbd8726..1c36b8a 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -690,6 +690,8 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
+ 
++	*cfg = (struct tegra_clk_pll_freq_table) { };
++
+ 	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
 -- 
-2.9.4
+1.9.1
