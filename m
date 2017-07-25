@@ -1,63 +1,65 @@
-Return-Path: <dvhart@infradead.org>
-Date: Mon, 10 Jul 2017 16:54:03 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux@endlessm.com,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH] clk: x86: Do not gate clocks enabled by the firmware
-Message-ID: <20170710235403.GB25390@fury>
-References: <20170710203801.17496-1-carlo@caione.org>
- <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alex Frid <afrid@nvidia.com>
+Subject: [PATCH 06/14] clk: tegra: Fix T210 effective NDIV calculation
+Date: Tue, 25 Jul 2017 13:34:07 +0300
+Message-ID: <1500978856-5981-7-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAFqH_51Mje4tK494JRgb=wWJNU9zu=WZ1sS482kRAvRrPpLkXQ@mail.gmail.com>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 11, 2017 at 12:31:28AM +0200, Enric Balletbo Serra wrote:
-> Hi,
-> 
-> 2017-07-10 22:38 GMT+02:00 Carlo Caione <carlo@caione.org>:
-> > From: Carlo Caione <carlo@endlessm.com>
-> >
-> > Read the enable register to determine if the clock is already in use by
-> > the firmware. In this case avoid gating the clock.
-> >
-> > Signed-off-by: Carlo Caione <carlo@endlessm.com>
-> > ---
-> >  drivers/clk/x86/clk-pmc-atom.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> > index 2b60577703ef..46a8b6216fca 100644
-> > --- a/drivers/clk/x86/clk-pmc-atom.c
-> > +++ b/drivers/clk/x86/clk-pmc-atom.c
-> > @@ -185,6 +185,9 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
-> >         pclk->reg = base + PMC_CLK_CTL_OFFSET + id * PMC_CLK_CTL_SIZE;
-> >         spin_lock_init(&pclk->lock);
-> >
-> > +       if (plt_clk_is_enabled(&pclk->hw))
-> > +               init.flags |= CLK_IGNORE_UNUSED;
-> > +
-> >         ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
-> >         if (ret) {
-> >                 pclk = ERR_PTR(ret);
-> > --
-> > 2.13.2
-> >
-> 
-> It also fixes the issue introduced in commit 282a4e4 ("platform/x86:
-> Enable Atom PMC platform clocks") that causes no audio on Baytrail.
-> 
-> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: Alex Frid <afrid@nvidia.com>
 
-Excellent, thank you Enric. Pierre, any objections to this going in to
-4.13 now and stable back to 4.12?
+Don't take the fractional part into account to calculate the effective
+NDIV if fractional ndiv is not enabled.
 
+Signed-off-by: Alex Frid <afrid@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index dc4a813..a4d7d94 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -241,6 +241,9 @@
+ #define PLL_SDM_COEFF BIT(13)
+ #define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
+ #define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
++/* This macro returns ndiv effective scaled to SDM range */
++#define sdin_get_n_eff(cfg)	((cfg)->n * PLL_SDM_COEFF + ((cfg)->sdm_data ? \
++		(PLL_SDM_COEFF/2 + sdin_data_to_din((cfg)->sdm_data)) : 0))
+ 
+ /* Tegra CPU clock and reset control regs */
+ #define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
+@@ -1288,8 +1291,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
+ 			s -= PLL_SDM_COEFF / 2;
+ 			cfg->sdm_data = sdin_din_to_data(s);
+ 		}
+-		cfg->output_rate *= cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
+-					sdin_data_to_din(cfg->sdm_data);
++		cfg->output_rate *= sdin_get_n_eff(cfg);
+ 		cfg->output_rate /= p * cfg->m * PLL_SDM_COEFF;
+ 	} else {
+ 		cfg->output_rate *= cfg->n;
+@@ -1314,8 +1316,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
+  */
+ static void tegra210_clk_pll_set_gain(struct tegra_clk_pll_freq_table *cfg)
+ {
+-	cfg->n = cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
+-			sdin_data_to_din(cfg->sdm_data);
++	cfg->n = sdin_get_n_eff(cfg);
+ 	cfg->m *= PLL_SDM_COEFF;
+ }
+ 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+1.9.1
