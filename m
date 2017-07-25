@@ -1,51 +1,57 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 7 Jul 2017 13:44:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Message-ID: <20170707124419.jfkgyl66wi7jfhnu@sirena.org.uk>
-References: <20170704115927.32662-1-quentin.schulz@free-electrons.com>
- <20170704115927.32662-8-quentin.schulz@free-electrons.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alex Frid <afrid@nvidia.com>
+Subject: [PATCH] clk: Don't write error code into divider register
+Date: Tue, 25 Jul 2017 13:18:40 +0300
+Message-ID: <1500977920-5533-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="woub2x6txwmvzhcf"
-In-Reply-To: <20170704115927.32662-8-quentin.schulz@free-electrons.com>
-Subject: Re: [PATCH v2 7/9] ASoC: atmel-classd: remove aclk clock from DT
- binding
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Alex Frid <afrid@nvidia.com>
 
---woub2x6txwmvzhcf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Add a check for error returned by divider value calculation to avoid
+writing error code into hw register.
 
-On Tue, Jul 04, 2017 at 01:59:25PM +0200, Quentin Schulz wrote:
-> Since gclk (generated-clk) is now able to determine the rate of the
-> audio_pll, there is no need for classd to have a direct phandle to the
-> audio_pll while already having a phandle to gclk.
+Signed-off-by: Alex Frid <afrid@nvidia.com>
+Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Reviewed-by: Jon Mayo <jmayo@nvidia.com>
+---
+ drivers/clk/clk-divider.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Acked-by: Mark Brown <broonie@kernel.org>
-
---woub2x6txwmvzhcf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllfgiMACgkQJNaLcl1U
-h9D4EAf/RdCKk4UjTfyf4/fmSVtDhhexDdLPZ2dtAdyhOXP0/WJBzS4FXuHMU5V8
-vuFe96ZKhVqeQFWzDV3Hf6Xit8JmgfKbIukIOVvY9FfDHfr/cslPIebGosWvDKT9
-txSlXUdCacd2cpd8PqTfx9aeT6An6HgL38JHwQSkxVBMbVuu3ZM1oE9ReJ2TOXIG
-OSn6IvR3VYJ0G6cw+zbJ61u48vdHLj5QVEy/lm7AhLjUhp6lL9zVhBoPTYV1EiR9
-G8WJbAXxwfGkHZayulD4mI73Hr/1sMYnvrebsJDSnFOJPgk/I9hQHlm16DSv4cVo
-zw9O4tbWs7PAN7Ej/WziemoWbokP1g==
-=c1fk
------END PGP SIGNATURE-----
-
---woub2x6txwmvzhcf--
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 9bb472c..4ed516c 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -385,12 +385,14 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long parent_rate)
+ {
+ 	struct clk_divider *divider = to_clk_divider(hw);
+-	unsigned int value;
++	int value;
+ 	unsigned long flags = 0;
+ 	u32 val;
+ 
+ 	value = divider_get_val(rate, parent_rate, divider->table,
+ 				divider->width, divider->flags);
++	if (value < 0)
++		return value;
+ 
+ 	if (divider->lock)
+ 		spin_lock_irqsave(divider->lock, flags);
+@@ -403,7 +405,7 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		val = clk_readl(divider->reg);
+ 		val &= ~(div_mask(divider->width) << divider->shift);
+ 	}
+-	val |= value << divider->shift;
++	val |= (u32)value << divider->shift;
+ 	clk_writel(val, divider->reg);
+ 
+ 	if (divider->lock)
+-- 
+1.9.1
