@@ -1,49 +1,84 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: robh+dt@kernel.org
-Cc: dinguyen@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCHv1 1/4] ARM: dts: socfpga: update documentation for clock bindings
-Date: Fri,  7 Jul 2017 14:03:16 -0500
-Message-Id: <1499454199-31901-1-git-send-email-dinguyen@kernel.org>
+Return-Path: <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH v4 1/9] clk: at91: clk-generated: remove useless divisor
+ loop
+To: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<alexandre.belloni@free-electrons.com>, <linux@armlinux.org.uk>,
+	<boris.brezillon@free-electrons.com>, <perex@perex.cz>, <tiwai@suse.com>
+CC: <cyrille.pitchen@wedev4u.fr>, <thomas.petazzoni@free-electrons.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+ <b9d92004d22f745e8acde0599359d67538c006a9.1500968090.git-series.quentin.schulz@free-electrons.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <4bffddd0-cf9d-8f68-204a-f754f7f384d5@microchip.com>
+Date: Tue, 25 Jul 2017 17:28:02 +0200
+MIME-Version: 1.0
+In-Reply-To: <b9d92004d22f745e8acde0599359d67538c006a9.1500968090.git-series.quentin.schulz@free-electrons.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: nicolas.ferre@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the bindings document for the Arria10 and Stratix10 clock bindings.
+On 25/07/2017 at 09:37, Quentin Schulz wrote:
+> The driver requests the current clk rate of each of its parent clocks to
+> decide whether a clock rate is suitable or not. It does not request
+> determine_rate from a parent clock which could request a rate change in
+> parent clock (i.e. there is no parent rate propagation).
+> 
+> We know the rate we want (passed along req argument of the function) and
+> the parent clock rate, thus we know the closest rounded divisor, we
+> don't need to iterate over the available divisors to find the best one
+> for a given clock.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- Documentation/devicetree/bindings/clock/altr_socfpga.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-diff --git a/Documentation/devicetree/bindings/clock/altr_socfpga.txt b/Documentation/devicetree/bindings/clock/altr_socfpga.txt
-index f72e80e..1c32658 100644
---- a/Documentation/devicetree/bindings/clock/altr_socfpga.txt
-+++ b/Documentation/devicetree/bindings/clock/altr_socfpga.txt
-@@ -12,6 +12,20 @@ Required properties:
- 	"altr,socfpga-gate-clk" - Clocks that directly feed peripherals and
- 		can get gated.
- 
-+	For Arria10:
-+	"altr,socfpga-a10-pll-clock" - for a PLL clock
-+	"altr,socfpga-a10-perip-clock" - The peripheral clock divided from the
-+		PLL clock.
-+	"altr,socfpga-a10-gate-clk" - Clocks that directly feed peripherals and
-+		can get gated.
-+
-+	For Stratix10:
-+	"altr,socfpga-s10-pll-clock" - for a PLL clock
-+	"altr,socfpga-s10-perip-clock" - The peripheral clock divided from the
-+		PLL clock.
-+	"altr,socfpga-s10-gate-clk" - Clocks that directly feed peripherals and
-+		can get gated.
-+
- - reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
- - clocks : shall be the input parent clock phandle for the clock. This is
- 	either an oscillator or a pll output.
+> ---
+>  drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index f0b7ae9..ef4b4e0 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  		    (gck->range.max && min_rate > gck->range.max))
+>  			continue;
+>  
+> -		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
+> -			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
+> -			tmp_diff = abs(req->rate - tmp_rate);
+> -
+> -			if (best_diff < 0 || best_diff > tmp_diff) {
+> -				best_rate = tmp_rate;
+> -				best_diff = tmp_diff;
+> -				req->best_parent_rate = parent_rate;
+> -				req->best_parent_hw = parent;
+> -			}
+> -
+> -			if (!best_diff || tmp_rate < req->rate)
+> -				break;
+> +		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
+> +		if (!div)
+> +			tmp_rate = parent_rate;
+> +		else
+> +			tmp_rate = parent_rate / div;
+> +		tmp_diff = abs(req->rate - tmp_rate);
+> +
+> +		if (best_diff < 0 || best_diff > tmp_diff) {
+> +			best_rate = tmp_rate;
+> +			best_diff = tmp_diff;
+> +			req->best_parent_rate = parent_rate;
+> +			req->best_parent_hw = parent;
+>  		}
+>  
+>  		if (!best_diff)
+> 
+
+
 -- 
-2.7.4
+Nicolas Ferre
