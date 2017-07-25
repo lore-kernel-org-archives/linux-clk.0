@@ -1,118 +1,177 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-        "radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones
-	<lee.jones@linaro.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        Ludovic BARRE <ludovic.barre@st.com>,
-        "Olivier
- BIDEAU" <olivier.bideau@st.com>,
-        Amelie DELAUNAY <amelie.delaunay@st.com>,
-        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>
-Subject: Re: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
-Date: Mon, 17 Jul 2017 07:30:08 +0000
-Message-ID: <cca4fdb9-7150-0259-4a78-b705b76f2986@st.com>
-References: <201707150222.ogIMUhKu%fengguang.wu@intel.com>
-In-Reply-To: <201707150222.ogIMUhKu%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="Windows-1252"
-MIME-Version: 1.0
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v4 6/9] clk: at91: clk-generated: make gclk determine audio_pll rate
+Date: Tue, 25 Jul 2017 09:37:07 +0200
+Message-Id: <4ccbc456b4812f4e91cc446914759781e6933a48.1500968090.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+This allows gclk to determine audio_pll rate and set the parent rate
+accordingly.
 
+However, there are multiple children clocks that could technically
+change the rate of audio_pll (via gck). With the rate locking, the first
+consumer to enable the clock will be the one definitely setting the rate
+of the clock.
 
-On 07/14/2017 08:52 PM, kbuild test robot wrote:
-> Hi Gabriel,
->
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v4.12 next-20170714]
-> [if your patch is applied to the wrong git tree, please drop us a note to=
- help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/gabriel-fernandez-st-com=
-/clk-stm32h7-Add-stm32h743-clock-driver/20170714-170518
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
--next
-> config: arm-lpc32xx_defconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
-> reproduce:
->          wget https://raw.githubusercontent.com/01org/lkp-tests/master/sb=
-in/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          make.cross ARCH=3Darm
->
-> All errors (new ones prefixed by >>):
->
->>> drivers/clk/nxp/clk-lpc32xx.c:906:12: error: static declaration of 'clk=
-_gate_is_enabled' follows non-static declaration
->      static int clk_gate_is_enabled(struct clk_hw *hw)
->                 ^~~~~~~~~~~~~~~~~~~
->     In file included from drivers/clk/nxp/clk-lpc32xx.c:13:0:
->     include/linux/clk-provider.h:346:5: note: previous declaration of 'cl=
-k_gate_is_enabled' was here
->      int clk_gate_is_enabled(struct clk_hw *hw);
->          ^~~~~~~~~~~~~~~~~~~
->
-> vim +/clk_gate_is_enabled +906 drivers/clk/nxp/clk-lpc32xx.c
->
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  905
-> f7c82a60 Vladimir Zapolskiy 2015-12-06 @906  static int clk_gate_is_enabl=
-ed(struct clk_hw *hw)
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  907  {
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  908  	struct lpc32xx_clk_gate *cl=
-k =3D to_lpc32xx_gate(hw);
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  909  	u32 val;
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  910  	bool is_set;
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  911
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  912  	regmap_read(clk_regmap, clk=
-->reg, &val);
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  913  	is_set =3D val & BIT(clk->b=
-it_idx);
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  914
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  915  	return (clk->flags & CLK_GA=
-TE_SET_TO_DISABLE ? !is_set : is_set);
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  916  }
-> f7c82a60 Vladimir Zapolskiy 2015-12-06  917  EXPORT_SYMBOL_GPL(__clk_gate=
-_is_enabled);
->
->
-> :::::: The code at line 906 was first introduced by commit
-> :::::: f7c82a60ba26c2f003662bcb2cff131021c1e828 clk: lpc32xx: add common =
-clock framework driver
->
-> :::::: TO: Vladimir Zapolskiy <vz@mleia.com>
-> :::::: CC: Michael Turquette <mturquette@baylibre.com>
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Ce=
-nter
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corpora=
-tion
+Since audio IPs are most likely to request the same rate, we enforce
+that the only clks able to modify gck rate are those of audio IPs.
 
-Rename 'clk_gate_is_enabled' into'__clk_gate_is_enabled' from clk-gate.c=20
-file, is it a good solution for you ?
+To remain consistent, we deny other clocks to be children of audio_pll.
 
-i could add also EXPORT_SYMBOL_GPL(__clk_gate_is_enabled) if you are ok.
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/clk/at91/clk-generated.c | 63 +++++++++++++++++++++++++++++----
+ 1 file changed, 57 insertions(+), 6 deletions(-)
 
-
-Best Regards
-Gabriel=
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 7260e49..3348136 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -26,6 +26,13 @@
+ #define GENERATED_SOURCE_MAX	6
+ #define GENERATED_MAX_DIV	255
+ 
++#define GCK_ID_SSC0		43
++#define GCK_ID_SSC1		44
++#define GCK_ID_I2S0		54
++#define GCK_ID_I2S1		55
++#define GCK_ID_CLASSD		59
++#define GCK_INDEX_DT_AUDIO_PLL	5
++
+ struct clk_generated {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -34,6 +41,7 @@ struct clk_generated {
+ 	u32 id;
+ 	u32 gckdiv;
+ 	u8 parent_id;
++	bool audio_pll_allowed;
+ };
+ 
+ #define to_clk_generated(hw) \
+@@ -126,15 +134,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+ 	struct clk_hw *parent = NULL;
++	struct clk_rate_request req_parent = *req;
+ 	long best_rate = -EINVAL;
+-	unsigned long min_rate;
++	unsigned long min_rate, parent_rate;
+ 	int best_diff = -1;
+ 	int i;
++	u32 div;
+ 
+-	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+-		u32 div;
+-		unsigned long parent_rate;
+-
++	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+@@ -150,11 +157,38 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 		clk_generated_best_diff(req, parent, parent_rate, div,
+ 					&best_diff, &best_rate);
+ 
++		if (!best_diff)
++			break;
++	}
++
++	/*
++	 * The audio_pll rate can be modified, unlike the five others clocks
++	 * that should never be altered.
++	 * The audio_pll can technically be used by multiple consumers. However,
++	 * with the rate locking, the first consumer to enable to clock will be
++	 * the one definitely setting the rate of the clock.
++	 * Since audio IPs are most likely to request the same rate, we enforce
++	 * that the only clks able to modify gck rate are those of audio IPs.
++	 */
++
++	if (!gck->audio_pll_allowed)
++		goto end;
++
++	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
++	if (!parent)
++		goto end;
++
++	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
++		req_parent.rate = req->rate * div;
++		__clk_determine_rate(parent, &req_parent);
++		clk_generated_best_diff(req, parent, req_parent.rate, div,
++					&best_diff, &best_rate);
+ 
+ 		if (!best_diff)
+ 			break;
+ 	}
+ 
++end:
+ 	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
+ 		 __func__, best_rate,
+ 		 __clk_get_name((req->best_parent_hw)->clk),
+@@ -264,7 +298,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 	init.ops = &generated_ops;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+-	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
++	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
++		CLK_SET_RATE_PARENT;
+ 
+ 	gck->id = id;
+ 	gck->hw.init = &init;
+@@ -296,6 +331,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 	struct device_node *gcknp;
+ 	struct clk_range range = CLK_RANGE(0, 0);
+ 	struct regmap *regmap;
++	struct clk_generated *gck;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents == 0 || num_parents > GENERATED_SOURCE_MAX)
+@@ -327,6 +363,21 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock, name,
+ 						  parent_names, num_parents,
+ 						  id, &range);
++
++		gck = to_clk_generated(hw);
++
++		if (of_device_is_compatible(np,
++					    "atmel,sama5d2-clk-generated")) {
++			if (gck->id == GCK_ID_SSC0 || gck->id == GCK_ID_SSC1 ||
++			    gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
++			    gck->id == GCK_ID_CLASSD)
++				gck->audio_pll_allowed = true;
++			else
++				gck->audio_pll_allowed = false;
++		} else {
++			gck->audio_pll_allowed = false;
++		}
++
+ 		if (IS_ERR(hw))
+ 			continue;
+ 
+-- 
+git-series 0.9.1
