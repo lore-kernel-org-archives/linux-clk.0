@@ -1,28 +1,59 @@
-Return-Path: <wens@csie.org>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Message-ID: <5976FA39.6070803@baylibre.com>
+Date: Tue, 25 Jul 2017 09:58:49 +0200
+From: Neil Armstrong <narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20170721161935.18411-1-maxime.ripard@free-electrons.com>
-References: <20170721161935.18411-1-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 22 Jul 2017 10:23:19 +0800
-Message-ID: <CAGb2v64AmFA7qHgTK6+w147-vb0Mv6uh5xx5MXy5jVfKNX_WVg@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Add clk_set_rate_parent to the CPU clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+ carlo@caione.org, jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+ robh+dt@kernel.org
+CC: devicetree@vger.kernel.org, linux@armlinux.org.uk,
+ mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [PATCH v2 3/3] ARM: dts: meson: mark the clock controller also
+ as reset controller
+References: <20170722185807.10504-1-martin.blumenstingl@googlemail.com> <20170722185807.10504-4-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170722185807.10504-4-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jul 22, 2017 at 12:19 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The current CPU clock is missing the option to change the rate of its
-> parents, leading to improper rates calculated by cpufreq, and eventually
-> crashes.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-> Reported-by: Kevin Hilman <khilman@baylibre.com>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+
+Le 22/07/2017 20:58, Martin Blumenstingl a écrit :
+> The clock controller provides a few reset lines as well. Add the
+> #reset-cells property so we can pass the CPU soft reset lines to their
+> corresponding CPU cores.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  arch/arm/boot/dts/meson8.dtsi  | 1 +
+>  arch/arm/boot/dts/meson8b.dtsi | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+> index 6fe6a159e960..b98d44fde6b6 100644
+> --- a/arch/arm/boot/dts/meson8.dtsi
+> +++ b/arch/arm/boot/dts/meson8.dtsi
+> @@ -168,6 +168,7 @@
+>  &cbus {
+>  	clkc: clock-controller@4000 {
+>  		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+>  		compatible = "amlogic,meson8-clkc";
+>  		reg = <0x8000 0x4>, <0x4000 0x460>;
+>  	};
+> diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+> index 8fce13844b0c..bc278da7df0d 100644
+> --- a/arch/arm/boot/dts/meson8b.dtsi
+> +++ b/arch/arm/boot/dts/meson8b.dtsi
+> @@ -119,6 +119,7 @@
+>  &cbus {
+>  	clkc: clock-controller@4000 {
+>  		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+>  		compatible = "amlogic,meson8b-clkc";
+>  		reg = <0x8000 0x4>, <0x4000 0x460>;
+>  	};
+> 
+
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
