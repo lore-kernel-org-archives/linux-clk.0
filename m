@@ -1,66 +1,175 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 17 Jul 2017 18:30:26 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: moxart: remove unnecessary statics
-Message-ID: <20170718013026.GR22780@codeaurora.org>
-References: <20170704223650.GA22546@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170704223650.GA22546@embeddedgus>
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	cl@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2] clk: rockchip: rk3128: modify rk3128 clk driver to support rk3126
+Date: Tue, 25 Jul 2017 17:42:50 +0800
+Message-Id: <1500975770-25046-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/04, Gustavo A. R. Silva wrote:
-> Remove unnecessary static on local variable _base_ in both functions
-> moxart_of_pll_clk_init() and moxart_of_apb_clk_init(). Such variables
-> are initialized before being used, on every execution path throughout
-> the mentioned functions. The statics have no benefit and, removing
-> them reduce the code size.
-> 
-> This issue was detected using Coccinelle and the following semantic patch:
-> 
-> @bad exists@
-> position p;
-> identifier x;
-> type T;
-> @@
-> 
-> static T x@p;
-> ...
-> x = <+...x...+>
-> 
-> @@
-> identifier x;
-> expression e;
-> type T;
-> position p != bad.p;
-> @@
-> 
-> -static
->  T x@p;
->  ... when != x
->      when strict
-> ?x = e;
-> 
-> In the following log you can see the difference in the code size. Also,
-> notice that the bss segment is reduced down to zero. This log is the
-> output of the size command, before and after the code change:
-> 
-> before:
->    text    data     bss     dec     hex filename
->    1724     384     128    2236     8bc drivers/clk/clk-moxart.o
-> 
-> after:
->    text    data     bss     dec     hex filename
->    1697     240       0    1937     791 drivers/clk/clk-moxart.o
-> 
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> ---
+rk3128 and rk3126 have some gate registers describe differences.
+So need to make some distinctions.
+The RK3126 and RK3128 Same clock description we move it to
+the common clock branches.
+And the different clks description use the own clock branches.
 
-Applied to clk-next
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3128.c | 69 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 55 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
+index e243f2eae68f..62d7854e4b87 100644
+--- a/drivers/clk/rockchip/clk-rk3128.c
++++ b/drivers/clk/rockchip/clk-rk3128.c
+@@ -201,7 +201,7 @@ enum rk3128_plls {
+ 	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS);
+ 
+-static struct rockchip_clk_branch rk3128_clk_branches[] __initdata = {
++static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	/*
+ 	 * Clock-Architecture Diagram 1
+ 	 */
+@@ -459,10 +459,6 @@ enum rk3128_plls {
+ 			RK2928_CLKSEL_CON(2), 14, 2, MFLAGS, 8, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 15, GFLAGS),
+ 
+-	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_sclk_sfc_src_p, 0,
+-			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
+-			RK2928_CLKGATE_CON(3), 15, GFLAGS),
+-
+ 	COMPOSITE_NOMUX(PCLK_PMU_PRE, "pclk_pmu_pre", "cpll", 0,
+ 			RK2928_CLKSEL_CON(29), 8, 6, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 0, GFLAGS),
+@@ -495,7 +491,6 @@ enum rk3128_plls {
+ 	GATE(ACLK_DMAC, "aclk_dmac", "aclk_peri", 0, RK2928_CLKGATE_CON(5), 1, GFLAGS),
+ 	GATE(0, "aclk_peri_niu", "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 15, GFLAGS),
+ 	GATE(0, "aclk_cpu_to_peri", "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 2, GFLAGS),
+-	GATE(HCLK_GPS, "hclk_gps", "aclk_peri", 0, RK2928_CLKGATE_CON(3), 14, GFLAGS),
+ 
+ 	GATE(HCLK_I2S_8CH, "hclk_i2s_8ch", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 4, GFLAGS),
+ 	GATE(0, "hclk_peri_matrix", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 0, GFLAGS),
+@@ -541,7 +536,6 @@ enum rk3128_plls {
+ 	GATE(0, "hclk_rom", "hclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 6, GFLAGS),
+ 	GATE(HCLK_CRYPTO, "hclk_crypto", "hclk_cpu", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
+ 
+-	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8, GFLAGS),
+ 	GATE(PCLK_ACODEC, "pclk_acodec", "pclk_cpu", 0, RK2928_CLKGATE_CON(5), 14, GFLAGS),
+ 	GATE(0, "pclk_ddrupctl", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 7, GFLAGS),
+ 	GATE(0, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 4, GFLAGS),
+@@ -561,6 +555,21 @@ enum rk3128_plls {
+ 	MMC(SCLK_EMMC_SAMPLE,  "emmc_sample",  "sclk_emmc",  RK3228_EMMC_CON1,  0),
+ };
+ 
++static struct rockchip_clk_branch rk3126_clk_branches[] __initdata = {
++	GATE(0, "pclk_stimer", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
++	GATE(0, "pclk_s_efuse", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
++	GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 8, GFLAGS),
++};
++
++static struct rockchip_clk_branch rk3128_clk_branches[] __initdata = {
++	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_sclk_sfc_src_p, 0,
++			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RK2928_CLKGATE_CON(3), 15, GFLAGS),
++
++	GATE(HCLK_GPS, "hclk_gps", "aclk_peri", 0, RK2928_CLKGATE_CON(3), 14, GFLAGS),
++	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8, GFLAGS),
++};
++
+ static const char *const rk3128_critical_clocks[] __initconst = {
+ 	"aclk_cpu",
+ 	"hclk_cpu",
+@@ -570,7 +579,7 @@ enum rk3128_plls {
+ 	"pclk_peri",
+ };
+ 
+-static void __init rk3128_clk_init(struct device_node *np)
++static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
+ {
+ 	struct rockchip_clk_provider *ctx;
+ 	void __iomem *reg_base;
+@@ -578,23 +587,21 @@ static void __init rk3128_clk_init(struct device_node *np)
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+-		return;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip clk init failed\n", __func__);
+ 		iounmap(reg_base);
+-		return;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	rockchip_clk_register_plls(ctx, rk3128_pll_clks,
+ 				   ARRAY_SIZE(rk3128_pll_clks),
+ 				   RK3128_GRF_SOC_STATUS0);
+-	rockchip_clk_register_branches(ctx, rk3128_clk_branches,
+-				  ARRAY_SIZE(rk3128_clk_branches));
+-	rockchip_clk_protect_critical(rk3128_critical_clocks,
+-				      ARRAY_SIZE(rk3128_critical_clocks));
++	rockchip_clk_register_branches(ctx, common_clk_branches,
++				  ARRAY_SIZE(common_clk_branches));
+ 
+ 	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
+ 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
+@@ -606,6 +613,40 @@ static void __init rk3128_clk_init(struct device_node *np)
+ 
+ 	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
+ 
++	return ctx;
++}
++
++static void __init rk3126_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++
++	ctx = rk3128_common_clk_init(np);
++	if (IS_ERR(ctx))
++		return;
++
++	rockchip_clk_register_branches(ctx, rk3126_clk_branches,
++				       ARRAY_SIZE(rk3126_clk_branches));
++	rockchip_clk_protect_critical(rk3128_critical_clocks,
++				      ARRAY_SIZE(rk3128_critical_clocks));
++
++	rockchip_clk_of_add_provider(np, ctx);
++}
++
++CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
++
++static void __init rk3128_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++
++	ctx = rk3128_common_clk_init(np);
++	if (IS_ERR(ctx))
++		return;
++
++	rockchip_clk_register_branches(ctx, rk3128_clk_branches,
++				       ARRAY_SIZE(rk3128_clk_branches));
++	rockchip_clk_protect_critical(rk3128_critical_clocks,
++				      ARRAY_SIZE(rk3128_critical_clocks));
++
+ 	rockchip_clk_of_add_provider(np, ctx);
+ }
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
