@@ -1,42 +1,42 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexandre Bailon <abailon@baylibre.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH v2 0/3] normalize clk API for older platforms
-Date: Fri, 21 Jul 2017 17:22:45 +0200
-Message-Id: <20170721152250.3310552-1-arnd@arndb.de>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Wed, 26 Jul 2017 08:59:39 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+	nicolas.ferre@microchip.com, linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com, perex@perex.cz, tiwai@suse.com,
+	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH v4 9/9] ARM: dts: at91: sama5d2_xplained: add pin muxing
+ and enable classd
+Message-ID: <20170726065939.5xnfypocdj3qftiy@piout.net>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+ <f2f55956879fd7e80cf0fb72ba743f8c5cb28fcc.1500968090.git-series.quentin.schulz@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <f2f55956879fd7e80cf0fb72ba743f8c5cb28fcc.1500968090.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Based on the earlier feedback so far, I have split out the patch
-per platform, improved the davinci implementation, dropped both
-ep93xx (which has a proper implementation coming) and mmp (which
-is dead code anyway), and decided to do the sa1100 implementation
-differnently (without warning).
-
-       Arnd
-
-Arnd Bergmann (3):
-  ARM: davinci: normalize clk API
-  ARM: sa1100: normalize clk API
-  ARM: w90x900: normalize clk API
-
- arch/arm/mach-davinci/clock.c |  9 +++++++++
- arch/arm/mach-sa1100/clock.c  | 25 +++++++++++++++++++++++++
- arch/arm/mach-w90x900/clock.c | 29 +++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+)
+On 25/07/2017 at 09:37:10 +0200, Quentin Schulz wrote:
+> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> 
+> This patch adds the pin muxing for classd and enables it.
+> 
+> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+Applied, thanks.
 
 -- 
-2.9.0
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
