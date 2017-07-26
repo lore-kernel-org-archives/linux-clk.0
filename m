@@ -1,42 +1,41 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: sun5i: Add clk_set_rate_parent to the CPU clock
-Date: Fri, 21 Jul 2017 18:19:35 +0200
-Message-Id: <20170721161935.18411-1-maxime.ripard@free-electrons.com>
+Return-Path: <>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+Cc: geert+renesas@glider.be,
+	linux-renesas-soc@vger.kernel.org,
+	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] clk: renesas: r8a7796: Add USB3.0 clock
+Date: Wed, 26 Jul 2017 20:23:39 +0900
+Message-Id: <1501068219-3834-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The current CPU clock is missing the option to change the rate of its
-parents, leading to improper rates calculated by cpufreq, and eventually
-crashes.
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-Cc: <stable@vger.kernel.org>
-Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-Reported-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This patch adds USB3.0-IF0 clock for R8A7796 SoC.
+
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-sun5i.c
-index 5372bf8be5e6..31d7ffda9aab 100644
---- a/drivers/clk/sunxi-ng/ccu-sun5i.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
-@@ -184,7 +184,7 @@ static struct ccu_mux cpu_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS("cpu",
- 						      cpu_parents,
- 						      &ccu_mux_ops,
--						      CLK_IS_CRITICAL),
-+						      CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
- 	}
- };
- 
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index acc6d0f..eaaf663 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -138,6 +138,7 @@ enum clk_ids {
+ 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
+ 	DEF_MOD("pcie1",		 318,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("pcie0",		 319,	R8A7796_CLK_S3D1),
++	DEF_MOD("usb3-if0",		 328,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
 -- 
-2.13.3
+1.9.1
