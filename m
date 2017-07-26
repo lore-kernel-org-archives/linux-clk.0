@@ -1,57 +1,113 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 31 Jul 2017 18:38:00 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [GIT PULL] Meson clock fixes for 4.13-rc4
-Message-ID: <20170801013800.GL2146@codeaurora.org>
-References: <ce41382f-fd93-1dc9-0dba-1484ac555945@baylibre.com>
- <20170731202031.GK2146@codeaurora.org>
- <1501537388.2759.7.camel@baylibre.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1501537388.2759.7.camel@baylibre.com>
+In-Reply-To: <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-11-icenowy@aosc.io>
+ <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com> <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 26 Jul 2017 15:30:13 +0800
+Message-ID: <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A
+ regulator to Orange Pi PC
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/31, Jerome Brunet wrote:
-> On Mon, 2017-07-31 at 13:20 -0700, Stephen Boyd wrote:
-> > On 07/31, Neil Armstrong wrote:
-> > > Hi Mike, Stephen,
-> > > 
-> > > Here is some fixes for Meson GXBB and Meson8 drivers, that could go for
-> > > 4.13-rc4.
-> > > 
-> > 
-> > Are any of these critical fixes for regressions in the v4.13-rc
-> > series? All the Fixes tags look like they go back to before
-> > v4.13-rc1, so they don't look critical at first glance. If
-> > anything, they're mostly nice to have non-critical fixes? If so,
-> > can we defer these until the next merge window?
-> 
-> I agree that these fixes hardly qualify as critical, except maybe for the mpll
-> fix. The clock rate actually applied can be really off compared to what CCF will
->  except to have set.
+On Wed, Jul 26, 2017 at 3:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+>
+> 于 2017年7月26日 GMT+08:00 下午3:08:06, Chen-Yu Tsai <wens@csie.org> 写到:
+>>On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>> From: Ondrej Jirman <megous@megous.com>
+>>>
+>>> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
+>>> Orange Pi PC, then set the power supply of the ARM cores to this
+>>> regulator, in order to enable DVFS.
+>>>
+>>> Signed-off-by: Ondrej Jirman <megous@megous.com>
+>>> [Icenowy: Enable DVFS in this patch, slight changes and change commit
+>>>  message]
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
+>>>  1 file changed, 19 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>> index 998b60f8d295..d855f8b6254e 100644
+>>> --- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>> +++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>> @@ -98,6 +98,10 @@
+>>>         status = "okay";
+>>>  };
+>>>
+>>> +&cpu0 {
+>>> +       cpu-supply = <&reg_sy8106a>;
+>>> +};
+>>> +
+>>>  &ehci0 {
+>>>         status = "okay";
+>>>  };
+>>> @@ -160,6 +164,21 @@
+>>>         };
+>>>  };
+>>>
+>>> +&r_i2c {
+>>> +       status = "okay";
+>>> +
+>>> +       reg_sy8106a: regulator@65 {
+>>> +               compatible = "silergy,sy8106a";
+>>> +               reg = <0x65>;
+>>> +               regulator-name = "vdd-cpux";
+>>> +               regulator-min-microvolt = <1000000>;
+>>
+>>According to the H3 datasheet, the minimum voltage is 1.1V, not 1V.
+>
+> But the Armbian OPP table for H3 contains several
+> OPP under 1.1V...
 
-Ok. So perhaps just the mpll fix would be appropriate then?
+Can you provide a link?
 
-> 
-> These fixes are quite simple and safe, it would be nice if we could avoid having
->  the next version tagged with known issues.
-> 
+If Armbian users have actually field tested this (a big if),
+then I would like to see some evidence of the SoC running
+stably at those OPPs with those lower voltages under full load.
 
-I agree they're simple and safe, but they're also not necessary
-to the release we're working on unless they're causing some
-problem with code that was introduced this merge window. We try
-to avoid merging non-critical fixes unless they're really causing
-someone some sort of problems. If they aren't, we can stick them
-into linux-next and wait until next release. Of course, they'll
-be backported to stable trees as well with the Fixes tag, so
-everything works out in the end.
+Even then you should still leave a note describing why we allow
+voltages below the recommended range.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ChenYu
+
+>
+>>
+>>Otherwse
+>>
+>>> +               regulator-max-microvolt = <1400000>;
+>>> +               regulator-ramp-delay = <200>;
+>>
+>>Is this an actual constraint of the SoC? Or is it a characteristic
+>>of the regulator? If it is the latter, it belongs in the driver.
+>>AFAIK the regulator supports varying the ramp delay (slew rate).
+>>
+>>ChenYu
+>>
+>>> +               regulator-boot-on;
+>>> +               regulator-always-on;
+>>> +       };
+>>> +};
+>>> +
+>>>  &r_pio {
+>>>         leds_r_opc: led_pins@0 {
+>>>                 pins = "PL10";
+>>> --
+>>> 2.13.0
+>>>
