@@ -1,96 +1,104 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
-	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
-	<ping.bai@nxp.com>
-Subject: [PATCH V2 03/10] clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-Date: Thu, 13 Jul 2017 19:47:08 +0800
-Message-ID: <1499946435-7177-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Wed, 26 Jul 2017 13:44:20 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+Cc: icenowy@aosc.io, wens@csie.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A
+ regulator to Orange Pi PC
+Message-ID: <20170726114420.ipirqgbluqmggcjy@flea>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+ <20170723102749.17323-11-icenowy@aosc.io>
+ <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
+ <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
+ <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
+ <82507f40a1ddba8517cf09f51d3afa33@aosc.io>
+ <1501064628.14577.1.camel@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tpwlf6xvobw3hsae"
+In-Reply-To: <1501064628.14577.1.camel@megous.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding CLK_FRAC_DIVIDER_ZERO_BASED flag to indicate the numerator and
-denominator value in register are start from 0.
 
-This can be used to support frac dividers like below:
-Divider output clock = Divider input clock x [(frac +1) / (div +1)]
-where frac/div in register is:
-000b - Divide by 1.
-001b - Divide by 2.
-010b - Divide by 3.
+--tpwlf6xvobw3hsae
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Hi,
 
----
-ChangeLog:
-v1->v2:
- * improve comments suggested by Stephen
----
- drivers/clk/clk-fractional-divider.c | 10 ++++++++++
- include/linux/clk-provider.h         |  8 ++++++++
- 2 files changed, 18 insertions(+)
+On Wed, Jul 26, 2017 at 12:23:48PM +0200, Ond=C5=99ej Jirman wrote:
+> Hi,
+>=20
+> icenowy@aosc.io p=C3=AD=C5=A1e v St 26. 07. 2017 v 15:36 +0800:
+> >=20
+> > > > >=20
+> > > > > Otherwse
+> > > > >=20
+> > > > > > +               regulator-max-microvolt =3D <1400000>;
+> > > > > > +               regulator-ramp-delay =3D <200>;
+> > > > >=20
+> > > > > Is this an actual constraint of the SoC? Or is it a characteristic
+> > > > > of the regulator? If it is the latter, it belongs in the driver.
+> > > > > AFAIK the regulator supports varying the ramp delay (slew rate).
+> >=20
+> > I don't know...
+> >=20
+> > Maybe I should ask Ondrej?
+>=20
+> It is probably neither.
+>=20
+> It is used to calculate a delay inserted by the kernel between setting
+> a new target voltage over I2C and changing the frequency of the CPU.
+> The actual delay is calculated by the difference between previous and
+> the new voltage.
+>=20
+> I don't remember seeing anything in the datasheet of the regulator.
+> This is just some low value that works.
+>=20
+> It would probably be dependent on the capacitance on the output of the
+> regulator, actual load (which varies), etc. So it is a board specific
+> value. One could measure it with an oscilloscope if there's a need to
+> optimize this.
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index aab9046..455bec5 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -40,6 +40,11 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- 	m = (val & fd->mmask) >> fd->mshift;
- 	n = (val & fd->nmask) >> fd->nshift;
- 
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m++;
-+		n++;
-+	}
-+
- 	if (!n || !m)
- 		return parent_rate;
- 
-@@ -91,6 +96,11 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
- 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
- 			&m, &n);
- 
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m--;
-+		n--;
-+	}
-+
- 	if (fd->lock)
- 		spin_lock_irqsave(fd->lock, flags);
- 	else
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index efaf5cf..4568a12 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -563,6 +563,12 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
-  * @lock:	register lock
-  *
-  * Clock with adjustable fractional divider affecting its output frequency.
-+ *
-+ * Flags:
-+ * CLK_FRAC_DIVIDER_ZERO_BASED - by default the numerator and denominator
-+ *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
-+ *	is set then the numerator and denominator are both the value read
-+ *	plus one.
-  */
- struct clk_fractional_divider {
- 	struct clk_hw	hw;
-@@ -579,6 +585,8 @@ struct clk_fractional_divider {
- 
- #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
- 
-+#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
-+
- extern const struct clk_ops clk_fractional_divider_ops;
- struct clk *clk_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
--- 
-2.7.4
+If this is a reasonable default, then this should be in the
+driver. You can't expect anyone to properly calculate a ramp delay and
+have access to both a scope and the CPU power lines.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--tpwlf6xvobw3hsae
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZeICUAAoJEBx+YmzsjxAgnDgP/jvGHNkgGXAkd3SWUgBf3Rqk
+4rOyU+/OnTtKBYWImQ+PYHGvL5dNTJtGRIzRVGaL50ZjUT8GbMTaUOrwJu51c3kP
+Psbt2w4TQCrjbw/Qe/KoePCPsI9nT6JWnAsdYSQTiN0M9FUF6JQBS6dxSjeBpP6s
+sY+1ogf5qlQf/Pe5FNkeNgmuVC03Pthsl68Ua13X0YSjIsjEFNrnExDGhG8W9ZVW
+MLcOTTNjpwMLdLUUWOa44RI1ud/x/h1ejyOArbRBiwoDNG66y2cwEBojjHXYMNu+
+LScMmvq6dICFRsOGd71aUNm57NiW5T1lKLuWfL0uOXLMZmnOuwyAJtIt983dfEJt
+xkRjjaBmY+nfTNZsZwzp/5dfLS/btHKig676oeHVbHuTy+qVJqTni9oKKhKQxfFw
+7WJ5RpYo7/DcQDf6G2mSrh1iKp9ypA4Y2Olz+orECuGkjAWvO138BgIXRwNkxlQZ
+5RMIPyzRxiCmndaxSF3Jp6OFtGUGlPhH2Wxv3TwDRteOWELlmEC2MDVM1tUDy8pl
+o6qVuPzJU/dntWYg7DovJLcVxQDSDKuyJQLIun1dCgKE+erdMuDxh+1wwuiKoCnt
+S8FL+K0VZG+hVHM9fwVX47TijDI+FORTnZFYjIUutWJv/CN/tN+svrPi11+PgO5k
+P+OodljiTEvlm/sOqeoh
+=qLeE
+-----END PGP SIGNATURE-----
+
+--tpwlf6xvobw3hsae--
