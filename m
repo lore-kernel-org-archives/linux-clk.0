@@ -1,53 +1,97 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	ce3a@gmx.de,
-	Sergej Sawazki <sergej@taudac.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-Subject: [PATCH] clk: si5351: Apply PLL soft reset before enabling the outputs
-Date: Tue, 25 Jul 2017 21:17:41 +0200
-Message-Id: <1501010261-7130-1-git-send-email-sergej@taudac.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1501088747.2401.27.camel@baylibre.com>
+Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michael Turquette
+ <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>, Kevin
+ Hilman <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..."
+ <linux-amlogic@lists.infradead.org>, Russell King <linux@armlinux.org.uk>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>, Adriana Reus
+ <adi.reus@gmail.com>
+Date: Wed, 26 Jul 2017 19:05:47 +0200
+In-Reply-To: <20170712011604.GQ22780@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
+	 <1497955822.7387.3.camel@baylibre.com>
+	 <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
+	 <1497961950.7387.7.camel@baylibre.com>
+	 <1498050903.7387.12.camel@baylibre.com>
+	 <20170712011604.GQ22780@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
-before enabling the outputs [1]. This is required to get a deterministic
-phase relationship between the output clocks.
+On Tue, 2017-07-11 at 18:16 -0700, Stephen Boyd wrote:
+> On 06/21, Jerome Brunet wrote:
+> > 
+> > I managed to have a run on kci - based on v4.12-rc6:
+> > https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-1
+> > 0-ge
+> > a373ddef830/
+> > 
+> > There was no build regression but kci did find one boot regression on qcom
+> > platforms:
+> > * qcom-apq8064-cm-qs600
+> > * qcom-apq8064-ifc6410
+> > 
+> > it seems the problem is coming from the clock used by the mmc driver
+> > (drivers/mmc/host/mmci.c)
+> > 
+> > the driver does following sequence:
+> > * get_clk
+> > * prepare_enable
+> > * get_rate
+> > * set_rate
+> > * ...
+> > 
+> > with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has
+> > CLK_SET_RATE_PARENT
+> > flag so it will transmit the request to its parent.
+> > The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
+> > 
+> > This can't work with sequence above. The flag was clearly bypassed before,
+> > so I
+> > think it would be best to remove CLK_SET_RATE_GATE from the SDCx_src clocks
+> > 
+> > Stephen, would you agree ?
+> > 
+> > There was an issue with the chip board as well but this particular board has
+> > not
+> > been very reliable in this lab lately. It has failed on several other job.
+> > 
+> 
+> Yes the flag was never working before and we've been ignoring the
+> subtle problems that it causes to change the rate while the clk
+> is enabled. On these older SoCs, all the clks marked with
+> CLK_SET_RATE_GATE need to implement something to forcibly disable
+> all child clks across the rate change. That is the hardware
+> recommended procedure.
 
-Without the PLL reset, the phase offset beween the clocks is unpredictable.
+Seems that HW has been doing fine w/o recommended procedure so far ;)
 
-References:
-[1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
-    Figure 12 ("I2C Programming Procedure")
+> 
+> So something like
+> 
+> 	get_clk
+> 	prepare_enable
+> 	get_rate
+> 	set_rate
+> 	 call ->set_rate() op
+> 	 forcibly disable children of rcgs
+> 	 actually change the rate of rcg
+> 	 forcibly enable all children that were disabled
+> 
+> and have that happen under one big spinlock local to the qcom
+> driver I suppose so that enable/disable can't leak into the rate
+> change. Fun! I'll make an attempt at implementing the right
+> solution tomorrow/tonight. Of course, we can remove the flag from
+> qcom drivers if it's blocking this series.
+> 
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Signed-off-by: Sergej Sawazki <sergej@taudac.com>
----
- drivers/clk/clk-si5351.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Yeah, it is probably blocking the series.
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 255d0fe..6cca425 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -905,6 +905,15 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
- 
- 	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
- 			SI5351_CLK_POWERDOWN, 0);
-+
-+	/*
-+	 * Reset the PLLs before enabling the outputs to get a deterministic
-+	 * phase relationship between the output clocks. Otherwise, the phase
-+	 * offset beween the clocks is unpredictable.
-+	 */
-+	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
-+			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
-+
- 	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
- 			(1 << hwdata->num), 0);
- 	return 0;
--- 
-2.7.4
+In the following mail, I've only replied where I wanted to discuss a bit more.
+For everything else, please consider the comments agreed and the modifications
+done as requested.
