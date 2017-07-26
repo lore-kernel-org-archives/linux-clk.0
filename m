@@ -1,123 +1,105 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 19 Jul 2017 13:28:56 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 05/11] mmc: sunxi: Support controllers that can use both
- old and new timings
-Message-ID: <20170719112856.7vjcsel5cj6f5s5h@flea>
-References: <20170714064302.20383-1-wens@csie.org>
- <20170714064302.20383-6-wens@csie.org>
- <20170717091747.kcrlifbp7meihszm@flea>
- <CAGb2v67VmdfrMNLFH=6hhbGAHr15e0q4toDUbJ17d3exS3maFw@mail.gmail.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Wed, 26 Jul 2017 15:16:16 +0800
+In-Reply-To: <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-11-icenowy@aosc.io> <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bd2jix6f475lfyof"
-In-Reply-To: <CAGb2v67VmdfrMNLFH=6hhbGAHr15e0q4toDUbJ17d3exS3maFw@mail.gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A regulator to Orange Pi PC
+To: Chen-Yu Tsai <wens@csie.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---bd2jix6f475lfyof
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 19, 2017 at 04:59:23PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Jul 17, 2017 at 5:17 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Hi,
-> >
-> > On Fri, Jul 14, 2017 at 02:42:56PM +0800, Chen-Yu Tsai wrote:
-> >> On the SoCs that introduced the new timing mode for MMC controllers,
-> >> both the old (where the clock delays are set in the CCU) and new
-> >> (where the clock delays are set in the MMC controller) timing modes
-> >> are available, and we have to support them both. However there are
-> >> two bits that control which mode is active. One is in the CCU, the
-> >> other is in the MMC controller. The settings on both sides must be
-> >> the same, or nothing will work.
-> >>
-> >> The CCU's get/set_phase callbacks return -ENOTSUPP when the new
-> >> timing mode is active. This provides a way to know which mode is
-> >> active on that side, and we can set the bit on the MMC controller
-> >> side accordingly.
-> >>
-> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >> ---
-> >>  drivers/mmc/host/sunxi-mmc.c | 34 ++++++++++++++++++++++++++++++----
-> >>  1 file changed, 30 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc=
-=2Ec
-> >> index 0fb4e4c119e1..56e45c65b52d 100644
-> >> --- a/drivers/mmc/host/sunxi-mmc.c
-> >> +++ b/drivers/mmc/host/sunxi-mmc.c
-> >> @@ -22,6 +22,7 @@
-> >>  #include <linux/err.h>
-> >>
-> >>  #include <linux/clk.h>
-> >> +#include <linux/clk/sunxi-ng.h>
-> >>  #include <linux/gpio.h>
-> >>  #include <linux/platform_device.h>
-> >>  #include <linux/spinlock.h>
-> >> @@ -259,7 +260,7 @@ struct sunxi_mmc_cfg {
-> >>       /* Does DATA0 needs to be masked while the clock is updated */
-> >>       bool mask_data0;
-> >>
-> >> -     bool needs_new_timings;
-> >> +     bool has_new_timings;
-> >
-> > I think we should have both, it's a bit different. Newer SoCs like the
-> > A64 can only operate using new timings, while the older ones can
-> > operate in both modes.
-> >
-> > In one case, we're forced to use it, in the other one it's a
-> > policy. We should differentiate both cases.
->=20
-> For the A64's case, the limit is implied by not having any clk_delays.
+于 2017年7月26日 GMT+08:00 下午3:08:06, Chen-Yu Tsai <wens@csie.org> 写到:
+>On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> From: Ondrej Jirman <megous@megous.com>
+>>
+>> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
+>> Orange Pi PC, then set the power supply of the ARM cores to this
+>> regulator, in order to enable DVFS.
+>>
+>> Signed-off-by: Ondrej Jirman <megous@megous.com>
+>> [Icenowy: Enable DVFS in this patch, slight changes and change commit
+>>  message]
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>> index 998b60f8d295..d855f8b6254e 100644
+>> --- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>> +++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>> @@ -98,6 +98,10 @@
+>>         status = "okay";
+>>  };
+>>
+>> +&cpu0 {
+>> +       cpu-supply = <&reg_sy8106a>;
+>> +};
+>> +
+>>  &ehci0 {
+>>         status = "okay";
+>>  };
+>> @@ -160,6 +164,21 @@
+>>         };
+>>  };
+>>
+>> +&r_i2c {
+>> +       status = "okay";
+>> +
+>> +       reg_sy8106a: regulator@65 {
+>> +               compatible = "silergy,sy8106a";
+>> +               reg = <0x65>;
+>> +               regulator-name = "vdd-cpux";
+>> +               regulator-min-microvolt = <1000000>;
+>
+>According to the H3 datasheet, the minimum voltage is 1.1V, not 1V.
 
-FWIW, I'm really not a big fan of that either :)
+But the Armbian OPP table for H3 contains several
+OPP under 1.1V...
 
-Explicit is better than implicit.=A9
-
-> But yes, I'll keep "needs_new_timings", and rename the new option to
-> "has_timing_switch" to make things clearer.
-
-Great, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---bd2jix6f475lfyof
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZb0J4AAoJEBx+YmzsjxAglo8QALargjCFyEB5hU3tIpW6Ra7E
-c0XfzP2gdl60I5JiNl/iEuI+maNS6rwON70hmq0JW58rmCc1pGDf5WoLfT8U8tKi
-GwXhMqHpCHBpX5y+x5YDdEgOTEiKAVNotmtEgZkaIEnolsxUvYiMD8iTmoYUW6PD
-OKSt1HLXCmpsdx0vpYNiHAi0JpEpwBa+WTuzdas6+g4FF4WLx6fhqG03FvwIQ74d
-gainmHvUhWMzir8XXq9tSsV9aslCYCn8WmCQT6YWEMdmlxWDUHXxAI1lytd9GosE
-kuR4Y//zRk9M9KZuaNeGxy9Pp5+dK0ReX48GkcXTNz0L9hdk7qr1YYW6Xe046i0L
-Fliu7OZMw4mAOM0rqHZO5UIONTQ8ltl5N0/ZjsI1T9+A73Zi/+cpHWj9V6Gx8Uj9
-aZV8b+mYwptJQOACR74EYWVdTn/EPFFT1MDuBfppE88BMPJaBf4LnZw6Aid/8Q/G
-gpULc33RIAmu4sQHJvo4FOOAQ/3uWj0FZQYgkPHFsMXrdswHFbzRvzU0LSCjbuRn
-mDUM/aKdJFBPPfhT++5nvCt55sGvczf6i8FVYBg5bigzFoeNUiXNFQ2KAEcAx27q
-Z5Yko/t0O6QCSrifvbr206TkIuYnHCRIrcTpzTGq49QRizbz/nAwBrI1Bg8MZQgO
-lbb/OtQWwY9RjweQIgqa
-=D0Fp
------END PGP SIGNATURE-----
-
---bd2jix6f475lfyof--
+>
+>Otherwse
+>
+>> +               regulator-max-microvolt = <1400000>;
+>> +               regulator-ramp-delay = <200>;
+>
+>Is this an actual constraint of the SoC? Or is it a characteristic
+>of the regulator? If it is the latter, it belongs in the driver.
+>AFAIK the regulator supports varying the ramp delay (slew rate).
+>
+>ChenYu
+>
+>> +               regulator-boot-on;
+>> +               regulator-always-on;
+>> +       };
+>> +};
+>> +
+>>  &r_pio {
+>>         leds_r_opc: led_pins@0 {
+>>                 pins = "PL10";
+>> --
+>> 2.13.0
+>>
+>> --
+>> You received this message because you are subscribed to the Google
+>Groups "linux-sunxi" group.
+>> To unsubscribe from this group and stop receiving emails from it,
+>send an email to linux-sunxi+unsubscribe@googlegroups.com.
+>> For more options, visit https://groups.google.com/d/optout.
