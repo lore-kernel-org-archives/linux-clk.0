@@ -1,64 +1,135 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH 13/14] clk: tegra: Correct Tegra210 UTMIPLL poweron delay
-Date: Tue, 25 Jul 2017 13:34:14 +0300
-Message-ID: <1500978856-5981-14-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52642 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750813AbdGZHg2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 Jul 2017 03:36:28 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 26 Jul 2017 15:36:27 +0800
+From: icenowy@aosc.io
+To: wens@csie.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>
+Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A
+ regulator to Orange Pi PC
+In-Reply-To: <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+ <20170723102749.17323-11-icenowy@aosc.io>
+ <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
+ <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
+ <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
+Message-ID: <82507f40a1ddba8517cf09f51d3afa33@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+在 2017-07-26 15:30，Chen-Yu Tsai 写道：
+> On Wed, Jul 26, 2017 at 3:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> 
+>> 
+>> 于 2017年7月26日 GMT+08:00 下午3:08:06, Chen-Yu Tsai <wens@csie.org> 写到:
+>>> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> 
+>>> wrote:
+>>>> From: Ondrej Jirman <megous@megous.com>
+>>>> 
+>>>> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
+>>>> Orange Pi PC, then set the power supply of the ARM cores to this
+>>>> regulator, in order to enable DVFS.
+>>>> 
+>>>> Signed-off-by: Ondrej Jirman <megous@megous.com>
+>>>> [Icenowy: Enable DVFS in this patch, slight changes and change 
+>>>> commit
+>>>>  message]
+>>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>>> ---
+>>>>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
+>>>>  1 file changed, 19 insertions(+)
+>>>> 
+>>>> diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>> b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>>> index 998b60f8d295..d855f8b6254e 100644
+>>>> --- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>>> +++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>>>> @@ -98,6 +98,10 @@
+>>>>         status = "okay";
+>>>>  };
+>>>> 
+>>>> +&cpu0 {
+>>>> +       cpu-supply = <&reg_sy8106a>;
+>>>> +};
+>>>> +
+>>>>  &ehci0 {
+>>>>         status = "okay";
+>>>>  };
+>>>> @@ -160,6 +164,21 @@
+>>>>         };
+>>>>  };
+>>>> 
+>>>> +&r_i2c {
+>>>> +       status = "okay";
+>>>> +
+>>>> +       reg_sy8106a: regulator@65 {
+>>>> +               compatible = "silergy,sy8106a";
+>>>> +               reg = <0x65>;
+>>>> +               regulator-name = "vdd-cpux";
+>>>> +               regulator-min-microvolt = <1000000>;
+>>> 
+>>> According to the H3 datasheet, the minimum voltage is 1.1V, not 1V.
+>> 
+>> But the Armbian OPP table for H3 contains several
+>> OPP under 1.1V...
+> 
+> Can you provide a link?
+> 
+> If Armbian users have actually field tested this (a big if),
+> then I would like to see some evidence of the SoC running
+> stably at those OPPs with those lower voltages under full load.
 
-Increased Tegra210 UTMIPLL power on delay to 20us (spec maximum is 15us).
-Also remove a few empty lines to make it more clear the ACTIVE_DLY_COUNT
-and ENABLE_DLY_COUNT fields.
+See [1].
 
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Reviewed-by: Jon Mayo <jmayo@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[1] 
+https://github.com/armbian/build/blob/master/config/fex/orangepipc.fex#L736
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 4fa7ab3..fd04b0e 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2472,15 +2472,14 @@ static void tegra210_utmi_param_configure(void)
- 	reg |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
- 
- 	reg &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
--
- 	reg |=
- 	UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(utmi_parameters[i].active_delay_count);
- 	writel_relaxed(reg, clk_base + UTMIP_PLL_CFG2);
- 
- 	/* Program UTMIP PLL delay and oscillator frequency counts */
- 	reg = readl_relaxed(clk_base + UTMIP_PLL_CFG1);
--	reg &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
- 
-+	reg &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
- 	reg |=
- 	UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(utmi_parameters[i].enable_delay_count);
- 
-@@ -2496,7 +2495,8 @@ static void tegra210_utmi_param_configure(void)
- 	reg &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
- 	reg |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
- 	writel_relaxed(reg, clk_base + UTMIP_PLL_CFG1);
--	udelay(1);
-+
-+	udelay(20);
- 
- 	/* Enable samplers for SNPS, XUSB_HOST, XUSB_DEV */
- 	reg = readl_relaxed(clk_base + UTMIP_PLL_CFG2);
--- 
-1.9.1
+> 
+> Even then you should still leave a note describing why we allow
+> voltages below the recommended range.
+> 
+> ChenYu
+> 
+>> 
+>>> 
+>>> Otherwse
+>>> 
+>>>> +               regulator-max-microvolt = <1400000>;
+>>>> +               regulator-ramp-delay = <200>;
+>>> 
+>>> Is this an actual constraint of the SoC? Or is it a characteristic
+>>> of the regulator? If it is the latter, it belongs in the driver.
+>>> AFAIK the regulator supports varying the ramp delay (slew rate).
+
+I don't know...
+
+Maybe I should ask Ondrej?
+
+>>> 
+>>> ChenYu
+>>> 
+>>>> +               regulator-boot-on;
+>>>> +               regulator-always-on;
+>>>> +       };
+>>>> +};
+>>>> +
+>>>>  &r_pio {
+>>>>         leds_r_opc: led_pins@0 {
+>>>>                 pins = "PL10";
+>>>> --
+>>>> 2.13.0
+>>>> 
