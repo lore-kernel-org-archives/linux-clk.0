@@ -1,125 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37586 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751392AbdGRQoL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Jul 2017 12:44:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/2] clk: renesas: rcar-gen3-cpg.c: refactor checks for accessing the div table
-Date: Tue, 18 Jul 2017 18:44:07 +0200
-Message-Id: <20170718164407.22998-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
-References: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170724135905.28855-1-wens@csie.org>
+References: <20170724135905.28855-1-wens@csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 26 Jul 2017 22:09:41 +0800
+Message-ID: <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC controllers
+To: Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Do the checks for accessing the SD divider table only when the rate gets
-updated, namely on init and set_rate. In all other cases, reuse the last
-value. This simplifies code, runtime load, and error reporting.
+On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> Hi everyone,
+>
+> This is v3 of my MMC controller support series.
+>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 46 ++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 26 deletions(-)
+[...]
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 71b8a986bd4889..d4d27cf6110d38 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -60,6 +60,7 @@ struct sd_clock {
- 	unsigned int div_num;
- 	unsigned int div_min;
- 	unsigned int div_max;
-+	unsigned int cur_div_idx;
- };
- 
- /* SDn divider
-@@ -96,21 +97,10 @@ static const struct sd_div_table cpg_sd_div_table[] = {
- static int cpg_sd_clock_enable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val, sd_fc;
--	unsigned int i;
--
--	val = readl(clock->reg);
--
--	sd_fc = val & CPG_SD_FC_MASK;
--	for (i = 0; i < clock->div_num; i++)
--		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
--			break;
--
--	if (i >= clock->div_num)
--		return -EINVAL;
-+	u32 val = readl(clock->reg);
- 
- 	val &= ~(CPG_SD_STP_MASK);
--	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
-+	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
- 
- 	writel(val, clock->reg);
- 
-@@ -135,20 +125,9 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val, sd_fc;
--	unsigned int i;
--
--	val = readl(clock->reg);
--
--	sd_fc = val & CPG_SD_FC_MASK;
--	for (i = 0; i < clock->div_num; i++)
--		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
--			break;
--
--	if (i >= clock->div_num)
--		return -EINVAL;
- 
--	return DIV_ROUND_CLOSEST(parent_rate, clock->div_table[i].div);
-+	return DIV_ROUND_CLOSEST(parent_rate,
-+				 clock->div_table[clock->cur_div_idx].div);
- }
- 
- static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
-@@ -189,6 +168,8 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (i >= clock->div_num)
- 		return -EINVAL;
- 
-+	clock->cur_div_idx = i;
-+
- 	val = readl(clock->reg);
- 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
- 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
-@@ -214,6 +195,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	struct sd_clock *clock;
- 	struct clk *clk;
- 	unsigned int i;
-+	u32 sd_fc;
- 
- 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
- 	if (!clock)
-@@ -230,6 +212,18 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	clock->div_table = cpg_sd_div_table;
- 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
- 
-+	sd_fc = readl(clock->reg) & CPG_SD_FC_MASK;
-+	for (i = 0; i < clock->div_num; i++)
-+		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
-+			break;
-+
-+	if (WARN_ON(i >= clock->div_num)) {
-+		kfree(clock);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	clock->cur_div_idx = i;
-+
- 	clock->div_max = clock->div_table[0].div;
- 	clock->div_min = clock->div_max;
- 	for (i = 1; i < clock->div_num; i++) {
--- 
-2.11.0
+> Chen-Yu Tsai (10):
+>   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+>   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
+>     switching
+>   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
+>   mmc: sunxi: Support controllers that can use both old and new timings
+>   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
+>   mmc: sunxi: Add support for A83T eMMC (MMC2)
 
+So this series seems to be ready for inclusion, unless Ulf has further
+concerns about the clk usage.
+
+The first mmc patch have build time dependencies on the first clk patch.
+Shall we put the clk patch on a separate immutable branch for both trees
+to pull? Or we could just merge everything through the mmc tree? I don't
+think we'll touch this part of the sunxi-ng clk driver for the remainder
+of this cycle.
+
+
+Regards
+ChenYu
+
+
+>   ARM: dts: sun8i: a83t: Add MMC controller device nodes
+>   ARM: dts: sun8i: a83t: Add pingroup for 8-bit eMMC on mmc2
+>   ARM: dts: sun8i: a83t: cubietruck-plus: Enable micro-SD card and eMMC
+>   ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
