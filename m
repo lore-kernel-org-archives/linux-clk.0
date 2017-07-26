@@ -1,103 +1,272 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Rob Clark <robdclark@gmail.com>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org>
- <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
- <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
- <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <60a56ae6-ed9d-57cd-130f-5bd9d32d4d58@codeaurora.org>
-Date: Thu, 13 Jul 2017 19:23:02 +0530
-MIME-Version: 1.0
-In-Reply-To: <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: gxbb: add sd_emmc clk0 clocks
+Date: Wed, 26 Jul 2017 22:31:38 +0200
+Message-Id: <20170726203138.11367-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Input source 0 of the mmc controllers are not the xtal, as currently
+described in DT, but  composite clocks (the usual mux, divider and gate).
+The muxes can take the crytal (default) and any of the fclk_div clocks
+which should provide any rate an mmc/nand could request.
 
-On 7/13/2017 5:20 PM, Rob Clark wrote:
-> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
->> Hi Vivek,
->>
->> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
->>> Hi Stephen,
->>>
->>>
->>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->>>> On 07/06, Vivek Gautam wrote:
->>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->>>>>                    size_t size)
->>>>>   {
->>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->>>>> +    size_t ret;
->>>>>         if (!ops)
->>>>>           return 0;
->>>>>   -    return ops->unmap(ops, iova, size);
->>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
->>>> Can these map/unmap ops be called from an atomic context? I seem
->>>> to recall that being a problem before.
->>>
->>> That's something which was dropped in the following patch merged in master:
->>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
->>>
->>> Looks like we don't  need locks here anymore?
->>
->>  Apart from the locking, wonder why a explicit pm_runtime is needed
->>  from unmap. Somehow looks like some path in the master using that
->>  should have enabled the pm ?
->>
-> 
-> Yes, there are a bunch of scenarios where unmap can happen with
-> disabled master (but not in atomic context).  On the gpu side we
-> opportunistically keep a buffer mapping until the buffer is freed
-> (which can happen after gpu is disabled).  Likewise, v4l2 won't unmap
-> an exported dmabuf while some other driver holds a reference to it
-> (which can be dropped when the v4l2 device is suspended).
-> 
-> Since unmap triggers tbl flush which touches iommu regs, the iommu
-> driver *definitely* needs a pm_runtime_get_sync().
+The mux should also be able to take mpll2, mpll3 and gp0_pll but these
+are precious clock for other usage. It is better if the mmc does not use
+these them. For this reason, mpll2, mpll3 and gp0_pll is not listed among
+the possible parent.
 
- Ok, with that being the case, there are two things here,
-
- 1) If the device links are still intact at these places where unmap is called,
-    then pm_runtime from the master would setup the all the clocks. That would
-    avoid reintroducing the locking indirectly here.
-
- 2) If not, then doing it here is the only way. But for both cases, since
-    the unmap can be called from atomic context, resume handler here should
-    avoid doing clk_prepare_enable , instead move the clk_prepare to the init.
-
-Regards,
- Sricharan
-
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+ drivers/clk/meson/gxbb.c | 167 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h |  11 +++-
+ 2 files changed, 177 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index a897ea45327c..d466901e88a2 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -974,6 +974,146 @@ static struct clk_mux gxbb_32k_clk_sel = {
+ 	},
+ };
+ 
++static const char * const gxbb_sd_emmc_clk0_parent_names[] = {
++	"xtal", "fclk_div2", "fclk_div3", "fclk_div5", "fclk_div7",
++
++	/*
++	 * Following these clocks, we should also have had mpll2, mpll3
++	 * and gp0_pll but these clocks are too precious to be used here.
++	 * All the necessary rates for MMC and NAND operation can acheived
++	 * using the xtal and the fclk_div clocks
++	 */
++};
++
++/* SDIO clock */
++static struct clk_mux gxbb_sd_emmc_a_clk0_sel = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 9,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_a_clk0_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_sd_emmc_clk0_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_divider gxbb_sd_emmc_a_clk0_div = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.shift = 0,
++	.width = 7,
++	.lock = &clk_lock,
++	.flags = CLK_DIVIDER_ROUND_CLOSEST,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_a_clk0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sd_emmc_a_clk0_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_gate gxbb_sd_emmc_a_clk0 = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.bit_idx = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sd_emmc_a_clk0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sd_emmc_a_clk0_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/* SDcard clock */
++static struct clk_mux gxbb_sd_emmc_b_clk0_sel = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 25,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_b_clk0_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_sd_emmc_clk0_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_divider gxbb_sd_emmc_b_clk0_div = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.shift = 16,
++	.width = 7,
++	.lock = &clk_lock,
++	.flags = CLK_DIVIDER_ROUND_CLOSEST,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_b_clk0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sd_emmc_b_clk0_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_gate gxbb_sd_emmc_b_clk0 = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.bit_idx = 23,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sd_emmc_b_clk0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sd_emmc_b_clk0_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/* EMMC/NAND clock */
++static struct clk_mux gxbb_sd_emmc_c_clk0_sel = {
++	.reg = (void *)HHI_NAND_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 9,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_c_clk0_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_sd_emmc_clk0_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_divider gxbb_sd_emmc_c_clk0_div = {
++	.reg = (void *)HHI_NAND_CLK_CNTL,
++	.shift = 0,
++	.width = 7,
++	.lock = &clk_lock,
++	.flags = CLK_DIVIDER_ROUND_CLOSEST,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_c_clk0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sd_emmc_c_clk0_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_gate gxbb_sd_emmc_c_clk0 = {
++	.reg = (void *)HHI_NAND_CLK_CNTL,
++	.bit_idx = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sd_emmc_c_clk0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sd_emmc_c_clk0_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -1183,6 +1323,15 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+ 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+ 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
++		[CLKID_SD_EMMC_A_CLK0_SEL]  = &gxbb_sd_emmc_a_clk0_sel.hw,
++		[CLKID_SD_EMMC_A_CLK0_DIV]  = &gxbb_sd_emmc_a_clk0_div.hw,
++		[CLKID_SD_EMMC_A_CLK0]	    = &gxbb_sd_emmc_a_clk0.hw,
++		[CLKID_SD_EMMC_B_CLK0_SEL]  = &gxbb_sd_emmc_b_clk0_sel.hw,
++		[CLKID_SD_EMMC_B_CLK0_DIV]  = &gxbb_sd_emmc_b_clk0_div.hw,
++		[CLKID_SD_EMMC_B_CLK0]	    = &gxbb_sd_emmc_b_clk0.hw,
++		[CLKID_SD_EMMC_C_CLK0_SEL]  = &gxbb_sd_emmc_c_clk0_sel.hw,
++		[CLKID_SD_EMMC_C_CLK0_DIV]  = &gxbb_sd_emmc_c_clk0_div.hw,
++		[CLKID_SD_EMMC_C_CLK0]	    = &gxbb_sd_emmc_c_clk0.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1305,6 +1454,15 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+ 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+ 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
++		[CLKID_SD_EMMC_A_CLK0_SEL]  = &gxbb_sd_emmc_a_clk0_sel.hw,
++		[CLKID_SD_EMMC_A_CLK0_DIV]  = &gxbb_sd_emmc_a_clk0_div.hw,
++		[CLKID_SD_EMMC_A_CLK0]	    = &gxbb_sd_emmc_a_clk0.hw,
++		[CLKID_SD_EMMC_B_CLK0_SEL]  = &gxbb_sd_emmc_b_clk0_sel.hw,
++		[CLKID_SD_EMMC_B_CLK0_DIV]  = &gxbb_sd_emmc_b_clk0_div.hw,
++		[CLKID_SD_EMMC_B_CLK0]	    = &gxbb_sd_emmc_b_clk0.hw,
++		[CLKID_SD_EMMC_C_CLK0_SEL]  = &gxbb_sd_emmc_c_clk0_sel.hw,
++		[CLKID_SD_EMMC_C_CLK0_DIV]  = &gxbb_sd_emmc_c_clk0_div.hw,
++		[CLKID_SD_EMMC_C_CLK0]	    = &gxbb_sd_emmc_c_clk0.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1420,6 +1578,9 @@ static struct clk_gate *const gxbb_clk_gates[] = {
+ 	&gxbb_cts_amclk,
+ 	&gxbb_cts_mclk_i958,
+ 	&gxbb_32k_clk,
++	&gxbb_sd_emmc_a_clk0,
++	&gxbb_sd_emmc_b_clk0,
++	&gxbb_sd_emmc_c_clk0,
+ };
+ 
+ static struct clk_mux *const gxbb_clk_muxes[] = {
+@@ -1432,6 +1593,9 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
+ 	&gxbb_cts_mclk_i958_sel,
+ 	&gxbb_cts_i958,
+ 	&gxbb_32k_clk_sel,
++	&gxbb_sd_emmc_a_clk0_sel,
++	&gxbb_sd_emmc_b_clk0_sel,
++	&gxbb_sd_emmc_c_clk0_sel,
+ };
+ 
+ static struct clk_divider *const gxbb_clk_dividers[] = {
+@@ -1441,6 +1605,9 @@ static struct clk_divider *const gxbb_clk_dividers[] = {
+ 	&gxbb_mali_1_div,
+ 	&gxbb_cts_mclk_i958_div,
+ 	&gxbb_32k_clk_div,
++	&gxbb_sd_emmc_a_clk0_div,
++	&gxbb_sd_emmc_b_clk0_div,
++	&gxbb_sd_emmc_c_clk0_div,
+ };
+ 
+ static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index d63e77e8433d..17e5629777dc 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -287,8 +287,17 @@
+ #define CLKID_32K_CLK		  114
+ #define CLKID_32K_CLK_SEL	  115
+ #define CLKID_32K_CLK_DIV	  116
++#define CLKID_SD_EMMC_A_CLK0_SEL  117
++#define CLKID_SD_EMMC_A_CLK0_DIV  118
++#define CLKID_SD_EMMC_A_CLK0	  119
++#define CLKID_SD_EMMC_B_CLK0_SEL  120
++#define CLKID_SD_EMMC_B_CLK0_DIV  121
++#define CLKID_SD_EMMC_B_CLK0	  122
++#define CLKID_SD_EMMC_C_CLK0_SEL  123
++#define CLKID_SD_EMMC_C_CLK0_DIV  124
++#define CLKID_SD_EMMC_C_CLK0	  125
+ 
+-#define NR_CLKS			  117
++#define NR_CLKS			  126
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+-- 
+2.9.4
