@@ -1,55 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 11 Jul 2017 18:22:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v3 02/10] clk: add clk_core_set_phase_nolock function
-Message-ID: <20170712012212.GS22780@codeaurora.org>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
- <20170612194438.12298-3-jbrunet@baylibre.com>
+Return-Path: <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+To: Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: ti: check for null return in strrchr to avoid null dereferencing
+Date: Thu, 27 Jul 2017 00:56:27 +0100
+Message-Id: <20170726235627.9163-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170612194438.12298-3-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12, Jerome Brunet wrote:
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index f5c371532509..dceaf0ff23db 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1873,6 +1873,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
->  }
->  EXPORT_SYMBOL_GPL(clk_set_parent);
->  
-> +static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
-> +{
-> +	int ret = -EINVAL;
-> +
-> +	if (!core)
-> +		return 0;
+From: Colin Ian King <colin.king@canonical.com>
 
-Same comment about lockdep assertion applies here.
+strrchr can potentially return a null so the following strlen on the
+null pointer can cause a null dereference. Add a check to see if
+the string postfix is not null before calling strlen.
 
-> +
-> +	trace_clk_set_phase(core, degrees);
-> +
-> +	if (core->ops->set_phase)
-> +		ret = core->ops->set_phase(core->hw, degrees);
-> +
-> +	trace_clk_set_phase_complete(core, degrees);
-> +
-> +	return ret;
-> +}
-> +
->  /**
->   * clk_set_phase - adjust the phase shift of a clock signal
->   * @clk: clock signal source
+Detected by CoverityScan, CID#1452039 ("Dereference null return")
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/ti/adpll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+index 255cafb18336..bd7cb9a413c9 100644
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -222,7 +222,7 @@ static int ti_adpll_setup_clock(struct ti_adpll_data *d, struct clk *clock,
+ 
+ 	/* Separate con_id in format "pll040dcoclkldo" to fit MAX_CON_ID */
+ 	postfix = strrchr(name, '.');
+-	if (strlen(postfix) > 1) {
++	if (postfix && strlen(postfix) > 1) {
+ 		if (strlen(postfix) > ADPLL_MAX_CON_ID)
+ 			dev_warn(d->dev, "clock %s con_id lookup may fail\n",
+ 				 name);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
