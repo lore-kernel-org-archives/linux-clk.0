@@ -1,103 +1,161 @@
-Return-Path: <plaes@plaes.org>
-From: Priit Laes <plaes@plaes.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>,
-	Priit Laes <plaes@plaes.org>
-Subject: [PATCH v5 1/6] clk: sunxi-ng: div: Add support for fixed post-divider
-Date: Tue,  4 Jul 2017 23:04:56 +0300
-Message-Id: <805048a548031cafc890e6ea06ee773bdfb199d0.1499197129.git-series.plaes@plaes.org>
-In-Reply-To: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
-In-Reply-To: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
+Return-Path: <sergej@taudac.com>
+Subject: Re: [PATCH] clk: si5351: Apply PLL soft reset before enabling the
+ outputs
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, jacob@teenage.engineering,
+ Russell King <linux@armlinux.org.uk>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ Rabeeh Khoury <rabeeh@solid-run.com>
+References: <1501010261-7130-1-git-send-email-sergej@taudac.com>
+ <20170726011112.GK2146@codeaurora.org>
+ <5b9c2982-c376-ce39-e3aa-09c0feefd63c@gmail.com>
+From: Sergej Sawazki <sergej@taudac.com>
+Message-ID: <96cb94f5-1b00-70a4-4027-863b2f8e6ba4@taudac.com>
+Date: Thu, 27 Jul 2017 01:10:58 +0200
+MIME-Version: 1.0
+In-Reply-To: <5b9c2982-c376-ce39-e3aa-09c0feefd63c@gmail.com>
+Content-Type: multipart/alternative;
+ boundary="------------E5B38192A09962DF87A9438C"
 List-ID: <linux-clk.vger.kernel.org>
 
-SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-6 is fixed post-divider.
+This is a multi-part message in MIME format.
+--------------E5B38192A09962DF87A9438C
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
+Am 26.07.2017 um 06:43 schrieb Sebastian Hesselbarth:
+> On 26.07.2017 03:11, Stephen Boyd wrote:
+>> On 07/25, Sergej Sawazki wrote:
+>>> The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
+>>> before enabling the outputs [1]. This is required to get a deterministic
+>>> phase relationship between the output clocks.
+>>>
+>>> Without the PLL reset, the phase offset beween the clocks is unpredictable.
+>>>
+>>> References:
+>>> [1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
+>>>     Figure 12 ("I2C Programming Procedure")
+>>>
+>>> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>>> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+>>> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+>>> ---
+>> This is similar to commit 6dc669a22c77 (clk: si5351: Add PLL soft
+>> reset, 2015-11-20)? But I think that commit was causing some
+>> problem for Russell King and there was going to be a patch to
+>> change it but nothing has materialized on the list. Unless this
+>> is that patch?
+> Sergej, Stephen,
+>
+> resetting both PLLs in this driver will not happen as it does have
+> an influence on the other PLL and all clocks on it.
+>
+> I understand that some of the functions of the clk gen will not be
+> available with this driver but it is not the use case of this driver.
+>
+> So, NAK on this one.
+>
+> The patch you are talking about is still pending but I think I just
+> send it in a few days.
+>
+> Sebastian
+
+Sebastian, Stephen,
+
+On my setup, the Si5351 provides audio bit and frame clocks. Without
+resetting the PLLs before enabling the output clocks the phase offset
+between the clocks is unpredictable, the clocks are not aligned, this
+corrupts the audio stream.
+
+I agree, resetting both PLLs is not a good idea. Only one PLL should
+be resetted (the one that the output clocks are connected to).
+
+I am not changing the rates, I am only enabling/disabling the outputs
+and changing the clkin source. So resetting the PLL in set_rate() does
+not help me.
+
+Sergej
+
+ 
+
+--------------E5B38192A09962DF87A9438C
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body smarttemplateinserted="true" text="#000000" bgcolor="#FFFFFF">
+    <div class="moz-cite-prefix">Am 26.07.2017 um 06:43 schrieb
+      Sebastian Hesselbarth:<br>
+    </div>
+    <blockquote type="cite"
+      cite="mid:5b9c2982-c376-ce39-e3aa-09c0feefd63c@gmail.com">
+      <pre wrap="">On 26.07.2017 03:11, Stephen Boyd wrote:
+</pre>
+      <blockquote type="cite">
+        <pre wrap="">On 07/25, Sergej Sawazki wrote:
+</pre>
+        <blockquote type="cite">
+          <pre wrap="">The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
+before enabling the outputs [1]. This is required to get a deterministic
+phase relationship between the output clocks.
+
+Without the PLL reset, the phase offset beween the clocks is unpredictable.
+
+References:
+[1] <a class="moz-txt-link-freetext" href="https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf">https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf</a>
+    Figure 12 ("I2C Programming Procedure")
+
+Cc: Sebastian Hesselbarth <a class="moz-txt-link-rfc2396E" href="mailto:sebastian.hesselbarth@gmail.com">&lt;sebastian.hesselbarth@gmail.com&gt;</a>
+Cc: Rabeeh Khoury <a class="moz-txt-link-rfc2396E" href="mailto:rabeeh@solid-run.com">&lt;rabeeh@solid-run.com&gt;</a>
+Signed-off-by: Sergej Sawazki <a class="moz-txt-link-rfc2396E" href="mailto:sergej@taudac.com">&lt;sergej@taudac.com&gt;</a>
 ---
- drivers/clk/sunxi-ng/ccu_div.c | 18 ++++++++++++++++--
- drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
- 2 files changed, 18 insertions(+), 3 deletions(-)
+</pre>
+        </blockquote>
+        <pre wrap="">
+This is similar to commit 6dc669a22c77 (clk: si5351: Add PLL soft
+reset, 2015-11-20)? But I think that commit was causing some
+problem for Russell King and there was going to be a patch to
+change it but nothing has materialized on the list. Unless this
+is that patch?
+</pre>
+      </blockquote>
+      <pre wrap="">
+Sergej, Stephen,
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-index c0e5c10..054b12a 100644
---- a/drivers/clk/sunxi-ng/ccu_div.c
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -21,6 +21,9 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
- {
- 	struct ccu_div *cd = data;
- 
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate /= cd->fixed_post_div;
-+
- 	return divider_round_rate_parent(&cd->common.hw, parent,
- 					 rate, parent_rate,
- 					 cd->div.table, cd->div.width,
-@@ -62,8 +65,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
- 	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
- 						  parent_rate);
- 
--	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
--				   cd->div.flags);
-+	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-+				  cd->div.flags);
-+
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		val /= cd->fixed_post_div;
-+
-+	return val;
- }
- 
- static int ccu_div_determine_rate(struct clk_hw *hw,
-@@ -71,6 +79,9 @@ static int ccu_div_determine_rate(struct clk_hw *hw,
- {
- 	struct ccu_div *cd = hw_to_ccu_div(hw);
- 
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		req->rate *= cd->fixed_post_div;
-+
- 	return ccu_mux_helper_determine_rate(&cd->common, &cd->mux,
- 					     req, ccu_div_round_rate, cd);
- }
-@@ -89,6 +100,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
- 			      cd->div.flags);
- 
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		val /= cd->fixed_post_div;
-+
- 	spin_lock_irqsave(cd->common.lock, flags);
- 
- 	reg = readl(cd->common.base + cd->common.reg);
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 08d0744..f3a5028 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -86,9 +86,10 @@ struct ccu_div_internal {
- struct ccu_div {
- 	u32			enable;
- 
--	struct ccu_div_internal		div;
-+	struct ccu_div_internal	div;
- 	struct ccu_mux_internal	mux;
- 	struct ccu_common	common;
-+	unsigned int		fixed_post_div;
- };
- 
- #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
--- 
-git-series 0.9.1
+resetting both PLLs in this driver will not happen as it does have
+an influence on the other PLL and all clocks on it.
+
+I understand that some of the functions of the clk gen will not be
+available with this driver but it is not the use case of this driver.
+
+So, NAK on this one.
+
+The patch you are talking about is still pending but I think I just
+send it in a few days.
+
+Sebastian
+</pre>
+    </blockquote>
+    <pre>Sebastian, Stephen,
+
+<tt>On my setup, the Si5351 provides audio bit and frame clocks. W</tt><tt>ithout
+resetting the PLLs before enabling the output clocks</tt> the phase offset
+between the clocks is unpredictable, the clocks are not aligned, this
+corrupts the audio stream.
+
+I agree, resetting both PLLs is not a good idea. Only one PLL should
+be resetted (the one that the output clocks are connected to).
+
+I am not changing the rates, I am only enabling/disabling the outputs
+and changing the clkin source. So resetting the PLL in set_rate() does
+not help me.
+
+Sergej</pre>
+    <div id="smartTemplate4-template"> </div>
+  </body>
+</html>
+
+--------------E5B38192A09962DF87A9438C--
