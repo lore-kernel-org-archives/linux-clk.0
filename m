@@ -1,60 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:9351 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751129AbdGHGjz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Jul 2017 02:39:55 -0400
-Message-ID: <1499495984.16278.13.camel@mtkswgap22>
-Subject: Re: [bug report] clk: mediatek: add missing cpu mux causing
- Mediatek cpufreq can't work
-From: Sean Wang <sean.wang@mediatek.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-CC: <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <sboyd@codeaurora.org>
-Date: Sat, 8 Jul 2017 14:39:44 +0800
-In-Reply-To: <20170707095331.s7zlvk5hbqwgngld@mwanda>
-References: <20170707095331.s7zlvk5hbqwgngld@mwanda>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Wed, 26 Jul 2017 08:57:32 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>,
+	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+	perex@perex.cz, tiwai@suse.com, cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 0/9] add support for Sama5d2 audio PLLs and enable
+ ClassD
+Message-ID: <20170726065732.zphp7zaug4ypcqzj@piout.net>
+References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+ <194d2fc6-4c88-bc3b-1127-b4c0bdb7c6a1@microchip.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <194d2fc6-4c88-bc3b-1127-b4c0bdb7c6a1@microchip.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dan, 
+On 25/07/2017 at 17:44:19 +0200, Nicolas Ferre wrote:
+> On 25/07/2017 at 09:37, Quentin Schulz wrote:
+> > This patch series adds support for the audio PLLs and enables ClassD that
+> > can be found in ATMEL Sama5d2 SoC.
+> > 
+> > There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
+> > FRAC can output between 620 and 700MHz and only multiply the rate of its
+> > parent. The two audio PLLs then divide the FRAC rate to best match the
+> > asked rate.
+> > 
+> > I basically took an old patch series posted by Nicolas on December, 6th
+> > 2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
+> > sent on July, 15th 2015.
+> > 
+> > I also fixed the function used to compute the divisors, removed useless
+> > spinlocks and added a range to the audio frac PLL to stay within vendor's
+> > supported range. Clocks that are children of gclk (generated-clk) are now
+> > able to propagate rate to the audio PLL clocks when needed.
+> > 
+> > However, there are multiple children clocks that could technically
+> > change the rate of audio_pll (via gck). With the rate locking introduced
+> > in Jerome Brunet's patch series[5], the first consumer to enable the clock
+> > will be the one definitely setting the rate of the clock. Without the rate
+> > locking, the last consumer to set the rate will be able to mess with the
+> > rate.
+> > Since audio IPs are most likely to request the same rate, we enforce
+> > that the only clks able to modify gck rate are those of audio IPs.
+> > 
+> > To remain consistent, we deny other clocks to be children of audio_pll.
+> 
+> Quentin,
+> 
+> Thanks for having revived this series. Everything's okay on my side for
+> this v4. I think that my tag isn't missing from any patch of this
+> series. Now we surely need to define which path it must take...
+> 
 
-	thank you for reporting the defect, I will handle this int next days.
-	Sean
-
-On Fri, 2017-07-07 at 12:53 +0300, Dan Carpenter wrote:
-> Hello Sean Wang,
-> 
-> The patch 1e17de9049da: "clk: mediatek: add missing cpu mux causing
-> Mediatek cpufreq can't work" from May 5, 2017, leads to the following
-> static checker warning:
-> 
-> 	drivers/clk/mediatek/clk-cpumux.c:39 clk_cpumux_get_parent()
-> 	warn: signedness bug returning '(-22)'
-> 
-> drivers/clk/mediatek/clk-cpumux.c
->     27  static u8 clk_cpumux_get_parent(struct clk_hw *hw)
->     28  {
->     29          struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
->     30          int num_parents = clk_hw_get_num_parents(hw);
->     31          unsigned int val;
->     32  
->     33          regmap_read(mux->regmap, mux->reg, &val);
->     34  
->     35          val >>= mux->shift;
->     36          val &= mux->mask;
->     37  
->     38          if (val >= num_parents)
->     39                  return -EINVAL;
->                         ^^^^^^^^^^^^^^
-> Doesn't work for u8.
-> 
->     40  
->     41          return val;
->     42  }
-> 
-> regards,
-> dan carpenter
+I'll take the two dts patches now as the bindings have been acked.
+Everything else should probably go through the clk tree.
 
 
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
