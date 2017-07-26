@@ -1,103 +1,64 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 3 Jul 2017 16:01:40 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 25 Jul 2017 17:14:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- mark.rutland@arm.com, nicolas.ferre@microchip.com,
- alexandre.belloni@free-electrons.com, linux@armlinux.org.uk,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- Nicolas Ferre <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
- thomas.petazzoni@free-electrons.com
-Subject: Re: [PATCH 2/6] clk: at91: add audio pll clock driver
-Message-ID: <20170703160140.6959bad8@bbrezillon>
-In-Reply-To: <20170623090059.8371-3-quentin.schulz@free-electrons.com>
-References: <20170623090059.8371-1-quentin.schulz@free-electrons.com>
-	<20170623090059.8371-3-quentin.schulz@free-electrons.com>
+Cc: mark.rutland@arm.com, boris.brezillon@free-electrons.com,
+	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+	tiwai@suse.com, linux-clk@vger.kernel.org, lgirdwood@gmail.com,
+	Nicolas Ferre <nicolas.ferre@atmel.com>, robh+dt@kernel.org,
+	alexandre.belloni@free-electrons.com, broonie@kernel.org,
+	cyrille.pitchen@wedev4u.fr, linux@armlinux.org.uk, perex@perex.cz,
+	thomas.petazzoni@free-electrons.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/9] clk: at91: add audio pll clock drivers
+Message-ID: <20170726001452.GD2146@codeaurora.org>
+References: <20170713074927.10882-1-quentin.schulz@free-electrons.com>
+ <20170713074927.10882-4-quentin.schulz@free-electrons.com>
+ <20170721222029.GO19878@codeaurora.org>
+ <5f6fd25b-8f99-8dec-39b6-0e7677675c24@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5f6fd25b-8f99-8dec-39b6-0e7677675c24@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 23 Jun 2017 11:00:55 +0200
-Quentin Schulz <quentin.schulz@free-electrons.com> wrote:
-
-> From: Nicolas Ferre <nicolas.ferre@atmel.com>
+On 07/25, Quentin Schulz wrote:
+> Hi Stephen,
 > 
-> This new clock driver set allows to have a fractional divided clock that
-> would generate a precise clock particularly suitable for audio
-> applications.
+> I forgot to answer one of your questions:
 > 
-> The main audio pll clock has two children clocks: one that is connected
-> to the PMC, the other that can directly drive a pad. As these two routes
-> have different enable bits and different dividers and divider formula,
-> they are handled by two different drivers. Each of them could modify the
-> rate of the main audio pll parent.
-> The main audio pll clock can output 620MHz to 700MHz.
+> On 22/07/2017 00:20, Stephen Boyd wrote:
+> > On 07/13, Quentin Schulz wrote:
+> >> diff --git a/drivers/clk/at91/clk-audio-pll-pad.c b/drivers/clk/at91/clk-audio-pll-pad.c
+> >> new file mode 100644
+> >> index 000000000000..10dd6d625696
+> >> --- /dev/null
+> >> +++ b/drivers/clk/at91/clk-audio-pll-pad.c
+> [...]
+> >> +}
+> >> +
+> >> +CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_pad_setup,
+> >> +	       "atmel,sama5d2-clk-audio-pll-pad",
+> >> +	       of_sama5d2_clk_audio_pll_pad_setup);
+> > 
+> > We can't have a device driver for this?
+> > 
 > 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> ---
->  .../devicetree/bindings/clock/at91-clock.txt       |  10 +
-
-As already mentioned by Alex, DT bindings should go in a separate patch
-
->  arch/arm/mach-at91/Kconfig                         |   4 +
->  drivers/clk/at91/Makefile                          |   2 +
->  drivers/clk/at91/clk-audio-pll-pad.c               | 204 ++++++++++++++++++
->  drivers/clk/at91/clk-audio-pll-pmc.c               | 175 +++++++++++++++
->  drivers/clk/at91/clk-audio-pll.c                   | 237 +++++++++++++++++++++
->  include/linux/clk/at91_pmc.h                       |  25 +++
->  sound/soc/atmel/atmel-classd.c                     |  20 +-
-
-Same goes for the atmel-classd changes.
-
->  8 files changed, 658 insertions(+), 19 deletions(-)
->  create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
->  create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
->  create mode 100644 drivers/clk/at91/clk-audio-pll.c
+> I tried to work on that but the device does not get probed because the
+> parent node (pmc) does not register its children. We would need to
+> modify the DT to add such a support and break DT compat.
+> 
+> As we are speaking about getting rid of clk subnodes (c.f. Rob and
+> Alexandre answers on the first version of this patch series:
+> https://patchwork.kernel.org/patch/9805991/) in favor of a clock
+> controller node that would break the DT compat as well, IMHO it would be
+> best to break the DT compat as few times as possible and thus, rework
+> this driver once we switch to a clock controller node.
 > 
 
-[...]
+Ok. That's fine. Is there work in progress to make a new binding
+here?
 
-> diff --git a/drivers/clk/at91/clk-audio-pll-pmc.c b/drivers/clk/at91/clk-audio-pll-pmc.c
-> new file mode 100644
-> index 000000000000..208d0b59eb4e
-> --- /dev/null
-> +++ b/drivers/clk/at91/clk-audio-pll-pmc.c
-> @@ -0,0 +1,175 @@
-> +/*
-> + *  Copyright (C) 2016 Atmel Corporation,
-> + *                     Nicolas Ferre <nicolas.ferre@atmel.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/clk/at91_pmc.h>
-> +#include <linux/of.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "pmc.h"
-> +
-> +/*
-> + * DOC: PMC output for fractional PLL clock for audio
-> + *
-> + * Traits of this clock:
-> + * enable - clk_enable writes qdpmc, and enables PMC output
-> + * rate - rate is adjustable.
-> + *        clk->rate = parent->rate / (qdpmc + 1)
-> + * parent - fixed parent.  No clk_set_parent support
-> + */
-> +
-> +#define AUDIO_PLL_FOUT_MIN		620000000
-> +#define AUDIO_PLL_FOUT_MAX		700000000
-> +#define AUDIO_PLL_REFERENCE_FOUT	660000000
-
-These 3 macros are not unused, you can drop them.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
