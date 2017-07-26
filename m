@@ -1,161 +1,82 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Dong Aisheng <dongas86@gmail.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"Anson Huang" <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: RE: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
- support
-Date: Mon, 3 Jul 2017 03:46:47 +0000
-Message-ID: <AM3PR04MB306CF3A71C1A9ED0A2427BF80D60@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1494856763-6543-1-git-send-email-aisheng.dong@nxp.com>
- <1494856763-6543-2-git-send-email-aisheng.dong@nxp.com>
- <20170620014512.GL4493@codeaurora.org>
- <20170620090815.GA6805@b29396-OptiPlex-7040>
- <20170701005542.GT22780@codeaurora.org>
-In-Reply-To: <20170701005542.GT22780@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH] clk: si5351: Apply PLL soft reset before enabling the
+ outputs
+To: Stephen Boyd <sboyd@codeaurora.org>, Sergej Sawazki <sergej@taudac.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, ce3a@gmx.de,
+ Rabeeh Khoury <rabeeh@solid-run.com>, Russell King <linux@armlinux.org.uk>
+References: <1501010261-7130-1-git-send-email-sergej@taudac.com>
+ <20170726011112.GK2146@codeaurora.org>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <5b9c2982-c376-ce39-e3aa-09c0feefd63c@gmail.com>
+Date: Wed, 26 Jul 2017 06:43:05 +0200
+In-Reply-To: <20170726011112.GK2146@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
-> Sent: Saturday, July 01, 2017 8:56 AM
-> To: Dong Aisheng
-> Cc: A.s. Dong; linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
-> shawnguo@kernel.org; Anson Huang; Jacky Bai
-> Subject: Re: [PATCH 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
-> support
->=20
-> On 06/20, Dong Aisheng wrote:
-> > Hi Stephen,
-> >
-> > On Mon, Jun 19, 2017 at 06:45:12PM -0700, Stephen Boyd wrote:
-> > > On 05/15, Dong Aisheng wrote:
-> > > > ---
-> > > >  drivers/clk/clk-divider.c    | 2 ++
-> > > >  include/linux/clk-provider.h | 4 ++++
-> > > >  2 files changed, 6 insertions(+)
-> > > >
-> > > > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > > > index 96386ff..f78ba7a 100644
-> > > > --- a/drivers/clk/clk-divider.c
-> > > > +++ b/drivers/clk/clk-divider.c
-> > > > @@ -125,6 +125,8 @@ unsigned long divider_recalc_rate(struct
-> > > > clk_hw *hw, unsigned long parent_rate,
-> > > >
-> > > >  	div =3D _get_div(table, val, flags, divider->width);
-> > > >  	if (!div) {
-> > > > +		if (flags & CLK_DIVIDER_ZERO_GATE)
-> > > > +			return 0;
-> > > >  		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
-> > >
-> > > Why not use the CLK_DIVIDER_ALLOW_ZERO flag? A clk being off doesn't
-> > > mean the rate is 0. The divider is just disabled, so we would
-> > > consider the rate as whatever the parent is, which is what this code
-> > > does before this patch. Similarly, we don't do anything about gate
-> > > clocks and return a rate of 0 when they're disabled.
-> > >
-> >
-> > The semantic of CLK_DIVIDER_ALLOW_ZERO seems a bit different.
-> >
-> > See below definition:
-> > * CLK_DIVIDER_ALLOW_ZERO - Allow zero divisors.  For dividers which
-> have
-> > *      CLK_DIVIDER_ONE_BASED set, it is possible to end up with a zero
-> divisor.
-> > *      Some hardware implementations gracefully handle this case and
-> allow a
-> > *      zero divisor by not modifying their input clock
-> > *      (divide by one / bypass).
-> >
-> > zero divisor is simply as divide by one or bypass which is supported
-> > by hardware.
-> >
-> > But it's not true for this hardware.
-> >
-> > If we consider the rate as whatever the parent is if divider is zero,
-> > we may got an issue like below:
-> > e.g.
-> > Assuming spll_bus_clk divider is 0x0 and it may be enabled by users
-> > directly without setting a rate first.
-> >
-> > Then the clock tree looks like:
-> > ...
-> > spll_pfd0                    1            1   500210526          0 0
-> >   spll_pfd_sel              1            1   500210526          0 0
-> >     spll_sel               1            1   500210526          0 0
-> >       spll_bus_clk           1            1   500210526          0 0
-> >
-> > But the spll_bus_clk clock rate actually is wrong and it's even not
-> > enabled, not like CLK_DIVIDER_ALLOW_ZERO which zero divider means
-> simply bypass.
-> >
-> > So for this case, we probably can't simply assume zero divider rate as
-> > its parent, it is actually set to 0 in hw, although it's something
-> > like gate, but a bit different from gate as the normal gate does not
-> > affect divider where you can keep the rate.
-> >
-> > How would you suggest for this?
-> >
->=20
-> It seems that set_rate() and enable/disable are conflated here.
-> From what you describe, it sounds like the clk is considered off when the
-> divider value is zero, and it's on when the divider value is non-zero.
->=20
-> I'd suggest you make it so this clk supports enable/disable and set_rate
-> with the same register. Something like, set rate when the clk is disabled
-> will cache the rate request and only when the clk is enabled will the
-> driver actually program the hardware to have the requested divider value.
-> Similarly, when the clk is disabled we'll write a 0 there, but when the
-> clk is enabled we'll restore whatever rate (divider) was chosen last.
->=20
-> It does mean that recalc rate will be sort of odd, because when the clk
-> is off it will return 0, and when the clk is on it will return the right
-> rate. So to make things work, we'll need to return the cached rate in
-> recalc rate when the clk is off and read the hardware when the clk is on.
-> Probably an if register =3D=3D
-> 0 then lookup in cache, otherwise do normal division.
->=20
+On 26.07.2017 03:11, Stephen Boyd wrote:
+> On 07/25, Sergej Sawazki wrote:
+>> The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
+>> before enabling the outputs [1]. This is required to get a deterministic
+>> phase relationship between the output clocks.
+>>
+>> Without the PLL reset, the phase offset beween the clocks is unpredictable.
+>>
+>> References:
+>> [1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
+>>     Figure 12 ("I2C Programming Procedure")
+>>
+>> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+>> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+>> ---
+> 
+> This is similar to commit 6dc669a22c77 (clk: si5351: Add PLL soft
+> reset, 2015-11-20)? But I think that commit was causing some
+> problem for Russell King and there was going to be a patch to
+> change it but nothing has materialized on the list. Unless this
+> is that patch?
 
-Well, good suggestions to me.
-It makes the implementation of this clock type more comprehensive.
+Sergej, Stephen,
 
-It seems we still need keep CLK_DIVIDER_ZERO_GATE to distinguish with other=
-s.
+resetting both PLLs in this driver will not happen as it does have
+an influence on the other PLL and all clocks on it.
 
-The change for recacle_rate may looks like:
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index f78ba7a..7364ac4 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -125,8 +125,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, un=
-signed long parent_rate,
-=20
-        div =3D _get_div(table, val, flags, divider->width);
-        if (!div) {
-+               if ((flags & CLK_DIVIDER_ZERO_GATE) && clk_hw_is_enabled(hw=
-))
-+                       return divider->cached_rate;
-+
-                WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
-                        "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not se=
-t\n",
-                        clk_hw_get_name(hw));
+I understand that some of the functions of the clk gen will not be
+available with this driver but it is not the use case of this driver.
 
-And for the initial disabled state (div =3D 0), the calc_rate will still re=
-turn
-0 rate as there's still no set_rate happened.
+So, NAK on this one.
 
-If any issue, please let me know.
+The patch you are talking about is still pending but I think I just
+send it in a few days.
 
-Regards
-Dong Aisheng
+Sebastian
 
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
-> Linux Foundation Collaborative Project
+> Does the other reset in this driver need to be removed? At the
+> least, it may be a good idea to combine the two places where
+> CLK_POWERDOWN is cleared to also have this reset part.
+> 
+>>  drivers/clk/clk-si5351.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+>> index 255d0fe..6cca425 100644
+>> --- a/drivers/clk/clk-si5351.c
+>> +++ b/drivers/clk/clk-si5351.c
+>> @@ -905,6 +905,15 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
+>>  
+>>  	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
+>>  			SI5351_CLK_POWERDOWN, 0);
+>> +
+>> +	/*
+>> +	 * Reset the PLLs before enabling the outputs to get a deterministic
+>> +	 * phase relationship between the output clocks. Otherwise, the phase
+>> +	 * offset beween the clocks is unpredictable.
+>> +	 */
+>> +	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
+>> +			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
+>> +
+>>  	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
+>>  			(1 << hwdata->num), 0);
+>>  	return 0;
+> 
