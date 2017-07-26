@@ -1,114 +1,70 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 25 Jul 2017 18:11:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <sergej@taudac.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, ce3a@gmx.de,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rabeeh Khoury <rabeeh@solid-run.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH] clk: si5351: Apply PLL soft reset before enabling the
+ outputs
+Message-ID: <20170726011112.GK2146@codeaurora.org>
+References: <1501010261-7130-1-git-send-email-sergej@taudac.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64gjLSdb83fR9OCZthtgMQz-UkmMhT9OmJkq3Xp6mJ-aA@mail.gmail.com>
-References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-6-wens@csie.org>
- <CAPDyKFoLTXJ10EJRfPPggJBg8bh9BpdwTnew-WL0G7LpnO43Pg@mail.gmail.com> <CAGb2v64gjLSdb83fR9OCZthtgMQz-UkmMhT9OmJkq3Xp6mJ-aA@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 14 Jul 2017 11:57:35 +0200
-Message-ID: <CAPDyKFqe1hFmfWziu04fW=cQa0EGvT11YzuJ0f-eHy6+u7vutQ@mail.gmail.com>
-Subject: Re: [PATCH 05/11] mmc: sunxi: Support controllers that can use both
- old and new timings
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1501010261-7130-1-git-send-email-sergej@taudac.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14 July 2017 at 11:40, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Fri, Jul 14, 2017 at 5:26 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 14 July 2017 at 08:42, Chen-Yu Tsai <wens@csie.org> wrote:
->>> On the SoCs that introduced the new timing mode for MMC controllers,
->>> both the old (where the clock delays are set in the CCU) and new
->>> (where the clock delays are set in the MMC controller) timing modes
->>> are available, and we have to support them both. However there are
->>> two bits that control which mode is active. One is in the CCU, the
->>> other is in the MMC controller. The settings on both sides must be
->>> the same, or nothing will work.
->>>
->>> The CCU's get/set_phase callbacks return -ENOTSUPP when the new
->>> timing mode is active. This provides a way to know which mode is
->>> active on that side, and we can set the bit on the MMC controller
->>> side accordingly.
->
-> Argh... I forgot to update the commit log... :(
->
->>>
->>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>> ---
->>>  drivers/mmc/host/sunxi-mmc.c | 34 ++++++++++++++++++++++++++++++----
->>>  1 file changed, 30 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
->>> index 0fb4e4c119e1..56e45c65b52d 100644
->>> --- a/drivers/mmc/host/sunxi-mmc.c
->>> +++ b/drivers/mmc/host/sunxi-mmc.c
->>> @@ -22,6 +22,7 @@
->>>  #include <linux/err.h>
->>>
->>>  #include <linux/clk.h>
->>> +#include <linux/clk/sunxi-ng.h>
->>
->> I don't like this. This looks like an SoC specific hack.
->>
->>>  #include <linux/gpio.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/spinlock.h>
->>> @@ -259,7 +260,7 @@ struct sunxi_mmc_cfg {
->>>         /* Does DATA0 needs to be masked while the clock is updated */
->>>         bool mask_data0;
->>>
->>> -       bool needs_new_timings;
->>> +       bool has_new_timings;
->>>  };
->>>
->>>  struct sunxi_mmc_host {
->>> @@ -293,6 +294,9 @@ struct sunxi_mmc_host {
->>>
->>>         /* vqmmc */
->>>         bool            vqmmc_enabled;
->>> +
->>> +       /* timings */
->>> +       bool            use_new_timings;
->>>  };
->>>
->>>  static int sunxi_mmc_reset_host(struct sunxi_mmc_host *host)
->>> @@ -714,7 +718,7 @@ static int sunxi_mmc_clk_set_phase(struct sunxi_mmc_host *host,
->>>  {
->>>         int index;
->>>
->>> -       if (!host->cfg->clk_delays)
->>> +       if (host->use_new_timings)
->>>                 return 0;
->>>
->>>         /* determine delays */
->>> @@ -765,6 +769,15 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
->>>             ios->bus_width == MMC_BUS_WIDTH_8)
->>>                 clock <<= 1;
->>>
->>> +       if (host->use_new_timings) {
->>> +               ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
->>
->> Can't this be solved through some other generic API/interface?
->
-> The old discussion is here: https://lkml.org/lkml/2017/5/5/77
->
-> It is possible to piggy back on existing API, but as Maxime mentioned
-> back in the discussion, it is confusing.
->
-> IIRC Mike said (via Maxime) an SoC specific call was the easy way
-> to handle this. I don't think there's anything generic about this.
-> Even if you could have a _set_mode callback for the clks, the modes
-> would be SoC specific anyway.
+On 07/25, Sergej Sawazki wrote:
+> The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
+> before enabling the outputs [1]. This is required to get a deterministic
+> phase relationship between the output clocks.
+> 
+> Without the PLL reset, the phase offset beween the clocks is unpredictable.
+> 
+> References:
+> [1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
+>     Figure 12 ("I2C Programming Procedure")
+> 
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+> ---
 
-Right. But it would benefit that we can keep drivers generic, as they
-are using generic APIs/interfaces. I prefer that.
+This is similar to commit 6dc669a22c77 (clk: si5351: Add PLL soft
+reset, 2015-11-20)? But I think that commit was causing some
+problem for Russell King and there was going to be a patch to
+change it but nothing has materialized on the list. Unless this
+is that patch?
 
-Anyway, let me try to dig up the earlier discussion.
+Does the other reset in this driver need to be removed? At the
+least, it may be a good idea to combine the two places where
+CLK_POWERDOWN is cleared to also have this reset part.
 
-Kind regards
-Uffe
+>  drivers/clk/clk-si5351.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index 255d0fe..6cca425 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -905,6 +905,15 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
+>  
+>  	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
+>  			SI5351_CLK_POWERDOWN, 0);
+> +
+> +	/*
+> +	 * Reset the PLLs before enabling the outputs to get a deterministic
+> +	 * phase relationship between the output clocks. Otherwise, the phase
+> +	 * offset beween the clocks is unpredictable.
+> +	 */
+> +	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
+> +			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
+> +
+>  	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
+>  			(1 << hwdata->num), 0);
+>  	return 0;
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
