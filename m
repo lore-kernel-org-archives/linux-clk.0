@@ -1,82 +1,44 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:55968 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751633AbdG0WrO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Jul 2017 18:47:14 -0400
-Date: Thu, 27 Jul 2017 15:47:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v2 2/5] clk: Add clk_hw_get_clk() helper API to be used
- by clk providers
-Message-ID: <20170727224713.GP2146@codeaurora.org>
-References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
- <1500526099-9935-3-git-send-email-rnayak@codeaurora.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:39254 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbdGZHPH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2017 03:15:07 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500526099-9935-3-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <20170723102749.17323-6-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-6-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 26 Jul 2017 15:14:43 +0800
+Message-ID: <CAGb2v66jK+iAbKVsv6=4tb0470KBdwU+AHjWDnWwKKTY+U+W6g@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 05/10] clk: sunxi-ng: h3: gate then ungate
+ PLL CPU clk after rate change
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/20, Rajendra Nayak wrote:
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index fc58c52..c9bbfb3 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -186,6 +186,45 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_get_name);
->  
-> +struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *dev_id,
-> +			   const char *con_id)
-> +{
-> +	return __clk_create_clk(hw, dev_id, con_id);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_get_clk);
-> +
-> +void clk_hw_put_clk(struct clk *clk)
-> +{
-> +	__clk_free_clk(clk);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_put_clk);
+On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+>
+> This patch utilizes the new PLL clk notifier to gate then ungate the
+> PLL CPU clock after rate changes. This should prevent any system hangs
+> resulting from cpufreq changes to the clk.
+>
+> Reported-by: Ondrej Jirman <megous@megous.com>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Tested-by: Icenowy Zheng <icenowy@aosc.io>
 
-Isn't this just clk_put()? Not sure why we need this API.
+This is missing
 
-> +
-> +static void devm_clk_hw_put(struct device *dev, void *res)
-> +{
-> +	clk_hw_put_clk(*(struct clk **)res);
-> +}
+Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
 
-Same comment.
-
-> +
-> +struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
-> +				const char *con_id)
-> +{
-> +	struct clk **ptr, *clk;
-> +
-> +	ptr = devres_alloc(devm_clk_hw_put, sizeof(*ptr), GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	clk = clk_hw_get_clk(hw, dev_name(dev), con_id);
-> +	if (!IS_ERR(clk)) {
-> +		*ptr = clk;
-> +		devres_add(dev, ptr);
-> +	} else {
-> +		devres_free(ptr);
-> +	}
-> +
-> +	return clk;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_clk_hw_get_clk);
-
-Hm.. ok. Wasn't expecting us to need this API, but I guess it is
-needed.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ChenYu
