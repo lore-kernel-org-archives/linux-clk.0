@@ -1,44 +1,88 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Jul 2017 16:10:20 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 26 Jul 2017 21:45:22 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V3 3/8] clk: vc5: Do not warn about disabled output
- buffer input muxes
-Message-ID: <20170712231020.GI22780@codeaurora.org>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
- <20170709132814.2339-3-marek.vasut+renesas@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC
+ controllers
+Message-ID: <20170726194522.7d64f7c2danrknfi@flea>
+References: <20170724135905.28855-1-wens@csie.org>
+ <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170709132814.2339-3-marek.vasut+renesas@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="t4p4sc5v3likqkxq"
+In-Reply-To: <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/09, Marek Vasut wrote:
-> The output buffer input mux can be configured in either of three
-> states -- disabled, input from FOD, input from previous output.
-> If the output buffer input mux is set to disabled, the code in
-> vc5_clk_out_get_parent() would consider this an invalid setting
-> and warn about it, which is not necessarily the case.
-> 
-> In case the output buffer input mux is disabled, default to input
-> from FOD to have some parent and don't print the warning.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> on Salvator-XS with the display LVDS output.
-> ---
 
-Applied to clk-next
+--t4p4sc5v3likqkxq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Wed, Jul 26, 2017 at 10:09:41PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> > Hi everyone,
+> >
+> > This is v3 of my MMC controller support series.
+> >
+>=20
+> [...]
+>=20
+> > Chen-Yu Tsai (10):
+> >   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+> >   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
+> >     switching
+> >   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
+> >   mmc: sunxi: Support controllers that can use both old and new timings
+> >   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
+> >   mmc: sunxi: Add support for A83T eMMC (MMC2)
+>=20
+> So this series seems to be ready for inclusion, unless Ulf has further
+> concerns about the clk usage.
+>=20
+> The first mmc patch have build time dependencies on the first clk patch.
+> Shall we put the clk patch on a separate immutable branch for both trees
+> to pull? Or we could just merge everything through the mmc tree? I don't
+> think we'll touch this part of the sunxi-ng clk driver for the remainder
+> of this cycle.
+
+I guess the easiest would be for it to go through Ulf tree, unless he
+says otherwise of course :)
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--t4p4sc5v3likqkxq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZePFSAAoJEBx+YmzsjxAgJJEQAMAPkqxIgWt5zhdvRBodODdm
+r8UKPzetUTraLKvZ1U8hzOQ5jMlEAC8hjWO+RNcwE6xp9/uQaqBXrMLiZFEAe8HQ
+6+rwxwtEjO9y9DrYC7EWS1pv7NoewULPIjhXBMHcb7EhpSo+Yy9UHF4iy2/EzJcl
+AWAP1nVPGlyzcCUbG1Ace2WH+1PWjpkz9HXJHxVcRqJtOx7TkQrhZFKwXCMDmyYJ
+K8P+wexUpDF7eAlZ5ZMkwmzmIA6qYRSTl5kM3y0iHIv1QI2ypMXAPupw9UondAE+
+KAJzWR0fzq9hh+bf63onGA4z5xc1h8ULDAPaOUsEIvhlUsWNcNP8FP3ZRyP/HflC
+MvRjUgFUmtCaREjXHUzSivkPoATm4tWp4nxX8tKzhANJFBwfRf0MsneMaOgKuHgl
+de7CTGPEDmqumyZU8n7d/lyrmpESFFadF1E4BSDnMgxnLAWsjQvt9C2KYcRi8Mbv
+wLT5c7ezeaoyE0ubsLJrqHTx/Z3VbrCK4U2aXKLLk2OjKbmJyr9xAoTmOl+rPCQx
+eDLxzk03P84VqXpprSDtaPlEowyhEncdpKzSIiA7lFEedT0No0pJ90hOXWQBW2zC
+udU5tzD9yDlTD/jnF+X67T8ixNYv0jWWId/7UfeRuEqYzVVy9b4p1PpAdnKBbepj
+C6VA8IuvJreF7bkpdIO9
+=VcM4
+-----END PGP SIGNATURE-----
+
+--t4p4sc5v3likqkxq--
