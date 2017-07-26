@@ -1,141 +1,77 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH 10/14] clk: tegra: Re-factor T210 PLLX registration
-Date: Tue, 25 Jul 2017 13:34:11 +0300
-Message-ID: <1500978856-5981-11-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1501089749.2401.31.camel@baylibre.com>
+Subject: Re: [PATCH v3 07/10] clk: rollback set_rate_range changes on failure
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Peter De Schrijver
+	 <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
+ Russell King <linux@armlinux.org.uk>,  Linus Walleij
+ <linus.walleij@linaro.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>
+Date: Wed, 26 Jul 2017 19:22:29 +0200
+In-Reply-To: <20170712020233.GV22780@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+	 <20170612194438.12298-8-jbrunet@baylibre.com>
+	 <20170712020233.GV22780@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+On Tue, 2017-07-11 at 19:02 -0700, Stephen Boyd wrote:
+> On 06/12, Jerome Brunet wrote:
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
+> There should be some commit text here describing the problem.
+> Also a Fixes: tag and please put this earlier in the series.
 
-Tegra210 PLLX uses the same sequences than then PLLC instances. So there
-is no need to have a special registration function and ops struct for it.
-Simplify the code by changing all references to the Tegra210 PLLX
-registration function to the Tegra210 PLLC registration function and
-avoid duplicate functionality.
+Fixes added but as explained, I dropped this patch after thinking about Peter's
+observations.
 
-Based on work by Alex Frid <afrid@nvidia.com>
+The new candidate patch would be [0]. I suggest we discuss this out of the clock
+ protect thread to avoid mixing issues.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c              | 40 --------------------------------
- drivers/clk/tegra/clk-tegra-super-gen4.c | 11 +++++++--
- drivers/clk/tegra/clk-tegra210.c         |  2 +-
- drivers/clk/tegra/clk.h                  |  6 -----
- 4 files changed, 10 insertions(+), 49 deletions(-)
+[0]: https://github.com/jeromebrunet/linux/commit/235e477f346a9e8d115dda257f9f73
+834151bd7f
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 695ccb4..02f34e6 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2610,46 +2610,6 @@ struct clk *tegra_clk_register_pllc_tegra210(const char *name,
- 	return clk;
- }
- 
--struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
--			const char *parent_name, void __iomem *clk_base,
--			void __iomem *pmc, unsigned long flags,
--			struct tegra_clk_pll_params *pll_params,
--			spinlock_t *lock)
--{
--	struct tegra_clk_pll *pll;
--	struct clk *clk, *parent;
--	unsigned long parent_rate;
--
--	parent = __clk_lookup(parent_name);
--	if (!parent) {
--		WARN(1, "parent clk %s of %s must be registered first\n",
--			name, parent_name);
--		return ERR_PTR(-EINVAL);
--	}
--
--	if (!pll_params->pdiv_tohw)
--		return ERR_PTR(-EINVAL);
--
--	parent_rate = clk_get_rate(parent);
--
--	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
--
--	if (pll_params->adjust_vco)
--		pll_params->vco_min = pll_params->adjust_vco(pll_params,
--							     parent_rate);
--
--	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
--	if (IS_ERR(pll))
--		return ERR_CAST(pll);
--
--	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
--				      &tegra_clk_pll_ops);
--	if (IS_ERR(clk))
--		kfree(pll);
--
--	return clk;
--}
--
- struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 				const char *parent_name, void __iomem *clk_base,
- 				unsigned long flags,
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-index 474de0f..4f6fd30 100644
---- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -232,8 +232,15 @@ static void __init tegra_super_clk_init(void __iomem *clk_base,
- 	if (!dt_clk)
- 		return;
- 
--	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
--			pmc_base, CLK_IGNORE_UNUSED, params, NULL);
-+#if defined(CONFIG_ARCH_TEGRA_210_SOC)
-+	if (gen_info->gen == gen5)
-+		clk = tegra_clk_register_pllc_tegra210("pll_x", "pll_ref",
-+			clk_base, pmc_base, CLK_IGNORE_UNUSED, params, NULL);
-+	else
-+#endif
-+		clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
-+				pmc_base, CLK_IGNORE_UNUSED, params, NULL);
-+
- 	*dt_clk = clk;
- 
- 	/* PLLX_OUT0 */
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 1e470ca..4fa7ab3 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2701,7 +2701,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 	struct clk *clk;
- 
- 	/* PLLC */
--	clk = tegra_clk_register_pllxc_tegra210("pll_c", "pll_ref", clk_base,
-+	clk = tegra_clk_register_pllc_tegra210("pll_c", "pll_ref", clk_base,
- 			pmc, 0, &pll_c_params, NULL);
- 	if (!WARN_ON(IS_ERR(clk)))
- 		clk_register_clkdev(clk, "pll_c", NULL);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 945b070..872f118 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -362,12 +362,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 			    struct tegra_clk_pll_params *pll_params,
- 			    spinlock_t *lock);
- 
--struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
--			const char *parent_name, void __iomem *clk_base,
--			void __iomem *pmc, unsigned long flags,
--			struct tegra_clk_pll_params *pll_params,
--			spinlock_t *lock);
--
- struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 			   void __iomem *clk_base, void __iomem *pmc,
- 			   unsigned long flags,
--- 
-1.9.1
+
+> 
+> > ---
+> >  drivers/clk/clk.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index d91236e70a04..253f1d3f0971 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1864,6 +1864,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate_protect);
+> >  int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long
+> > max)
+> >  {
+> >  	int ret = 0;
+> > +	unsigned int old_min, old_max;
+> >  
+> >  	if (!clk)
+> >  		return 0;
+> > @@ -1881,9 +1882,16 @@ int clk_set_rate_range(struct clk *clk, unsigned long
+> > min, unsigned long max)
+> >  		clk_core_rate_unprotect(clk->core);
+> >  
+> >  	if (min != clk->min_rate || max != clk->max_rate) {
+> > +		old_min = clk->min_rate;
+> > +		old_max = clk->max_rate;
+> >  		clk->min_rate = min;
+> >  		clk->max_rate = max;
+> >  		ret = clk_core_set_rate_nolock(clk->core, clk->core-
+> > >req_rate);
+> > +		if (ret) {
+> > +			/* undo changes */
+> > +			clk->min_rate = old_min;
+> > +			clk->max_rate = old_max;
+> > +		}
+> >  	}
+> >  
+> >  	if (clk->protect_count)
+> 
+> 
