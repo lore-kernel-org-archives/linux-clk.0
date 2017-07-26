@@ -1,103 +1,102 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Jul 2017 16:08:32 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH] clk: gemini: Fix reset regression
-Message-ID: <20170712230832.GF22780@codeaurora.org>
-References: <20170711122601.17745-1-linus.walleij@linaro.org>
- <1499874682.6374.57.camel@pengutronix.de>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "A.s. Dong" <aisheng.dong@nxp.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"dongas86@gmail.com" <dongas86@gmail.com>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, Anson Huang <anson.huang@nxp.com>, Jacky Bai
+	<ping.bai@nxp.com>
+Subject: RE: [PATCH V2 00/10] clk: add imx7ulp clk support
+Date: Wed, 26 Jul 2017 02:57:32 +0000
+Message-ID: <AM3PR04MB306D2D23526F1737DA4249B80B90@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1499874682.6374.57.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/12, Philipp Zabel wrote:
-> Hi Linus,
-> 
-> On Tue, 2017-07-11 at 14:26 +0200, Linus Walleij wrote:
-> > commit e2860e1f62f2 ("serial: 8250_of: Add reset support")
-> > introduced reset support for the 8250_of driver.
-> > 
-> > However it unconditionally uses the assert/deassert pair to
-> > deassert reset on the device at probe and assert it at
-> > remove. This does not work with systems that have a
-> > self-deasserting reset controller, such as Gemini, that
-> > recently added a reset controller.
-> > 
-> > As a result, the console will not probe on the Gemini with
-> > this message:
-> > 
-> > Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
-> > of_serial: probe of 42000000.serial failed with error -524
-> > 
-> > This (-ENOTSUPP) is the error code returned by the
-> > deassert() operation on self-deasserting reset controllers.
-> > 
-> > To work around this, implement dummy .assert() and
-> > .deassert() operations in the Gemini combined clock and
-> > reset controller. This fixes the issue on this system.
-> >
-> > Cc: Joel Stanley <joel@jms.id.au>
-> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: linux-serial@vger.kernel.org
-> > Fixes: e2860e1f62f2 ("serial: 8250_of: Add reset support")
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> > This is the solution suggested by Philipp, I think.
-> 
-> It is what I suggested, yes, but now that I see it before me, I don't
-> think this is the proper solution either. Reason below:
-> 
-> > ---
-> >  drivers/clk/clk-gemini.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
-> > index c391a49aaaff..b4cf2f699a21 100644
-> > --- a/drivers/clk/clk-gemini.c
-> > +++ b/drivers/clk/clk-gemini.c
-> > @@ -237,6 +237,18 @@ static int gemini_reset(struct reset_controller_dev *rcdev,
-> >  			    BIT(GEMINI_RESET_CPU1) | BIT(id));
-> >  }
-> >  
-> > +static int gemini_reset_assert(struct reset_controller_dev *rcdev,
-> > +			       unsigned long id)
-> > +{
-> > +	return 0;
-> 
-> This is valid behaviour for shared reset controls, as sharing users
-> don't mind whether the reset line is actually asserted after this call,
-> they just allow it.
-> 
-> For an exclusive reset control this should return an error though, as
-> the caller would expect the reset line to be asserted after this call.
-> Unfortunately the core does not provide information whether the reset
-> control is shared or exclusive to the reset drivers, and it could be
-> argued that the drivers shouldn't have to care. I suppose I'll have to
-> handle this in the core, after all. What do you think of the attached
-> patch?
-> 
-> Otherwise, as a regression fix, I think this would be ok. There isn't
-> going to be any driver on the Gemini platform that requests an exclusive
-> reset control and then calls reset_control_assert, expecting the reset
-> line to stay asserted.
-> 
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
+Ping...
 
-I'll queue this up for clk-fixes once -rc1 is out.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> -----Original Message-----
+> From: Dong Aisheng [mailto:aisheng.dong@nxp.com]
+> Sent: Thursday, July 13, 2017 7:47 PM
+> To: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> sboyd@codeaurora.org; mturquette@baylibre.com; A.s. Dong;
+> dongas86@gmail.com; shawnguo@kernel.org; Anson Huang; Jacky Bai
+> Subject: [PATCH V2 00/10] clk: add imx7ulp clk support
+>=20
+> This patch series intends to add imx7ulp clk support.
+>=20
+> i.MX7ULP Clock functions are under joint control of the System Clock
+> Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and Cor=
+e
+> Mode Controller (CMC)1 blocks
+>=20
+> The clocking scheme provides clear separation between M4 domain and A7
+> domain. Except for a few clock sources shared between two domains, such a=
+s
+> the System Oscillator clock, the Slow IRC (SIRC), and and the Fast IRC
+> clock (FIRCLK), clock sources and clock management are separated and
+> contained within each domain.
+>=20
+> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+>=20
+> Note: this series only adds A7 clock domain support as M4 clock domain
+> will be handled by M4 seperately.
+>=20
+> Change Log:
+> v1->v2:
+>  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+>  * use clk_hw apis to register clocks
+>  * use of_clk_add_hw_provider
+>  * split the clocks register process into two parts: early part for
+> possible
+>    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part
+> for
+>    the left normal peripheral clocks registered by a platform driver.
+>=20
+> Dong Aisheng (10):
+>   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+>   clk: reparent orphans after critical clocks enabled
+>   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+>   clk: imx: add pllv4 support
+>   clk: imx: add pfdv2 support
+>   clk: imx: add composite clk support
+>   dt-bindings: clock: add imx7ulp clock binding doc
+>   clk: imx: make mux parent strings const
+>   clk: imx: implement new clk_hw based APIs
+>   clk: imx: add imx7ulp clk driver
+>=20
+>  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
+>  drivers/clk/clk-divider.c                          | 100 ++++++++-
+>  drivers/clk/clk-fractional-divider.c               |  10 +
+>  drivers/clk/clk.c                                  |  39 ++--
+>  drivers/clk/imx/Makefile                           |   6 +-
+>  drivers/clk/imx/clk-busy.c                         |   2 +-
+>  drivers/clk/imx/clk-composite.c                    |  90 ++++++++
+>  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+>  drivers/clk/imx/clk-imx7ulp.c                      | 245
+> +++++++++++++++++++++
+>  drivers/clk/imx/clk-pfdv2.c                        | 207
+> +++++++++++++++++
+>  drivers/clk/imx/clk-pllv4.c                        | 188 +++++++++++++++=
++
+>  drivers/clk/imx/clk.c                              |  22 ++
+>  drivers/clk/imx/clk.h                              |  92 +++++++-
+>  include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++
+>  include/linux/clk-provider.h                       |  17 ++
+>  15 files changed, 1159 insertions(+), 31 deletions(-)  create mode 10064=
+4
+> Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+>  create mode 100644 drivers/clk/imx/clk-composite.c  create mode 100644
+> drivers/clk/imx/clk-imx7ulp.c  create mode 100644 drivers/clk/imx/clk-
+> pfdv2.c  create mode 100644 drivers/clk/imx/clk-pllv4.c  create mode
+> 100644 include/dt-bindings/clock/imx7ulp-clock.h
+>=20
+> --
+> 2.7.4
