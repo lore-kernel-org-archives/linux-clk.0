@@ -1,118 +1,100 @@
-Return-Path: <wens@wens.csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:39202 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbdGZHIb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2017 03:08:31 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170723102749.17323-11-icenowy@aosc.io>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-11-icenowy@aosc.io>
 From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 00/10] ARM: sun8i: a83t: Add support for MMC controllers
-Date: Thu, 20 Jul 2017 11:44:42 +0800
-Message-Id: <20170720034452.15920-1-wens@csie.org>
+Date: Wed, 26 Jul 2017 15:08:06 +0800
+Message-ID: <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A
+ regulator to Orange Pi PC
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Ondrej Jirman <megous@megous.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Ondrej Jirman <megous@megous.com>
+>
+> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
+> Orange Pi PC, then set the power supply of the ARM cores to this
+> regulator, in order to enable DVFS.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> [Icenowy: Enable DVFS in this patch, slight changes and change commit
+>  message]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+> index 998b60f8d295..d855f8b6254e 100644
+> --- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+> +++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+> @@ -98,6 +98,10 @@
+>         status = "okay";
+>  };
+>
+> +&cpu0 {
+> +       cpu-supply = <&reg_sy8106a>;
+> +};
+> +
+>  &ehci0 {
+>         status = "okay";
+>  };
+> @@ -160,6 +164,21 @@
+>         };
+>  };
+>
+> +&r_i2c {
+> +       status = "okay";
+> +
+> +       reg_sy8106a: regulator@65 {
+> +               compatible = "silergy,sy8106a";
+> +               reg = <0x65>;
+> +               regulator-name = "vdd-cpux";
+> +               regulator-min-microvolt = <1000000>;
 
-This is v2 of my MMC controller support series.
+According to the H3 datasheet, the minimum voltage is 1.1V, not 1V.
 
-Changes since v1:
+Otherwse
 
-  - Fix patches already applied have been dropped
+> +               regulator-max-microvolt = <1400000>;
+> +               regulator-ramp-delay = <200>;
 
-  - V2 now exports sunxi-ng mmc timing mode API functions
-    (in case mmc driver is built as a module)
+Is this an actual constraint of the SoC? Or is it a characteristic
+of the regulator? If it is the latter, it belongs in the driver.
+AFAIK the regulator supports varying the ramp delay (slew rate).
 
-  - Added stub functions for the timing mode API functions,
-    in case sunxi-ng clk driver is not enabled
-
-  - Added special class of MP clocks that consider the timing mode
-    bit when calculating clock rates
-
-  - Convert A83T MMC2 clock to use special MP_MMC clock
-
-  - Keep feature bits for "has timing mode switch" and "needs new
-    timing mode" in the mmc driver separate.
-
-  - Add SoC specific compatible strings for MMC0/1 in the device tree
-
-  - Updated commit message for patch "mmc: sunxi: Support controllers
-    that can use both old and new timings"
-
-  - Added acks from Rob
-
-
-The MMC driver changes have compile time dependencies on the clk driver
-changes. What would be a good way to merge this? An immutable branch?
-
-The device tree changes don't depend on anything other than the
-"Switch to CCU device tree binding macros" patch from v1. I hope we
-can merge those ASAP, so I can send other patches on top of them.
-
-
-Original cover letter from v1:
-
-This series adds support for the MMC controllers on the A83T. The A83T's
-MMC controller adds what they call the "new timing mode". It moves the
-MMC clock delay lines into the controller itself. There are some minor
-changes to how the clock rate is calculated. The new mode give better
-performance and stability for eMMC applications. This mode is only
-found on the eMMC facing controller (or MMC2 on this chip).
-
-This mode is also found on the A64, but on that chip, the controller
-is fixed to that mode. On the A83t, the user is free to use the old
-or new mode, but the new mode is recommended. There are two switches,
-one in the clock controller, the other in the MMC controller, that
-must be set in tandem.
-
-The main part of this series adds custom functions to the sunxi-ng
-clk driver, allowing the MMC driver to query and configure the mode.
-The MMC driver can then support timing mode switching, and thus, the
-MMC2 controller on the A83t.
-
-The other bits are some related cleanups, and the usual device tree
-changes.
-
-Please have a look.
-
-
-Regards
 ChenYu
 
-Chen-Yu Tsai (10):
-  clk: sunxi-ng: Add interface to query or configure MMC timing modes.
-  clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
-    switching
-  clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
-  mmc: sunxi: Support controllers that can use both old and new timings
-  mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
-  mmc: sunxi: Add support for A83T eMMC (MMC2)
-  ARM: dts: sun8i: a83t: Add MMC controller device nodes
-  ARM: dts: sun8i: a83t: Add pingroup for 8-bit eMMC on mmc2
-  ARM: dts: sun8i: a83t: cubietruck-plus: Enable micro-SD card and eMMC
-  ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
-
- .../devicetree/bindings/mmc/sunxi-mmc.txt          |  1 +
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  | 21 ++++++
- arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts   | 27 +++++++
- arch/arm/boot/dts/sun8i-a83t.dtsi                  | 68 ++++++++++++++++++
- drivers/clk/sunxi-ng/Makefile                      |  1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              | 15 ++--
- drivers/clk/sunxi-ng/ccu_common.h                  |  5 ++
- drivers/clk/sunxi-ng/ccu_mmc_timing.c              | 73 +++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_mp.c                      | 80 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_mp.h                      | 24 +++++++
- drivers/mmc/host/sunxi-mmc.c                       | 83 ++++++++++++++++++----
- include/linux/clk/sunxi-ng.h                       | 35 +++++++++
- 12 files changed, 411 insertions(+), 22 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
- create mode 100644 include/linux/clk/sunxi-ng.h
-
--- 
-2.13.2
+> +               regulator-boot-on;
+> +               regulator-always-on;
+> +       };
+> +};
+> +
+>  &r_pio {
+>         leds_r_opc: led_pins@0 {
+>                 pins = "PL10";
+> --
+> 2.13.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
