@@ -1,46 +1,53 @@
-Return-Path: <vz@mleia.com>
-Subject: Re: [PATCH v7 1/3] clk: nxp: clk-lpc32xx: rename
- clk_gate_is_enabled()
-To: gabriel.fernandez@st.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
- <1500474344-9832-2-git-send-email-gabriel.fernandez@st.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Russell King <linux@armlinux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@st.com>, Nicolas Pitre <nico@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, daniel.thompson@linaro.org,
- andrea.merello@gmail.com, radoslaw.pietrzyk@gmail.com,
- Lee Jones <lee.jones@linaro.org>, Sylvain Lemieux <slemieux.tyco@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
- gabriel.fernandez.st@gmail.com, Arvind Yadav <arvind.yadav.cs@gmail.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <6626e519-0b69-367c-1966-6dee894febfc@mleia.com>
-Date: Thu, 20 Jul 2017 00:00:23 +0300
-MIME-Version: 1.0
-In-Reply-To: <1500474344-9832-2-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:34052 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750952AbdGZUHS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jul 2017 16:07:18 -0400
+Received: by mail-wr0-f175.google.com with SMTP id 12so135975448wrb.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jul 2017 13:07:17 -0700 (PDT)
+Message-ID: <1501099634.2401.37.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] dt-bindings: clock: amlogic,gxbb-aoclkc: Update
+ bindings
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date: Wed, 26 Jul 2017 22:07:14 +0200
+In-Reply-To: <20170726004830.GI2146@codeaurora.org>
+References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
+         <1499336663-23875-4-git-send-email-narmstrong@baylibre.com>
+         <20170710035031.rdbi64ookkbq6zeo@rob-hp-laptop>
+         <20170721204439.GJ19878@codeaurora.org>
+         <1a971e80-1f91-c446-7e28-d193354b2859@baylibre.com>
+         <1500897650.2401.1.camel@baylibre.com>
+         <20170726004830.GI2146@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Gabriel,
-
-On 07/19/2017 05:25 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Tue, 2017-07-25 at 17:48 -0700, Stephen Boyd wrote:
+> > 
+> > Maybe it is time to investigate having the regmap clock from qcom available
+> > to
+> > every other platform ?
 > 
-> We need to export clk_gate_is_enabled() from clk framework, then
-> to avoid compilation issue we have to rename clk_gate_is_enabled()
-> in NXP LPC32xx clock driver.
-> We changed all gate op with 'lpc32xx_' prefix:
-> lpc32xx_clk_gate_enable(),
-> lpc32xx_clk_gate_disable(),
-> lpc32xx_clk_gate_is_enabled().
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> I think we have regmap clk duplicated a couple times in the
+> drivers/clk/ directory now.
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+Which is why we may start thinking of common and generic "regmap" compatible
+solution in the CCF, at least for things like gates, dividers and muxes
 
---
-With best wishes,
-Vladimir
+The approach used in qcom with regmap clocks could be a candidate for this,
+don't you think ?
+
+> Not sure how this is related, except
+> for that there looks to be a desire to use a syscon binding here
+> and that forces regmap on drivers?
+
+Syscon has been created exactly for this case where you want to create an mfd
+just for sharing a register region between several, otherwise well separated,
+devices, isn't it ?
