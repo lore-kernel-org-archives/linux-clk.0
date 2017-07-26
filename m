@@ -1,67 +1,96 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:64311 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752333AbdGKCoA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2017 22:44:00 -0400
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <dan.carpenter@oracle.com>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH] clk: mediatek: fixed static checker warning in clk_cpumux_get_parent call
-Date: Tue, 11 Jul 2017 10:43:51 +0800
-Message-ID: <59fd4aa684632f1d9d2e7573a95bc42850e81690.1499701486.git.sean.wang@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 25 Jul 2017 17:59:00 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v3 06/10] clk: add clk_set_rate_protect
+Message-ID: <20170726005900.GJ2146@codeaurora.org>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-7-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170612194438.12298-7-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+On 06/12, Jerome Brunet wrote:
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index d688b8f59a59..d91236e70a04 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1809,6 +1809,51 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+>  EXPORT_SYMBOL_GPL(clk_set_rate);
+>  
+>  /**
+> + * clk_set_rate_protect - specify a new rate and protect it
+> + * @clk: the clk whose rate is being changed
+> + * @rate: the new rate for clk
+> + *
+> + * This is a combination of clk_set_rate and clk_rate_protect within
 
-Fixed the signedness bug returning '(-22)' on the return type as u8 with
-moving the sanity checker into clk_cpumux_set_parent() to ensure always
-validity in clk_cpumux_get_parent() got called.
+s/clk_set_rate/clk_set_rate()/
+s/clk_rate_protect/clk_rate_protect()/
 
-Fixes: commit 1e17de9049da ("clk: mediatek: add missing cpu mux causing Mediatek cpufreq can't work")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/clk/mediatek/clk-cpumux.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> + * a critical section
+> + *
+> + * This can be used initially to ensure that at least 1 consumers is
 
-diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-index edd8e69..c6a3a1a 100644
---- a/drivers/clk/mediatek/clk-cpumux.c
-+++ b/drivers/clk/mediatek/clk-cpumux.c
-@@ -27,7 +27,6 @@ static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
- static u8 clk_cpumux_get_parent(struct clk_hw *hw)
- {
- 	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
--	int num_parents = clk_hw_get_num_parents(hw);
- 	unsigned int val;
- 
- 	regmap_read(mux->regmap, mux->reg, &val);
-@@ -35,17 +34,18 @@ static u8 clk_cpumux_get_parent(struct clk_hw *hw)
- 	val >>= mux->shift;
- 	val &= mux->mask;
- 
--	if (val >= num_parents)
--		return -EINVAL;
--
- 	return val;
- }
- 
- static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct mtk_clk_cpumux *mux = to_mtk_clk_cpumux(hw);
-+	int num_parents = clk_hw_get_num_parents(hw);
- 	u32 mask, val;
- 
-+	if (index >= num_parents)
-+		return -EINVAL;
-+
- 	val = index << mux->shift;
- 	mask = mux->mask << mux->shift;
- 
+s/consumers/consumer/
+
+> + * statisfied when several protecting consummers are competing for the
+
+s/consummers/consumers/
+
+> + * same clock provider.
+> + *
+> + * The protection is not applied if setting the rate failed.
+> + *
+> + * Returns 0 on success, -EERROR otherwise.
+> + */
+> +int clk_set_rate_protect(struct clk *clk, unsigned long rate)
+> +{
+> +	int ret;
+> +
+> +	if (!clk)
+> +		return 0;
+> +
+> +	/* prevent racing with updates to the clock topology */
+> +	clk_prepare_lock();
+> +
+> +	/*
+> +	 * The temporary protection removal is not here, on purpose
+> +	 * This function is meant to be used in instead of clk_rate_protect,
+
+s/in//
+
+> +	 * so before the consumer code path protect the clock provider
+> +	 */
+> +
+> +	ret = clk_core_set_rate_nolock(clk->core, rate);
+> +
+
+Drop newline please.
+
+> +	if (!ret) {
+> +		clk_core_rate_protect(clk->core);
+> +		clk->protect_count++;
+> +	}
+> +
+> +	clk_prepare_unlock();
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_set_rate_protect);
+> +
+> +/**
+>   * clk_set_rate_range - set a rate range for a clock source
+>   * @clk: clock source
+>   * @min: desired minimum clock rate in Hz, inclusive
+
 -- 
-2.7.4
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
