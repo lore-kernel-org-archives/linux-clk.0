@@ -1,138 +1,81 @@
-Return-Path: <oliver@schinagl.nl>
-Subject: Re: [linux-sunxi] [PATCH v5 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU
- driver
-To: Priit Laes <plaes@plaes.org>
-References: <cover.23e9103a2becf2261d7e145bb1516221a5cfb8a4.1499197129.git-series.plaes@plaes.org>
- <65066c74b8dedfeb8de27d90b5fecfea3a700178.1499197129.git-series.plaes@plaes.org>
- <5099cd90-e019-8a65-38e5-02b3c939a7a8@schinagl.nl>
- <20170713192358.GB22375@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
- Jonathan Liu <net147@gmail.com>
-From: Olliver Schinagl <oliver@schinagl.nl>
-Message-ID: <d178101c-bcc7-3914-481e-1edc4f5d7b60@schinagl.nl>
-Date: Thu, 13 Jul 2017 21:46:57 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170713192358.GB22375@plaes.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC 09/12] clk: qcom: support for Brammo PLL
+Date: Thu, 27 Jul 2017 16:40:22 +0530
+Message-Id: <1501153825-5181-10-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hey Priit,
+Brammo PLL does not allow configuration of VCO and it
+supports the dynamic update in which the frequency can
+be changed dynamically without turning off the PLL.
 
-On 07/13/17 21:23, Priit Laes wrote:
-> On Mon, Jul 10, 2017 at 11:45:32AM +0200, Olliver Schinagl wrote:
->> Hi Pleas,
->>
->> again, but this time with content :)
->>
->> On 04-07-17 22:04, Priit Laes wrote:
->>> Introduce a clock controller driver for sun4i A10 and sun7i A20
->>> series SoCs.
-> [ ... ]
->
->>> +++ b/drivers/clk/sunxi-ng/Kconfig
->>> @@ -11,6 +11,19 @@ config SUN50I_A64_CCU
->>> 	default ARM64 && ARCH_SUNXI
->>> 	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
->>>
->>> +config SUNXI_A10_CCU
->> I understand why you say sunXi here (it's support for both sun4i and sun7i)
->> but then why A10, as it also supports the A20.
->>
->> I guess the CCU is identical on the A20 and the A10, right? Thus would it
->> not be sensible to just call it sun4i_ccu (like we do for sun5i_ccu below?
-> No, it's not identical.
-But then saying SUNXI_A10_CCU is not correct? Since it is not identical
-on the A20? So what does the A10 stand for?
->
->>> +	bool "Support for the Allwinner A10/A20 CCU"
->>> +	select SUNXI_CCU_DIV
->>> +	select SUNXI_CCU_MULT
->>> +	select SUNXI_CCU_NK
->>> +	select SUNXI_CCU_NKM
->>> +	select SUNXI_CCU_NM
->>> +	select SUNXI_CCU_MP
->>> +	select SUNXI_CCU_PHASE
->>> +	default MACH_SUN4I
->>> +	default MACH_SUN7I
->>> +	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
->>> +
->>> config SUN5I_CCU
->>> 	bool "Support for the Allwinner sun5i family CCM"
->>> 	default MACH_SUN5I
->>> @@ -57,4 +70,5 @@ config SUN8I_R_CCU
->>> 	bool "Support for Allwinner SoCs' PRCM CCUs"
->>> 	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
->>>
->>> +
->> oops?
-> OK
->
->>> new file mode 100644
->>> index 0000000..49052b7
->>> --- /dev/null
->>> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
->> <snip>
->>
->>> +static const char *const apb1_parents[] = { "hosc", "pll-periph", "osc32k" };
->>> +static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", apb1_parents, 0x058,
->>> +			     0, 5,	/* M */
->>> +			     16, 2,	/* P */
->>> +			     24, 2,	/* mux */
->>> +			     0);
->>> +
->>> +/* Not present on A20 */
->>> +static SUNXI_CCU_GATE(axi_dram_clk,	"axi-dram",	"ahb",
->>> +		      0x05c, BIT(31), 0);
->> Same here I guess, two defines make this a bit more readable.
-> You mean SUN4I_CCU_GATE? and SUN7I_CCU_GATE defines?
-> I don't think it makes things more readable...
-you think 0x05c and BIT(31) are easier to read? I'll do a pop quiz in 6
-months from now and see if you remember :p
->
->>> +
->>> +static SUNXI_CCU_GATE(ahb_otg_clk,	"ahb-otg",	"ahb",
-> ...
->>> +		      0x060, BIT(14), CLK_IS_CRITICAL);
->> <snip>
->>
->>> +static struct ccu_reset_map sun7i_a20_ccu_resets[] = {
->>> +	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
->>> +	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
->>> +	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
->>> +	[RST_GPS]		= { 0x0d0, BIT(0) },
->>> +	[RST_DE_BE0]		= { 0x104, BIT(30) },
->>> +	[RST_DE_BE1]		= { 0x108, BIT(30) },
->>> +	[RST_DE_FE0]		= { 0x10c, BIT(30) },
->>> +	[RST_DE_FE1]		= { 0x110, BIT(30) },
->>> +	[RST_DE_MP]		= { 0x114, BIT(30) },
->>> +	[RST_TCON0]		= { 0x118, BIT(30) },
->>> +	[RST_TCON1]		= { 0x11c, BIT(30) },
->> You are missing the TV encoder reset:
->> +      [RST_TVE0]              = { 0x118, BIT(29) },
->> +      [RST_TVE1]              = { 0x11c, BIT(29) },
->>
->> (to match your table i did not use defines :p)
-> Where did you get this information?
-> This is not present in any datasheets I have:
->   * A10 - 1.50
->   * A20 - 1.4
-It is actually from the A13. In the A13 all the other bits match up. We
-know from both that TCON0 is at 0x118 with its reset at BIT(30) and
-TCON1 has its reset 0x11c. From the A13 datasheet we gather that TCON(0)
-and TV(0) are at 0x118 with RST_TV on BIT(31) and thus it is only
-logical that that for the TVE1 we have the rest at 0x11c.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-But this is writing from the top of my head, I think we can also find it
-in the 3.4 sources if I recall correctly.
->
-> [...]
->
-> Päikest,
-> Priit Laes
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index d17d83a..e37a3ab 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -52,6 +52,7 @@
+ #define PLL_HUAYRA_N_MASK		0xff
+ #define PLL_HUAYRA_ALPHA_WIDTH		16
+ 
++#define PLL_BRAMMO_ALPHA_BITWIDTH	40
+ /*
+  * Even though 40 bits are present, use only 32 for ease of calculation.
+  */
+@@ -105,6 +106,17 @@
+ 	[ALPHA_PLL_STATUS] = 0x24,
+ };
+ 
++const u8 brammo_pll_offsets[] = {
++	[ALPHA_PLL_MODE] = 0x00,
++	[ALPHA_PLL_L_VAL] = 0x04,
++	[ALPHA_PLL_ALPHA_VAL] = 0x08,
++	[ALPHA_PLL_ALPHA_VAL_U] = 0x0c,
++	[ALPHA_PLL_USER_CTL] = 0x10,
++	[ALPHA_PLL_CONFIG_CTL] = 0x18,
++	[ALPHA_PLL_TEST_CTL] = 0x1c,
++	[ALPHA_PLL_STATUS] = 0x24,
++};
++
+ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
+ 			const char *action)
+ {
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index c98e7469..891d14b 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -64,6 +64,7 @@ struct clk_alpha_pll {
+ #define CLK_HUAYRA_PLL_FLAGS	(HAVE_NO_VCO_CONF | SUPPORTS_DYNAMIC_UPDATE | \
+ 				 SUPPORTS_64BIT_CONFIG_CTL |		      \
+ 				 SUPPORTS_16BIT_ALPHA)
++#define CLK_BRAMMO_PLL_FLAGS	(HAVE_NO_VCO_CONF | SUPPORTS_DYNAMIC_UPDATE)
+ 
+ /**
+  * struct clk_alpha_pll_postdiv - phase locked loop (PLL) post-divider
+@@ -102,6 +103,7 @@ struct alpha_pll_config {
+ 
+ extern const u8 alpha_pll_offsets[];
+ extern const u8 huayra_pll_offsets[];
++extern const u8 brammo_pll_offsets[];
+ 
+ extern const struct clk_ops clk_alpha_pll_ops;
+ extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
