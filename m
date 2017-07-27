@@ -1,93 +1,129 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-Date: Mon, 17 Jul 2017 11:18:01 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: clk: renesas: rcar-gen3: Fix error return code in
- cpg_sd_clock_recalc_rate
-Message-ID: <20170717091801.GA2129@katana>
-References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
- <20170714142559.p6xp6dp4whlqcr5n@ninjato>
- <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-In-Reply-To: <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC 12/12] clk: qcom: add parent map for regmap mux
+Date: Thu, 27 Jul 2017 16:40:25 +0530
+Message-Id: <1501153825-5181-13-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Currently the driver assumes the register configuration value
+is identical to its index in the parent map. This patch adds
+the parent map field in regmap mux clock node which contains
+the mapping of parent index with actual register configuration
+value. If regmap node contains this parent map then the
+configuration value will be taken from this
+parent map instead of simply writing the index value.
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h        | 10 ----------
+ drivers/clk/qcom/clk-regmap-mux.c |  6 ++++++
+ drivers/clk/qcom/clk-regmap-mux.h |  2 ++
+ drivers/clk/qcom/common.h         | 11 ++++++++++-
+ 4 files changed, 18 insertions(+), 11 deletions(-)
 
-Hi Geert,
-
-> >> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
-> >> error occurs, but -EINVAL is returned. This patch fixes it.
-> >>
-> >> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen=
-3 support code")
-> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> >
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Why is it desirable to return 0 if an error occurs? Because the return ty=
-pe is
-> unsigned long?
-
-Yes, I'd think so. Instead of an arbitrary high, kind-of-random, number, ju=
-st
-return 0 which also indicates that something unexpected happened? Also, all
-other drivers return zero in an error case (did some quick coccinelle
-grepping before).
-
->=20
-> Is this routine allowed to fail? I don't see any handling of zero by
-> its callers.
-
-=46rom clk-provider.h:
-
- * @recalc_rate Recalculate the rate of this clock, by querying hardware. T=
-he
- *              parent rate is an input parameter.  It is up to the caller =
-to
- *              ensure that the prepare_mutex is held across this call.
- *              Returns the calculated rate.  Optional, but recommended - if
- *              this op is not set then clock rate will be initialized to 0.
-
-What would be the benefit of keeping -EINVAL in an unsigned long?
-
-Regards,
-
-   Wolfram
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllsgMUACgkQFA3kzBSg
-Kbb9Uw/+OYc7tD5vp6+0L5/yAoVdnuBMKhxCFAWmfU9bK45NvDdg2Qljchqfkezf
-6ExyAqYaDDQOpT6bMlRhdYB1kSZCQCpc8kReeThveMdXPMxx4NfVKDxrLMvQlNub
-+K6LrVmUEBiOSB79P5sROrMyOZPEtRWBHs7NeUkLqKuvEbLvjTGCco4U9YTMTvdp
-6j5hgkqQwWG6b1AFnFc4rB06ApHvCEx7dX3kUVTteESmPY8sTDCT4BSj+cpqyvd3
-9P6y0nPO9e4XLKKPPPBht+EW7EegKMhZVyB9k+eaqONDIa1VKVgqyFruuXqxabuf
-aPfbnavW/5RBrbrxxoIAiujmmHbS5/0kfhNXB5bWVaSiNRfwQbe6RzKsSHWeK7e/
-mvLkcpDfKcRbZeeIb5+hmrr51vZ5dTY/FHds6pjMKW1bF8KbDmqXPWUCmS96OFVw
-AHi4yyaMK6SjquEDdV1UoKcXrUaWKJ1+DeJo61P5L1BwSYutVvxQRdNsktRTnKkX
-sEDtxgZF5eW/2FYjWIP+jzscOBHfJ//oj5KcWgZsSyl8RRcsDy0fD5YOueMjoeF/
-swnyCr9J1gA7mxki6HzrscTMaSujNHxuNb5Z2tuaYio1U2O6x66GSslDDT7gX3+u
-OD08TZrJsFFxiD3XjW3NrmSvQQGQ+FizPszXMkSJzaetV3U1Or4=
-=LdHT
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 54add3b..4fcd982 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -34,16 +34,6 @@ struct freq_tbl {
+ };
+ 
+ /**
+- * struct parent_map - map table for PLL source select configuration values
+- * @src: source PLL
+- * @cfg: configuration value
+- */
+-struct parent_map {
+-	u8 src;
+-	u8 cfg;
+-};
+-
+-/**
+  * struct mn - M/N:D counter
+  * @mnctr_en_bit: bit to enable mn counter
+  * @mnctr_reset_bit: bit to assert mn counter reset
+diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
+index cae3071..0f3a1bd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.c
++++ b/drivers/clk/qcom/clk-regmap-mux.c
+@@ -35,6 +35,9 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	val >>= mux->shift;
+ 	val &= mask;
+ 
++	if (mux->parent_map)
++		return qcom_find_src_index(hw, mux->parent_map, val);
++
+ 	return val;
+ }
+ 
+@@ -45,6 +48,9 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
+ 	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+ 	unsigned int val;
+ 
++	if (mux->parent_map)
++		index = mux->parent_map[index].cfg;
++
+ 	val = index;
+ 	val <<= mux->shift;
+ 
+diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
+index 5cec761..7797cdd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.h
++++ b/drivers/clk/qcom/clk-regmap-mux.h
+@@ -16,11 +16,13 @@
+ 
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
++#include "common.h"
+ 
+ struct clk_regmap_mux {
+ 	u32			reg;
+ 	u32			shift;
+ 	u32			width;
++	const struct parent_map	*parent_map;
+ 	struct clk_regmap	clkr;
+ };
+ 
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 23c1927..00196ee 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -20,7 +20,6 @@
+ struct regmap;
+ struct freq_tbl;
+ struct clk_hw;
+-struct parent_map;
+ 
+ #define PLL_LOCK_COUNT_SHIFT	8
+ #define PLL_LOCK_COUNT_MASK	0x3f
+@@ -39,6 +38,16 @@ struct qcom_cc_desc {
+ 	size_t num_gdscs;
+ };
+ 
++/**
++ * struct parent_map - map table for source select configuration values
++ * @src: source
++ * @cfg: configuration value
++ */
++struct parent_map {
++	u8 src;
++	u8 cfg;
++};
++
+ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+ 					     unsigned long rate);
+ extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
