@@ -1,111 +1,170 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1499166096.2308.63.camel@pengutronix.de>
-Subject: Re: [RFC 0/2] clk: imx7d: Uart clock set-up conflict if clk needs
- gating on set rate or re-parent
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Adriana Reus <adriana.reus@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>, Andy Duan <fugang.duan@nxp.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>, Fabio Estevam
- <fabio.estevam@nxp.com>,  "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Anson Huang <anson.huang@nxp.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-Date: Tue, 04 Jul 2017 13:01:36 +0200
-In-Reply-To: <1499165817.19416.31.camel@nxp.com>
-References: <1499092083-2852-1-git-send-email-adriana.reus@nxp.com>
-	 <1499092935.2308.18.camel@pengutronix.de>
-	 <1499165817.19416.31.camel@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC 05/12] clk: qcom: fix 16 bit alpha support calculation
+Date: Thu, 27 Jul 2017 16:40:18 +0530
+Message-Id: <1501153825-5181-6-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, den 04.07.2017, 10:57 +0000 schrieb Adriana Reus:
-> On Lu, 2017-07-03 at 16:42 +0200, Lucas Stach wrote:
-> > Am Montag, den 03.07.2017, 17:28 +0300 schrieb Adriana Reus:
-> > > 
-> > > Hi all,
-> > > 
-> > > I am currently trying to fix an issue occurring when trying to set
-> > > the
-> > > CLK_SET_RATE_GATE flag for the uart root clks. This causes the imx
-> > > serial
-> > > driver to fail when setting up devicetree specified frequency or
-> > > parent because
-> > > the uart clk is already in use by the ccm driver that starts up all
-> > > uart clocks
-> > > for earlycon.
-> > > 
-> > > Some context:
-> > > 
-> > > There are three main types of clock slices on imx7d ccm: "Core
-> > > clock slice",
-> > > "Bus clock slice (AXI/AHB)", and "Peripheral clock slice". Vast
-> > > majority of
-> > > clock roots fall in the peripheral slice category:
-> > > 
-> > >     8:1 mux -> gate -> div -> div -> gate
-> > > 
-> > > The root clocks that derive from peripheral slices are expected to
-> > > be
-> > > gated when changing frequency [0].
-> > > 
-> > > The first patch of this series sets this up. (It is only a
-> > > reference point for
-> > > this conversation, not to be merged as it WIP and needs more
-> > > testing).
-> > > 
-> > > When setting this up, the imx serial driver
-> > > (platform_driver_register -> of_clk_set_defaults) will fail
-> > > to set the rate or parent specified in the devicetree:
-> > > 
-> > >     imx-uart 30a70000.serial: clk_set_rate() failed
-> > >     imx-uart: probe of 30a70000.serial failed with error -16
-> > > 
-> > > The reason for this is that the uart clks are already prepared and
-> > > enabled in
-> > > imx7d_clocks_init by the imx_register_uart_clocks function if
-> > > earlycon is
-> > > enabled. Functionality added in patches:
-> > > 'commit 55adc61c568af99419be1dc0412f8eae019c71f2
-> > > ("clk: imx: add common logic to detect early UART usage")'
-> > > 'commit 1b9af68f325cb91ac9fc691f52d69dfb0826afd7
-> > > ("clk: imx7d: retain early UART clocks during kernel init")'
-> > > 
-> > > One option is to remove the imx_register_uart_clocks from the ccm
-> > > driver and
-> > > leave the uart clock set up and enable entirely to the serial
-> > > driver and DT.
-> > > The second RFC patch does this for imx7d.
-> > 
-> > This is not an option. The CCM holds a reference to those clocks,
-> > specifically to prevent them from being disabled before a real serial
-> > driver is bound. If this isn't done you might end up in a situation
-> > where PM or driver probe deferal disables the UART clock/the parent
-> > of
-> > this clock, even if it was previously enabled by the bootloader. With
-> > earlycon this might lead to a full system hang at this point, when
-> > earlycon tries to access a clock gated UART.
-> > 
-> > Regards,
-> > Lucas
-> > 
-> 
-> Hi Lucas, Thank you for your reply.
-> 
-> Looking at clk_core_unprepare and clk_core_disable they seem to return
-> without hardware disabling the clock if enable_count or prepare_count
-> are 0. So, disabling a bootloader enabled only clock does not seem to
-> be a problem. Let me know if I misunderstand.
+The alpha value calculation function has been written for
+40 bit alpha which is not coming properly for 16 bit alpha.
 
-That's correct, however image a situation where some other driver probes
-that uses the same parent clock as the earlycon UART, before the real
-serial driver is up. This driver requests and enables the parent clock,
-then goes into runtime suspended state, disabling the clock. As the
-clock has been enabled by this driver we now have the transition from
-enabled to disabled, disabling the bootloader enabled clock.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 58 +++++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 24 deletions(-)
 
-The same can happen with driver probe deferal.
-
-Regards,
-Lucas
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index ef24c80..3a7ec42 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -45,8 +45,11 @@
+  * Even though 40 bits are present, use only 32 for ease of calculation.
+  */
+ #define ALPHA_REG_BITWIDTH	40
++#define ALPHA_REG_16BIT_WIDTH	16
+ #define ALPHA_BITWIDTH		32
+-#define ALPHA_16BIT_MASK	0xffff
++
++#define pll_alpha_width(pll)  (pll->flags & SUPPORTS_16BIT_ALPHA ?	\
++			       ALPHA_REG_16BIT_WIDTH : ALPHA_REG_BITWIDTH)
+ 
+ #define pll_mode(pll)		(pll->base + pll->offsets[ALPHA_PLL_MODE])
+ #define pll_l(pll)		(pll->base + pll->offsets[ALPHA_PLL_L_VAL])
+@@ -316,13 +319,16 @@ static void clk_alpha_pll_disable(struct clk_hw *hw)
+ 	regmap_update_bits(pll->clkr.regmap, pll_mode(pll), mask, 0);
+ }
+ 
+-static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
++static unsigned long
++alpha_pll_calc_rate(u64 prate, u32 l, u32 a, u32 alpha_width)
+ {
+-	return (prate * l) + ((prate * a) >> ALPHA_BITWIDTH);
++	return (prate * l) + ((prate * a) >>
++		(alpha_width > ALPHA_BITWIDTH ? ALPHA_BITWIDTH : alpha_width));
+ }
+ 
+ static unsigned long
+-alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a)
++alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
++		     u32 alpha_width)
+ {
+ 	u64 remainder;
+ 	u64 quotient;
+@@ -337,14 +343,16 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+ 	}
+ 
+ 	/* Upper ALPHA_BITWIDTH bits of Alpha */
+-	quotient = remainder << ALPHA_BITWIDTH;
++	quotient = remainder << (alpha_width > ALPHA_BITWIDTH ?
++				 ALPHA_BITWIDTH : alpha_width);
++
+ 	remainder = do_div(quotient, prate);
+ 
+ 	if (remainder)
+ 		quotient++;
+ 
+ 	*a = quotient;
+-	return alpha_pll_calc_rate(prate, *l, *a);
++	return alpha_pll_calc_rate(prate, *l, *a, alpha_width);
+ }
+ 
+ static const struct pll_vco *
+@@ -363,26 +371,26 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
+ static unsigned long
+ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ {
+-	u32 l, low, high, ctl;
+-	u64 a = 0, prate = parent_rate;
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 l, low, high, ctl, alpha_width = pll_alpha_width(pll);
++	u64 a = 0, prate = parent_rate;
+ 
+ 	regmap_read(pll->clkr.regmap, pll_l(pll), &l);
+ 
+ 	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
+ 	if (ctl & PLL_ALPHA_EN) {
+ 		regmap_read(pll->clkr.regmap, pll_alpha(pll), &low);
+-		if (pll->flags & SUPPORTS_16BIT_ALPHA) {
+-			a = low & ALPHA_16BIT_MASK;
+-		} else {
++		if (alpha_width > ALPHA_BITWIDTH) {
+ 			regmap_read(pll->clkr.regmap, pll_alpha_u(pll),
+ 				    &high);
+-			a = (u64)high << 32 | low;
+-			a >>= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
++			a = (u64)high << ALPHA_BITWIDTH | low;
++			a >>= alpha_width - ALPHA_BITWIDTH;
++		} else {
++			a = low;
+ 		}
+ 	}
+ 
+-	return alpha_pll_calc_rate(prate, l, a);
++	return alpha_pll_calc_rate(prate, l, a, alpha_width);
+ }
+ 
+ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -390,10 +398,10 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	const struct pll_vco *vco;
+-	u32 l;
++	u32 l, alpha_width = pll_alpha_width(pll);
+ 	u64 a;
+ 
+-	rate = alpha_pll_round_rate(rate, prate, &l, &a);
++	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+ 	vco = alpha_pll_find_vco(pll, rate);
+ 	if (!vco) {
+ 		pr_err("alpha pll not in a valid vco range\n");
+@@ -402,14 +410,16 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	regmap_write(pll->clkr.regmap, pll_l(pll), l);
+ 
+-	if (pll->flags & SUPPORTS_16BIT_ALPHA) {
+-		regmap_write(pll->clkr.regmap, pll_alpha(pll),
+-			     a & ALPHA_16BIT_MASK);
+-	} else {
+-		a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
+-		regmap_write(pll->clkr.regmap, pll_alpha_u(pll), a >> 32);
++	if (alpha_width > ALPHA_BITWIDTH) {
++		a <<= (alpha_width - ALPHA_BITWIDTH);
++		regmap_update_bits(pll->clkr.regmap, pll_alpha_u(pll),
++				   GENMASK(0, alpha_width - ALPHA_BITWIDTH - 1),
++				   a >> ALPHA_BITWIDTH);
+ 	}
+ 
++	regmap_update_bits(pll->clkr.regmap, pll_alpha(pll),
++			   GENMASK(0, alpha_width - 1), a);
++
+ 	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
+ 			   PLL_VCO_MASK << PLL_VCO_SHIFT,
+ 			   vco->val << PLL_VCO_SHIFT);
+@@ -424,11 +434,11 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				     unsigned long *prate)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+-	u32 l;
++	u32 l, alpha_width = pll_alpha_width(pll);
+ 	u64 a;
+ 	unsigned long min_freq, max_freq;
+ 
+-	rate = alpha_pll_round_rate(rate, *prate, &l, &a);
++	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
+ 	if (alpha_pll_find_vco(pll, rate))
+ 		return rate;
+ 
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
