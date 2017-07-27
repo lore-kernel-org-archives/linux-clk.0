@@ -1,93 +1,68 @@
-Return-Path: <wens@csie.org>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC 02/12] clk: qcom: flag for 64 bit CONFIG_CTL
+Date: Thu, 27 Jul 2017 16:40:15 +0530
+Message-Id: <1501153825-5181-3-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170721071810.7nlwdzqno56cdax3@flea>
-References: <20170720034452.15920-1-wens@csie.org> <20170720034452.15920-2-wens@csie.org>
- <20170721071810.7nlwdzqno56cdax3@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 21 Jul 2017 15:23:15 +0800
-Message-ID: <CAGb2v66zbRGvttnP9Ho61WMJEOa1atb_nZ5rsLNeV2LwsCRa3w@mail.gmail.com>
-Subject: Re: [PATCH v2 01/10] clk: sunxi-ng: Add interface to query or
- configure MMC timing modes.
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 21, 2017 at 3:18 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Thu, Jul 20, 2017 at 11:44:43AM +0800, Chen-Yu Tsai wrote:
->> Starting with the A83T SoC, Allwinner introduced a new timing mode for
->> its MMC clocks. The new mode changes how the MMC controller sample and
->> output clocks are delayed to match chip and board specifics. There are
->> two controls for this, one on the CCU side controlling how the clocks
->> behave, and one in the MMC controller controlling what inputs to take
->> and how to route them.
->>
->> In the old mode, the MMC clock had 2 child clocks providing the output
->> and sample clocks, which could be delayed by a number of clock cycles
->> measured from the MMC clock's parent.
->>
->> With the new mode, the 2 delay clocks are no longer active. Instead,
->> the delays and associated controls are moved into the MMC controller.
->> The output of the MMC clock is also halved.
->>
->> The difference in how things are wired between the modes means that the
->> clock controls and the MMC controls must match. To achieve this in a
->> clear, explicit way, we introduce two functions for the MMC driver to
->> use: one queries the hardware for the current mode set, and the other
->> allows the MMC driver to request a mode.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  drivers/clk/sunxi-ng/Makefile         |  1 +
->>  drivers/clk/sunxi-ng/ccu_common.h     |  5 +++
->>  drivers/clk/sunxi-ng/ccu_mmc_timing.c | 73 +++++++++++++++++++++++++++++++++++
->>  include/linux/clk/sunxi-ng.h          | 35 +++++++++++++++++
->>  4 files changed, 114 insertions(+)
->>  create mode 100644 drivers/clk/sunxi-ng/ccu_mmc_timing.c
->>  create mode 100644 include/linux/clk/sunxi-ng.h
->>
->> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
->> index 0c45fa50283d..45a5910379a5 100644
->> --- a/drivers/clk/sunxi-ng/Makefile
->> +++ b/drivers/clk/sunxi-ng/Makefile
->> @@ -1,5 +1,6 @@
->>  # Common objects
->>  lib-$(CONFIG_SUNXI_CCU)              += ccu_common.o
->> +lib-$(CONFIG_SUNXI_CCU)              += ccu_mmc_timing.o
->>  lib-$(CONFIG_SUNXI_CCU)              += ccu_reset.o
->>
->>  # Base clock types
->> diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
->> index d6fdd7a789aa..1e2761c53f06 100644
->> --- a/drivers/clk/sunxi-ng/ccu_common.h
->> +++ b/drivers/clk/sunxi-ng/ccu_common.h
->> @@ -23,6 +23,11 @@
->>  #define CCU_FEATURE_FIXED_POSTDIV    BIT(3)
->>  #define CCU_FEATURE_ALL_PREDIV               BIT(4)
->>  #define CCU_FEATURE_LOCK_REG         BIT(5)
->> +#define CCU_FEATURE_MMC_TIMING_SWITCH        BIT(6)
->> +#define CCU_FEATURE_MMC_ALWAYS_NEW   BIT(7)
->
-> Didn't we agree on removing that flag?
+Some of the Alpha PLL’s (like Spark, Brammo PLL) do not have
+CONFIG_CTL_U register. This patch adds the flag for PLL’s
+which have CONFIG_CTL_U register and checks the same while
+doing PLL initial configuration.
 
-Indeed. I thought I had finished the cleanup. But apparently I didn't.
-Sorry about that.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 5 ++++-
+ drivers/clk/qcom/clk-alpha-pll.h | 7 ++++---
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-ChenYu
-
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 47a1da3..e6cde2d 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -118,7 +118,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	regmap_write(regmap, off + PLL_L_VAL, config->l);
+ 	regmap_write(regmap, off + PLL_ALPHA_VAL, config->alpha);
+ 	regmap_write(regmap, off + PLL_CONFIG_CTL, config->config_ctl_val);
+-	regmap_write(regmap, off + PLL_CONFIG_CTL_U, config->config_ctl_hi_val);
++
++	if (pll->flags & SUPPORTS_64BIT_CONFIG_CTL)
++		regmap_write(regmap, off + PLL_CONFIG_CTL_U,
++			     config->config_ctl_hi_val);
+ 
+ 	val = config->main_output_mask;
+ 	val |= config->aux_output_mask;
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index d6e1ee2..bbd6aa9 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -34,9 +34,10 @@ struct clk_alpha_pll {
+ 
+ 	const struct pll_vco *vco_table;
+ 	size_t num_vco;
+-#define SUPPORTS_OFFLINE_REQ	BIT(0)
+-#define SUPPORTS_16BIT_ALPHA	BIT(1)
+-#define SUPPORTS_FSM_MODE	BIT(2)
++#define SUPPORTS_OFFLINE_REQ		BIT(0)
++#define SUPPORTS_16BIT_ALPHA		BIT(1)
++#define SUPPORTS_FSM_MODE		BIT(2)
++#define SUPPORTS_64BIT_CONFIG_CTL	BIT(3)
+ 	u8 flags;
+ 
+ 	struct clk_regmap clkr;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
