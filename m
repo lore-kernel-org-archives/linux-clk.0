@@ -1,33 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Jul 2017 13:34:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: renesas: rcar-gen3: Add support for SCCG/Clean
- peripheral clocks
-Message-ID: <20170721203421.GF19878@codeaurora.org>
-References: <1500554409-22423-1-git-send-email-geert+renesas@glider.be>
- <1500554409-22423-4-git-send-email-geert+renesas@glider.be>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 0/2] clk: meson: gxbb: fix audio divider flags
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20170727130940.18005-1-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <0aa1d502-473e-637e-7907-e4f805a16ffb@baylibre.com>
+Date: Thu, 27 Jul 2017 15:35:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1500554409-22423-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20170727130940.18005-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/20, Geert Uytterhoeven wrote:
-> On R-Car Gen3 SoCs with a Spread Spectrum Clock Generator (e.g. R-Car
-> D3), a peripheral clock divider has been added, to select between clean
-> and spread spectrum parents.
+On 07/27/2017 03:09 PM, Jerome Brunet wrote:
+> Two audio clocks incorrectly set divider flags in the hw.init flag.
+> Just move these flags where they belong.
 > 
-> Add a new clock type to the R-Car Gen3 driver core to handle this.
-> To avoid increasing the size of struct cpg_core_clk, both parents and
-> dividers are stored in the existing parent resp. div fields.
+> Jerome Brunet (2):
+>   clk: meson: gxbb: fix meson cts_amclk divider flags
+>   clk: meson: gxbb: fix clk_mclk_i958 divider flags
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+>  drivers/clk/meson/gxbb.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Applied on clk-meson's fixes/drivers
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thx
