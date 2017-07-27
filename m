@@ -1,34 +1,280 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 11 Jul 2017 19:02:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
 	linux-amlogic@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v3 08/10] clk: cosmetic changes to clk_summary debugfs
- entry
-Message-ID: <20170712020253.GW22780@codeaurora.org>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
- <20170612194438.12298-9-jbrunet@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170612194438.12298-9-jbrunet@baylibre.com>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: meson: gxbb: add sd_emmc clk0 clocks
+Date: Thu, 27 Jul 2017 12:39:02 +0200
+Message-Id: <20170727103902.3262-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12, Jerome Brunet wrote:
-> clk_summary debugfs entry was already well over the traditional 80
-> characters per line limit but it grew even larger with the addition of
-> clock protection.
-> 
+Input source 0 of the mmc controllers is not directly xtal, as currently
+described in DT. Each controller is fed by a composite clock (the usual
+mux, divider and gate). The muxes inputs are the xtal (default) and the
+fclk_div clocks. These parents, along with the divider, should be able to
+provide the necessary rates for mmc and nand operation.
 
-Before/after example output perhaps?
+The input muxes should also be able to take mpll2, mpll3 and gp0_pll but
+these are precious clocks, needed for other usage. It is better if the
+mmc does not use these them. For this reason, mpll2, mpll3 and gp0_pll is
+not listed among the possible parents.
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
 
+Changes since v1: [0]
+ - Correct commit description and comments.
+ - No functional changes
+
+[0]: https://lkml.kernel.org/r/20170726203138.11367-1-jbrunet@baylibre.com
+
+ drivers/clk/meson/gxbb.c | 167 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h |  11 +++-
+ 2 files changed, 177 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index a897ea45327c..d966ae85f9f9 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -974,6 +974,146 @@ static struct clk_mux gxbb_32k_clk_sel = {
+ 	},
+ };
+ 
++static const char * const gxbb_sd_emmc_clk0_parent_names[] = {
++	"xtal", "fclk_div2", "fclk_div3", "fclk_div5", "fclk_div7",
++
++	/*
++	 * Following these parent clocks, we should also have had mpll2, mpll3
++	 * and gp0_pll but these clocks are too precious to be used here. All
++	 * the necessary rates for MMC and NAND operation can be acheived using
++	 * xtal or fclk_div clocks
++	 */
++};
++
++/* SDIO clock */
++static struct clk_mux gxbb_sd_emmc_a_clk0_sel = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 9,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_a_clk0_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_sd_emmc_clk0_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_divider gxbb_sd_emmc_a_clk0_div = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.shift = 0,
++	.width = 7,
++	.lock = &clk_lock,
++	.flags = CLK_DIVIDER_ROUND_CLOSEST,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_a_clk0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sd_emmc_a_clk0_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_gate gxbb_sd_emmc_a_clk0 = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.bit_idx = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sd_emmc_a_clk0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sd_emmc_a_clk0_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/* SDcard clock */
++static struct clk_mux gxbb_sd_emmc_b_clk0_sel = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 25,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_b_clk0_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_sd_emmc_clk0_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_divider gxbb_sd_emmc_b_clk0_div = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.shift = 16,
++	.width = 7,
++	.lock = &clk_lock,
++	.flags = CLK_DIVIDER_ROUND_CLOSEST,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_b_clk0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sd_emmc_b_clk0_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_gate gxbb_sd_emmc_b_clk0 = {
++	.reg = (void *)HHI_SD_EMMC_CLK_CNTL,
++	.bit_idx = 23,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sd_emmc_b_clk0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sd_emmc_b_clk0_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/* EMMC/NAND clock */
++static struct clk_mux gxbb_sd_emmc_c_clk0_sel = {
++	.reg = (void *)HHI_NAND_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 9,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_c_clk0_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_sd_emmc_clk0_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_sd_emmc_clk0_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_divider gxbb_sd_emmc_c_clk0_div = {
++	.reg = (void *)HHI_NAND_CLK_CNTL,
++	.shift = 0,
++	.width = 7,
++	.lock = &clk_lock,
++	.flags = CLK_DIVIDER_ROUND_CLOSEST,
++	.hw.init = &(struct clk_init_data) {
++		.name = "sd_emmc_c_clk0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sd_emmc_c_clk0_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_gate gxbb_sd_emmc_c_clk0 = {
++	.reg = (void *)HHI_NAND_CLK_CNTL,
++	.bit_idx = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sd_emmc_c_clk0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sd_emmc_c_clk0_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -1183,6 +1323,15 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+ 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+ 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
++		[CLKID_SD_EMMC_A_CLK0_SEL]  = &gxbb_sd_emmc_a_clk0_sel.hw,
++		[CLKID_SD_EMMC_A_CLK0_DIV]  = &gxbb_sd_emmc_a_clk0_div.hw,
++		[CLKID_SD_EMMC_A_CLK0]	    = &gxbb_sd_emmc_a_clk0.hw,
++		[CLKID_SD_EMMC_B_CLK0_SEL]  = &gxbb_sd_emmc_b_clk0_sel.hw,
++		[CLKID_SD_EMMC_B_CLK0_DIV]  = &gxbb_sd_emmc_b_clk0_div.hw,
++		[CLKID_SD_EMMC_B_CLK0]	    = &gxbb_sd_emmc_b_clk0.hw,
++		[CLKID_SD_EMMC_C_CLK0_SEL]  = &gxbb_sd_emmc_c_clk0_sel.hw,
++		[CLKID_SD_EMMC_C_CLK0_DIV]  = &gxbb_sd_emmc_c_clk0_div.hw,
++		[CLKID_SD_EMMC_C_CLK0]	    = &gxbb_sd_emmc_c_clk0.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1305,6 +1454,15 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+ 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+ 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
++		[CLKID_SD_EMMC_A_CLK0_SEL]  = &gxbb_sd_emmc_a_clk0_sel.hw,
++		[CLKID_SD_EMMC_A_CLK0_DIV]  = &gxbb_sd_emmc_a_clk0_div.hw,
++		[CLKID_SD_EMMC_A_CLK0]	    = &gxbb_sd_emmc_a_clk0.hw,
++		[CLKID_SD_EMMC_B_CLK0_SEL]  = &gxbb_sd_emmc_b_clk0_sel.hw,
++		[CLKID_SD_EMMC_B_CLK0_DIV]  = &gxbb_sd_emmc_b_clk0_div.hw,
++		[CLKID_SD_EMMC_B_CLK0]	    = &gxbb_sd_emmc_b_clk0.hw,
++		[CLKID_SD_EMMC_C_CLK0_SEL]  = &gxbb_sd_emmc_c_clk0_sel.hw,
++		[CLKID_SD_EMMC_C_CLK0_DIV]  = &gxbb_sd_emmc_c_clk0_div.hw,
++		[CLKID_SD_EMMC_C_CLK0]	    = &gxbb_sd_emmc_c_clk0.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1420,6 +1578,9 @@ static struct clk_gate *const gxbb_clk_gates[] = {
+ 	&gxbb_cts_amclk,
+ 	&gxbb_cts_mclk_i958,
+ 	&gxbb_32k_clk,
++	&gxbb_sd_emmc_a_clk0,
++	&gxbb_sd_emmc_b_clk0,
++	&gxbb_sd_emmc_c_clk0,
+ };
+ 
+ static struct clk_mux *const gxbb_clk_muxes[] = {
+@@ -1432,6 +1593,9 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
+ 	&gxbb_cts_mclk_i958_sel,
+ 	&gxbb_cts_i958,
+ 	&gxbb_32k_clk_sel,
++	&gxbb_sd_emmc_a_clk0_sel,
++	&gxbb_sd_emmc_b_clk0_sel,
++	&gxbb_sd_emmc_c_clk0_sel,
+ };
+ 
+ static struct clk_divider *const gxbb_clk_dividers[] = {
+@@ -1441,6 +1605,9 @@ static struct clk_divider *const gxbb_clk_dividers[] = {
+ 	&gxbb_mali_1_div,
+ 	&gxbb_cts_mclk_i958_div,
+ 	&gxbb_32k_clk_div,
++	&gxbb_sd_emmc_a_clk0_div,
++	&gxbb_sd_emmc_b_clk0_div,
++	&gxbb_sd_emmc_c_clk0_div,
+ };
+ 
+ static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index d63e77e8433d..17e5629777dc 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -287,8 +287,17 @@
+ #define CLKID_32K_CLK		  114
+ #define CLKID_32K_CLK_SEL	  115
+ #define CLKID_32K_CLK_DIV	  116
++#define CLKID_SD_EMMC_A_CLK0_SEL  117
++#define CLKID_SD_EMMC_A_CLK0_DIV  118
++#define CLKID_SD_EMMC_A_CLK0	  119
++#define CLKID_SD_EMMC_B_CLK0_SEL  120
++#define CLKID_SD_EMMC_B_CLK0_DIV  121
++#define CLKID_SD_EMMC_B_CLK0	  122
++#define CLKID_SD_EMMC_C_CLK0_SEL  123
++#define CLKID_SD_EMMC_C_CLK0_DIV  124
++#define CLKID_SD_EMMC_C_CLK0	  125
+ 
+-#define NR_CLKS			  117
++#define NR_CLKS			  126
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.4
