@@ -1,91 +1,157 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:53606 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751086AbdGXEJj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2017 00:09:39 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Jul 2017 16:02:59 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
+Subject: Re: [PATCH v2 3/5] clk: qcom: gdsc: Add support to control
+ associated clks
+Message-ID: <20170727230259.GR2146@codeaurora.org>
+References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+ <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170723102749.17323-10-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-10-icenowy@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 24 Jul 2017 12:09:14 +0800
-Message-ID: <CAGb2v65B10VuG6YDKuFmx-7Z5R-PRLiN51g484MA_959y=Le5Q@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 09/10] ARM: sun8i: h2+: add SY8113B
- regulator used by Orange Pi Zero board
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> Orange Pi Zero board has a SY8113B regulator, which is controlled via
-> GPIO and capable of outputing 1.1V when the PL6 GPIO is set to output 0
-> or 1.3V when the PL6 GPIO is set to input or output 1, and the output is
-> the power supply of the ARM cores in H2+ SoC.
->
-> Add the device tree node of this regulator and set the cpu's cpu-supply
-> property to it.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts b/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
-> index 6713d0f2b3f4..28b4433bd7f7 100644
-> --- a/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
-> +++ b/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
-> @@ -94,6 +94,27 @@
->                 reset-gpios = <&r_pio 0 7 GPIO_ACTIVE_LOW>;
->                 post-power-on-delay-ms = <200>;
->         };
+On 07/20, Rajendra Nayak wrote:
+> @@ -166,6 +169,29 @@ static inline void gdsc_assert_clamp_io(struct gdsc *sc)
+>  			   GMEM_CLAMP_IO_MASK, 1);
+>  }
+>  
+> +static inline int gdsc_clk_enable(struct gdsc *sc)
+> +{
+> +	int i, ret;
 > +
-> +       reg_sy8113b: gpio-regulator {
-> +               compatible = "regulator-gpio";
+> +	for (i = 0; i < sc->clk_count; i++) {
+> +		ret = clk_prepare_enable(sc->clks[i]);
+> +		if (ret) {
+> +			for (i--; i >= 0; i--)
+
+while (--i >= 0) ?
+
+> +				clk_disable_unprepare(sc->clks[i]);
+> +			return ret;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +static inline void gdsc_clk_disable(struct gdsc *sc)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < sc->clk_count; i++)
+
+Could also be the same while loop.
+
+> +		clk_disable_unprepare(sc->clks[i]);
+> +}
+> +
+>  static int gdsc_enable(struct generic_pm_domain *domain)
+>  {
+>  	struct gdsc *sc = domain_to_gdsc(domain);
+> @@ -193,6 +219,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>  	 */
+>  	udelay(1);
+>  
+> +	ret = gdsc_clk_enable(sc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Turn on HW trigger mode if supported */
+>  	if (sc->flags & HW_CTRL) {
+>  		ret = gdsc_hwctrl(sc, true);
+> @@ -241,6 +271,8 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  			return ret;
+>  	}
+>  
+> +	gdsc_clk_disable(sc);
+
+Can we call sleeping APIs (i.e. prepare/unprepare) from within
+the power domains? I thought that didn't work generically because
+someone could set their runtime PM configuration to be atomic
+context friendly. Is there some way we can block that from
+happening if we hook up a power domain that is no longer safe to
+call from atomic context?
+
+> +
+>  	if (sc->pwrsts & PWRSTS_OFF)
+>  		gdsc_clear_mem_on(sc);
+>  
+> @@ -254,7 +286,27 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>  	return 0;
+>  }
+>  
+> -static int gdsc_init(struct gdsc *sc)
+> +static inline int gdsc_clk_get(struct device *dev, struct gdsc *sc)
+> +{
+> +	if (sc->clk_count) {
+
+We could drop this check. kmalloc with size zero is OK as long as
+we don't use the returned pointer value. We shouldn't use it
+assuming the for loop is maintained.
+
+> +		int i;
+> +
+> +		sc->clks = devm_kcalloc(dev, sc->clk_count, sizeof(*sc->clks),
+> +					GFP_KERNEL);
+> +		if (!sc->clks)
+> +			return -ENOMEM;
+> +
+> +		for (i = 0; i < sc->clk_count; i++) {
+> +			sc->clks[i] = devm_clk_hw_get_clk(dev, sc->clk_hws[i],
+> +							  NULL);
+> +			if (IS_ERR(sc->clks[i]))
+> +				return PTR_ERR(sc->clks[i]);
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int gdsc_init(struct device *dev, struct gdsc *sc)
+>  {
+>  	u32 mask, val;
+>  	int on, ret;
+> @@ -284,6 +336,10 @@ static int gdsc_init(struct gdsc *sc)
+>  	if (on < 0)
+>  		return on;
+>  
+> +	ret = gdsc_clk_get(dev, sc);
+> +	if (ret)
+> +		return ret;
 > +
 
-No need for the newline.
+This concerns me if we do probe defer on orphan clks. We may get
+into some situation where the gdsc is setup by a clk driver that
+is trying to probe before some parent clk has registered for the
+clks we're "getting" here. For example, this could easily happen
+if we insert XO into the tree at the top and everything defers.
 
-> +               regulator-name = "vdd-cpux";
-> +               regulator-type = "voltage";
-> +               regulator-boot-on;
-> +               regulator-always-on;
-> +               regulator-min-microvolt = <1100000>;
-> +               regulator-max-microvolt = <1300000>;
-> +               regulator-ramp-delay = <50>; /* 4ms */
+I suppose this is not a problem because in this case we don't
+have any clk here that could be orphaned even if RPM clks are
+inserted into the clk tree for XO? I mean to say that we won't
+get into a probe defer due to orphan clk loop. I'm always afraid
+someone will make hardware that send a clk from one controller to
+another and then back again (we did that with pcie) and then
+we'll be unable to get out of the defer loop because we'll be
+deferred on orphan status.
 
-You should also add "enable-active-high". The driver might not
-honor the GPIO_ACTIVE_HIGH flag. AFAIK this was a problem with
-the old GPIO API.
 
-ChenYu
+>  	/*
+>  	 * Votable GDSCs can be ON due to Vote from other masters.
+>  	 * If a Votable GDSC is ON, make sure we have a Vote.
+> @@ -327,7 +383,7 @@ int gdsc_register(struct gdsc_desc *desc,
+>  			continue;
+>  		scs[i]->regmap = regmap;
+>  		scs[i]->rcdev = rcdev;
+> -		ret = gdsc_init(scs[i]);
+> +		ret = gdsc_init(dev, scs[i]);
+>  		if (ret)
+>  			return ret;
+>  		data->domains[i] = &scs[i]->pd;
 
-> +
-> +               gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
-> +               gpios-states = <0x1>;
-> +               states = <1100000 0x0
-> +                         1300000 0x1>;
-> +       };
-> +};
-> +
-> +&cpu0 {
-> +       cpu-supply = <&reg_sy8113b>;
->  };
->
->  &ehci0 {
-> --
-> 2.13.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
