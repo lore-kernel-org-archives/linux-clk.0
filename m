@@ -1,55 +1,89 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com
-Subject: Re: [PATCH v3 2/2] dt-bindings: add documentation for rk3126 clock
-Date: Mon, 31 Jul 2017 13:24:27 +0200
-Message-ID: <1528313.SDTh7a5k6t@diego>
-In-Reply-To: <1501497728-7805-3-git-send-email-zhangqing@rock-chips.com>
-References: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com> <1501497728-7805-3-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC 07/12] clk: qcom: add flag for VCO operation
+Date: Thu, 27 Jul 2017 16:40:20 +0530
+Message-Id: <1501153825-5181-8-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
+Some of the Alpha PLL’s does not have VCO configuration so this
+patch adds the flag and does not perform VCO operation if this
+flag is set.
 
-Am Montag, 31. Juli 2017, 18:42:08 CEST schrieb Elaine Zhang:
-> This add bindings documentation for rk3126 SoCs.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 19 ++++++++++++-------
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
-thanks for noticing that the binding doc was missing, I meant to
-write a response about that but didn't find the time yet.
-
-> ---
->  Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt index
-> 455a9a00a623..25098fa8595f 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
-> @@ -1,12 +1,12 @@
-> -* Rockchip RK3128 Clock and Reset Unit
-> +* Rockchip RK3128/RK3126 Clock and Reset Unit
-> 
-> -The RK3128 clock controller generates and supplies clock to various
-> +The RK3128/RK3126 clock controller generates and supplies clock to various
->  controllers within the SoC and also implements a reset controller for SoC
->  peripherals.
-> 
->  Required Properties:
-> 
-> -- compatible: should be "rockchip,rk3128-cru"
-> +- compatible: should be "rockchip,rk3128-cru", "rockchip,rk3126-cru"
-
-- compatible: should be one of "rockchip,rk3128-cru" or "rockchip,rk3126-cru".
-
-
-Heiko
-
-
->  - reg: physical base address of the controller and length of memory mapped
->    region.
->  - #clock-cells: should be 1.
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index e38f4d2..0ac9f96 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -415,10 +415,13 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u64 a;
+ 
+ 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+-	vco = alpha_pll_find_vco(pll, rate);
+-	if (!vco) {
+-		pr_err("alpha pll not in a valid vco range\n");
+-		return -EINVAL;
++
++	if (!(pll->flags & HAVE_NO_VCO_CONF)) {
++		vco = alpha_pll_find_vco(pll, rate);
++		if (!vco) {
++			pr_err("alpha pll not in a valid vco range\n");
++			return -EINVAL;
++		}
+ 	}
+ 
+ 	regmap_write(pll->clkr.regmap, pll_l(pll), l);
+@@ -428,8 +431,10 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	regmap_write(pll->clkr.regmap, pll_alpha(pll), a);
+ 	regmap_write(pll->clkr.regmap, pll_alpha_u(pll), a >> 32);
+ 
+-	regmap_update_bits(pll->clkr.regmap, pll_alpha(pll),
+-			   GENMASK(0, alpha_width - 1), a);
++	if (!(pll->flags & HAVE_NO_VCO_CONF))
++		regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
++				   PLL_VCO_MASK << PLL_VCO_SHIFT,
++				   vco->val << PLL_VCO_SHIFT);
+ 
+ 	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
+ 			   PLL_ALPHA_EN, PLL_ALPHA_EN);
+@@ -479,7 +484,7 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long min_freq, max_freq;
+ 
+ 	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
+-	if (alpha_pll_find_vco(pll, rate))
++	if ((pll->flags & HAVE_NO_VCO_CONF) || alpha_pll_find_vco(pll, rate))
+ 		return rate;
+ 
+ 	min_freq = pll->vco_table[0].min_freq;
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 6e40e09..01869a8 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -55,6 +55,7 @@ struct clk_alpha_pll {
+ #define SUPPORTS_FSM_MODE		BIT(2)
+ #define SUPPORTS_64BIT_CONFIG_CTL	BIT(3)
+ #define SUPPORTS_DYNAMIC_UPDATE		BIT(4)
++#define HAVE_NO_VCO_CONF		BIT(5)
+ 	u8 flags;
+ 
+ 	struct clk_regmap clkr;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
