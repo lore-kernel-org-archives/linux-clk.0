@@ -1,68 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33782 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752403AbdGFJhp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2017 05:37:45 -0400
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, sboyd@codeaurora.org,
-        robdclark@gmail.com, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH V4 4/6] iommu/arm-smmu: Add the device_link between masters and smmu
-Date: Thu,  6 Jul 2017 15:07:03 +0530
-Message-Id: <1499333825-7658-5-git-send-email-vivek.gautam@codeaurora.org>
-In-Reply-To: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: meson: gxbb: fix meson cts_amclk divider flags
+Date: Thu, 27 Jul 2017 15:09:39 +0200
+Message-Id: <20170727130940.18005-2-jbrunet@baylibre.com>
+In-Reply-To: <20170727130940.18005-1-jbrunet@baylibre.com>
+References: <20170727130940.18005-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sricharan R <sricharan@codeaurora.org>
+CLK_DIVIDER_ROUND_CLOSEST was incorrectly put in the hw.init flags
+while it should have been in the divider flags
 
-Finally add the device link between the master device and
-smmu, so that the smmu gets runtime enabled/disabled only when the
-master needs it. This is done from add_device callback which gets
-called once when the master is added to the smmu.
-
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Fixes: 4087bd4b2170 ("clk: meson: gxbb: add cts_amclk")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/iommu/arm-smmu.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/meson/gxbb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index ddbfa8ab69e6..75567d9698ab 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -1348,6 +1348,7 @@ static int arm_smmu_add_device(struct device *dev)
- 	struct arm_smmu_device *smmu;
- 	struct arm_smmu_master_cfg *cfg;
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
-+	struct device_link *link = NULL;
- 	int i, ret;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index a897ea45327c..b1b72524153b 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -845,13 +845,14 @@ static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
+ 		.shift   = 0,
+ 		.width   = 8,
+ 	},
++	.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cts_amclk_div",
+ 		.ops = &meson_clk_audio_divider_ops,
+ 		.parent_names = (const char *[]){ "cts_amclk_sel" },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
  
- 	if (using_legacy_binding) {
-@@ -1403,6 +1404,16 @@ static int arm_smmu_add_device(struct device *dev)
- 
- 	pm_runtime_put_sync(smmu->dev);
- 
-+	/*
-+	 * Establish the link between smmu and master, so that the
-+	 * smmu gets runtime enabled/disabled as per the master's
-+	 * needs.
-+	 */
-+	link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
-+	if (!link)
-+		dev_warn(smmu->dev, "Unable to create device link between %s and %s\n",
-+			 dev_name(smmu->dev), dev_name(dev));
-+
- 	return 0;
- 
- out_cfg_free:
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.9.4
