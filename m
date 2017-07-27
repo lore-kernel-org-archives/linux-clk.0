@@ -1,81 +1,55 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, Vladimir
- Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
-        <gabriel.fernandez.st@gmail.com>,
-        Arvind Yadav
-	<arvind.yadav.cs@gmail.com>
-Subject: [PATCH v7 2/3] clk: gate: expose clk_gate_ops::is_enabled
-Date: Wed, 19 Jul 2017 16:25:43 +0200
-Message-ID: <1500474344-9832-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
-References: <1500474344-9832-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: meson: gxbb: fix protection against undefined clks
+Date: Thu, 27 Jul 2017 18:17:55 +0200
+Message-Id: <20170727161755.10393-3-jbrunet@baylibre.com>
+In-Reply-To: <20170727161755.10393-1-jbrunet@baylibre.com>
+References: <20170727161755.10393-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+gxbb clock driver gracefully handles case where the clkid is defined but
+the clock hw pointer is not provided, as long as it is not at the end of
+the hw_onecell_data array.
 
-This patch exposes clk_gate_ops::is_enabled as functions
-that can be directly called and assigned in places like this so
-we don't need wrapper functions that do nothing besides forward
-the call.
+This patch ensure that the last entries are defined as well to handle
+this particular case.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Sugested by Stephen Boyd <sboyd@codeaurora.org>
+Fixes: a70c6e06ed7c ("clk: meson: gxbb: protect against holes in the onecell_data array")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/clk-gate.c       | 3 ++-
- include/linux/clk-provider.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/meson/gxbb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 4e0c054a..dd82485 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
- 	clk_gate_endisable(hw, 0);
- }
- 
--static int clk_gate_is_enabled(struct clk_hw *hw)
-+int clk_gate_is_enabled(struct clk_hw *hw)
- {
- 	u32 reg;
- 	struct clk_gate *gate = to_clk_gate(hw);
-@@ -101,6 +101,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
- 
- 	return reg ? 1 : 0;
- }
-+EXPORT_SYMBOL_GPL(clk_gate_is_enabled);
- 
- const struct clk_ops clk_gate_ops = {
- 	.enable = clk_gate_enable,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c59c625..e9587ab 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -343,6 +343,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 		u8 clk_gate_flags, spinlock_t *lock);
- void clk_unregister_gate(struct clk *clk);
- void clk_hw_unregister_gate(struct clk_hw *hw);
-+int clk_gate_is_enabled(struct clk_hw *hw);
- 
- struct clk_div_table {
- 	unsigned int	val;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index a897ea45327c..8409d86cda24 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1183,6 +1183,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+ 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+ 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
++		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1305,6 +1306,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_32K_CLK]		    = &gxbb_32k_clk.hw,
+ 		[CLKID_32K_CLK_SEL]	    = &gxbb_32k_clk_sel.hw,
+ 		[CLKID_32K_CLK_DIV]	    = &gxbb_32k_clk_div.hw,
++		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+ };
 -- 
-1.9.1
+2.9.4
