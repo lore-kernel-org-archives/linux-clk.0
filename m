@@ -1,69 +1,88 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH 14/14] clk: tegra: Fix Tegra210 PLLU initialization
-Date: Tue, 25 Jul 2017 13:34:15 +0300
-Message-ID: <1500978856-5981-15-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC 10/12] clk: qcom: add read-only divider operations
+Date: Thu, 27 Jul 2017 16:40:23 +0530
+Message-Id: <1501153825-5181-11-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+Some of the divider settings are preconfigured and should not
+be changed by the clock framework during frequency change. This
+patch adds the read-only divider operation for QCOM dividers
+which is equivalent to generic divider operations in
+'commit 79c6ab509558 ("clk: divider: add CLK_DIVIDER_READ_ONLY flag")'.
 
-- Added necessary delays in PLLU enable sequence during initialization
-- Applied PLLU lock to all secondary gates (PLLU_48M and PLLU_60M were
-missing).
-
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-regmap-divider.c | 29 +++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-divider.h |  1 +
+ 2 files changed, 30 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index fd04b0e..6d7a613 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2554,6 +2554,7 @@ static int tegra210_enable_pllu(void)
- 	reg = readl_relaxed(clk_base + pllu.params->ext_misc_reg[0]);
- 	reg &= ~BIT(pllu.params->iddq_bit_idx);
- 	writel_relaxed(reg, clk_base + pllu.params->ext_misc_reg[0]);
-+	udelay(5);
+diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-regmap-divider.c
+index 5348491..6cf9005 100644
+--- a/drivers/clk/qcom/clk-regmap-divider.c
++++ b/drivers/clk/qcom/clk-regmap-divider.c
+@@ -23,6 +23,29 @@ static inline struct clk_regmap_div *to_clk_regmap_div(struct clk_hw *hw)
+ 	return container_of(to_clk_regmap(hw), struct clk_regmap_div, clkr);
+ }
  
- 	reg = readl_relaxed(clk_base + PLLU_BASE);
- 	reg &= ~GENMASK(20, 0);
-@@ -2561,6 +2562,7 @@ static int tegra210_enable_pllu(void)
- 	reg |= fentry->n << 8;
- 	reg |= fentry->p << 16;
- 	writel(reg, clk_base + PLLU_BASE);
-+	udelay(1);
- 	reg |= PLL_ENABLE;
- 	writel(reg, clk_base + PLLU_BASE);
++static long div_round_ro_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long *prate)
++{
++	struct clk_regmap_div *divider = to_clk_regmap_div(hw);
++	struct clk_regmap *clkr = &divider->clkr;
++	u32 div;
++	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
++
++	regmap_read(clkr->regmap, divider->reg, &div);
++	div >>= divider->shift;
++	div &= BIT(divider->width) - 1;
++	div += 1;
++
++	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
++		if (!hw_parent)
++			return -EINVAL;
++
++		*prate = clk_hw_round_rate(hw_parent, rate * div);
++	}
++
++	return DIV_ROUND_UP_ULL((u64)*prate, div);
++}
++
+ static long div_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long *prate)
+ {
+@@ -68,3 +91,9 @@ static unsigned long div_recalc_rate(struct clk_hw *hw,
+ 	.recalc_rate = div_recalc_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_regmap_div_ops);
++
++const struct clk_ops clk_regmap_div_ro_ops = {
++	.round_rate = div_round_ro_rate,
++	.recalc_rate = div_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_div_ro_ops);
+diff --git a/drivers/clk/qcom/clk-regmap-divider.h b/drivers/clk/qcom/clk-regmap-divider.h
+index fc4492e..8c39c27 100644
+--- a/drivers/clk/qcom/clk-regmap-divider.h
++++ b/drivers/clk/qcom/clk-regmap-divider.h
+@@ -25,5 +25,6 @@ struct clk_regmap_div {
+ };
  
-@@ -2800,14 +2802,14 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 	/* PLLU_60M */
- 	clk = clk_register_gate(NULL, "pll_u_60M", "pll_u_out2",
- 				CLK_SET_RATE_PARENT, clk_base + PLLU_BASE,
--				23, 0, NULL);
-+				23, 0, &pll_u_lock);
- 	clk_register_clkdev(clk, "pll_u_60M", NULL);
- 	clks[TEGRA210_CLK_PLL_U_60M] = clk;
+ extern const struct clk_ops clk_regmap_div_ops;
++extern const struct clk_ops clk_regmap_div_ro_ops;
  
- 	/* PLLU_48M */
- 	clk = clk_register_gate(NULL, "pll_u_48M", "pll_u_out1",
- 				CLK_SET_RATE_PARENT, clk_base + PLLU_BASE,
--				25, 0, NULL);
-+				25, 0, &pll_u_lock);
- 	clk_register_clkdev(clk, "pll_u_48M", NULL);
- 	clks[TEGRA210_CLK_PLL_U_48M] = clk;
- 
+ #endif
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
