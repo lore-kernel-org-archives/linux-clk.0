@@ -1,36 +1,51 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 14 Jul 2017 11:10:18 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Jul 2017 18:24:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-	Ben Li <ben.li@spreadtrum.com>,
-	Orson Zhai <orson.zhai@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH V2 02/10] dt-bindings: Add Spreadtrum clock binding
- documentation
-Message-ID: <20170714161018.tkzr6xuvqfaii22o@rob-hp-laptop>
-References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
- <20170711105627.20526-3-chunyan.zhang@spreadtrum.com>
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] ARC: clk: introduce HSDKv1 pll driver
+Message-ID: <20170728012424.GY2146@codeaurora.org>
+References: <20170714153128.8945-1-Eugeniy.Paltsev@synopsys.com>
+ <3d1bddbb-aaf5-ca5a-614a-5a84900feadc@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170711105627.20526-3-chunyan.zhang@spreadtrum.com>
+In-Reply-To: <3d1bddbb-aaf5-ca5a-614a-5a84900feadc@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 11, 2017 at 06:56:19PM +0800, Chunyan Zhang wrote:
-> Introduce a new binding with its documentation for Spreadtrum clock
-> sub-framework.
+On 07/27, Vineet Gupta wrote:
+> Hi Stephen,
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
->  Documentation/devicetree/bindings/clock/sprd.txt | 36 ++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
+> On 07/14/2017 09:01 PM, Eugeniy Paltsev wrote:
+> >HSDKv1 boards manages it's clocks using various PLLs. These PLL has same
+> >dividers and corresponding control registers mapped to different addresses.
+> >So we add one common driver for such PLLs.
+> >
+> >Each PLL on HSDK board consist of three dividers: IDIV, FBDIV and
+> >ODIV. Output clock value is managed using these dividers.
+> >
+> >We add pre-defined tables with supported rate values and appropriate
+> >configurations of IDIV, FBDIV and ODIV for each value.
+> >
+> >As of today we add support for PLLs that generate clock for the
+> >HSDKv1 arc cpus, system, ddr, AXI tunnel and hdmi.
+> >
+> >By this patch we add support for several plls (arc cpus pll and others),
+> >so we had to use two different init types: CLK_OF_DECLARE for arc cpus pll
+> >and regular probing for others plls.
+> >
+> >Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> 
+> Gentle ping, any chance you could look at this sometime.
+> 
+> Thx,
 
-Acked-by: Rob Herring <robh@kernel.org>
+Yes it's in the queue. Probably get to it tomorrow.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
