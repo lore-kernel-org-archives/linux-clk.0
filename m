@@ -1,33 +1,42 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 0/2] clk: meson: fix protection against undefined clks
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20170727161755.10393-1-jbrunet@baylibre.com>
 From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
-Date: Thu,  6 Jul 2017 12:24:21 +0200
-Message-Id: <1499336663-23875-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
-References: <1499336663-23875-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <709b4877-f3e5-3654-c0c7-970ea43161e6@baylibre.com>
+Date: Fri, 28 Jul 2017 12:07:00 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170727161755.10393-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the clock binding entry for the CEC 32K AO Clock.
+On 07/27/2017 06:17 PM, Jerome Brunet wrote:
+> If the last clkids defined have no hw pointer associated with them in
+> the hw_onecell_data array, the initialization is going to crash badly
+> because the array is not big enough.
+> 
+> The patchset makes sure the array is big enough, and that each clkid is
+> associated with a valid hw pointer, or NULL.
+> 
+> Doing it in two patches to ease backport, since we are not fixing the
+> same commit on meson8b and gxbb
+> 
+> Jerome Brunet (2):
+>   clk: meson: meson8b: fix protection against undefined clks
+>   clk: meson: gxbb: fix protection against undefined clks
+> 
+>  drivers/clk/meson/gxbb.c    | 2 ++
+>  drivers/clk/meson/meson8b.c | 1 +
+>  2 files changed, 3 insertions(+)
+> 
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- include/dt-bindings/clock/gxbb-aoclkc.h | 1 +
- 1 file changed, 1 insertion(+)
+Applied to clk-meson's fixes/drivers !
 
-diff --git a/include/dt-bindings/clock/gxbb-aoclkc.h b/include/dt-bindings/clock/gxbb-aoclkc.h
-index 3175148..9d15e22 100644
---- a/include/dt-bindings/clock/gxbb-aoclkc.h
-+++ b/include/dt-bindings/clock/gxbb-aoclkc.h
-@@ -62,5 +62,6 @@
- #define CLKID_AO_UART1		3
- #define CLKID_AO_UART2		4
- #define CLKID_AO_IR_BLASTER	5
-+#define CLKID_AO_CEC_32K	6
- 
- #endif
--- 
-1.9.1
+Thanks,
+Neil
