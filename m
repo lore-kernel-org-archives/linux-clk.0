@@ -1,87 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:11278 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752762AbdGLPVh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2017 11:21:37 -0400
-Subject: Re: [PATCH] dt-bindings: clock: ti-sci: Fix incorrect usage of
- headers
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20170711223615.29398-1-s-anna@ti.com>
- <20170712010923.GP22780@codeaurora.org>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <539129c3-8214-4e0d-0e97-7c6784a9b2b5@ti.com>
-Date: Wed, 12 Jul 2017 10:21:10 -0500
-MIME-Version: 1.0
-In-Reply-To: <20170712010923.GP22780@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: mpll: fix mpll0 fractional part ignored
+Date: Fri, 28 Jul 2017 18:32:28 +0200
+Message-Id: <20170728163228.10879-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/2017 08:09 PM, Stephen Boyd wrote:
-> On 07/11, Suman Anna wrote:
->> The clock consumer usage description was erroneously referring to
->> couple of dt-binding headers that are no longer valid. The definition
->> and/or usage of these headers is incorrect and the only file present
->> at the moment, dt-bindings/soc/k2g.h is also being cleaned up. The
->> examples in this binding were updated properly, but the update to
->> description was missed out. So, fix this.
->>
->> Fixes: 8f306cfe4383 ("Documentation: dt: Add TI SCI clock driver")
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->> Hi Stephen,
->>
->> Looks like this was missed during the update/repost of the ti-sci-clk
->> driver/binding. FYI, Santosh is going to pickup the header file cleanup
->> patch https://patchwork.kernel.org/patch/9741279/ for the next merge
->> window.
-> 
-> I'll let Rob apply this as it is purely a binding document update.
+mpll0 clock is special compared to the other mplls. It needs another
+bit (ssen) to be set to activate the fractional part the mpll divider
 
-OK, thanks.
+Fixes: 007e6e5c5f01 ("clk: meson: mpll: add rw operation")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/clk-mpll.c | 7 +++++++
+ drivers/clk/meson/clkc.h     | 1 +
+ drivers/clk/meson/gxbb.c     | 5 +++++
+ drivers/clk/meson/meson8b.c  | 5 +++++
+ 4 files changed, 18 insertions(+)
 
-> 
->>
->> regards
->> Suman
->>
->>  Documentation/devicetree/bindings/clock/ti,sci-clk.txt | 7 +++----
->>  1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->> index 1e884c40ab50..4e59dc6b1778 100644
->> --- a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->> @@ -14,10 +14,9 @@ Required properties:
->>  - compatible: Must be "ti,k2g-sci-clk"
->>  - #clock-cells: Shall be 2.
->>    In clock consumers, this cell represents the device ID and clock ID
->> -  exposed by the PM firmware. The assignments can be found in the header
->> -  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
->> -  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
->> -  is the SoC involved, for example 'k2g'.
->> +  exposed by the PM firmware. The list of valid values for the device IDs
->> +  and clocks IDs for 66AK2G SoC are documented at
->> +  http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data
->>  
-> 
-> I hope the weblink doesn't die in the future. Why can't we copy
-> it into the binding document here for safe keeping?
-
-Yeah, the weblink will be maintained, it explains our TI-SCI protocol
-information and we also have couple more references to it. I don't think
-the values themselves do not belong to any binding and they are specific
-to each SoC. We have initially added them to dt-bindings header files,
-but since those files are not really leveraged by any drivers and only
-provided macro usage in DTS files, they are being cleaned up. DT nodes
-will directly use the required values instead.
-
-regards
-Suman
-
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 39eab69fe51a..44a5a535ca63 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -161,6 +161,13 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 	reg = PARM_SET(p->width, p->shift, reg, 1);
+ 	writel(reg, mpll->base + p->reg_off);
+ 
++	p = &mpll->ssen;
++	if (p->width != 0) {
++		reg = readl(mpll->base + p->reg_off);
++		reg = PARM_SET(p->width, p->shift, reg, 1);
++		writel(reg, mpll->base + p->reg_off);
++	}
++
+ 	p = &mpll->n2;
+ 	reg = readl(mpll->base + p->reg_off);
+ 	reg = PARM_SET(p->width, p->shift, reg, n2);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index d6feafe8bd6c..1629da9b4141 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -118,6 +118,7 @@ struct meson_clk_mpll {
+ 	struct parm sdm_en;
+ 	struct parm n2;
+ 	struct parm en;
++	struct parm ssen;
+ 	spinlock_t *lock;
+ };
+ 
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 59a296b119ea..79b195b4df03 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -528,6 +528,11 @@ static struct meson_clk_mpll gxbb_mpll0 = {
+ 		.shift   = 14,
+ 		.width	 = 1,
+ 	},
++	.ssen = {
++		.reg_off = HHI_MPLL_CNTL,
++		.shift   = 25,
++		.width	 = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0",
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index bb3f1de876b1..6ec512ad2598 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -267,6 +267,11 @@ static struct meson_clk_mpll meson8b_mpll0 = {
+ 		.shift   = 14,
+ 		.width   = 1,
+ 	},
++	.ssen = {
++		.reg_off = HHI_MPLL_CNTL,
++		.shift   = 25,
++		.width   = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0",
+-- 
+2.9.4
