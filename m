@@ -1,135 +1,99 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52642 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750813AbdGZHg2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Jul 2017 03:36:28 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 28 Jul 2017 09:37:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
+Subject: Re: [PATCH v2 3/5] clk: qcom: gdsc: Add support to control
+ associated clks
+Message-ID: <20170728163753.GB2146@codeaurora.org>
+References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+ <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
+ <20170727230259.GR2146@codeaurora.org>
+ <b1db092a-edd8-76e9-f1d2-91bf123638d7@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 26 Jul 2017 15:36:27 +0800
-From: icenowy@aosc.io
-To: wens@csie.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Ondrej Jirman <megous@megous.com>
-Subject: Re: [linux-sunxi] [PATCH 10/10] ARM: dts: sun8i: Add SY8106A
- regulator to Orange Pi PC
-In-Reply-To: <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
-References: <20170723102749.17323-1-icenowy@aosc.io>
- <20170723102749.17323-11-icenowy@aosc.io>
- <CAGb2v66AGjazHT-+hWVLyNBLDw=DJ5yTmNxF-_=BtZFfjnni-A@mail.gmail.com>
- <25C8A89C-8495-4787-934C-8E9667CD70BF@aosc.io>
- <CAGb2v64xXOmC44TKrSDZFAh6i_rgFEccCHj4EG+1fxFJd9fjjw@mail.gmail.com>
-Message-ID: <82507f40a1ddba8517cf09f51d3afa33@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <b1db092a-edd8-76e9-f1d2-91bf123638d7@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-07-26 15:30，Chen-Yu Tsai 写道：
-> On Wed, Jul 26, 2017 at 3:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> 
->> 
->> 于 2017年7月26日 GMT+08:00 下午3:08:06, Chen-Yu Tsai <wens@csie.org> 写到:
->>> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> 
->>> wrote:
->>>> From: Ondrej Jirman <megous@megous.com>
->>>> 
->>>> Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
->>>> Orange Pi PC, then set the power supply of the ARM cores to this
->>>> regulator, in order to enable DVFS.
->>>> 
->>>> Signed-off-by: Ondrej Jirman <megous@megous.com>
->>>> [Icenowy: Enable DVFS in this patch, slight changes and change 
->>>> commit
->>>>  message]
->>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>>> ---
->>>>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 19 +++++++++++++++++++
->>>>  1 file changed, 19 insertions(+)
->>>> 
->>>> diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->>> b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->>>> index 998b60f8d295..d855f8b6254e 100644
->>>> --- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->>>> +++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->>>> @@ -98,6 +98,10 @@
->>>>         status = "okay";
->>>>  };
->>>> 
->>>> +&cpu0 {
->>>> +       cpu-supply = <&reg_sy8106a>;
->>>> +};
->>>> +
->>>>  &ehci0 {
->>>>         status = "okay";
->>>>  };
->>>> @@ -160,6 +164,21 @@
->>>>         };
->>>>  };
->>>> 
->>>> +&r_i2c {
->>>> +       status = "okay";
->>>> +
->>>> +       reg_sy8106a: regulator@65 {
->>>> +               compatible = "silergy,sy8106a";
->>>> +               reg = <0x65>;
->>>> +               regulator-name = "vdd-cpux";
->>>> +               regulator-min-microvolt = <1000000>;
->>> 
->>> According to the H3 datasheet, the minimum voltage is 1.1V, not 1V.
->> 
->> But the Armbian OPP table for H3 contains several
->> OPP under 1.1V...
+On 07/28, Rajendra Nayak wrote:
 > 
-> Can you provide a link?
 > 
-> If Armbian users have actually field tested this (a big if),
-> then I would like to see some evidence of the SoC running
-> stably at those OPPs with those lower voltages under full load.
-
-See [1].
-
-[1] 
-https://github.com/armbian/build/blob/master/config/fex/orangepipc.fex#L736
-
+> On 07/28/2017 04:32 AM, Stephen Boyd wrote:
+> > On 07/20, Rajendra Nayak wrote:
+> > 
+> >> +		clk_disable_unprepare(sc->clks[i]);
+> >> +}
+> >> +
+> >>  static int gdsc_enable(struct generic_pm_domain *domain)
+> >>  {
+> >>  	struct gdsc *sc = domain_to_gdsc(domain);
+> >> @@ -193,6 +219,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+> >>  	 */
+> >>  	udelay(1);
+> >>  
+> >> +	ret = gdsc_clk_enable(sc);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >>  	/* Turn on HW trigger mode if supported */
+> >>  	if (sc->flags & HW_CTRL) {
+> >>  		ret = gdsc_hwctrl(sc, true);
+> >> @@ -241,6 +271,8 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+> >>  			return ret;
+> >>  	}
+> >>  
+> >> +	gdsc_clk_disable(sc);
+> > 
+> > Can we call sleeping APIs (i.e. prepare/unprepare) from within
+> > the power domains? I thought that didn't work generically because
+> > someone could set their runtime PM configuration to be atomic
+> > context friendly. Is there some way we can block that from
+> > happening if we hook up a power domain that is no longer safe to
+> > call from atomic context?
 > 
-> Even then you should still leave a note describing why we allow
-> voltages below the recommended range.
+> hmm, I don't see a way to do that. Perhaps we could prepare/unprepare
+> these as part of the pm_domain attach/detach to a device and then
+> only enable/disable them as part of the gdsc_enable/disable?
 > 
-> ChenYu
+
+The problem there is if we keep these clks prepared while the
+domain is attached to a device I don't see how we can ever turn
+off the XO clk and achieve XO shutdown in low power modes. A pm
+domain is basically never detached, right? This is where we need
+different power levels in PM domains if I understand correctly.
+
+> > 
+> > This concerns me if we do probe defer on orphan clks. We may get
+> > into some situation where the gdsc is setup by a clk driver that
+> > is trying to probe before some parent clk has registered for the
+> > clks we're "getting" here. For example, this could easily happen
+> > if we insert XO into the tree at the top and everything defers.
+> > 
+> > I suppose this is not a problem because in this case we don't
+> > have any clk here that could be orphaned even if RPM clks are
+> > inserted into the clk tree for XO? I mean to say that we won't
+> > get into a probe defer due to orphan clk loop. I'm always afraid
+> > someone will make hardware that send a clk from one controller to
+> > another and then back again (we did that with pcie) and then
+> > we'll be unable to get out of the defer loop because we'll be
+> > deferred on orphan status.
 > 
->> 
->>> 
->>> Otherwse
->>> 
->>>> +               regulator-max-microvolt = <1400000>;
->>>> +               regulator-ramp-delay = <200>;
->>> 
->>> Is this an actual constraint of the SoC? Or is it a characteristic
->>> of the regulator? If it is the latter, it belongs in the driver.
->>> AFAIK the regulator supports varying the ramp delay (slew rate).
+> Yes, we would probably run into these issues with probe defer for
+> orphan clks. One way to handle it could be to decouple the probing
+> of the clocks and powerdomain parts of the controller. Like the clock
+> driver can probe and then register a dummy device for powerdomains
+> (like is done for tsens on 8960) so it could probe independently?
+> 
 
-I don't know...
+Well is it a problem right now? I think we're OK here because we
+don't have a "cycle" between clk providers in the clk provider
+hierarchy. Can we clk_get() during attach and then fail attach if
+we can't get clks at that point? If this works, we have a backup
+plan should something go wrong, but we can ignore this concern
+for now until it becomes a real problem.
 
-Maybe I should ask Ondrej?
-
->>> 
->>> ChenYu
->>> 
->>>> +               regulator-boot-on;
->>>> +               regulator-always-on;
->>>> +       };
->>>> +};
->>>> +
->>>>  &r_pio {
->>>>         leds_r_opc: led_pins@0 {
->>>>                 pins = "PL10";
->>>> --
->>>> 2.13.0
->>>> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
