@@ -1,66 +1,73 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 25 Jul 2017 09:33:36 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 07/10] ARM: dts: sun8i: a83t: Add MMC controller
- device nodes
-Message-ID: <20170725073336.w2ppeh7tcsji4gzo@flea>
-References: <20170724135905.28855-1-wens@csie.org>
- <20170724135905.28855-8-wens@csie.org>
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: jbrunet@baylibre.com,
+	narmstrong@baylibre.com
+Subject: [PATCH v2 0/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
+Date: Fri, 28 Jul 2017 11:53:05 +0200
+Message-Id: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4yux76stjrlom2dt"
-In-Reply-To: <20170724135905.28855-8-wens@csie.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+In order to support the standalone CEC Controller on the Amlogic SoCs,
+a specific CEC 32K clock must be handled in the AO domain.
 
---4yux76stjrlom2dt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The CEC 32K AO Clock is a dual divider with dual counter to provide a more
+precise 32768Hz clock for the CEC subsystem from the external xtal.
 
-On Mon, Jul 24, 2017 at 09:59:02PM +0800, Chen-Yu Tsai wrote:
-> The A83T has 3 MMC controllers. The third one is a bit special, as it
-> supports a wider 8-bit bus, and a "new timing mode".
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+The AO clocks management registers are spread among the AO register space,
+so this patch also adds management of these registers mappings then uses them
+for the CEC 32K AO clock management.
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This patchset :
+ - updates the bindings accordingly
+ - switch driver to new bindings
+ - adds the CEC 32k clock
+ - adds the clock binding entry
 
-Thanks,
-Maxime
+The DT Update will be sent in another patchset.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Changes since v1 at [1] :
+ - move bindings to parent syscon node and move clkc to subnode
+ - switch aoclkc to use regmap only register access
+ - introduce aoclk-regmap-gate for this purpose until regmap clocks are generic
 
---4yux76stjrlom2dt
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] https://lkml.kernel.org/r/1499336663-23875-1-git-send-email-narmstrong@baylibre.com
 
------BEGIN PGP SIGNATURE-----
+Neil Armstrong (4):
+  dt-bindings: clock: amlogic,gxbb-aoclkc: Update bindings
+  clk: meson: gxbb-aoclk: Switch to regmap for register access
+  dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
+  clk: meson: gxbb-aoclk: Add CEC 32k clock
 
-iQIcBAEBAgAGBQJZdvRQAAoJEBx+YmzsjxAgkV4P/iATVBERC1cwX6F76BTPTefK
-uS4qFlAmPJ3veBrGk11w9tWObzb75qRj62S7Z+G/d3IvTdyRT54J8MoqmWl6AL/8
-uv9qzULsYneItW+HJGG2+i1qRI0zzXJjHehuGB35gomegSQvfJf8oVfjNNPaBxeY
-SrhQzxtzN7Okp1i6XmtslrWN2aT5t4Hr+EFytrRX58yvYpYqLTRu8OIrERVDf/a9
-xb8/A70ZM88Q60wea5/2TX8jMdsQegyVwov7OUF83Cm3b/DgVaReSUM1bDYlXSqG
-976ViphtcFWHcHZ6xfriyu1cRdwHBMXmxDoFIp22VbSpqUVAV5K6b+doQbh6/1Tr
-5I+DRYoZtNc4wFsQMwD5ERTtAAL72e0yDXV4Uv42rJqK2UhsegcshFr8EBL2Zk+T
-Be3vczrIIEDepu83w0AwxiA5MKUJg+W09JrBpZHFg/ZddKK3IG4SYI+GmqhPTSWl
-UoEMb8rxSIGkimHRbXb5teIZbmd/GVI2ZB7oDkwIArhzuWklb+yTPg2DEPJs2CCW
-QILE+YsVtB3jOj+cCHRB5m7Cg9oIsfF3smdnsB+ERRA3+dx4sJNPsbh1oxtUBz6y
-b/69UNfoazGn7pKADXtL2p+w4b4gvVCLfexM2rWkH2dRFGgL5ARf/EK1JHDF/Mai
-0FENgh6GqDcG2ZyrLnsy
-=eWJO
------END PGP SIGNATURE-----
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  22 ++-
+ drivers/clk/meson/Makefile                         |   2 +-
+ drivers/clk/meson/gxbb-aoclk-32k.c                 | 180 +++++++++++++++++++++
+ drivers/clk/meson/gxbb-aoclk-regmap.c              |  46 ++++++
+ drivers/clk/meson/gxbb-aoclk.c                     |  65 +++++---
+ drivers/clk/meson/gxbb-aoclk.h                     |  42 +++++
+ include/dt-bindings/clock/gxbb-aoclkc.h            |   1 +
+ 7 files changed, 328 insertions(+), 30 deletions(-)
+ create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
+ create mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+ create mode 100644 drivers/clk/meson/gxbb-aoclk.h
 
---4yux76stjrlom2dt--
+-- 
+1.9.1
+
+
+_______________________________________________
+linux-amlogic mailing list
+linux-amlogic@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-amlogic
