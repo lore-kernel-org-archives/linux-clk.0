@@ -1,44 +1,38 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Jul 2017 16:10:11 -0700
+Date: Fri, 28 Jul 2017 11:34:28 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V3 1/8] clk: vc5: Prevent division by zero on
- unconfigured outputs
-Message-ID: <20170712231007.GG22780@codeaurora.org>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: mturquette@baylibre.com, andy.gross@linaro.org, david.brown@linaro.org,
+	rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC 06/12] Clk: qcom: support for dynamic updating the PLL
+Message-ID: <20170728183428.GH2146@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+ <1501153825-5181-7-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1501153825-5181-7-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/09, Marek Vasut wrote:
-> In case the initial values of the FOD registers are not configured in
-> the OTP or by the bootloader, it is possible that the FOD registers
-> will contain zeroes. The code in vc5_fod_recalc_rate() immediately
-> feeds the FOD divider value obtained from the FOD registers into the
-> div64_u64() and if the FOD divider value is zero, triggers division
-> by zero exception.
+On 07/27, Abhishek Sahu wrote:
+> Some of the Alpha PLL’s support dynamic update in which the
+> frequency can be changed dynamically without turning off the PLL.
 > 
-> Check if the FOD divider value is zero and return the frequency of
-> the FOD output as 0 Hz if it is so. This prevents the division by
-> zero exception.
+> This dynamic update requires the following sequence
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> on Salvator-XS with the display LVDS output.
-> ---
+> 1. Write the desired values to pll_l_val and pll_alpha_val.
+> 2. Toggle pll_latch_input from low to high.
+> 3. Wait for pll_ack_latch to transition from low to high.
+>    The new L and alpha values have been latched. It make
+>    take some time for the PLL to fully settle with these
+>    new values.
+> 4. Pull pll_latch_input low.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 
-Applied to clk-next
+I think Rajendra has a similar patch that was sent. Is this the
+same? Can you please look on the list and find it and compare?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
