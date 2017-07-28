@@ -1,116 +1,91 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH 11/14] clk: tegra: Update T210 PLLSS (D2/DP) registration
-Date: Tue, 25 Jul 2017 13:34:12 +0300
-Message-ID: <1500978856-5981-12-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: jbrunet@baylibre.com,
+	narmstrong@baylibre.com
+Subject: [PATCH v2 1/4] dt-bindings: clock: amlogic,
+ gxbb-aoclkc: Update bindings
+Date: Fri, 28 Jul 2017 11:53:06 +0200
+Message-Id: <1501235589-318-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
+References: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+On the first revision of the bindings, only the gates + resets were known
+in the AO Clock HW, but more registers used to configures AO clock are known
+to be spread among the AO register space.
+This patch adds a parent node for the entire system control zone for the AO
+domain then moves the clock controller as a subnode of the system control
+node.
 
-Remove from Tegra210 PLLSS registration code sections that
-- attempt to set PLL minimum rate (unnecessary, and dangerous if PLL
-  is already enabled on boot)
-- apply pre-Tegra210 defaults settings
-- check IDDQ setting (duplicated with Tegra210 PLLSS check defaults)
-
-Replaced setting of reference clock with check that default oscillator
-selection is not changed, and failed registration otherwise as validation
-was only done with the oscillator as the reference clock.
-
-Reordered registration, so that PLL initialization is called after
-VCOmin adjustment.
-
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/tegra/clk-pll.c | 48 +++++++++------------------------------------
- 1 file changed, 9 insertions(+), 39 deletions(-)
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 02f34e6..c6bce4a 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2618,10 +2618,8 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- {
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk, *parent;
--	struct tegra_clk_pll_freq_table cfg;
- 	unsigned long parent_rate;
- 	u32 val;
--	int i;
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+index a55d31b..64884ed 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+@@ -5,9 +5,11 @@ controllers within the Always-On part of the SoC.
  
- 	if (!pll_params->div_nmp)
- 		return ERR_PTR(-EINVAL);
-@@ -2633,13 +2631,11 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 		return ERR_PTR(-EINVAL);
- 	}
+ Required Properties:
  
--	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
--	if (IS_ERR(pll))
--		return ERR_CAST(pll);
--
--	val = pll_readl_base(pll);
--	val &= ~PLLSS_REF_SRC_SEL_MASK;
--	pll_writel_base(val, pll);
-+	val = readl_relaxed(clk_base + pll_params->base_reg);
-+	if (val & PLLSS_REF_SRC_SEL_MASK) {
-+		WARN(1, "not supported reference clock for %s\n", name);
-+		return ERR_PTR(-EINVAL);
-+	}
+-- compatible: should be "amlogic,gxbb-aoclkc"
+-- reg: physical base address of the clock controller and length of memory
+-       mapped region.
++- compatible: value should be different for each SoC family as :
++	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
++	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
++	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
++	followed by the common "amlogic,meson-gx-aoclkc"
  
- 	parent_rate = clk_get_rate(parent);
+ - #clock-cells: should be 1.
  
-@@ -2649,36 +2645,10 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
+@@ -23,14 +25,22 @@ to specify the reset which they consume. All available resets are defined as
+ preprocessor macros in the dt-bindings/reset/gxbb-aoclkc.h header and can be
+ used in device tree sources.
  
--	/* initialize PLL to minimum rate */
--
--	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
--	cfg.n = cfg.m * pll_params->vco_min / parent_rate;
--
--	for (i = 0; pll_params->pdiv_tohw[i].pdiv; i++)
--		;
--	if (!i) {
--		kfree(pll);
--		return ERR_PTR(-EINVAL);
--	}
--
--	cfg.p = pll_params->pdiv_tohw[i-1].hw_val;
--
--	_update_pll_mnp(pll, &cfg);
--
--	pll_writel_misc(PLLSS_MISC_DEFAULT, pll);
--
--	val = pll_readl_base(pll);
--	if (val & PLL_BASE_ENABLE) {
--		if (val & BIT(pll_params->iddq_bit_idx)) {
--			WARN(1, "%s is on but IDDQ set\n", name);
--			kfree(pll);
--			return ERR_PTR(-EINVAL);
--		}
--	} else
--		val |= BIT(pll_params->iddq_bit_idx);
--
--	val &= ~PLLSS_LOCK_OVERRIDE;
--	pll_writel_base(val, pll);
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
-+	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
++Parent node should have the following properties :
++- compatible: "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd"
++- reg: base address and size of the AO system control register space.
++
+ Example: AO Clock controller node:
  
- 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
- 					&tegra_clk_pll_ops);
+-	clkc_AO: clock-controller@040 {
+-		compatible = "amlogic,gxbb-aoclkc";
+-		reg = <0x0 0x040 0x0 0x4>;
++ao_sysctrl: sys-ctrl@0 {
++	compatible = "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd";
++	reg =  <0x0 0x0 0x0 0x100>;
++
++	clkc_AO: clock-controller {
++		compatible = "amlogic,meson-gxbb-aoclkc", "amlogic,meson-gx-aoclkc";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
++};
+ 
+ Example: UART controller node that consumes the clock and reset generated
+   by the clock controller:
 -- 
 1.9.1
+
+
+_______________________________________________
+linux-amlogic mailing list
+linux-amlogic@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-amlogic
