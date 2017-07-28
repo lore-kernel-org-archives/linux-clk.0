@@ -1,117 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34430 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbdGFJhv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2017 05:37:51 -0400
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, sboyd@codeaurora.org,
-        robdclark@gmail.com, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org,
-        stanimir.varbanov@linaro.org, architt@codeaurora.org,
-        vivek.gautam@codeaurora.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH V4 5/6] iommu/arm-smmu: Add support for MMU40x/500 clocks
-Date: Thu,  6 Jul 2017 15:07:04 +0530
-Message-Id: <1499333825-7658-6-git-send-email-vivek.gautam@codeaurora.org>
-In-Reply-To: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-clk@vger.kernel.org,
+	robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux@armlinux.org.uk,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 3/3] ARM: dts: meson: mark the clock controller also as reset controller
+Date: Fri, 28 Jul 2017 23:13:13 +0200
+Message-Id: <20170728211313.10603-4-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
+References: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sricharan R <sricharan@codeaurora.org>
+The clock controller provides a few reset lines as well. Add the
+corresponding CPU cores.
 
-The MMU400x/500 is the implementation of the SMMUv2
-arch specification. It is split in to two blocks
-TBU, TCU. TBU caches the page table, instantiated
-for each master locally, clocked by the TBUn_clk.
-TCU manages the address translation with PTW and has
-the programming interface as well, clocked using the
-TCU_CLK. The TBU can also be sharing the same clock
-domain as TCU, in which case both are clocked using
-the TCU_CLK.
-
-This defines the clock bindings for the same and adds
-the clock names to compatible data.
-
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-[vivek: clock rework and cleanup]
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- .../devicetree/bindings/iommu/arm,smmu.txt         | 24 ++++++++++++++++++++++
- drivers/iommu/arm-smmu.c                           | 12 ++++++++++-
- 2 files changed, 35 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/meson8.dtsi  | 1 +
+ arch/arm/boot/dts/meson8b.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 8a6ffce12af5..00331752d355 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -71,6 +71,26 @@ conditions.
-                   or using stream matching with #iommu-cells = <2>, and
-                   may be ignored if present in such cases.
- 
-+- clock-names:    Should be "tcu" and "iface" for "arm,mmu-400",
-+                  "arm,mmu-401" and "arm,mmu-500"
-+
-+                  "tcu" clock is required for smmu's register access using the
-+                  programming interface and ptw for downstream bus access. This
-+                  clock is also used for access to the TBU connected to the
-+                  master locally. Sometimes however, TBU is clocked along with
-+                  the master.
-+
-+                  "iface" clock is required to access the TCU's programming
-+                  interface, apart from the "tcu" clock.
-+
-+- clocks:         Phandles for respective clocks described by clock-names.
-+
-+- power-domains:  Phandles to SMMU's power domain specifier. This is
-+                  required even if SMMU belongs to the master's power
-+                  domain, as the SMMU will have to be enabled and
-+                  accessed before master gets enabled and linked to its
-+                  SMMU.
-+
- ** Deprecated properties:
- 
- - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-@@ -95,6 +115,10 @@ conditions.
-                              <0 36 4>,
-                              <0 37 4>;
-                 #iommu-cells = <1>;
-+                clocks = <&gcc GCC_SMMU_CFG_CLK>,
-+                         <&gcc GCC_APSS_TCU_CLK>;
-+
-+		clock-names = "iface", "tcu";
-         };
- 
-         /* device with two stream IDs, 0 and 7 */
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 75567d9698ab..7bb09280fa11 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -1947,9 +1947,19 @@ struct arm_smmu_match_data {
- ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
--ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
- 
-+static const char * const arm_mmu500_clks[] = {
-+	"tcu", "iface",
-+};
-+
-+static const struct arm_smmu_match_data arm_mmu500 = {
-+	.version = ARM_SMMU_V2,
-+	.model = ARM_MMU500,
-+	.clks = arm_mmu500_clks,
-+	.num_clks = ARRAY_SIZE(arm_mmu500_clks),
-+};
-+
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
- 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 6fe6a159e960..b98d44fde6b6 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -168,6 +168,7 @@
+ &cbus {
+ 	clkc: clock-controller@4000 {
+ 		#clock-cells = <1>;
++		#reset-cells = <1>;
+ 		compatible = "amlogic,meson8-clkc";
+ 		reg = <0x8000 0x4>, <0x4000 0x460>;
+ 	};
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 8fce13844b0c..bc278da7df0d 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -119,6 +119,7 @@
+ &cbus {
+ 	clkc: clock-controller@4000 {
+ 		#clock-cells = <1>;
++		#reset-cells = <1>;
+ 		compatible = "amlogic,meson8b-clkc";
+ 		reg = <0x8000 0x4>, <0x4000 0x460>;
+ 	};
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.13.3
