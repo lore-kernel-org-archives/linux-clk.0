@@ -1,71 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47206 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbdGMFgJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2017 01:36:09 -0400
-Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: joro@8bytes.org, robin.murphy@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, will.deacon@arm.com,
-        m.szyprowski@samsung.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, stanimir.varbanov@linaro.org,
-        architt@codeaurora.org, linux-arm-kernel@lists.infradead.org
-References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
- <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
- <20170712225459.GZ22780@codeaurora.org>
- <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org>
-Date: Thu, 13 Jul 2017 11:05:59 +0530
+Return-Path: <absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Sun, 30 Jul 2017 18:34:51 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, andy.gross@linaro.org, david.brown@linaro.org,
+ rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [RFC 02/12] clk: qcom: flag for 64 bit CONFIG_CTL
+In-Reply-To: <20170728183321.GG2146@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+ <1501153825-5181-3-git-send-email-absahu@codeaurora.org>
+ <20170728183321.GG2146@codeaurora.org>
+Message-ID: <e976eedc7c835f92c1f5d19f6a2911a1@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vivek,
-
-On 7/13/2017 10:43 AM, Vivek Gautam wrote:
-> Hi Stephen,
+On 2017-07-29 00:03, Stephen Boyd wrote:
+> On 07/27, Abhishek Sahu wrote:
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c 
+>> b/drivers/clk/qcom/clk-alpha-pll.c
+>> index 47a1da3..e6cde2d 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -118,7 +118,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll 
+>> *pll, struct regmap *regmap,
+>>  	regmap_write(regmap, off + PLL_L_VAL, config->l);
+>>  	regmap_write(regmap, off + PLL_ALPHA_VAL, config->alpha);
+>>  	regmap_write(regmap, off + PLL_CONFIG_CTL, config->config_ctl_val);
+>> -	regmap_write(regmap, off + PLL_CONFIG_CTL_U, 
+>> config->config_ctl_hi_val);
+>> +
+>> +	if (pll->flags & SUPPORTS_64BIT_CONFIG_CTL)
+>> +		regmap_write(regmap, off + PLL_CONFIG_CTL_U,
+>> +			     config->config_ctl_hi_val);
 > 
-> 
-> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
->> On 07/06, Vivek Gautam wrote:
->>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->>>                    size_t size)
->>>   {
->>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
->>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
->>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
->>> +    size_t ret;
->>>         if (!ops)
->>>           return 0;
->>>   -    return ops->unmap(ops, iova, size);
->>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
->> Can these map/unmap ops be called from an atomic context? I seem
->> to recall that being a problem before.
-> 
-> That's something which was dropped in the following patch merged in master:
-> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
-> 
-> Looks like we don't  need locks here anymore?
+> Is there a hole there? I mean a RAZ/WI register so we can just
+> keep writing it and not care?
 
- Apart from the locking, wonder why a explicit pm_runtime is needed
- from unmap. Somehow looks like some path in the master using that
- should have enabled the pm ?
+  We don't have hole for most of the alpha PLL. The offset for
+  CONFIG_CTL itself is not same for all types of Alpha PLL
+  and the same is being handled in patch 4 of this patch
+  series.
 
-Regards,
- Sricharan
+  Spark PLL
+  CONFIG_CTL	0x18
+  TEST_CTL	0x1C
+  TEST_CTL_U	0x20
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+  Brammo PLL
+  CONFIG_CTL	0x18
+  TEST_CTL	0x1C
+  PLL_STATUS     0x24
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
-
+  Hyuara PLL
+  CONFIG_CTL	0x14
+  CONFIG_CTL_U	0x18
+  TEST_CTL       0x1c
