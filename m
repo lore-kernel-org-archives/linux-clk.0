@@ -1,71 +1,57 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoOsp7ATFY-0N4ExVWQb=z1kCJqowLv7g7CSBK4jWVj_A@mail.gmail.com>
-References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-5-wens@csie.org>
- <CAPDyKFoOsp7ATFY-0N4ExVWQb=z1kCJqowLv7g7CSBK4jWVj_A@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 14 Jul 2017 17:44:40 +0800
-Message-ID: <CAGb2v674ZT-4O-FD4T3uK9pZEOZT5UtUFa8L90bUa2YKdbftig@mail.gmail.com>
-Subject: Re: [PATCH 04/11] mmc: sunxi: Keep default timing phase settings for
- new timing mode
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com
+Cc: wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 3/4] clk: sunxi-ng: Make fractional helper less chatty
+Date: Sun, 30 Jul 2017 18:41:49 +0200
+Message-Id: <20170730164150.26302-4-jernej.skrabec@siol.net>
+In-Reply-To: <20170730164150.26302-1-jernej.skrabec@siol.net>
+References: <20170730164150.26302-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 14, 2017 at 5:16 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 14 July 2017 at 08:42, Chen-Yu Tsai <wens@csie.org> wrote:
->> The register for the "new timing mode" also has bit fields for setting
->> output and sample timing phases. According to comments in Allwinner's
->> BSP kernel, the default values are good enough.
->>
->> Keep the default values already in the hardware when setting new timing
->> mode, instead of overwriting the whole register.
->>
->> Fixes: 9a37e53e451e ("mmc: sunxi: Enable the new timings for the A64 MMC
->>                       controllers")
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->
-> It looks like this change doesn't depend on anything else? Do you want
-> me to pick it up for fixes and adding stable tag?
+ccu_frac_helper_read_rate() prints some info which is not really
+helpful except during debugging.
 
-Yes, please.
+Replace printk() with pr_debug().
 
-ChenYu
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_frac.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
->
-> Kind regards
-> Uffe
->
->> ---
->>  drivers/mmc/host/sunxi-mmc.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
->> index d6fa2214aaae..0fb4e4c119e1 100644
->> --- a/drivers/mmc/host/sunxi-mmc.c
->> +++ b/drivers/mmc/host/sunxi-mmc.c
->> @@ -793,8 +793,12 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
->>         }
->>         mmc_writel(host, REG_CLKCR, rval);
->>
->> -       if (host->cfg->needs_new_timings)
->> -               mmc_writel(host, REG_SD_NTSR, SDXC_2X_TIMING_MODE);
->> +       if (host->cfg->needs_new_timings) {
->> +               /* Don't touch the delay bits */
->> +               rval = mmc_readl(host, REG_SD_NTSR);
->> +               rval |= SDXC_2X_TIMING_MODE;
->> +               mmc_writel(host, REG_SD_NTSR, rval);
->> +       }
->>
->>         ret = sunxi_mmc_clk_set_phase(host, ios, rate);
->>         if (ret)
->> --
->> 2.13.2
->>
+diff --git a/drivers/clk/sunxi-ng/ccu_frac.c b/drivers/clk/sunxi-ng/ccu_frac.c
+index 8b5eb7756bf7..ff9e72dc5337 100644
+--- a/drivers/clk/sunxi-ng/ccu_frac.c
++++ b/drivers/clk/sunxi-ng/ccu_frac.c
+@@ -67,18 +67,18 @@ unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
+ {
+ 	u32 reg;
+ 
+-	printk("%s: Read fractional\n", clk_hw_get_name(&common->hw));
++	pr_debug("%s: Read fractional\n", clk_hw_get_name(&common->hw));
+ 
+ 	if (!(common->features & CCU_FEATURE_FRACTIONAL))
+ 		return 0;
+ 
+-	printk("%s: clock is fractional (rates %lu and %lu)\n",
+-	       clk_hw_get_name(&common->hw), cf->rates[0], cf->rates[1]);
++	pr_debug("%s: clock is fractional (rates %lu and %lu)\n",
++		 clk_hw_get_name(&common->hw), cf->rates[0], cf->rates[1]);
+ 
+ 	reg = readl(common->base + common->reg);
+ 
+-	printk("%s: clock reg is 0x%x (select is 0x%x)\n",
+-	       clk_hw_get_name(&common->hw), reg, cf->select);
++	pr_debug("%s: clock reg is 0x%x (select is 0x%x)\n",
++		 clk_hw_get_name(&common->hw), reg, cf->select);
+ 
+ 	return (reg & cf->select) ? cf->rates[1] : cf->rates[0];
+ }
+-- 
+2.13.3
