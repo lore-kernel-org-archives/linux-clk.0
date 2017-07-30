@@ -1,39 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Jul 2017 16:20:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 01/18] clk: ingenic: Use const pointer to clk_ops in
- struct
-Message-ID: <20170712232037.GR22780@codeaurora.org>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
- <20170702163016.6714-2-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170702163016.6714-2-paul@crapouillou.net>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com
+Cc: wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 0/4] clk: sunxi-ng: Fix issues with fractional mode
+Date: Sun, 30 Jul 2017 18:41:46 +0200
+Message-Id: <20170730164150.26302-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/02, Paul Cercueil wrote:
-> The CGU common code does not modify the pointed clk_ops structure, so it
-> should be marked as const.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+During development of H3 HDMI driver, I found some issues with
+setting video clock rate. It turned out that clock driver decided
+to use fractional mode and selected right frequency, but it didn't
+enable it. Additionally, fractional helpers don't wait on lock.
 
-Sorry I forgot, did you want an ack for these clk patches or for
-me to take them through clk tree. If it's the ack case,
+Patch 1 adds a call to N-M clock driver which enables fractional mode.
+It also clears M factor before that as required by most SoCs.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Patch 2 adds a call to N clock driver which enables fractional mode.
 
-for patches 1 through 6.
+Patch 3 makes fractional helpers less chatty.
+
+Patch 4 adds a wait for lock to fractional helpers.
+
+Jernej Skrabec (4):
+  clk: sunxi-ng: Fix fractional mode for N-M clocks
+  clk: sunxi-ng: multiplier: Fix fractional mode
+  clk: sunxi-ng: Make fractional helper less chatty
+  clk: sunxi-ng: Wait for lock when using fractional mode
+
+ drivers/clk/sunxi-ng/ccu_frac.c | 14 ++++++++------
+ drivers/clk/sunxi-ng/ccu_frac.h |  2 +-
+ drivers/clk/sunxi-ng/ccu_mult.c | 10 +++++++---
+ drivers/clk/sunxi-ng/ccu_nm.c   | 19 ++++++++++++++++---
+ 4 files changed, 32 insertions(+), 13 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.3
