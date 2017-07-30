@@ -1,107 +1,158 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Wed, 26 Jul 2017 09:18:08 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Sergej Sawazki <sergej@taudac.com>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, ce3a@gmx.de,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-Subject: Re: [PATCH] clk: si5351: Apply PLL soft reset before enabling the
- outputs
-Message-ID: <20170726081807.GL31807@n2100.armlinux.org.uk>
-References: <1501010261-7130-1-git-send-email-sergej@taudac.com>
- <20170726011112.GK2146@codeaurora.org>
+Return-Path: <absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170726011112.GK2146@codeaurora.org>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sun, 30 Jul 2017 18:56:20 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org, mturquette@baylibre.com
+Cc: andy.gross@linaro.org, david.brown@linaro.org, rnayak@codeaurora.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 04/12] clk: qcom: use offset from alpha pll node
+In-Reply-To: <1501153825-5181-5-git-send-email-absahu@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+ <1501153825-5181-5-git-send-email-absahu@codeaurora.org>
+Message-ID: <976cafe0058c671f141a8af533762dff@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 25, 2017 at 06:11:12PM -0700, Stephen Boyd wrote:
-> On 07/25, Sergej Sawazki wrote:
-> > The "Si5351A/B/C Data Sheet" states to apply a PLLA and PLLB soft reset
-> > before enabling the outputs [1]. This is required to get a deterministic
-> > phase relationship between the output clocks.
-> > 
-> > Without the PLL reset, the phase offset beween the clocks is unpredictable.
-> > 
-> > References:
-> > [1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
-> >     Figure 12 ("I2C Programming Procedure")
-> > 
-> > Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> > Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-> > Signed-off-by: Sergej Sawazki <sergej@taudac.com>
-> > ---
+On 2017-07-27 16:40, Abhishek Sahu wrote:
+> Alpha PLL is a generic name used for Qualcomm PLL’s which uses L
+> and Alpha values for configuring the integer and fractional part.
+> Qualcomm SoC’s use different types of Alpha PLL’s for which basic
+> software configuration part is common. These PLL’s will have same
+> basic registers like PLL_MODE, L_VAL, ALPHA_VAL but some of the
+> register offsets are different in each PLL type.
+> Also, the offsets are not same in different instances of same
+> type of PLL in some cases so it’s better to get the offsets
+> from PLL node itself instead of hardcoding it.
 > 
-> This is similar to commit 6dc669a22c77 (clk: si5351: Add PLL soft
-> reset, 2015-11-20)? But I think that commit was causing some
-> problem for Russell King and there was going to be a patch to
-> change it but nothing has materialized on the list. Unless this
-> is that patch?
+> This patch adds the support for giving the PLL offsets array in
+> PLL node itself and uses the same for calculating the offsets.
+> Now, this offsets array will be mandatory for all alpha PLL nodes.
+> This patch provides the default array of offsets which driver can use
+> in case where the PLL offsets are same. Some of the existing
+> Qualcomm SoC’s uses the alpha PLL nodes so this patch added the
+> default offsets in its nodes.
+> 
 
-Did I not send that patch?  Sorry, I can't keep track of everything.
+  Did more analysis for this patch. Following are the
+  offsets comparison of different types of Alpha PLL
+  being used in different QCOM chips.
 
-8<====
-From: Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH] clk: si5351: fix PLL reset
+  Offsets                   Pious  Spark   Brammo  Huayra   Fabia  APSS 
+PLL
 
-Changing the audio sample rate on the SolidRun Cubox disrupts the video
-output.  The Si5351 provides both the video clock (using PLLA on output
-0) and the audio clock (using PLLB on output 2).
+  ALPHA_MODE                0x00   0x00    0x00    0x00     0x00  0x00
+  ALPHA_L_VAL               0x04   0x04    0x04    0x04     0x04  0x08
+  ALPHA_ALPHA_VAL           0x08   0x08    0x08    0x08     0x38  0x10
+  ALPHA_ALPHA_VAL_U         0x0c   0x0c    0x0c    NA       NA    NA
+  ALPHA_PLL_USER_CTL        0x10   0x10    0x10    0x10     0x0c  0x18
+  ALPHA_PLL_USER_CTL_U      0x14   0x14    NA      NA       0x10  NA
+  ALPHA_CONFIG_CTL          0x18   0x18    0x18    0x14     0x14  0x20
+  ALPHA_CONFIG_CTL_U        NA     NA      NA      0x18     0x18  0x24
+  ALPHA_TEST_CTL            0x1c   0x1c    0x1c    0x1c     0x1c  0x30
+  ALPHA_TEST_CTL_U          0x20   0x20    NA      0x20     0x20  0x34
+  ALPHA_STATUS              0x24   0x24    0x24    0x24     0x24  0x28
 
-When the rate of clock output 2 is changed, it reconfigures PLLB, which
-results in both PLLA and PLLB being reset.  The reset of PLLA causes
-clock output 0 to be disrupted, thereby causing a loss of sync by the
-attached display device.
+  where
+  APPS PLL is Huayra PLL and being used in IPQ8074 and MSM8953
+  MSM8994 uses Pious PLL
+  MSM8996 uses Spark and Huayra PLL
+  IPQ8074 uses Spark, Brammo and Huayra PLL
+  MSM8998 uses Fabia PLL
 
-Hence, each time the audio sample rate changes (eg, when a video player
-starts up, or when starting to play music) the video display momentarily
-blanks while the Si5351 settles down.  Prior to the commit below, this
-behaviour did not happen.
-
-Fix this by only resetting only the PLL which has been changed.
-
-Fixes: 6dc669a22c77 ("clk: si5351: Add PLL soft reset")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
----
- drivers/clk/clk-si5351.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 412a1fb5b6aa..48961ac1ced5 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -520,6 +520,11 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		SI5351_CLK_INTEGER_MODE,
- 		(hwdata->params.p2 == 0) ? SI5351_CLK_INTEGER_MODE : 0);
- 
-+	/* Do a pll soft reset on the affected pll */
-+	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
-+			 hwdata->num == 0 ? SI5351_PLL_RESET_A :
-+					    SI5351_PLL_RESET_B);
-+
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
- 		__func__, clk_hw_get_name(hw),
-@@ -1092,13 +1097,6 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
- 			SI5351_CLK_POWERDOWN, 0);
- 
--	/*
--	 * Do a pll soft reset on both plls, needed in some cases to get
--	 * all outputs running.
--	 */
--	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
--			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
--
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
- 		__func__, clk_hw_get_name(hw), (1 << rdiv),
--- 
-2.7.4
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 129 
+> ++++++++++++++++++++-------------------
+>  drivers/clk/qcom/clk-alpha-pll.h |  28 +++++++--
+>  drivers/clk/qcom/gcc-ipq8074.c   |   6 +-
+>  drivers/clk/qcom/gcc-msm8994.c   |  12 ++--
+>  drivers/clk/qcom/gcc-msm8996.c   |  12 ++--
+>  drivers/clk/qcom/mmcc-msm8996.c  |  48 ++++++++++-----
+>  6 files changed, 141 insertions(+), 94 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c 
+> b/drivers/clk/qcom/clk-alpha-pll.c
+> index 6291048..ef24c80 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -20,7 +20,6 @@
+>  #include "clk-alpha-pll.h"
+>  #include "common.h"
+> 
+> -#define PLL_MODE		0x00
+>  # define PLL_OUTCTRL		BIT(0)
+>  # define PLL_BYPASSNL		BIT(1)
+>  # define PLL_RESET_N		BIT(2)
+> @@ -36,25 +35,12 @@
+>  # define PLL_ACTIVE_FLAG	BIT(30)
+>  # define PLL_LOCK_DET		BIT(31)
+> 
+> -#define PLL_L_VAL		0x04
+> -#define PLL_ALPHA_VAL		0x08
+> -#define PLL_ALPHA_VAL_U		0x0c
+> -
+> -#define PLL_USER_CTL		0x10
+>  # define PLL_POST_DIV_SHIFT	8
+>  # define PLL_POST_DIV_MASK	0xf
+>  # define PLL_ALPHA_EN		BIT(24)
+>  # define PLL_VCO_SHIFT		20
+>  # define PLL_VCO_MASK		0x3
+> 
+> -#define PLL_USER_CTL_U		0x14
+> -
+> -#define PLL_CONFIG_CTL		0x18
+> -#define PLL_CONFIG_CTL_U	0x20
+> -#define PLL_TEST_CTL		0x1c
+> -#define PLL_TEST_CTL_U		0x20
+> -#define PLL_STATUS		0x24
+> -
+>  /*
+>   * Even though 40 bits are present, use only 32 for ease of 
+> calculation.
+>   */
+> @@ -62,27 +48,51 @@
+>  #define ALPHA_BITWIDTH		32
+>  #define ALPHA_16BIT_MASK	0xffff
+> 
+> +#define pll_mode(pll)		(pll->base + pll->offsets[ALPHA_PLL_MODE])
+> +#define pll_l(pll)		(pll->base + pll->offsets[ALPHA_PLL_L_VAL])
+> +#define pll_alpha(pll)		(pll->base + 
+> pll->offsets[ALPHA_PLL_ALPHA_VAL])
+> +#define pll_alpha_u(pll)	(pll->base + 
+> pll->offsets[ALPHA_PLL_ALPHA_VAL_U])
+> +#define pll_user_ctl(pll)	(pll->base + 
+> pll->offsets[ALPHA_PLL_USER_CTL])
+> +#define pll_user_ctl_u(pll)	(pll->base + 
+> pll->offsets[ALPHA_PLL_USER_CTL_U])
+> +#define pll_cfg_ctl(pll)	(pll->base + 
+> pll->offsets[ALPHA_PLL_CONFIG_CTL])
+> +#define pll_test_ctl(pll)	(pll->base + 
+> pll->offsets[ALPHA_PLL_TEST_CTL])
+> +#define pll_test_ctl_u(pll)	(pll->base + 
+> pll->offsets[ALPHA_PLL_TEST_CTL_U])
+> +#define pll_status(pll)		(pll->base + pll->offsets[ALPHA_PLL_STATUS])
+> +#define pll_cfg_ctl_u(pll)	(pll->base + 
+> pll->offsets[ALPHA_PLL_CONFIG_CTL_U])
+> +
+>  #define to_clk_alpha_pll(_hw) container_of(to_clk_regmap(_hw), \
+>  					   struct clk_alpha_pll, clkr)
+> 
+>  #define to_clk_alpha_pll_postdiv(_hw) container_of(to_clk_regmap(_hw), 
+> \
+>  					   struct clk_alpha_pll_postdiv, clkr)
+> 
+> +const u8 alpha_pll_offsets[] = {
+> +	[ALPHA_PLL_MODE] = 0x00,
+> +	[ALPHA_PLL_L_VAL] = 0x04,
+> +	[ALPHA_PLL_ALPHA_VAL] = 0x08,
+> +	[ALPHA_PLL_ALPHA_VAL_U] = 0x0c,
+> +	[ALPHA_PLL_USER_CTL] = 0x10,
+> +	[ALPHA_PLL_USER_CTL_U] = 0x14,
+> +	[ALPHA_PLL_CONFIG_CTL] = 0x18,
+> +	[ALPHA_PLL_TEST_CTL] = 0x1c,
+> +	[ALPHA_PLL_TEST_CTL_U] = 0x20,
+> +	[ALPHA_PLL_STATUS] = 0x24,
+> +};
+> +
