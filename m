@@ -1,63 +1,93 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>,
-	Maarten ter Huurne <maarten@treewalker.org>,
-	devicetree@vger.kernel.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com
+Cc: wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 15/18] MIPS: JZ4770: Work around config2 misreporting associativity
-Date: Sun,  2 Jul 2017 18:30:13 +0200
-Message-Id: <20170702163016.6714-16-paul@crapouillou.net>
-In-Reply-To: <20170702163016.6714-1-paul@crapouillou.net>
-References: <20170607200439.24450-2-paul@crapouillou.net>
- <20170702163016.6714-1-paul@crapouillou.net>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 4/4] clk: sunxi-ng: Wait for lock when using fractional mode
+Date: Sun, 30 Jul 2017 18:41:50 +0200
+Message-Id: <20170730164150.26302-5-jernej.skrabec@siol.net>
+In-Reply-To: <20170730164150.26302-1-jernej.skrabec@siol.net>
+References: <20170730164150.26302-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Maarten ter Huurne <maarten@treewalker.org>
+Currently ccu_frac_helper_set_rate() doesn't wait for a lock bit to be
+set before returning. Because of that, unstable clock may be used.
 
-According to config2, the associativity would be 5-ways, but the
-documentation states 4-ways, which also matches the documented
-L2 cache size of 256 kB.
+Add a wait for lock in the helper function.
 
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/mips/mm/sc-mips.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clk/sunxi-ng/ccu_frac.c | 4 +++-
+ drivers/clk/sunxi-ng/ccu_frac.h | 2 +-
+ drivers/clk/sunxi-ng/ccu_mult.c | 3 ++-
+ drivers/clk/sunxi-ng/ccu_nm.c   | 3 ++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
- v2: No change
- v3: No change
-
-diff --git a/arch/mips/mm/sc-mips.c b/arch/mips/mm/sc-mips.c
-index c909c3342729..67a3b4d88580 100644
---- a/arch/mips/mm/sc-mips.c
-+++ b/arch/mips/mm/sc-mips.c
-@@ -15,6 +15,7 @@
- #include <asm/mmu_context.h>
- #include <asm/r4kcache.h>
- #include <asm/mips-cm.h>
-+#include <asm/bootinfo.h>
+diff --git a/drivers/clk/sunxi-ng/ccu_frac.c b/drivers/clk/sunxi-ng/ccu_frac.c
+index ff9e72dc5337..d1d168d4c4f0 100644
+--- a/drivers/clk/sunxi-ng/ccu_frac.c
++++ b/drivers/clk/sunxi-ng/ccu_frac.c
+@@ -85,7 +85,7 @@ unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
  
- /*
-  * MIPS32/MIPS64 L2 cache handling
-@@ -228,6 +229,14 @@ static inline int __init mips_sc_probe(void)
- 	else
- 		return 0;
+ int ccu_frac_helper_set_rate(struct ccu_common *common,
+ 			     struct ccu_frac_internal *cf,
+-			     unsigned long rate)
++			     unsigned long rate, u32 lock)
+ {
+ 	unsigned long flags;
+ 	u32 reg, sel;
+@@ -106,5 +106,7 @@ int ccu_frac_helper_set_rate(struct ccu_common *common,
+ 	writel(reg | sel, common->base + common->reg);
+ 	spin_unlock_irqrestore(common->lock, flags);
  
-+	/*
-+	 * According to config2 it would be 5-ways, but that is contradicted
-+	 * by all documentation.
-+	 */
-+	if (current_cpu_type() == CPU_JZRISC &&
-+				mips_machtype == MACH_INGENIC_JZ4770)
-+		c->scache.ways = 4;
++	ccu_helper_wait_for_lock(common, lock);
 +
- 	c->scache.waysize = c->scache.sets * c->scache.linesz;
- 	c->scache.waybit = __ffs(c->scache.waysize);
+ 	return 0;
+ }
+diff --git a/drivers/clk/sunxi-ng/ccu_frac.h b/drivers/clk/sunxi-ng/ccu_frac.h
+index 7b1ee380156f..efe2dd6bac01 100644
+--- a/drivers/clk/sunxi-ng/ccu_frac.h
++++ b/drivers/clk/sunxi-ng/ccu_frac.h
+@@ -48,6 +48,6 @@ unsigned long ccu_frac_helper_read_rate(struct ccu_common *common,
  
+ int ccu_frac_helper_set_rate(struct ccu_common *common,
+ 			     struct ccu_frac_internal *cf,
+-			     unsigned long rate);
++			     unsigned long rate, u32 lock);
+ 
+ #endif /* _CCU_FRAC_H_ */
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index ee5e96222cb2..12e0783caee6 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -114,7 +114,8 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (ccu_frac_helper_has_rate(&cm->common, &cm->frac, rate)) {
+ 		ccu_frac_helper_enable(&cm->common, &cm->frac);
+ 
+-		return ccu_frac_helper_set_rate(&cm->common, &cm->frac, rate);
++		return ccu_frac_helper_set_rate(&cm->common, &cm->frac,
++						rate, cm->lock);
+ 	} else {
+ 		ccu_frac_helper_disable(&cm->common, &cm->frac);
+ 	}
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index c6ba866b99d3..a32158e8f2e3 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -129,7 +129,8 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 		ccu_frac_helper_enable(&nm->common, &nm->frac);
+ 
+-		return ccu_frac_helper_set_rate(&nm->common, &nm->frac, rate);
++		return ccu_frac_helper_set_rate(&nm->common, &nm->frac,
++						rate, nm->lock);
+ 	} else {
+ 		ccu_frac_helper_disable(&nm->common, &nm->frac);
+ 	}
 -- 
-2.11.0
+2.13.3
