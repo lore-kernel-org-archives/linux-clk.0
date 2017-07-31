@@ -1,66 +1,29 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 25 Jul 2017 09:39:07 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 10/10] ARM: dts: sun8i: a83t: h8homlet: Enable
- micro-SD card and onboard eMMC
-Message-ID: <20170725073907.ykcarlb6fv2tlytc@flea>
-References: <20170724135905.28855-1-wens@csie.org>
- <20170724135905.28855-11-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:49918 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751867AbdGaL0S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 31 Jul 2017 07:26:18 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 03/14] pinctrl: rockchip: add input schmitt support for rv1108
+Date: Mon, 31 Jul 2017 13:26:11 +0200
+Message-ID: <17667109.HATuc3212V@diego>
+In-Reply-To: <1501495822-21503-1-git-send-email-andy.yan@rock-chips.com>
+References: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com> <1501495822-21503-1-git-send-email-andy.yan@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rzyeyouhr346tdlv"
-In-Reply-To: <20170724135905.28855-11-wens@csie.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Am Montag, 31. Juli 2017, 18:10:22 CEST schrieb Andy Yan:
+> Some pins like i2c SCL/SDA need the schmitt input function
+> to avoid crosstalk problems.
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
---rzyeyouhr346tdlv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-On Mon, Jul 24, 2017 at 09:59:05PM +0800, Chen-Yu Tsai wrote:
-> The H8 homlet has a micro-SD card slot connected to mmc0,
-> and onboard eMMC from FORESEE, connected to mmc2.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---rzyeyouhr346tdlv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZdvWbAAoJEBx+YmzsjxAgXo4QAMDIWXwb/pYl+CaJCmcpDmoZ
-qo/EXfGBcG8h6Fwkz20ZNEBt8VR+fm4GOBIhFWAryKQ2u1Z/4CcDCfvGOslMSPcm
-uR1duPEc0n8J63dD+IABBpP2EwIXwOd6qz85Iu5y/oCB2OsO5olwtwy7Xlvm2ujT
-NfB642sKXsEMa+Gb2WpGgq0OpzQJAJYKv4nybMRS9lC/KXAoaqYr2+9vjXimHARG
-3VBXmrf0jBc7GnF0ixZZRz6GDgxv9KdI5wNJKQrFly7ofFHc4EPs9uZAZ2pBnSIg
-DCKI7xmF8I86BF4DeacUE1Aapu4vCV5IzoOoTJsOt0e0+/PJD3HcEGCwita+D4qi
-wU5dUz9NT0PijbbJS+knv/2b/m/HoxlF+IxztvgsCFf46M8Hr0L2jUnhx76lu2P6
-Bw0ovDrXd1238BV3NR82mxGPwRaukbD/NebDG7RTProeaEEzt7wIul2hAQfK2K50
-LLaHGhh7UJQ+5CVkaAYdvMQAWO6zLQcT4YtaK6m3prKAKcs4ldm1CwNWewK7ip0T
-kZ3tcjwVOhsqVZe7uQ5KBT775qAEqFT781QhGJj4ICA9CkpCpjgDLKtCpoQMUqm3
-v4aXv5aNnFVTY8vt9UX2LmoLVWT7jG0puJemTtVQ5qk2hFbqg0f87yAyVPRR80DV
-W95cPZBB89R8zZXE0XvL
-=4mMg
------END PGP SIGNATURE-----
-
---rzyeyouhr346tdlv--
