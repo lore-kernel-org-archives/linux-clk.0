@@ -1,79 +1,34 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <aisheng.dong@nxp.com>,
-	<dongas86@gmail.com>, <shawnguo@kernel.org>, <Anson.Huang@nxp.com>,
-	<ping.bai@nxp.com>
-Subject: [PATCH V2 00/10] clk: add imx7ulp clk support
-Date: Thu, 13 Jul 2017 19:47:05 +0800
-Message-ID: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, robh+dt@kernel.org, shawn.lin@rock-chips.com, zhangqing@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 02/14] clk: rockchip: support more clks for rv1108
+Date: Tue, 01 Aug 2017 01:31:10 +0200
+Message-ID: <17095133.Ri7aPbk3bA@phil>
+In-Reply-To: <1501495719-21452-1-git-send-email-andy.yan@rock-chips.com>
+References: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com> <1501495719-21452-1-git-send-email-andy.yan@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series intends to add imx7ulp clk support.
+Am Montag, 31. Juli 2017, 18:08:39 CEST schrieb Andy Yan:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
+> 
+> 1. Added the description of the missing clock,
+> make the clock more complete.
+> 2. fix up some clk descriptions error.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
+Again, this should be split into multiple patches that are easier to review.
+- pll-fixes
+- fixes for existing clocks
+- renames of things
+- new clock-definitions
 
-The clocking scheme provides clear separation between M4 domain
-and A7 domain. Except for a few clock sources shared between two
-domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-and and the Fast IRC clock (FIRCLK), clock sources and clock
-management are separated and contained within each domain.
+And should definitly include a bit more explanation.
 
-M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
 
-Note: this series only adds A7 clock domain support as M4 clock
-domain will be handled by M4 seperately.
-
-Change Log:
-v1->v2:
- * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
- * use clk_hw apis to register clocks
- * use of_clk_add_hw_provider
- * split the clocks register process into two parts: early part for possible
-   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
-   the left normal peripheral clocks registered by a platform driver.
-
-Dong Aisheng (10):
-  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-  clk: reparent orphans after critical clocks enabled
-  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-  clk: imx: add pllv4 support
-  clk: imx: add pfdv2 support
-  clk: imx: add composite clk support
-  dt-bindings: clock: add imx7ulp clock binding doc
-  clk: imx: make mux parent strings const
-  clk: imx: implement new clk_hw based APIs
-  clk: imx: add imx7ulp clk driver
-
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
- drivers/clk/clk-divider.c                          | 100 ++++++++-
- drivers/clk/clk-fractional-divider.c               |  10 +
- drivers/clk/clk.c                                  |  39 ++--
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-busy.c                         |   2 +-
- drivers/clk/imx/clk-composite.c                    |  90 ++++++++
- drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
- drivers/clk/imx/clk-imx7ulp.c                      | 245 +++++++++++++++++++++
- drivers/clk/imx/clk-pfdv2.c                        | 207 +++++++++++++++++
- drivers/clk/imx/clk-pllv4.c                        | 188 ++++++++++++++++
- drivers/clk/imx/clk.c                              |  22 ++
- drivers/clk/imx/clk.h                              |  92 +++++++-
- include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++
- include/linux/clk-provider.h                       |  17 ++
- 15 files changed, 1159 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 drivers/clk/imx/clk-composite.c
- create mode 100644 drivers/clk/imx/clk-imx7ulp.c
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
- create mode 100644 drivers/clk/imx/clk-pllv4.c
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
-
--- 
-2.7.4
+Thanks
+Heiko
