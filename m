@@ -1,155 +1,109 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC 06/12] Clk: qcom: support for dynamic updating the PLL
-Date: Thu, 27 Jul 2017 16:40:19 +0530
-Message-Id: <1501153825-5181-7-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:35657 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751735AbdGaILF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2017 04:11:05 -0400
+Received: by mail-wm0-f42.google.com with SMTP id m85so68257395wma.0
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2017 01:11:05 -0700 (PDT)
+Subject: Re: [PATCH v2 4/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
+To: Chris Moore <moore@free.fr>, jbrunet@baylibre.com
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1501235589-318-1-git-send-email-narmstrong@baylibre.com>
+ <1501235589-318-5-git-send-email-narmstrong@baylibre.com>
+ <389b0cd5-4c93-e043-9c55-02bd56f590cf@free.fr>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <85e100a8-2c83-b153-51fd-dcc80698c685@baylibre.com>
+Date: Mon, 31 Jul 2017 10:10:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <389b0cd5-4c93-e043-9c55-02bd56f590cf@free.fr>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the Alpha PLL’s support dynamic update in which the
-frequency can be changed dynamically without turning off the PLL.
+Hi,
 
-This dynamic update requires the following sequence
+On 07/29/2017 10:04 AM, Chris Moore wrote:
+> Hi,
+> 
+> Sorry I forgot to reply to all in my previous post :(
+> I hope this corrects things.
+> 
+> Le 28/07/2017 à 11:53, Neil Armstrong a écrit :
+> 
+> [snip]
+> 
+>> +static long aoclk_cec_32k_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +                     unsigned long *prate)
+>> +{
+>> +    const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
+>> +                                  *prate);
+>> +
+>> +    /* If invalid return first one */
+>> +    if (!freq)
+>> +        return freq[0].target_rate;
+> 
+> Wouldn't this dereference a null pointer (or am I being stupid this morning)?
 
-1. Write the desired values to pll_l_val and pll_alpha_val.
-2. Toggle pll_latch_input from low to high.
-3. Wait for pll_ack_latch to transition from low to high.
-   The new L and alpha values have been latched. It make
-   take some time for the PLL to fully settle with these
-   new values.
-4. Pull pll_latch_input low.
+No, it's me !!
+Will fix it in v3...
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 62 +++++++++++++++++++++++++++++++++-------
- drivers/clk/qcom/clk-alpha-pll.h |  1 +
- 2 files changed, 52 insertions(+), 11 deletions(-)
+> 
+>> +
+>> +    return freq->target_rate;
+>> +}
+>> +
+>> +static int aoclk_cec_32k_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                  unsigned long parent_rate)
+>> +{
+>> +    const struct cec_32k_freq_table *freq = find_cec_32k_freq(rate,
+>> +                                  parent_rate);
+>> +    struct aoclk_cec_32k *cec_32k = to_aoclk_cec_32k(hw);
+>> +    u32 reg = 0;
+>> +
+>> +    if (!freq)
+>> +        return -EINVAL;
+>> +
+>> +    /* Disable clock */
+>> +    regmap_update_bits(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0,
+>> +               CLK_CNTL0_IN_GATE_EN | CLK_CNTL0_OUT_GATE_EN, 0);
+>> +
+>> +    if (freq->dualdiv)
+>> +        reg = CLK_CNTL0_DUALDIV_EN |
+>> +              FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1) |
+>> +              FIELD_PREP(CLK_CNTL0_N2_MASK, freq->n2 - 1);
+>> +    else
+>> +        reg = FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1);
+>> +
+> 
+> Suggestion:
+> 
+> +    reg = FIELD_PREP(CLK_CNTL0_N1_MASK, freq->n1 - 1);
+> +    if (freq->dualdiv)
+> +        reg |= CLK_CNTL0_DUALDIV_EN |
+> +               FIELD_PREP(CLK_CNTL0_N2_MASK, freq->n2 - 1);
+> 
+> is shorter but maybe generates the same code.
+> 
+>> + regmap_write(cec_32k->regmap, AO_RTC_ALT_CLK_CNTL0, reg);
+>> +
+>> +    if (freq->dualdiv)
+>> +        reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1) |
+>> +              FIELD_PREP(CLK_CNTL1_M2_MASK, freq->m2 - 1);
+>> +    else
+>> +        reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1);
+>> +
+> 
+> Idem:
+> 
+> +    reg = FIELD_PREP(CLK_CNTL1_M1_MASK, freq->m1 - 1);
+> +    if (freq->dualdiv)
+> +        reg |= FIELD_PREP(CLK_CNTL1_M2_MASK, freq->m2 - 1);
+>
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 3a7ec42..e38f4d2 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -31,7 +31,10 @@
- # define PLL_VOTE_FSM_ENA	BIT(20)
- # define PLL_FSM_ENA		BIT(20)
- # define PLL_VOTE_FSM_RESET	BIT(21)
-+# define PLL_UPDATE		BIT(22)
-+# define PLL_UPDATE_BYPASS	BIT(23)
- # define PLL_OFFLINE_ACK	BIT(28)
-+# define ALPHA_PLL_ACK_LATCH	BIT(29)
- # define PLL_ACTIVE_FLAG	BIT(30)
- # define PLL_LOCK_DET		BIT(31)
- 
-@@ -122,6 +125,15 @@ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
- #define wait_for_pll_offline(pll) \
- 	wait_for_pll(pll, PLL_OFFLINE_ACK, 0, "offline")
- 
-+#define wait_for_pll_update(pll) \
-+	wait_for_pll(pll, PLL_UPDATE, 1, "update")
-+
-+#define wait_for_pll_update_ack_set(pll) \
-+	wait_for_pll(pll, ALPHA_PLL_ACK_LATCH, 0, "update_ack_set")
-+
-+#define wait_for_pll_update_ack_clear(pll) \
-+	wait_for_pll(pll, ALPHA_PLL_ACK_LATCH, 1, "update_ack_clear")
-+
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config)
- {
-@@ -398,7 +410,8 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	const struct pll_vco *vco;
--	u32 l, alpha_width = pll_alpha_width(pll);
-+	u32 l, mode, alpha_width = pll_alpha_width(pll);
-+	int ret;
- 	u64 a;
- 
- 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
-@@ -410,22 +423,49 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	regmap_write(pll->clkr.regmap, pll_l(pll), l);
- 
--	if (alpha_width > ALPHA_BITWIDTH) {
--		a <<= (alpha_width - ALPHA_BITWIDTH);
--		regmap_update_bits(pll->clkr.regmap, pll_alpha_u(pll),
--				   GENMASK(0, alpha_width - ALPHA_BITWIDTH - 1),
--				   a >> ALPHA_BITWIDTH);
--	}
-+	a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
-+
-+	regmap_write(pll->clkr.regmap, pll_alpha(pll), a);
-+	regmap_write(pll->clkr.regmap, pll_alpha_u(pll), a >> 32);
- 
- 	regmap_update_bits(pll->clkr.regmap, pll_alpha(pll),
- 			   GENMASK(0, alpha_width - 1), a);
- 
- 	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
--			   PLL_VCO_MASK << PLL_VCO_SHIFT,
--			   vco->val << PLL_VCO_SHIFT);
-+			   PLL_ALPHA_EN, PLL_ALPHA_EN);
-+
-+	if (!clk_hw_is_enabled(hw) || !(pll->flags & SUPPORTS_DYNAMIC_UPDATE))
-+		return 0;
-+
-+	regmap_read(pll->clkr.regmap, pll_mode(pll), &mode);
-+	regmap_update_bits(pll->clkr.regmap, pll_mode(pll), PLL_UPDATE,
-+			   PLL_UPDATE);
-+
-+	/* Make sure PLL_UPDATE request goes through*/
-+	mb();
- 
--	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll), PLL_ALPHA_EN,
--			   PLL_ALPHA_EN);
-+	/*
-+	 * PLL will latch the new L, Alpha and freq control word.
-+	 * PLL will respond by raising PLL_ACK_LATCH output when new programming
-+	 * has been latched in and PLL is being updated. When
-+	 * UPDATE_LOGIC_BYPASS bit is not set, PLL_UPDATE will be cleared
-+	 * automatically by hardware when PLL_ACK_LATCH is asserted by PLL.
-+	 */
-+	if (!(mode & PLL_UPDATE_BYPASS))
-+		return wait_for_pll_update(pll);
-+
-+	ret = wait_for_pll_update_ack_set(pll);
-+	if (ret)
-+		return ret;
-+
-+	regmap_update_bits(pll->clkr.regmap, pll_mode(pll), PLL_UPDATE, 0);
-+
-+	/* Make sure PLL_UPDATE request goes through*/
-+	mb();
-+
-+	ret = wait_for_pll_update_ack_clear(pll);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 51a61a0..6e40e09 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -54,6 +54,7 @@ struct clk_alpha_pll {
- #define SUPPORTS_16BIT_ALPHA		BIT(1)
- #define SUPPORTS_FSM_MODE		BIT(2)
- #define SUPPORTS_64BIT_CONFIG_CTL	BIT(3)
-+#define SUPPORTS_DYNAMIC_UPDATE		BIT(4)
- 	u8 flags;
- 
- 	struct clk_regmap clkr;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Thanks for the suggestions, I will send a v3 asap.
+
+Neil
+> Cheers,
+> Chris
+
