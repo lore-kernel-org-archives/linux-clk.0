@@ -1,85 +1,102 @@
-Return-Path: <wens@csie.org>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH v3 0/3] add the reset controller to the Meson8b clkc
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, khilman@baylibre.com, carlo@caione.org,
+ linux-clk@vger.kernel.org, robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org
+References: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
+ <1501489667.6834.1.camel@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <655f0326-df03-a810-9010-13148aee2db5@baylibre.com>
+Date: Mon, 31 Jul 2017 13:59:36 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170717091747.kcrlifbp7meihszm@flea>
-References: <20170714064302.20383-1-wens@csie.org> <20170714064302.20383-6-wens@csie.org>
- <20170717091747.kcrlifbp7meihszm@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 19 Jul 2017 16:59:23 +0800
-Message-ID: <CAGb2v67VmdfrMNLFH=6hhbGAHr15e0q4toDUbJ17d3exS3maFw@mail.gmail.com>
-Subject: Re: [PATCH 05/11] mmc: sunxi: Support controllers that can use both
- old and new timings
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1501489667.6834.1.camel@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 17, 2017 at 5:17 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Fri, Jul 14, 2017 at 02:42:56PM +0800, Chen-Yu Tsai wrote:
->> On the SoCs that introduced the new timing mode for MMC controllers,
->> both the old (where the clock delays are set in the CCU) and new
->> (where the clock delays are set in the MMC controller) timing modes
->> are available, and we have to support them both. However there are
->> two bits that control which mode is active. One is in the CCU, the
->> other is in the MMC controller. The settings on both sides must be
->> the same, or nothing will work.
+On 07/31/2017 10:27 AM, Jerome Brunet wrote:
+> On Fri, 2017-07-28 at 23:13 +0200, Martin Blumenstingl wrote:
+>> This registers the known (soft) reset lines provided by the clock
+>> controller's registers.
 >>
->> The CCU's get/set_phase callbacks return -ENOTSUPP when the new
->> timing mode is active. This provides a way to know which mode is
->> active on that side, and we can set the bit on the MMC controller
->> side accordingly.
+>> This is the first preparation step for SMP and CPU hotplug support on
+>> Meson8/Meson8b/Meson8m2. Booting the secondary cores on these SoCs
+>> requires asserting and de-asserting a reset line (one for each CPU
+>> core). These reset lines are provided by the clock controller.
 >>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  drivers/mmc/host/sunxi-mmc.c | 34 ++++++++++++++++++++++++++++++----
->>  1 file changed, 30 insertions(+), 4 deletions(-)
+>> The reset controller part of the meson8b clock controller has to be
+>> registered early (which I did through CLK_OF_DECLARE_DRIVER), because
+>> the secondary cores are started *very* early in the boot process (and
+>> meson8b_clkc_probe is invoked long after we need the reset controller
+>> to be available for booting the secondary CPU cores).
 >>
->> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
->> index 0fb4e4c119e1..56e45c65b52d 100644
->> --- a/drivers/mmc/host/sunxi-mmc.c
->> +++ b/drivers/mmc/host/sunxi-mmc.c
->> @@ -22,6 +22,7 @@
->>  #include <linux/err.h>
+>> The user of the reset-controller (= the patches which enable SMP and
+>> CPU hotplug support) will follow in the next days. I decided to split
+>> this because the SMP series will probably consist of 6 patches alone
+>> (and may need to go through two separate trees).
 >>
->>  #include <linux/clk.h>
->> +#include <linux/clk/sunxi-ng.h>
->>  #include <linux/gpio.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/spinlock.h>
->> @@ -259,7 +260,7 @@ struct sunxi_mmc_cfg {
->>       /* Does DATA0 needs to be masked while the clock is updated */
->>       bool mask_data0;
+>> Changes since v2 at [3]:
+>> - move the reset line preprocessor defines into a separate file
+>>   (affects patch #1 as this header file is part of the dt-binding)
+>> - rename the reset line preprocessor macros from RESETID_ to
+>>   CLKC_RESET_ to clearly indicate that these are provided by the
+>>   clock controller (unlike the preprocessor macros for the reset
+>>   lines in the standlone reset controller, which start with RESET_)
+>> - updated patch #2 due to the changes mentioned above
+>> - added Neil's Reviewed-by to all patches
 >>
->> -     bool needs_new_timings;
->> +     bool has_new_timings;
->
-> I think we should have both, it's a bit different. Newer SoCs like the
-> A64 can only operate using new timings, while the older ones can
-> operate in both modes.
->
-> In one case, we're forced to use it, in the other one it's a
-> policy. We should differentiate both cases.
+>> Changes since v1 at [0]:
+>> - updated cover letter description as we are now registering more than
+>>   four reset lines
+>> - split patch #1 into a dt-binding and clk driver patch
+>> - slightly reworded the dt-binding documentation so it's now clear that
+>>   the reset identifiers are preprocessor macros in
+>>   dt-bindings/clock/meson8b-clkc.h (v1 of this series didn't have these
+>>   macros at all)
+>> - patch #2 (previously part of patch #1) now registers all known reset
+>>   lines (see [1] and [2] for the results of my detective work)
+>> - patch #3 is untouched
+>>
+>>
+>> [0] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004283.html
+>> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004330.html
+>> [2] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004347.html
+>> [3] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004352.html
+>>
+>>
+>> Martin Blumenstingl (3):
+>>   dt-bindings: clock: meson8b: describe the embedded reset controller
+>>   clk: meson: meson8b: register the built-in reset controller
+>>   ARM: dts: meson: mark the clock controller also as reset controller
+>>
+>>  .../bindings/clock/amlogic,meson8b-clkc.txt        |   9 +-
+>>  arch/arm/boot/dts/meson8.dtsi                      |   1 +
+>>  arch/arm/boot/dts/meson8b.dtsi                     |   1 +
+>>  drivers/clk/meson/Kconfig                          |   1 +
+>>  drivers/clk/meson/meson8b.c                        | 159 +++++++++++++++++++-
+>> -
+>>  drivers/clk/meson/meson8b.h                        |   9 +-
+>>  .../dt-bindings/reset/amlogic,meson8b-clkc-reset.h |  27 ++++
+>>  7 files changed, 193 insertions(+), 14 deletions(-)
+>>  create mode 100644 include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h
+>>
+> 
+> Series looks good to me overall.
+> 
+> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
+> Just one thing, which is not an issue really, I wonder if the dt-bindings
+> documentation and the bindings them-self should be in separate patches ? 
+> 
 
-For the A64's case, the limit is implied by not having any clk_delays.
+Hi Martin,
 
-But yes, I'll keep "needs_new_timings", and rename the new option to
-"has_timing_switch" to make things clearer.
+Anyway it's OK for me, I've applied patches 1 & 2 on the clk-meson's next branches.
 
-ChenYu
+Kevin, patch 3 is all yours !
 
->
-> Looks good otherwise, thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+Thanks,
+Neil
