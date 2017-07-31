@@ -1,63 +1,41 @@
-Return-Path: <adriana.reus@nxp.com>
-From: Adriana Reus <adriana.reus@nxp.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	fabio.estevam@nxp.com,
-	shawnguo@kernel.org,
-	anson.huang@nxp.com,
-	Adriana Reus <adriana.reus@nxp.com>
-Subject: [PATCH 1/2] clk: imx: imx7d: Fix parent clock for OCRAM_CLK
-Date: Tue, 18 Jul 2017 10:44:51 +0300
-Message-Id: <1500363892-1173-2-git-send-email-adriana.reus@nxp.com>
-In-Reply-To: <1500363892-1173-1-git-send-email-adriana.reus@nxp.com>
-References: <1500363892-1173-1-git-send-email-adriana.reus@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: adriana.reus@nxp.com
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1501537388.2759.7.camel@baylibre.com>
+Subject: Re: [GIT PULL] Meson clock fixes for 4.13-rc4
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Neil Armstrong
+	 <narmstrong@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Date: Mon, 31 Jul 2017 23:43:08 +0200
+In-Reply-To: <20170731202031.GK2146@codeaurora.org>
+References: <ce41382f-fd93-1dc9-0dba-1484ac555945@baylibre.com>
+	 <20170731202031.GK2146@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The parent of OCRAM_CLK should be axi_main_root_clk
-and not axi_post_div.
+On Mon, 2017-07-31 at 13:20 -0700, Stephen Boyd wrote:
+> On 07/31, Neil Armstrong wrote:
+> > Hi Mike, Stephen,
+> > 
+> > Here is some fixes for Meson GXBB and Meson8 drivers, that could go for
+> > 4.13-rc4.
+> > 
+> 
+> Are any of these critical fixes for regressions in the v4.13-rc
+> series? All the Fixes tags look like they go back to before
+> v4.13-rc1, so they don't look critical at first glance. If
+> anything, they're mostly nice to have non-critical fixes? If so,
+> can we defer these until the next merge window?
 
-before:
+I agree that these fixes hardly qualify as critical, except maybe for the mpll
+fix. The clock rate actually applied can be really off compared to what CCF will
+ except to have set.
 
-    axi_src                     1       1       332307692       0 0
-      axi_cg                    1       1       332307692       0 0
-        axi_pre_div             1       1       332307692       0 0
-          axi_post_div          1       1       332307692       0 0
-            ocram_clk           0       0       332307692       0 0
-            main_axi_root_clk   1       1       332307692       0 0
+These fixes are quite simple and safe, it would be nice if we could avoid having
+ the next version tagged with known issues.
 
-after:
-
-    axi_src                     1       1       332307692       0 0
-      axi_cg                    1       1       332307692       0 0
-        axi_pre_div             1       1       332307692       0 0
-          axi_post_div          1       1       332307692       0 0
-            main_axi_root_clk   1       1       332307692       0 0
-              ocram_clk         0       0       332307692       0 0
-
-Signed-off-by: Adriana Reus <adriana.reus@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 3da1218..10f6a10 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -797,7 +797,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
- 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
- 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
--	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
-+	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "main_axi_root_clk", base + 0x4110, 0);
- 	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
- 	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
--- 
-2.7.4
+> 
