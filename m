@@ -1,30 +1,42 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 9 Jul 2017 19:51:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Brandon Streiff <brandon.streiff@ni.com>
-Cc: no To-header on input <;, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: si5351: expand compatible strings in documentation
-Message-ID: <20170710005116.lyv4hjzadv5h6t6k@rob-hp-laptop>
-References: <1498743105-29078-1-git-send-email-brandon.streiff@ni.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 31 Jul 2017 13:17:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: exynos5420: The EPLL rate table corrections
+Message-ID: <20170731201709.GJ2146@codeaurora.org>
+References: <CGME20170721112008epcas5p1eb75e4eb00d1dbad130460d2cbc0ce0c@epcas5p1.samsung.com>
+ <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1498743105-29078-1-git-send-email-brandon.streiff@ni.com>
+In-Reply-To: <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 29, 2017 at 08:31:45AM -0500, Brandon Streiff wrote:
-> checkpatch.pl doesn't know how to expand "silabs,si5351{a,a-msop,b,c}"
-> and so generates warnings about si5351-compatible devices appearing to
-> be un-documented. Resolve this by documenting the compatible options
-> supported by the clk-si5351 driver individually.
+On 07/21, Sylwester Nawrocki wrote:
+> This patch fixes values of the EPLL K coefficient and changes
+> the EPLL output frequency values to match exactly what is
+> possible to achieve with given M, P, S, K coefficients.
+> This allows to avoid rounding errors and unexpected frequency
+> being set with clk_set_rate(), due to recalc_rate returning
+> different values than the PLL rate specified in the
+> exynos5420_epll_24mhz_tbl table. E.g. this prevents a case
+> where two consecutive clk_set_rate() calls with same argument
+> result in different PLL output frequency.
 > 
-> Signed-off-by: Brandon Streiff <brandon.streiff@ni.com>
+> The PLL output frequencies have been calculated with formula:
+> 
+> f = fxtal * (M * 2^16 + K) / (P * 2^S) / 2^16
+> 
+> where fxtal = 24000000.
+> 
+> Fixes: 9842452acd ("clk: samsung: exynos542x: Add EPLL rate table")
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  Documentation/devicetree/bindings/clock/silabs,si5351.txt | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
 
-Applied, thanks.
+Applied to clk-fixes
 
-Rob
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
