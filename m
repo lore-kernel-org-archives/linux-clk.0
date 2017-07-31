@@ -1,37 +1,45 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 10 Jul 2017 21:53:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
-Message-ID: <20170711025323.xdzgp7jsuvfb5u5o@rob-hp-laptop>
-References: <1499621970-12925-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1499622005-13003-1-git-send-email-vladimir.barinov@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1499622005-13003-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: The EPLL rate table
+ corrections
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: cw00.choi@samsung.com, krzk@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <33f53903-9043-29c0-2cb8-e5d6950cc92f@samsung.com>
+Date: Mon, 31 Jul 2017 14:26:24 +0200
+MIME-version: 1.0
+In-reply-to: <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20170721112008epcas5p1eb75e4eb00d1dbad130460d2cbc0ce0c@epcas5p1.samsung.com>
+	<1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 09, 2017 at 08:40:05PM +0300, Vladimir Barinov wrote:
-> From: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
+On 07/21/2017 01:19 PM, Sylwester Nawrocki wrote:
+> This patch fixes values of the EPLL K coefficient and changes
+> the EPLL output frequency values to match exactly what is
+> possible to achieve with given M, P, S, K coefficients.
+> This allows to avoid rounding errors and unexpected frequency
+> being set with clk_set_rate(), due to recalc_rate returning
+> different values than the PLL rate specified in the
+> exynos5420_epll_24mhz_tbl table. E.g. this prevents a case
+> where two consecutive clk_set_rate() calls with same argument
+> result in different PLL output frequency.
 > 
-> IDT VersaClock 5 5P49V5925 has 5 clock outputs, 4 fractional dividers.
-> Input clock source can be taken only from external reference clock.
+> The PLL output frequencies have been calculated with formula:
 > 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov+renesas@cogentembedded.com>
-> ---
-> Changes in version 2:
-> - fixed typo in patch header: VC5 has 5 clock outputs
-> - rebased against patch:
->   [V3,7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
+> f = fxtal * (M * 2^16  + K) / (P * 2^S) / 2^16
 > 
->  Documentation/devicetree/bindings/clock/idt,versaclock5.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+> where fxtal = 24000000.
+> 
+> Fixes: 9842452acd ("clk: samsung: exynos542x: Add EPLL rate table")
+> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Stephen, Mike,
+
+Could you apply this patch directly for v4.12-rcX?
+It fixes code added in v4.12.
+
+-- 
+Thanks,
+Sylwester
