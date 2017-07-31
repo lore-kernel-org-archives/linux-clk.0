@@ -1,77 +1,64 @@
-Return-Path: <garsilva@embeddedor.com>
-Date: Tue, 4 Jul 2017 17:17:07 -0500
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] clk: moxart: remove unnecessary static in
- moxart_of_pll_clk_init()
-Message-ID: <20170704221707.GA20243@embeddedgus>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170730164150.26302-1-jernej.skrabec@siol.net>
+References: <20170730164150.26302-1-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 31 Jul 2017 13:13:34 +0800
+Message-ID: <CAGb2v65pH-Me6JjMYzp41NwS478azMTLBPrkJwZcho9Ay2JX1Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] clk: sunxi-ng: Fix issues with fractional mode
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove unnecessary static on local variable _base_.
-Such variable is initialized before being used,
-on every execution path throughout the function.
-The static has no benefit and, removing it reduces
-the code size.
+Hi Jernej,
 
-This issue was detected using Coccinelle and the following semantic patch:
+On Mon, Jul 31, 2017 at 12:41 AM, Jernej Skrabec
+<jernej.skrabec@siol.net> wrote:
+> During development of H3 HDMI driver, I found some issues with
+> setting video clock rate. It turned out that clock driver decided
+> to use fractional mode and selected right frequency, but it didn't
+> enable it. Additionally, fractional helpers don't wait on lock.
 
-@bad exists@
-position p;
-identifier x;
-type T;
-@@
+What kind of resolution were you testing to actually hit this?
 
-static T x@p;
-...
-x = <+...x...+>
+AFAIK the fractional mode is either 297 or 270 MHz. Even Full HD
+1080p60 dot clocks aren't that high. And the clk drivers should
+try to request a matching parent clk rate. So the PLL wouldn't
+go that high. Are you testing 4k @ 30fps?
 
-@@
-identifier x;
-expression e;
-type T;
-position p != bad.p;
-@@
+As it stands, I don't think any of the existing display support
+can go that high, so I think we're safe as far as old kernels
+go, i.e. we don't need to Cc stable for these.
 
--static
- T x@p;
- ... when != x
-     when strict
-?x = e;
+Regards
+ChenYu
 
-In the following log you can see the difference in the code size and,
-a significant difference in bss segment. This log is the output
-of the size command, before and after the code change:
-
-before:
-   text    data     bss     dec     hex filename
-   1724     384     128    2236     8bc drivers/clk/clk-moxart.o
-
-after:
-   text    data     bss     dec     hex filename
-   1713     328      64    2105     839 drivers/clk/clk-moxart.o
-
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- drivers/clk/clk-moxart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-index b86dac8..d687d6a 100644
---- a/drivers/clk/clk-moxart.c
-+++ b/drivers/clk/clk-moxart.c
-@@ -18,7 +18,7 @@
- 
- static void __init moxart_of_pll_clk_init(struct device_node *node)
- {
--	static void __iomem *base;
-+	void __iomem *base;
- 	struct clk_hw *hw;
- 	struct clk *ref_clk;
- 	unsigned int mul;
--- 
-2.5.0
+> Patch 1 adds a call to N-M clock driver which enables fractional mode.
+> It also clears M factor before that as required by most SoCs.
+>
+> Patch 2 adds a call to N clock driver which enables fractional mode.
+>
+> Patch 3 makes fractional helpers less chatty.
+>
+> Patch 4 adds a wait for lock to fractional helpers.
+>
+> Jernej Skrabec (4):
+>   clk: sunxi-ng: Fix fractional mode for N-M clocks
+>   clk: sunxi-ng: multiplier: Fix fractional mode
+>   clk: sunxi-ng: Make fractional helper less chatty
+>   clk: sunxi-ng: Wait for lock when using fractional mode
+>
+>  drivers/clk/sunxi-ng/ccu_frac.c | 14 ++++++++------
+>  drivers/clk/sunxi-ng/ccu_frac.h |  2 +-
+>  drivers/clk/sunxi-ng/ccu_mult.c | 10 +++++++---
+>  drivers/clk/sunxi-ng/ccu_nm.c   | 19 ++++++++++++++++---
+>  4 files changed, 32 insertions(+), 13 deletions(-)
+>
+> --
+> 2.13.3
+>
