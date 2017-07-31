@@ -1,94 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V2 10/10] arm64: dts: add clocks for SC9860
-Date: Tue, 11 Jul 2017 18:56:27 +0800
-Message-ID: <20170711105627.20526-11-chunyan.zhang@spreadtrum.com>
-In-Reply-To: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
-References: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:38557 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751446AbdGaMml (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2017 08:42:41 -0400
+Received: by mail-wm0-f48.google.com with SMTP id m85so168903248wma.1
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jul 2017 05:42:40 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: jbrunet@baylibre.com, narmstrong@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
+Date: Mon, 31 Jul 2017 14:42:33 +0200
+Message-Id: <1501504957-19476-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now we have clock driver, so add clock devicetree data for SC9860.
+In order to support the standalone CEC Controller on the Amlogic SoCs,
+a specific CEC 32K clock must be handled in the AO domain.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- arch/arm64/boot/dts/sprd/sc9860.dtsi | 22 ++++++++++++++++++++++
- arch/arm64/boot/dts/sprd/whale2.dtsi |  3 +--
- 2 files changed, 23 insertions(+), 2 deletions(-)
+The CEC 32K AO Clock is a dual divider with dual counter to provide a more
+precise 32768Hz clock for the CEC subsystem from the external xtal.
 
-diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-index 7b7d8ce..8d3f549 100644
---- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
-+++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-@@ -7,6 +7,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sprd,sc9860-clk.h>
- #include "whale2.dtsi"
- 
- / {
-@@ -183,6 +184,27 @@
- 	};
- 
- 	soc {
-+		clk: clk {
-+			compatible = "sprd,sc9860-clk";
-+			#clock-cells = <1>;
-+			reg = <0 0x20000000 0 0x400>,
-+			      <0 0x20210000 0 0x3000>,
-+			      <0 0x402b0000 0 0x4000>,
-+			      <0 0x402d0000 0 0x400>,
-+			      <0 0x402e0000 0 0x4000>,
-+			      <0 0x40400000 0 0x400>,
-+			      <0 0x40880000 0 0x400>,
-+			      <0 0x415e0000 0 0x400>,
-+			      <0 0x60200000 0 0x400>,
-+			      <0 0x61000000 0 0x400>,
-+			      <0 0x61100000 0 0x3000>,
-+			      <0 0x62000000 0 0x4000>,
-+			      <0 0x62100000 0 0x4000>,
-+			      <0 0x63000000 0 0x400>,
-+			      <0 0x63100000 0 0x3000>,
-+			      <0 0x70b00000 0 0x3000>;
-+		};
-+
- 		funnel@10001000 { /* SoC Funnel */
- 			compatible = "arm,coresight-funnel", "arm,primecell";
- 			reg = <0 0x10001000 0 0x1000>;
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 7c217c5..a4f376e 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -59,13 +59,12 @@
- 				status = "disabled";
- 			};
- 		};
--
- 	};
- 
- 	ext_26m: ext-26m {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <26000000>;
--		clock-output-names = "ext_26m";
-+		clock-output-names = "ext-26m";
- 	};
- };
+The AO clocks management registers are spread among the AO register space,
+so this patch also adds management of these registers mappings then uses them
+for the CEC 32K AO clock management.
+
+This patchset :
+ - updates the bindings accordingly
+ - switch driver to new bindings
+ - adds the CEC 32k clock
+ - adds the clock binding entry
+
+The DT Update will be sent in another patchset.
+
+Changes since v2 at [2] :
+ - fix round_rate invalid handling
+ - enhance set_rate code thanks to Chris Moore
+ - add more explicit comments thanks to Martin
+
+Changes since v1 at [1] :
+ - move bindings to parent syscon node and move clkc to subnode
+ - switch aoclkc to use regmap only register access
+ - introduce aoclk-regmap-gate for this purpose until regmap clocks are generic
+
+[1] https://lkml.kernel.org/r/1499336663-23875-1-git-send-email-narmstrong@baylibre.com
+[2] https://lkml.kernel.org/r/1501235589-318-1-git-send-email-narmstrong@baylibre.com
+
+Neil Armstrong (4):
+  dt-bindings: clock: amlogic,gxbb-aoclkc: Update bindings
+  clk: meson: gxbb-aoclk: Switch to regmap for register access
+  dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
+  clk: meson: gxbb-aoclk: Add CEC 32k clock
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  22 ++-
+ drivers/clk/meson/Makefile                         |   2 +-
+ drivers/clk/meson/gxbb-aoclk-32k.c                 | 194 +++++++++++++++++++++
+ drivers/clk/meson/gxbb-aoclk-regmap.c              |  46 +++++
+ drivers/clk/meson/gxbb-aoclk.c                     |  65 ++++---
+ drivers/clk/meson/gxbb-aoclk.h                     |  42 +++++
+ include/dt-bindings/clock/gxbb-aoclkc.h            |   1 +
+ 7 files changed, 342 insertions(+), 30 deletions(-)
+ create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
+ create mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+ create mode 100644 drivers/clk/meson/gxbb-aoclk.h
+
 -- 
-2.7.4
+1.9.1
+
