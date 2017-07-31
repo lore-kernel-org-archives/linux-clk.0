@@ -1,167 +1,38 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 6/8] clk: vc5: Add support for the input frequency doubler
-Date: Sun,  9 Jul 2017 15:28:12 +0200
-Message-Id: <20170709132814.2339-6-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
-References: <20170709132814.2339-1-marek.vasut+renesas@gmail.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 4/4] clk: sunxi-ng: Wait for lock when using fractional mode
+Date: Mon, 31 Jul 2017 19:18:28 +0200
+Message-ID: <2215267.q3CNAWEAR3@jernej-laptop>
+In-Reply-To: <CAGb2v66FAYtsp39+5Aj2oZfyo=O=R1GJ11w3-vmJOysezsvcYg@mail.gmail.com>
+References: <20170730164150.26302-1-jernej.skrabec@siol.net> <20170730164150.26302-5-jernej.skrabec@siol.net> <CAGb2v66FAYtsp39+5Aj2oZfyo=O=R1GJ11w3-vmJOysezsvcYg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-The VersaClock 6 has an input frequency doubler between the input
-clock mux and the predivider. Add new capability flag and support
-for this frequency doubler block into the driver.
+Hi Chen-Yu,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-on Salvator-XS with the display LVDS output.
----
-V2: None
-V3: None
----
- drivers/clk/clk-versaclock5.c | 78 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 77 insertions(+), 1 deletion(-)
+Dne ponedeljek, 31. julij 2017 ob 07:02:18 CEST je Chen-Yu Tsai napisal(a):
+> On Mon, Jul 31, 2017 at 12:41 AM, Jernej Skrabec
+> 
+> <jernej.skrabec@siol.net> wrote:
+> > Currently ccu_frac_helper_set_rate() doesn't wait for a lock bit to be
+> > set before returning. Because of that, unstable clock may be used.
+> > 
+> > Add a wait for lock in the helper function.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> 
+> Can you provide a Fixes: tag?
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 453c9f721b78..d0406b62133a 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -57,6 +57,7 @@
- #define VC5_PRIM_SRC_SHDN			0x10
- #define VC5_PRIM_SRC_SHDN_EN_XTAL		BIT(7)
- #define VC5_PRIM_SRC_SHDN_EN_CLKIN		BIT(6)
-+#define VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ	BIT(3)
- #define VC5_PRIM_SRC_SHDN_SP			BIT(1)
- #define VC5_PRIM_SRC_SHDN_EN_GBL_SHDN		BIT(0)
- 
-@@ -122,6 +123,8 @@
- /* flags to describe chip features */
- /* chip has built-in oscilator */
- #define VC5_HAS_INTERNAL_XTAL	BIT(0)
-+/* chip has PFD requency doubler */
-+#define VC5_HAS_PFD_FREQ_DBL	BIT(1)
- 
- /* Supported IDT VC5 models. */
- enum vc5_model {
-@@ -157,6 +160,7 @@ struct vc5_driver_data {
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
-+	struct clk_hw		clk_mul;
- 	struct clk_hw		clk_pfd;
- 	struct vc5_hw_data	clk_pll;
- 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
-@@ -167,6 +171,10 @@ static const char * const vc5_mux_names[] = {
- 	"mux"
- };
- 
-+static const char * const vc5_dbl_names[] = {
-+	"dbl"
-+};
-+
- static const char * const vc5_pfd_names[] = {
- 	"pfd"
- };
-@@ -264,6 +272,54 @@ static const struct clk_ops vc5_mux_ops = {
- 	.get_parent	= vc5_mux_get_parent,
- };
- 
-+static unsigned long vc5_dbl_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct vc5_driver_data *vc5 =
-+		container_of(hw, struct vc5_driver_data, clk_mul);
-+	unsigned int premul;
-+
-+	regmap_read(vc5->regmap, VC5_PRIM_SRC_SHDN, &premul);
-+	if (premul & VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ)
-+		parent_rate *= 2;
-+
-+	return parent_rate;
-+}
-+
-+static long vc5_dbl_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	if ((*parent_rate == rate) || ((*parent_rate * 2) == rate))
-+		return rate;
-+	else
-+		return -EINVAL;
-+}
-+
-+static int vc5_dbl_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct vc5_driver_data *vc5 =
-+		container_of(hw, struct vc5_driver_data, clk_mul);
-+	u32 mask;
-+
-+	if ((parent_rate * 2) == rate)
-+		mask = VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ;
-+	else
-+		mask = 0;
-+
-+	regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN,
-+			   VC5_PRIM_SRC_SHDN_EN_DOUBLE_XTAL_FREQ,
-+			   mask);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops vc5_dbl_ops = {
-+	.recalc_rate	= vc5_dbl_recalc_rate,
-+	.round_rate	= vc5_dbl_round_rate,
-+	.set_rate	= vc5_dbl_set_rate,
-+};
-+
- static unsigned long vc5_pfd_recalc_rate(struct clk_hw *hw,
- 					 unsigned long parent_rate)
- {
-@@ -706,12 +762,32 @@ static int vc5_probe(struct i2c_client *client,
- 		goto err_clk;
- 	}
- 
-+	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
-+		/* Register frequency doubler */
-+		memset(&init, 0, sizeof(init));
-+		init.name = vc5_dbl_names[0];
-+		init.ops = &vc5_dbl_ops;
-+		init.flags = CLK_SET_RATE_PARENT;
-+		init.parent_names = vc5_mux_names;
-+		init.num_parents = 1;
-+		vc5->clk_mul.init = &init;
-+		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
-+		if (ret) {
-+			dev_err(&client->dev, "unable to register %s\n",
-+				init.name);
-+			goto err_clk;
-+		}
-+	}
-+
- 	/* Register PFD */
- 	memset(&init, 0, sizeof(init));
- 	init.name = vc5_pfd_names[0];
- 	init.ops = &vc5_pfd_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
--	init.parent_names = vc5_mux_names;
-+	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL)
-+		init.parent_names = vc5_dbl_names;
-+	else
-+		init.parent_names = vc5_mux_names;
- 	init.num_parents = 1;
- 	vc5->clk_pfd.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
--- 
-2.11.0
+fixes: 89a3dfb78707 ("clk: sunxi-ng: Add fractional lib")
+
+As we discussed on IRC, it is safe to call ccu_helper_wait_for_lock() even on 
+platforms where lock bit is not present, since it just returns without effect.
+
+Regards,
+Jernej
+
+> 
+> Otherwise this looks good.
