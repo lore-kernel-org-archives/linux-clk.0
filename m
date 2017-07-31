@@ -1,90 +1,60 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Alexey Firago <alexey_firago@mentor.com>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH V2 7/8] clk: vc5: Add bindings for IDT VersaClock 5P49V6901
-Date: Sat,  1 Jul 2017 22:04:57 +0200
-Message-Id: <20170701200459.11505-7-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
-References: <20170701200459.11505-1-marek.vasut+renesas@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.136]:46355 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbdGaKEi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jul 2017 06:04:38 -0400
+From: Andy Yan <andy.yan@rock-chips.com>
+To: heiko@sntech.de
+Cc: devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        mturquette@baylibre.com, linux-gpio@vger.kernel.org,
+        sboyd@codeaurora.org, broonie@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wsa@the-dreams.de, linux-rockchip@lists.infradead.org,
+        robh+dt@kernel.org, linux-i2c@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-spi@vger.kernel.org,
+        zhangqing@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH 00/14] Support more devices on rockchip rv1108
+Date: Mon, 31 Jul 2017 18:04:09 +0800
+Message-Id: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-IDT VersaClock 6 5P49V6901 has 4 clock outputs, 4 fractional dividers.
-Input clock source can be taken from either external crystal or from
-external reference clock.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
----
-V2: Edit the top of the DT binding document to mention VersaClock 6
----
- .../devicetree/bindings/clock/idt,versaclock5.txt   | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+This series try to support i2c/spi/pwm/saradc/pmic/watchdog and
+the full clk tree on rockchip rv1108 soc.
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 53d7e50ed875..115ab5f75c5d 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -1,24 +1,26 @@
--Binding for IDT VersaClock5 programmable i2c clock generator.
-+Binding for IDT VersaClock 5,6 programmable i2c clock generators.
- 
--The IDT VersaClock5 are programmable i2c clock generators providing
--from 3 to 12 output clocks.
-+The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
-+generators providing from 3 to 12 output clocks.
- 
- ==I2C device node==
- 
- Required properties:
- - compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
--		"idt,5p49v5935".
-+		"idt,5p49v5935" , "idt,5p49v6901".
- - reg:		i2c device address, shall be 0x68 or 0x6a.
- - #clock-cells:	from common clock binding; shall be set to 1.
- - clocks:	from common clock binding; list of parent clock handles,
--		- 5p49v5923: (required) either or both of XTAL or CLKIN
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of XTAL or CLKIN
- 					reference clock.
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present (internal
- 					Xtal used) or CLKIN reference
- 					clock.
- - clock-names:	from common clock binding; clock input names, can be
--		- 5p49v5923: (required) either or both of "xin", "clkin".
-+		- 5p49v5923 and
-+		  5p49v6901: (required) either or both of "xin", "clkin".
- 		- 5p49v5933 and
- 		- 5p49v5935: (optional) property not present or "clkin".
- 
-@@ -44,6 +46,13 @@ clock specifier, the following mapping applies:
- 	3 -- OUT3
- 	4 -- OUT4
- 
-+5P49V6901:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+	3 -- OUT3
-+	4 -- OUT4
-+
- ==Example==
- 
- /* 25MHz reference crystal */
+
+Andy Yan (12):
+  pinctrl: rockchip: add input schmitt support for rv1108
+  dt-bindings: i2c: rk3x: add support for rv1108
+  i2c: rk3x: add support for rv1108
+  ARM: dts: rockchip: add i2c dt node for rv1108
+  spi: rockchip: add compatible string for rv1108 spi
+  ARM: dts: rockchip: add spi dt node for rv1108
+  ARM: dts: rockchip: add pwm dt node for rv1108
+  ARM: dts: rockchip: add watchdog dt node for rv1108
+  ARM: dts: rockchip: add saradc support for rv1108
+  ARM: dts: rockchip: add pwm backlight for rv1108 evb
+  ARM: dts: rockchip: add pmic rk805 dt node for rv1108 evb
+  ARM: dts: rockchip: add accelerometer bma250e dt node for rv1108 evb
+
+Elaine Zhang (2):
+  clk: rockchip: add more clk ids for rv1108
+  clk: rockchip: support more clks for rv1108
+
+ Documentation/devicetree/bindings/i2c/i2c-rk3x.txt |   1 +
+ .../devicetree/bindings/spi/spi-rockchip.txt       |   1 +
+ arch/arm/boot/dts/rv1108-evb.dts                   | 158 +++++++
+ arch/arm/boot/dts/rv1108.dtsi                      | 249 ++++++++++
+ drivers/clk/rockchip/clk-rv1108.c                  | 513 ++++++++++++++++-----
+ drivers/i2c/busses/i2c-rk3x.c                      |   9 +
+ drivers/pinctrl/pinctrl-rockchip.c                 |  31 ++
+ drivers/spi/spi-rockchip.c                         |   1 +
+ include/dt-bindings/clock/rv1108-cru.h             | 128 ++++-
+ 9 files changed, 964 insertions(+), 127 deletions(-)
+
 -- 
-2.11.0
+2.7.4
+
+
