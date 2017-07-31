@@ -1,115 +1,49 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>,
-        Ben Li <ben.li@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Subject: [PATCH V2 00/10] add clock driver for Spreadtrum platforms
-Date: Tue, 11 Jul 2017 18:56:17 +0800
-Message-ID: <20170711105627.20526-1-chunyan.zhang@spreadtrum.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 31 Jul 2017 13:17:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: exynos5420: The EPLL rate table corrections
+Message-ID: <20170731201701.GI2146@codeaurora.org>
+References: <CGME20170721112008epcas5p1eb75e4eb00d1dbad130460d2cbc0ce0c@epcas5p1.samsung.com>
+ <1500635990-19474-1-git-send-email-s.nawrocki@samsung.com>
+ <33f53903-9043-29c0-2cb8-e5d6950cc92f@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <33f53903-9043-29c0-2cb8-e5d6950cc92f@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a rewrite of Spreadtrum's original clock driver[1] according to the
-comments[2] from Stephen Boyd.
+On 07/31, Sylwester Nawrocki wrote:
+> On 07/21/2017 01:19 PM, Sylwester Nawrocki wrote:
+> >This patch fixes values of the EPLL K coefficient and changes
+> >the EPLL output frequency values to match exactly what is
+> >possible to achieve with given M, P, S, K coefficients.
+> >This allows to avoid rounding errors and unexpected frequency
+> >being set with clk_set_rate(), due to recalc_rate returning
+> >different values than the PLL rate specified in the
+> >exynos5420_epll_24mhz_tbl table. E.g. this prevents a case
+> >where two consecutive clk_set_rate() calls with same argument
+> >result in different PLL output frequency.
+> >
+> >The PLL output frequencies have been calculated with formula:
+> >
+> >f = fxtal * (M * 2^16  + K) / (P * 2^S) / 2^16
+> >
+> >where fxtal = 24000000.
+> >
+> >Fixes: 9842452acd ("clk: samsung: exynos542x: Add EPLL rate table")
+> >Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> 
+> Stephen, Mike,
+> 
+> Could you apply this patch directly for v4.12-rcX?
+> It fixes code added in v4.12.
+> 
 
-This series adds Spreadtrum clock support together with its binding
-documentation and devicetree data.
-
-Any comments would be greatly appreciated.
-
-Thanks,
-Chunyan
-
-Changes from V1 (https://lkml.org/lkml/2017/6/17/356):
-* Address Stephen's comments:
-  - Switch to use platform device driver instead of the DT probing mechanism.
-  - Move the common clock macro out from vendor directory, but need to remove those
-    overlap code from other vendors (such as sunxi-ng) once this gets merged.
-  - Add support to be built as a module.
-  - Add 'sprd_' prefix for all spin locks used in these drivers.
-  - Mark input parameter of sprd_x with const.
-  - Remove unreasonable dependencies to CONFIG_64BIT.
-  - Add readl() after writing the same register.
-  - Remove CLK_IS_BASIC which is no longer used.
-  - Remove unnecessary CLK_IGNORE_UNUSED when defining a clock.
-  - Change to expose all clock index.
-  - Use clk_ instead of ccu.
-  - Add Kconfig for sprd clocks.
-  - Move the fixed clocks out from the soc node.
-  - Switch to use 64-bit math in pll driver instead of 32-bit math.
-* Revise binding documentation according to dt modification.
-* Rename sc9860.c to sc9860-clk.c
-
-
-[1] https://lwn.net/Articles/722739/
-[2] https://www.spinics.net/lists/arm-kernel/msg582017.html
-
-
-Chunyan Zhang (10):
-  drivers: move clock common macros out from vendor directories
-  dt-bindings: Add Spreadtrum clock binding documentation
-  clk: sprd: Add common infrastructure
-  clk: sprd: add gate clock support
-  clk: sprd: add mux clock support
-  clk: sprd: add divider clock support
-  clk: sprd: add composite clock support
-  clk: sprd: add adjustable pll support
-  clk: sprd: add clocks support for SC9860
-  arm64: dts: add clocks for SC9860
-
- Documentation/devicetree/bindings/clock/sprd.txt |   36 +
- arch/arm64/boot/dts/sprd/sc9860.dtsi             |   22 +
- arch/arm64/boot/dts/sprd/whale2.dtsi             |    3 +-
- drivers/clk/Kconfig                              |    1 +
- drivers/clk/Makefile                             |    1 +
- drivers/clk/clk_common.h                         |   60 +
- drivers/clk/sprd/Kconfig                         |   14 +
- drivers/clk/sprd/Makefile                        |   11 +
- drivers/clk/sprd/common.c                        |   83 ++
- drivers/clk/sprd/common.h                        |   56 +
- drivers/clk/sprd/composite.c                     |   64 +
- drivers/clk/sprd/composite.h                     |   47 +
- drivers/clk/sprd/div.c                           |   98 ++
- drivers/clk/sprd/div.h                           |   77 +
- drivers/clk/sprd/gate.c                          |  104 ++
- drivers/clk/sprd/gate.h                          |   58 +
- drivers/clk/sprd/mux.c                           |   86 ++
- drivers/clk/sprd/mux.h                           |   63 +
- drivers/clk/sprd/pll.c                           |  236 +++
- drivers/clk/sprd/pll.h                           |  133 ++
- drivers/clk/sprd/sc9860-clk.c                    | 1726 ++++++++++++++++++++++
- include/dt-bindings/clock/sprd,sc9860-clk.h      |  375 +++++
- 22 files changed, 3352 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/sprd.txt
- create mode 100644 drivers/clk/clk_common.h
- create mode 100644 drivers/clk/sprd/Kconfig
- create mode 100644 drivers/clk/sprd/Makefile
- create mode 100644 drivers/clk/sprd/common.c
- create mode 100644 drivers/clk/sprd/common.h
- create mode 100644 drivers/clk/sprd/composite.c
- create mode 100644 drivers/clk/sprd/composite.h
- create mode 100644 drivers/clk/sprd/div.c
- create mode 100644 drivers/clk/sprd/div.h
- create mode 100644 drivers/clk/sprd/gate.c
- create mode 100644 drivers/clk/sprd/gate.h
- create mode 100644 drivers/clk/sprd/mux.c
- create mode 100644 drivers/clk/sprd/mux.h
- create mode 100644 drivers/clk/sprd/pll.c
- create mode 100644 drivers/clk/sprd/pll.h
- create mode 100644 drivers/clk/sprd/sc9860-clk.c
- create mode 100644 include/dt-bindings/clock/sprd,sc9860-clk.h
+You mean v4.13? Sure.
 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
