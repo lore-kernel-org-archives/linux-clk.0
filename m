@@ -1,47 +1,55 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: meson: meson8b: fix protection against undefined clks
-Date: Thu, 27 Jul 2017 18:17:54 +0200
-Message-Id: <20170727161755.10393-2-jbrunet@baylibre.com>
-In-Reply-To: <20170727161755.10393-1-jbrunet@baylibre.com>
-References: <20170727161755.10393-1-jbrunet@baylibre.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com
+Subject: Re: [PATCH v3 2/2] dt-bindings: add documentation for rk3126 clock
+Date: Mon, 31 Jul 2017 13:24:27 +0200
+Message-ID: <1528313.SDTh7a5k6t@diego>
+In-Reply-To: <1501497728-7805-3-git-send-email-zhangqing@rock-chips.com>
+References: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com> <1501497728-7805-3-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-meson8b clock driver gracefully handles case where the clkid is defined
-but the clock hw pointer is not provided, as long as it is not at the end
-of the hw_onecell_data array.
+Hi Elaine,
 
-This patch ensure that the last entries are defined as well to handle
-this particular case.
+Am Montag, 31. Juli 2017, 18:42:08 CEST schrieb Elaine Zhang:
+> This add bindings documentation for rk3126 SoCs.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-Fixes: e92f7cca446e ("clk: meson8b: clean up fixed rate clocks")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/meson8b.c | 1 +
- 1 file changed, 1 insertion(+)
+thanks for noticing that the binding doc was missing, I meant to
+write a response about that but didn't find the time yet.
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index bb3f1de876b1..7629aa09472a 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -585,6 +585,7 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
- 		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
- 		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
-+		[CLK_NR_CLKS]		    = NULL,
- 	},
- 	.num = CLK_NR_CLKS,
- };
--- 
-2.9.4
+> ---
+>  Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+> b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt index
+> 455a9a00a623..25098fa8595f 100644
+> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+> @@ -1,12 +1,12 @@
+> -* Rockchip RK3128 Clock and Reset Unit
+> +* Rockchip RK3128/RK3126 Clock and Reset Unit
+> 
+> -The RK3128 clock controller generates and supplies clock to various
+> +The RK3128/RK3126 clock controller generates and supplies clock to various
+>  controllers within the SoC and also implements a reset controller for SoC
+>  peripherals.
+> 
+>  Required Properties:
+> 
+> -- compatible: should be "rockchip,rk3128-cru"
+> +- compatible: should be "rockchip,rk3128-cru", "rockchip,rk3126-cru"
+
+- compatible: should be one of "rockchip,rk3128-cru" or "rockchip,rk3126-cru".
+
+
+Heiko
+
+
+>  - reg: physical base address of the controller and length of memory mapped
+>    region.
+>  - #clock-cells: should be 1.
