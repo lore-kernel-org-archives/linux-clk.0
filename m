@@ -1,82 +1,42 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170717091801.GA2129@katana>
-References: <1492624001-3758-13-git-send-email-ykaneko0929@gmail.com>
- <20170714142559.p6xp6dp4whlqcr5n@ninjato> <CAMuHMdV0fLG6m5hdyMpeKxb1nz_L+xEmyjvZV0iotXMSK517zw@mail.gmail.com>
- <20170717091801.GA2129@katana>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Jul 2017 12:18:39 +0200
-Message-ID: <CAMuHMdVhuN1ozEmtDJnn63rvktE7Aj4FACzweaJzCMzP1q8BKw@mail.gmail.com>
-Subject: Re: clk: renesas: rcar-gen3: Fix error return code in cpg_sd_clock_recalc_rate
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20170731113832.26490-1-jbrunet@baylibre.com>
+References: <20170731113832.26490-1-jbrunet@baylibre.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 31 Jul 2017 16:05:02 +0200
+Message-ID: <CAK8P3a28nb8QsJC8V4+SJM0gz70BDOv8jAczRWoCF+HfvkwJfA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: meson: expose clk ids
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>, Olof Johansson <olof@lixom.net>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Wolfram,
-
-On Mon, Jul 17, 2017 at 11:18 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> >> In .recalc_rate of struct clk_ops, it is desirable to return 0 if an
->> >> error occurs, but -EINVAL is returned. This patch fixes it.
->> >>
->> >> Fixes: 5b1defde7054 ("clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code")
->> >> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> >> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> >
->> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>
->> Why is it desirable to return 0 if an error occurs? Because the return type is
->> unsigned long?
+On Mon, Jul 31, 2017 at 1:38 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> In previous cycles, concerns have been raised about the way clocks are
+> exposed for the meson clock controller, only when validated and required
+> in DT.
 >
-> Yes, I'd think so. Instead of an arbitrary high, kind-of-random, number, just
-> return 0 which also indicates that something unexpected happened? Also, all
-> other drivers return zero in an error case (did some quick coccinelle
-> grepping before).
-
-OK.
-
->> Is this routine allowed to fail? I don't see any handling of zero by
->> its callers.
+> Instead, this patchset expose all the known clocks which may be needed in
+> DT later on. The clocks left out are internal clocks which should never be
+> used directly in DT. These are mostly internal muxes and dividers of
+> composite clocks.
 >
-> From clk-provider.h:
+> While this should reduce the patch flow on the related header files, It
+> won't stop it completely. There are still many clocks we don't know about
+> yet. We tend discover a few in every cycle.
 >
->  * @recalc_rate Recalculate the rate of this clock, by querying hardware. The
->  *              parent rate is an input parameter.  It is up to the caller to
->  *              ensure that the prepare_mutex is held across this call.
->  *              Returns the calculated rate.  Optional, but recommended - if
->  *              this op is not set then clock rate will be initialized to 0.
+> This patchset depends on these fixes [0] to avoid issues when adding new
+> clk ids.
 >
-> What would be the benefit of keeping -EINVAL in an unsigned long?
+> [0]: https://lkml.kernel.org/r/20170727161755.10393-1-jbrunet@baylibre.com
 
-I do not mean that -EINVAL is correct. Obviously it isn't. But blindly
-replacing -EINVAL by zero may not be the right solution neither.
+Thanks a lot!
 
-If recalc_rate cannot return an error value, perhaps there is a good reason
-for that?
-
-I see there's a similar check in cpg_sd_clock_enable(), so the clock also
-cannot be enabled if this condition is met?
-
-When does this happen? If the firmware leaves a invalid/unsupported setting
-in the register? If we can't recover from that, perhaps the clock's probe
-should just fail instead?
-
-It looks like the only writer of that field is cpg_sd_clock_set_rate(),
-which always writes a valid/supported value. Is it guaranteed that this
-function is always called first?
-If yes, the checks can just be removed instead?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ Acked-by: Arnd Bergmann <arnd@arndb.de>
