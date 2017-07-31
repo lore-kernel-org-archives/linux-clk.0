@@ -1,68 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 13 Jul 2017 18:16:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: gabriel.fernandez@st.com, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	devicetree@vger.kernel.org, amelie.delaunay@st.com,
-	olivier.bideau@st.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
-	linux-arm-kernel@lists.infradead.org, ludovic.barre@st.com
-Subject: Re: [PATCH v5 1/2] clk: gate: expose clk_gate_ops::is_enabled
-Message-ID: <20170714011610.GF22780@codeaurora.org>
-References: <1499954552-20075-1-git-send-email-gabriel.fernandez@st.com>
- <1499954552-20075-2-git-send-email-gabriel.fernandez@st.com>
- <efa06f77-7b0e-9902-dbf1-c76d3203b813@gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <efa06f77-7b0e-9902-dbf1-c76d3203b813@gmail.com>
+In-Reply-To: <20170730164150.26302-2-jernej.skrabec@siol.net>
+References: <20170730164150.26302-1-jernej.skrabec@siol.net> <20170730164150.26302-2-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 31 Jul 2017 12:54:53 +0800
+Message-ID: <CAGb2v65mVyS+4k+o70mBEOqDq2+4xrrEZex8BSLy83xZDsQKAw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: sunxi-ng: Fix fractional mode for N-M clocks
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/13, Florian Fainelli wrote:
-> On 07/13/2017 07:02 AM, gabriel.fernandez@st.com wrote:
-> > From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> > 
-> > This patch exposes clk_gate_ops::is_enabled as functions
-> > that can be directly called and assigned in places like this so
-> > we don't need wrapper functions that do nothing besides forward
-> > the call.
-> > 
-> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> > Sugested by Stephen Boyd <sboyd@codeaurora.org>
-> > ---
-> >  drivers/clk/clk-gate.c       | 2 +-
-> >  include/linux/clk-provider.h | 1 +
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-> > index 4e0c054a..e27e28f 100644
-> > --- a/drivers/clk/clk-gate.c
-> > +++ b/drivers/clk/clk-gate.c
-> > @@ -86,7 +86,7 @@ static void clk_gate_disable(struct clk_hw *hw)
-> >  	clk_gate_endisable(hw, 0);
-> >  }
-> >  
-> > -static int clk_gate_is_enabled(struct clk_hw *hw)
-> > +int clk_gate_is_enabled(struct clk_hw *hw)
-> >  {
-> >  	u32 reg;
-> >  	struct clk_gate *gate = to_clk_gate(hw);
-> 
-> Don't you need to add an EXPORT_SYMBOL_GPL(clk_gate_is_enabled) as well
-> in case this gets used by modules?
+On Mon, Jul 31, 2017 at 12:41 AM, Jernej Skrabec
+<jernej.skrabec@siol.net> wrote:
+> N-M factor clock driver is missing a call to ccu_frac_helper_enable()
+> when fractional mode is used. Additionally, most SoCs require that M
+> factor must be set to 0 when fractional mode is used.
+>
+> Without this patch, clock keeps the old value and clk_set_rate() returns
+> without error.
+>
+> Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
+> CC: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-It would be needed in the future if someone uses it from a
-module. The only user in this patch series looks to be builtin
-only. I can add it when applying the patch if there aren't other
-comments on the series.
+Queued as a fix for 4.13.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ChenYu
