@@ -1,71 +1,53 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 10/10] ARM: dts: sun8i: a83t: h8homlet: Enable micro-SD card and onboard eMMC
-Date: Thu, 20 Jul 2017 11:44:52 +0800
-Message-Id: <20170720034452.15920-11-wens@csie.org>
-In-Reply-To: <20170720034452.15920-1-wens@csie.org>
-References: <20170720034452.15920-1-wens@csie.org>
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	cl@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 2/2] dt-bindings: add documentation for rk3126 clock
+Date: Mon, 31 Jul 2017 18:42:08 +0800
+Message-Id: <1501497728-7805-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com>
+References: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The H8 homlet has a micro-SD card slot connected to mmc0,
-and onboard eMMC from FORESEE, connected to mmc2.
+This add bindings documentation for rk3126 SoCs.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts   | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-index aecdeeb368ed..7afbaa4eea8d 100644
---- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-@@ -43,6 +43,7 @@
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+index 455a9a00a623..25098fa8595f 100644
+--- a/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3128-cru.txt
+@@ -1,12 +1,12 @@
+-* Rockchip RK3128 Clock and Reset Unit
++* Rockchip RK3128/RK3126 Clock and Reset Unit
  
- /dts-v1/;
- #include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
+-The RK3128 clock controller generates and supplies clock to various
++The RK3128/RK3126 clock controller generates and supplies clock to various
+ controllers within the SoC and also implements a reset controller for SoC
+ peripherals.
  
- / {
- 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
-@@ -57,6 +58,26 @@
- 	};
- };
+ Required Properties:
  
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_8bit_emmc_pins>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
+-- compatible: should be "rockchip,rk3128-cru"
++- compatible: should be "rockchip,rk3128-cru", "rockchip,rk3126-cru"
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ - #clock-cells: should be 1.
 -- 
-2.13.2
+1.9.1
