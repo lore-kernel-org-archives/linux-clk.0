@@ -1,141 +1,119 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 04/10] mmc: sunxi: Support controllers that can use both old and new timings
-Date: Thu, 20 Jul 2017 11:44:46 +0800
-Message-Id: <20170720034452.15920-5-wens@csie.org>
-In-Reply-To: <20170720034452.15920-1-wens@csie.org>
-References: <20170720034452.15920-1-wens@csie.org>
+Return-Path: <rnayak@codeaurora.org>
+Subject: Re: [PATCH v2 3/5] clk: qcom: gdsc: Add support to control associated
+ clks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1500526099-9935-1-git-send-email-rnayak@codeaurora.org>
+ <1500526099-9935-4-git-send-email-rnayak@codeaurora.org>
+ <20170727230259.GR2146@codeaurora.org>
+ <b1db092a-edd8-76e9-f1d2-91bf123638d7@codeaurora.org>
+ <20170728163753.GB2146@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, mturquette@baylibre.com,
+ stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <3e97d797-774f-fb5c-eb01-7b4761f17d91@codeaurora.org>
+Date: Mon, 31 Jul 2017 13:55:37 +0530
+MIME-Version: 1.0
+In-Reply-To: <20170728163753.GB2146@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On the SoCs that introduced the new timing mode for MMC controllers,
-both the old (where the clock delays are set in the CCU) and new
-(where the clock delays are set in the MMC controller) timing modes
-are available, and we have to support them both. However there are
-two bits that control which mode is active. One is in the CCU, the
-other is in the MMC controller. The settings on both sides must be
-the same, or nothing will work.
 
-The sunxi-ng clock driver provides an API to query and set the
-active timing mode. At probe time, we try to set the active mode
-to the "new timing mode". If it succeeds, we can then use the MMC
-controller in the new mode. If not, we fall back to the old mode.
+On 07/28/2017 10:07 PM, Stephen Boyd wrote:
+> On 07/28, Rajendra Nayak wrote:
+>>
+>>
+>> On 07/28/2017 04:32 AM, Stephen Boyd wrote:
+>>> On 07/20, Rajendra Nayak wrote:
+>>>
+>>>> +		clk_disable_unprepare(sc->clks[i]);
+>>>> +}
+>>>> +
+>>>>  static int gdsc_enable(struct generic_pm_domain *domain)
+>>>>  {
+>>>>  	struct gdsc *sc = domain_to_gdsc(domain);
+>>>> @@ -193,6 +219,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>>>>  	 */
+>>>>  	udelay(1);
+>>>>  
+>>>> +	ret = gdsc_clk_enable(sc);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>>  	/* Turn on HW trigger mode if supported */
+>>>>  	if (sc->flags & HW_CTRL) {
+>>>>  		ret = gdsc_hwctrl(sc, true);
+>>>> @@ -241,6 +271,8 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>>>>  			return ret;
+>>>>  	}
+>>>>  
+>>>> +	gdsc_clk_disable(sc);
+>>>
+>>> Can we call sleeping APIs (i.e. prepare/unprepare) from within
+>>> the power domains? I thought that didn't work generically because
+>>> someone could set their runtime PM configuration to be atomic
+>>> context friendly. Is there some way we can block that from
+>>> happening if we hook up a power domain that is no longer safe to
+>>> call from atomic context?
+>>
+>> hmm, I don't see a way to do that. Perhaps we could prepare/unprepare
+>> these as part of the pm_domain attach/detach to a device and then
+>> only enable/disable them as part of the gdsc_enable/disable?
+>>
+> 
+> The problem there is if we keep these clks prepared while the
+> domain is attached to a device I don't see how we can ever turn
+> off the XO clk and achieve XO shutdown in low power modes. A pm
+> domain is basically never detached, right? This is where we need
+> different power levels in PM domains if I understand correctly.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/mmc/host/sunxi-mmc.c | 45 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 43 insertions(+), 2 deletions(-)
+right, I did not realize the XO shutdown would happen via a unprepare
+callback and not disable.
+So looking some more into this, genpd does have a GENPD_FLAG_IRQ_SAFE
+used to indicate an IRQ safe domain. We don't set this today for any
+of the gdscs so genpd uses mutex locking anyway.
+When we do end up supporting/have a need to support IRQ safe domains
+we might end up putting a check to make sure we don't associate any
+clocks with those gdscs and leave it to the devices to handle it from
+within the drivers.
 
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 0fb4e4c119e1..c8a60e43dc43 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -22,6 +22,7 @@
- #include <linux/err.h>
- 
- #include <linux/clk.h>
-+#include <linux/clk/sunxi-ng.h>
- #include <linux/gpio.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
-@@ -259,7 +260,11 @@ struct sunxi_mmc_cfg {
- 	/* Does DATA0 needs to be masked while the clock is updated */
- 	bool mask_data0;
- 
-+	/* hardware only supports new timing mode */
- 	bool needs_new_timings;
-+
-+	/* hardware can switch between old and new timing modes */
-+	bool has_timings_switch;
- };
- 
- struct sunxi_mmc_host {
-@@ -293,6 +298,9 @@ struct sunxi_mmc_host {
- 
- 	/* vqmmc */
- 	bool		vqmmc_enabled;
-+
-+	/* timings */
-+	bool		use_new_timings;
- };
- 
- static int sunxi_mmc_reset_host(struct sunxi_mmc_host *host)
-@@ -714,7 +722,7 @@ static int sunxi_mmc_clk_set_phase(struct sunxi_mmc_host *host,
- {
- 	int index;
- 
--	if (!host->cfg->clk_delays)
-+	if (host->use_new_timings)
- 		return 0;
- 
- 	/* determine delays */
-@@ -765,6 +773,15 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 	    ios->bus_width == MMC_BUS_WIDTH_8)
- 		clock <<= 1;
- 
-+	if (host->use_new_timings) {
-+		ret = sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
-+		if (ret) {
-+			dev_err(mmc_dev(mmc),
-+				"error setting new timing mode\n");
-+			return ret;
-+		}
-+	}
-+
- 	rate = clk_round_rate(host->clk_mmc, clock);
- 	if (rate < 0) {
- 		dev_err(mmc_dev(mmc), "error rounding clk to %d: %ld\n",
-@@ -793,7 +810,7 @@ static int sunxi_mmc_clk_set_rate(struct sunxi_mmc_host *host,
- 	}
- 	mmc_writel(host, REG_CLKCR, rval);
- 
--	if (host->cfg->needs_new_timings) {
-+	if (host->use_new_timings) {
- 		/* Don't touch the delay bits */
- 		rval = mmc_readl(host, REG_SD_NTSR);
- 		rval |= SDXC_2X_TIMING_MODE;
-@@ -1262,6 +1279,30 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
- 		goto error_free_host;
- 	}
- 
-+	if (host->cfg->has_timings_switch) {
-+		/*
-+		 * Supports both old and new timing modes.
-+		 * Try setting the clk to new timing mode.
-+		 */
-+		sunxi_ccu_set_mmc_timing_mode(host->clk_mmc, true);
-+
-+		/* And check the result */
-+		ret = sunxi_ccu_get_mmc_timing_mode(host->clk_mmc);
-+		if (ret < 0) {
-+			/*
-+			 * For whatever reason we were not able to get
-+			 * the current active mode. Default to old mode.
-+			 */
-+			dev_warn(&pdev->dev, "MMC clk timing mode unknown\n");
-+			host->use_new_timings = false;
-+		} else {
-+			host->use_new_timings = !!ret;
-+		}
-+	} else if (host->cfg->needs_new_timings) {
-+		/* Supports new timing mode only */
-+		host->use_new_timings = true;
-+	}
-+
- 	mmc->ops		= &sunxi_mmc_ops;
- 	mmc->max_blk_count	= 8192;
- 	mmc->max_blk_size	= 4096;
+> 
+>>>
+>>> This concerns me if we do probe defer on orphan clks. We may get
+>>> into some situation where the gdsc is setup by a clk driver that
+>>> is trying to probe before some parent clk has registered for the
+>>> clks we're "getting" here. For example, this could easily happen
+>>> if we insert XO into the tree at the top and everything defers.
+>>>
+>>> I suppose this is not a problem because in this case we don't
+>>> have any clk here that could be orphaned even if RPM clks are
+>>> inserted into the clk tree for XO? I mean to say that we won't
+>>> get into a probe defer due to orphan clk loop. I'm always afraid
+>>> someone will make hardware that send a clk from one controller to
+>>> another and then back again (we did that with pcie) and then
+>>> we'll be unable to get out of the defer loop because we'll be
+>>> deferred on orphan status.
+>>
+>> Yes, we would probably run into these issues with probe defer for
+>> orphan clks. One way to handle it could be to decouple the probing
+>> of the clocks and powerdomain parts of the controller. Like the clock
+>> driver can probe and then register a dummy device for powerdomains
+>> (like is done for tsens on 8960) so it could probe independently?
+>>
+> 
+> Well is it a problem right now? I think we're OK here because we
+> don't have a "cycle" between clk providers in the clk provider
+> hierarchy. Can we clk_get() during attach and then fail attach if
+> we can't get clks at that point? If this works, we have a backup
+> plan should something go wrong, but we can ignore this concern
+> for now until it becomes a real problem.
+
+we don't have a cycle but I was worried about gcc being deferred until
+RPM clocks are probed and MMCC getting probed in between, and MMCC init
+before GCC init would have us run into issues.
+But I should be able to defer the clk_get()'s to during pm domain attach
+and it should all work in that case.
+
 -- 
-2.13.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
