@@ -1,85 +1,170 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v4 1/9] clk: at91: clk-generated: remove useless divisor loop
-Date: Tue, 25 Jul 2017 09:37:02 +0200
-Message-Id: <b9d92004d22f745e8acde0599359d67538c006a9.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
-References: <cover.c8ce78c15296190b2aa5c452c0c4512528e28518.1500968090.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, cl@rock-chips.com,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 1/2] clk: rockchip: rk3128: modify rk3128 clk driver to support rk3126
+Date: Mon, 31 Jul 2017 18:42:07 +0800
+Message-Id: <1501497728-7805-2-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com>
+References: <1501497728-7805-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver requests the current clk rate of each of its parent clocks to
-decide whether a clock rate is suitable or not. It does not request
-determine_rate from a parent clock which could request a rate change in
-parent clock (i.e. there is no parent rate propagation).
+rk3128 and rk3126 have some gate registers describe differences.
+So need to make some distinctions.
+The RK3126 and RK3128 Same clock description we move it to
+the common clock branches.
+And the different clks description use the own clock branches.
 
-We know the rate we want (passed along req argument of the function) and
-the parent clock rate, thus we know the closest rounded divisor, we
-don't need to iterate over the available divisors to find the best one
-for a given clock.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ drivers/clk/rockchip/clk-rk3128.c | 69 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 55 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index f0b7ae9..ef4b4e0 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 		    (gck->range.max && min_rate > gck->range.max))
- 			continue;
+diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
+index e243f2eae68f..62d7854e4b87 100644
+--- a/drivers/clk/rockchip/clk-rk3128.c
++++ b/drivers/clk/rockchip/clk-rk3128.c
+@@ -201,7 +201,7 @@ enum rk3128_plls {
+ 	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS);
  
--		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
--			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
--			tmp_diff = abs(req->rate - tmp_rate);
+-static struct rockchip_clk_branch rk3128_clk_branches[] __initdata = {
++static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	/*
+ 	 * Clock-Architecture Diagram 1
+ 	 */
+@@ -459,10 +459,6 @@ enum rk3128_plls {
+ 			RK2928_CLKSEL_CON(2), 14, 2, MFLAGS, 8, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 15, GFLAGS),
+ 
+-	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_sclk_sfc_src_p, 0,
+-			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
+-			RK2928_CLKGATE_CON(3), 15, GFLAGS),
 -
--			if (best_diff < 0 || best_diff > tmp_diff) {
--				best_rate = tmp_rate;
--				best_diff = tmp_diff;
--				req->best_parent_rate = parent_rate;
--				req->best_parent_hw = parent;
--			}
--
--			if (!best_diff || tmp_rate < req->rate)
--				break;
-+		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-+		if (!div)
-+			tmp_rate = parent_rate;
-+		else
-+			tmp_rate = parent_rate / div;
-+		tmp_diff = abs(req->rate - tmp_rate);
+ 	COMPOSITE_NOMUX(PCLK_PMU_PRE, "pclk_pmu_pre", "cpll", 0,
+ 			RK2928_CLKSEL_CON(29), 8, 6, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 0, GFLAGS),
+@@ -495,7 +491,6 @@ enum rk3128_plls {
+ 	GATE(ACLK_DMAC, "aclk_dmac", "aclk_peri", 0, RK2928_CLKGATE_CON(5), 1, GFLAGS),
+ 	GATE(0, "aclk_peri_niu", "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 15, GFLAGS),
+ 	GATE(0, "aclk_cpu_to_peri", "aclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 2, GFLAGS),
+-	GATE(HCLK_GPS, "hclk_gps", "aclk_peri", 0, RK2928_CLKGATE_CON(3), 14, GFLAGS),
+ 
+ 	GATE(HCLK_I2S_8CH, "hclk_i2s_8ch", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 4, GFLAGS),
+ 	GATE(0, "hclk_peri_matrix", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 0, GFLAGS),
+@@ -541,7 +536,6 @@ enum rk3128_plls {
+ 	GATE(0, "hclk_rom", "hclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 6, GFLAGS),
+ 	GATE(HCLK_CRYPTO, "hclk_crypto", "hclk_cpu", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
+ 
+-	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8, GFLAGS),
+ 	GATE(PCLK_ACODEC, "pclk_acodec", "pclk_cpu", 0, RK2928_CLKGATE_CON(5), 14, GFLAGS),
+ 	GATE(0, "pclk_ddrupctl", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 7, GFLAGS),
+ 	GATE(0, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 4, GFLAGS),
+@@ -561,6 +555,21 @@ enum rk3128_plls {
+ 	MMC(SCLK_EMMC_SAMPLE,  "emmc_sample",  "sclk_emmc",  RK3228_EMMC_CON1,  0),
+ };
+ 
++static struct rockchip_clk_branch rk3126_clk_branches[] __initdata = {
++	GATE(0, "pclk_stimer", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
++	GATE(0, "pclk_s_efuse", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
++	GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 8, GFLAGS),
++};
 +
-+		if (best_diff < 0 || best_diff > tmp_diff) {
-+			best_rate = tmp_rate;
-+			best_diff = tmp_diff;
-+			req->best_parent_rate = parent_rate;
-+			req->best_parent_hw = parent;
- 		}
++static struct rockchip_clk_branch rk3128_clk_branches[] __initdata = {
++	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_sclk_sfc_src_p, 0,
++			RK2928_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RK2928_CLKGATE_CON(3), 15, GFLAGS),
++
++	GATE(HCLK_GPS, "hclk_gps", "aclk_peri", 0, RK2928_CLKGATE_CON(3), 14, GFLAGS),
++	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8, GFLAGS),
++};
++
+ static const char *const rk3128_critical_clocks[] __initconst = {
+ 	"aclk_cpu",
+ 	"hclk_cpu",
+@@ -570,7 +579,7 @@ enum rk3128_plls {
+ 	"pclk_peri",
+ };
  
- 		if (!best_diff)
+-static void __init rk3128_clk_init(struct device_node *np)
++static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
+ {
+ 	struct rockchip_clk_provider *ctx;
+ 	void __iomem *reg_base;
+@@ -578,23 +587,21 @@ static void __init rk3128_clk_init(struct device_node *np)
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+-		return;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip clk init failed\n", __func__);
+ 		iounmap(reg_base);
+-		return;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	rockchip_clk_register_plls(ctx, rk3128_pll_clks,
+ 				   ARRAY_SIZE(rk3128_pll_clks),
+ 				   RK3128_GRF_SOC_STATUS0);
+-	rockchip_clk_register_branches(ctx, rk3128_clk_branches,
+-				  ARRAY_SIZE(rk3128_clk_branches));
+-	rockchip_clk_protect_critical(rk3128_critical_clocks,
+-				      ARRAY_SIZE(rk3128_critical_clocks));
++	rockchip_clk_register_branches(ctx, common_clk_branches,
++				  ARRAY_SIZE(common_clk_branches));
+ 
+ 	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
+ 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
+@@ -606,6 +613,40 @@ static void __init rk3128_clk_init(struct device_node *np)
+ 
+ 	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
+ 
++	return ctx;
++}
++
++static void __init rk3126_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++
++	ctx = rk3128_common_clk_init(np);
++	if (IS_ERR(ctx))
++		return;
++
++	rockchip_clk_register_branches(ctx, rk3126_clk_branches,
++				       ARRAY_SIZE(rk3126_clk_branches));
++	rockchip_clk_protect_critical(rk3128_critical_clocks,
++				      ARRAY_SIZE(rk3128_critical_clocks));
++
++	rockchip_clk_of_add_provider(np, ctx);
++}
++
++CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
++
++static void __init rk3128_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++
++	ctx = rk3128_common_clk_init(np);
++	if (IS_ERR(ctx))
++		return;
++
++	rockchip_clk_register_branches(ctx, rk3128_clk_branches,
++				       ARRAY_SIZE(rk3128_clk_branches));
++	rockchip_clk_protect_critical(rk3128_critical_clocks,
++				      ARRAY_SIZE(rk3128_critical_clocks));
++
+ 	rockchip_clk_of_add_provider(np, ctx);
+ }
+ 
 -- 
-git-series 0.9.1
+1.9.1
