@@ -1,43 +1,47 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: sebastian.hesselbarth@gmail.com,
-	rabeeh@solid-run.com,
-	linux@armlinux.org.uk,
-	linux-clk@vger.kernel.org,
-	Sergej Sawazki <sergej@taudac.com>
-Subject: [PATCH 3/3] clk: si5351: Add a debug message for PLL reset
-Date: Sat, 12 Aug 2017 16:23:03 +0200
-Message-Id: <1502547783-24685-4-git-send-email-sergej@taudac.com>
-In-Reply-To: <1502547783-24685-1-git-send-email-sergej@taudac.com>
-References: <1502547783-24685-1-git-send-email-sergej@taudac.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [GIT PULL v2] Meson clock fixes for 4.13-rc4
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+ "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Message-ID: <5af2832c-c23c-c42b-c19f-ba7cb10c27c8@baylibre.com>
+Date: Tue, 1 Aug 2017 14:21:08 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Print a debug message when resetting a PLL. It is useful to figure out
-what PLL is resetted and when.
+Hi Mike, Stephen,
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Signed-off-by: Sergej Sawazki <sergej@taudac.com>
----
- drivers/clk/clk-si5351.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Here is a fix for Meson GXBB driver, that could go for 4.13-rc4.
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index aa8d8d9..7a122c7 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -917,6 +917,10 @@ void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
- 	si5351_reg_write(drvdata, SI5351_PLL_RESET,
- 			 (val & SI5351_CLK_PLL_SELECT) ? SI5351_PLL_RESET_B :
- 			 SI5351_PLL_RESET_A);
-+
-+	dev_dbg(&drvdata->client->dev, "%s - %s: pll = %d\n",
-+		__func__, clk_hw_get_name(&drvdata->clkout[num].hw),
-+		(val & SI5351_CLK_PLL_SELECT) ? 1 : 0);
- }
- 
- static int si5351_clkout_prepare(struct clk_hw *hw)
--- 
-2.7.4
+Thanks,
+Neil
+
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  git://github.com/baylibre/clk-meson.git tags/meson-clk-fixes-for-4.13-rc4-v2
+
+for you to fetch changes up to 1f737ffa13efd3da2c703d45894ea234e9290c89:
+
+  clk: meson: mpll: fix mpll0 fractional part ignored (2017-08-01 14:18:31 +0200)
+
+----------------------------------------------------------------
+Meson Clock fixes:
+- mpll: fix mpll0 fractional part ignored
+
+----------------------------------------------------------------
+Jerome Brunet (1):
+      clk: meson: mpll: fix mpll0 fractional part ignored
+
+ drivers/clk/meson/clk-mpll.c | 7 +++++++
+ drivers/clk/meson/clkc.h     | 1 +
+ drivers/clk/meson/gxbb.c     | 5 +++++
+ drivers/clk/meson/meson8b.c  | 5 +++++
+ 4 files changed, 18 insertions(+)
