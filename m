@@ -1,43 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56637 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751352AbdHAKsy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 1 Aug 2017 06:48:54 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/3] clk: renesas: rcar-gen3-cpg: updates to SD divider table
-Date: Tue,  1 Aug 2017 12:46:00 +0200
-Message-Id: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH 08/13] [NOT FOR REVIEW NOW] drm: bridge: Enable polling hpd
+ event in dw_hdmi
+Date: Tue,  1 Aug 2017 21:12:59 +0800
+Message-Id: <20170801131304.7741-9-icenowy@aosc.io>
+In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This small series updates the SD divider tables for Renesas R-Car Gen3 by
-documenting the use case for the dividers, add the recommended value for the
-still-to-be-implemented HS400 support, and removes unused entries. The
-documented values are then in sync with the recommendations the HW engineers
-gave to the BSP team.
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Tested on a M3-W Salvator-X (r8a7796) with HS and SDR50/104 cards. clk_summary
-shows the same frequency selections as before.
+Some custom phys don't support hpd interrupts. Add support for polling
+such events.
 
-Morimoto-san, could you double check that these patches match with what we
-discussed before? That would be very kind. Thanks!
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-   Wolfram
-
-
-Wolfram Sang (3):
-  clk: renesas: rcar-gen3-cpg: document SD divider usage
-  clk: renesas: rcar-gen3-cpg: add setting for HS400
-  clk: renesas: rcar-gen3-cpg: remove unused SD divider entries
-
- drivers/clk/renesas/rcar-gen3-cpg.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 60faf2d2bc6b..6c6466c6297c 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1942,7 +1942,11 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+ 	struct drm_connector *connector = &hdmi->connector;
+ 
+ 	connector->interlace_allowed = 1;
+-	connector->polled = DRM_CONNECTOR_POLL_HPD;
++	if (hdmi->phy.ops->setup_hpd)
++		connector->polled = DRM_CONNECTOR_POLL_HPD;
++	else
++		connector->polled = DRM_CONNECTOR_POLL_CONNECT |
++				    DRM_CONNECTOR_POLL_DISCONNECT;
+ 
+ 	drm_connector_helper_add(connector, &dw_hdmi_connector_helper_funcs);
+ 
 -- 
-2.11.0
+2.13.0
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
