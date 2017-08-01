@@ -1,248 +1,233 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61798 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751666AbdHOGn5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 02:43:57 -0400
-From: <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v1 6/9] soc: mediatek: add bus protection extend API
-Date: Tue, 15 Aug 2017 14:42:47 +0800
-Message-ID: <1502779370-30150-7-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH 07/13] ARM: sun8i: h3: add display engine pipeline barebone
+Date: Tue,  1 Aug 2017 21:12:58 +0800
+Message-Id: <20170801131304.7741-8-icenowy@aosc.io>
+In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Weiyi Lu <weiyi.lu@mediatek.com>
+As we have already the support for the DE2 on Allwinner H3, add the
+display engine pipeline device tree nodes to its DTSI file.
 
-MT2712 add "set/clear" bus control register to each control register set
-instead of providing only one "enable" control register, we could avoid
-the read-modify-write racing by using extend API with such new design.
-Also there exists the second bus control register set, we could not access
-this setting via original API rather than the extend API.
-By improving the mtk-infracfg bus protection implementation to
-support set/clear bus protection control method and second
-register set while power on/off scpsys.
+The H5 pipeline has some differences and will be enabled later.
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/soc/mediatek/mtk-infracfg.c   | 90 +++++++++++++++++++++++++++++++++--
- drivers/soc/mediatek/mtk-scpsys.c     | 36 ++++++++++++--
- include/linux/soc/mediatek/infracfg.h | 14 +++++-
- 3 files changed, 132 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/sun8i-h3.dtsi | 170 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 170 insertions(+)
 
-diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
-index dba3055..63898e4 100644
---- a/drivers/soc/mediatek/mtk-infracfg.c
-+++ b/drivers/soc/mediatek/mtk-infracfg.c
-@@ -17,9 +17,6 @@
- #include <linux/soc/mediatek/infracfg.h>
- #include <asm/processor.h>
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index b36f9f423c39..75ad7b65a7fc 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -41,6 +41,8 @@
+  */
  
--#define INFRA_TOPAXI_PROTECTEN		0x0220
--#define INFRA_TOPAXI_PROTECTSTA1	0x0228
--
- /**
-  * mtk_infracfg_set_bus_protection - enable bus protection
-  * @regmap: The infracfg regmap
-@@ -89,3 +86,90 @@ int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
+ #include "sunxi-h3-h5.dtsi"
++#include <dt-bindings/clock/sun8i-de2.h>
++#include <dt-bindings/reset/sun8i-de2.h>
  
- 	return 0;
- }
-+
-+/**
-+ * mtk_infracfg_set_bus_protection_ext - enable bus protection
-+ * @regmap: The infracfg regmap
-+ * @mask: The mask containing the protection bits to be enabled.
-+ * @reg_set: The register used to enable protection bits.
-+ * @reg_sta: The register used to check the protection bits are enabled.
-+ * @reg_en: The register used to enable protection bits when there doesn't
-+ *          exist reg_set.
-+ *
-+ * This function enables the bus protection bits for disabled power
-+ * domains so that the system does not hang when some unit accesses the
-+ * bus while in power down.
-+ */
-+int mtk_infracfg_set_bus_protection_ext(struct regmap *infracfg, u32 mask,
-+		u32 reg_set, u32 reg_sta, u32 reg_en)
-+{
-+	unsigned long expired;
-+	u32 val;
-+	int ret;
-+
-+	if (reg_set)
-+		regmap_write(infracfg, reg_set, mask);
-+	else
-+		regmap_update_bits(infracfg, reg_en, mask, mask);
-+
-+	expired = jiffies + HZ;
-+
-+	while (1) {
-+		ret = regmap_read(infracfg, reg_sta, &val);
-+		if (ret)
-+			return ret;
-+
-+		if ((val & mask) == mask)
-+			break;
-+
-+		cpu_relax();
-+		if (time_after(jiffies, expired))
-+			return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * mtk_infracfg_clear_bus_protection_ext - disable bus protection
-+ * @regmap: The infracfg regmap
-+ * @mask: The mask containing the protection bits to be disabled.
-+ * @reg_clr: The register used to disable protection bits.
-+ * @reg_sta: The register used to check the protection bits are disabled.
-+ * @reg_en: The register used to disable protection bits when there doesn't
-+ *          exist reg_clr.
-+ *
-+ * This function disables the bus protection bits previously enabled with
-+ * mtk_infracfg_set_bus_protection.
-+ */
-+
-+int mtk_infracfg_clear_bus_protection_ext(struct regmap *infracfg, u32 mask,
-+		u32 reg_clr, u32 reg_sta, u32 reg_en)
-+{
-+	unsigned long expired;
-+	int ret;
-+
-+	if (reg_clr)
-+		regmap_write(infracfg, reg_clr, mask);
-+	else
-+		regmap_update_bits(infracfg, reg_en, mask, 0);
-+
-+	expired = jiffies + HZ;
-+
-+	while (1) {
-+		u32 val;
-+
-+		ret = regmap_read(infracfg, reg_sta, &val);
-+		if (ret)
-+			return ret;
-+
-+		if (!(val & mask))
-+			break;
-+
-+		cpu_relax();
-+		if (time_after(jiffies, expired))
-+			return -EIO;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index ceb2cc4..b181ef2 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -89,6 +89,13 @@ enum clk_id {
+ / {
+ 	cpus {
+@@ -72,6 +74,174 @@
+ 		};
+ 	};
  
- #define MAX_CLKS	2
- 
-+struct bus_prot_ext {
-+	u32 set_ofs;
-+	u32 clr_ofs;
-+	u32 en_ofs;
-+	u32 sta_ofs;
-+};
++	de: display-engine {
++		compatible = "allwinner,sun8i-h3-display-engine";
++		allwinner,pipelines = <&mixer0>,
++				      <&mixer1>;
++		status = "disabled";
++	};
 +
- struct scp_domain_data {
- 	const char *name;
- 	u32 sta_mask;
-@@ -96,6 +103,7 @@ struct scp_domain_data {
- 	u32 sram_pdn_bits;
- 	u32 sram_pdn_ack_bits;
- 	u32 bus_prot_mask;
-+	struct bus_prot_ext bp_ext;
- 	enum clk_id clk_id[MAX_CLKS];
- 	bool active_wakeup;
- };
-@@ -228,8 +236,18 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	}
- 
- 	if (scpd->data->bus_prot_mask) {
--		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask);
-+		if (((scpd->data->bp_ext.set_ofs && scpd->data->bp_ext.clr_ofs)
-+			|| scpd->data->bp_ext.en_ofs)
-+			&& scpd->data->bp_ext.sta_ofs)
-+			ret = mtk_infracfg_clear_bus_protection_ext(
-+					scp->infracfg,
-+					scpd->data->bus_prot_mask,
-+					scpd->data->bp_ext.clr_ofs,
-+					scpd->data->bp_ext.sta_ofs,
-+					scpd->data->bp_ext.en_ofs);
-+		else
-+			ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-+					scpd->data->bus_prot_mask);
- 		if (ret)
- 			goto err_pwr_ack;
- 	}
-@@ -263,8 +281,18 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	int i;
- 
- 	if (scpd->data->bus_prot_mask) {
--		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask);
-+		if (((scpd->data->bp_ext.set_ofs && scpd->data->bp_ext.clr_ofs)
-+			|| scpd->data->bp_ext.en_ofs)
-+			&& scpd->data->bp_ext.sta_ofs)
-+			ret = mtk_infracfg_set_bus_protection_ext(
-+					scp->infracfg,
-+					scpd->data->bus_prot_mask,
-+					scpd->data->bp_ext.set_ofs,
-+					scpd->data->bp_ext.sta_ofs,
-+					scpd->data->bp_ext.en_ofs);
-+		else
-+			ret = mtk_infracfg_set_bus_protection(scp->infracfg,
-+					scpd->data->bus_prot_mask);
- 		if (ret)
- 			goto out;
- 	}
-diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-index a5714e9..d3fbb45 100644
---- a/include/linux/soc/mediatek/infracfg.h
-+++ b/include/linux/soc/mediatek/infracfg.h
-@@ -1,6 +1,15 @@
- #ifndef __SOC_MEDIATEK_INFRACFG_H
- #define __SOC_MEDIATEK_INFRACFG_H
- 
-+#define INFRA_TOPAXI_PROTECTEN		0x0220
-+#define INFRA_TOPAXI_PROTECTSTA1	0x0228
-+#define INFRA_TOPAXI_PROTECTEN1		0x0250
-+#define INFRA_TOPAXI_PROTECTSTA3	0x0258
-+#define INFRA_TOPAXI_PROTECTEN_SET	0x0260
-+#define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
-+#define INFRA_TOPAXI_PROTECTEN1_SET	0x0270
-+#define INFRA_TOPAXI_PROTECTEN1_CLR	0x0274
++	soc {
++		display_clocks: clock@1000000 {
++			compatible = "allwinner,sun8i-a83t-de2-clk";
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_BUS_DE>,
++				 <&ccu CLK_DE>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			assigned-clocks = <&ccu CLK_DE>;
++			assigned-clock-parents = <&ccu CLK_PLL_DE>;
++			assigned-clock-rates = <432000000>;
++		};
 +
- #define MT8173_TOP_AXI_PROT_EN_MCI_M2		BIT(0)
- #define MT8173_TOP_AXI_PROT_EN_MM_M0		BIT(1)
- #define MT8173_TOP_AXI_PROT_EN_MM_M1		BIT(2)
-@@ -22,5 +31,8 @@
- 
- int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
- int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
--
-+int mtk_infracfg_set_bus_protection_ext(struct regmap *infracfg, u32 mask,
-+		u32 reg_set, u32 reg_sta, u32 reg_en);
-+int mtk_infracfg_clear_bus_protection_ext(struct regmap *infracfg, u32 mask,
-+		u32 reg_clr, u32 reg_sta, u32 reg_en);
- #endif /* __SOC_MEDIATEK_INFRACFG_H */
++		mixer0: mixer@1100000 {
++			compatible = "allwinner,sun8i-h3-de2-mixer0";
++			reg = <0x01100000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER0>,
++				 <&display_clocks CLK_MIXER0>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_MIXER0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer0_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_mixer0>;
++					};
++
++					mixer0_out_tcon1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&tcon1_in_mixer0>;
++					};
++				};
++			};
++		};
++
++		mixer1: mixer@1200000 {
++			compatible = "allwinner,sun8i-h3-de2-mixer1";
++			reg = <0x01200000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&display_clocks CLK_MIXER1>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_WB>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer1_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_mixer1>;
++					};
++
++					mixer1_out_tcon1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&tcon1_in_mixer1>;
++					};
++				};
++			};
++		};
++
++		tcon0: lcd-controller@1c0c000 {
++			compatible = "allwinner,sun8i-h3-tcon";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>,
++				 <&ccu CLK_TCON0>;
++			clock-names = "ahb",
++				      "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON0>;
++			reset-names = "lcd";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++
++					tcon0_in_mixer1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&mixer1_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++		tcon1: lcd-controller@1c0d000 {
++			compatible = "allwinner,sun8i-h3-tcon";
++			reg = <0x01c0d000 0x1000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON1>,
++				 <&ccu CLK_TVE>;
++			clock-names = "ahb",
++				      "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON1>;
++			reset-names = "lcd";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon1_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon1_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon1>;
++					};
++
++					tcon1_in_mixer1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&mixer1_out_tcon1>;
++					};
++				};
++
++				tcon1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
-1.9.1
+2.13.0
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
