@@ -1,105 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.131]:57786 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752130AbdHHHOk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2017 03:14:40 -0400
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, shawn.lin@rock-chips.com,
-        andy.yan@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 8/9] clk: rockchip: rename some of clks for rv1108 SoC
-Date: Tue,  8 Aug 2017 15:19:17 +0800
-Message-Id: <1502176757-32369-1-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
-References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH 09/13] [NOT FOR REVIEW NOW] drm: bridge: Add a pre_init
+ function for the dw_hdmi driver
+Date: Tue,  1 Aug 2017 21:13:00 +0800
+Message-Id: <20170801131304.7741-10-icenowy@aosc.io>
+In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Rename some of clks to keep the consistency with the TRM.
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Some platform glues of DesignWare HDMI controller require some
+initialization to be performed before probing the main HDMI controller.
+
+Add a pre_init function for this kind of work.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/rockchip/clk-rv1108.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 +++
+ include/drm/bridge/dw_hdmi.h              | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index 829beef82cff..b845c5d8e792 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -276,24 +276,24 @@ enum rv1108_plls {
- 	COMPOSITE_NOMUX(0, "pmu_24m_ena", "gpll", CLK_IGNORE_UNUSED,
- 			RV1108_CLKSEL_CON(38), 0, 5, DFLAGS,
- 			RV1108_CLKGATE_CON(8), 12, GFLAGS),
--	GATE(0, "pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 0, GFLAGS),
--	GATE(0, "intmem1", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_intmem1", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 1, GFLAGS),
--	GATE(0, "gpio0_pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(PCLK_GPIO0_PMU, "pclk_gpio0_pmu", "pmu_24m_ena", 0,
- 			RV1108_CLKGATE_CON(10), 2, GFLAGS),
--	GATE(0, "pmugrf", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_pmugrf", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 3, GFLAGS),
--	GATE(0, "pmu_noc", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_pmu_niu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 4, GFLAGS),
--	GATE(0, "i2c0_pmu_pclk", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(PCLK_I2C0_PMU, "pclk_i2c0_pmu", "pmu_24m_ena", 0,
- 			RV1108_CLKGATE_CON(10), 5, GFLAGS),
--	GATE(0, "pwm0_pmu_pclk", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(PCLK_PWM0_PMU, "pclk_pwm0_pmu", "pmu_24m_ena", 0,
- 			RV1108_CLKGATE_CON(10), 6, GFLAGS),
--	COMPOSITE(0, "pwm0_pmu_clk", mux_pll_src_2plls_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(SCLK_PWM0_PMU, "sclk_pwm0_pmu", mux_pll_src_2plls_p, 0,
- 			RV1108_CLKSEL_CON(12), 7, 1, MFLAGS, 0, 7, DFLAGS,
- 			RV1108_CLKGATE_CON(8), 15, GFLAGS),
--	COMPOSITE(0, "i2c0_pmu_clk", mux_pll_src_2plls_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(SCLK_I2C0_PMU, "sclk_i2c0_pmu", mux_pll_src_2plls_p, 0,
- 			RV1108_CLKSEL_CON(19), 7, 1, MFLAGS, 0, 7, DFLAGS,
- 			RV1108_CLKGATE_CON(8), 14, GFLAGS),
- 	GATE(0, "pvtm_pmu", "xin24m", CLK_IGNORE_UNUSED,
-@@ -410,10 +410,10 @@ enum rv1108_plls {
- 	/*
- 	 * Clock-Architecture Diagram 4
- 	 */
--	COMPOSITE(0, "aclk_vio0_2wrap_occ", mux_pll_src_4plls_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(0, "aclk_vio0_pre", mux_pll_src_4plls_p, CLK_IGNORE_UNUSED,
- 			RV1108_CLKSEL_CON(28), 6, 2, MFLAGS, 0, 5, DFLAGS,
- 			RV1108_CLKGATE_CON(6), 0, GFLAGS),
--	GATE(0, "aclk_vio0_pre", "aclk_vio0_2wrap_occ", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_VIO0, "aclk_vio0", "aclk_vio0_pre", 0,
- 			RV1108_CLKGATE_CON(17), 0, GFLAGS),
- 	COMPOSITE_NOMUX(0, "hclk_vio_pre", "aclk_vio0_pre", 0,
- 			RV1108_CLKSEL_CON(29), 0, 5, DFLAGS,
-@@ -632,10 +632,10 @@ enum rv1108_plls {
- 			RV1108_CLKGATE_CON(13), 1, GFLAGS),
- 	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_bus_pre", 0,
- 			RV1108_CLKGATE_CON(13), 2, GFLAGS),
--	COMPOSITE(SCLK_PWM, "clk_pwm1", mux_pll_src_2plls_p, 0,
-+	COMPOSITE(SCLK_PWM, "clk_pwm", mux_pll_src_2plls_p, 0,
- 			RV1108_CLKSEL_CON(12), 15, 2, MFLAGS, 8, 7, DFLAGS,
- 			RV1108_CLKGATE_CON(3), 10, GFLAGS),
--	GATE(PCLK_PWM, "pclk_pwm1", "pclk_bus_pre", 0,
-+	GATE(PCLK_PWM, "pclk_pwm", "pclk_bus_pre", 0,
- 			RV1108_CLKGATE_CON(13), 6, GFLAGS),
- 	GATE(PCLK_WDT, "pclk_wdt", "pclk_bus_pre", 0,
- 			RV1108_CLKGATE_CON(13), 3, GFLAGS),
-@@ -720,7 +720,7 @@ enum rv1108_plls {
- 			RV1108_CLKSEL_CON(23), 15, 1, MFLAGS, 0, 5, DFLAGS,
- 			RV1108_CLKGATE_CON(15), 11, GFLAGS),
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 6c6466c6297c..1e69b7631cae 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -2343,6 +2343,9 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 		goto err_isfr;
+ 	}
  
--	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
-+	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
- 			RV1108_CLKSEL_CON(25), 8, 2, MFLAGS, 0, 8, DFLAGS,
- 			RV1108_CLKGATE_CON(5), 0, GFLAGS),
++	if (plat_data->pre_init)
++		plat_data->pre_init(plat_data->pre_init_data);
++
+ 	/* Product and revision IDs */
+ 	hdmi->version = (hdmi_readb(hdmi, HDMI_DESIGN_ID) << 8)
+ 		      | (hdmi_readb(hdmi, HDMI_REVISION_ID) << 0);
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 182f83283e24..6e109c336ca1 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -128,6 +128,8 @@ struct dw_hdmi_plat_data {
+ 					   const struct drm_display_mode *mode);
+ 	unsigned long input_bus_format;
+ 	unsigned long input_bus_encoding;
++	void (*pre_init)(void *data);
++	void *pre_init_data;
  
+ 	/* Vendor PHY support */
+ 	const struct dw_hdmi_phy_ops *phy_ops;
 -- 
-1.9.1
+2.13.0
 
 
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
