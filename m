@@ -1,215 +1,74 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Ulf
-	Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae
-	<inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej
-	Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v9 5/5] clk: samsung: exynos-audss: Add support for runtime
- PM
-Date: Mon, 21 Aug 2017 10:05:03 +0200
-Message-id: <1503302703-13801-6-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-References: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-	<CGME20170821080540eucas1p2e07bb23e15027aca9563316a5fbf1597@eucas1p2.samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH 06/13] clk: sunxi-ng: export CLK_PLL_DE for H3
+Date: Tue,  1 Aug 2017 21:12:57 +0800
+Message-Id: <20170801131304.7741-7-icenowy@aosc.io>
+In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for runtime PM to Exynos Audio SubSystem driver to
-enable full support for audio power domain on Exynos5 SoCs. The main change
-is moving register saving and restoring code from system sleep PM ops to
-runtime PM ops and implementing system sleep PM ops with generic
-pm_runtime_force_suspend/resume helpers. Runtime PM of the Exynos AudSS
-device is managed from clock core depending on the preparation status
-of the provided clocks.
+The CLK_PLL_DE is needed to be referenced in device tree for H3, for
+both forcing the parent of PLL_DE.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+So export it to the device tree binding header.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- .../devicetree/bindings/clock/clk-exynos-audss.txt |  6 +++
- drivers/clk/samsung/clk-exynos-audss.c             | 51 ++++++++++++++--------
- 2 files changed, 40 insertions(+), 17 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 3 +--
+ include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-index 0c3d6015868d..f3635d5aeba4 100644
---- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-+++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-@@ -33,6 +33,12 @@ Required Properties:
- - clock-names: Aliases for the above clocks. They should be "pll_ref",
-   "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+index 1b4baea37d81..add3a7c18212 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
+@@ -35,9 +35,8 @@
+ #define CLK_PLL_PERIPH0_2X	10
+ #define CLK_PLL_GPU		11
+ #define CLK_PLL_PERIPH1		12
+-#define CLK_PLL_DE		13
  
-+Optional Properties:
+-/* The CPUX clock is exported */
++/* The PLL_DE and CPUX clocks is exported */
+ 
+ #define CLK_AXI			15
+ #define CLK_AHB1		16
+diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
+index e139fe5c62ec..5345957a8c2e 100644
+--- a/include/dt-bindings/clock/sun8i-h3-ccu.h
++++ b/include/dt-bindings/clock/sun8i-h3-ccu.h
+@@ -45,6 +45,8 @@
+ 
+ #define CLK_PLL_PERIPH0		9
+ 
++#define CLK_PLL_DE		13
 +
-+  - power-domains: a phandle to respective power domain node as described by
-+    generic PM domain bindings (see power/power_domain.txt for more
-+    information).
-+
- The following is the list of clocks generated by the controller. Each clock is
- assigned an identifier and client nodes use this identifier to specify the
- clock which they consume. Some of the clocks are available only on a particular
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 6be52fb46ff3..ab494c104ce6 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -18,6 +18,7 @@
- #include <linux/syscore_ops.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
+ #define CLK_CPUX		14
  
- #include <dt-bindings/clock/exynos-audss-clk.h>
- 
-@@ -36,14 +37,13 @@
- #define ASS_CLK_DIV 0x4
- #define ASS_CLK_GATE 0x8
- 
--#ifdef CONFIG_PM_SLEEP
- static unsigned long reg_save[][2] = {
- 	{ ASS_CLK_SRC,  0 },
- 	{ ASS_CLK_DIV,  0 },
- 	{ ASS_CLK_GATE, 0 },
- };
- 
--static int exynos_audss_clk_suspend(struct device *dev)
-+static int __maybe_unused exynos_audss_clk_suspend(struct device *dev)
- {
- 	int i;
- 
-@@ -53,7 +53,7 @@ static int exynos_audss_clk_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int exynos_audss_clk_resume(struct device *dev)
-+static int __maybe_unused exynos_audss_clk_resume(struct device *dev)
- {
- 	int i;
- 
-@@ -62,7 +62,6 @@ static int exynos_audss_clk_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif /* CONFIG_PM_SLEEP */
- 
- struct exynos_audss_clk_drvdata {
- 	unsigned int has_adma_clk:1;
-@@ -179,7 +178,18 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 			}
- 		}
- 	}
--	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
-+
-+	/*
-+	 * Enable runtime PM here to allow the clock core using runtime PM
-+	 * for the registered clocks. Additionally, we increase the runtime
-+	 * PM usage count before registering the clocks, to prevent the
-+	 * clock core from runtime suspending the device.
-+	 */
-+	pm_runtime_get_noresume(dev);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+
-+	clk_table[EXYNOS_MOUT_AUDSS] = clk_hw_register_mux(dev, "mout_audss",
- 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
-@@ -190,48 +200,48 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		mout_i2s_p[1] = __clk_get_name(cdclk);
- 	if (!IS_ERR(sclk_audio))
- 		mout_i2s_p[2] = __clk_get_name(sclk_audio);
--	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(NULL, "mout_i2s",
-+	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(dev, "mout_i2s",
- 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
- 
--	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(NULL, "dout_srp",
-+	clk_table[EXYNOS_DOUT_SRP] = clk_hw_register_divider(dev, "dout_srp",
- 				"mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
- 				0, &lock);
- 
--	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(NULL,
-+	clk_table[EXYNOS_DOUT_AUD_BUS] = clk_hw_register_divider(dev,
- 				"dout_aud_bus", "dout_srp", 0,
- 				reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
- 
--	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(NULL, "dout_i2s",
-+	clk_table[EXYNOS_DOUT_I2S] = clk_hw_register_divider(dev, "dout_i2s",
- 				"mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
- 				&lock);
- 
--	clk_table[EXYNOS_SRP_CLK] = clk_hw_register_gate(NULL, "srp_clk",
-+	clk_table[EXYNOS_SRP_CLK] = clk_hw_register_gate(dev, "srp_clk",
- 				"dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 0, 0, &lock);
- 
--	clk_table[EXYNOS_I2S_BUS] = clk_hw_register_gate(NULL, "i2s_bus",
-+	clk_table[EXYNOS_I2S_BUS] = clk_hw_register_gate(dev, "i2s_bus",
- 				"dout_aud_bus", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 2, 0, &lock);
- 
--	clk_table[EXYNOS_SCLK_I2S] = clk_hw_register_gate(NULL, "sclk_i2s",
-+	clk_table[EXYNOS_SCLK_I2S] = clk_hw_register_gate(dev, "sclk_i2s",
- 				"dout_i2s", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 3, 0, &lock);
- 
--	clk_table[EXYNOS_PCM_BUS] = clk_hw_register_gate(NULL, "pcm_bus",
-+	clk_table[EXYNOS_PCM_BUS] = clk_hw_register_gate(dev, "pcm_bus",
- 				 "sclk_pcm", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
- 	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
- 	if (!IS_ERR(sclk_pcm_in))
- 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
--	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
-+	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(dev, "sclk_pcm",
- 				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
- 
- 	if (variant->has_adma_clk) {
--		clk_table[EXYNOS_ADMA] = clk_hw_register_gate(NULL, "adma",
-+		clk_table[EXYNOS_ADMA] = clk_hw_register_gate(dev, "adma",
- 				"dout_srp", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 9, 0, &lock);
- 	}
-@@ -251,10 +261,14 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		goto unregister;
- 	}
- 
-+	pm_runtime_put_sync(dev);
-+
- 	return 0;
- 
- unregister:
- 	exynos_audss_clk_teardown();
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
- 
- 	if (!IS_ERR(epll))
- 		clk_disable_unprepare(epll);
-@@ -267,6 +281,7 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
- 	of_clk_del_provider(pdev->dev.of_node);
- 
- 	exynos_audss_clk_teardown();
-+	pm_runtime_disable(&pdev->dev);
- 
- 	if (!IS_ERR(epll))
- 		clk_disable_unprepare(epll);
-@@ -275,8 +290,10 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
- }
- 
- static const struct dev_pm_ops exynos_audss_clk_pm_ops = {
--	SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos_audss_clk_suspend,
--				     exynos_audss_clk_resume)
-+	SET_RUNTIME_PM_OPS(exynos_audss_clk_suspend, exynos_audss_clk_resume,
-+			   NULL)
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				     pm_runtime_force_resume)
- };
- 
- static struct platform_driver exynos_audss_clk_driver = {
+ #define CLK_BUS_CE		20
 -- 
-1.9.1
+2.13.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
