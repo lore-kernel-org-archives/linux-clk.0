@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de
-Cc: robh+dt@kernel.org, shawn.lin@rock-chips.com,
-        zhangqing@rock-chips.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux-rockchip@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 05/23] clk: rockchip: fix up the pll clks error for rv1108 SoC
-Date: Wed,  2 Aug 2017 16:33:04 +0800
-Message-Id: <1501662784-11973-1-git-send-email-andy.yan@rock-chips.com>
-In-Reply-To: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
-References: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:56645 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751217AbdHAKsy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 1 Aug 2017 06:48:54 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/3] clk: renesas: rcar-gen3-cpg: document SD divider usage
+Date: Tue,  1 Aug 2017 12:46:01 +0200
+Message-Id: <20170801104603.10459-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
+References: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Document the intended use case for the SD dividers.
 
-fix up the lock_shift describe error.
-remove the ROCKCHIP_PLL_SYNC_RATE flag for gpll.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rv1108.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index 3c670db..9c6bad0 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -148,11 +148,11 @@ PNAME(mux_i2s2_p)		= { "i2s2_src", "i2s2_frac", "xin12m" };
- 
- static struct rockchip_pll_clock rv1108_pll_clks[] __initdata = {
- 	[apll] = PLL(pll_rk3399, PLL_APLL, "apll", mux_pll_p, 0, RV1108_PLL_CON(0),
--		     RV1108_PLL_CON(3), 8, 31, 0, rv1108_pll_rates),
-+		     RV1108_PLL_CON(3), 8, 0, 0, rv1108_pll_rates),
- 	[dpll] = PLL(pll_rk3399, PLL_DPLL, "dpll", mux_pll_p, 0, RV1108_PLL_CON(8),
--		     RV1108_PLL_CON(11), 8, 31, 0, NULL),
-+		     RV1108_PLL_CON(11), 8, 1, 0, NULL),
- 	[gpll] = PLL(pll_rk3399, PLL_GPLL, "gpll", mux_pll_p, 0, RV1108_PLL_CON(16),
--		     RV1108_PLL_CON(19), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rv1108_pll_rates),
-+		     RV1108_PLL_CON(19), 8, 2, 0, rv1108_pll_rates),
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 3dee900522b703..81b7713afd694c 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -62,14 +62,16 @@ struct sd_clock {
+ 	unsigned int div_max;
  };
  
- #define MFLAGS CLK_MUX_HIWORD_MASK
+-/* SDn divider
++/*
++ * SDn dividers - recommended settings from HW engineers
++ *
+  *                     sd_srcfc   sd_fc   div
+  * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
+  *-------------------------------------------------------------------
+- *  0         0         0 (1)      1 (4)      4
+- *  0         0         1 (2)      1 (4)      8
+- *  1         0         2 (4)      1 (4)     16
+- *  1         0         3 (8)      1 (4)     32
++ *  0         0         0 (1)      1 (4)      4 -> SDR104 / HS200
++ *  0         0         1 (2)      1 (4)      8 -> SDR50
++ *  1         0         2 (4)      1 (4)     16 -> HS / SDR25
++ *  1         0         3 (8)      1 (4)     32 -> NS / SDR12
+  *  1         0         4 (16)     1 (4)     64
+  *  0         0         0 (1)      0 (2)      2
+  *  0         0         1 (2)      0 (2)      4
 -- 
-2.7.4
+2.11.0
+
