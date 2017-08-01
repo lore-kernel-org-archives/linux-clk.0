@@ -1,34 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 31 Aug 2017 11:31:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	kernel@pengutronix.de, patchwork-lst@pengutronix.de,
-	Chris Healy <cphealy@gmail.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	"Wladimir J . van der Laan" <laanwj@gmail.com>,
-	Ilia Mirkin <imirkin@alum.mit.edu>
-Subject: Re: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
-Message-ID: <20170831183138.GG21656@codeaurora.org>
-References: <20170818163058.22252-1-l.stach@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170818163058.22252-1-l.stach@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:56637 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751352AbdHAKsy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 1 Aug 2017 06:48:54 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/3] clk: renesas: rcar-gen3-cpg: updates to SD divider table
+Date: Tue,  1 Aug 2017 12:46:00 +0200
+Message-Id: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/18, Lucas Stach wrote:
-> This propagates rate requests from the display interface to the divider
-> or PLL output, allowing to hit the required display rate in many more
-> cases.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
+This small series updates the SD divider tables for Renesas R-Car Gen3 by
+documenting the use case for the dividers, add the recommended value for the
+still-to-be-implemented HS400 support, and removes unused entries. The
+documented values are then in sync with the recommendations the HW engineers
+gave to the BSP team.
 
-Applied to clk-next
+Tested on a M3-W Salvator-X (r8a7796) with HS and SDR50/104 cards. clk_summary
+shows the same frequency selections as before.
+
+Morimoto-san, could you double check that these patches match with what we
+discussed before? That would be very kind. Thanks!
+
+   Wolfram
+
+
+Wolfram Sang (3):
+  clk: renesas: rcar-gen3-cpg: document SD divider usage
+  clk: renesas: rcar-gen3-cpg: add setting for HS400
+  clk: renesas: rcar-gen3-cpg: remove unused SD divider entries
+
+ drivers/clk/renesas/rcar-gen3-cpg.c | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
+
