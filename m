@@ -1,124 +1,40 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1502285688.2759.41.camel@baylibre.com>
-Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>, Stephen Boyd
-	 <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
- Linus Walleij <linus.walleij@linaro.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>
-Date: Wed, 09 Aug 2017 15:34:48 +0200
-In-Reply-To: <20170809114548.GD20805@n2100.armlinux.org.uk>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-	 <20170612194438.12298-6-jbrunet@baylibre.com>
-	 <20170726001217.GC2146@codeaurora.org>
-	 <1501089516.2401.29.camel@baylibre.com>
-	 <20170804001836.GU2146@codeaurora.org>
-	 <150223186723.22158.11617219588466426777@resonance>
-	 <20170809021906.GA2146@codeaurora.org>
-	 <20170809114548.GD20805@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35084 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752055AbdHAL5J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2017 07:57:09 -0400
+Received: by mail-wm0-f47.google.com with SMTP id m85so12511832wma.0
+        for <linux-clk@vger.kernel.org>; Tue, 01 Aug 2017 04:57:08 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: jbrunet@baylibre.com, narmstrong@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3.1 3/4] dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
+Date: Tue,  1 Aug 2017 13:56:58 +0200
+Message-Id: <1501588619-10991-4-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
+References: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-08-09 at 12:45 +0100, Russell King - ARM Linux wrote:
-> On Tue, Aug 08, 2017 at 07:19:06PM -0700, Stephen Boyd wrote:
-> > I also vaguely remember Paul saying that
-> > clk_round_rate() could return something and then clk_set_rate()
-> > after that would fail because what was calculated during the rate
-> > speculation/rounding phase would be different if some other
-> > consumer goes and changes some rate high up in the tree.
-> 
-> That's probably because people tend to get this stuff wrong.  It is
-> _not_ supposed to be:
-> 
-> 	rounded_rate = clk_round_rate(clk, requested_rate);
-> 
-> 	clk_set_rate(clk, rounded_rate);
-> 
-> but:
-> 
-> 	rounded_rate = clk_round_rate(clk, requested_rate);
-> 
-> 	clk_set_rate(clk, requested_rate);
-> 
-> The former is wrong for two reasons:
-> 
-> 1. it's completely wasteful of CPU resources to do all the calculations
->    that need to be done within clk_set_rate().
-> 
-> 2. it's racy - there is no guarantee that you'll end up with "rounded_rate"
-> 
-> The API definition of clk_round_rate() explicitly mentions that it is
-> equivalent to clk_set_rate() followed by clk_get_rate() with the
-> exception that it doesn't affect the hardware.
-> 
-> I'm not sure that the clock rate protection API is really the right
-> solution - if we're trying to stop others from changing the clock rate,
-> that implies we have multiple different threads potentially changing
-> the rate at any time.  If a driver does this:
-> 
-> 	clk_set_rate(clk, foo);
-> 	clk_rate_protect(clk);
-> 
-> what prevents another thread from changing the clock rate between these
-> two calls?  The only way to do this safely would be something like:
-> 
-> 	r = clk_round_rate(clk, foo);
-> 	while (1) {
-> 		err = clk_set_rate(clk, foo);
-> 		clk_rate_protect(clk);
-> 		if (err < 0)
-> 			break;
-> 
-> 		if (r == clk_get_rate(clk)) /* success */
-> 			break;
-> 
-> 		clk_rate_unprotect(clk);
-> 	}
-> 
-> 	if (err)
-> 		failed;
+This patchadds the clock binding entry for the CEC 32K AO Clock.
 
-Russell,
-I think you have missed one subtle thing, when trying any clock altering
-operation, if the consumer is protecting the clock, it will temporarily release 
-the protection once, under the prepare_lock (to guarantee safe operation). This
-is explained in the cover letter:
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ include/dt-bindings/clock/gxbb-aoclkc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-"""
-With this series there is 3 use-case:
- - the provider is not protected: nothing changes
- - the provider is protected by only 1 consumer (and only once), then only
-   this consumer will be able to alter the rate of the clock, as it is the
-   only one depending on it.
- - If the provider is protected more than once, or by the provider itself,
-   the rate is basically locked and protected against reparenting.
-"""
+diff --git a/include/dt-bindings/clock/gxbb-aoclkc.h b/include/dt-bindings/clock/gxbb-aoclkc.h
+index 3175148..9d15e22 100644
+--- a/include/dt-bindings/clock/gxbb-aoclkc.h
++++ b/include/dt-bindings/clock/gxbb-aoclkc.h
+@@ -62,5 +62,6 @@
+ #define CLKID_AO_UART1		3
+ #define CLKID_AO_UART2		4
+ #define CLKID_AO_IR_BLASTER	5
++#define CLKID_AO_CEC_32K	6
+ 
+ #endif
+-- 
+1.9.1
 
-So what you should do if you have to protect the clock is:
-
-clk_rate_protect(clk);
-err = clk_set_rate(clk, foo);
-
-[...]
-clk_rate_unprotect(clk);
-
-If the clock rate could be changed (protected only once) err = 0;
-If the clock rate could not be changed: err = -EBUSY;
-
-if you wish to combine clk_rate_protect() and clk_set_rate(), you may use
-clk_set_rate_protect() which is added in another patch of this series.
-
-> 
-> That's rather a lot of code to add to every driver, and given the
-> number of times I've seen people get the clk_round_rate() vs
-> clk_set_rate() thing wrong, I've zero confidence that folk will get
-> this right either.
-> 
-> So, I'd suggest _not_ adding this clk_rate_protect() thing, but
-> instead an API that simultaneously sets and protects the rate, so
-> driver authors don't have to get involved in details like the above.
-> 
