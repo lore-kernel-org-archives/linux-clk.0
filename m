@@ -1,47 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:45991 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752337AbdHLSMV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2017 14:12:21 -0400
-Date: Sat, 12 Aug 2017 20:12:16 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-Cc: linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RFCv2] rtc: ds1307: add square wave output from ds1308
-Message-ID: <20170812181216.u2p3yd3ogappnzh4@piout.net>
-References: <20170802052727.18289-1-sean.nyekjaer@prevas.dk>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH v3 1/2] clk: meson: gxbb: Add sd_emmc clk0 clkids
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Carlo Caione <carlo@caione.org>,
+ Kevin Hilman <khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20170731115603.29720-1-jbrunet@baylibre.com>
+ <20170731115603.29720-2-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <ddf63956-781d-670b-366e-712445307e60@baylibre.com>
+Date: Tue, 1 Aug 2017 14:09:28 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170802052727.18289-1-sean.nyekjaer@prevas.dk>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170731115603.29720-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/08/2017 at 07:27:27 +0200, Sean Nyekjaer wrote:
-> +static int ds1308_write_control(struct ds1307 *ds1307, u8 mask, u8 value)
-> +{
-> +	struct mutex *lock = &ds1307->rtc->ops_lock;
-> +	int ret;
+On 07/31/2017 01:56 PM, Jerome Brunet wrote:
+> Add the clkids for the clocks feeding the input0 of the mmc controllers
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/gxbb.h              | 10 ++++++++--
+>  include/dt-bindings/clock/gxbb-clkc.h |  3 +++
+>  2 files changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index 2c8986d3232c..5b1d4b374d1c 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -184,8 +184,14 @@
+>  #define CLKID_CTS_MCLK_I958_DIV	  112
+>  #define CLKID_32K_CLK_SEL	  115
+>  #define CLKID_32K_CLK_DIV	  116
+> -
+> -#define NR_CLKS			  117
+> +#define CLKID_SD_EMMC_A_CLK0_SEL  117
+> +#define CLKID_SD_EMMC_A_CLK0_DIV  118
+> +#define CLKID_SD_EMMC_B_CLK0_SEL  120
+> +#define CLKID_SD_EMMC_B_CLK0_DIV  121
+> +#define CLKID_SD_EMMC_C_CLK0_SEL  123
+> +#define CLKID_SD_EMMC_C_CLK0_DIV  124
 > +
-> +	mutex_lock(lock);
-> +	ret = regmap_update_bits(ds1307->regmap, DS1307_REG_CONTROL,
-> +				 mask, value);
+> +#define NR_CLKS			  126
+>  
+>  /* include the CLKIDs that have been made part of the DT binding */
+>  #include <dt-bindings/clock/gxbb-clkc.h>
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+> index e07fea011ebd..c04a76d8facf 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -110,5 +110,8 @@
+>  #define CLKID_CTS_MCLK_I958	110
+>  #define CLKID_CTS_I958		113
+>  #define CLKID_32K_CLK		114
+> +#define CLKID_SD_EMMC_A_CLK0	119
+> +#define CLKID_SD_EMMC_B_CLK0	122
+> +#define CLKID_SD_EMMC_C_CLK0	125
+>  
+>  #endif /* __GXBB_CLKC_H */
+> 
 
-This access is already properly locked, you don't need
-ds1308_write_control.
+Applied to clk-meson's next/headers.
 
-(I know, the function below is not necessary either but it is there for
-historical reasons).
-
-> +	mutex_unlock(lock);
-> +
-> +	return ret;
-> +}
-> +
->  static int ds1337_write_control(struct ds1307 *ds1307, u8 mask, u8 value)
->  {
->  	struct mutex *lock = &ds1307->rtc->ops_lock;
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Thanks,
+Neil
