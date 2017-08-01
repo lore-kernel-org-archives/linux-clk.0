@@ -1,78 +1,85 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 01/10] dt-bindings: add binding for the SY8160A voltage
- regulator
-Date: Sun, 23 Jul 2017 18:27:40 +0800
-Message-Id: <20170723102749.17323-2-icenowy@aosc.io>
-In-Reply-To: <20170723102749.17323-1-icenowy@aosc.io>
-References: <20170723102749.17323-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Ondrej Jirman <megous@megous.com>, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <4026156.d8uMWWFJnt@jernej-laptop>
+References: <20170730164150.26302-1-jernej.skrabec@siol.net>
+ <CAGb2v65pH-Me6JjMYzp41NwS478azMTLBPrkJwZcho9Ay2JX1Q@mail.gmail.com> <4026156.d8uMWWFJnt@jernej-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 1 Aug 2017 10:17:46 +0800
+Message-ID: <CAGb2v66W+kEZAPOj6qLnBc15ocrYT9pv3oofgBr9TsNmzBGuhg@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 0/4] clk: sunxi-ng: Fix issues with
+ fractional mode
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-sunxi <linux-sunxi@googlegroups.com>, Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Ondrej Jirman <megous@megous.com>
+On Tue, Aug 1, 2017 at 12:50 AM, Jernej =C5=A0krabec <jernej.skrabec@siol.n=
+et> wrote:
+> Hi Chen-Yu,
+>
+> Dne ponedeljek, 31. julij 2017 ob 07:13:34 CEST je Chen-Yu Tsai napisal(a=
+):
+>> Hi Jernej,
+>>
+>> On Mon, Jul 31, 2017 at 12:41 AM, Jernej Skrabec
+>>
+>> <jernej.skrabec@siol.net> wrote:
+>> > During development of H3 HDMI driver, I found some issues with
+>> > setting video clock rate. It turned out that clock driver decided
+>> > to use fractional mode and selected right frequency, but it didn't
+>> > enable it. Additionally, fractional helpers don't wait on lock.
+>>
+>> What kind of resolution were you testing to actually hit this?
+>
+> 1920x1080p @ 60Hz
+>
+>>
+>> AFAIK the fractional mode is either 297 or 270 MHz. Even Full HD
+>> 1080p60 dot clocks aren't that high. And the clk drivers should
+>> try to request a matching parent clk rate. So the PLL wouldn't
+>> go that high. Are you testing 4k @ 30fps?
+>
+> No, it is a bit more complicated than that. H3's HDMI PHY is proprietary =
+and
+> register meanings are not known well. Because of that, I'm using values f=
+ound
+> in BSP driver. Those values include pixel clock divider. BSP driver alway=
+s use
+> 297 MHz as a base and uses dividers in PHY to prepare right pixel clock. =
+So
+> the case for 1080p is 297 MHz / 2 =3D 148.5 MHz.
 
-SY8106A is an I2C-controlled adjustable voltage regulator made by
-Silergy Corp.
+I see. So for the current in kernel users, none would be able to
+hit the fractional mode clock rates. HDMI on sun5i is limited to
+1080p60, and we don't support pixel doubling. LCD dotclocks have
+a minimal /6 divider, though it doesn't seem likely they will hit
+this either, or we would have seen someone complain. And these
+drivers were introduced well before 4.13-rc1. The clk maintainers
+really like to have just critical fixes, and fixes for stuff
+added in the current release. So I'm re-queuing these 4 patches
+for 4.14.
 
-Add its device tree binding.
+Thanks
+ChenYu
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-[Icenowy: Change commit message]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- .../bindings/regulator/sy8106a-regulator.txt        | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
-
-diff --git a/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
-new file mode 100644
-index 000000000000..1e623a34b1cb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
-@@ -0,0 +1,21 @@
-+SY8106A Voltage regulator
-+
-+Required properties:
-+- compatible: Must be "silergy,sy8106a"
-+- reg: I2C slave address - must be <0x65>
-+
-+Any property defined as part of the core regulator binding, defined in
-+regulator.txt, can also be used.
-+
-+Example:
-+
-+	sy8106a {
-+		compatible = "silergy,sy8106a";
-+		reg = <0x65>;
-+		regulator-name = "sy8106a-vdd";
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1400000>;
-+		regulator-ramp-delay = <200>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
--- 
-2.13.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>>
+>> As it stands, I don't think any of the existing display support
+>> can go that high, so I think we're safe as far as old kernels
+>> go, i.e. we don't need to Cc stable for these.
+>
+> Ok.
+>
+> Regards,
+> Jernej
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
