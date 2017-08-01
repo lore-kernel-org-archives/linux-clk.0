@@ -1,30 +1,60 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [GIT PULL] Meson clock fixes for 4.13-rc4
+To: Stephen Boyd <sboyd@codeaurora.org>, Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <ce41382f-fd93-1dc9-0dba-1484ac555945@baylibre.com>
+ <20170731202031.GK2146@codeaurora.org> <1501537388.2759.7.camel@baylibre.com>
+ <20170801013800.GL2146@codeaurora.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <3492f1fe-c4d6-034c-1914-ec7e702f5bcc@baylibre.com>
+Date: Tue, 1 Aug 2017 14:11:38 +0200
 MIME-Version: 1.0
-In-Reply-To: <1501495822-21503-1-git-send-email-andy.yan@rock-chips.com>
-References: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com> <1501495822-21503-1-git-send-email-andy.yan@rock-chips.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 7 Aug 2017 10:49:38 +0200
-Message-ID: <CACRpkdZQqtPnJ-OzixxwDzQg1oWZ7swO32YTRK1BiP0BaBbV0Q@mail.gmail.com>
-Subject: Re: [PATCH 03/14] pinctrl: rockchip: add input schmitt support for rv1108
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170801013800.GL2146@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 31, 2017 at 12:10 PM, Andy Yan <andy.yan@rock-chips.com> wrote:
+On 08/01/2017 03:38 AM, Stephen Boyd wrote:
+> On 07/31, Jerome Brunet wrote:
+>> On Mon, 2017-07-31 at 13:20 -0700, Stephen Boyd wrote:
+>>> On 07/31, Neil Armstrong wrote:
+>>>> Hi Mike, Stephen,
+>>>>
+>>>> Here is some fixes for Meson GXBB and Meson8 drivers, that could go for
+>>>> 4.13-rc4.
+>>>>
+>>>
+>>> Are any of these critical fixes for regressions in the v4.13-rc
+>>> series? All the Fixes tags look like they go back to before
+>>> v4.13-rc1, so they don't look critical at first glance. If
+>>> anything, they're mostly nice to have non-critical fixes? If so,
+>>> can we defer these until the next merge window?
+>>
+>> I agree that these fixes hardly qualify as critical, except maybe for the mpll
+>> fix. The clock rate actually applied can be really off compared to what CCF will
+>>  except to have set.
+> 
+> Ok. So perhaps just the mpll fix would be appropriate then?
+> 
+>>
+>> These fixes are quite simple and safe, it would be nice if we could avoid having
+>>  the next version tagged with known issues.
+>>
+> 
+> I agree they're simple and safe, but they're also not necessary
+> to the release we're working on unless they're causing some
+> problem with code that was introduced this merge window. We try
+> to avoid merging non-critical fixes unless they're really causing
+> someone some sort of problems. If they aren't, we can stick them
+> into linux-next and wait until next release. Of course, they'll
+> be backported to stable trees as well with the Fixes tag, so
+> everything works out in the end.
+> 
 
-> Some pins like i2c SCL/SDA need the schmitt input function
-> to avoid crosstalk problems.
->
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+OK, I'll resend a v2 PR with only the mpll fix.
 
-Patch applied with Heiko's review tag.
+The other will be pushed on our next/drivers branch.
 
-Yours,
-Linus Walleij
+Neil
