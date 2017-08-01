@@ -1,48 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:38099 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751548AbdGSH6B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2017 03:58:01 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 31 Jul 2017 18:38:00 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [GIT PULL] Meson clock fixes for 4.13-rc4
+Message-ID: <20170801013800.GL2146@codeaurora.org>
+References: <ce41382f-fd93-1dc9-0dba-1484ac555945@baylibre.com>
+ <20170731202031.GK2146@codeaurora.org>
+ <1501537388.2759.7.camel@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
-References: <20170718164407.22998-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 19 Jul 2017 09:57:59 +0200
-Message-ID: <CAMuHMdU+Sgk_TGDqGRfOVHy6cByw1au0cBzmK_t_zTS00Fu2OA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] clk: renesas: rcar-gen3-cpg: refactor accessing
- the SD div table
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1501537388.2759.7.camel@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Wolfram,
+On 07/31, Jerome Brunet wrote:
+> On Mon, 2017-07-31 at 13:20 -0700, Stephen Boyd wrote:
+> > On 07/31, Neil Armstrong wrote:
+> > > Hi Mike, Stephen,
+> > > 
+> > > Here is some fixes for Meson GXBB and Meson8 drivers, that could go for
+> > > 4.13-rc4.
+> > > 
+> > 
+> > Are any of these critical fixes for regressions in the v4.13-rc
+> > series? All the Fixes tags look like they go back to before
+> > v4.13-rc1, so they don't look critical at first glance. If
+> > anything, they're mostly nice to have non-critical fixes? If so,
+> > can we defer these until the next merge window?
+> 
+> I agree that these fixes hardly qualify as critical, except maybe for the mpll
+> fix. The clock rate actually applied can be really off compared to what CCF will
+>  except to have set.
 
-On Tue, Jul 18, 2017 at 6:44 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Here is a patch series trying to implement the conclusions about accessing the
-> SD divider table, coming from this discussion [1]. Patch 1 is a tiny, yet
-> seperate cleanup. Patch 2 is the bulk of the work doing the checks only when needed.
-> I think the code looks much better now.
->
-> I tested this on a Salvator-X (R-Car M3-W) with highspeed and UHS SD cards. I
-> could access them and checksum files. I also did not notice any performance
-> regressions. There are also no WARNings in the boot log.
->
-> Please let me know if this is what you had in mind and if you can think of
-> other ways of testing this change.
+Ok. So perhaps just the mpll fix would be appropriate then?
 
-Thank you, looks great!
+> 
+> These fixes are quite simple and safe, it would be nice if we could avoid having
+>  the next version tagged with known issues.
+> 
 
-Gr{oetje,eeting}s,
+I agree they're simple and safe, but they're also not necessary
+to the release we're working on unless they're causing some
+problem with code that was introduced this merge window. We try
+to avoid merging non-critical fixes unless they're really causing
+someone some sort of problems. If they aren't, we can stick them
+into linux-next and wait until next release. Of course, they'll
+be backported to stable trees as well with the Fixes tag, so
+everything works out in the end.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
