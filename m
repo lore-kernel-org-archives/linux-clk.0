@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Tue, 15 Aug 2017 16:52:29 +0800
-From: icenowy@aosc.io
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH 13/13] [NOT FOR REVIEW NOW] ARM: sun8i: h3: enable HDMI output
+ on Orange Pi PC
+Date: Tue,  1 Aug 2017 21:13:04 +0800
+Message-Id: <20170801131304.7741-14-icenowy@aosc.io>
+In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5] clk: sunxi-ng: support R40 SoC
-In-Reply-To: <20170815055529.4780-1-icenowy@aosc.io>
-References: <20170815055529.4780-1-icenowy@aosc.io>
-Message-ID: <ba1af994f165b96c096ec03a72836739@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-08-15 13:55，Icenowy Zheng 写道：
-> Allwinner R40 SoC have a clock controller module in the style of the
-> SoCs beyond sun6i, however, it's more rich and complex.
-> 
-> Add support for it.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v5:
-> - Added TODO's for PLL constraints.
-> - Forced OHCI12M mux to 0.
-> - Changed "adda" clock to "codec" to be consistent with "bus-codec".
-> - Added several CLK_SET_RATE_{UNGATE,PARENT} flags.
-> - Added PLL_CPU gate notifier.
-> Changes in v4:
-> - Removed usb-ohci-12M mux clocks.
-> - Removed unused (and not in user manual) adda-4x clock.
-> - Implemented proper SATA PLL system.
-> - Renamed MP (Mixed Processor) clock names to drop the extra "DE_".
-> - Renamed TCONs' clock names to "tcon-lcdX" or "tcon-tvX".
-> - Added missing RST_DRAM.
-> - Several clock post/pre-dividers and constraints fixes.
-> Changes in v3:
-> - Rebased on current linux-next.
-> Changes in v2:
-> - Fixes according to the SoC's user manual.
-> 
->  drivers/clk/sunxi-ng/Kconfig              |    5 +
->  drivers/clk/sunxi-ng/Makefile             |    1 +
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1290 
-> +++++++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   69 ++
->  include/dt-bindings/clock/sun8i-r40-ccu.h |  187 +++++
->  include/dt-bindings/reset/sun8i-r40-ccu.h |  130 +++
->  6 files changed, 1682 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
->  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
-> 
-> [...]
-> +static void __init sun8i_r40_ccu_setup(struct device_node *node)
-> +{
-> +	void __iomem *reg;
-> +	u32 val;
-> +
-> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg)) {
-> +		pr_err("%s: Could not map the clock registers\n",
-> +		       of_node_full_name(node));
-> +		return;
-> +	}
-> +
-> +	/* Force the PLL-Audio-1x divider to 4 */
-> +	val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
-> +	val &= ~GENMASK(19, 16);
-> +	writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
-> +
-> +	/* Force PLL-MIPI to MIPI mode */
-> +	val = readl(reg + SUN8I_R40_PLL_MIPI_REG);
-> +	val &= ~BIT(16);
-> +	writel(val, reg + SUN8I_R40_PLL_MIPI_REG);
-> +
-> +	/* Force OHCI 12M parent to 0 */
-> +	val = readl(reg + SUN8I_R40_USB_CLK_REG);
-> +	val &= ~GENMASK(20, 6);
+Orange Pi PC board has a HDMI-A port connected to the HDMI controller of
+Allwinner H3 SoC.
 
-Sorry but I think this line should be:
+Enable the HDMI output in Orange Pi PC device tree.
 
-val &= ~GENMASK(25, 20);
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-I didn't understand GENMASK well...
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+index 998b60f8d295..0e3326399590 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+@@ -98,6 +98,10 @@
+ 	status = "okay";
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -121,12 +125,20 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+ 	status = "okay";
+ };
+ 
++&mixer0 {
++	status = "okay";
++};
++
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
+@@ -177,6 +189,10 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+-- 
+2.13.0
 
-> +	writel(val, reg + SUN8I_R40_USB_CLK_REG);
-> +
-> +	sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
-> +
-> +	/* Gate then ungate PLL CPU after any rate changes */
-> +	ccu_pll_notifier_register(&sun8i_r40_pll_cpu_nb);
-> +
-> +	/* Reparent CPU during PLL CPU rate changes */
-> +	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
-> +				  &sun8i_r40_cpu_nb);
-> +}
-> [...]
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
