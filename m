@@ -1,53 +1,94 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>
-Subject: RE: [PATCH] clk: bulk: call of_clk_get() when id is NULL
-Date: Thu, 31 Aug 2017 07:12:06 +0000
-Message-ID: <AM3PR04MB306B791472D5AB2BF12730F809D0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
- <20170809173318.GD2146@codeaurora.org> <20170813141851.GD31819@dragon>
- <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
- <20170831070118.GA3328@dragon>
-In-Reply-To: <20170831070118.GA3328@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:51776 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbdHBEqg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2017 00:46:36 -0400
 MIME-Version: 1.0
+In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 2 Aug 2017 12:46:12 +0800
+Message-ID: <CAGb2v64giQbwJK+Yp=EN0jVDN3eHA_Yf_X3gR-hfC6j_u3z9PA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 00/13] Allwinner H3 DE2 basical support
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> Sent: Thursday, August 31, 2017 3:01 PM
-> To: A.s. Dong
-> Cc: Stephen Boyd; Michael Turquette; linux-clk@vger.kernel.org; linux-arm=
--
-> kernel@lists.infradead.org; Shawn Guo
-> Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
->=20
-> On Wed, Aug 30, 2017 at 03:31:38PM +0000, A.s. Dong wrote:
-> > IMHO how about implement a of_clk_bulk_get() to handle this issue as
-> > we already have a of_clk_get?
-> > e.g.
-> >
-> > int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> >                               struct clk_bulk_data *clks) {
-> >         for (i =3D 0; i < num_clks; i++) {
-> >                 clks[i].clk =3D of_clk_get(dev, clks[i].id);
->=20
-> The of_clk_get() takes clock index rather than name/id as the second
-> parameter.
->=20
+On Tue, Aug 1, 2017 at 9:12 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner H3 features a "Display Engine 2.0", which needs some support
+> to be present in the DRM driver.
+>
+> This patchset is now a basical version, which dropped some features I
+> used to submitted:
+> - TVE support (not so high priority now)
+> - Multi-pipeline support (also not so high priority now due to no TVE)
 
-You're right.
-It's for only an idea demonstration, so sent too quick! :-)
+Even though you dropped some patches, this is still v3.
 
-Regards
-Dong Aisheng
+What has changed since v2?
 
-> Shawn
->=20
-> > ...
-> >
-> > }
+>
+> The last 6 patches are only used for testing this patchset, and they're
+> going to be sent by Jernej Skrabec after this patchset is applied.
+>
+> Icenowy Zheng (9):
+>   dt-bindings: update the binding for Allwinner H3 DE2 support
+>   drm: sun4i: add support for H3 mixers
+>   drm: sun4i: add support for H3's TCON
+>   drm: sun4i: add compatible for H3 display engine
+>   clk: sunxi-ng: allow CLK_DE to set CLK_PLL_DE for H3
+>   clk: sunxi-ng: export CLK_PLL_DE for H3
+>   ARM: sun8i: h3: add display engine pipeline barebone
+>   [NOT FOR REVIEW NOW] ARM: sun8i: h3: enable DesignWare HDMI controller
+>   [NOT FOR REVIEW NOW] ARM: sun8i: h3: enable HDMI output on Orange Pi
+>     PC
+>
+> Jernej Skrabec (4):
+>   [NOT FOR REVIEW NOW] drm: bridge: Enable polling hpd event in dw_hdmi
+>   [NOT FOR REVIEW NOW] drm: bridge: Add a pre_init function for the
+>     dw_hdmi driver
+>   [NOT FOR REVIEW NOW] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3
+>     HDMI clock
+
+This one looks trivial enough that I can pick it up regardless of the tag.
+
+ChenYu
+
+>   [NOT FOR REVIEW NOW] drm: sun4i: Add a glue for the DesignWare HDMI
+>     controller in H3
+>
+>  .../bindings/display/sunxi/sun4i-drm.txt           |  25 +-
+>  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  16 +
+>  arch/arm/boot/dts/sun8i-h3.dtsi                    | 205 +++++++++
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   4 +-
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   3 +-
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |   9 +-
+>  drivers/gpu/drm/sun4i/Kconfig                      |   9 +
+>  drivers/gpu/drm/sun4i/Makefile                     |   1 +
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                  |   2 +
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  43 +-
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
+>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 462 +++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c                |  18 +
+>  include/drm/bridge/dw_hdmi.h                       |   2 +
+>  include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
+>  15 files changed, 781 insertions(+), 21 deletions(-)
+>  create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+>
+> --
+> 2.13.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
