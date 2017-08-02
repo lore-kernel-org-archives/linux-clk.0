@@ -1,51 +1,180 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:40214 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751058AbdHBWtv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Aug 2017 18:49:51 -0400
+Date: Thu, 03 Aug 2017 06:49:38 +0800
+In-Reply-To: <48442573.082BymFnMM@jernej-laptop>
+References: <20170801131304.7741-1-icenowy@aosc.io> <79034825.lnfmIyYlWl@jernej-laptop> <d6c7c6de29be2674ad6b37b184d1df7f@aosc.io> <48442573.082BymFnMM@jernej-laptop>
 MIME-Version: 1.0
-In-Reply-To: <20170809172308.GC2146@codeaurora.org>
-References: <20170808190818.11740-1-linus.walleij@linaro.org>
- <20170809014312.GZ2146@codeaurora.org> <CACRpkda0cLMuiipEBX+mH6MJ3v6k=CY+q=Q6NUj=BM+6wnFO2A@mail.gmail.com>
- <20170809172308.GC2146@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 28 Aug 2017 18:47:33 +0200
-Message-ID: <CACRpkdY3y6_W3heTYGW3SejZ=+trH=hvOAdqg2gV3hQ5g8FhYQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: gemini: hands off PCI OE bit
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk <linux-clk@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [PATCH 01/13] dt-bindings: update the binding for Allwinner H3 DE2 support
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com
+CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <712DBBDE-0C7F-4333-A73C-29504FD9352C@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 9, 2017 at 7:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 08/09, Linus Walleij wrote:
->> On Wed, Aug 9, 2017 at 3:43 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 08/08, Linus Walleij wrote:
->> >> This bit is pin control, and needs to be carefully managed by the
->> >> new pin control driver.
->> >>
->> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> >
->> > Fixes tag?
->>
->> It's not a fix, it'd just that we move the responsibility of managing the
->> pin from the clock driver to the pin control driver.
->>
->> I initially thought the Gemini would not need a separate pin control
->> driver because it was "simple" ... so these bits could be handled here
->> and there among the peripherals. Little did I know. Mea culpa.
->>
->> > Does this need to be merged now as a critical fix? Or we can wait
->> > on it for next release?
->>
->> Just put it in for the next release, thanks!
->>
+
+
+于 2017年8月3日 GMT+08:00 上午3:06:26, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
+>Hi,
 >
-> Alright. Thanks!
+>Dne sreda, 02. avgust 2017 ob 07:02:39 CEST je icenowy@aosc.io
+>napisal(a):
+>> 在 2017-08-02 12:53，Jernej Škrabec 写道：
+>> 
+>> > Hi Icenowy,
+>> > 
+>> > Dne torek, 01. avgust 2017 ob 15:12:52 CEST je Icenowy Zheng
+>> > 
+>> > napisal(a):
+>> >> Allwinner H3 features a "Display Engine 2.0".
+>> >> 
+>> >> Add device tree bindings for the following parts:
+>> >> - H3 TCONs
+>> >> - H3 Mixers
+>> >> - H3 Display engine
+>> >> 
+>> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >> ---
+>> >> 
+>> >>  .../bindings/display/sunxi/sun4i-drm.txt           | 25
+>> >> 
+>> >> ++++++++++++++++++---- 1 file changed, 21 insertions(+), 4
+>> >> deletions(-)
+>> >> 
+>> >> diff --git
+>> >> a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> >> b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>index
+>> >> 2ee6ff0ef98e..92512953943e 100644
+>> >> ---
+>a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> >> +++
+>b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> >> 
+>> >> @@ -87,18 +87,17 @@ Required properties:
+>> >>     * allwinner,sun6i-a31-tcon
+>> >>     * allwinner,sun6i-a31s-tcon
+>> >>     * allwinner,sun8i-a33-tcon
+>> >> 
+>> >> +   * allwinner,sun8i-h3-tcon
+>> >> 
+>> >>     * allwinner,sun8i-v3s-tcon
+>> >>   
+>> >>   - reg: base address and size of memory-mapped region
+>> >>   - interrupts: interrupt associated to this IP
+>> >>   
+>> >>   - clocks: phandles to the clocks feeding the TCON. Three are
+>needed:
+>> >>     - 'ahb': the interface clocks
+>> >> 
+>> >> -   - 'tcon-ch0': The clock driving the TCON channel 0
+>> >> 
+>> >>   - resets: phandles to the reset controllers driving the encoder
+>> >>   
+>> >>     - "lcd": the reset line for the TCON channel 0
+>> >>   
+>> >>   - clock-names: the clock names mentioned above
+>> >>   - reset-names: the reset names mentioned above
+>> >> 
+>> >> - - clock-output-names: Name of the pixel clock created
+>> >> 
+>> >>  - ports: A ports node with endpoint definitions as defined in
+>> >>  
+>> >>    Documentation/devicetree/bindings/media/video-interfaces.txt.
+>The
+>> >> 
+>> >> @@ -112,7 +111,23 @@ Required properties:
+>> >>    channel the endpoint is associated to. If that property is not
+>> >>    present, the endpoint number will be used as the channel
+>number.
+>> >> 
+>> >> -On SoCs other than the A33 and V3s, there is one more clock
+>required:
+>> >> +For the following compatibles:
+>> >> +   * allwinner,sun5i-a13-tcon
+>> >> +   * allwinner,sun6i-a31-tcon
+>> >> +   * allwinner,sun6i-a31s-tcon
+>> >> +   * allwinner,sun8i-a33-tcon
+>> >> +   * allwinner,sun8i-v3s-tcon
+>> >> +there is one more clock and one more property required:
+>> >> + - clocks:
+>> >> +   - 'tcon-ch0': The clock driving the TCON channel 0
+>> >> + - clock-output-names: Name of the pixel clock created
+>> >> +
+>> >> +For the following compatibles:
+>> >> +   * allwinner,sun5i-a13-tcon
+>> >> +   * allwinner,sun6i-a31-tcon
+>> >> +   * allwinner,sun6i-a31s-tcon
+>> >> +   * allwinner,sun8i-h3-tcon
+>> >> 
+>> >> +there is one more clock required:
+>> >>     - 'tcon-ch1': The clock driving the TCON channel 1
+>> >>  
+>> >>  DRC
+>> >> 
+>> >> @@ -207,6 +222,8 @@ supported.
+>> >> 
+>> >>  Required properties:
+>> >>    - compatible: value must be one of:
+>> >>      * allwinner,sun8i-v3s-de2-mixer
+>> >> 
+>> >> +    * allwinner,sun8i-h3-de2-mixer0
+>> >> +    * allwinner,sun8i-h3-de2-mixer1
+>> > 
+>> > About that, I concur with Maxime here, plane number properties
+>would be
+>> > better. If we don't do this now, we will never have it.
+>> 
+>> But I still prefer different compatibles, as the capabilities are
+>> already
+>> proven to be different between mixer0 and mixer1, and furtherly we
+>> cannot
+>> promise Allwinner won't add more functions only available at mixer0.
+>> 
+>> Then we will be trapped into a situation that we describe more and
+>more
+>> functions via properties, but they should be encoded into the
+>> compatible.
+>
+>It is either multiple compatibles or multiple properties. I prefer the
+>later, 
+>but it is up to maintainers to decide.
+>
+>Anyway, I think DE2 will not evolve much since DE3 is almost ready
+>(H6). At 
+>least basics seems to be similar according to a BSP code drop.
 
-Stephen are you queueing this patch?
+According to what I heard from TL Lim, DE3 is just an evolution
+to DE2.
 
-Or someone else from the clk group?
-
-Yours,
-Linus Walleij
+>
+>Regards,
+>Jernej
+>
+>> 
+>> > Reference:
+>> >
+>http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/512902.htm
+>> > l
+>> > 
+>> > Regards,
+>> > Jernej
+>> 
+>> --
+>> You received this message because you are subscribed to the Google
+>Groups
+>> "linux-sunxi" group. To unsubscribe from this group and stop
+>receiving
+>> emails from it, send an email to
+>linux-sunxi+unsubscribe@googlegroups.com.
+>> For more options, visit https://groups.google.com/d/optout.
