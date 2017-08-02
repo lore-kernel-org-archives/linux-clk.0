@@ -1,35 +1,76 @@
-Return-Path: <david.wu@rock-chips.com>
-Subject: Re: [PATCH v2 3/4] clk: rockchip: rv1108: rename macphy to mac
-To: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
- sboyd@codeaurora.org, heiko@sntech.de
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
- cl@rock-chips.com, andy.yan@rock-chips.com, wdc@rock-chips.com
-References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
- <1503303367-17915-4-git-send-email-zhangqing@rock-chips.com>
-From: "David.Wu" <david.wu@rock-chips.com>
-Message-ID: <521d67b9-3598-8781-c2a0-76e7829c9a45@rock-chips.com>
-Date: Mon, 21 Aug 2017 18:30:22 +0800
-MIME-Version: 1.0
-In-Reply-To: <1503303367-17915-4-git-send-email-zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Andy Yan <andy.yan@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh+dt@kernel.org, shawn.lin@rock-chips.com,
+        zhangqing@rock-chips.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux-rockchip@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v2 04/23] clk: rockchip: support more rates for cpuclk
+Date: Wed,  2 Aug 2017 16:32:23 +0800
+Message-Id: <1501662743-11920-1-git-send-email-andy.yan@rock-chips.com>
+In-Reply-To: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
+References: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-ÔÚ 2017/8/21 16:16, Elaine Zhang Ð´µÀ:
-> This MAC has no internal phy for rv1108.
-> 
-> Signed-off-by: Elaine Zhang<zhangqing@rock-chips.com>
-> ---
->   drivers/clk/rockchip/clk-rv1108.c      | 12 ++++++------
->   include/dt-bindings/clock/rv1108-cru.h |  6 +++---
->   2 files changed, 9 insertions(+), 9 deletions(-)
+fix up the cpuclk rates table for support more freqs.
+fix up the mux_core_mask describe error.
 
-Acked-by: David Wu <david.wu@rock-chips.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-Usually, MAC and PHY are separate, macphy is easy to cause ambiguity, 
-and RV1108 SOC does not have integrated ethernet PHY. It is more clear 
-to change the name.
+---
+
+Changes in v2:
+- split the new added clks and rename.
+
+ drivers/clk/rockchip/clk-rv1108.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 7c05ab3..3c670db 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -93,9 +93,24 @@ static struct rockchip_pll_rate_table rv1108_pll_rates[] = {
+ 	}
+ 
+ static struct rockchip_cpuclk_rate_table rv1108_cpuclk_rates[] __initdata = {
+-	RV1108_CPUCLK_RATE(816000000, 4),
+-	RV1108_CPUCLK_RATE(600000000, 4),
+-	RV1108_CPUCLK_RATE(312000000, 4),
++	RV1108_CPUCLK_RATE(1608000000, 7),
++	RV1108_CPUCLK_RATE(1512000000, 7),
++	RV1108_CPUCLK_RATE(1488000000, 5),
++	RV1108_CPUCLK_RATE(1416000000, 5),
++	RV1108_CPUCLK_RATE(1392000000, 5),
++	RV1108_CPUCLK_RATE(1296000000, 5),
++	RV1108_CPUCLK_RATE(1200000000, 5),
++	RV1108_CPUCLK_RATE(1104000000, 5),
++	RV1108_CPUCLK_RATE(1008000000, 5),
++	RV1108_CPUCLK_RATE(912000000, 5),
++	RV1108_CPUCLK_RATE(816000000, 3),
++	RV1108_CPUCLK_RATE(696000000, 3),
++	RV1108_CPUCLK_RATE(600000000, 3),
++	RV1108_CPUCLK_RATE(500000000, 3),
++	RV1108_CPUCLK_RATE(408000000, 1),
++	RV1108_CPUCLK_RATE(312000000, 1),
++	RV1108_CPUCLK_RATE(216000000, 1),
++	RV1108_CPUCLK_RATE(96000000, 1),
+ };
+ 
+ static const struct rockchip_cpuclk_reg_data rv1108_cpuclk_data = {
+@@ -105,7 +120,7 @@ static const struct rockchip_cpuclk_reg_data rv1108_cpuclk_data = {
+ 	.mux_core_alt = 1,
+ 	.mux_core_main = 0,
+ 	.mux_core_shift = 8,
+-	.mux_core_mask = 0x1,
++	.mux_core_mask = 0x3,
+ };
+ 
+ PNAME(mux_pll_p)		= { "xin24m", "xin24m"};
+-- 
+2.7.4
