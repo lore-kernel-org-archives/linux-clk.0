@@ -1,55 +1,383 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v66jK+iAbKVsv6=4tb0470KBdwU+AHjWDnWwKKTY+U+W6g@mail.gmail.com>
-References: <20170723102749.17323-1-icenowy@aosc.io>
- <20170723102749.17323-6-icenowy@aosc.io>
- <CAGb2v66jK+iAbKVsv6=4tb0470KBdwU+AHjWDnWwKKTY+U+W6g@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 4 Aug 2017 12:09:22 +0800
-Message-ID: <CAGb2v67LWirnWuQzzkNx4MU6Z-pERJBr6vcVfdoddFwLC=FXoA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 05/10] clk: sunxi-ng: h3: gate then ungate
- PLL CPU clk after rate change
-To: Chen-Yu Tsai <wens@csie.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- "open list:THERMAL" <linux-pm@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- linux-sunxi <linux-sunxi@googlegroups.com>, Mark Brown <broonie@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Andy Yan <andy.yan@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh+dt@kernel.org, shawn.lin@rock-chips.com,
+        zhangqing@rock-chips.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux-rockchip@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v2 06/23] clk: rockchip: support more clks for rv1108
+Date: Wed,  2 Aug 2017 16:33:57 +0800
+Message-Id: <1501662837-12029-1-git-send-email-andy.yan@rock-chips.com>
+In-Reply-To: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
+References: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 26, 2017 at 3:14 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> From: Chen-Yu Tsai <wens@csie.org>
->>
->> This patch utilizes the new PLL clk notifier to gate then ungate the
->> PLL CPU clock after rate changes. This should prevent any system hangs
->> resulting from cpufreq changes to the clk.
->>
->> Reported-by: Ondrej Jirman <megous@megous.com>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> Tested-by: Icenowy Zheng <icenowy@aosc.io>
->
-> This is missing
->
-> Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-Applied for 4.14 with the Fixes tag and Stephen's ack.
+Added the description of the missing clock,
+make the clock tree more complete.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+---
+
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rv1108.c | 282 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 280 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 9c6bad0..27155ca 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -145,6 +145,18 @@ PNAME(mux_i2s0_pre_p)		= { "i2s0_src", "i2s0_frac", "ext_i2s", "xin12m" };
+ PNAME(mux_i2s_out_p)		= { "i2s0_pre", "xin12m" };
+ PNAME(mux_i2s1_p)		= { "i2s1_src", "i2s1_frac", "xin12m" };
+ PNAME(mux_i2s2_p)		= { "i2s2_src", "i2s2_frac", "xin12m" };
++PNAME(mux_wifi_src_p)	= { "gpll", "xin24m" };
++PNAME(mux_cifout_src_p)	= { "hdmiphy", "gpll" };
++PNAME(mux_cifout_p)	= { "sclk_cifout_src", "xin24m" };
++PNAME(mux_sclk_cif0_src_p)		= { "pclk_vip", "clk_cif0_chn_out", "pclkin_cvbs2cif" };
++PNAME(mux_sclk_cif1_src_p)		= { "pclk_vip", "clk_cif1_chn_out", "pclkin_cvbs2cif" };
++PNAME(mux_sclk_cif2_src_p)		= { "pclk_vip", "clk_cif2_chn_out", "pclkin_cvbs2cif" };
++PNAME(mux_sclk_cif3_src_p)		= { "pclk_vip", "clk_cif3_chn_out", "pclkin_cvbs2cif" };
++PNAME(mux_dsp_src_p)		= { "dpll", "gpll", "apll", "usb480m" };
++PNAME(mux_dclk_hdmiphy_p)	= { "hdmiphy", "xin24m" };
++PNAME(mux_dclk_vop_p)	= { "dclk_hdmiphy", "dclk_vop_src" };
++PNAME(mux_hdmi_cec_src_p)		= { "dpll", "gpll", "xin24m" };
++PNAME(mux_cvbs_src_p)		= { "apll", "io_cvbs_clkin", "hdmiphy", "gpll" };
+ 
+ static struct rockchip_pll_clock rv1108_pll_clks[] __initdata = {
+ 	[apll] = PLL(pll_rk3399, PLL_APLL, "apll", mux_pll_p, 0, RV1108_PLL_CON(0),
+@@ -212,8 +224,53 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
+ 			RV1108_CLKGATE_CON(11), 1, GFLAGS),
+ 
+ 	/* PD_RKVENC */
++	COMPOSITE(0, "aclk_rkvenc_pre", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(37), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(8), 8, GFLAGS),
++	FACTOR_GATE(0, "hclk_rkvenc_pre", "aclk_rkvenc_pre", 0, 1, 4,
++			RV1108_CLKGATE_CON(8), 10, GFLAGS),
++	COMPOSITE(SCLK_VENC_CORE, "clk_venc_core", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(37), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(8), 9, GFLAGS),
++	GATE(ACLK_RKVENC, "aclk_rkvenc", "aclk_rkvenc_pre", 0,
++			RV1108_CLKGATE_CON(19), 8, GFLAGS),
++	GATE(HCLK_RKVENC, "hclk_rkvenc", "hclk_rkvenc_pre", 0,
++			RV1108_CLKGATE_CON(19), 9, GFLAGS),
++	GATE(0, "aclk_rkvenc_niu", "aclk_rkvenc_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(19), 11, GFLAGS),
++	GATE(0, "hclk_rkvenc_niu", "hclk_rkvenc_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(19), 10, GFLAGS),
+ 
+ 	/* PD_RKVDEC */
++	COMPOSITE(SCLK_HEVC_CORE, "sclk_hevc_core", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(36), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(8), 2, GFLAGS),
++	FACTOR_GATE(0, "hclk_rkvdec_pre", "sclk_hevc_core", 0, 1, 4,
++			RV1108_CLKGATE_CON(8), 10, GFLAGS),
++	COMPOSITE(SCLK_HEVC_CABAC, "clk_hevc_cabac", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(35), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(8), 1, GFLAGS),
++
++	COMPOSITE(0, "aclk_rkvdec_pre", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(35), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(8), 0, GFLAGS),
++	COMPOSITE(0, "aclk_vpu_pre", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(36), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(8), 3, GFLAGS),
++	GATE(ACLK_RKVDEC, "aclk_rkvdec", "aclk_rkvdec_pre", 0,
++			RV1108_CLKGATE_CON(19), 0, GFLAGS),
++	GATE(ACLK_VPU, "aclk_vpu", "aclk_vpu_pre", 0,
++			RV1108_CLKGATE_CON(19), 1, GFLAGS),
++	GATE(HCLK_RKVDEC, "hclk_rkvdec", "hclk_rkvdec_pre", 0,
++			RV1108_CLKGATE_CON(19), 2, GFLAGS),
++	GATE(HCLK_VPU, "hclk_vpu", "hclk_rkvdec_pre", 0,
++			RV1108_CLKGATE_CON(19), 3, GFLAGS),
++	GATE(0, "aclk_rkvdec_niu", "aclk_rkvdec_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(19), 4, GFLAGS),
++	GATE(0, "hclk_rkvdec_niu", "hclk_rkvdec_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(19), 5, GFLAGS),
++	GATE(0, "aclk_vpu_niu", "aclk_vpu_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(19), 6, GFLAGS),
+ 
+ 	/* PD_PMU_wrapper */
+ 	COMPOSITE_NOMUX(0, "pmu_24m_ena", "gpll", CLK_IGNORE_UNUSED,
+@@ -243,6 +300,120 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
+ 			RV1108_CLKGATE_CON(8), 13, GFLAGS),
+ 
+ 	/*
++	 * Clock-Architecture Diagram 3
++	 */
++	COMPOSITE(SCLK_WIFI, "sclk_wifi", mux_wifi_src_p, 0,
++			RV1108_CLKSEL_CON(28), 15, 1, MFLAGS, 8, 6, DFLAGS,
++			RV1108_CLKGATE_CON(9), 8, GFLAGS),
++	COMPOSITE_NODIV(0, "sclk_cifout_src", mux_cifout_src_p, 0,
++			RV1108_CLKSEL_CON(40), 8, 1, MFLAGS,
++			RV1108_CLKGATE_CON(9), 11, GFLAGS),
++	COMPOSITE_NOGATE(SCLK_CIFOUT, "sclk_cifout", mux_cifout_p, 0,
++			RV1108_CLKSEL_CON(40), 12, 1, MFLAGS, 0, 5, DFLAGS),
++	COMPOSITE_NOMUX(SCLK_MIPI_CSI_OUT, "sclk_mipi_csi_out", "xin24m", 0,
++			RV1108_CLKSEL_CON(41), 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 12, GFLAGS),
++
++	GATE(0, "pclk_acodecphy", "pclk_top_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(14), 6, GFLAGS),
++	GATE(0, "pclk_usbgrf", "pclk_top_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(14), 14, GFLAGS),
++
++	INVERTER(0, "pclk_vip", "pclkin_vip",
++			RV1108_CLKSEL_CON(31), 8, IFLAGS),
++	GATE(0, "pclk_isp_pre", "pclk_vip", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(7), 6, GFLAGS),
++	GATE(PCLK_ISP, "pclk_isp", "pclk_isp_pre", 0,
++			RV1108_CLKGATE_CON(18), 10, GFLAGS),
++	GATE(ACLK_CIF0, "aclk_cif0", "aclk_vio1_pre", 0,
++			RV1108_CLKGATE_CON(18), 10, GFLAGS),
++	GATE(HCLK_CIF0, "hclk_cif0", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(18), 10, GFLAGS),
++	COMPOSITE_NODIV(SCLK_CIF0, "sclk_cif0", mux_sclk_cif0_src_p, 0,
++			RV1108_CLKSEL_CON(31), 0, 2, MFLAGS,
++			RV1108_CLKGATE_CON(7), 9, GFLAGS),
++	GATE(ACLK_CIF1, "aclk_cif1", "aclk_vio1_pre", 0,
++			RV1108_CLKGATE_CON(17), 6, GFLAGS),
++	GATE(HCLK_CIF1, "hclk_cif1", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(17), 7, GFLAGS),
++	COMPOSITE_NODIV(SCLK_CIF1, "sclk_cif1", mux_sclk_cif1_src_p, 0,
++			RV1108_CLKSEL_CON(31), 2, 2, MFLAGS,
++			RV1108_CLKGATE_CON(7), 10, GFLAGS),
++	GATE(ACLK_CIF2, "aclk_cif2", "aclk_vio1_pre", 0,
++			RV1108_CLKGATE_CON(17), 8, GFLAGS),
++	GATE(HCLK_CIF2, "hclk_cif2", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(17), 9, GFLAGS),
++	COMPOSITE_NODIV(SCLK_CIF2, "sclk_cif2", mux_sclk_cif2_src_p, 0,
++			RV1108_CLKSEL_CON(31), 4, 2, MFLAGS,
++			RV1108_CLKGATE_CON(7), 11, GFLAGS),
++	GATE(ACLK_CIF3, "aclk_cif3", "aclk_vio1_pre", 0,
++			RV1108_CLKGATE_CON(17), 10, GFLAGS),
++	GATE(HCLK_CIF3, "hclk_cif3", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(17), 11, GFLAGS),
++	COMPOSITE_NODIV(SCLK_CIF3, "sclk_cif3", mux_sclk_cif3_src_p, 0,
++			RV1108_CLKSEL_CON(31), 6, 2, MFLAGS,
++			RV1108_CLKGATE_CON(7), 12, GFLAGS),
++	GATE(0, "pclk_cif1to4", "pclk_vip", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(7), 8, GFLAGS),
++
++	/* PD_DSP_wrapper */
++	COMPOSITE(SCLK_DSP, "sclk_dsp", mux_dsp_src_p, 0,
++			RV1108_CLKSEL_CON(42), 8, 2, MFLAGS, 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 0, GFLAGS),
++	GATE(0, "clk_dsp_sys_wd", "sclk_dsp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 0, GFLAGS),
++	GATE(0, "clk_dsp_epp_wd", "sclk_dsp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 1, GFLAGS),
++	GATE(0, "clk_dsp_edp_wd", "sclk_dsp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 2, GFLAGS),
++	GATE(0, "clk_dsp_iop_wd", "sclk_dsp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 3, GFLAGS),
++	GATE(0, "clk_dsp_free", "sclk_dsp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 13, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_DSP_IOP, "sclk_dsp_iop", "sclk_dsp", 0,
++			RV1108_CLKSEL_CON(44), 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 1, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_DSP_EPP, "sclk_dsp_epp", "sclk_dsp", 0,
++			RV1108_CLKSEL_CON(44), 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 2, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_DSP_EDP, "sclk_dsp_edp", "sclk_dsp", 0,
++			RV1108_CLKSEL_CON(45), 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 3, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_DSP_EDAP, "sclk_dsp_edap", "sclk_dsp", 0,
++			RV1108_CLKSEL_CON(45), 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 4, GFLAGS),
++	GATE(0, "pclk_dsp_iop_niu", "sclk_dsp_iop", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 4, GFLAGS),
++	GATE(0, "aclk_dsp_epp_niu", "sclk_dsp_epp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 5, GFLAGS),
++	GATE(0, "aclk_dsp_edp_niu", "sclk_dsp_edp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 6, GFLAGS),
++	GATE(0, "pclk_dsp_dbg_niu", "sclk_dsp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 7, GFLAGS),
++	GATE(0, "aclk_dsp_edap_niu", "sclk_dsp_edap", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 14, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_DSP_PFM, "sclk_dsp_pfm", "sclk_dsp", 0,
++			RV1108_CLKSEL_CON(43), 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 5, GFLAGS),
++	COMPOSITE_NOMUX(PCLK_DSP_CFG, "pclk_dsp_cfg", "sclk_dsp", 0,
++			RV1108_CLKSEL_CON(43), 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(9), 6, GFLAGS),
++	GATE(0, "pclk_dsp_cfg_niu", "pclk_dsp_cfg", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 8, GFLAGS),
++	GATE(0, "pclk_dsp_pfm_mon", "pclk_dsp_cfg", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 9, GFLAGS),
++	GATE(0, "pclk_intc", "pclk_dsp_cfg", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 10, GFLAGS),
++	GATE(0, "pclk_dsp_grf", "pclk_dsp_cfg", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 11, GFLAGS),
++	GATE(0, "pclk_mailbox", "pclk_dsp_cfg", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 12, GFLAGS),
++	GATE(0, "aclk_dsp_epp_perf", "sclk_dsp_epp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(16), 15, GFLAGS),
++	GATE(0, "aclk_dsp_edp_perf", "sclk_dsp_edp", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(11), 8, GFLAGS),
++
++	/*
+ 	 * Clock-Architecture Diagram 4
+ 	 */
+ 	COMPOSITE(0, "aclk_vio0_2wrap_occ", mux_pll_src_4plls_p, CLK_IGNORE_UNUSED,
+@@ -253,6 +424,8 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "hclk_vio_pre", "aclk_vio0_pre", 0,
+ 			RV1108_CLKSEL_CON(29), 0, 5, DFLAGS,
+ 			RV1108_CLKGATE_CON(7), 2, GFLAGS),
++	GATE(HCLK_VIO, "hclk_vio", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(17), 2, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "pclk_vio_pre", "aclk_vio0_pre", 0,
+ 			RV1108_CLKSEL_CON(29), 8, 5, DFLAGS,
+ 			RV1108_CLKGATE_CON(7), 3, GFLAGS),
+@@ -269,14 +442,96 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
+ 			RV1108_CLKGATE_CON(6), 4, GFLAGS),
+ 	COMPOSITE_NOGATE(0, "dclk_hdmiphy", mux_dclk_hdmiphy_pre_p, 0,
+ 			RV1108_CLKSEL_CON(32), 6, 2, MFLAGS, 8, 6, DFLAGS),
+-
++	COMPOSITE_NOGATE(DCLK_VOP_SRC, "dclk_vop_src", mux_dclk_hdmiphy_pre_p, 0,
++			RV1108_CLKSEL_CON(32), 6, 1, MFLAGS, 0, 6, DFLAGS),
++	MUX(DCLK_HDMIPHY, "dclk_hdmiphy", mux_dclk_hdmiphy_p, CLK_SET_RATE_PARENT,
++			RV1108_CLKSEL_CON(32), 15, 1, MFLAGS),
++	MUX(DCLK_VOP, "dclk_vop", mux_dclk_vop_p, CLK_SET_RATE_PARENT,
++			RV1108_CLKSEL_CON(32), 7, 1, MFLAGS),
++	GATE(ACLK_VOP, "aclk_vop", "aclk_vio0_pre", 0,
++			RV1108_CLKGATE_CON(18), 0, GFLAGS),
++	GATE(HCLK_VOP, "hclk_vop", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(18), 1, GFLAGS),
++	GATE(ACLK_IEP, "aclk_iep", "aclk_vio0_pre", 0,
++			RV1108_CLKGATE_CON(18), 2, GFLAGS),
++	GATE(HCLK_IEP, "hclk_iep", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(18), 3, GFLAGS),
++
++	GATE(ACLK_RGA, "aclk_rga", "aclk_vio1_pre", 0,
++			RV1108_CLKGATE_CON(18), 4, GFLAGS),
++	GATE(HCLK_RGA, "hclk_rga", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(18), 5, GFLAGS),
++	COMPOSITE(SCLK_RGA, "sclk_rga", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(33), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(6), 6, GFLAGS),
++
++	COMPOSITE(SCLK_CVBS_HOST, "sclk_cvbs_host", mux_cvbs_src_p, 0,
++			RV1108_CLKSEL_CON(33), 13, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(6), 7, GFLAGS),
++	FACTOR(0, "sclk_cvbs_27m", "sclk_cvbs_host", 0, 1, 2),
++
++	GATE(SCLK_HDMI_SFR, "sclk_hdmi_sfr", "xin24m", 0,
++			RV1108_CLKGATE_CON(6), 8, GFLAGS),
++
++	COMPOSITE(SCLK_HDMI_CEC, "sclk_hdmi_cec", mux_hdmi_cec_src_p, 0,
++			RV1108_CLKSEL_CON(34), 14, 2, MFLAGS, 0, 14, DFLAGS,
++			RV1108_CLKGATE_CON(6), 9, GFLAGS),
++	GATE(PCLK_MIPI_DSI, "pclk_mipi_dsi", "pclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(18), 8, GFLAGS),
++	GATE(PCLK_HDMI_CTRL, "pclk_hdmi_ctrl", "pclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(18), 9, GFLAGS),
++
++	GATE(ACLK_ISP, "aclk_isp", "aclk_vio1_pre", 0,
++			RV1108_CLKGATE_CON(18), 12, GFLAGS),
++	GATE(HCLK_ISP, "hclk_isp", "hclk_vio_pre", 0,
++			RV1108_CLKGATE_CON(18), 11, GFLAGS),
++	COMPOSITE(SCLK_ISP, "sclk_isp", mux_pll_src_4plls_p, 0,
++			RV1108_CLKSEL_CON(30), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(6), 3, GFLAGS),
++
++	GATE(0, "clk_dsiphy24m", "xin24m", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(9), 10, GFLAGS),
++	GATE(0, "pclk_vdacphy", "pclk_top_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(14), 9, GFLAGS),
++	GATE(0, "pclk_mipi_dsiphy", "pclk_top_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(14), 11, GFLAGS),
++	GATE(0, "pclk_mipi_csiphy", "pclk_top_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(14), 12, GFLAGS),
+ 	/*
+ 	 * Clock-Architecture Diagram 5
+ 	 */
+ 
+ 	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
+ 
+-	COMPOSITE(0, "i2s0_src", mux_pll_src_2plls_p, 0,
++	/* PD_BUS */
++	GATE(0, "aclk_bus_src_gpll", "gpll", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(1), 0, GFLAGS),
++	GATE(0, "aclk_bus_src_apll", "apll", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(1), 1, GFLAGS),
++	GATE(0, "aclk_bus_src_dpll", "dpll", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(1), 2, GFLAGS),
++	COMPOSITE_NOGATE(ACLK_PRE, "aclk_bus_pre", mux_aclk_bus_src_p, 0,
++			RV1108_CLKSEL_CON(2), 8, 2, MFLAGS, 0, 5, DFLAGS),
++	COMPOSITE_NOMUX(HCLK_BUS, "hclk_bus_pre", "aclk_bus_pre", 0,
++			RV1108_CLKSEL_CON(3), 0, 5, DFLAGS,
++			RV1108_CLKGATE_CON(1), 4, GFLAGS),
++	COMPOSITE_NOMUX(0, "pclk_bus_pre", "aclk_bus_pre", 0,
++			RV1108_CLKSEL_CON(3), 8, 5, DFLAGS,
++			RV1108_CLKGATE_CON(1), 5, GFLAGS),
++	GATE(PCLK_BUS, "pclk_bus", "pclk_bus_pre", 0,
++			RV1108_CLKGATE_CON(1), 6, GFLAGS),
++	GATE(0, "pclk_top_pre", "pclk_bus_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(1), 7, GFLAGS),
++	GATE(0, "pclk_ddr_pre", "pclk_bus_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(1), 8, GFLAGS),
++	GATE(SCLK_TIMER0, "clk_timer0", "xin24m", 0,
++			RV1108_CLKGATE_CON(1), 9, GFLAGS),
++	GATE(SCLK_TIMER1, "clk_timer1", "xin24m", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(1), 10, GFLAGS),
++	GATE(PCLK_TIMER, "pclk_timer", "pclk_bus_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(13), 4, GFLAGS),
++
++	COMPOSITE(SCLK_I2S0_SRC, "i2s0_src", mux_pll_src_2plls_p, 0,
+ 			RV1108_CLKSEL_CON(5), 8, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RV1108_CLKGATE_CON(2), 0, GFLAGS),
+ 	COMPOSITE_FRACMUX(0, "i2s1_frac", "i2s1_src", CLK_SET_RATE_PARENT,
+@@ -397,6 +652,20 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
+ 
+ 	GATE(0, "pclk_grf", "pclk_bus_pre", CLK_IGNORE_UNUSED,
+ 			RV1108_CLKGATE_CON(14), 0, GFLAGS),
++	GATE(PCLK_EFUSE0, "pclk_efuse0", "pclk_bus_pre", 0,
++			RV1108_CLKGATE_CON(12), 12, GFLAGS),
++	GATE(PCLK_EFUSE1, "pclk_efuse1", "pclk_bus_pre", 0,
++			RV1108_CLKGATE_CON(12), 13, GFLAGS),
++	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_bus_pre", 0,
++			RV1108_CLKGATE_CON(13), 13, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_TSADC, "sclk_tsadc", "xin24m", 0,
++			RV1108_CLKSEL_CON(21), 0, 10, DFLAGS,
++			RV1108_CLKGATE_CON(3), 11, GFLAGS),
++	GATE(PCLK_SARADC, "pclk_saradc", "pclk_bus_pre", 0,
++			RV1108_CLKGATE_CON(13), 14, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_SARADC, "sclk_saradc", "xin24m", 0,
++			RV1108_CLKSEL_CON(22), 0, 10, DFLAGS,
++			RV1108_CLKGATE_CON(3), 12, GFLAGS),
+ 
+ 	GATE(ACLK_DMAC, "aclk_dmac", "aclk_bus_pre", 0,
+ 	     RV1108_CLKGATE_CON(12), 2, GFLAGS),
+@@ -424,6 +693,10 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
+ 			RV1108_CLKGATE_CON(12), 6, GFLAGS),
+ 	GATE(0, "timer_clk", "xin24m", CLK_IGNORE_UNUSED,
+ 			RV1108_CLKGATE_CON(0), 11, GFLAGS),
++	GATE(0, "pclk_mschniu", "pclk_ddr_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(14), 2, GFLAGS),
++	GATE(0, "pclk_ddrphy", "pclk_ddr_pre", CLK_IGNORE_UNUSED,
++			RV1108_CLKGATE_CON(14), 4, GFLAGS),
+ 
+ 	/*
+ 	 * Clock-Architecture Diagram 6
+@@ -473,6 +746,11 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
+ 			RV1108_CLKGATE_CON(5), 3, GFLAGS),
+ 	GATE(HCLK_NANDC, "hclk_nandc", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 3, GFLAGS),
+ 
++	GATE(HCLK_HOST0, "hclk_host0", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 6, GFLAGS),
++	GATE(0, "hclk_host0_arb", "hclk_periph", CLK_IGNORE_UNUSED, RV1108_CLKGATE_CON(15), 7, GFLAGS),
++	GATE(HCLK_OTG, "hclk_otg", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 8, GFLAGS),
++	GATE(0, "hclk_otg_pmu", "hclk_periph", CLK_IGNORE_UNUSED, RV1108_CLKGATE_CON(15), 9, GFLAGS),
++	GATE(SCLK_USBPHY, "clk_usbphy", "xin24m", CLK_IGNORE_UNUSED, RV1108_CLKGATE_CON(5), 5, GFLAGS),
+ 	COMPOSITE(SCLK_SFC, "sclk_sfc", mux_pll_src_2plls_p, 0,
+ 			RV1108_CLKSEL_CON(27), 7, 2, MFLAGS, 0, 7, DFLAGS,
+ 			RV1108_CLKGATE_CON(5), 4, GFLAGS),
+-- 
+2.7.4
