@@ -1,62 +1,71 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH 05/13] clk: sunxi-ng: allow CLK_DE to set CLK_PLL_DE for H3
-Date: Tue,  1 Aug 2017 21:12:56 +0800
-Message-Id: <20170801131304.7741-6-icenowy@aosc.io>
-In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
-References: <20170801131304.7741-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Andy Yan <andy.yan@rock-chips.com>
+To: heiko@sntech.de
+Cc: linus.walleij@linaro.org, linux-pwm@vger.kernel.org,
+        robh+dt@kernel.org, david.wu@rock-chips.com,
+        shawn.lin@rock-chips.com, linux-i2c@vger.kernel.org,
+        zhangqing@rock-chips.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@codeaurora.org, wsa@the-dreams.de,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-spi@vger.kernel.org,
+        Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v2 00/23] Support more devices on rockchip rv1108
+Date: Wed,  2 Aug 2017 16:25:03 +0800
+Message-Id: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H3 features a PLL named CLK_PLL_DE, and a mod clock for the
-"Display Engine 2.0" named CLK_DE. As the name indicated, the CLK_PLL_DE
-is a PLL for CLK_DE.
 
-Only CLK_DE and CLK_TVE have a parent of CLK_PLL_DE, and CLK_TVE is also
-one part of the display clocks.
+This series try to support i2c/spi/pwm/saradc/pmic/watchdog and
+the full clk tree on rockchip rv1108 soc.
 
-So allow CLK_DE to set CLK_PLL_DE (add CLK_SET_RATE_PARENT to it).
+Changes in v2:
+- split the rename and intentation fix part from id patch
+- split the new added clks and rename.
+- add compatible string "rockchip,rv1108-pwm"
+- add compatible string "rockchip,rv1108-saradc"
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Andy Yan (14):
+  pinctrl: rockchip: add schmitt input mode support for rv1108
+  dt-bindings: i2c: rk3x: add support for rv1108
+  i2c: rk3x: add support for rv1108
+  ARM: dts: rockchip: add i2c dt node for rv1108
+  spi: rockchip: add compatible string for rv1108 spi
+  ARM: dts: rockchip: add spi dt node for rv1108
+  dt-bindings: pwm: add description for rv1108 pwm
+  ARM: dts: rockchip: add pwm dt node for rv1108
+  ARM: dts: rockchip: add watchdog dt node for rv1108
+  dt-bindings: adc: add description for rv1108 saradc
+  ARM: dts: rockchip: add saradc support for rv1108
+  ARM: dts: rockchip: add pwm backlight for rv1108 evb
+  ARM: dts: rockchip: add pmic rk805 dt node for rv1108 evb
+  ARM: dts: rockchip: add accelerometer bma250e dt node for rv1108 evb
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index d1ab0d713fa6..b1127e8629d9 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -439,7 +439,7 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
- 
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
- 
- static const char * const tcon_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
+Elaine Zhang (9):
+  clk: rockchip: add more clk ids for rv1108
+  clk: rockchip: rename the clk id for HCLK_I2S1_2CH
+  clk: rockchip: fix up the indentation stuff for RV1108 SoC
+  clk: rockchip: support more rates for cpuclk
+  clk: rockchip: fix up the pll clks error for rv1108 SoC
+  clk: rockchip: support more clks for rv1108
+  clk: rockchip: fix up some clks describe error for rv1108 SoC
+  clk: rockchip: rename some of clks for rv1108 SoC
+  clk: rockchip: add some critical clocks for rv1108 SoC
+
+ Documentation/devicetree/bindings/i2c/i2c-rk3x.txt |   1 +
+ .../bindings/iio/adc/rockchip-saradc.txt           |   1 +
+ .../devicetree/bindings/pwm/pwm-rockchip.txt       |   2 +-
+ .../devicetree/bindings/spi/spi-rockchip.txt       |   1 +
+ arch/arm/boot/dts/rv1108-evb.dts                   | 158 +++++++
+ arch/arm/boot/dts/rv1108.dtsi                      | 249 ++++++++++
+ drivers/clk/rockchip/clk-rv1108.c                  | 514 ++++++++++++++++-----
+ drivers/i2c/busses/i2c-rk3x.c                      |   9 +
+ drivers/pinctrl/pinctrl-rockchip.c                 |  31 ++
+ drivers/spi/spi-rockchip.c                         |   1 +
+ include/dt-bindings/clock/rv1108-cru.h             | 123 ++++-
+ 11 files changed, 964 insertions(+), 126 deletions(-)
+
 -- 
-2.13.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
