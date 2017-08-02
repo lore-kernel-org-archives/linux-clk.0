@@ -1,76 +1,241 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-To: julia.lawall@lip6.fr,
-	t-kristo@ti.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] clk: ti: make clk_ops const
-Date: Tue, 22 Aug 2017 18:41:15 +0530
-Message-Id: <1503407475-11620-1-git-send-email-bhumirks@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs1.siol.net ([213.250.19.134]:47461 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750742AbdHBEri (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Aug 2017 00:47:38 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, icenowy@aosc.io
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH 07/13] ARM: sun8i: h3: add display engine pipeline barebone
+Date: Wed, 02 Aug 2017 06:47:31 +0200
+Message-ID: <1773537.vAqre0jhCE@jernej-laptop>
+In-Reply-To: <20170801131304.7741-8-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io> <20170801131304.7741-8-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make these const as they are only stored in the const field of a
-clk_init_data structure.
+Hi Icenowy,
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/clk/ti/adpll.c | 2 +-
- drivers/clk/ti/apll.c  | 2 +-
- drivers/clk/ti/fapll.c | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Dne torek, 01. avgust 2017 ob 15:12:58 CEST je Icenowy Zheng napisal(a):
+> As we have already the support for the DE2 on Allwinner H3, add the
+> display engine pipeline device tree nodes to its DTSI file.
+> 
+> The H5 pipeline has some differences and will be enabled later.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  arch/arm/boot/dts/sun8i-h3.dtsi | 170
+> ++++++++++++++++++++++++++++++++++++++++ 1 file changed, 170 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+> b/arch/arm/boot/dts/sun8i-h3.dtsi index b36f9f423c39..75ad7b65a7fc 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -41,6 +41,8 @@
+>   */
+> 
+>  #include "sunxi-h3-h5.dtsi"
+> +#include <dt-bindings/clock/sun8i-de2.h>
+> +#include <dt-bindings/reset/sun8i-de2.h>
+> 
+>  / {
+>  	cpus {
+> @@ -72,6 +74,174 @@
+>  		};
+>  	};
+> 
+> +	de: display-engine {
+> +		compatible = "allwinner,sun8i-h3-display-engine";
+> +		allwinner,pipelines = <&mixer0>,
+> +				      <&mixer1>;
+> +		status = "disabled";
+> +	};
+> +
+> +	soc {
+> +		display_clocks: clock@1000000 {
+> +			compatible = "allwinner,sun8i-a83t-de2-clk";
+> +			reg = <0x01000000 0x100000>;
+> +			clocks = <&ccu CLK_BUS_DE>,
+> +				 <&ccu CLK_DE>;
+> +			clock-names = "bus",
+> +				      "mod";
+> +			resets = <&ccu RST_BUS_DE>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			assigned-clocks = <&ccu CLK_DE>;
+> +			assigned-clock-parents = <&ccu CLK_PLL_DE>;
+> +			assigned-clock-rates = <432000000>;
+> +		};
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index 255cafb..d5c6db4 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -486,7 +486,7 @@ static u8 ti_adpll_get_parent(struct clk_hw *hw)
- 	return 0;
- }
- 
--static struct clk_ops ti_adpll_ops = {
-+static const struct clk_ops ti_adpll_ops = {
- 	.prepare = ti_adpll_prepare,
- 	.unprepare = ti_adpll_unprepare,
- 	.is_prepared = ti_adpll_is_prepared,
-diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
-index 06f486b..83b148f 100644
---- a/drivers/clk/ti/apll.c
-+++ b/drivers/clk/ti/apll.c
-@@ -304,7 +304,7 @@ static void omap2_apll_disable(struct clk_hw *hw)
- 	ti_clk_ll_ops->clk_writel(v, &ad->control_reg);
- }
- 
--static struct clk_ops omap2_apll_ops = {
-+static const struct clk_ops omap2_apll_ops = {
- 	.enable		= &omap2_apll_enable,
- 	.disable	= &omap2_apll_disable,
- 	.is_enabled	= &omap2_apll_is_enabled,
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index 66a0d0e..071af44 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -268,7 +268,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
--static struct clk_ops ti_fapll_ops = {
-+static const struct clk_ops ti_fapll_ops = {
- 	.enable = ti_fapll_enable,
- 	.disable = ti_fapll_disable,
- 	.is_enabled = ti_fapll_is_enabled,
-@@ -478,7 +478,7 @@ static int ti_fapll_synth_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
--static struct clk_ops ti_fapll_synt_ops = {
-+static const struct clk_ops ti_fapll_synt_ops = {
- 	.enable = ti_fapll_synth_enable,
- 	.disable = ti_fapll_synth_disable,
- 	.is_enabled = ti_fapll_synth_is_enabled,
--- 
-1.9.1
+I believe Maxime ask you to use clk_set_rate() in the past:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/512909.html
+
+Regards,
+Jernej
+
+> +
+> +		mixer0: mixer@1100000 {
+> +			compatible = "allwinner,sun8i-h3-de2-mixer0";
+> +			reg = <0x01100000 0x100000>;
+> +			clocks = <&display_clocks CLK_BUS_MIXER0>,
+> +				 <&display_clocks CLK_MIXER0>;
+> +			clock-names = "bus",
+> +				      "mod";
+> +			resets = <&display_clocks RST_MIXER0>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				mixer0_out: port@1 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <1>;
+> +
+> +					mixer0_out_tcon0: endpoint@0 {
+> +						reg = <0>;
+> +						remote-endpoint = <&tcon0_in_mixer0>;
+> +					};
+> +
+> +					mixer0_out_tcon1: endpoint@1 {
+> +						reg = <1>;
+> +						remote-endpoint = <&tcon1_in_mixer0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		mixer1: mixer@1200000 {
+> +			compatible = "allwinner,sun8i-h3-de2-mixer1";
+> +			reg = <0x01200000 0x100000>;
+> +			clocks = <&display_clocks CLK_BUS_MIXER1>,
+> +				 <&display_clocks CLK_MIXER1>;
+> +			clock-names = "bus",
+> +				      "mod";
+> +			resets = <&display_clocks RST_WB>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				mixer1_out: port@1 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <1>;
+> +
+> +					mixer1_out_tcon0: endpoint@0 {
+> +						reg = <0>;
+> +						remote-endpoint = <&tcon0_in_mixer1>;
+> +					};
+> +
+> +					mixer1_out_tcon1: endpoint@1 {
+> +						reg = <1>;
+> +						remote-endpoint = <&tcon1_in_mixer1>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		tcon0: lcd-controller@1c0c000 {
+> +			compatible = "allwinner,sun8i-h3-tcon";
+> +			reg = <0x01c0c000 0x1000>;
+> +			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_TCON0>,
+> +				 <&ccu CLK_TCON0>;
+> +			clock-names = "ahb",
+> +				      "tcon-ch1";
+> +			resets = <&ccu RST_BUS_TCON0>;
+> +			reset-names = "lcd";
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				tcon0_in: port@0 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <0>;
+> +
+> +					tcon0_in_mixer0: endpoint@0 {
+> +						reg = <0>;
+> +						remote-endpoint = <&mixer0_out_tcon0>;
+> +					};
+> +
+> +					tcon0_in_mixer1: endpoint@1 {
+> +						reg = <1>;
+> +						remote-endpoint = <&mixer1_out_tcon0>;
+> +					};
+> +				};
+> +
+> +				tcon0_out: port@1 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <1>;
+> +				};
+> +			};
+> +		};
+> +
+> +		tcon1: lcd-controller@1c0d000 {
+> +			compatible = "allwinner,sun8i-h3-tcon";
+> +			reg = <0x01c0d000 0x1000>;
+> +			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_TCON1>,
+> +				 <&ccu CLK_TVE>;
+> +			clock-names = "ahb",
+> +				      "tcon-ch1";
+> +			resets = <&ccu RST_BUS_TCON1>;
+> +			reset-names = "lcd";
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				tcon1_in: port@0 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <0>;
+> +
+> +					tcon1_in_mixer0: endpoint@0 {
+> +						reg = <0>;
+> +						remote-endpoint = <&mixer0_out_tcon1>;
+> +					};
+> +
+> +					tcon1_in_mixer1: endpoint@1 {
+> +						reg = <1>;
+> +						remote-endpoint = <&mixer1_out_tcon1>;
+> +					};
+> +				};
+> +
+> +				tcon1_out: port@1 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <1>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>  	timer {
+>  		compatible = "arm,armv7-timer";
+>  		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | 
+IRQ_TYPE_LEVEL_LOW)>,
+> --
+> 2.13.0
+> 
+> --
+> You received this message because you are subscribed to the Google Groups
+> "linux-sunxi" group. To unsubscribe from this group and stop receiving
+> emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
+
+
