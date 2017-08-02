@@ -1,58 +1,55 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1502280893.2759.36.camel@baylibre.com>
-Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-clk
- <linux-clk@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, "open
- list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Russell
- King <linux@armlinux.org.uk>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Adriana Reus <adi.reus@gmail.com>
-In-Reply-To: <150223201433.22158.14534387406241186358@resonance>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
-	 <1497955822.7387.3.camel@baylibre.com>
-	 <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
-	 <1497961950.7387.7.camel@baylibre.com>
-	 <1498050903.7387.12.camel@baylibre.com>
-	 <20170712011604.GQ22780@codeaurora.org>
-	 <1501088747.2401.27.camel@baylibre.com>
-	 <20170727224459.GO2146@codeaurora.org>
-	 <150223201433.22158.14534387406241186358@resonance>
-Content-Type: text/plain; charset="UTF-8"
-Date: Wed, 09 Aug 2017 14:14:53 +0200
-Mime-Version: 1.0
+Return-Path: <absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Wed, 02 Aug 2017 19:20:50 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, andy.gross@linaro.org, david.brown@linaro.org,
+ rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [RFC 06/12] Clk: qcom: support for dynamic updating the PLL
+In-Reply-To: <20170801211237.GM2146@codeaurora.org>
+References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
+ <1501153825-5181-7-git-send-email-absahu@codeaurora.org>
+ <20170728183428.GH2146@codeaurora.org>
+ <660f193a457e47a290356d377ef30cd2@codeaurora.org>
+ <20170801211237.GM2146@codeaurora.org>
+Message-ID: <d5d68fc218a04e1bf427e63656a2bfcf@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-08-08 at 15:40 -0700, Michael Turquette wrote:
-> Quoting Stephen Boyd (2017-07-27 15:44:59)
-> > On 07/26, Jerome Brunet wrote:
-> > > In the following mail, I've only replied where I wanted to discuss a bit
-> > > more.
-> > > For everything else, please consider the comments agreed and the
-> > > modifications
-> > > done as requested.
-> > > 
-> > 
-> > Ok. Good that we can move forward in some way so this is not a
-> > blocker. I've almost completed writing the qcom code to force
-> > clks on and off so it will be resolved one way or the other soon.
-> 
-> Stephen, are all of the existential issues are sufficiently resolved?
-> 
-> Jerome, are you going to submit a v4?
+On 2017-08-02 02:42, Stephen Boyd wrote:
+> On 07/30, Abhishek Sahu wrote:
+>> On 2017-07-29 00:04, Stephen Boyd wrote:
+>> >On 07/27, Abhishek Sahu wrote:
 
-Once the current discussion reaches an agreement, yes for sure.
-If it helps, I could send it right now, with the points being discussed
-addressed 
+>>  2. Following patch fixes different issue although flag name
+>>     is common.
+>> 
+>>  https://patchwork.kernel.org/patch/9662917/
+>> 
+>>  Shall I include this patch in my patch series but not
+>>  sure we can directly turn off the PLL inside the PLL
+>>  set rate operation since it will turn the PLL off for
+>>  all its users.
+>> 
+> 
+> Hopefully the users of a PLL that doesn't support dynamic rate
+> update can accept the fact that the clk will turn off while the
+> rate is reprogrammed. At least that seems to be true for Taniya
+> in that patch set. If it isn't true for your hardware, then don't
+> specify the flag? Or is the problem that you may not have the
+> flag set for certain PLLs that you're supporting?
 
-> 
-> Thanks,
-> Mike
-> 
-> > 
-> > -- 
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> > a Linux Foundation Collaborative Project
+  The turning off PLL will happen in case of flag is not set.
+  The turning off PLL in set rate is unsafe. If this PLL
+  is driving multiple RCG's and one of the RCG is changing the
+  PLL frequency by its clk_set_rate with CLK_SET_RATE_PARENT,
+  then all the RCG's clock will go off for some
+  time and it may trigger crash/silent reboot.
+
+  If the user is aware, then it can turn off the clock first,
+  then do the set rate and then it can enable again. In
+  PLL set_rate we can check if PLL is enabled and can
+  return EBUSY error.
