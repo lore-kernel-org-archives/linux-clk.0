@@ -1,64 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.134]:47461 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752234AbdHULP1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Aug 2017 07:15:27 -0400
-Subject: Re: [PATCH v2 1/4] clk: rockchip: add rv1108 ACLK_GAMC and PCLK_GMAC
- ID
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
-        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com,
-        xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com,
-        andy.yan@rock-chips.com, wdc@rock-chips.com
-References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
- <1503303367-17915-2-git-send-email-zhangqing@rock-chips.com>
- <f51160d5-32cc-a63c-3877-76ea91fb6e8b@rock-chips.com>
- <19279521.prAVXYBsZ9@phil>
-From: "David.Wu" <david.wu@rock-chips.com>
-Message-ID: <4765221b-e122-b67d-cec2-dffbeeadc379@rock-chips.com>
-Date: Mon, 21 Aug 2017 19:15:18 +0800
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <19279521.prAVXYBsZ9@phil>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <f03e50040dc2d3dc3edd6be071510feeb953161d.1500043741.git-series.plaes@plaes.org>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+ <f03e50040dc2d3dc3edd6be071510feeb953161d.1500043741.git-series.plaes@plaes.org>
+From: Jonathan Liu <net147@gmail.com>
+Date: Wed, 2 Aug 2017 17:05:04 +1000
+Message-ID: <CANwerB2En3q6XkUDwMo1CpCraCzpNi42WQYuAFb3yACT2j1FYw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU driver
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Olliver Schinagl <oliver@schinagl.nl>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+Hi Priit,
 
-在 2017/8/21 18:32, Heiko Stuebner 写道:
-> Hi David,
-> 
-> Am Montag, 21. August 2017, 18:22:31 CEST schrieb David.Wu:
->> Hi Elaine,
->>
->> 在 2017/8/21 16:16, Elaine Zhang 写道:
->>> This patch exports gmac aclk and pclk for dts reference.
->>>
->>> Signed-off-by: Elaine Zhang<zhangqing@rock-chips.com>
->>> ---
->>>    include/dt-bindings/clock/rv1108-cru.h | 2 ++
->>>    1 file changed, 2 insertions(+)
->>
->> Acked-by: David Wu <david.wu@rock-chips.com>
-> 
-> Acked-by is mainly meant for cross-maintainer stuff (changes
-> for one subsystem going through a different tree etc).
-> 
-> If you want to show that the change is correct and you have reviewed
-> the patch, please use "Reviewed-by".
-> 
+On 15 July 2017 at 00:49, Priit Laes <plaes@plaes.org> wrote:
+> Introduce a clock controller driver for sun4i A10 and sun7i A20
+> series SoCs.
+>
+> Signed-off-by: Priit Laes <plaes@plaes.org>
+> ---
+>  drivers/clk/sunxi-ng/Kconfig              |   13 +-
+>  drivers/clk/sunxi-ng/Makefile             |    1 +-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.c      | 1454 ++++++++++++++++++++++-
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   61 +-
+>  include/dt-bindings/clock/sun4i-a10-ccu.h |  200 +++-
+>  include/dt-bindings/clock/sun7i-a20-ccu.h |   53 +-
+>  include/dt-bindings/reset/sun4i-a10-ccu.h |   69 +-
+>  7 files changed, 1851 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
+>  create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
+>  create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
 
-Yeap, my intent is that the patches are correct. And change the tag here.🙂
-So for the series:
+<snip>
 
-Reviewed-by: David Wu <david.wu@rock-chips.com>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> new file mode 100644
+> index 0000000..09e97d7
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
 
-> 
-> Heiko
-> 
-> 
-> 
+<snip>
 
+> +static void __init sun4i_ccu_init(struct device_node *node,
+> +                                 const struct sunxi_ccu_desc *desc)
+> +{
+> +       void __iomem *reg;
+> +       u32 val;
+> +
+> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+> +       if (IS_ERR(reg)) {
+> +               pr_err("%s: Could not map the clock registers\n",
+> +                      of_node_full_name(node));
+> +               return;
+> +       }
+> +
+> +       /* Force the PLL-Audio-1x divider to 4 */
+> +       val = readl(reg + SUN4I_PLL_AUDIO_REG);
+
+> +       val &= ~GENMASK(19, 16);
+> +       writel(val | (3 << 16), reg + SUN4I_PLL_AUDIO_REG);
+
+This doesn't work for me on A20 (440 Hz tone outputs at 880 Hz tone)
+and I need to use the following instead:
+       val &= ~GENMASK(29, 26);
+       writel(val | (4 << 26), reg + SUN4I_PLL_AUDIO_REG);
+
+Toggling bits 16-19 doesn't seem to have any effect on the audio for me.
+
+Thanks.
+
+Regards,
+Jonathan
