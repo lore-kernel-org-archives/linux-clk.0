@@ -1,72 +1,157 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs1.siol.net ([213.250.19.134]:35250 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751186AbdHBTGc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Aug 2017 15:06:32 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, icenowy@aosc.io
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH 01/13] dt-bindings: update the binding for Allwinner H3 DE2 support
+Date: Wed, 02 Aug 2017 21:06:26 +0200
+Message-ID: <48442573.082BymFnMM@jernej-laptop>
+In-Reply-To: <d6c7c6de29be2674ad6b37b184d1df7f@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io> <79034825.lnfmIyYlWl@jernej-laptop> <d6c7c6de29be2674ad6b37b184d1df7f@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <7e211ba8fd8ae0296f678294d09fcf0d@aosc.io>
-References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-9-icenowy@aosc.io>
- <20170529073428.f5os7g5e666v4xnp@wens.csie.org> <7e211ba8fd8ae0296f678294d09fcf0d@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 12 Aug 2017 12:05:38 +0800
-Message-ID: <CAGb2v64_aUYrU0gJyVMiTpJq83FhPUfo9rj_51d4X5mK0NSONQ@mail.gmail.com>
-Subject: Re: [PATCH v3 08/10] clk: sunxi-ng: support R40 SoC
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Aug 12, 2017 at 12:04 PM,  <icenowy@aosc.io> wrote:
-> 在 2017-05-29 15:34，Chen-Yu Tsai 写道：
->>
->> Hi,
->>
->> On Sat, May 27, 2017 at 06:23:06PM +0800, Icenowy Zheng wrote:
->>>
->>> Allwinner R40 SoC have a clock controller module in the style of the
->>> SoCs beyond sun6i, however, it's more rich and complex.
->>>
->>> Add support for it.
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>> Changes in v3:
->>> - Rebased on current linux-next.
->>> Changes in v2:
->>> - Fixes according to the SoC's user manual.
->>>
->>>  drivers/clk/sunxi-ng/Kconfig              |   10 +
->>>  drivers/clk/sunxi-ng/Makefile             |    1 +
->>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1153
->>> +++++++++++++++++++++++++++++
->>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   68 ++
->>>  include/dt-bindings/clock/sun8i-r40-ccu.h |  191 +++++
->>>  include/dt-bindings/reset/sun8i-r40-ccu.h |  129 ++++
->>>  6 files changed, 1552 insertions(+)
->>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
->>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
->>>  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
->>>  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
->>>
->> ...
->>>
->>> +static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
->>> +                                  "osc24M", 0x04c,
->>> +                                  8, 7,        /* N */
->>
->>
->> N has minimum and maximum limits.
->
->
-> These constraints are never implemented in old SoCs.
+Hi,
 
-Then we should implement them if we find that they are
-missing.
+Dne sreda, 02. avgust 2017 ob 07:02:39 CEST je icenowy@aosc.io napisal(a):
+> 在 2017-08-02 12:53，Jernej Škrabec 写道：
+> 
+> > Hi Icenowy,
+> > 
+> > Dne torek, 01. avgust 2017 ob 15:12:52 CEST je Icenowy Zheng
+> > 
+> > napisal(a):
+> >> Allwinner H3 features a "Display Engine 2.0".
+> >> 
+> >> Add device tree bindings for the following parts:
+> >> - H3 TCONs
+> >> - H3 Mixers
+> >> - H3 Display engine
+> >> 
+> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> ---
+> >> 
+> >>  .../bindings/display/sunxi/sun4i-drm.txt           | 25
+> >> 
+> >> ++++++++++++++++++---- 1 file changed, 21 insertions(+), 4
+> >> deletions(-)
+> >> 
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> >> b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+> >> 2ee6ff0ef98e..92512953943e 100644
+> >> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> >> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> >> 
+> >> @@ -87,18 +87,17 @@ Required properties:
+> >>     * allwinner,sun6i-a31-tcon
+> >>     * allwinner,sun6i-a31s-tcon
+> >>     * allwinner,sun8i-a33-tcon
+> >> 
+> >> +   * allwinner,sun8i-h3-tcon
+> >> 
+> >>     * allwinner,sun8i-v3s-tcon
+> >>   
+> >>   - reg: base address and size of memory-mapped region
+> >>   - interrupts: interrupt associated to this IP
+> >>   
+> >>   - clocks: phandles to the clocks feeding the TCON. Three are needed:
+> >>     - 'ahb': the interface clocks
+> >> 
+> >> -   - 'tcon-ch0': The clock driving the TCON channel 0
+> >> 
+> >>   - resets: phandles to the reset controllers driving the encoder
+> >>   
+> >>     - "lcd": the reset line for the TCON channel 0
+> >>   
+> >>   - clock-names: the clock names mentioned above
+> >>   - reset-names: the reset names mentioned above
+> >> 
+> >> - - clock-output-names: Name of the pixel clock created
+> >> 
+> >>  - ports: A ports node with endpoint definitions as defined in
+> >>  
+> >>    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> >> 
+> >> @@ -112,7 +111,23 @@ Required properties:
+> >>    channel the endpoint is associated to. If that property is not
+> >>    present, the endpoint number will be used as the channel number.
+> >> 
+> >> -On SoCs other than the A33 and V3s, there is one more clock required:
+> >> +For the following compatibles:
+> >> +   * allwinner,sun5i-a13-tcon
+> >> +   * allwinner,sun6i-a31-tcon
+> >> +   * allwinner,sun6i-a31s-tcon
+> >> +   * allwinner,sun8i-a33-tcon
+> >> +   * allwinner,sun8i-v3s-tcon
+> >> +there is one more clock and one more property required:
+> >> + - clocks:
+> >> +   - 'tcon-ch0': The clock driving the TCON channel 0
+> >> + - clock-output-names: Name of the pixel clock created
+> >> +
+> >> +For the following compatibles:
+> >> +   * allwinner,sun5i-a13-tcon
+> >> +   * allwinner,sun6i-a31-tcon
+> >> +   * allwinner,sun6i-a31s-tcon
+> >> +   * allwinner,sun8i-h3-tcon
+> >> 
+> >> +there is one more clock required:
+> >>     - 'tcon-ch1': The clock driving the TCON channel 1
+> >>  
+> >>  DRC
+> >> 
+> >> @@ -207,6 +222,8 @@ supported.
+> >> 
+> >>  Required properties:
+> >>    - compatible: value must be one of:
+> >>      * allwinner,sun8i-v3s-de2-mixer
+> >> 
+> >> +    * allwinner,sun8i-h3-de2-mixer0
+> >> +    * allwinner,sun8i-h3-de2-mixer1
+> > 
+> > About that, I concur with Maxime here, plane number properties would be
+> > better. If we don't do this now, we will never have it.
+> 
+> But I still prefer different compatibles, as the capabilities are
+> already
+> proven to be different between mixer0 and mixer1, and furtherly we
+> cannot
+> promise Allwinner won't add more functions only available at mixer0.
+> 
+> Then we will be trapped into a situation that we describe more and more
+> functions via properties, but they should be encoded into the
+> compatible.
 
-ChenYu
+It is either multiple compatibles or multiple properties. I prefer the later, 
+but it is up to maintainers to decide.
+
+Anyway, I think DE2 will not evolve much since DE3 is almost ready (H6). At 
+least basics seems to be similar according to a BSP code drop.
+
+Regards,
+Jernej
+
+> 
+> > Reference:
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/512902.htm
+> > l
+> > 
+> > Regards,
+> > Jernej
+> 
+> --
+> You received this message because you are subscribed to the Google Groups
+> "linux-sunxi" group. To unsubscribe from this group and stop receiving
+> emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
+
+
