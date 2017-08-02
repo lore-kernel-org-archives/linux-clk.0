@@ -1,134 +1,98 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <598BFCB8.5070401@samsung.com>
-Date: Thu, 10 Aug 2017 15:27:04 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sylwester
-	Nawrocki <s.nawrocki@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v8 4/5] clk: samsung: exynos-audss: Use local variable
- for controller's device
-In-reply-to: <1502274907-11931-5-git-send-email-m.szyprowski@samsung.com>
-References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
-	<CGME20170809103514eucas1p11fb5d1af243e882a5d51a25956d24a19@eucas1p1.samsung.com>
-	<1502274907-11931-5-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:37728 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751058AbdHBFH5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Aug 2017 01:07:57 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 02 Aug 2017 13:07:55 +0800
+From: icenowy@aosc.io
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [linux-sunxi] [PATCH 07/13] ARM: sun8i: h3: add display engine
+ pipeline barebone
+In-Reply-To: <1773537.vAqre0jhCE@jernej-laptop>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+ <20170801131304.7741-8-icenowy@aosc.io> <1773537.vAqre0jhCE@jernej-laptop>
+Message-ID: <fcbff773f61061bbc0f1d6ffef2a7c35@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 2017년 08월 09일 19:35, Marek Szyprowski wrote:
-> Store pointer to the controller's device in local variable to avoid
-> extracting it from platform device in each call. This will also simplify
-> code in the future, when runtime PM support is added.
+在 2017-08-02 12:47，Jernej Škrabec 写道：
+> Hi Icenowy,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos-audss.c | 25 +++++++++++++------------
->  1 file changed, 13 insertions(+), 12 deletions(-)
+> Dne torek, 01. avgust 2017 ob 15:12:58 CEST je Icenowy Zheng 
+> napisal(a):
+>> As we have already the support for the DE2 on Allwinner H3, add the
+>> display engine pipeline device tree nodes to its DTSI file.
+>> 
+>> The H5 pipeline has some differences and will be enabled later.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  arch/arm/boot/dts/sun8i-h3.dtsi | 170
+>> ++++++++++++++++++++++++++++++++++++++++ 1 file changed, 170 
+>> insertions(+)
+>> 
+>> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+>> b/arch/arm/boot/dts/sun8i-h3.dtsi index b36f9f423c39..75ad7b65a7fc 
+>> 100644
+>> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+>> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+>> @@ -41,6 +41,8 @@
+>>   */
+>> 
+>>  #include "sunxi-h3-h5.dtsi"
+>> +#include <dt-bindings/clock/sun8i-de2.h>
+>> +#include <dt-bindings/reset/sun8i-de2.h>
+>> 
+>>  / {
+>>  	cpus {
+>> @@ -72,6 +74,174 @@
+>>  		};
+>>  	};
+>> 
+>> +	de: display-engine {
+>> +		compatible = "allwinner,sun8i-h3-display-engine";
+>> +		allwinner,pipelines = <&mixer0>,
+>> +				      <&mixer1>;
+>> +		status = "disabled";
+>> +	};
+>> +
+>> +	soc {
+>> +		display_clocks: clock@1000000 {
+>> +			compatible = "allwinner,sun8i-a83t-de2-clk";
+>> +			reg = <0x01000000 0x100000>;
+>> +			clocks = <&ccu CLK_BUS_DE>,
+>> +				 <&ccu CLK_DE>;
+>> +			clock-names = "bus",
+>> +				      "mod";
+>> +			resets = <&ccu RST_BUS_DE>;
+>> +			#clock-cells = <1>;
+>> +			#reset-cells = <1>;
+>> +			assigned-clocks = <&ccu CLK_DE>;
+>> +			assigned-clock-parents = <&ccu CLK_PLL_DE>;
+>> +			assigned-clock-rates = <432000000>;
+>> +		};
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-> index 1fab56f396d4..6be52fb46ff3 100644
-> --- a/drivers/clk/samsung/clk-exynos-audss.c
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -135,6 +135,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  	const struct exynos_audss_clk_drvdata *variant;
->  	struct clk_hw **clk_table;
->  	struct resource *res;
-> +	struct device *dev = &pdev->dev;
->  	int i, ret = 0;
->  
->  	variant = of_device_get_match_data(&pdev->dev);
-> @@ -142,15 +143,15 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(&pdev->dev, res);
-> +	reg_base = devm_ioremap_resource(dev, res);
->  	if (IS_ERR(reg_base)) {
-> -		dev_err(&pdev->dev, "failed to map audss registers\n");
-> +		dev_err(dev, "failed to map audss registers\n");
->  		return PTR_ERR(reg_base);
->  	}
->  
->  	epll = ERR_PTR(-ENODEV);
->  
-> -	clk_data = devm_kzalloc(&pdev->dev,
-> +	clk_data = devm_kzalloc(dev,
->  				sizeof(*clk_data) +
->  				sizeof(*clk_data->hws) * EXYNOS_AUDSS_MAX_CLKS,
->  				GFP_KERNEL);
-> @@ -160,8 +161,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  	clk_data->num = variant->num_clks;
->  	clk_table = clk_data->hws;
->  
-> -	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
-> -	pll_in = devm_clk_get(&pdev->dev, "pll_in");
-> +	pll_ref = devm_clk_get(dev, "pll_ref");
-> +	pll_in = devm_clk_get(dev, "pll_in");
->  	if (!IS_ERR(pll_ref))
->  		mout_audss_p[0] = __clk_get_name(pll_ref);
->  	if (!IS_ERR(pll_in)) {
-> @@ -172,7 +173,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  
->  			ret = clk_prepare_enable(epll);
->  			if (ret) {
-> -				dev_err(&pdev->dev,
-> +				dev_err(dev,
->  					"failed to prepare the epll clock\n");
->  				return ret;
->  			}
-> @@ -183,8 +184,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  				CLK_SET_RATE_NO_REPARENT,
->  				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
->  
-> -	cdclk = devm_clk_get(&pdev->dev, "cdclk");
-> -	sclk_audio = devm_clk_get(&pdev->dev, "sclk_audio");
-> +	cdclk = devm_clk_get(dev, "cdclk");
-> +	sclk_audio = devm_clk_get(dev, "sclk_audio");
->  	if (!IS_ERR(cdclk))
->  		mout_i2s_p[1] = __clk_get_name(cdclk);
->  	if (!IS_ERR(sclk_audio))
-> @@ -222,7 +223,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  				 "sclk_pcm", CLK_SET_RATE_PARENT,
->  				reg_base + ASS_CLK_GATE, 4, 0, &lock);
->  
-> -	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
-> +	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
->  	if (!IS_ERR(sclk_pcm_in))
->  		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
->  	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
-> @@ -237,16 +238,16 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  
->  	for (i = 0; i < clk_data->num; i++) {
->  		if (IS_ERR(clk_table[i])) {
-> -			dev_err(&pdev->dev, "failed to register clock %d\n", i);
-> +			dev_err(dev, "failed to register clock %d\n", i);
->  			ret = PTR_ERR(clk_table[i]);
->  			goto unregister;
->  		}
->  	}
->  
-> -	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
-> +	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->  				     clk_data);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "failed to add clock provider\n");
-> +		dev_err(dev, "failed to add clock provider\n");
->  		goto unregister;
->  	}
->  
+> I believe Maxime ask you to use clk_set_rate() in the past:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/512909.html
+
+Yes, but I think the frequency is still part of our configuration, not 
+forced
+by the hardware.
+
+If we set it in the driver, why don't we set it to 300MHz?
+
+(In fact for pipelines without TVE we can really use 300MHz for CLK_DE, 
+and if
+we do not want 4K we can even use lower frequency)
+
 > 
-
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> Regards,
+> Jernej
