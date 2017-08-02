@@ -1,75 +1,63 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC v2 08/12] clk: qcom: support for Brammo PLL
-Date: Tue,  8 Aug 2017 23:54:13 +0530
-Message-Id: <1502216657-3342-9-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:32770 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753122AbdHBL5I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Aug 2017 07:57:08 -0400
+Date: Wed, 2 Aug 2017 13:57:06 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Subject: Re: [PATCH 0/3] clk: renesas: rcar-gen3-cpg: updates to SD divider
+ table
+Message-ID: <20170802115706.ij3tqalr7etvl4gx@ninjato>
+References: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
+ <20170801162936.knvmsojiu7xibdxq@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6x7ck3ul4yetslym"
+In-Reply-To: <20170801162936.knvmsojiu7xibdxq@ninjato>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-1. Brammo PLL does not allow configuration of VCO
-2. Supports the dynamic update in which the frequency can
-   be changed dynamically without turning off the PLL
-3. The register offsets are different from normal Alpha PLL
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  2 ++
- 2 files changed, 14 insertions(+)
+--6x7ck3ul4yetslym
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 23e2bb7..b491dbe 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -107,6 +107,18 @@
- };
- EXPORT_SYMBOL_GPL(clk_alpha_huayra_pll_offsets);
- 
-+const u8 clk_alpha_brammo_pll_offsets[] = {
-+	[ALPHA_PLL_MODE] = 0x00,
-+	[ALPHA_PLL_L_VAL] = 0x04,
-+	[ALPHA_PLL_ALPHA_VAL] = 0x08,
-+	[ALPHA_PLL_ALPHA_VAL_U] = 0x0c,
-+	[ALPHA_PLL_USER_CTL] = 0x10,
-+	[ALPHA_PLL_CONFIG_CTL] = 0x18,
-+	[ALPHA_PLL_TEST_CTL] = 0x1c,
-+	[ALPHA_PLL_STATUS] = 0x24,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_brammo_pll_offsets);
-+
- static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
- 			const char *action)
- {
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index af74abf..8a0dab6 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -64,6 +64,7 @@ struct clk_alpha_pll {
- #define CLK_HUAYRA_PLL_FLAGS	(SUPPORTS_NO_VCO | SUPPORTS_DYNAMIC_UPDATE | \
- 				 SUPPORTS_64BIT_CONFIG_CTL |		     \
- 				 SUPPORTS_16BIT_ALPHA)
-+#define CLK_BRAMMO_PLL_FLAGS	(SUPPORTS_NO_VCO | SUPPORTS_DYNAMIC_UPDATE)
- 
- /**
-  * struct clk_alpha_pll_postdiv - phase locked loop (PLL) post-divider
-@@ -102,6 +103,7 @@ struct alpha_pll_config {
- 
- extern const u8 clk_alpha_pll_offsets[];
- extern const u8 clk_alpha_huayra_pll_offsets[];
-+extern const u8 clk_alpha_brammo_pll_offsets[];
- 
- extern const struct clk_ops clk_alpha_pll_ops;
- extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+On Tue, Aug 01, 2017 at 06:29:36PM +0200, Wolfram Sang wrote:
+>=20
+> > Tested on a M3-W Salvator-X (r8a7796) with HS and SDR50/104 cards. clk_=
+summary
+> > shows the same frequency selections as before.
+>=20
+> Darn, not tested on H3 ES1.0 where it fails because everything is half
+> speed there :( Need to rethink this.
+
+Please discard this series. We need to respin it when we implement HS400
+support.
+
+
+--6x7ck3ul4yetslym
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmBvg8ACgkQFA3kzBSg
+KbYTmBAAtLBzKcEZLnGV+LZiS2ItpFvuiWVdsaDTQTV0/W+MVdp6byfIWngU9/EI
+IphNCR/CBhGIQPY0c++Ioc3VTbC6Mqr+aJnya67WfXPQH9Nsut/US+Bu6qlVgy+i
+P2wcFqysQKXoFUtLKKwmiGtz50m97pZOWKBwmDpIuTPjsCpFTErkE9PLgdIwlmSg
+RTVb/CSQdtXDV6pljyzS0B7fFTYZ1S6z279OIlSLzsVEN0f9vHP1VhEASFYBv9/0
+laDoK0J8atsWNnkjKY8bXUL6YrCB63u0YkXMiGY3uFqeJ5vCUjdBImFM4J1mmchK
+jkWJPybS2JwiQUma/DUMCHzz1ZCIBDIUtr/MMhXMNidnhXwRZK9aLUwRdW01nO91
+1RKXIjP0VFCOj7fW5uJMD9nAw59QN8M8DJzh3Ruap0aLMB1T4mvTQt5j7zt/vNeU
+6g9TUjmm4qlSwRPQeKlIwAXAU+uC3AUt0jBiGHUUm/LC+4Zfo9YpT1k9yTDZjPh5
+QU7LzxzOe2HCfJz4nBcpMW1PFHVqGHhLwEm6b3czf45i8Elyc/tH5nXVyOBKBtqE
+hmAmMh+p9RZ8q9WsO4LZSivLhTSh14TCks+MT8cTzGBRc/VfD5h4VELjnN4kkmGZ
+1lhbC/VRziK+JuRhA+5HyCxs07qVcTdTk6NE2XWzj7HkGP5/ZMo=
+=SHR7
+-----END PGP SIGNATURE-----
+
+--6x7ck3ul4yetslym--
