@@ -1,41 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38497 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbdHDNXT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 09:23:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 4/4] clk: renesas: r8a7795: Add Z2 clock
-Date: Fri,  4 Aug 2017 15:23:00 +0200
-Message-Id: <1501852980-22733-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
-References: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170726194522.7d64f7c2danrknfi@flea>
+References: <20170724135905.28855-1-wens@csie.org> <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
+ <20170726194522.7d64f7c2danrknfi@flea>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 3 Aug 2017 13:19:50 +0200
+Message-ID: <CAPDyKFrssySjKW0E7sB3D-UjVea8_Yxvrkkr7sKf47x6jwgVSQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC controllers
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 26 July 2017 at 21:45, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Wed, Jul 26, 2017 at 10:09:41PM +0800, Chen-Yu Tsai wrote:
+>> On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>> > Hi everyone,
+>> >
+>> > This is v3 of my MMC controller support series.
+>> >
+>>
+>> [...]
+>>
+>> > Chen-Yu Tsai (10):
+>> >   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+>> >   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
+>> >     switching
+>> >   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
+>> >   mmc: sunxi: Support controllers that can use both old and new timings
+>> >   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
+>> >   mmc: sunxi: Add support for A83T eMMC (MMC2)
+>>
+>> So this series seems to be ready for inclusion, unless Ulf has further
+>> concerns about the clk usage.
+>>
+>> The first mmc patch have build time dependencies on the first clk patch.
+>> Shall we put the clk patch on a separate immutable branch for both trees
+>> to pull? Or we could just merge everything through the mmc tree? I don't
+>> think we'll touch this part of the sunxi-ng clk driver for the remainder
+>> of this cycle.
+>
+> I guess the easiest would be for it to go through Ulf tree, unless he
+> says otherwise of course :)
 
-This patch adds Z2 clock for r8a7795 SoC.
+Okay, I have picked up the series and applied it for my next branch.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 084ccf01fae6..b0266a4b0852 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -75,6 +75,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
- 
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
-+	DEF_BASE("z2",          R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
--- 
-2.1.4
-
+Thanks and kind regards
+Uffe
