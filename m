@@ -1,41 +1,66 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: sebastian.hesselbarth@gmail.com,
-	rabeeh@solid-run.com,
-	linux@armlinux.org.uk,
-	linux-clk@vger.kernel.org,
-	Sergej Sawazki <sergej@taudac.com>
-Subject: [PATCH 0/3] clk: si5351: PLL reset fixes
-Date: Sat, 12 Aug 2017 16:23:00 +0200
-Message-Id: <1502547783-24685-1-git-send-email-sergej@taudac.com>
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <CAGb2v648K1Nguf8nVjfunow7+xwS0MHazzMXJd1xZ3uNM2WesA@mail.gmail.com>
+References: <20170724135905.28855-1-wens@csie.org> <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
+ <20170726194522.7d64f7c2danrknfi@flea> <CAPDyKFrssySjKW0E7sB3D-UjVea8_Yxvrkkr7sKf47x6jwgVSQ@mail.gmail.com>
+ <CAGb2v648K1Nguf8nVjfunow7+xwS0MHazzMXJd1xZ3uNM2WesA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 3 Aug 2017 14:02:42 +0200
+Message-ID: <CAPDyKFrBfQ-mNTNitcpgo1FCa1068ZzC_J4efsxmU2X6tOJgzw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC controllers
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The Si5351 clock generator has up to 8 output clocks and 2 PLLs. In order
-to get a deterministic phase offset relationship between the output clocks,
-it is necessary to reset the PLLs is certain scenarios.
+On 3 August 2017 at 13:25, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Thu, Aug 3, 2017 at 7:19 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 26 July 2017 at 21:45, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>>> On Wed, Jul 26, 2017 at 10:09:41PM +0800, Chen-Yu Tsai wrote:
+>>>> On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>>>> > Hi everyone,
+>>>> >
+>>>> > This is v3 of my MMC controller support series.
+>>>> >
+>>>>
+>>>> [...]
+>>>>
+>>>> > Chen-Yu Tsai (10):
+>>>> >   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+>>>> >   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
+>>>> >     switching
+>>>> >   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
+>>>> >   mmc: sunxi: Support controllers that can use both old and new timings
+>>>> >   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
+>>>> >   mmc: sunxi: Add support for A83T eMMC (MMC2)
+>>>>
+>>>> So this series seems to be ready for inclusion, unless Ulf has further
+>>>> concerns about the clk usage.
+>>>>
+>>>> The first mmc patch have build time dependencies on the first clk patch.
+>>>> Shall we put the clk patch on a separate immutable branch for both trees
+>>>> to pull? Or we could just merge everything through the mmc tree? I don't
+>>>> think we'll touch this part of the sunxi-ng clk driver for the remainder
+>>>> of this cycle.
+>>>
+>>> I guess the easiest would be for it to go through Ulf tree, unless he
+>>> says otherwise of course :)
+>>
+>> Okay, I have picked up the series and applied it for my next branch.
+>
+> I guess I wasn't very clear. When I meant "everything" I meant the mmc
+> and clk patches. We will take the dts patches through the sunxi tree.
+>
+> Can you drop the four dts patches from your tree? That would be the
+> last four patches on mmc/next at the moment.
 
-This patch-set:
- * fixes a regression and adds resetting the PLL before enabling the outputs
- * adds a dt-property for enabling/disabling the PLL reset
- * adds a debug message for PLL reset (it is helpful during debugging,
-   probably no longer required?)
+Done!
 
-Based on clk-next.
-
-Best regards,
-Sergej
-
-Sergej Sawazki (3):
-  clk: si5351: Apply PLL soft reset before enabling the outputs
-  clk: si5351: Add DT property to enable PLL reset
-  clk: si5351: Add a debug message for PLL reset
-
- .../devicetree/bindings/clock/silabs,si5351.txt    |  1 +
- drivers/clk/clk-si5351.c                           | 40 ++++++++++++++++++++--
- include/linux/platform_data/si5351.h               |  2 ++
- 3 files changed, 41 insertions(+), 2 deletions(-)
-
--- 
-2.7.4
+Kind regards
+Uffe
