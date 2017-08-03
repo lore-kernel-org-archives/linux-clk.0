@@ -1,27 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Aug 2017 09:13:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.13
-Message-ID: <20170802161318.GP2146@codeaurora.org>
-References: <20170802081540.kzy2q7qo4lb3muxt@wens.csie.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170802081540.kzy2q7qo4lb3muxt@wens.csie.org>
+In-Reply-To: <CAPDyKFrssySjKW0E7sB3D-UjVea8_Yxvrkkr7sKf47x6jwgVSQ@mail.gmail.com>
+References: <20170724135905.28855-1-wens@csie.org> <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
+ <20170726194522.7d64f7c2danrknfi@flea> <CAPDyKFrssySjKW0E7sB3D-UjVea8_Yxvrkkr7sKf47x6jwgVSQ@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 3 Aug 2017 19:25:24 +0800
+Message-ID: <CAGb2v648K1Nguf8nVjfunow7+xwS0MHazzMXJd1xZ3uNM2WesA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC controllers
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/02, Chen-Yu Tsai wrote:
-> Hi Mike, Stephen,
-> 
-> I will be handling most of the Allwinner pull requests for this cycle.
-> Here is a critical fix for the sunxi-ng clk drivers.
-> 
+On Thu, Aug 3, 2017 at 7:19 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 26 July 2017 at 21:45, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>> On Wed, Jul 26, 2017 at 10:09:41PM +0800, Chen-Yu Tsai wrote:
+>>> On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>>> > Hi everyone,
+>>> >
+>>> > This is v3 of my MMC controller support series.
+>>> >
+>>>
+>>> [...]
+>>>
+>>> > Chen-Yu Tsai (10):
+>>> >   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
+>>> >   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
+>>> >     switching
+>>> >   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
+>>> >   mmc: sunxi: Support controllers that can use both old and new timings
+>>> >   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
+>>> >   mmc: sunxi: Add support for A83T eMMC (MMC2)
+>>>
+>>> So this series seems to be ready for inclusion, unless Ulf has further
+>>> concerns about the clk usage.
+>>>
+>>> The first mmc patch have build time dependencies on the first clk patch.
+>>> Shall we put the clk patch on a separate immutable branch for both trees
+>>> to pull? Or we could just merge everything through the mmc tree? I don't
+>>> think we'll touch this part of the sunxi-ng clk driver for the remainder
+>>> of this cycle.
+>>
+>> I guess the easiest would be for it to go through Ulf tree, unless he
+>> says otherwise of course :)
+>
+> Okay, I have picked up the series and applied it for my next branch.
 
-Thanks. Pulled.
+I guess I wasn't very clear. When I meant "everything" I meant the mmc
+and clk patches. We will take the dts patches through the sunxi tree.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Can you drop the four dts patches from your tree? That would be the
+last four patches on mmc/next at the moment.
+
+Thanks and sorry for the confusion.
+
+ChenYu
