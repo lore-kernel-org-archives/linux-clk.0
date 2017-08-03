@@ -1,40 +1,38 @@
-Return-Path: <romain.perier@collabora.com>
-From: Romain Perier <romain.perier@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Romain Perier <romain.perier@collabora.com>
-Subject: [PATCH 0/4] rockchip: Add efuse support for RK3368 SoCs
-Date: Mon, 28 Aug 2017 14:16:00 +0200
-Message-Id: <20170828121604.15968-1-romain.perier@collabora.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 3 Aug 2017 18:08:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+	carlo@caione.org, narmstrong@baylibre.com, jbrunet@baylibre.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux@armlinux.org.uk, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: meson8b: describe the
+ embedded reset controller
+Message-ID: <20170803230822.5kd6y46pqnpxezms@rob-hp-laptop>
+References: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
+ <20170728211313.10603-2-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170728211313.10603-2-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This set of patches exports the right clocks, add required functions
-and data, and definition for enabling and supporting eFuse on RK3368
-SoCs.
+On Fri, Jul 28, 2017 at 11:13:11PM +0200, Martin Blumenstingl wrote:
+> The Amlogic Meson8/Meson8b/Meson8m2 clock controller provides some reset
+> lines. These are used for example to boot the secondary CPU cores.
+> 
+> This patch describes the reset controller which is embedded into the
+> clock controller on these SoCs.
+> A header file is provided which provides preprocessor macros for each
+> reset line (to make the .dts files easier to read).
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  .../bindings/clock/amlogic,meson8b-clkc.txt        |  9 +++++++-
+>  .../dt-bindings/reset/amlogic,meson8b-clkc-reset.h | 27 ++++++++++++++++++++++
+>  2 files changed, 35 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h
 
-Romain Perier (4):
-  clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
-  clk: rockchip: export clock pclk_efuse_256 for RK3368 SoCs
-  nvmem: rockchip: add support for RK3368
-  arm64: dts: rockchip: add efuse for RK3368 SoCs
-
- .../devicetree/bindings/nvmem/rockchip-efuse.txt   |  1 +
- arch/arm64/boot/dts/rockchip/rk3368.dtsi           | 14 ++++
- drivers/clk/rockchip/clk-rk3368.c                  |  2 +-
- drivers/nvmem/rockchip-efuse.c                     | 80 ++++++++++++++++++++++
- include/dt-bindings/clock/rk3368-cru.h             |  1 +
- 5 files changed, 97 insertions(+), 1 deletion(-)
-
--- 
-2.11.0
+Acked-by: Rob Herring <robh@kernel.org>
