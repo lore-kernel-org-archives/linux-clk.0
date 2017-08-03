@@ -1,50 +1,46 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>
-Subject: [PATCH 1/2] dt-bindings: aspeed-scu: Add clock and reset properties
-Date: Wed, 23 Aug 2017 15:39:56 +0930
-Message-Id: <20170823060957.31167-1-joel@jms.id.au>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:55064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751184AbdHCBPF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Aug 2017 21:15:05 -0400
+Date: Thu, 3 Aug 2017 09:13:58 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: kernel@pengutronix.de, sboyd@codeaurora.org, aisheng.dong@nxp.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
+        richard@nod.at, robh+dt@kernel.org, mark.rutland@arm.com,
+        han.xu@nxp.com, fabio.estevam@freescale.com,
+        LW@karo-electronics.de, linux-mtd@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] ARM: dts: imx7: add NAND support
+Message-ID: <20170803011357.GA31819@dragon>
+References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
+ <20170614151146.GC30112@dragon>
+ <c05aff108433c9ced4c85efcf3ba65e8@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c05aff108433c9ced4c85efcf3ba65e8@agner.ch>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- Documentation/devicetree/bindings/mfd/aspeed-scu.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Tue, Aug 01, 2017 at 07:41:41PM -0700, Stefan Agner wrote:
+> Hi Shawn,
+> 
+> On 2017-06-14 08:11, Shawn Guo wrote:
+> > On Thu, Jun 08, 2017 at 03:34:46PM -0700, Stefan Agner wrote:
+> >> Stefan Agner (3):
+> >>   clk: imx7d: create clocks behind rawnand clock gate
+> >>   ARM: dts: imx7: add GPMI NAND and APBH DMA
+> >>   ARM: dts: imx7-colibri: add NAND support
+> > 
+> > Both dts patches look good to me.  Please ping me after the clk patch
+> > lands on mainline.
+> 
+> The clk patch landed in mainline. These two patches seem to apply fine
+> still. Can you queue them for -next?
 
-diff --git a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
-index 4fc5b83726d6..ce8cf0ec6279 100644
---- a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
-+++ b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
-@@ -9,10 +9,16 @@ Required properties:
- 		"aspeed,g5-scu", "syscon", "simple-mfd"
- 
- - reg:		contains the offset and length of the SCU memory region
-+- #clock-cells: should be set to <1> - the system controller is also a
-+	clock provider
-+- #reset-cells: should be set to <1> - the system controller is also a
-+	reset line provider
- 
- Example:
- 
- syscon: syscon@1e6e2000 {
- 	compatible = "aspeed,ast2400-scu", "syscon", "simple-mfd";
- 	reg = <0x1e6e2000 0x1a8>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
- };
--- 
-2.14.1
+Just applied.  Thanks for reminding.
+
+Shawn
