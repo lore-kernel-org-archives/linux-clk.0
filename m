@@ -1,182 +1,380 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC v2 04/12] clk: qcom: fix 16 bit alpha support calculation
-Date: Tue,  8 Aug 2017 23:54:09 +0530
-Message-Id: <1502216657-3342-5-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 3 Aug 2017 18:53:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] ARC: clk: introduce HSDKv1 pll driver
+Message-ID: <20170804015351.GW2146@codeaurora.org>
+References: <20170714153128.8945-1-Eugeniy.Paltsev@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170714153128.8945-1-Eugeniy.Paltsev@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The alpha value calculation function has been written for 40 bit
-alpha which is not coming properly for 16 bit
+On 07/14, Eugeniy Paltsev wrote:
+> HSDKv1 boards manages it's clocks using various PLLs. These PLL has same
 
-1. Alpha value is being calculated on the basis of
-   ALPHA_BITWIDTH to make the computation easy for 40 bit alpha.
-   After calculating the 32 bit alpha, It is being converted to 40
-   bit alpha by making making lower bits zero. But if actual alpha
-   register width is less than ALPHA_BITWIDTH, then the actual width
-   can be used for calculation
+s/it's/its/
 
-2. During 40 bit alpha pll set rate, the lower alpha register is
-   not being configured
+s/has/have/
 
-Now the changes have been made to calculate the rate and register
-values from alpha_width instead hardcoding it so that it can work
-for all the cases.
+> dividers and corresponding control registers mapped to different addresses.
+> So we add one common driver for such PLLs.
+> 
+> Each PLL on HSDK board consist of three dividers: IDIV, FBDIV and
+> ODIV. Output clock value is managed using these dividers.
+> 
+> We add pre-defined tables with supported rate values and appropriate
+> configurations of IDIV, FBDIV and ODIV for each value.
+> 
+> As of today we add support for PLLs that generate clock for the
+> HSDKv1 arc cpus, system, ddr, AXI tunnel and hdmi.
+> 
+> By this patch we add support for several plls (arc cpus pll and others),
+> so we had to use two different init types: CLK_OF_DECLARE for arc cpus pll
+> and regular probing for others plls.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 56 +++++++++++++++++++++++-----------------
- 1 file changed, 33 insertions(+), 23 deletions(-)
+Ok. This should be put into comment form above the
+CLK_OF_DECLARE() macro in the driver. Like "CPU PLL needed early
+for XYZ thing that is used early".
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 084fbdc..6694fd5 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -45,8 +45,11 @@
-  * Even though 40 bits are present, use only 32 for ease of calculation.
-  */
- #define ALPHA_REG_BITWIDTH	40
-+#define ALPHA_REG_16BIT_WIDTH	16
- #define ALPHA_BITWIDTH		32
--#define ALPHA_16BIT_MASK	0xffff
-+
-+#define pll_alpha_width(pll)  (pll->flags & SUPPORTS_16BIT_ALPHA ?	\
-+			       ALPHA_REG_16BIT_WIDTH : ALPHA_REG_BITWIDTH)
- 
- #define pll_mode(pll)		(pll->base + pll->offsets[ALPHA_PLL_MODE])
- #define pll_l(pll)		(pll->base + pll->offsets[ALPHA_PLL_L_VAL])
-@@ -317,13 +320,16 @@ static void clk_alpha_pll_disable(struct clk_hw *hw)
- 	regmap_update_bits(pll->clkr.regmap, pll_mode(pll), mask, 0);
- }
- 
--static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
-+static unsigned long
-+alpha_pll_calc_rate(u64 prate, u32 l, u32 a, u32 alpha_width)
- {
--	return (prate * l) + ((prate * a) >> ALPHA_BITWIDTH);
-+	return (prate * l) + ((prate * a) >>
-+		(alpha_width < ALPHA_BITWIDTH ? alpha_width : ALPHA_BITWIDTH));
- }
- 
- static unsigned long
--alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a)
-+alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
-+		     u32 alpha_width)
- {
- 	u64 remainder;
- 	u64 quotient;
-@@ -338,14 +344,16 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
- 	}
- 
- 	/* Upper ALPHA_BITWIDTH bits of Alpha */
--	quotient = remainder << ALPHA_BITWIDTH;
-+	quotient = remainder << (alpha_width < ALPHA_BITWIDTH ?
-+				 alpha_width : ALPHA_BITWIDTH);
-+
- 	remainder = do_div(quotient, prate);
- 
- 	if (remainder)
- 		quotient++;
- 
- 	*a = quotient;
--	return alpha_pll_calc_rate(prate, *l, *a);
-+	return alpha_pll_calc_rate(prate, *l, *a, alpha_width);
- }
- 
- static const struct pll_vco *
-@@ -364,26 +372,28 @@ static unsigned long alpha_pll_calc_rate(u64 prate, u32 l, u32 a)
- static unsigned long
- clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- {
--	u32 l, low, high, ctl;
--	u64 a = 0, prate = parent_rate;
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	u32 l, low, high, ctl, alpha_width = pll_alpha_width(pll);
-+	u64 a = 0, prate = parent_rate;
- 
- 	regmap_read(pll->clkr.regmap, pll_l(pll), &l);
- 
- 	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
- 	if (ctl & PLL_ALPHA_EN) {
- 		regmap_read(pll->clkr.regmap, pll_alpha(pll), &low);
--		if (pll->flags & SUPPORTS_16BIT_ALPHA) {
--			a = low & ALPHA_16BIT_MASK;
--		} else {
-+		if (alpha_width > 32) {
- 			regmap_read(pll->clkr.regmap, pll_alpha_u(pll),
- 				    &high);
- 			a = (u64)high << 32 | low;
--			a >>= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
-+		} else {
-+			a = low & GENMASK(0, alpha_width - 1);
- 		}
-+
-+		if (alpha_width > ALPHA_BITWIDTH)
-+			a >>= alpha_width - ALPHA_BITWIDTH;
- 	}
- 
--	return alpha_pll_calc_rate(prate, l, a);
-+	return alpha_pll_calc_rate(prate, l, a, alpha_width);
- }
- 
- static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -391,10 +401,10 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	const struct pll_vco *vco;
--	u32 l;
-+	u32 l, alpha_width = pll_alpha_width(pll);
- 	u64 a;
- 
--	rate = alpha_pll_round_rate(rate, prate, &l, &a);
-+	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
- 	vco = alpha_pll_find_vco(pll, rate);
- 	if (!vco) {
- 		pr_err("alpha pll not in a valid vco range\n");
-@@ -403,13 +413,13 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	regmap_write(pll->clkr.regmap, pll_l(pll), l);
- 
--	if (pll->flags & SUPPORTS_16BIT_ALPHA) {
--		regmap_write(pll->clkr.regmap, pll_alpha(pll),
--			     a & ALPHA_16BIT_MASK);
--	} else {
--		a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
-+	if (alpha_width > ALPHA_BITWIDTH)
-+		a <<= alpha_width - ALPHA_BITWIDTH;
-+
-+	if (alpha_width > 32)
- 		regmap_write(pll->clkr.regmap, pll_alpha_u(pll), a >> 32);
--	}
-+
-+	regmap_write(pll->clkr.regmap, pll_alpha(pll), a);
- 
- 	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
- 			   PLL_VCO_MASK << PLL_VCO_SHIFT,
-@@ -425,11 +435,11 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				     unsigned long *prate)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
--	u32 l;
-+	u32 l, alpha_width = pll_alpha_width(pll);
- 	u64 a;
- 	unsigned long min_freq, max_freq;
- 
--	rate = alpha_pll_round_rate(rate, *prate, &l, &a);
-+	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
- 	if (alpha_pll_find_vco(pll, rate))
- 		return rate;
- 
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 68ca2d9..198fc14 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -219,6 +219,13 @@ config COMMON_CLK_VC5
+>  	  This driver supports the IDT VersaClock5 programmable clock
+>  	  generator.
+>  
+> +config CLK_HSDK_V1
+> +	bool "PLL Driver for HSDKv1 platform"
+> +	depends on OF || COMPILE_TEST
+> +	---help---
+> +	  This driver supports the HSDKv1 core, system, ddr, tunnel and hdmi PLLs
+> +	  control.
+> +
+
+Are we keeping this file sorted? Not really, but please put this
+somewhere semi-sorted instead of at the end of the file. I'll go
+and sort this Kconfig file later.
+
+> diff --git a/drivers/clk/clk-hsdk-pll.c b/drivers/clk/clk-hsdk-pll.c
+> new file mode 100644
+> index 0000000..4e58e55
+> --- /dev/null
+> +++ b/drivers/clk/clk-hsdk-pll.c
+> @@ -0,0 +1,346 @@
+> +/*
+> + * Synopsys HSDKv1 SDP Generic PLL clock driver
+> + *
+> + * Copyright (C) 2017 Synopsys
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2. This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+
+No need for this include.
+
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/device.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/of.h>
+> +
+> +#define CGU_PLL_CTRL	0x000 /* ARC PLL control register */
+> +#define CGU_PLL_STATUS	0x004 /* ARC PLL status register */
+> +#define CGU_PLL_FMEAS	0x008 /* ARC PLL frequency measurement register */
+> +#define CGU_PLL_MON	0x00C /* ARC PLL monitor register */
+> +
+> +#define CGU_PLL_CTRL_ODIV_SHIFT		2
+> +#define CGU_PLL_CTRL_IDIV_SHIFT		4
+> +#define CGU_PLL_CTRL_FBDIV_SHIFT	9
+> +#define CGU_PLL_CTRL_BAND_SHIFT		20
+> +
+> +#define CGU_PLL_CTRL_ODIV_MASK		GENMASK(3, CGU_PLL_CTRL_ODIV_SHIFT)
+> +#define CGU_PLL_CTRL_IDIV_MASK		GENMASK(8, CGU_PLL_CTRL_IDIV_SHIFT)
+> +#define CGU_PLL_CTRL_FBDIV_MASK		GENMASK(15, CGU_PLL_CTRL_FBDIV_SHIFT)
+> +
+> +#define CGU_PLL_CTRL_PD			BIT(0)
+> +#define CGU_PLL_CTRL_BYPASS		BIT(1)
+> +
+> +#define CGU_PLL_STATUS_LOCK		BIT(0)
+> +#define CGU_PLL_STATUS_ERR		BIT(1)
+> +
+> +#define HSDK_PLL_MAX_LOCK_TIME		100 /* 100 us */
+> +
+> +struct hsdk_pll_cfg {
+> +	u32 rate;
+> +	u32 idiv;
+> +	u32 fbdiv;
+> +	u32 odiv;
+> +	u32 band;
+> +};
+> +
+> +static const struct hsdk_pll_cfg asdt_pll_cfg[] = {
+> +	{ 100000000,  0, 11, 3, 0 },
+> +	{ 133000000,  0, 15, 3, 0 },
+> +	{ 200000000,  1, 47, 3, 0 },
+> +	{ 233000000,  1, 27, 2, 0 },
+> +	{ 300000000,  1, 35, 2, 0 },
+> +	{ 333000000,  1, 39, 2, 0 },
+> +	{ 400000000,  1, 47, 2, 0 },
+> +	{ 500000000,  0, 14, 1, 0 },
+> +	{ 600000000,  0, 17, 1, 0 },
+> +	{ 700000000,  0, 20, 1, 0 },
+> +	{ 800000000,  0, 23, 1, 0 },
+> +	{ 900000000,  1, 26, 0, 0 },
+> +	{ 1000000000, 1, 29, 0, 0 },
+> +	{ 1100000000, 1, 32, 0, 0 },
+> +	{ 1200000000, 1, 35, 0, 0 },
+> +	{ 1300000000, 1, 38, 0, 0 },
+> +	{ 1400000000, 1, 41, 0, 0 },
+> +	{ 1500000000, 1, 44, 0, 0 },
+> +	{ 1600000000, 1, 47, 0, 0 },
+> +	{}
+> +};
+> +
+> +static const struct hsdk_pll_cfg hdmi_pll_cfg[] = {
+> +	{ 297000000,  0, 21, 2, 0 },
+> +	{ 540000000,  0, 19, 1, 0 },
+> +	{ 594000000,  0, 21, 1, 0 },
+> +	{}
+> +};
+> +
+> +struct hsdk_pll_clk {
+> +	struct clk_hw hw;
+> +	void __iomem *regs;
+> +	const struct hsdk_pll_cfg *pll_cfg;
+> +	struct device *dev;
+> +};
+> +
+> +static inline void hsdk_pll_write(struct hsdk_pll_clk *clk, u32 reg, u32 val)
+> +{
+> +	iowrite32(val, clk->regs + reg);
+> +}
+> +
+> +static inline u32 hsdk_pll_read(struct hsdk_pll_clk *clk, u32 reg)
+> +{
+> +	return ioread32(clk->regs + reg);
+> +}
+> +
+> +static inline void hsdk_pll_set_cfg(struct hsdk_pll_clk *clk,
+> +				    const struct hsdk_pll_cfg *cfg)
+> +{
+> +	u32 val = 0;
+> +
+> +	/* Powerdown and Bypass bits should be cleared */
+> +	val |= cfg->idiv << CGU_PLL_CTRL_IDIV_SHIFT;
+> +	val |= cfg->fbdiv << CGU_PLL_CTRL_FBDIV_SHIFT;
+> +	val |= cfg->odiv << CGU_PLL_CTRL_ODIV_SHIFT;
+> +	val |= cfg->band << CGU_PLL_CTRL_BAND_SHIFT;
+> +
+> +	dev_dbg(clk->dev, "write configurarion: 0x%x", val);
+
+Or just use %#x to add the 0x part.
+
+> +
+> +	hsdk_pll_write(clk, CGU_PLL_CTRL, val);
+> +}
+> +
+> +static inline bool hsdk_pll_is_locked(struct hsdk_pll_clk *clk)
+> +{
+> +	u32 val;
+> +
+> +	val = hsdk_pll_read(clk, CGU_PLL_STATUS);
+> +
+> +	return (val & CGU_PLL_STATUS_LOCK) == CGU_PLL_STATUS_LOCK;
+> +}
+> +
+> +static inline bool hsdk_pll_is_err(struct hsdk_pll_clk *clk)
+> +{
+> +	u32 val;
+> +
+> +	val = ;
+> +
+> +	return (val & CGU_PLL_STATUS_ERR) == CGU_PLL_STATUS_ERR;
+
+Above two could be simplified to one line functions?
+
+	return hsdk_pll_read(clk, CGU_PLL_STATUS) & CGU_PLL_STATUS_ERR;
+
+> +}
+> +
+> +static inline struct hsdk_pll_clk *to_hsdk_pll_clk(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct hsdk_pll_clk, hw);
+> +}
+> +
+> +static unsigned long hsdk_pll_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	u32 val;
+> +	u64 rate;
+> +	u32 idiv, fbdiv, odiv;
+> +	struct hsdk_pll_clk *clk = to_hsdk_pll_clk(hw);
+> +
+> +	val = hsdk_pll_read(clk, CGU_PLL_CTRL);
+> +
+> +	dev_dbg(clk->dev, "current configurarion: 0x%x", val);
+> +
+> +	/* Check if PLL is disabled */
+> +	if ((val & CGU_PLL_CTRL_PD) == CGU_PLL_CTRL_PD)
+> +		return 0;
+> +
+> +	/* Check if PLL is bypassed */
+> +	if ((val & CGU_PLL_CTRL_BYPASS) == CGU_PLL_CTRL_BYPASS)
+
+These are single bits. Do we really need to check for anything
+besides the and operation returning a non-zero value?
+
+> +		return parent_rate;
+> +
+> +	/* input devider = reg.idiv + 1 */
+
+s/devider/divider/
+
+Maybe just drop these comments. They're just repeating the code.
+
+> +	idiv = 1 + ((val & CGU_PLL_CTRL_IDIV_MASK) >> CGU_PLL_CTRL_IDIV_SHIFT);
+> +	/* fb devider = 2*(reg.fbdiv + 1) */
+
+s/devider/divider/
+
+> +	fbdiv = 2 * (1 + ((val & CGU_PLL_CTRL_FBDIV_MASK) >> CGU_PLL_CTRL_FBDIV_SHIFT));
+> +	/* output devider = 2^(reg.odiv) */
+> +	odiv = 1 << ((val & CGU_PLL_CTRL_ODIV_MASK) >> CGU_PLL_CTRL_ODIV_SHIFT);
+> +
+> +	rate = (u64)parent_rate * fbdiv;
+> +	do_div(rate, idiv * odiv);
+> +
+> +	return rate;
+> +}
+> +
+> +static long hsdk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long *prate)
+> +{
+> +	int i;
+> +	long best_rate;
+> +	struct hsdk_pll_clk *clk = to_hsdk_pll_clk(hw);
+> +	const struct hsdk_pll_cfg *pll_cfg = clk->pll_cfg;
+> +
+> +	if (pll_cfg[0].rate == 0)
+> +		return -EINVAL;
+
+This happens?
+
+> +
+> +	best_rate = pll_cfg[0].rate;
+> +
+> +	for (i = 1; pll_cfg[i].rate != 0; i++) {
+> +		if (abs(rate - pll_cfg[i].rate) < abs(rate - best_rate))
+
+Alright, rate is unsigned long, and best_rate is long. abs() does
+the right thing here, but it makes me have to think twice if
+best_rate can be negative and then this is a larger number, not a
+smaller one. Can we make best_rate unsigned long in this
+function?
+
+> +			best_rate = pll_cfg[i].rate;
+> +	}
+> +
+> +	dev_dbg(clk->dev, "chosen best rate: %lu", best_rate);
+> +
+> +	return best_rate;
+> +}
+[...]
+> +
+> +static void __init of_hsdk_pll_clk_setup(struct device_node *node)
+> +{
+> +	const char *parent_name;
+> +	struct hsdk_pll_clk *pll_clk;
+> +	struct clk_init_data init = { };
+> +	int ret;
+> +
+> +	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+> +	if (!pll_clk)
+> +		return;
+> +
+> +	pll_clk->regs = of_iomap(node, 0);
+> +	if (!pll_clk->regs) {
+> +		pr_err("failed to map pll registers\n");
+> +		goto err_free_pll_clk;
+> +	}
+> +
+> +	init.name = node->name;
+> +	init.ops = &hsdk_pll_ops;
+> +	parent_name = of_clk_get_parent_name(node, 0);
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = parent_name ? 1 : 0;
+
+of_clk_parent_fill(node, &init.parent_names, 1)?
+
+> +	pll_clk->hw.init = &init;
+> +	pll_clk->pll_cfg = asdt_pll_cfg;
+> +
+> +	ret = clk_hw_register(NULL, &pll_clk->hw);
+> +	if (ret) {
+> +		pr_err("failed to register %s clock\n", node->name);
+> +		goto err_unmap_regs;
+> +	}
+> +
+> +	ret = of_clk_add_hw_provider(node, of_clk_hw_simple_get, &pll_clk->hw);
+> +	if (ret) {
+> +		pr_err("failed to add hw provider for %s clock\n", node->name);
+> +		goto err_unmap_regs;
+> +	}
+> +
+> +	return;
+> +
+> +err_unmap_regs:
+> +	iounmap(pll_clk->regs);
+> +err_free_pll_clk:
+> +	kfree(pll_clk);
+> +}
+
+Can you add a comment why this can't be probed via driver paths
+here?
+
+> +CLK_OF_DECLARE(hsdk_pll_clock, "snps,hsdk-core-pll-clock",
+> +of_hsdk_pll_clk_setup);
+> +
+> +static const struct of_device_id hsdk_pll_clk_id[] = {
+> +	{ .compatible = "snps,hsdk-gp-pll-clock", .data = &asdt_pll_cfg},
+> +	{ .compatible = "snps,hsdk-hdmi-pll-clock", .data = &hdmi_pll_cfg},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, hsdk_pll_clk_id);
+> +
+> +static struct platform_driver hsdk_pll_clk_driver = {
+> +	.driver = {
+> +		.name = "hsdk-gp-pll-clock",
+> +		.of_match_table = hsdk_pll_clk_id,
+> +	},
+> +	.probe = hsdk_pll_clk_probe,
+> +	.remove = hsdk_pll_clk_remove,
+> +};
+> +builtin_platform_driver(hsdk_pll_clk_driver);
+> +
+> +MODULE_AUTHOR("Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>");
+> +MODULE_DESCRIPTION("Synopsys HSDKv1 SDP Generic PLL Clock Driver");
+> +MODULE_LICENSE("GPL v2");
+
+These three lines should be removed, or Paul G. will find them
+and delete them because the driver is never a module. Same goes
+for the MODULE_DEVICE_TABLE line.
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
