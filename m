@@ -1,76 +1,55 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC v2 02/12] clk: qcom: support for alpha mode configuration
-Date: Tue,  8 Aug 2017 23:54:07 +0530
-Message-Id: <1502216657-3342-3-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <CAGb2v66jK+iAbKVsv6=4tb0470KBdwU+AHjWDnWwKKTY+U+W6g@mail.gmail.com>
+References: <20170723102749.17323-1-icenowy@aosc.io>
+ <20170723102749.17323-6-icenowy@aosc.io>
+ <CAGb2v66jK+iAbKVsv6=4tb0470KBdwU+AHjWDnWwKKTY+U+W6g@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 4 Aug 2017 12:09:22 +0800
+Message-ID: <CAGb2v67LWirnWuQzzkNx4MU6Z-pERJBr6vcVfdoddFwLC=FXoA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 05/10] clk: sunxi-ng: h3: gate then ungate
+ PLL CPU clk after rate change
+To: Chen-Yu Tsai <wens@csie.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree <devicetree@vger.kernel.org>,
+ "open list:THERMAL" <linux-pm@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ linux-sunxi <linux-sunxi@googlegroups.com>, Mark Brown <broonie@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The current configuration does not fully configure PLL alpha mode
-and values so this patch
+On Wed, Jul 26, 2017 at 3:14 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> From: Chen-Yu Tsai <wens@csie.org>
+>>
+>> This patch utilizes the new PLL clk notifier to gate then ungate the
+>> PLL CPU clock after rate changes. This should prevent any system hangs
+>> resulting from cpufreq changes to the clk.
+>>
+>> Reported-by: Ondrej Jirman <megous@megous.com>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> Tested-by: Icenowy Zheng <icenowy@aosc.io>
+>
+> This is missing
+>
+> Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
 
-1. Configures PLL_ALPHA_VAL_U for PLL which supports 40 bit alpha.
-2. Adds alpha enable and alpha mode configuration support.
+Applied for 4.14 with the Fixes tag and Stephen's ack.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 5 +++++
- drivers/clk/qcom/clk-alpha-pll.h | 3 +++
- 2 files changed, 8 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index e6cde2d..6291048 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -123,6 +123,9 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 		regmap_write(regmap, off + PLL_CONFIG_CTL_U,
- 			     config->config_ctl_hi_val);
- 
-+	if (!(pll->flags & SUPPORTS_16BIT_ALPHA))
-+		regmap_write(regmap, off + PLL_ALPHA_VAL_U, config->alpha_hi);
-+
- 	val = config->main_output_mask;
- 	val |= config->aux_output_mask;
- 	val |= config->aux2_output_mask;
-@@ -130,6 +133,8 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	val |= config->pre_div_val;
- 	val |= config->post_div_val;
- 	val |= config->vco_val;
-+	val |= config->alpha_en_mask;
-+	val |= config->alpha_mode_mask;
- 
- 	mask = config->main_output_mask;
- 	mask |= config->aux_output_mask;
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index bbd6aa9..39686db 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -59,12 +59,15 @@ struct clk_alpha_pll_postdiv {
- struct alpha_pll_config {
- 	u32 l;
- 	u32 alpha;
-+	u32 alpha_hi;
- 	u32 config_ctl_val;
- 	u32 config_ctl_hi_val;
- 	u32 main_output_mask;
- 	u32 aux_output_mask;
- 	u32 aux2_output_mask;
- 	u32 early_output_mask;
-+	u32 alpha_en_mask;
-+	u32 alpha_mode_mask;
- 	u32 pre_div_val;
- 	u32 pre_div_mask;
- 	u32 post_div_val;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
