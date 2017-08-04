@@ -1,104 +1,154 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH RESEND v8 6/9] MIPS: Loongson: Add Loongson-1A board support
-Date: Tue, 29 Aug 2017 16:38:43 +0800
-Message-Id: <1503995926-17125-7-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1503995926-17125-1-git-send-email-zhoubb@lemote.com>
-References: <1503995926-17125-1-git-send-email-zhoubb@lemote.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38390 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751300AbdHDJj3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 05:39:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <E50F5E8C-2121-493C-A7B2-D1535E916471@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io> <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io>
+ <CAGb2v67ihCOmjojidpGfp9WvLiWWbwL+27tm7vOrKX0rRH4O1w@mail.gmail.com>
+ <13060066.Dl610HiJ2r@jernej-laptop> <E50F5E8C-2121-493C-A7B2-D1535E916471@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 4 Aug 2017 17:39:04 +0800
+Message-ID: <CAGb2v64W-7pyazHhgZEWH-3KwRQOPR79mNJdV6FMSvdZEkbWRQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add
+ CLK_SET_RATE_PARENT flag for H3 HDMI clock
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Register basic devices for Loongson-1A, and setup clk for UART.
+On Fri, Aug 4, 2017 at 5:03 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+>
+> 于 2017年8月4日 GMT+08:00 下午4:59:03, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
+>>Hi Chen-Yu,
+>>
+>>Dne petek, 04. avgust 2017 ob 06:29:50 CEST je Chen-Yu Tsai napisal(a):
+>>> On Fri, Aug 4, 2017 at 12:16 PM, Icenowy Zheng <icenowy@aosc.io>
+>>wrote:
+>>> > 于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
+>>> >>Hi,
+>>> >>
+>>> >>On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io>
+>>wrote:
+>>> >>> From: Jernej Skrabec <jernej.skrabec@siol.net>
+>>> >>>
+>>> >>> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to
+>>be
+>>> >>
+>>> >>set.
+>>> >>
+>>> >>> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
+>>> >>>
+>>> >>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>>> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> >>> ---
+>>> >>>
+>>> >>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+>>> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>> >>>
+>>> >>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> >>
+>>> >>b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> >>
+>>> >>> index b1127e8629d9..2ebb3d865b01 100644
+>>> >>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> >>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> >>> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,
+>>> >>
+>>> >>"avs",          "osc24M",
+>>> >>
+>>> >>>  static const char * const hdmi_parents[] = { "pll-video" };
+>>> >>>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+>>> >>>
+>>> >>> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
+>>> >>> +                                0x150, 0, 4, 24, 2, BIT(31),
+>>> >>
+>>> >>CLK_SET_RATE_PARENT);
+>>> >>
+>>> >>Line is longer than 80 characters.
+>>> >>
+>>> >>This looks independent enough so I've merged this for 4.14 with the
+>>> >>offending line wrapped and the following tag added:
+>>> >>
+>>> >>Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+>>> >>
+>>> > Please don't merge this now until Jernej send it.
+>>>
+>>> (Dropped Rob, devicetree and dri mailing lists)
+>>>
+>>> Hi Jernej,
+>>>
+>>> Is it OK if we take this patch for the next release? Or rather,
+>>> if there anything blocking this patch?
+>>
+>>I just made last check now and this patch is indeed OK. Before merging,
+>>please
+>>read explanation below.
+>>
+>>Background:
+>>According to H3 datasheet and BSP driver, HDMI clock has M factor
+>>(divider) to
+>>correctly set pixel clock to desired value. However, Jens Kuske
+>>discovered
+>>that this factor doesn't play any role whatsoever and instead, division
+>>factor
+>>set in PHY registers is the important one. I confirmed that on BSP
+>>kernel by
+>>tying M factor to 0. Both, HDMI video and audio, still worked
+>>correctly.
+>>
+>>So that flag is necessary to set pll-video to pixel clock * div factor.
+>>I can
+>>also change HDMI clock type to SUNXI_CCU_GATE (without M factor) and
+>>document
+>>discrepancy with datasheet in ccu-sun8i-h3.c. Alternatively to this
+>>patch,
+>>just in case, to be on the safe side, I can add pll-video clock phandle
+>>to the
+>>dt node. However, as far as I know, that might prevent selecting
+>>another
+>>parent on SoCs where HDMI clock has multiple parents.
+>
+> Unfortunately A64 is this situation -- A64 TCON1/HDMI clocks can
+> use pll-video0/1 as parent, but TCON0 can only use pll-video0 or
+> pll-mipi (also a downstream clock of pll-video0), and by default
+> TCON1/HDMI also uses pll-video0.
+>
+> Because of this I have never succeeded in multihead (LCD+HDMI)
+> on Pinebook.
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
----
- arch/mips/loongson32/Makefile      |  6 ++++++
- arch/mips/loongson32/ls1a/Makefile |  5 +++++
- arch/mips/loongson32/ls1a/board.c  | 31 +++++++++++++++++++++++++++++++
- 3 files changed, 42 insertions(+)
- create mode 100644 arch/mips/loongson32/ls1a/Makefile
- create mode 100644 arch/mips/loongson32/ls1a/board.c
+Multihead support hasn't been tested, despite all the patches I've
+done to try and support it. I had to do some more to get HDMI and
+LCD working together on the A31. And even then there are still
+issues.
 
-diff --git a/arch/mips/loongson32/Makefile b/arch/mips/loongson32/Makefile
-index 1ab2c5b..cd1f597 100644
---- a/arch/mips/loongson32/Makefile
-+++ b/arch/mips/loongson32/Makefile
-@@ -5,6 +5,12 @@
- obj-$(CONFIG_MACH_LOONGSON32) += common/
- 
- #
-+# Loongson LS1A board
-+#
-+
-+obj-$(CONFIG_LOONGSON1_LS1A)  += ls1a/
-+
-+#
- # Loongson LS1B board
- #
- 
-diff --git a/arch/mips/loongson32/ls1a/Makefile b/arch/mips/loongson32/ls1a/Makefile
-new file mode 100644
-index 0000000..dc23a9a
---- /dev/null
-+++ b/arch/mips/loongson32/ls1a/Makefile
-@@ -0,0 +1,5 @@
-+#
-+# Makefile for loongson1A based machines.
-+#
-+
-+obj-y += board.o
-diff --git a/arch/mips/loongson32/ls1a/board.c b/arch/mips/loongson32/ls1a/board.c
-new file mode 100644
-index 0000000..7993f6c
---- /dev/null
-+++ b/arch/mips/loongson32/ls1a/board.c
-@@ -0,0 +1,31 @@
-+/*
-+ * Copyright (c) 2016 Binbin Zhou <zhoubb@lemote.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation; either version 2 of the License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <platform.h>
-+
-+static struct platform_device *ls1a_platform_devices[] __initdata = {
-+	&ls1x_uart_pdev,
-+	&ls1x_eth0_pdev,
-+	&ls1x_eth1_pdev,
-+	&ls1x_rtc_pdev,
-+	&ls1x_wdt_pdev,
-+	&ls1x_ahci_pdev,
-+	&ls1x_ohci_pdev,
-+};
-+
-+static int __init ls1a_platform_init(void)
-+{
-+	ls1x_serial_set_uartclk(&ls1x_uart_pdev);
-+	ls1x_rtc_set_extclk(&ls1x_rtc_pdev);
-+
-+	return platform_add_devices(ls1a_platform_devices,
-+				   ARRAY_SIZE(ls1a_platform_devices));
-+}
-+
-+arch_initcall(ls1a_platform_init);
--- 
-2.9.4
+The current (as of Maxime's sunxi-drm/for-next branch) issues are
+
+  - Two outputs with incompatible dot clocks will step on each
+    other, instead of switching to another PLL. Maxime seems to
+    have some patches to prevent this.
+
+  - Engine and TCON pairing in a fully connected display system
+    is (still) broken. You will end up tying both TCON with the
+    same engine. I have patches to fix this in my a31-hdmi-v2
+    branch.
+
+You can work around both issues, the first one by adding
+CLK_SET_RATE_NO_REPARENT to the TCON clocks, and forcing the
+TCON parents at ccu probe time. The second one can be worked
+around by removing the extra unused connections between mixer0
+and TCON1, and vice versa.
+
+This should at least allow you to test your hardware.
+
+Regards
+ChenYu
