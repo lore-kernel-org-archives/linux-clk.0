@@ -1,75 +1,84 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 17 Aug 2017 15:48:03 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
-Message-ID: <20170817134803.GE6854@ulmo>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
- <20170726013746.GM2146@codeaurora.org>
- <20170726082728.GD26726@tbergstrom-lnx.Nvidia.com>
- <20170727185406.GN2146@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:33181 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751005AbdHDEQw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Aug 2017 00:16:52 -0400
+Date: Fri, 04 Aug 2017 12:16:41 +0800
+In-Reply-To: <CAGb2v65Ncp5jfq5hrOpqBNYER-VGW1B5j4zT40rj8_CJh5xxVw@mail.gmail.com>
+References: <20170801131304.7741-1-icenowy@aosc.io> <20170801131304.7741-11-icenowy@aosc.io> <CAGb2v65Ncp5jfq5hrOpqBNYER-VGW1B5j4zT40rj8_CJh5xxVw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JBi0ZxuS5uaEhkUZ"
-In-Reply-To: <20170727185406.GN2146@codeaurora.org>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
+To: wens@csie.org, Chen-Yu Tsai <wens@csie.org>
+CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---JBi0ZxuS5uaEhkUZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 27, 2017 at 11:54:06AM -0700, Stephen Boyd wrote:
-> On 07/26, Peter De Schrijver wrote:
-> > On Tue, Jul 25, 2017 at 06:37:46PM -0700, Stephen Boyd wrote:
-> > > On 07/25, Peter De Schrijver wrote:
-> > > > A number of smaller fixes and simplifications for the Tegra clock
-> > > > implementation.
-> > >=20
-> > > Any of these need fixes tags so they can be backported to stable
-> > > trees? Also, everyone is on To: line, so not sure who is supposed
-> >=20
-> > I will have a look. For some of them a backport might be useful.
-> >=20
-> > > to pick these up. Me? That's fine if so.
-> > >=20
-> >=20
-> > That would be the easiest I think.
-> >=20
->=20
-> Ok. I'll wait for you to reply with tags unless you didn't find
-> any?
+于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
+>Hi,
+>
+>On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> From: Jernej Skrabec <jernej.skrabec@siol.net>
+>>
+>> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be
+>set.
+>>
+>> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
+>>
+>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> index b1127e8629d9..2ebb3d865b01 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,             
+>"avs",          "osc24M",
+>>
+>>  static const char * const hdmi_parents[] = { "pll-video" };
+>>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+>> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
+>> +                                0x150, 0, 4, 24, 2, BIT(31),
+>CLK_SET_RATE_PARENT);
+>
+>Line is longer than 80 characters.
+>
+>This looks independent enough so I've merged this for 4.14 with the
+>offending line wrapped and the following tag added:
+>
+>Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
 
-I'm not aware of any bugs that these would fix, so I think we can apply
-these as-is.
+Please don't merge this now until Jernej send it.
 
-Thierry
-
---JBi0ZxuS5uaEhkUZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlmVnpEACgkQ3SOs138+
-s6HrKxAAnoKJdWE+ohoCz9yMcFpTbWB065HWpI/TwE/stni5xrg7sPAMMwh5ni/r
-gLAxKbI/+4fLHMSngIop+P0n6ln6QB2b02oAw4kkhUEBw2rt4arK8EtNWY9hX8Cd
-dAFaYb/lVEIqE3mzoo49j+pXZeb4aJ5WwTmIsOPTP6h92y9SIx6uip87n4yKKhV+
-8QcMXq8SQuMGIM/RLkSWRWnVHZmVBHkIDOyg5rRWHMyM6rC/LlFL604gyU2dNFQT
-c6HGGgwPPSc88wjVtTvRhZ2C4KkStqNcHBIOYssehXagjPQP7yy/UDMuEhTEpcZF
-DGQzMnVY9rgU/t2whma/F6MiJDMPUeINclwSBU70kbvkXHb5qjgRRbpO9o9p+LB6
-CXvfYR6M0Ikm9CgiagZu6R9cwodwuC3ftqXJUgWd1pY1i6p5mCvtva78YfrY9x0W
-JNHawVlQfRpdqmSZoEFRMSR+YhBRaWPYCP5p5bbnUaQ2ZQB5Qqqxo9K/mmzu9Oug
-IzcR3A/Yx6wVYYR66NLcuXyzxS8zKtxIbFkczhKyvevtfxjZ23c5Dt7KTZNLYrVY
-slKmGaOLmFBnkQC6ZM1GijYEHBmoJL6wEz0hiTIKwKXtqPmYM4OBLOV2+oNKDbx4
-u3P8fDmbCTfoZl+HDE1hRzriIpkDkx5UVvEGL5xy/PqG5g6F5SM=
-=ZTd3
------END PGP SIGNATURE-----
-
---JBi0ZxuS5uaEhkUZ--
+>
+>ChenYu
+>
+>>
+>>  static SUNXI_CCU_GATE(hdmi_ddc_clk,    "hdmi-ddc",     "osc24M",
+>>                       0x154, BIT(31), 0);
+>> --
+>> 2.13.0
+>>
+>> --
+>> You received this message because you are subscribed to the Google
+>Groups "linux-sunxi" group.
+>> To unsubscribe from this group and stop receiving emails from it,
+>send an email to linux-sunxi+unsubscribe@googlegroups.com.
+>> For more options, visit https://groups.google.com/d/optout.
