@@ -1,36 +1,50 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: "David.Wu" <david.wu@rock-chips.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com, andy.yan@rock-chips.com, wdc@rock-chips.com
-Subject: Re: [PATCH v2 1/4] clk: rockchip: add rv1108 ACLK_GAMC and PCLK_GMAC ID
-Date: Mon, 21 Aug 2017 12:32:49 +0200
-Message-ID: <19279521.prAVXYBsZ9@phil>
-In-Reply-To: <f51160d5-32cc-a63c-3877-76ea91fb6e8b@rock-chips.com>
-References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com> <1503303367-17915-2-git-send-email-zhangqing@rock-chips.com> <f51160d5-32cc-a63c-3877-76ea91fb6e8b@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20170801131304.7741-4-icenowy@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+ <20170801131304.7741-4-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 4 Aug 2017 11:56:22 +0800
+Message-ID: <CAGb2v65gxoQgcdhyZVWFNeKxUJj34FuN7EJx-a6DkquyQhLYRA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 03/13] drm: sun4i: add support for H3's TCON
+To: Icenowy Zheng <icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree <devicetree@vger.kernel.org>,
+ Jernej Skrabec <jernej.skrabec@siol.net>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi David,
+On Tue, Aug 1, 2017 at 9:12 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Icenowy Zheng <icenowy@aosc.xyz>
+>
+> Allwinner H3 has two special TCONs without channel 0.
+>
+> Add support for this kind of TCON.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Am Montag, 21. August 2017, 18:22:31 CEST schrieb David.Wu:
-> Hi Elaine,
->=20
-> =E5=9C=A8 2017/8/21 16:16, Elaine Zhang =E5=86=99=E9=81=93:
-> > This patch exports gmac aclk and pclk for dts reference.
-> >=20
-> > Signed-off-by: Elaine Zhang<zhangqing@rock-chips.com>
-> > ---
-> >   include/dt-bindings/clock/rv1108-cru.h | 2 ++
-> >   1 file changed, 2 insertions(+)
->=20
-> Acked-by: David Wu <david.wu@rock-chips.com>
+Ideally you would split this into two patches. The first one would add
+the quirks support for TCONs without channel 0. I can also use this for
+the A80. The second would add the H3 TCON.
 
-Acked-by is mainly meant for cross-maintainer stuff (changes
-for one subsystem going through a different tree etc).
+ChenYu
 
-If you want to show that the change is correct and you have reviewed
-the patch, please use "Reviewed-by".
-
-
-Heiko
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
