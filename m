@@ -1,172 +1,142 @@
-Return-Path: <cwchoi00@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:39548 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752454AbdHDORY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 10:17:24 -0400
 MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <1501839294-478-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170804093514eucas1p2b15dbf1879d150c8c40f1696c2109975@eucas1p2.samsung.com>
- <1501839294-478-1-git-send-email-m.szyprowski@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Fri, 4 Aug 2017 23:28:50 +0900
-Message-ID: <CAGTfZH35Sc9oOGG6QyhqD2+8fhjUsiykoNsJ0O1C5XstAE0HjA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/4] Add runtime PM support for clocks (on Exynos SoC example)
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In-Reply-To: <18315912.JHEzglLTUl@jernej-laptop>
+References: <20170801131304.7741-1-icenowy@aosc.io> <13060066.Dl610HiJ2r@jernej-laptop>
+ <CAGb2v64hQGwZtcRMhkSejKFozZu7rbL+47NbOuYrc7pKoOYLkw@mail.gmail.com> <18315912.JHEzglLTUl@jernej-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 4 Aug 2017 22:16:56 +0800
+Message-ID: <CAGb2v67B_8kHBtnLd_1vB-pHR7bV6p2M3H8iZ7njeSztE0pMVA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add
+ CLK_SET_RATE_PARENT flag for H3 HDMI clock
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Fri, Aug 4, 2017 at 9:49 PM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+> Hi Chen-Yu,
+>
+> Dne petek, 04. avgust 2017 ob 11:27:33 CEST je Chen-Yu Tsai napisal(a):
+>> On Fri, Aug 4, 2017 at 4:59 PM, Jernej Škrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > Hi Chen-Yu,
+>> >
+>> > Dne petek, 04. avgust 2017 ob 06:29:50 CEST je Chen-Yu Tsai napisal(a):
+>> >> On Fri, Aug 4, 2017 at 12:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> >> > 于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
+>> >> >>Hi,
+>> >> >>
+>> >> >>On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> >> >>> From: Jernej Skrabec <jernej.skrabec@siol.net>
+>> >> >>>
+>> >> >>> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be
+>> >> >>
+>> >> >>set.
+>> >> >>
+>> >> >>> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
+>> >> >>>
+>> >> >>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> >> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >> >>> ---
+>> >> >>>
+>> >> >>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+>> >> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >> >>>
+>> >> >>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> >> >>
+>> >> >>b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> >> >>
+>> >> >>> index b1127e8629d9..2ebb3d865b01 100644
+>> >> >>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> >> >>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> >> >>> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,
+>> >> >>
+>> >> >>"avs",          "osc24M",
+>> >> >>
+>> >> >>>  static const char * const hdmi_parents[] = { "pll-video" };
+>> >> >>>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+>> >> >>>
+>> >> >>> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
+>> >> >>> +                                0x150, 0, 4, 24, 2, BIT(31),
+>> >> >>
+>> >> >>CLK_SET_RATE_PARENT);
+>> >> >>
+>> >> >>Line is longer than 80 characters.
+>> >> >>
+>> >> >>This looks independent enough so I've merged this for 4.14 with the
+>> >> >>offending line wrapped and the following tag added:
+>> >> >>
+>> >> >>Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+>> >> >>
+>> >> > Please don't merge this now until Jernej send it.
+>> >>
+>> >> (Dropped Rob, devicetree and dri mailing lists)
+>> >>
+>> >> Hi Jernej,
+>> >>
+>> >> Is it OK if we take this patch for the next release? Or rather,
+>> >> if there anything blocking this patch?
+>> >
+>> > I just made last check now and this patch is indeed OK. Before merging,
+>> > please read explanation below.
+>>
+>> Ack.
+>>
+>> > Background:
+>> > According to H3 datasheet and BSP driver, HDMI clock has M factor
+>> > (divider) to correctly set pixel clock to desired value. However, Jens
+>> > Kuske discovered that this factor doesn't play any role whatsoever and
+>> > instead, division factor set in PHY registers is the important one. I
+>> > confirmed that on BSP kernel by tying M factor to 0. Both, HDMI video and
+>> > audio, still worked correctly.
+>> Great. Sounds like what we have on A31 and earlier SoCs.
+>>
+>> > So that flag is necessary to set pll-video to pixel clock * div factor. I
+>> > can also change HDMI clock type to SUNXI_CCU_GATE (without M factor) and
+>> > document discrepancy with datasheet in ccu-sun8i-h3.c. Alternatively to
+>> > this patch, just in case, to be on the safe side, I can add pll-video
+>> > clock phandle to the dt node. However, as far as I know, that might
+>> > prevent selecting another parent on SoCs where HDMI clock has multiple
+>> > parents.
+>>
+>> It could be that the HDMI clock only drives the DW-HDMI sampler and other
+>> internal logic, while the PHY takes the PLL input directly for the TMDS
+>> clock? I'm not sure how you could verify this though. Maybe increase M
+>> to the maximum, and see if there is any tearing or other artifacts?
+>> Ideally we could just ask Allwinner...
+>
+> I just made quick test with maximum divider and everything seems to be ok.
+> Unfortunately, I don't have time to do extensive test.
+>
+> I will forward the question to Tl Lim and let's see if he can get the answer,
+> since the situation for A64 is completely the same.
 
-On Fri, Aug 4, 2017 at 6:34 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Dear All,
->
-> This patchset adds runtime PM support to common clock framework. This is an
-> attempt to implement support for clock controllers, which belongs to a power
-> domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
-> us to solve various freeze/crash issues related to power management.
->
-> The main idea behind this patchset is to keep clock's controller power domain
-> enabled every time when at least one of its clock is enabled or access to its
-> registers is being made. Clock controller driver (clock provider) can
-> supply a struct device pointer, which is the used by clock core for tracking and
-> managing clock's controller runtime pm state. Each clk_prepare() operation will
-> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
-> will do pm_runtime_put() at the end.
->
-> This runtime PM feature has been tested with Exynos4412 (not included in this
-> patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
-> respective power domains and need special handling during power on/off
-> procedures. Till now it wasn't handled at all, what caused various problems.
->
-> Patches for clocks drivers change the way the clock provider is initialized.
-> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+That would be much appreciated.
 
-First of all, I agree this approach absolutely.
+>>
+>> You should change it to SUNXI_CCU_MUX_WITH_GATE if you want to change it.
+>> If there are mux bits, even if there's only one valid setting, you should
+>> still have the mux, so the kernel can actually correct any invalid settings
+>> that may be incorrectly programmed into the hardware by the bootloader or
+>> user. This would be a separate patch.
+>
+> I will leave it as it is for now. Will you still merge the patch?
 
-Almost clock domains are enough to support the runtime PM with this approach.
-But, the specific clock domain should be handled by CLK_OF_DECLARE
-if the specific clock domain contains the clocks for timer.
-Because some clocks for timer are required on early boot phase.
+I'll drop it for now. Although we have this how A10s and A31, the hardware
+is not wired to actually use, as I mentioned above. We can do something
+about it once we have a better understanding of the hardware.
 
-Maybe, Need to find the further method to support the runtime PM for
-all clock domains.
+Thanks for all the explanation and testing.
 
-Regards,
-Chanwoo Choi
-
-
-> infrastructure is being used. This is needed to let driver to use runtime PM
-> feature and integrate with generic power domains. The side-effect of this change
-> is a delay in clock provider registeration during system boot, so early
-> initialized drivers might get EPROBEDEFER error when requesting their clocks.
-> This is an issue for IOMMU drivers, so this patchset will be fully functional
-> once the deferred probe for IOMMU will be merged. v9 of the IOMMU deferred probe
-> support has been posted a few days ago:
-> https://www.spinics.net/lists/arm-kernel/msg567558.html
->
-> Patches are based on v4.13-rc3.
->
-> Stephen: this patchset finally got a review from Ulf (from PM point of
-> view). Is also touches only the Exynos5433 and Exynos Audio Subsystem
-> drivers, which both have separate DT nodes for each clock controllers and
-> each clock controller is entirely only in the one power domain, so everything is
-> clean from the current DT bindings perspective. Would it be okay to merge it?
->
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
->
->
-> Changelog:
->
-> v7:
-> - rebased onto v4.13-rc3
-> - still waiting for any comments from clk maintainers
->
-> v6:
-> - addressed comments from Ulf Hanson and added his 'Reviewed-by' tags
-> - simplified exynos 5433 clock driver code a bit
-> - fixes issues pointed by kbuild test robot
->
-> v5:
-> - rebased onto next-20170125 kernel release
-> - added two more calls to runtime PM in clock's core:
->         1. clk_recalc() should ensure active runtime pm state, because it might
->            read registers (in case of dividers) to calculate the rate
->         2. clk_register() also needs to ensure active runtime pm state to read
->            initial rate and status of the clocks
-> - more fixes in Exynos5433 clocks drivers:
->         1. PLL in DISP CMU must be enabled for suspend
->         2. guard clocks registration with pm_runtime_get_sync/pm_runtime_put to
->            avoid turning the power domain on and off many times for no good
->            reason (registering each clock will call pm_runtime_get_sync(), then
->            pm_runtime_put, what in turn might disable power domain)
-> - still waiting for a review...
->
-> v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
-> - Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
->   domain for ISP sub-controller needs more discussion. It will be handled
->   separately when the runtime PM for clocks feature gets merged.
-> - Added patch with runtime PM support for Exynos AudioSS clock controller driver
->   (needed to enable audio power domain on Exynos5 series).
-> - Fixes in Exynos5433 driver:
->         1. added missing clock for Audio CMU
->         2. added support for FSYS CMU
->         3. improved support for DISP CMU (thanks to Andrzej Hajda for
->            investigating that).
-> - Rebased onto v4.10-rc1
-> - Waiting for a review...
->
-> v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
-> - Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
->   for the provided device during clock registration as suggested by Ulf
-> - Simplified code for exynos4412 isp clock driver registration
-> - Resolved some other minor issues pointed by Ulf clk core code
-> - Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
->
-> v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
-> - Simplified clk_pm_runtime_get/put functions, removed workaround for devices
->   with disabled runtime pm. Such workaround is no longer needed since commit
->   4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
->   during system PM phases").
-> - Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
->   call runtime pm functions. This solves problem with clocks, for which struct
->   device is already registered, but no runtime pm is enabled.
-> - Extended commit messages according to Ulf suggestions.
-> - Fixed some style issues pointed by Barlomiej.
->
-> v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
-> - initial version
->
->
-> Patch summary:
->
-> Marek Szyprowski (4):
->   clk: Add support for runtime PM
->   clk: samsung: Add support for runtime PM
->   clk: samsung: exynos5433: Add runtime PM support
->   clk: samsung: exynos-audss: Use runtime PM
->
->  .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
->  .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
->  drivers/clk/clk.c                                  | 129 ++++++-
->  drivers/clk/samsung/clk-exynos-audss.c             |  68 ++--
->  drivers/clk/samsung/clk-exynos5433.c               | 409 ++++++++++++++++-----
->  drivers/clk/samsung/clk-pll.c                      |   2 +-
->  drivers/clk/samsung/clk.c                          |  12 +-
->  drivers/clk/samsung/clk.h                          |   7 +
->  8 files changed, 513 insertions(+), 136 deletions(-)
->
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards
+ChenYu
