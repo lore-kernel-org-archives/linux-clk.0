@@ -1,42 +1,99 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	cl@rock-chips.com,
-	andy.yan@rock-chips.com,
-	wdc@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 0/4] clk: rockchip: rv1108: support mac clk
-Date: Mon, 21 Aug 2017 16:16:03 +0800
-Message-Id: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36762 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750899AbdHDEaO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 00:30:14 -0400
+MIME-Version: 1.0
+In-Reply-To: <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io>
+References: <20170801131304.7741-1-icenowy@aosc.io> <20170801131304.7741-11-icenowy@aosc.io>
+ <CAGb2v65Ncp5jfq5hrOpqBNYER-VGW1B5j4zT40rj8_CJh5xxVw@mail.gmail.com> <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 4 Aug 2017 12:29:50 +0800
+Message-ID: <CAGb2v67ihCOmjojidpGfp9WvLiWWbwL+27tm7vOrKX0rRH4O1w@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add
+ CLK_SET_RATE_PARENT flag for H3 HDMI clock
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-change in V2:
-[PATCH v2 1/4] : NONE
-[PATCH v2 2/4] : NONE
-[PATCH v2 3/4] : NONE
-[PATCH v2 4/4] : fix up the clk_mac mux regs description error
+On Fri, Aug 4, 2017 at 12:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+>
+> 于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
+>>Hi,
+>>
+>>On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>> From: Jernej Skrabec <jernej.skrabec@siol.net>
+>>>
+>>> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be
+>>set.
+>>>
+>>> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
+>>>
+>>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> index b1127e8629d9..2ebb3d865b01 100644
+>>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>>> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,
+>>"avs",          "osc24M",
+>>>
+>>>  static const char * const hdmi_parents[] = { "pll-video" };
+>>>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+>>> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
+>>> +                                0x150, 0, 4, 24, 2, BIT(31),
+>>CLK_SET_RATE_PARENT);
+>>
+>>Line is longer than 80 characters.
+>>
+>>This looks independent enough so I've merged this for 4.14 with the
+>>offending line wrapped and the following tag added:
+>>
+>>Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+>
+> Please don't merge this now until Jernej send it.
 
-Elaine Zhang (4):
-  clk: rockchip: add rv1108 ACLK_GAMC and PCLK_GMAC ID
-  clk: rockchip: rv1108: add ACLK_GMAC and PCLK_GMAC clk id
-  clk: rockchip: rv1108: rename macphy to mac
-  clk: rockchip: rv1108: fix up the clk_mac sel register description
+(Dropped Rob, devicetree and dri mailing lists)
 
- drivers/clk/rockchip/clk-rv1108.c      | 14 ++++++++------
- include/dt-bindings/clock/rv1108-cru.h |  8 +++++---
- 2 files changed, 13 insertions(+), 9 deletions(-)
+Hi Jernej,
 
--- 
-1.9.1
+Is it OK if we take this patch for the next release? Or rather,
+if there anything blocking this patch?
+
+Thanks
+ChenYu
+
+>
+>>
+>>ChenYu
+>>
+>>>
+>>>  static SUNXI_CCU_GATE(hdmi_ddc_clk,    "hdmi-ddc",     "osc24M",
+>>>                       0x154, BIT(31), 0);
+>>> --
+>>> 2.13.0
+>>>
+>>> --
+>>> You received this message because you are subscribed to the Google
+>>Groups "linux-sunxi" group.
+>>> To unsubscribe from this group and stop receiving emails from it,
+>>send an email to linux-sunxi+unsubscribe@googlegroups.com.
+>>> For more options, visit https://groups.google.com/d/optout.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
