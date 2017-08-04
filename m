@@ -1,79 +1,77 @@
-Return-Path: <afaerber@suse.de>
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Roc He <hepeng@zidoo.tv>,
-	=?UTF-8?q?=E8=92=8B=E4=B8=BD=E7=90=B4?= <jiang.liqin@geniatech.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [RFC 2/4] arm64: dts: realtek: Add clock nodes for RTD1295
-Date: Thu, 17 Aug 2017 13:20:23 +0200
-Message-Id: <20170817112026.24062-3-afaerber@suse.de>
-In-Reply-To: <20170817112026.24062-1-afaerber@suse.de>
-References: <20170817112026.24062-1-afaerber@suse.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:36605 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751964AbdHDKOw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 06:14:52 -0400
+Received: by mail-wm0-f48.google.com with SMTP id t201so15831303wmt.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Aug 2017 03:14:52 -0700 (PDT)
+Subject: Re: [PATCH v3.1 0/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
+To: jbrunet@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <d7c27631-e50a-501a-a94f-28a124f9aa74@baylibre.com>
+Date: Fri, 4 Aug 2017 12:14:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add 27 MHz oscillator and two clock controller nodes.
+On 08/01/2017 01:56 PM, Neil Armstrong wrote:
+> In order to support the standalone CEC Controller on the Amlogic SoCs,
+> a specific CEC 32K clock must be handled in the AO domain.
+> 
+> The CEC 32K AO Clock is a dual divider with dual counter to provide a more
+> precise 32768Hz clock for the CEC subsystem from the external xtal.
+> 
+> The AO clocks management registers are spread among the AO register space,
+> so this patch also adds management of these registers mappings then uses them
+> for the CEC 32K AO clock management.
+> 
+> This patchset :
+>  - updates the bindings accordingly
+>  - switch driver to new bindings
+>  - adds the CEC 32k clock
+>  - adds the clock binding entry
+> 
+> The DT Update will be sent in another patchset.
+> 
+> Changes since v3 at [3] :
+>  - fix typo in cec_32k set_rate
+> 
+> Changes since v2 at [2] :
+>  - fix round_rate invalid handling
+>  - enhance set_rate code thanks to Chris Moore
+>  - add more explicit comments thanks to Martin
+> 
+> Changes since v1 at [1] :
+>  - move bindings to parent syscon node and move clkc to subnode
+>  - switch aoclkc to use regmap only register access
+>  - introduce aoclk-regmap-gate for this purpose until regmap clocks are generic
+> 
+> [1] https://lkml.kernel.org/r/1499336663-23875-1-git-send-email-narmstrong@baylibre.com
+> [2] https://lkml.kernel.org/r/1501235589-318-1-git-send-email-narmstrong@baylibre.com
+> [3] https://lkml.kernel.org/r/1501504957-19476-1-git-send-email-narmstrong@baylibre.com
+> 
+> Neil Armstrong (4):
+>   dt-bindings: clock: amlogic,gxbb-aoclkc: Update bindings
+>   clk: meson: gxbb-aoclk: Switch to regmap for register access
+>   dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
+>   clk: meson: gxbb-aoclk: Add CEC 32k clock
+> 
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  22 ++-
+>  drivers/clk/meson/Makefile                         |   2 +-
+>  drivers/clk/meson/gxbb-aoclk-32k.c                 | 194 +++++++++++++++++++++
+>  drivers/clk/meson/gxbb-aoclk-regmap.c              |  46 +++++
+>  drivers/clk/meson/gxbb-aoclk.c                     |  65 ++++---
+>  drivers/clk/meson/gxbb-aoclk.h                     |  42 +++++
+>  include/dt-bindings/clock/gxbb-aoclkc.h            |   1 +
+>  7 files changed, 342 insertions(+), 30 deletions(-)
+>  create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
+>  create mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+>  create mode 100644 drivers/clk/meson/gxbb-aoclk.h
+> 
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- arch/arm64/boot/dts/realtek/rtd1295.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/realtek/rtd1295.dtsi b/arch/arm64/boot/dts/realtek/rtd1295.dtsi
-index 77063e984db9..078a11506876 100644
---- a/arch/arm64/boot/dts/realtek/rtd1295.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd1295.dtsi
-@@ -81,6 +81,13 @@
- 			(GIC_CPU_MASK_RAW(0xf) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
-+	osc27M: osc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <27000000>;
-+		#clock-cells = <0>;
-+		clock-output-names = "osc27M";
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -88,6 +95,13 @@
- 		/* Exclude up to 2 GiB of RAM */
- 		ranges = <0x80000000 0x80000000 0x80000000>;
- 
-+		clkc: clock-controller@98000000 {
-+			compatible = "realtek,rtd1295-clk";
-+			reg = <0x98000000 0x1000>;
-+			clocks = <&osc27M>;
-+			#clock-cells = <1>;
-+		};
-+
- 		reset1: reset-controller@98000000 {
- 			compatible = "realtek,rtd1295-reset";
- 			reg = <0x98000000 0x4>;
-@@ -112,6 +126,13 @@
- 			#reset-cells = <1>;
- 		};
- 
-+		iso_clkc: clock-controller@98007000 {
-+			compatible = "realtek,rtd1295-iso-clk";
-+			reg = <0x98007000 0x100>;
-+			clocks = <&osc27M>;
-+			#clock-cells = <1>;
-+		};
-+
- 		iso_irq_mux: interrupt-controller@98007000 {
- 			compatible = "realtek,rtd1295-iso-irq-mux";
- 			reg = <0x98007000 0x100>;
--- 
-2.12.3
+Applied to clk-meson's next/drivers except for patch 3 to next/headers
