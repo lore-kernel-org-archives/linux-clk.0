@@ -1,232 +1,158 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1502281102.2759.37.camel@baylibre.com>
-Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
- linux-amlogic@lists.infradead.org, Russell King <linux@armlinux.org.uk>,
- Linus Walleij <linus.walleij@linaro.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>
-Date: Wed, 09 Aug 2017 14:18:22 +0200
-In-Reply-To: <150223186723.22158.11617219588466426777@resonance>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-	 <20170612194438.12298-6-jbrunet@baylibre.com>
-	 <20170726001217.GC2146@codeaurora.org>
-	 <1501089516.2401.29.camel@baylibre.com>
-	 <20170804001836.GU2146@codeaurora.org>
-	 <150223186723.22158.11617219588466426777@resonance>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs7.siol.net ([213.250.19.138]:46756 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752240AbdHDNte (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Aug 2017 09:49:34 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, wens@csie.org
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
+Date: Fri, 04 Aug 2017 15:49:29 +0200
+Message-ID: <18315912.JHEzglLTUl@jernej-laptop>
+In-Reply-To: <CAGb2v64hQGwZtcRMhkSejKFozZu7rbL+47NbOuYrc7pKoOYLkw@mail.gmail.com>
+References: <20170801131304.7741-1-icenowy@aosc.io> <13060066.Dl610HiJ2r@jernej-laptop> <CAGb2v64hQGwZtcRMhkSejKFozZu7rbL+47NbOuYrc7pKoOYLkw@mail.gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-08-08 at 15:37 -0700, Michael Turquette wrote:
-> Hi Stephen,
-> 
-> Quoting Stephen Boyd (2017-08-03 17:18:36)
-> > On 07/26, Jerome Brunet wrote:
-> > > > > +void clk_rate_protect(struct clk *clk);
-> > > > 
-> > > > Is there any plan to use this clk_rate_protect() API? It seems
-> > > > inherently racy for a clk consumer to call clk_set_rate() and
-> > > > then this clk_rate_protect() API after that to lock the rate in.
-> > > > How about we leave this out of the consumer API until a user
-> > > > needs it?
-> > > 
-> > > Having this API available is whole reason I've been working on this for so
-> > > long.
-> > > By the now, you may have forgot but I explained the use-case in first RFC
-> > > [0]
-> > > Here is an example (wip) of usage [1]
-> > > 
-> > > [0]: http://lkml.kernel.org/r/20170302173835.18313-1-jbrunet@baylibre.com
-> > > [1]: https://github.com/jeromebrunet/linux/commits/amlogic/wip/audio-clk-l
-> > > ock
-> 
-> Indeed, something like rate protection or "lock rate" has been discussed
-> since the birth of CCF. I remember a whiteboarding session between you,
-> Paul W. and myself about it probably in 2012. Peter might have been
-> there too.
-> 
-> > 
-> > If we're forgetting why something is introduced then it means the
-> > commit text is missing information. Please clearly describe the
-> > need for the API in the commit text for the patch that introduces
-> > it.
-> 
-> My $0.02 is that the "pick an unused PLL" thing is a benefit of this new
-> api that is internal to the clock controller driver, and is not the
-> driving force behind the series. If a simple, easy to understand
-> justification for this patch series is needed, might I suggest something
-> like the following for the next commit log/coverletter:
-> 
-> "Some clock consumers require that a clock rate must not deviate from
-> its selected frequency. There can be several reasons for this, not least
-> of which is that some hardware may not be able to handle or recover from
-> a glitch caused by changing the clock rate while the hardware is in
-> operation. The ability to lock a clock's rate, and release that lock, is
-> a fundamental clock rate control primitive. It's absence is a bug that
-> is fixed by this patch series."
-> 
-> That's the short and sweet version. If more verbosity is needed as to
-> why rate_range doesn't need this, there are some good reasons:
-> 
-> 1) simplicity: some consumers don't care about their rate, but do
-> care that they rate doesn't change. clk_rate_{un}protect is much simpler
-> than forcing those consumers to call clk_get_rate, then cache that value
-> for future use and then call clk_set_rate_range.
-> 
-> 2) expressiveness / debug: trying to find out why a clock rate is locked
-> searching through every use of clk_set_rate_range is sort of lame,
-> especially if variables are used to pass in min/max instead of
-> hard-coded values. It's way way easier to just grep for
-> clk_rate_protect.
-> 
-> > 
-> > > 
-> > > > 
-> > > > Finally, When does a consumer want the rate of a clk to change
-> > > > after they call clk_set_rate() on it? I would guess that very few
-> > > > consumers would be willing to accept that. Which begs the
-> > > > question, if anyone will keep calling clk_set_rate() after this
-> > > > API (and the clk_set_rate_protect() API) is added. It almost
-> > > > seems like we would want it to be opt-out, instead of opt-in, so
-> > > > that consumers would call clk_set_rate() and expect it to be a
-> > > > stable clk rate after that, and they would call
-> > > > clk_set_rate_trample_on_me() or something properly named when
-> > > > they don't care what the rate is after they call the API.
-> > > > 
-> > > 
-> > > Indeed, we generally don't want our rate to change, but:
-> > > - This is mostly for leaf clocks, the internal path would generally not
-> > > care, as
-> > > long as the leaf are happy.
-> > > - Even a leaf may be open (be able to deal with) to small glitches, pll
-> > > relock,
-> > > re parenting
-> > > 
-> > > Actually, if all the clock could not tolerate any glitches, there would
-> > > have
-> > > been a lot of complains about CCF by now, it does not prevent glitches at
-> > > all.
-> > 
-> > Well some devices handle glitches in the hardware, so the details
-> > of glitch free rate changes are hidden from clk consumers, and
-> > the software in general, on those devices.
-> 
-> On the hardware that I am familiar with, the problem of glitches lies
-> not in the clock hardware, but with the downstream peripheral logic / ip
-> block that consumes that clock signal. So it seems to me that having a
-> consumer api for locking the rate makes perfect sense.
-> 
-> > 
-> > > 
-> > > If you go over the initial RFC, the point is also for the CCF to favor
-> > > other
-> > > (unused parent) when several (sometimes with the same capabilities) are
-> > > available. I think this is also a fairly common use case. That's something
-> > > rate_range won't do either, as far as I understood.
-> > 
-> > Fair enough, but why do we want consumers to need to know that
-> > there are sometimes unused parents that aren't getting chosen for
-> > a particular frequency? I see this as exposing the internals of
-> > the clk tree to consumers when they shouldn't need to care. Of
-> > course, sometimes clk consumers really do care about internals,
-> 
-> Right, sometimes they do, and we need to strike a balance. I think that
-> this api has been needed for some time. It very likely could have been
-> included in the initial version of the CCF that was merged years back if
-> I hadn't been trying very hard to stick only to the existing clk.h.
-> 
-> clk_set_rate has always been a "last write wins" api, across a shared
-> resource, and we've always known that this is not a great situation.
-> This patch series does a good job of solving that issue, in conjunction
-> with the existing range stuff.
-> 
-> > for example if some PLL is used for a display controller and it's
-> > also routed out of the chip on the display phy pins to encode
-> > data or something. Then perhaps we really want to use one
-> > particular PLL instead of a generic one that may also be a parent
-> > of the display controller clk. Making sure clk_set_rate() doesn't
-> > trample on clks deep in the tree seems different than this
-> > though.
-> > 
-> > Going back to your RFC series cover letter though, I see three
-> > PLLs (mppl0,1,2) and two users of the PLLs (amclk and mclk_i958).
-> > Is anything else using these PLLs in the system? Why are we doing
-> > all this stuff instead of hard-coding the parents for these clks
-> > to be different PLLs? If we want it to be flexible we could
-> > assign parents to the cts_amclk_sel and cts_mclk_i958_sel to be
-> > different PLLs in DT via assigned clock parents. Or it could just
-> > be hard-coded in the clk driver during probe.
-> > 
-> > If there's really sharing going on, and you can't hardcode the
-> > parents, please indicate why that's the case in the commit text.
-> > I don't want to introduce another consumer API just because we
-> > didn't want to restrict the available parents for a couple clks.
-> 
-> I think the PLL sharing thing is a big distraction. Giving consumers the
-> ability to guarantee that their rates are locked in using a simple
-> critical section call just makes sense to me. If it helps with other
-> cases then yay.
+Hi Chen-Yu,
 
-It guarantee that what is being protected, won't be broken ... for sure it helps
-with sharing issues.
+Dne petek, 04. avgust 2017 ob 11:27:33 CEST je Chen-Yu Tsai napisal(a):
+> On Fri, Aug 4, 2017 at 4:59 PM, Jernej Škrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Hi Chen-Yu,
+> > 
+> > Dne petek, 04. avgust 2017 ob 06:29:50 CEST je Chen-Yu Tsai napisal(a):
+> >> On Fri, Aug 4, 2017 at 12:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> >> > 于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
+> >> >>Hi,
+> >> >>
+> >> >>On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> >> >>> From: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> >>> 
+> >> >>> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be
+> >> >>
+> >> >>set.
+> >> >>
+> >> >>> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
+> >> >>> 
+> >> >>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> >>> ---
+> >> >>> 
+> >> >>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+> >> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> >>> 
+> >> >>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> >> >>
+> >> >>b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> >> >>
+> >> >>> index b1127e8629d9..2ebb3d865b01 100644
+> >> >>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> >> >>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> >> >>> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,
+> >> >>
+> >> >>"avs",          "osc24M",
+> >> >>
+> >> >>>  static const char * const hdmi_parents[] = { "pll-video" };
+> >> >>>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+> >> >>> 
+> >> >>> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
+> >> >>> +                                0x150, 0, 4, 24, 2, BIT(31),
+> >> >>
+> >> >>CLK_SET_RATE_PARENT);
+> >> >>
+> >> >>Line is longer than 80 characters.
+> >> >>
+> >> >>This looks independent enough so I've merged this for 4.14 with the
+> >> >>offending line wrapped and the following tag added:
+> >> >>
+> >> >>Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+> >> >>
+> >> > Please don't merge this now until Jernej send it.
+> >> 
+> >> (Dropped Rob, devicetree and dri mailing lists)
+> >> 
+> >> Hi Jernej,
+> >> 
+> >> Is it OK if we take this patch for the next release? Or rather,
+> >> if there anything blocking this patch?
+> > 
+> > I just made last check now and this patch is indeed OK. Before merging,
+> > please read explanation below.
+> 
+> Ack.
+> 
+> > Background:
+> > According to H3 datasheet and BSP driver, HDMI clock has M factor
+> > (divider) to correctly set pixel clock to desired value. However, Jens
+> > Kuske discovered that this factor doesn't play any role whatsoever and
+> > instead, division factor set in PHY registers is the important one. I
+> > confirmed that on BSP kernel by tying M factor to 0. Both, HDMI video and
+> > audio, still worked correctly.
+> Great. Sounds like what we have on A31 and earlier SoCs.
+> 
+> > So that flag is necessary to set pll-video to pixel clock * div factor. I
+> > can also change HDMI clock type to SUNXI_CCU_GATE (without M factor) and
+> > document discrepancy with datasheet in ccu-sun8i-h3.c. Alternatively to
+> > this patch, just in case, to be on the safe side, I can add pll-video
+> > clock phandle to the dt node. However, as far as I know, that might
+> > prevent selecting another parent on SoCs where HDMI clock has multiple
+> > parents.
+> 
+> It could be that the HDMI clock only drives the DW-HDMI sampler and other
+> internal logic, while the PHY takes the PLL input directly for the TMDS
+> clock? I'm not sure how you could verify this though. Maybe increase M
+> to the maximum, and see if there is any tearing or other artifacts?
+> Ideally we could just ask Allwinner...
+
+I just made quick test with maximum divider and everything seems to be ok. 
+Unfortunately, I don't have time to do extensive test.
+
+I will forward the question to Tl Lim and let's see if he can get the answer, 
+since the situation for A64 is completely the same.
 
 > 
+> You should change it to SUNXI_CCU_MUX_WITH_GATE if you want to change it.
+> If there are mux bits, even if there's only one valid setting, you should
+> still have the mux, so the kernel can actually correct any invalid settings
+> that may be incorrectly programmed into the hardware by the bootloader or
+> user. This would be a separate patch.
+
+I will leave it as it is for now. Will you still merge the patch?
+
+Regards,
+Jernej
+
+> 
+> How we support other SoCs really depends on whether the TMDS clock bits
+> have a mux or not, or whether they are connected to the HDMI mod clock
+> in any way.
+> 
+> Regards
+> ChenYu
+> 
+> > Regards,
+> > Jernej
 > > 
-> > > 
-> > > Last but not least, it allows consumer to set the rate in a sort of
-> > > critical
-> > > section and have the guarantee that nobody will be able to change the rate
-> > > between the clk_set_rate() call and prepare_enable(). That's something we
-> > > don't
-> > > have at the moment.
-> > > 
-> > 
-> > Right, but clk_rate_protect() doesn't close the critical section
-> > between clk_set_rate() and clk_rate_protect() if another
-> > consumers changes the frequency, or if that consumer changes the
-> > frequency of some parent of the clk. This is why I'm asking what
+> >> Thanks
+> >> ChenYu
+> >> 
+> >> >>ChenYu
+> >> >>
+> >> >>>  static SUNXI_CCU_GATE(hdmi_ddc_clk,    "hdmi-ddc",     "osc24M",
+> >> >>>  
+> >> >>>                       0x154, BIT(31), 0);
 > 
-> Right, clk_set_rate_protect does this in the next patch in this series.
+> --
+> You received this message because you are subscribed to the Google Groups
+> "linux-sunxi" group. To unsubscribe from this group and stop receiving
+> emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-Hum, I disagree here. For sure, if you call clk_set_rate() before
-clk_rate_protect() you have not guarantee at all, but you are doing it wrong.
-The way to use this it to call clk_rate_protect() then clk_set_rate().
 
-As explained earlier, as long as the clock is protected only once, the
-protecting consumer is still able to change the rate, because it is the only one
-depending on clock.
-
-This is a good fit for driver which heavily depends on rate being but need to
-change the rate during during their operations. It is not necessary to unprotect
-the clock before calling clk_set_rate().
-
-clk_set_rate_protect() is only introduce to help driver which could get in the
-situation where 2 consumers protect the clock w/o getting a chance to set the
-rate, exhausting  the ressources. To re-set the rate, clk_rate_unprotect() must
-be called before calling clk_set_rate_protect() again.
-
-> 
-> > the use of this API is for. Shouldn't we want consumers to use
-> > clk_set_rate_protect() so they can be sure they got the rate they
-> > wanted, instead of hoping that something else hasn't come in
-> > between the set_rate and the protect calls and changed the
-> > frequency?
-> 
-> We can remove clk_rate_protect if you really want, but there is always
-> the case that a consumer driver does not set the rate, but needs to
-> guarantee that the rate will not change during operation.
-> 
-> Any driver that must both set the rate AND guarantee it will not change
-> must use clk_set_rate_protect.
-> 
-> Regards,
-> Mike
-> 
-> > 
-> > -- 
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> > a Linux Foundation Collaborative Project
