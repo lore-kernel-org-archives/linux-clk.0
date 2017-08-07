@@ -1,57 +1,54 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v1 9/9] arm: dts: Add power controller device node of MT2712
-Date: Tue, 15 Aug 2017 14:42:50 +0800
-Message-ID: <1502779370-30150-10-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: robh+dt@kernel.org, shawn.lin@rock-chips.com, zhangqing@rock-chips.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 06/23] clk: rockchip: support more clks for rv1108
+Date: Tue, 08 Aug 2017 00:57:45 +0200
+Message-ID: <11738434.oWbxbgkgjP@phil>
+In-Reply-To: <1501662837-12029-1-git-send-email-andy.yan@rock-chips.com>
+References: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com> <1501662837-12029-1-git-send-email-andy.yan@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Weiyi Lu <weiyi.lu@mediatek.com>
+Hi Andy,
 
-add power controller node for MT2712
+Am Mittwoch, 2. August 2017, 16:33:57 CEST schrieb Andy Yan:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
+> 
+> Added the description of the missing clock,
+> make the clock tree more complete.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+[...]
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index 6338a1f..3fc2eee 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -165,6 +165,21 @@
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
-+	scpsys: scpsys@10006000 {
-+		compatible = "mediatek,mt2712-scpsys", "syscon";
-+		#power-domain-cells = <1>;
-+		reg = <0 0x10006000 0 0x1000>;
-+		clocks = <&topckgen CLK_TOP_MM_SEL>,
-+			 <&topckgen CLK_TOP_MFG_SEL>,
-+			 <&topckgen CLK_TOP_VENC_SEL>,
-+			 <&topckgen CLK_TOP_JPGDEC_SEL>,
-+			 <&topckgen CLK_TOP_A1SYS_HP_SEL>,
-+			 <&topckgen CLK_TOP_VDEC_SEL>;
-+		clock-names = "mm", "mfg", "venc",
-+			"jpgdec", "audio", "vdec";
-+		infracfg = <&infracfg>;
-+	};
-+
- 	uart5: serial@1000f000 {
- 		compatible = "mediatek,mt2712-uart",
- 			     "mediatek,mt6577-uart";
--- 
-1.9.1
+>  	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
+>  
+> -	COMPOSITE(0, "i2s0_src", mux_pll_src_2plls_p, 0,
+> +	/* PD_BUS */
+> +	GATE(0, "aclk_bus_src_gpll", "gpll", CLK_IGNORE_UNUSED,
+> +			RV1108_CLKGATE_CON(1), 0, GFLAGS),
+> +	GATE(0, "aclk_bus_src_apll", "apll", CLK_IGNORE_UNUSED,
+> +			RV1108_CLKGATE_CON(1), 1, GFLAGS),
+> +	GATE(0, "aclk_bus_src_dpll", "dpll", CLK_IGNORE_UNUSED,
+> +			RV1108_CLKGATE_CON(1), 2, GFLAGS),
+> +	COMPOSITE_NOGATE(ACLK_PRE, "aclk_bus_pre", mux_aclk_bus_src_p, 0,
+> +			RV1108_CLKSEL_CON(2), 8, 2, MFLAGS, 0, 5, DFLAGS),
+> +	COMPOSITE_NOMUX(HCLK_BUS, "hclk_bus_pre", "aclk_bus_pre", 0,
+> +			RV1108_CLKSEL_CON(3), 0, 5, DFLAGS,
+> +			RV1108_CLKGATE_CON(1), 4, GFLAGS),
+
+you're adding a (new / second) hclk_bus_pre here, but only drop the
+old in patch 7. Please structure patch-contents in a way that each patch
+is self-contained and works on its own ... aka the clock tree should not
+get worse if only patch 6 is applied (like in a random git bisect), but
+here the state is bad between these 2 patches.
+
+hclk_bus_pre also is only _one_ example and there are probably more of
+those hiding in these clock patches. So please fix these issues.
+
+
+Thanks
+Heiko
