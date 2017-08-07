@@ -1,108 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:37309 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751202AbdHOMic (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 15 Aug 2017 08:38:32 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Tue, 15 Aug 2017 20:38:25 +0800
-From: icenowy@aosc.io
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner
- SoCs
-In-Reply-To: <4537884.Ku45nQGoFt@aspire.rjw.lan>
-References: <20170723102749.17323-1-icenowy@aosc.io>
- <2436327.OLdY8skjMP@aspire.rjw.lan>
- <CAGb2v640an6X75PTbNTnMqhnEREekX97uJZ4sFsfqTAgcDinQg@mail.gmail.com>
- <4537884.Ku45nQGoFt@aspire.rjw.lan>
-Message-ID: <cd9133086c3e527fff7003a441862412@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <guodong.xu@linaro.org>
+Return-Path: <guodong.xu@linaro.org>
+From: Guodong Xu <guodong.xu@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: chenjun14@huawei.com,
+	zhongkaihua@huawei.com,
+	zhangfei.gao@linaro.org,
+	leo.yan@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Guodong Xu <guodong.xu@linaro.org>
+Subject: [PATCH] clk: hi3660: fix incorrect uart3 clock freqency
+Date: Mon,  7 Aug 2017 22:51:56 +0800
+Message-Id: <20170807145156.7880-1-guodong.xu@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-08-15 20:25，Rafael J. Wysocki 写道：
-> On Tuesday, August 15, 2017 7:42:19 AM CEST Chen-Yu Tsai wrote:
->> On Mon, Jul 24, 2017 at 7:46 PM, Rafael J. Wysocki <rjw@rjwysocki.net> 
->> wrote:
->> > On Monday, July 24, 2017 02:23:49 PM Viresh Kumar wrote:
->> >> On 23-07-17, 18:27, Icenowy Zheng wrote:
->> >> > Some new Allwinner SoCs get supported in the kernel after the
->> >> > compatibles are added to cpufreq-dt-platdev driver.
->> >> >
->> >> > Add their compatible strings in the cpufreq-dt-platdev driver.
->> >> >
->> >> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->> >> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> >> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> >> > ---
->> >> >  drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
->> >> >  1 file changed, 6 insertions(+)
->> >> >
->> >> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
->> >> > index 2eb40d46d357..c3851453e84a 100644
->> >> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
->> >> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
->> >> > @@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
->> >> >     { .compatible = "allwinner,sun8i-a23", },
->> >> >     { .compatible = "allwinner,sun8i-a33", },
->> >> >     { .compatible = "allwinner,sun8i-a83t", },
->> >> > +   { .compatible = "allwinner,sun8i-h2-plus", },
->> >> >     { .compatible = "allwinner,sun8i-h3", },
->> >> > +   { .compatible = "allwinner,sun8i-v3s", },
->> >> > +   { .compatible = "allwinner,sun50i-a64", },
->> >> > +   { .compatible = "allwinner,sun50i-h5", },
->> >> >
->> >> >     { .compatible = "apm,xgene-shadowcat", },
->> >> >
->> >> > @@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
->> >> >     { .compatible = "marvell,pxa250", },
->> >> >     { .compatible = "marvell,pxa270", },
->> >> >
->> >> > +   { .compatible = "nextthing,gr8", },
->> >> > +
->> >> >     { .compatible = "samsung,exynos3250", },
->> >> >     { .compatible = "samsung,exynos4210", },
->> >> >     { .compatible = "samsung,exynos4212", },
->> >>
->> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> >>
->> >>
->> >
->> > OK
->> >
->> > I'm assuming this will go in via arm-soc along with the rest of the series.
->> 
->> The rest of the series, except for the clk patches I've already taken,
->> doesn't seem to be going anywhere just yet. Is there a cpufreq or pm 
->> tree
->> this can be merged through?
-> 
-> You mean this particular patch or the whole series?
-> 
-> If the former, then yes, there is.
+From: Zhong Kaihua <zhongkaihua@huawei.com>
 
-I think he means the particular patch.
+UART3 clock rate is doubled in previous commit.
 
-Other patches in this series still need some review, however, this patch
-is standalone and can be taken independently.
+This error is not detected until recently a mezzanine board which makes
+real use of uart3 port (through LS connector of 96boards) was setup
+and tested on hi3660-hikey960 board.
 
-> 
-> Thanks,
-> Rafael
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This patch changes clock source rate of clk_factor_uart3 to 100000000.
+
+Signed-off-by: Zhong Kaihua <zhongkaihua@huawei.com>
+Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi3660.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/hisilicon/clk-hi3660.c b/drivers/clk/hisilicon/clk-hi3660.c
+index a18258e..f404199 100644
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -34,7 +34,7 @@ static const struct hisi_fixed_rate_clock hi3660_fixed_rate_clks[] = {
+ 
+ /* crgctrl */
+ static const struct hisi_fixed_factor_clock hi3660_crg_fixed_factor_clks[] = {
+-	{ HI3660_FACTOR_UART3, "clk_factor_uart3", "iomcu_peri0", 1, 8, 0, },
++	{ HI3660_FACTOR_UART3, "clk_factor_uart3", "iomcu_peri0", 1, 16, 0, },
+ 	{ HI3660_CLK_FACTOR_MMC, "clk_factor_mmc", "clkin_sys", 1, 6, 0, },
+ 	{ HI3660_CLK_GATE_I2C0, "clk_gate_i2c0", "clk_i2c0_iomcu", 1, 4, 0, },
+ 	{ HI3660_CLK_GATE_I2C1, "clk_gate_i2c1", "clk_i2c1_iomcu", 1, 4, 0, },
+-- 
+2.10.2
