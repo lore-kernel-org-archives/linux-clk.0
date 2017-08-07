@@ -1,74 +1,100 @@
-Return-Path: <hayashi.kunihiko@socionext.com>
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: yamada.masahiro@socionext.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	masami.hiramatsu@linaro.org,
-	jaswinder.singh@linaro.org,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH] clk: uniphier: add ethernet clock control support
-Date: Mon, 28 Aug 2017 18:57:23 +0900
-Message-Id: <1503914243-24518-1-git-send-email-hayashi.kunihiko@socionext.com>
+Return-Path: <wens@wens.csie.org>
+Date: Mon, 7 Aug 2017 10:43:59 +0800
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [GIT PULL] Allwinner clock changes for 4.14
+Message-ID: <20170807024359.s6jj5wlgrd3fxe2k@wens.csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qyoseamnlebcrjg2"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock control for ethernet controller on Pro4, PXs2, LD11 and LD20.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/clk/uniphier/clk-uniphier-sys.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+--qyoseamnlebcrjg2
+Content-Type: text/plain; charset=big5
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index 6fcf781..01da141 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -57,6 +57,12 @@
- #define UNIPHIER_PRO4_SYS_CLK_USB3(idx, ch)				\
- 	UNIPHIER_CLK_GATE("usb3" #ch, (idx), NULL, 0x2104, 16 + (ch))
- 
-+#define UNIPHIER_PRO4_SYS_CLK_ETHER(idx)				\
-+	UNIPHIER_CLK_GATE("ether", (idx), NULL, 0x2104, 12)
-+
-+#define UNIPHIER_LD11_SYS_CLK_ETHER(idx)				\
-+	UNIPHIER_CLK_GATE("ether", (idx), NULL, 0x210c, 6)
-+
- const struct uniphier_clk_data uniphier_ld4_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 65, 1),		/* 1597.44 MHz */
- 	UNIPHIER_CLK_FACTOR("upll", -1, "ref", 6000, 512),	/* 288 MHz */
-@@ -81,6 +87,7 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
- 	UNIPHIER_LD4_SYS_CLK_NAND(2),
- 	UNIPHIER_LD4_SYS_CLK_SD,
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
-+	UNIPHIER_PRO4_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD4_SYS_CLK_STDMAC(8),			/* HSC, MIO, RLE */
- 	UNIPHIER_PRO4_SYS_CLK_GIO(12),			/* Ether, SATA, USB3 */
- 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
-@@ -122,6 +129,7 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 48),
- 	UNIPHIER_PRO5_SYS_CLK_NAND(2),
- 	UNIPHIER_PRO5_SYS_CLK_SD,
-+	UNIPHIER_PRO4_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD4_SYS_CLK_STDMAC(8),				/* HSC, RLE */
- 	/* GIO is always clock-enabled: no function for 0x2104 bit6 */
- 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
-@@ -142,6 +150,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
- 	UNIPHIER_LD11_SYS_CLK_NAND(2),
- 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
- 	/* Index 5 reserved for eMMC PHY */
-+	UNIPHIER_LD11_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
- 	/* CPU gears */
-@@ -171,6 +180,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
- 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
- 	/* Index 5 reserved for eMMC PHY */
- 	UNIPHIER_LD20_SYS_CLK_SD,
-+	UNIPHIER_LD11_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
- 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
- 	/*
--- 
-2.7.4
+Hi Mike, Stephen,
+
+Here is the first and possibly only bunch of patches for 4.14.
+These are all non critical fixes.
+
+Thanks!
+ChenYu
+
+
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
+i-clk-for-4.14
+
+for you to fetch changes up to 913c3d85b4b562e38242765baa95113c8c7f1c14:
+
+  clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3 (20=
+17-08-04 12:05:33 +0800)
+
+----------------------------------------------------------------
+Allwinner clock changes for 4.14
+
+Non critical fixes:
+
+  - Fix sunxi-ng/ccu-sunxi-r.h header file guard macro typo
+
+  - Make fractional clock modes really used and correctly configured
+
+  - Make H3 cpu clock rate change correctly to be used with cpufreq
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      clk: sunxi-ng: h3: gate then ungate PLL CPU clk after rate change
+
+Icenowy Zheng (1):
+      clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3
+
+Jernej =C5=A0krabec (4):
+      clk: sunxi-ng: Fix fractional mode for N-M clocks
+      clk: sunxi-ng: multiplier: Fix fractional mode
+      clk: sunxi-ng: Make fractional helper less chatty
+      clk: sunxi-ng: Wait for lock when using fractional mode
+
+Matthias Kaehlcke (1):
+      clk: sunxi-ng: Fix header guard of ccu-sun8i-r.h
+
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 13 ++++++++++++-
+ drivers/clk/sunxi-ng/ccu-sun8i-r.h  |  2 +-
+ drivers/clk/sunxi-ng/ccu_frac.c     | 14 ++++++++------
+ drivers/clk/sunxi-ng/ccu_frac.h     |  2 +-
+ drivers/clk/sunxi-ng/ccu_mult.c     | 10 +++++++---
+ drivers/clk/sunxi-ng/ccu_nm.c       | 19 ++++++++++++++++---
+ 6 files changed, 45 insertions(+), 15 deletions(-)
+
+--qyoseamnlebcrjg2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAlmH0+8ACgkQOJpUIZwP
+JDDzjQ/+JvDsN5Qm00uG7gXn49HaKPlYhEbKbc4paThpdoWRD7R6QBow6zIoITBB
+8H1JMXtVMOATbJxnOkyVxjwpC1lE/E3bigseAUb+Ezt9pF2RL063srF2es4LYbUN
+uTjHjAptp+yTiE/mrLpRszv/xkC7ZBfhkOI4mb4SMZrgl8UjAsI72NDuw12kgl5w
+jybcKMdSRQJUf8z5NIVuAbZWvBFjCcDzBw65tXI0KL/RVPhJcjxat8jxIE2E7373
+QhCt0ogG7YuMl/o+IoGt2TN+7AOJ/yYmYPKxgxrGyb7dNSMPT5C5RnklBHxKCnVH
+FhyRq+lXdaTuDDrnmzBHgeiDIbzw65GIyOvCrMBLvaziX+lp2NYC52euuQt4R1yN
+22/6V5k7dlaDdkeIfkTX+87Kdmy9wm3nFV5zDAeXZwDFsNXOICgq4U2WjU1BWnli
+y8QEvaYw2SVmJMsBEzbeQcFRCY8L8p7izdgT3L5Q6VVAib1BNkWv2YOapntgicnW
+PYJ/daBoh1JAhDehs15u9rkYNyU31eBQlbM1mYT2hlPloOngCHKNfIf1O8qcGQAC
+CG/VxSh5jdlmc9espAV8MLPjHMtGs7SaDWfFh1IRJwoFurm71jkfYwAqCVCi0C8v
+arUgjqwjvx3yxr1cnq16/gQDYQHJnueXLW/mlnefn8LTIsiS6/Y=
+=vki3
+-----END PGP SIGNATURE-----
+
+--qyoseamnlebcrjg2--
