@@ -1,169 +1,69 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:42058 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751293AbdHDJDO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Aug 2017 05:03:14 -0400
-Date: Fri, 04 Aug 2017 17:03:03 +0800
-In-Reply-To: <13060066.Dl610HiJ2r@jernej-laptop>
-References: <20170801131304.7741-1-icenowy@aosc.io> <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io> <CAGb2v67ihCOmjojidpGfp9WvLiWWbwL+27tm7vOrKX0rRH4O1w@mail.gmail.com> <13060066.Dl610HiJ2r@jernej-laptop>
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2561 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752634AbdHGJTv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2017 05:19:51 -0400
+From: Zhong Kaihua <zhongkaihua@huawei.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <puck.chen@hisilicon.com>, <leo.yan@linaro.org>,
+        <wangruyi@huawei.com>, <zhongkaihua@huawei.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC: <john.stultz@linaro.org>, <guodong.xu@linaro.org>,
+        <zhangfei.gao@linaro.org>, <jason.liu@linaro.org>,
+        <dan.zhao@hisilicon.com>, <suzhuangluan@hisilicon.com>,
+        <xuezhiliang@hisilicon.com>, <xupeng7@huawei.com>,
+        <chenjun14@huawei.com>, <hanwei.hanwei@huawei.com>,
+        <hezetong@huawei.com>, <wuze1@huawei.com>,
+        Kai Zhao <zhaokai1@hisilicon.com>,
+        Tao Wang <kevin.wangtao@hisilicon.com>
+Subject: [PATCH 2/2] dts: arm64: bind stub clock driver for Hi3660
+Date: Mon, 7 Aug 2017 17:19:15 +0800
+Message-ID: <1502097555-11541-2-git-send-email-zhongkaihua@huawei.com>
+In-Reply-To: <1502097555-11541-1-git-send-email-zhongkaihua@huawei.com>
+References: <1502097555-11541-1-git-send-email-zhongkaihua@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, wens@csie.org
-CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <E50F5E8C-2121-493C-A7B2-D1535E916471@aosc.io>
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Kaihua Zhong <zhongkaihua@huawei.com>
 
+Add binding to stub clock driver.
 
-于 2017年8月4日 GMT+08:00 下午4:59:03, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
->Hi Chen-Yu,
->
->Dne petek, 04. avgust 2017 ob 06:29:50 CEST je Chen-Yu Tsai napisal(a):
->> On Fri, Aug 4, 2017 at 12:16 PM, Icenowy Zheng <icenowy@aosc.io>
->wrote:
->> > 于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
->> >>Hi,
->> >>
->> >>On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io>
->wrote:
->> >>> From: Jernej Skrabec <jernej.skrabec@siol.net>
->> >>> 
->> >>> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to
->be
->> >>
->> >>set.
->> >>
->> >>> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
->> >>> 
->> >>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> >>> ---
->> >>> 
->> >>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
->> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
->> >>> 
->> >>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> >>
->> >>b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> >>
->> >>> index b1127e8629d9..2ebb3d865b01 100644
->> >>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> >>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> >>> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,
->> >>
->> >>"avs",          "osc24M",
->> >>
->> >>>  static const char * const hdmi_parents[] = { "pll-video" };
->> >>>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
->> >>> 
->> >>> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
->> >>> +                                0x150, 0, 4, 24, 2, BIT(31),
->> >>
->> >>CLK_SET_RATE_PARENT);
->> >>
->> >>Line is longer than 80 characters.
->> >>
->> >>This looks independent enough so I've merged this for 4.14 with the
->> >>offending line wrapped and the following tag added:
->> >>
->> >>Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
->> >>
->> > Please don't merge this now until Jernej send it.
->> 
->> (Dropped Rob, devicetree and dri mailing lists)
->> 
->> Hi Jernej,
->> 
->> Is it OK if we take this patch for the next release? Or rather,
->> if there anything blocking this patch?
->
->I just made last check now and this patch is indeed OK. Before merging,
->please 
->read explanation below.
->
->Background:
->According to H3 datasheet and BSP driver, HDMI clock has M factor
->(divider) to 
->correctly set pixel clock to desired value. However, Jens Kuske
->discovered 
->that this factor doesn't play any role whatsoever and instead, division
->factor 
->set in PHY registers is the important one. I confirmed that on BSP
->kernel by 
->tying M factor to 0. Both, HDMI video and audio, still worked
->correctly.
->
->So that flag is necessary to set pll-video to pixel clock * div factor.
->I can 
->also change HDMI clock type to SUNXI_CCU_GATE (without M factor) and
->document 
->discrepancy with datasheet in ccu-sun8i-h3.c. Alternatively to this
->patch, 
->just in case, to be on the safe side, I can add pll-video clock phandle
->to the 
->dt node. However, as far as I know, that might prevent selecting
->another 
->parent on SoCs where HDMI clock has multiple parents.
+Signed-off-by: Kai Zhao <zhaokai1@hisilicon.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Tao Wang <kevin.wangtao@hisilicon.com>
+Signed-off-by: Ruyi Wang <wangruyi@huawei.com>
+Tested-by: Kaihua Zhong <zhongkaihua@huawei.com>
 
-Unfortunately A64 is this situation -- A64 TCON1/HDMI clocks can
-use pll-video0/1 as parent, but TCON0 can only use pll-video0 or
-pll-mipi (also a downstream clock of pll-video0), and by default
-TCON1/HDMI also uses pll-video0.
+---
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Because of this I have never succeeded in multihead (LCD+HDMI)
-on Pinebook.
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index ac20065..f23df62 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -299,6 +299,14 @@
+ 			#mbox-cells = <3>;
+ 		};
+ 
++		stub_clock: stub_clock {
++			compatible = "hisilicon,hi3660-stub-clk";
++			reg = <0x0 0xe896b500 0x0 0x0100>;
++			#clock-cells = <1>;
++			mbox-names = "mbox-tx";
++			mboxes = <&mailbox 13 3 0>;
++		};
++
+ 		dual_timer0: timer@fff14000 {
+ 			compatible = "arm,sp804", "arm,primecell";
+ 			reg = <0x0 0xfff14000 0x0 0x1000>;
+-- 
+1.8.3.2
 
->
->Regards,
->Jernej
->
->> 
->> Thanks
->> ChenYu
->> 
->> >>ChenYu
->> >>
->> >>>  static SUNXI_CCU_GATE(hdmi_ddc_clk,    "hdmi-ddc",     "osc24M",
->> >>>  
->> >>>                       0x154, BIT(31), 0);
->> >>> 
->> >>> --
->> >>> 2.13.0
->> >>> 
->> >>> --
->> >>> You received this message because you are subscribed to the
->Google
->> >>
->> >>Groups "linux-sunxi" group.
->> >>
->> >>> To unsubscribe from this group and stop receiving emails from it,
->> >>
->> >>send an email to linux-sunxi+unsubscribe@googlegroups.com.
->> >>
->> >>> For more options, visit https://groups.google.com/d/optout.
->> > 
->> > --
->> > You received this message because you are subscribed to the Google
->Groups
->> > "linux-sunxi" group. To unsubscribe from this group and stop
->receiving
->> > emails from it, send an email to
->> > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
->> > https://groups.google.com/d/optout.
->> 
->> --
->> You received this message because you are subscribed to the Google
->Groups
->> "linux-sunxi" group. To unsubscribe from this group and stop
->receiving
->> emails from it, send an email to
->linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
