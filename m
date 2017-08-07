@@ -1,69 +1,103 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2561 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752634AbdHGJTv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2017 05:19:51 -0400
-From: Zhong Kaihua <zhongkaihua@huawei.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <puck.chen@hisilicon.com>, <leo.yan@linaro.org>,
-        <wangruyi@huawei.com>, <zhongkaihua@huawei.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC: <john.stultz@linaro.org>, <guodong.xu@linaro.org>,
-        <zhangfei.gao@linaro.org>, <jason.liu@linaro.org>,
-        <dan.zhao@hisilicon.com>, <suzhuangluan@hisilicon.com>,
-        <xuezhiliang@hisilicon.com>, <xupeng7@huawei.com>,
-        <chenjun14@huawei.com>, <hanwei.hanwei@huawei.com>,
-        <hezetong@huawei.com>, <wuze1@huawei.com>,
-        Kai Zhao <zhaokai1@hisilicon.com>,
-        Tao Wang <kevin.wangtao@hisilicon.com>
-Subject: [PATCH 2/2] dts: arm64: bind stub clock driver for Hi3660
-Date: Mon, 7 Aug 2017 17:19:15 +0800
-Message-ID: <1502097555-11541-2-git-send-email-zhongkaihua@huawei.com>
-In-Reply-To: <1502097555-11541-1-git-send-email-zhongkaihua@huawei.com>
-References: <1502097555-11541-1-git-send-email-zhongkaihua@huawei.com>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36211 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752156AbdHGMaD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Aug 2017 08:30:03 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAFp+6iH-WR4gNExaOBfnwy7GG7DXrjdytPvnMHNmo64YQZdQWQ@mail.gmail.com>
+References: <1499333825-7658-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1499333825-7658-4-git-send-email-vivek.gautam@codeaurora.org>
+ <20170712225459.GZ22780@codeaurora.org> <5ee0bacd-e557-a6c4-a897-844fb12ea6ae@codeaurora.org>
+ <4dbc938c-ac88-9bd4-cf00-458008ae24c1@codeaurora.org> <CAF6AEGsFOtsOjt1sLNPSFLEcu-7d1zxCOhTeC+P8e0TDbb1dSA@mail.gmail.com>
+ <CAFp+6iH-WR4gNExaOBfnwy7GG7DXrjdytPvnMHNmo64YQZdQWQ@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 7 Aug 2017 08:29:59 -0400
+Message-ID: <CAF6AEGsw2=nERuJ8UCBr_kTBS0TigaA9LL1Hxw3JmNiu4oycOA@mail.gmail.com>
+Subject: Re: [PATCH V4 3/6] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kaihua Zhong <zhongkaihua@huawei.com>
+On Mon, Aug 7, 2017 at 4:27 AM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> On Thu, Jul 13, 2017 at 5:20 PM, Rob Clark <robdclark@gmail.com> wrote:
+>> On Thu, Jul 13, 2017 at 1:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>>> Hi Vivek,
+>>>
+>>> On 7/13/2017 10:43 AM, Vivek Gautam wrote:
+>>>> Hi Stephen,
+>>>>
+>>>>
+>>>> On 07/13/2017 04:24 AM, Stephen Boyd wrote:
+>>>>> On 07/06, Vivek Gautam wrote:
+>>>>>> @@ -1231,12 +1237,18 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
+>>>>>>   static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>>>>>                    size_t size)
+>>>>>>   {
+>>>>>> -    struct io_pgtable_ops *ops = to_smmu_domain(domain)->pgtbl_ops;
+>>>>>> +    struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>>>> +    struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+>>>>>> +    size_t ret;
+>>>>>>         if (!ops)
+>>>>>>           return 0;
+>>>>>>   -    return ops->unmap(ops, iova, size);
+>>>>>> +    pm_runtime_get_sync(smmu_domain->smmu->dev);
+>>>>> Can these map/unmap ops be called from an atomic context? I seem
+>>>>> to recall that being a problem before.
+>>>>
+>>>> That's something which was dropped in the following patch merged in master:
+>>>> 523d7423e21b iommu/arm-smmu: Remove io-pgtable spinlock
+>>>>
+>>>> Looks like we don't  need locks here anymore?
+>>>
+>>>  Apart from the locking, wonder why a explicit pm_runtime is needed
+>>>  from unmap. Somehow looks like some path in the master using that
+>>>  should have enabled the pm ?
+>>>
+>>
+>> Yes, there are a bunch of scenarios where unmap can happen with
+>> disabled master (but not in atomic context).
+>
+> I would like to understand whether there is a situation where an unmap is
+> called in atomic context without an enabled master?
+>
+> Let's say we have the case where all the unmap calls in atomic context happen
+> only from the master's context (in which case the device link should
+> take care of
+> the pm state of smmu), and the only unmap that happen in non-atomic context
+> is the one with master disabled. In such a case doesn it make sense to
+> distinguish
+> the atomic/non-atomic context and add pm_runtime_get_sync()/put_sync() only
+> for the non-atomic context since that would be the one with master disabled.
+>
 
-Add binding to stub clock driver.
+At least drm/msm needs to hold obj->lock (a mutex) in unmap, so it
+won't unmap anything in atomic ctx (but it can unmap w/ master
+disabled).  I can't really comment about other non-gpu drivers.  It
+seems like a reasonable constraint that either master is enabled or
+not in atomic ctx.
 
-Signed-off-by: Kai Zhao <zhaokai1@hisilicon.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Signed-off-by: Tao Wang <kevin.wangtao@hisilicon.com>
-Signed-off-by: Ruyi Wang <wangruyi@huawei.com>
-Tested-by: Kaihua Zhong <zhongkaihua@huawei.com>
+Currently we actually wrap unmap w/ pm_runtime_get/put_sync(), but I'd
+like to drop that to avoid powering up the gpu.
 
----
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index ac20065..f23df62 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -299,6 +299,14 @@
- 			#mbox-cells = <3>;
- 		};
- 
-+		stub_clock: stub_clock {
-+			compatible = "hisilicon,hi3660-stub-clk";
-+			reg = <0x0 0xe896b500 0x0 0x0100>;
-+			#clock-cells = <1>;
-+			mbox-names = "mbox-tx";
-+			mboxes = <&mailbox 13 3 0>;
-+		};
-+
- 		dual_timer0: timer@fff14000 {
- 			compatible = "arm,sp804", "arm,primecell";
- 			reg = <0x0 0xfff14000 0x0 0x1000>;
--- 
-1.8.3.2
-
+BR,
+-R
