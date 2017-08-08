@@ -1,74 +1,23 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:41092 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751731AbdHLDHr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Aug 2017 23:07:47 -0400
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, shawn.lin@rock-chips.com, andy.yan@rock-chips.com
+Subject: Re: [PATCH v3 2/9] clk: rockchip: rename the clk id for HCLK_I2S1_2CH
+Date: Tue, 08 Aug 2017 17:35:39 +0200
+Message-ID: <7826906.vHv6rg8ahg@phil>
+In-Reply-To: <1502176547-30817-3-git-send-email-zhangqing@rock-chips.com>
+References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com> <1502176547-30817-3-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Sat, 12 Aug 2017 11:07:42 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Priit Laes <plaes@plaes.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Jonathan Liu <net147@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-sunxi@googlegroups.com, Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 1/6] clk: sunxi-ng: div: Add support for fixed
- post-divider
-In-Reply-To: <20170717085235.i7pwwql5dgmnf6kk@flea>
-References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
- <946794e97ae2c36cd67c272099e8236a589efc28.1500043741.git-series.plaes@plaes.org>
- <20170717085235.i7pwwql5dgmnf6kk@flea>
-Message-ID: <d3ca32de91e857a8933fd570600cda17@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-07-17 16:52，Maxime Ripard 写道：
-> On Fri, Jul 14, 2017 at 05:49:23PM +0300, Priit Laes wrote:
->> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
->> 6 is fixed post-divider.
->> 
->> Signed-off-by: Priit Laes <plaes@plaes.org>
->> ---
->>  drivers/clk/sunxi-ng/ccu_div.c | 15 +++++++++++++--
->>  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
->>  2 files changed, 15 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/clk/sunxi-ng/ccu_div.c 
->> b/drivers/clk/sunxi-ng/ccu_div.c
->> index c0e5c10..744502a 100644
->> --- a/drivers/clk/sunxi-ng/ccu_div.c
->> +++ b/drivers/clk/sunxi-ng/ccu_div.c
->> @@ -21,6 +21,9 @@ static unsigned long ccu_div_round_rate(struct 
->> ccu_mux_internal *mux,
->>  {
->>  	struct ccu_div *cd = data;
->> 
->> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
->> +		rate *= cd->fixed_post_div;
->> +
->>  	return divider_round_rate_parent(&cd->common.hw, parent,
->>  					 rate, parent_rate,
->>  					 cd->div.table, cd->div.width,
+Am Dienstag, 8. August 2017, 15:15:40 CEST schrieb Elaine Zhang:
+> i2s1 has 2 channels but not 8 channels.
 > 
-> 
-> You still haven't addressed the biggest issue with this patch, see:
-> https://patchwork.kernel.org/patch/9825565/
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-I think he has already did the changes suggested in the review.
+I had already picked the one from v2 before noticing the
+issues in the previous clock-driver changes, so ignored.
 
-(P.S. during developing R40 CCU driver I found that pll-periph0-sata
-also needs this patch, so I'm rechecking it)
 
-> 
-> Maxime
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Heiko
