@@ -1,128 +1,129 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1502286356.2759.43.camel@baylibre.com>
-Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Kevin Hilman
- <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, Linus Walleij
- <linus.walleij@linaro.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>
-Date: Wed, 09 Aug 2017 15:45:56 +0200
-In-Reply-To: <20170809134036.GE20805@n2100.armlinux.org.uk>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
-	 <20170612194438.12298-6-jbrunet@baylibre.com>
-	 <20170726001217.GC2146@codeaurora.org>
-	 <1501089516.2401.29.camel@baylibre.com>
-	 <20170804001836.GU2146@codeaurora.org>
-	 <150223186723.22158.11617219588466426777@resonance>
-	 <20170809021906.GA2146@codeaurora.org>
-	 <20170809114548.GD20805@n2100.armlinux.org.uk>
-	 <1502285688.2759.41.camel@baylibre.com>
-	 <20170809134036.GE20805@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC v2 12/12] clk: qcom: add parent map for regmap mux
+Date: Tue,  8 Aug 2017 23:54:17 +0530
+Message-Id: <1502216657-3342-13-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-08-09 at 14:40 +0100, Russell King - ARM Linux wrote:
-> On Wed, Aug 09, 2017 at 03:34:48PM +0200, Jerome Brunet wrote:
-> > On Wed, 2017-08-09 at 12:45 +0100, Russell King - ARM Linux wrote:
-> > > On Tue, Aug 08, 2017 at 07:19:06PM -0700, Stephen Boyd wrote:
-> > > > I also vaguely remember Paul saying that
-> > > > clk_round_rate() could return something and then clk_set_rate()
-> > > > after that would fail because what was calculated during the rate
-> > > > speculation/rounding phase would be different if some other
-> > > > consumer goes and changes some rate high up in the tree.
-> > > 
-> > > That's probably because people tend to get this stuff wrong.  It is
-> > > _not_ supposed to be:
-> > > 
-> > > 	rounded_rate = clk_round_rate(clk, requested_rate);
-> > > 
-> > > 	clk_set_rate(clk, rounded_rate);
-> > > 
-> > > but:
-> > > 
-> > > 	rounded_rate = clk_round_rate(clk, requested_rate);
-> > > 
-> > > 	clk_set_rate(clk, requested_rate);
-> > > 
-> > > The former is wrong for two reasons:
-> > > 
-> > > 1. it's completely wasteful of CPU resources to do all the calculations
-> > >    that need to be done within clk_set_rate().
-> > > 
-> > > 2. it's racy - there is no guarantee that you'll end up with
-> > > "rounded_rate"
-> > > 
-> > > The API definition of clk_round_rate() explicitly mentions that it is
-> > > equivalent to clk_set_rate() followed by clk_get_rate() with the
-> > > exception that it doesn't affect the hardware.
-> > > 
-> > > I'm not sure that the clock rate protection API is really the right
-> > > solution - if we're trying to stop others from changing the clock rate,
-> > > that implies we have multiple different threads potentially changing
-> > > the rate at any time.  If a driver does this:
-> > > 
-> > > 	clk_set_rate(clk, foo);
-> > > 	clk_rate_protect(clk);
-> > > 
-> > > what prevents another thread from changing the clock rate between these
-> > > two calls?  The only way to do this safely would be something like:
-> > > 
-> > > 	r = clk_round_rate(clk, foo);
-> > > 	while (1) {
-> > > 		err = clk_set_rate(clk, foo);
-> > > 		clk_rate_protect(clk);
-> > > 		if (err < 0)
-> > > 			break;
-> > > 
-> > > 		if (r == clk_get_rate(clk)) /* success */
-> > > 			break;
-> > > 
-> > > 		clk_rate_unprotect(clk);
-> > > 	}
-> > > 
-> > > 	if (err)
-> > > 		failed;
-> > 
-> > Russell,
-> > I think you have missed one subtle thing, when trying any clock altering
-> > operation, if the consumer is protecting the clock, it will temporarily
-> > release 
-> > the protection once, under the prepare_lock (to guarantee safe operation).
-> > This
-> > is explained in the cover letter:
-> > 
-> > """
-> > With this series there is 3 use-case:
-> >  - the provider is not protected: nothing changes
-> >  - the provider is protected by only 1 consumer (and only once), then only
-> >    this consumer will be able to alter the rate of the clock, as it is the
-> >    only one depending on it.
-> >  - If the provider is protected more than once, or by the provider itself,
-> >    the rate is basically locked and protected against reparenting.
-> > """
-> > 
-> > So what you should do if you have to protect the clock is:
-> > 
-> > clk_rate_protect(clk);
-> > err = clk_set_rate(clk, foo);
-> > 
-> > [...]
-> > clk_rate_unprotect(clk);
-> 
-> So here you drop the protection, which means anyone can alter the clock
-> again.
-> 
+Currently the driver assumes the register configuration value
+is identical to its index in the parent map. This patch adds
+the parent map field in regmap mux clock node which contains
+the mapping of parent index with actual register configuration
+value. If regmap node contains this parent map then the
+configuration value will be taken from this
+parent map instead of simply writing the index value.
 
-That's just an example. The rate is set after clk_set_rate() if no other
-consumer depends on the clock.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h        | 10 ----------
+ drivers/clk/qcom/clk-regmap-mux.c |  6 ++++++
+ drivers/clk/qcom/clk-regmap-mux.h |  2 ++
+ drivers/clk/qcom/common.h         | 11 ++++++++++-
+ 4 files changed, 18 insertions(+), 11 deletions(-)
 
-I just added clk_rate_unprotect() here to illustrate that the calls should be
-balanced, as documented.
-
-> Either that or "clk_rate_unprotect" is inappropriately named and doesn't
-> do what it says it does.
-> 
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 1b3e8d2..ee66857 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -26,16 +26,6 @@ struct freq_tbl {
+ };
+ 
+ /**
+- * struct parent_map - map table for PLL source select configuration values
+- * @src: source PLL
+- * @cfg: configuration value
+- */
+-struct parent_map {
+-	u8 src;
+-	u8 cfg;
+-};
+-
+-/**
+  * struct mn - M/N:D counter
+  * @mnctr_en_bit: bit to enable mn counter
+  * @mnctr_reset_bit: bit to assert mn counter reset
+diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
+index cae3071..0f3a1bd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.c
++++ b/drivers/clk/qcom/clk-regmap-mux.c
+@@ -35,6 +35,9 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	val >>= mux->shift;
+ 	val &= mask;
+ 
++	if (mux->parent_map)
++		return qcom_find_src_index(hw, mux->parent_map, val);
++
+ 	return val;
+ }
+ 
+@@ -45,6 +48,9 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
+ 	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+ 	unsigned int val;
+ 
++	if (mux->parent_map)
++		index = mux->parent_map[index].cfg;
++
+ 	val = index;
+ 	val <<= mux->shift;
+ 
+diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
+index 5cec761..7797cdd 100644
+--- a/drivers/clk/qcom/clk-regmap-mux.h
++++ b/drivers/clk/qcom/clk-regmap-mux.h
+@@ -16,11 +16,13 @@
+ 
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
++#include "common.h"
+ 
+ struct clk_regmap_mux {
+ 	u32			reg;
+ 	u32			shift;
+ 	u32			width;
++	const struct parent_map	*parent_map;
+ 	struct clk_regmap	clkr;
+ };
+ 
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 23c1927..00196ee 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -20,7 +20,6 @@
+ struct regmap;
+ struct freq_tbl;
+ struct clk_hw;
+-struct parent_map;
+ 
+ #define PLL_LOCK_COUNT_SHIFT	8
+ #define PLL_LOCK_COUNT_MASK	0x3f
+@@ -39,6 +38,16 @@ struct qcom_cc_desc {
+ 	size_t num_gdscs;
+ };
+ 
++/**
++ * struct parent_map - map table for source select configuration values
++ * @src: source
++ * @cfg: configuration value
++ */
++struct parent_map {
++	u8 src;
++	u8 cfg;
++};
++
+ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+ 					     unsigned long rate);
+ extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
