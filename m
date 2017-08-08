@@ -1,165 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:45542 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751742AbdHRJRB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2017 05:17:01 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/4] ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 18 Aug 2017 11:16:57 +0200
-Message-Id: <1503047817-29439-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
-References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sumit.semwal@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170808155707.GA19636@kroah.com>
+References: <CAO_48GHvyUD7vD1qJP=41Wt0nyeiyhoCpVSYL-v-jbU_dd1Sgw@mail.gmail.com>
+ <20170808155707.GA19636@kroah.com>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Date: Tue, 8 Aug 2017 22:11:57 +0530
+Message-ID: <CAO_48GFtw+OGh1MKG=dZbUL0WoqNW7-EQCXZ5bdGjiMAFXGEZg@mail.gmail.com>
+Subject: Re: Request for inclusion to stable-4.9
+To: Greg KH <greg@kroah.com>
+Cc: "# 3.4.x" <stable@vger.kernel.org>, Leo Yan <leo.yan@linaro.org>, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-clk@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+Hi Greg,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++++---------------------
- 1 file changed, 59 insertions(+), 65 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index ebd44d9982be07cc..a4c35d29f77c16dc 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -982,71 +982,65 @@
- 		status = "disabled";
- 	};
- 
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured  as 0 Hz fixed
--		 * frequency clocks by default.  Boards that provide audio
--		 * clocks should override them.
--		 */
--		audio_clka: audio_clka {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkb: audio_clkb {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clkc: audio_clkc {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7794-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured  as 0 Hz fixed
-+	 * frequency clocks by default.  Boards that provide audio
-+	 * clocks should override them.
-+	 */
-+	audio_clka: audio_clka {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkb: audio_clkb {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkc: audio_clkc {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7794-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	rst: reset-controller@e6160000 {
--- 
-2.7.4
-
+On 8 August 2017 at 21:27, Greg KH <greg@kroah.com> wrote:
+> On Tue, Aug 08, 2017 at 09:05:03PM +0530, Sumit Semwal wrote:
+>> Hi Greg,
+>>
+>> Please consider commit
+>>
+>> 9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI
+>>
+>> for inclusion into stable-4.9; without this, Hikey's cpufreq driver
+>> doesn't work, and the cpufreq kselftests fail on it accordingly.
+>
+> How can it "not work", all that patch does it enable it by "default",
+> you can always change your .config file to enable it successfully,
+> right?
+Of course. I meant "doesn't work with default defconfig"; having it
+enabled by default just makes it a little easier to test in a CI loop
+- we could do that in the CI scripts as well, so apologies about the
+noise here.
+>
+> thanks,
+>
+> greg k-h
