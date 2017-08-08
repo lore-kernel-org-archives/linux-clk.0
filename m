@@ -1,36 +1,24 @@
-Return-Path: <arvind.yadav.cs@gmail.com>
-Return-Path: <arvind.yadav.cs@gmail.com>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	jun.nie@linaro.org,
-	baoyou.xie@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/2] constify clk clk_div_table
-Date: Mon, 28 Aug 2017 10:58:51 +0530
-Message-Id: <1503898133-10862-1-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, shawn.lin@rock-chips.com, andy.yan@rock-chips.com
+Subject: Re: [PATCH v3 7/9] clk: rockchip: fix up some clks describe error for rv1108 SoC
+Date: Tue, 08 Aug 2017 17:36:41 +0200
+Message-ID: <2886228.L8ZHQJ0d60@phil>
+In-Reply-To: <1502176739-32321-1-git-send-email-zhangqing@rock-chips.com>
+References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com> <1502176739-32321-1-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_div_table are not supposed to change at runtime. All functions
-working with clk_div_table provided by <linux/clk-provider.h> work
-with const clk_div_table. So mark the non-const structs as const.
+Am Dienstag, 8. August 2017, 15:18:59 CEST schrieb Elaine Zhang:
+> 1. fix up the parent name
+> 2. remove the CLK_IGNORE_UNUSED flag for some clk not need to always on.
+> 3. fix up some clks regs describe error.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-Arvind Yadav (2):
-  [PATCH 1/2] clk: imx: constify clk_div_table
-  [PATCH 2/2] clk: zte: constify clk_div_table
+applied for 4.14
 
- drivers/clk/imx/clk-imx6sl.c   | 6 +++---
- drivers/clk/imx/clk-imx6sx.c   | 6 +++---
- drivers/clk/imx/clk-imx6ul.c   | 6 +++---
- drivers/clk/imx/clk-imx7d.c    | 4 ++--
- drivers/clk/imx/clk-vf610.c    | 2 +-
- drivers/clk/zte/clk-zx296718.c | 6 +++---
- 6 files changed, 15 insertions(+), 15 deletions(-)
-
--- 
-1.9.1
+Thanks for restructuring the patches
+Heiko
