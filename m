@@ -1,25 +1,68 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Mon, 28 Aug 2017 17:42:38 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, jun.nie@linaro.org, baoyou.xie@linaro.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: imx: constify clk_div_table
-Message-ID: <20170828094236.GA3525@dragon>
-References: <1503898133-10862-1-git-send-email-arvind.yadav.cs@gmail.com>
- <1503898133-10862-2-git-send-email-arvind.yadav.cs@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503898133-10862-2-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, shawn.lin@rock-chips.com,
+        andy.yan@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 4/9] clk: rockchip: support more rates for cpuclk
+Date: Tue,  8 Aug 2017 15:15:42 +0800
+Message-Id: <1502176547-30817-5-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 28, 2017 at 10:58:52AM +0530, Arvind Yadav wrote:
-> clk_div_table are not supposed to change at runtime. All functions
-> working with clk_div_table provided by <linux/clk-provider.h> work
-> with const clk_div_table. So mark the non-const structs as const.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+fix up the cpuclk rates table for support more freqs.
+fix up the mux_core_mask describe error.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rv1108.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 7c05ab366348..3c670db16e18 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -93,9 +93,24 @@ enum rv1108_plls {
+ 	}
+ 
+ static struct rockchip_cpuclk_rate_table rv1108_cpuclk_rates[] __initdata = {
+-	RV1108_CPUCLK_RATE(816000000, 4),
+-	RV1108_CPUCLK_RATE(600000000, 4),
+-	RV1108_CPUCLK_RATE(312000000, 4),
++	RV1108_CPUCLK_RATE(1608000000, 7),
++	RV1108_CPUCLK_RATE(1512000000, 7),
++	RV1108_CPUCLK_RATE(1488000000, 5),
++	RV1108_CPUCLK_RATE(1416000000, 5),
++	RV1108_CPUCLK_RATE(1392000000, 5),
++	RV1108_CPUCLK_RATE(1296000000, 5),
++	RV1108_CPUCLK_RATE(1200000000, 5),
++	RV1108_CPUCLK_RATE(1104000000, 5),
++	RV1108_CPUCLK_RATE(1008000000, 5),
++	RV1108_CPUCLK_RATE(912000000, 5),
++	RV1108_CPUCLK_RATE(816000000, 3),
++	RV1108_CPUCLK_RATE(696000000, 3),
++	RV1108_CPUCLK_RATE(600000000, 3),
++	RV1108_CPUCLK_RATE(500000000, 3),
++	RV1108_CPUCLK_RATE(408000000, 1),
++	RV1108_CPUCLK_RATE(312000000, 1),
++	RV1108_CPUCLK_RATE(216000000, 1),
++	RV1108_CPUCLK_RATE(96000000, 1),
+ };
+ 
+ static const struct rockchip_cpuclk_reg_data rv1108_cpuclk_data = {
+@@ -105,7 +120,7 @@ enum rv1108_plls {
+ 	.mux_core_alt = 1,
+ 	.mux_core_main = 0,
+ 	.mux_core_shift = 8,
+-	.mux_core_mask = 0x1,
++	.mux_core_mask = 0x3,
+ };
+ 
+ PNAME(mux_pll_p)		= { "xin24m", "xin24m"};
+-- 
+1.9.1
