@@ -1,45 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:33148 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751561AbdHSIRs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2017 04:17:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v65174+qJTyReMH7ov0NWvp+f6YC3+ovPVZghw9tsokmZw@mail.gmail.com>
-References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-8-icenowy@aosc.io>
- <CAGb2v65174+qJTyReMH7ov0NWvp+f6YC3+ovPVZghw9tsokmZw@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 19 Aug 2017 16:17:23 +0800
-Message-ID: <CAGb2v65CdqK1JZWwQAby5VRaLYMFYPttLcwb9XaRJ6_PMrPEjQ@mail.gmail.com>
-Subject: Re: [PATCH v3 07/10] dt-bindings: add compatible string for Allwinner
- R40 CCU
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <net147@gmail.com>
+Return-Path: <net147@gmail.com>
+From: Jonathan Liu <net147@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>
+Subject: [PATCH] dt-bindings: clock: sunxi-ccu: Add compatibles for sun5i CCU driver
+Date: Tue,  8 Aug 2017 11:25:40 +1000
+Message-Id: <20170808012540.16691-1-net147@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, May 28, 2017 at 11:09 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Sat, May 27, 2017 at 6:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> Allwinner R40 has a clock controlling unit like the ones on other
->> Allwinner SoCs after sun6i, and can also use a CCU-based driver.
->>
->> Add a compatible string for it.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+The bindings were not updated when the sun5i CCU driver was added in
+commit 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver").
 
-Fixed the conflict and applied for 4.14. Next time please include this when you
-send the driver patches.
+Signed-off-by: Jonathan Liu <net147@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-ChenYu
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index df9fad58facd..dbe0c1c58ab5 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -3,6 +3,8 @@ Allwinner Clock Control Unit Binding
+ 
+ Required properties :
+ - compatible: must contain one of the following compatibles:
++		- "allwinner,sun5i-a10s-ccu"
++		- "allwinner,sun5i-a13-ccu"
+ 		- "allwinner,sun6i-a31-ccu"
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
+@@ -15,6 +17,7 @@ Required properties :
+ 		- "allwinner,sun50i-a64-ccu"
+ 		- "allwinner,sun50i-a64-r-ccu"
+ 		- "allwinner,sun50i-h5-ccu"
++		- "nextthing,gr8-ccu"
+ 
+ - reg: Must contain the registers base address and length
+ - clocks: phandle to the oscillators feeding the CCU. Two are needed:
+-- 
+2.13.2
