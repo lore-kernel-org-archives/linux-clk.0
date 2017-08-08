@@ -1,28 +1,23 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Aug 2017 15:38:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, jbrunet@baylibre.com,
-	linux-clk@vger.kernel.org,
-	"open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [GIT PULL] Amlogic clock driver updates for 4.14
-Message-ID: <20170823223831.GD21656@codeaurora.org>
-References: <894174b4-63d5-1e7d-c518-5bba150178ab@baylibre.com>
+Return-Path: <sumit.semwal@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <894174b4-63d5-1e7d-c518-5bba150178ab@baylibre.com>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Date: Tue, 8 Aug 2017 21:05:03 +0530
+Message-ID: <CAO_48GHvyUD7vD1qJP=41Wt0nyeiyhoCpVSYL-v-jbU_dd1Sgw@mail.gmail.com>
+Subject: Request for inclusion to stable-4.9
+To: "# 3.4.x" <stable@vger.kernel.org>
+Cc: Leo Yan <leo.yan@linaro.org>, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04, Neil Armstrong wrote:
-> Hi Mike, Stephen,
-> 
-> Below is a request to pull the Amlogic clock driver updates for 4.14.
-> 
-> 
+Hi Greg,
 
-Thanks. Pulled into clk-next.
+Please consider commit
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI
+
+for inclusion into stable-4.9; without this, Hikey's cpufreq driver
+doesn't work, and the cpufreq kselftests fail on it accordingly.
+
+Best regards,
+Sumit.
