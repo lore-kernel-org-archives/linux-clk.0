@@ -1,95 +1,84 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, huangtao@rock-chips.com, cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com
-Subject: [PATCH 1/2] clk: fractional-divider: allow overriding of approximation
-Date: Tue, 01 Aug 2017 18:21:22 +0200
-Message-ID: <5453089.AIzWDZk3ey@phil>
-In-Reply-To: <5990882.df1suBpf8V@phil>
-References: <1500624187-12165-1-git-send-email-zhangqing@rock-chips.com> <5990882.df1suBpf8V@phil>
+Return-Path: <sumit.semwal@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170808155707.GA19636@kroah.com>
+References: <CAO_48GHvyUD7vD1qJP=41Wt0nyeiyhoCpVSYL-v-jbU_dd1Sgw@mail.gmail.com>
+ <20170808155707.GA19636@kroah.com>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Date: Tue, 8 Aug 2017 21:49:24 +0530
+Message-ID: <CAO_48GH29NsWgrq2Z_8STHWGoEQ=8jWryge1JFvqUcygxg0VuQ@mail.gmail.com>
+Subject: Re: Request for inclusion to stable-4.9
+To: Greg KH <greg@kroah.com>
+Cc: mturquette@baylibre.com, Viresh Kumar <viresh.kumar@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	"# 3.4.x" <stable@vger.kernel.org>
+Content-Type: multipart/alternative; boundary="001a114621c8ada5410556405303"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+--001a114621c8ada5410556405303
+Content-Type: text/plain; charset="UTF-8"
 
-Fractional dividers may have special requirements concerning numerator
-and denominator selection that differ from just getting the best
-approximation.
+Hello,
 
-For example on Rockchip socs the denominator must be at least 20 times
-larger than the numerator to generate precise clock frequencies.
+On Aug 8, 2017 21:27, "Greg KH" <greg@kroah.com> wrote:
 
-Therefore add the ability to provide custom approximation functions.
+On Tue, Aug 08, 2017 at 09:05:03PM +0530, Sumit Semwal wrote:
+> Hi Greg,
+>
+> Please consider commit
+>
+> 9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI
+>
+> for inclusion into stable-4.9; without this, Hikey's cpufreq driver
+> doesn't work, and the cpufreq kselftests fail on it accordingly.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/clk-fractional-divider.c | 28 ++++++++++++++++++++--------
- include/linux/clk-provider.h         |  3 +++
- 2 files changed, 23 insertions(+), 8 deletions(-)
+How can it "not work", all that patch does it enable it by "default",
+you can always change your .config file to enable it successfully,
+right?
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index aab904618eb6..fdf625fb10fa 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -49,16 +49,12 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- 	return ret;
- }
- 
--static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
--			      unsigned long *parent_rate)
-+static void clk_fd_general_approximation(struct clk_hw *hw, unsigned long rate,
-+					 unsigned long *parent_rate,
-+					 unsigned long *m, unsigned long *n)
- {
- 	struct clk_fractional_divider *fd = to_clk_fd(hw);
- 	unsigned long scale;
--	unsigned long m, n;
--	u64 ret;
--
--	if (!rate || rate >= *parent_rate)
--		return *parent_rate;
- 
- 	/*
- 	 * Get rate closer to *parent_rate to guarantee there is no overflow
-@@ -71,7 +67,23 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	rational_best_approximation(rate, *parent_rate,
- 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
--			&m, &n);
-+			m, n);
-+}
-+
-+static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct clk_fractional_divider *fd = to_clk_fd(hw);
-+	unsigned long m, n;
-+	u64 ret;
-+
-+	if (!rate || rate >= *parent_rate)
-+		return *parent_rate;
-+
-+	if (fd->approximation)
-+		fd->approximation(hw, rate, parent_rate, &m, &n);
-+	else
-+		clk_fd_general_approximation(hw, rate, parent_rate, &m, &n);
- 
- 	ret = (u64)*parent_rate * m;
- 	do_div(ret, n);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c59c62571e4f..1fc113fbf955 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -565,6 +565,9 @@ struct clk_fractional_divider {
- 	u8		nwidth;
- 	u32		nmask;
- 	u8		flags;
-+	void		(*approximation)(struct clk_hw *hw,
-+				unsigned long rate, unsigned long *parent_rate,
-+				unsigned long *m, unsigned long *n);
- 	spinlock_t	*lock;
- };
- 
--- 
-2.11.0
+Of course. I meant "doesn't work with default defconfig"; having it enabled
+by default just makes it a little easier to test in a CI loop - we could do
+that in the CI scripts as well, so apologies about the noise here.
+
+
+thanks,
+
+greg k-h
+
+--001a114621c8ada5410556405303
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto"><div>Hello,<br><div class=3D"gmail_extra"><br><div class=
+=3D"gmail_quote">On Aug 8, 2017 21:27, &quot;Greg KH&quot; &lt;<a href=3D"m=
+ailto:greg@kroah.com" target=3D"_blank">greg@kroah.com</a>&gt; wrote:<br ty=
+pe=3D"attribution"><blockquote class=3D"m_1777527394077629454quote" style=
+=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><div cla=
+ss=3D"m_1777527394077629454elided-text">On Tue, Aug 08, 2017 at 09:05:03PM =
++0530, Sumit Semwal wrote:<br>
+&gt; Hi Greg,<br>
+&gt;<br>
+&gt; Please consider commit<br>
+&gt;<br>
+&gt; 9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI<br>
+&gt;<br>
+&gt; for inclusion into stable-4.9; without this, Hikey&#39;s cpufreq drive=
+r<br>
+&gt; doesn&#39;t work, and the cpufreq kselftests fail on it accordingly.<b=
+r>
+<br>
+</div>How can it &quot;not work&quot;, all that patch does it enable it by =
+&quot;default&quot;,<br>
+you can always change your .config file to enable it successfully,<br>
+right?</blockquote></div></div></div><div dir=3D"auto">Of course. I meant &=
+quot;doesn&#39;t work with default defconfig&quot;; having it enabled by de=
+fault just makes it a little easier to test in a CI loop - we could do that=
+ in the CI scripts as well, so apologies about the noise here.</div><div di=
+r=3D"auto"></div><div dir=3D"auto"><div class=3D"gmail_extra"><div class=3D=
+"gmail_quote"><blockquote class=3D"m_1777527394077629454quote" style=3D"mar=
+gin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
+<br>
+thanks,<br>
+<br>
+greg k-h</blockquote></div></div></div></div>
+
+--001a114621c8ada5410556405303--
