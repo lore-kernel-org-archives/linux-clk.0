@@ -1,76 +1,85 @@
-Return-Path: <wens@wens.csie.org>
-Date: Wed, 2 Aug 2017 16:15:40 +0800
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] Allwinner clock fixes for 4.13
-Message-ID: <20170802081540.kzy2q7qo4lb3muxt@wens.csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yvjd62nhq3qvajbd"
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC v2 10/12] clk: qcom: add read-only alpha pll post divider operations
+Date: Tue,  8 Aug 2017 23:54:15 +0530
+Message-Id: <1502216657-3342-11-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Some of the divider settings are preconfigured and should not
+be changed by the clock framework during frequency change. This
+patch adds the read-only divider operation for QCOM alpha pll
+post divider which is equivalent to generic divider operations in
+'commit 79c6ab509558 ("clk: divider: add CLK_DIVIDER_READ_ONLY flag")'.
 
---yvjd62nhq3qvajbd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 25 +++++++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 26 insertions(+)
 
-Hi Mike, Stephen,
-
-I will be handling most of the Allwinner pull requests for this cycle.
-Here is a critical fix for the sunxi-ng clk drivers.
-
-Thanks
-ChenYu
-
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
-
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-4.13
-
-for you to fetch changes up to 9735ee9e3cc3ba113ac96b0368ef3f1a73092a23:
-
-  clk: sunxi-ng: sun5i: Add clk_set_rate_parent to the CPU clock (2017-07-24 11:37:04 +0200)
-
-----------------------------------------------------------------
-Allwinner clock fixes for 4.13
-
-One critical clock fix for sun5i (A10s/A13/R8) which enables propogation
-of clock rate changes from the "cpu" clock to it's parent PLL clock.
-This fixes cpufreq related crashes that have been observed on KernelCI
-with the C.H.I.P. and multi_v7_defconfig.
-
-----------------------------------------------------------------
-Maxime Ripard (1):
-      clk: sunxi-ng: sun5i: Add clk_set_rate_parent to the CPU clock
-
- drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---yvjd62nhq3qvajbd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAlmBiigACgkQOJpUIZwP
-JDALMRAAx9ZuQBMVpvlHMYKUDIwyN6LMAw83TaDCmkrReURp6AVASWV116iq/bV+
-kvmtoQlMM+TOWgX7xck69jC3cpR7rxT8YjeyQE7XmKvM2jXwz/JFsRgOIX+7Yof4
-CGvfH5EOKV8FPP5E+TYEhjZmG27vWzv90IFUZaHhcP6RtZjHYzvBNJ0FWJ98qICV
-a08E1VcMyvw3rPvmWTXziNvogXCdrpuKsL+r3TAxeZ2tUVISTzgx9HXN283Y+90M
-N3DhjNtlNRcDdCig448tGHacca9D1a8FHfj3BMZK8lrv5gIVvre9aAA+GE+3fXfQ
-H2JgAWdaFq3kT2OX9lxXPbOXhfABKoZ64UA4BIwq7Eadexxr8nx1CFVrs6uS+Yye
-m382KCg1mDIwXvEmXzj4Sv+TIdUSrxLSyOeI3v95Yxis8PjIo+IW2HaQGaQDmXeq
-k/k6MHxO7op6pHFdixP/6W0v2UZHry5tnxOStQeggOx8FjQtiFq0bfxgPjf045kk
-Klgp7EwjbbrVC6w2yR+9P1+BJNG2mjmTXbI0b9RIUagasCdbFJnUC1j20+1lgX+q
-bNPeo4ciOrGhsYnAtUyVO/0YWf8cxva6BJYSMsAUQ7QdiqhWTOmRXt1JAr79lUX2
-0n0pRA9g/vTb+jjb63fuQF1entgWZhAzgqlHxoh/UPFYNyWPB1k=
-=7sfB
------END PGP SIGNATURE-----
-
---yvjd62nhq3qvajbd--
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 4725f80..69d069f 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -774,6 +774,25 @@ static long clk_alpha_huayra_pll_round_rate(struct clk_hw *hw,
+ 				  pll->width, CLK_DIVIDER_POWER_OF_TWO);
+ }
+ 
++static long
++clk_alpha_pll_postdiv_round_ro_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long *prate)
++{
++	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
++	u32 ctl, div;
++
++	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
++
++	ctl >>= PLL_POST_DIV_SHIFT;
++	ctl &= BIT(pll->width) - 1;
++	div = 1 << fls(ctl);
++
++	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)
++		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), div * rate);
++
++	return DIV_ROUND_UP_ULL((u64)*prate, div);
++}
++
+ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 					  unsigned long parent_rate)
+ {
+@@ -794,3 +813,9 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	.set_rate = clk_alpha_pll_postdiv_set_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ops);
++
++const struct clk_ops clk_alpha_pll_postdiv_ro_ops = {
++	.round_rate = clk_alpha_pll_postdiv_round_ro_rate,
++	.recalc_rate = clk_alpha_pll_postdiv_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ro_ops);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 8a0dab6..2b96beb 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -109,6 +109,7 @@ struct alpha_pll_config {
+ extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
+ extern const struct clk_ops clk_alpha_huayra_pll_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_ops;
++extern const struct clk_ops clk_alpha_pll_postdiv_ro_ops;
+ 
+ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 			     const struct alpha_pll_config *config);
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
