@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <f03e50040dc2d3dc3edd6be071510feeb953161d.1500043741.git-series.plaes@plaes.org>
-References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
- <f03e50040dc2d3dc3edd6be071510feeb953161d.1500043741.git-series.plaes@plaes.org>
-From: Jonathan Liu <net147@gmail.com>
-Date: Wed, 2 Aug 2017 17:05:04 +1000
-Message-ID: <CANwerB2En3q6XkUDwMo1CpCraCzpNi42WQYuAFb3yACT2j1FYw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/6] clk: sunxi-ng: Add sun4i/sun7i CCU driver
-To: Priit Laes <plaes@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Olliver Schinagl <oliver@schinagl.nl>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.131]:57786 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752130AbdHHHOk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Aug 2017 03:14:40 -0400
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, shawn.lin@rock-chips.com,
+        andy.yan@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 8/9] clk: rockchip: rename some of clks for rv1108 SoC
+Date: Tue,  8 Aug 2017 15:19:17 +0800
+Message-Id: <1502176757-32369-1-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Priit,
+Rename some of clks to keep the consistency with the TRM.
 
-On 15 July 2017 at 00:49, Priit Laes <plaes@plaes.org> wrote:
-> Introduce a clock controller driver for sun4i A10 and sun7i A20
-> series SoCs.
->
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  drivers/clk/sunxi-ng/Kconfig              |   13 +-
->  drivers/clk/sunxi-ng/Makefile             |    1 +-
->  drivers/clk/sunxi-ng/ccu-sun4i-a10.c      | 1454 ++++++++++++++++++++++-
->  drivers/clk/sunxi-ng/ccu-sun4i-a10.h      |   61 +-
->  include/dt-bindings/clock/sun4i-a10-ccu.h |  200 +++-
->  include/dt-bindings/clock/sun7i-a20-ccu.h |   53 +-
->  include/dt-bindings/reset/sun4i-a10-ccu.h |   69 +-
->  7 files changed, 1851 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
->  create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
->  create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rv1108.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-<snip>
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 829beef82cff..b845c5d8e792 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -276,24 +276,24 @@ enum rv1108_plls {
+ 	COMPOSITE_NOMUX(0, "pmu_24m_ena", "gpll", CLK_IGNORE_UNUSED,
+ 			RV1108_CLKSEL_CON(38), 0, 5, DFLAGS,
+ 			RV1108_CLKGATE_CON(8), 12, GFLAGS),
+-	GATE(0, "pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
++	GATE(0, "pclk_pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
+ 			RV1108_CLKGATE_CON(10), 0, GFLAGS),
+-	GATE(0, "intmem1", "pmu_24m_ena", CLK_IGNORE_UNUSED,
++	GATE(0, "pclk_intmem1", "pmu_24m_ena", CLK_IGNORE_UNUSED,
+ 			RV1108_CLKGATE_CON(10), 1, GFLAGS),
+-	GATE(0, "gpio0_pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
++	GATE(PCLK_GPIO0_PMU, "pclk_gpio0_pmu", "pmu_24m_ena", 0,
+ 			RV1108_CLKGATE_CON(10), 2, GFLAGS),
+-	GATE(0, "pmugrf", "pmu_24m_ena", CLK_IGNORE_UNUSED,
++	GATE(0, "pclk_pmugrf", "pmu_24m_ena", CLK_IGNORE_UNUSED,
+ 			RV1108_CLKGATE_CON(10), 3, GFLAGS),
+-	GATE(0, "pmu_noc", "pmu_24m_ena", CLK_IGNORE_UNUSED,
++	GATE(0, "pclk_pmu_niu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
+ 			RV1108_CLKGATE_CON(10), 4, GFLAGS),
+-	GATE(0, "i2c0_pmu_pclk", "pmu_24m_ena", CLK_IGNORE_UNUSED,
++	GATE(PCLK_I2C0_PMU, "pclk_i2c0_pmu", "pmu_24m_ena", 0,
+ 			RV1108_CLKGATE_CON(10), 5, GFLAGS),
+-	GATE(0, "pwm0_pmu_pclk", "pmu_24m_ena", CLK_IGNORE_UNUSED,
++	GATE(PCLK_PWM0_PMU, "pclk_pwm0_pmu", "pmu_24m_ena", 0,
+ 			RV1108_CLKGATE_CON(10), 6, GFLAGS),
+-	COMPOSITE(0, "pwm0_pmu_clk", mux_pll_src_2plls_p, CLK_IGNORE_UNUSED,
++	COMPOSITE(SCLK_PWM0_PMU, "sclk_pwm0_pmu", mux_pll_src_2plls_p, 0,
+ 			RV1108_CLKSEL_CON(12), 7, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RV1108_CLKGATE_CON(8), 15, GFLAGS),
+-	COMPOSITE(0, "i2c0_pmu_clk", mux_pll_src_2plls_p, CLK_IGNORE_UNUSED,
++	COMPOSITE(SCLK_I2C0_PMU, "sclk_i2c0_pmu", mux_pll_src_2plls_p, 0,
+ 			RV1108_CLKSEL_CON(19), 7, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RV1108_CLKGATE_CON(8), 14, GFLAGS),
+ 	GATE(0, "pvtm_pmu", "xin24m", CLK_IGNORE_UNUSED,
+@@ -410,10 +410,10 @@ enum rv1108_plls {
+ 	/*
+ 	 * Clock-Architecture Diagram 4
+ 	 */
+-	COMPOSITE(0, "aclk_vio0_2wrap_occ", mux_pll_src_4plls_p, CLK_IGNORE_UNUSED,
++	COMPOSITE(0, "aclk_vio0_pre", mux_pll_src_4plls_p, CLK_IGNORE_UNUSED,
+ 			RV1108_CLKSEL_CON(28), 6, 2, MFLAGS, 0, 5, DFLAGS,
+ 			RV1108_CLKGATE_CON(6), 0, GFLAGS),
+-	GATE(0, "aclk_vio0_pre", "aclk_vio0_2wrap_occ", CLK_IGNORE_UNUSED,
++	GATE(ACLK_VIO0, "aclk_vio0", "aclk_vio0_pre", 0,
+ 			RV1108_CLKGATE_CON(17), 0, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "hclk_vio_pre", "aclk_vio0_pre", 0,
+ 			RV1108_CLKSEL_CON(29), 0, 5, DFLAGS,
+@@ -632,10 +632,10 @@ enum rv1108_plls {
+ 			RV1108_CLKGATE_CON(13), 1, GFLAGS),
+ 	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_bus_pre", 0,
+ 			RV1108_CLKGATE_CON(13), 2, GFLAGS),
+-	COMPOSITE(SCLK_PWM, "clk_pwm1", mux_pll_src_2plls_p, 0,
++	COMPOSITE(SCLK_PWM, "clk_pwm", mux_pll_src_2plls_p, 0,
+ 			RV1108_CLKSEL_CON(12), 15, 2, MFLAGS, 8, 7, DFLAGS,
+ 			RV1108_CLKGATE_CON(3), 10, GFLAGS),
+-	GATE(PCLK_PWM, "pclk_pwm1", "pclk_bus_pre", 0,
++	GATE(PCLK_PWM, "pclk_pwm", "pclk_bus_pre", 0,
+ 			RV1108_CLKGATE_CON(13), 6, GFLAGS),
+ 	GATE(PCLK_WDT, "pclk_wdt", "pclk_bus_pre", 0,
+ 			RV1108_CLKGATE_CON(13), 3, GFLAGS),
+@@ -720,7 +720,7 @@ enum rv1108_plls {
+ 			RV1108_CLKSEL_CON(23), 15, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RV1108_CLKGATE_CON(15), 11, GFLAGS),
+ 
+-	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
++	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
+ 			RV1108_CLKSEL_CON(25), 8, 2, MFLAGS, 0, 8, DFLAGS,
+ 			RV1108_CLKGATE_CON(5), 0, GFLAGS),
+ 
+-- 
+1.9.1
 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> new file mode 100644
-> index 0000000..09e97d7
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
 
-<snip>
-
-> +static void __init sun4i_ccu_init(struct device_node *node,
-> +                                 const struct sunxi_ccu_desc *desc)
-> +{
-> +       void __iomem *reg;
-> +       u32 val;
-> +
-> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +       if (IS_ERR(reg)) {
-> +               pr_err("%s: Could not map the clock registers\n",
-> +                      of_node_full_name(node));
-> +               return;
-> +       }
-> +
-> +       /* Force the PLL-Audio-1x divider to 4 */
-> +       val = readl(reg + SUN4I_PLL_AUDIO_REG);
-
-> +       val &= ~GENMASK(19, 16);
-> +       writel(val | (3 << 16), reg + SUN4I_PLL_AUDIO_REG);
-
-This doesn't work for me on A20 (440 Hz tone outputs at 880 Hz tone)
-and I need to use the following instead:
-       val &= ~GENMASK(29, 26);
-       writel(val | (4 << 26), reg + SUN4I_PLL_AUDIO_REG);
-
-Toggling bits 16-19 doesn't seem to have any effect on the audio for me.
-
-Thanks.
-
-Regards,
-Jonathan
