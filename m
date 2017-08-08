@@ -1,58 +1,47 @@
-Return-Path: <romain.perier@collabora.com>
-From: Romain Perier <romain.perier@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	Romain Perier <romain.perier@collabora.com>
-Subject: [PATCH 4/4] arm64: dts: rockchip: add efuse for RK3368 SoCs
-Date: Mon, 28 Aug 2017 14:16:04 +0200
-Message-Id: <20170828121604.15968-5-romain.perier@collabora.com>
-In-Reply-To: <20170828121604.15968-1-romain.perier@collabora.com>
-References: <20170828121604.15968-1-romain.perier@collabora.com>
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	andy.yan@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 2/9] clk: rockchip: rename the clk id for HCLK_I2S1_2CH
+Date: Tue,  8 Aug 2017 15:15:40 +0800
+Message-Id: <1502176547-30817-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the definition for eFuse that is found on RK3368 SoCs with the
-corresponding data cells.
+i2s1 has 2 channels but not 8 channels.
 
-Signed-off-by: Romain Perier <romain.perier@collabora.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3368.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ include/dt-bindings/clock/rv1108-cru.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-index 3039c2da533e..cca2ce1705b3 100644
---- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-@@ -569,6 +569,20 @@
- 		};
- 	};
+diff --git a/include/dt-bindings/clock/rv1108-cru.h b/include/dt-bindings/clock/rv1108-cru.h
+index fe013cf51e2b..e8aa6d56990a 100644
+--- a/include/dt-bindings/clock/rv1108-cru.h
++++ b/include/dt-bindings/clock/rv1108-cru.h
+@@ -144,7 +144,7 @@
  
-+	efuse: efuse@ffb00000 {
-+		compatible = "rockchip,rk3368-efuse";
-+		reg = <0x0 0xffb00000 0x0 0x20>;
-+		clocks = <&cru PCLK_EFUSE_256>;
-+		clock-names = "pclk_efuse";
-+
-+		cpu_leakage: cpu-leakage@17 {
-+			reg = <0x17 0x1>;
-+		};
-+		temp_adjust: temp-adjust@1f {
-+			reg = <0x1f 0x1>;
-+		};
-+	};
-+
- 	tsadc: tsadc@ff280000 {
- 		compatible = "rockchip,rk3368-tsadc";
- 		reg = <0x0 0xff280000 0x0 0x100>;
+ /* hclk gates */
+ #define HCLK_I2S0_8CH			320
+-#define HCLK_I2S1_8CH			321
++#define HCLK_I2S1_2CH			321
+ #define HCLK_I2S2_2CH			322
+ #define HCLK_NANDC			323
+ #define HCLK_SDMMC			324
 -- 
-2.11.0
+1.9.1
