@@ -1,56 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:57746 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751815AbdHAQ3j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 1 Aug 2017 12:29:39 -0400
-Date: Tue, 1 Aug 2017 18:29:36 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
-Subject: Re: [PATCH 0/3] clk: renesas: rcar-gen3-cpg: updates to SD divider
- table
-Message-ID: <20170801162936.knvmsojiu7xibdxq@ninjato>
-References: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC v2 00/12] Misc patches for QCOM clocks
+Date: Tue,  8 Aug 2017 23:54:05 +0530
+Message-Id: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ycf3dxhssbtsy5q6"
-In-Reply-To: <20170801104603.10459-1-wsa+renesas@sang-engineering.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+* v2:
 
---ycf3dxhssbtsy5q6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+1. Discussion is going on with HW team to fix the offset issue in next chip
+   version so removed the RCG patch
+2. Made “fix 16 bit alpha support calculation” generic to support all cases.
 
+3. Clubbed the [1] and Patch [2] for "support for dynamic updating the PLL"
+   a. The PLL_LATCH_INTERFACE bit is not available in every Alpha PLL and it
+      will be turned off after default power on. If the PLL user want to turn
+      off the LATCH_INTERFACE then they can directly set this bit in
+      PLL_USER_CTL_U during alpha_pll_configure and clear the dynamic update
+      flag bit
+   b. The latching procedure is only required if PLL is enabled
+   c. The handling is different according to PLL_UPDATE_BYPASS bit
 
-> Tested on a M3-W Salvator-X (r8a7796) with HS and SDR50/104 cards. clk_summary
-> shows the same frequency selections as before.
+4. Added the patch for “2 bit PLL post divider”
 
-Darn, not tested on H3 ES1.0 where it fails because everything is half
-speed there :( Need to rethink this.
+[1] https://www.spinics.net/lists/linux-arm-msm/msg24569.html
+[2] https://www.spinics.net/lists/kernel/msg2566714.html
 
+* v1:
 
---ycf3dxhssbtsy5q6
-Content-Type: application/pgp-signature; name="signature.asc"
+https://www.spinics.net/lists/kernel/msg2566710.html
 
------BEGIN PGP SIGNATURE-----
+Abhishek Sahu (12):
+  clk: qcom: flag for 64 bit CONFIG_CTL
+  clk: qcom: support for alpha mode configuration
+  clk: qcom: use offset from alpha pll node
+  clk: qcom: fix 16 bit alpha support calculation
+  clk: qcom: support for dynamic updating the PLL
+  clk: qcom: add flag for VCO operation
+  clk: qcom: support for Huayra PLL
+  clk: qcom: support for Brammo PLL
+  clk: qcom: support for 2 bit PLL post divider
+  clk: qcom: add read-only alpha pll post divider operations
+  clk: qcom: add read-only divider operations
+  clk: qcom: add parent map for regmap mux
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmArGwACgkQFA3kzBSg
-KbZKxg//Qfgk9Wxx9DwTQvtvDild4yY/Ei05wSdWgzqI7vEN0KQTSSdWrhTmHOaQ
-rUrtBHXg8iH51l55feHw/yu9Qsk/tDKjGlxevh8U4tbkm/EXuQYqdGYrgr72Ffpx
-6OnFmOLJik+MlWkWfwcrqXo0FCfIYYKFgYjg/xf+HG/2oJ93QZygjfcejW6DCy8o
-lHHzPAS2UJ0oOvdKAhd2rnbT4N0I5SzhWW+e/FPjNGhsjrxaLy4GWbSQAYXy8I0w
-IDMKa9+QeXEzVrCorrledRPxXL6Koa5TrFnDpY4HcpTzZZI6/P9vey/UuaHb2f/N
-ZyqElflXUNubw/g3/OHRufoHGeHsFqJv1BK8SvrMHtZn2Gf6IQno/RsE2h5jLA/+
-1fKe/Fecxss1z+ViPTStsKg+UB+tNp88uSiEZta8tTheriU4rV5Tty5voDu/eqTI
-ECqb2Ybm56sE3vGuyAdPg24ehi29DaBrBq9GN2rw9YKc+6V2cSwlvpHeOa+jLn7W
-FivIjgqn8AWhxaX8DbbdgBBtk0DB0+u4vwAiMzSF4Nm2ZjQslR95ICLKM9GVmyJb
-6unepnnXtQAER7Dj3Tp5H7Y3LF8exfYTdsc0uEDs5aK4QLD6ULHOknlXoawtHGzg
-ixLHjSSpS2uKVtZJegZCdaY2A9mH21kOUtPi0sKPhXGDe6VABo4=
-=V57C
------END PGP SIGNATURE-----
+ drivers/clk/qcom/clk-alpha-pll.c      | 507 +++++++++++++++++++++++++++-------
+ drivers/clk/qcom/clk-alpha-pll.h      |  49 +++-
+ drivers/clk/qcom/clk-rcg.h            |  10 -
+ drivers/clk/qcom/clk-regmap-divider.c |  29 ++
+ drivers/clk/qcom/clk-regmap-divider.h |   1 +
+ drivers/clk/qcom/clk-regmap-mux.c     |   6 +
+ drivers/clk/qcom/clk-regmap-mux.h     |   2 +
+ drivers/clk/qcom/common.h             |  11 +-
+ drivers/clk/qcom/gcc-ipq8074.c        |   6 +-
+ drivers/clk/qcom/gcc-msm8994.c        |  12 +-
+ drivers/clk/qcom/gcc-msm8996.c        |  12 +-
+ drivers/clk/qcom/mmcc-msm8996.c       |  48 ++--
+ 12 files changed, 554 insertions(+), 139 deletions(-)
 
---ycf3dxhssbtsy5q6--
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
