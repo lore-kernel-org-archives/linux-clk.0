@@ -1,63 +1,68 @@
-Return-Path: <wens@csie.org>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC v2 01/12] clk: qcom: flag for 64 bit CONFIG_CTL
+Date: Tue,  8 Aug 2017 23:54:06 +0530
+Message-Id: <1502216657-3342-2-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrssySjKW0E7sB3D-UjVea8_Yxvrkkr7sKf47x6jwgVSQ@mail.gmail.com>
-References: <20170724135905.28855-1-wens@csie.org> <CAGb2v66DQ3H2Mta7h+t1P+UzSRLnMABRebeYcopaPkN0gOiwxA@mail.gmail.com>
- <20170726194522.7d64f7c2danrknfi@flea> <CAPDyKFrssySjKW0E7sB3D-UjVea8_Yxvrkkr7sKf47x6jwgVSQ@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 3 Aug 2017 19:25:24 +0800
-Message-ID: <CAGb2v648K1Nguf8nVjfunow7+xwS0MHazzMXJd1xZ3uNM2WesA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] ARM: sun8i: a83t: Add support for MMC controllers
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 3, 2017 at 7:19 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 26 July 2017 at 21:45, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> On Wed, Jul 26, 2017 at 10:09:41PM +0800, Chen-Yu Tsai wrote:
->>> On Mon, Jul 24, 2017 at 9:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
->>> > Hi everyone,
->>> >
->>> > This is v3 of my MMC controller support series.
->>> >
->>>
->>> [...]
->>>
->>> > Chen-Yu Tsai (10):
->>> >   clk: sunxi-ng: Add interface to query or configure MMC timing modes.
->>> >   clk: sunxi-ng: Add MP_MMC clocks that support MMC timing modes
->>> >     switching
->>> >   clk: sunxi-ng: a83t: Support new timing mode for mmc2 clock
->>> >   mmc: sunxi: Support controllers that can use both old and new timings
->>> >   mmc: sunxi: Support MMC DDR52 transfer mode with new timing mode
->>> >   mmc: sunxi: Add support for A83T eMMC (MMC2)
->>>
->>> So this series seems to be ready for inclusion, unless Ulf has further
->>> concerns about the clk usage.
->>>
->>> The first mmc patch have build time dependencies on the first clk patch.
->>> Shall we put the clk patch on a separate immutable branch for both trees
->>> to pull? Or we could just merge everything through the mmc tree? I don't
->>> think we'll touch this part of the sunxi-ng clk driver for the remainder
->>> of this cycle.
->>
->> I guess the easiest would be for it to go through Ulf tree, unless he
->> says otherwise of course :)
->
-> Okay, I have picked up the series and applied it for my next branch.
+Some of the Alpha PLL’s (like Spark, Brammo PLL) do not have
+CONFIG_CTL_U register. This patch adds the flag for PLL’s
+which have CONFIG_CTL_U register and checks the same while
+doing PLL initial configuration.
 
-I guess I wasn't very clear. When I meant "everything" I meant the mmc
-and clk patches. We will take the dts patches through the sunxi tree.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 5 ++++-
+ drivers/clk/qcom/clk-alpha-pll.h | 7 ++++---
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-Can you drop the four dts patches from your tree? That would be the
-last four patches on mmc/next at the moment.
-
-Thanks and sorry for the confusion.
-
-ChenYu
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 47a1da3..e6cde2d 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -118,7 +118,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	regmap_write(regmap, off + PLL_L_VAL, config->l);
+ 	regmap_write(regmap, off + PLL_ALPHA_VAL, config->alpha);
+ 	regmap_write(regmap, off + PLL_CONFIG_CTL, config->config_ctl_val);
+-	regmap_write(regmap, off + PLL_CONFIG_CTL_U, config->config_ctl_hi_val);
++
++	if (pll->flags & SUPPORTS_64BIT_CONFIG_CTL)
++		regmap_write(regmap, off + PLL_CONFIG_CTL_U,
++			     config->config_ctl_hi_val);
+ 
+ 	val = config->main_output_mask;
+ 	val |= config->aux_output_mask;
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index d6e1ee2..bbd6aa9 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -34,9 +34,10 @@ struct clk_alpha_pll {
+ 
+ 	const struct pll_vco *vco_table;
+ 	size_t num_vco;
+-#define SUPPORTS_OFFLINE_REQ	BIT(0)
+-#define SUPPORTS_16BIT_ALPHA	BIT(1)
+-#define SUPPORTS_FSM_MODE	BIT(2)
++#define SUPPORTS_OFFLINE_REQ		BIT(0)
++#define SUPPORTS_16BIT_ALPHA		BIT(1)
++#define SUPPORTS_FSM_MODE		BIT(2)
++#define SUPPORTS_64BIT_CONFIG_CTL	BIT(3)
+ 	u8 flags;
+ 
+ 	struct clk_regmap clkr;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
