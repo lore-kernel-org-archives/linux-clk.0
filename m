@@ -1,51 +1,32 @@
-Return-Path: <net147@gmail.com>
-Return-Path: <net147@gmail.com>
-From: Jonathan Liu <net147@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>
-Subject: [PATCH] dt-bindings: clock: sunxi-ccu: Add compatibles for sun5i CCU driver
-Date: Tue,  8 Aug 2017 11:25:40 +1000
-Message-Id: <20170808012540.16691-1-net147@gmail.com>
+Return-Path: <greg@kroah.com>
+Date: Tue, 8 Aug 2017 08:57:07 -0700
+From: Greg KH <greg@kroah.com>
+To: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: "# 3.4.x" <stable@vger.kernel.org>, Leo Yan <leo.yan@linaro.org>,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: Request for inclusion to stable-4.9
+Message-ID: <20170808155707.GA19636@kroah.com>
+References: <CAO_48GHvyUD7vD1qJP=41Wt0nyeiyhoCpVSYL-v-jbU_dd1Sgw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAO_48GHvyUD7vD1qJP=41Wt0nyeiyhoCpVSYL-v-jbU_dd1Sgw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The bindings were not updated when the sun5i CCU driver was added in
-commit 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver").
+On Tue, Aug 08, 2017 at 09:05:03PM +0530, Sumit Semwal wrote:
+> Hi Greg,
+> 
+> Please consider commit
+> 
+> 9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI
+> 
+> for inclusion into stable-4.9; without this, Hikey's cpufreq driver
+> doesn't work, and the cpufreq kselftests fail on it accordingly.
 
-Signed-off-by: Jonathan Liu <net147@gmail.com>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 3 +++
- 1 file changed, 3 insertions(+)
+How can it "not work", all that patch does it enable it by "default",
+you can always change your .config file to enable it successfully,
+right?
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index df9fad58facd..dbe0c1c58ab5 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -3,6 +3,8 @@ Allwinner Clock Control Unit Binding
- 
- Required properties :
- - compatible: must contain one of the following compatibles:
-+		- "allwinner,sun5i-a10s-ccu"
-+		- "allwinner,sun5i-a13-ccu"
- 		- "allwinner,sun6i-a31-ccu"
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
-@@ -15,6 +17,7 @@ Required properties :
- 		- "allwinner,sun50i-a64-ccu"
- 		- "allwinner,sun50i-a64-r-ccu"
- 		- "allwinner,sun50i-h5-ccu"
-+		- "nextthing,gr8-ccu"
- 
- - reg: Must contain the registers base address and length
- - clocks: phandle to the oscillators feeding the CCU. Two are needed:
--- 
-2.13.2
+thanks,
+
+greg k-h
