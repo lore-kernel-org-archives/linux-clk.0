@@ -1,94 +1,117 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170823125740.342120870@cogentembedded.com>
-References: <20170823125740.342120870@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 Aug 2017 09:23:49 +0200
-Message-ID: <CAMuHMdXukditjmD_C3d1bMkfk38EpG5sWzepRMbzuHqORju7Jg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: add R8A7797 CPG core clock definitions
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	andy.yan@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 3/9] clk: rockchip: fix up the indentation stuff for RV1108 SoC
+Date: Tue,  8 Aug 2017 15:15:41 +0800
+Message-Id: <1502176547-30817-4-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+Make the code look better.
 
-On Wed, Aug 23, 2017 at 2:52 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add macros usable by the device tree sources to reference the R8A7797 CPG
-> clocks  by index.
->
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ include/dt-bindings/clock/rv1108-cru.h | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-Please refer to Table 8.2c ("List of Clocks [R-Car V3M]") of the R-Car Series,
-3rd Generation Hardware User's Manual (Rev. 0.55, Jun. 30, 2017).
-
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> ---
->  include/dt-bindings/clock/r8a7797-cpg-mssr.h |   48 +++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->
-> Index: linux/include/dt-bindings/clock/r8a7797-cpg-mssr.h
-> ===================================================================
-> --- /dev/null
-> +++ linux/include/dt-bindings/clock/r8a7797-cpg-mssr.h
-
-Please use "r8a77970-cpg-mssr.h", to follow the new 5-digit scheme started
-with r8a77995.
-
-> @@ -0,0 +1,48 @@
-> +/*
-> + * Copyright (C) 2016 Renesas Electronics Corp.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_R8A7797_CPG_MSSR_H__
-> +#define __DT_BINDINGS_CLOCK_R8A7797_CPG_MSSR_H__
-
-...R8A77970...
-
-> +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +
-> +/* r8a7797 CPG Core Clocks */
-> +#define R8A7797_CLK_Z2                 0
-
-#define R8A77970_...
-
-> +#define R8A7797_CLK_CSIREF             26
-
-The CSIREF clock was dropped in Rev. 0.54 of the datasheet.
-Please remove it.
-
-> +#define R8A7797_CLK_FRAY               27
-> +#define R8A7797_CLK_CP                 28
-> +#define R8A7797_CLK_CPEX               29
-> +#define R8A7797_CLK_R                  30
-> +#define R8A7797_CLK_OSC                        31
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/dt-bindings/clock/rv1108-cru.h b/include/dt-bindings/clock/rv1108-cru.h
+index e8aa6d56990a..f269d833e41a 100644
+--- a/include/dt-bindings/clock/rv1108-cru.h
++++ b/include/dt-bindings/clock/rv1108-cru.h
+@@ -173,16 +173,16 @@
+ #define CLK_NR_CLKS			(HCLK_VPU + 1)
+ 
+ /* reset id */
+-#define SRST_CORE_PO_AD		0
++#define SRST_CORE_PO_AD			0
+ #define SRST_CORE_AD			1
+ #define SRST_L2_AD			2
+-#define SRST_CPU_NIU_AD		3
++#define SRST_CPU_NIU_AD			3
+ #define SRST_CORE_PO			4
+ #define SRST_CORE			5
+-#define SRST_L2			6
++#define SRST_L2				6
+ #define SRST_CORE_DBG			8
+ #define PRST_DBG			9
+-#define RST_DAP			10
++#define RST_DAP				10
+ #define PRST_DBG_NIU			11
+ #define ARST_STRC_SYS_AD		15
+ 
+@@ -249,9 +249,9 @@
+ #define HRST_SYSBUS			75
+ #define PRST_USBGRF			76
+ 
+-#define ARST_PERIPH_NIU		80
+-#define HRST_PERIPH_NIU		81
+-#define PRST_PERIPH_NIU		82
++#define ARST_PERIPH_NIU			80
++#define HRST_PERIPH_NIU			81
++#define PRST_PERIPH_NIU			82
+ #define HRST_PERIPH			83
+ #define HRST_SDMMC			84
+ #define HRST_SDIO			85
+@@ -269,7 +269,7 @@
+ #define HRST_HOST0_AUX			96
+ #define HRST_HOST0_ARB			97
+ #define SRST_HOST0_EHCIPHY		98
+-#define SRST_HOST0_UTMI		99
++#define SRST_HOST0_UTMI			99
+ #define SRST_USBPOR			100
+ #define SRST_UTMI0			101
+ #define SRST_UTMI1			102
+@@ -316,21 +316,21 @@
+ #define HRST_VPU_NIU			141
+ #define ARST_VPU			142
+ #define HRST_VPU			143
+-#define ARST_RKVDEC_NIU		144
+-#define HRST_RKVDEC_NIU		145
++#define ARST_RKVDEC_NIU			144
++#define HRST_RKVDEC_NIU			145
+ #define ARST_RKVDEC			146
+ #define HRST_RKVDEC			147
+ #define SRST_RKVDEC_CABAC		148
+ #define SRST_RKVDEC_CORE		149
+-#define ARST_RKVENC_NIU		150
+-#define HRST_RKVENC_NIU		151
++#define ARST_RKVENC_NIU			150
++#define HRST_RKVENC_NIU			151
+ #define ARST_RKVENC			152
+ #define HRST_RKVENC			153
+ #define SRST_RKVENC_CORE		154
+ 
+ #define SRST_DSP_CORE			156
+ #define SRST_DSP_SYS			157
+-#define SRST_DSP_GLOBAL		158
++#define SRST_DSP_GLOBAL			158
+ #define SRST_DSP_OECM			159
+ #define PRST_DSP_IOP_NIU		160
+ #define ARST_DSP_EPP_NIU		161
+@@ -348,7 +348,7 @@
+ #define SRST_PMU_I2C0			173
+ #define PRST_PMU_I2C0			174
+ #define PRST_PMU_GPIO0			175
+-#define PRST_PMU_INTMEM		176
++#define PRST_PMU_INTMEM			176
+ #define PRST_PMU_PWM0			177
+ #define SRST_PMU_PWM0			178
+ #define PRST_PMU_GRF			179
+-- 
+1.9.1
