@@ -1,42 +1,20 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Tue, 8 Aug 2017 17:44:04 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v7 2/4] clk: samsung: Add support for runtime PM
-Message-ID: <20170808154404.GB2646@kozik-book>
-References: <1501839294-478-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170804093515eucas1p1cc2273ba02d86767c5b2533430577698@eucas1p1.samsung.com>
- <1501839294-478-3-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, shawn.lin@rock-chips.com, andy.yan@rock-chips.com
+Subject: Re: [PATCH v3 4/9] clk: rockchip: support more rates for cpuclk
+Date: Tue, 08 Aug 2017 17:10:30 +0200
+Message-ID: <1704165.jNFQGu57Du@phil>
+In-Reply-To: <1502176547-30817-5-git-send-email-zhangqing@rock-chips.com>
+References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com> <1502176547-30817-5-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1501839294-478-3-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 04, 2017 at 11:34:52AM +0200, Marek Szyprowski wrote:
-> This patch adds struct device pointer to samsung_clk_provider and forwarding it
-> to clk_register_* functions, so drivers can register clocks, which use runtime
-> pm feature.
+Am Dienstag, 8. August 2017, 15:15:42 CEST schrieb Elaine Zhang:
+> fix up the cpuclk rates table for support more freqs.
+> fix up the mux_core_mask describe error.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/clk/samsung/clk-pll.c |  2 +-
->  drivers/clk/samsung/clk.c     | 12 ++++++------
->  drivers/clk/samsung/clk.h     |  1 +
->  3 files changed, 8 insertions(+), 7 deletions(-)
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+already applied the one from Andy's v2, so ignored this one
