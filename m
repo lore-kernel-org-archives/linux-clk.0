@@ -1,76 +1,89 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 24 Aug 2017 10:50:35 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: fix uninitialized access
-Message-ID: <20170824085035.uznlemp5dzpts5ms@flea.lan>
-References: <20170823143937.2176025-1-arnd@arndb.de>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC v2 06/12] clk: qcom: add flag for VCO operation
+Date: Tue,  8 Aug 2017 23:54:11 +0530
+Message-Id: <1502216657-3342-7-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nymlfymace5gdopi"
-In-Reply-To: <20170823143937.2176025-1-arnd@arndb.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Some of the Alpha PLL’s does not have VCO configuration so this
+patch adds the flag and does not perform VCO operation if this
+flag is set.
 
---nymlfymace5gdopi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 19 +++++++++++--------
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
-On Wed, Aug 23, 2017 at 04:39:27PM +0200, Arnd Bergmann wrote:
-> gcc-8 reports an uninitialized variable access in a code path
-> that we would see with incorrect DTB input:
->=20
-> drivers/clk/sunxi/clk-sun8i-bus-gates.c: In function 'sun8i_h3_bus_gates_=
-init':
-> drivers/clk/sunxi/clk-sun8i-bus-gates.c:85:27: error: 'clk_parent' may be=
- used uninitialized in this function [-Werror=3Dmaybe-uninitialized]
->=20
-> This works around by skipping invalid input and printing a warning
-> instead if it ever happens. The problem was apparently part of the
-> initiali driver submission, but older compilers don't notice it.
->=20
-> Fixes: ab6e23a4e388 ("clk: sunxi: Add H3 clocks support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-That's weird it stayed for that long without any compiler noticing.
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Mike, Stephen, can you pick it up as a fix? We don't have anything
-else coming your way.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---nymlfymace5gdopi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZnpNbAAoJEBx+YmzsjxAgCi0P/RMcqNg8wTz19tCWbq1TJRzY
-wX2amoZtd/OvKihlSY1GPoQveEUpQceFwJOU7d/ceBcu0GYFaypOtdcrPTcmhUPV
-FnL3fcoFS9R7fDfPQUSYEsQx+pO6FxJI/hwQFosG5/dGeihielKHBc38nlmXa5pE
-IGV7fZXrIe1MBG4TOE2kItjisPe/33CdrgBv7Si4l5YYwSi+IcLFGfLwkOJGfGgf
-ZMLhuRK2rSOlRQ+CtA7SqClAwTpsrXMfmoXmELJXzDNRduQ4Ycr5GwFIA3h0Z7Iy
-bpAXepxoyCyRmLHYhW6sp6aMunnBHxfrCIgbWhpuo7yCLc5JVwsYXWGwx3bmjhhE
-1HCsR7PyrOD4W14F3yataEfR2rkLbRa/v+L6AHlzuWChSqkCG2NGbcmzKcA6qhG1
-88VRqslNIx52d01Vzi+CkhYx86zRJAULqsCgAEEl17OWovHthwlzf4oyfFf9vaGy
-ODpGoLBBPDswFmFXP/KDVJ2gLgSPcRAHZDpL78JPed7M/BybaqGcmM82WiCM3IEa
-3CHgr7ZMCYsjQwhsteOhqLLrg1X/HHeHFHqxXRBW7NJApBczn0vCoHrVhpHurqX7
-J/cane4Mcnjq/IwYR8zlJT6uy1s4sL63rmkEl+q8l6/raP+PomxPQnTYOtlnMy1q
-pSyL8IF8VKfESo3+H62j
-=4GpJ
------END PGP SIGNATURE-----
-
---nymlfymace5gdopi--
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 1f37bf8a..c368e7c 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -467,10 +467,12 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u64 a;
+ 
+ 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+-	vco = alpha_pll_find_vco(pll, rate);
+-	if (!vco) {
+-		pr_err("alpha pll not in a valid vco range\n");
+-		return -EINVAL;
++	if (!(pll->flags & SUPPORTS_NO_VCO)) {
++		vco = alpha_pll_find_vco(pll, rate);
++		if (!vco) {
++			pr_err("alpha pll not in a valid vco range\n");
++			return -EINVAL;
++		}
+ 	}
+ 
+ 	regmap_write(pll->clkr.regmap, pll_l(pll), l);
+@@ -483,9 +485,10 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	regmap_write(pll->clkr.regmap, pll_alpha(pll), a);
+ 
+-	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
+-			   PLL_VCO_MASK << PLL_VCO_SHIFT,
+-			   vco->val << PLL_VCO_SHIFT);
++	if (!(pll->flags & SUPPORTS_NO_VCO))
++		regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
++				   PLL_VCO_MASK << PLL_VCO_SHIFT,
++				   vco->val << PLL_VCO_SHIFT);
+ 
+ 	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll), PLL_ALPHA_EN,
+ 			   PLL_ALPHA_EN);
+@@ -505,7 +508,7 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long min_freq, max_freq;
+ 
+ 	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
+-	if (alpha_pll_find_vco(pll, rate))
++	if ((pll->flags & SUPPORTS_NO_VCO) || alpha_pll_find_vco(pll, rate))
+ 		return rate;
+ 
+ 	min_freq = pll->vco_table[0].min_freq;
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 8b27c05..973673b 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -55,6 +55,7 @@ struct clk_alpha_pll {
+ #define SUPPORTS_FSM_MODE		BIT(2)
+ #define SUPPORTS_64BIT_CONFIG_CTL	BIT(3)
+ #define SUPPORTS_DYNAMIC_UPDATE		BIT(4)
++#define SUPPORTS_NO_VCO			BIT(5)
+ 	u8 flags;
+ 
+ 	struct clk_regmap clkr;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
