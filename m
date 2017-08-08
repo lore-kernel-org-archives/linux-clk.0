@@ -1,29 +1,60 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com
-Subject: Re: [PATCH v4 0/2] clk: rockchip: support clk drivers for RK3126 SoC.
-Date: Tue, 08 Aug 2017 17:31:44 +0200
-Message-ID: <1713855.y1e3qplvsl@phil>
-In-Reply-To: <1501550224-6875-1-git-send-email-zhangqing@rock-chips.com>
-References: <1501550224-6875-1-git-send-email-zhangqing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org
+Cc: Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] clk: gemini: hands off PCI OE bit
+Date: Tue,  8 Aug 2017 21:08:18 +0200
+Message-Id: <20170808190818.11740-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 1. August 2017, 09:17:02 CEST schrieb Elaine Zhang:
-> changed in V4:
-> modify the document description for rk3126 clock.
-> 
-> changed in V3:
-> add documentation for rk3126 clock
-> 
-> Elaine Zhang (2):
->   clk: rockchip: rk3128: modify rk3128 clk driver to support rk3126
->   dt-bindings: add documentation for rk3126 clock
+This bit is pin control, and needs to be carefully managed by the
+new pin control driver.
 
-applied both for 4.14
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/clk/clk-gemini.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-
-Thanks
-Heiko
+diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+index b4cf2f699a21..f940e5af845b 100644
+--- a/drivers/clk/clk-gemini.c
++++ b/drivers/clk/clk-gemini.c
+@@ -37,7 +37,6 @@ static DEFINE_SPINLOCK(gemini_clk_lock);
+ 
+ #define GEMINI_GLOBAL_MISC_CONTROL	0x30
+ #define PCI_CLK_66MHZ			BIT(18)
+-#define PCI_CLK_OE			BIT(17)
+ 
+ #define GEMINI_GLOBAL_CLOCK_CONTROL	0x34
+ #define PCI_CLKRUN_EN			BIT(16)
+@@ -159,9 +158,6 @@ static int gemini_pci_enable(struct clk_hw *hw)
+ 
+ 	regmap_update_bits(pciclk->map, GEMINI_GLOBAL_CLOCK_CONTROL,
+ 			   0, PCI_CLKRUN_EN);
+-	regmap_update_bits(pciclk->map,
+-			   GEMINI_GLOBAL_MISC_CONTROL,
+-			   0, PCI_CLK_OE);
+ 	return 0;
+ }
+ 
+@@ -169,9 +165,6 @@ static void gemini_pci_disable(struct clk_hw *hw)
+ {
+ 	struct clk_gemini_pci *pciclk = to_pciclk(hw);
+ 
+-	regmap_update_bits(pciclk->map,
+-			   GEMINI_GLOBAL_MISC_CONTROL,
+-			   PCI_CLK_OE, 0);
+ 	regmap_update_bits(pciclk->map, GEMINI_GLOBAL_CLOCK_CONTROL,
+ 			   PCI_CLKRUN_EN, 0);
+ }
+-- 
+2.9.4
