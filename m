@@ -1,63 +1,64 @@
-Return-Path: <sebastien.szymanski@armadeus.com>
-From: =?UTF-8?q?S=C3=A9bastien=20Szymanski?= <sebastien.szymanski@armadeus.com>
-To: linux-kernel@vger.kernel.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
 Cc: linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Julien Boibessot <julien.boibessot@armadeus.com>,
-	Nicolas Colombain <nicolas.colombain@armadeus.com>,
-	Fabien Marteau <fabien.marteau@armadeus.com>,
-	=?UTF-8?q?S=C3=A9bastien=20Szymanski?= <sebastien.szymanski@armadeus.com>
-Subject: [PATCH 1/1] clk: imx6: refine hdmi_isfr's parent to make HDMI work on i.MX6 SoCs w/o VPU
-Date: Tue,  1 Aug 2017 12:40:07 +0200
-Message-Id: <1501584007-12433-1-git-send-email-sebastien.szymanski@armadeus.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	shawn.lin@rock-chips.com,
+	andy.yan@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 0/9] clk: rockchip: support clk for RV1108 Soc
+Date: Tue,  8 Aug 2017 15:15:38 +0800
+Message-Id: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On i.MX6 SoCs without VPU (in my case MCIMX6D4AVT10AC), the hdmi driver
-fails to probe:
+RV1108 submit is too much, make the CLK part out to review alone.
 
-[    2.540030] dwhdmi-imx 120000.hdmi: Unsupported HDMI controller
-(0000:00:00)
-[    2.548199] imx-drm display-subsystem: failed to bind 120000.hdmi
-(ops dw_hdmi_imx_ops): -19
-[    2.557403] imx-drm display-subsystem: master bind failed: -19
+Changes in v3:
+[PATCH v3 1/9] None
+[PATCH v3 2/9] None
+[PATCH v3 3/9] None
+[PATCH v3 4/9] None
+[PATCH v3 5/9] None
+[PATCH v3 6/9] fix up the structure patch-contents
+[PATCH v3 7/9] fix up the structure patch-contents
+[PATCH v3 8/9] fix up the structure patch-contents
+[PATCH v3 8/9] None
 
-That's because hdmi_isfr's parent, video_27m, is not correctly ungated.
-As explained in commit 5ccc248cc537 ("ARM: imx6q: clk: Add support for
-mipi_core_cfg clock as a shared clock gate"), video_27m is gated by
-CCM_CCGR3[CG8].
+Changes in v2:
+[PATCH v2 1/9] split the rename and intentation fix part
+[PATCH v2 2/9] None
+[PATCH v2 3/9] None
+[PATCH v2 4/9] split the new added clks and rename.
+[PATCH v2 5/9] None
+[PATCH v2 6/9] None
+[PATCH v2 7/9] None
+[PATCH v2 8/9] None
+[PATCH v3 9/9] None
 
-On i.MX6 SoCs with VPU, the hdmi is working thanks to the
-CCM_CMEOR[mod_en_ov_vpu] bit which makes the video_27m ungated whatever
-is in CCM_CCGR3[CG8]. The issue can be reproduced by setting
-CCMEOR[mod_en_ov_vpu] to 0.
+Elaine Zhang (9):
+  clk: rockchip: add more clk ids for rv1108
+  clk: rockchip: rename the clk id for HCLK_I2S1_2CH
+  clk: rockchip: fix up the indentation stuff for RV1108 SoC
+  clk: rockchip: support more rates for cpuclk
+  clk: rockchip: fix up the pll clks error for rv1108 SoC
+  clk: rockchip: support more clks for rv1108
+  clk: rockchip: fix up some clks describe error for rv1108 SoC
+  clk: rockchip: rename some of clks for rv1108 SoC
+  clk: rockchip: add some critical clocks for rv1108 SoC
 
-Make the HDMI work in every case by setting hdmi_isfr's parent to
-mipi_core_cfg.
+ drivers/clk/rockchip/clk-rv1108.c      | 476 +++++++++++++++++++++++++++------
+ include/dt-bindings/clock/rv1108-cru.h | 123 +++++++--
+ 2 files changed, 494 insertions(+), 105 deletions(-)
 
-Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
----
- drivers/clk/imx/clk-imx6q.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index c07df719..8d518ad 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -761,7 +761,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	clk[IMX6QDL_CLK_GPU2D_CORE] = imx_clk_gate2("gpu2d_core", "gpu2d_core_podf", base + 0x6c, 24);
- 	clk[IMX6QDL_CLK_GPU3D_CORE]   = imx_clk_gate2("gpu3d_core",    "gpu3d_core_podf",   base + 0x6c, 26);
- 	clk[IMX6QDL_CLK_HDMI_IAHB]    = imx_clk_gate2("hdmi_iahb",     "ahb",               base + 0x70, 0);
--	clk[IMX6QDL_CLK_HDMI_ISFR]    = imx_clk_gate2("hdmi_isfr",     "video_27m",         base + 0x70, 4);
-+	clk[IMX6QDL_CLK_HDMI_ISFR]    = imx_clk_gate2("hdmi_isfr",     "mipi_core_cfg",     base + 0x70, 4);
- 	clk[IMX6QDL_CLK_I2C1]         = imx_clk_gate2("i2c1",          "ipg_per",           base + 0x70, 6);
- 	clk[IMX6QDL_CLK_I2C2]         = imx_clk_gate2("i2c2",          "ipg_per",           base + 0x70, 8);
- 	clk[IMX6QDL_CLK_I2C3]         = imx_clk_gate2("i2c3",          "ipg_per",           base + 0x70, 10);
 -- 
-2.7.3
+1.9.1
