@@ -1,270 +1,231 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 31 Aug 2017 17:19:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: ALKML <linux-arm-kernel@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	DTML <devicetree@vger.kernel.org>, Roy Franz <roy.franz@cavium.com>,
-	Harb Abdulhamid <harba@codeaurora.org>, Nishanth Menon <nm@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>, Loc Ho <lho@apm.com>,
-	Alexey Klimov <alexey.klimov@arm.com>,
-	Ryan Harkin <Ryan.Harkin@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 15/18] clk: add support for clocks provided by SCMI
-Message-ID: <20170901001901.GJ21656@codeaurora.org>
-References: <1501857104-11279-1-git-send-email-sudeep.holla@arm.com>
- <1501857104-11279-16-git-send-email-sudeep.holla@arm.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1501857104-11279-16-git-send-email-sudeep.holla@arm.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, "Jerome Brunet" <jbrunet@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170804001836.GU2146@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, "Kevin Hilman" <khilman@baylibre.com>,
+ linux-amlogic@lists.infradead.org, "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-6-jbrunet@baylibre.com>
+ <20170726001217.GC2146@codeaurora.org>
+ <1501089516.2401.29.camel@baylibre.com>
+ <20170804001836.GU2146@codeaurora.org>
+Message-ID: <150223186723.22158.11617219588466426777@resonance>
+Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
+Date: Tue, 08 Aug 2017 15:37:47 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04, Sudeep Holla wrote:
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> new file mode 100644
-> index 000000000000..37f98a6439a0
-> --- /dev/null
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -0,0 +1,216 @@
-> +/*
-> + * System Control and Power Interface (SCMI) Protocol based clock driver
-> + *
-> + * Copyright (C) 2017 ARM Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License along with
-> + * this program. If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/of.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
+Hi Stephen,
 
-Is this include used?
+Quoting Stephen Boyd (2017-08-03 17:18:36)
+> On 07/26, Jerome Brunet wrote:
+> > > > +void clk_rate_protect(struct clk *clk);
+> > > =
 
-> +#include <linux/platform_device.h>
-> +#include <linux/scmi_protocol.h>
-> +
-> +struct scmi_clk {
-> +	u32 id;
-> +	struct clk_hw hw;
-> +	const struct scmi_clock_info *info;
-> +	const struct scmi_handle *handle;
-> +};
-> +
-> +#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
-> +
-> +static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	int ret;
-> +	u64 rate;
-> +	struct scmi_clk *clk = to_scmi_clk(hw);
-> +
-> +	ret = clk->handle->clk_ops->rate_get(clk->handle, clk->id, &rate);
-> +	if (ret)
-> +		return 0;
-> +	return rate;
-> +}
-> +
-> +static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *parent_rate)
-> +{
-> +	u64 fmin, fmax, ftmp;
-> +	struct scmi_clk *clk = to_scmi_clk(hw);
-> +
-> +	/*
-> +	 * We can't figure out what rate it will be, so just return the
-> +	 * rate back to the caller. scmi_clk_recalc_rate() will be called
-> +	 * after the rate is set and we'll know what rate the clock is
-> +	 * running at then.
-> +	 */
-> +	if (clk->info->rate_discrete)
-> +		return rate;
-> +
-> +	fmin = clk->info->range.min_rate;
-> +	fmax = clk->info->range.max_rate;
-> +	for (ftmp = fmin; ftmp <= fmax; ftmp += clk->info->range.step_size) {
-> +		if (ftmp >= rate) {
-> +			if (ftmp <= fmax)
-> +				fmax = ftmp;
-> +			break;
-> +		} else if (ftmp >= fmin) {
-> +			fmin = ftmp;
-> +		}
-> +	}
+> > > Is there any plan to use this clk_rate_protect() API? It seems
+> > > inherently racy for a clk consumer to call clk_set_rate() and
+> > > then this clk_rate_protect() API after that to lock the rate in.
+> > > How about we leave this out of the consumer API until a user
+> > > needs it?
+> > =
 
-Are the max_rate and min_rate potentially unaligned with the
-step_size? Do any of these things change at runtime? It seems
-like we could do some simple math instead of this for loop unless
-I missed something.
+> > Having this API available is whole reason I've been working on this for=
+ so long.
+> > By the now, you may have forgot but I explained the use-case in first R=
+FC [0]
+> > Here is an example (wip) of usage [1]
+> > =
 
-> +	return fmax != clk->info->range.max_rate ? fmax : fmin;
-> +}
-> +
-> +static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			     unsigned long parent_rate)
-> +{
-> +	struct scmi_clk *clk = to_scmi_clk(hw);
-> +
-> +	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, 0, rate);
-> +}
-> +
-> +static int scmi_clk_enable(struct clk_hw *hw)
-> +{
-> +	struct scmi_clk *clk = to_scmi_clk(hw);
-> +
-> +	return clk->handle->clk_ops->enable(clk->handle, clk->id);
-> +}
-> +
-> +static void scmi_clk_disable(struct clk_hw *hw)
-> +{
-> +	struct scmi_clk *clk = to_scmi_clk(hw);
-> +
-> +	clk->handle->clk_ops->disable(clk->handle, clk->id);
-> +}
-> +
-> +static const struct clk_ops scmi_clk_ops = {
-> +	.recalc_rate = scmi_clk_recalc_rate,
-> +	.round_rate = scmi_clk_round_rate,
-> +	.set_rate = scmi_clk_set_rate,
-> +	/*
-> +	 * We can't provide enable/disable callback as we can't perform the same
-> +	 * in atomic context. Since the clock framework provides standard API
-> +	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
-> +	 * context, it should be fine providing prepare/unprepare.
-> +	 */
-> +	.prepare = scmi_clk_enable,
-> +	.unprepare = scmi_clk_disable,
-> +};
-> +
-> +static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
-> +{
-> +	int ret;
-> +	struct clk_init_data init;
+> > [0]: http://lkml.kernel.org/r/20170302173835.18313-1-jbrunet@baylibre.c=
+om
+> > [1]: https://github.com/jeromebrunet/linux/commits/amlogic/wip/audio-cl=
+k-lock
 
-Best to do = { } here in case we add something else to the init
-structure in future.
+Indeed, something like rate protection or "lock rate" has been discussed
+since the birth of CCF. I remember a whiteboarding session between you,
+Paul W. and myself about it probably in 2012. Peter might have been
+there too.
 
-> +
-> +	init.flags = CLK_GET_RATE_NOCACHE;
-> +	init.num_parents = 0;
-> +	init.ops = &scmi_clk_ops;
-> +	init.name = sclk->info->name;
-> +	sclk->hw.init = &init;
-> +
-> +	ret = devm_clk_hw_register(dev, &sclk->hw);
-> +	if (!ret)
-> +		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
-> +				      sclk->info->range.max_rate);
-> +	return ret;
-> +}
-> +
-> +static int scmi_clk_add(struct device *dev, struct device_node *np,
-> +			const struct scmi_handle *handle)
-> +{
-> +	int idx, count, err;
-> +	struct clk_hw **hws;
-> +	struct clk_hw_onecell_data *clk_data;
-> +
-> +	count = handle->clk_ops->count_get(handle);
-> +	if (count < 0) {
-> +		dev_err(dev, "%s: invalid clock output count\n", np->name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
-> +				sizeof(*clk_data->hws) * count, GFP_KERNEL);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	clk_data->num = count;
-> +	hws = clk_data->hws;
-> +
-> +	for (idx = 0; idx < count; idx++) {
-> +		struct scmi_clk *sclk;
-> +
-> +		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
-> +		if (!sclk)
-> +			return -ENOMEM;
-> +
-> +		sclk->info = handle->clk_ops->info_get(handle, idx);
-> +		if (!sclk->info) {
-> +			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
-> +			continue;
-> +		}
-> +
-> +		sclk->id = idx;
-> +		sclk->handle = handle;
-> +
-> +		err = scmi_clk_ops_init(dev, sclk);
-> +		if (err) {
-> +			dev_err(dev, "failed to register clock %d\n", idx);
-> +			devm_kfree(dev, sclk);
-> +			hws[idx] = NULL;
-> +		} else {
-> +			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
-> +			hws[idx] = &sclk->hw;
-> +		}
-> +	}
-> +
-> +	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-> +}
-> +
-> +static int scmi_clocks_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +
-> +	of_clk_del_provider(np);
-> +	return 0;
-> +}
-> +
-> +static int scmi_clocks_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	const struct scmi_handle *handle = devm_scmi_handle_get(dev);
-> +
-> +	if (IS_ERR_OR_NULL(handle) || !handle->clk_ops)
-> +		return -EPROBE_DEFER;
-> +
-> +	return scmi_clk_add(dev, np, handle);
+> =
 
-Why the function? We support more than just platform devices?
-Just fold scmi_clk_add() into this function instead please.
+> If we're forgetting why something is introduced then it means the
+> commit text is missing information. Please clearly describe the
+> need for the API in the commit text for the patch that introduces
+> it.
 
-> +}
-> +
-> +static struct platform_driver scmi_clocks_driver = {
-> +	.driver	= {
-> +		.name = "scmi-clocks",
-> +	},
-> +	.probe = scmi_clocks_probe,
-> +	.remove = scmi_clocks_remove,
-> +};
-> +module_platform_driver(scmi_clocks_driver);
-> +
-> +MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-> +MODULE_DESCRIPTION("ARM SCMI clock driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.7.4
-> 
+My $0.02 is that the "pick an unused PLL" thing is a benefit of this new
+api that is internal to the clock controller driver, and is not the
+driving force behind the series. If a simple, easy to understand
+justification for this patch series is needed, might I suggest something
+like the following for the next commit log/coverletter:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+"Some clock consumers require that a clock rate must not deviate from
+its selected frequency. There can be several reasons for this, not least
+of which is that some hardware may not be able to handle or recover from
+a glitch caused by changing the clock rate while the hardware is in
+operation. The ability to lock a clock's rate, and release that lock, is
+a fundamental clock rate control primitive. It's absence is a bug that
+is fixed by this patch series."
+
+That's the short and sweet version. If more verbosity is needed as to
+why rate_range doesn't need this, there are some good reasons:
+
+1) simplicity: some consumers don't care about their rate, but do
+care that they rate doesn't change. clk_rate_{un}protect is much simpler
+than forcing those consumers to call clk_get_rate, then cache that value
+for future use and then call clk_set_rate_range.
+
+2) expressiveness / debug: trying to find out why a clock rate is locked
+searching through every use of clk_set_rate_range is sort of lame,
+especially if variables are used to pass in min/max instead of
+hard-coded values. It's way way easier to just grep for
+clk_rate_protect.
+
+> =
+
+> > =
+
+> > > =
+
+> > > Finally, When does a consumer want the rate of a clk to change
+> > > after they call clk_set_rate() on it? I would guess that very few
+> > > consumers would be willing to accept that. Which begs the
+> > > question, if anyone will keep calling clk_set_rate() after this
+> > > API (and the clk_set_rate_protect() API) is added. It almost
+> > > seems like we would want it to be opt-out, instead of opt-in, so
+> > > that consumers would call clk_set_rate() and expect it to be a
+> > > stable clk rate after that, and they would call
+> > > clk_set_rate_trample_on_me() or something properly named when
+> > > they don't care what the rate is after they call the API.
+> > > =
+
+> > =
+
+> > Indeed, we generally don't want our rate to change, but:
+> > - This is mostly for leaf clocks, the internal path would generally not=
+ care, as
+> > long as the leaf are happy.
+> > - Even a leaf may be open (be able to deal with) to small glitches, pll=
+ relock,
+> > re parenting
+> > =
+
+> > Actually, if all the clock could not tolerate any glitches, there would=
+ have
+> > been a lot of complains about CCF by now, it does not prevent glitches =
+at all.
+> =
+
+> Well some devices handle glitches in the hardware, so the details
+> of glitch free rate changes are hidden from clk consumers, and
+> the software in general, on those devices.
+
+On the hardware that I am familiar with, the problem of glitches lies
+not in the clock hardware, but with the downstream peripheral logic / ip
+block that consumes that clock signal. So it seems to me that having a
+consumer api for locking the rate makes perfect sense.
+
+> =
+
+> > =
+
+> > If you go over the initial RFC, the point is also for the CCF to favor =
+other
+> > (unused parent) when several (sometimes with the same capabilities) are
+> > available. I think this is also a fairly common use case. That's someth=
+ing
+> > rate_range won't do either, as far as I understood.
+> =
+
+> Fair enough, but why do we want consumers to need to know that
+> there are sometimes unused parents that aren't getting chosen for
+> a particular frequency? I see this as exposing the internals of
+> the clk tree to consumers when they shouldn't need to care. Of
+> course, sometimes clk consumers really do care about internals,
+
+Right, sometimes they do, and we need to strike a balance. I think that
+this api has been needed for some time. It very likely could have been
+included in the initial version of the CCF that was merged years back if
+I hadn't been trying very hard to stick only to the existing clk.h.
+
+clk_set_rate has always been a "last write wins" api, across a shared
+resource, and we've always known that this is not a great situation.
+This patch series does a good job of solving that issue, in conjunction
+with the existing range stuff.
+
+> for example if some PLL is used for a display controller and it's
+> also routed out of the chip on the display phy pins to encode
+> data or something. Then perhaps we really want to use one
+> particular PLL instead of a generic one that may also be a parent
+> of the display controller clk. Making sure clk_set_rate() doesn't
+> trample on clks deep in the tree seems different than this
+> though.
+> =
+
+> Going back to your RFC series cover letter though, I see three
+> PLLs (mppl0,1,2) and two users of the PLLs (amclk and mclk_i958).
+> Is anything else using these PLLs in the system? Why are we doing
+> all this stuff instead of hard-coding the parents for these clks
+> to be different PLLs? If we want it to be flexible we could
+> assign parents to the cts_amclk_sel and cts_mclk_i958_sel to be
+> different PLLs in DT via assigned clock parents. Or it could just
+> be hard-coded in the clk driver during probe.
+> =
+
+> If there's really sharing going on, and you can't hardcode the
+> parents, please indicate why that's the case in the commit text.
+> I don't want to introduce another consumer API just because we
+> didn't want to restrict the available parents for a couple clks.
+
+I think the PLL sharing thing is a big distraction. Giving consumers the
+ability to guarantee that their rates are locked in using a simple
+critical section call just makes sense to me. If it helps with other
+cases then yay.
+
+> =
+
+> > =
+
+> > Last but not least, it allows consumer to set the rate in a sort of cri=
+tical
+> > section and have the guarantee that nobody will be able to change the r=
+ate
+> > between the clk_set_rate() call and prepare_enable(). That's something =
+we don't
+> > have at the moment.
+> > =
+
+> =
+
+> Right, but clk_rate_protect() doesn't close the critical section
+> between clk_set_rate() and clk_rate_protect() if another
+> consumers changes the frequency, or if that consumer changes the
+> frequency of some parent of the clk. This is why I'm asking what
+
+Right, clk_set_rate_protect does this in the next patch in this series.
+
+> the use of this API is for. Shouldn't we want consumers to use
+> clk_set_rate_protect() so they can be sure they got the rate they
+> wanted, instead of hoping that something else hasn't come in
+> between the set_rate and the protect calls and changed the
+> frequency?
+
+We can remove clk_rate_protect if you really want, but there is always
+the case that a consumer driver does not set the rate, but needs to
+guarantee that the rate will not change during operation.
+
+Any driver that must both set the rate AND guarantee it will not change
+must use clk_set_rate_protect.
+
+Regards,
+Mike
+
+> =
+
+> -- =
+
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
