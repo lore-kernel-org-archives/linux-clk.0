@@ -1,64 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:48620 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751204AbdHRJRC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2017 05:17:02 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 18 Aug 2017 11:16:53 +0200
-Message-Id: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC v2 11/12] clk: qcom: add read-only divider operations
+Date: Tue,  8 Aug 2017 23:54:16 +0530
+Message-Id: <1502216657-3342-12-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Some of the divider settings are preconfigured and should not
+be changed by the clock framework during frequency change. This
+patch adds the read-only divider operation for QCOM dividers
+which is equivalent to generic divider operations in
+'commit 79c6ab509558 ("clk: divider: add CLK_DIVIDER_READ_ONLY flag")'.
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-regmap-divider.c | 29 +++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-divider.h |  1 +
+ 2 files changed, 30 insertions(+)
 
-Hence this patch series implements this for the various R-Car Gen2
-DTSes that still need this (r8a7792.dtsi is OK).
-
-Changes compared to v1:
-  - Rebased.
-
-Dependencies:
-  - renesas-devel-20170818-v4.13-rc5,
-  - Patch series "[PATCH v2 0/5] ARM: dts: rcar-gen2: Convert to new
-    CPG/MSSR bindings".
-
-For your convenience, this series is also available in the
-topic/rcar2-cpg-mssr-dt-v2 branch of my renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-Thanks for applying!
-
-Geert Uytterhoeven (4):
-  ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
-  ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
-  ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
-  ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
-
- arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
- arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
- arch/arm/boot/dts/r8a7793.dtsi | 125 ++++++++++++++++++-------------------
- arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++-------------------
- 4 files changed, 251 insertions(+), 272 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-regmap-divider.c
+index 5348491..6cf9005 100644
+--- a/drivers/clk/qcom/clk-regmap-divider.c
++++ b/drivers/clk/qcom/clk-regmap-divider.c
+@@ -23,6 +23,29 @@ static inline struct clk_regmap_div *to_clk_regmap_div(struct clk_hw *hw)
+ 	return container_of(to_clk_regmap(hw), struct clk_regmap_div, clkr);
+ }
+ 
++static long div_round_ro_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long *prate)
++{
++	struct clk_regmap_div *divider = to_clk_regmap_div(hw);
++	struct clk_regmap *clkr = &divider->clkr;
++	u32 div;
++	struct clk_hw *hw_parent = clk_hw_get_parent(hw);
++
++	regmap_read(clkr->regmap, divider->reg, &div);
++	div >>= divider->shift;
++	div &= BIT(divider->width) - 1;
++	div += 1;
++
++	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
++		if (!hw_parent)
++			return -EINVAL;
++
++		*prate = clk_hw_round_rate(hw_parent, rate * div);
++	}
++
++	return DIV_ROUND_UP_ULL((u64)*prate, div);
++}
++
+ static long div_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long *prate)
+ {
+@@ -68,3 +91,9 @@ static unsigned long div_recalc_rate(struct clk_hw *hw,
+ 	.recalc_rate = div_recalc_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_regmap_div_ops);
++
++const struct clk_ops clk_regmap_div_ro_ops = {
++	.round_rate = div_round_ro_rate,
++	.recalc_rate = div_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_div_ro_ops);
+diff --git a/drivers/clk/qcom/clk-regmap-divider.h b/drivers/clk/qcom/clk-regmap-divider.h
+index fc4492e..8c39c27 100644
+--- a/drivers/clk/qcom/clk-regmap-divider.h
++++ b/drivers/clk/qcom/clk-regmap-divider.h
+@@ -25,5 +25,6 @@ struct clk_regmap_div {
+ };
+ 
+ extern const struct clk_ops clk_regmap_div_ops;
++extern const struct clk_ops clk_regmap_div_ro_ops;
+ 
+ #endif
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
