@@ -1,84 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:33181 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751005AbdHDEQw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Aug 2017 00:16:52 -0400
-Date: Fri, 04 Aug 2017 12:16:41 +0800
-In-Reply-To: <CAGb2v65Ncp5jfq5hrOpqBNYER-VGW1B5j4zT40rj8_CJh5xxVw@mail.gmail.com>
-References: <20170801131304.7741-1-icenowy@aosc.io> <20170801131304.7741-11-icenowy@aosc.io> <CAGb2v65Ncp5jfq5hrOpqBNYER-VGW1B5j4zT40rj8_CJh5xxVw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add CLK_SET_RATE_PARENT flag for H3 HDMI clock
-To: wens@csie.org, Chen-Yu Tsai <wens@csie.org>
-CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rnayak@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [RFC v2 08/12] clk: qcom: support for Brammo PLL
+Date: Tue,  8 Aug 2017 23:54:13 +0530
+Message-Id: <1502216657-3342-9-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+1. Brammo PLL does not allow configuration of VCO
+2. Supports the dynamic update in which the frequency can
+   be changed dynamically without turning off the PLL
+3. The register offsets are different from normal Alpha PLL
 
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
->Hi,
->
->On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> From: Jernej Skrabec <jernej.skrabec@siol.net>
->>
->> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be
->set.
->>
->> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
->>
->> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> index b1127e8629d9..2ebb3d865b01 100644
->> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,             
->"avs",          "osc24M",
->>
->>  static const char * const hdmi_parents[] = { "pll-video" };
->>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
->> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
->> +                                0x150, 0, 4, 24, 2, BIT(31),
->CLK_SET_RATE_PARENT);
->
->Line is longer than 80 characters.
->
->This looks independent enough so I've merged this for 4.14 with the
->offending line wrapped and the following tag added:
->
->Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
-
-Please don't merge this now until Jernej send it.
-
->
->ChenYu
->
->>
->>  static SUNXI_CCU_GATE(hdmi_ddc_clk,    "hdmi-ddc",     "osc24M",
->>                       0x154, BIT(31), 0);
->> --
->> 2.13.0
->>
->> --
->> You received this message because you are subscribed to the Google
->Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it,
->send an email to linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 23e2bb7..b491dbe 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -107,6 +107,18 @@
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_huayra_pll_offsets);
+ 
++const u8 clk_alpha_brammo_pll_offsets[] = {
++	[ALPHA_PLL_MODE] = 0x00,
++	[ALPHA_PLL_L_VAL] = 0x04,
++	[ALPHA_PLL_ALPHA_VAL] = 0x08,
++	[ALPHA_PLL_ALPHA_VAL_U] = 0x0c,
++	[ALPHA_PLL_USER_CTL] = 0x10,
++	[ALPHA_PLL_CONFIG_CTL] = 0x18,
++	[ALPHA_PLL_TEST_CTL] = 0x1c,
++	[ALPHA_PLL_STATUS] = 0x24,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_brammo_pll_offsets);
++
+ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
+ 			const char *action)
+ {
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index af74abf..8a0dab6 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -64,6 +64,7 @@ struct clk_alpha_pll {
+ #define CLK_HUAYRA_PLL_FLAGS	(SUPPORTS_NO_VCO | SUPPORTS_DYNAMIC_UPDATE | \
+ 				 SUPPORTS_64BIT_CONFIG_CTL |		     \
+ 				 SUPPORTS_16BIT_ALPHA)
++#define CLK_BRAMMO_PLL_FLAGS	(SUPPORTS_NO_VCO | SUPPORTS_DYNAMIC_UPDATE)
+ 
+ /**
+  * struct clk_alpha_pll_postdiv - phase locked loop (PLL) post-divider
+@@ -102,6 +103,7 @@ struct alpha_pll_config {
+ 
+ extern const u8 clk_alpha_pll_offsets[];
+ extern const u8 clk_alpha_huayra_pll_offsets[];
++extern const u8 clk_alpha_brammo_pll_offsets[];
+ 
+ extern const struct clk_ops clk_alpha_pll_ops;
+ extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
