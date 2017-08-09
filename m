@@ -1,129 +1,33 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC v2 12/12] clk: qcom: add parent map for regmap mux
-Date: Tue,  8 Aug 2017 23:54:17 +0530
-Message-Id: <1502216657-3342-13-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 8 Aug 2017 18:43:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] clk: gemini: hands off PCI OE bit
+Message-ID: <20170809014312.GZ2146@codeaurora.org>
+References: <20170808190818.11740-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170808190818.11740-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the driver assumes the register configuration value
-is identical to its index in the parent map. This patch adds
-the parent map field in regmap mux clock node which contains
-the mapping of parent index with actual register configuration
-value. If regmap node contains this parent map then the
-configuration value will be taken from this
-parent map instead of simply writing the index value.
+On 08/08, Linus Walleij wrote:
+> This bit is pin control, and needs to be carefully managed by the
+> new pin control driver.
+> 
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg.h        | 10 ----------
- drivers/clk/qcom/clk-regmap-mux.c |  6 ++++++
- drivers/clk/qcom/clk-regmap-mux.h |  2 ++
- drivers/clk/qcom/common.h         | 11 ++++++++++-
- 4 files changed, 18 insertions(+), 11 deletions(-)
+Fixes tag?
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 1b3e8d2..ee66857 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -26,16 +26,6 @@ struct freq_tbl {
- };
- 
- /**
-- * struct parent_map - map table for PLL source select configuration values
-- * @src: source PLL
-- * @cfg: configuration value
-- */
--struct parent_map {
--	u8 src;
--	u8 cfg;
--};
--
--/**
-  * struct mn - M/N:D counter
-  * @mnctr_en_bit: bit to enable mn counter
-  * @mnctr_reset_bit: bit to assert mn counter reset
-diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
-index cae3071..0f3a1bd 100644
---- a/drivers/clk/qcom/clk-regmap-mux.c
-+++ b/drivers/clk/qcom/clk-regmap-mux.c
-@@ -35,6 +35,9 @@ static u8 mux_get_parent(struct clk_hw *hw)
- 	val >>= mux->shift;
- 	val &= mask;
- 
-+	if (mux->parent_map)
-+		return qcom_find_src_index(hw, mux->parent_map, val);
-+
- 	return val;
- }
- 
-@@ -45,6 +48,9 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
- 	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
- 	unsigned int val;
- 
-+	if (mux->parent_map)
-+		index = mux->parent_map[index].cfg;
-+
- 	val = index;
- 	val <<= mux->shift;
- 
-diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
-index 5cec761..7797cdd 100644
---- a/drivers/clk/qcom/clk-regmap-mux.h
-+++ b/drivers/clk/qcom/clk-regmap-mux.h
-@@ -16,11 +16,13 @@
- 
- #include <linux/clk-provider.h>
- #include "clk-regmap.h"
-+#include "common.h"
- 
- struct clk_regmap_mux {
- 	u32			reg;
- 	u32			shift;
- 	u32			width;
-+	const struct parent_map	*parent_map;
- 	struct clk_regmap	clkr;
- };
- 
-diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-index 23c1927..00196ee 100644
---- a/drivers/clk/qcom/common.h
-+++ b/drivers/clk/qcom/common.h
-@@ -20,7 +20,6 @@
- struct regmap;
- struct freq_tbl;
- struct clk_hw;
--struct parent_map;
- 
- #define PLL_LOCK_COUNT_SHIFT	8
- #define PLL_LOCK_COUNT_MASK	0x3f
-@@ -39,6 +38,16 @@ struct qcom_cc_desc {
- 	size_t num_gdscs;
- };
- 
-+/**
-+ * struct parent_map - map table for source select configuration values
-+ * @src: source
-+ * @cfg: configuration value
-+ */
-+struct parent_map {
-+	u8 src;
-+	u8 cfg;
-+};
-+
- extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
- 					     unsigned long rate);
- extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+Does this need to be merged now as a critical fix? Or we can wait
+on it for next release?
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
