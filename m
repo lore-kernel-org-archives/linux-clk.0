@@ -1,178 +1,218 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:45556 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbdHRJRB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2017 05:17:01 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 18 Aug 2017 11:16:54 +0200
-Message-Id: <1503047817-29439-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
-References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <de027e15-0cac-c1b7-c98b-23369b9cec60@samsung.com>
+References: <1501839294-478-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170804093516eucas1p2267f819dad7c2e84eeca81a81d2687f2@eucas1p2.samsung.com>
+ <1501839294-478-4-git-send-email-m.szyprowski@samsung.com>
+ <20170808161119.GC2646@kozik-book> <de027e15-0cac-c1b7-c98b-23369b9cec60@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 9 Aug 2017 10:50:11 +0200
+Message-ID: <CAJKOXPdbo6jpf_s1=SN-0mMfPhsOwuTb=tKenwZ2FDwnoceTYA@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] clk: samsung: exynos5433: Add runtime PM support
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+On Wed, Aug 9, 2017 at 10:19 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hi Krzysztof,
+>
+>
+> On 2017-08-08 18:11, Krzysztof Kozlowski wrote:
+>>
+>> On Fri, Aug 04, 2017 at 11:34:53AM +0200, Marek Szyprowski wrote:
+>>>
+>>> Add runtime pm support for all clock controller units (CMU), which
+>>> belongs
+>>
+>> s/belongs/belong/
+>>
+>>> to power domains and require special handling during on/off operations.
+>>> Typically special values has to be written to MUX registers to change
+>>> internal clocks parents to OSC clock before turning power off. During
+>>> such
+>>> operation all clocks, which enters CMU has to be enabled to let MUX to
+>>
+>> s/enters/enter/
+>>
+>> Beside that, how about unifying the title with previous mail ("Add
+>> support for runtime PM")?
+>>
+>>> stabilize. Also for each CMU there is one special parent clock, which has
+>>> to be enabled all the time when any access to CMU registers is done.
+>>>
+>>> This patch solves most of the mysterious external abort and freeze issues
+>>> caused by a lack of proper parent CMU clock enabled or incorrect turn off
+>>> procedure.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>> ---
+>>>   .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
+>>>   drivers/clk/samsung/clk-exynos5433.c               | 409
+>>> ++++++++++++++++-----
+>>>   drivers/clk/samsung/clk.h                          |   6 +
+>>>   3 files changed, 346 insertions(+), 85 deletions(-)
+>>>
+>> Looks okay for me, few minor nits below and:
+>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>
+>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>>> b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>>> index 1dc80f8811fe..5c7dd12e667a 100644
+>>> --- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>>> @@ -168,6 +168,11 @@ Required Properties:
+>>>                 - aclk_cam1_400
+>>>                 - aclk_cam1_552
+>>>   +Optional properties:
+>>> +  - power-domains: a phandle to respective power domain node as
+>>> described by
+>>> +       generic PM domain bindings (see power/power_domain.txt for more
+>>> +       information).
+>>> +
+>>>   Each clock is assigned an identifier and client nodes can use this
+>>> identifier
+>>>   to specify the clock which they consume.
+>>>   @@ -270,6 +275,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clocks = <&xxti>,
+>>>                        <&cmu_top CLK_ACLK_G2D_266>,
+>>>                        <&cmu_top CLK_ACLK_G2D_400>;
+>>> +               power-domains = <&pd_g2d>;
+>>>         };
+>>>         cmu_disp: clock-controller@13b90000 {
+>>> @@ -295,6 +301,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                        <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
+>>>                        <&cmu_mif CLK_SCLK_DECON_TV_VCLK_DISP>,
+>>>                        <&cmu_mif CLK_ACLK_DISP_333>;
+>>> +               power-domains = <&pd_disp>;
+>>>         };
+>>>         cmu_aud: clock-controller@114c0000 {
+>>> @@ -304,6 +311,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clock-names = "oscclk", "fout_aud_pll";
+>>>                 clocks = <&xxti>, <&cmu_top CLK_FOUT_AUD_PLL>;
+>>> +               power-domains = <&pd_aud>;
+>>>         };
+>>>         cmu_bus0: clock-controller@13600000 {
+>>> @@ -340,6 +348,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clock-names = "oscclk", "aclk_g3d_400";
+>>>                 clocks = <&xxti>, <&cmu_top CLK_ACLK_G3D_400>;
+>>> +               power-domains = <&pd_g3d>;
+>>>         };
+>>>         cmu_gscl: clock-controller@13cf0000 {
+>>> @@ -353,6 +362,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clocks = <&xxti>,
+>>>                         <&cmu_top CLK_ACLK_GSCL_111>,
+>>>                         <&cmu_top CLK_ACLK_GSCL_333>;
+>>> +               power-domains = <&pd_gscl>;
+>>>         };
+>>>         cmu_apollo: clock-controller@11900000 {
+>>> @@ -384,6 +394,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clocks = <&xxti>,
+>>>                        <&cmu_top CLK_SCLK_JPEG_MSCL>,
+>>>                        <&cmu_top CLK_ACLK_MSCL_400>;
+>>> +               power-domains = <&pd_mscl>;
+>>>         };
+>>>         cmu_mfc: clock-controller@15280000 {
+>>> @@ -393,6 +404,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clock-names = "oscclk", "aclk_mfc_400";
+>>>                 clocks = <&xxti>, <&cmu_top CLK_ACLK_MFC_400>;
+>>> +               power-domains = <&pd_mfc>;
+>>>         };
+>>>         cmu_hevc: clock-controller@14f80000 {
+>>> @@ -402,6 +414,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clock-names = "oscclk", "aclk_hevc_400";
+>>>                 clocks = <&xxti>, <&cmu_top CLK_ACLK_HEVC_400>;
+>>> +               power-domains = <&pd_hevc>;
+>>>         };
+>>>         cmu_isp: clock-controller@146d0000 {
+>>> @@ -415,6 +428,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                 clocks = <&xxti>,
+>>>                        <&cmu_top CLK_ACLK_ISP_DIS_400>,
+>>>                        <&cmu_top CLK_ACLK_ISP_400>;
+>>> +               power-domains = <&pd_isp>;
+>>>         };
+>>>         cmu_cam0: clock-controller@120d0000 {
+>>> @@ -430,6 +444,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                        <&cmu_top CLK_ACLK_CAM0_333>,
+>>>                        <&cmu_top CLK_ACLK_CAM0_400>,
+>>>                        <&cmu_top CLK_ACLK_CAM0_552>;
+>>> +               power-domains = <&pd_cam0>;
+>>>         };
+>>>         cmu_cam1: clock-controller@145d0000 {
+>>> @@ -451,6 +466,7 @@ Example 2: Examples of clock controller nodes are
+>>> listed below.
+>>>                        <&cmu_top CLK_ACLK_CAM1_333>,
+>>>                        <&cmu_top CLK_ACLK_CAM1_400>,
+>>>                        <&cmu_top CLK_ACLK_CAM1_552>;
+>>> +               power-domains = <&pd_cam1>;
+>>>         };
+>>>     Example 3: UART controller node that consumes the clock generated by
+>>> the clock
+>>> diff --git a/drivers/clk/samsung/clk-exynos5433.c
+>>> b/drivers/clk/samsung/clk-exynos5433.c
+>>> index 11343a597093..7ae9bccb1192 100644
+>>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>>> @@ -9,9 +9,14 @@
+>>>    * Common Clock Framework support for Exynos5433 SoC.
+>>>    */
+>>>   +#include <linux/clk.h>
+>>>   #include <linux/clk-provider.h>
+>>>   #include <linux/of.h>
+>>>   #include <linux/of_address.h>
+>>> +#include <linux/of_device.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/pm_runtime.h>
+>>> +#include <linux/slab.h>
+>>
+>> Why you need slab.h?
+>
+>
+> It was needed for kzalloc, which was later converted to devm_kzalloc. Maybe
+> it would make sense to include "linux/device.h" then to avoid indirect
+> inclusion.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
- 1 file changed, 66 insertions(+), 71 deletions(-)
+platform_device.h pulls device.h so I think this could be removed.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 5a31dfc0c3163d6c..70040c6c4ceac114 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1061,77 +1061,72 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 	};
- 
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External PCIe clock - can be overridden by the board */
--		pcie_bus_clk: pcie_bus {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
--		 * default. Boards that provide audio clocks should override them.
--		 */
--		audio_clk_a: audio_clk_a {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_b: audio_clk_b {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_c: audio_clk_c {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7790-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7790-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	prr: chipid@ff000044 {
--- 
-2.7.4
+(...)
 
+>>> +
+>>> info->nr_fixed_factor_clks);
+>>> +
+>>> +       samsung_clk_of_add_provider(dev->of_node, ctx);
+>>> +       pm_runtime_put_sync(dev);
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
+>>> +static const struct of_device_id exynos5433_cmu_of_match[] = {
+>>
+>> Since this is used only when matching devices maybe it can be also
+>> marked as refdata?
+>
+>
+> It is indirectly used by of_device_get_match_data() in probe(). I'm not sure
+> if this would be fine for refdata.
+
+Yes, right, it shouldn't be refdata then. Thanks for explanation.
+
+Best regards,
+Krzysztof
