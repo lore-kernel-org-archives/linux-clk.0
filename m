@@ -1,68 +1,58 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC v2 01/12] clk: qcom: flag for 64 bit CONFIG_CTL
-Date: Tue,  8 Aug 2017 23:54:06 +0530
-Message-Id: <1502216657-3342-2-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <Eugeniy.Paltsev@synopsys.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
+CC: "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] ARC: clk: introduce HSDKv1 pll driver
+Date: Wed, 9 Aug 2017 16:43:49 +0000
+Message-ID: <1502297028.2586.4.camel@synopsys.com>
+References: <20170714153128.8945-1-Eugeniy.Paltsev@synopsys.com>
+	 <20170804015351.GW2146@codeaurora.org>
+In-Reply-To: <20170804015351.GW2146@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the Alpha PLL’s (like Spark, Brammo PLL) do not have
-CONFIG_CTL_U register. This patch adds the flag for PLL’s
-which have CONFIG_CTL_U register and checks the same while
-doing PLL initial configuration.
-
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 5 ++++-
- drivers/clk/qcom/clk-alpha-pll.h | 7 ++++---
- 2 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 47a1da3..e6cde2d 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -118,7 +118,10 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	regmap_write(regmap, off + PLL_L_VAL, config->l);
- 	regmap_write(regmap, off + PLL_ALPHA_VAL, config->alpha);
- 	regmap_write(regmap, off + PLL_CONFIG_CTL, config->config_ctl_val);
--	regmap_write(regmap, off + PLL_CONFIG_CTL_U, config->config_ctl_hi_val);
-+
-+	if (pll->flags & SUPPORTS_64BIT_CONFIG_CTL)
-+		regmap_write(regmap, off + PLL_CONFIG_CTL_U,
-+			     config->config_ctl_hi_val);
- 
- 	val = config->main_output_mask;
- 	val |= config->aux_output_mask;
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index d6e1ee2..bbd6aa9 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -34,9 +34,10 @@ struct clk_alpha_pll {
- 
- 	const struct pll_vco *vco_table;
- 	size_t num_vco;
--#define SUPPORTS_OFFLINE_REQ	BIT(0)
--#define SUPPORTS_16BIT_ALPHA	BIT(1)
--#define SUPPORTS_FSM_MODE	BIT(2)
-+#define SUPPORTS_OFFLINE_REQ		BIT(0)
-+#define SUPPORTS_16BIT_ALPHA		BIT(1)
-+#define SUPPORTS_FSM_MODE		BIT(2)
-+#define SUPPORTS_64BIT_CONFIG_CTL	BIT(3)
- 	u8 flags;
- 
- 	struct clk_regmap clkr;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+SGkgU3RlcGhlbizCoA0KdGhhbmtzIGZvciByZXNwb25kLCBteSBjb21tZW50cyBhcmUgaW5saW5l
+ZCBiZWxvdy4NCg0KT24gVGh1LCAyMDE3LTA4LTAzIGF0IDE4OjUzIC0wNzAwLCBTdGVwaGVuIEJv
+eWQgd3JvdGU6DQo+IE9uIDA3LzE0LCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6DQoNCj4gWy4uLl0N
+Cj4gPiArCWRldl9kYmcoY2xrLT5kZXYsICJ3cml0ZSBjb25maWd1cmFyaW9uOiAweCV4IiwgdmFs
+KTsNCj7CoA0KPiBPciBqdXN0IHVzZSAlI3ggdG8gYWRkIHRoZSAweCBwYXJ0Lg0KDQpUaGFua3Ms
+IEkgZG9uJ3Qga25vdyBhYm91dCB0aGlzIG9wdGlvbi4NCj7CoA0KPiBbLi4uXQ0KPg0KPiA+ICsJ
+LyogaW5wdXQgZGl2aWRlciA9IHJlZy5pZGl2ICsgMSAqLw0KPiA+ICsJaWRpdiA9IDEgKyAoKHZh
+bCAmIENHVV9QTExfQ1RSTF9JRElWX01BU0spID4+DQo+ID4gQ0dVX1BMTF9DVFJMX0lESVZfU0hJ
+RlQpOw0KPiA+ICsJLyogZmIgZGl2aWRlciA9IDIqKHJlZy5mYmRpdiArIDEpICovDQo+ID4gKwlm
+YmRpdiA9IDIgKiAoMSArICgodmFsICYgQ0dVX1BMTF9DVFJMX0ZCRElWX01BU0spID4+DQo+ID4g
+Q0dVX1BMTF9DVFJMX0ZCRElWX1NISUZUKSk7DQo+ID4gKwkvKiBvdXRwdXQgZGl2aWRlciA9IDJe
+KHJlZy5vZGl2KSAqLw0KPiA+ICsJb2RpdiA9IDEgPDwgKCh2YWwgJiBDR1VfUExMX0NUUkxfT0RJ
+Vl9NQVNLKSA+Pg0KPiA+IENHVV9QTExfQ1RSTF9PRElWX1NISUZUKTsNCj4NCj4gTWF5YmUganVz
+dCBkcm9wIHRoZXNlIGNvbW1lbnRzLiBUaGV5J3JlIGp1c3QgcmVwZWF0aW5nIHRoZSBjb2RlLg0K
+DQpBY3R1YWxseSBJIHdvdWxkIHByZWZlciB0byBrZWVwIHRoZW0sIGFzICIyXihyZWcub2Rpdiki
+IGlzIG1vcmXCoA0KaHVtYW4tcmVhZGFibGUgdGhlbg0KIjEgPDwgKCh2YWwgJiBDR1VfUExMX0NU
+UkxfT0RJVl9NQVNLKSA+PiBDR1VfUExMX0NUUkxfT0RJVl9TSElGVCkiDQoNCj4gPiArDQo+ID4g
+KwlyYXRlID0gKHU2NClwYXJlbnRfcmF0ZSAqIGZiZGl2Ow0KPiA+ICsJZG9fZGl2KHJhdGUsIGlk
+aXYgKiBvZGl2KTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gcmF0ZTsNCj4gPiArfQ0KPiA+ICsNCj4g
+PiArc3RhdGljIGxvbmcgaHNka19wbGxfcm91bmRfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywgdW5z
+aWduZWQgbG9uZw0KPiA+IHJhdGUsDQo+ID4gKwkJCQl1bnNpZ25lZCBsb25nICpwcmF0ZSkNCj4g
+PiArew0KPiA+ICsJaW50IGk7DQo+ID4gKwlsb25nIGJlc3RfcmF0ZTsNCj4gPiArCXN0cnVjdCBo
+c2RrX3BsbF9jbGsgKmNsayA9IHRvX2hzZGtfcGxsX2Nsayhodyk7DQo+ID4gKwljb25zdCBzdHJ1
+Y3QgaHNka19wbGxfY2ZnICpwbGxfY2ZnID0gY2xrLT5wbGxfY2ZnOw0KPiA+ICsNCj4gPiArCWlm
+IChwbGxfY2ZnWzBdLnJhdGUgPT0gMCkNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj7CoA0KPiBU
+aGlzIGhhcHBlbnM/DQoNCk9ubHkgaWYgd2UgYWRkIGJhZCBoc2RrX3BsbF9jZmcgdGFibGUuIEJ1
+dCBpdCBpcyBxdWl0ZSBjb2xkIGNvZGUgLSB3ZQ0KY2hhbmdlIHBsbCBjb25maWd1cmF0aW9uIHF1
+aXRlIHJhcmUsIHNvIG1heWJlIGl0J3MgYmV0dGVyIHRvIGtlZXAgdGhpcw0KYXNzZXJ0Pw0KDQo+
+ID4gKw0KPiA+ICsJYmVzdF9yYXRlID0gcGxsX2NmZ1swXS5yYXRlOw0KPiA+ICsNCj4gPiArCWZv
+ciAoaSA9IDE7IHBsbF9jZmdbaV0ucmF0ZSAhPSAwOyBpKyspIHsNCj4gPiArCQlpZiAoYWJzKHJh
+dGUgLSBwbGxfY2ZnW2ldLnJhdGUpIDwgYWJzKHJhdGUgLQ0KPiA+IGJlc3RfcmF0ZSkpDQo+wqAN
+Cj4gQWxyaWdodCwgcmF0ZSBpcyB1bnNpZ25lZCBsb25nLCBhbmQgYmVzdF9yYXRlIGlzIGxvbmcu
+IGFicygpIGRvZXMNCj4gdGhlIHJpZ2h0IHRoaW5nIGhlcmUsIGJ1dCBpdCBtYWtlcyBtZSBoYXZl
+IHRvIHRoaW5rIHR3aWNlIGlmDQo+IGJlc3RfcmF0ZSBjYW4gYmUgbmVnYXRpdmUgYW5kIHRoZW4g
+dGhpcyBpcyBhIGxhcmdlciBudW1iZXIsIG5vdCBhDQo+IHNtYWxsZXIgb25lLiBDYW4gd2UgbWFr
+ZSBiZXN0X3JhdGUgdW5zaWduZWQgbG9uZyBpbiB0aGlzDQo+IGZ1bmN0aW9uPw0KDQpZZXMsIHdl
+IGNhbi4NCkFueXdheSBpdCdzIGEgYml0IHN0cmFuZ2Ugd2hhdCByYXRlIGlzIHVuc2lnbmVkIGxv
+bmcgYW5kIHJvdW5kX3JhdGUNCnJldHVybiB2YWx1ZSBpcyBsb25nLg0KLS3CoA0KwqBFdWdlbml5
+IFBhbHRzZXY=
