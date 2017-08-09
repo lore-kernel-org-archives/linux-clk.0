@@ -1,28 +1,31 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 3 Aug 2017 15:38:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: uniphier: remove sLD3 SoC support
-Message-ID: <20170803223816.GS2146@codeaurora.org>
-References: <1501040075-24279-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1501040075-24279-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20170808012540.16691-1-net147@gmail.com>
+References: <20170808012540.16691-1-net147@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 9 Aug 2017 16:55:57 +0800
+Message-ID: <CAGb2v65Rbr11b-ojmgFD_fkDSXkr227HGDMS7oDsZ3Zx2juaJg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: sunxi-ccu: Add compatibles for sun5i
+ CCU driver
+To: Jonathan Liu <net147@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/26, Masahiro Yamada wrote:
-> This SoC is too old.  It is difficult to maintain any longer.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Hi,
 
-Applied to clk-next
+On Tue, Aug 8, 2017 at 9:25 AM, Jonathan Liu <net147@gmail.com> wrote:
+> The bindings were not updated when the sun5i CCU driver was added in
+> commit 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver").
+>
+> Signed-off-by: Jonathan Liu <net147@gmail.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Looks good to me. Will wait for the device tree binding maintainers
+to have a say before I apply it for 4.14.
+
+ChenYu
