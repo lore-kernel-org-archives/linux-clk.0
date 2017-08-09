@@ -1,119 +1,124 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-In-Reply-To: <655f0326-df03-a810-9010-13148aee2db5@baylibre.com>
-References: <20170728211313.10603-1-martin.blumenstingl@googlemail.com>
- <1501489667.6834.1.camel@baylibre.com> <655f0326-df03-a810-9010-13148aee2db5@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 1 Aug 2017 20:53:08 +0200
-Message-ID: <CAFBinCDSTzOj-jZ3du2=+DXOLhn-qM0QxvTq_TKOE8yR0LbT3w@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] add the reset controller to the Meson8b clkc
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com, carlo@caione.org, linux-clk@vger.kernel.org,
-	robh+dt@kernel.org, devicetree@vger.kernel.org, linux@armlinux.org.uk,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1502285688.2759.41.camel@baylibre.com>
+Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>, Stephen Boyd
+	 <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
+ Linus Walleij <linus.walleij@linaro.org>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>
+Date: Wed, 09 Aug 2017 15:34:48 +0200
+In-Reply-To: <20170809114548.GD20805@n2100.armlinux.org.uk>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+	 <20170612194438.12298-6-jbrunet@baylibre.com>
+	 <20170726001217.GC2146@codeaurora.org>
+	 <1501089516.2401.29.camel@baylibre.com>
+	 <20170804001836.GU2146@codeaurora.org>
+	 <150223186723.22158.11617219588466426777@resonance>
+	 <20170809021906.GA2146@codeaurora.org>
+	 <20170809114548.GD20805@n2100.armlinux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Neil,
+On Wed, 2017-08-09 at 12:45 +0100, Russell King - ARM Linux wrote:
+> On Tue, Aug 08, 2017 at 07:19:06PM -0700, Stephen Boyd wrote:
+> > I also vaguely remember Paul saying that
+> > clk_round_rate() could return something and then clk_set_rate()
+> > after that would fail because what was calculated during the rate
+> > speculation/rounding phase would be different if some other
+> > consumer goes and changes some rate high up in the tree.
+> 
+> That's probably because people tend to get this stuff wrong.  It is
+> _not_ supposed to be:
+> 
+> 	rounded_rate = clk_round_rate(clk, requested_rate);
+> 
+> 	clk_set_rate(clk, rounded_rate);
+> 
+> but:
+> 
+> 	rounded_rate = clk_round_rate(clk, requested_rate);
+> 
+> 	clk_set_rate(clk, requested_rate);
+> 
+> The former is wrong for two reasons:
+> 
+> 1. it's completely wasteful of CPU resources to do all the calculations
+>    that need to be done within clk_set_rate().
+> 
+> 2. it's racy - there is no guarantee that you'll end up with "rounded_rate"
+> 
+> The API definition of clk_round_rate() explicitly mentions that it is
+> equivalent to clk_set_rate() followed by clk_get_rate() with the
+> exception that it doesn't affect the hardware.
+> 
+> I'm not sure that the clock rate protection API is really the right
+> solution - if we're trying to stop others from changing the clock rate,
+> that implies we have multiple different threads potentially changing
+> the rate at any time.  If a driver does this:
+> 
+> 	clk_set_rate(clk, foo);
+> 	clk_rate_protect(clk);
+> 
+> what prevents another thread from changing the clock rate between these
+> two calls?  The only way to do this safely would be something like:
+> 
+> 	r = clk_round_rate(clk, foo);
+> 	while (1) {
+> 		err = clk_set_rate(clk, foo);
+> 		clk_rate_protect(clk);
+> 		if (err < 0)
+> 			break;
+> 
+> 		if (r == clk_get_rate(clk)) /* success */
+> 			break;
+> 
+> 		clk_rate_unprotect(clk);
+> 	}
+> 
+> 	if (err)
+> 		failed;
 
-On Mon, Jul 31, 2017 at 1:59 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> On 07/31/2017 10:27 AM, Jerome Brunet wrote:
->> On Fri, 2017-07-28 at 23:13 +0200, Martin Blumenstingl wrote:
->>> This registers the known (soft) reset lines provided by the clock
->>> controller's registers.
->>>
->>> This is the first preparation step for SMP and CPU hotplug support on
->>> Meson8/Meson8b/Meson8m2. Booting the secondary cores on these SoCs
->>> requires asserting and de-asserting a reset line (one for each CPU
->>> core). These reset lines are provided by the clock controller.
->>>
->>> The reset controller part of the meson8b clock controller has to be
->>> registered early (which I did through CLK_OF_DECLARE_DRIVER), because
->>> the secondary cores are started *very* early in the boot process (and
->>> meson8b_clkc_probe is invoked long after we need the reset controller
->>> to be available for booting the secondary CPU cores).
->>>
->>> The user of the reset-controller (= the patches which enable SMP and
->>> CPU hotplug support) will follow in the next days. I decided to split
->>> this because the SMP series will probably consist of 6 patches alone
->>> (and may need to go through two separate trees).
->>>
->>> Changes since v2 at [3]:
->>> - move the reset line preprocessor defines into a separate file
->>>   (affects patch #1 as this header file is part of the dt-binding)
->>> - rename the reset line preprocessor macros from RESETID_ to
->>>   CLKC_RESET_ to clearly indicate that these are provided by the
->>>   clock controller (unlike the preprocessor macros for the reset
->>>   lines in the standlone reset controller, which start with RESET_)
->>> - updated patch #2 due to the changes mentioned above
->>> - added Neil's Reviewed-by to all patches
->>>
->>> Changes since v1 at [0]:
->>> - updated cover letter description as we are now registering more than
->>>   four reset lines
->>> - split patch #1 into a dt-binding and clk driver patch
->>> - slightly reworded the dt-binding documentation so it's now clear that
->>>   the reset identifiers are preprocessor macros in
->>>   dt-bindings/clock/meson8b-clkc.h (v1 of this series didn't have these
->>>   macros at all)
->>> - patch #2 (previously part of patch #1) now registers all known reset
->>>   lines (see [1] and [2] for the results of my detective work)
->>> - patch #3 is untouched
->>>
->>>
->>> [0] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004283.html
->>> [1] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004330.html
->>> [2] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004347.html
->>> [3] http://lists.infradead.org/pipermail/linux-amlogic/2017-July/004352.html
->>>
->>>
->>> Martin Blumenstingl (3):
->>>   dt-bindings: clock: meson8b: describe the embedded reset controller
->>>   clk: meson: meson8b: register the built-in reset controller
->>>   ARM: dts: meson: mark the clock controller also as reset controller
->>>
->>>  .../bindings/clock/amlogic,meson8b-clkc.txt        |   9 +-
->>>  arch/arm/boot/dts/meson8.dtsi                      |   1 +
->>>  arch/arm/boot/dts/meson8b.dtsi                     |   1 +
->>>  drivers/clk/meson/Kconfig                          |   1 +
->>>  drivers/clk/meson/meson8b.c                        | 159 +++++++++++++++++++-
->>> -
->>>  drivers/clk/meson/meson8b.h                        |   9 +-
->>>  .../dt-bindings/reset/amlogic,meson8b-clkc-reset.h |  27 ++++
->>>  7 files changed, 193 insertions(+), 14 deletions(-)
->>>  create mode 100644 include/dt-bindings/reset/amlogic,meson8b-clkc-reset.h
->>>
->>
->> Series looks good to me overall.
->>
->> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
->>
->> Just one thing, which is not an issue really, I wonder if the dt-bindings
->> documentation and the bindings them-self should be in separate patches ?
->>
->
-> Hi Martin,
->
-> Anyway it's OK for me, I've applied patches 1 & 2 on the clk-meson's next branches.
-thank you!
-I'm also fine with either way - I chose to include it in the
-dt-bindings patch due to two reasons:
-- my SMP series depends on this header file
-- we typically send header updates with a dt-bindings patch (see your
-AO CEC clock for example)
-with these I thought it makes sense to combine the documentation and
-the header in the dt-bindings patch - if it's an issue I can simply
-change it
+Russell,
+I think you have missed one subtle thing, when trying any clock altering
+operation, if the consumer is protecting the clock, it will temporarily release 
+the protection once, under the prepare_lock (to guarantee safe operation). This
+is explained in the cover letter:
 
-may be the DT-maintainers can comment on this?
+"""
+With this series there is 3 use-case:
+ - the provider is not protected: nothing changes
+ - the provider is protected by only 1 consumer (and only once), then only
+   this consumer will be able to alter the rate of the clock, as it is the
+   only one depending on it.
+ - If the provider is protected more than once, or by the provider itself,
+   the rate is basically locked and protected against reparenting.
+"""
 
-anyway, thanks for taking care!
+So what you should do if you have to protect the clock is:
 
-> Kevin, patch 3 is all yours !
->
-> Thanks,
-> Neil
+clk_rate_protect(clk);
+err = clk_set_rate(clk, foo);
 
+[...]
+clk_rate_unprotect(clk);
 
-Martin
+If the clock rate could be changed (protected only once) err = 0;
+If the clock rate could not be changed: err = -EBUSY;
+
+if you wish to combine clk_rate_protect() and clk_set_rate(), you may use
+clk_set_rate_protect() which is added in another patch of this series.
+
+> 
+> That's rather a lot of code to add to every driver, and given the
+> number of times I've seen people get the clk_round_rate() vs
+> clk_set_rate() thing wrong, I've zero confidence that folk will get
+> this right either.
+> 
+> So, I'd suggest _not_ adding this clk_rate_protect() thing, but
+> instead an API that simultaneously sets and protects the rate, so
+> driver authors don't have to get involved in details like the above.
+> 
