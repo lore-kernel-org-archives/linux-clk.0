@@ -1,57 +1,58 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170825094953.3247-2-maxime.ripard@free-electrons.com>
-References: <20170825094953.3247-1-maxime.ripard@free-electrons.com> <20170825094953.3247-2-maxime.ripard@free-electrons.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 30 Aug 2017 15:14:11 +0200
-Message-ID: <CAPDyKFqAyhB1C096YjXNz2iAPL0Vrr5-hsyoiL8meho1b0qNPg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: sunxi: Reset the device at probe time
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1502280893.2759.36.camel@baylibre.com>
+Subject: Re: [PATCH v3 00/10] clk: implement clock rate protection mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-clk
+ <linux-clk@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, "open
+ list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Russell
+ King <linux@armlinux.org.uk>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, Adriana Reus <adi.reus@gmail.com>
+In-Reply-To: <150223201433.22158.14534387406241186358@resonance>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+	 <CACRpkdaXFS-pW7qhbVLexzefaZwZ50ww3+KTeY4cuHRQUSCWKQ@mail.gmail.com>
+	 <1497955822.7387.3.camel@baylibre.com>
+	 <CACRpkdacB3HKgewSciQWB0c8v2KCF7u+eT0A_RSC0+z_KrQzhA@mail.gmail.com>
+	 <1497961950.7387.7.camel@baylibre.com>
+	 <1498050903.7387.12.camel@baylibre.com>
+	 <20170712011604.GQ22780@codeaurora.org>
+	 <1501088747.2401.27.camel@baylibre.com>
+	 <20170727224459.GO2146@codeaurora.org>
+	 <150223201433.22158.14534387406241186358@resonance>
 Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 09 Aug 2017 14:14:53 +0200
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25 August 2017 at 11:49, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> We might be into some troubles if the bootloader misconfigured the MMC
-> controller.
->
-> We currently only de-assert the reset line at probe time, which means that
-> if the device was already out of reset, we're going to keep whatever state
-> was set already.
->
-> Switch to a reset instead of the deassert to have a device in a pristine
-> state when we start operating.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Tue, 2017-08-08 at 15:40 -0700, Michael Turquette wrote:
+> Quoting Stephen Boyd (2017-07-27 15:44:59)
+> > On 07/26, Jerome Brunet wrote:
+> > > In the following mail, I've only replied where I wanted to discuss a bit
+> > > more.
+> > > For everything else, please consider the comments agreed and the
+> > > modifications
+> > > done as requested.
+> > > 
+> > 
+> > Ok. Good that we can move forward in some way so this is not a
+> > blocker. I've almost completed writing the qcom code to force
+> > clks on and off so it will be resolved one way or the other soon.
+> 
+> Stephen, are all of the existential issues are sufficiently resolved?
+> 
+> Jerome, are you going to submit a v4?
 
-Thanks, applied for next!
+Once the current discussion reaches an agreement, yes for sure.
+If it helps, I could send it right now, with the points being discussed
+addressed 
 
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/host/sunxi-mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> index da5f46a14497..53c970fe0873 100644
-> --- a/drivers/mmc/host/sunxi-mmc.c
-> +++ b/drivers/mmc/host/sunxi-mmc.c
-> @@ -1242,7 +1242,7 @@ static int sunxi_mmc_resource_request(struct sunxi_mmc_host *host,
->         }
->
->         if (!IS_ERR(host->reset)) {
-> -               ret = reset_control_deassert(host->reset);
-> +               ret = reset_control_reset(host->reset);
->                 if (ret) {
->                         dev_err(&pdev->dev, "reset err %d\n", ret);
->                         goto error_disable_clk_sample;
-> --
-> 2.13.5
->
+> 
+> Thanks,
+> Mike
+> 
+> > 
+> > -- 
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> > a Linux Foundation Collaborative Project
