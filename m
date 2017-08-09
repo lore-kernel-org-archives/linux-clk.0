@@ -1,64 +1,72 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	shawn.lin@rock-chips.com,
-	andy.yan@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 0/9] clk: rockchip: support clk for RV1108 Soc
-Date: Tue,  8 Aug 2017 15:15:38 +0800
-Message-Id: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 9 Aug 2017 10:22:13 -0700
+From: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] ARC: clk: introduce HSDKv1 pll driver
+Message-ID: <20170809172213.GB2146@codeaurora.org>
+References: <20170714153128.8945-1-Eugeniy.Paltsev@synopsys.com>
+ <20170804015351.GW2146@codeaurora.org>
+ <1502297028.2586.4.camel@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1502297028.2586.4.camel@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-RV1108 submit is too much, make the CLK part out to review alone.
+On 08/09, Eugeniy Paltsev wrote:
+> On Thu, 2017-08-03 at 18:53 -0700, Stephen Boyd wrote:
+> > On 07/14, Eugeniy Paltsev wrote:
+> > > +	/* input divider = reg.idiv + 1 */
+> > > +	idiv = 1 + ((val & CGU_PLL_CTRL_IDIV_MASK) >>
+> > > CGU_PLL_CTRL_IDIV_SHIFT);
+> > > +	/* fb divider = 2*(reg.fbdiv + 1) */
+> > > +	fbdiv = 2 * (1 + ((val & CGU_PLL_CTRL_FBDIV_MASK) >>
+> > > CGU_PLL_CTRL_FBDIV_SHIFT));
+> > > +	/* output divider = 2^(reg.odiv) */
+> > > +	odiv = 1 << ((val & CGU_PLL_CTRL_ODIV_MASK) >>
+> > > CGU_PLL_CTRL_ODIV_SHIFT);
+> >
+> > Maybe just drop these comments. They're just repeating the code.
+> 
+> Actually I would prefer to keep them, as "2^(reg.odiv)" is more 
+> human-readable then
+> "1 << ((val & CGU_PLL_CTRL_ODIV_MASK) >> CGU_PLL_CTRL_ODIV_SHIFT)"
 
-Changes in v3:
-[PATCH v3 1/9] None
-[PATCH v3 2/9] None
-[PATCH v3 3/9] None
-[PATCH v3 4/9] None
-[PATCH v3 5/9] None
-[PATCH v3 6/9] fix up the structure patch-contents
-[PATCH v3 7/9] fix up the structure patch-contents
-[PATCH v3 8/9] fix up the structure patch-contents
-[PATCH v3 8/9] None
+Alright.
 
-Changes in v2:
-[PATCH v2 1/9] split the rename and intentation fix part
-[PATCH v2 2/9] None
-[PATCH v2 3/9] None
-[PATCH v2 4/9] split the new added clks and rename.
-[PATCH v2 5/9] None
-[PATCH v2 6/9] None
-[PATCH v2 7/9] None
-[PATCH v2 8/9] None
-[PATCH v3 9/9] None
+> 
+> > > +
+> > > +	rate = (u64)parent_rate * fbdiv;
+> > > +	do_div(rate, idiv * odiv);
+> > > +
+> > > +	return rate;
+> > > +}
+> > > +
+> > > +static long hsdk_pll_round_rate(struct clk_hw *hw, unsigned long
+> > > rate,
+> > > +				unsigned long *prate)
+> > > +{
+> > > +	int i;
+> > > +	long best_rate;
+> > > +	struct hsdk_pll_clk *clk = to_hsdk_pll_clk(hw);
+> > > +	const struct hsdk_pll_cfg *pll_cfg = clk->pll_cfg;
+> > > +
+> > > +	if (pll_cfg[0].rate == 0)
+> > > +		return -EINVAL;
+> > 
+> > This happens?
+> 
+> Only if we add bad hsdk_pll_cfg table. But it is quite cold code - we
+> change pll configuration quite rare, so maybe it's better to keep this
+> assert?
 
-Elaine Zhang (9):
-  clk: rockchip: add more clk ids for rv1108
-  clk: rockchip: rename the clk id for HCLK_I2S1_2CH
-  clk: rockchip: fix up the indentation stuff for RV1108 SoC
-  clk: rockchip: support more rates for cpuclk
-  clk: rockchip: fix up the pll clks error for rv1108 SoC
-  clk: rockchip: support more clks for rv1108
-  clk: rockchip: fix up some clks describe error for rv1108 SoC
-  clk: rockchip: rename some of clks for rv1108 SoC
-  clk: rockchip: add some critical clocks for rv1108 SoC
-
- drivers/clk/rockchip/clk-rv1108.c      | 476 +++++++++++++++++++++++++++------
- include/dt-bindings/clock/rv1108-cru.h | 123 +++++++--
- 2 files changed, 494 insertions(+), 105 deletions(-)
+Can it be a BUILD_BUG_ON() somehow?
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
