@@ -1,74 +1,123 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-To: julia.lawall@lip6.fr,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] clk: hisilicon: make clk_ops const
-Date: Tue, 22 Aug 2017 19:12:07 +0530
-Message-Id: <1503409327-20278-1-git-send-email-bhumirks@gmail.com>
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v8 4/5] clk: samsung: exynos-audss: Use local variable for
+ controller's device
+Date: Wed, 09 Aug 2017 12:35:06 +0200
+Message-id: <1502274907-11931-5-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
+References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170809103514eucas1p11fb5d1af243e882a5d51a25956d24a19@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make these const as they are only stored in the const field of a
-clk_init_data structure.
+Store pointer to the controller's device in local variable to avoid
+extracting it from platform device in each call. This will also simplify
+code in the future, when runtime PM support is added.
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/hisilicon/clk-hi3620.c        | 2 +-
- drivers/clk/hisilicon/clk-hix5hd2.c       | 4 ++--
- drivers/clk/hisilicon/clkgate-separated.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos-audss.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-index fa0fba6..77072c7 100644
---- a/drivers/clk/hisilicon/clk-hi3620.c
-+++ b/drivers/clk/hisilicon/clk-hi3620.c
-@@ -415,7 +415,7 @@ static int mmc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return mmc_clk_set_timing(hw, rate);
- }
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 1fab56f396d4..6be52fb46ff3 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -135,6 +135,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 	const struct exynos_audss_clk_drvdata *variant;
+ 	struct clk_hw **clk_table;
+ 	struct resource *res;
++	struct device *dev = &pdev->dev;
+ 	int i, ret = 0;
  
--static struct clk_ops clk_mmc_ops = {
-+static const struct clk_ops clk_mmc_ops = {
- 	.prepare = mmc_clk_prepare,
- 	.determine_rate = mmc_clk_determine_rate,
- 	.set_rate = mmc_clk_set_rate,
-diff --git a/drivers/clk/hisilicon/clk-hix5hd2.c b/drivers/clk/hisilicon/clk-hix5hd2.c
-index 14b05ef..9584f0c 100644
---- a/drivers/clk/hisilicon/clk-hix5hd2.c
-+++ b/drivers/clk/hisilicon/clk-hix5hd2.c
-@@ -208,7 +208,7 @@ static void clk_ether_unprepare(struct clk_hw *hw)
- 	writel_relaxed(val, clk->ctrl_reg);
- }
+ 	variant = of_device_get_match_data(&pdev->dev);
+@@ -142,15 +143,15 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  
--static struct clk_ops clk_ether_ops = {
-+static const struct clk_ops clk_ether_ops = {
- 	.prepare = clk_ether_prepare,
- 	.unprepare = clk_ether_unprepare,
- };
-@@ -247,7 +247,7 @@ static void clk_complex_disable(struct clk_hw *hw)
- 	writel_relaxed(val, clk->phy_reg);
- }
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg_base = devm_ioremap_resource(&pdev->dev, res);
++	reg_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(reg_base)) {
+-		dev_err(&pdev->dev, "failed to map audss registers\n");
++		dev_err(dev, "failed to map audss registers\n");
+ 		return PTR_ERR(reg_base);
+ 	}
  
--static struct clk_ops clk_complex_ops = {
-+static const struct clk_ops clk_complex_ops = {
- 	.enable = clk_complex_enable,
- 	.disable = clk_complex_disable,
- };
-diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
-index 7908bc3..1172b09 100644
---- a/drivers/clk/hisilicon/clkgate-separated.c
-+++ b/drivers/clk/hisilicon/clkgate-separated.c
-@@ -88,7 +88,7 @@ static int clkgate_separated_is_enabled(struct clk_hw *hw)
- 	return reg ? 1 : 0;
- }
+ 	epll = ERR_PTR(-ENODEV);
  
--static struct clk_ops clkgate_separated_ops = {
-+static const struct clk_ops clkgate_separated_ops = {
- 	.enable		= clkgate_separated_enable,
- 	.disable	= clkgate_separated_disable,
- 	.is_enabled	= clkgate_separated_is_enabled,
+-	clk_data = devm_kzalloc(&pdev->dev,
++	clk_data = devm_kzalloc(dev,
+ 				sizeof(*clk_data) +
+ 				sizeof(*clk_data->hws) * EXYNOS_AUDSS_MAX_CLKS,
+ 				GFP_KERNEL);
+@@ -160,8 +161,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 	clk_data->num = variant->num_clks;
+ 	clk_table = clk_data->hws;
+ 
+-	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
+-	pll_in = devm_clk_get(&pdev->dev, "pll_in");
++	pll_ref = devm_clk_get(dev, "pll_ref");
++	pll_in = devm_clk_get(dev, "pll_in");
+ 	if (!IS_ERR(pll_ref))
+ 		mout_audss_p[0] = __clk_get_name(pll_ref);
+ 	if (!IS_ERR(pll_in)) {
+@@ -172,7 +173,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 
+ 			ret = clk_prepare_enable(epll);
+ 			if (ret) {
+-				dev_err(&pdev->dev,
++				dev_err(dev,
+ 					"failed to prepare the epll clock\n");
+ 				return ret;
+ 			}
+@@ -183,8 +184,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 				CLK_SET_RATE_NO_REPARENT,
+ 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
+ 
+-	cdclk = devm_clk_get(&pdev->dev, "cdclk");
+-	sclk_audio = devm_clk_get(&pdev->dev, "sclk_audio");
++	cdclk = devm_clk_get(dev, "cdclk");
++	sclk_audio = devm_clk_get(dev, "sclk_audio");
+ 	if (!IS_ERR(cdclk))
+ 		mout_i2s_p[1] = __clk_get_name(cdclk);
+ 	if (!IS_ERR(sclk_audio))
+@@ -222,7 +223,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 				 "sclk_pcm", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
+ 
+-	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
++	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
+ 	if (!IS_ERR(sclk_pcm_in))
+ 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
+ 	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
+@@ -237,16 +238,16 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < clk_data->num; i++) {
+ 		if (IS_ERR(clk_table[i])) {
+-			dev_err(&pdev->dev, "failed to register clock %d\n", i);
++			dev_err(dev, "failed to register clock %d\n", i);
+ 			ret = PTR_ERR(clk_table[i]);
+ 			goto unregister;
+ 		}
+ 	}
+ 
+-	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+ 				     clk_data);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to add clock provider\n");
++		dev_err(dev, "failed to add clock provider\n");
+ 		goto unregister;
+ 	}
+ 
 -- 
 1.9.1
