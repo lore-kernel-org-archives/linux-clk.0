@@ -1,98 +1,121 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:37728 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751058AbdHBFH5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Aug 2017 01:07:57 -0400
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Wed, 9 Aug 2017 14:40:36 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
+Message-ID: <20170809134036.GE20805@n2100.armlinux.org.uk>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-6-jbrunet@baylibre.com>
+ <20170726001217.GC2146@codeaurora.org>
+ <1501089516.2401.29.camel@baylibre.com>
+ <20170804001836.GU2146@codeaurora.org>
+ <150223186723.22158.11617219588466426777@resonance>
+ <20170809021906.GA2146@codeaurora.org>
+ <20170809114548.GD20805@n2100.armlinux.org.uk>
+ <1502285688.2759.41.camel@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 02 Aug 2017 13:07:55 +0800
-From: icenowy@aosc.io
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [linux-sunxi] [PATCH 07/13] ARM: sun8i: h3: add display engine
- pipeline barebone
-In-Reply-To: <1773537.vAqre0jhCE@jernej-laptop>
-References: <20170801131304.7741-1-icenowy@aosc.io>
- <20170801131304.7741-8-icenowy@aosc.io> <1773537.vAqre0jhCE@jernej-laptop>
-Message-ID: <fcbff773f61061bbc0f1d6ffef2a7c35@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1502285688.2759.41.camel@baylibre.com>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-åœ¨ 2017-08-02 12:47ï¼ŒJernej Å krabec å†™é“ï¼š
-> Hi Icenowy,
+On Wed, Aug 09, 2017 at 03:34:48PM +0200, Jerome Brunet wrote:
+> On Wed, 2017-08-09 at 12:45 +0100, Russell King - ARM Linux wrote:
+> > On Tue, Aug 08, 2017 at 07:19:06PM -0700, Stephen Boyd wrote:
+> > > I also vaguely remember Paul saying that
+> > > clk_round_rate() could return something and then clk_set_rate()
+> > > after that would fail because what was calculated during the rate
+> > > speculation/rounding phase would be different if some other
+> > > consumer goes and changes some rate high up in the tree.
+> > 
+> > That's probably because people tend to get this stuff wrong.  It is
+> > _not_ supposed to be:
+> > 
+> > 	rounded_rate = clk_round_rate(clk, requested_rate);
+> > 
+> > 	clk_set_rate(clk, rounded_rate);
+> > 
+> > but:
+> > 
+> > 	rounded_rate = clk_round_rate(clk, requested_rate);
+> > 
+> > 	clk_set_rate(clk, requested_rate);
+> > 
+> > The former is wrong for two reasons:
+> > 
+> > 1. it's completely wasteful of CPU resources to do all the calculations
+> >    that need to be done within clk_set_rate().
+> > 
+> > 2. it's racy - there is no guarantee that you'll end up with "rounded_rate"
+> > 
+> > The API definition of clk_round_rate() explicitly mentions that it is
+> > equivalent to clk_set_rate() followed by clk_get_rate() with the
+> > exception that it doesn't affect the hardware.
+> > 
+> > I'm not sure that the clock rate protection API is really the right
+> > solution - if we're trying to stop others from changing the clock rate,
+> > that implies we have multiple different threads potentially changing
+> > the rate at any time.  If a driver does this:
+> > 
+> > 	clk_set_rate(clk, foo);
+> > 	clk_rate_protect(clk);
+> > 
+> > what prevents another thread from changing the clock rate between these
+> > two calls?  The only way to do this safely would be something like:
+> > 
+> > 	r = clk_round_rate(clk, foo);
+> > 	while (1) {
+> > 		err = clk_set_rate(clk, foo);
+> > 		clk_rate_protect(clk);
+> > 		if (err < 0)
+> > 			break;
+> > 
+> > 		if (r == clk_get_rate(clk)) /* success */
+> > 			break;
+> > 
+> > 		clk_rate_unprotect(clk);
+> > 	}
+> > 
+> > 	if (err)
+> > 		failed;
 > 
-> Dne torek, 01. avgust 2017 ob 15:12:58 CEST je Icenowy Zheng 
-> napisal(a):
->> As we have already the support for the DE2 on Allwinner H3, add the
->> display engine pipeline device tree nodes to its DTSI file.
->> 
->> The H5 pipeline has some differences and will be enabled later.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  arch/arm/boot/dts/sun8i-h3.dtsi | 170
->> ++++++++++++++++++++++++++++++++++++++++ 1 file changed, 170 
->> insertions(+)
->> 
->> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
->> b/arch/arm/boot/dts/sun8i-h3.dtsi index b36f9f423c39..75ad7b65a7fc 
->> 100644
->> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
->> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
->> @@ -41,6 +41,8 @@
->>   */
->> 
->>  #include "sunxi-h3-h5.dtsi"
->> +#include <dt-bindings/clock/sun8i-de2.h>
->> +#include <dt-bindings/reset/sun8i-de2.h>
->> 
->>  / {
->>  	cpus {
->> @@ -72,6 +74,174 @@
->>  		};
->>  	};
->> 
->> +	de: display-engine {
->> +		compatible = "allwinner,sun8i-h3-display-engine";
->> +		allwinner,pipelines = <&mixer0>,
->> +				      <&mixer1>;
->> +		status = "disabled";
->> +	};
->> +
->> +	soc {
->> +		display_clocks: clock@1000000 {
->> +			compatible = "allwinner,sun8i-a83t-de2-clk";
->> +			reg = <0x01000000 0x100000>;
->> +			clocks = <&ccu CLK_BUS_DE>,
->> +				 <&ccu CLK_DE>;
->> +			clock-names = "bus",
->> +				      "mod";
->> +			resets = <&ccu RST_BUS_DE>;
->> +			#clock-cells = <1>;
->> +			#reset-cells = <1>;
->> +			assigned-clocks = <&ccu CLK_DE>;
->> +			assigned-clock-parents = <&ccu CLK_PLL_DE>;
->> +			assigned-clock-rates = <432000000>;
->> +		};
+> Russell,
+> I think you have missed one subtle thing, when trying any clock altering
+> operation, if the consumer is protecting the clock, it will temporarily release 
+> the protection once, under the prepare_lock (to guarantee safe operation). This
+> is explained in the cover letter:
 > 
-> I believe Maxime ask you to use clk_set_rate() in the past:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/512909.html
-
-Yes, but I think the frequency is still part of our configuration, not 
-forced
-by the hardware.
-
-If we set it in the driver, why don't we set it to 300MHz?
-
-(In fact for pipelines without TVE we can really use 300MHz for CLK_DE, 
-and if
-we do not want 4K we can even use lower frequency)
-
+> """
+> With this series there is 3 use-case:
+>  - the provider is not protected: nothing changes
+>  - the provider is protected by only 1 consumer (and only once), then only
+>    this consumer will be able to alter the rate of the clock, as it is the
+>    only one depending on it.
+>  - If the provider is protected more than once, or by the provider itself,
+>    the rate is basically locked and protected against reparenting.
+> """
 > 
-> Regards,
-> Jernej
+> So what you should do if you have to protect the clock is:
+> 
+> clk_rate_protect(clk);
+> err = clk_set_rate(clk, foo);
+> 
+> [...]
+> clk_rate_unprotect(clk);
+
+So here you drop the protection, which means anyone can alter the clock
+again.
+
+Either that or "clk_rate_unprotect" is inappropriately named and doesn't
+do what it says it does.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
