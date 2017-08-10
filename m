@@ -1,53 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:34995 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753147AbdHQVEs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2017 17:04:48 -0400
-Date: Thu, 17 Aug 2017 16:04:45 -0500
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 9 Aug 2017 19:18:09 -0500
 From: Rob Herring <robh@kernel.org>
-To: weiyi.lu@mediatek.com
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fan Chen <fan.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 1/9] dt-bindings: ARM: Mediatek: Document bindings for
- MT2712
-Message-ID: <20170817210445.y34gpxbqixt6qswr@rob-hp-laptop>
-References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
- <1502779370-30150-2-git-send-email-weiyi.lu@mediatek.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 01/13] dt-bindings: update the binding for Allwinner H3
+ DE2 support
+Message-ID: <20170810001809.6xhloimtgwsg5j5d@rob-hp-laptop>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+ <20170801131304.7741-2-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1502779370-30150-2-git-send-email-weiyi.lu@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170801131304.7741-2-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 15, 2017 at 02:42:42PM +0800, weiyi.lu@mediatek.com wrote:
-> From: Weiyi Lu <weiyi.lu@mediatek.com>
+On Tue, Aug 01, 2017 at 09:12:52PM +0800, Icenowy Zheng wrote:
+> Allwinner H3 features a "Display Engine 2.0".
 > 
-> This patch adds the binding documentation for apmixedsys, bdpsys,
-> imgsys, imgsys, infracfg, mcucfg, mfgcfg, mmsys, pericfg, topckgen,
-> vdecsys and vencsys for Mediatek MT2712.
+> Add device tree bindings for the following parts:
+> - H3 TCONs
+> - H3 Mixers
+> - H3 Display engine
 > 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
->  .../bindings/arm/mediatek/mediatek,bdpsys.txt      |  1 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
->  .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   | 22 ++++++++++++++++++++++
->  .../bindings/arm/mediatek/mediatek,mcucfg.txt      | 22 ++++++++++++++++++++++
->  .../bindings/arm/mediatek/mediatek,mfgcfg.txt      | 22 ++++++++++++++++++++++
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
->  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
->  .../bindings/arm/mediatek/mediatek,vencsys.txt     |  1 +
->  12 files changed, 75 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+>  .../bindings/display/sunxi/sun4i-drm.txt           | 25 ++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
 
 Acked-by: Rob Herring <robh@kernel.org>
