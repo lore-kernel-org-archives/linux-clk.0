@@ -1,20 +1,74 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com, andy.yan@rock-chips.com, wdc@rock-chips.com
-Subject: Re: [PATCH v2 2/4] clk: rockchip: rv1108: add ACLK_GMAC and PCLK_GMAC clk id
-Date: Tue, 22 Aug 2017 02:52:46 +0200
-Message-ID: <2771200.zl9p58xxmH@phil>
-In-Reply-To: <1503303367-17915-3-git-send-email-zhangqing@rock-chips.com>
-References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com> <1503303367-17915-3-git-send-email-zhangqing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v5 2/7] dt-bindings: clk: at91: add audio plls to the compatible list
+Date: Thu, 10 Aug 2017 08:34:02 +0200
+Message-Id: <09230b9714c7d8fee053d1b014ef6af43c1bebbc.1502346448.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 21. August 2017, 16:16:05 CEST schrieb Elaine Zhang:
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+This new clock driver set allows to have a fractional divided clock that
+would generate a precise clock particularly suitable for audio
+applications.
 
-applied for 4.14 after adapting the subject and adding a commit message
+The main audio pll clock has two children clocks: one that is connected
+to the PMC, the other that can directly drive a pad. As these two routes
+have different enable bits and different dividers and divider formulas,
+they are handled by two different drivers.
 
+This adds the audio plls (frac, pad and pmc) to the compatible list of
+at91 clocks in DT binding.
 
-Heiko
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ Documentation/devicetree/bindings/clock/at91-clock.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+index 5f3ad65..51c259a 100644
+--- a/Documentation/devicetree/bindings/clock/at91-clock.txt
++++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+@@ -81,6 +81,16 @@ Required properties:
+ 	"atmel,sama5d2-clk-generated":
+ 		at91 generated clock
+ 
++	"atmel,sama5d2-clk-audio-pll-frac":
++		at91 audio fractional pll
++
++	"atmel,sama5d2-clk-audio-pll-pad":
++		at91 audio pll CLK_AUDIO output pin
++
++	"atmel,sama5d2-clk-audio-pll-pmc"
++		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
++		and can be used by peripheral clock or generic clock
++
+ Required properties for SCKC node:
+ - reg : defines the IO memory reserved for the SCKC.
+ - #size-cells : shall be 0 (reg is used to encode clk id).
+-- 
+git-series 0.9.1
