@@ -1,52 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Aug 2017 16:07:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] Fixes for Tegra clocks
-Message-ID: <20170823230702.GK21656@codeaurora.org>
-References: <1500978856-5981-1-git-send-email-pdeschrijver@nvidia.com>
- <20170726013746.GM2146@codeaurora.org>
- <20170726082728.GD26726@tbergstrom-lnx.Nvidia.com>
- <20170727185406.GN2146@codeaurora.org>
- <20170817134803.GE6854@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170817134803.GE6854@ulmo>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v5 4/7] clk: at91: clk-generated: create function to find best_diff
+Date: Thu, 10 Aug 2017 08:34:04 +0200
+Message-Id: <4dde07bb3345d569778e7b1b5a8679bded095041.1502346448.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/17, Thierry Reding wrote:
-> On Thu, Jul 27, 2017 at 11:54:06AM -0700, Stephen Boyd wrote:
-> > On 07/26, Peter De Schrijver wrote:
-> > > On Tue, Jul 25, 2017 at 06:37:46PM -0700, Stephen Boyd wrote:
-> > > > On 07/25, Peter De Schrijver wrote:
-> > > > > A number of smaller fixes and simplifications for the Tegra clock
-> > > > > implementation.
-> > > > 
-> > > > Any of these need fixes tags so they can be backported to stable
-> > > > trees? Also, everyone is on To: line, so not sure who is supposed
-> > > 
-> > > I will have a look. For some of them a backport might be useful.
-> > > 
-> > > > to pick these up. Me? That's fine if so.
-> > > > 
-> > > 
-> > > That would be the easiest I think.
-> > > 
-> > 
-> > Ok. I'll wait for you to reply with tags unless you didn't find
-> > any?
-> 
-> I'm not aware of any bugs that these would fix, so I think we can apply
-> these as-is.
-> 
+The way to find the best_diff and do the appropriate process afterwards
+can be re-used.
 
-Ok. Applied them all to clk-next.
+This patch prepares the driver for an upcoming patch that will allow
+clk_generated to determine the rate of the audio_pll.
 
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ drivers/clk/at91/clk-generated.c | 41 +++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index ef4b4e0..7260e49 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -99,15 +99,36 @@ clk_generated_recalc_rate(struct clk_hw *hw,
+ 	return DIV_ROUND_CLOSEST(parent_rate, gck->gckdiv + 1);
+ }
+ 
++static void clk_generated_best_diff(struct clk_rate_request *req,
++				    struct clk_hw *parent,
++				    unsigned long parent_rate, u32 div,
++				    int *best_diff, long *best_rate)
++{
++	unsigned long tmp_rate;
++	int tmp_diff;
++
++	if (!div)
++		tmp_rate = parent_rate;
++	else
++		tmp_rate = parent_rate / div;
++	tmp_diff = abs(req->rate - tmp_rate);
++
++	if (*best_diff < 0 || *best_diff > tmp_diff) {
++		*best_rate = tmp_rate;
++		*best_diff = tmp_diff;
++		req->best_parent_rate = parent_rate;
++		req->best_parent_hw = parent;
++	}
++}
++
+ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 					struct clk_rate_request *req)
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+ 	struct clk_hw *parent = NULL;
+ 	long best_rate = -EINVAL;
+-	unsigned long tmp_rate, min_rate;
++	unsigned long min_rate;
+ 	int best_diff = -1;
+-	int tmp_diff;
+ 	int i;
+ 
+ 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+@@ -125,18 +146,10 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 			continue;
+ 
+ 		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
+-		if (!div)
+-			tmp_rate = parent_rate;
+-		else
+-			tmp_rate = parent_rate / div;
+-		tmp_diff = abs(req->rate - tmp_rate);
+-
+-		if (best_diff < 0 || best_diff > tmp_diff) {
+-			best_rate = tmp_rate;
+-			best_diff = tmp_diff;
+-			req->best_parent_rate = parent_rate;
+-			req->best_parent_hw = parent;
+-		}
++
++		clk_generated_best_diff(req, parent, parent_rate, div,
++					&best_diff, &best_rate);
++
+ 
+ 		if (!best_diff)
+ 			break;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
