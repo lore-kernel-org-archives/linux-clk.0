@@ -1,84 +1,172 @@
-Return-Path: <sumit.semwal@linaro.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20170808155707.GA19636@kroah.com>
-References: <CAO_48GHvyUD7vD1qJP=41Wt0nyeiyhoCpVSYL-v-jbU_dd1Sgw@mail.gmail.com>
- <20170808155707.GA19636@kroah.com>
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Date: Tue, 8 Aug 2017 21:49:24 +0530
-Message-ID: <CAO_48GH29NsWgrq2Z_8STHWGoEQ=8jWryge1JFvqUcygxg0VuQ@mail.gmail.com>
-Subject: Re: Request for inclusion to stable-4.9
-To: Greg KH <greg@kroah.com>
-Cc: mturquette@baylibre.com, Viresh Kumar <viresh.kumar@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	"# 3.4.x" <stable@vger.kernel.org>
-Content-Type: multipart/alternative; boundary="001a114621c8ada5410556405303"
+To: Russell King - ARM Linux <linux@armlinux.org.uk>,
+ "Jerome Brunet" <jbrunet@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170809134036.GE20805@n2100.armlinux.org.uk>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ "Kevin Hilman" <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+References: <20170612194438.12298-1-jbrunet@baylibre.com>
+ <20170612194438.12298-6-jbrunet@baylibre.com>
+ <20170726001217.GC2146@codeaurora.org>
+ <1501089516.2401.29.camel@baylibre.com>
+ <20170804001836.GU2146@codeaurora.org>
+ <150223186723.22158.11617219588466426777@resonance>
+ <20170809021906.GA2146@codeaurora.org>
+ <20170809114548.GD20805@n2100.armlinux.org.uk>
+ <1502285688.2759.41.camel@baylibre.com>
+ <20170809134036.GE20805@n2100.armlinux.org.uk>
+Message-ID: <150238372258.5192.1565192307312367583@resonance>
+Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
+Date: Thu, 10 Aug 2017 09:48:42 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
---001a114621c8ada5410556405303
-Content-Type: text/plain; charset="UTF-8"
+Quoting Russell King - ARM Linux (2017-08-09 06:40:36)
+> On Wed, Aug 09, 2017 at 03:34:48PM +0200, Jerome Brunet wrote:
+> > On Wed, 2017-08-09 at 12:45 +0100, Russell King - ARM Linux wrote:
+> > > On Tue, Aug 08, 2017 at 07:19:06PM -0700, Stephen Boyd wrote:
+> > > > I also vaguely remember Paul saying that
+> > > > clk_round_rate() could return something and then clk_set_rate()
+> > > > after that would fail because what was calculated during the rate
+> > > > speculation/rounding phase would be different if some other
+> > > > consumer goes and changes some rate high up in the tree.
+> > > =
 
-Hello,
+> > > That's probably because people tend to get this stuff wrong.=C2=A0=C2=
+=A0It is
+> > > _not_ supposed to be:
+> > > =
 
-On Aug 8, 2017 21:27, "Greg KH" <greg@kroah.com> wrote:
+> > >     rounded_rate =3D clk_round_rate(clk, requested_rate);
+> > > =
 
-On Tue, Aug 08, 2017 at 09:05:03PM +0530, Sumit Semwal wrote:
-> Hi Greg,
->
-> Please consider commit
->
-> 9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI
->
-> for inclusion into stable-4.9; without this, Hikey's cpufreq driver
-> doesn't work, and the cpufreq kselftests fail on it accordingly.
+> > >     clk_set_rate(clk, rounded_rate);
+> > > =
 
-How can it "not work", all that patch does it enable it by "default",
-you can always change your .config file to enable it successfully,
-right?
+> > > but:
+> > > =
 
-Of course. I meant "doesn't work with default defconfig"; having it enabled
-by default just makes it a little easier to test in a CI loop - we could do
-that in the CI scripts as well, so apologies about the noise here.
+> > >     rounded_rate =3D clk_round_rate(clk, requested_rate);
+> > > =
 
+> > >     clk_set_rate(clk, requested_rate);
+> > > =
 
-thanks,
+> > > The former is wrong for two reasons:
+> > > =
 
-greg k-h
+> > > 1. it's completely wasteful of CPU resources to do all the calculatio=
+ns
+> > > =C2=A0=C2=A0=C2=A0that need to be done within clk_set_rate().
+> > > =
 
---001a114621c8ada5410556405303
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> > > 2. it's racy - there is no guarantee that you'll end up with "rounded=
+_rate"
+> > > =
 
-<div dir=3D"auto"><div>Hello,<br><div class=3D"gmail_extra"><br><div class=
-=3D"gmail_quote">On Aug 8, 2017 21:27, &quot;Greg KH&quot; &lt;<a href=3D"m=
-ailto:greg@kroah.com" target=3D"_blank">greg@kroah.com</a>&gt; wrote:<br ty=
-pe=3D"attribution"><blockquote class=3D"m_1777527394077629454quote" style=
-=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><div cla=
-ss=3D"m_1777527394077629454elided-text">On Tue, Aug 08, 2017 at 09:05:03PM =
-+0530, Sumit Semwal wrote:<br>
-&gt; Hi Greg,<br>
-&gt;<br>
-&gt; Please consider commit<br>
-&gt;<br>
-&gt; 9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI<br>
-&gt;<br>
-&gt; for inclusion into stable-4.9; without this, Hikey&#39;s cpufreq drive=
-r<br>
-&gt; doesn&#39;t work, and the cpufreq kselftests fail on it accordingly.<b=
-r>
-<br>
-</div>How can it &quot;not work&quot;, all that patch does it enable it by =
-&quot;default&quot;,<br>
-you can always change your .config file to enable it successfully,<br>
-right?</blockquote></div></div></div><div dir=3D"auto">Of course. I meant &=
-quot;doesn&#39;t work with default defconfig&quot;; having it enabled by de=
-fault just makes it a little easier to test in a CI loop - we could do that=
- in the CI scripts as well, so apologies about the noise here.</div><div di=
-r=3D"auto"></div><div dir=3D"auto"><div class=3D"gmail_extra"><div class=3D=
-"gmail_quote"><blockquote class=3D"m_1777527394077629454quote" style=3D"mar=
-gin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-<br>
-thanks,<br>
-<br>
-greg k-h</blockquote></div></div></div></div>
+> > > The API definition of clk_round_rate() explicitly mentions that it is
+> > > equivalent to clk_set_rate() followed by clk_get_rate() with the
+> > > exception that it doesn't affect the hardware.
+> > > =
 
---001a114621c8ada5410556405303--
+> > > I'm not sure that the clock rate protection API is really the right
+> > > solution - if we're trying to stop others from changing the clock rat=
+e,
+> > > that implies we have multiple different threads potentially changing
+> > > the rate at any time.=C2=A0=C2=A0If a driver does this:
+> > > =
+
+> > >     clk_set_rate(clk, foo);
+> > >     clk_rate_protect(clk);
+> > > =
+
+> > > what prevents another thread from changing the clock rate between the=
+se
+> > > two calls?=C2=A0=C2=A0The only way to do this safely would be somethi=
+ng like:
+> > > =
+
+> > >     r =3D clk_round_rate(clk, foo);
+> > >     while (1) {
+> > >             err =3D clk_set_rate(clk, foo);
+> > >             clk_rate_protect(clk);
+> > >             if (err < 0)
+> > >                     break;
+> > > =
+
+> > >             if (r =3D=3D clk_get_rate(clk)) /* success */
+> > >                     break;
+> > > =
+
+> > >             clk_rate_unprotect(clk);
+> > >     }
+> > > =
+
+> > >     if (err)
+> > >             failed;
+> > =
+
+> > Russell,
+> > I think you have missed one subtle thing, when trying any clock altering
+> > operation, if the consumer is protecting the clock, it will temporarily=
+ release =
+
+> > the protection once, under the prepare_lock (to guarantee safe operatio=
+n). This
+> > is explained in the cover letter:
+> > =
+
+> > """
+> > With this series there is 3 use-case:
+> > =C2=A0- the provider is not protected: nothing changes
+> > =C2=A0- the provider is protected by only 1 consumer (and only once), t=
+hen only
+> > =C2=A0=C2=A0=C2=A0this consumer will be able to alter the rate of the c=
+lock, as it is the
+> > =C2=A0=C2=A0=C2=A0only one depending on it.
+> > =C2=A0- If the provider is protected more than once, or by the provider=
+ itself,
+> > =C2=A0=C2=A0=C2=A0the rate is basically locked and protected against re=
+parenting.
+> > """
+> > =
+
+> > So what you should do if you have to protect the clock is:
+> > =
+
+> > clk_rate_protect(clk);
+> > err =3D clk_set_rate(clk, foo);
+> > =
+
+> > [...]
+> > clk_rate_unprotect(clk);
+> =
+
+> So here you drop the protection, which means anyone can alter the clock
+> again.
+
+Correct. It would be appropriate to use clk_rate_unprotect in two ways:
+
+1) module unload
+2) when a clk consumer driver completes a critical section of work and
+no longer cares about clk rate. I would expect this same consumer driver
+to call clk_disable_unprepare as well.
+
+Regards,
+Mike
+
+> =
+
+> Either that or "clk_rate_unprotect" is inappropriately named and doesn't
+> do what it says it does.
+> =
+
+> -- =
+
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps=
+ up
+> According to speedtest.net: 8.21Mbps down 510kbps up
