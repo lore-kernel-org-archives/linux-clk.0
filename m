@@ -1,40 +1,47 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] clk: rockchip: Mark rockchip_fractional_approximation static
-Date: Wed, 23 Aug 2017 15:39:32 -0700
-Message-Id: <20170823223932.27881-1-sboyd@codeaurora.org>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Thu, 10 Aug 2017 07:51:45 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v8 5/5] clk: samsung: exynos-audss: Add support for
+ runtime PM
+Message-ID: <20170810055145.GA3268@kozik-book>
+References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170809103515eucas1p19fcbdd113e191cc02f9e5aaa469376d3@eucas1p1.samsung.com>
+ <1502274907-11931-6-git-send-email-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1502274907-11931-6-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Silence the sparse warning
+On Wed, Aug 09, 2017 at 12:35:07PM +0200, Marek Szyprowski wrote:
+> This patch adds support for runtime PM to Exynos Audio SubSystem driver to
+> enable full support for audio power domain on Exynos5 SoCs. The main change
+> is moving register saving and restoring code from system sleep PM ops to
+> runtime PM ops and implementing system sleep PM ops with generic
+> pm_runtime_force_suspend/resume helpers. Runtime PM of the Exynos AudSS
+> device is managed from clock core depending on the preparation status
+> of the provided clocks.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/clk-exynos-audss.txt |  6 +++
+>  drivers/clk/samsung/clk-exynos-audss.c             | 51 ++++++++++++++--------
+>  2 files changed, 40 insertions(+), 17 deletions(-)
+> 
 
-clk/rockchip/clk.c:172:6: warning: symbol 'rockchip_fractional_approximation' was not declared. Should it be static?
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Cc: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/rockchip/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index b6db79a00602..35dbd63c2f49 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -169,7 +169,7 @@ static int rockchip_clk_frac_notifier_cb(struct notifier_block *nb,
-  * fractional divider must set that denominator is 20 times larger than
-  * numerator to generate precise clock frequency.
-  */
--void rockchip_fractional_approximation(struct clk_hw *hw,
-+static void rockchip_fractional_approximation(struct clk_hw *hw,
- 		unsigned long rate, unsigned long *parent_rate,
- 		unsigned long *m, unsigned long *n)
- {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
