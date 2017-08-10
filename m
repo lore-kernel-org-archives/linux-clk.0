@@ -1,62 +1,31 @@
-Return-Path: <arvind.yadav.cs@gmail.com>
-Return-Path: <arvind.yadav.cs@gmail.com>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	ulf.hansson@linaro.org,
-	linus.walleij@linaro.org,
-	mturquette@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] clk: ux500: prcc: constify clk_ops.
-Date: Mon, 28 Aug 2017 12:32:41 +0530
-Message-Id: <1503903761-21730-4-git-send-email-arvind.yadav.cs@gmail.com>
-In-Reply-To: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
-References: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20170810072346.32299-2-suzuki.katsuhiro@socionext.com>
+References: <20170810072346.32299-1-suzuki.katsuhiro@socionext.com> <20170810072346.32299-2-suzuki.katsuhiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 10 Aug 2017 20:07:10 +0900
+Message-ID: <CAK7LNAQ2cqn46SKg_Xh-XquGP3c+dNy93_mNN1ZbcDRh+9NkOw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: uniphier: add video input subsystem clock
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_ops are not supposed to change at runtime. All functions
-working with clk_ops provided by <linux/clk-provider.h> work
-with const clk_ops. So mark the non-const clk_ops as const.
+2017-08-10 16:23 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> Add a clock for video input subsystem (EXIV) on
+> UniPhier LD11/LD20 SoCs.
+>
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-Here, Function "clk_reg_prcc" is used to initialized clk_init_data.
-clk_init_data is working with const clk_ops. So make clk_reg_prcc
-non-const clk_ops argument as const.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/clk/ux500/clk-prcc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
-index 0e95076..f505927 100644
---- a/drivers/clk/ux500/clk-prcc.c
-+++ b/drivers/clk/ux500/clk-prcc.c
-@@ -79,13 +79,13 @@ static int clk_prcc_is_enabled(struct clk_hw *hw)
- 	return clk->is_enabled;
- }
- 
--static struct clk_ops clk_prcc_pclk_ops = {
-+static const struct clk_ops clk_prcc_pclk_ops = {
- 	.enable = clk_prcc_pclk_enable,
- 	.disable = clk_prcc_pclk_disable,
- 	.is_enabled = clk_prcc_is_enabled,
- };
- 
--static struct clk_ops clk_prcc_kclk_ops = {
-+static const struct clk_ops clk_prcc_kclk_ops = {
- 	.enable = clk_prcc_kclk_enable,
- 	.disable = clk_prcc_kclk_disable,
- 	.is_enabled = clk_prcc_is_enabled,
-@@ -96,7 +96,7 @@ static struct clk *clk_reg_prcc(const char *name,
- 				resource_size_t phy_base,
- 				u32 cg_sel,
- 				unsigned long flags,
--				struct clk_ops *clk_prcc_ops)
-+				const struct clk_ops *clk_prcc_ops)
- {
- 	struct clk_prcc *clk;
- 	struct clk_init_data clk_prcc_init;
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
