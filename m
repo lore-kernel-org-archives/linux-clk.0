@@ -1,72 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 9 Aug 2017 10:22:13 -0700
-From: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH] ARC: clk: introduce HSDKv1 pll driver
-Message-ID: <20170809172213.GB2146@codeaurora.org>
-References: <20170714153128.8945-1-Eugeniy.Paltsev@synopsys.com>
- <20170804015351.GW2146@codeaurora.org>
- <1502297028.2586.4.camel@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1502297028.2586.4.camel@synopsys.com>
+Return-Path: <suzuki.katsuhiro@socionext.com>
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-clk@vger.kernel.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+	Jassi Brar <jaswinder.singh@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH 2/2] clk: uniphier: add video input subsystem clock
+Date: Thu, 10 Aug 2017 16:23:46 +0900
+Message-Id: <20170810072346.32299-2-suzuki.katsuhiro@socionext.com>
+In-Reply-To: <20170810072346.32299-1-suzuki.katsuhiro@socionext.com>
+References: <20170810072346.32299-1-suzuki.katsuhiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09, Eugeniy Paltsev wrote:
-> On Thu, 2017-08-03 at 18:53 -0700, Stephen Boyd wrote:
-> > On 07/14, Eugeniy Paltsev wrote:
-> > > +	/* input divider = reg.idiv + 1 */
-> > > +	idiv = 1 + ((val & CGU_PLL_CTRL_IDIV_MASK) >>
-> > > CGU_PLL_CTRL_IDIV_SHIFT);
-> > > +	/* fb divider = 2*(reg.fbdiv + 1) */
-> > > +	fbdiv = 2 * (1 + ((val & CGU_PLL_CTRL_FBDIV_MASK) >>
-> > > CGU_PLL_CTRL_FBDIV_SHIFT));
-> > > +	/* output divider = 2^(reg.odiv) */
-> > > +	odiv = 1 << ((val & CGU_PLL_CTRL_ODIV_MASK) >>
-> > > CGU_PLL_CTRL_ODIV_SHIFT);
-> >
-> > Maybe just drop these comments. They're just repeating the code.
-> 
-> Actually I would prefer to keep them, as "2^(reg.odiv)" is more 
-> human-readable then
-> "1 << ((val & CGU_PLL_CTRL_ODIV_MASK) >> CGU_PLL_CTRL_ODIV_SHIFT)"
+Add a clock for video input subsystem (EXIV) on
+UniPhier LD11/LD20 SoCs.
 
-Alright.
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ drivers/clk/uniphier/clk-uniphier-sys.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> 
-> > > +
-> > > +	rate = (u64)parent_rate * fbdiv;
-> > > +	do_div(rate, idiv * odiv);
-> > > +
-> > > +	return rate;
-> > > +}
-> > > +
-> > > +static long hsdk_pll_round_rate(struct clk_hw *hw, unsigned long
-> > > rate,
-> > > +				unsigned long *prate)
-> > > +{
-> > > +	int i;
-> > > +	long best_rate;
-> > > +	struct hsdk_pll_clk *clk = to_hsdk_pll_clk(hw);
-> > > +	const struct hsdk_pll_cfg *pll_cfg = clk->pll_cfg;
-> > > +
-> > > +	if (pll_cfg[0].rate == 0)
-> > > +		return -EINVAL;
-> > 
-> > This happens?
-> 
-> Only if we add bad hsdk_pll_cfg table. But it is quite cold code - we
-> change pll configuration quite rare, so maybe it's better to keep this
-> assert?
-
-Can it be a BUILD_BUG_ON() somehow?
-
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index 7c4528d0fb6e..c60aa586fea7 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -65,6 +65,10 @@
+ 	UNIPHIER_CLK_FACTOR("evea-io100m", -1, "spll", 1, 20),		\
+ 	UNIPHIER_CLK_GATE("evea", (idx), "evea-io100m", 0x2108, 1)
+ 
++#define UNIPHIER_LD11_SYS_CLK_EXIV(idx)					\
++	UNIPHIER_CLK_FACTOR("exiv-io200m", -1, "spll", 1, 10),		\
++	UNIPHIER_CLK_GATE("exiv", (idx), "exiv-io200m", 0x2110, 2)
++
+ const struct uniphier_clk_data uniphier_sld3_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 65, 1),		/* 1597.44 MHz */
+ 	UNIPHIER_CLK_FACTOR("upll", -1, "ref", 6000, 512),	/* 288 MHz */
+@@ -168,6 +172,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
+ 	UNIPHIER_LD11_SYS_CLK_AIO(40),
+ 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
++	UNIPHIER_LD11_SYS_CLK_EXIV(42),
+ 	/* CPU gears */
+ 	UNIPHIER_CLK_DIV4("cpll", 2, 3, 4, 8),
+ 	UNIPHIER_CLK_DIV4("mpll", 2, 3, 4, 8),
+@@ -206,6 +211,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
+ 	UNIPHIER_CLK_GATE("usb30-phy1", 17, NULL, 0x210c, 13),
+ 	UNIPHIER_LD11_SYS_CLK_AIO(40),
+ 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
++	UNIPHIER_LD11_SYS_CLK_EXIV(42),
+ 	/* CPU gears */
+ 	UNIPHIER_CLK_DIV4("cpll", 2, 3, 4, 8),
+ 	UNIPHIER_CLK_DIV4("spll", 2, 3, 4, 8),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.2
