@@ -1,47 +1,119 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:35894 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752071AbdHXRf2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2017 13:35:28 -0400
-Received: by mail-wr0-f175.google.com with SMTP id p14so406567wrg.3
-        for <linux-clk@vger.kernel.org>; Thu, 24 Aug 2017 10:35:28 -0700 (PDT)
-Subject: Re: [PATCH] clk: qcom: msm8916: Fix bimc gpu clock ops
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, robdclark@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20170818142250.27867-1-georgi.djakov@linaro.org>
- <20170823225543.GJ21656@codeaurora.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <a307ae95-ee53-4676-e5ed-8763b8b507ce@linaro.org>
-Date: Thu, 24 Aug 2017 20:35:25 +0300
-MIME-Version: 1.0
-In-Reply-To: <20170823225543.GJ21656@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v5 0/7] add support for Sama5d2 audio PLLs and enable ClassD
+Date: Thu, 10 Aug 2017 08:34:00 +0200
+Message-Id: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/24/2017 01:55 AM, Stephen Boyd wrote:
-> On 08/18, Georgi Djakov wrote:
->> The clock bimc_gpu_clk_src is incorrectly set to use the shared rcg2
->> ops, which are for RCGs with child branches controlled by different
->> CPUs.
->>
->> The result of the incorrect ops is that the GPU's PM runtime may leave
->> this clock set at a very low rate. Fix this issue by using the correct
->> rcg2 ops.
->>
->> Fixes: a2e8272f3f89 ("clk: qcom: Add MSM8916 gpu clocks")
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
-> 
-> This is the only user of clk_rcg2_shared_ops. I'm totally lost
-> why we added this in the first place.
-> 
+This patch series adds support for the audio PLLs and enables ClassD that
+can be found in ATMEL Sama5d2 SoC.
 
-Yes, this is the only user. It seems that the ops could be useful for
-a few other SoC that are not upstream yet, but for now i am sending a
-patch to remove the unused code.
+There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
+FRAC can output between 620 and 700MHz and only multiply the rate of its
+parent. The two audio PLLs then divide the FRAC rate to best match the
+asked rate.
+
+I basically took an old patch series posted by Nicolas on December, 6th
+2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
+sent on July, 15th 2015.
+
+I also fixed the function used to compute the divisors, removed useless
+spinlocks and added a range to the audio frac PLL to stay within vendor's
+supported range. Clocks that are children of gclk (generated-clk) are now
+able to propagate rate to the audio PLL clocks when needed.
+
+However, there are multiple children clocks that could technically
+change the rate of audio_pll (via gck). With the rate locking introduced
+in Jerome Brunet's patch series[5], the first consumer to enable the clock
+will be the one definitely setting the rate of the clock. Without the rate
+locking, the last consumer to set the rate will be able to mess with the
+rate.
+Since audio IPs are most likely to request the same rate, we enforce
+that the only clks able to modify gck rate are those of audio IPs.
+
+To remain consistent, we deny other clocks to be children of audio_pll.
+
+I suggest this whole series going through the clk subsystem.
+
+v5:
+ - replaced clk_audio_pll_frac_round_rate by
+ clk_audio_pll_frac_determine_rate to also return min and max rate for
+ the clk, suggested by Stephen Boyd during v3,
+
+v4:
+ - initialized the clk_init_data structure,
+ - switched to of_clk_parent_fill instead of manually setting
+ parent_names,
+ - removed include of clkdev.h in favor of slab.h,
+ - removed unnecessary second cast in operation,
+ - used clamp instead of two conditions,
+ - removed dependency on clock-output-names, the name is gotten from DT
+ node,
+ - merged all three drivers for audio PLLs (FRAC, PMC, PAD) into one,
+
+v3:
+ - added a flag per generated clock to know which one is allowed to
+ modify audio_pll rate,
+ - set the flag in setup function depending on the compatible and the
+ clock ID,
+
+v2:
+ - split big patch containing dt-binding, pll drivers and classd
+ modifications,
+ - removed unused AUDIO_PLL_*FOUT* defines from clk-audio-pll-pmc,
+ - added conditions for audio pll rate setting restriction for SSC and
+ I2S,
+ - renamed all mentions of ACLK to GCLK in classD driver,
 
 Thanks,
-Georgi
+Quentin
+
+[1] https://patchwork.kernel.org/patch/9462351/
+[2] https://patchwork.kernel.org/patch/9462347/
+[3] https://patchwork.kernel.org/patch/9462349/
+[4] https://www.spinics.net/lists/arm-kernel/msg436120.html
+[5] http://www.spinics.net/lists/linux-clk/msg17927.html
+
+Quentin Schulz (7):
+  clk: at91: clk-generated: remove useless divisor loop
+  dt-bindings: clk: at91: add audio plls to the compatible list
+  clk: at91: add audio pll clock drivers
+  clk: at91: clk-generated: create function to find best_diff
+  clk: at91: clk-generated: make gclk determine audio_pll rate
+  ASoC: atmel-classd: remove aclk clock from DT binding
+  ASoC: atmel-classd: remove aclk clock
+
+ Documentation/devicetree/bindings/clock/at91-clock.txt   |  10 +-
+ Documentation/devicetree/bindings/sound/atmel-classd.txt |   9 +-
+ arch/arm/mach-at91/Kconfig                               |   4 +-
+ drivers/clk/at91/Makefile                                |   1 +-
+ drivers/clk/at91/clk-audio-pll.c                         | 536 ++++++++-
+ drivers/clk/at91/clk-generated.c                         | 101 +-
+ include/linux/clk/at91_pmc.h                             |  25 +-
+ sound/soc/atmel/atmel-classd.c                           |  47 +-
+ 8 files changed, 675 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/clk/at91/clk-audio-pll.c
+
+base-commit: 22bbe310b60b37b029659460843265f190364e48
+-- 
+git-series 0.9.1
