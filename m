@@ -1,46 +1,80 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Return-Path: <quentin.schulz@free-electrons.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
 To: mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: robh+dt@kernel.org,
+	robh+dt@kernel.org,
 	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk,
+	boris.brezillon@free-electrons.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
 	linux-arm-kernel@lists.infradead.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	cl@rock-chips.com,
-	andy.yan@rock-chips.com,
-	wdc@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 2/4] clk: rockchip: rv1108: add ACLK_GMAC and PCLK_GMAC clk id
-Date: Mon, 21 Aug 2017 16:16:05 +0800
-Message-Id: <1503303367-17915-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
-References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
+	cyrille.pitchen@wedev4u.fr,
+	thomas.petazzoni@free-electrons.com,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v5 6/7] ASoC: atmel-classd: remove aclk clock from DT binding
+Date: Thu, 10 Aug 2017 08:34:06 +0200
+Message-Id: <baa9ebcc16cba5f41ee5b01895ec7cfce60a8ddc.1502346448.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rv1108.c | 2 ++
- 1 file changed, 2 insertions(+)
+Since gclk (generated-clk) is now able to determine the rate of the
+audio_pll, there is no need for classd to have a direct phandle to the
+audio_pll while already having a phandle to gclk.
 
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index d1065dd9f442..0e441ec21e90 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -763,6 +763,8 @@ enum rv1108_plls {
- 	GATE(SCLK_MACPHY_RX, "sclk_macphy_rx", "sclk_macphy", 0, RV1108_CLKGATE_CON(4), 8, GFLAGS),
- 	GATE(SCLK_MAC_REF, "sclk_mac_ref", "sclk_macphy", 0, RV1108_CLKGATE_CON(4), 6, GFLAGS),
- 	GATE(SCLK_MAC_REFOUT, "sclk_mac_refout", "sclk_macphy", 0, RV1108_CLKGATE_CON(4), 7, GFLAGS),
-+	GATE(ACLK_GMAC, "aclk_gmac", "aclk_periph", 0, RV1108_CLKGATE_CON(15), 4, GFLAGS),
-+	GATE(PCLK_GMAC, "pclk_gmac", "pclk_periph", 0, RV1108_CLKGATE_CON(15), 5, GFLAGS),
+This binding is used by no board in mainline so it is safe to be
+modified.
+
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ Documentation/devicetree/bindings/sound/atmel-classd.txt |  9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/atmel-classd.txt b/Documentation/devicetree/bindings/sound/atmel-classd.txt
+index 549e701..8985510 100644
+--- a/Documentation/devicetree/bindings/sound/atmel-classd.txt
++++ b/Documentation/devicetree/bindings/sound/atmel-classd.txt
+@@ -13,13 +13,11 @@ Required properties:
+ 	Must be "tx".
+ - clock-names
+ 	Tuple listing input clock names.
+-	Required elements: "pclk", "gclk" and "aclk".
++	Required elements: "pclk" and "gclk".
+ - clocks
+ 	Please refer to clock-bindings.txt.
+ - assigned-clocks
+ 	Should be <&classd_gclk>.
+-- assigned-clock-parents
+-	Should be <&audio_pll_pmc>.
  
- 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RV1108_SDMMC_CON0, 1),
- 	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc", RV1108_SDMMC_CON1, 1),
+ Optional properties:
+ - pinctrl-names, pinctrl-0
+@@ -45,10 +43,9 @@ classd: classd@fc048000 {
+ 			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
+ 			| AT91_XDMAC_DT_PERID(47))>;
+ 		dma-names = "tx";
+-		clocks = <&classd_clk>, <&classd_gclk>, <&audio_pll_pmc>;
+-		clock-names = "pclk", "gclk", "aclk";
++		clocks = <&classd_clk>, <&classd_gclk>;
++		clock-names = "pclk", "gclk";
+ 		assigned-clocks = <&classd_gclk>;
+-		assigned-clock-parents = <&audio_pll_pmc>;
+ 
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_classd_default>;
 -- 
-1.9.1
+git-series 0.9.1
