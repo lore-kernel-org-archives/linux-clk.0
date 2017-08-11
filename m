@@ -1,80 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:38001 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751890AbdHAL5H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2017 07:57:07 -0400
-Received: by mail-wm0-f42.google.com with SMTP id m85so12490896wma.1
-        for <linux-clk@vger.kernel.org>; Tue, 01 Aug 2017 04:57:07 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3.1 1/4] dt-bindings: clock: amlogic,gxbb-aoclkc: Update bindings
-Date: Tue,  1 Aug 2017 13:56:56 +0200
-Message-Id: <1501588619-10991-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
-References: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170811025134.ee4v2tbol2pjcd4i@rob-hp-laptop>
+References: <20170808012540.16691-1-net147@gmail.com> <20170811025134.ee4v2tbol2pjcd4i@rob-hp-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 11 Aug 2017 22:13:09 +0800
+Message-ID: <CAGb2v661S=a0Bzp4yAoTHKb2YaDURmDczEGjMOEGwgEqXo5ddg@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH] dt-bindings: clock: sunxi-ccu: Add
+ compatibles for sun5i CCU driver
+To: Rob Herring <robh@kernel.org>
+Cc: Jonathan Liu <net147@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On the first revision of the bindings, only the gates + resets were known
-in the AO Clock HW, but more registers used to configures AO clock are known
-to be spread among the AO register space.
-This patch adds a parent node for the entire system control zone for the AO
-domain then moves the clock controller as a subnode of the system control
-node.
+On Fri, Aug 11, 2017 at 10:51 AM, Rob Herring <robh@kernel.org> wrote:
+> On Tue, Aug 08, 2017 at 11:25:40AM +1000, Jonathan Liu wrote:
+>> The bindings were not updated when the sun5i CCU driver was added in
+>> commit 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver").
+>>
+>> Signed-off-by: Jonathan Liu <net147@gmail.com>
+>> ---
+>>  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 3 +++
+>>  1 file changed, 3 insertions(+)
+>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+Applied for 4.14.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index a55d31b..64884ed 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -5,9 +5,11 @@ controllers within the Always-On part of the SoC.
- 
- Required Properties:
- 
--- compatible: should be "amlogic,gxbb-aoclkc"
--- reg: physical base address of the clock controller and length of memory
--       mapped region.
-+- compatible: value should be different for each SoC family as :
-+	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
-+	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
-+	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
-+	followed by the common "amlogic,meson-gx-aoclkc"
- 
- - #clock-cells: should be 1.
- 
-@@ -23,14 +25,22 @@ to specify the reset which they consume. All available resets are defined as
- preprocessor macros in the dt-bindings/reset/gxbb-aoclkc.h header and can be
- used in device tree sources.
- 
-+Parent node should have the following properties :
-+- compatible: "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd"
-+- reg: base address and size of the AO system control register space.
-+
- Example: AO Clock controller node:
- 
--	clkc_AO: clock-controller@040 {
--		compatible = "amlogic,gxbb-aoclkc";
--		reg = <0x0 0x040 0x0 0x4>;
-+ao_sysctrl: sys-ctrl@0 {
-+	compatible = "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd";
-+	reg =  <0x0 0x0 0x0 0x100>;
-+
-+	clkc_AO: clock-controller {
-+		compatible = "amlogic,meson-gxbb-aoclkc", "amlogic,meson-gx-aoclkc";
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
- 	};
-+};
- 
- Example: UART controller node that consumes the clock and reset generated
-   by the clock controller:
--- 
-1.9.1
-
+ChenYu
