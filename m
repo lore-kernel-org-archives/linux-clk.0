@@ -1,43 +1,49 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	cl@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 3/3] clk: rockchip: rk3126: add sclk_timer5 as critical clock
-Date: Fri,  1 Sep 2017 10:01:46 +0800
-Message-Id: <1504231306-4450-4-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1504231306-4450-1-git-send-email-zhangqing@rock-chips.com>
-References: <1504231306-4450-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <s.nawrocki@samsung.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Linux Kernel
+	Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc
+	<linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for 4.14-rc1
+Message-id: <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
+Date: Fri, 11 Aug 2017 19:00:40 +0200
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+References: <CGME20170811170044epcas1p156cc48d8ca2d2533fa91daf41213487f@epcas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-sclk_timer5 is for arm arch counter, so need always on.
-but no dts node to handle this clk, so make it as critical clock
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3128.c | 1 +
- 1 file changed, 1 insertion(+)
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
-diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-index ce02d2cff608..5970a50671b9 100644
---- a/drivers/clk/rockchip/clk-rk3128.c
-+++ b/drivers/clk/rockchip/clk-rk3128.c
-@@ -578,6 +578,7 @@ enum rk3128_plls {
- 	"hclk_peri",
- 	"pclk_peri",
- 	"pclk_pmu",
-+	"sclk_timer5",
- };
- 
- static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.14-samsung
+
+for you to fetch changes up to 599cebea93e69c25e4cf027fc21d2bdf9a4a1ec7:
+
+  clk: samsung: exynos542x: Enable clock rate propagation up to the EPLL (2017-08-10 10:56:23 +0200)
+
+----------------------------------------------------------------
+clk/samsung updates for 4.14
+
+Changes in definitions of audio related clocks for Exynos5420/5422/5800
+SoCs: a fix of mau_epll clock definition and changes enabling clock rate
+setting propagation on a path from the I2S IP block up the EPLL.
+
+----------------------------------------------------------------
+Sylwester Nawrocki (3):
+      clk: samsung: Fix mau_epll clock definition for exynos5422
+      clk: samsung: Add CLK_SET_RATE_PARENT to some AUDSS CLK CON clocks
+      clk: samsung: exynos542x: Enable clock rate propagation up to the EPLL
+
+ drivers/clk/samsung/clk-exynos-audss.c |  8 ++++----
+ drivers/clk/samsung/clk-exynos5420.c   | 23 +++++++++++++++--------
+ 2 files changed, 19 insertions(+), 12 deletions(-)
+
 -- 
-1.9.1
+Thanks,
+Sylwester
