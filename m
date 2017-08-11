@@ -1,99 +1,187 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36762 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750899AbdHDEaO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 00:30:14 -0400
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io>
-References: <20170801131304.7741-1-icenowy@aosc.io> <20170801131304.7741-11-icenowy@aosc.io>
- <CAGb2v65Ncp5jfq5hrOpqBNYER-VGW1B5j4zT40rj8_CJh5xxVw@mail.gmail.com> <55076172-DD11-4AF5-AEAF-A16C757BF5F0@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 4 Aug 2017 12:29:50 +0800
-Message-ID: <CAGb2v67ihCOmjojidpGfp9WvLiWWbwL+27tm7vOrKX0rRH4O1w@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add
- CLK_SET_RATE_PARENT flag for H3 HDMI clock
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <3668240d-c425-6da8-d62c-1d5fdde7c91e@samsung.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>, "Inki Dae" <inki.dae@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170809103512eucas1p2eb66401b357d82bed91182a5a1b1fea9@eucas1p2.samsung.com>
+ <1502274907-11931-2-git-send-email-m.szyprowski@samsung.com>
+ <150238969053.5192.13225746723120483789@resonance>
+ <3668240d-c425-6da8-d62c-1d5fdde7c91e@samsung.com>
+Message-ID: <150246891549.5192.9442462735977804505@resonance>
+Subject: Re: [PATCH v8 1/5] clk: Add support for runtime PM
+Date: Fri, 11 Aug 2017 09:28:35 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 4, 2017 at 12:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->
->
-> 于 2017年8月4日 GMT+08:00 下午12:15:27, Chen-Yu Tsai <wens@csie.org> 写到:
->>Hi,
->>
->>On Tue, Aug 1, 2017 at 9:13 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->>> From: Jernej Skrabec <jernej.skrabec@siol.net>
->>>
->>> When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be
->>set.
->>>
->>> Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
->>>
->>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->>b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->>> index b1127e8629d9..2ebb3d865b01 100644
->>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
->>> @@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,
->>"avs",          "osc24M",
->>>
->>>  static const char * const hdmi_parents[] = { "pll-video" };
->>>  static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
->>> -                                0x150, 0, 4, 24, 2, BIT(31), 0);
->>> +                                0x150, 0, 4, 24, 2, BIT(31),
->>CLK_SET_RATE_PARENT);
->>
->>Line is longer than 80 characters.
->>
->>This looks independent enough so I've merged this for 4.14 with the
->>offending line wrapped and the following tag added:
->>
->>Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
->
-> Please don't merge this now until Jernej send it.
+Quoting Marek Szyprowski (2017-08-10 23:18:42)
+> Hi Michael,
+> =
 
-(Dropped Rob, devicetree and dri mailing lists)
+> Thanks for the comments!
+> =
 
-Hi Jernej,
+> On 2017-08-10 20:28, Michael Turquette wrote:
+> > Hi Marek,
+> >
+> > Quoting Marek Szyprowski (2017-08-09 03:35:03)
+> >> Registers for some clocks might be located in the SOC area, which are =
+under the
+> >> power domain. To enable access to those registers respective domain ha=
+s to be
+> >> turned on. Additionally, registers for such clocks will usually loose =
+its
+> >> contents when power domain is turned off, so additional saving and res=
+toring of
+> >> them might be needed in the clock controller driver.
+> >>
+> >> This patch adds basic infrastructure in the clocks core to allow imple=
+menting
+> >> driver for such clocks under power domains. Clock provider can supply a
+> >> struct device pointer, which is the used by clock core for tracking an=
+d managing
+> >> clock's controller runtime pm state. Each clk_prepare() operation
+> >> will first call pm_runtime_get_sync() on the supplied device, while
+> >> clk_unprepare() will do pm_runtime_put_sync() at the end.
+> >>
+> >> Additional calls to pm_runtime_get/put functions are required to ensur=
+e that any
+> >> register access (like calculating/changing clock rates and unpreparing=
+/disabling
+> >> unused clocks on boot) will be done with clock controller in runtime r=
+esumend
+> >> state.
+> >>
+> >> When one wants to register clock controller, which make use of this fe=
+ature, he
+> >> has to:
+> >> 1. Provide a struct device to the core when registering the provider.
+> >> 2. Ensure to enable runtime PM for that device before registering cloc=
+ks.
+> >> 3. Make sure that the runtime PM status of the controller device refle=
+cts
+> >>     the HW state.
+> >>
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > Overall the idea and the patch look good to me.
+> >
+> > Calling pm_runtime_get for prepare and pm_runtime_put for unprepared
+> > makes perfect sense to me. It means that the power domain that powers
+> > that clock hardware must be on for that clock to function properly.
+> >
+> > It=E2=80=99s worth pointing out that this patch leaves that power domai=
+n enabled
+> > for for as long as prepare_count is greater than zero.
+> >
+> > However the rate-change operations only use the pm_runtime functions to
+> > program the hardware and modify the registers. At the end of each
+> > rate-change call there is a pm_runtime_put. This makes sense to me, but
+> > I=E2=80=99m trying to wrap my head around the fact that this patch intr=
+oduces
+> > two behaviors:
+> >
+> > 1) protect access to the clk hardware by wrapping writes across the bus
+> > with pm_runtime calls
+> > 2) power the clock logic when the clock is in use (e.g. clk_prepare())
+> >
+> > Everything about this patch *seems* correct to me, but I=E2=80=99m tryi=
+ng to
+> > figure out what it means to for a clock consumer driver to do something
+> > like this:
+> >
+> > clk_prepare_enable()
+> > clk_disable_unprepare()
+> > clk_set_rate()
+> >
+> > Maybe patches #2-5 will help me understand, but I wanted to jot this
+> > down in my review before I forget.
+> =
 
-Is it OK if we take this patch for the next release? Or rather,
-if there anything blocking this patch?
+> Well, the question is what will the above sequence do without my patches?
+> =
 
-Thanks
-ChenYu
+> IMO the only result of above calls is (optionally) changed rate of parent
+> clocks and appropriate values written to given clock's registers, so next
+> time one calls clk_(prepare)_enable(), the given clock will be enabled
+> with the configured rate.
+> =
 
->
->>
->>ChenYu
->>
->>>
->>>  static SUNXI_CCU_GATE(hdmi_ddc_clk,    "hdmi-ddc",     "osc24M",
->>>                       0x154, BIT(31), 0);
->>> --
->>> 2.13.0
->>>
->>> --
->>> You received this message because you are subscribed to the Google
->>Groups "linux-sunxi" group.
->>> To unsubscribe from this group and stop receiving emails from it,
->>send an email to linux-sunxi+unsubscribe@googlegroups.com.
->>> For more options, visit https://groups.google.com/d/optout.
->
+> With runtime pm patches the overall result will be the same. However, if
+> the given clock is the only/last enabled clock from the provider, there
+> might be a runtime pm resume/suspend transition (2 times: one from
+> prepare/unprepare calls, the second from set_rate calls). This means that
+> the rate of parent clocks (especially if they comes from the other
+> providers) might or might not change between those transitions. This
+> depends how the runtime pm is implemented and what operations has to be
+> done for putting provider into suspend mode. The final result will be
+> however the same as without runtime pm patches.
+> =
+
+> Clock provider's runtime pm suspend callback should save internal
+> configuration and resume callback must restore it completely, so the
+> provider's internal state is exactly the same as before suspend. If we
+> assume that clock provider might be in a power domain, the internal
+> clock provider's hardware context might be lost after suspend callback.
+> =
+
+> >> @@ -2583,6 +2673,12 @@ struct clk *clk_register(struct device *dev, st=
+ruct clk_hw *hw)
+> >>                  goto fail_name;
+> >>          }
+> >>          core->ops =3D hw->init->ops;
+> >> +       if (dev && pm_runtime_enabled(dev)) {
+> >> +               core->dev =3D dev;
+> >> +               ret =3D clk_pm_runtime_get(core);
+> >> +               if (ret)
+> >> +                       goto fail_pm;
+> >> +       }
+> >>          if (dev && dev->driver)
+> >>                  core->owner =3D dev->driver->owner;
+> >>          core->hw =3D hw;
+> >> @@ -2629,12 +2725,13 @@ struct clk *clk_register(struct device *dev, s=
+truct clk_hw *hw)
+> >>          }
+> >>   =
+
+> >>          ret =3D __clk_core_init(core);
+> >> -       if (!ret)
+> >> +       if (!ret) {
+> >> +               clk_pm_runtime_put(core);
+> >>                  return hw->clk;
+> >> +       }
+> > I wonder if the above can be moved inside of __clk_core_init?
+> > clk_register shouldn't manage any clk_ops directly, only __clk_core_init
+> > does this.
+> =
+
+> If you prefer that, I will move runtime pm related bits to =
+
+> __clk_core_init then.
+
+Please do. After that I can pull v9 into clk-next.
+
+Thanks,
+Mike
+
+> =
+
+> Best regards
+> -- =
+
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> =
+
 > --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
