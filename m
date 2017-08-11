@@ -1,42 +1,47 @@
-Return-Path: <romain.perier@collabora.com>
-From: Romain Perier <romain.perier@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Romain Perier <romain.perier@collabora.com>
-Subject: [PATCH 1/4] clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
-Date: Mon, 28 Aug 2017 14:16:01 +0200
-Message-Id: <20170828121604.15968-2-romain.perier@collabora.com>
-In-Reply-To: <20170828121604.15968-1-romain.perier@collabora.com>
-References: <20170828121604.15968-1-romain.perier@collabora.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:52913 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752850AbdHKPkW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Aug 2017 11:40:22 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] r8a7796: Add Z and Z2 clock support
+Date: Fri, 11 Aug 2017 17:39:58 +0200
+Message-Id: <1502466000-20185-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Romain Perier <romain.perier@collabora.com>
----
- include/dt-bindings/clock/rk3368-cru.h | 1 +
- 1 file changed, 1 insertion(+)
+Hi,
 
-diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
-index aeb83e581a11..a0063ed7284a 100644
---- a/include/dt-bindings/clock/rk3368-cru.h
-+++ b/include/dt-bindings/clock/rk3368-cru.h
-@@ -156,6 +156,7 @@
- #define PCLK_ISP		366
- #define PCLK_VIP		367
- #define PCLK_WDT		368
-+#define PCLK_EFUSE256		369
- 
- /* hclk gates */
- #define HCLK_SFC		448
+this patch-set adds Z and Z2 clock support.
+
+These are dependencies for supporting CPUFreq. The remainder of that
+work is being posted separately and can be found at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7796-cpufreq
+
+
+A description of steps taken to lightly exercise the same feature for the
+r88a7795 the above can be found at the link below. The results are the same
+for the r8a7796 with the exception that it has two active CPU cores rather
+than four.
+
+http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
+
+This series is based on and depends on
+"[PATCH 0/4] r8a7795: Add Z and Z2 clock support"
+
+
+Takeshi Kihara (2):
+  clk: renesas: r8a7796: Add Z clock
+  clk: renesas: r8a7796: Add Z2 clock
+
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
 -- 
-2.11.0
+2.1.4
+
