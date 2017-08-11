@@ -1,42 +1,31 @@
-Return-Path: <wens@csie.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 10 Aug 2017 21:51:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jonathan Liu <net147@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] dt-bindings: clock: sunxi-ccu: Add compatibles for sun5i
+ CCU driver
+Message-ID: <20170811025134.ee4v2tbol2pjcd4i@rob-hp-laptop>
+References: <20170808012540.16691-1-net147@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <884514a2d304315f54dc81b8b42aea74@aosc.io>
-References: <20170825094953.3247-1-maxime.ripard@free-electrons.com> <884514a2d304315f54dc81b8b42aea74@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 27 Aug 2017 21:10:02 +0800
-Message-ID: <CAGb2v647hP6Ytm+bqNiuA+eMUU5WQrF36mFpVaagLgKZbuQrWQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: Provide a default reset hook
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, devicetree <devicetree@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170808012540.16691-1-net147@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Aug 27, 2017 at 9:01 PM,  <icenowy@aosc.io> wrote:
-> =E5=9C=A8 2017-08-25 17:49=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
-=9A
->>
->> The reset hook was left implemented. Provide a dumb implementation so th=
-at
->> client drivers can depend on it.
->
->
-> I think some clients should also convert to use this.
->
-> For example:
->
-> - The TCON driver in sun4i-drm. (It now uses reset_control_status, but
->   this is also not implemented in CCU.)
+On Tue, Aug 08, 2017 at 11:25:40AM +1000, Jonathan Liu wrote:
+> The bindings were not updated when the sun5i CCU driver was added in
+> commit 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver").
+> 
+> Signed-off-by: Jonathan Liu <net147@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 
-I have patches for both sides of this.
-
-> - The EPHY in dwmac-sun8i driver. (It uses explicit assert then deassert)
->
-> P.S. maybe the status hook should also be implemented?
-
-Yes.
-
-ChenYu
+Acked-by: Rob Herring <robh@kernel.org>
