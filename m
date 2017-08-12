@@ -1,31 +1,47 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:45991 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752337AbdHLSMV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Aug 2017 14:12:21 -0400
+Date: Sat, 12 Aug 2017 20:12:16 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Cc: linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RFCv2] rtc: ds1307: add square wave output from ds1308
+Message-ID: <20170812181216.u2p3yd3ogappnzh4@piout.net>
+References: <20170802052727.18289-1-sean.nyekjaer@prevas.dk>
 MIME-Version: 1.0
-In-Reply-To: <20170808012540.16691-1-net147@gmail.com>
-References: <20170808012540.16691-1-net147@gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 9 Aug 2017 16:55:57 +0800
-Message-ID: <CAGb2v65Rbr11b-ojmgFD_fkDSXkr227HGDMS7oDsZ3Zx2juaJg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: sunxi-ccu: Add compatibles for sun5i
- CCU driver
-To: Jonathan Liu <net147@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170802052727.18289-1-sean.nyekjaer@prevas.dk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 02/08/2017 at 07:27:27 +0200, Sean Nyekjaer wrote:
+> +static int ds1308_write_control(struct ds1307 *ds1307, u8 mask, u8 value)
+> +{
+> +	struct mutex *lock = &ds1307->rtc->ops_lock;
+> +	int ret;
+> +
+> +	mutex_lock(lock);
+> +	ret = regmap_update_bits(ds1307->regmap, DS1307_REG_CONTROL,
+> +				 mask, value);
 
-On Tue, Aug 8, 2017 at 9:25 AM, Jonathan Liu <net147@gmail.com> wrote:
-> The bindings were not updated when the sun5i CCU driver was added in
-> commit 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver").
->
-> Signed-off-by: Jonathan Liu <net147@gmail.com>
+This access is already properly locked, you don't need
+ds1308_write_control.
 
-Looks good to me. Will wait for the device tree binding maintainers
-to have a say before I apply it for 4.14.
+(I know, the function below is not necessary either but it is there for
+historical reasons).
 
-ChenYu
+> +	mutex_unlock(lock);
+> +
+> +	return ret;
+> +}
+> +
+>  static int ds1337_write_control(struct ds1307 *ds1307, u8 mask, u8 value)
+>  {
+>  	struct mutex *lock = &ds1307->rtc->ops_lock;
+
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
