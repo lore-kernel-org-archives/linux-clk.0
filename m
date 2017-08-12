@@ -1,45 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Aug 2017 15:38:43 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [GIT PULL] clk/samsung updates for 4.14-rc1
-Message-ID: <20170823223843.GE21656@codeaurora.org>
-References: <CGME20170811170044epcas1p156cc48d8ca2d2533fa91daf41213487f@epcas1p1.samsung.com>
- <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:41092 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751731AbdHLDHr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Aug 2017 23:07:47 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sat, 12 Aug 2017 11:07:42 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Priit Laes <plaes@plaes.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Jonathan Liu <net147@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-sunxi@googlegroups.com, Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 1/6] clk: sunxi-ng: div: Add support for fixed
+ post-divider
+In-Reply-To: <20170717085235.i7pwwql5dgmnf6kk@flea>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+ <946794e97ae2c36cd67c272099e8236a589efc28.1500043741.git-series.plaes@plaes.org>
+ <20170717085235.i7pwwql5dgmnf6kk@flea>
+Message-ID: <d3ca32de91e857a8933fd570600cda17@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Sylwester Nawrocki wrote:
+在 2017-07-17 16:52，Maxime Ripard 写道：
+> On Fri, Jul 14, 2017 at 05:49:23PM +0300, Priit Laes wrote:
+>> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
+>> 6 is fixed post-divider.
+>> 
+>> Signed-off-by: Priit Laes <plaes@plaes.org>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu_div.c | 15 +++++++++++++--
+>>  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
+>>  2 files changed, 15 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/drivers/clk/sunxi-ng/ccu_div.c 
+>> b/drivers/clk/sunxi-ng/ccu_div.c
+>> index c0e5c10..744502a 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_div.c
+>> +++ b/drivers/clk/sunxi-ng/ccu_div.c
+>> @@ -21,6 +21,9 @@ static unsigned long ccu_div_round_rate(struct 
+>> ccu_mux_internal *mux,
+>>  {
+>>  	struct ccu_div *cd = data;
+>> 
+>> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>> +		rate *= cd->fixed_post_div;
+>> +
+>>  	return divider_round_rate_parent(&cd->common.hw, parent,
+>>  					 rate, parent_rate,
+>>  					 cd->div.table, cd->div.width,
 > 
-> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 > 
->   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.14-samsung
-> 
-> for you to fetch changes up to 599cebea93e69c25e4cf027fc21d2bdf9a4a1ec7:
-> 
->   clk: samsung: exynos542x: Enable clock rate propagation up to the EPLL (2017-08-10 10:56:23 +0200)
-> 
-> ----------------------------------------------------------------
-> clk/samsung updates for 4.14
-> 
-> Changes in definitions of audio related clocks for Exynos5420/5422/5800
-> SoCs: a fix of mau_epll clock definition and changes enabling clock rate
-> setting propagation on a path from the I2S IP block up the EPLL.
-> 
+> You still haven't addressed the biggest issue with this patch, see:
+> https://patchwork.kernel.org/patch/9825565/
 
-Thanks. Pulled into clk-next.
+I think he has already did the changes suggested in the review.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+(P.S. during developing R40 CCU driver I found that pll-periph0-sata
+also needs this patch, so I'm rechecking it)
+
+> 
+> Maxime
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
