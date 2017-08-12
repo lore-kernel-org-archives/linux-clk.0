@@ -1,69 +1,94 @@
-Return-Path: <afaerber@suse.de>
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Roc He <hepeng@zidoo.tv>,
-	=?UTF-8?q?=E8=92=8B=E4=B8=BD=E7=90=B4?= <jiang.liqin@geniatech.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	devicetree@vger.kernel.org
-Subject: [RFC 0/4] arm64: Realtek RTD1295 clocks
-Date: Thu, 17 Aug 2017 13:20:21 +0200
-Message-Id: <20170817112026.24062-1-afaerber@suse.de>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <d3ca32de91e857a8933fd570600cda17@aosc.io>
+References: <cover.ba2aaaa405a7ec685034e34926b8855fd6c9ab86.1500043741.git-series.plaes@plaes.org>
+ <946794e97ae2c36cd67c272099e8236a589efc28.1500043741.git-series.plaes@plaes.org>
+ <20170717085235.i7pwwql5dgmnf6kk@flea> <d3ca32de91e857a8933fd570600cda17@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 12 Aug 2017 12:13:38 +0800
+Message-ID: <CAGb2v675Y3AAa747-3VqsPN64YOk11v5Gm3_yq5ZeJ=YPz596g@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v6 1/6] clk: sunxi-ng: div: Add support
+ for fixed post-divider
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Priit Laes <plaes@plaes.org>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
+	Jonathan Liu <net147@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	linux-sunxi <linux-sunxi@googlegroups.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel <linux-kernel@vger.kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Sat, Aug 12, 2017 at 11:07 AM,  <icenowy@aosc.io> wrote:
+> =E5=9C=A8 2017-07-17 16:52=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
+=9A
+>>
+>> On Fri, Jul 14, 2017 at 05:49:23PM +0300, Priit Laes wrote:
+>>>
+>>> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
+>>> 6 is fixed post-divider.
+>>>
+>>> Signed-off-by: Priit Laes <plaes@plaes.org>
+>>> ---
+>>>  drivers/clk/sunxi-ng/ccu_div.c | 15 +++++++++++++--
+>>>  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
+>>>  2 files changed, 15 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/sunxi-ng/ccu_div.c
+>>> b/drivers/clk/sunxi-ng/ccu_div.c
+>>> index c0e5c10..744502a 100644
+>>> --- a/drivers/clk/sunxi-ng/ccu_div.c
+>>> +++ b/drivers/clk/sunxi-ng/ccu_div.c
+>>> @@ -21,6 +21,9 @@ static unsigned long ccu_div_round_rate(struct
+>>> ccu_mux_internal *mux,
+>>>  {
+>>>         struct ccu_div *cd =3D data;
+>>>
+>>> +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>>> +               rate *=3D cd->fixed_post_div;
+>>> +
+>>>         return divider_round_rate_parent(&cd->common.hw, parent,
+>>>                                          rate, parent_rate,
+>>>                                          cd->div.table, cd->div.width,
+>>
+>>
+>>
+>> You still haven't addressed the biggest issue with this patch, see:
+>> https://patchwork.kernel.org/patch/9825565/
+>
+>
+> I think he has already did the changes suggested in the review.
 
-This series adds two clock controllers for the Realtek RTD1295 SoC.
-Based on my reset controller and IRQ mux series.
+Nope. Only half of it is fixed. First you "unapply" the post-divider,
+i.e. multiply the rate by the divider. Then you pass it to
+divider_round_rate_parent. You still have to reapply the divider
+to the result. This last part is missing. This means the clock
+rate returned by ccu_div_round_rate is going to be off.
 
-There being no public source code for RTD1295, the implementation is based on
-register offsets, fields and names seen in the vendor DT, unified into 2 nodes.
+Instead the return statement should be
 
-The PLL calculations were experimentally found by comparing vendor Android
-/sys/kernel/debug/clk/clk_summary to the register field values in /dev/mem -
-thus the formulas may be incomplete or incorrect.
+    return divider_round_rate_parent(...) / cd->fixed_post_div
 
-Together with the reset driver and IRQ mux, the clock gates allow to
-initialize UART1.
+ChenYu
 
-Code needs cleanups - sharing this for calculation findings and design.
-
-More experimental patches at:
-https://github.com/afaerber/linux/commits/rtd1295-next
-
-Have a lot of fun!
-
-Cheers,
-Andreas
-
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: Roc He <hepeng@zidoo.tv>
-Cc: 蒋丽琴 <jiang.liqin@geniatech.com>
-Cc: devicetree@vger.kernel.org
-
-Andreas Färber (4):
-  dt-bindings: clock: Add Realtek RTD1295
-  arm64: dts: realtek: Add clock nodes for RTD1295
-  clk: Add Realtek RTD1295
-  arm64: dts: realtek: Update RTD1295 UART nodes with clocks
-
- .../devicetree/bindings/clock/realtek,rtd129x.txt  |  20 ++
- arch/arm64/boot/dts/realtek/rtd1295.dtsi           |  28 +-
- drivers/clk/Kconfig                                |   7 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-rtd1295.c                          | 385 +++++++++++++++++++++
- include/dt-bindings/clock/realtek,rtd1295.h        |  99 ++++++
- 6 files changed, 537 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd129x.txt
- create mode 100644 drivers/clk/clk-rtd1295.c
- create mode 100644 include/dt-bindings/clock/realtek,rtd1295.h
-
--- 
-2.12.3
+>
+> (P.S. during developing R40 CCU driver I found that pll-periph0-sata
+> also needs this patch, so I'm rechecking it)
+>
+>>
+>> Maxime
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
