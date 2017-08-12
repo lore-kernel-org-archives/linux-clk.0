@@ -1,52 +1,56 @@
-Return-Path: <plaes@plaes.org>
-From: Priit Laes <plaes@plaes.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>,
-	Olliver Schinagl <oliver@schinagl.nl>,
-	Priit Laes <plaes@plaes.org>
-Subject: [PATCH v7 3/5] dt-bindings: List devicetree binding for the CCU of Allwinner A10
-Date: Wed, 23 Aug 2017 20:23:31 +0300
-Message-Id: <8164ec90ec4949801522a1b6b3fe57efe9feb60e.1503507503.git-series.plaes@plaes.org>
-In-Reply-To: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
-References: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
-In-Reply-To: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
-References: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:53799 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750848AbdHLMoK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 12 Aug 2017 08:44:10 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 0/3] Allwinner R40 CCU driver
+Date: Sat, 12 Aug 2017 20:43:49 +0800
+Message-Id: <20170812124352.24148-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A10 is now driven by sunxi-ng CCU driver.
+Allwinner R40 has a CCU like other CCUs after A31, however as it contains
+many peripherals (especially SATA), the CCU is complicated.
 
-Add devicetree binding for it.
+This patchset adds support for it.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
- 1 file changed, 1 insertion(+)
+Patch 1 is from Priit's A10/A20 CCU patchset, which is needed for
+pll-periph0-sata (like the pll-periph-sata on A10/A20).
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index 2712891..7eda08e 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
- 
- Required properties :
- - compatible: must contain one of the following compatibles:
-+		- "allwinner,sun4i-a10-ccu"
- 		- "allwinner,sun5i-a10s-ccu"
- 		- "allwinner,sun5i-a13-ccu"
- 		- "allwinner,sun6i-a31-ccu"
+Patch 2 adds postdiv support for NKM type clock, which is needed for
+pll-sata (with a postdiv of 6).
+
+Patch 3 is the main patch, which adds the support for R40 CCU.
+
+Icenowy Zheng (2):
+  clk: sunxi-ng: nkm: add support for fixed post-divider
+  clk: sunxi-ng: support R40 SoC
+
+Priit Laes (1):
+  clk: sunxi-ng: div: Add support for fixed post-divider
+
+ drivers/clk/sunxi-ng/Kconfig              |    5 +
+ drivers/clk/sunxi-ng/Makefile             |    1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1240 +++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   69 ++
+ drivers/clk/sunxi-ng/ccu_div.c            |   22 +-
+ drivers/clk/sunxi-ng/ccu_div.h            |    3 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c            |   22 +-
+ drivers/clk/sunxi-ng/ccu_nkm.h            |    2 +
+ include/dt-bindings/clock/sun8i-r40-ccu.h |  187 +++++
+ include/dt-bindings/reset/sun8i-r40-ccu.h |  130 +++
+ 10 files changed, 1674 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+ create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+
 -- 
-git-series 0.9.1
+2.13.0
+
