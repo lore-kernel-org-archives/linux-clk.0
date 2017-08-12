@@ -1,35 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 31 Aug 2017 18:32:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Dmitry Shmidt <dimitrysh@google.com>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: Re: [PATCH 2/2] arm64: dts: hi6220: enable watchdog
-Message-ID: <20170901013233.GL21656@codeaurora.org>
-References: <1503993518-24428-1-git-send-email-leo.yan@linaro.org>
- <1503993518-24428-2-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:43794 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750757AbdHLEvS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 12 Aug 2017 00:51:18 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503993518-24428-2-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sat, 12 Aug 2017 12:51:17 +0800
+From: icenowy@aosc.io
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 08/10] clk: sunxi-ng: support R40 SoC
+In-Reply-To: <CAGb2v66_n-ZDRsCd+wcwUgvVbNw3OBk6JG9yqp8Mb6gXajHk3g@mail.gmail.com>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+ <20170527102308.1988-9-icenowy@aosc.io>
+ <20170529073428.f5os7g5e666v4xnp@wens.csie.org>
+ <e09fedcfd790963729f785cd432206a6@aosc.io>
+ <CAGb2v66_n-ZDRsCd+wcwUgvVbNw3OBk6JG9yqp8Mb6gXajHk3g@mail.gmail.com>
+Message-ID: <36d3f8302887937ff18067fd6f6bc38d@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/29, Leo Yan wrote:
-> From: Dmitry Shmidt <dimitrysh@google.com>
+在 2017-08-12 12:04，Chen-Yu Tsai 写道：
+> On Sat, Jul 22, 2017 at 11:00 AM,  <icenowy@aosc.io> wrote:
+>> 在 2017-05-29 15:34，Chen-Yu Tsai 写道：
+>>> 
+>>> Hi,
+>>> 
+>>> On Sat, May 27, 2017 at 06:23:06PM +0800, Icenowy Zheng wrote:
 > 
-> This patch is to add watchdog binding for Hi6220 on Hikey board.
+> [...]
 > 
-> Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
-> ---
+>>>> +
+>>>> +/*
+>>>> + * For the special bit in gate part, please see the BSP source code 
+>>>> at
+>>>> + *
+>>>> https://github.com/BPI-SINOVOIP/BPI-M2U-bsp/blob/master/linux-sunxi/drivers/clk/sunxi/clk-sun8iw11.c#L665
+>>>> + */
+>>>> +static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_sata_clk, "pll-sata",
+>>>> +                                   "osc24M", 0x034,
+>>>> +                                   8, 5,       /* N */
+>>>> +                                   4, 2,       /* K */
+>>>> +                                   0, 2,       /* M */
+>>>> +                                   BIT(31) | BIT(14),  /* gate */
+>>>> +                                   BIT(28),    /* lock */
+>>>> +                                   0);
+>>> 
+>>> 
+>>> I think this is a somewhat simplified approach. From what I 
+>>> understand
+>>> of the user manual, the SATA clock path look like:
+>>> 
+>>> 
+>>> [ PLL-PERIPH0-SATA ] -\
+>>>                       mux @ 0x34 bit 30 --- gate @ 0x34 bit 14 --- 
+>>> ...
+>>> [ PLL-SATA ] ---------/
+>>> 
+>>> ... from above ... ------\
+>>>                          mux @ 0xc8 bit 24 --- gate @ 0xc8 bit 31
+>>> [ external oscillator ] -/
+>>> 
+>>> If you choose to simplify the implementation, please include a 
+>>> detailed
+>>> note as to why you chose to do so, and the validity of the 
+>>> simplification.
+>> 
+>> 
+>> I think it can be fully implemented...
+>> 
+>> But how should I call the internal clock controlled by the mux @ 0x34 
+>> bit
+>> 30?
+> 
+> sata-pll-mux?
 
-This will go through arm-soc?
+I choose to call it pll-sata-out, as the mux @ 0x34 bit 30 is called
+"PLL_OUTPUT_SEL".
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> ChenYu
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
