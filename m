@@ -1,46 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, shawn.lin@rock-chips.com,
-        andy.yan@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 5/9] clk: rockchip: fix up the pll clks error for rv1108 SoC
-Date: Tue,  8 Aug 2017 15:17:55 +0800
-Message-Id: <1502176675-32228-1-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
-References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sat, 12 Aug 2017 12:04:14 +0800
+From: icenowy@aosc.io
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 08/10] clk: sunxi-ng: support R40 SoC
+In-Reply-To: <20170529073428.f5os7g5e666v4xnp@wens.csie.org>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+ <20170527102308.1988-9-icenowy@aosc.io>
+ <20170529073428.f5os7g5e666v4xnp@wens.csie.org>
+Message-ID: <7e211ba8fd8ae0296f678294d09fcf0d@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-fix up the lock_shift describe error.
-remove the ROCKCHIP_PLL_SYNC_RATE flag for gpll.
+在 2017-05-29 15:34，Chen-Yu Tsai 写道：
+> Hi,
+> 
+> On Sat, May 27, 2017 at 06:23:06PM +0800, Icenowy Zheng wrote:
+>> Allwinner R40 SoC have a clock controller module in the style of the
+>> SoCs beyond sun6i, however, it's more rich and complex.
+>> 
+>> Add support for it.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>> Changes in v3:
+>> - Rebased on current linux-next.
+>> Changes in v2:
+>> - Fixes according to the SoC's user manual.
+>> 
+>>  drivers/clk/sunxi-ng/Kconfig              |   10 +
+>>  drivers/clk/sunxi-ng/Makefile             |    1 +
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1153 
+>> +++++++++++++++++++++++++++++
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   68 ++
+>>  include/dt-bindings/clock/sun8i-r40-ccu.h |  191 +++++
+>>  include/dt-bindings/reset/sun8i-r40-ccu.h |  129 ++++
+>>  6 files changed, 1552 insertions(+)
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+>>  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+>>  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+>> 
+> ...
+>> +static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
+>> +				   "osc24M", 0x04c,
+>> +				   8, 7,	/* N */
+> 
+> N has minimum and maximum limits.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rv1108.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+These constraints are never implemented in old SoCs.
 
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index 3c670db16e18..9c6bad0da140 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -148,11 +148,11 @@ enum rv1108_plls {
- 
- static struct rockchip_pll_clock rv1108_pll_clks[] __initdata = {
- 	[apll] = PLL(pll_rk3399, PLL_APLL, "apll", mux_pll_p, 0, RV1108_PLL_CON(0),
--		     RV1108_PLL_CON(3), 8, 31, 0, rv1108_pll_rates),
-+		     RV1108_PLL_CON(3), 8, 0, 0, rv1108_pll_rates),
- 	[dpll] = PLL(pll_rk3399, PLL_DPLL, "dpll", mux_pll_p, 0, RV1108_PLL_CON(8),
--		     RV1108_PLL_CON(11), 8, 31, 0, NULL),
-+		     RV1108_PLL_CON(11), 8, 1, 0, NULL),
- 	[gpll] = PLL(pll_rk3399, PLL_GPLL, "gpll", mux_pll_p, 0, RV1108_PLL_CON(16),
--		     RV1108_PLL_CON(19), 8, 31, ROCKCHIP_PLL_SYNC_RATE, rv1108_pll_rates),
-+		     RV1108_PLL_CON(19), 8, 2, 0, rv1108_pll_rates),
- };
- 
- #define MFLAGS CLK_MUX_HIWORD_MASK
--- 
-1.9.1
+>> --
+>> 2.12.2
+>> 
