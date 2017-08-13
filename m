@@ -1,157 +1,114 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [RFC v2 05/12] clk: qcom: support for dynamic updating the PLL
-Date: Tue,  8 Aug 2017 23:54:10 +0530
-Message-Id: <1502216657-3342-6-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:42855 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752264AbdHMCul (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 12 Aug 2017 22:50:41 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Sun, 13 Aug 2017 10:50:40 +0800
+From: icenowy@aosc.io
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-sunxi@googlegroups.com, Priit Laes <plaes@plaes.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] clk: sunxi-ng: div: Add support for fixed
+ post-divider
+In-Reply-To: <20170812124352.24148-2-icenowy@aosc.io>
+References: <20170812124352.24148-1-icenowy@aosc.io>
+ <20170812124352.24148-2-icenowy@aosc.io>
+Message-ID: <d47777b1acaae095020697fa7c2064ac@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the Alpha PLL’s support dynamic update in which the
-frequency can be changed dynamically without turning off the PLL.
+在 2017-08-12 20:43，Icenowy Zheng 写道：
+> From: Priit Laes <plaes@plaes.org>
+> 
+> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
+> 6 is fixed post-divider.
+> 
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 
-This dynamic update requires the following sequence
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-1. Write the desired values to pll_l_val and pll_alpha_val
-2. Toggle pll_latch_input from low to high
-3. Wait for pll_ack_latch to transition from low to high
-   The new L and alpha values have been latched. It make
-   take some time for the PLL to fully settle with these
-   new values
-4. Pull pll_latch_input low
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 67 +++++++++++++++++++++++++++++++++++++++-
- drivers/clk/qcom/clk-alpha-pll.h |  1 +
- 2 files changed, 67 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 6694fd5..1f37bf8a 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -31,7 +31,10 @@
- # define PLL_VOTE_FSM_ENA	BIT(20)
- # define PLL_FSM_ENA		BIT(20)
- # define PLL_VOTE_FSM_RESET	BIT(21)
-+# define PLL_UPDATE		BIT(22)
-+# define PLL_UPDATE_BYPASS	BIT(23)
- # define PLL_OFFLINE_ACK	BIT(28)
-+# define ALPHA_PLL_ACK_LATCH	BIT(29)
- # define PLL_ACTIVE_FLAG	BIT(30)
- # define PLL_LOCK_DET		BIT(31)
- 
-@@ -123,6 +126,15 @@ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
- #define wait_for_pll_offline(pll) \
- 	wait_for_pll(pll, PLL_OFFLINE_ACK, 0, "offline")
- 
-+#define wait_for_pll_update(pll) \
-+	wait_for_pll(pll, PLL_UPDATE, 1, "update")
-+
-+#define wait_for_pll_update_ack_set(pll) \
-+	wait_for_pll(pll, ALPHA_PLL_ACK_LATCH, 0, "update_ack_set")
-+
-+#define wait_for_pll_update_ack_clear(pll) \
-+	wait_for_pll(pll, ALPHA_PLL_ACK_LATCH, 1, "update_ack_clear")
-+
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config)
- {
-@@ -396,6 +408,56 @@ static void clk_alpha_pll_disable(struct clk_hw *hw)
- 	return alpha_pll_calc_rate(prate, l, a, alpha_width);
- }
- 
-+static int clk_alpha_pll_update_latch(struct clk_alpha_pll *pll)
-+{
-+	u32 mode;
-+	int ret;
-+
-+	regmap_read(pll->clkr.regmap, pll_mode(pll), &mode);
-+
-+	/* Latch the input to the PLL */
-+	regmap_update_bits(pll->clkr.regmap, pll_mode(pll), PLL_UPDATE,
-+			   PLL_UPDATE);
-+
-+	/* Make sure PLL_UPDATE request goes through*/
-+	mb();
-+
-+	/* Wait for 2 reference cycle before checking ACK bit */
-+	udelay(1);
-+
-+	/*
-+	 * PLL will latch the new L, Alpha and freq control word.
-+	 * PLL will respond by raising PLL_ACK_LATCH output when new programming
-+	 * has been latched in and PLL is being updated. When
-+	 * UPDATE_LOGIC_BYPASS bit is not set, PLL_UPDATE will be cleared
-+	 * automatically by hardware when PLL_ACK_LATCH is asserted by PLL.
-+	 */
-+	if (mode & PLL_UPDATE_BYPASS) {
-+		ret = wait_for_pll_update_ack_set(pll);
-+		if (ret)
-+			return ret;
-+
-+		regmap_update_bits(pll->clkr.regmap, pll_mode(pll),
-+				   PLL_UPDATE, 0);
-+
-+		/* Make sure PLL_UPDATE request goes through*/
-+		mb();
-+	} else {
-+		ret = wait_for_pll_update(pll);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = wait_for_pll_update_ack_clear(pll);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for PLL output to stabilize */
-+	udelay(10);
-+
-+	return 0;
-+}
-+
- static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long prate)
- {
-@@ -428,7 +490,10 @@ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll), PLL_ALPHA_EN,
- 			   PLL_ALPHA_EN);
- 
--	return 0;
-+	if (!clk_hw_is_enabled(hw) || !(pll->flags & SUPPORTS_DYNAMIC_UPDATE))
-+		return 0;
-+
-+	return clk_alpha_pll_update_latch(pll);
- }
- 
- static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 4901d92..8b27c05 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -54,6 +54,7 @@ struct clk_alpha_pll {
- #define SUPPORTS_16BIT_ALPHA		BIT(1)
- #define SUPPORTS_FSM_MODE		BIT(2)
- #define SUPPORTS_64BIT_CONFIG_CTL	BIT(3)
-+#define SUPPORTS_DYNAMIC_UPDATE		BIT(4)
- 	u8 flags;
- 
- 	struct clk_regmap clkr;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> ---
+> It's based on the patch in v6 of the A10/A20 CCU patchset, but with
+> ccu_div_round_rate fixed.
+> 
+>  drivers/clk/sunxi-ng/ccu_div.c | 22 +++++++++++++++++++---
+>  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
+>  2 files changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.c 
+> b/drivers/clk/sunxi-ng/ccu_div.c
+> index c0e5c10d0091..baa3cf96507b 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.c
+> +++ b/drivers/clk/sunxi-ng/ccu_div.c
+> @@ -21,10 +21,18 @@ static unsigned long ccu_div_round_rate(struct
+> ccu_mux_internal *mux,
+>  {
+>  	struct ccu_div *cd = data;
+> 
+> -	return divider_round_rate_parent(&cd->common.hw, parent,
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate *= cd->fixed_post_div;
+> +
+> +	rate = divider_round_rate_parent(&cd->common.hw, parent,
+>  					 rate, parent_rate,
+>  					 cd->div.table, cd->div.width,
+>  					 cd->div.flags);
+> +
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate /= cd->fixed_post_div;
+> +
+> +	return rate;
+>  }
+> 
+>  static void ccu_div_disable(struct clk_hw *hw)
+> @@ -62,8 +70,13 @@ static unsigned long ccu_div_recalc_rate(struct 
+> clk_hw *hw,
+>  	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
+>  						  parent_rate);
+> 
+> -	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+> -				   cd->div.flags);
+> +	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
+> +				  cd->div.flags);
+> +
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		val /= cd->fixed_post_div;
+> +
+> +	return val;
+>  }
+> 
+>  static int ccu_div_determine_rate(struct clk_hw *hw,
+> @@ -86,6 +99,9 @@ static int ccu_div_set_rate(struct clk_hw *hw,
+> unsigned long rate,
+>  	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
+>  						  parent_rate);
+> 
+> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> +		rate *= cd->fixed_post_div;
+> +
+>  	val = divider_get_val(rate, parent_rate, cd->div.table, 
+> cd->div.width,
+>  			      cd->div.flags);
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.h 
+> b/drivers/clk/sunxi-ng/ccu_div.h
+> index 08d074451204..f3a5028dcd14 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.h
+> +++ b/drivers/clk/sunxi-ng/ccu_div.h
+> @@ -86,9 +86,10 @@ struct ccu_div_internal {
+>  struct ccu_div {
+>  	u32			enable;
+> 
+> -	struct ccu_div_internal		div;
+> +	struct ccu_div_internal	div;
+>  	struct ccu_mux_internal	mux;
+>  	struct ccu_common	common;
+> +	unsigned int		fixed_post_div;
+>  };
+> 
+>  #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
