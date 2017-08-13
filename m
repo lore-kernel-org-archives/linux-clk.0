@@ -1,36 +1,56 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1503914243-24518-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1503914243-24518-1-git-send-email-hayashi.kunihiko@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 29 Aug 2017 00:40:27 +0900
-Message-ID: <CAK7LNAQ_7hsMZzP161pGseaLkNSxn9yVFSFCHCLOS_mqxZSNjg@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: add ethernet clock control support
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752095AbdHMOWn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 13 Aug 2017 10:22:43 -0400
+From: Shawn Guo <shawnguo@kernel.org>
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-clk@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH] usb: dwc3: of-simple: remove include of clk-provider.h
+Date: Sun, 13 Aug 2017 22:21:11 +0800
+Message-Id: <1502634071-2266-1-git-send-email-shawnguo@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-08-28 18:57 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
-> Add clock control for ethernet controller on Pro4, PXs2, LD11 and LD20.
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
+From: Shawn Guo <shawn.guo@linaro.org>
 
+The header clk-provider.h is there for clock drivers (providers) to
+include, not client drivers (consumers).  That said,
+of_clk_get_parent_count() is a helper function for clock providers, not
+a clk API for consumers.
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Let's replace of_clk_get_parent_count() with of_count_phandle_with_args()
+call, so that we can remove the include of clk-provider.h.
 
-Thanks!
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+ drivers/usb/dwc3/dwc3-of-simple.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-
+diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+index fe414e7a9c78..4cef7d4f9cd0 100644
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -25,7 +25,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/clk.h>
+-#include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
+@@ -96,7 +95,8 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, simple);
+ 	simple->dev = dev;
+ 
+-	ret = dwc3_of_simple_clk_init(simple, of_clk_get_parent_count(np));
++	ret = dwc3_of_simple_clk_init(simple, of_count_phandle_with_args(np,
++						"clocks", "#clock-cells"));
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
+
