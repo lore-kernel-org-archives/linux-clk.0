@@ -1,266 +1,89 @@
-Return-Path: <lori.hikichi@broadcom.com>
-Return-Path: <lori.hikichi@broadcom.com>
-From: Lori Hikichi <lori.hikichi@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 13 Aug 2017 22:18:53 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Lori Hikichi <lori.hikichi@broadcom.com>,
-	Simran Rai <ssimran@broadcom.com>
-Subject: [PATCH v1 1/4] clk: iproc: Allow iproc pll to runtime calculate vco parameters
-Date: Mon, 14 Aug 2017 12:00:38 -0700
-Message-Id: <1502737241-2040-2-git-send-email-lori.hikichi@broadcom.com>
-In-Reply-To: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
-References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
+Message-ID: <20170813141851.GD31819@dragon>
+References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
+ <20170809173318.GD2146@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170809173318.GD2146@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the ability for the iproc pll to calculate the pll parameters at
-runtime instead of only using predefined tables. This ability allows
-the clock users to select from the full range of vco frequencies.
-The old method of table based programming is retained so that existing
-users will retain expected behavior. The flag IPROC_CLK_PLL_CALC_PARAM
-will need to be set to enable the new runtime calculation method.
-Currently, this is only being enabled for the audio pll.
+Hi Stephen,
 
-This feature also revealed a problem with the driver using the
-round_rate api.  The round_rate api does not allow for frequencies larger
-than 2^31 to be returned.  Those large frequencies are interpreted as an
-error code. Therefore, we are moving to the determine_rate api which
-solves this problem.
+On Wed, Aug 09, 2017 at 10:33:18AM -0700, Stephen Boyd wrote:
+> > diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+> > index c834f5abfc49..65cee595a67e 100644
+> > --- a/drivers/clk/clk-bulk.c
+> > +++ b/drivers/clk/clk-bulk.c
+> > @@ -39,7 +39,10 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+> >  		clks[i].clk = NULL;
+> >  
+> >  	for (i = 0; i < num_clks; i++) {
+> > -		clks[i].clk = clk_get(dev, clks[i].id);
+> > +		if (clks[i].id)
+> > +			clks[i].clk = clk_get(dev, clks[i].id);
+> > +		else if (dev->of_node)
+> > +			clks[i].clk = of_clk_get(dev->of_node, i);
+> 
+> This seems a little too magical. The omission of an id in an
+> array of clks would mean that only that one clk is acquired
+> through of_clk_get(). We could have a mixture of ids and no ids
+> for some device, and then do very odd things.
+> 
+> How about we add a flag to clk_bulk_data that indicates we want
+> it to use of_clk_get() instead of clk_get() for all of the clks?
+> Then the id is ignored for the entire function.
 
-Signed-off-by: Simran Rai <ssimran@broadcom.com>
-Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
----
- drivers/clk/bcm/clk-cygnus.c    | 25 +++--------
- drivers/clk/bcm/clk-iproc-pll.c | 97 ++++++++++++++++++++++++++++++++++-------
- drivers/clk/bcm/clk-iproc.h     |  5 +++
- 3 files changed, 92 insertions(+), 35 deletions(-)
+I have sent v2 to add a flag to clk_bulk_data to address your comments.
+But I just found it might not be what you want exactly, because the
+current bulk clk APIs defines clk_bulk_data in a different way from what
+you are asking here.
 
-diff --git a/drivers/clk/bcm/clk-cygnus.c b/drivers/clk/bcm/clk-cygnus.c
-index 464fdc4..b8d073e 100644
---- a/drivers/clk/bcm/clk-cygnus.c
-+++ b/drivers/clk/bcm/clk-cygnus.c
-@@ -269,23 +269,10 @@ static void __init cygnus_asiu_init(struct device_node *node)
- }
- CLK_OF_DECLARE(cygnus_asiu_clk, "brcm,cygnus-asiu-clk", cygnus_asiu_init);
- 
--/*
-- * AUDIO PLL VCO frequency parameter table
-- *
-- * PLL output frequency = ((ndiv_int + ndiv_frac / 2^20) *
-- * (parent clock rate / pdiv)
-- *
-- * On Cygnus, parent is the 25MHz oscillator
-- */
--static const struct iproc_pll_vco_param audiopll_vco_params[] = {
--	/* rate (Hz) ndiv_int ndiv_frac pdiv */
--	{ 1354750204UL,  54,     199238,   1 },
--	{ 1769470191UL,  70,     816639,   1 },
--};
--
- static const struct iproc_pll_ctrl audiopll = {
- 	.flags = IPROC_CLK_PLL_NEEDS_SW_CFG | IPROC_CLK_PLL_HAS_NDIV_FRAC |
--		IPROC_CLK_PLL_USER_MODE_ON | IPROC_CLK_PLL_RESET_ACTIVE_LOW,
-+		IPROC_CLK_PLL_USER_MODE_ON | IPROC_CLK_PLL_RESET_ACTIVE_LOW |
-+		IPROC_CLK_PLL_CALC_PARAM,
- 	.reset = RESET_VAL(0x5c, 0, 1),
- 	.dig_filter = DF_VAL(0x48, 0, 3, 6, 4, 3, 3),
- 	.sw_ctrl = SW_CTRL_VAL(0x4, 0),
-@@ -300,8 +287,7 @@ static void __init cygnus_asiu_init(struct device_node *node)
- static const struct iproc_clk_ctrl audiopll_clk[] = {
- 	[BCM_CYGNUS_AUDIOPLL_CH0] = {
- 		.channel = BCM_CYGNUS_AUDIOPLL_CH0,
--		.flags = IPROC_CLK_AON |
--				IPROC_CLK_MCLK_DIV_BY_2,
-+		.flags = IPROC_CLK_AON | IPROC_CLK_MCLK_DIV_BY_2,
- 		.enable = ENABLE_VAL(0x14, 8, 10, 9),
- 		.mdiv = REG_VAL(0x14, 0, 8),
- 	},
-@@ -321,9 +307,8 @@ static void __init cygnus_asiu_init(struct device_node *node)
- 
- static void __init cygnus_audiopll_clk_init(struct device_node *node)
- {
--	iproc_pll_clk_setup(node, &audiopll, audiopll_vco_params,
--			    ARRAY_SIZE(audiopll_vco_params), audiopll_clk,
--			    ARRAY_SIZE(audiopll_clk));
-+	iproc_pll_clk_setup(node, &audiopll, NULL, 0,
-+			    audiopll_clk,  ARRAY_SIZE(audiopll_clk));
- }
- CLK_OF_DECLARE(cygnus_audiopll, "brcm,cygnus-audiopll",
- 			cygnus_audiopll_clk_init);
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index 375d8dd..9514ecf 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -95,6 +95,39 @@ struct iproc_pll {
- 
- #define to_iproc_clk(hw) container_of(hw, struct iproc_clk, hw)
- 
-+static int pll_calc_param(unsigned long target_rate,
-+			unsigned long parent_rate,
-+			struct iproc_pll_vco_param *vco_out)
-+{
-+	u64 ndiv_int, ndiv_frac, residual;
-+
-+	ndiv_int = target_rate / parent_rate;
-+
-+	if (!ndiv_int || (ndiv_int > 255))
-+		return -EINVAL;
-+
-+	residual = target_rate - (ndiv_int * parent_rate);
-+	residual <<= 20;
-+
-+	/*
-+	 * Add half of the divisor so the result will be rounded to closest
-+	 * instead of rounded down.
-+	 */
-+	residual += (parent_rate / 2);
-+	ndiv_frac = div64_u64((u64)residual, (u64)parent_rate);
-+
-+	vco_out->ndiv_int = ndiv_int;
-+	vco_out->ndiv_frac = ndiv_frac;
-+	vco_out->pdiv = 1;
-+
-+	vco_out->rate = vco_out->ndiv_int * parent_rate;
-+	residual = (u64)vco_out->ndiv_frac * (u64)parent_rate;
-+	residual >>= 20;
-+	vco_out->rate += residual;
-+
-+	return 0;
-+}
-+
- /*
-  * Based on the target frequency, find a match from the VCO frequency parameter
-  * table and return its index
-@@ -252,11 +285,10 @@ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
- 	iproc_pll_write(pll, pll->control_base, reset->offset, val);
- }
- 
--static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
-+static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
- 			unsigned long parent_rate)
- {
- 	struct iproc_pll *pll = clk->pll;
--	const struct iproc_pll_vco_param *vco = &pll->vco_param[rate_index];
- 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
- 	int ka = 0, ki, kp, ret;
- 	unsigned long rate = vco->rate;
-@@ -431,25 +463,50 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
- 	return clk->rate;
- }
- 
--static long iproc_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *parent_rate)
-+static int iproc_pll_determine_rate(struct clk_hw *hw,
-+		struct clk_rate_request *req)
- {
--	unsigned i;
-+	unsigned int  i;
- 	struct iproc_clk *clk = to_iproc_clk(hw);
- 	struct iproc_pll *pll = clk->pll;
-+	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
-+	unsigned long  diff, best_diff;
-+	unsigned int  best_idx = 0;
-+	int ret;
- 
--	if (rate == 0 || *parent_rate == 0 || !pll->vco_param)
-+	if (req->rate == 0 || req->best_parent_rate == 0)
- 		return -EINVAL;
- 
-+	if (ctrl->flags & IPROC_CLK_PLL_CALC_PARAM) {
-+		struct iproc_pll_vco_param vco_param;
-+
-+		ret = pll_calc_param(req->rate, req->best_parent_rate,
-+					&vco_param);
-+		if (ret)
-+			return ret;
-+
-+		req->rate = vco_param.rate;
-+		return 0;
-+	}
-+
-+	if (!pll->vco_param)
-+		return -EINVAL;
-+
-+	best_diff = ULONG_MAX;
- 	for (i = 0; i < pll->num_vco_entries; i++) {
--		if (rate <= pll->vco_param[i].rate)
-+		diff = abs(req->rate - pll->vco_param[i].rate);
-+		if (diff <= best_diff) {
-+			best_diff = diff;
-+			best_idx = i;
-+		}
-+		/* break now if perfect match */
-+		if (diff == 0)
- 			break;
- 	}
- 
--	if (i == pll->num_vco_entries)
--		i--;
-+	req->rate = pll->vco_param[best_idx].rate;
- 
--	return pll->vco_param[i].rate;
-+	return 0;
- }
- 
- static int iproc_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -457,13 +514,23 @@ static int iproc_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct iproc_clk *clk = to_iproc_clk(hw);
- 	struct iproc_pll *pll = clk->pll;
-+	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
-+	struct iproc_pll_vco_param vco_param;
- 	int rate_index, ret;
- 
--	rate_index = pll_get_rate_index(pll, rate);
--	if (rate_index < 0)
--		return rate_index;
-+	if (ctrl->flags & IPROC_CLK_PLL_CALC_PARAM) {
-+		ret = pll_calc_param(rate, parent_rate, &vco_param);
-+		if (ret)
-+			return ret;
-+	} else {
-+		rate_index = pll_get_rate_index(pll, rate);
-+		if (rate_index < 0)
-+			return rate_index;
-+
-+		vco_param = pll->vco_param[rate_index];
-+	}
- 
--	ret = pll_set_rate(clk, rate_index, parent_rate);
-+	ret = pll_set_rate(clk, &vco_param, parent_rate);
- 	return ret;
- }
- 
-@@ -471,7 +538,7 @@ static int iproc_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.enable = iproc_pll_enable,
- 	.disable = iproc_pll_disable,
- 	.recalc_rate = iproc_pll_recalc_rate,
--	.round_rate = iproc_pll_round_rate,
-+	.determine_rate = iproc_pll_determine_rate,
- 	.set_rate = iproc_pll_set_rate,
- };
- 
-diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
-index 2148b4e..a48ddd3 100644
---- a/drivers/clk/bcm/clk-iproc.h
-+++ b/drivers/clk/bcm/clk-iproc.h
-@@ -81,6 +81,11 @@
- #define IPROC_CLK_PLL_RESET_ACTIVE_LOW BIT(9)
- 
- /*
-+ * Calculate the PLL parameters are runtime, instead of using table
-+ */
-+#define IPROC_CLK_PLL_CALC_PARAM BIT(10)
-+
-+/*
-  * Parameters for VCO frequency configuration
+It seems that you think clk_bulk_data represents all the clocks that
+bulk APIs manage, but actually it only represents one of the multiple
+clocks.  Callers need to prepare an array of clk_bulk_data to represent
+multiple clocks.  That said, the flag we add to clk_bulk_data only
+affects one clock instead of all clocks.
+
+I feel this is something we can improve.  clk_bulk_data can be used to
+represent all clocks, something like below.  In this case, bulk clk APIs
+do not need to take num_clks as a separate parameter, and callers do not
+need to maintain multiple clk_bulk_data instances.  Since we do not have
+any in tree users of bulk clk APIs yet, we can make this semantic change
+quickly.  Thoughts?
+
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 31fee2e8d4a2..ddc4812758f6 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -80,8 +80,10 @@ struct clk_notifier_data {
+ /**
+  * struct clk_bulk_data - Data used for bulk clk operations.
   *
-  * VCO frequency =
--- 
-1.9.1
+- * @id: clock consumer ID
+- * @clk: struct clk * to store the associated clock
++ * @ids: array of clock consumer IDs which should be provided by caller.
++ * @clks: array of struct clk * to store the associated clocks, which will be
++ *     allocated by clk_bulk_get() and freed by clk_bulk_put().
++ * @num_clks: number of clocks that caller wants bulk API to manage.
+  * @flags: bulk clk operation flags
+  *
+  * The CLK APIs provide a series of clk_bulk_() API calls as
+@@ -93,8 +95,9 @@ struct clk_notifier_data {
+  *     clk_bulk_get() API will call of_clk_get() to find clock by index.
+  */
+ struct clk_bulk_data {
+-       const char              *id;
+-       struct clk              *clk;
++       const char              **ids;
++       struct clk              **clks;
++       unsigned int            num_clks;
+        unsigned long           flags;
+ };
