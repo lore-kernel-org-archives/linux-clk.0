@@ -1,40 +1,34 @@
-Return-Path: <sumit.semwal@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170808155707.GA19636@kroah.com>
-References: <CAO_48GHvyUD7vD1qJP=41Wt0nyeiyhoCpVSYL-v-jbU_dd1Sgw@mail.gmail.com>
- <20170808155707.GA19636@kroah.com>
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Date: Tue, 8 Aug 2017 22:11:57 +0530
-Message-ID: <CAO_48GFtw+OGh1MKG=dZbUL0WoqNW7-EQCXZ5bdGjiMAFXGEZg@mail.gmail.com>
-Subject: Re: Request for inclusion to stable-4.9
-To: Greg KH <greg@kroah.com>
-Cc: "# 3.4.x" <stable@vger.kernel.org>, Leo Yan <leo.yan@linaro.org>, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-clk@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <lori.hikichi@broadcom.com>
+Return-Path: <lori.hikichi@broadcom.com>
+From: Lori Hikichi <lori.hikichi@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lori Hikichi <lori.hikichi@broadcom.com>
+Subject: [PATCH v1 0/4] clk: iproc: Enable glitchless pll rate change
+Date: Mon, 14 Aug 2017 12:00:37 -0700
+Message-Id: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Greg,
+This patchset enables the ability for the iproc plls to do small rate changes
+without glitching the clock.
 
-On 8 August 2017 at 21:27, Greg KH <greg@kroah.com> wrote:
-> On Tue, Aug 08, 2017 at 09:05:03PM +0530, Sumit Semwal wrote:
->> Hi Greg,
->>
->> Please consider commit
->>
->> 9a881bc55d7b: clk: Hi6220: enable stub clock driver for ARCH_HISI
->>
->> for inclusion into stable-4.9; without this, Hikey's cpufreq driver
->> doesn't work, and the cpufreq kselftests fail on it accordingly.
->
-> How can it "not work", all that patch does it enable it by "default",
-> you can always change your .config file to enable it successfully,
-> right?
-Of course. I meant "doesn't work with default defconfig"; having it
-enabled by default just makes it a little easier to test in a CI loop
-- we could do that in the CI scripts as well, so apologies about the
-noise here.
->
-> thanks,
->
-> greg k-h
+Lori Hikichi (4):
+  clk: iproc: Allow iproc pll to runtime calculate vco parameters
+  clk: iproc: Fix error in the pll post divider rate calculation
+  clk: iproc: Allow plls to do minor rate changes without reset
+  clk: iproc: Minor tidy up of iproc pll data structures
+
+ drivers/clk/bcm/clk-cygnus.c    |  25 +---
+ drivers/clk/bcm/clk-iproc-pll.c | 260 ++++++++++++++++++++++++++++------------
+ drivers/clk/bcm/clk-iproc.h     |   5 +
+ 3 files changed, 192 insertions(+), 98 deletions(-)
+
+-- 
+1.9.1
