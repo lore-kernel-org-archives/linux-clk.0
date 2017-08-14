@@ -1,30 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.134]:50251 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750868AbdIACCD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2017 22:02:03 -0400
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
-        cl@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 0/3] clk: rockchip: rk3128: fix up some clks
-Date: Fri,  1 Sep 2017 10:01:43 +0800
-Message-Id: <1504231306-4450-1-git-send-email-zhangqing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1501068219-3834-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1501068219-3834-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Aug 2017 10:18:50 +0200
+Message-ID: <CAMuHMdU+p_tkEHpUk0O815iBm5Chg2KEevGPQ4jDbqcJnR1jig@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add USB3.0 clock
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Elaine Zhang (3):
-  clk: rockchip: rk3128: add pclk_pmu as critical clock
-  clk: rockchip: rk3128: fix up pvtm and mipi_24m gate regs description
-    error
-  clk: rockchip: rk3126: add sclk_timer5 as critical clock
+On Wed, Jul 26, 2017 at 1:23 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>
+> This patch adds USB3.0-IF0 clock for R8A7796 SoC.
+>
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
- drivers/clk/rockchip/clk-rk3128.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--- 
-1.9.1
+I.e. will queue in clk-renesas-for-v4.14.
 
+je,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
