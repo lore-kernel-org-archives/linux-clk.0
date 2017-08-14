@@ -1,102 +1,279 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Russell King - ARM Linux <linux@armlinux.org.uk>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170809114548.GD20805@n2100.armlinux.org.uk>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- "Kevin Hilman" <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Boris Brezillon" <boris.brezillon@free-electrons.com>
-References: <20170612194438.12298-1-jbrunet@baylibre.com>
- <20170612194438.12298-6-jbrunet@baylibre.com>
- <20170726001217.GC2146@codeaurora.org>
- <1501089516.2401.29.camel@baylibre.com>
- <20170804001836.GU2146@codeaurora.org>
- <150223186723.22158.11617219588466426777@resonance>
- <20170809021906.GA2146@codeaurora.org>
- <20170809114548.GD20805@n2100.armlinux.org.uk>
-Message-ID: <150238357489.5192.13375163361255683826@resonance>
-Subject: Re: [PATCH v3 05/10] clk: add support for clock protection
-Date: Thu, 10 Aug 2017 09:46:15 -0700
+Return-Path: <lori.hikichi@broadcom.com>
+Return-Path: <lori.hikichi@broadcom.com>
+From: Lori Hikichi <lori.hikichi@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lori Hikichi <lhikichi@broadcom.com>,
+	Lori Hikichi <lori.hikichi@broadcom.com>
+Subject: [PATCH v1 4/4] clk: iproc: Minor tidy up of iproc pll data structures
+Date: Mon, 14 Aug 2017 12:00:41 -0700
+Message-Id: <1502737241-2040-5-git-send-email-lori.hikichi@broadcom.com>
+In-Reply-To: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
+References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Russell,
+From: Lori Hikichi <lhikichi@broadcom.com>
 
-Quoting Russell King - ARM Linux (2017-08-09 04:45:48)
-> I'm not sure that the clock rate protection API is really the right
-> solution - if we're trying to stop others from changing the clock rate,
-> that implies we have multiple different threads potentially changing
-> the rate at any time.  If a driver does this:
-> =
+There were a few fields in the iproc pll data structures that were
+holding information that was not true state information.
+Using stack variables is sufficient and simplifies the structure.
+There are not any functional changes in this commit.
 
->         clk_set_rate(clk, foo);
->         clk_rate_protect(clk);
-> =
+Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
+---
+ drivers/clk/bcm/clk-iproc-pll.c | 83 ++++++++++++++++++-----------------------
+ 1 file changed, 36 insertions(+), 47 deletions(-)
 
-> what prevents another thread from changing the clock rate between these
-> two calls?  The only way to do this safely would be something like:
-
-I agree that ordering the calls in your example above is racy. It is an
-incorrect use of this new api. The two correct ways to use this api are:
-
-1) Use clk_set_rate_protect, introduced in patch #6 of this series
-
-2) Call clk_rate_protect() first, and if that call succeeds then call
-clk_set_rate(). Thanks to per-consumer struct clk objects, we can know
-that *this* consumer is the exclusive owner of the clk rate, and is
-allowed to change the rate within the critical section.
-
-I think this subtlety is not well described in the commitlog nor the
-kerneldoc, since most reviewing including myself have missed it: the
-consumer that successfully protects the clk can change the rate within
-the critical section, by design.
-
-> =
-
->         r =3D clk_round_rate(clk, foo);
->         while (1) {
->                 err =3D clk_set_rate(clk, foo);
->                 clk_rate_protect(clk);
->                 if (err < 0)
->                         break;
-> =
-
->                 if (r =3D=3D clk_get_rate(clk)) /* success */
->                         break;
-> =
-
->                 clk_rate_unprotect(clk);
->         }
-> =
-
->         if (err)
->                 failed;
-> =
-
-> That's rather a lot of code to add to every driver, and given the
-> number of times I've seen people get the clk_round_rate() vs
-> clk_set_rate() thing wrong, I've zero confidence that folk will get
-> this right either.
-> =
-
-> So, I'd suggest _not_ adding this clk_rate_protect() thing, but
-> instead an API that simultaneously sets and protects the rate, so
-> driver authors don't have to get involved in details like the above.
-
-As mentioned above, patch #6 does exactly this. Furthermore if you
-simply flip your use of clk_set_rate and clk_rate_protect, then things
-Just Work.
-
-Thanks,
-Mike
-
-> =
-
-> -- =
-
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps=
- up
-> According to speedtest.net: 8.21Mbps down 510kbps up
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index ab10819..43a58ae 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -69,16 +69,6 @@ enum vco_freq_range {
+ 	VCO_MAX       = 4000000000U,
+ };
+ 
+-struct iproc_pll;
+-
+-struct iproc_clk {
+-	struct clk_hw hw;
+-	const char *name;
+-	struct iproc_pll *pll;
+-	unsigned long rate;
+-	const struct iproc_clk_ctrl *ctrl;
+-};
+-
+ struct iproc_pll {
+ 	void __iomem *status_base;
+ 	void __iomem *control_base;
+@@ -88,9 +78,12 @@ struct iproc_pll {
+ 	const struct iproc_pll_ctrl *ctrl;
+ 	const struct iproc_pll_vco_param *vco_param;
+ 	unsigned int num_vco_entries;
++};
+ 
+-	struct clk_hw_onecell_data *clk_data;
+-	struct iproc_clk *clks;
++struct iproc_clk {
++	struct clk_hw hw;
++	struct iproc_pll *pll;
++	const struct iproc_clk_ctrl *ctrl;
+ };
+ 
+ #define to_iproc_clk(hw) container_of(hw, struct iproc_clk, hw)
+@@ -329,6 +322,7 @@ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
+ 	u32 val;
+ 	enum kp_band kp_index;
+ 	unsigned long ref_freq;
++	const char *clk_name = clk_hw_get_name(&clk->hw);
+ 
+ 	/*
+ 	 * reference frequency = parent frequency / PDIV
+@@ -351,19 +345,19 @@ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
+ 		kp_index = KP_BAND_HIGH_HIGH;
+ 	} else {
+ 		pr_err("%s: pll: %s has invalid rate: %lu\n", __func__,
+-				clk->name, rate);
++				clk_name, rate);
+ 		return -EINVAL;
+ 	}
+ 
+ 	kp = get_kp(ref_freq, kp_index);
+ 	if (kp < 0) {
+-		pr_err("%s: pll: %s has invalid kp\n", __func__, clk->name);
++		pr_err("%s: pll: %s has invalid kp\n", __func__, clk_name);
+ 		return kp;
+ 	}
+ 
+ 	ret = __pll_enable(pll);
+ 	if (ret) {
+-		pr_err("%s: pll: %s fails to enable\n", __func__, clk->name);
++		pr_err("%s: pll: %s fails to enable\n", __func__, clk_name);
+ 		return ret;
+ 	}
+ 
+@@ -433,7 +427,7 @@ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
+ 
+ 	ret = pll_wait_for_lock(pll);
+ 	if (ret < 0) {
+-		pr_err("%s: pll: %s failed to lock\n", __func__, clk->name);
++		pr_err("%s: pll: %s failed to lock\n", __func__, clk_name);
+ 		return ret;
+ 	}
+ 
+@@ -469,16 +463,15 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
+ 	u32 val;
+ 	u64 ndiv, ndiv_int, ndiv_frac;
+ 	unsigned int pdiv;
++	unsigned long rate;
+ 
+ 	if (parent_rate == 0)
+ 		return 0;
+ 
+ 	/* PLL needs to be locked */
+ 	val = readl(pll->status_base + ctrl->status.offset);
+-	if ((val & (1 << ctrl->status.shift)) == 0) {
+-		clk->rate = 0;
++	if ((val & (1 << ctrl->status.shift)) == 0)
+ 		return 0;
+-	}
+ 
+ 	/*
+ 	 * PLL output frequency =
+@@ -500,14 +493,14 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
+ 	val = readl(pll->control_base + ctrl->pdiv.offset);
+ 	pdiv = (val >> ctrl->pdiv.shift) & bit_mask(ctrl->pdiv.width);
+ 
+-	clk->rate = (ndiv * parent_rate) >> 20;
++	rate = (ndiv * parent_rate) >> 20;
+ 
+ 	if (pdiv == 0)
+-		clk->rate *= 2;
++		rate *= 2;
+ 	else
+-		clk->rate /= pdiv;
++		rate /= pdiv;
+ 
+-	return clk->rate;
++	return rate;
+ }
+ 
+ static int iproc_pll_determine_rate(struct clk_hw *hw,
+@@ -632,6 +625,7 @@ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
+ 	struct iproc_pll *pll = clk->pll;
+ 	u32 val;
+ 	unsigned int mdiv;
++	unsigned long rate;
+ 
+ 	if (parent_rate == 0)
+ 		return 0;
+@@ -642,11 +636,11 @@ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
+ 		mdiv = 256;
+ 
+ 	if (ctrl->flags & IPROC_CLK_MCLK_DIV_BY_2)
+-		clk->rate = parent_rate / (mdiv * 2);
++		rate = parent_rate / (mdiv * 2);
+ 	else
+-		clk->rate = parent_rate / mdiv;
++		rate = parent_rate / mdiv;
+ 
+-	return clk->rate;
++	return rate;
+ }
+ 
+ static int iproc_clk_determine_rate(struct clk_hw *hw,
+@@ -698,10 +692,6 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		val |= div << ctrl->mdiv.shift;
+ 	}
+ 	iproc_pll_write(pll, pll->control_base, ctrl->mdiv.offset, val);
+-	if (ctrl->flags & IPROC_CLK_MCLK_DIV_BY_2)
+-		clk->rate = parent_rate / (div * 2);
+-	else
+-		clk->rate = parent_rate / div;
+ 
+ 	return 0;
+ }
+@@ -744,6 +734,8 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 	struct iproc_clk *iclk;
+ 	struct clk_init_data init;
+ 	const char *parent_name;
++	struct iproc_clk *iclk_array;
++	struct clk_hw_onecell_data *clk_data;
+ 
+ 	if (WARN_ON(!pll_ctrl) || WARN_ON(!clk_ctrl))
+ 		return;
+@@ -752,14 +744,14 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 	if (WARN_ON(!pll))
+ 		return;
+ 
+-	pll->clk_data = kzalloc(sizeof(*pll->clk_data->hws) * num_clks +
+-				sizeof(*pll->clk_data), GFP_KERNEL);
+-	if (WARN_ON(!pll->clk_data))
++	clk_data = kzalloc(sizeof(*clk_data->hws) * num_clks +
++				sizeof(*clk_data), GFP_KERNEL);
++	if (WARN_ON(!clk_data))
+ 		goto err_clk_data;
+-	pll->clk_data->num = num_clks;
++	clk_data->num = num_clks;
+ 
+-	pll->clks = kcalloc(num_clks, sizeof(*pll->clks), GFP_KERNEL);
+-	if (WARN_ON(!pll->clks))
++	iclk_array = kcalloc(num_clks, sizeof(struct iproc_clk), GFP_KERNEL);
++	if (WARN_ON(!iclk_array))
+ 		goto err_clks;
+ 
+ 	pll->control_base = of_iomap(node, 0);
+@@ -789,9 +781,8 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 	/* initialize and register the PLL itself */
+ 	pll->ctrl = pll_ctrl;
+ 
+-	iclk = &pll->clks[0];
++	iclk = &iclk_array[0];
+ 	iclk->pll = pll;
+-	iclk->name = node->name;
+ 
+ 	init.name = node->name;
+ 	init.ops = &iproc_pll_ops;
+@@ -812,7 +803,7 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 	if (WARN_ON(ret))
+ 		goto err_pll_register;
+ 
+-	pll->clk_data->hws[0] = &iclk->hw;
++	clk_data->hws[0] = &iclk->hw;
+ 
+ 	/* now initialize and register all leaf clocks */
+ 	for (i = 1; i < num_clks; i++) {
+@@ -826,8 +817,7 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 		if (WARN_ON(ret))
+ 			goto err_clk_register;
+ 
+-		iclk = &pll->clks[i];
+-		iclk->name = clk_name;
++		iclk = &iclk_array[i];
+ 		iclk->pll = pll;
+ 		iclk->ctrl = &clk_ctrl[i];
+ 
+@@ -842,11 +832,10 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 		if (WARN_ON(ret))
+ 			goto err_clk_register;
+ 
+-		pll->clk_data->hws[i] = &iclk->hw;
++		clk_data->hws[i] = &iclk->hw;
+ 	}
+ 
+-	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+-				     pll->clk_data);
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 	if (WARN_ON(ret))
+ 		goto err_clk_register;
+ 
+@@ -854,7 +843,7 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 
+ err_clk_register:
+ 	while (--i >= 0)
+-		clk_hw_unregister(pll->clk_data->hws[i]);
++		clk_hw_unregister(clk_data->hws[i]);
+ 
+ err_pll_register:
+ 	if (pll->status_base != pll->control_base)
+@@ -871,10 +860,10 @@ void iproc_pll_clk_setup(struct device_node *node,
+ 	iounmap(pll->control_base);
+ 
+ err_pll_iomap:
+-	kfree(pll->clks);
++	kfree(iclk_array);
+ 
+ err_clks:
+-	kfree(pll->clk_data);
++	kfree(clk_data);
+ 
+ err_clk_data:
+ 	kfree(pll);
+-- 
+1.9.1
