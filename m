@@ -1,283 +1,99 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rnayak@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <lori.hikichi@broadcom.com>
+Return-Path: <lori.hikichi@broadcom.com>
+From: Lori Hikichi <lori.hikichi@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com,
 	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [RFC v2 07/12] clk: qcom: support for Huayra PLL
-Date: Tue,  8 Aug 2017 23:54:12 +0530
-Message-Id: <1502216657-3342-8-git-send-email-absahu@codeaurora.org>
-In-Reply-To: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-References: <1502216657-3342-1-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	Lori Hikichi <lhikichi@broadcom.com>,
+	Lori Hikichi <lori.hikichi@broadcom.com>
+Subject: [PATCH v1 3/4] clk: iproc: Allow plls to do minor rate changes without reset
+Date: Mon, 14 Aug 2017 12:00:40 -0700
+Message-Id: <1502737241-2040-4-git-send-email-lori.hikichi@broadcom.com>
+In-Reply-To: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
+References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Following are the major differences in Huayra PLL
+From: Lori Hikichi <lhikichi@broadcom.com>
 
-1. PLL Alpha Value is 16 bits
-2. Depending on alpha_mode, the pll_alpha_val can be treated as
-   M/N value or as a two’s compliment number.
-3. Huayra PLL supports PLL dynamic programming. User can change
-   L_VAL, without having to go through the power on sequence.
+The iproc plls are capable of doing small rate changes without the
+need for a full reset and re-lock procedure.  This feature will
+allow for small tweaks to the PLL rate to occur smoothly.
 
-Since the decoding of alpha val and dynamic programming are
-completely different from other Alpha PLL’s so this patch
-made adds separate functions for Huayra PLL.
-
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 180 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |   6 ++
- 2 files changed, 186 insertions(+)
+ drivers/clk/bcm/clk-iproc-pll.c | 47 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index c368e7c..23e2bb7 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -41,9 +41,17 @@
- # define PLL_POST_DIV_SHIFT	8
- # define PLL_POST_DIV_MASK	0xf
- # define PLL_ALPHA_EN		BIT(24)
-+# define PLL_ALPHA_MODE		BIT(25)
- # define PLL_VCO_SHIFT		20
- # define PLL_VCO_MASK		0x3
- 
-+#define PLL_HUAYRA_M_WIDTH		8
-+#define PLL_HUAYRA_M_SHIFT		8
-+#define PLL_HUAYRA_M_MASK		0xff
-+#define PLL_HUAYRA_N_SHIFT		0
-+#define PLL_HUAYRA_N_MASK		0xff
-+#define PLL_HUAYRA_ALPHA_WIDTH		16
-+
- /*
-  * Even though 40 bits are present, use only 32 for ease of calculation.
-  */
-@@ -86,6 +94,19 @@
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_offsets);
- 
-+const u8 clk_alpha_huayra_pll_offsets[] = {
-+	[ALPHA_PLL_MODE] = 0x00,
-+	[ALPHA_PLL_L_VAL] = 0x04,
-+	[ALPHA_PLL_ALPHA_VAL] = 0x08,
-+	[ALPHA_PLL_USER_CTL] = 0x10,
-+	[ALPHA_PLL_CONFIG_CTL] = 0x14,
-+	[ALPHA_PLL_CONFIG_CTL_U] = 0x18,
-+	[ALPHA_PLL_TEST_CTL] = 0x1c,
-+	[ALPHA_PLL_TEST_CTL_U] = 0x20,
-+	[ALPHA_PLL_STATUS] = 0x24,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_huayra_pll_offsets);
-+
- static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
- 			const char *action)
- {
-@@ -517,6 +538,155 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return clamp(rate, min_freq, max_freq);
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 7df010b..ab10819 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -285,6 +285,40 @@ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
+ 	iproc_pll_write(pll, pll->control_base, reset->offset, val);
  }
  
-+static unsigned long
-+alpha_huayra_pll_calc_rate(u64 prate, u32 l, u32 a)
++/*
++ * Determines if the change to be applied to the PLL is minor (just an update
++ * or the fractional divider). If so, then we can avoid going through a
++ * disruptive reset and lock sequence.
++ */
++static bool pll_fractional_change_only(struct iproc_pll *pll,
++				       struct iproc_pll_vco_param *vco)
 +{
-+	/*
-+	 * a contains 16 bit alpha_val in two’s compliment number in the range
-+	 * of [-0.5, 0.5).
-+	 */
-+	if (a >= BIT(PLL_HUAYRA_ALPHA_WIDTH - 1))
-+		l -= 1;
++	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
++	u32 val;
++	u32 ndiv_int;
++	unsigned int pdiv;
 +
-+	return (prate * l) + (prate * a >> PLL_HUAYRA_ALPHA_WIDTH);
++	/* PLL needs to be locked */
++	val = readl(pll->status_base + ctrl->status.offset);
++	if ((val & (1 << ctrl->status.shift)) == 0)
++		return false;
++
++	val = readl(pll->control_base + ctrl->ndiv_int.offset);
++	ndiv_int = (val >> ctrl->ndiv_int.shift) &
++		bit_mask(ctrl->ndiv_int.width);
++
++	if (ndiv_int != vco->ndiv_int)
++		return false;
++
++	val = readl(pll->control_base + ctrl->pdiv.offset);
++	pdiv = (val >> ctrl->pdiv.shift) & bit_mask(ctrl->pdiv.width);
++
++	if (pdiv != vco->pdiv)
++		return false;
++
++	return true;
 +}
 +
-+static unsigned long
-+alpha_huayra_pll_round_rate(unsigned long rate, unsigned long prate,
-+			    u32 *l, u32 *a)
-+{
-+	u64 remainder;
-+	u64 quotient;
-+
-+	quotient = rate;
-+	remainder = do_div(quotient, prate);
-+	*l = quotient;
-+
-+	if (!remainder) {
-+		*a = 0;
-+		return rate;
-+	}
-+
-+	quotient = remainder << PLL_HUAYRA_ALPHA_WIDTH;
-+	remainder = do_div(quotient, prate);
-+
-+	if (remainder)
-+		quotient++;
-+
-+	/*
-+	 * alpha_val should be in two’s compliment number in the range
-+	 * of [-0.5, 0.5) so if quotient >= 0.5 then increment the l value
-+	 * since alpha value will be subtracted in this case.
-+	 */
-+	if (quotient >= BIT(PLL_HUAYRA_ALPHA_WIDTH - 1))
-+		*l += 1;
-+
-+	*a = quotient;
-+	return alpha_huayra_pll_calc_rate(prate, *l, *a);
-+}
-+
-+static unsigned long
-+clk_alpha_huayra_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	u32 l, alpha = 0, ctl, alpha_m, alpha_n;
-+	u64 rate = parent_rate, tmp;
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+
-+	regmap_read(pll->clkr.regmap, pll_l(pll), &l);
-+	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
-+
-+	if (ctl & PLL_ALPHA_EN) {
-+		regmap_read(pll->clkr.regmap, pll_alpha(pll), &alpha);
-+		/*
-+		 * Depending upon alpha_mode, it can be treated as M/N value or
-+		 * as a two’s compliment number. When
-+		 * alpha_mode=1 pll_alpha_val<15:8>=M & pll_apla_val<7:0>=N
-+		 *		Fout=FIN*(L+(M/N))
-+		 * M is a signed number (-128 to 127) and N is unsigned
-+		 * (0 to 255). M/N has to be within +/-0.5.
-+		 *
-+		 * alpha_mode=0, it is a two’s compliment number in the range
-+		 * of [-0.5, 0.5).
-+		 *		Fout=FIN*(L+(alpha_val)/2^16),where alpha_val is
-+		 * two’s compliment number.
-+		 */
-+		if (!(ctl & PLL_ALPHA_MODE))
-+			return alpha_huayra_pll_calc_rate(rate, l, alpha);
-+
-+		alpha_m = alpha >> PLL_HUAYRA_M_SHIFT & PLL_HUAYRA_M_MASK;
-+		alpha_n = alpha >> PLL_HUAYRA_N_SHIFT & PLL_HUAYRA_N_MASK;
-+
-+		rate *= l;
-+		tmp = parent_rate;
-+		if (alpha_m >= BIT(PLL_HUAYRA_M_WIDTH - 1)) {
-+			alpha_m = BIT(PLL_HUAYRA_M_WIDTH) - alpha_m;
-+			tmp *= alpha_m;
-+			do_div(tmp, alpha_n);
-+			rate -= tmp;
-+		} else {
-+			tmp *= alpha_m;
-+			do_div(tmp, alpha_n);
-+			rate += tmp;
-+		}
-+
-+		return rate;
-+	}
-+
-+	return alpha_huayra_pll_calc_rate(rate, l, alpha);
-+}
-+
-+static int clk_alpha_huayra_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+					 unsigned long prate)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	u32 l, a, ctl, cur_alpha = 0;
-+
-+	rate = alpha_huayra_pll_round_rate(rate, prate, &l, &a);
-+
-+	regmap_read(pll->clkr.regmap, pll_user_ctl(pll), &ctl);
-+
-+	if (ctl & PLL_ALPHA_EN)
-+		regmap_read(pll->clkr.regmap, pll_alpha(pll), &cur_alpha);
-+
-+	/*
-+	 * Huayra PLL supports PLL dynamic programming. User can change L_VAL,
-+	 * without having to go through the power on sequence.
-+	 */
-+	if (clk_hw_is_enabled(hw)) {
-+		if (cur_alpha != a) {
-+			pr_err("clock needs to be gated %s\n",
-+			       clk_hw_get_name(hw));
-+			return -EBUSY;
-+		}
-+
-+		regmap_write(pll->clkr.regmap, pll_l(pll), l);
-+		/* Ensure that the write above goes to detect L val change. */
-+		mb();
-+		return wait_for_pll_enable_lock(pll);
-+	}
-+
-+	regmap_write(pll->clkr.regmap, pll_l(pll), l);
-+	regmap_write(pll->clkr.regmap, pll_alpha(pll), a);
-+
-+	if (a == 0)
-+		regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
-+				   PLL_ALPHA_EN, 0x0);
-+	else
-+		regmap_update_bits(pll->clkr.regmap, pll_user_ctl(pll),
-+				   PLL_ALPHA_EN | PLL_ALPHA_MODE, PLL_ALPHA_EN);
-+
-+	return 0;
-+}
-+
-+static long clk_alpha_huayra_pll_round_rate(struct clk_hw *hw,
-+					    unsigned long rate,
-+					    unsigned long *prate)
-+{
-+	u32 l, a;
-+
-+	return alpha_huayra_pll_round_rate(rate, *prate, &l, &a);
-+}
-+
- const struct clk_ops clk_alpha_pll_ops = {
- 	.enable = clk_alpha_pll_enable,
- 	.disable = clk_alpha_pll_disable,
-@@ -537,6 +707,16 @@ static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
- 
-+const struct clk_ops clk_alpha_huayra_pll_ops = {
-+	.enable = clk_alpha_pll_enable,
-+	.disable = clk_alpha_pll_disable,
-+	.is_enabled = clk_alpha_pll_is_enabled,
-+	.recalc_rate = clk_alpha_huayra_pll_recalc_rate,
-+	.round_rate = clk_alpha_huayra_pll_round_rate,
-+	.set_rate = clk_alpha_huayra_pll_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_huayra_pll_ops);
-+
- static unsigned long
- clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
+ 			unsigned long parent_rate)
  {
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 973673b..af74abf 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -61,6 +61,10 @@ struct clk_alpha_pll {
- 	struct clk_regmap clkr;
- };
+@@ -333,6 +367,19 @@ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
+ 		return ret;
+ 	}
  
-+#define CLK_HUAYRA_PLL_FLAGS	(SUPPORTS_NO_VCO | SUPPORTS_DYNAMIC_UPDATE | \
-+				 SUPPORTS_64BIT_CONFIG_CTL |		     \
-+				 SUPPORTS_16BIT_ALPHA)
++	if (pll_fractional_change_only(clk->pll, vco)) {
++		/* program fractional part of NDIV */
++		if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
++			val = readl(pll->control_base + ctrl->ndiv_frac.offset);
++			val &= ~(bit_mask(ctrl->ndiv_frac.width) <<
++				 ctrl->ndiv_frac.shift);
++			val |= vco->ndiv_frac << ctrl->ndiv_frac.shift;
++			iproc_pll_write(pll, pll->control_base,
++					ctrl->ndiv_frac.offset, val);
++			return 0;
++		}
++	}
 +
- /**
-  * struct clk_alpha_pll_postdiv - phase locked loop (PLL) post-divider
-  * @base: base address of registers
-@@ -97,9 +101,11 @@ struct alpha_pll_config {
- };
+ 	/* put PLL in reset */
+ 	__pll_put_in_reset(pll);
  
- extern const u8 clk_alpha_pll_offsets[];
-+extern const u8 clk_alpha_huayra_pll_offsets[];
- 
- extern const struct clk_ops clk_alpha_pll_ops;
- extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
-+extern const struct clk_ops clk_alpha_huayra_pll_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_ops;
- 
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
