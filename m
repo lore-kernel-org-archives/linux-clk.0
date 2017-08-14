@@ -1,77 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:36605 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbdHDKOw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 06:14:52 -0400
-Received: by mail-wm0-f48.google.com with SMTP id t201so15831303wmt.1
-        for <linux-clk@vger.kernel.org>; Fri, 04 Aug 2017 03:14:52 -0700 (PDT)
-Subject: Re: [PATCH v3.1 0/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
-To: jbrunet@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <d7c27631-e50a-501a-a94f-28a124f9aa74@baylibre.com>
-Date: Fri, 4 Aug 2017 12:14:45 +0200
-MIME-Version: 1.0
-In-Reply-To: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <lori.hikichi@broadcom.com>
+Return-Path: <lori.hikichi@broadcom.com>
+From: Lori Hikichi <lori.hikichi@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lori Hikichi <lori.hikichi@broadcom.com>,
+	Simran Rai <ssimran@broadcom.com>
+Subject: [PATCH v1 2/4] clk: iproc: Fix error in the pll post divider rate calculation
+Date: Mon, 14 Aug 2017 12:00:39 -0700
+Message-Id: <1502737241-2040-3-git-send-email-lori.hikichi@broadcom.com>
+In-Reply-To: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
+References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/01/2017 01:56 PM, Neil Armstrong wrote:
-> In order to support the standalone CEC Controller on the Amlogic SoCs,
-> a specific CEC 32K clock must be handled in the AO domain.
-> 
-> The CEC 32K AO Clock is a dual divider with dual counter to provide a more
-> precise 32768Hz clock for the CEC subsystem from the external xtal.
-> 
-> The AO clocks management registers are spread among the AO register space,
-> so this patch also adds management of these registers mappings then uses them
-> for the CEC 32K AO clock management.
-> 
-> This patchset :
->  - updates the bindings accordingly
->  - switch driver to new bindings
->  - adds the CEC 32k clock
->  - adds the clock binding entry
-> 
-> The DT Update will be sent in another patchset.
-> 
-> Changes since v3 at [3] :
->  - fix typo in cec_32k set_rate
-> 
-> Changes since v2 at [2] :
->  - fix round_rate invalid handling
->  - enhance set_rate code thanks to Chris Moore
->  - add more explicit comments thanks to Martin
-> 
-> Changes since v1 at [1] :
->  - move bindings to parent syscon node and move clkc to subnode
->  - switch aoclkc to use regmap only register access
->  - introduce aoclk-regmap-gate for this purpose until regmap clocks are generic
-> 
-> [1] https://lkml.kernel.org/r/1499336663-23875-1-git-send-email-narmstrong@baylibre.com
-> [2] https://lkml.kernel.org/r/1501235589-318-1-git-send-email-narmstrong@baylibre.com
-> [3] https://lkml.kernel.org/r/1501504957-19476-1-git-send-email-narmstrong@baylibre.com
-> 
-> Neil Armstrong (4):
->   dt-bindings: clock: amlogic,gxbb-aoclkc: Update bindings
->   clk: meson: gxbb-aoclk: Switch to regmap for register access
->   dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
->   clk: meson: gxbb-aoclk: Add CEC 32k clock
-> 
->  .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  22 ++-
->  drivers/clk/meson/Makefile                         |   2 +-
->  drivers/clk/meson/gxbb-aoclk-32k.c                 | 194 +++++++++++++++++++++
->  drivers/clk/meson/gxbb-aoclk-regmap.c              |  46 +++++
->  drivers/clk/meson/gxbb-aoclk.c                     |  65 ++++---
->  drivers/clk/meson/gxbb-aoclk.h                     |  42 +++++
->  include/dt-bindings/clock/gxbb-aoclkc.h            |   1 +
->  7 files changed, 342 insertions(+), 30 deletions(-)
->  create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
->  create mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
->  create mode 100644 drivers/clk/meson/gxbb-aoclk.h
-> 
+The pll post divider code was using DIV_ROUND_UP when determining the
+divider value best suited to produce the target frequency.
+Using DIV_ROUND_CLOSEST will give us better divider values when
+the division results in a small remainder.
+Also, change the post divider clock over to the determine_rate api
+instead of round_rate.
 
-Applied to clk-meson's next/drivers except for patch 3 to next/headers
+Signed-off-by: Simran Rai <ssimran@broadcom.com>
+Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
+---
+ drivers/clk/bcm/clk-iproc-pll.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 9514ecf..7df010b 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -602,25 +602,26 @@ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
+ 	return clk->rate;
+ }
+ 
+-static long iproc_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+-		unsigned long *parent_rate)
++static int iproc_clk_determine_rate(struct clk_hw *hw,
++		struct clk_rate_request *req)
+ {
+-	unsigned int div;
++	unsigned int bestdiv;
+ 
+-	if (rate == 0 || *parent_rate == 0)
++	if (req->rate == 0)
+ 		return -EINVAL;
++	if (req->rate == req->best_parent_rate)
++		return 0;
+ 
+-	if (rate == *parent_rate)
+-		return *parent_rate;
++	bestdiv = DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
++	if (bestdiv < 2)
++		req->rate = req->best_parent_rate;
+ 
+-	div = DIV_ROUND_UP(*parent_rate, rate);
+-	if (div < 2)
+-		return *parent_rate;
++	if (bestdiv > 256)
++		bestdiv = 256;
+ 
+-	if (div > 256)
+-		div = 256;
++	req->rate = req->best_parent_rate / bestdiv;
+ 
+-	return *parent_rate / div;
++	return 0;
+ }
+ 
+ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -635,10 +636,10 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (rate == 0 || parent_rate == 0)
+ 		return -EINVAL;
+ 
++	div = DIV_ROUND_CLOSEST(parent_rate, rate);
+ 	if (ctrl->flags & IPROC_CLK_MCLK_DIV_BY_2)
+-		div = DIV_ROUND_UP(parent_rate, rate * 2);
+-	else
+-		div = DIV_ROUND_UP(parent_rate, rate);
++		div /=  2;
++
+ 	if (div > 256)
+ 		return -EINVAL;
+ 
+@@ -662,7 +663,7 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	.enable = iproc_clk_enable,
+ 	.disable = iproc_clk_disable,
+ 	.recalc_rate = iproc_clk_recalc_rate,
+-	.round_rate = iproc_clk_round_rate,
++	.determine_rate = iproc_clk_determine_rate,
+ 	.set_rate = iproc_clk_set_rate,
+ };
+ 
+-- 
+1.9.1
