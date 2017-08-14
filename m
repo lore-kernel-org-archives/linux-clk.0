@@ -1,441 +1,489 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 31 Aug 2017 12:02:59 +0200
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-To: Ingo van Lil <inguin@gmx.de>
-Subject: Re: [PATCH] clk: at91: utmi: Support configurable multipliers
-Message-ID: <20170831100259.qj4cisnu2il6mo5y@rfolt0960.corp.atmel.com>
-References: <20170710122409.3017-1-inguin@gmx.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:37674 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750989AbdHNQx4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 14 Aug 2017 12:53:56 -0400
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="qsoczu47mcxkeksl"
-In-Reply-To: <20170710122409.3017-1-inguin@gmx.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
- Nicolas Ferre <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Tue, 15 Aug 2017 00:53:49 +0800
+From: icenowy@aosc.io
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 3/3] clk: sunxi-ng: support R40 SoC
+In-Reply-To: <CAGb2v67cz9AeHghe6iB_AJc+2=0sYRHLdfHo+sTPYHhjJxydUQ@mail.gmail.com>
+References: <20170812124352.24148-1-icenowy@aosc.io>
+ <20170812124352.24148-4-icenowy@aosc.io>
+ <CAGb2v67cz9AeHghe6iB_AJc+2=0sYRHLdfHo+sTPYHhjJxydUQ@mail.gmail.com>
+Message-ID: <edaffbb2947c5d4707c880482d3c7f4c@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---qsoczu47mcxkeksl
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-Hi Ingo,
-
-I did a similar patch, and I was told that you sent something similar.
-I missed your patch since I have not subscribed to the linux-clk mailing
-list. If it's related to at91, you should send it to linux-arm mailing list
-too.
-
-On Mon, Jul 10, 2017 at 02:24:09PM +0200, Ingo van Lil wrote:
-> The AT91 UTMI clock is a PLL generating the 480 MHz USB clock.
-> Originally, this PLL always had a fixed x40 multiplier, thus requiring
-> a 12 MHz input clock. Recent SOCs (sama5d2 and sama5d3) have a special
-> function register for configuring this multiplier, allowing to use
-> different main clock frequencies.
+在 2017-08-15 00:12，Chen-Yu Tsai 写道：
+> )On Sat, Aug 12, 2017 at 8:43 PM, Icenowy Zheng <icenowy@aosc.io> 
+> wrote:
+>> Allwinner R40 SoC have a clock controller module in the style of the
+>> SoCs beyond sun6i, however, it's more rich and complex.
+>> 
+>> Add support for it.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>> Changes in v4:
+>> - Removed usb-ohci-12M mux clocks.
+>> - Removed unused (and not in user manual) adda-4x clock.
+>> - Implemented proper SATA PLL system.
+>> - Renamed MP (Mixed Processor) clock names to drop the extra "DE_".
+>> - Renamed TCONs' clock names to "tcon-lcdX" or "tcon-tvX".
+>> - Added missing RST_DRAM.
+>> - Several clock post/pre-dividers and constraints fixes.
+>> Changes in v3:
+>> - Rebased on current linux-next.
+>> Changes in v2:
+>> - Fixes according to the SoC's user manual.
+>> 
+>>  drivers/clk/sunxi-ng/Kconfig              |    5 +
+>>  drivers/clk/sunxi-ng/Makefile             |    1 +
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1240 
+>> +++++++++++++++++++++++++++++
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   69 ++
+>>  include/dt-bindings/clock/sun8i-r40-ccu.h |  187 +++++
+>>  include/dt-bindings/reset/sun8i-r40-ccu.h |  130 +++
+>>  6 files changed, 1632 insertions(+)
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+>>  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+>>  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+>> 
+>> diff --git a/drivers/clk/sunxi-ng/Kconfig 
+>> b/drivers/clk/sunxi-ng/Kconfig
+>> index 7342928c35cd..7a360737fe3c 100644
+>> --- a/drivers/clk/sunxi-ng/Kconfig
+>> +++ b/drivers/clk/sunxi-ng/Kconfig
+>> @@ -48,6 +48,11 @@ config SUN8I_V3S_CCU
+>>  config SUN8I_DE2_CCU
+>>         bool "Support for the Allwinner SoCs DE2 CCU"
+>> 
+>> +config SUN8I_R40_CCU
+>> +       bool "Support for the Allwinner R40 CCU"
+>> +       default MACH_SUN8I
+>> +       depends on MACH_SUN8I || COMPILE_TEST
+>> +
+>>  config SUN9I_A80_CCU
+>>         bool "Support for the Allwinner A80 CCU"
+>>         default MACH_SUN9I
+>> diff --git a/drivers/clk/sunxi-ng/Makefile 
+>> b/drivers/clk/sunxi-ng/Makefile
+>> index 45a5910379a5..b1267fe68a8f 100644
+>> --- a/drivers/clk/sunxi-ng/Makefile
+>> +++ b/drivers/clk/sunxi-ng/Makefile
+>> @@ -29,6 +29,7 @@ obj-$(CONFIG_SUN8I_H3_CCU)    += ccu-sun8i-h3.o
+>>  obj-$(CONFIG_SUN8I_V3S_CCU)    += ccu-sun8i-v3s.o
+>>  obj-$(CONFIG_SUN8I_DE2_CCU)    += ccu-sun8i-de2.o
+>>  obj-$(CONFIG_SUN8I_R_CCU)      += ccu-sun8i-r.o
+>> +obj-$(CONFIG_SUN8I_R40_CCU)    += ccu-sun8i-r40.o
+>>  obj-$(CONFIG_SUN9I_A80_CCU)    += ccu-sun9i-a80.o
+>>  obj-$(CONFIG_SUN9I_A80_CCU)    += ccu-sun9i-a80-de.o
+>>  obj-$(CONFIG_SUN9I_A80_CCU)    += ccu-sun9i-a80-usb.o
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c 
+>> b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>> new file mode 100644
+>> index 000000000000..9dc6ad419f9a
+>> --- /dev/null
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
 > 
-> Signed-off-by: Ingo van Lil <inguin@gmx.de>
-
-Unfortunately, replacing my patch by yours, it no longer works. More
-precisely, USB stuff is broken: utmi rate is weird.
-
-> ---
->  drivers/clk/at91/clk-utmi.c  | 105 +++++++++++++++++++++++++++++++++++++++++--
->  include/soc/at91/atmel-sfr.h |   2 +
->  2 files changed, 104 insertions(+), 3 deletions(-)
+> [...]
 > 
-> diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-> index aadabd9..d41c38b 100644
-> --- a/drivers/clk/at91/clk-utmi.c
-> +++ b/drivers/clk/at91/clk-utmi.c
-> @@ -14,14 +14,29 @@
->  #include <linux/of.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> +#include <soc/at91/atmel-sfr.h>
->  
->  #include "pmc.h"
->  
-> +/* default multiplier for SOCs that do not allow configuration via SFR */
->  #define UTMI_FIXED_MUL		40
->  
-> +/* supported multiplier settings for SOCs that allow configuration via SFR */
-> +struct utmi_multipliers {
-> +	const char *sfr_compatible_name;
-> +	u8 multipliers[4];
-> +};
-> +
-> +static const struct utmi_multipliers utmi_multipliers[] = {
-> +	{ "atmel,sama5d2-sfr", { 40, 30, 20, 40 } },
-> +	{ "atmel,sama5d3-sfr", { 40, 30, 20, 10 } },
-> +};
-> +
+>> +/*
+>> + * The MIPI PLL has 2 modes: "MIPI" and "HDMI".
+>> + *
+>> + * The MIPI mode is a standard NKM-style clock. The HDMI mode is an
+>> + * integer / fractional clock with switchable multipliers and 
+>> dividers.
+>> + * This is not supported here. We hardcode the PLL to MIPI mode.
+>> + */
+>> +#define SUN8I_R40_PLL_MIPI_REG 0x040
+>> +
+>> +static const char * const pll_mipi_parents[] = { "pll-video0" };
+>> +static SUNXI_CCU_NKM_WITH_MUX_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+>> +                                       pll_mipi_parents, 0x040,
+>> +                                       8, 4,   /* N */
+>> +                                       4, 2,   /* K */
+>> +                                       0, 4,   /* M */
+>> +                                       21, 1,  /* mux */
+>> +                                       BIT(31) | BIT(23) | BIT(22), 
+>> /* gate */
+>> +                                       BIT(28),        /* lock */
+>> +                                       CLK_SET_RATE_UNGATE);
+> 
+> K has a minimum of 2 here.
 
-I will see if there is no mistake in the datasheet. On my side, I deal
-only with '40, 30, 20, 10' case, I am not sure we have to take care of
-'40, 30, 20, 40' even if it's not a mistake in the datasheet.
+I think it's not mentioned on the user manual...
 
->  struct clk_utmi {
->  	struct clk_hw hw;
->  	struct regmap *regmap;
-> +	struct regmap *sfr_regmap;
-> +	const u8 *multipliers;
->  };
->  
->  #define to_clk_utmi(hw) container_of(hw, struct clk_utmi, hw)
-> @@ -66,8 +81,67 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
->  static unsigned long clk_utmi_recalc_rate(struct clk_hw *hw,
->  					  unsigned long parent_rate)
->  {
-> -	/* UTMI clk is a fixed clk multiplier */
-> -	return parent_rate * UTMI_FIXED_MUL;
-> +	struct clk_utmi *utmi = to_clk_utmi(hw);
-> +	u8 mul = UTMI_FIXED_MUL;
-> +
-> +	if (utmi->sfr_regmap && utmi->multipliers) {
-> +		u32 regval;
-> +		regmap_read(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM, &regval);
-> +		mul = utmi->multipliers[regval & AT91_UTMICKTRIM_FREQ_MASK];
-> +	}
-> +
-> +	return parent_rate * mul;
-> +}
-> +
-> +static long clk_utmi_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *parent_rate)
-> +{
-> +	struct clk_utmi *utmi = to_clk_utmi(hw);
-> +	unsigned long bestrate = 0;
-> +	int bestdiff = -1;
-> +	int i;
-> +
-> +	if (!utmi->sfr_regmap || !utmi->multipliers)
-> +		return *parent_rate * UTMI_FIXED_MUL;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-> +		unsigned long tmprate = *parent_rate * utmi->multipliers[i];
-> +		int tmpdiff;
-> +
-> +		if (tmprate < rate)
-> +			continue;
-> +
-> +		tmpdiff = tmprate - rate;
-> +		if (bestdiff < 0 || bestdiff > tmpdiff) {
-> +			bestrate = tmprate;
-> +			bestdiff = tmpdiff;
-> +		}
-> +
-> +		if (!bestdiff)
-> +			break;
-> +	}
-> +
-> +	return bestrate;
-> +}
-> +
-> +static int clk_utmi_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			     unsigned long parent_rate)
-> +{
-> +	struct clk_utmi *utmi = to_clk_utmi(hw);
-> +	int i;
-> +
-> +	if (!utmi->sfr_regmap || !utmi->multipliers)
-> +		return rate == parent_rate * UTMI_FIXED_MUL ? 0 : -EINVAL;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-> +		if (rate == parent_rate * utmi->multipliers[i]) {
-> +			regmap_update_bits(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM,
-> +					   AT91_UTMICKTRIM_FREQ_MASK, i);
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
->  }
+It says "The range is from 1 to 4."
 
-What's the purpose of this addition? Who should set the rate of the utmi
-clock? I mean you have no choice, the rate is 480 MHz.
+> 
+>> +
+>> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
+>> +                                       "osc24M", 0x0048,
+>> +                                       8, 7,           /* N */
+>> +                                       0, 4,           /* M */
+>> +                                       BIT(24),        /* frac enable 
+>> */
+>> +                                       BIT(25),        /* frac select 
+>> */
+>> +                                       270000000,      /* frac rate 0 
+>> */
+>> +                                       297000000,      /* frac rate 1 
+>> */
+>> +                                       BIT(31),        /* gate */
+>> +                                       BIT(28),        /* lock */
+>> +                                       0);
+> 
+> CLK_SET_RATE_UNGATE should be set for _all_ PLLs. The lock status bit
+> depends on the PLL running, and we check the lock status whenever 
+> set_rate
+> is done.
 
->  
->  static const struct clk_ops utmi_ops = {
-> @@ -75,10 +149,13 @@ static const struct clk_ops utmi_ops = {
->  	.unprepare = clk_utmi_unprepare,
->  	.is_prepared = clk_utmi_is_prepared,
->  	.recalc_rate = clk_utmi_recalc_rate,
-> +	.round_rate = clk_utmi_round_rate,
-> +	.set_rate = clk_utmi_set_rate,
->  };
->  
->  static struct clk_hw * __init
->  at91_clk_register_utmi(struct regmap *regmap,
-> +		       struct regmap *sfr_regmap, const u8 *multipliers,
->  		       const char *name, const char *parent_name)
->  {
->  	struct clk_utmi *utmi;
-> @@ -98,6 +175,8 @@ at91_clk_register_utmi(struct regmap *regmap,
->  
->  	utmi->hw.init = &init;
->  	utmi->regmap = regmap;
-> +	utmi->sfr_regmap = sfr_regmap;
-> +	utmi->multipliers = multipliers;
->  
->  	hw = &utmi->hw;
->  	ret = clk_hw_register(NULL, &utmi->hw);
-> @@ -115,6 +194,9 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
->  	const char *parent_name;
->  	const char *name = np->name;
->  	struct regmap *regmap;
-> +	struct regmap *sfr_regmap;
-> +	const u8 *multipliers = NULL;
-> +	size_t i;
->  
->  	parent_name = of_clk_get_parent_name(np, 0);
->  
-> @@ -124,7 +206,24 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
->  	if (IS_ERR(regmap))
->  		return;
->  
-> -	hw = at91_clk_register_utmi(regmap, name, parent_name);
-> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-> +		sfr_regmap = syscon_regmap_lookup_by_compatible(
-> +			utmi_multipliers[i].sfr_compatible_name);
-> +		if (!IS_ERR(sfr_regmap)) {
-> +			pr_debug("clk-utmi: found sfr node: %s\n",
-> +				 utmi_multipliers[i].sfr_compatible_name);
-> +			multipliers = utmi_multipliers[i].multipliers;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (IS_ERR(sfr_regmap)) {
-> +		pr_debug("clk-utmi: failed to find sfr node\n");
-> +		sfr_regmap = NULL;
-> +	}
-> +
-> +	hw = at91_clk_register_utmi(regmap, sfr_regmap, multipliers,
-> +				    name, parent_name);
->  	if (IS_ERR(hw))
->  		return;
->  
-> diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
-> index 506ea8f..763948e 100644
-> --- a/include/soc/at91/atmel-sfr.h
-> +++ b/include/soc/at91/atmel-sfr.h
-> @@ -17,6 +17,7 @@
->  /* 0x08 ~ 0x0c: Reserved */
->  #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
->  #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
-> +#define AT91_SFR_UTMICKTRIM	0x30	/* UTMI Clock Trimming Register */
->  #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
->  
->  /* Field definitions */
-> @@ -28,5 +29,6 @@
->  					 AT91_OHCIICR_SUSPEND_B | \
->  					 AT91_OHCIICR_SUSPEND_C)
->  
-> +#define AT91_UTMICKTRIM_FREQ_MASK	0x03
+Should we also do this on older SoCs?
 
-You can use GENMASK here.
+I think at least on H3 I met PLL-DE waiting for lock failure.
 
->  
->  #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
+> 
+>> +
+>> +static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
+>> +                                  "osc24M", 0x04c,
+>> +                                  8, 7,        /* N */
+>> +                                  0, 2,        /* M */
+>> +                                  BIT(31),     /* gate */
+>> +                                  BIT(28),     /* lock */
+>> +                                  CLK_SET_RATE_UNGATE);
+> 
+> Manual says 16 <= N <= 75.
 
-I have attached the patch I did.
+Maybe we need to implement more things for this constraint?
 
-Regards
+But I think the frequency is not going to be changed when
+running...
 
-Ludovic
+> 
+> [...]
+> 
+>> +
+>> +static struct clk_div_table ths_div_table[] = {
+>> +       { .val = 0, .div = 1 },
+>> +       { .val = 1, .div = 2 },
+>> +       { .val = 2, .div = 4 },
+>> +       { .val = 3, .div = 8 },
+>> +};
+>> +static const char * const ths_parents[] = { "osc24M" };
+>> +static struct ccu_div ths_clk = {
+>> +       .enable = BIT(31),
+>> +       .div    = _SUNXI_CCU_DIV_TABLE(0, 2, ths_div_table),
+> 
+> You could use _SUNXI_CCU_DIV_FLAGS(0, 2, CLK_DIVIDER_POWER_OF_TWO)
+> instead of div_table.
 
---qsoczu47mcxkeksl
-Content-Type: text/x-diff; charset="us-ascii"
-Content-Disposition: attachment; filename="utmi.patch"
+Thanks.
 
-diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-index aadabd9d1e2b..0b88147c4ec6 100644
---- a/drivers/clk/at91/clk-utmi.c
-+++ b/drivers/clk/at91/clk-utmi.c
-@@ -14,14 +14,15 @@
- #include <linux/of.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-+#include <soc/at91/atmel-sfr.h>
- 
- #include "pmc.h"
- 
--#define UTMI_FIXED_MUL		40
--
- struct clk_utmi {
- 	struct clk_hw hw;
--	struct regmap *regmap;
-+	unsigned int mul;
-+	struct regmap *regmap_pmc;
-+	struct regmap *regmap_sfr;
- };
- 
- #define to_clk_utmi(hw) container_of(hw, struct clk_utmi, hw)
-@@ -37,13 +38,54 @@ static inline bool clk_utmi_ready(struct regmap *regmap)
- 
- static int clk_utmi_prepare(struct clk_hw *hw)
- {
-+	struct clk_hw *hw_parent;
- 	struct clk_utmi *utmi = to_clk_utmi(hw);
- 	unsigned int uckr = AT91_PMC_UPLLEN | AT91_PMC_UPLLCOUNT |
- 			    AT91_PMC_BIASEN;
-+	unsigned int utmi_ref_clk_freq;
-+	unsigned long parent_rate;
-+
-+	/*
-+	 * If mainck rate is different from 12 MHz, we have to configure the
-+	 * FREQ field of the SFR_UTMICKTRIM register to generate properly
-+	 * the utmi clock.
-+	 */
-+	hw_parent = clk_hw_get_parent(hw);
-+	parent_rate = clk_hw_get_rate(hw_parent);
-+
-+	switch (parent_rate) {
-+	case 12000000:
-+		utmi_ref_clk_freq = 0;
-+		utmi->mul = 40;
-+		break;
-+	case 16000000:
-+		utmi_ref_clk_freq = 1;
-+		utmi->mul = 30;
-+		break;
-+	case 24000000:
-+		utmi_ref_clk_freq = 2;
-+		utmi->mul = 20;
-+		break;
-+	case 48000000:
-+		utmi_ref_clk_freq = 3;
-+		utmi->mul = 10;
-+		break;
-+	default:
-+		pr_err("Unsupported mainck rate to generate the utmi clock\n");
-+		return -EINVAL;
-+	}
-+
-+	if (utmi_ref_clk_freq & !utmi->regmap_sfr) {
-+		pr_err("If mainck rate is different from 12 MHz, the sfr node is required to generate the utmi clock\n");
-+		return -EINVAL;
-+	}
- 
--	regmap_update_bits(utmi->regmap, AT91_CKGR_UCKR, uckr, uckr);
-+	regmap_update_bits(utmi->regmap_sfr, AT91_SFR_UTMICKTRIM,
-+			   AT91_UTMICKTRIM_FREQ, utmi_ref_clk_freq);
- 
--	while (!clk_utmi_ready(utmi->regmap))
-+	regmap_update_bits(utmi->regmap_pmc, AT91_CKGR_UCKR, uckr, uckr);
-+
-+	while (!clk_utmi_ready(utmi->regmap_pmc))
- 		cpu_relax();
- 
- 	return 0;
-@@ -53,21 +95,22 @@ static int clk_utmi_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_utmi *utmi = to_clk_utmi(hw);
- 
--	return clk_utmi_ready(utmi->regmap);
-+	return clk_utmi_ready(utmi->regmap_pmc);
- }
- 
- static void clk_utmi_unprepare(struct clk_hw *hw)
- {
- 	struct clk_utmi *utmi = to_clk_utmi(hw);
- 
--	regmap_update_bits(utmi->regmap, AT91_CKGR_UCKR, AT91_PMC_UPLLEN, 0);
-+	regmap_update_bits(utmi->regmap_pmc, AT91_CKGR_UCKR, AT91_PMC_UPLLEN, 0);
- }
- 
- static unsigned long clk_utmi_recalc_rate(struct clk_hw *hw,
- 					  unsigned long parent_rate)
- {
--	/* UTMI clk is a fixed clk multiplier */
--	return parent_rate * UTMI_FIXED_MUL;
-+	struct clk_utmi *utmi = to_clk_utmi(hw);
-+
-+	return parent_rate * utmi->mul;
- }
- 
- static const struct clk_ops utmi_ops = {
-@@ -78,7 +121,7 @@ static const struct clk_ops utmi_ops = {
- };
- 
- static struct clk_hw * __init
--at91_clk_register_utmi(struct regmap *regmap,
-+at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
- 		       const char *name, const char *parent_name)
- {
- 	struct clk_utmi *utmi;
-@@ -97,7 +140,8 @@ at91_clk_register_utmi(struct regmap *regmap,
- 	init.flags = CLK_SET_RATE_GATE;
- 
- 	utmi->hw.init = &init;
--	utmi->regmap = regmap;
-+	utmi->regmap_pmc = regmap_pmc;
-+	utmi->regmap_sfr = regmap_sfr;
- 
- 	hw = &utmi->hw;
- 	ret = clk_hw_register(NULL, &utmi->hw);
-@@ -114,17 +158,20 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
- 	struct clk_hw *hw;
- 	const char *parent_name;
- 	const char *name = np->name;
--	struct regmap *regmap;
-+	struct regmap *regmap_pmc, *regmap_sfr;
- 
- 	parent_name = of_clk_get_parent_name(np, 0);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
--	if (IS_ERR(regmap))
-+	regmap_pmc = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap_pmc))
- 		return;
- 
--	hw = at91_clk_register_utmi(regmap, name, parent_name);
-+	/* SFR node missing is not necessarily an issue, we'll check it later. */
-+	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
-+
-+	hw = at91_clk_register_utmi(regmap_pmc, regmap_sfr, name, parent_name);
- 	if (IS_ERR(hw))
- 		return;
- 
-diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
-index 506ea8ffda19..ad97856f8964 100644
---- a/include/soc/at91/atmel-sfr.h
-+++ b/include/soc/at91/atmel-sfr.h
-@@ -17,6 +17,7 @@
- /* 0x08 ~ 0x0c: Reserved */
- #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
- #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
-+#define AT91_SFR_UTMICKTRIM	0x30
- #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
- 
- /* Field definitions */
-@@ -28,5 +29,6 @@
- 					 AT91_OHCIICR_SUSPEND_B | \
- 					 AT91_OHCIICR_SUSPEND_C)
- 
-+#define AT91_UTMICKTRIM_FREQ	GENMASK(1,0)
- 
- #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
+> 
+>> +       .mux    = _SUNXI_CCU_MUX(24, 2),
+>> +       .common = {
+>> +               .reg            = 0x074,
+>> +               .hw.init        = CLK_HW_INIT_PARENTS("ths",
+>> +                                                     ths_parents,
+>> +                                                     &ccu_div_ops,
+>> +                                                     0),
+>> +       },
+>> +};
+> 
+> [...]
+> 
+>> +static const char * const keypad_parents[] = { "osc24M", "osc32k", };
+> 
+> Nit: you can drop the extra comma.
 
---qsoczu47mcxkeksl
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Thanks.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> [...]
+> 
+>> +static const char * const sata_parents[] = { "pll-sata-out", 
+>> "sata-ext" };
+>> +static SUNXI_CCU_MUX_WITH_GATE(sata_clk, "sata", sata_parents,
+>> +                              0x0c8, 24, 1, BIT(31), 
+>> CLK_SET_RATE_PARENT);
+> 
+> You don't have CLK_SET_RATE_PARENT for the parent, which is also a 
+> mux+gate.
+> I'm not sure what you are expecting to happen here.
 
---qsoczu47mcxkeksl--
+Oh maybe I should add it there.
+
+> 
+>> +
+>> +static SUNXI_CCU_GATE(usb_phy0_clk,    "usb-phy0",     "osc24M",
+>> +                     0x0cc, BIT(8), 0);
+>> +static SUNXI_CCU_GATE(usb_phy1_clk,    "usb-phy1",     "osc24M",
+>> +                     0x0cc, BIT(9), 0);
+>> +static SUNXI_CCU_GATE(usb_phy2_clk,    "usb-phy2",     "osc24M",
+>> +                     0x0cc, BIT(10), 0);
+>> +static SUNXI_CCU_GATE(usb_ohci0_clk,   "usb-ohci0",    "osc12M",
+>> +                     0x0cc, BIT(16), 0);
+>> +static SUNXI_CCU_GATE(usb_ohci1_clk,   "usb-ohci1",    "osc12M",
+>> +                     0x0cc, BIT(17), 0);
+>> +static SUNXI_CCU_GATE(usb_ohci2_clk,   "usb-ohci2",    "osc12M",
+>> +                     0x0cc, BIT(18), 0);
+> 
+> Maybe you should force the OHCI muxes to 0?
+
+This seems to be not done in A64 driver.
+
+P.S. I changed this block to make it similar to the A64 driver.
+
+> 
+> [...]
+> 
+>> +static const char * const tcon_parents[] = { "pll-video0", 
+>> "pll-video1",
+>> +                                            "pll-video0-2x", 
+>> "pll-video1-2x",
+>> +                                            "pll-mipi" };
+>> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0", 
+>> tcon_parents,
+>> +                              0x110, 24, 3, BIT(31), 
+>> CLK_SET_RATE_PARENT);
+>> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1", 
+>> tcon_parents,
+>> +                              0x114, 24, 3, BIT(31), 
+>> CLK_SET_RATE_PARENT);
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", 
+>> tcon_parents,
+>> +                                0x118, 0, 4, 24, 3, BIT(31), 0);
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", 
+>> tcon_parents,
+>> +                                0x11c, 0, 4, 24, 3, BIT(31), 0);
+> 
+> You will likely need CLK_SET_RATE_PARENT for tcon-tv* as well.
+
+According to the experience on H3, the TCONs may be more complex.
+
+Leave 0 here until we have either HDMI driver or TVE driver.
+
+> 
+> [...]
+> 
+>> +static const char * const csi_mclk_parents[] = { "osc24M", 
+>> "pll-video",
+> 
+> pll-video1?
+
+oh yes, thanks.
+
+> 
+>> +                                                "pll-periph1" };
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(csi1_mclk_clk, "csi1-mclk", 
+>> csi_mclk_parents,
+>> +                                0x130, 0, 5, 8, 3, BIT(15), 0);
+>> +
+>> +static const char * const csi_sclk_parents[] = { "pll-periph0", 
+>> "pll-periph1" };
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", 
+>> csi_sclk_parents,
+>> +                                0x134, 16, 4, 24, 3, BIT(31), 0);
+>> +
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(csi0_mclk_clk, "csi0-mclk", 
+>> csi_mclk_parents,
+>> +                                0x134, 0, 5, 8, 3, BIT(15), 0);
+> 
+> [...]
+> 
+>> +
+>> +static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+>> +                            0x13c, 16, 3, BIT(31), 0);
+> 
+> CLK_SET_RATE_PARENT?
+
+Seems ok.
+
+> 
+>> +
+>> +static SUNXI_CCU_GATE(adda_clk,                "adda",         
+>> "pll-audio",
+>> +                     0x140, BIT(31), CLK_SET_RATE_PARENT);
+> 
+> You call the bus clock "bus-codec", but here you call it "adda". Pick 
+> one and
+> be consistent.
+
+Use codec?
+
+> 
+> [...]
+> 
+>> +static const char * const hdmi_parents[] = { "pll-video0", 
+>> "pll-video1" };
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+>> +                                0x150, 0, 4, 24, 2, BIT(31), 0);
+> 
+> CLK_SET_RATE_PARENT?
+
+Wait for HDMI driver.
+
+> 
+> 
+> [...]
+> 
+>> +static const char * const mbus_parents[] = { "osc24M", 
+>> "pll-periph0-2x",
+>> +                                            "pll-ddr0" };
+>> +static SUNXI_CCU_MP_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents, 
+>> 0x15c,
+>> +                                 0, 4,         /* M */
+>> +                                 16, 2,        /* P */
+>> +                                 24, 2,        /* mux */
+>> +                                 BIT(31),      /* gate */
+>> +                                 CLK_IS_CRITICAL);
+> 
+> The documentation for this one is fuzzy. It mentions the N (or P) 
+> factor,
+> but does not include it in the formula. Can you double check it against
+> the BSP and add a comment about it?
+
+```
+SUNXI_CLK_PERIPH(mbus, MBUS_CFG, 24, 2, MBUS_CFG, 0, 4, 16, 2, 0, 
+MBUS_CFG,
+			MBUS_RST, 0, 0, 31, 31, 0, 0, &clk_lock, NULL, 0);
+```
+I think the BSP driver used both factors, however, the driver may be 
+also
+not accurate as I think maybe mbus is not going to be changed even in 
+BSP
+kernel.
+
+> 
+>> +
+>> +static const char * const dsi_dphy_parents[] = { "pll-video0", 
+>> "pll-video1",
+>> +                                                "pll-periph0" };
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(dsi_dphy_clk, "dsi-dphy", 
+>> dsi_dphy_parents,
+>> +                                0x168, 0, 4, 8, 2, BIT(15), 0);
+> 
+> Note: we might need CLK_SET_RATE_PARENT later on, but we will need to 
+> find
+> a way to keep pll-periph* fixed.
+> 
+>> +
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tve0_clk, "tve0", tcon_parents,
+>> +                                0x180, 0, 4, 24, 3, BIT(31), 0);
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tve1_clk, "tve1", tcon_parents,
+>> +                                0x184, 0, 4, 24, 3, BIT(31), 0);
+> 
+> CLK_SET_RATE_PARENT?
+
+Wait for the real driver -- it may be more complex.
+
+> 
+>> +
+>> +static const char * const tvd_parents[] = { "pll-video0", 
+>> "pll-video1",
+>> +                                           "pll-video0-2x", 
+>> "pll-video1-2x" };
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd0_clk, "tvd0", tvd_parents,
+>> +                                0x188, 0, 4, 24, 3, BIT(31), 0);
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd1_clk, "tvd1", tvd_parents,
+>> +                                0x18c, 0, 4, 24, 3, BIT(31), 0);
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd2_clk, "tvd2", tvd_parents,
+>> +                                0x190, 0, 4, 24, 3, BIT(31), 0);
+>> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd3_clk, "tvd3", tvd_parents,
+>> +                                0x194, 0, 4, 24, 3, BIT(31), 0);
+> 
+> CLK_SET_RATE_PARENT?
+
+Not sure at all, maybe they should be changed when really doing TVD
+driver.
+
+> 
+> [...]
+> 
+> You are missing the SYS_32k mux at register 0x310. According to
+> the diagrams, this is the actual clock that supplies the LOSC
+> parent of various muxes in the CCU. It itself is a mux between
+> an internal 2M RC oscillator, and LOSC from the RTC module.
+> 
+>> +
+>> +static struct ccu_reset_map sun8i_r40_ccu_resets[] = {
+> 
+> [...]
+> 
+>> +       [RST_BUS_HDMI_SLOW]     =  { 0x2c4, BIT(10) },
+>> +       [RST_BUS_HDMI]          =  { 0x2c4, BIT(11) },
+> 
+> Manual says bit 10 is HDMI0, bit 11 is HDMI1. Looking at the clocks,
+> bit 10 would be RST_BUS_HDMI, while bit 11 would be RST_BUS_HDMI_SLOW.
+
+Let me just call them 0 and 1 in next version.
+
+> 
+> [...]
+> 
+>> +
+>> +static const struct sunxi_ccu_desc sun8i_r40_ccu_desc = {
+>> +       .ccu_clks       = sun8i_r40_ccu_clks,
+>> +       .num_ccu_clks   = ARRAY_SIZE(sun8i_r40_ccu_clks),
+>> +
+>> +       .hw_clks        = &sun8i_r40_hw_clks,
+>> +
+>> +       .resets         = sun8i_r40_ccu_resets,
+>> +       .num_resets     = ARRAY_SIZE(sun8i_r40_ccu_resets),
+>> +};
+>> +
+>> +static struct ccu_mux_nb sun8i_r40_cpu_nb = {
+>> +       .common         = &cpu_clk.common,
+>> +       .cm             = &cpu_clk.mux,
+>> +       .delay_us       = 1, /* > 8 clock cycles at 24 MHz */
+>> +       .bypass_index   = 1, /* index of 24 MHz oscillator */
+>> +};
+>> +
+>> +static void __init sun8i_r40_ccu_setup(struct device_node *node)
+>> +{
+>> +       void __iomem *reg;
+>> +       u32 val;
+>> +
+>> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+>> +       if (IS_ERR(reg)) {
+>> +               pr_err("%s: Could not map the clock registers\n",
+>> +                      of_node_full_name(node));
+>> +               return;
+>> +       }
+>> +
+>> +       /* Force the PLL-Audio-1x divider to 4 */
+>> +       val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
+>> +       val &= ~GENMASK(19, 16);
+>> +       writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
+> 
+> You should also force pll-mipi to mipi mode. And the OHCI muxes.
+> 
+>> +
+>> +       sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
+>> +
+>> +       ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
+>> +                                 &sun8i_r40_cpu_nb);
+> 
+> Do you also need the gate-then-ungate notifier?
+
+Still unknown...
+
+> 
+> Thanks
+> ChenYu
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
