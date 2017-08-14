@@ -1,339 +1,366 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170823125744.424675523@cogentembedded.com>
-Date: Wed, 23 Aug 2017 15:52:29 +0300
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
- Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
- Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A7797 support
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <20170812124352.24148-4-icenowy@aosc.io>
+References: <20170812124352.24148-1-icenowy@aosc.io> <20170812124352.24148-4-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 15 Aug 2017 00:12:47 +0800
+Message-ID: <CAGb2v67cz9AeHghe6iB_AJc+2=0sYRHLdfHo+sTPYHhjJxydUQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] clk: sunxi-ng: support R40 SoC
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add R-Car V3M (R8A7797) Clock Pulse Generator / Module Standby and
-Software Reset support, using the CPG/MSSR driver core and the common
-R-Car Gen3 code.
+)On Sat, Aug 12, 2017 at 8:43 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> Allwinner R40 SoC have a clock controller module in the style of the
+> SoCs beyond sun6i, however, it's more rich and complex.
+>
+> Add support for it.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v4:
+> - Removed usb-ohci-12M mux clocks.
+> - Removed unused (and not in user manual) adda-4x clock.
+> - Implemented proper SATA PLL system.
+> - Renamed MP (Mixed Processor) clock names to drop the extra "DE_".
+> - Renamed TCONs' clock names to "tcon-lcdX" or "tcon-tvX".
+> - Added missing RST_DRAM.
+> - Several clock post/pre-dividers and constraints fixes.
+> Changes in v3:
+> - Rebased on current linux-next.
+> Changes in v2:
+> - Fixes according to the SoC's user manual.
+>
+>  drivers/clk/sunxi-ng/Kconfig              |    5 +
+>  drivers/clk/sunxi-ng/Makefile             |    1 +
+>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1240 +++++++++++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   69 ++
+>  include/dt-bindings/clock/sun8i-r40-ccu.h |  187 +++++
+>  include/dt-bindings/reset/sun8i-r40-ccu.h |  130 +++
+>  6 files changed, 1632 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+>  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+>
+> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> index 7342928c35cd..7a360737fe3c 100644
+> --- a/drivers/clk/sunxi-ng/Kconfig
+> +++ b/drivers/clk/sunxi-ng/Kconfig
+> @@ -48,6 +48,11 @@ config SUN8I_V3S_CCU
+>  config SUN8I_DE2_CCU
+>         bool "Support for the Allwinner SoCs DE2 CCU"
+>
+> +config SUN8I_R40_CCU
+> +       bool "Support for the Allwinner R40 CCU"
+> +       default MACH_SUN8I
+> +       depends on MACH_SUN8I || COMPILE_TEST
+> +
+>  config SUN9I_A80_CCU
+>         bool "Support for the Allwinner A80 CCU"
+>         default MACH_SUN9I
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index 45a5910379a5..b1267fe68a8f 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -29,6 +29,7 @@ obj-$(CONFIG_SUN8I_H3_CCU)    += ccu-sun8i-h3.o
+>  obj-$(CONFIG_SUN8I_V3S_CCU)    += ccu-sun8i-v3s.o
+>  obj-$(CONFIG_SUN8I_DE2_CCU)    += ccu-sun8i-de2.o
+>  obj-$(CONFIG_SUN8I_R_CCU)      += ccu-sun8i-r.o
+> +obj-$(CONFIG_SUN8I_R40_CCU)    += ccu-sun8i-r40.o
+>  obj-$(CONFIG_SUN9I_A80_CCU)    += ccu-sun9i-a80.o
+>  obj-$(CONFIG_SUN9I_A80_CCU)    += ccu-sun9i-a80-de.o
+>  obj-$(CONFIG_SUN9I_A80_CCU)    += ccu-sun9i-a80-usb.o
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+> new file mode 100644
+> index 000000000000..9dc6ad419f9a
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+[...]
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> +/*
+> + * The MIPI PLL has 2 modes: "MIPI" and "HDMI".
+> + *
+> + * The MIPI mode is a standard NKM-style clock. The HDMI mode is an
+> + * integer / fractional clock with switchable multipliers and dividers.
+> + * This is not supported here. We hardcode the PLL to MIPI mode.
+> + */
+> +#define SUN8I_R40_PLL_MIPI_REG 0x040
+> +
+> +static const char * const pll_mipi_parents[] = { "pll-video0" };
+> +static SUNXI_CCU_NKM_WITH_MUX_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+> +                                       pll_mipi_parents, 0x040,
+> +                                       8, 4,   /* N */
+> +                                       4, 2,   /* K */
+> +                                       0, 4,   /* M */
+> +                                       21, 1,  /* mux */
+> +                                       BIT(31) | BIT(23) | BIT(22), /* gate */
+> +                                       BIT(28),        /* lock */
+> +                                       CLK_SET_RATE_UNGATE);
 
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
- drivers/clk/renesas/Kconfig                                  |    5 
- drivers/clk/renesas/Makefile                                 |    1 
- drivers/clk/renesas/r8a7797-cpg-mssr.c                       |  207 +++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
- drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
- 6 files changed, 223 insertions(+), 2 deletions(-)
+K has a minimum of 2 here.
 
-Index: linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -22,6 +22,7 @@ Required Properties:
-       - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
-       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
-       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
-+      - "renesas,r8a7797-cpg-mssr" for the r8a7797 SoC (R-Car V3M)
- 
-   - reg: Base address and length of the memory resource used by the CPG/MSSR
-     block
-@@ -30,8 +31,8 @@ Required Properties:
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
-       - "extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
--		 r8a7795, r8a7796)
--      - "extalr" (r8a7795, r8a7796)
-+		 r8a7795, r8a7796, r8a7797)
-+      - "extalr" (r8a7795, r8a7796, r8a7797)
-       - "usb_extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7793, r8a7794)
- 
-   - #clock-cells: Must be 2
-Index: linux/drivers/clk/renesas/Kconfig
-===================================================================
---- linux.orig/drivers/clk/renesas/Kconfig
-+++ linux/drivers/clk/renesas/Kconfig
-@@ -15,6 +15,7 @@ config CLK_RENESAS
- 	select CLK_R8A7794 if ARCH_R8A7794
- 	select CLK_R8A7795 if ARCH_R8A7795
- 	select CLK_R8A7796 if ARCH_R8A7796
-+	select CLK_R8A7797 if ARCH_R8A7797
- 	select CLK_SH73A0 if ARCH_SH73A0
- 
- if CLK_RENESAS
-@@ -94,6 +95,10 @@ config CLK_R8A7796
- 	bool
- 	select CLK_RCAR_GEN3_CPG
- 
-+config CLK_R8A7797
-+	bool
-+	select CLK_RCAR_GEN3_CPG
-+
- config CLK_SH73A0
- 	bool
- 	select CLK_RENESAS_CPG_MSTP
-Index: linux/drivers/clk/renesas/Makefile
-===================================================================
---- linux.orig/drivers/clk/renesas/Makefile
-+++ linux/drivers/clk/renesas/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_CLK_R8A7792)		+= r8a7792-cp
- obj-$(CONFIG_CLK_R8A7794)		+= r8a7794-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
-+obj-$(CONFIG_CLK_R8A7797)		+= r8a7797-cpg-mssr.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
- 
- # Family
-Index: linux/drivers/clk/renesas/r8a7797-cpg-mssr.c
-===================================================================
---- /dev/null
-+++ linux/drivers/clk/renesas/r8a7797-cpg-mssr.c
-@@ -0,0 +1,207 @@
-+/*
-+ * r8a7797 Clock Pulse Generator / Module Standby and Software Reset
-+ *
-+ * Copyright (C) 2017 Cogent Embedded Inc.
-+ *
-+ * Based on r8a7795-cpg-mssr.c
-+ *
-+ * Copyright (C) 2015 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/soc/renesas/rcar-rst.h>
-+
-+#include <dt-bindings/clock/r8a7797-cpg-mssr.h>
-+
-+#include "renesas-cpg-mssr.h"
-+#include "rcar-gen3-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R8A7797_CLK_OSC,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+	CLK_EXTALR,
-+
-+	/* Internal Core Clocks */
-+	CLK_MAIN,
-+	CLK_PLL0,
-+	CLK_PLL1,
-+	CLK_PLL3,
-+	CLK_PLL1_DIV2,
-+	CLK_PLL1_DIV4,
-+	CLK_S1,
-+	CLK_S2,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE
-+};
-+
-+static const struct cpg_core_clk r8a7797_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal",	CLK_EXTAL),
-+	DEF_INPUT("extalr",	CLK_EXTALR),
-+
-+	/* Internal Core Clocks */
-+	DEF_BASE(".main",	CLK_MAIN, CLK_TYPE_GEN3_MAIN, CLK_EXTAL),
-+	DEF_BASE(".pll0",	CLK_PLL0, CLK_TYPE_GEN3_PLL0, CLK_MAIN),
-+	DEF_BASE(".pll1",	CLK_PLL1, CLK_TYPE_GEN3_PLL1, CLK_MAIN),
-+	DEF_BASE(".pll3",	CLK_PLL3, CLK_TYPE_GEN3_PLL3, CLK_MAIN),
-+
-+	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
-+	DEF_FIXED(".pll1_div4",	CLK_PLL1_DIV4,	CLK_PLL1_DIV2,	2, 1),
-+	DEF_FIXED(".s1",	CLK_S1,		CLK_PLL1_DIV2,	4, 1),
-+	DEF_FIXED(".s2",	CLK_S2,		CLK_PLL1_DIV2,	6, 1),
-+
-+	/* Core Clock Outputs */
-+	DEF_FIXED("ztr",	R8A7797_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
-+	DEF_FIXED("ztrd2",	R8A7797_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
-+	DEF_FIXED("zt",		R8A7797_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
-+	DEF_FIXED("zx",		R8A7797_CLK_ZX,    CLK_PLL1_DIV2,  3, 1),
-+	DEF_FIXED("s1d1",	R8A7797_CLK_S1D1,  CLK_S1,	   1, 1),
-+	DEF_FIXED("s1d2",	R8A7797_CLK_S1D2,  CLK_S1,	   2, 1),
-+	DEF_FIXED("s1d4",	R8A7797_CLK_S1D4,  CLK_S1,	   4, 1),
-+	DEF_FIXED("s2d1",	R8A7797_CLK_S2D1,  CLK_S2,	   1, 1),
-+	DEF_FIXED("s2d2",	R8A7797_CLK_S2D2,  CLK_S2,	   2, 1),
-+	DEF_FIXED("s2d4",	R8A7797_CLK_S2D4,  CLK_S2,	   4, 1),
-+
-+	DEF_FIXED("cl",		R8A7797_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
-+	DEF_FIXED("cp",		R8A7797_CLK_CP,    CLK_EXTAL,	   2, 1),
-+
-+	DEF_DIV6P1("canfd",	R8A7797_CLK_CANFD, CLK_PLL1_DIV4,  0x244),
-+	DEF_DIV6P1("mso",	R8A7797_CLK_MSO,   CLK_PLL1_DIV4,  0x014),
-+	DEF_DIV6P1("csi0",	R8A7797_CLK_CSI0,  CLK_PLL1_DIV4,  0x00c),
-+
-+	DEF_FIXED("osc",	R8A7797_CLK_OSC,   CLK_PLL1_DIV2, (12*1024), 1),
-+	DEF_FIXED("r",		R8A7797_CLK_R,	   CLK_EXTALR,	   1, 1),
-+};
-+
-+static const struct mssr_mod_clk r8a7797_mod_clks[] __initconst = {
-+	DEF_MOD("ivcp1e",		 127,	R8A7797_CLK_S2D1),
-+	DEF_MOD("scif4",		 203,	R8A7797_CLK_S2D4),
-+	DEF_MOD("scif3",		 204,	R8A7797_CLK_S2D4),
-+	DEF_MOD("scif1",		 206,	R8A7797_CLK_S2D4),
-+	DEF_MOD("scif0",		 207,	R8A7797_CLK_S2D4),
-+	DEF_MOD("msiof3",		 208,	R8A7797_CLK_MSO),
-+	DEF_MOD("msiof2",		 209,	R8A7797_CLK_MSO),
-+	DEF_MOD("msiof1",		 210,	R8A7797_CLK_MSO),
-+	DEF_MOD("msiof0",		 211,	R8A7797_CLK_MSO),
-+	DEF_MOD("mfis",			 213,	R8A7797_CLK_S2D2),
-+	DEF_MOD("sys-dmac2",		 217,	R8A7797_CLK_S2D1),
-+	DEF_MOD("sys-dmac1",		 218,	R8A7797_CLK_S2D1),
-+	DEF_MOD("rwdt",			 402,	R8A7797_CLK_R),
-+	DEF_MOD("intc-ex",		 407,	R8A7797_CLK_CP),
-+	DEF_MOD("intc-ap",		 408,	R8A7797_CLK_S2D1),
-+	DEF_MOD("hscif3",		 517,	R8A7797_CLK_S2D1),
-+	DEF_MOD("hscif2",		 518,	R8A7797_CLK_S2D1),
-+	DEF_MOD("hscif1",		 519,	R8A7797_CLK_S2D1),
-+	DEF_MOD("hscif0",		 520,	R8A7797_CLK_S2D1),
-+	DEF_MOD("thermal",		 522,	R8A7797_CLK_CP),
-+	DEF_MOD("pwm",			 523,	R8A7797_CLK_S2D4),
-+	DEF_MOD("fcpvd0",		 603,	R8A7797_CLK_S2D1),
-+	DEF_MOD("vspd0",		 623,	R8A7797_CLK_S2D1),
-+	DEF_MOD("csi40",		 716,	R8A7797_CLK_CSI0),
-+	DEF_MOD("du0",			 724,	R8A7797_CLK_S2D1),
-+	DEF_MOD("vin3",			 808,	R8A7797_CLK_S2D1),
-+	DEF_MOD("vin2",			 809,	R8A7797_CLK_S2D1),
-+	DEF_MOD("vin1",			 810,	R8A7797_CLK_S2D1),
-+	DEF_MOD("vin0",			 811,	R8A7797_CLK_S2D1),
-+	DEF_MOD("etheravb",		 812,	R8A7797_CLK_S2D2),
-+	DEF_MOD("gpio5",		 907,	R8A7797_CLK_CP),
-+	DEF_MOD("gpio4",		 908,	R8A7797_CLK_CP),
-+	DEF_MOD("gpio3",		 909,	R8A7797_CLK_CP),
-+	DEF_MOD("gpio2",		 910,	R8A7797_CLK_CP),
-+	DEF_MOD("gpio1",		 911,	R8A7797_CLK_CP),
-+	DEF_MOD("gpio0",		 912,	R8A7797_CLK_CP),
-+	DEF_MOD("can-fd",		 914,	R8A7797_CLK_S2D2),
-+	DEF_MOD("i2c4",			 927,	R8A7797_CLK_S2D2),
-+	DEF_MOD("i2c3",			 928,	R8A7797_CLK_S2D2),
-+	DEF_MOD("i2c2",			 929,	R8A7797_CLK_S2D2),
-+	DEF_MOD("i2c1",			 930,	R8A7797_CLK_S2D2),
-+	DEF_MOD("i2c0",			 931,	R8A7797_CLK_S2D2),
-+};
-+
-+static const unsigned int r8a7797_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
-+};
-+
-+
-+/*
-+ * CPG Clock Data
-+ */
-+
-+/*
-+ *   MD		EXTAL		PLL0	PLL1	PLL3
-+ * 14 13 19	(MHz)
-+ *-------------------------------------------------
-+ * 0  0  0	16.66 x 1	x192	x192	x96
-+ * 0  0  1	16.66 x 1	x192	x192	x80
-+ * 0  1  0	20    x 1	x160	x160	x80
-+ * 0  1  1	20    x 1	x160	x160	x66
-+ * 1  0  0	27    / 2	x236	x236	x118
-+ * 1  0  1	27    / 2	x236	x236	x98
-+ * 1  1  0	33.33 / 2	x192	x192	x96
-+ * 1  1  1	33.33 / 2	x192	x192	x80
-+ */
-+#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
-+					 (((md) & BIT(13)) >> 12) | \
-+					 (((md) & BIT(19)) >> 19))
-+
-+static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[8] __initconst = {
-+	/* EXTAL div	PLL1 mult	PLL3 mult */
-+	{ 1,		192,		96,	},
-+	{ 1,		192,		80,	},
-+	{ 1,		160,		80,	},
-+	{ 1,		160,		66,	},
-+	{ 2,		236,		118,	},
-+	{ 2,		236,		98,	},
-+	{ 2,		192,		96,	},
-+	{ 2,		192,		80,	},
-+};
-+
-+static int __init r8a7797_cpg_mssr_init(struct device *dev)
-+{
-+	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
-+	u32 cpg_mode;
-+	int error;
-+
-+	error = rcar_rst_read_mode_pins(&cpg_mode);
-+	if (error)
-+		return error;
-+
-+	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
-+	if (!cpg_pll_config->extal_div) {
-+		dev_err(dev, "Prohibited setting (cpg_mode=0x%x)\n", cpg_mode);
-+		return -EINVAL;
-+	}
-+
-+	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
-+}
-+
-+const struct cpg_mssr_info r8a7797_cpg_mssr_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r8a7797_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r8a7797_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r8a7797_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r8a7797_mod_clks),
-+	.num_hw_mod_clks = 12 * 32,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r8a7797_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r8a7797_crit_mod_clks),
-+
-+	/* Callbacks */
-+	.init = r8a7797_cpg_mssr_init,
-+	.cpg_clk_register = rcar_gen3_cpg_clk_register,
-+};
-Index: linux/drivers/clk/renesas/renesas-cpg-mssr.c
-===================================================================
---- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ linux/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -680,6 +680,12 @@ static const struct of_device_id cpg_mss
- 		.data = &r8a7796_cpg_mssr_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R8A7797
-+	{
-+		.compatible = "renesas,r8a7797-cpg-mssr",
-+		.data = &r8a7797_cpg_mssr_info,
-+	},
-+#endif
- 	{ /* sentinel */ }
- };
- 
-Index: linux/drivers/clk/renesas/renesas-cpg-mssr.h
-===================================================================
---- linux.orig/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ linux/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -138,6 +138,7 @@ extern const struct cpg_mssr_info r8a779
- extern const struct cpg_mssr_info r8a7794_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
-+extern const struct cpg_mssr_info r8a7797_cpg_mssr_info;
- 
- 
-     /*
+> +
+> +static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
+> +                                       "osc24M", 0x0048,
+> +                                       8, 7,           /* N */
+> +                                       0, 4,           /* M */
+> +                                       BIT(24),        /* frac enable */
+> +                                       BIT(25),        /* frac select */
+> +                                       270000000,      /* frac rate 0 */
+> +                                       297000000,      /* frac rate 1 */
+> +                                       BIT(31),        /* gate */
+> +                                       BIT(28),        /* lock */
+> +                                       0);
+
+CLK_SET_RATE_UNGATE should be set for _all_ PLLs. The lock status bit
+depends on the PLL running, and we check the lock status whenever set_rate
+is done.
+
+> +
+> +static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
+> +                                  "osc24M", 0x04c,
+> +                                  8, 7,        /* N */
+> +                                  0, 2,        /* M */
+> +                                  BIT(31),     /* gate */
+> +                                  BIT(28),     /* lock */
+> +                                  CLK_SET_RATE_UNGATE);
+
+Manual says 16 <= N <= 75.
+
+[...]
+
+> +
+> +static struct clk_div_table ths_div_table[] = {
+> +       { .val = 0, .div = 1 },
+> +       { .val = 1, .div = 2 },
+> +       { .val = 2, .div = 4 },
+> +       { .val = 3, .div = 8 },
+> +};
+> +static const char * const ths_parents[] = { "osc24M" };
+> +static struct ccu_div ths_clk = {
+> +       .enable = BIT(31),
+> +       .div    = _SUNXI_CCU_DIV_TABLE(0, 2, ths_div_table),
+
+You could use _SUNXI_CCU_DIV_FLAGS(0, 2, CLK_DIVIDER_POWER_OF_TWO)
+instead of div_table.
+
+> +       .mux    = _SUNXI_CCU_MUX(24, 2),
+> +       .common = {
+> +               .reg            = 0x074,
+> +               .hw.init        = CLK_HW_INIT_PARENTS("ths",
+> +                                                     ths_parents,
+> +                                                     &ccu_div_ops,
+> +                                                     0),
+> +       },
+> +};
+
+[...]
+
+> +static const char * const keypad_parents[] = { "osc24M", "osc32k", };
+
+Nit: you can drop the extra comma.
+
+[...]
+
+> +static const char * const sata_parents[] = { "pll-sata-out", "sata-ext" };
+> +static SUNXI_CCU_MUX_WITH_GATE(sata_clk, "sata", sata_parents,
+> +                              0x0c8, 24, 1, BIT(31), CLK_SET_RATE_PARENT);
+
+You don't have CLK_SET_RATE_PARENT for the parent, which is also a mux+gate.
+I'm not sure what you are expecting to happen here.
+
+> +
+> +static SUNXI_CCU_GATE(usb_phy0_clk,    "usb-phy0",     "osc24M",
+> +                     0x0cc, BIT(8), 0);
+> +static SUNXI_CCU_GATE(usb_phy1_clk,    "usb-phy1",     "osc24M",
+> +                     0x0cc, BIT(9), 0);
+> +static SUNXI_CCU_GATE(usb_phy2_clk,    "usb-phy2",     "osc24M",
+> +                     0x0cc, BIT(10), 0);
+> +static SUNXI_CCU_GATE(usb_ohci0_clk,   "usb-ohci0",    "osc12M",
+> +                     0x0cc, BIT(16), 0);
+> +static SUNXI_CCU_GATE(usb_ohci1_clk,   "usb-ohci1",    "osc12M",
+> +                     0x0cc, BIT(17), 0);
+> +static SUNXI_CCU_GATE(usb_ohci2_clk,   "usb-ohci2",    "osc12M",
+> +                     0x0cc, BIT(18), 0);
+
+Maybe you should force the OHCI muxes to 0?
+
+[...]
+
+> +static const char * const tcon_parents[] = { "pll-video0", "pll-video1",
+> +                                            "pll-video0-2x", "pll-video1-2x",
+> +                                            "pll-mipi" };
+> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_parents,
+> +                              0x110, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_parents,
+> +                              0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_parents,
+> +                                0x118, 0, 4, 24, 3, BIT(31), 0);
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_parents,
+> +                                0x11c, 0, 4, 24, 3, BIT(31), 0);
+
+You will likely need CLK_SET_RATE_PARENT for tcon-tv* as well.
+
+[...]
+
+> +static const char * const csi_mclk_parents[] = { "osc24M", "pll-video",
+
+pll-video1?
+
+> +                                                "pll-periph1" };
+> +static SUNXI_CCU_M_WITH_MUX_GATE(csi1_mclk_clk, "csi1-mclk", csi_mclk_parents,
+> +                                0x130, 0, 5, 8, 3, BIT(15), 0);
+> +
+> +static const char * const csi_sclk_parents[] = { "pll-periph0", "pll-periph1" };
+> +static SUNXI_CCU_M_WITH_MUX_GATE(csi_sclk_clk, "csi-sclk", csi_sclk_parents,
+> +                                0x134, 16, 4, 24, 3, BIT(31), 0);
+> +
+> +static SUNXI_CCU_M_WITH_MUX_GATE(csi0_mclk_clk, "csi0-mclk", csi_mclk_parents,
+> +                                0x134, 0, 5, 8, 3, BIT(15), 0);
+
+[...]
+
+> +
+> +static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+> +                            0x13c, 16, 3, BIT(31), 0);
+
+CLK_SET_RATE_PARENT?
+
+> +
+> +static SUNXI_CCU_GATE(adda_clk,                "adda",         "pll-audio",
+> +                     0x140, BIT(31), CLK_SET_RATE_PARENT);
+
+You call the bus clock "bus-codec", but here you call it "adda". Pick one and
+be consistent.
+
+[...]
+
+> +static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
+> +static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+> +                                0x150, 0, 4, 24, 2, BIT(31), 0);
+
+CLK_SET_RATE_PARENT?
+
+
+[...]
+
+> +static const char * const mbus_parents[] = { "osc24M", "pll-periph0-2x",
+> +                                            "pll-ddr0" };
+> +static SUNXI_CCU_MP_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents, 0x15c,
+> +                                 0, 4,         /* M */
+> +                                 16, 2,        /* P */
+> +                                 24, 2,        /* mux */
+> +                                 BIT(31),      /* gate */
+> +                                 CLK_IS_CRITICAL);
+
+The documentation for this one is fuzzy. It mentions the N (or P) factor,
+but does not include it in the formula. Can you double check it against
+the BSP and add a comment about it?
+
+> +
+> +static const char * const dsi_dphy_parents[] = { "pll-video0", "pll-video1",
+> +                                                "pll-periph0" };
+> +static SUNXI_CCU_M_WITH_MUX_GATE(dsi_dphy_clk, "dsi-dphy", dsi_dphy_parents,
+> +                                0x168, 0, 4, 8, 2, BIT(15), 0);
+
+Note: we might need CLK_SET_RATE_PARENT later on, but we will need to find
+a way to keep pll-periph* fixed.
+
+> +
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tve0_clk, "tve0", tcon_parents,
+> +                                0x180, 0, 4, 24, 3, BIT(31), 0);
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tve1_clk, "tve1", tcon_parents,
+> +                                0x184, 0, 4, 24, 3, BIT(31), 0);
+
+CLK_SET_RATE_PARENT?
+
+> +
+> +static const char * const tvd_parents[] = { "pll-video0", "pll-video1",
+> +                                           "pll-video0-2x", "pll-video1-2x" };
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd0_clk, "tvd0", tvd_parents,
+> +                                0x188, 0, 4, 24, 3, BIT(31), 0);
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd1_clk, "tvd1", tvd_parents,
+> +                                0x18c, 0, 4, 24, 3, BIT(31), 0);
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd2_clk, "tvd2", tvd_parents,
+> +                                0x190, 0, 4, 24, 3, BIT(31), 0);
+> +static SUNXI_CCU_M_WITH_MUX_GATE(tvd3_clk, "tvd3", tvd_parents,
+> +                                0x194, 0, 4, 24, 3, BIT(31), 0);
+
+CLK_SET_RATE_PARENT?
+
+[...]
+
+You are missing the SYS_32k mux at register 0x310. According to
+the diagrams, this is the actual clock that supplies the LOSC
+parent of various muxes in the CCU. It itself is a mux between
+an internal 2M RC oscillator, and LOSC from the RTC module.
+
+> +
+> +static struct ccu_reset_map sun8i_r40_ccu_resets[] = {
+
+[...]
+
+> +       [RST_BUS_HDMI_SLOW]     =  { 0x2c4, BIT(10) },
+> +       [RST_BUS_HDMI]          =  { 0x2c4, BIT(11) },
+
+Manual says bit 10 is HDMI0, bit 11 is HDMI1. Looking at the clocks,
+bit 10 would be RST_BUS_HDMI, while bit 11 would be RST_BUS_HDMI_SLOW.
+
+[...]
+
+> +
+> +static const struct sunxi_ccu_desc sun8i_r40_ccu_desc = {
+> +       .ccu_clks       = sun8i_r40_ccu_clks,
+> +       .num_ccu_clks   = ARRAY_SIZE(sun8i_r40_ccu_clks),
+> +
+> +       .hw_clks        = &sun8i_r40_hw_clks,
+> +
+> +       .resets         = sun8i_r40_ccu_resets,
+> +       .num_resets     = ARRAY_SIZE(sun8i_r40_ccu_resets),
+> +};
+> +
+> +static struct ccu_mux_nb sun8i_r40_cpu_nb = {
+> +       .common         = &cpu_clk.common,
+> +       .cm             = &cpu_clk.mux,
+> +       .delay_us       = 1, /* > 8 clock cycles at 24 MHz */
+> +       .bypass_index   = 1, /* index of 24 MHz oscillator */
+> +};
+> +
+> +static void __init sun8i_r40_ccu_setup(struct device_node *node)
+> +{
+> +       void __iomem *reg;
+> +       u32 val;
+> +
+> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+> +       if (IS_ERR(reg)) {
+> +               pr_err("%s: Could not map the clock registers\n",
+> +                      of_node_full_name(node));
+> +               return;
+> +       }
+> +
+> +       /* Force the PLL-Audio-1x divider to 4 */
+> +       val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
+> +       val &= ~GENMASK(19, 16);
+> +       writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
+
+You should also force pll-mipi to mipi mode. And the OHCI muxes.
+
+> +
+> +       sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
+> +
+> +       ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
+> +                                 &sun8i_r40_cpu_nb);
+
+Do you also need the gate-then-ungate notifier?
+
+Thanks
+ChenYu
