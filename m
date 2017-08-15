@@ -1,44 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52891 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752631AbdHKPkN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Aug 2017 11:40:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] clk: renesas: r8a7796: Add Z clock
-Date: Fri, 11 Aug 2017 17:39:59 +0200
-Message-Id: <1502466000-20185-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1502466000-20185-1-git-send-email-horms+renesas@verge.net.au>
-References: <1502466000-20185-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <2436327.OLdY8skjMP@aspire.rjw.lan>
+References: <20170723102749.17323-1-icenowy@aosc.io> <20170723102749.17323-8-icenowy@aosc.io>
+ <20170724085349.GT352@vireshk-i7> <2436327.OLdY8skjMP@aspire.rjw.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 15 Aug 2017 13:42:19 +0800
+Message-ID: <CAGb2v640an6X75PTbNTnMqhnEREekX97uJZ4sFsfqTAgcDinQg@mail.gmail.com>
+Subject: Re: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner SoCs
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Mon, Jul 24, 2017 at 7:46 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Monday, July 24, 2017 02:23:49 PM Viresh Kumar wrote:
+>> On 23-07-17, 18:27, Icenowy Zheng wrote:
+>> > Some new Allwinner SoCs get supported in the kernel after the
+>> > compatibles are added to cpufreq-dt-platdev driver.
+>> >
+>> > Add their compatible strings in the cpufreq-dt-platdev driver.
+>> >
+>> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> > ---
+>> >  drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
+>> >  1 file changed, 6 insertions(+)
+>> >
+>> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+>> > index 2eb40d46d357..c3851453e84a 100644
+>> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+>> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+>> > @@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
+>> >     { .compatible = "allwinner,sun8i-a23", },
+>> >     { .compatible = "allwinner,sun8i-a33", },
+>> >     { .compatible = "allwinner,sun8i-a83t", },
+>> > +   { .compatible = "allwinner,sun8i-h2-plus", },
+>> >     { .compatible = "allwinner,sun8i-h3", },
+>> > +   { .compatible = "allwinner,sun8i-v3s", },
+>> > +   { .compatible = "allwinner,sun50i-a64", },
+>> > +   { .compatible = "allwinner,sun50i-h5", },
+>> >
+>> >     { .compatible = "apm,xgene-shadowcat", },
+>> >
+>> > @@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
+>> >     { .compatible = "marvell,pxa250", },
+>> >     { .compatible = "marvell,pxa270", },
+>> >
+>> > +   { .compatible = "nextthing,gr8", },
+>> > +
+>> >     { .compatible = "samsung,exynos3250", },
+>> >     { .compatible = "samsung,exynos4210", },
+>> >     { .compatible = "samsung,exynos4212", },
+>>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>
+>>
+>
+> OK
+>
+> I'm assuming this will go in via arm-soc along with the rest of the series.
 
-This patch adds Z clock for R8A7796 SoC.
+The rest of the series, except for the clk patches I've already taken,
+doesn't seem to be going anywhere just yet. Is there a cpufreq or pm tree
+this can be merged through?
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index acc6d0f153e1..d9a27df96f7a 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -74,6 +74,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
- 
- 	/* Core Clock Outputs */
-+	DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
- 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
--- 
-2.1.4
-
+Thanks
+ChenYu
