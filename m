@@ -1,83 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41853 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751894AbdHUJCs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Aug 2017 05:02:48 -0400
-Date: Mon, 21 Aug 2017 11:02:47 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] ARM: dts: rcar-gen2: Convert to new CPG/MSSR
- bindings
-Message-ID: <20170821090247.GE14174@verge.net.au>
-References: <1503047498-29078-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503047498-29078-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <4537884.Ku45nQGoFt@aspire.rjw.lan>
+References: <20170723102749.17323-1-icenowy@aosc.io> <2436327.OLdY8skjMP@aspire.rjw.lan>
+ <CAGb2v640an6X75PTbNTnMqhnEREekX97uJZ4sFsfqTAgcDinQg@mail.gmail.com> <4537884.Ku45nQGoFt@aspire.rjw.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 15 Aug 2017 20:39:41 +0800
+Message-ID: <CAGb2v67zenaLQaK+df_oN1BebH_7LhTOtSr6dGyaLPN-k3fZow@mail.gmail.com>
+Subject: Re: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner SoCs
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 18, 2017 at 11:11:33AM +0200, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2,
-> clk-mstp, and clk-div6 drivers, which depend on most clocks being
-> described in DT.  Especially the module (MSTP) clocks are cumbersome and
-> error prone, due to 3 arrays (clocks, clock-indices, and
-> clock-output-names) to be kept in sync. In addition, the clk-mstp driver
-> cannot be extended easily to also support module resets, which are
-> provided by the same hardware module.
-> 
-> Hence when developing support for R-Car Gen3 SoCs, another approach was
-> chosen, which led to the CPG/MSSR driver core, and SoC-specific
-> subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
-> 
-> This series converts the various R-Car Gen2 DTSes to migrate to the new
-> CPG/MSSR drivers that were added in v4.13-rc1.
-> 
-> Note that module reset descriptions will be added later.
-> 
-> Changes compared to v1:
->   - Rebased.
-> 
-> Dependencies:
->   - renesas-devel-20170818-v4.13-rc5.
-> 
-> Known issues:
->   - The CPG/MSSR driver is initialized later than the old clk-rcar-gen2
->     driver, causing changes of initialization order for other drivers.
-> 
->     Currently the PHY subsystem does not support probe deferral
-> 
-> 	+irq: no irq domain found for /interrupt-controller@e61c0000 !
-> 
-> 	-Micrel KSZ8041RNLI ee700000.ethernet-ffffffff:01: attached PHY driver [Micrel KSZ8041RNLI] (mii_bus:phy_addr=ee700000.ethernet-ffffffff:01, irq=182)
-> 	+Micrel KSZ8041RNLI ee700000.ethernet-ffffffff:01: attached PHY driver [Micrel KSZ8041RNLI] (mii_bus:phy_addr=ee700000.ethernet-ffffffff:01, irq=-1)
-> 
->     leading to the Ethernet PHY falling back to polling instead of using an
->     interrupt.  This can be remedied by "of_mdio: Fix broken PHY IRQ in
->     case of probe deferral" (https://patchwork.kernel.org/patch/9734175/),
->     which is still pending approval.
-> 
->     Fortunately the impact of this is limited to a small delay in the
->     detection of cable (un)plugging.
->     Note that when using the PHY interrupt, cable unplugging is reported
->     instantaneous, but plugging takes ca. 1.5-1.8 seconds.  Hence when
->     using polling with the standard interval of 1 second, the link comes up
->     in about the same time.
-> 
-> For your convenience, this series is also available in the
-> topic/rcar2-cpg-mssr-dt-v2 branch of my renesas-drivers git repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> 
-> This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
-> r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
-> been compared before and after the conversion.
-> 
-> Thanks for applying!
+On Tue, Aug 15, 2017 at 8:25 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Tuesday, August 15, 2017 7:42:19 AM CEST Chen-Yu Tsai wrote:
+>> On Mon, Jul 24, 2017 at 7:46 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> > On Monday, July 24, 2017 02:23:49 PM Viresh Kumar wrote:
+>> >> On 23-07-17, 18:27, Icenowy Zheng wrote:
+>> >> > Some new Allwinner SoCs get supported in the kernel after the
+>> >> > compatibles are added to cpufreq-dt-platdev driver.
+>> >> >
+>> >> > Add their compatible strings in the cpufreq-dt-platdev driver.
+>> >> >
+>> >> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>> >> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> >> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >> > ---
+>> >> >  drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
+>> >> >  1 file changed, 6 insertions(+)
+>> >> >
+>> >> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+>> >> > index 2eb40d46d357..c3851453e84a 100644
+>> >> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+>> >> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+>> >> > @@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
+>> >> >     { .compatible = "allwinner,sun8i-a23", },
+>> >> >     { .compatible = "allwinner,sun8i-a33", },
+>> >> >     { .compatible = "allwinner,sun8i-a83t", },
+>> >> > +   { .compatible = "allwinner,sun8i-h2-plus", },
+>> >> >     { .compatible = "allwinner,sun8i-h3", },
+>> >> > +   { .compatible = "allwinner,sun8i-v3s", },
+>> >> > +   { .compatible = "allwinner,sun50i-a64", },
+>> >> > +   { .compatible = "allwinner,sun50i-h5", },
+>> >> >
+>> >> >     { .compatible = "apm,xgene-shadowcat", },
+>> >> >
+>> >> > @@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
+>> >> >     { .compatible = "marvell,pxa250", },
+>> >> >     { .compatible = "marvell,pxa270", },
+>> >> >
+>> >> > +   { .compatible = "nextthing,gr8", },
+>> >> > +
+>> >> >     { .compatible = "samsung,exynos3250", },
+>> >> >     { .compatible = "samsung,exynos4210", },
+>> >> >     { .compatible = "samsung,exynos4212", },
+>> >>
+>> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> >>
+>> >>
+>> >
+>> > OK
+>> >
+>> > I'm assuming this will go in via arm-soc along with the rest of the series.
+>>
+>> The rest of the series, except for the clk patches I've already taken,
+>> doesn't seem to be going anywhere just yet. Is there a cpufreq or pm tree
+>> this can be merged through?
+>
+> You mean this particular patch or the whole series?
+>
+> If the former, then yes, there is.
 
-Thanks, applied for v4.15.
+Just this patch. As I mentioned the rest of the series still needs some
+work, and likely won't make it in this cycle. If you could take this
+through the tree it would normally go through, avoiding any conflicts,
+that'd be great.
+
+ChenYu
