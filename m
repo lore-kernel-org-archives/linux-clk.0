@@ -1,118 +1,89 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.132]:35578 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752493AbdHIHsS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Aug 2017 03:48:18 -0400
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
-Cc: boris.brezillon@free-electrons.com, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
-        david.wu@rock-chips.com, xjq@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [RESEND PATCH v1] clk: Keep clocks in their initial state until clk_disable_unused() is called
-Date: Wed,  9 Aug 2017 15:53:00 +0800
-Message-Id: <1502265180-21661-1-git-send-email-zhangqing@rock-chips.com>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:54592 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751129AbdHOMeX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 08:34:23 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 07/10] cpufreq: dt: Add support for some new Allwinner SoCs
+Date: Tue, 15 Aug 2017 14:25:58 +0200
+Message-ID: <4537884.Ku45nQGoFt@aspire.rjw.lan>
+In-Reply-To: <CAGb2v640an6X75PTbNTnMqhnEREekX97uJZ4sFsfqTAgcDinQg@mail.gmail.com>
+References: <20170723102749.17323-1-icenowy@aosc.io> <2436327.OLdY8skjMP@aspire.rjw.lan> <CAGb2v640an6X75PTbNTnMqhnEREekX97uJZ4sFsfqTAgcDinQg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
+On Tuesday, August 15, 2017 7:42:19 AM CEST Chen-Yu Tsai wrote:
+> On Mon, Jul 24, 2017 at 7:46 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > On Monday, July 24, 2017 02:23:49 PM Viresh Kumar wrote:
+> >> On 23-07-17, 18:27, Icenowy Zheng wrote:
+> >> > Some new Allwinner SoCs get supported in the kernel after the
+> >> > compatibles are added to cpufreq-dt-platdev driver.
+> >> >
+> >> > Add their compatible strings in the cpufreq-dt-platdev driver.
+> >> >
+> >> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> >> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> >> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> > ---
+> >> >  drivers/cpufreq/cpufreq-dt-platdev.c | 6 ++++++
+> >> >  1 file changed, 6 insertions(+)
+> >> >
+> >> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> >> > index 2eb40d46d357..c3851453e84a 100644
+> >> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> >> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> >> > @@ -24,7 +24,11 @@ static const struct of_device_id machines[] __initconst = {
+> >> >     { .compatible = "allwinner,sun8i-a23", },
+> >> >     { .compatible = "allwinner,sun8i-a33", },
+> >> >     { .compatible = "allwinner,sun8i-a83t", },
+> >> > +   { .compatible = "allwinner,sun8i-h2-plus", },
+> >> >     { .compatible = "allwinner,sun8i-h3", },
+> >> > +   { .compatible = "allwinner,sun8i-v3s", },
+> >> > +   { .compatible = "allwinner,sun50i-a64", },
+> >> > +   { .compatible = "allwinner,sun50i-h5", },
+> >> >
+> >> >     { .compatible = "apm,xgene-shadowcat", },
+> >> >
+> >> > @@ -43,6 +47,8 @@ static const struct of_device_id machines[] __initconst = {
+> >> >     { .compatible = "marvell,pxa250", },
+> >> >     { .compatible = "marvell,pxa270", },
+> >> >
+> >> > +   { .compatible = "nextthing,gr8", },
+> >> > +
+> >> >     { .compatible = "samsung,exynos3250", },
+> >> >     { .compatible = "samsung,exynos4210", },
+> >> >     { .compatible = "samsung,exynos4212", },
+> >>
+> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> >>
+> >>
+> >
+> > OK
+> >
+> > I'm assuming this will go in via arm-soc along with the rest of the series.
+> 
+> The rest of the series, except for the clk patches I've already taken,
+> doesn't seem to be going anywhere just yet. Is there a cpufreq or pm tree
+> this can be merged through?
 
-Some drivers are briefly preparing+enabling the clock in their
-->probe() hook and disable+unprepare them before leaving the function.
+You mean this particular patch or the whole series?
 
-This can be problem if a clock is shared between different devices, and
-one of these devices is critical to the system. If this clock is
-enabled/disabled by a non-critical device before the driver of the
-critical one had a chance to enable+prepare it, there might be a short
-period of time during which the critical device is not clocked.
+If the former, then yes, there is.
 
-To solve this problem, we save the initial clock state (at registration
-time) and prevent the clock from being disabled until kernel init is done
-(which is when clk_disable_unused() is called).
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/clk.c | 29 +++++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fc58c52a26b4..3f61374a364b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -58,6 +58,8 @@ struct clk_core {
- 	struct clk_core		*new_child;
- 	unsigned long		flags;
- 	bool			orphan;
-+	bool			keep_enabled;
-+	bool			keep_prepared;
- 	unsigned int		enable_count;
- 	unsigned int		prepare_count;
- 	unsigned long		min_rate;
-@@ -486,7 +488,7 @@ static void clk_core_unprepare(struct clk_core *core)
- 
- 	trace_clk_unprepare(core);
- 
--	if (core->ops->unprepare)
-+	if (core->ops->unprepare && !core->keep_prepared)
- 		core->ops->unprepare(core->hw);
- 
- 	trace_clk_unprepare_complete(core);
-@@ -602,7 +604,7 @@ static void clk_core_disable(struct clk_core *core)
- 
- 	trace_clk_disable_rcuidle(core);
- 
--	if (core->ops->disable)
-+	if (core->ops->disable && !core->keep_enabled)
- 		core->ops->disable(core->hw);
- 
- 	trace_clk_disable_complete_rcuidle(core);
-@@ -739,6 +741,12 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
- 	hlist_for_each_entry(child, &core->children, child_node)
- 		clk_unprepare_unused_subtree(child);
- 
-+	/*
-+	 * Reset the ->keep_prepared flag so that subsequent calls to
-+	 * clk_unprepare() on this clk actually unprepare it.
-+	 */
-+	core->keep_prepared = false;
-+
- 	if (core->prepare_count)
- 		return;
- 
-@@ -770,6 +778,12 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 
- 	flags = clk_enable_lock();
- 
-+	/*
-+	 * Reset the ->keep_enabled flag so that subsequent calls to
-+	 * clk_disable() on this clk actually disable it.
-+	 */
-+	core->keep_enabled = false;
-+
- 	if (core->enable_count)
- 		goto unlock_out;
- 
-@@ -2446,6 +2460,17 @@ static int __clk_core_init(struct clk_core *core)
- 		core->accuracy = 0;
- 
- 	/*
-+	 * We keep track of the initial clk status to keep clks in the state
-+	 * they were left in by the bootloader until all drivers had a chance
-+	 * to keep them prepared/enabled if they need to.
-+	 */
-+	if (core->ops->is_prepared && !clk_ignore_unused)
-+		core->keep_prepared = core->ops->is_prepared(core->hw);
-+
-+	if (core->ops->is_enabled && !clk_ignore_unused)
-+		core->keep_enabled = core->ops->is_enabled(core->hw);
-+
-+	/*
- 	 * Set clk's phase.
- 	 * Since a phase is by definition relative to its parent, just
- 	 * query the current clock phase, or just assume it's in phase.
--- 
-1.9.1
-
+Thanks,
+Rafael
 
