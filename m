@@ -1,57 +1,103 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+ <sboyd@codeaurora.org>
+Subject: [PATCH v1 5/9] dt-bindings: soc: add MT2712 power dt-bindings
+Date: Tue, 15 Aug 2017 14:42:46 +0800
+Message-ID: <1502779370-30150-6-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1500963987-4627-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1500963987-4627-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Aug 2017 09:23:40 +0200
-Message-ID: <CAMuHMdVypfK4n720SyTAkOZJx3gbA6_gaUA0RhXKGhVEB=54ig@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
- clock selector PHY
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: James Liao <jamesjj.liao@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
+ srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Fan Chen <fan.chen@mediatek.com>,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 25, 2017 at 8:26 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> R-Car USB 2.0 controller can change the clock source from an oscillator
-> to an external clock via a register. So, this patch adds support
-> the clock source selector as a clock driver.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  This patch is based on the renesas-drivers.git /
-> renesas-drivers-2017-07-18-v4.13-rc1 tag.
->
->  Changes from v2:
->   - Fix the example of device tree doc.
->   - Replace some 8 spaces to a tab in the device tree doc.
->   - Add Rob's Acked-by for the doc.
->   - Drop CLK_IS_BASIC on init.flag.
->   - Use of_clk_add_hw_provider() instead of of_clk_add_provider().
->   - Use builtin_platform_driver() instead of syscall_init_sync().
->   - Use pm_runtime APIs instead of clk APIs for "ehci_ohci" clk.
->
->  Changes from v1:
->   - Change this driver as a clock driver from a generic phy driver.
->     https://patchwork.kernel.org/patch/9788697/
->   - Remove "RFC" tag.
+From: Weiyi Lu <weiyi.lu@mediatek.com>
 
-Thank you, queued v3 + the fix from Julia in clk-renesas-for-4.14.
+Add power dt-bindings for MT2712.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |  3 +++
+ include/dt-bindings/power/mt2712-power.h           | 26 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 include/dt-bindings/power/mt2712-power.h
 
-                        Geert
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index b1d165b..031aa19 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -12,10 +12,12 @@ power/power_domain.txt. It provides the power domains defined in
+ - include/dt-bindings/power/mt8173-power.h
+ - include/dt-bindings/power/mt6797-power.h
+ - include/dt-bindings/power/mt2701-power.h
++- include/dt-bindings/power/mt2712-power.h
+ 
+ Required properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-scpsys"
++	- "mediatek,mt2712-scpsys"
+ 	- "mediatek,mt6797-scpsys"
+ 	- "mediatek,mt8173-scpsys"
+ - #power-domain-cells: Must be 1
+@@ -25,6 +27,7 @@ Required properties:
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
+ 	Required clocks for MT2701: "mm", "mfg", "ethif"
++	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
+ 	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+ 
+diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
+new file mode 100644
+index 0000000..92b46d7
+--- /dev/null
++++ b/include/dt-bindings/power/mt2712-power.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2017 MediaTek Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
++ */
++
++#ifndef _DT_BINDINGS_POWER_MT2712_POWER_H
++#define _DT_BINDINGS_POWER_MT2712_POWER_H
++
++#define MT2712_POWER_DOMAIN_MM		0
++#define MT2712_POWER_DOMAIN_VDEC	1
++#define MT2712_POWER_DOMAIN_VENC	2
++#define MT2712_POWER_DOMAIN_ISP		3
++#define MT2712_POWER_DOMAIN_AUDIO	4
++#define MT2712_POWER_DOMAIN_USB		5
++#define MT2712_POWER_DOMAIN_USB2	6
++#define MT2712_POWER_DOMAIN_MFG		7
++
++#endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
+-- 
+1.9.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
