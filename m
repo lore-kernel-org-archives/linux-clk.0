@@ -1,50 +1,76 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Subject: [PATCH v1 0/9] Mediatek MT2712 clock and scpsys support
+Date: Tue, 15 Aug 2017 14:42:41 +0800
+Message-ID: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
- <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 Aug 2017 11:21:02 +0200
-Message-ID: <CAMuHMdUy5hi3fLVW6J1o=D194ASjr7Vz-pjWtddHyybK4RZxxA@mail.gmail.com>
-Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC example)
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+This patch set is composed of clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
 
-On Mon, Aug 21, 2017 at 10:04 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Patches for clocks drivers change the way the clock provider is initialized.
-> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
-> infrastructure is being used. This is needed to let driver to use runtime PM
-> feature and integrate with generic power domains. The side-effect of this change
-> is a delay in clock provider registeration during system boot, so early
-> initialized drivers might get EPROBEDEFER error when requesting their clocks.
-> This was an issue for IOMMU drivers, but IOMMU deferred probe support has been
-> finally merged to v4.13-rc1 and now it is handled correctly.
+Weiyi Lu (9):
+[PATCH v1 1/9] dt-bindings: ARM: Mediatek: Document bindings for MT2712
+[PATCH v1 2/9] clk: mediatek: Add dt-bindings for MT2712 clocks
+[PATCH v1 3/9] clk: mediatek: Add MT2712 clock support
+[PATCH v1 4/9] arm: dts: mt2712: Add clock controller device nodes
+[PATCH v1 5/9] dt-bindings: soc: add MT2712 power dt-bindings
+[PATCH v1 6/9] soc: mediatek: add bus protection extend API
+[PATCH v1 7/9] soc: mediatek: add dependent clock jpgdec/audio for
+[PATCH v1 8/9] soc: mediatek: add MT2712 scpsys support
+[PATCH v1 9/9] arm: dts: Add power controller device node of MT2712
 
-Any chances you have PHY devices falling back to polling due to this,
-cfr. https://patchwork.kernel.org/patch/9734175/?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert (collecting momentum for the patch
-referenced above)
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   |   22 +
+ .../bindings/arm/mediatek/mediatek,mcucfg.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |    3 +
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |  130 ++
+ drivers/clk/mediatek/Kconfig                       |   50 +
+ drivers/clk/mediatek/Makefile                      |    8 +
+ drivers/clk/mediatek/clk-mt2712-bdp.c              |  102 ++
+ drivers/clk/mediatek/clk-mt2712-img.c              |   80 ++
+ drivers/clk/mediatek/clk-mt2712-jpgdec.c           |   76 ++
+ drivers/clk/mediatek/clk-mt2712-mfg.c              |   75 ++
+ drivers/clk/mediatek/clk-mt2712-mm.c               |  170 +++
+ drivers/clk/mediatek/clk-mt2712-vdec.c             |   94 ++
+ drivers/clk/mediatek/clk-mt2712-venc.c             |   77 ++
+ drivers/clk/mediatek/clk-mt2712.c                  | 1400 ++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h                     |    2 +
+ drivers/clk/mediatek/clk-pll.c                     |   13 +-
+ drivers/soc/mediatek/mtk-infracfg.c                |   90 +-
+ drivers/soc/mediatek/mtk-scpsys.c                  |  160 ++-
+ include/dt-bindings/clock/mt2712-clk.h             |  428 ++++++
+ include/dt-bindings/power/mt2712-power.h           |   26 +
+ include/linux/soc/mediatek/infracfg.h              |   14 +-
+ 31 files changed, 3057 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-bdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-jpgdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712.c
+ create mode 100644 include/dt-bindings/clock/mt2712-clk.h
+ create mode 100644 include/dt-bindings/power/mt2712-power.h
