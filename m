@@ -1,60 +1,99 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20170818163058.22252-1-l.stach@pengutronix.de>
-References: <20170818163058.22252-1-l.stach@pengutronix.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 21 Aug 2017 11:17:01 -0300
-Message-ID: <CAOMZO5BoZNQrmDMXE0CDxLS-v7xVu4z87Ezdma1X1QCV56rPtQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
-To: Lucas Stach <l.stach@pengutronix.de>, "Wladimir J . van der Laan" <laanwj@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	patchwork-lst@pengutronix.de,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Ilia Mirkin <imirkin@alum.mit.edu>, linux-clk@vger.kernel.org,
-	Chris Healy <cphealy@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58576 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753127AbdHOHRu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 03:17:50 -0400
+Message-ID: <1502781465.19230.35.camel@mtkswgap22>
+Subject: Re: [PATCH v1 0/9] Mediatek MT2712 clock and scpsys support
+From: Sean Wang <sean.wang@mediatek.com>
+To: <weiyi.lu@mediatek.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Fan Chen <fan.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 15 Aug 2017 15:17:45 +0800
+In-Reply-To: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 18, 2017 at 1:30 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> This propagates rate requests from the display interface to the divider
-> or PLL output, allowing to hit the required display rate in many more
-> cases.
->
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 
-Looks good:
+Hi, Weiyi
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+for patch 5 to 9, you should re-base to the latest the Matthias tree
+which has some changes around scpsys since Linux v4.13-rc1
 
-> ---
->  drivers/clk/imx/clk-imx51-imx53.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
-> index 1e3c9ea5f9dc..7bcaf270db11 100644
-> --- a/drivers/clk/imx/clk-imx51-imx53.c
-> +++ b/drivers/clk/imx/clk-imx51-imx53.c
-> @@ -416,10 +416,10 @@ static void __init mx51_clocks_init(struct device_node *np)
->
->         clk[IMX5_CLK_LP_APM]            = imx_clk_mux("lp_apm", MXC_CCM_CCSR, 9, 1,
->                                                 lp_apm_sel, ARRAY_SIZE(lp_apm_sel));
-> -       clk[IMX5_CLK_IPU_DI0_SEL]       = imx_clk_mux("ipu_di0_sel", MXC_CCM_CSCMR2, 26, 3,
-> -                                               mx51_ipu_di0_sel, ARRAY_SIZE(mx51_ipu_di0_sel));
-> -       clk[IMX5_CLK_IPU_DI1_SEL]       = imx_clk_mux("ipu_di1_sel", MXC_CCM_CSCMR2, 29, 3,
-> -                                               mx51_ipu_di1_sel, ARRAY_SIZE(mx51_ipu_di1_sel));
-> +       clk[IMX5_CLK_IPU_DI0_SEL]       = imx_clk_mux_flags("ipu_di0_sel", MXC_CCM_CSCMR2, 26, 3,
-> +                                               mx51_ipu_di0_sel, ARRAY_SIZE(mx51_ipu_di0_sel), CLK_SET_RATE_PARENT);
-> +       clk[IMX5_CLK_IPU_DI1_SEL]       = imx_clk_mux_flags("ipu_di1_sel", MXC_CCM_CSCMR2, 29, 3,
-> +                                               mx51_ipu_di1_sel, ARRAY_SIZE(mx51_ipu_di1_sel), CLK_SET_RATE_PARENT);
->         clk[IMX5_CLK_TVE_EXT_SEL]       = imx_clk_mux_flags("tve_ext_sel", MXC_CCM_CSCMR1, 6, 1,
->                                                 mx51_tve_ext_sel, ARRAY_SIZE(mx51_tve_ext_sel), CLK_SET_RATE_PARENT);
->         clk[IMX5_CLK_TVE_SEL]           = imx_clk_mux("tve_sel", MXC_CCM_CSCMR1, 7, 1,
+	Sean
 
-Wladimir,
 
-Could you please test it and see if it fixes the DVI output issue you
-reported earlier?
-https://lists.freedesktop.org/archives/dri-devel/2017-April/138155.html
+On Tue, 2017-08-15 at 14:42 +0800, weiyi.lu@mediatek.com wrote:
+> This patch set is composed of clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
+> 
+> Weiyi Lu (9):
+> [PATCH v1 1/9] dt-bindings: ARM: Mediatek: Document bindings for MT2712
+> [PATCH v1 2/9] clk: mediatek: Add dt-bindings for MT2712 clocks
+> [PATCH v1 3/9] clk: mediatek: Add MT2712 clock support
+> [PATCH v1 4/9] arm: dts: mt2712: Add clock controller device nodes
+> [PATCH v1 5/9] dt-bindings: soc: add MT2712 power dt-bindings
+> [PATCH v1 6/9] soc: mediatek: add bus protection extend API
+> [PATCH v1 7/9] soc: mediatek: add dependent clock jpgdec/audio for
+> [PATCH v1 8/9] soc: mediatek: add MT2712 scpsys support
+> [PATCH v1 9/9] arm: dts: Add power controller device node of MT2712
+> 
+>  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+>  .../bindings/arm/mediatek/mediatek,bdpsys.txt      |    1 +
+>  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+>  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+>  .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   |   22 +
+>  .../bindings/arm/mediatek/mediatek,mcucfg.txt      |   22 +
+>  .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |   22 +
+>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+>  .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
+>  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+>  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+>  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
+>  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    3 +
+>  arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |  130 ++
+>  drivers/clk/mediatek/Kconfig                       |   50 +
+>  drivers/clk/mediatek/Makefile                      |    8 +
+>  drivers/clk/mediatek/clk-mt2712-bdp.c              |  102 ++
+>  drivers/clk/mediatek/clk-mt2712-img.c              |   80 ++
+>  drivers/clk/mediatek/clk-mt2712-jpgdec.c           |   76 ++
+>  drivers/clk/mediatek/clk-mt2712-mfg.c              |   75 ++
+>  drivers/clk/mediatek/clk-mt2712-mm.c               |  170 +++
+>  drivers/clk/mediatek/clk-mt2712-vdec.c             |   94 ++
+>  drivers/clk/mediatek/clk-mt2712-venc.c             |   77 ++
+>  drivers/clk/mediatek/clk-mt2712.c                  | 1400 ++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mtk.h                     |    2 +
+>  drivers/clk/mediatek/clk-pll.c                     |   13 +-
+>  drivers/soc/mediatek/mtk-infracfg.c                |   90 +-
+>  drivers/soc/mediatek/mtk-scpsys.c                  |  160 ++-
+>  include/dt-bindings/clock/mt2712-clk.h             |  428 ++++++
+>  include/dt-bindings/power/mt2712-power.h           |   26 +
+>  include/linux/soc/mediatek/infracfg.h              |   14 +-
+>  31 files changed, 3057 insertions(+), 16 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712-bdp.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712-img.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712-jpgdec.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712-mfg.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712-mm.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712-vdec.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712-venc.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt2712.c
+>  create mode 100644 include/dt-bindings/clock/mt2712-clk.h
+>  create mode 100644 include/dt-bindings/power/mt2712-power.h
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
-Thanks
+
