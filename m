@@ -1,265 +1,48 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:32809 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751622AbdHQK5u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2017 06:57:50 -0400
-Subject: Re: [PATCH v1 6/9] soc: mediatek: add bus protection extend API
-To: weiyi.lu@mediatek.com, Stephen Boyd <sboyd@codeaurora.org>
-Cc: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com
-References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
- <1502779370-30150-7-git-send-email-weiyi.lu@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <a179cf17-0380-f47e-645e-92f38b0e1917@gmail.com>
-Date: Thu, 17 Aug 2017 12:57:44 +0200
-MIME-Version: 1.0
-In-Reply-To: <1502779370-30150-7-git-send-email-weiyi.lu@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: from regular1.263xmail.com ([211.150.99.136]:52843 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752664AbdHPCCa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 22:02:30 -0400
+From: Joseph Chen <chenjh@rock-chips.com>
+To: gnurou@gmail.com, linus.walleij@linaro.org,
+        dmitry.torokhov@gmail.com, lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
+        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
+        wdc@rock-chips.com, tony.xie@rock-chips.com,
+        linux-input@vger.kernel.org, mark.rutland@arm.com,
+        w.egorov@phytec.de, linux-clk@vger.kernel.org,
+        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
+Subject: [RESEND v9 10/12] mfd: rk808: Add RK805 pinctrl support
+Date: Wed, 16 Aug 2017 10:01:48 +0800
+Message-Id: <1502848908-31057-1-git-send-email-chenjh@rock-chips.com>
+In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/rk808.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index 18329c8..c803d2d 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -97,6 +97,7 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ static const struct mfd_cell rk805s[] = {
+ 	{ .name = "rk808-clkout", },
+ 	{ .name = "rk808-regulator", },
++	{ .name = "rk805-pinctrl", },
+ 	{
+ 		.name = "rk808-rtc",
+ 		.num_resources = ARRAY_SIZE(rtc_resources),
+-- 
+1.9.1
 
 
-On 08/15/2017 08:42 AM, weiyi.lu@mediatek.com wrote:
-> From: Weiyi Lu <weiyi.lu@mediatek.com>
-> 
-> MT2712 add "set/clear" bus control register to each control register set
-> instead of providing only one "enable" control register, we could avoid
-> the read-modify-write racing by using extend API with such new design.
-> Also there exists the second bus control register set, we could not access
-> this setting via original API rather than the extend API.
-> By improving the mtk-infracfg bus protection implementation to
-> support set/clear bus protection control method and second
-> register set while power on/off scpsys.
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->   drivers/soc/mediatek/mtk-infracfg.c   | 90 +++++++++++++++++++++++++++++++++--
->   drivers/soc/mediatek/mtk-scpsys.c     | 36 ++++++++++++--
->   include/linux/soc/mediatek/infracfg.h | 14 +++++-
->   3 files changed, 132 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
-> index dba3055..63898e4 100644
-> --- a/drivers/soc/mediatek/mtk-infracfg.c
-> +++ b/drivers/soc/mediatek/mtk-infracfg.c
-> @@ -17,9 +17,6 @@
->   #include <linux/soc/mediatek/infracfg.h>
->   #include <asm/processor.h>
->   
-> -#define INFRA_TOPAXI_PROTECTEN		0x0220
-> -#define INFRA_TOPAXI_PROTECTSTA1	0x0228
-> -
->   /**
->    * mtk_infracfg_set_bus_protection - enable bus protection
->    * @regmap: The infracfg regmap
-> @@ -89,3 +86,90 @@ int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
->   
->   	return 0;
->   }
-> +
-> +/**
-> + * mtk_infracfg_set_bus_protection_ext - enable bus protection
-> + * @regmap: The infracfg regmap
-> + * @mask: The mask containing the protection bits to be enabled.
-> + * @reg_set: The register used to enable protection bits.
-> + * @reg_sta: The register used to check the protection bits are enabled.
-> + * @reg_en: The register used to enable protection bits when there doesn't
-> + *          exist reg_set.
-> + *
-> + * This function enables the bus protection bits for disabled power
-> + * domains so that the system does not hang when some unit accesses the
-> + * bus while in power down.
-> + */
-> +int mtk_infracfg_set_bus_protection_ext(struct regmap *infracfg, u32 mask,
-> +		u32 reg_set, u32 reg_sta, u32 reg_en)
-
-There is no need to add a new function. The only differences are:
-1. it passes the register offsets instead of assuming default ones
-2. it checks if reg_set/reg_clr and enables/disable.
-
-We should change the original function instead of adding a new one.
- From what I see, we are all done if we provide a boolean which tells infracfg 
-if it should use set/clear or update register.
-
-For now we don't have any user of INFRA_TOPAXI_PROTECTSTA3 (same for 
-*PROTECTEN1*). Do you expect one in the near future? If so, we could pass a 
-flags value instead of bool which points that out. It seems there is no need for 
-now to pass the register value.
-
-Regards,
-Matthias
-
-> +{
-> +	unsigned long expired;
-> +	u32 val;
-> +	int ret;
-> +
-> +	if (reg_set)
-> +		regmap_write(infracfg, reg_set, mask);
-> +	else
-> +		regmap_update_bits(infracfg, reg_en, mask, mask);
-> +
-> +	expired = jiffies + HZ;
-> +
-> +	while (1) {
-> +		ret = regmap_read(infracfg, reg_sta, &val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if ((val & mask) == mask)
-> +			break;
-> +
-> +		cpu_relax();
-> +		if (time_after(jiffies, expired))
-> +			return -EIO;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * mtk_infracfg_clear_bus_protection_ext - disable bus protection
-> + * @regmap: The infracfg regmap
-> + * @mask: The mask containing the protection bits to be disabled.
-> + * @reg_clr: The register used to disable protection bits.
-> + * @reg_sta: The register used to check the protection bits are disabled.
-> + * @reg_en: The register used to disable protection bits when there doesn't
-> + *          exist reg_clr.
-> + *
-> + * This function disables the bus protection bits previously enabled with
-> + * mtk_infracfg_set_bus_protection.
-> + */
-> +
-> +int mtk_infracfg_clear_bus_protection_ext(struct regmap *infracfg, u32 mask,
-> +		u32 reg_clr, u32 reg_sta, u32 reg_en)
-> +{
-> +	unsigned long expired;
-> +	int ret;
-> +
-> +	if (reg_clr)
-> +		regmap_write(infracfg, reg_clr, mask);
-> +	else
-> +		regmap_update_bits(infracfg, reg_en, mask, 0);
-> +
-> +	expired = jiffies + HZ;
-> +
-> +	while (1) {
-> +		u32 val;
-> +
-> +		ret = regmap_read(infracfg, reg_sta, &val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (!(val & mask))
-> +			break;
-> +
-> +		cpu_relax();
-> +		if (time_after(jiffies, expired))
-> +			return -EIO;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index ceb2cc4..b181ef2 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -89,6 +89,13 @@ enum clk_id {
->   
->   #define MAX_CLKS	2
->   
-> +struct bus_prot_ext {
-> +	u32 set_ofs;
-> +	u32 clr_ofs;
-> +	u32 en_ofs;
-> +	u32 sta_ofs;
-> +};
-> +
->   struct scp_domain_data {
->   	const char *name;
->   	u32 sta_mask;
-> @@ -96,6 +103,7 @@ struct scp_domain_data {
->   	u32 sram_pdn_bits;
->   	u32 sram_pdn_ack_bits;
->   	u32 bus_prot_mask;
-> +	struct bus_prot_ext bp_ext;
->   	enum clk_id clk_id[MAX_CLKS];
->   	bool active_wakeup;
->   };
-> @@ -228,8 +236,18 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
->   	}
->   
->   	if (scpd->data->bus_prot_mask) {
-> -		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-> -				scpd->data->bus_prot_mask);
-> +		if (((scpd->data->bp_ext.set_ofs && scpd->data->bp_ext.clr_ofs)
-> +			|| scpd->data->bp_ext.en_ofs)
-> +			&& scpd->data->bp_ext.sta_ofs)
-> +			ret = mtk_infracfg_clear_bus_protection_ext(
-> +					scp->infracfg,
-> +					scpd->data->bus_prot_mask,
-> +					scpd->data->bp_ext.clr_ofs,
-> +					scpd->data->bp_ext.sta_ofs,
-> +					scpd->data->bp_ext.en_ofs);
-> +		else
-> +			ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-> +					scpd->data->bus_prot_mask);
->   		if (ret)
->   			goto err_pwr_ack;
->   	}
-> @@ -263,8 +281,18 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
->   	int i;
->   
->   	if (scpd->data->bus_prot_mask) {
-> -		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
-> -				scpd->data->bus_prot_mask);
-> +		if (((scpd->data->bp_ext.set_ofs && scpd->data->bp_ext.clr_ofs)
-> +			|| scpd->data->bp_ext.en_ofs)
-> +			&& scpd->data->bp_ext.sta_ofs)
-> +			ret = mtk_infracfg_set_bus_protection_ext(
-> +					scp->infracfg,
-> +					scpd->data->bus_prot_mask,
-> +					scpd->data->bp_ext.set_ofs,
-> +					scpd->data->bp_ext.sta_ofs,
-> +					scpd->data->bp_ext.en_ofs);
-> +		else
-> +			ret = mtk_infracfg_set_bus_protection(scp->infracfg,
-> +					scpd->data->bus_prot_mask);
->   		if (ret)
->   			goto out;
->   	}
-> diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-> index a5714e9..d3fbb45 100644
-> --- a/include/linux/soc/mediatek/infracfg.h
-> +++ b/include/linux/soc/mediatek/infracfg.h
-> @@ -1,6 +1,15 @@
->   #ifndef __SOC_MEDIATEK_INFRACFG_H
->   #define __SOC_MEDIATEK_INFRACFG_H
->   
-> +#define INFRA_TOPAXI_PROTECTEN		0x0220
-> +#define INFRA_TOPAXI_PROTECTSTA1	0x0228
-> +#define INFRA_TOPAXI_PROTECTEN1		0x0250
-> +#define INFRA_TOPAXI_PROTECTSTA3	0x0258
-> +#define INFRA_TOPAXI_PROTECTEN_SET	0x0260
-> +#define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
-> +#define INFRA_TOPAXI_PROTECTEN1_SET	0x0270
-> +#define INFRA_TOPAXI_PROTECTEN1_CLR	0x0274
-> +
->   #define MT8173_TOP_AXI_PROT_EN_MCI_M2		BIT(0)
->   #define MT8173_TOP_AXI_PROT_EN_MM_M0		BIT(1)
->   #define MT8173_TOP_AXI_PROT_EN_MM_M1		BIT(2)
-> @@ -22,5 +31,8 @@
->   
->   int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
->   int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
-> -
-> +int mtk_infracfg_set_bus_protection_ext(struct regmap *infracfg, u32 mask,
-> +		u32 reg_set, u32 reg_sta, u32 reg_en);
-> +int mtk_infracfg_clear_bus_protection_ext(struct regmap *infracfg, u32 mask,
-> +		u32 reg_clr, u32 reg_sta, u32 reg_en);
->   #endif /* __SOC_MEDIATEK_INFRACFG_H */
-> 
