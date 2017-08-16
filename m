@@ -1,105 +1,157 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.131]:56668 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752891AbdHPCDC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 22:03:02 -0400
-From: Joseph Chen <chenjh@rock-chips.com>
-To: gnurou@gmail.com, linus.walleij@linaro.org,
-        dmitry.torokhov@gmail.com, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
-        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
-        wdc@rock-chips.com, tony.xie@rock-chips.com,
-        linux-input@vger.kernel.org, mark.rutland@arm.com,
-        w.egorov@phytec.de, linux-clk@vger.kernel.org,
-        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
-Subject: [RESEND v9 12/12] pinctrl: dt-bindings: add bindings for Rockchip RK805 PMIC
-Date: Wed, 16 Aug 2017 10:02:25 +0800
-Message-Id: <1502848945-8574-1-git-send-email-chenjh@rock-chips.com>
-In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+Received: from mailoutvs7.siol.net ([213.250.19.138]:42066 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752439AbdHPVrB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Aug 2017 17:47:01 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Rob Herring <robh@kernel.org>
+Cc: linux-sunxi@googlegroups.com, icenowy@aosc.io,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH 01/13] dt-bindings: update the binding for Allwinner H3 DE2 support
+Date: Wed, 16 Aug 2017 23:46:53 +0200
+Message-ID: <6770524.gZqruV9rkF@jernej-laptop>
+In-Reply-To: <20170810002121.jydgklyxpm3fuekl@rob-hp-laptop>
+References: <20170801131304.7741-1-icenowy@aosc.io> <48442573.082BymFnMM@jernej-laptop> <20170810002121.jydgklyxpm3fuekl@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- .../devicetree/bindings/pinctrl/pinctrl-rk805.txt  | 63 ++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-new file mode 100644
-index 0000000..eee3dc2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-@@ -0,0 +1,63 @@
-+Pincontrol driver for RK805 Power management IC.
-+
-+RK805 has 2 pins which can be configured as GPIO output only.
-+
-+Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
-+for details of the common pinctrl bindings used by client devices,
-+including the meaning of the phrase "pin configuration node".
-+
-+Optional Pinmux properties:
-+--------------------------
-+Following properties are required if default setting of pins are required
-+at boot.
-+- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
-+- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
-+		<pinctrl-binding.txt>.
-+
-+The pin configurations are defined as child of the pinctrl states node. Each
-+sub-node have following properties:
-+
-+Required properties:
-+------------------
-+- #gpio-cells: Should be two. The first cell is the pin number and the
-+  second is the GPIO flags.
-+
-+- gpio-controller: Marks the device node as a GPIO controller.
-+
-+- pins: List of pins. Valid values of pins properties are: gpio0, gpio1.
-+
-+First 2 properties must be added in the RK805 PMIC node, documented in
-+Documentation/devicetree/bindings/mfd/rk808.txt
-+
-+Optional properties:
-+-------------------
-+Following are optional properties defined as pinmux DT binding document
-+<pinctrl-bindings.txt>. Absence of properties will leave the configuration
-+on default.
-+	function,
-+	output-low,
-+	output-high.
-+
-+Valid values for function properties are: gpio.
-+
-+Theres is also not customised properties for any GPIO.
-+
-+Example:
-+--------
-+rk805: rk805@18 {
-+	compatible = "rockchip,rk805";
-+	...
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmic_int_l>, <&rk805_default>;
-+
-+	rk805_default: pinmux {
-+		gpio01 {
-+			pins = "gpio0", "gpio1";
-+			function = "gpio";
-+			output-high;
-+		};
-+	};
-+};
--- 
-1.9.1
+Dne četrtek, 10. avgust 2017 ob 02:21:21 CEST je Rob Herring napisal(a):
+> On Wed, Aug 02, 2017 at 09:06:26PM +0200, Jernej Škrabec wrote:
+> > Hi,
+> > 
+> > Dne sreda, 02. avgust 2017 ob 07:02:39 CEST je icenowy@aosc.io napisal(a):
+> > > 在 2017-08-02 12:53，Jernej Škrabec 写道：
+> > > 
+> > > > Hi Icenowy,
+> > > > 
+> > > > Dne torek, 01. avgust 2017 ob 15:12:52 CEST je Icenowy Zheng
+> > > > 
+> > > > napisal(a):
+> > > >> Allwinner H3 features a "Display Engine 2.0".
+> > > >> 
+> > > >> Add device tree bindings for the following parts:
+> > > >> - H3 TCONs
+> > > >> - H3 Mixers
+> > > >> - H3 Display engine
+> > > >> 
+> > > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > >> ---
+> > > >> 
+> > > >>  .../bindings/display/sunxi/sun4i-drm.txt           | 25
+> > > >> 
+> > > >> ++++++++++++++++++---- 1 file changed, 21 insertions(+), 4
+> > > >> deletions(-)
+> > > >> 
+> > > >> diff --git
+> > > >> a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > >> b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+> > > >> 2ee6ff0ef98e..92512953943e 100644
+> > > >> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > >> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > > >> 
+> > > >> @@ -87,18 +87,17 @@ Required properties:
+> > > >>     * allwinner,sun6i-a31-tcon
+> > > >>     * allwinner,sun6i-a31s-tcon
+> > > >>     * allwinner,sun8i-a33-tcon
+> > > >> 
+> > > >> +   * allwinner,sun8i-h3-tcon
+> > > >> 
+> > > >>     * allwinner,sun8i-v3s-tcon
+> > > >>   
+> > > >>   - reg: base address and size of memory-mapped region
+> > > >>   - interrupts: interrupt associated to this IP
+> > > >>   
+> > > >>   - clocks: phandles to the clocks feeding the TCON. Three are 
+needed:
+> > > >>     - 'ahb': the interface clocks
+> > > >> 
+> > > >> -   - 'tcon-ch0': The clock driving the TCON channel 0
+> > > >> 
+> > > >>   - resets: phandles to the reset controllers driving the encoder
+> > > >>   
+> > > >>     - "lcd": the reset line for the TCON channel 0
+> > > >>   
+> > > >>   - clock-names: the clock names mentioned above
+> > > >>   - reset-names: the reset names mentioned above
+> > > >> 
+> > > >> - - clock-output-names: Name of the pixel clock created
+> > > >> 
+> > > >>  - ports: A ports node with endpoint definitions as defined in
+> > > >>  
+> > > >>    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > > >> 
+> > > >> @@ -112,7 +111,23 @@ Required properties:
+> > > >>    channel the endpoint is associated to. If that property is not
+> > > >>    present, the endpoint number will be used as the channel number.
+> > > >> 
+> > > >> -On SoCs other than the A33 and V3s, there is one more clock
+> > > >> required:
+> > > >> +For the following compatibles:
+> > > >> +   * allwinner,sun5i-a13-tcon
+> > > >> +   * allwinner,sun6i-a31-tcon
+> > > >> +   * allwinner,sun6i-a31s-tcon
+> > > >> +   * allwinner,sun8i-a33-tcon
+> > > >> +   * allwinner,sun8i-v3s-tcon
+> > > >> +there is one more clock and one more property required:
+> > > >> + - clocks:
+> > > >> +   - 'tcon-ch0': The clock driving the TCON channel 0
+> > > >> + - clock-output-names: Name of the pixel clock created
+> > > >> +
+> > > >> +For the following compatibles:
+> > > >> +   * allwinner,sun5i-a13-tcon
+> > > >> +   * allwinner,sun6i-a31-tcon
+> > > >> +   * allwinner,sun6i-a31s-tcon
+> > > >> +   * allwinner,sun8i-h3-tcon
+> > > >> 
+> > > >> +there is one more clock required:
+> > > >>     - 'tcon-ch1': The clock driving the TCON channel 1
+> > > >>  
+> > > >>  DRC
+> > > >> 
+> > > >> @@ -207,6 +222,8 @@ supported.
+> > > >> 
+> > > >>  Required properties:
+> > > >>    - compatible: value must be one of:
+> > > >>      * allwinner,sun8i-v3s-de2-mixer
+> > > >> 
+> > > >> +    * allwinner,sun8i-h3-de2-mixer0
+> > > >> +    * allwinner,sun8i-h3-de2-mixer1
+> > > > 
+> > > > About that, I concur with Maxime here, plane number properties would
+> > > > be
+> > > > better. If we don't do this now, we will never have it.
+> > > 
+> > > But I still prefer different compatibles, as the capabilities are
+> > > already
+> > > proven to be different between mixer0 and mixer1, and furtherly we
+> > > cannot
+> > > promise Allwinner won't add more functions only available at mixer0.
+> > > 
+> > > Then we will be trapped into a situation that we describe more and more
+> > > functions via properties, but they should be encoded into the
+> > > compatible.
+> > 
+> > It is either multiple compatibles or multiple properties. I prefer the
+> > later, but it is up to maintainers to decide.
+> 
+> It's not the same. A compatible can imply an infinite number of
+> properties. I'm fine with properties too, but with only 2 instances I
+> don't think it makes much sense.
+
+Actually, there are more combinations since different SoCs have also different 
+capabilities regarding mixer0 or mixer1.
+
+For example, mixer0 on H3 has different capabilities than mixer0 on A83T (max. 
+plane size and number and type of planes, etc.).
+
+Best regards,
+Jernej
 
 
