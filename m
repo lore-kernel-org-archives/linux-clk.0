@@ -1,23 +1,96 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, shawn.lin@rock-chips.com, andy.yan@rock-chips.com
-Subject: Re: [PATCH v3 6/9] clk: rockchip: support more clks for rv1108
-Date: Tue, 08 Aug 2017 17:36:27 +0200
-Message-ID: <3884584.0gIWhf9E44@phil>
-In-Reply-To: <1502176723-32275-1-git-send-email-zhangqing@rock-chips.com>
-References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com> <1502176723-32275-1-git-send-email-zhangqing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.131]:43072 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752697AbdHPB60 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 21:58:26 -0400
+From: Joseph Chen <chenjh@rock-chips.com>
+To: gnurou@gmail.com, linus.walleij@linaro.org,
+        dmitry.torokhov@gmail.com, lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
+        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
+        wdc@rock-chips.com, tony.xie@rock-chips.com,
+        linux-input@vger.kernel.org, mark.rutland@arm.com,
+        w.egorov@phytec.de, linux-clk@vger.kernel.org,
+        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
+Subject: [RESEND v9 01/12] mfd: rk808: fix up the chip id get failed
+Date: Wed, 16 Aug 2017 09:56:57 +0800
+Message-Id: <1502848628-27757-2-git-send-email-chenjh@rock-chips.com>
+In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 8. August 2017, 15:18:43 CEST schrieb Elaine Zhang:
-> Add the description of the missing clock,
-> make the clock more complete.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-applied for 4.14
+the rk8xx chip id is:
+((MSB << 8) | LSB) & 0xfff0
 
-Thanks for restructuring the patches
-Heiko
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/rk808.c       | 21 +++++++++++++++------
+ include/linux/mfd/rk808.h |  1 +
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index fd087cb..8e60eba 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -325,7 +325,7 @@ static int rk808_probe(struct i2c_client *client,
+ 	void (*pm_pwroff_fn)(void);
+ 	int nr_pre_init_regs;
+ 	int nr_cells;
+-	int pm_off = 0;
++	int pm_off = 0, msb, lsb;
+ 	int ret;
+ 	int i;
+ 
+@@ -333,14 +333,23 @@ static int rk808_probe(struct i2c_client *client,
+ 	if (!rk808)
+ 		return -ENOMEM;
+ 
+-	rk808->variant = i2c_smbus_read_word_data(client, RK808_ID_MSB);
+-	if (rk808->variant < 0) {
+-		dev_err(&client->dev, "Failed to read the chip id at 0x%02x\n",
++	/* Read chip variant */
++	msb = i2c_smbus_read_byte_data(client, RK808_ID_MSB);
++	if (msb < 0) {
++		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
+ 			RK808_ID_MSB);
+-		return rk808->variant;
++		return msb;
+ 	}
+ 
+-	dev_dbg(&client->dev, "Chip id: 0x%x\n", (unsigned int)rk808->variant);
++	lsb = i2c_smbus_read_byte_data(client, RK808_ID_LSB);
++	if (lsb < 0) {
++		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
++			RK808_ID_LSB);
++		return lsb;
++	}
++
++	rk808->variant = ((msb << 8) | lsb) & RK8XX_ID_MSK;
++	dev_info(&client->dev, "chip id: 0x%x\n", (unsigned int)rk808->variant);
+ 
+ 	switch (rk808->variant) {
+ 	case RK808_ID:
+diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+index 83701ef..54feb14 100644
+--- a/include/linux/mfd/rk808.h
++++ b/include/linux/mfd/rk808.h
+@@ -298,6 +298,7 @@ enum rk818_reg {
+ #define VOUT_LO_INT	BIT(0)
+ #define CLK32KOUT2_EN	BIT(0)
+ 
++#define RK8XX_ID_MSK			0xfff0
+ enum {
+ 	BUCK_ILMIN_50MA,
+ 	BUCK_ILMIN_100MA,
+-- 
+1.9.1
+
+
