@@ -1,49 +1,105 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de,
-	Chris Healy <cphealy@gmail.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	"Wladimir J . van der Laan" <laanwj@gmail.com>,
-	Ilia Mirkin <imirkin@alum.mit.edu>
-Subject: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
-Date: Fri, 18 Aug 2017 18:30:58 +0200
-Message-Id: <20170818163058.22252-1-l.stach@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.131]:56668 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752891AbdHPCDC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 22:03:02 -0400
+From: Joseph Chen <chenjh@rock-chips.com>
+To: gnurou@gmail.com, linus.walleij@linaro.org,
+        dmitry.torokhov@gmail.com, lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
+        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
+        wdc@rock-chips.com, tony.xie@rock-chips.com,
+        linux-input@vger.kernel.org, mark.rutland@arm.com,
+        w.egorov@phytec.de, linux-clk@vger.kernel.org,
+        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
+Subject: [RESEND v9 12/12] pinctrl: dt-bindings: add bindings for Rockchip RK805 PMIC
+Date: Wed, 16 Aug 2017 10:02:25 +0800
+Message-Id: <1502848945-8574-1-git-send-email-chenjh@rock-chips.com>
+In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This propagates rate requests from the display interface to the divider
-or PLL output, allowing to hit the required display rate in many more
-cases.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/clk/imx/clk-imx51-imx53.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/pinctrl/pinctrl-rk805.txt  | 63 ++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
 
-diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
-index 1e3c9ea5f9dc..7bcaf270db11 100644
---- a/drivers/clk/imx/clk-imx51-imx53.c
-+++ b/drivers/clk/imx/clk-imx51-imx53.c
-@@ -416,10 +416,10 @@ static void __init mx51_clocks_init(struct device_node *np)
- 
- 	clk[IMX5_CLK_LP_APM]		= imx_clk_mux("lp_apm", MXC_CCM_CCSR, 9, 1,
- 						lp_apm_sel, ARRAY_SIZE(lp_apm_sel));
--	clk[IMX5_CLK_IPU_DI0_SEL]	= imx_clk_mux("ipu_di0_sel", MXC_CCM_CSCMR2, 26, 3,
--						mx51_ipu_di0_sel, ARRAY_SIZE(mx51_ipu_di0_sel));
--	clk[IMX5_CLK_IPU_DI1_SEL]	= imx_clk_mux("ipu_di1_sel", MXC_CCM_CSCMR2, 29, 3,
--						mx51_ipu_di1_sel, ARRAY_SIZE(mx51_ipu_di1_sel));
-+	clk[IMX5_CLK_IPU_DI0_SEL]	= imx_clk_mux_flags("ipu_di0_sel", MXC_CCM_CSCMR2, 26, 3,
-+						mx51_ipu_di0_sel, ARRAY_SIZE(mx51_ipu_di0_sel), CLK_SET_RATE_PARENT);
-+	clk[IMX5_CLK_IPU_DI1_SEL]	= imx_clk_mux_flags("ipu_di1_sel", MXC_CCM_CSCMR2, 29, 3,
-+						mx51_ipu_di1_sel, ARRAY_SIZE(mx51_ipu_di1_sel), CLK_SET_RATE_PARENT);
- 	clk[IMX5_CLK_TVE_EXT_SEL]	= imx_clk_mux_flags("tve_ext_sel", MXC_CCM_CSCMR1, 6, 1,
- 						mx51_tve_ext_sel, ARRAY_SIZE(mx51_tve_ext_sel), CLK_SET_RATE_PARENT);
- 	clk[IMX5_CLK_TVE_SEL]		= imx_clk_mux("tve_sel", MXC_CCM_CSCMR1, 7, 1,
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+new file mode 100644
+index 0000000..eee3dc2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+@@ -0,0 +1,63 @@
++Pincontrol driver for RK805 Power management IC.
++
++RK805 has 2 pins which can be configured as GPIO output only.
++
++Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
++for details of the common pinctrl bindings used by client devices,
++including the meaning of the phrase "pin configuration node".
++
++Optional Pinmux properties:
++--------------------------
++Following properties are required if default setting of pins are required
++at boot.
++- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
++- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
++		<pinctrl-binding.txt>.
++
++The pin configurations are defined as child of the pinctrl states node. Each
++sub-node have following properties:
++
++Required properties:
++------------------
++- #gpio-cells: Should be two. The first cell is the pin number and the
++  second is the GPIO flags.
++
++- gpio-controller: Marks the device node as a GPIO controller.
++
++- pins: List of pins. Valid values of pins properties are: gpio0, gpio1.
++
++First 2 properties must be added in the RK805 PMIC node, documented in
++Documentation/devicetree/bindings/mfd/rk808.txt
++
++Optional properties:
++-------------------
++Following are optional properties defined as pinmux DT binding document
++<pinctrl-bindings.txt>. Absence of properties will leave the configuration
++on default.
++	function,
++	output-low,
++	output-high.
++
++Valid values for function properties are: gpio.
++
++Theres is also not customised properties for any GPIO.
++
++Example:
++--------
++rk805: rk805@18 {
++	compatible = "rockchip,rk805";
++	...
++	gpio-controller;
++	#gpio-cells = <2>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pmic_int_l>, <&rk805_default>;
++
++	rk805_default: pinmux {
++		gpio01 {
++			pins = "gpio0", "gpio1";
++			function = "gpio";
++			output-high;
++		};
++	};
++};
 -- 
-2.11.0
+1.9.1
+
+
