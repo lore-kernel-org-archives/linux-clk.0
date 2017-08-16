@@ -1,667 +1,577 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH v5 3/7] clk: at91: add audio pll clock drivers
-Date: Thu, 10 Aug 2017 08:34:03 +0200
-Message-Id: <f1c7acbfec384c2c33bf340464a98b731dac8c0c.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.136]:52609 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752756AbdHPCB4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 22:01:56 -0400
+From: Joseph Chen <chenjh@rock-chips.com>
+To: gnurou@gmail.com, linus.walleij@linaro.org,
+        dmitry.torokhov@gmail.com, lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
+        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
+        wdc@rock-chips.com, tony.xie@rock-chips.com,
+        linux-input@vger.kernel.org, mark.rutland@arm.com,
+        w.egorov@phytec.de, linux-clk@vger.kernel.org,
+        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
+Subject: [RESEND v9 08/12] pinctrl: Add pinctrl driver for the RK805 PMIC
+Date: Wed, 16 Aug 2017 10:01:20 +0800
+Message-Id: <1502848880-28981-1-git-send-email-chenjh@rock-chips.com>
+In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This new clock driver set allows to have a fractional divided clock that
-would generate a precise clock particularly suitable for audio
-applications.
+RK805 is one of Rockchip PMICs family, it has 2 output only GPIOs.
 
-The main audio pll clock has two children clocks: one that is connected
-to the PMC, the other that can directly drive a pad. As these two routes
-have different enable bits and different dividers and divider formulas,
-they are handled by two different drivers. Each of them could modify the
-rate of the main audio pll parent.
+This driver is also designed for other Rockchip PMICs to expend.
+Different PMIC maybe have different pin features, for example,
+RK816 has one pin which can be used for TS or GPIO(input/out).
+The mainly difference between PMICs pins are pinmux, direction
+and output value, that is 'struct rk805_pin_config'.
 
-The main audio pll clock can output 620MHz to 700MHz.
-
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/mach-at91/Kconfig       |   4 +-
- drivers/clk/at91/Makefile        |   1 +-
- drivers/clk/at91/clk-audio-pll.c | 536 ++++++++++++++++++++++++++++++++-
- include/linux/clk/at91_pmc.h     |  25 +-
- 4 files changed, 566 insertions(+)
- create mode 100644 drivers/clk/at91/clk-audio-pll.c
+ drivers/pinctrl/Kconfig         |   9 +
+ drivers/pinctrl/Makefile        |   1 +
+ drivers/pinctrl/pinctrl-rk805.c | 493 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 503 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-rk805.c
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index d735e5f..9ae14d5 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -26,6 +26,7 @@ config SOC_SAMA5D2
- 	select HAVE_AT91_USB_CLK
- 	select HAVE_AT91_H32MX
- 	select HAVE_AT91_GENERATED_CLK
-+	select HAVE_AT91_AUDIO_PLL
- 	select PINCTRL_AT91PIO4
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 8f8c2af..c33098f 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -285,6 +285,15 @@ config PINCTRL_ZYNQ
  	help
- 	  Select this if ou are using one of Atmel's SAMA5D2 family SoC.
-@@ -125,6 +126,9 @@ config HAVE_AT91_H32MX
- config HAVE_AT91_GENERATED_CLK
- 	bool
+ 	  This selects the pinctrl driver for Xilinx Zynq.
  
-+config HAVE_AT91_AUDIO_PLL
-+	bool
++config PINCTRL_RK805
++	tristate "Pinctrl and GPIO driver for RK805 PMIC"
++	depends on MFD_RK808
++	select GPIOLIB
++	select PINMUX
++	select GENERIC_PINCONF
++	help
++	  This selects the pinctrl driver for RK805.
 +
- config SOC_SAM_V4_V5
- 	bool
+ source "drivers/pinctrl/aspeed/Kconfig"
+ source "drivers/pinctrl/bcm/Kconfig"
+ source "drivers/pinctrl/berlin/Kconfig"
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index a251f43..7485af3 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -38,6 +38,7 @@ obj-$(CONFIG_PINCTRL_LPC18XX)	+= pinctrl-lpc18xx.o
+ obj-$(CONFIG_PINCTRL_TB10X)	+= pinctrl-tb10x.o
+ obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
+ obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
++obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
  
-diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 13e67bd..c68947b 100644
---- a/drivers/clk/at91/Makefile
-+++ b/drivers/clk/at91/Makefile
-@@ -6,6 +6,7 @@ obj-y += pmc.o sckc.o
- obj-y += clk-slow.o clk-main.o clk-pll.o clk-plldiv.o clk-master.o
- obj-y += clk-system.o clk-peripheral.o clk-programmable.o
- 
-+obj-$(CONFIG_HAVE_AT91_AUDIO_PLL)	+= clk-audio-pll.o
- obj-$(CONFIG_HAVE_AT91_UTMI)		+= clk-utmi.o
- obj-$(CONFIG_HAVE_AT91_USB_CLK)		+= clk-usb.o
- obj-$(CONFIG_HAVE_AT91_SMD)		+= clk-smd.o
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
+ obj-$(CONFIG_ARCH_ASPEED)	+= aspeed/
+ obj-y				+= bcm/
+diff --git a/drivers/pinctrl/pinctrl-rk805.c b/drivers/pinctrl/pinctrl-rk805.c
 new file mode 100644
-index 0000000..da7bafc
+index 0000000..b0bfd30
 --- /dev/null
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -0,0 +1,536 @@
++++ b/drivers/pinctrl/pinctrl-rk805.c
+@@ -0,0 +1,493 @@
 +/*
-+ *  Copyright (C) 2016 Atmel Corporation,
-+ *		       Songjun Wu <songjun.wu@atmel.com>,
-+ *                     Nicolas Ferre <nicolas.ferre@atmel.com>
-+ *  Copyright (C) 2017 Free Electrons,
-+ *		       Quentin Schulz <quentin.schulz@free-electrons.com>
++ * Pinctrl driver for Rockchip RK805 PMIC
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd
 + *
-+ * The Sama5d2 SoC has two audio PLLs (PMC and PAD) that shares the same parent
-+ * (FRAC). FRAC can output between 620 and 700MHz and only multiply the rate of
-+ * its own parent. PMC and PAD can then divide the FRAC rate to best match the
-+ * asked rate.
++ * Author: Joseph Chen <chenjh@rock-chips.com>
 + *
-+ * Traits of FRAC clock:
-+ * enable - clk_enable writes nd, fracr parameters and enables PLL
-+ * rate - rate is adjustable.
-+ *        clk->rate = parent->rate * ((nd + 1) + (fracr / 2^22))
-+ * parent - fixed parent.  No clk_set_parent support
++ * This program is free software; you can redistribute it and/or modify it
++ * under  the terms of the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the License, or (at your
++ * option) any later version.
 + *
-+ * Traits of PMC clock:
-+ * enable - clk_enable writes qdpmc, and enables PMC output
-+ * rate - rate is adjustable.
-+ *        clk->rate = parent->rate / (qdpmc + 1)
-+ * parent - fixed parent.  No clk_set_parent support
-+ *
-+ * Traits of PAD clock:
-+ * enable - clk_enable writes divisors and enables PAD output
-+ * rate - rate is adjustable.
-+ *        clk->rate = parent->rate / (qdaudio * div))
-+ * parent - fixed parent.  No clk_set_parent support
-+ *
++ * Based on the pinctrl-as3722 driver
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clk/at91_pmc.h>
++#include <linux/gpio/driver.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mfd/rk808.h>
 +#include <linux/of.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pinctrl/consumer.h>
++#include <linux/pinctrl/machine.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/pm.h>
 +#include <linux/slab.h>
 +
-+#define AUDIO_PLL_DIV_FRAC	BIT(22)
-+#define AUDIO_PLL_ND_MAX	(AT91_PMC_AUDIO_PLL_ND_MASK >> \
-+					AT91_PMC_AUDIO_PLL_ND_OFFSET)
++#include "core.h"
++#include "pinconf.h"
++#include "pinctrl-utils.h"
 +
-+#define AUDIO_PLL_QDPAD(qd, div)	((AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV(qd) & \
-+					  AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_MASK) | \
-+					 (AT91_PMC_AUDIO_PLL_QDPAD_DIV(div) & \
-+					  AT91_PMC_AUDIO_PLL_QDPAD_DIV_MASK))
-+
-+#define AUDIO_PLL_QDPMC_MAX		(AT91_PMC_AUDIO_PLL_QDPMC_MASK >> \
-+						AT91_PMC_AUDIO_PLL_QDPMC_OFFSET)
-+
-+#define AUDIO_PLL_FOUT_MIN	620000000UL
-+#define AUDIO_PLL_FOUT_MAX	700000000UL
-+
-+struct clk_audio_frac {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 fracr;
-+	u8 nd;
++struct rk805_pin_function {
++	const char *name;
++	const char *const *groups;
++	unsigned int ngroups;
++	int mux_option;
 +};
 +
-+struct clk_audio_pad {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u8 qdaudio;
-+	u8 div;
++struct rk805_pin_group {
++	const char *name;
++	const unsigned int pins[1];
++	unsigned int npins;
 +};
 +
-+struct clk_audio_pmc {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u8 qdpmc;
++/*
++ * @reg: gpio setting register;
++ * @fun_mask: functions select mask value, when set is gpio;
++ * @dir_mask: input or output mask value, when set is output, otherwise input;
++ * @val_mask: gpio set value, when set is level high, otherwise low;
++ *
++ * Different PMIC has different pin features, belowing 3 mask members are not
++ * all necessary for every PMIC. For example, RK805 has 2 pins that can be used
++ * as output only GPIOs, so func_mask and dir_mask are not needed. RK816 has 1
++ * pin that can be used as TS/GPIO, so fun_mask, dir_mask and val_mask are all
++ * necessary.
++ */
++struct rk805_pin_config {
++	u8 reg;
++	u8 fun_msk;
++	u8 dir_msk;
++	u8 val_msk;
 +};
 +
-+#define to_clk_audio_frac(hw) container_of(hw, struct clk_audio_frac, hw)
-+#define to_clk_audio_pad(hw) container_of(hw, struct clk_audio_pad, hw)
-+#define to_clk_audio_pmc(hw) container_of(hw, struct clk_audio_pmc, hw)
++struct rk805_pctrl_info {
++	struct rk808 *rk808;
++	struct device *dev;
++	struct pinctrl_dev *pctl;
++	struct gpio_chip gpio_chip;
++	struct pinctrl_desc pinctrl_desc;
++	const struct rk805_pin_function *functions;
++	unsigned int num_functions;
++	const struct rk805_pin_group *groups;
++	int num_pin_groups;
++	const struct pinctrl_pin_desc *pins;
++	unsigned int num_pins;
++	struct rk805_pin_config *pin_cfg;
++};
 +
-+static int clk_audio_pll_frac_enable(struct clk_hw *hw)
++enum rk805_pinmux_option {
++	RK805_PINMUX_GPIO,
++};
++
++enum {
++	RK805_GPIO0,
++	RK805_GPIO1,
++};
++
++static const char *const rk805_gpio_groups[] = {
++	"gpio0",
++	"gpio1",
++};
++
++/* RK805: 2 output only GPIOs */
++static const struct pinctrl_pin_desc rk805_pins_desc[] = {
++	PINCTRL_PIN(RK805_GPIO0, "gpio0"),
++	PINCTRL_PIN(RK805_GPIO1, "gpio1"),
++};
++
++static const struct rk805_pin_function rk805_pin_functions[] = {
++	{
++		.name = "gpio",
++		.groups = rk805_gpio_groups,
++		.ngroups = ARRAY_SIZE(rk805_gpio_groups),
++		.mux_option = RK805_PINMUX_GPIO,
++	},
++};
++
++static const struct rk805_pin_group rk805_pin_groups[] = {
++	{
++		.name = "gpio0",
++		.pins = { RK805_GPIO0 },
++		.npins = 1,
++	},
++	{
++		.name = "gpio1",
++		.pins = { RK805_GPIO1 },
++		.npins = 1,
++	},
++};
++
++#define RK805_GPIO0_VAL_MSK	BIT(0)
++#define RK805_GPIO1_VAL_MSK	BIT(1)
++
++static struct rk805_pin_config rk805_gpio_cfgs[] = {
++	{
++		.reg = RK805_OUT_REG,
++		.val_msk = RK805_GPIO0_VAL_MSK,
++	},
++	{
++		.reg = RK805_OUT_REG,
++		.val_msk = RK805_GPIO1_VAL_MSK,
++	},
++};
++
++/* generic gpio chip */
++static int rk805_gpio_get(struct gpio_chip *chip, unsigned int offset)
 +{
-+	struct clk_audio_frac *frac = to_clk_audio_frac(hw);
++	struct rk805_pctrl_info *pci = gpiochip_get_data(chip);
++	int ret, val;
 +
-+	regmap_update_bits(frac->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_RESETN, 0);
-+	regmap_update_bits(frac->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_RESETN,
-+			   AT91_PMC_AUDIO_PLL_RESETN);
-+	regmap_update_bits(frac->regmap, AT91_PMC_AUDIO_PLL1,
-+			   AT91_PMC_AUDIO_PLL_FRACR_MASK, frac->fracr);
-+
-+	/*
-+	 * reset and enable have to be done in 2 separated writes
-+	 * for AT91_PMC_AUDIO_PLL0
-+	 */
-+	regmap_update_bits(frac->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_PLLEN |
-+			   AT91_PMC_AUDIO_PLL_ND_MASK,
-+			   AT91_PMC_AUDIO_PLL_PLLEN |
-+			   AT91_PMC_AUDIO_PLL_ND(frac->nd));
-+
-+	return 0;
-+}
-+
-+static int clk_audio_pll_pad_enable(struct clk_hw *hw)
-+{
-+	struct clk_audio_pad *apad_ck = to_clk_audio_pad(hw);
-+
-+	regmap_update_bits(apad_ck->regmap, AT91_PMC_AUDIO_PLL1,
-+			   AT91_PMC_AUDIO_PLL_QDPAD_MASK,
-+			   AUDIO_PLL_QDPAD(apad_ck->qdaudio, apad_ck->div));
-+	regmap_update_bits(apad_ck->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_PADEN, AT91_PMC_AUDIO_PLL_PADEN);
-+
-+	return 0;
-+}
-+
-+static int clk_audio_pll_pmc_enable(struct clk_hw *hw)
-+{
-+	struct clk_audio_pmc *apmc_ck = to_clk_audio_pmc(hw);
-+
-+	regmap_update_bits(apmc_ck->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_PMCEN |
-+			   AT91_PMC_AUDIO_PLL_QDPMC_MASK,
-+			   AT91_PMC_AUDIO_PLL_PMCEN |
-+			   AT91_PMC_AUDIO_PLL_QDPMC(apmc_ck->qdpmc));
-+	return 0;
-+}
-+
-+static void clk_audio_pll_frac_disable(struct clk_hw *hw)
-+{
-+	struct clk_audio_frac *frac = to_clk_audio_frac(hw);
-+
-+	regmap_update_bits(frac->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_PLLEN, 0);
-+	/* do it in 2 separated writes */
-+	regmap_update_bits(frac->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_RESETN, 0);
-+}
-+
-+static void clk_audio_pll_pad_disable(struct clk_hw *hw)
-+{
-+	struct clk_audio_pad *apad_ck = to_clk_audio_pad(hw);
-+
-+	regmap_update_bits(apad_ck->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_PADEN, 0);
-+}
-+
-+static void clk_audio_pll_pmc_disable(struct clk_hw *hw)
-+{
-+	struct clk_audio_pmc *apmc_ck = to_clk_audio_pmc(hw);
-+
-+	regmap_update_bits(apmc_ck->regmap, AT91_PMC_AUDIO_PLL0,
-+			   AT91_PMC_AUDIO_PLL_PMCEN, 0);
-+}
-+
-+static unsigned long clk_audio_pll_fout(unsigned long parent_rate,
-+					unsigned long nd, unsigned long fracr)
-+{
-+	unsigned long long fr = (unsigned long long)parent_rate * fracr;
-+
-+	pr_debug("A PLL: %s, fr = %llu\n", __func__, fr);
-+
-+	fr = DIV_ROUND_CLOSEST_ULL(fr, AUDIO_PLL_DIV_FRAC);
-+
-+	pr_debug("A PLL: %s, fr = %llu\n", __func__, fr);
-+
-+	return parent_rate * (nd + 1) + fr;
-+}
-+
-+static unsigned long clk_audio_pll_frac_recalc_rate(struct clk_hw *hw,
-+						    unsigned long parent_rate)
-+{
-+	struct clk_audio_frac *frac = to_clk_audio_frac(hw);
-+	unsigned long fout;
-+
-+	fout = clk_audio_pll_fout(parent_rate, frac->nd, frac->fracr);
-+
-+	pr_debug("A PLL: %s, fout = %lu (nd = %u, fracr = %lu)\n", __func__,
-+		 fout, frac->nd, (unsigned long)frac->fracr);
-+
-+	return fout;
-+}
-+
-+static unsigned long clk_audio_pll_pad_recalc_rate(struct clk_hw *hw,
-+						   unsigned long parent_rate)
-+{
-+	struct clk_audio_pad *apad_ck = to_clk_audio_pad(hw);
-+	unsigned long apad_rate = 0;
-+
-+	if (apad_ck->qdaudio && apad_ck->div)
-+		apad_rate = parent_rate / (apad_ck->qdaudio * apad_ck->div);
-+
-+	pr_debug("A PLL/PAD: %s, apad_rate = %lu (div = %u, qdaudio = %u)\n",
-+		 __func__, apad_rate, apad_ck->div, apad_ck->qdaudio);
-+
-+	return apad_rate;
-+}
-+
-+static unsigned long clk_audio_pll_pmc_recalc_rate(struct clk_hw *hw,
-+						   unsigned long parent_rate)
-+{
-+	struct clk_audio_pmc *apmc_ck = to_clk_audio_pmc(hw);
-+	unsigned long apmc_rate = 0;
-+
-+	apmc_rate = parent_rate / (apmc_ck->qdpmc + 1);
-+
-+	pr_debug("A PLL/PMC: %s, apmc_rate = %lu (qdpmc = %u)\n", __func__,
-+		 apmc_rate, apmc_ck->qdpmc);
-+
-+	return apmc_rate;
-+}
-+
-+static int clk_audio_pll_frac_compute_frac(unsigned long rate,
-+					   unsigned long parent_rate,
-+					   unsigned long *nd,
-+					   unsigned long *fracr)
-+{
-+	unsigned long long tmp, rem;
-+
-+	if (!rate)
-+		return -EINVAL;
-+
-+	tmp = rate;
-+	rem = do_div(tmp, parent_rate);
-+	if (!tmp || tmp >= AUDIO_PLL_ND_MAX)
-+		return -EINVAL;
-+
-+	*nd = tmp - 1;
-+
-+	tmp = rem * AUDIO_PLL_DIV_FRAC;
-+	tmp = DIV_ROUND_CLOSEST_ULL(tmp, parent_rate);
-+	if (tmp > AT91_PMC_AUDIO_PLL_FRACR_MASK)
-+		return -EINVAL;
-+
-+	/* we can cast here as we verified the bounds just above */
-+	*fracr = (unsigned long)tmp;
-+
-+	return 0;
-+}
-+
-+static int clk_audio_pll_frac_determine_rate(struct clk_hw *hw,
-+					     struct clk_rate_request *req)
-+{
-+	unsigned long fracr, nd;
-+	int ret;
-+
-+	pr_debug("A PLL: %s, rate = %lu (parent_rate = %lu)\n", __func__,
-+		 req->rate, req->best_parent_rate);
-+
-+	req->rate = clamp(req->rate, AUDIO_PLL_FOUT_MIN, AUDIO_PLL_FOUT_MAX);
-+
-+	req->min_rate = max(req->min_rate, AUDIO_PLL_FOUT_MIN);
-+	req->max_rate = min(req->max_rate, AUDIO_PLL_FOUT_MAX);
-+
-+	ret = clk_audio_pll_frac_compute_frac(req->rate, req->best_parent_rate,
-+					      &nd, &fracr);
-+	if (ret)
++	ret = regmap_read(pci->rk808->regmap, pci->pin_cfg[offset].reg, &val);
++	if (ret) {
++		dev_err(pci->dev, "get gpio%d value failed\n", offset);
 +		return ret;
-+
-+	req->rate = clk_audio_pll_fout(req->best_parent_rate, nd, fracr);
-+
-+	req->best_parent_hw = clk_hw_get_parent(hw);
-+
-+	pr_debug("A PLL: %s, best_rate = %lu (nd = %lu, fracr = %lu)\n",
-+		 __func__, req->rate, nd, fracr);
-+
-+	return 0;
-+}
-+
-+static long clk_audio_pll_pad_round_rate(struct clk_hw *hw, unsigned long rate,
-+					 unsigned long *parent_rate)
-+{
-+	struct clk_hw *pclk = clk_hw_get_parent(hw);
-+	long best_rate = -EINVAL;
-+	unsigned long best_parent_rate;
-+	unsigned long tmp_qd;
-+	u32 div;
-+	long tmp_rate;
-+	int tmp_diff;
-+	int best_diff = -1;
-+
-+	pr_debug("A PLL/PAD: %s, rate = %lu (parent_rate = %lu)\n", __func__,
-+		 rate, *parent_rate);
-+
-+	/*
-+	 * Rate divisor is actually made of two different divisors, multiplied
-+	 * between themselves before dividing the rate.
-+	 * tmp_qd goes from 1 to 31 and div is either 2 or 3.
-+	 * In order to avoid testing twice the rate divisor (e.g. divisor 12 can
-+	 * be found with (tmp_qd, div) = (2, 6) or (3, 4)), we remove any loop
-+	 * for a rate divisor when div is 2 and tmp_qd is a multiple of 3.
-+	 * We cannot inverse it (condition div is 3 and tmp_qd is even) or we
-+	 * would miss some rate divisor that aren't reachable with div being 2
-+	 * (e.g. rate divisor 90 is made with div = 3 and tmp_qd = 30, thus
-+	 * tmp_qd is even so we skip it because we think div 2 could make this
-+	 * rate divisor which isn't possible since tmp_qd has to be <= 31).
-+	 */
-+	for (tmp_qd = 1; tmp_qd < AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_MAX; tmp_qd++)
-+		for (div = 2; div <= 3; div++) {
-+			if (div == 2 && tmp_qd % 3 == 0)
-+				continue;
-+
-+			best_parent_rate = clk_hw_round_rate(pclk,
-+							rate * tmp_qd * div);
-+			tmp_rate = best_parent_rate / (div * tmp_qd);
-+			tmp_diff = abs(rate - tmp_rate);
-+
-+			if (best_diff < 0 || best_diff > tmp_diff) {
-+				*parent_rate = best_parent_rate;
-+				best_rate = tmp_rate;
-+				best_diff = tmp_diff;
-+			}
-+		}
-+
-+	pr_debug("A PLL/PAD: %s, best_rate = %ld, best_parent_rate = %lu\n",
-+		 __func__, best_rate, best_parent_rate);
-+
-+	return best_rate;
-+}
-+
-+static long clk_audio_pll_pmc_round_rate(struct clk_hw *hw, unsigned long rate,
-+					 unsigned long *parent_rate)
-+{
-+	struct clk_hw *pclk = clk_hw_get_parent(hw);
-+	long best_rate = -EINVAL;
-+	unsigned long best_parent_rate = 0;
-+	u32 tmp_qd = 0, div;
-+	long tmp_rate;
-+	int tmp_diff;
-+	int best_diff = -1;
-+
-+	pr_debug("A PLL/PMC: %s, rate = %lu (parent_rate = %lu)\n", __func__,
-+		 rate, *parent_rate);
-+
-+	for (div = 1; div <= AUDIO_PLL_QDPMC_MAX; div++) {
-+		best_parent_rate = clk_round_rate(pclk->clk, rate * div);
-+		tmp_rate = best_parent_rate / div;
-+		tmp_diff = abs(rate - tmp_rate);
-+
-+		if (best_diff < 0 || best_diff > tmp_diff) {
-+			*parent_rate = best_parent_rate;
-+			best_rate = tmp_rate;
-+			best_diff = tmp_diff;
-+			tmp_qd = div;
-+		}
 +	}
 +
-+	pr_debug("A PLL/PMC: %s, best_rate = %ld, best_parent_rate = %lu (qd = %d)\n",
-+		 __func__, best_rate, *parent_rate, tmp_qd - 1);
-+
-+	return best_rate;
++	return !!(val & pci->pin_cfg[offset].val_msk);
 +}
 +
-+static int clk_audio_pll_frac_set_rate(struct clk_hw *hw, unsigned long rate,
-+				       unsigned long parent_rate)
++static void rk805_gpio_set(struct gpio_chip *chip,
++			   unsigned int offset,
++			   int value)
 +{
-+	struct clk_audio_frac *frac = to_clk_audio_frac(hw);
-+	unsigned long fracr, nd;
++	struct rk805_pctrl_info *pci = gpiochip_get_data(chip);
 +	int ret;
 +
-+	pr_debug("A PLL: %s, rate = %lu (parent_rate = %lu)\n", __func__, rate,
-+		 parent_rate);
-+
-+	if (rate < AUDIO_PLL_FOUT_MIN || rate > AUDIO_PLL_FOUT_MAX)
-+		return -EINVAL;
-+
-+	ret = clk_audio_pll_frac_compute_frac(rate, parent_rate, &nd, &fracr);
++	ret = regmap_update_bits(pci->rk808->regmap,
++				 pci->pin_cfg[offset].reg,
++				 pci->pin_cfg[offset].val_msk,
++				 value ? pci->pin_cfg[offset].val_msk : 0);
 +	if (ret)
-+		return ret;
++		dev_err(pci->dev, "set gpio%d value %d failed\n",
++			offset, value);
++}
 +
-+	frac->nd = nd;
-+	frac->fracr = fracr;
++static int rk805_gpio_direction_input(struct gpio_chip *chip,
++				      unsigned int offset)
++{
++	return pinctrl_gpio_direction_input(chip->base + offset);
++}
++
++static int rk805_gpio_direction_output(struct gpio_chip *chip,
++				       unsigned int offset, int value)
++{
++	rk805_gpio_set(chip, offset, value);
++	return pinctrl_gpio_direction_output(chip->base + offset);
++}
++
++static int rk805_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
++{
++	struct rk805_pctrl_info *pci = gpiochip_get_data(chip);
++	unsigned int val;
++	int ret;
++
++	/* default output*/
++	if (!pci->pin_cfg[offset].dir_msk)
++		return 0;
++
++	ret = regmap_read(pci->rk808->regmap,
++			  pci->pin_cfg[offset].reg,
++			  &val);
++	if (ret) {
++		dev_err(pci->dev, "get gpio%d direction failed\n", offset);
++		return ret;
++	}
++
++	return !(val & pci->pin_cfg[offset].dir_msk);
++}
++
++static struct gpio_chip rk805_gpio_chip = {
++	.label			= "rk805-gpio",
++	.request		= gpiochip_generic_request,
++	.free			= gpiochip_generic_free,
++	.get_direction		= rk805_gpio_get_direction,
++	.get			= rk805_gpio_get,
++	.set			= rk805_gpio_set,
++	.direction_input	= rk805_gpio_direction_input,
++	.direction_output	= rk805_gpio_direction_output,
++	.can_sleep		= true,
++	.base			= -1,
++	.owner			= THIS_MODULE,
++};
++
++/* generic pinctrl */
++static int rk805_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++
++	return pci->num_pin_groups;
++}
++
++static const char *rk805_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
++						unsigned int group)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++
++	return pci->groups[group].name;
++}
++
++static int rk805_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
++					unsigned int group,
++					const unsigned int **pins,
++					unsigned int *num_pins)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++
++	*pins = pci->groups[group].pins;
++	*num_pins = pci->groups[group].npins;
 +
 +	return 0;
 +}
 +
-+static int clk_audio_pll_pad_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
++static const struct pinctrl_ops rk805_pinctrl_ops = {
++	.get_groups_count = rk805_pinctrl_get_groups_count,
++	.get_group_name = rk805_pinctrl_get_group_name,
++	.get_group_pins = rk805_pinctrl_get_group_pins,
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
++	.dt_free_map = pinctrl_utils_free_map,
++};
++
++static int rk805_pinctrl_get_funcs_count(struct pinctrl_dev *pctldev)
 +{
-+	struct clk_audio_pad *apad_ck = to_clk_audio_pad(hw);
-+	u8 tmp_div;
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
 +
-+	pr_debug("A PLL/PAD: %s, rate = %lu (parent_rate = %lu)\n", __func__,
-+		 rate, parent_rate);
++	return pci->num_functions;
++}
 +
-+	if (!rate)
-+		return -EINVAL;
++static const char *rk805_pinctrl_get_func_name(struct pinctrl_dev *pctldev,
++					       unsigned int function)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
 +
-+	tmp_div = parent_rate / rate;
-+	if (tmp_div % 3 == 0) {
-+		apad_ck->qdaudio = tmp_div / 3;
-+		apad_ck->div = 3;
++	return pci->functions[function].name;
++}
++
++static int rk805_pinctrl_get_func_groups(struct pinctrl_dev *pctldev,
++					 unsigned int function,
++					 const char *const **groups,
++					 unsigned int *const num_groups)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++
++	*groups = pci->functions[function].groups;
++	*num_groups = pci->functions[function].ngroups;
++
++	return 0;
++}
++
++static int _rk805_pinctrl_set_mux(struct pinctrl_dev *pctldev,
++				  unsigned int offset,
++				  int mux)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++	int ret;
++
++	if (!pci->pin_cfg[offset].fun_msk)
++		return 0;
++
++	if (mux == RK805_PINMUX_GPIO) {
++		ret = regmap_update_bits(pci->rk808->regmap,
++					 pci->pin_cfg[offset].reg,
++					 pci->pin_cfg[offset].fun_msk,
++					 pci->pin_cfg[offset].fun_msk);
++		if (ret) {
++			dev_err(pci->dev, "set gpio%d GPIO failed\n", offset);
++			return ret;
++		}
 +	} else {
-+		apad_ck->qdaudio = tmp_div / 2;
-+		apad_ck->div = 2;
++		dev_err(pci->dev, "Couldn't find function mux %d\n", mux);
++		return -EINVAL;
 +	}
 +
 +	return 0;
 +}
 +
-+static int clk_audio_pll_pmc_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
++static int rk805_pinctrl_set_mux(struct pinctrl_dev *pctldev,
++				 unsigned int function,
++				 unsigned int group)
 +{
-+	struct clk_audio_pmc *apmc_ck = to_clk_audio_pmc(hw);
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++	int mux = pci->functions[function].mux_option;
++	int offset = group;
 +
-+	if (!rate)
-+		return -EINVAL;
++	return _rk805_pinctrl_set_mux(pctldev, offset, mux);
++}
 +
-+	pr_debug("A PLL/PMC: %s, rate = %lu (parent_rate = %lu)\n", __func__,
-+		 rate, parent_rate);
++static int rk805_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
++					struct pinctrl_gpio_range *range,
++					unsigned int offset, bool input)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++	int ret;
 +
-+	apmc_ck->qdpmc = parent_rate / rate - 1;
++	/* switch to gpio function */
++	ret = _rk805_pinctrl_set_mux(pctldev, offset, RK805_PINMUX_GPIO);
++	if (ret) {
++		dev_err(pci->dev, "set gpio%d mux failed\n", offset);
++		return ret;
++	}
++
++	/* set direction */
++	if (!pci->pin_cfg[offset].dir_msk)
++		return 0;
++
++	ret = regmap_update_bits(pci->rk808->regmap,
++				 pci->pin_cfg[offset].reg,
++				 pci->pin_cfg[offset].dir_msk,
++				 input ? 0 : pci->pin_cfg[offset].dir_msk);
++	if (ret) {
++		dev_err(pci->dev, "set gpio%d direction failed\n", offset);
++		return ret;
++	}
++
++	return ret;
++}
++
++static const struct pinmux_ops rk805_pinmux_ops = {
++	.get_functions_count	= rk805_pinctrl_get_funcs_count,
++	.get_function_name	= rk805_pinctrl_get_func_name,
++	.get_function_groups	= rk805_pinctrl_get_func_groups,
++	.set_mux		= rk805_pinctrl_set_mux,
++	.gpio_set_direction	= rk805_pmx_gpio_set_direction,
++};
++
++static int rk805_pinconf_get(struct pinctrl_dev *pctldev,
++			     unsigned int pin, unsigned long *config)
++{
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param = pinconf_to_config_param(*config);
++	u32 arg = 0;
++
++	switch (param) {
++	case PIN_CONFIG_OUTPUT:
++		arg = rk805_gpio_get(&pci->gpio_chip, pin);
++		break;
++	default:
++		dev_err(pci->dev, "Properties not supported\n");
++		return -ENOTSUPP;
++	}
++
++	*config = pinconf_to_config_packed(param, (u16)arg);
 +
 +	return 0;
 +}
 +
-+static const struct clk_ops audio_pll_frac_ops = {
-+	.enable = clk_audio_pll_frac_enable,
-+	.disable = clk_audio_pll_frac_disable,
-+	.recalc_rate = clk_audio_pll_frac_recalc_rate,
-+	.determine_rate = clk_audio_pll_frac_determine_rate,
-+	.set_rate = clk_audio_pll_frac_set_rate,
-+};
-+
-+static const struct clk_ops audio_pll_pad_ops = {
-+	.enable = clk_audio_pll_pad_enable,
-+	.disable = clk_audio_pll_pad_disable,
-+	.recalc_rate = clk_audio_pll_pad_recalc_rate,
-+	.round_rate = clk_audio_pll_pad_round_rate,
-+	.set_rate = clk_audio_pll_pad_set_rate,
-+};
-+
-+static const struct clk_ops audio_pll_pmc_ops = {
-+	.enable = clk_audio_pll_pmc_enable,
-+	.disable = clk_audio_pll_pmc_disable,
-+	.recalc_rate = clk_audio_pll_pmc_recalc_rate,
-+	.round_rate = clk_audio_pll_pmc_round_rate,
-+	.set_rate = clk_audio_pll_pmc_set_rate,
-+};
-+
-+static int of_sama5d2_clk_audio_pll_setup(struct device_node *np,
-+					  struct clk_init_data *init,
-+					  struct clk_hw *hw,
-+					  struct regmap **clk_audio_regmap)
++static int rk805_pinconf_set(struct pinctrl_dev *pctldev,
++			     unsigned int pin, unsigned long *configs,
++			     unsigned int num_configs)
 +{
-+	struct regmap *regmap;
-+	const char *parent_names[1];
++	struct rk805_pctrl_info *pci = pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param;
++	u32 i, arg = 0;
++
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_OUTPUT:
++			rk805_gpio_set(&pci->gpio_chip, pin, arg);
++			rk805_pmx_gpio_set_direction(pctldev, NULL, pin, false);
++			break;
++		default:
++			dev_err(pci->dev, "Properties not supported\n");
++			return -ENOTSUPP;
++		}
++	}
++
++	return 0;
++}
++
++static const struct pinconf_ops rk805_pinconf_ops = {
++	.pin_config_get = rk805_pinconf_get,
++	.pin_config_set = rk805_pinconf_set,
++};
++
++static struct pinctrl_desc rk805_pinctrl_desc = {
++	.name = "rk805-pinctrl",
++	.pctlops = &rk805_pinctrl_ops,
++	.pmxops = &rk805_pinmux_ops,
++	.confops = &rk805_pinconf_ops,
++	.owner = THIS_MODULE,
++};
++
++static int rk805_pinctrl_probe(struct platform_device *pdev)
++{
++	struct rk805_pctrl_info *pci;
 +	int ret;
 +
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
++	pci = devm_kzalloc(&pdev->dev, sizeof(*pci), GFP_KERNEL);
++	if (!pci)
++		return -ENOMEM;
 +
-+	init->name = np->name;
-+	of_clk_parent_fill(np, parent_names, 1);
-+	init->parent_names = parent_names;
-+	init->num_parents = 1;
++	pci->dev = &pdev->dev;
++	pci->dev->of_node = pdev->dev.parent->of_node;
++	pci->rk808 = dev_get_drvdata(pdev->dev.parent);
 +
-+	hw->init = init;
-+	*clk_audio_regmap = regmap;
++	pci->pinctrl_desc = rk805_pinctrl_desc;
++	pci->gpio_chip = rk805_gpio_chip;
++	pci->gpio_chip.parent = &pdev->dev;
++	pci->gpio_chip.of_node = pdev->dev.parent->of_node;
 +
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret)
++	platform_set_drvdata(pdev, pci);
++
++	switch (pci->rk808->variant) {
++	case RK805_ID:
++		pci->pins = rk805_pins_desc;
++		pci->num_pins = ARRAY_SIZE(rk805_pins_desc);
++		pci->functions = rk805_pin_functions;
++		pci->num_functions = ARRAY_SIZE(rk805_pin_functions);
++		pci->groups = rk805_pin_groups;
++		pci->num_pin_groups = ARRAY_SIZE(rk805_pin_groups);
++		pci->pinctrl_desc.pins = rk805_pins_desc;
++		pci->pinctrl_desc.npins = ARRAY_SIZE(rk805_pins_desc);
++		pci->pin_cfg = rk805_gpio_cfgs;
++		pci->gpio_chip.ngpio = ARRAY_SIZE(rk805_gpio_cfgs);
++		break;
++	default:
++		dev_err(&pdev->dev, "unsupported RK805 ID %lu\n",
++			pci->rk808->variant);
++		return -EINVAL;
++	}
++
++	/* Add gpio chip */
++	ret = devm_gpiochip_add_data(&pdev->dev, &pci->gpio_chip, pci);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Couldn't add gpiochip\n");
 +		return ret;
++	}
 +
-+	return of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
++	/* Add pinctrl */
++	pci->pctl = devm_pinctrl_register(&pdev->dev, &pci->pinctrl_desc, pci);
++	if (IS_ERR(pci->pctl)) {
++		dev_err(&pdev->dev, "Couldn't add pinctrl\n");
++		return PTR_ERR(pci->pctl);
++	}
++
++	/* Add pin range */
++	ret = gpiochip_add_pin_range(&pci->gpio_chip, dev_name(&pdev->dev),
++				     0, 0, pci->gpio_chip.ngpio);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Couldn't add gpiochip pin range\n");
++		return ret;
++	}
++
++	return 0;
 +}
 +
-+static void __init of_sama5d2_clk_audio_pll_frac_setup(struct device_node *np)
-+{
-+	struct clk_audio_frac *frac_ck;
-+	struct clk_init_data init = {};
++static struct platform_driver rk805_pinctrl_driver = {
++	.probe = rk805_pinctrl_probe,
++	.driver = {
++		.name = "rk805-pinctrl",
++	},
++};
++module_platform_driver(rk805_pinctrl_driver);
 +
-+	frac_ck = kzalloc(sizeof(*frac_ck), GFP_KERNEL);
-+	if (!frac_ck)
-+		return;
-+
-+	init.ops = &audio_pll_frac_ops;
-+	init.flags = CLK_SET_RATE_GATE;
-+
-+	if (of_sama5d2_clk_audio_pll_setup(np, &init, &frac_ck->hw,
-+					   &frac_ck->regmap))
-+		kfree(frac_ck);
-+}
-+
-+static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
-+{
-+	struct clk_audio_pad *apad_ck;
-+	struct clk_init_data init = {};
-+
-+	apad_ck = kzalloc(sizeof(*apad_ck), GFP_KERNEL);
-+	if (!apad_ck)
-+		return;
-+
-+	init.ops = &audio_pll_pad_ops;
-+	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
-+		CLK_SET_RATE_PARENT;
-+
-+	if (of_sama5d2_clk_audio_pll_setup(np, &init, &apad_ck->hw,
-+					   &apad_ck->regmap))
-+		kfree(apad_ck);
-+}
-+
-+static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
-+{
-+	struct clk_audio_pad *apmc_ck;
-+	struct clk_init_data init = {};
-+
-+	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
-+	if (!apmc_ck)
-+		return;
-+
-+	init.ops = &audio_pll_pmc_ops;
-+	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
-+		CLK_SET_RATE_PARENT;
-+
-+	if (of_sama5d2_clk_audio_pll_setup(np, &init, &apmc_ck->hw,
-+					   &apmc_ck->regmap))
-+		kfree(apmc_ck);
-+}
-+
-+CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_frac_setup,
-+	       "atmel,sama5d2-clk-audio-pll-frac",
-+	       of_sama5d2_clk_audio_pll_frac_setup);
-+CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_pad_setup,
-+	       "atmel,sama5d2-clk-audio-pll-pad",
-+	       of_sama5d2_clk_audio_pll_pad_setup);
-+CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_pmc_setup,
-+	       "atmel,sama5d2-clk-audio-pll-pmc",
-+	       of_sama5d2_clk_audio_pll_pmc_setup);
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index 17f413b..6aca5ce 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -185,4 +185,29 @@
- #define		AT91_PMC_PCR_EN			(0x1  <<  28)				/* Enable */
- #define		AT91_PMC_PCR_GCKEN		(0x1  <<  29)				/* GCK Enable */
- 
-+#define AT91_PMC_AUDIO_PLL0	0x14c
-+#define		AT91_PMC_AUDIO_PLL_PLLEN	(1  <<  0)
-+#define		AT91_PMC_AUDIO_PLL_PADEN	(1  <<  1)
-+#define		AT91_PMC_AUDIO_PLL_PMCEN	(1  <<  2)
-+#define		AT91_PMC_AUDIO_PLL_RESETN	(1  <<  3)
-+#define		AT91_PMC_AUDIO_PLL_ND_OFFSET	8
-+#define		AT91_PMC_AUDIO_PLL_ND_MASK	(0x7f << AT91_PMC_AUDIO_PLL_ND_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_ND(n)	((n)  << AT91_PMC_AUDIO_PLL_ND_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_QDPMC_OFFSET	16
-+#define		AT91_PMC_AUDIO_PLL_QDPMC_MASK	(0x7f << AT91_PMC_AUDIO_PLL_QDPMC_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_QDPMC(n)	((n)  << AT91_PMC_AUDIO_PLL_QDPMC_OFFSET)
-+
-+#define AT91_PMC_AUDIO_PLL1	0x150
-+#define		AT91_PMC_AUDIO_PLL_FRACR_MASK		0x3fffff
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_OFFSET		24
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_MASK		(0x7f << AT91_PMC_AUDIO_PLL_QDPAD_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_QDPAD(n)		((n)  << AT91_PMC_AUDIO_PLL_QDPAD_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_DIV_OFFSET	AT91_PMC_AUDIO_PLL_QDPAD_OFFSET
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_DIV_MASK	(0x3  << AT91_PMC_AUDIO_PLL_QDPAD_DIV_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_DIV(n)		((n)  << AT91_PMC_AUDIO_PLL_QDPAD_DIV_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_OFFSET	26
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_MAX	0x1f
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_MASK	(AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_MAX << AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_OFFSET)
-+#define		AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV(n)	((n)  << AT91_PMC_AUDIO_PLL_QDPAD_EXTDIV_OFFSET)
-+
- #endif
++MODULE_DESCRIPTION("RK805 pin control and GPIO driver");
++MODULE_AUTHOR("Joseph Chen <chenjh@rock-chips.com>");
++MODULE_LICENSE("GPL v2");
 -- 
-git-series 0.9.1
+1.9.1
+
+
