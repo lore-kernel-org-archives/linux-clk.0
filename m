@@ -1,49 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 31 Aug 2017 18:36:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
-	gabriel.fernandez.st@gmail.com,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: Re: [RESEND PATCH v8 1/3] clk: nxp: clk-lpc32xx: rename
- clk_gate_is_enabled()
-Message-ID: <20170901013639.GP21656@codeaurora.org>
-References: <1503316742-22145-1-git-send-email-gabriel.fernandez@st.com>
- <1503316742-22145-2-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:34901 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753635AbdHQVJb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2017 17:09:31 -0400
+Date: Thu, 17 Aug 2017 16:09:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: weiyi.lu@mediatek.com
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Fan Chen <fan.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 5/9] dt-bindings: soc: add MT2712 power dt-bindings
+Message-ID: <20170817210928.3np4vrmww56ovs6b@rob-hp-laptop>
+References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
+ <1502779370-30150-6-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503316742-22145-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1502779370-30150-6-git-send-email-weiyi.lu@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/21, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Tue, Aug 15, 2017 at 02:42:46PM +0800, weiyi.lu@mediatek.com wrote:
+> From: Weiyi Lu <weiyi.lu@mediatek.com>
 > 
-> We need to export clk_gate_is_enabled() from clk framework, then
-> to avoid compilation issue we have to rename clk_gate_is_enabled()
-> in NXP LPC32xx clock driver.
-> We changed all gate op with 'lpc32xx_' prefix:
-> lpc32xx_clk_gate_enable(),
-> lpc32xx_clk_gate_disable(),
-> lpc32xx_clk_gate_is_enabled().
+> Add power dt-bindings for MT2712.
 > 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > ---
+>  .../devicetree/bindings/soc/mediatek/scpsys.txt    |  3 +++
+>  include/dt-bindings/power/mt2712-power.h           | 26 ++++++++++++++++++++++
+>  2 files changed, 29 insertions(+)
+>  create mode 100644 include/dt-bindings/power/mt2712-power.h
 
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>
