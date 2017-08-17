@@ -1,244 +1,265 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:41843 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbdHaI40 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2017 04:56:26 -0400
-Date: Thu, 31 Aug 2017 10:56:07 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Ingo van Lil <inguin@gmx.de>
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@atmel.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: utmi: Support configurable multipliers
-Message-ID: <20170831105607.6144abf1@bbrezillon>
-In-Reply-To: <20170710122409.3017-1-inguin@gmx.de>
-References: <20170710122409.3017-1-inguin@gmx.de>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:32809 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751622AbdHQK5u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2017 06:57:50 -0400
+Subject: Re: [PATCH v1 6/9] soc: mediatek: add bus protection extend API
+To: weiyi.lu@mediatek.com, Stephen Boyd <sboyd@codeaurora.org>
+Cc: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com
+References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
+ <1502779370-30150-7-git-send-email-weiyi.lu@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <a179cf17-0380-f47e-645e-92f38b0e1917@gmail.com>
+Date: Thu, 17 Aug 2017 12:57:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1502779370-30150-7-git-send-email-weiyi.lu@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ingo,
 
-Sorry for the delay.
 
-On Mon, 10 Jul 2017 14:24:09 +0200
-Ingo van Lil <inguin@gmx.de> wrote:
-
-> The AT91 UTMI clock is a PLL generating the 480 MHz USB clock.
-> Originally, this PLL always had a fixed x40 multiplier, thus requiring
-> a 12 MHz input clock. Recent SOCs (sama5d2 and sama5d3) have a special
-> function register for configuring this multiplier, allowing to use
-> different main clock frequencies.
-
-Looks good to me, just a few nitpicks below. Once addressed you can add
-
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
+On 08/15/2017 08:42 AM, weiyi.lu@mediatek.com wrote:
+> From: Weiyi Lu <weiyi.lu@mediatek.com>
 > 
-> Signed-off-by: Ingo van Lil <inguin@gmx.de>
+> MT2712 add "set/clear" bus control register to each control register set
+> instead of providing only one "enable" control register, we could avoid
+> the read-modify-write racing by using extend API with such new design.
+> Also there exists the second bus control register set, we could not access
+> this setting via original API rather than the extend API.
+> By improving the mtk-infracfg bus protection implementation to
+> support set/clear bus protection control method and second
+> register set while power on/off scpsys.
+> 
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > ---
->  drivers/clk/at91/clk-utmi.c  | 105 +++++++++++++++++++++++++++++++++++++++++--
->  include/soc/at91/atmel-sfr.h |   2 +
->  2 files changed, 104 insertions(+), 3 deletions(-)
+>   drivers/soc/mediatek/mtk-infracfg.c   | 90 +++++++++++++++++++++++++++++++++--
+>   drivers/soc/mediatek/mtk-scpsys.c     | 36 ++++++++++++--
+>   include/linux/soc/mediatek/infracfg.h | 14 +++++-
+>   3 files changed, 132 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-> index aadabd9..d41c38b 100644
-> --- a/drivers/clk/at91/clk-utmi.c
-> +++ b/drivers/clk/at91/clk-utmi.c
-> @@ -14,14 +14,29 @@
->  #include <linux/of.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> +#include <soc/at91/atmel-sfr.h>
->  
->  #include "pmc.h"
->  
-> +/* default multiplier for SOCs that do not allow configuration via SFR */
->  #define UTMI_FIXED_MUL		40
->  
-> +/* supported multiplier settings for SOCs that allow configuration via SFR */
-> +struct utmi_multipliers {
-> +	const char *sfr_compatible_name;
-
-	const char *sfr_compat;
-
-so that you don't end with formatting issues because of the 80 chars
-per line rule.
-
-> +	u8 multipliers[4];
-> +};
+> diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
+> index dba3055..63898e4 100644
+> --- a/drivers/soc/mediatek/mtk-infracfg.c
+> +++ b/drivers/soc/mediatek/mtk-infracfg.c
+> @@ -17,9 +17,6 @@
+>   #include <linux/soc/mediatek/infracfg.h>
+>   #include <asm/processor.h>
+>   
+> -#define INFRA_TOPAXI_PROTECTEN		0x0220
+> -#define INFRA_TOPAXI_PROTECTSTA1	0x0228
+> -
+>   /**
+>    * mtk_infracfg_set_bus_protection - enable bus protection
+>    * @regmap: The infracfg regmap
+> @@ -89,3 +86,90 @@ int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
+>   
+>   	return 0;
+>   }
 > +
-> +static const struct utmi_multipliers utmi_multipliers[] = {
-> +	{ "atmel,sama5d2-sfr", { 40, 30, 20, 40 } },
-> +	{ "atmel,sama5d3-sfr", { 40, 30, 20, 10 } },
-> +};
-> +
->  struct clk_utmi {
->  	struct clk_hw hw;
->  	struct regmap *regmap;
-> +	struct regmap *sfr_regmap;
-> +	const u8 *multipliers;
->  };
->  
->  #define to_clk_utmi(hw) container_of(hw, struct clk_utmi, hw)
-> @@ -66,8 +81,67 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
->  static unsigned long clk_utmi_recalc_rate(struct clk_hw *hw,
->  					  unsigned long parent_rate)
->  {
-> -	/* UTMI clk is a fixed clk multiplier */
-> -	return parent_rate * UTMI_FIXED_MUL;
-> +	struct clk_utmi *utmi = to_clk_utmi(hw);
-> +	u8 mul = UTMI_FIXED_MUL;
-> +
-> +	if (utmi->sfr_regmap && utmi->multipliers) {
-> +		u32 regval;
+> +/**
+> + * mtk_infracfg_set_bus_protection_ext - enable bus protection
+> + * @regmap: The infracfg regmap
+> + * @mask: The mask containing the protection bits to be enabled.
+> + * @reg_set: The register used to enable protection bits.
+> + * @reg_sta: The register used to check the protection bits are enabled.
+> + * @reg_en: The register used to enable protection bits when there doesn't
+> + *          exist reg_set.
+> + *
+> + * This function enables the bus protection bits for disabled power
+> + * domains so that the system does not hang when some unit accesses the
+> + * bus while in power down.
+> + */
+> +int mtk_infracfg_set_bus_protection_ext(struct regmap *infracfg, u32 mask,
+> +		u32 reg_set, u32 reg_sta, u32 reg_en)
 
-Add an empty line here.
+There is no need to add a new function. The only differences are:
+1. it passes the register offsets instead of assuming default ones
+2. it checks if reg_set/reg_clr and enables/disable.
 
-> +		regmap_read(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM, &regval);
-> +		mul = utmi->multipliers[regval & AT91_UTMICKTRIM_FREQ_MASK];
+We should change the original function instead of adding a new one.
+ From what I see, we are all done if we provide a boolean which tells infracfg 
+if it should use set/clear or update register.
+
+For now we don't have any user of INFRA_TOPAXI_PROTECTSTA3 (same for 
+*PROTECTEN1*). Do you expect one in the near future? If so, we could pass a 
+flags value instead of bool which points that out. It seems there is no need for 
+now to pass the register value.
+
+Regards,
+Matthias
+
+> +{
+> +	unsigned long expired;
+> +	u32 val;
+> +	int ret;
+> +
+> +	if (reg_set)
+> +		regmap_write(infracfg, reg_set, mask);
+> +	else
+> +		regmap_update_bits(infracfg, reg_en, mask, mask);
+> +
+> +	expired = jiffies + HZ;
+> +
+> +	while (1) {
+> +		ret = regmap_read(infracfg, reg_sta, &val);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if ((val & mask) == mask)
+> +			break;
+> +
+> +		cpu_relax();
+> +		if (time_after(jiffies, expired))
+> +			return -EIO;
 > +	}
 > +
-> +	return parent_rate * mul;
+> +	return 0;
 > +}
 > +
-> +static long clk_utmi_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *parent_rate)
+> +/**
+> + * mtk_infracfg_clear_bus_protection_ext - disable bus protection
+> + * @regmap: The infracfg regmap
+> + * @mask: The mask containing the protection bits to be disabled.
+> + * @reg_clr: The register used to disable protection bits.
+> + * @reg_sta: The register used to check the protection bits are disabled.
+> + * @reg_en: The register used to disable protection bits when there doesn't
+> + *          exist reg_clr.
+> + *
+> + * This function disables the bus protection bits previously enabled with
+> + * mtk_infracfg_set_bus_protection.
+> + */
+> +
+> +int mtk_infracfg_clear_bus_protection_ext(struct regmap *infracfg, u32 mask,
+> +		u32 reg_clr, u32 reg_sta, u32 reg_en)
 > +{
-> +	struct clk_utmi *utmi = to_clk_utmi(hw);
-> +	unsigned long bestrate = 0;
-> +	int bestdiff = -1;
-> +	int i;
+> +	unsigned long expired;
+> +	int ret;
 > +
-> +	if (!utmi->sfr_regmap || !utmi->multipliers)
-> +		return *parent_rate * UTMI_FIXED_MUL;
+> +	if (reg_clr)
+> +		regmap_write(infracfg, reg_clr, mask);
+> +	else
+> +		regmap_update_bits(infracfg, reg_en, mask, 0);
 > +
-> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-> +		unsigned long tmprate = *parent_rate * utmi->multipliers[i];
-> +		int tmpdiff;
+> +	expired = jiffies + HZ;
 > +
-> +		if (tmprate < rate)
-> +			continue;
+> +	while (1) {
+> +		u32 val;
 > +
-> +		tmpdiff = tmprate - rate;
-> +		if (bestdiff < 0 || bestdiff > tmpdiff) {
-> +			bestrate = tmprate;
-> +			bestdiff = tmpdiff;
-> +		}
+> +		ret = regmap_read(infracfg, reg_sta, &val);
+> +		if (ret)
+> +			return ret;
 > +
-> +		if (!bestdiff)
+> +		if (!(val & mask))
 > +			break;
+> +
+> +		cpu_relax();
+> +		if (time_after(jiffies, expired))
+> +			return -EIO;
 > +	}
 > +
-> +	return bestrate;
+> +	return 0;
 > +}
+> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> index ceb2cc4..b181ef2 100644
+> --- a/drivers/soc/mediatek/mtk-scpsys.c
+> +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> @@ -89,6 +89,13 @@ enum clk_id {
+>   
+>   #define MAX_CLKS	2
+>   
+> +struct bus_prot_ext {
+> +	u32 set_ofs;
+> +	u32 clr_ofs;
+> +	u32 en_ofs;
+> +	u32 sta_ofs;
+> +};
 > +
-> +static int clk_utmi_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			     unsigned long parent_rate)
-> +{
-> +	struct clk_utmi *utmi = to_clk_utmi(hw);
-> +	int i;
+>   struct scp_domain_data {
+>   	const char *name;
+>   	u32 sta_mask;
+> @@ -96,6 +103,7 @@ struct scp_domain_data {
+>   	u32 sram_pdn_bits;
+>   	u32 sram_pdn_ack_bits;
+>   	u32 bus_prot_mask;
+> +	struct bus_prot_ext bp_ext;
+>   	enum clk_id clk_id[MAX_CLKS];
+>   	bool active_wakeup;
+>   };
+> @@ -228,8 +236,18 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+>   	}
+>   
+>   	if (scpd->data->bus_prot_mask) {
+> -		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
+> -				scpd->data->bus_prot_mask);
+> +		if (((scpd->data->bp_ext.set_ofs && scpd->data->bp_ext.clr_ofs)
+> +			|| scpd->data->bp_ext.en_ofs)
+> +			&& scpd->data->bp_ext.sta_ofs)
+> +			ret = mtk_infracfg_clear_bus_protection_ext(
+> +					scp->infracfg,
+> +					scpd->data->bus_prot_mask,
+> +					scpd->data->bp_ext.clr_ofs,
+> +					scpd->data->bp_ext.sta_ofs,
+> +					scpd->data->bp_ext.en_ofs);
+> +		else
+> +			ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
+> +					scpd->data->bus_prot_mask);
+>   		if (ret)
+>   			goto err_pwr_ack;
+>   	}
+> @@ -263,8 +281,18 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+>   	int i;
+>   
+>   	if (scpd->data->bus_prot_mask) {
+> -		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
+> -				scpd->data->bus_prot_mask);
+> +		if (((scpd->data->bp_ext.set_ofs && scpd->data->bp_ext.clr_ofs)
+> +			|| scpd->data->bp_ext.en_ofs)
+> +			&& scpd->data->bp_ext.sta_ofs)
+> +			ret = mtk_infracfg_set_bus_protection_ext(
+> +					scp->infracfg,
+> +					scpd->data->bus_prot_mask,
+> +					scpd->data->bp_ext.set_ofs,
+> +					scpd->data->bp_ext.sta_ofs,
+> +					scpd->data->bp_ext.en_ofs);
+> +		else
+> +			ret = mtk_infracfg_set_bus_protection(scp->infracfg,
+> +					scpd->data->bus_prot_mask);
+>   		if (ret)
+>   			goto out;
+>   	}
+> diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
+> index a5714e9..d3fbb45 100644
+> --- a/include/linux/soc/mediatek/infracfg.h
+> +++ b/include/linux/soc/mediatek/infracfg.h
+> @@ -1,6 +1,15 @@
+>   #ifndef __SOC_MEDIATEK_INFRACFG_H
+>   #define __SOC_MEDIATEK_INFRACFG_H
+>   
+> +#define INFRA_TOPAXI_PROTECTEN		0x0220
+> +#define INFRA_TOPAXI_PROTECTSTA1	0x0228
+> +#define INFRA_TOPAXI_PROTECTEN1		0x0250
+> +#define INFRA_TOPAXI_PROTECTSTA3	0x0258
+> +#define INFRA_TOPAXI_PROTECTEN_SET	0x0260
+> +#define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
+> +#define INFRA_TOPAXI_PROTECTEN1_SET	0x0270
+> +#define INFRA_TOPAXI_PROTECTEN1_CLR	0x0274
 > +
-> +	if (!utmi->sfr_regmap || !utmi->multipliers)
-> +		return rate == parent_rate * UTMI_FIXED_MUL ? 0 : -EINVAL;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-> +		if (rate == parent_rate * utmi->multipliers[i]) {
-> +			regmap_update_bits(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM,
-> +					   AT91_UTMICKTRIM_FREQ_MASK, i);
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
->  }
->  
->  static const struct clk_ops utmi_ops = {
-> @@ -75,10 +149,13 @@ static const struct clk_ops utmi_ops = {
->  	.unprepare = clk_utmi_unprepare,
->  	.is_prepared = clk_utmi_is_prepared,
->  	.recalc_rate = clk_utmi_recalc_rate,
-> +	.round_rate = clk_utmi_round_rate,
-> +	.set_rate = clk_utmi_set_rate,
->  };
->  
->  static struct clk_hw * __init
->  at91_clk_register_utmi(struct regmap *regmap,
-> +		       struct regmap *sfr_regmap, const u8 *multipliers,
->  		       const char *name, const char *parent_name)
->  {
->  	struct clk_utmi *utmi;
-> @@ -98,6 +175,8 @@ at91_clk_register_utmi(struct regmap *regmap,
->  
->  	utmi->hw.init = &init;
->  	utmi->regmap = regmap;
-> +	utmi->sfr_regmap = sfr_regmap;
-> +	utmi->multipliers = multipliers;
->  
->  	hw = &utmi->hw;
->  	ret = clk_hw_register(NULL, &utmi->hw);
-> @@ -115,6 +194,9 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
->  	const char *parent_name;
->  	const char *name = np->name;
->  	struct regmap *regmap;
-> +	struct regmap *sfr_regmap;
-> +	const u8 *multipliers = NULL;
-> +	size_t i;
->  
->  	parent_name = of_clk_get_parent_name(np, 0);
->  
-> @@ -124,7 +206,24 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
->  	if (IS_ERR(regmap))
->  		return;
->  
-> -	hw = at91_clk_register_utmi(regmap, name, parent_name);
-> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
-> +		sfr_regmap = syscon_regmap_lookup_by_compatible(
-> +			utmi_multipliers[i].sfr_compatible_name);
-
-		const char *compat = utmi_multipliers[i].sfr_compat;
-
-		sfr_regmap = syscon_regmap_lookup_by_compatible(compat);
-
-This way you avoid this weird formatting.
-
-> +		if (!IS_ERR(sfr_regmap)) {
-> +			pr_debug("clk-utmi: found sfr node: %s\n",
-> +				 utmi_multipliers[i].sfr_compatible_name);
-> +			multipliers = utmi_multipliers[i].multipliers;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (IS_ERR(sfr_regmap)) {
-> +		pr_debug("clk-utmi: failed to find sfr node\n");
-> +		sfr_regmap = NULL;
-> +	}
-> +
-> +	hw = at91_clk_register_utmi(regmap, sfr_regmap, multipliers,
-> +				    name, parent_name);
->  	if (IS_ERR(hw))
->  		return;
->  
-> diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
-> index 506ea8f..763948e 100644
-> --- a/include/soc/at91/atmel-sfr.h
-> +++ b/include/soc/at91/atmel-sfr.h
-> @@ -17,6 +17,7 @@
->  /* 0x08 ~ 0x0c: Reserved */
->  #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
->  #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
-> +#define AT91_SFR_UTMICKTRIM	0x30	/* UTMI Clock Trimming Register */
->  #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
->  
->  /* Field definitions */
-> @@ -28,5 +29,6 @@
->  					 AT91_OHCIICR_SUSPEND_B | \
->  					 AT91_OHCIICR_SUSPEND_C)
->  
-> +#define AT91_UTMICKTRIM_FREQ_MASK	0x03
->  
->  #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
-
+>   #define MT8173_TOP_AXI_PROT_EN_MCI_M2		BIT(0)
+>   #define MT8173_TOP_AXI_PROT_EN_MM_M0		BIT(1)
+>   #define MT8173_TOP_AXI_PROT_EN_MM_M1		BIT(2)
+> @@ -22,5 +31,8 @@
+>   
+>   int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
+>   int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
+> -
+> +int mtk_infracfg_set_bus_protection_ext(struct regmap *infracfg, u32 mask,
+> +		u32 reg_set, u32 reg_sta, u32 reg_en);
+> +int mtk_infracfg_clear_bus_protection_ext(struct regmap *infracfg, u32 mask,
+> +		u32 reg_clr, u32 reg_sta, u32 reg_en);
+>   #endif /* __SOC_MEDIATEK_INFRACFG_H */
+> 
