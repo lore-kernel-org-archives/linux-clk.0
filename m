@@ -1,102 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:53818 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751741AbdHLMo0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 12 Aug 2017 08:44:26 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Priit Laes <plaes@plaes.org>
-Subject: [PATCH v4 1/3] clk: sunxi-ng: div: Add support for fixed post-divider
-Date: Sat, 12 Aug 2017 20:43:50 +0800
-Message-Id: <20170812124352.24148-2-icenowy@aosc.io>
-In-Reply-To: <20170812124352.24148-1-icenowy@aosc.io>
-References: <20170812124352.24148-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <afaerber@suse.de>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Roc He <hepeng@zidoo.tv>,
+	=?UTF-8?q?=E8=92=8B=E4=B8=BD=E7=90=B4?= <jiang.liqin@geniatech.com>,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	devicetree@vger.kernel.org
+Subject: [RFC 0/4] arm64: Realtek RTD1295 clocks
+Date: Thu, 17 Aug 2017 13:20:21 +0200
+Message-Id: <20170817112026.24062-1-afaerber@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Priit Laes <plaes@plaes.org>
+Hello,
 
-SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-6 is fixed post-divider.
+This series adds two clock controllers for the Realtek RTD1295 SoC.
+Based on my reset controller and IRQ mux series.
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
-It's based on the patch in v6 of the A10/A20 CCU patchset, but with
-ccu_div_round_rate fixed.
+There being no public source code for RTD1295, the implementation is based on
+register offsets, fields and names seen in the vendor DT, unified into 2 nodes.
 
- drivers/clk/sunxi-ng/ccu_div.c | 22 +++++++++++++++++++---
- drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
- 2 files changed, 21 insertions(+), 4 deletions(-)
+The PLL calculations were experimentally found by comparing vendor Android
+/sys/kernel/debug/clk/clk_summary to the register field values in /dev/mem -
+thus the formulas may be incomplete or incorrect.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-index c0e5c10d0091..baa3cf96507b 100644
---- a/drivers/clk/sunxi-ng/ccu_div.c
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -21,10 +21,18 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
- {
- 	struct ccu_div *cd = data;
- 
--	return divider_round_rate_parent(&cd->common.hw, parent,
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate *= cd->fixed_post_div;
-+
-+	rate = divider_round_rate_parent(&cd->common.hw, parent,
- 					 rate, parent_rate,
- 					 cd->div.table, cd->div.width,
- 					 cd->div.flags);
-+
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate /= cd->fixed_post_div;
-+
-+	return rate;
- }
- 
- static void ccu_div_disable(struct clk_hw *hw)
-@@ -62,8 +70,13 @@ static unsigned long ccu_div_recalc_rate(struct clk_hw *hw,
- 	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
- 						  parent_rate);
- 
--	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
--				   cd->div.flags);
-+	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-+				  cd->div.flags);
-+
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		val /= cd->fixed_post_div;
-+
-+	return val;
- }
- 
- static int ccu_div_determine_rate(struct clk_hw *hw,
-@@ -86,6 +99,9 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
- 						  parent_rate);
- 
-+	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate *= cd->fixed_post_div;
-+
- 	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
- 			      cd->div.flags);
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-index 08d074451204..f3a5028dcd14 100644
---- a/drivers/clk/sunxi-ng/ccu_div.h
-+++ b/drivers/clk/sunxi-ng/ccu_div.h
-@@ -86,9 +86,10 @@ struct ccu_div_internal {
- struct ccu_div {
- 	u32			enable;
- 
--	struct ccu_div_internal		div;
-+	struct ccu_div_internal	div;
- 	struct ccu_mux_internal	mux;
- 	struct ccu_common	common;
-+	unsigned int		fixed_post_div;
- };
- 
- #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
+Together with the reset driver and IRQ mux, the clock gates allow to
+initialize UART1.
+
+Code needs cleanups - sharing this for calculation findings and design.
+
+More experimental patches at:
+https://github.com/afaerber/linux/commits/rtd1295-next
+
+Have a lot of fun!
+
+Cheers,
+Andreas
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: Roc He <hepeng@zidoo.tv>
+Cc: 蒋丽琴 <jiang.liqin@geniatech.com>
+Cc: devicetree@vger.kernel.org
+
+Andreas Färber (4):
+  dt-bindings: clock: Add Realtek RTD1295
+  arm64: dts: realtek: Add clock nodes for RTD1295
+  clk: Add Realtek RTD1295
+  arm64: dts: realtek: Update RTD1295 UART nodes with clocks
+
+ .../devicetree/bindings/clock/realtek,rtd129x.txt  |  20 ++
+ arch/arm64/boot/dts/realtek/rtd1295.dtsi           |  28 +-
+ drivers/clk/Kconfig                                |   7 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-rtd1295.c                          | 385 +++++++++++++++++++++
+ include/dt-bindings/clock/realtek,rtd1295.h        |  99 ++++++
+ 6 files changed, 537 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd129x.txt
+ create mode 100644 drivers/clk/clk-rtd1295.c
+ create mode 100644 include/dt-bindings/clock/realtek,rtd1295.h
+
 -- 
-2.13.0
-
+2.12.3
