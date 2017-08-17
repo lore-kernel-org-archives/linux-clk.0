@@ -1,143 +1,90 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	robdclark@gmail.com,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH] clk: qcom: Remove unused RCG ops
-Date: Thu, 24 Aug 2017 20:36:44 +0300
-Message-Id: <20170824173644.10305-1-georgi.djakov@linaro.org>
-In-Reply-To: <20170823225543.GJ21656@codeaurora.org>
-References: <20170823225543.GJ21656@codeaurora.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.14
+Date: Thu, 17 Aug 2017 10:29:02 +0200
+Message-Id: <1502958542-2900-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The RCGs ops for shared branches are not used now, so remove it.
+	Hi Mike, Stephen,
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/clk-rcg.h  |  3 --
- drivers/clk/qcom/clk-rcg2.c | 79 ---------------------------------------------
- 2 files changed, 82 deletions(-)
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 1b3e8d265bdb..a2495457e564 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -156,7 +156,6 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-  * @hid_width: number of bits in half integer divider
-  * @parent_map: map from software's parent index to hardware's src_sel field
-  * @freq_tbl: frequency table
-- * @current_freq: last cached frequency when using branches with shared RCGs
-  * @clkr: regmap clock handle
-  *
-  */
-@@ -166,7 +165,6 @@ struct clk_rcg2 {
- 	u8			hid_width;
- 	const struct parent_map	*parent_map;
- 	const struct freq_tbl	*freq_tbl;
--	unsigned long		current_freq;
- 	struct clk_regmap	clkr;
- };
- 
-@@ -174,7 +172,6 @@ struct clk_rcg2 {
- 
- extern const struct clk_ops clk_rcg2_ops;
- extern const struct clk_ops clk_rcg2_floor_ops;
--extern const struct clk_ops clk_rcg2_shared_ops;
- extern const struct clk_ops clk_edp_pixel_ops;
- extern const struct clk_ops clk_byte_ops;
- extern const struct clk_ops clk_byte2_ops;
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 1a0985ae20d2..bbeaf9c09dbb 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -358,85 +358,6 @@ const struct clk_ops clk_rcg2_floor_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
- 
--static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
--{
--	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--	const char *name = clk_hw_get_name(hw);
--	int ret, count;
--
--	/* force enable RCG */
--	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
--				 CMD_ROOT_EN, CMD_ROOT_EN);
--	if (ret)
--		return ret;
--
--	/* wait for RCG to turn ON */
--	for (count = 500; count > 0; count--) {
--		ret = clk_rcg2_is_enabled(hw);
--		if (ret)
--			break;
--		udelay(1);
--	}
--	if (!count)
--		pr_err("%s: RCG did not turn on\n", name);
--
--	/* set clock rate */
--	ret = __clk_rcg2_set_rate(hw, rate, CEIL);
--	if (ret)
--		return ret;
--
--	/* clear force enable RCG */
--	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
--				 CMD_ROOT_EN, 0);
--}
--
--static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
--				    unsigned long parent_rate)
--{
--	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--
--	/* cache the rate */
--	rcg->current_freq = rate;
--
--	if (!__clk_is_enabled(hw->clk))
--		return 0;
--
--	return clk_rcg2_shared_force_enable(hw, rcg->current_freq);
--}
--
--static unsigned long
--clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
--{
--	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--
--	return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
--}
--
--static int clk_rcg2_shared_enable(struct clk_hw *hw)
--{
--	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--
--	return clk_rcg2_shared_force_enable(hw, rcg->current_freq);
--}
--
--static void clk_rcg2_shared_disable(struct clk_hw *hw)
--{
--	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--
--	/* switch to XO, which is the lowest entry in the freq table */
--	clk_rcg2_shared_set_rate(hw, rcg->freq_tbl[0].freq, 0);
--}
--
--const struct clk_ops clk_rcg2_shared_ops = {
--	.enable = clk_rcg2_shared_enable,
--	.disable = clk_rcg2_shared_disable,
--	.get_parent = clk_rcg2_get_parent,
--	.recalc_rate = clk_rcg2_shared_recalc_rate,
--	.determine_rate = clk_rcg2_determine_rate,
--	.set_rate = clk_rcg2_shared_set_rate,
--};
--EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
--
- struct frac_entry {
- 	int num;
- 	int den;
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.14-tag1
+
+for you to fetch changes up to c29f82951b974f27e0bc4ce2525db164f86f2e4d:
+
+  clk: renesas: r8a7796: Add USB3.0 clock (2017-08-17 09:22:26 +0200)
+
+----------------------------------------------------------------
+A bit delayed due to holidays, but here they are!
+
+clk: renesas: Updates for v4.14
+
+  - Add more module clocks for R-Car V2H and M3-W,
+  - Add support for the R-Car Gen3 USB 2.0 clock selector PHY,
+  - Add support for the new R-Car D3 SoC,
+  - Allow compile-testing of all (sub)drivers now all dummy infrastructure
+    is available,
+  - Small fixes and cleanups.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (7):
+      clk: renesas: div6: Document fields used for parent selection
+      clk: renesas: r8a7792: Add IMR-LX3/LSX3 clocks
+      clk: renesas: Allow compile-testing of all (sub)drivers
+      clk: renesas: Add r8a77995 CPG Core Clock Definitions
+      clk: renesas: rcar-gen3: Add divider support for PLL1 and PLL3
+      clk: renesas: rcar-gen3: Add support for SCCG/Clean peripheral clocks
+      clk: renesas: cpg-mssr: Add R8A77995 support
+
+Hiromitsu Yamasaki (1):
+      clk: renesas: r8a7796: Add USB3.0 clock
+
+Wolfram Sang (2):
+      clk: renesas: rcar-gen3-cpg: Drop superfluous variable
+      clk: renesas: rcar-gen3-cpg: Refactor checks for accessing the div table
+
+Yoshihiro Shimoda (1):
+      clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0 clock selector PHY
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
+ .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  55 +++++
+ drivers/clk/renesas/Kconfig                        |  48 +++--
+ drivers/clk/renesas/Makefile                       |   2 +
+ drivers/clk/renesas/clk-div6.c                     |   3 +
+ drivers/clk/renesas/r8a7792-cpg-mssr.c             |   7 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |  34 +--
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |  35 +--
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            | 236 +++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.c                |  69 +++---
+ drivers/clk/renesas/rcar-gen3-cpg.h                |  15 +-
+ drivers/clk/renesas/rcar-usb2-clock-sel.c          | 188 ++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a77995-cpg-mssr.h      |  57 +++++
+ 15 files changed, 674 insertions(+), 85 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+ create mode 100644 drivers/clk/renesas/r8a77995-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/rcar-usb2-clock-sel.c
+ create mode 100644 include/dt-bindings/clock/r8a77995-cpg-mssr.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
