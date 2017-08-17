@@ -1,115 +1,57 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v7 2/4] clk: samsung: Add support for runtime PM
-Date: Fri, 04 Aug 2017 11:34:52 +0200
-Message-id: <1501839294-478-3-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1501839294-478-1-git-send-email-m.szyprowski@samsung.com>
-References: <1501839294-478-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170804093515eucas1p1cc2273ba02d86767c5b2533430577698@eucas1p1.samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1500963987-4627-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1500963987-4627-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Aug 2017 09:23:40 +0200
+Message-ID: <CAMuHMdVypfK4n720SyTAkOZJx3gbA6_gaUA0RhXKGhVEB=54ig@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0
+ clock selector PHY
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds struct device pointer to samsung_clk_provider and forwarding it
-to clk_register_* functions, so drivers can register clocks, which use runtime
-pm feature.
+On Tue, Jul 25, 2017 at 8:26 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> R-Car USB 2.0 controller can change the clock source from an oscillator
+> to an external clock via a register. So, this patch adds support
+> the clock source selector as a clock driver.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  This patch is based on the renesas-drivers.git /
+> renesas-drivers-2017-07-18-v4.13-rc1 tag.
+>
+>  Changes from v2:
+>   - Fix the example of device tree doc.
+>   - Replace some 8 spaces to a tab in the device tree doc.
+>   - Add Rob's Acked-by for the doc.
+>   - Drop CLK_IS_BASIC on init.flag.
+>   - Use of_clk_add_hw_provider() instead of of_clk_add_provider().
+>   - Use builtin_platform_driver() instead of syscall_init_sync().
+>   - Use pm_runtime APIs instead of clk APIs for "ehci_ohci" clk.
+>
+>  Changes from v1:
+>   - Change this driver as a clock driver from a generic phy driver.
+>     https://patchwork.kernel.org/patch/9788697/
+>   - Remove "RFC" tag.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/clk/samsung/clk-pll.c |  2 +-
- drivers/clk/samsung/clk.c     | 12 ++++++------
- drivers/clk/samsung/clk.h     |  1 +
- 3 files changed, 8 insertions(+), 7 deletions(-)
+Thank you, queued v3 + the fix from Julia in clk-renesas-for-4.14.
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 037c61484098..41ebb94d2855 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -1388,7 +1388,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	pll->lock_reg = base + pll_clk->lock_offset;
- 	pll->con_reg = base + pll_clk->con_offset;
- 
--	ret = clk_hw_register(NULL, &pll->hw);
-+	ret = clk_hw_register(ctx->dev, &pll->hw);
- 	if (ret) {
- 		pr_err("%s: failed to register pll clock %s : %d\n",
- 			__func__, pll_clk->name, ret);
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 7ce0fa86c5ff..aef97b091b50 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -134,7 +134,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk_hw = clk_hw_register_fixed_rate(NULL, list->name,
-+		clk_hw = clk_hw_register_fixed_rate(ctx->dev, list->name,
- 			list->parent_name, list->flags, list->fixed_rate);
- 		if (IS_ERR(clk_hw)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-@@ -163,7 +163,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
- 	unsigned int idx;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk_hw = clk_hw_register_fixed_factor(NULL, list->name,
-+		clk_hw = clk_hw_register_fixed_factor(ctx->dev, list->name,
- 			list->parent_name, list->flags, list->mult, list->div);
- 		if (IS_ERR(clk_hw)) {
- 			pr_err("%s: failed to register clock %s\n", __func__,
-@@ -184,7 +184,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk_hw = clk_hw_register_mux(NULL, list->name,
-+		clk_hw = clk_hw_register_mux(ctx->dev, list->name,
- 			list->parent_names, list->num_parents, list->flags,
- 			ctx->reg_base + list->offset,
- 			list->shift, list->width, list->mux_flags, &ctx->lock);
-@@ -217,13 +217,13 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
- 		if (list->table)
--			clk_hw = clk_hw_register_divider_table(NULL,
-+			clk_hw = clk_hw_register_divider_table(ctx->dev,
- 				list->name, list->parent_name, list->flags,
- 				ctx->reg_base + list->offset,
- 				list->shift, list->width, list->div_flags,
- 				list->table, &ctx->lock);
- 		else
--			clk_hw = clk_hw_register_divider(NULL, list->name,
-+			clk_hw = clk_hw_register_divider(ctx->dev, list->name,
- 				list->parent_name, list->flags,
- 				ctx->reg_base + list->offset, list->shift,
- 				list->width, list->div_flags, &ctx->lock);
-@@ -255,7 +255,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
- 	unsigned int idx, ret;
- 
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		clk_hw = clk_hw_register_gate(NULL, list->name, list->parent_name,
-+		clk_hw = clk_hw_register_gate(ctx->dev, list->name, list->parent_name,
- 				list->flags, ctx->reg_base + list->offset,
- 				list->bit_idx, list->gate_flags, &ctx->lock);
- 		if (IS_ERR(clk_hw)) {
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index b8ca0dd3a38b..f0acae4f5d1b 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -24,6 +24,7 @@
-  */
- struct samsung_clk_provider {
- 	void __iomem *reg_base;
-+	struct device *dev;
- 	spinlock_t lock;
- 	/* clk_data must be the last entry due to variable lenght 'hws' array */
- 	struct clk_hw_onecell_data clk_data;
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
