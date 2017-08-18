@@ -1,102 +1,178 @@
-Return-Path: <plaes@plaes.org>
-From: Priit Laes <plaes@plaes.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com,
-	Jonathan Liu <net147@gmail.com>,
-	Olliver Schinagl <oliver@schinagl.nl>,
-	Priit Laes <plaes@plaes.org>
-Subject: [PATCH v7 0/5] ARM: sunxi: Convert sun4i/sun7i series SoCs to sunxi-ng CCU
-Date: Wed, 23 Aug 2017 20:23:28 +0300
-Message-Id: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:45562 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751740AbdHRJRB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2017 05:17:01 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/4] ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 18 Aug 2017 11:16:55 +0200
+Message-Id: <1503047817-29439-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-This serie brings A10 (sun4i) and A20 (sun7i) SoCs into the
-sunxi-ng world. With this patchset we now support all the clocks
-in sun4i/sun7i SoCs.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
+ 1 file changed, 66 insertions(+), 71 deletions(-)
 
-In order to make cross-tree merges bisectable, changes to device
-trees are currently using clock index as numbers instead of defines.
-
-Changes from v6:
- - Use correct mask for audio PLL (Olliver Schinagl, Jonathan Liu)
- - Rename SUNXI_A10_CCU kconfig variable to SUN4I_A10_CCU
- - Drop applied div clock postdivider patch (Icenowy Zheng)
-
-Changes from v5:
- - Added reviewed-by tags for Wens (A10/A20 dts bindings)
- - Fix hdmi clock parents (Jonathan Liu)
- - Add missing TVE0/1 reset bits (Olliver Schinagl)
- - Fix divider clock's fixed postdivider logic again (Maxime Ripard)
- - Set CLK_SET_RATE_PARENT for main hdmi and gpu clocks (Jonathan Liu)
-
-Changes from v4:
- - Add CLK_SET_RATE_PARENT to "sata" clock.
- - Add proper postdivider support for divider clock.
-
-Changes from v3:
- - Add support for fixed post-divider support for DIV clocks.
- - Fix wrong clk_ops for SATA. Spotted by Jonathan Liu.
- - Use numeric values for clock indices to make merging somewhat easier
- - Create separate sun7i/a20 specific header.
-
-Changes from v2:
- - Rename driver and relevant files to sun4i-a10-ccu.
- - Drop mmc output and sample clocks for sun4i-a10.
- - Rename CSI ISP clock to SCLK as it is called on other variants.
- - Add comment on why PLL6 is used as AHB parent.
- - Fix parents for out_a/out_b clocks.
- - Stop exporting PLL_PERIPH_SATA gate. Driver takes care of gate.
- - Rework SATA clock handling.
- - Fix ahb gate parents.
- - Simplefb clock fixes (add dependencies for HDMI/LVDS clocks).
- - Fixes for pll-ve and pll-video1 clocks pointed out by Jonathan Liu.
- - Adapt to latest upstream changes from sunxi-next.
-
-Changes from v1:
- - Drop useless comments
- - Add support for A10 / sun4i.
- - Rename driver to sunxi-a10-a20.
- - Add previously unimplemented clocks.
- - Document the audio pll hardcoded post-divider
- - Add Acked-by: Rob Herring <robh at kernel.org> on patch 4
-
-Priit Laes (5):
-  clk: sunxi-ng: Add sun4i/sun7i CCU driver
-  dt-bindings: List devicetree binding for the CCU of Allwinner A20
-  dt-bindings: List devicetree binding for the CCU of Allwinner A10
-  ARM: sun7i: Convert to CCU
-  ARM: sun4i: Convert to CCU
-
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt |    2 +-
- arch/arm/boot/dts/sun4i-a10.dtsi                      |  646 +----
- arch/arm/boot/dts/sun7i-a20.dtsi                      |  719 +-----
- drivers/clk/sunxi-ng/Kconfig                          |   13 +-
- drivers/clk/sunxi-ng/Makefile                         |    1 +-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c                  | 1456 ++++++++++-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.h                  |   61 +-
- include/dt-bindings/clock/sun4i-a10-ccu.h             |  200 +-
- include/dt-bindings/clock/sun7i-a20-ccu.h             |   53 +-
- include/dt-bindings/reset/sun4i-a10-ccu.h             |   69 +-
- 10 files changed, 2012 insertions(+), 1208 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
- create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
- create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
- create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
-
-base-commit: 85c46c1a085cab2fea2df1de0fe8adfbcf1ef1ae
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 5fca397b722bfa66..e984b106dd1acd7b 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1097,77 +1097,72 @@
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 	};
+ 
+-	clocks {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		/* External root clock */
+-		extal_clk: extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overriden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/*
+-		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
+-		 * default. Boards that provide audio clocks should override them.
+-		 */
+-		audio_clk_a: audio_clk_a {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_b: audio_clk_b {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_c: audio_clk_c {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External PCIe clock - can be overridden by the board */
+-		pcie_bus_clk: pcie_bus {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External SCIF clock */
+-		scif_clk: scif {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External USB clock - can be overridden by the board */
+-		usb_extal_clk: usb_extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
+-		};
+-
+-		/* External CAN clock */
+-		can_clk: can {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a7791-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&usb_extal_clk>;
+-			clock-names = "extal", "usb_extal";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-		};
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7791-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&usb_extal_clk>;
++		clock-names = "extal", "usb_extal";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
+ 	};
+ 
+ 	rst: reset-controller@e6160000 {
 -- 
-git-series 0.9.1
+2.7.4
+
