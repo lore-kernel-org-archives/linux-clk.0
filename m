@@ -1,110 +1,46 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.135]:51328 "EHLO
+Received: from regular1.263xmail.com ([211.150.99.139]:57238 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751768AbdHBDpa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2017 23:45:30 -0400
-Message-ID: <59814A66.5070500@rock-chips.com>
-Date: Wed, 02 Aug 2017 11:43:34 +0800
+        with ESMTP id S1754005AbdHRDoq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Aug 2017 23:44:46 -0400
 From: Elaine Zhang <zhangqing@rock-chips.com>
-MIME-Version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>
-CC: mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, huangtao@rock-chips.com,
-        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com
-Subject: Re: [PATCH 1/2] clk: fractional-divider: allow overriding of approximation
-References: <1500624187-12165-1-git-send-email-zhangqing@rock-chips.com> <5990882.df1suBpf8V@phil> <5453089.AIzWDZk3ey@phil>
-In-Reply-To: <5453089.AIzWDZk3ey@phil>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
+Cc: robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com,
+        xf@rock-chips.com, huangtao@rock-chips.com,
+        frank.wang@rock-chips.com, cl@rock-chips.com,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 2/2] clk: rockchip: rk3228: add SCLK_SDIO_SRC clk id
+Date: Fri, 18 Aug 2017 11:49:25 +0800
+Message-Id: <1503028165-27072-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1503028165-27072-1-git-send-email-zhangqing@rock-chips.com>
+References: <1503028165-27072-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-hi,heiko:
+In some special circumstances, may be need to reparent clk for sclk_sdio_src.
 
-This a good solution.And I tested it on RK SOCs.It's work well.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3228.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 08/02/2017 12:21 AM, Heiko Stuebner wrote:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
->
-> Fractional dividers may have special requirements concerning numerator
-> and denominator selection that differ from just getting the best
-> approximation.
->
-> For example on Rockchip socs the denominator must be at least 20 times
-> larger than the numerator to generate precise clock frequencies.
->
-> Therefore add the ability to provide custom approximation functions.
->
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->   drivers/clk/clk-fractional-divider.c | 28 ++++++++++++++++++++--------
->   include/linux/clk-provider.h         |  3 +++
->   2 files changed, 23 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-> index aab904618eb6..fdf625fb10fa 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -49,16 +49,12 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
->   	return ret;
->   }
->
-> -static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
-> -			      unsigned long *parent_rate)
-> +static void clk_fd_general_approximation(struct clk_hw *hw, unsigned long rate,
-> +					 unsigned long *parent_rate,
-> +					 unsigned long *m, unsigned long *n)
->   {
->   	struct clk_fractional_divider *fd = to_clk_fd(hw);
->   	unsigned long scale;
-> -	unsigned long m, n;
-> -	u64 ret;
-> -
-> -	if (!rate || rate >= *parent_rate)
-> -		return *parent_rate;
->
->   	/*
->   	 * Get rate closer to *parent_rate to guarantee there is no overflow
-> @@ -71,7 +67,23 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
->
->   	rational_best_approximation(rate, *parent_rate,
->   			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
-> -			&m, &n);
-> +			m, n);
-> +}
-> +
-> +static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			      unsigned long *parent_rate)
-> +{
-> +	struct clk_fractional_divider *fd = to_clk_fd(hw);
-> +	unsigned long m, n;
-> +	u64 ret;
-> +
-> +	if (!rate || rate >= *parent_rate)
-> +		return *parent_rate;
-> +
-> +	if (fd->approximation)
-> +		fd->approximation(hw, rate, parent_rate, &m, &n);
-> +	else
-> +		clk_fd_general_approximation(hw, rate, parent_rate, &m, &n);
->
->   	ret = (u64)*parent_rate * m;
->   	do_div(ret, n);
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index c59c62571e4f..1fc113fbf955 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -565,6 +565,9 @@ struct clk_fractional_divider {
->   	u8		nwidth;
->   	u32		nmask;
->   	u8		flags;
-> +	void		(*approximation)(struct clk_hw *hw,
-> +				unsigned long rate, unsigned long *parent_rate,
-> +				unsigned long *m, unsigned long *n);
->   	spinlock_t	*lock;
->   };
->
->
-Tested-by: Elaine Zhang <zhangqing@rock-chips.com>
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index bb405d9044a3..11e7f2d1c054 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -391,7 +391,7 @@ enum rk3228_plls {
+ 			RK2928_CLKSEL_CON(11), 8, 2, MFLAGS, 0, 8, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 
+-	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
++	COMPOSITE_NODIV(SCLK_SDIO_SRC, "sclk_sdio_src", mux_mmc_src_p, 0,
+ 			RK2928_CLKSEL_CON(11), 10, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
+ 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
+-- 
+1.9.1
+
 
