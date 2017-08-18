@@ -1,109 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:33350 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750854AbdHSJMH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2017 05:12:07 -0400
-MIME-Version: 1.0
-In-Reply-To: <ba1af994f165b96c096ec03a72836739@aosc.io>
-References: <20170815055529.4780-1-icenowy@aosc.io> <ba1af994f165b96c096ec03a72836739@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 19 Aug 2017 17:11:42 +0800
-Message-ID: <CAGb2v645YO-t-5+k2yRsj4_wcJuURic-HY6oD0-mZzOh7--4Ow@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v5] clk: sunxi-ng: support R40 SoC
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de,
+	Chris Healy <cphealy@gmail.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	"Wladimir J . van der Laan" <laanwj@gmail.com>,
+	Ilia Mirkin <imirkin@alum.mit.edu>
+Subject: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
+Date: Fri, 18 Aug 2017 18:30:58 +0200
+Message-Id: <20170818163058.22252-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 15, 2017 at 4:52 PM,  <icenowy@aosc.io> wrote:
-> 在 2017-08-15 13:55，Icenowy Zheng 写道：
->>
->> Allwinner R40 SoC have a clock controller module in the style of the
->> SoCs beyond sun6i, however, it's more rich and complex.
->>
->> Add support for it.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Changes in v5:
->> - Added TODO's for PLL constraints.
->> - Forced OHCI12M mux to 0.
->> - Changed "adda" clock to "codec" to be consistent with "bus-codec".
->> - Added several CLK_SET_RATE_{UNGATE,PARENT} flags.
->> - Added PLL_CPU gate notifier.
->> Changes in v4:
->> - Removed usb-ohci-12M mux clocks.
->> - Removed unused (and not in user manual) adda-4x clock.
->> - Implemented proper SATA PLL system.
->> - Renamed MP (Mixed Processor) clock names to drop the extra "DE_".
->> - Renamed TCONs' clock names to "tcon-lcdX" or "tcon-tvX".
->> - Added missing RST_DRAM.
->> - Several clock post/pre-dividers and constraints fixes.
->> Changes in v3:
->> - Rebased on current linux-next.
->> Changes in v2:
->> - Fixes according to the SoC's user manual.
->>
->>  drivers/clk/sunxi-ng/Kconfig              |    5 +
->>  drivers/clk/sunxi-ng/Makefile             |    1 +
->>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1290
->> +++++++++++++++++++++++++++++
->>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   69 ++
->>  include/dt-bindings/clock/sun8i-r40-ccu.h |  187 +++++
->>  include/dt-bindings/reset/sun8i-r40-ccu.h |  130 +++
->>  6 files changed, 1682 insertions(+)
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
->>  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
->>  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
->>
->> [...]
->>
->> +static void __init sun8i_r40_ccu_setup(struct device_node *node)
->> +{
->> +       void __iomem *reg;
->> +       u32 val;
->> +
->> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
->> +       if (IS_ERR(reg)) {
->> +               pr_err("%s: Could not map the clock registers\n",
->> +                      of_node_full_name(node));
->> +               return;
->> +       }
->> +
->> +       /* Force the PLL-Audio-1x divider to 4 */
->> +       val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
->> +       val &= ~GENMASK(19, 16);
->> +       writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
->> +
->> +       /* Force PLL-MIPI to MIPI mode */
->> +       val = readl(reg + SUN8I_R40_PLL_MIPI_REG);
->> +       val &= ~BIT(16);
->> +       writel(val, reg + SUN8I_R40_PLL_MIPI_REG);
->> +
->> +       /* Force OHCI 12M parent to 0 */
+This propagates rate requests from the display interface to the divider
+or PLL output, allowing to hit the required display rate in many more
+cases.
 
-Clarified the comment as
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx51-imx53.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-        Force OHCI 12M parent to 12M divided from 48M
-
->> +       val = readl(reg + SUN8I_R40_USB_CLK_REG);
->> +       val &= ~GENMASK(20, 6);
->
->
-> Sorry but I think this line should be:
->
-> val &= ~GENMASK(25, 20);
->
-> I didn't understand GENMASK well...
-
-Fixed and applied. Thanks!
-
-ChenYu
+diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
+index 1e3c9ea5f9dc..7bcaf270db11 100644
+--- a/drivers/clk/imx/clk-imx51-imx53.c
++++ b/drivers/clk/imx/clk-imx51-imx53.c
+@@ -416,10 +416,10 @@ static void __init mx51_clocks_init(struct device_node *np)
+ 
+ 	clk[IMX5_CLK_LP_APM]		= imx_clk_mux("lp_apm", MXC_CCM_CCSR, 9, 1,
+ 						lp_apm_sel, ARRAY_SIZE(lp_apm_sel));
+-	clk[IMX5_CLK_IPU_DI0_SEL]	= imx_clk_mux("ipu_di0_sel", MXC_CCM_CSCMR2, 26, 3,
+-						mx51_ipu_di0_sel, ARRAY_SIZE(mx51_ipu_di0_sel));
+-	clk[IMX5_CLK_IPU_DI1_SEL]	= imx_clk_mux("ipu_di1_sel", MXC_CCM_CSCMR2, 29, 3,
+-						mx51_ipu_di1_sel, ARRAY_SIZE(mx51_ipu_di1_sel));
++	clk[IMX5_CLK_IPU_DI0_SEL]	= imx_clk_mux_flags("ipu_di0_sel", MXC_CCM_CSCMR2, 26, 3,
++						mx51_ipu_di0_sel, ARRAY_SIZE(mx51_ipu_di0_sel), CLK_SET_RATE_PARENT);
++	clk[IMX5_CLK_IPU_DI1_SEL]	= imx_clk_mux_flags("ipu_di1_sel", MXC_CCM_CSCMR2, 29, 3,
++						mx51_ipu_di1_sel, ARRAY_SIZE(mx51_ipu_di1_sel), CLK_SET_RATE_PARENT);
+ 	clk[IMX5_CLK_TVE_EXT_SEL]	= imx_clk_mux_flags("tve_ext_sel", MXC_CCM_CSCMR1, 6, 1,
+ 						mx51_tve_ext_sel, ARRAY_SIZE(mx51_tve_ext_sel), CLK_SET_RATE_PARENT);
+ 	clk[IMX5_CLK_TVE_SEL]		= imx_clk_mux("tve_sel", MXC_CCM_CSCMR1, 7, 1,
+-- 
+2.11.0
