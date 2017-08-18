@@ -1,42 +1,178 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Fri, 1 Sep 2017 10:16:33 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Dmitry Shmidt <dimitrysh@google.com>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: Re: [PATCH 1/2] clk: hi6220: change watchdog clock source
-Message-ID: <20170901021633.GC516@leoy-ThinkPad-T440>
-References: <1503993518-24428-1-git-send-email-leo.yan@linaro.org>
- <20170901013240.GM21656@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170901013240.GM21656@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:45556 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751728AbdHRJRB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2017 05:17:01 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 18 Aug 2017 11:16:54 +0200
+Message-Id: <1503047817-29439-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 31, 2017 at 06:32:40PM -0700, Stephen Boyd wrote:
-> On 08/29, Leo Yan wrote:
-> > The old code uses tcxo (19.2MHz) as watchdog clock but actually the
-> > watchdog uses 32K clock, as result the watchdog timeout cannot be set
-> > correctly and delay long time to reset SoC.
-> > 
-> > So this patch is to use 'ref32k' as clock source for watchdog.
-> > 
-> > Fixes: 72ea48610d43 ("clk: hi6220: Clock driver support for Hisilicon hi6220 SoC")
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> 
-> Applied to clk-next
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-Thanks, Stephen.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
+ 1 file changed, 66 insertions(+), 71 deletions(-)
 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 5a31dfc0c3163d6c..70040c6c4ceac114 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1061,77 +1061,72 @@
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 	};
+ 
+-	clocks {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		/* External root clock */
+-		extal_clk: extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overriden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External PCIe clock - can be overridden by the board */
+-		pcie_bus_clk: pcie_bus {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/*
+-		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
+-		 * default. Boards that provide audio clocks should override them.
+-		 */
+-		audio_clk_a: audio_clk_a {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_b: audio_clk_b {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clk_c: audio_clk_c {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External SCIF clock */
+-		scif_clk: scif {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External USB clock - can be overridden by the board */
+-		usb_extal_clk: usb_extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
+-		};
+-
+-		/* External CAN clock */
+-		can_clk: can {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a7790-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&usb_extal_clk>;
+-			clock-names = "extal", "usb_extal";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-		};
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7790-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&usb_extal_clk>;
++		clock-names = "extal", "usb_extal";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
+ 	};
+ 
+ 	prr: chipid@ff000044 {
+-- 
+2.7.4
+
