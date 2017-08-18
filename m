@@ -1,165 +1,165 @@
-Return-Path: <afaerber@suse.de>
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Roc He <hepeng@zidoo.tv>,
-	=?UTF-8?q?=E8=92=8B=E4=B8=BD=E7=90=B4?= <jiang.liqin@geniatech.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [RFC 1/4] dt-bindings: clock: Add Realtek RTD1295
-Date: Thu, 17 Aug 2017 13:20:22 +0200
-Message-Id: <20170817112026.24062-2-afaerber@suse.de>
-In-Reply-To: <20170817112026.24062-1-afaerber@suse.de>
-References: <20170817112026.24062-1-afaerber@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:45542 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbdHRJRB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2017 05:17:01 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 18 Aug 2017 11:16:57 +0200
+Message-Id: <1503047817-29439-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Naming inspired from Zidoo X9S Device Tree and clk_summary.
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/clock/realtek,rtd129x.txt  | 20 +++++
- include/dt-bindings/clock/realtek,rtd1295.h        | 99 ++++++++++++++++++++++
- 2 files changed, 119 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd129x.txt
- create mode 100644 include/dt-bindings/clock/realtek,rtd1295.h
+ arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++++---------------------
+ 1 file changed, 59 insertions(+), 65 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/realtek,rtd129x.txt b/Documentation/devicetree/bindings/clock/realtek,rtd129x.txt
-new file mode 100644
-index 000000000000..b55da39faf58
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/realtek,rtd129x.txt
-@@ -0,0 +1,20 @@
-+Realtek RTD129x clock controllers
-+=================================
-+
-+Requires properties:
-+- compatible   :  Should be one of the following:
-+                  - "realtek,rtd1295-clk"
-+                  - "realtek,rtd1295-iso-clk"
-+- reg          :  Specifies physical base address and size
-+- clocks       :  Specifies the oscillator node
-+- #clock-cells :  Shall be 1
-+
-+
-+Example:
-+
-+	clock-controller@98000000 {
-+		compatible = "realtek,rtd1295-clk";
-+		reg = <0x98000000 0x1000>;
-+		clocks = <&osc27M>;
-+		#clock-cells = <1>;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index ebd44d9982be07cc..a4c35d29f77c16dc 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -982,71 +982,65 @@
+ 		status = "disabled";
+ 	};
+ 
+-	clocks {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		/* External root clock */
+-		extal_clk: extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overriden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External USB clock - can be overridden by the board */
+-		usb_extal_clk: usb_extal {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <48000000>;
+-		};
+-
+-		/* External CAN clock */
+-		can_clk: can {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/* External SCIF clock */
+-		scif_clk: scif {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			/* This value must be overridden by the board. */
+-			clock-frequency = <0>;
+-		};
+-
+-		/*
+-		 * The external audio clocks are configured  as 0 Hz fixed
+-		 * frequency clocks by default.  Boards that provide audio
+-		 * clocks should override them.
+-		 */
+-		audio_clka: audio_clka {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clkb: audio_clkb {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-		audio_clkc: audio_clkc {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <0>;
+-		};
+-
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a7794-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&usb_extal_clk>;
+-			clock-names = "extal", "usb_extal";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-		};
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
 +	};
-diff --git a/include/dt-bindings/clock/realtek,rtd1295.h b/include/dt-bindings/clock/realtek,rtd1295.h
-new file mode 100644
-index 000000000000..278148bff2ac
---- /dev/null
-+++ b/include/dt-bindings/clock/realtek,rtd1295.h
-@@ -0,0 +1,99 @@
-+/*
-+ * Copyright (c) 2017 Andreas Färber
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+#ifndef DT_BINDINGS_CLOCK_RTD1295_H
-+#define DT_BINDINGS_CLOCK_RTD1295_H
 +
-+#define RTD1295_CLK_PLL_SCPU		0
-+#define RTD1295_CLK_PLL_BUS		1
-+#define RTD1295_CLK_PLL_BUS_DIV2	2
-+#define RTD1295_CLK_SYS			3
-+#define RTD1295_CLK_PLL_BUS_H		4
-+#define RTD1295_CLK_SYSH		5
-+#define RTD1295_CLK_PLL_DDSA		6
-+#define RTD1295_CLK_PLL_DDSB		7
-+#define RTD1295_CLK_PLL_VODMA		8
-+#define RTD1295_CLK_PLL_VE1		9
-+#define RTD1295_CLK_PLL_VE2		10
-+#define RTD1295_CLK_PLL_GPU		14
-+#define RTD1295_CLK_PLL_ACPU		15
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
 +
-+#define RTD1295_CLK_EN_BASE		16
-+#define RTD1295_CLK_EN_MISC		(RTD1295_CLK_EN_BASE + 0)
-+#define RTD1295_CLK_EN_PCIE0		(RTD1295_CLK_EN_BASE + 1)
-+#define RTD1295_CLK_EN_SATA_0		(RTD1295_CLK_EN_BASE + 2)
-+#define RTD1295_CLK_EN_GSPI		(RTD1295_CLK_EN_BASE + 3)
-+#define RTD1295_CLK_EN_USB		(RTD1295_CLK_EN_BASE + 4)
-+#define RTD1295_CLK_EN_PCR		(RTD1295_CLK_EN_BASE + 5)
-+#define RTD1295_CLK_EN_ISO_MISC		(RTD1295_CLK_EN_BASE + 6)
-+#define RTD1295_CLK_EN_SATA_ALIVE_0	(RTD1295_CLK_EN_BASE + 7)
-+#define RTD1295_CLK_EN_HDMI		(RTD1295_CLK_EN_BASE + 8)
-+#define RTD1295_CLK_EN_ETN		(RTD1295_CLK_EN_BASE + 9)
-+#define RTD1295_CLK_EN_AIO		(RTD1295_CLK_EN_BASE + 10)
-+#define RTD1295_CLK_EN_GPU		(RTD1295_CLK_EN_BASE + 11)
-+#define RTD1295_CLK_EN_VE1		(RTD1295_CLK_EN_BASE + 12)
-+#define RTD1295_CLK_EN_VE2		(RTD1295_CLK_EN_BASE + 13)
-+#define RTD1295_CLK_EN_TVE		(RTD1295_CLK_EN_BASE + 14)
-+#define RTD1295_CLK_EN_VO		(RTD1295_CLK_EN_BASE + 15)
-+#define RTD1295_CLK_EN_LVDS		(RTD1295_CLK_EN_BASE + 16)
-+#define RTD1295_CLK_EN_SE		(RTD1295_CLK_EN_BASE + 17)
-+#define RTD1295_CLK_EN_DCU		(RTD1295_CLK_EN_BASE + 18)
-+#define RTD1295_CLK_EN_CP		(RTD1295_CLK_EN_BASE + 19)
-+#define RTD1295_CLK_EN_MD		(RTD1295_CLK_EN_BASE + 20)
-+#define RTD1295_CLK_EN_TP		(RTD1295_CLK_EN_BASE + 21)
-+#define RTD1295_CLK_EN_RSA		(RTD1295_CLK_EN_BASE + 22)
-+#define RTD1295_CLK_EN_NF		(RTD1295_CLK_EN_BASE + 23)
-+#define RTD1295_CLK_EN_EMMC		(RTD1295_CLK_EN_BASE + 24)
-+#define RTD1295_CLK_EN_CR		(RTD1295_CLK_EN_BASE + 25)
-+#define RTD1295_CLK_EN_SDIO_IP		(RTD1295_CLK_EN_BASE + 26)
-+#define RTD1295_CLK_EN_MIPI		(RTD1295_CLK_EN_BASE + 27)
-+#define RTD1295_CLK_EN_EMMC_IP		(RTD1295_CLK_EN_BASE + 28)
-+#define RTD1295_CLK_EN_VE3		(RTD1295_CLK_EN_BASE + 29)
-+#define RTD1295_CLK_EN_SDIO		(RTD1295_CLK_EN_BASE + 30)
-+#define RTD1295_CLK_EN_SD_IP		(RTD1295_CLK_EN_BASE + 31)
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
 +
-+#define RTD1295_CLK_EN_BASE2		(RTD1295_CLK_EN_BASE + 32)
-+#define RTD1295_CLK_EN_NAT		(RTD1295_CLK_EN_BASE2 + 0)
-+#define RTD1295_CLK_EN_MISC_I2C_5	(RTD1295_CLK_EN_BASE2 + 1)
-+#define RTD1295_CLK_EN_SCPU		(RTD1295_CLK_EN_BASE2 + 2)
-+#define RTD1295_CLK_EN_JPEG		(RTD1295_CLK_EN_BASE2 + 3)
-+#define RTD1295_CLK_EN_APU		(RTD1295_CLK_EN_BASE2 + 4)
-+#define RTD1295_CLK_EN_PCIE1		(RTD1295_CLK_EN_BASE2 + 5)
-+#define RTD1295_CLK_EN_MISC_SC		(RTD1295_CLK_EN_BASE2 + 6)
-+#define RTD1295_CLK_EN_CBUS_TX		(RTD1295_CLK_EN_BASE2 + 7)
-+#define RTD1295_CLK_EN_MISC_RTC		(RTD1295_CLK_EN_BASE2 + 10)
-+#define RTD1295_CLK_EN_MISC_I2C_4	(RTD1295_CLK_EN_BASE2 + 13)
-+#define RTD1295_CLK_EN_MISC_I2C_3	(RTD1295_CLK_EN_BASE2 + 14)
-+#define RTD1295_CLK_EN_MISC_I2C_2	(RTD1295_CLK_EN_BASE2 + 15)
-+#define RTD1295_CLK_EN_MISC_I2C_1	(RTD1295_CLK_EN_BASE2 + 16)
-+#define RTD1295_CLK_EN_AIO_AU_CODEC	(RTD1295_CLK_EN_BASE2 + 17)
-+#define RTD1295_CLK_EN_AIO_MOD		(RTD1295_CLK_EN_BASE2 + 18)
-+#define RTD1295_CLK_EN_AIO_DA		(RTD1295_CLK_EN_BASE2 + 19)
-+#define RTD1295_CLK_EN_AIO_HDMI		(RTD1295_CLK_EN_BASE2 + 20)
-+#define RTD1295_CLK_EN_AIO_SPDIF	(RTD1295_CLK_EN_BASE2 + 21)
-+#define RTD1295_CLK_EN_AIO_I2S		(RTD1295_CLK_EN_BASE2 + 22)
-+#define RTD1295_CLK_EN_AIO_MCLK		(RTD1295_CLK_EN_BASE2 + 23)
-+#define RTD1295_CLK_EN_HDMIRX		(RTD1295_CLK_EN_BASE2 + 24)
-+#define RTD1295_CLK_EN_SATA_1		(RTD1295_CLK_EN_BASE2 + 25)
-+#define RTD1295_CLK_EN_SATA_ALIVE_1	(RTD1295_CLK_EN_BASE2 + 26)
-+#define RTD1295_CLK_EN_UR2		(RTD1295_CLK_EN_BASE2 + 27)
-+#define RTD1295_CLK_EN_UR1		(RTD1295_CLK_EN_BASE2 + 28)
-+#define RTD1295_CLK_EN_FAN		(RTD1295_CLK_EN_BASE2 + 29)
-+#define RTD1295_CLK_EN_DCPHY_0		(RTD1295_CLK_EN_BASE2 + 30)
-+#define RTD1295_CLK_EN_DCPHY_1		(RTD1295_CLK_EN_BASE2 + 31)
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
 +
-+#define RTD1295_ISO_CLK_EN_MISC_CEC0	2
-+#define RTD1295_ISO_CLK_EN_CBUSRX_SYS	3
-+#define RTD1295_ISO_CLK_EN_CBUSTX_SYS	4
-+#define RTD1295_ISO_CLK_EN_CBUS_SYS	5
-+#define RTD1295_ISO_CLK_EN_CBUS_OSC	6
-+#define RTD1295_ISO_CLK_EN_MISC_IR	7
-+#define RTD1295_ISO_CLK_EN_MISC_UR0	8
-+#define RTD1295_ISO_CLK_EN_I2C_0	9
-+#define RTD1295_ISO_CLK_EN_I2C_1	10
-+#define RTD1295_ISO_CLK_EN_ETN_250M	11
-+#define RTD1295_ISO_CLK_EN_ETN_SYS	12
++	/*
++	 * The external audio clocks are configured  as 0 Hz fixed
++	 * frequency clocks by default.  Boards that provide audio
++	 * clocks should override them.
++	 */
++	audio_clka: audio_clka {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clkb: audio_clkb {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clkc: audio_clkc {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
 +
-+#endif
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7794-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&usb_extal_clk>;
++		clock-names = "extal", "usb_extal";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
+ 	};
+ 
+ 	rst: reset-controller@e6160000 {
 -- 
-2.12.3
+2.7.4
+
