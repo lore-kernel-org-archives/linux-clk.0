@@ -1,132 +1,64 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1502274907-11931-2-git-send-email-m.szyprowski@samsung.com>
-Cc: "Marek Szyprowski" <m.szyprowski@samsung.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Ulf Hansson" <ulf.hansson@linaro.org>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Chanwoo Choi" <cw00.choi@samsung.com>, "Inki Dae" <inki.dae@samsung.com>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
-References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170809103512eucas1p2eb66401b357d82bed91182a5a1b1fea9@eucas1p2.samsung.com>
- <1502274907-11931-2-git-send-email-m.szyprowski@samsung.com>
-Message-ID: <150238969053.5192.13225746723120483789@resonance>
-Subject: Re: [PATCH v8 1/5] clk: Add support for runtime PM
-Date: Thu, 10 Aug 2017 11:28:10 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:48620 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751204AbdHRJRC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Aug 2017 05:17:02 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a "clocks" subnode
+Date: Fri, 18 Aug 2017 11:16:53 +0200
+Message-Id: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+	Hi Simon, Magnus,
 
-Quoting Marek Szyprowski (2017-08-09 03:35:03)
-> Registers for some clocks might be located in the SOC area, which are und=
-er the
-> power domain. To enable access to those registers respective domain has t=
-o be
-> turned on. Additionally, registers for such clocks will usually loose its
-> contents when power domain is turned off, so additional saving and restor=
-ing of
-> them might be needed in the clock controller driver.
-> =
+The current practice is to not group clocks under a "clocks" subnode,
+but just put them together with the other on-SoC devices.
 
-> This patch adds basic infrastructure in the clocks core to allow implemen=
-ting
-> driver for such clocks under power domains. Clock provider can supply a
-> struct device pointer, which is the used by clock core for tracking and m=
-anaging
-> clock's controller runtime pm state. Each clk_prepare() operation
-> will first call pm_runtime_get_sync() on the supplied device, while
-> clk_unprepare() will do pm_runtime_put_sync() at the end.
-> =
+Hence this patch series implements this for the various R-Car Gen2
+DTSes that still need this (r8a7792.dtsi is OK).
 
-> Additional calls to pm_runtime_get/put functions are required to ensure t=
-hat any
-> register access (like calculating/changing clock rates and unpreparing/di=
-sabling
-> unused clocks on boot) will be done with clock controller in runtime resu=
-mend
-> state.
-> =
+Changes compared to v1:
+  - Rebased.
 
-> When one wants to register clock controller, which make use of this featu=
-re, he
-> has to:
-> 1. Provide a struct device to the core when registering the provider.
-> 2. Ensure to enable runtime PM for that device before registering clocks.
-> 3. Make sure that the runtime PM status of the controller device reflects
->    the HW state.
-> =
+Dependencies:
+  - renesas-devel-20170818-v4.13-rc5,
+  - Patch series "[PATCH v2 0/5] ARM: dts: rcar-gen2: Convert to new
+    CPG/MSSR bindings".
 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+For your convenience, this series is also available in the
+topic/rcar2-cpg-mssr-dt-v2 branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
 
-Overall the idea and the patch look good to me.
+Thanks for applying!
 
-Calling pm_runtime_get for prepare and pm_runtime_put for unprepared
-makes perfect sense to me. It means that the power domain that powers
-that clock hardware must be on for that clock to function properly.
+Geert Uytterhoeven (4):
+  ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
+  ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
 
-It=E2=80=99s worth pointing out that this patch leaves that power domain en=
-abled
-for for as long as prepare_count is greater than zero.
+ arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7791.dtsi | 137 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/r8a7793.dtsi | 125 ++++++++++++++++++-------------------
+ arch/arm/boot/dts/r8a7794.dtsi | 124 ++++++++++++++++++-------------------
+ 4 files changed, 251 insertions(+), 272 deletions(-)
 
-However the rate-change operations only use the pm_runtime functions to
-program the hardware and modify the registers. At the end of each
-rate-change call there is a pm_runtime_put. This makes sense to me, but
-I=E2=80=99m trying to wrap my head around the fact that this patch introduc=
-es
-two behaviors:
+-- 
+2.7.4
 
-1) protect access to the clk hardware by wrapping writes across the bus
-with pm_runtime calls
-2) power the clock logic when the clock is in use (e.g. clk_prepare())
+Gr{oetje,eeting}s,
 
-Everything about this patch *seems* correct to me, but I=E2=80=99m trying to
-figure out what it means to for a clock consumer driver to do something
-like this:
+						Geert
 
-clk_prepare_enable()
-clk_disable_unprepare()
-clk_set_rate()
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Maybe patches #2-5 will help me understand, but I wanted to jot this
-down in my review before I forget.
-
-> @@ -2583,6 +2673,12 @@ struct clk *clk_register(struct device *dev, struc=
-t clk_hw *hw)
->                 goto fail_name;
->         }
->         core->ops =3D hw->init->ops;
-> +       if (dev && pm_runtime_enabled(dev)) {
-> +               core->dev =3D dev;
-> +               ret =3D clk_pm_runtime_get(core);
-> +               if (ret)
-> +                       goto fail_pm;
-> +       }
->         if (dev && dev->driver)
->                 core->owner =3D dev->driver->owner;
->         core->hw =3D hw;
-> @@ -2629,12 +2725,13 @@ struct clk *clk_register(struct device *dev, stru=
-ct clk_hw *hw)
->         }
->  =
-
->         ret =3D __clk_core_init(core);
-> -       if (!ret)
-> +       if (!ret) {
-> +               clk_pm_runtime_put(core);
->                 return hw->clk;
-> +       }
-
-I wonder if the above can be moved inside of __clk_core_init?
-clk_register shouldn't manage any clk_ops directly, only __clk_core_init
-does this.
-
-Regards,
-Mike
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
