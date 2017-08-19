@@ -1,47 +1,109 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [GIT PULL v2] Meson clock fixes for 4.13-rc4
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: jbrunet@baylibre.com, linux-clk@vger.kernel.org,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Message-ID: <5af2832c-c23c-c42b-c19f-ba7cb10c27c8@baylibre.com>
-Date: Tue, 1 Aug 2017 14:21:08 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:33350 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750854AbdHSJMH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Aug 2017 05:12:07 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <ba1af994f165b96c096ec03a72836739@aosc.io>
+References: <20170815055529.4780-1-icenowy@aosc.io> <ba1af994f165b96c096ec03a72836739@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 19 Aug 2017 17:11:42 +0800
+Message-ID: <CAGb2v645YO-t-5+k2yRsj4_wcJuURic-HY6oD0-mZzOh7--4Ow@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v5] clk: sunxi-ng: support R40 SoC
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+On Tue, Aug 15, 2017 at 4:52 PM,  <icenowy@aosc.io> wrote:
+> 在 2017-08-15 13:55，Icenowy Zheng 写道：
+>>
+>> Allwinner R40 SoC have a clock controller module in the style of the
+>> SoCs beyond sun6i, however, it's more rich and complex.
+>>
+>> Add support for it.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>> Changes in v5:
+>> - Added TODO's for PLL constraints.
+>> - Forced OHCI12M mux to 0.
+>> - Changed "adda" clock to "codec" to be consistent with "bus-codec".
+>> - Added several CLK_SET_RATE_{UNGATE,PARENT} flags.
+>> - Added PLL_CPU gate notifier.
+>> Changes in v4:
+>> - Removed usb-ohci-12M mux clocks.
+>> - Removed unused (and not in user manual) adda-4x clock.
+>> - Implemented proper SATA PLL system.
+>> - Renamed MP (Mixed Processor) clock names to drop the extra "DE_".
+>> - Renamed TCONs' clock names to "tcon-lcdX" or "tcon-tvX".
+>> - Added missing RST_DRAM.
+>> - Several clock post/pre-dividers and constraints fixes.
+>> Changes in v3:
+>> - Rebased on current linux-next.
+>> Changes in v2:
+>> - Fixes according to the SoC's user manual.
+>>
+>>  drivers/clk/sunxi-ng/Kconfig              |    5 +
+>>  drivers/clk/sunxi-ng/Makefile             |    1 +
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1290
+>> +++++++++++++++++++++++++++++
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   69 ++
+>>  include/dt-bindings/clock/sun8i-r40-ccu.h |  187 +++++
+>>  include/dt-bindings/reset/sun8i-r40-ccu.h |  130 +++
+>>  6 files changed, 1682 insertions(+)
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+>>  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+>>  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+>>
+>> [...]
+>>
+>> +static void __init sun8i_r40_ccu_setup(struct device_node *node)
+>> +{
+>> +       void __iomem *reg;
+>> +       u32 val;
+>> +
+>> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+>> +       if (IS_ERR(reg)) {
+>> +               pr_err("%s: Could not map the clock registers\n",
+>> +                      of_node_full_name(node));
+>> +               return;
+>> +       }
+>> +
+>> +       /* Force the PLL-Audio-1x divider to 4 */
+>> +       val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
+>> +       val &= ~GENMASK(19, 16);
+>> +       writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
+>> +
+>> +       /* Force PLL-MIPI to MIPI mode */
+>> +       val = readl(reg + SUN8I_R40_PLL_MIPI_REG);
+>> +       val &= ~BIT(16);
+>> +       writel(val, reg + SUN8I_R40_PLL_MIPI_REG);
+>> +
+>> +       /* Force OHCI 12M parent to 0 */
 
-Here is a fix for Meson GXBB driver, that could go for 4.13-rc4.
+Clarified the comment as
 
-Thanks,
-Neil
+        Force OHCI 12M parent to 12M divided from 48M
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+>> +       val = readl(reg + SUN8I_R40_USB_CLK_REG);
+>> +       val &= ~GENMASK(20, 6);
+>
+>
+> Sorry but I think this line should be:
+>
+> val &= ~GENMASK(25, 20);
+>
+> I didn't understand GENMASK well...
 
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+Fixed and applied. Thanks!
 
-are available in the git repository at:
-
-  git://github.com/baylibre/clk-meson.git tags/meson-clk-fixes-for-4.13-rc4-v2
-
-for you to fetch changes up to 1f737ffa13efd3da2c703d45894ea234e9290c89:
-
-  clk: meson: mpll: fix mpll0 fractional part ignored (2017-08-01 14:18:31 +0200)
-
-----------------------------------------------------------------
-Meson Clock fixes:
-- mpll: fix mpll0 fractional part ignored
-
-----------------------------------------------------------------
-Jerome Brunet (1):
-      clk: meson: mpll: fix mpll0 fractional part ignored
-
- drivers/clk/meson/clk-mpll.c | 7 +++++++
- drivers/clk/meson/clkc.h     | 1 +
- drivers/clk/meson/gxbb.c     | 5 +++++
- drivers/clk/meson/meson8b.c  | 5 +++++
- 4 files changed, 18 insertions(+)
+ChenYu
