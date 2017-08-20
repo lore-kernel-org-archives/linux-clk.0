@@ -1,50 +1,75 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC
- example)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Linux PM list
-	<linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <e53af278-061d-bc9b-6f05-65c5e5491d00@samsung.com>
-Date: Tue, 22 Aug 2017 11:27:06 +0200
-MIME-version: 1.0
-In-reply-to: 
-	<CAMuHMdUy5hi3fLVW6J1o=D194ASjr7Vz-pjWtddHyybK4RZxxA@mail.gmail.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
-	<1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
-	<CAMuHMdUy5hi3fLVW6J1o=D194ASjr7Vz-pjWtddHyybK4RZxxA@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:33484 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752440AbdHTBoX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 19 Aug 2017 21:44:23 -0400
+Subject: Re: [RFC 3/3] irqchip: Add Realtek RTD1295 mux driver
+To: linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        =?UTF-8?B?6JKL5Li955C0?= <jiang.liqin@geniatech.com>,
+        linux-kernel@vger.kernel.org, Roc He <hepeng@zidoo.tv>
+References: <20170817101140.32000-1-afaerber@suse.de>
+ <20170817101140.32000-4-afaerber@suse.de>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <32b536aa-36df-33fc-36f0-da974e480fea@suse.de>
+Date: Sun, 20 Aug 2017 03:44:20 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170817101140.32000-4-afaerber@suse.de>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Am 17.08.2017 um 12:11 schrieb Andreas Färber:
+> This irq mux driver is derived from the RTD1295 vendor DT and assumes a linear
+> mapping between intr_en and intr_status registers. Code for RTD119x indicates
+> this may not always be the case (i2c_3).
+> 
+> The register initialization was copied from QNAP's mach-rtk119x/rtk_irq_mux.c
+> as a boot fix, without full insights into what exactly this is changing (TODO).
+> 
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
+[...]
+> diff --git a/drivers/irqchip/irq-rtd119x-mux.c b/drivers/irqchip/irq-rtd119x-mux.c
+> new file mode 100644
+> index 000000000000..c6c1ba126bf3
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-rtd119x-mux.c
+[...]
+> +static int __init rtd119x_irq_mux_init(struct device_node *node,
+> +				       struct device_node *parent,
+> +				       const struct rtd119x_irq_mux_info *info)
+> +{
+> +	struct rtd119x_irq_mux_data *data;
+> +	void __iomem *base;
+> +	u32 val;
+[...]
+> +	/* TODO Investigate why these are necessary (from downstream rtk119x rtk_irq_mux.c) */
+> +	val = readl(data->intr_en);
+> +	val &= ~BIT(2);
+> +	writel(val, data->intr_en);
+> +
+> +	writel(BIT(2), data->intr_status);
 
-On 2017-08-22 11:21, Geert Uytterhoeven wrote:
-> On Mon, Aug 21, 2017 at 10:04 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Patches for clocks drivers change the way the clock provider is initialized.
->> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
->> infrastructure is being used. This is needed to let driver to use runtime PM
->> feature and integrate with generic power domains. The side-effect of this change
->> is a delay in clock provider registeration during system boot, so early
->> initialized drivers might get EPROBEDEFER error when requesting their clocks.
->> This was an issue for IOMMU drivers, but IOMMU deferred probe support has been
->> finally merged to v4.13-rc1 and now it is handled correctly.
-> Any chances you have PHY devices falling back to polling due to this,
-> cfr. https://patchwork.kernel.org/patch/9734175/?
+This intr_status write appears to be the fix. The register is 0x00000004
+before, but oddly writing it again resolves the observed timer hang.
 
-At least in case of Exynos5433 all related PHY drivers correctly handle 
-deferred
-probe and don't fallback to half-functional mode.
+The intr_en register is 0xe0183924 before, and masking out bit 2 makes
+no observable difference.
 
-Best regards
+> +
+> +	irq_set_chained_handler_and_data(data->irq, rtd119x_mux_irq_handle, data);
+> +
+> +	return 0;
+> +}
+[snip]
+
+Regards,
+Andreas
 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
