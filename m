@@ -1,178 +1,140 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v5 5/7] clk: at91: clk-generated: make gclk determine audio_pll rate
-Date: Thu, 10 Aug 2017 08:34:05 +0200
-Message-Id: <600ed1e3623477c8083c6c4fa16299e33f7b76a9.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:41115 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbdHUIaI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Aug 2017 04:30:08 -0400
+Date: Mon, 21 Aug 2017 10:30:05 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: icenowy@aosc.io
+Cc: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [linux-sunxi] [PATCH 07/13] ARM: sun8i: h3: add display engine
+ pipeline barebone
+Message-ID: <20170821083005.4ujfk5g3kqgqofwl@flea.lan>
+References: <20170801131304.7741-1-icenowy@aosc.io>
+ <20170801131304.7741-8-icenowy@aosc.io>
+ <1773537.vAqre0jhCE@jernej-laptop>
+ <fcbff773f61061bbc0f1d6ffef2a7c35@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="u4b3hybyzegoos4e"
+In-Reply-To: <fcbff773f61061bbc0f1d6ffef2a7c35@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This allows gclk to determine audio_pll rate and set the parent rate
-accordingly.
 
-However, there are multiple children clocks that could technically
-change the rate of audio_pll (via gck). With the rate locking, the first
-consumer to enable the clock will be the one definitely setting the rate
-of the clock.
+--u4b3hybyzegoos4e
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since audio IPs are most likely to request the same rate, we enforce
-that the only clks able to modify gck rate are those of audio IPs.
+On Wed, Aug 02, 2017 at 01:07:55PM +0800, icenowy@aosc.io wrote:
+> =E5=9C=A8 2017-08-02 12:47=EF=BC=8CJernej =C5=A0krabec =E5=86=99=E9=81=93=
+=EF=BC=9A
+> > Hi Icenowy,
+> >=20
+> > Dne torek, 01. avgust 2017 ob 15:12:58 CEST je Icenowy Zheng napisal(a):
+> > > As we have already the support for the DE2 on Allwinner H3, add the
+> > > display engine pipeline device tree nodes to its DTSI file.
+> > >=20
+> > > The H5 pipeline has some differences and will be enabled later.
+> > >=20
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > ---
+> > >  arch/arm/boot/dts/sun8i-h3.dtsi | 170
+> > > ++++++++++++++++++++++++++++++++++++++++ 1 file changed, 170
+> > > insertions(+)
+> > >=20
+> > > diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+> > > b/arch/arm/boot/dts/sun8i-h3.dtsi index b36f9f423c39..75ad7b65a7fc
+> > > 100644
+> > > --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> > > +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> > > @@ -41,6 +41,8 @@
+> > >   */
+> > >=20
+> > >  #include "sunxi-h3-h5.dtsi"
+> > > +#include <dt-bindings/clock/sun8i-de2.h>
+> > > +#include <dt-bindings/reset/sun8i-de2.h>
+> > >=20
+> > >  / {
+> > >  	cpus {
+> > > @@ -72,6 +74,174 @@
+> > >  		};
+> > >  	};
+> > >=20
+> > > +	de: display-engine {
+> > > +		compatible =3D "allwinner,sun8i-h3-display-engine";
+> > > +		allwinner,pipelines =3D <&mixer0>,
+> > > +				      <&mixer1>;
+> > > +		status =3D "disabled";
+> > > +	};
+> > > +
+> > > +	soc {
+> > > +		display_clocks: clock@1000000 {
+> > > +			compatible =3D "allwinner,sun8i-a83t-de2-clk";
+> > > +			reg =3D <0x01000000 0x100000>;
+> > > +			clocks =3D <&ccu CLK_BUS_DE>,
+> > > +				 <&ccu CLK_DE>;
+> > > +			clock-names =3D "bus",
+> > > +				      "mod";
+> > > +			resets =3D <&ccu RST_BUS_DE>;
+> > > +			#clock-cells =3D <1>;
+> > > +			#reset-cells =3D <1>;
+> > > +			assigned-clocks =3D <&ccu CLK_DE>;
+> > > +			assigned-clock-parents =3D <&ccu CLK_PLL_DE>;
+> > > +			assigned-clock-rates =3D <432000000>;
+> > > +		};
+> >=20
+> > I believe Maxime ask you to use clk_set_rate() in the past:
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/512909.=
+html
+>=20
+> Yes, but I think the frequency is still part of our configuration,
+> not forced by the hardware.
+>=20
+> If we set it in the driver, why don't we set it to 300MHz?
+>=20
+> (In fact for pipelines without TVE we can really use 300MHz for
+> CLK_DE, and if we do not want 4K we can even use lower frequency)
 
-To remain consistent, we deny other clocks to be children of audio_pll.
+You should ask yourself another question. Do you absolutely need that
+rate and parent to operate properly?
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/clk/at91/clk-generated.c | 63 +++++++++++++++++++++++++++++----
- 1 file changed, 57 insertions(+), 6 deletions(-)
+If the answer is yes, the DT is not what you're looking for, it
+provides no guarantee on the changes to the clock rate and parenthood,
+and doesn't allow you to act upon those changes either.
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 7260e49..3348136 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -26,6 +26,13 @@
- #define GENERATED_SOURCE_MAX	6
- #define GENERATED_MAX_DIV	255
- 
-+#define GCK_ID_SSC0		43
-+#define GCK_ID_SSC1		44
-+#define GCK_ID_I2S0		54
-+#define GCK_ID_I2S1		55
-+#define GCK_ID_CLASSD		59
-+#define GCK_INDEX_DT_AUDIO_PLL	5
-+
- struct clk_generated {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-@@ -34,6 +41,7 @@ struct clk_generated {
- 	u32 id;
- 	u32 gckdiv;
- 	u8 parent_id;
-+	bool audio_pll_allowed;
- };
- 
- #define to_clk_generated(hw) \
-@@ -126,15 +134,14 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- {
- 	struct clk_generated *gck = to_clk_generated(hw);
- 	struct clk_hw *parent = NULL;
-+	struct clk_rate_request req_parent = *req;
- 	long best_rate = -EINVAL;
--	unsigned long min_rate;
-+	unsigned long min_rate, parent_rate;
- 	int best_diff = -1;
- 	int i;
-+	u32 div;
- 
--	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
--		u32 div;
--		unsigned long parent_rate;
--
-+	for (i = 0; i < clk_hw_get_num_parents(hw) - 1; i++) {
- 		parent = clk_hw_get_parent_by_index(hw, i);
- 		if (!parent)
- 			continue;
-@@ -150,11 +157,38 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 		clk_generated_best_diff(req, parent, parent_rate, div,
- 					&best_diff, &best_rate);
- 
-+		if (!best_diff)
-+			break;
-+	}
-+
-+	/*
-+	 * The audio_pll rate can be modified, unlike the five others clocks
-+	 * that should never be altered.
-+	 * The audio_pll can technically be used by multiple consumers. However,
-+	 * with the rate locking, the first consumer to enable to clock will be
-+	 * the one definitely setting the rate of the clock.
-+	 * Since audio IPs are most likely to request the same rate, we enforce
-+	 * that the only clks able to modify gck rate are those of audio IPs.
-+	 */
-+
-+	if (!gck->audio_pll_allowed)
-+		goto end;
-+
-+	parent = clk_hw_get_parent_by_index(hw, GCK_INDEX_DT_AUDIO_PLL);
-+	if (!parent)
-+		goto end;
-+
-+	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
-+		req_parent.rate = req->rate * div;
-+		__clk_determine_rate(parent, &req_parent);
-+		clk_generated_best_diff(req, parent, req_parent.rate, div,
-+					&best_diff, &best_rate);
- 
- 		if (!best_diff)
- 			break;
- 	}
- 
-+end:
- 	pr_debug("GCLK: %s, best_rate = %ld, parent clk: %s @ %ld\n",
- 		 __func__, best_rate,
- 		 __clk_get_name((req->best_parent_hw)->clk),
-@@ -264,7 +298,8 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
- 	init.ops = &generated_ops;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
--	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
-+	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
-+		CLK_SET_RATE_PARENT;
- 
- 	gck->id = id;
- 	gck->hw.init = &init;
-@@ -296,6 +331,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
- 	struct device_node *gcknp;
- 	struct clk_range range = CLK_RANGE(0, 0);
- 	struct regmap *regmap;
-+	struct clk_generated *gck;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents == 0 || num_parents > GENERATED_SOURCE_MAX)
-@@ -327,6 +363,21 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
- 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock, name,
- 						  parent_names, num_parents,
- 						  id, &range);
-+
-+		gck = to_clk_generated(hw);
-+
-+		if (of_device_is_compatible(np,
-+					    "atmel,sama5d2-clk-generated")) {
-+			if (gck->id == GCK_ID_SSC0 || gck->id == GCK_ID_SSC1 ||
-+			    gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
-+			    gck->id == GCK_ID_CLASSD)
-+				gck->audio_pll_allowed = true;
-+			else
-+				gck->audio_pll_allowed = false;
-+		} else {
-+			gck->audio_pll_allowed = false;
-+		}
-+
- 		if (IS_ERR(hw))
- 			continue;
- 
--- 
-git-series 0.9.1
+If you want to make it work, you need to have some code to do that.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--u4b3hybyzegoos4e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZmpoNAAoJEBx+YmzsjxAgLR0QAK9D9Ekx5tcR60iwsQRtLJv1
+cqQqYihGVGVZUkhweuuNGuFPOXK7Ry1ufwqCrd5erwFkz5E8P8XnLAK6V0db806X
+Lw3FR6f78konbmkLTZfBbg6lsqEaeKShKuBmq545gj0OseCy4qRKWp5lU3a7+2FD
+KZTbiNPQLTSKkVCj79oDp4yYata91xiEYkyZY+8yDF1I6z7FbjZL4aj3hejsROP2
++kC/3OXMOC1yJutEFM0qTXIQoMizdM4sPFpJOzdz3E9qe0ScqGBugXvpQP2rBDsF
+GAk0rOmPvNPUrXj6pJGeKPual5OdhtmrkIpKcBVKcet5/6ZRM7lH0LEWYPmXZHgm
+qiKRVezShFEBRZSUXSFu8Qy/Iqb/bs8q9LIfseFfMmwe5KgIfczgG4nYS+nb7u0V
+Tub9imZsDlXXBp48YW/EcTbsy1SUZQKkgp2A6hRBLdiWA/vkPJcA6ZF0Yqjq3J/4
+s3BFHX65yeDghXYR8gsmfk7O5GYexk4axFNVmlUKpAPUGApK747AktclYVGBRJim
+7FPm+jiNK+4ApNACZ4MaEGM8ol4QCf7/3pwIDbVFUeC3vGEyira15gMnNXcVJC2E
+oAPSFuMg3PpT09JASwkFfYG0VFyhUdwKXi2+luHVh1CTKakAohborRJvt57LfHkr
+lokjn38nphNAy+mG05yd
+=HQFv
+-----END PGP SIGNATURE-----
+
+--u4b3hybyzegoos4e--
