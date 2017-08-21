@@ -1,62 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.135]:55256 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752526AbdHBIhP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2017 04:37:15 -0400
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de
-Cc: robh+dt@kernel.org, shawn.lin@rock-chips.com,
-        zhangqing@rock-chips.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux-rockchip@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 09/23] clk: rockchip: add some critical clocks for rv1108 SoC
-Date: Wed,  2 Aug 2017 16:36:54 +0800
-Message-Id: <1501663014-12192-1-git-send-email-andy.yan@rock-chips.com>
-In-Reply-To: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
-References: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <laanwj@gmail.com>
+Return-Path: <laanwj@gmail.com>
+Date: Mon, 21 Aug 2017 18:38:24 +0200
+From: "Wladimir J. van der Laan" <laanwj@gmail.com>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Ilia Mirkin <imirkin@alum.mit.edu>, linux-clk@vger.kernel.org,
+	Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
+Message-ID: <20170821163824.GC24652@amethyst.visucore.com>
+References: <20170818163058.22252-1-l.stach@pengutronix.de>
+ <CAOMZO5BoZNQrmDMXE0CDxLS-v7xVu4z87Ezdma1X1QCV56rPtQ@mail.gmail.com>
+ <20170821155412.GA24652@amethyst.visucore.com>
+ <4d5dbc0a-56b0-52a3-482d-2b3348c9c53b@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4d5dbc0a-56b0-52a3-482d-2b3348c9c53b@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Hello Nikita, Fabio,
 
-the bus/periph/nclk_ddrupctl/pclk_ddrmon/pclk_acodecphy/pclk_pmu
-no driver to handle them,
-chip design requirements for these clock to always on.
+On Mon, Aug 21, 2017 at 06:58:19PM +0300, Nikita Yushchenko wrote:
+> > I'm trying to, but getting a non-clock-related problem on the i.mx51 babbage board
+> > with current kernel preventing the display from coming up at all:
+> > 
+> >     [    0.824712] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+> >     [    0.831411] [drm] No driver support for vblank timestamp query.
+> >     [    0.837632] imx-drm display-subsystem: bound imx-ipuv3-crtc.0 (ops ipu_crtc_ops)
+> >     [    0.845214] imx-drm display-subsystem: bound imx-ipuv3-crtc.1 (ops ipu_crtc_ops)
+> >     [    0.852720] imx-drm display-subsystem: failed to bind display@di0 (ops imx_pd_ops): -19
+> >     [    0.860994] imx-drm display-subsystem: master bind failed: -19
+> 
+> I believe this should be fixed by
+> 
+> commit 799ee2970485dc206c3bf347d6e6827c04d5e4f9
+> Author: Philipp Zabel <p.zabel@pengutronix.de>
+> Date:   Mon Jun 12 17:54:29 2017 +0200
+> 
+>   drm/imx: parallel-display: Accept drm_of_find_panel_or_bridge failure
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
+Thanks,
+With that patch and Lucas' patch series applied, I can confirm to have working a console on DVI!
 
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rv1108.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index dca9c37..e60d83a 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -774,10 +774,16 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
- 
- static const char *const rv1108_critical_clocks[] __initconst = {
- 	"aclk_core",
--	"aclk_bus_src_gpll",
-+	"aclk_bus",
-+	"hclk_bus",
-+	"pclk_bus",
- 	"aclk_periph",
- 	"hclk_periph",
- 	"pclk_periph",
-+	"nclk_ddrupctl",
-+	"pclk_ddrmon",
-+	"pclk_acodecphy",
-+	"pclk_pmu",
- };
- 
- static void __init rv1108_clk_init(struct device_node *np)
--- 
-2.7.4
-
-
+Regards,
+Wladimir
