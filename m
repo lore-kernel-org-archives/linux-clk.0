@@ -1,70 +1,23 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.132]:54829 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753164AbdHPCCw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 22:02:52 -0400
-From: Joseph Chen <chenjh@rock-chips.com>
-To: gnurou@gmail.com, linus.walleij@linaro.org,
-        dmitry.torokhov@gmail.com, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
-        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
-        wdc@rock-chips.com, tony.xie@rock-chips.com,
-        linux-input@vger.kernel.org, mark.rutland@arm.com,
-        w.egorov@phytec.de, linux-clk@vger.kernel.org,
-        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
-Subject: [RESEND v9 11/12] mfd: rk808: Add RK805 power key support
-Date: Wed, 16 Aug 2017 10:02:07 +0800
-Message-Id: <1502848927-389-1-git-send-email-chenjh@rock-chips.com>
-In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, frank.wang@rock-chips.com, cl@rock-chips.com
+Subject: Re: [PATCH v1 1/2] clk: rockchip: add rk3228 sclk_sdio_src ID
+Date: Tue, 22 Aug 2017 00:37:41 +0200
+Message-ID: <22784402.835yMo1lPR@phil>
+In-Reply-To: <1503028165-27072-2-git-send-email-zhangqing@rock-chips.com>
+References: <1503028165-27072-1-git-send-email-zhangqing@rock-chips.com> <1503028165-27072-2-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/mfd/rk808.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Am Freitag, 18. August 2017, 11:49:24 CEST schrieb Elaine Zhang:
+> This patch exports sdio src clock for dts reference.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-index c803d2d..216fbf6 100644
---- a/drivers/mfd/rk808.c
-+++ b/drivers/mfd/rk808.c
-@@ -94,6 +94,19 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
- 	}
- };
- 
-+static struct resource rk805_key_resources[] = {
-+	{
-+		.start  = RK805_IRQ_PWRON_FALL,
-+		.end    = RK805_IRQ_PWRON_FALL,
-+		.flags  = IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = RK805_IRQ_PWRON_RISE,
-+		.end    = RK805_IRQ_PWRON_RISE,
-+		.flags  = IORESOURCE_IRQ,
-+	}
-+};
-+
- static const struct mfd_cell rk805s[] = {
- 	{ .name = "rk808-clkout", },
- 	{ .name = "rk808-regulator", },
-@@ -103,6 +116,10 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
- 		.num_resources = ARRAY_SIZE(rtc_resources),
- 		.resources = &rtc_resources[0],
- 	},
-+	{	.name = "rk805-pwrkey",
-+		.num_resources = ARRAY_SIZE(rk805_key_resources),
-+		.resources = &rk805_key_resources[0],
-+	},
- };
- 
- static const struct mfd_cell rk808s[] = {
--- 
-1.9.1
+applied for 4.14
 
 
+Thanks
+Heiko
