@@ -1,74 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:43941 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754613AbdHYSQo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Aug 2017 14:16:44 -0400
-Subject: Re: [PATCH v4] ARC: clk: introduce HSDK pll driver
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-References: <20170825173914.32121-1-Eugeniy.Paltsev@synopsys.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <808b0f38-f899-268a-94f9-f73885896b5d@synopsys.com>
-Date: Fri, 25 Aug 2017 11:16:35 -0700
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [RESEND PATCH v8 1/3] clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
+Date: Mon, 21 Aug 2017 13:59:00 +0200
+Message-ID: <1503316742-22145-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1503316742-22145-1-git-send-email-gabriel.fernandez@st.com>
+References: <1503316742-22145-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20170825173914.32121-1-Eugeniy.Paltsev@synopsys.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25/2017 10:39 AM, Eugeniy Paltsev wrote:
-> HSDK board manages its clocks using various PLLs. These PLL have same
-> dividers and corresponding control registers mapped to different addresses.
-> So we add one common driver for such PLLs.
->
-> Each PLL on HSDK board consists of three dividers: IDIV, FBDIV and
-> ODIV. Output clock value is managed using these dividers.
->
-> We add pre-defined tables with supported rate values and appropriate
-> configurations of IDIV, FBDIV and ODIV for each value.
->
-> As of today we add support for PLLs that generate clock for the
-> HSDK arc cpus, system, ddr, AXI tunnel and hdmi.
->
-> By this patch we add support for several plls (arc cpus pll and others),
-> so we had to use two different init types: CLK_OF_DECLARE for arc cpus pll
-> and regular probing for others plls.
->
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> ---
-> Changes v3 -> v4:
->   * Rename HSDKv1 to HSDK
->
-> Changes v2 -> v3:
->   * Add special management of arc core interface divider.
->
-> Changes v1 -> v2:
->   * Remove all MODULE* defines as this driver can't be build as module.
->   * Simplified hsdk_pll_is_err and hsdk_pll_is_locked functions.
->   * Use unsigned long fo best_rate in hsdk_pll_round_rate.
->   * Use of_clk_get_parent_count to get num_parents.
->   * Other small changes.
->
->   .../bindings/clock/snps,hsdk-pll-clock.txt         |  28 ++
->   MAINTAINERS                                        |   6 +
->   drivers/clk/Kconfig                                |   7 +
->   drivers/clk/Makefile                               |   1 +
->   drivers/clk/clk-hsdk-pll.c                         | 431 +++++++++++++++++++++
->   5 files changed, 473 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/snps,hsdk-pll-clock.txt
->   create mode 100644 drivers/clk/clk-hsdk-pll.c
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Reviewed-by: Vineet Gupta <vgupta@synopsys.com>
+We need to export clk_gate_is_enabled() from clk framework, then
+to avoid compilation issue we have to rename clk_gate_is_enabled()
+in NXP LPC32xx clock driver.
+We changed all gate op with 'lpc32xx_' prefix:
+lpc32xx_clk_gate_enable(),
+lpc32xx_clk_gate_disable(),
+lpc32xx_clk_gate_is_enabled().
 
-P.S. Stephen I'd be nice if this can make it into 4.14 as we are slated to add the 
-hasdk platform support in there.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thx,
--Vineet
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 5b98ff9..7b359af 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -885,7 +885,7 @@ static unsigned long clk_usb_i2c_recalc_rate(struct clk_hw *hw,
+ 	.recalc_rate = clk_usb_i2c_recalc_rate,
+ };
+ 
+-static int clk_gate_enable(struct clk_hw *hw)
++static int lpc32xx_clk_gate_enable(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
+ 	u32 mask = BIT(clk->bit_idx);
+@@ -894,7 +894,7 @@ static int clk_gate_enable(struct clk_hw *hw)
+ 	return regmap_update_bits(clk_regmap, clk->reg, mask, val);
+ }
+ 
+-static void clk_gate_disable(struct clk_hw *hw)
++static void lpc32xx_clk_gate_disable(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
+ 	u32 mask = BIT(clk->bit_idx);
+@@ -903,7 +903,7 @@ static void clk_gate_disable(struct clk_hw *hw)
+ 	regmap_update_bits(clk_regmap, clk->reg, mask, val);
+ }
+ 
+-static int clk_gate_is_enabled(struct clk_hw *hw)
++static int lpc32xx_clk_gate_is_enabled(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_gate *clk = to_lpc32xx_gate(hw);
+ 	u32 val;
+@@ -916,9 +916,9 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
+ }
+ 
+ static const struct clk_ops lpc32xx_clk_gate_ops = {
+-	.enable = clk_gate_enable,
+-	.disable = clk_gate_disable,
+-	.is_enabled = clk_gate_is_enabled,
++	.enable = lpc32xx_clk_gate_enable,
++	.disable = lpc32xx_clk_gate_disable,
++	.is_enabled = lpc32xx_clk_gate_is_enabled,
+ };
+ 
+ #define div_mask(width)	((1 << (width)) - 1)
+-- 
+1.9.1
