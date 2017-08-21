@@ -1,92 +1,54 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-To: julia.lawall@lip6.fr,
-	shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] clk: imx: make clk_ops const
-Date: Tue, 22 Aug 2017 18:48:29 +0530
-Message-Id: <1503407909-15469-1-git-send-email-bhumirks@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41919 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753064AbdHUJGO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Aug 2017 05:06:14 -0400
+Date: Mon, 21 Aug 2017 11:06:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] ARM: dts: rcar-gen2: Stop grouping clocks under a
+ "clocks" subnode
+Message-ID: <20170821090613.GF14174@verge.net.au>
+References: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1503047817-29439-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make these const as they are only stored in the const field of a
-clk_init_data structure.
+On Fri, Aug 18, 2017 at 11:16:53AM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> The current practice is to not group clocks under a "clocks" subnode,
+> but just put them together with the other on-SoC devices.
+> 
+> Hence this patch series implements this for the various R-Car Gen2
+> DTSes that still need this (r8a7792.dtsi is OK).
+> 
+> Changes compared to v1:
+>   - Rebased.
+> 
+> Dependencies:
+>   - renesas-devel-20170818-v4.13-rc5,
+>   - Patch series "[PATCH v2 0/5] ARM: dts: rcar-gen2: Convert to new
+>     CPG/MSSR bindings".
+> 
+> For your convenience, this series is also available in the
+> topic/rcar2-cpg-mssr-dt-v2 branch of my renesas-drivers git repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (4):
+>   ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
+>   ARM: dts: r8a7791: Stop grouping clocks under a "clocks" subnode
+>   ARM: dts: r8a7793: Stop grouping clocks under a "clocks" subnode
+>   ARM: dts: r8a7794: Stop grouping clocks under a "clocks" subnode
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/clk/imx/clk-busy.c  | 4 ++--
- drivers/clk/imx/clk-gate2.c | 2 +-
- drivers/clk/imx/clk-pllv1.c | 2 +-
- drivers/clk/imx/clk-pllv2.c | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Thanks. r8a779[034] patches applied for v4.15.
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 5cc9959..6df3389 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -72,7 +72,7 @@ static int clk_busy_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ret;
- }
- 
--static struct clk_ops clk_busy_divider_ops = {
-+static const struct clk_ops clk_busy_divider_ops = {
- 	.recalc_rate = clk_busy_divider_recalc_rate,
- 	.round_rate = clk_busy_divider_round_rate,
- 	.set_rate = clk_busy_divider_set_rate,
-@@ -147,7 +147,7 @@ static int clk_busy_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return ret;
- }
- 
--static struct clk_ops clk_busy_mux_ops = {
-+static const struct clk_ops clk_busy_mux_ops = {
- 	.get_parent = clk_busy_mux_get_parent,
- 	.set_parent = clk_busy_mux_set_parent,
- };
-diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
-index db44a19..60fc9d7 100644
---- a/drivers/clk/imx/clk-gate2.c
-+++ b/drivers/clk/imx/clk-gate2.c
-@@ -118,7 +118,7 @@ static void clk_gate2_disable_unused(struct clk_hw *hw)
- 	spin_unlock_irqrestore(gate->lock, flags);
- }
- 
--static struct clk_ops clk_gate2_ops = {
-+static const struct clk_ops clk_gate2_ops = {
- 	.enable = clk_gate2_enable,
- 	.disable = clk_gate2_disable,
- 	.disable_unused = clk_gate2_disable_unused,
-diff --git a/drivers/clk/imx/clk-pllv1.c b/drivers/clk/imx/clk-pllv1.c
-index 82fe366..703818e 100644
---- a/drivers/clk/imx/clk-pllv1.c
-+++ b/drivers/clk/imx/clk-pllv1.c
-@@ -106,7 +106,7 @@ static unsigned long clk_pllv1_recalc_rate(struct clk_hw *hw,
- 	return ull;
- }
- 
--static struct clk_ops clk_pllv1_ops = {
-+static const struct clk_ops clk_pllv1_ops = {
- 	.recalc_rate = clk_pllv1_recalc_rate,
- };
- 
-diff --git a/drivers/clk/imx/clk-pllv2.c b/drivers/clk/imx/clk-pllv2.c
-index 4aeda56..c845b8c 100644
---- a/drivers/clk/imx/clk-pllv2.c
-+++ b/drivers/clk/imx/clk-pllv2.c
-@@ -226,7 +226,7 @@ static void clk_pllv2_unprepare(struct clk_hw *hw)
- 	__raw_writel(reg, pllbase + MXC_PLL_DP_CTL);
- }
- 
--static struct clk_ops clk_pllv2_ops = {
-+static const struct clk_ops clk_pllv2_ops = {
- 	.prepare = clk_pllv2_prepare,
- 	.unprepare = clk_pllv2_unprepare,
- 	.recalc_rate = clk_pllv2_recalc_rate,
--- 
-1.9.1
+The r8a7791 patch did not apply cleanly for some reason.
+Could you rebase and repost once I have pushed today's devel branch?
