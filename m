@@ -1,31 +1,36 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 10 Aug 2017 21:51:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jonathan Liu <net147@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] dt-bindings: clock: sunxi-ccu: Add compatibles for sun5i
- CCU driver
-Message-ID: <20170811025134.ee4v2tbol2pjcd4i@rob-hp-laptop>
-References: <20170808012540.16691-1-net147@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: "David.Wu" <david.wu@rock-chips.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com, andy.yan@rock-chips.com, wdc@rock-chips.com
+Subject: Re: [PATCH v2 1/4] clk: rockchip: add rv1108 ACLK_GAMC and PCLK_GMAC ID
+Date: Mon, 21 Aug 2017 12:32:49 +0200
+Message-ID: <19279521.prAVXYBsZ9@phil>
+In-Reply-To: <f51160d5-32cc-a63c-3877-76ea91fb6e8b@rock-chips.com>
+References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com> <1503303367-17915-2-git-send-email-zhangqing@rock-chips.com> <f51160d5-32cc-a63c-3877-76ea91fb6e8b@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170808012540.16691-1-net147@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 08, 2017 at 11:25:40AM +1000, Jonathan Liu wrote:
-> The bindings were not updated when the sun5i CCU driver was added in
-> commit 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver").
-> 
-> Signed-off-by: Jonathan Liu <net147@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 3 +++
->  1 file changed, 3 insertions(+)
+Hi David,
 
-Acked-by: Rob Herring <robh@kernel.org>
+Am Montag, 21. August 2017, 18:22:31 CEST schrieb David.Wu:
+> Hi Elaine,
+>=20
+> =E5=9C=A8 2017/8/21 16:16, Elaine Zhang =E5=86=99=E9=81=93:
+> > This patch exports gmac aclk and pclk for dts reference.
+> >=20
+> > Signed-off-by: Elaine Zhang<zhangqing@rock-chips.com>
+> > ---
+> >   include/dt-bindings/clock/rv1108-cru.h | 2 ++
+> >   1 file changed, 2 insertions(+)
+>=20
+> Acked-by: David Wu <david.wu@rock-chips.com>
+
+Acked-by is mainly meant for cross-maintainer stuff (changes
+for one subsystem going through a different tree etc).
+
+If you want to show that the change is correct and you have reviewed
+the patch, please use "Reviewed-by".
+
+
+Heiko
