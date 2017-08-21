@@ -1,266 +1,130 @@
-Return-Path: <zhoubb@lemote.com>
-From: Binbin Zhou <zhoubb@lemote.com>
-To: Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <james.hogan@imgtec.com>
-Cc: John Crispin <john@phrozen.org>,
-	"Steven J . Hill" <Steven.Hill@imgtec.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Fuxin Zhang <zhangfx@lemote.com>,
-	Zhangjin Wu <wuzhangjin@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yang Ling <gnaygnil@gmail.com>,
-	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@linux-mips.org,
-	linux-clk@vger.kernel.org,
-	Binbin Zhou <zhoubb@lemote.com>,
-	HuaCai Chen <chenhc@lemote.com>
-Subject: [PATCH RESEND v8 2/9] MIPS: Loongson: Expand Loongson-1's register definition
-Date: Tue, 29 Aug 2017 16:38:39 +0800
-Message-Id: <1503995926-17125-3-git-send-email-zhoubb@lemote.com>
-In-Reply-To: <1503995926-17125-1-git-send-email-zhoubb@lemote.com>
-References: <1503995926-17125-1-git-send-email-zhoubb@lemote.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 21 Aug 2017 21:43:03 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com,
+ huangtao@rock-chips.com, david.wu@rock-chips.com, xjq@rock-chips.com, Doug
+ Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v1] clk: Keep clocks in their initial state until
+ clk_disable_unused() is called
+Message-ID: <20170821214303.25169c7d@bbrezillon>
+In-Reply-To: <1502264249-30509-1-git-send-email-zhangqing@rock-chips.com>
+References: <1502264249-30509-1-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-To improve the code readability, expand the register definition.
-Because most registers are generic in Loongson-1 series CPU.
++Doug
 
-Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
-Signed-off-by: HuaCai Chen <chenhc@lemote.com>
----
- arch/mips/include/asm/mach-loongson32/loongson1.h | 170 ++++++++++++++++++----
- arch/mips/loongson32/common/platform.c            |  16 +-
- 2 files changed, 149 insertions(+), 37 deletions(-)
+Le Wed,  9 Aug 2017 15:37:29 +0800,
+Elaine Zhang <zhangqing@rock-chips.com> a =C3=A9crit :
 
-diff --git a/arch/mips/include/asm/mach-loongson32/loongson1.h b/arch/mips/include/asm/mach-loongson32/loongson1.h
-index 84c28a8..8cfd4ba 100644
---- a/arch/mips/include/asm/mach-loongson32/loongson1.h
-+++ b/arch/mips/include/asm/mach-loongson32/loongson1.h
-@@ -19,35 +19,147 @@
- #endif
- 
- /* Loongson 1 Register Bases */
--#define LS1X_MUX_BASE			0x1fd00420
--#define LS1X_INTC_BASE			0x1fd01040
--#define LS1X_GPIO0_BASE			0x1fd010c0
--#define LS1X_GPIO1_BASE			0x1fd010c4
--#define LS1X_DMAC_BASE			0x1fd01160
--#define LS1X_CBUS_BASE			0x1fd011c0
--#define LS1X_EHCI_BASE			0x1fe00000
--#define LS1X_OHCI_BASE			0x1fe08000
--#define LS1X_GMAC0_BASE			0x1fe10000
--#define LS1X_GMAC1_BASE			0x1fe20000
--
--#define LS1X_UART0_BASE			0x1fe40000
--#define LS1X_UART1_BASE			0x1fe44000
--#define LS1X_UART2_BASE			0x1fe48000
--#define LS1X_UART3_BASE			0x1fe4c000
--#define LS1X_CAN0_BASE			0x1fe50000
--#define LS1X_CAN1_BASE			0x1fe54000
--#define LS1X_I2C0_BASE			0x1fe58000
--#define LS1X_I2C1_BASE			0x1fe68000
--#define LS1X_I2C2_BASE			0x1fe70000
--#define LS1X_PWM0_BASE			0x1fe5c000
--#define LS1X_PWM1_BASE			0x1fe5c010
--#define LS1X_PWM2_BASE			0x1fe5c020
--#define LS1X_PWM3_BASE			0x1fe5c030
--#define LS1X_WDT_BASE			0x1fe5c060
--#define LS1X_RTC_BASE			0x1fe64000
--#define LS1X_AC97_BASE			0x1fe74000
--#define LS1X_NAND_BASE			0x1fe78000
--#define LS1X_CLK_BASE			0x1fe78030
-+#define LS1X_DC_REG_BASE		0x1c200000
-+#define LS1X_MUX_REG_BASE		0x1f000000
-+
-+#define LS1X_CFG_REG_BASE		(LS1X_MUX_REG_BASE + 0x00d00000)
-+
-+#define LS1X_INTC_BASE			(LS1X_CFG_REG_BASE + 0x1040)
-+
-+/* GPIO regs */
-+#define LS1X_GPIO_REG_BASE		(LS1X_CFG_REG_BASE + 0x1000)
-+#define LS1X_GPIO_CFG0_REG		(LS1X_GPIO_REG_BASE + 0xc0)
-+#define LS1X_GPIO_CFG1_REG		(LS1X_GPIO_REG_BASE + 0xc4)
-+#define LS1X_GPIO_CFG2_REG		(LS1X_GPIO_REG_BASE + 0xc8)
-+#define LS1X_GPIO_OE0_REG		(LS1X_GPIO_REG_BASE + 0xd0)
-+#define LS1X_GPIO_OE1_REG		(LS1X_GPIO_REG_BASE + 0xd4)
-+#define LS1X_GPIO_OE2_REG		(LS1X_GPIO_REG_BASE + 0xd8)
-+#define LS1X_GPIO_IN0_REG		(LS1X_GPIO_REG_BASE + 0xe0)
-+#define LS1X_GPIO_IN1_REG		(LS1X_GPIO_REG_BASE + 0xe4)
-+#define LS1X_GPIO_IN2_REG		(LS1X_GPIO_REG_BASE + 0xe8)
-+#define LS1X_GPIO_OUT0_REG		(LS1X_GPIO_REG_BASE + 0xf0)
-+#define LS1X_GPIO_OUT1_REG		(LS1X_GPIO_REG_BASE + 0xf4)
-+#define LS1X_GPIO_OUT2_REG		(LS1X_GPIO_REG_BASE + 0xf8)
-+
-+#define LS1X_DMA_ORDER_REG		(LS1X_CFG_REG_BASE + 0x1160)
-+
-+#define LS1X_MUX_BASE			(LS1X_CFG_REG_BASE + 0x0420)
-+
-+/* USB regs */
-+#define LS1X_EHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e00000)
-+#define LS1X_OHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e08000)
-+
-+/* GMAC regs */
-+#define LS1X_GMAC0_BASE			(LS1X_MUX_REG_BASE + 0x00e10000)
-+#define LS1X_GMAC0_DMA_REG		(LS1X_GMAC0_BASE + 0x1000)
-+#define LS1X_GMAC1_BASE			(LS1X_MUX_REG_BASE + 0x00e20000)
-+#define LS1X_GMAC1_DMA_REG		(LS1X_GMAC1_BASE + 0x1000)
-+
-+/* SATA regs */
-+#define LS1X_AHCI_BASE			(LS1X_MUX_REG_BASE + 0x00e30000)
-+
-+/* APB regs */
-+#define LS1X_APB_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e40000)
-+
-+/* UART regs */
-+#define LS1X_UART0_BASE			(LS1X_APB_REG_BASE + 0x0000)
-+#define LS1X_UART1_BASE			(LS1X_APB_REG_BASE + 0x4000)
-+#define LS1X_UART2_BASE			(LS1X_APB_REG_BASE + 0x8000)
-+#define LS1X_UART3_BASE			(LS1X_APB_REG_BASE + 0xc000)
-+
-+/* CAN regs */
-+#define LS1X_CAN0_BASE			(LS1X_APB_REG_BASE + 0x10000)
-+#define LS1X_CAN1_BASE			(LS1X_APB_REG_BASE + 0x14000)
-+
-+#define LS1X_I2C0_BASE			(LS1X_APB_REG_BASE + 0x18000)
-+#define LS1X_I2C0_PRER_LO_REG		(LS1X_I2C0_BASE + 0x0)
-+#define LS1X_I2C0_PRER_HI_REG		(LS1X_I2C0_BASE + 0x1)
-+#define LS1X_I2C0_CTR_REG		(LS1X_I2C0_BASE + 0x2)
-+#define LS1X_I2C0_TXR_REG		(LS1X_I2C0_BASE + 0x3)
-+#define LS1X_I2C0_RXR_REG		(LS1X_I2C0_BASE + 0x3)
-+#define LS1X_I2C0_CR_REG		(LS1X_I2C0_BASE + 0x4)
-+#define LS1X_I2C0_SR_REG		(LS1X_I2C0_BASE + 0x4)
-+
-+#define LS1X_I2C1_BASE			(LS1X_APB_REG_BASE + 0x28000)
-+#define LS1X_I2C1_PRER_LO_REG		(LS1X_I2C1_BASE + 0x0)
-+#define LS1X_I2C1_PRER_HI_REG		(LS1X_I2C1_BASE + 0x1)
-+#define LS1X_I2C1_CTR_REG		(LS1X_I2C1_BASE + 0x2)
-+#define LS1X_I2C1_TXR_REG		(LS1X_I2C1_BASE + 0x3)
-+#define LS1X_I2C1_RXR_REG		(LS1X_I2C1_BASE + 0x3)
-+#define LS1X_I2C1_CR_REG		(LS1X_I2C1_BASE + 0x4)
-+#define LS1X_I2C1_SR_REG		(LS1X_I2C1_BASE + 0x4)
-+
-+#define LS1X_I2C2_BASE			(LS1X_APB_REG_BASE + 0x30000)
-+#define LS1X_I2C2_PRER_LO_REG		(LS1X_I2C2_BASE + 0x0)
-+#define LS1X_I2C2_PRER_HI_REG		(LS1X_I2C2_BASE + 0x1)
-+#define LS1X_I2C2_CTR_REG		(LS1X_I2C2_BASE + 0x2)
-+#define LS1X_I2C2_TXR_REG		(LS1X_I2C2_BASE + 0x3)
-+#define LS1X_I2C2_RXR_REG		(LS1X_I2C2_BASE + 0x3)
-+#define LS1X_I2C2_CR_REG		(LS1X_I2C2_BASE + 0x4)
-+#define LS1X_I2C2_SR_REG		(LS1X_I2C2_BASE + 0x4)
-+
-+#define LS1X_PWM_REG_BASE		(LS1X_APB_REG_BASE + 0x1c000)
-+#define LS1X_PWM0_BASE			(LS1X_PWM_REG_BASE + 0x00)
-+#define LS1X_PWM1_BASE			(LS1X_PWM_REG_BASE + 0x10)
-+#define LS1X_PWM2_BASE			(LS1X_PWM_REG_BASE + 0x20)
-+#define LS1X_PWM3_BASE			(LS1X_PWM_REG_BASE + 0x30)
-+
-+/* RTC regs */
-+#define LS1X_RTC_BASE			(LS1X_APB_REG_BASE + 0x24000)
-+
-+/* AC97 regs */
-+#define LS1X_AC97_BASE			(LS1X_APB_REG_BASE + 0x34000)
-+
-+/* Watchdog regs */
-+#ifdef CONFIG_CPU_LOONGSON1A
-+#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e7c060)
-+#else
-+#define LS1X_WDT_BASE			(LS1X_MUX_REG_BASE + 0x00e5c060)
-+#endif
-+
-+/* CLK regs */
-+#define LS1X_CLK_BASE			(LS1X_MUX_REG_BASE + 0x00e78030)
-+
-+/* NAND regs */
-+#define LS1X_NAND_REG_BASE		(LS1X_APB_REG_BASE + 0x38000)
-+#define LS1X_NAND_CMD_REG		(LS1X_NAND_REG_BASE + 0x0000)
-+#define LS1X_NAND_ADDR_C_REG		(LS1X_NAND_REG_BASE + 0x0004)
-+#define LS1X_NAND_ADDR_R_REG		(LS1X_NAND_REG_BASE + 0x0008)
-+#define LS1X_NAND_TIMING_REG		(LS1X_NAND_REG_BASE + 0x000c)
-+#define LS1X_NAND_IDL_REG		(LS1X_NAND_REG_BASE + 0x0010)
-+#define LS1X_NAND_STA_IDH_REG		(LS1X_NAND_REG_BASE + 0x0014)
-+#define LS1X_NAND_PARAM_REG		(LS1X_NAND_REG_BASE + 0x0018)
-+#define LS1X_NAND_OP_NUM_REG		(LS1X_NAND_REG_BASE + 0x001c)
-+#define LS1X_NAND_CSRDY_MAP_REG		(LS1X_NAND_REG_BASE + 0x0020)
-+#define LS1X_NAND_DMA_ACC_REG		(LS1X_NAND_REG_BASE + 0x0040)
-+
-+/* ACPI regs for ls1a */
-+#define LS1X_ACPI_REG_BASE		(LS1X_APB_REG_BASE + 0x3c000)
-+#define LS1X_PM1_STS_REG		(LS1X_ACPI_REG_BASE + 0x0000)
-+#define LS1X_PM1_EN_REG			(LS1X_ACPI_REG_BASE + 0x0004)
-+#define LS1X_PM1_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0008)
-+#define LS1X_PM1_TMR_REG		(LS1X_ACPI_REG_BASE + 0x000c)
-+#define LS1X_P_CNT_REG			(LS1X_ACPI_REG_BASE + 0x0010)
-+#define LS1X_P_LVL2_REG			(LS1X_ACPI_REG_BASE + 0x0014)
-+#define LS1X_P_LVL3_REG			(LS1X_ACPI_REG_BASE + 0x0018)
-+#define LS1X_GPE0_STS_REG		(LS1X_ACPI_REG_BASE + 0x0020)
-+#define LS1X_GPE0_EN_REG		(LS1X_ACPI_REG_BASE + 0x0024)
-+#define LS1X_PM_CONF1_REG		(LS1X_ACPI_REG_BASE + 0x0030)
-+#define LS1X_PM_CONF2_REG		(LS1X_ACPI_REG_BASE + 0x0034)
-+#define LS1X_PM_CONF3_REG		(LS1X_ACPI_REG_BASE + 0x0038)
-+#define LS1X_RST_CNT_REG		(LS1X_ACPI_REG_BASE + 0x0044)
-+#define LS1X_CPU_INIT_REG		(LS1X_ACPI_REG_BASE + 0x0050)
-+
-+#define LS1X_SPI0_REG_BASE		(LS1X_MUX_REG_BASE + 0x00e80000)
-+#define LS1X_SPI1_REG_BASE		(LS1X_MUX_REG_BASE + 0x00ec0000)
-+
-+/* LPC regs */
-+#define LS1X_LPC_IO_BASE		(LS1X_MUX_REG_BASE + 0x00f00000)
-+#define LS1X_LPC_REG_BASE		(LS1X_MUX_REG_BASE + 0x00f10200)
-+#define LS1X_LPC_CFG0_REG		(LS1X_LPC_REG_BASE + 0x0)
-+#define LS1X_LPC_CFG1_REG		(LS1X_LPC_REG_BASE + 0x4)
-+#define LS1X_LPC_CFG2_REG		(LS1X_LPC_REG_BASE + 0x8)
-+#define LS1X_LPC_CFG3_REG		(LS1X_LPC_REG_BASE + 0xc)
- 
- #include <regs-clk.h>
- #include <regs-mux.h>
-diff --git a/arch/mips/loongson32/common/platform.c b/arch/mips/loongson32/common/platform.c
-index 100f23d..f71392f 100644
---- a/arch/mips/loongson32/common/platform.c
-+++ b/arch/mips/loongson32/common/platform.c
-@@ -84,8 +84,8 @@ struct platform_device ls1x_cpufreq_pdev = {
- /* DMA */
- static struct resource ls1x_dma_resources[] = {
- 	[0] = {
--		.start = LS1X_DMAC_BASE,
--		.end = LS1X_DMAC_BASE + SZ_4 - 1,
-+		.start = LS1X_DMA_ORDER_REG,
-+		.end = LS1X_DMA_ORDER_REG + SZ_4 - 1,
- 		.flags = IORESOURCE_MEM,
- 	},
- 	[1] = {
-@@ -259,8 +259,8 @@ struct platform_device ls1x_eth1_pdev = {
- /* GPIO */
- static struct resource ls1x_gpio0_resources[] = {
- 	[0] = {
--		.start	= LS1X_GPIO0_BASE,
--		.end	= LS1X_GPIO0_BASE + SZ_4 - 1,
-+		.start	= LS1X_GPIO_CFG0_REG,
-+		.end	= LS1X_GPIO_CFG0_REG + SZ_4 - 1,
- 		.flags	= IORESOURCE_MEM,
- 	},
- };
-@@ -274,8 +274,8 @@ struct platform_device ls1x_gpio0_pdev = {
- 
- static struct resource ls1x_gpio1_resources[] = {
- 	[0] = {
--		.start	= LS1X_GPIO1_BASE,
--		.end	= LS1X_GPIO1_BASE + SZ_4 - 1,
-+		.start	= LS1X_GPIO_CFG1_REG,
-+		.end	= LS1X_GPIO_CFG1_REG + SZ_4 - 1,
- 		.flags	= IORESOURCE_MEM,
- 	},
- };
-@@ -290,8 +290,8 @@ struct platform_device ls1x_gpio1_pdev = {
- /* NAND Flash */
- static struct resource ls1x_nand_resources[] = {
- 	[0] = {
--		.start	= LS1X_NAND_BASE,
--		.end	= LS1X_NAND_BASE + SZ_32 - 1,
-+		.start	= LS1X_NAND_REG_BASE,
-+		.end	= LS1X_NAND_REG_BASE + SZ_32 - 1,
- 		.flags	= IORESOURCE_MEM,
- 	},
- 	[1] = {
--- 
-2.9.4
+> ome drivers are briefly preparing+enabling the clock in their
+
+*Some
+
+> ->probe() hook and disable+unprepare them before leaving the function. =20
+>=20
+> This can be problem if a clock is shared between different devices, and
+> one of these devices is critical to the system. If this clock is
+> enabled/disabled by a non-critical device before the driver of the
+> critical one had a chance to enable+prepare it, there might be a short
+> period of time during which the critical device is not clocked.
+>=20
+> To solve this problem, we save the initial clock state (at registration
+> time) and prevent the clock from being disabled until kernel init is done
+> (which is when clk_disable_unused() is called).
+
+Well, my patch was just an informal proposal, and Doug pointed one
+thing that needs to be addressed before considering this approach: we
+are breaking clk users that expect clk_disable/unprepare() to be
+synchronous even when they're called before clk_disable_unused().
+
+Mike, Stephen, any idea how to solve this problem properly?
+
+>=20
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  drivers/clk/clk.c | 29 +++++++++++++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index fc58c52a26b4..3f61374a364b 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -58,6 +58,8 @@ struct clk_core {
+>  	struct clk_core		*new_child;
+>  	unsigned long		flags;
+>  	bool			orphan;
+> +	bool			keep_enabled;
+> +	bool			keep_prepared;
+>  	unsigned int		enable_count;
+>  	unsigned int		prepare_count;
+>  	unsigned long		min_rate;
+> @@ -486,7 +488,7 @@ static void clk_core_unprepare(struct clk_core *core)
+> =20
+>  	trace_clk_unprepare(core);
+> =20
+> -	if (core->ops->unprepare)
+> +	if (core->ops->unprepare && !core->keep_prepared)
+>  		core->ops->unprepare(core->hw);
+> =20
+>  	trace_clk_unprepare_complete(core);
+> @@ -602,7 +604,7 @@ static void clk_core_disable(struct clk_core *core)
+> =20
+>  	trace_clk_disable_rcuidle(core);
+> =20
+> -	if (core->ops->disable)
+> +	if (core->ops->disable && !core->keep_enabled)
+>  		core->ops->disable(core->hw);
+> =20
+>  	trace_clk_disable_complete_rcuidle(core);
+> @@ -739,6 +741,12 @@ static void clk_unprepare_unused_subtree(struct clk_=
+core *core)
+>  	hlist_for_each_entry(child, &core->children, child_node)
+>  		clk_unprepare_unused_subtree(child);
+> =20
+> +	/*
+> +	 * Reset the ->keep_prepared flag so that subsequent calls to
+> +	 * clk_unprepare() on this clk actually unprepare it.
+> +	 */
+> +	core->keep_prepared =3D false;
+> +
+>  	if (core->prepare_count)
+>  		return;
+> =20
+> @@ -770,6 +778,12 @@ static void clk_disable_unused_subtree(struct clk_co=
+re *core)
+> =20
+>  	flags =3D clk_enable_lock();
+> =20
+> +	/*
+> +	 * Reset the ->keep_enabled flag so that subsequent calls to
+> +	 * clk_disable() on this clk actually disable it.
+> +	 */
+> +	core->keep_enabled =3D false;
+> +
+>  	if (core->enable_count)
+>  		goto unlock_out;
+> =20
+> @@ -2446,6 +2460,17 @@ static int __clk_core_init(struct clk_core *core)
+>  		core->accuracy =3D 0;
+> =20
+>  	/*
+> +	 * We keep track of the initial clk status to keep clks in the state
+> +	 * they were left in by the bootloader until all drivers had a chance
+> +	 * to keep them prepared/enabled if they need to.
+> +	 */
+> +	if (core->ops->is_prepared && !clk_ignore_unused)
+> +		core->keep_prepared =3D core->ops->is_prepared(core->hw);
+> +
+> +	if (core->ops->is_enabled && !clk_ignore_unused)
+> +		core->keep_enabled =3D core->ops->is_enabled(core->hw);
+> +
+> +	/*
+>  	 * Set clk's phase.
+>  	 * Since a phase is by definition relative to its parent, just
+>  	 * query the current clock phase, or just assume it's in phase.
