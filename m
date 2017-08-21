@@ -1,114 +1,101 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:42855 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752264AbdHMCul (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 12 Aug 2017 22:50:41 -0400
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, Vladimir
+ Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>,
+        <gabriel.fernandez.st@gmail.com>,
+        Arvind Yadav
+	<arvind.yadav.cs@gmail.com>
+Subject: [RESEND PATCH v8 0/3] clk: stm32h7: Add stm32h743 clock driver
+Date: Mon, 21 Aug 2017 13:58:59 +0200
+Message-ID: <1503316742-22145-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Sun, 13 Aug 2017 10:50:40 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-sunxi@googlegroups.com, Priit Laes <plaes@plaes.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] clk: sunxi-ng: div: Add support for fixed
- post-divider
-In-Reply-To: <20170812124352.24148-2-icenowy@aosc.io>
-References: <20170812124352.24148-1-icenowy@aosc.io>
- <20170812124352.24148-2-icenowy@aosc.io>
-Message-ID: <d47777b1acaae095020697fa7c2064ac@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-08-12 20:43，Icenowy Zheng 写道：
-> From: Priit Laes <plaes@plaes.org>
-> 
-> SATA clock on sun4i/sun7i is of type (parent) / M / 6 where
-> 6 is fixed post-divider.
-> 
-> Signed-off-by: Priit Laes <plaes@plaes.org>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+v8:
+  - Documentation remarks from Valdimir:
+	- rename 'rcc' node name into 'reset-clock-controller'
+	- delete source paths into the device tree bindings documentation
+	- other cosmetic changes
+v7:
+  - Documentation: put 'st,syscfg' phandle in optional section
+  - rename nxp gate op with lpc32xx_ prefix
+  - Suppress useless code to disable/enable backup domain write protection
+    (backup domaine write is disable at the init and never enabled)
 
-> ---
-> It's based on the patch in v6 of the A10/A20 CCU patchset, but with
-> ccu_div_round_rate fixed.
-> 
->  drivers/clk/sunxi-ng/ccu_div.c | 22 +++++++++++++++++++---
->  drivers/clk/sunxi-ng/ccu_div.h |  3 ++-
->  2 files changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c 
-> b/drivers/clk/sunxi-ng/ccu_div.c
-> index c0e5c10d0091..baa3cf96507b 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.c
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> @@ -21,10 +21,18 @@ static unsigned long ccu_div_round_rate(struct
-> ccu_mux_internal *mux,
->  {
->  	struct ccu_div *cd = data;
-> 
-> -	return divider_round_rate_parent(&cd->common.hw, parent,
-> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		rate *= cd->fixed_post_div;
-> +
-> +	rate = divider_round_rate_parent(&cd->common.hw, parent,
->  					 rate, parent_rate,
->  					 cd->div.table, cd->div.width,
->  					 cd->div.flags);
-> +
-> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		rate /= cd->fixed_post_div;
-> +
-> +	return rate;
->  }
-> 
->  static void ccu_div_disable(struct clk_hw *hw)
-> @@ -62,8 +70,13 @@ static unsigned long ccu_div_recalc_rate(struct 
-> clk_hw *hw,
->  	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
->  						  parent_rate);
-> 
-> -	return divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> -				   cd->div.flags);
-> +	val = divider_recalc_rate(hw, parent_rate, val, cd->div.table,
-> +				  cd->div.flags);
-> +
-> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		val /= cd->fixed_post_div;
-> +
-> +	return val;
->  }
-> 
->  static int ccu_div_determine_rate(struct clk_hw *hw,
-> @@ -86,6 +99,9 @@ static int ccu_div_set_rate(struct clk_hw *hw,
-> unsigned long rate,
->  	parent_rate = ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, -1,
->  						  parent_rate);
-> 
-> +	if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +		rate *= cd->fixed_post_div;
-> +
->  	val = divider_get_val(rate, parent_rate, cd->div.table, 
-> cd->div.width,
->  			      cd->div.flags);
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h 
-> b/drivers/clk/sunxi-ng/ccu_div.h
-> index 08d074451204..f3a5028dcd14 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.h
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -86,9 +86,10 @@ struct ccu_div_internal {
->  struct ccu_div {
->  	u32			enable;
-> 
-> -	struct ccu_div_internal		div;
-> +	struct ccu_div_internal	div;
->  	struct ccu_mux_internal	mux;
->  	struct ccu_common	common;
-> +	unsigned int		fixed_post_div;
->  };
-> 
->  #define SUNXI_CCU_DIV_TABLE_WITH_GATE(_struct, _name, _parent, _reg,	\
+v6:
+  - rename clk_gate_is_enabled() in nxp lpc32xx driver.
+  - add EXPORT_SYMBOL_GPL(clk_gate_is_enabled)
+
+v5:
+  - return bool instead int for enable_power_domain_write_protection()
+  - add comment to explain use of CLK_OF_DECLARE_DRIVER()
+  - add comment to explain why we can't use read_poll_timeout()
+  - expose clk_gate_ops::is_enabled
+  - use of __clk_mux_determine_rate & clk_gate_is_enabled to avoid wrapper
+	function.
+
+v4:
+  - rename lock into stm32rcc_lock
+  - don't use clk_readl() 
+  - remove useless parentheses with GENMASK
+  - fix parents of timer_x clocks
+  - suppress pll configuration from DT
+  - fix kbuild warning
+
+v3:
+  - fix compatible string "stm32h7-pll" into "st,stm32h7-pll"
+  - fix bad parent name for mco2 clock
+  - set CLK_SET_RATE_PARENT for ltdc clock
+  - set CLK_IGNORE_UNUSED for pll1
+  - disable power domain write protection on disable ops if needed
+
+
+v2:
+  - rename compatible string "stm32,pll" into "stm32h7-pll"
+  - suppress "st,pllrge" property
+  - suppress "st, frac-status" property
+  - change management of "st,frac"  property
+	0 : enable 0 pll integer mode 
+	other values : enable pll in fractional mode (value is
+	the fractional factor)
+
+Gabriel Fernandez (3):
+  clk: nxp: clk-lpc32xx: rename clk_gate_is_enabled()
+  clk: gate: expose clk_gate_ops::is_enabled
+  clk: stm32h7: Add stm32h743 clock driver
+
+ .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |   71 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-gate.c                             |    3 +-
+ drivers/clk/clk-stm32h7.c                          | 1410 ++++++++++++++++++++
+ drivers/clk/nxp/clk-lpc32xx.c                      |   12 +-
+ include/dt-bindings/clock/stm32h7-clks.h           |  165 +++
+ include/dt-bindings/mfd/stm32h7-rcc.h              |  136 ++
+ include/linux/clk-provider.h                       |    1 +
+ 8 files changed, 1792 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32h7.c
+ create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
+ create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
+
+-- 
+1.9.1
