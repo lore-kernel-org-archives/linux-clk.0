@@ -1,73 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:35061 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751607AbdHAL5G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2017 07:57:06 -0400
-Received: by mail-wm0-f41.google.com with SMTP id m85so12510859wma.0
-        for <linux-clk@vger.kernel.org>; Tue, 01 Aug 2017 04:57:06 -0700 (PDT)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: jbrunet@baylibre.com, narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3.1 0/4] clk: meson: gxbb-aoclk: Add CEC 32k clock
-Date: Tue,  1 Aug 2017 13:56:55 +0200
-Message-Id: <1501588619-10991-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	cl@rock-chips.com,
+	andy.yan@rock-chips.com,
+	wdc@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 4/4] clk: rockchip: rv1108: fix up the clk_mac sel register description
+Date: Mon, 21 Aug 2017 16:16:07 +0800
+Message-Id: <1503303367-17915-5-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
+References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to support the standalone CEC Controller on the Amlogic SoCs,
-a specific CEC 32K clock must be handled in the AO domain.
+cru_sel24_con[8]
+rmii_extclk_sel
+clock source select control register
+1'b0: from internal PLL
+1'b1: from external IO
 
-The CEC 32K AO Clock is a dual divider with dual counter to provide a more
-precise 32768Hz clock for the CEC subsystem from the external xtal.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rv1108.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The AO clocks management registers are spread among the AO register space,
-so this patch also adds management of these registers mappings then uses them
-for the CEC 32K AO clock management.
-
-This patchset :
- - updates the bindings accordingly
- - switch driver to new bindings
- - adds the CEC 32k clock
- - adds the clock binding entry
-
-The DT Update will be sent in another patchset.
-
-Changes since v3 at [3] :
- - fix typo in cec_32k set_rate
-
-Changes since v2 at [2] :
- - fix round_rate invalid handling
- - enhance set_rate code thanks to Chris Moore
- - add more explicit comments thanks to Martin
-
-Changes since v1 at [1] :
- - move bindings to parent syscon node and move clkc to subnode
- - switch aoclkc to use regmap only register access
- - introduce aoclk-regmap-gate for this purpose until regmap clocks are generic
-
-[1] https://lkml.kernel.org/r/1499336663-23875-1-git-send-email-narmstrong@baylibre.com
-[2] https://lkml.kernel.org/r/1501235589-318-1-git-send-email-narmstrong@baylibre.com
-[3] https://lkml.kernel.org/r/1501504957-19476-1-git-send-email-narmstrong@baylibre.com
-
-Neil Armstrong (4):
-  dt-bindings: clock: amlogic,gxbb-aoclkc: Update bindings
-  clk: meson: gxbb-aoclk: Switch to regmap for register access
-  dt-bindings: clock: gxbb-aoclk: Add CEC 32k clock
-  clk: meson: gxbb-aoclk: Add CEC 32k clock
-
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  22 ++-
- drivers/clk/meson/Makefile                         |   2 +-
- drivers/clk/meson/gxbb-aoclk-32k.c                 | 194 +++++++++++++++++++++
- drivers/clk/meson/gxbb-aoclk-regmap.c              |  46 +++++
- drivers/clk/meson/gxbb-aoclk.c                     |  65 ++++---
- drivers/clk/meson/gxbb-aoclk.h                     |  42 +++++
- include/dt-bindings/clock/gxbb-aoclkc.h            |   1 +
- 7 files changed, 342 insertions(+), 30 deletions(-)
- create mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
- create mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
- create mode 100644 drivers/clk/meson/gxbb-aoclk.h
-
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 658da17c9d99..4d87828df4f7 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -140,7 +140,7 @@ enum rv1108_plls {
+ PNAME(mux_uart0_p)		= { "uart0_src", "uart0_frac", "xin24m" };
+ PNAME(mux_uart1_p)		= { "uart1_src", "uart1_frac", "xin24m" };
+ PNAME(mux_uart2_p)		= { "uart2_src", "uart2_frac", "xin24m" };
+-PNAME(mux_sclk_mac_p)	= { "ext_gmac", "sclk_mac_pre" };
++PNAME(mux_sclk_mac_p)	= { "sclk_mac_pre", "ext_gmac" };
+ PNAME(mux_i2s0_pre_p)		= { "i2s0_src", "i2s0_frac", "ext_i2s", "xin12m" };
+ PNAME(mux_i2s_out_p)		= { "i2s0_pre", "xin12m" };
+ PNAME(mux_i2s1_p)		= { "i2s1_src", "i2s1_frac", "dummy", "xin12m" };
 -- 
 1.9.1
-
