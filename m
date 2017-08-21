@@ -1,121 +1,64 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>
-Subject: RE: [PATCH] clk: bulk: call of_clk_get() when id is NULL
-Date: Wed, 30 Aug 2017 15:31:38 +0000
-Message-ID: <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
- <20170809173318.GD2146@codeaurora.org> <20170813141851.GD31819@dragon>
-In-Reply-To: <20170813141851.GD31819@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.134]:47461 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752234AbdHULP1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Aug 2017 07:15:27 -0400
+Subject: Re: [PATCH v2 1/4] clk: rockchip: add rv1108 ACLK_GAMC and PCLK_GMAC
+ ID
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
+        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com,
+        xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com,
+        andy.yan@rock-chips.com, wdc@rock-chips.com
+References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
+ <1503303367-17915-2-git-send-email-zhangqing@rock-chips.com>
+ <f51160d5-32cc-a63c-3877-76ea91fb6e8b@rock-chips.com>
+ <19279521.prAVXYBsZ9@phil>
+From: "David.Wu" <david.wu@rock-chips.com>
+Message-ID: <4765221b-e122-b67d-cec2-dffbeeadc379@rock-chips.com>
+Date: Mon, 21 Aug 2017 19:15:18 +0800
 MIME-Version: 1.0
+In-Reply-To: <19279521.prAVXYBsZ9@phil>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> Sent: Sunday, August 13, 2017 10:19 PM
-> To: Stephen Boyd
-> Cc: Michael Turquette; A.s. Dong; linux-clk@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; Shawn Guo
-> Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
->=20
-> Hi Stephen,
->=20
-> On Wed, Aug 09, 2017 at 10:33:18AM -0700, Stephen Boyd wrote:
-> > > diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c index
-> > > c834f5abfc49..65cee595a67e 100644
-> > > --- a/drivers/clk/clk-bulk.c
-> > > +++ b/drivers/clk/clk-bulk.c
-> > > @@ -39,7 +39,10 @@ int __must_check clk_bulk_get(struct device *dev,
-> int num_clks,
-> > >  		clks[i].clk =3D NULL;
-> > >
-> > >  	for (i =3D 0; i < num_clks; i++) {
-> > > -		clks[i].clk =3D clk_get(dev, clks[i].id);
-> > > +		if (clks[i].id)
-> > > +			clks[i].clk =3D clk_get(dev, clks[i].id);
-> > > +		else if (dev->of_node)
-> > > +			clks[i].clk =3D of_clk_get(dev->of_node, i);
-> >
-> > This seems a little too magical. The omission of an id in an array of
-> > clks would mean that only that one clk is acquired through
-> > of_clk_get(). We could have a mixture of ids and no ids for some
-> > device, and then do very odd things.
-> >
-> > How about we add a flag to clk_bulk_data that indicates we want it to
-> > use of_clk_get() instead of clk_get() for all of the clks?
-> > Then the id is ignored for the entire function.
->=20
-> I have sent v2 to add a flag to clk_bulk_data to address your comments.
-> But I just found it might not be what you want exactly, because the
-> current bulk clk APIs defines clk_bulk_data in a different way from what
-> you are asking here.
->=20
-> It seems that you think clk_bulk_data represents all the clocks that bulk
-> APIs manage, but actually it only represents one of the multiple clocks.
-> Callers need to prepare an array of clk_bulk_data to represent multiple
-> clocks.  That said, the flag we add to clk_bulk_data only affects one
-> clock instead of all clocks.
->=20
-> I feel this is something we can improve.  clk_bulk_data can be used to
-> represent all clocks, something like below.  In this case, bulk clk APIs
-> do not need to take num_clks as a separate parameter, and callers do not
-> need to maintain multiple clk_bulk_data instances.  Since we do not have
-> any in tree users of bulk clk APIs yet, we can make this semantic change
-> quickly.  Thoughts?
->=20
+Hi Heiko,
 
-Flags may be better used for extending per clk feature support in the futur=
-e.
+在 2017/8/21 18:32, Heiko Stuebner 写道:
+> Hi David,
+> 
+> Am Montag, 21. August 2017, 18:22:31 CEST schrieb David.Wu:
+>> Hi Elaine,
+>>
+>> 在 2017/8/21 16:16, Elaine Zhang 写道:
+>>> This patch exports gmac aclk and pclk for dts reference.
+>>>
+>>> Signed-off-by: Elaine Zhang<zhangqing@rock-chips.com>
+>>> ---
+>>>    include/dt-bindings/clock/rv1108-cru.h | 2 ++
+>>>    1 file changed, 2 insertions(+)
+>>
+>> Acked-by: David Wu <david.wu@rock-chips.com>
+> 
+> Acked-by is mainly meant for cross-maintainer stuff (changes
+> for one subsystem going through a different tree etc).
+> 
+> If you want to show that the change is correct and you have reviewed
+> the patch, please use "Reviewed-by".
+> 
 
-IMHO how about implement a of_clk_bulk_get() to handle this issue as we alr=
-eady
-have a of_clk_get?
-e.g.
+Yeap, my intent is that the patches are correct. And change the tag here.🙂
+So for the series:
 
-int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-                              struct clk_bulk_data *clks)
-{
-        for (i =3D 0; i < num_clks; i++) {
-                clks[i].clk =3D of_clk_get(dev, clks[i].id);
-...
+Reviewed-by: David Wu <david.wu@rock-chips.com>
 
-}
+> 
+> Heiko
+> 
+> 
+> 
 
-Then it's less intrusive.
-
-Regards
-Dong Aisheng
-
-> diff --git a/include/linux/clk.h b/include/linux/clk.h index
-> 31fee2e8d4a2..ddc4812758f6 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -80,8 +80,10 @@ struct clk_notifier_data {
->  /**
->   * struct clk_bulk_data - Data used for bulk clk operations.
->   *
-> - * @id: clock consumer ID
-> - * @clk: struct clk * to store the associated clock
-> + * @ids: array of clock consumer IDs which should be provided by caller.
-> + * @clks: array of struct clk * to store the associated clocks, which
-> will be
-> + *     allocated by clk_bulk_get() and freed by clk_bulk_put().
-> + * @num_clks: number of clocks that caller wants bulk API to manage.
->   * @flags: bulk clk operation flags
->   *
->   * The CLK APIs provide a series of clk_bulk_() API calls as @@ -93,8
-> +95,9 @@ struct clk_notifier_data {
->   *     clk_bulk_get() API will call of_clk_get() to find clock by index.
->   */
->  struct clk_bulk_data {
-> -       const char              *id;
-> -       struct clk              *clk;
-> +       const char              **ids;
-> +       struct clk              **clks;
-> +       unsigned int            num_clks;
->         unsigned long           flags;
->  };
