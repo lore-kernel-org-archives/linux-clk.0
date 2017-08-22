@@ -1,59 +1,32 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 31 Aug 2017 18:44:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Alex Frid <afrid@nvidia.com>
-Subject: Re: [PATCH] clk: Don't write error code into divider register
-Message-ID: <20170901014404.GV21656@codeaurora.org>
-References: <1500977920-5533-1-git-send-email-pdeschrijver@nvidia.com>
- <20170726003208.GF2146@codeaurora.org>
- <20170726082506.GC26726@tbergstrom-lnx.Nvidia.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 21 Aug 2017 21:21:03 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Roc He <hepeng@zidoo.tv>,
+	=?utf-8?B?6JKL5Li955C0?= <jiang.liqin@geniatech.com>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [RFC 1/4] dt-bindings: clock: Add Realtek RTD1295
+Message-ID: <20170822022103.3ud4mzjtozhd5ics@rob-hp-laptop>
+References: <20170817112026.24062-1-afaerber@suse.de>
+ <20170817112026.24062-2-afaerber@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170726082506.GC26726@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20170817112026.24062-2-afaerber@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/26, Peter De Schrijver wrote:
-> On Tue, Jul 25, 2017 at 05:32:08PM -0700, Stephen Boyd wrote:
-> > On 07/25, Peter De Schrijver wrote:
-> > > From: Alex Frid <afrid@nvidia.com>
-> > > 
-> > > Add a check for error returned by divider value calculation to avoid
-> > > writing error code into hw register.
-> > > 
-> > > Signed-off-by: Alex Frid <afrid@nvidia.com>
-> > > Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > > Reviewed-by: Jon Mayo <jmayo@nvidia.com>
-> > > ---
-> > 
-> > Fixes: bca9690b9426 ("clk: divider: Make generic for usage elsewhere")
-> > 
-> > perhaps?
-> > 
-> > Also, curious how this got triggered? Presumably round_rate would
-> > have failed before a set_rate call with something invalid came
-> > through so that's why nobody has reported anything so far.
-> > 
+On Thu, Aug 17, 2017 at 01:20:22PM +0200, Andreas Färber wrote:
+> Naming inspired from Zidoo X9S Device Tree and clk_summary.
 > 
-> I don't really know. Aleks do you remember?
-> 
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
+> ---
+>  .../devicetree/bindings/clock/realtek,rtd129x.txt  | 20 +++++
+>  include/dt-bindings/clock/realtek,rtd1295.h        | 99 ++++++++++++++++++++++
+>  2 files changed, 119 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd129x.txt
+>  create mode 100644 include/dt-bindings/clock/realtek,rtd1295.h
 
-Still wondering.
-
-> > 	if ((s32)value < 0)
-> > 
-> > to see if there was an error. Sort of annoying that we've limited
-> > the available space of divider_get_val() by combining the value
-> > with the error code number space. We may want to not do that in
-> > case people have huge dividers.
-> > 
-> 
-> Yes. It would have been better to return the divider in a separate variable.
-> There seem to be few users though, only 6.
-
-Patches welcome.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>
