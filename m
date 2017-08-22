@@ -1,65 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 9 Aug 2017 10:33:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
-Message-ID: <20170809173318.GD2146@codeaurora.org>
-References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+To: julia.lawall@lip6.fr,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] clk: hisilicon: make clk_ops const
+Date: Tue, 22 Aug 2017 19:12:07 +0530
+Message-Id: <1503409327-20278-1-git-send-email-bhumirks@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/09, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@linaro.org>
-> 
-> Most of clk API users have their clocks defined in device tree, and
-> client drivers will have to parse clk ids from DT 'clock-names'
-> property before using clk_bulk_get().  This is a burden for client
-> driver code.  And 'clock-names' being an optional DT property makes
-> it even worse.  The client driver will have no way to provide clock
-> id.
-> 
-> The patch makes a little improvement on clk_bulk_get() to call
-> of_clk_get() with index for DT users, if clock id is not available,
-> so that client drivers working with DT can use clk_bulk_get() to
-> retrieve clocks more easily.
-> 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
->  drivers/clk/clk-bulk.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> index c834f5abfc49..65cee595a67e 100644
-> --- a/drivers/clk/clk-bulk.c
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -39,7 +39,10 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
->  		clks[i].clk = NULL;
->  
->  	for (i = 0; i < num_clks; i++) {
-> -		clks[i].clk = clk_get(dev, clks[i].id);
-> +		if (clks[i].id)
-> +			clks[i].clk = clk_get(dev, clks[i].id);
-> +		else if (dev->of_node)
-> +			clks[i].clk = of_clk_get(dev->of_node, i);
+Make these const as they are only stored in the const field of a
+clk_init_data structure.
 
-This seems a little too magical. The omission of an id in an
-array of clks would mean that only that one clk is acquired
-through of_clk_get(). We could have a mixture of ids and no ids
-for some device, and then do very odd things.
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/clk/hisilicon/clk-hi3620.c        | 2 +-
+ drivers/clk/hisilicon/clk-hix5hd2.c       | 4 ++--
+ drivers/clk/hisilicon/clkgate-separated.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-How about we add a flag to clk_bulk_data that indicates we want
-it to use of_clk_get() instead of clk_get() for all of the clks?
-Then the id is ignored for the entire function.
-
-Also, this patch needs to document the new behavior somewhere in
-the kernel-doc for this function.
-
+diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+index fa0fba6..77072c7 100644
+--- a/drivers/clk/hisilicon/clk-hi3620.c
++++ b/drivers/clk/hisilicon/clk-hi3620.c
+@@ -415,7 +415,7 @@ static int mmc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return mmc_clk_set_timing(hw, rate);
+ }
+ 
+-static struct clk_ops clk_mmc_ops = {
++static const struct clk_ops clk_mmc_ops = {
+ 	.prepare = mmc_clk_prepare,
+ 	.determine_rate = mmc_clk_determine_rate,
+ 	.set_rate = mmc_clk_set_rate,
+diff --git a/drivers/clk/hisilicon/clk-hix5hd2.c b/drivers/clk/hisilicon/clk-hix5hd2.c
+index 14b05ef..9584f0c 100644
+--- a/drivers/clk/hisilicon/clk-hix5hd2.c
++++ b/drivers/clk/hisilicon/clk-hix5hd2.c
+@@ -208,7 +208,7 @@ static void clk_ether_unprepare(struct clk_hw *hw)
+ 	writel_relaxed(val, clk->ctrl_reg);
+ }
+ 
+-static struct clk_ops clk_ether_ops = {
++static const struct clk_ops clk_ether_ops = {
+ 	.prepare = clk_ether_prepare,
+ 	.unprepare = clk_ether_unprepare,
+ };
+@@ -247,7 +247,7 @@ static void clk_complex_disable(struct clk_hw *hw)
+ 	writel_relaxed(val, clk->phy_reg);
+ }
+ 
+-static struct clk_ops clk_complex_ops = {
++static const struct clk_ops clk_complex_ops = {
+ 	.enable = clk_complex_enable,
+ 	.disable = clk_complex_disable,
+ };
+diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
+index 7908bc3..1172b09 100644
+--- a/drivers/clk/hisilicon/clkgate-separated.c
++++ b/drivers/clk/hisilicon/clkgate-separated.c
+@@ -88,7 +88,7 @@ static int clkgate_separated_is_enabled(struct clk_hw *hw)
+ 	return reg ? 1 : 0;
+ }
+ 
+-static struct clk_ops clkgate_separated_ops = {
++static const struct clk_ops clkgate_separated_ops = {
+ 	.enable		= clkgate_separated_enable,
+ 	.disable	= clkgate_separated_disable,
+ 	.is_enabled	= clkgate_separated_is_enabled,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
