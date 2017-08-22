@@ -1,119 +1,76 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+To: julia.lawall@lip6.fr,
+	t-kristo@ti.com,
+	mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v5 0/7] add support for Sama5d2 audio PLLs and enable ClassD
-Date: Thu, 10 Aug 2017 08:34:00 +0200
-Message-Id: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+	linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] clk: ti: make clk_ops const
+Date: Tue, 22 Aug 2017 18:41:15 +0530
+Message-Id: <1503407475-11620-1-git-send-email-bhumirks@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the audio PLLs and enables ClassD that
-can be found in ATMEL Sama5d2 SoC.
+Make these const as they are only stored in the const field of a
+clk_init_data structure.
 
-There are two audio PLLs (PMC and PAD) that shares the same parent (FRAC).
-FRAC can output between 620 and 700MHz and only multiply the rate of its
-parent. The two audio PLLs then divide the FRAC rate to best match the
-asked rate.
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/clk/ti/adpll.c | 2 +-
+ drivers/clk/ti/apll.c  | 2 +-
+ drivers/clk/ti/fapll.c | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-I basically took an old patch series posted by Nicolas on December, 6th
-2016[1][2][3] and the comments Boris did on the first version[4] Nicolas
-sent on July, 15th 2015.
-
-I also fixed the function used to compute the divisors, removed useless
-spinlocks and added a range to the audio frac PLL to stay within vendor's
-supported range. Clocks that are children of gclk (generated-clk) are now
-able to propagate rate to the audio PLL clocks when needed.
-
-However, there are multiple children clocks that could technically
-change the rate of audio_pll (via gck). With the rate locking introduced
-in Jerome Brunet's patch series[5], the first consumer to enable the clock
-will be the one definitely setting the rate of the clock. Without the rate
-locking, the last consumer to set the rate will be able to mess with the
-rate.
-Since audio IPs are most likely to request the same rate, we enforce
-that the only clks able to modify gck rate are those of audio IPs.
-
-To remain consistent, we deny other clocks to be children of audio_pll.
-
-I suggest this whole series going through the clk subsystem.
-
-v5:
- - replaced clk_audio_pll_frac_round_rate by
- clk_audio_pll_frac_determine_rate to also return min and max rate for
- the clk, suggested by Stephen Boyd during v3,
-
-v4:
- - initialized the clk_init_data structure,
- - switched to of_clk_parent_fill instead of manually setting
- parent_names,
- - removed include of clkdev.h in favor of slab.h,
- - removed unnecessary second cast in operation,
- - used clamp instead of two conditions,
- - removed dependency on clock-output-names, the name is gotten from DT
- node,
- - merged all three drivers for audio PLLs (FRAC, PMC, PAD) into one,
-
-v3:
- - added a flag per generated clock to know which one is allowed to
- modify audio_pll rate,
- - set the flag in setup function depending on the compatible and the
- clock ID,
-
-v2:
- - split big patch containing dt-binding, pll drivers and classd
- modifications,
- - removed unused AUDIO_PLL_*FOUT* defines from clk-audio-pll-pmc,
- - added conditions for audio pll rate setting restriction for SSC and
- I2S,
- - renamed all mentions of ACLK to GCLK in classD driver,
-
-Thanks,
-Quentin
-
-[1] https://patchwork.kernel.org/patch/9462351/
-[2] https://patchwork.kernel.org/patch/9462347/
-[3] https://patchwork.kernel.org/patch/9462349/
-[4] https://www.spinics.net/lists/arm-kernel/msg436120.html
-[5] http://www.spinics.net/lists/linux-clk/msg17927.html
-
-Quentin Schulz (7):
-  clk: at91: clk-generated: remove useless divisor loop
-  dt-bindings: clk: at91: add audio plls to the compatible list
-  clk: at91: add audio pll clock drivers
-  clk: at91: clk-generated: create function to find best_diff
-  clk: at91: clk-generated: make gclk determine audio_pll rate
-  ASoC: atmel-classd: remove aclk clock from DT binding
-  ASoC: atmel-classd: remove aclk clock
-
- Documentation/devicetree/bindings/clock/at91-clock.txt   |  10 +-
- Documentation/devicetree/bindings/sound/atmel-classd.txt |   9 +-
- arch/arm/mach-at91/Kconfig                               |   4 +-
- drivers/clk/at91/Makefile                                |   1 +-
- drivers/clk/at91/clk-audio-pll.c                         | 536 ++++++++-
- drivers/clk/at91/clk-generated.c                         | 101 +-
- include/linux/clk/at91_pmc.h                             |  25 +-
- sound/soc/atmel/atmel-classd.c                           |  47 +-
- 8 files changed, 675 insertions(+), 58 deletions(-)
- create mode 100644 drivers/clk/at91/clk-audio-pll.c
-
-base-commit: 22bbe310b60b37b029659460843265f190364e48
+diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+index 255cafb..d5c6db4 100644
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -486,7 +486,7 @@ static u8 ti_adpll_get_parent(struct clk_hw *hw)
+ 	return 0;
+ }
+ 
+-static struct clk_ops ti_adpll_ops = {
++static const struct clk_ops ti_adpll_ops = {
+ 	.prepare = ti_adpll_prepare,
+ 	.unprepare = ti_adpll_unprepare,
+ 	.is_prepared = ti_adpll_is_prepared,
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index 06f486b..83b148f 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -304,7 +304,7 @@ static void omap2_apll_disable(struct clk_hw *hw)
+ 	ti_clk_ll_ops->clk_writel(v, &ad->control_reg);
+ }
+ 
+-static struct clk_ops omap2_apll_ops = {
++static const struct clk_ops omap2_apll_ops = {
+ 	.enable		= &omap2_apll_enable,
+ 	.disable	= &omap2_apll_disable,
+ 	.is_enabled	= &omap2_apll_is_enabled,
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index 66a0d0e..071af44 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -268,7 +268,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
+-static struct clk_ops ti_fapll_ops = {
++static const struct clk_ops ti_fapll_ops = {
+ 	.enable = ti_fapll_enable,
+ 	.disable = ti_fapll_disable,
+ 	.is_enabled = ti_fapll_is_enabled,
+@@ -478,7 +478,7 @@ static int ti_fapll_synth_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
+-static struct clk_ops ti_fapll_synt_ops = {
++static const struct clk_ops ti_fapll_synt_ops = {
+ 	.enable = ti_fapll_synth_enable,
+ 	.disable = ti_fapll_synth_disable,
+ 	.is_enabled = ti_fapll_synth_is_enabled,
 -- 
-git-series 0.9.1
+1.9.1
