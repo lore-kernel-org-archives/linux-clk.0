@@ -1,86 +1,207 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: make clk_ops const
-To: Bhumika Goyal <bhumirks@gmail.com>, <julia.lawall@lip6.fr>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1503407475-11620-1-git-send-email-bhumirks@gmail.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <a7632b61-a3de-e4c5-032d-e91fbb7b5f4e@ti.com>
-Date: Wed, 23 Aug 2017 12:31:22 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56714 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932495AbdHVKah (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2017 06:30:37 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH 8/9] soc: mediatek: add MT2712 scpsys support
+Date: Tue, 22 Aug 2017 18:28:21 +0800
+Message-ID: <1503397702-7201-9-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1503397702-7201-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1503397702-7201-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1503407475-11620-1-git-send-email-bhumirks@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-=EF=BB=BF
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Bu=
-siness ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+add scpsys driver for MT2712
 
-On 22/08/17 16:11, Bhumika Goyal wrote:
-> Make these const as they are only stored in the const field of a
-> clk_init_data structure.
->=20
-> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 112 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 106 insertions(+), 6 deletions(-)
 
-Looks fine.
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 28c6e6a..c8abd06 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -21,6 +21,7 @@
+ #include <linux/soc/mediatek/infracfg.h>
+ 
+ #include <dt-bindings/power/mt2701-power.h>
++#include <dt-bindings/power/mt2712-power.h>
+ #include <dt-bindings/power/mt6797-power.h>
+ #include <dt-bindings/power/mt7622-power.h>
+ #include <dt-bindings/power/mt8173-power.h>
+@@ -32,7 +33,7 @@
+ #define SPM_DIS_PWR_CON			0x023c
+ #define SPM_CONN_PWR_CON		0x0280
+ #define SPM_VEN2_PWR_CON		0x0298
+-#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173 */
++#define SPM_AUDIO_PWR_CON		0x029c	/* MT8173, MT2712 */
+ #define SPM_BDP_PWR_CON			0x029c	/* MT2701 */
+ #define SPM_ETH_PWR_CON			0x02a0
+ #define SPM_HIF_PWR_CON			0x02a4
+@@ -40,12 +41,12 @@
+ #define SPM_MFG_2D_PWR_CON		0x02c0
+ #define SPM_MFG_ASYNC_PWR_CON		0x02c4
+ #define SPM_USB_PWR_CON			0x02cc
++#define SPM_USB2_PWR_CON		0x02d4	/* MT2712 */
+ #define SPM_ETHSYS_PWR_CON		0x02e0	/* MT7622 */
+ #define SPM_HIF0_PWR_CON		0x02e4	/* MT7622 */
+ #define SPM_HIF1_PWR_CON		0x02e8	/* MT7622 */
+ #define SPM_WB_PWR_CON			0x02ec	/* MT7622 */
+ 
+-
+ #define SPM_PWR_STATUS			0x060c
+ #define SPM_PWR_STATUS_2ND		0x0610
+ 
+@@ -64,12 +65,13 @@
+ #define PWR_STATUS_ETH			BIT(15)
+ #define PWR_STATUS_HIF			BIT(16)
+ #define PWR_STATUS_IFR_MSC		BIT(17)
++#define PWR_STATUS_USB2			BIT(19)	/* MT2712 */
+ #define PWR_STATUS_VENC_LT		BIT(20)
+ #define PWR_STATUS_VENC			BIT(21)
+-#define PWR_STATUS_MFG_2D		BIT(22)
+-#define PWR_STATUS_MFG_ASYNC		BIT(23)
+-#define PWR_STATUS_AUDIO		BIT(24)
+-#define PWR_STATUS_USB			BIT(25)
++#define PWR_STATUS_MFG_2D		BIT(22)	/* MT8173 */
++#define PWR_STATUS_MFG_ASYNC		BIT(23)	/* MT8173 */
++#define PWR_STATUS_AUDIO		BIT(24)	/* MT8173, MT2712 */
++#define PWR_STATUS_USB			BIT(25)	/* MT8173, MT2712 */
+ #define PWR_STATUS_ETHSYS		BIT(24)	/* MT7622 */
+ #define PWR_STATUS_HIF0			BIT(25)	/* MT7622 */
+ #define PWR_STATUS_HIF1			BIT(26)	/* MT7622 */
+@@ -618,6 +620,85 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ };
+ 
+ /*
++ * MT2712 power domain support
++ */
++static const struct scp_domain_data scp_domain_data_mt2712[] = {
++	[MT2712_POWER_DOMAIN_MM] = {
++		.name = "mm",
++		.sta_mask = PWR_STATUS_DISP,
++		.ctl_offs = SPM_DIS_PWR_CON,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++		.clk_id = {CLK_MM},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_VDEC] = {
++		.name = "vdec",
++		.sta_mask = PWR_STATUS_VDEC,
++		.ctl_offs = SPM_VDE_PWR_CON,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++		.clk_id = {CLK_MM, CLK_VDEC},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_VENC] = {
++		.name = "venc",
++		.sta_mask = PWR_STATUS_VENC,
++		.ctl_offs = SPM_VEN_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(15, 12),
++		.clk_id = {CLK_MM, CLK_VENC, CLK_JPGDEC},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_ISP] = {
++		.name = "isp",
++		.sta_mask = PWR_STATUS_ISP,
++		.ctl_offs = SPM_ISP_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(13, 12),
++		.clk_id = {CLK_MM},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_AUDIO] = {
++		.name = "audio",
++		.sta_mask = PWR_STATUS_AUDIO,
++		.ctl_offs = SPM_AUDIO_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(15, 12),
++		.clk_id = {CLK_AUDIO},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_USB] = {
++		.name = "usb",
++		.sta_mask = PWR_STATUS_USB,
++		.ctl_offs = SPM_USB_PWR_CON,
++		.sram_pdn_bits = GENMASK(10, 8),
++		.sram_pdn_ack_bits = GENMASK(14, 12),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_USB2] = {
++		.name = "usb2",
++		.sta_mask = PWR_STATUS_USB2,
++		.ctl_offs = SPM_USB2_PWR_CON,
++		.sram_pdn_bits = GENMASK(10, 8),
++		.sram_pdn_ack_bits = GENMASK(14, 12),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG] = {
++		.name = "mfg",
++		.sta_mask = PWR_STATUS_MFG,
++		.ctl_offs = SPM_MFG_PWR_CON,
++		.sram_pdn_bits = GENMASK(11, 8),
++		.sram_pdn_ack_bits = GENMASK(19, 16),
++		.clk_id = {CLK_MFG},
++		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
++		.active_wakeup = true,
++	},
++};
++
++/*
+  * MT6797 power domain support
+  */
+ 
+@@ -852,6 +933,22 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 	}
+ };
+ 
++static const struct scp_soc_data mt2712_data = {
++	.domains = scp_domain_data_mt2712,
++	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
++	.regs = {
++		.scp_ctrl = {
++			.pwr_sta_offs = SPM_PWR_STATUS,
++			.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
++		},
++		.bus_prot = {
++			.set_offs = INFRA_TOPAXI_PROTECTEN_SET,
++			.clr_offs = INFRA_TOPAXI_PROTECTEN_CLR,
++			.sta_offs = INFRA_TOPAXI_PROTECTSTA1
++		},
++	}
++};
++
+ static const struct scp_soc_data mt6797_data = {
+ 	.domains = scp_domain_data_mt6797,
+ 	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
+@@ -910,6 +1007,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ 		.compatible = "mediatek,mt2701-scpsys",
+ 		.data = &mt2701_data,
+ 	}, {
++		.compatible = "mediatek,mt2712-scpsys",
++		.data = &mt2712_data,
++	}, {
+ 		.compatible = "mediatek,mt6797-scpsys",
+ 		.data = &mt6797_data,
+ 	}, {
+-- 
+1.9.1
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
-
-> ---
->   drivers/clk/ti/adpll.c | 2 +-
->   drivers/clk/ti/apll.c  | 2 +-
->   drivers/clk/ti/fapll.c | 4 ++--
->   3 files changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-> index 255cafb..d5c6db4 100644
-> --- a/drivers/clk/ti/adpll.c
-> +++ b/drivers/clk/ti/adpll.c
-> @@ -486,7 +486,7 @@ static u8 ti_adpll_get_parent(struct clk_hw *hw)
->   	return 0;
->   }
->  =20
-> -static struct clk_ops ti_adpll_ops =3D {
-> +static const struct clk_ops ti_adpll_ops =3D {
->   	.prepare =3D ti_adpll_prepare,
->   	.unprepare =3D ti_adpll_unprepare,
->   	.is_prepared =3D ti_adpll_is_prepared,
-> diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
-> index 06f486b..83b148f 100644
-> --- a/drivers/clk/ti/apll.c
-> +++ b/drivers/clk/ti/apll.c
-> @@ -304,7 +304,7 @@ static void omap2_apll_disable(struct clk_hw *hw)
->   	ti_clk_ll_ops->clk_writel(v, &ad->control_reg);
->   }
->  =20
-> -static struct clk_ops omap2_apll_ops =3D {
-> +static const struct clk_ops omap2_apll_ops =3D {
->   	.enable		=3D &omap2_apll_enable,
->   	.disable	=3D &omap2_apll_disable,
->   	.is_enabled	=3D &omap2_apll_is_enabled,
-> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-> index 66a0d0e..071af44 100644
-> --- a/drivers/clk/ti/fapll.c
-> +++ b/drivers/clk/ti/fapll.c
-> @@ -268,7 +268,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsig=
-ned long rate,
->   	return 0;
->   }
->  =20
-> -static struct clk_ops ti_fapll_ops =3D {
-> +static const struct clk_ops ti_fapll_ops =3D {
->   	.enable =3D ti_fapll_enable,
->   	.disable =3D ti_fapll_disable,
->   	.is_enabled =3D ti_fapll_is_enabled,
-> @@ -478,7 +478,7 @@ static int ti_fapll_synth_set_rate(struct clk_hw *hw,=
- unsigned long rate,
->   	return 0;
->   }
->  =20
-> -static struct clk_ops ti_fapll_synt_ops =3D {
-> +static const struct clk_ops ti_fapll_synt_ops =3D {
->   	.enable =3D ti_fapll_synth_enable,
->   	.disable =3D ti_fapll_synth_disable,
->   	.is_enabled =3D ti_fapll_synth_is_enabled,
->=20
