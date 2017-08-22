@@ -1,53 +1,190 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Dmitry Shmidt <dimitrysh@google.com>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH 1/2] clk: hi6220: change watchdog clock source
-Date: Tue, 29 Aug 2017 15:58:37 +0800
-Message-Id: <1503993518-24428-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:64366 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932222AbdHVKag (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2017 06:30:36 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH 4/9] arm: dts: mt2712: Add clock controller device nodes
+Date: Tue, 22 Aug 2017 18:28:17 +0800
+Message-ID: <1503397702-7201-5-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1503397702-7201-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1503397702-7201-1-git-send-email-weiyi.lu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The old code uses tcxo (19.2MHz) as watchdog clock but actually the
-watchdog uses 32K clock, as result the watchdog timeout cannot be set
-correctly and delay long time to reset SoC.
+Add clock controller nodes for MT2712, include topckgen, infracfg,
+pericfg, mcucfg and apmixedsys. This patch also add six oscillators that
+provide clocks for MT2712.
 
-So this patch is to use 'ref32k' as clock source for watchdog.
-
-Fixes: 72ea48610d43 ("clk: hi6220: Clock driver support for Hisilicon hi6220 SoC")
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/clk/hisilicon/clk-hi6220.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 115 ++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index 4181b68..e786d71 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -55,9 +55,9 @@ static struct hisi_fixed_factor_clock hi6220_fixed_factor_clks[] __initdata = {
+diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+index 92e4c50..6338a1f 100644
+--- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+@@ -5,6 +5,7 @@
+  * SPDX-License-Identifier: (GPL-2.0 OR MIT)
+  */
+ 
++#include <dt-bindings/clock/mt2712-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include "mt2712-pinfunc.h"
+@@ -74,6 +75,48 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
++
++	clk32k: oscillator@1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32000>;
++		clock-output-names = "clk32k";
++	};
++
++	clkfpc: oscillator@2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "clkfpc";
++	};
++
++	clkaud_ext_i_0: oscillator@3 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <6500000>;
++		clock-output-names = "clkaud_ext_i_0";
++	};
++
++	clkaud_ext_i_1: oscillator@4 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <196608000>;
++		clock-output-names = "clkaud_ext_i_1";
++	};
++
++	clkaud_ext_i_2: oscillator@5 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <180633600>;
++		clock-output-names = "clkaud_ext_i_2";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupt-parent = <&gic>;
+@@ -87,6 +130,24 @@
+ 			      (GIC_CPU_MASK_RAW(0x13) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt2712-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt2712-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	pericfg: syscon@10003000 {
++		compatible = "mediatek,mt2712-pericfg", "syscon";
++		reg = <0 0x10003000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	syscfg_pctl_a: syscfg_pctl_a@10005000 {
+ 		compatible = "mediatek,mt2712-pctl-a-syscfg", "syscon";
+ 		reg = <0 0x10005000 0 0x1000>;
+@@ -114,6 +175,18 @@
+ 		status = "disabled";
+ 	};
+ 
++	apmixedsys: syscon@10209000 {
++		compatible = "mediatek,mt2712-apmixedsys", "syscon";
++		reg = <0 0x10209000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mcucfg: syscon@10220000 {
++		compatible = "mediatek,mt2712-mcucfg", "syscon";
++		reg = <0 0x10220000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	sysirq: interrupt-controller@10220a80 {
+ 		compatible = "mediatek,mt2712-sysirq",
+ 			     "mediatek,mt6577-sysirq";
+@@ -185,5 +258,47 @@
+ 		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
++
++	mfgcfg: syscon@13000000 {
++		compatible = "mediatek,mt2712-mfgcfg", "syscon";
++		reg = <0 0x13000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mmsys: syscon@14000000 {
++		compatible = "mediatek,mt2712-mmsys", "syscon";
++		reg = <0 0x14000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	imgsys: syscon@15000000 {
++		compatible = "mediatek,mt2712-imgsys", "syscon";
++		reg = <0 0x15000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	bdpsys: syscon@15010000 {
++		compatible = "mediatek,mt2712-bdpsys", "syscon";
++		reg = <0 0x15010000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vdecsys: syscon@16000000 {
++		compatible = "mediatek,mt2712-vdecsys", "syscon";
++		reg = <0 0x16000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vencsys: syscon@18000000 {
++		compatible = "mediatek,mt2712-vencsys", "syscon";
++		reg = <0 0x18000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	jpgdecsys: syscon@19000000 {
++		compatible = "mediatek,mt2712-jpgdecsys", "syscon";
++		reg = <0 0x19000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
  };
  
- static struct hisi_gate_clock hi6220_separated_gate_clks_ao[] __initdata = {
--	{ HI6220_WDT0_PCLK,   "wdt0_pclk",   "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 12, 0, },
--	{ HI6220_WDT1_PCLK,   "wdt1_pclk",   "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 13, 0, },
--	{ HI6220_WDT2_PCLK,   "wdt2_pclk",   "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 14, 0, },
-+	{ HI6220_WDT0_PCLK,   "wdt0_pclk",   "ref32k",   CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 12, 0, },
-+	{ HI6220_WDT1_PCLK,   "wdt1_pclk",   "ref32k",   CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 13, 0, },
-+	{ HI6220_WDT2_PCLK,   "wdt2_pclk",   "ref32k",   CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 14, 0, },
- 	{ HI6220_TIMER0_PCLK, "timer0_pclk", "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 15, 0, },
- 	{ HI6220_TIMER1_PCLK, "timer1_pclk", "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 16, 0, },
- 	{ HI6220_TIMER2_PCLK, "timer2_pclk", "clk_tcxo", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x630, 17, 0, },
 -- 
-2.7.4
+1.9.1
+
