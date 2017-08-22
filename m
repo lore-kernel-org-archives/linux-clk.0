@@ -1,47 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:36138 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751655AbdHBCn4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Aug 2017 22:43:56 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 01 Aug 2017 19:41:41 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: kernel@pengutronix.de, sboyd@codeaurora.org, aisheng.dong@nxp.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@free-electrons.com, marek.vasut@gmail.com,
-        richard@nod.at, robh+dt@kernel.org, mark.rutland@arm.com,
-        han.xu@nxp.com, fabio.estevam@freescale.com,
-        LW@karo-electronics.de, linux-mtd@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] ARM: dts: imx7: add NAND support
-In-Reply-To: <20170614151146.GC30112@dragon>
-References: <cover.9fab78eaa869dbad4c9ad7e8578c9cef3e49daa8.1496961128.git-series.stefan@agner.ch>
- <20170614151146.GC30112@dragon>
-Message-ID: <c05aff108433c9ced4c85efcf3ba65e8@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC
+ example)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Linux PM list
+	<linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <e53af278-061d-bc9b-6f05-65c5e5491d00@samsung.com>
+Date: Tue, 22 Aug 2017 11:27:06 +0200
+MIME-version: 1.0
+In-reply-to: 
+	<CAMuHMdUy5hi3fLVW6J1o=D194ASjr7Vz-pjWtddHyybK4RZxxA@mail.gmail.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
+	<1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+	<CAMuHMdUy5hi3fLVW6J1o=D194ASjr7Vz-pjWtddHyybK4RZxxA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+Hi Geert,
 
-On 2017-06-14 08:11, Shawn Guo wrote:
-> On Thu, Jun 08, 2017 at 03:34:46PM -0700, Stefan Agner wrote:
->> Stefan Agner (3):
->>   clk: imx7d: create clocks behind rawnand clock gate
->>   ARM: dts: imx7: add GPMI NAND and APBH DMA
->>   ARM: dts: imx7-colibri: add NAND support
-> 
-> Both dts patches look good to me.  Please ping me after the clk patch
-> lands on mainline.
+On 2017-08-22 11:21, Geert Uytterhoeven wrote:
+> On Mon, Aug 21, 2017 at 10:04 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Patches for clocks drivers change the way the clock provider is initialized.
+>> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+>> infrastructure is being used. This is needed to let driver to use runtime PM
+>> feature and integrate with generic power domains. The side-effect of this change
+>> is a delay in clock provider registeration during system boot, so early
+>> initialized drivers might get EPROBEDEFER error when requesting their clocks.
+>> This was an issue for IOMMU drivers, but IOMMU deferred probe support has been
+>> finally merged to v4.13-rc1 and now it is handled correctly.
+> Any chances you have PHY devices falling back to polling due to this,
+> cfr. https://patchwork.kernel.org/patch/9734175/?
 
-The clk patch landed in mainline. These two patches seem to apply fine
-still. Can you queue them for -next?
+At least in case of Exynos5433 all related PHY drivers correctly handle 
+deferred
+probe and don't fallback to half-functional mode.
 
-FWIW, tested it on a Colibri iMX7 using v3.13-rc3, works fine after
-reverting the GPC changes (see my other email with subject "i.MX 7 boot
-freeze with 4.13-rc3").
+Best regards
 
---
-Stefan
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
