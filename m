@@ -1,47 +1,20 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, cl@rock-chips.com, andy.yan@rock-chips.com, wdc@rock-chips.com
+Subject: Re: [PATCH v2 2/4] clk: rockchip: rv1108: add ACLK_GMAC and PCLK_GMAC clk id
+Date: Tue, 22 Aug 2017 02:52:46 +0200
+Message-ID: <2771200.zl9p58xxmH@phil>
+In-Reply-To: <1503303367-17915-3-git-send-email-zhangqing@rock-chips.com>
+References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com> <1503303367-17915-3-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170721201631.GB19878@codeaurora.org>
-References: <1492624001-3758-10-git-send-email-ykaneko0929@gmail.com> <20170721201631.GB19878@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Aug 2017 09:56:32 +0200
-Message-ID: <CAMuHMdXOfH=u+6nQnHrEW95+HcNCh_5h_Mi9wTg7JXAgr2w0OA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Fix SD divider setting
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Am Montag, 21. August 2017, 16:16:05 CEST schrieb Elaine Zhang:
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-On Fri, Jul 21, 2017 at 10:16 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 04/20, Yoshihiro Kaneko wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> This patch fixed the SD divider settiing for corresponding to the change
->> in the HS200/HS400 mode.
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->> This patch is based on the clk-next branch of linux-clk tree.
->
-> Geert?
+applied for 4.14 after adapting the subject and adding a commit message
 
-This patch was superseded by Wolfram's series "[PATCH 0/3] clk: renesas:
-rcar-gen3-cpg: updates to SD divider table", which he retracted after noticing
-issues on some SoCs.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Heiko
