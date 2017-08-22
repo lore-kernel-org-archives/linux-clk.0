@@ -1,136 +1,91 @@
-Return-Path: <cwchoi00@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL v2] rockchip clock changes for 4.14
+Date: Tue, 22 Aug 2017 22:48:32 +0200
+Message-ID: <2504131.RNZrFhkOWB@phil>
+In-Reply-To: <2274885.hdbqj6Qr1b@phil>
+References: <2274885.hdbqj6Qr1b@phil>
 MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <1501839294-478-3-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170804093515eucas1p1cc2273ba02d86767c5b2533430577698@eucas1p1.samsung.com>
- <1501839294-478-1-git-send-email-m.szyprowski@samsung.com> <1501839294-478-3-git-send-email-m.szyprowski@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Fri, 4 Aug 2017 23:17:21 +0900
-Message-ID: <CAGTfZH3hK0BTTLHFrh+BNph4mak8-O1vh7LOni_AFpzi-QE28Q@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] clk: samsung: Add support for runtime PM
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Mike, Stephen,
 
-I tested these patches on Exynos5433-based TM2.
-It is well working and it is necessary for Exynos.
+please find below rockchip clock-changes targetted at 4.14.
+As we talked about before, it includes the approximation-callback
+for fractional dividers, Acked by Stephen.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Apart from that we have the usual changes as described by the tag.
+So if stuff looks ok, please pull.
 
-Regards,
-Chanwoo Choi
+changes in pull v2:
+Compared to v1 of the pull I included some more clock-ids and
+rv1108 fixes that came in meanwhile.
 
 
-On Fri, Aug 4, 2017 at 6:34 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> This patch adds struct device pointer to samsung_clk_provider and forwarding it
-> to clk_register_* functions, so drivers can register clocks, which use runtime
-> pm feature.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/clk/samsung/clk-pll.c |  2 +-
->  drivers/clk/samsung/clk.c     | 12 ++++++------
->  drivers/clk/samsung/clk.h     |  1 +
->  3 files changed, 8 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 037c61484098..41ebb94d2855 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -1388,7 +1388,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->         pll->lock_reg = base + pll_clk->lock_offset;
->         pll->con_reg = base + pll_clk->con_offset;
->
-> -       ret = clk_hw_register(NULL, &pll->hw);
-> +       ret = clk_hw_register(ctx->dev, &pll->hw);
->         if (ret) {
->                 pr_err("%s: failed to register pll clock %s : %d\n",
->                         __func__, pll_clk->name, ret);
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index 7ce0fa86c5ff..aef97b091b50 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -134,7 +134,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
->         unsigned int idx, ret;
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
-> -               clk_hw = clk_hw_register_fixed_rate(NULL, list->name,
-> +               clk_hw = clk_hw_register_fixed_rate(ctx->dev, list->name,
->                         list->parent_name, list->flags, list->fixed_rate);
->                 if (IS_ERR(clk_hw)) {
->                         pr_err("%s: failed to register clock %s\n", __func__,
-> @@ -163,7 +163,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
->         unsigned int idx;
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
-> -               clk_hw = clk_hw_register_fixed_factor(NULL, list->name,
-> +               clk_hw = clk_hw_register_fixed_factor(ctx->dev, list->name,
->                         list->parent_name, list->flags, list->mult, list->div);
->                 if (IS_ERR(clk_hw)) {
->                         pr_err("%s: failed to register clock %s\n", __func__,
-> @@ -184,7 +184,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
->         unsigned int idx, ret;
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
-> -               clk_hw = clk_hw_register_mux(NULL, list->name,
-> +               clk_hw = clk_hw_register_mux(ctx->dev, list->name,
->                         list->parent_names, list->num_parents, list->flags,
->                         ctx->reg_base + list->offset,
->                         list->shift, list->width, list->mux_flags, &ctx->lock);
-> @@ -217,13 +217,13 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
->                 if (list->table)
-> -                       clk_hw = clk_hw_register_divider_table(NULL,
-> +                       clk_hw = clk_hw_register_divider_table(ctx->dev,
->                                 list->name, list->parent_name, list->flags,
->                                 ctx->reg_base + list->offset,
->                                 list->shift, list->width, list->div_flags,
->                                 list->table, &ctx->lock);
->                 else
-> -                       clk_hw = clk_hw_register_divider(NULL, list->name,
-> +                       clk_hw = clk_hw_register_divider(ctx->dev, list->name,
->                                 list->parent_name, list->flags,
->                                 ctx->reg_base + list->offset, list->shift,
->                                 list->width, list->div_flags, &ctx->lock);
-> @@ -255,7 +255,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
->         unsigned int idx, ret;
->
->         for (idx = 0; idx < nr_clk; idx++, list++) {
-> -               clk_hw = clk_hw_register_gate(NULL, list->name, list->parent_name,
-> +               clk_hw = clk_hw_register_gate(ctx->dev, list->name, list->parent_name,
->                                 list->flags, ctx->reg_base + list->offset,
->                                 list->bit_idx, list->gate_flags, &ctx->lock);
->                 if (IS_ERR(clk_hw)) {
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index b8ca0dd3a38b..f0acae4f5d1b 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -24,6 +24,7 @@
->   */
->  struct samsung_clk_provider {
->         void __iomem *reg_base;
-> +       struct device *dev;
->         spinlock_t lock;
->         /* clk_data must be the last entry due to variable lenght 'hws' array */
->         struct clk_hw_onecell_data clk_data;
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks
+Heiko
+
+
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.14-rockchip-clk1
+
+for you to fetch changes up to 64a1644bc3baa62b769455d811b7999b9a1c6cd1:
+
+  clk: rockchip: fix the rv1108 clk_mac sel register description (2017-08-22 02:55:03 +0200)
+
+----------------------------------------------------------------
+The biggest change is fixing the jitter on the fractional clock-type
+Rockchip socs experience with the default approximation. For that we
+introduce the ability to override it with a clock-specific approximation
+and use that to create the needed rate settings as described in the
+Rockchip soc manuals (same for all Rockchip socs).
+
+Apart from that we have support for the rk3126 clock controller
+which is similar to the rk3128 with some minimal differences
+and a lot of improvements and fixes for the rv1108 clock controller
+(missing clocks, some clock-ids, naming fixes, register fixes).
+
+----------------------------------------------------------------
+Elaine Zhang (19):
+      clk: rockchip: add more clk ids for rv1108
+      clk: rockchip: rename the clk id for HCLK_I2S1_2CH
+      clk: rockchip: fix up indentation of some RV1108 clock-ids
+      clk: rockchip: support more rates for rv1108 cpuclk
+      clk: rockchip: fix up the pll clks error for rv1108 SoC
+      clk: rockchip: support more clks for rv1108
+      clk: rockchip: fix up some clks describe error for rv1108 SoC
+      clk: rockchip: rename some of clks for rv1108 SoC
+      clk: rockchip: add some critical clocks for rv1108 SoC
+      dt-bindings: add documentation for rk3126 clock
+      clk: rockchip: modify rk3128 clk driver to also support rk3126
+      clk: fractional-divider: allow overriding of approximation
+      clk: rockchip: add special approximation to fix up fractional clk's jitter
+      clk: rockchip: add rk3228 sclk_sdio_src ID
+      clk: rockchip: add rv1108 ACLK_GAMC and PCLK_GMAC ID
+      clk: rockchip: add rk3228 SCLK_SDIO_SRC clk id
+      clk: rockchip: add rv1108 ACLK_GMAC and PCLK_GMAC clocks
+      clk: rockchip: rename rv1108 macphy clock to mac
+      clk: rockchip: fix the rv1108 clk_mac sel register description
+
+Heiko Stuebner (2):
+      Merge branch 'v4.14-shared/clkids' into v4.14-clk/next
+      Merge branch 'v4.14-shared/clkids' into v4.14-clk/next
+
+ .../bindings/clock/rockchip,rk3128-cru.txt         |   8 +-
+ drivers/clk/clk-fractional-divider.c               |  28 +-
+ drivers/clk/rockchip/clk-rk3128.c                  |  69 ++-
+ drivers/clk/rockchip/clk-rk3228.c                  |   2 +-
+ drivers/clk/rockchip/clk-rv1108.c                  | 462 +++++++++++++++++----
+ drivers/clk/rockchip/clk.c                         |  36 ++
+ include/dt-bindings/clock/rk3228-cru.h             |   1 +
+ include/dt-bindings/clock/rv1108-cru.h             | 125 +++++-
+ include/linux/clk-provider.h                       |   3 +
+ 9 files changed, 611 insertions(+), 123 deletions(-)
