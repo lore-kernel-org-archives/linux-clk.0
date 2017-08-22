@@ -1,23 +1,91 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, shawn.lin@rock-chips.com, andy.yan@rock-chips.com
-Subject: Re: [PATCH v3 5/9] clk: rockchip: fix up the pll clks error for rv1108 SoC
-Date: Tue, 08 Aug 2017 17:11:51 +0200
-Message-ID: <31298853.0NzRDp6Diq@phil>
-In-Reply-To: <1502176675-32228-1-git-send-email-zhangqing@rock-chips.com>
-References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com> <1502176675-32228-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH 5/9] dt-bindings: soc: add MT2712 power dt-bindings
+Date: Tue, 22 Aug 2017 18:28:18 +0800
+Message-ID: <1503397702-7201-6-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1503397702-7201-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1503397702-7201-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 8. August 2017, 15:17:55 CEST schrieb Elaine Zhang:
-> fix up the lock_shift describe error.
-> remove the ROCKCHIP_PLL_SYNC_RATE flag for gpll.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Add power dt-bindings for MT2712.
 
-already picked the one from Andy's v2, so ignored this one
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |  3 +++
+ include/dt-bindings/power/mt2712-power.h           | 26 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 include/dt-bindings/power/mt2712-power.h
 
-
-Heiko
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index 40056f7..76bf45b 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -12,11 +12,13 @@ power/power_domain.txt. It provides the power domains defined in
+ - include/dt-bindings/power/mt8173-power.h
+ - include/dt-bindings/power/mt6797-power.h
+ - include/dt-bindings/power/mt2701-power.h
++- include/dt-bindings/power/mt2712-power.h
+ - include/dt-bindings/power/mt7622-power.h
+ 
+ Required properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-scpsys"
++	- "mediatek,mt2712-scpsys"
+ 	- "mediatek,mt6797-scpsys"
+ 	- "mediatek,mt7622-scpsys"
+ 	- "mediatek,mt8173-scpsys"
+@@ -27,6 +29,7 @@ Required properties:
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
+ 	Required clocks for MT2701: "mm", "mfg", "ethif"
++	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
+ 	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT7622: "hif_sel"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
+new file mode 100644
+index 0000000..92b46d7
+--- /dev/null
++++ b/include/dt-bindings/power/mt2712-power.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2017 MediaTek Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
++ */
++
++#ifndef _DT_BINDINGS_POWER_MT2712_POWER_H
++#define _DT_BINDINGS_POWER_MT2712_POWER_H
++
++#define MT2712_POWER_DOMAIN_MM		0
++#define MT2712_POWER_DOMAIN_VDEC	1
++#define MT2712_POWER_DOMAIN_VENC	2
++#define MT2712_POWER_DOMAIN_ISP		3
++#define MT2712_POWER_DOMAIN_AUDIO	4
++#define MT2712_POWER_DOMAIN_USB		5
++#define MT2712_POWER_DOMAIN_USB2	6
++#define MT2712_POWER_DOMAIN_MFG		7
++
++#endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
+-- 
+1.9.1
