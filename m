@@ -1,45 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 31 Aug 2017 18:36:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <plaes@plaes.org>
+From: Priit Laes <plaes@plaes.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
-	gabriel.fernandez.st@gmail.com,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: Re: [RESEND PATCH v8 2/3] clk: gate: expose clk_gate_ops::is_enabled
-Message-ID: <20170901013642.GQ21656@codeaurora.org>
-References: <1503316742-22145-1-git-send-email-gabriel.fernandez@st.com>
- <1503316742-22145-3-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503316742-22145-3-git-send-email-gabriel.fernandez@st.com>
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-sunxi@googlegroups.com,
+	Jonathan Liu <net147@gmail.com>,
+	Olliver Schinagl <oliver@schinagl.nl>,
+	Priit Laes <plaes@plaes.org>
+Subject: [PATCH v7 3/5] dt-bindings: List devicetree binding for the CCU of Allwinner A10
+Date: Wed, 23 Aug 2017 20:23:31 +0300
+Message-Id: <8164ec90ec4949801522a1b6b3fe57efe9feb60e.1503507503.git-series.plaes@plaes.org>
+In-Reply-To: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
+References: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
+In-Reply-To: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
+References: <cover.2a284ee63f45063ec7c0720b1098860e0b516c6d.1503507503.git-series.plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/21, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch exposes clk_gate_ops::is_enabled as functions
-> that can be directly called and assigned in places like this so
-> we don't need wrapper functions that do nothing besides forward
-> the call.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+Allwinner A10 is now driven by sunxi-ng CCU driver.
 
-Applied to clk-next
+Add devicetree binding for it.
 
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Priit Laes <plaes@plaes.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 2712891..7eda08e 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
+ 
+ Required properties :
+ - compatible: must contain one of the following compatibles:
++		- "allwinner,sun4i-a10-ccu"
+ 		- "allwinner,sun5i-a10s-ccu"
+ 		- "allwinner,sun5i-a13-ccu"
+ 		- "allwinner,sun6i-a31-ccu"
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
