@@ -1,87 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:35438 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932222AbdHVK23 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Aug 2017 06:28:29 -0400
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Subject: [PATCH v2 0/9] Mediatek MT2712 clock and scpsys support 
-Date: Tue, 22 Aug 2017 18:28:13 +0800
-Message-ID: <1503397702-7201-1-git-send-email-weiyi.lu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi: fix uninitialized access
+Date: Wed, 23 Aug 2017 16:39:27 +0200
+Message-Id: <20170823143937.2176025-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series is based on v4.13-next-soc and composed of
-clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
+gcc-8 reports an uninitialized variable access in a code path
+that we would see with incorrect DTB input:
 
-changes since v1:
-- Rebase to v4.13-next-soc.
-- Refine scpsys and infracfg for bus protection.
+drivers/clk/sunxi/clk-sun8i-bus-gates.c: In function 'sun8i_h3_bus_gates_init':
+drivers/clk/sunxi/clk-sun8i-bus-gates.c:85:27: error: 'clk_parent' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Weiyi Lu (9):
-  dt-bindings: ARM: Mediatek: Document bindings for MT2712
-  clk: mediatek: Add dt-bindings for MT2712 clocks
-  clk: mediatek: Add MT2712 clock support
-  arm: dts: mt2712: Add clock controller device nodes
-  dt-bindings: soc: add MT2712 power dt-bindings
-  soc: mediatek: extend bus protection API
-  soc: mediatek: add dependent clock jpgdec/audio for scpsys
-  soc: mediatek: add MT2712 scpsys support
-  arm: dts: Add power controller device node of MT2712
+This works around by skipping invalid input and printing a warning
+instead if it ever happens. The problem was apparently part of the
+initiali driver submission, but older compilers don't notice it.
 
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   |   22 +
- .../bindings/arm/mediatek/mediatek,mcucfg.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |    3 +
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |  131 ++
- drivers/clk/mediatek/Kconfig                       |   50 +
- drivers/clk/mediatek/Makefile                      |    8 +
- drivers/clk/mediatek/clk-mt2712-bdp.c              |  102 ++
- drivers/clk/mediatek/clk-mt2712-img.c              |   80 ++
- drivers/clk/mediatek/clk-mt2712-jpgdec.c           |   76 ++
- drivers/clk/mediatek/clk-mt2712-mfg.c              |   75 ++
- drivers/clk/mediatek/clk-mt2712-mm.c               |  170 +++
- drivers/clk/mediatek/clk-mt2712-vdec.c             |   94 ++
- drivers/clk/mediatek/clk-mt2712-venc.c             |   77 ++
- drivers/clk/mediatek/clk-mt2712.c                  | 1399 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h                     |    2 +
- drivers/clk/mediatek/clk-pll.c                     |   13 +-
- drivers/soc/mediatek/mtk-infracfg.c                |   32 +-
- drivers/soc/mediatek/mtk-scpsys.c                  |  199 ++-
- include/dt-bindings/clock/mt2712-clk.h             |  427 ++++++
- include/dt-bindings/power/mt2712-power.h           |   26 +
- include/linux/soc/mediatek/infracfg.h              |   12 +-
- 31 files changed, 3013 insertions(+), 38 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
- create mode 100644 drivers/clk/mediatek/clk-mt2712-bdp.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-jpgdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-mfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712-venc.c
- create mode 100644 drivers/clk/mediatek/clk-mt2712.c
- create mode 100644 include/dt-bindings/clock/mt2712-clk.h
- create mode 100644 include/dt-bindings/power/mt2712-power.h
+Fixes: ab6e23a4e388 ("clk: sunxi: Add H3 clocks support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/sunxi/clk-sun8i-bus-gates.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/drivers/clk/sunxi/clk-sun8i-bus-gates.c b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
+index 63fdb790df29..bee305bdddbe 100644
+--- a/drivers/clk/sunxi/clk-sun8i-bus-gates.c
++++ b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
+@@ -78,6 +78,10 @@ static void __init sun8i_h3_bus_gates_init(struct device_node *node)
+ 			clk_parent = APB1;
+ 		else if (index >= 96 && index <= 127)
+ 			clk_parent = APB2;
++		else {
++			WARN_ON(true);
++			continue;
++		}
+ 
+ 		clk_reg = reg + 4 * (index / 32);
+ 		clk_bit = index % 32;
+-- 
+2.9.0
