@@ -1,102 +1,50 @@
-Return-Path: <lori.hikichi@broadcom.com>
-Return-Path: <lori.hikichi@broadcom.com>
-From: Lori Hikichi <lori.hikichi@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Lee Jones <lee.jones@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Lori Hikichi <lori.hikichi@broadcom.com>,
-	Simran Rai <ssimran@broadcom.com>
-Subject: [PATCH v1 2/4] clk: iproc: Fix error in the pll post divider rate calculation
-Date: Mon, 14 Aug 2017 12:00:39 -0700
-Message-Id: <1502737241-2040-3-git-send-email-lori.hikichi@broadcom.com>
-In-Reply-To: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
-References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
+	linux-clk@vger.kernel.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>
+Subject: [PATCH 1/2] dt-bindings: aspeed-scu: Add clock and reset properties
+Date: Wed, 23 Aug 2017 15:39:56 +0930
+Message-Id: <20170823060957.31167-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-The pll post divider code was using DIV_ROUND_UP when determining the
-divider value best suited to produce the target frequency.
-Using DIV_ROUND_CLOSEST will give us better divider values when
-the division results in a small remainder.
-Also, change the post divider clock over to the determine_rate api
-instead of round_rate.
-
-Signed-off-by: Simran Rai <ssimran@broadcom.com>
-Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/clk/bcm/clk-iproc-pll.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+ Documentation/devicetree/bindings/mfd/aspeed-scu.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index 9514ecf..7df010b 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -602,25 +602,26 @@ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
- 	return clk->rate;
- }
+diff --git a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+index 4fc5b83726d6..ce8cf0ec6279 100644
+--- a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
++++ b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+@@ -9,10 +9,16 @@ Required properties:
+ 		"aspeed,g5-scu", "syscon", "simple-mfd"
  
--static long iproc_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--		unsigned long *parent_rate)
-+static int iproc_clk_determine_rate(struct clk_hw *hw,
-+		struct clk_rate_request *req)
- {
--	unsigned int div;
-+	unsigned int bestdiv;
+ - reg:		contains the offset and length of the SCU memory region
++- #clock-cells: should be set to <1> - the system controller is also a
++	clock provider
++- #reset-cells: should be set to <1> - the system controller is also a
++	reset line provider
  
--	if (rate == 0 || *parent_rate == 0)
-+	if (req->rate == 0)
- 		return -EINVAL;
-+	if (req->rate == req->best_parent_rate)
-+		return 0;
+ Example:
  
--	if (rate == *parent_rate)
--		return *parent_rate;
-+	bestdiv = DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
-+	if (bestdiv < 2)
-+		req->rate = req->best_parent_rate;
- 
--	div = DIV_ROUND_UP(*parent_rate, rate);
--	if (div < 2)
--		return *parent_rate;
-+	if (bestdiv > 256)
-+		bestdiv = 256;
- 
--	if (div > 256)
--		div = 256;
-+	req->rate = req->best_parent_rate / bestdiv;
- 
--	return *parent_rate / div;
-+	return 0;
- }
- 
- static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -635,10 +636,10 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (rate == 0 || parent_rate == 0)
- 		return -EINVAL;
- 
-+	div = DIV_ROUND_CLOSEST(parent_rate, rate);
- 	if (ctrl->flags & IPROC_CLK_MCLK_DIV_BY_2)
--		div = DIV_ROUND_UP(parent_rate, rate * 2);
--	else
--		div = DIV_ROUND_UP(parent_rate, rate);
-+		div /=  2;
-+
- 	if (div > 256)
- 		return -EINVAL;
- 
-@@ -662,7 +663,7 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.enable = iproc_clk_enable,
- 	.disable = iproc_clk_disable,
- 	.recalc_rate = iproc_clk_recalc_rate,
--	.round_rate = iproc_clk_round_rate,
-+	.determine_rate = iproc_clk_determine_rate,
- 	.set_rate = iproc_clk_set_rate,
+ syscon: syscon@1e6e2000 {
+ 	compatible = "aspeed,ast2400-scu", "syscon", "simple-mfd";
+ 	reg = <0x1e6e2000 0x1a8>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
  };
- 
 -- 
-1.9.1
+2.14.1
