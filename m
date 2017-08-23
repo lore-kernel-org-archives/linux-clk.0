@@ -1,44 +1,34 @@
-Return-Path: <nikita.yoush@cogentembedded.com>
-Return-Path: <nikita.yoush@cogentembedded.com>
-Subject: Re: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
-To: "Wladimir J. van der Laan" <laanwj@gmail.com>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Sascha Hauer
- <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
- Ilia Mirkin <imirkin@alum.mit.edu>, linux-clk@vger.kernel.org,
- Chris Healy <cphealy@gmail.com>
-References: <20170818163058.22252-1-l.stach@pengutronix.de>
- <CAOMZO5BoZNQrmDMXE0CDxLS-v7xVu4z87Ezdma1X1QCV56rPtQ@mail.gmail.com>
- <20170821155412.GA24652@amethyst.visucore.com>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Message-ID: <4d5dbc0a-56b0-52a3-482d-2b3348c9c53b@cogentembedded.com>
-Date: Mon, 21 Aug 2017 18:58:19 +0300
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 23 Aug 2017 15:55:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@baylibre.com, robdclark@gmail.com,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: msm8916: Fix bimc gpu clock ops
+Message-ID: <20170823225543.GJ21656@codeaurora.org>
+References: <20170818142250.27867-1-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20170821155412.GA24652@amethyst.visucore.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170818142250.27867-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-> I'm trying to, but getting a non-clock-related problem on the i.mx51 babbage board
-> with current kernel preventing the display from coming up at all:
+On 08/18, Georgi Djakov wrote:
+> The clock bimc_gpu_clk_src is incorrectly set to use the shared rcg2
+> ops, which are for RCGs with child branches controlled by different
+> CPUs.
 > 
->     [    0.824712] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->     [    0.831411] [drm] No driver support for vblank timestamp query.
->     [    0.837632] imx-drm display-subsystem: bound imx-ipuv3-crtc.0 (ops ipu_crtc_ops)
->     [    0.845214] imx-drm display-subsystem: bound imx-ipuv3-crtc.1 (ops ipu_crtc_ops)
->     [    0.852720] imx-drm display-subsystem: failed to bind display@di0 (ops imx_pd_ops): -19
->     [    0.860994] imx-drm display-subsystem: master bind failed: -19
+> The result of the incorrect ops is that the GPU's PM runtime may leave
+> this clock set at a very low rate. Fix this issue by using the correct
+> rcg2 ops.
+> 
+> Fixes: a2e8272f3f89 ("clk: qcom: Add MSM8916 gpu clocks")
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
 
-I believe this should be fixed by
+This is the only user of clk_rcg2_shared_ops. I'm totally lost
+why we added this in the first place.
 
-commit 799ee2970485dc206c3bf347d6e6827c04d5e4f9
-Author: Philipp Zabel <p.zabel@pengutronix.de>
-Date:   Mon Jun 12 17:54:29 2017 +0200
-
-  drm/imx: parallel-display: Accept drm_of_find_panel_or_bridge failure
-
-
-Nikita
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
