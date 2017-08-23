@@ -1,39 +1,47 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 31 Aug 2017 15:01:20 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
-Message-ID: <20170831070118.GA3328@dragon>
-References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
- <20170809173318.GD2146@codeaurora.org>
- <20170813141851.GD31819@dragon>
- <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 23 Aug 2017 15:42:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [git pull] clk: renesas: Updates for v4.14
+Message-ID: <20170823224216.GH21656@codeaurora.org>
+References: <1502958542-2900-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
+In-Reply-To: <1502958542-2900-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 30, 2017 at 03:31:38PM +0000, A.s. Dong wrote:
-> IMHO how about implement a of_clk_bulk_get() to handle this issue as we already
-> have a of_clk_get?
-> e.g.
+On 08/17, Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
 > 
-> int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
->                               struct clk_bulk_data *clks)
-> {
->         for (i = 0; i < num_clks; i++) {
->                 clks[i].clk = of_clk_get(dev, clks[i].id);
-
-The of_clk_get() takes clock index rather than name/id as the second
-parameter.
-
-Shawn
-
-> ...
+> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 > 
-> }
+>   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.14-tag1
+> 
+> for you to fetch changes up to c29f82951b974f27e0bc4ce2525db164f86f2e4d:
+> 
+>   clk: renesas: r8a7796: Add USB3.0 clock (2017-08-17 09:22:26 +0200)
+> 
+> ----------------------------------------------------------------
+> A bit delayed due to holidays, but here they are!
+> 
+> clk: renesas: Updates for v4.14
+> 
+>   - Add more module clocks for R-Car V2H and M3-W,
+>   - Add support for the R-Car Gen3 USB 2.0 clock selector PHY,
+>   - Add support for the new R-Car D3 SoC,
+>   - Allow compile-testing of all (sub)drivers now all dummy infrastructure
+>     is available,
+>   - Small fixes and cleanups.
+> 
+
+Thanks. Pulled into clk-next.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
