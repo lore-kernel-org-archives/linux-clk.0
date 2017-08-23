@@ -1,49 +1,45 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi: fix uninitialized access
-Date: Wed, 23 Aug 2017 16:39:27 +0200
-Message-Id: <20170823143937.2176025-1-arnd@arndb.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 23 Aug 2017 15:38:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for 4.14-rc1
+Message-ID: <20170823223843.GE21656@codeaurora.org>
+References: <CGME20170811170044epcas1p156cc48d8ca2d2533fa91daf41213487f@epcas1p1.samsung.com>
+ <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3188b220-d1da-eabc-33cf-333b2315af47@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-gcc-8 reports an uninitialized variable access in a code path
-that we would see with incorrect DTB input:
+On 08/11, Sylwester Nawrocki wrote:
+> 
+> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+> 
+>   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v4.14-samsung
+> 
+> for you to fetch changes up to 599cebea93e69c25e4cf027fc21d2bdf9a4a1ec7:
+> 
+>   clk: samsung: exynos542x: Enable clock rate propagation up to the EPLL (2017-08-10 10:56:23 +0200)
+> 
+> ----------------------------------------------------------------
+> clk/samsung updates for 4.14
+> 
+> Changes in definitions of audio related clocks for Exynos5420/5422/5800
+> SoCs: a fix of mau_epll clock definition and changes enabling clock rate
+> setting propagation on a path from the I2S IP block up the EPLL.
+> 
 
-drivers/clk/sunxi/clk-sun8i-bus-gates.c: In function 'sun8i_h3_bus_gates_init':
-drivers/clk/sunxi/clk-sun8i-bus-gates.c:85:27: error: 'clk_parent' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Thanks. Pulled into clk-next.
 
-This works around by skipping invalid input and printing a warning
-instead if it ever happens. The problem was apparently part of the
-initiali driver submission, but older compilers don't notice it.
-
-Fixes: ab6e23a4e388 ("clk: sunxi: Add H3 clocks support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/sunxi/clk-sun8i-bus-gates.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/sunxi/clk-sun8i-bus-gates.c b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-index 63fdb790df29..bee305bdddbe 100644
---- a/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-+++ b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-@@ -78,6 +78,10 @@ static void __init sun8i_h3_bus_gates_init(struct device_node *node)
- 			clk_parent = APB1;
- 		else if (index >= 96 && index <= 127)
- 			clk_parent = APB2;
-+		else {
-+			WARN_ON(true);
-+			continue;
-+		}
- 
- 		clk_reg = reg + 4 * (index / 32);
- 		clk_bit = index % 32;
 -- 
-2.9.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
