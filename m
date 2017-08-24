@@ -1,46 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39792 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751307AbdHaXUf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2017 19:20:35 -0400
-Date: Thu, 31 Aug 2017 16:20:32 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joseph Chen <chenjh@rock-chips.com>
-Cc: gnurou@gmail.com, linus.walleij@linaro.org,
-        dmitry.torokhov@gmail.com, lee.jones@linaro.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
-        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
-        wdc@rock-chips.com, tony.xie@rock-chips.com,
-        linux-input@vger.kernel.org, mark.rutland@arm.com,
-        w.egorov@phytec.de, linux-clk@vger.kernel.org,
-        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        rtc-linux@googlegroups.com
-Subject: Re: [RESEND v9 05/12] clk: Kconfig: Name RK805 in Kconfig for
- COMMON_CLK_RK808
-Message-ID: <20170831232032.GI21656@codeaurora.org>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
- <1502848803-22954-1-git-send-email-chenjh@rock-chips.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 24 Aug 2017 10:50:35 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi: fix uninitialized access
+Message-ID: <20170824085035.uznlemp5dzpts5ms@flea.lan>
+References: <20170823143937.2176025-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1502848803-22954-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nymlfymace5gdopi"
+In-Reply-To: <20170823143937.2176025-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/16, Joseph Chen wrote:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
-> 
-> The RK808 and RK805 PMICs are using a similar register map.
-> We can reuse the clk driver for the RK805 PMIC. So let's add
-> the RK805 in the Kconfig description.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-> ---
 
-Applied to clk-next
+--nymlfymace5gdopi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Wed, Aug 23, 2017 at 04:39:27PM +0200, Arnd Bergmann wrote:
+> gcc-8 reports an uninitialized variable access in a code path
+> that we would see with incorrect DTB input:
+>=20
+> drivers/clk/sunxi/clk-sun8i-bus-gates.c: In function 'sun8i_h3_bus_gates_=
+init':
+> drivers/clk/sunxi/clk-sun8i-bus-gates.c:85:27: error: 'clk_parent' may be=
+ used uninitialized in this function [-Werror=3Dmaybe-uninitialized]
+>=20
+> This works around by skipping invalid input and printing a warning
+> instead if it ever happens. The problem was apparently part of the
+> initiali driver submission, but older compilers don't notice it.
+>=20
+> Fixes: ab6e23a4e388 ("clk: sunxi: Add H3 clocks support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+That's weird it stayed for that long without any compiler noticing.
+
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Mike, Stephen, can you pick it up as a fix? We don't have anything
+else coming your way.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--nymlfymace5gdopi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZnpNbAAoJEBx+YmzsjxAgCi0P/RMcqNg8wTz19tCWbq1TJRzY
+wX2amoZtd/OvKihlSY1GPoQveEUpQceFwJOU7d/ceBcu0GYFaypOtdcrPTcmhUPV
+FnL3fcoFS9R7fDfPQUSYEsQx+pO6FxJI/hwQFosG5/dGeihielKHBc38nlmXa5pE
+IGV7fZXrIe1MBG4TOE2kItjisPe/33CdrgBv7Si4l5YYwSi+IcLFGfLwkOJGfGgf
+ZMLhuRK2rSOlRQ+CtA7SqClAwTpsrXMfmoXmELJXzDNRduQ4Ycr5GwFIA3h0Z7Iy
+bpAXepxoyCyRmLHYhW6sp6aMunnBHxfrCIgbWhpuo7yCLc5JVwsYXWGwx3bmjhhE
+1HCsR7PyrOD4W14F3yataEfR2rkLbRa/v+L6AHlzuWChSqkCG2NGbcmzKcA6qhG1
+88VRqslNIx52d01Vzi+CkhYx86zRJAULqsCgAEEl17OWovHthwlzf4oyfFf9vaGy
+ODpGoLBBPDswFmFXP/KDVJ2gLgSPcRAHZDpL78JPed7M/BybaqGcmM82WiCM3IEa
+3CHgr7ZMCYsjQwhsteOhqLLrg1X/HHeHFHqxXRBW7NJApBczn0vCoHrVhpHurqX7
+J/cane4Mcnjq/IwYR8zlJT6uy1s4sL63rmkEl+q8l6/raP+PomxPQnTYOtlnMy1q
+pSyL8IF8VKfESo3+H62j
+=4GpJ
+-----END PGP SIGNATURE-----
+
+--nymlfymace5gdopi--
