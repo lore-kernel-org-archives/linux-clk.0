@@ -1,122 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.132]:37214 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752195AbdHBIfq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Aug 2017 04:35:46 -0400
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de
-Cc: robh+dt@kernel.org, shawn.lin@rock-chips.com,
-        zhangqing@rock-chips.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux-rockchip@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 08/23] clk: rockchip: rename some of clks for rv1108 SoC
-Date: Wed,  2 Aug 2017 16:35:31 +0800
-Message-Id: <1501662931-12139-1-git-send-email-andy.yan@rock-chips.com>
-In-Reply-To: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
-References: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "A.s. Dong" <aisheng.dong@nxp.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "dongas86@gmail.com" <dongas86@gmail.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, Anson Huang
+	<anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Subject: RE: [PATCH V2 00/10] clk: add imx7ulp clk support
+Date: Thu, 24 Aug 2017 07:05:12 +0000
+Message-ID: <AM3PR04MB3063B98A5B78C3F9791A553809A0@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com> 
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+> -----Original Message-----
+> From: A.s. Dong
+> Sent: Wednesday, July 26, 2017 10:57 AM
+> To: A.s. Dong; linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> sboyd@codeaurora.org; mturquette@baylibre.com; dongas86@gmail.com;
+> shawnguo@kernel.org; Anson Huang; Jacky Bai
+> Subject: RE: [PATCH V2 00/10] clk: add imx7ulp clk support
+>=20
+> Ping...
+>=20
 
-Rename some of clks to keep the consistency with the TRM.
+Gently ping again...
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
+Hi Stephen,
 
-Changes in v2: None
+This has been more there without comments for more than one month.
 
- drivers/clk/rockchip/clk-rv1108.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+Would you help review when you're available later?
 
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index d667c7d..dca9c37 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -276,24 +276,24 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "pmu_24m_ena", "gpll", CLK_IGNORE_UNUSED,
- 			RV1108_CLKSEL_CON(38), 0, 5, DFLAGS,
- 			RV1108_CLKGATE_CON(8), 12, GFLAGS),
--	GATE(0, "pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 0, GFLAGS),
--	GATE(0, "intmem1", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_intmem1", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 1, GFLAGS),
--	GATE(0, "gpio0_pmu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(PCLK_GPIO0_PMU, "pclk_gpio0_pmu", "pmu_24m_ena", 0,
- 			RV1108_CLKGATE_CON(10), 2, GFLAGS),
--	GATE(0, "pmugrf", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_pmugrf", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 3, GFLAGS),
--	GATE(0, "pmu_noc", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_pmu_niu", "pmu_24m_ena", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(10), 4, GFLAGS),
--	GATE(0, "i2c0_pmu_pclk", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(PCLK_I2C0_PMU, "pclk_i2c0_pmu", "pmu_24m_ena", 0,
- 			RV1108_CLKGATE_CON(10), 5, GFLAGS),
--	GATE(0, "pwm0_pmu_pclk", "pmu_24m_ena", CLK_IGNORE_UNUSED,
-+	GATE(PCLK_PWM0_PMU, "pclk_pwm0_pmu", "pmu_24m_ena", 0,
- 			RV1108_CLKGATE_CON(10), 6, GFLAGS),
--	COMPOSITE(0, "pwm0_pmu_clk", mux_pll_src_2plls_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(SCLK_PWM0_PMU, "sclk_pwm0_pmu", mux_pll_src_2plls_p, 0,
- 			RV1108_CLKSEL_CON(12), 7, 1, MFLAGS, 0, 7, DFLAGS,
- 			RV1108_CLKGATE_CON(8), 15, GFLAGS),
--	COMPOSITE(0, "i2c0_pmu_clk", mux_pll_src_2plls_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(SCLK_I2C0_PMU, "sclk_i2c0_pmu", mux_pll_src_2plls_p, 0,
- 			RV1108_CLKSEL_CON(19), 7, 1, MFLAGS, 0, 7, DFLAGS,
- 			RV1108_CLKGATE_CON(8), 14, GFLAGS),
- 	GATE(0, "pvtm_pmu", "xin24m", CLK_IGNORE_UNUSED,
-@@ -416,10 +416,10 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
- 	/*
- 	 * Clock-Architecture Diagram 4
- 	 */
--	COMPOSITE(0, "aclk_vio0_2wrap_occ", mux_pll_src_4plls_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(0, "aclk_vio0_pre", mux_pll_src_4plls_p, CLK_IGNORE_UNUSED,
- 			RV1108_CLKSEL_CON(28), 6, 2, MFLAGS, 0, 5, DFLAGS,
- 			RV1108_CLKGATE_CON(6), 0, GFLAGS),
--	GATE(0, "aclk_vio0_pre", "aclk_vio0_2wrap_occ", CLK_IGNORE_UNUSED,
-+	GATE(ACLK_VIO0, "aclk_vio0", "aclk_vio0_pre", 0,
- 			RV1108_CLKGATE_CON(17), 0, GFLAGS),
- 	COMPOSITE_NOMUX(0, "hclk_vio_pre", "aclk_vio0_pre", 0,
- 			RV1108_CLKSEL_CON(29), 0, 5, DFLAGS,
-@@ -441,8 +441,8 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
- 			RV1108_CLKGATE_CON(6), 5, GFLAGS),
- 	GATE(0, "dclk_hdmiphy_src_dpll", "dpll", CLK_IGNORE_UNUSED,
- 			RV1108_CLKGATE_CON(6), 4, GFLAGS),
--	COMPOSITE_NOGATE(0, "dclk_hdmiphy", mux_dclk_hdmiphy_pre_p, 0,
--			RV1108_CLKSEL_CON(32), 6, 2, MFLAGS, 8, 6, DFLAGS),
-+	COMPOSITE_NOGATE(0, "dclk_hdmiphy_pre", mux_dclk_hdmiphy_pre_p, 0,
-+			RV1108_CLKSEL_CON(32), 6, 1, MFLAGS, 8, 6, DFLAGS),
- 	COMPOSITE_NOGATE(DCLK_VOP_SRC, "dclk_vop_src", mux_dclk_hdmiphy_pre_p, 0,
- 			RV1108_CLKSEL_CON(32), 6, 1, MFLAGS, 0, 6, DFLAGS),
- 	MUX(DCLK_HDMIPHY, "dclk_hdmiphy", mux_dclk_hdmiphy_p, CLK_SET_RATE_PARENT,
-@@ -630,10 +630,10 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
- 			RV1108_CLKGATE_CON(13), 1, GFLAGS),
- 	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_bus_pre", 0,
- 			RV1108_CLKGATE_CON(13), 2, GFLAGS),
--	COMPOSITE(SCLK_PWM, "clk_pwm1", mux_pll_src_2plls_p, 0,
-+	COMPOSITE(SCLK_PWM, "clk_pwm", mux_pll_src_2plls_p, 0,
- 			RV1108_CLKSEL_CON(12), 15, 2, MFLAGS, 8, 7, DFLAGS,
- 			RV1108_CLKGATE_CON(3), 10, GFLAGS),
--	GATE(PCLK_PWM, "pclk_pwm1", "pclk_bus_pre", 0,
-+	GATE(PCLK_PWM, "pclk_pwm", "pclk_bus_pre", 0,
- 			RV1108_CLKGATE_CON(13), 6, GFLAGS),
- 	GATE(PCLK_WDT, "pclk_wdt", "pclk_bus_pre", 0,
- 			RV1108_CLKGATE_CON(13), 3, GFLAGS),
-@@ -718,7 +718,7 @@ static struct rockchip_clk_branch rv1108_clk_branches[] __initdata = {
- 			RV1108_CLKSEL_CON(23), 15, 1, MFLAGS, 0, 5, DFLAGS,
- 			RV1108_CLKGATE_CON(15), 11, GFLAGS),
- 
--	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
-+	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
- 			RV1108_CLKSEL_CON(25), 8, 2, MFLAGS, 0, 8, DFLAGS,
- 			RV1108_CLKGATE_CON(5), 0, GFLAGS),
- 
--- 
-2.7.4
-
-
+Regards
+Dong Aisheng
+=20
+> > -----Original Message-----
+> > From: Dong Aisheng [mailto:aisheng.dong@nxp.com]
+> > Sent: Thursday, July 13, 2017 7:47 PM
+> > To: linux-clk@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org;
+> > sboyd@codeaurora.org; mturquette@baylibre.com; A.s. Dong;
+> > dongas86@gmail.com; shawnguo@kernel.org; Anson Huang; Jacky Bai
+> > Subject: [PATCH V2 00/10] clk: add imx7ulp clk support
+> >
+> > This patch series intends to add imx7ulp clk support.
+> >
+> > i.MX7ULP Clock functions are under joint control of the System Clock
+> > Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and
+> > Core Mode Controller (CMC)1 blocks
+> >
+> > The clocking scheme provides clear separation between M4 domain and A7
+> > domain. Except for a few clock sources shared between two domains,
+> > such as the System Oscillator clock, the Slow IRC (SIRC), and and the
+> > Fast IRC clock (FIRCLK), clock sources and clock management are
+> > separated and contained within each domain.
+> >
+> > M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> > A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+> >
+> > Note: this series only adds A7 clock domain support as M4 clock domain
+> > will be handled by M4 seperately.
+> >
+> > Change Log:
+> > v1->v2:
+> >  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+> >  * use clk_hw apis to register clocks
+> >  * use of_clk_add_hw_provider
+> >  * split the clocks register process into two parts: early part for
+> > possible
+> >    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later
+> > part for
+> >    the left normal peripheral clocks registered by a platform driver.
+> >
+> > Dong Aisheng (10):
+> >   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+> >   clk: reparent orphans after critical clocks enabled
+> >   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+> >   clk: imx: add pllv4 support
+> >   clk: imx: add pfdv2 support
+> >   clk: imx: add composite clk support
+> >   dt-bindings: clock: add imx7ulp clock binding doc
+> >   clk: imx: make mux parent strings const
+> >   clk: imx: implement new clk_hw based APIs
+> >   clk: imx: add imx7ulp clk driver
+> >
+> >  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
+> >  drivers/clk/clk-divider.c                          | 100 ++++++++-
+> >  drivers/clk/clk-fractional-divider.c               |  10 +
+> >  drivers/clk/clk.c                                  |  39 ++--
+> >  drivers/clk/imx/Makefile                           |   6 +-
+> >  drivers/clk/imx/clk-busy.c                         |   2 +-
+> >  drivers/clk/imx/clk-composite.c                    |  90 ++++++++
+> >  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+> >  drivers/clk/imx/clk-imx7ulp.c                      | 245
+> > +++++++++++++++++++++
+> >  drivers/clk/imx/clk-pfdv2.c                        | 207
+> > +++++++++++++++++
+> >  drivers/clk/imx/clk-pllv4.c                        | 188
+> ++++++++++++++++
+> >  drivers/clk/imx/clk.c                              |  22 ++
+> >  drivers/clk/imx/clk.h                              |  92 +++++++-
+> >  include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++
+> >  include/linux/clk-provider.h                       |  17 ++
+> >  15 files changed, 1159 insertions(+), 31 deletions(-)  create mode
+> > 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> >  create mode 100644 drivers/clk/imx/clk-composite.c  create mode
+> > 100644 drivers/clk/imx/clk-imx7ulp.c  create mode 100644
+> > drivers/clk/imx/clk- pfdv2.c  create mode 100644
+> > drivers/clk/imx/clk-pllv4.c  create mode
+> > 100644 include/dt-bindings/clock/imx7ulp-clock.h
+> >
+> > --
+> > 2.7.4
