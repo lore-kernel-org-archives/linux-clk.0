@@ -1,86 +1,99 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v5 1/7] clk: at91: clk-generated: remove useless divisor loop
-Date: Thu, 10 Aug 2017 08:34:01 +0200
-Message-Id: <fe26a470c87e39b5e07fbada6ce7020a6b65429b.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 24 Aug 2017 10:36:20 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock changes for 4.14, take 3
+Message-ID: <20170824083620.b5cq4qtyr3cqtpjx@flea.lan>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ocda6ongssomgbjx"
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver requests the current clk rate of each of its parent clocks to
-decide whether a clock rate is suitable or not. It does not request
-determine_rate from a parent clock which could request a rate change in
-parent clock (i.e. there is no parent rate propagation).
 
-We know the rate we want (passed along req argument of the function) and
-the parent clock rate, thus we know the closest rounded divisor, we
-don't need to iterate over the available divisors to find the best one
-for a given clock.
+--ocda6ongssomgbjx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/clk/at91/clk-generated.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+Hi,
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index f0b7ae9..ef4b4e0 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -124,19 +124,18 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 		    (gck->range.max && min_rate > gck->range.max))
- 			continue;
- 
--		for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
--			tmp_rate = DIV_ROUND_CLOSEST(parent_rate, div);
--			tmp_diff = abs(req->rate - tmp_rate);
--
--			if (best_diff < 0 || best_diff > tmp_diff) {
--				best_rate = tmp_rate;
--				best_diff = tmp_diff;
--				req->best_parent_rate = parent_rate;
--				req->best_parent_hw = parent;
--			}
--
--			if (!best_diff || tmp_rate < req->rate)
--				break;
-+		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-+		if (!div)
-+			tmp_rate = parent_rate;
-+		else
-+			tmp_rate = parent_rate / div;
-+		tmp_diff = abs(req->rate - tmp_rate);
-+
-+		if (best_diff < 0 || best_diff > tmp_diff) {
-+			best_rate = tmp_rate;
-+			best_diff = tmp_diff;
-+			req->best_parent_rate = parent_rate;
-+			req->best_parent_hw = parent;
- 		}
- 
- 		if (!best_diff)
--- 
-git-series 0.9.1
+Here is a quite late PR, but this also something we've been waiting
+for for quite some time already.
+
+These patches convert our last users of the old clock framework to the
+new one. We still have some marginal users of the old clock drivers,
+but they shouldn't prevent the fix for the orphans clocks we hold back
+to work.
+
+Maxime
+
+The following changes since commit cd030a78f7aa06fe216f6665a6ea84b8f3e5b3d3:
+
+  clk: sunxi-ng: support R40 SoC (2017-08-19 17:04:37 +0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
+i-clk-for-4.14-3
+
+for you to fetch changes up to c84f5683f6e9fee78e054431d89121225ccb7464:
+
+  clk: sunxi-ng: Add sun4i/sun7i CCU driver (2017-08-24 10:15:54 +0200)
+
+----------------------------------------------------------------
+Allwinner clock changes for 4.14, part 3
+
+Conversion of the last two SoCs (A10, A20) to the sunxi-ng framework.
+
+----------------------------------------------------------------
+Priit Laes (3):
+      dt-bindings: List devicetree binding for the CCU of Allwinner A20
+      dt-bindings: List devicetree binding for the CCU of Allwinner A10
+      clk: sunxi-ng: Add sun4i/sun7i CCU driver
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    2 +
+ drivers/clk/sunxi-ng/Kconfig                       |   13 +
+ drivers/clk/sunxi-ng/Makefile                      |    1 +
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.c               | 1456 ++++++++++++++++=
+++++
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.h               |   61 +
+ include/dt-bindings/clock/sun4i-a10-ccu.h          |  200 +++
+ include/dt-bindings/clock/sun7i-a20-ccu.h          |   53 +
+ include/dt-bindings/reset/sun4i-a10-ccu.h          |   69 +
+ 8 files changed, 1855 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun4i-a10.h
+ create mode 100644 include/dt-bindings/clock/sun4i-a10-ccu.h
+ create mode 100644 include/dt-bindings/clock/sun7i-a20-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun4i-a10-ccu.h
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ocda6ongssomgbjx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZnpAEAAoJEBx+YmzsjxAgISwP/0dGCHYbvNSJd8c6mxrnG6ap
+Ec4tSdkYh/YtA+PmHmXTD/gCyv1WteSL0YiU2Ffm7VSIMP41f0NmMEvJstP/Ep32
+DoZ71EaoK4mmkrVpt1xTHASqfzQ2k4+y6s7arisS8YspcIhubXNDCMEiAplGJb/1
+xfNwpTaHHb2Y9tksnjhr7v1xw9/tC1n/Wz/uOMLSGO7otOBsBR8I502mrv47VL8h
+KiPn1h/xadnBocuN9JlBdFaA09UNgafI4Ewzl5wSFkZ624A9HU0qsiSdACJryUl3
+Wcq0S3gOtms9cu2L6+cWFIRKG+TeSLszU84kWJl3g0OytzwFQLSTq8CvHKkff/aG
+8w8xjNUjfSqwzJzL8qS2hGXQ5MrGMcPCIjx4LwnQXQ3J/jD50ZNm6C5M2bu7EapQ
+6y4GCtxCelhXplv4IOgf88s8YNrxXTr4//NFgAWjezRS6s4EVcEVsQu2t5L3eLVX
+0DGqqEj70KPRbnhEDguw/uS/sd3VfJ06JehM8l1PiUWnRaYnoIfDIIVVOnkhZjci
+6cvLqtwbEpVEHh+0cVGi2A1B7khUG3Q2lM/5JL9AKzFUmLgcaJ8YMUAIv1DhtYRd
+scmGQtUGpkj+7QWk8OI6eSs2+Khm82k3CubZNSZBfoFuLoBrWBlcqAiSfHAPrhMJ
+4TuCx1mcetg6lt9hUeCT
+=qKIp
+-----END PGP SIGNATURE-----
+
+--ocda6ongssomgbjx--
