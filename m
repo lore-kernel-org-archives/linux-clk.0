@@ -1,123 +1,94 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v8 4/5] clk: samsung: exynos-audss: Use local variable for
- controller's device
-Date: Wed, 09 Aug 2017 12:35:06 +0200
-Message-id: <1502274907-11931-5-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
-References: <1502274907-11931-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170809103514eucas1p11fb5d1af243e882a5d51a25956d24a19@eucas1p1.samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170823125740.342120870@cogentembedded.com>
+References: <20170823125740.342120870@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 Aug 2017 09:23:49 +0200
+Message-ID: <CAMuHMdXukditjmD_C3d1bMkfk38EpG5sWzepRMbzuHqORju7Jg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: add R8A7797 CPG core clock definitions
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Store pointer to the controller's device in local variable to avoid
-extracting it from platform device in each call. This will also simplify
-code in the future, when runtime PM support is added.
+Hi Sergei,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos-audss.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+On Wed, Aug 23, 2017 at 2:52 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by the device tree sources to reference the R8A7797 CPG
+> clocks  by index.
+>
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 1fab56f396d4..6be52fb46ff3 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -135,6 +135,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	const struct exynos_audss_clk_drvdata *variant;
- 	struct clk_hw **clk_table;
- 	struct resource *res;
-+	struct device *dev = &pdev->dev;
- 	int i, ret = 0;
- 
- 	variant = of_device_get_match_data(&pdev->dev);
-@@ -142,15 +143,15 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	reg_base = devm_ioremap_resource(&pdev->dev, res);
-+	reg_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(reg_base)) {
--		dev_err(&pdev->dev, "failed to map audss registers\n");
-+		dev_err(dev, "failed to map audss registers\n");
- 		return PTR_ERR(reg_base);
- 	}
- 
- 	epll = ERR_PTR(-ENODEV);
- 
--	clk_data = devm_kzalloc(&pdev->dev,
-+	clk_data = devm_kzalloc(dev,
- 				sizeof(*clk_data) +
- 				sizeof(*clk_data->hws) * EXYNOS_AUDSS_MAX_CLKS,
- 				GFP_KERNEL);
-@@ -160,8 +161,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	clk_data->num = variant->num_clks;
- 	clk_table = clk_data->hws;
- 
--	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
--	pll_in = devm_clk_get(&pdev->dev, "pll_in");
-+	pll_ref = devm_clk_get(dev, "pll_ref");
-+	pll_in = devm_clk_get(dev, "pll_in");
- 	if (!IS_ERR(pll_ref))
- 		mout_audss_p[0] = __clk_get_name(pll_ref);
- 	if (!IS_ERR(pll_in)) {
-@@ -172,7 +173,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 
- 			ret = clk_prepare_enable(epll);
- 			if (ret) {
--				dev_err(&pdev->dev,
-+				dev_err(dev,
- 					"failed to prepare the epll clock\n");
- 				return ret;
- 			}
-@@ -183,8 +184,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
- 
--	cdclk = devm_clk_get(&pdev->dev, "cdclk");
--	sclk_audio = devm_clk_get(&pdev->dev, "sclk_audio");
-+	cdclk = devm_clk_get(dev, "cdclk");
-+	sclk_audio = devm_clk_get(dev, "sclk_audio");
- 	if (!IS_ERR(cdclk))
- 		mout_i2s_p[1] = __clk_get_name(cdclk);
- 	if (!IS_ERR(sclk_audio))
-@@ -222,7 +223,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				 "sclk_pcm", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
--	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
-+	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
- 	if (!IS_ERR(sclk_pcm_in))
- 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
- 	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(NULL, "sclk_pcm",
-@@ -237,16 +238,16 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < clk_data->num; i++) {
- 		if (IS_ERR(clk_table[i])) {
--			dev_err(&pdev->dev, "failed to register clock %d\n", i);
-+			dev_err(dev, "failed to register clock %d\n", i);
- 			ret = PTR_ERR(clk_table[i]);
- 			goto unregister;
- 		}
- 	}
- 
--	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
- 				     clk_data);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to add clock provider\n");
-+		dev_err(dev, "failed to add clock provider\n");
- 		goto unregister;
- 	}
- 
--- 
-1.9.1
+Please refer to Table 8.2c ("List of Clocks [R-Car V3M]") of the R-Car Series,
+3rd Generation Hardware User's Manual (Rev. 0.55, Jun. 30, 2017).
+
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> ---
+>  include/dt-bindings/clock/r8a7797-cpg-mssr.h |   48 +++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>
+> Index: linux/include/dt-bindings/clock/r8a7797-cpg-mssr.h
+> ===================================================================
+> --- /dev/null
+> +++ linux/include/dt-bindings/clock/r8a7797-cpg-mssr.h
+
+Please use "r8a77970-cpg-mssr.h", to follow the new 5-digit scheme started
+with r8a77995.
+
+> @@ -0,0 +1,48 @@
+> +/*
+> + * Copyright (C) 2016 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7797_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7797_CPG_MSSR_H__
+
+...R8A77970...
+
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7797 CPG Core Clocks */
+> +#define R8A7797_CLK_Z2                 0
+
+#define R8A77970_...
+
+> +#define R8A7797_CLK_CSIREF             26
+
+The CSIREF clock was dropped in Rev. 0.54 of the datasheet.
+Please remove it.
+
+> +#define R8A7797_CLK_FRAY               27
+> +#define R8A7797_CLK_CP                 28
+> +#define R8A7797_CLK_CPEX               29
+> +#define R8A7797_CLK_R                  30
+> +#define R8A7797_CLK_OSC                        31
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
