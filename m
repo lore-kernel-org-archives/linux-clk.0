@@ -1,184 +1,93 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.132]:47377 "EHLO
+Received: from regular1.263xmail.com ([211.150.99.138]:33810 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752174AbdHPB6e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 21:58:34 -0400
-From: Joseph Chen <chenjh@rock-chips.com>
-To: gnurou@gmail.com, linus.walleij@linaro.org,
-        dmitry.torokhov@gmail.com, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
-        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
-        wdc@rock-chips.com, tony.xie@rock-chips.com,
-        linux-input@vger.kernel.org, mark.rutland@arm.com,
-        w.egorov@phytec.de, linux-clk@vger.kernel.org,
-        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
-Subject: [RESEND v9 02/12] mfd: rk808: add rk805 regs addr and ID
-Date: Wed, 16 Aug 2017 09:56:58 +0800
-Message-Id: <1502848628-27757-3-git-send-email-chenjh@rock-chips.com>
-In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+        with ESMTP id S1753556AbdHYBF4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Aug 2017 21:05:56 -0400
+Message-ID: <599F77E7.4040604@rock-chips.com>
+Date: Fri, 25 Aug 2017 09:05:43 +0800
+From: jeffy <jeffy.chen@rock-chips.com>
+MIME-Version: 1.0
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Brian Norris <briannorris@chromium.org>,
+        Tejun Heo <tj@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 04/10] PCI: rockchip: fix system hang up if activating
+ CONFIG_DEBUG_SHIRQ
+References: <1503471673-69478-1-git-send-email-shawn.lin@rock-chips.com> <1503471758-73904-1-git-send-email-shawn.lin@rock-chips.com> <20170824202111.GS31858@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20170824202111.GS31858@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+Hi Bjorn,
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- include/linux/mfd/rk808.h | 120 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
+On 08/25/2017 04:21 AM, Bjorn Helgaas wrote:
+>> >In order to fix this, we remove all the clock-disabling from
+>> >the error handle path and driver's remove function. And replying
+>> >on the devm_add_action_or_reset to fire the clock-disabling at
+>> >the appropriate time. Also split out rockchip_pcie_setup_irq
+>> >and move requesting irq after enabling clks to avoid this kind
+> Thanks for splitting out the refactoring stuff.  That really makes
+> this patch much simpler.
+>
+> IIUC, this really has nothing to do with CONFIG_DEBUG_SHIRQ.  It may
+> be true that you've only*seen*  the problem with CONFIG_DEBUG_SHIRQ
+> enabled, but all that config option does is take a situation that
+> could happen at any time (another device sharing the IRQ generating an
+> interrupt), and force it to happen.  So it's just a way to expose an
+> existing driver problem.
+yes, and i'm wondering would it make more sense to somehow ignore those 
+irqs(triggered by other devices, and we don't really need to care since 
+we already unregistered) than trying to hold all needed resources(clks & 
+power domains & some other resources maybe) for that?
 
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index 54feb14..d315659 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -206,6 +206,97 @@ enum rk818_reg {
- #define RK818_USB_ILMIN_2000MA		0x7
- #define RK818_USB_CHG_SD_VSEL_MASK	0x70
- 
-+/* RK805 */
-+enum rk805_reg {
-+	RK805_ID_DCDC1,
-+	RK805_ID_DCDC2,
-+	RK805_ID_DCDC3,
-+	RK805_ID_DCDC4,
-+	RK805_ID_LDO1,
-+	RK805_ID_LDO2,
-+	RK805_ID_LDO3,
-+};
-+
-+/* CONFIG REGISTER */
-+#define RK805_VB_MON_REG		0x21
-+#define RK805_THERMAL_REG		0x22
-+
-+/* POWER CHANNELS ENABLE REGISTER */
-+#define RK805_DCDC_EN_REG		0x23
-+#define RK805_SLP_DCDC_EN_REG		0x25
-+#define RK805_SLP_LDO_EN_REG		0x26
-+#define RK805_LDO_EN_REG		0x27
-+
-+/* BUCK AND LDO CONFIG REGISTER */
-+#define RK805_BUCK_LDO_SLP_LP_EN_REG	0x2A
-+#define RK805_BUCK1_CONFIG_REG		0x2E
-+#define RK805_BUCK1_ON_VSEL_REG		0x2F
-+#define RK805_BUCK1_SLP_VSEL_REG	0x30
-+#define RK805_BUCK2_CONFIG_REG		0x32
-+#define RK805_BUCK2_ON_VSEL_REG		0x33
-+#define RK805_BUCK2_SLP_VSEL_REG	0x34
-+#define RK805_BUCK3_CONFIG_REG		0x36
-+#define RK805_BUCK4_CONFIG_REG		0x37
-+#define RK805_BUCK4_ON_VSEL_REG		0x38
-+#define RK805_BUCK4_SLP_VSEL_REG	0x39
-+#define RK805_LDO1_ON_VSEL_REG		0x3B
-+#define RK805_LDO1_SLP_VSEL_REG		0x3C
-+#define RK805_LDO2_ON_VSEL_REG		0x3D
-+#define RK805_LDO2_SLP_VSEL_REG		0x3E
-+#define RK805_LDO3_ON_VSEL_REG		0x3F
-+#define RK805_LDO3_SLP_VSEL_REG		0x40
-+
-+/* INTERRUPT REGISTER */
-+#define RK805_PWRON_LP_INT_TIME_REG	0x47
-+#define RK805_PWRON_DB_REG		0x48
-+#define RK805_DEV_CTRL_REG		0x4B
-+#define RK805_INT_STS_REG		0x4C
-+#define RK805_INT_STS_MSK_REG		0x4D
-+#define RK805_GPIO_IO_POL_REG		0x50
-+#define RK805_OUT_REG			0x52
-+#define RK805_ON_SOURCE_REG		0xAE
-+#define RK805_OFF_SOURCE_REG		0xAF
-+
-+#define RK805_NUM_REGULATORS		7
-+
-+#define RK805_PWRON_FALL_RISE_INT_EN	0x0
-+#define RK805_PWRON_FALL_RISE_INT_MSK	0x81
-+
-+/* RK805 IRQ Definitions */
-+#define RK805_IRQ_PWRON_RISE		0
-+#define RK805_IRQ_VB_LOW		1
-+#define RK805_IRQ_PWRON			2
-+#define RK805_IRQ_PWRON_LP		3
-+#define RK805_IRQ_HOTDIE		4
-+#define RK805_IRQ_RTC_ALARM		5
-+#define RK805_IRQ_RTC_PERIOD		6
-+#define RK805_IRQ_PWRON_FALL		7
-+
-+#define RK805_IRQ_PWRON_RISE_MSK	BIT(0)
-+#define RK805_IRQ_VB_LOW_MSK		BIT(1)
-+#define RK805_IRQ_PWRON_MSK		BIT(2)
-+#define RK805_IRQ_PWRON_LP_MSK		BIT(3)
-+#define RK805_IRQ_HOTDIE_MSK		BIT(4)
-+#define RK805_IRQ_RTC_ALARM_MSK		BIT(5)
-+#define RK805_IRQ_RTC_PERIOD_MSK	BIT(6)
-+#define RK805_IRQ_PWRON_FALL_MSK	BIT(7)
-+
-+#define RK805_PWR_RISE_INT_STATUS	BIT(0)
-+#define RK805_VB_LOW_INT_STATUS		BIT(1)
-+#define RK805_PWRON_INT_STATUS		BIT(2)
-+#define RK805_PWRON_LP_INT_STATUS	BIT(3)
-+#define RK805_HOTDIE_INT_STATUS		BIT(4)
-+#define RK805_ALARM_INT_STATUS		BIT(5)
-+#define RK805_PERIOD_INT_STATUS		BIT(6)
-+#define RK805_PWR_FALL_INT_STATUS	BIT(7)
-+
-+#define RK805_BUCK1_2_ILMAX_MASK	(3 << 6)
-+#define RK805_BUCK3_4_ILMAX_MASK        (3 << 3)
-+#define RK805_RTC_PERIOD_INT_MASK	(1 << 6)
-+#define RK805_RTC_ALARM_INT_MASK	(1 << 5)
-+#define RK805_INT_ALARM_EN		(1 << 3)
-+#define RK805_INT_TIMER_EN		(1 << 2)
-+
- /* RK808 IRQ Definitions */
- #define RK808_IRQ_VOUT_LO	0
- #define RK808_IRQ_VB_LO		1
-@@ -298,7 +389,14 @@ enum rk818_reg {
- #define VOUT_LO_INT	BIT(0)
- #define CLK32KOUT2_EN	BIT(0)
- 
-+#define TEMP115C			0x0c
-+#define TEMP_HOTDIE_MSK			0x0c
-+#define SLP_SD_MSK			(0x3 << 2)
-+#define SHUTDOWN_FUN			(0x2 << 2)
-+#define SLEEP_FUN			(0x1 << 2)
- #define RK8XX_ID_MSK			0xfff0
-+#define FPWM_MODE			BIT(7)
-+
- enum {
- 	BUCK_ILMIN_50MA,
- 	BUCK_ILMIN_100MA,
-@@ -322,6 +420,28 @@ enum {
- };
- 
- enum {
-+	RK805_BUCK1_2_ILMAX_2500MA,
-+	RK805_BUCK1_2_ILMAX_3000MA,
-+	RK805_BUCK1_2_ILMAX_3500MA,
-+	RK805_BUCK1_2_ILMAX_4000MA,
-+};
-+
-+enum {
-+	RK805_BUCK3_ILMAX_1500MA,
-+	RK805_BUCK3_ILMAX_2000MA,
-+	RK805_BUCK3_ILMAX_2500MA,
-+	RK805_BUCK3_ILMAX_3000MA,
-+};
-+
-+enum {
-+	RK805_BUCK4_ILMAX_2000MA,
-+	RK805_BUCK4_ILMAX_2500MA,
-+	RK805_BUCK4_ILMAX_3000MA,
-+	RK805_BUCK4_ILMAX_3500MA,
-+};
-+
-+enum {
-+	RK805_ID = 0x8050,
- 	RK808_ID = 0x0000,
- 	RK818_ID = 0x8181,
- };
--- 
-1.9.1
+maybe we can just make sure the irq handler unregistered when we stop 
+caring about the irqs? or maybe add a flag to tell the irq handler to 
+stop processing them?
+
+>
+> The real problem is apparently that rockchip_pcie_subsys_irq_handler()
+> relies on some clock being enabled, but we're leaving it registered at
+> a time when the clock has already been disabled.
+>
+> You fixed that by using devm_add_action_or_reset() to tell devm to
+> disable the clocks*after*  releasing the IRQ.
+>
+> That sort of makes sense, but devm_add_action_or_reset() is a little
+> obscure, and this feels like a hole in the devm framework.  Seems like
+> it would be nice if there were some sort of devm wrapper for
+> clk_prepare_enable() so this would happen automatically.
+>
+> This pattern:
+>
+>    clk = devm_clk_get(...);
+>    if (IS_ERR(clk)) {
+>      dev_warn("no clock for ...");
+>      return PTR_ERR(clk);
+>    }
+>
+>    ret = clk_prepare_enable(clk);
+>    if (ret) {
+>      dev_warn("failed to enable ...");
+>      return err;
+>    }
+>
+> is quite common ("git grep -A10 devm_clk_get | grep clk_prepare_enable
+>   | wc -l" finds over 400 occurrences).  Should there be something to
+> simplify this a little?
+>
+> I also wonder about other PCI host drivers that use both
+> clk_prepare_enable() and devm_request_irq().  Maybe Rockchip is
+> "special" in that it seems the driver must turn on a clock before it
+> can even talk to the host controller, whereas maybe other drivers can
+> always talk to the host controller, but need to turn on clocks
+> downstream from the controller.  I didn't audit them, but I'm
+> concerned that some of them might have this same problem.
+>
 
 
