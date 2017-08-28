@@ -1,47 +1,160 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170721201650.GC19878@codeaurora.org>
-References: <1492624001-3758-11-git-send-email-ykaneko0929@gmail.com> <20170721201650.GC19878@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Aug 2017 14:43:28 +0200
-Message-ID: <CAMuHMdUa05_6qfq5FXrrRq14J-OOrE4CRuo1Qhtmh58k2FLBYw@mail.gmail.com>
-Subject: Re: [PATCH] clk: cs2000: Add cs2000_set_saved_rate
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] clk: imx: constify clk_div_table
+Date: Mon, 28 Aug 2017 10:58:52 +0530
+Message-Id: <1503898133-10862-2-git-send-email-arvind.yadav.cs@gmail.com>
+In-Reply-To: <1503898133-10862-1-git-send-email-arvind.yadav.cs@gmail.com>
+References: <1503898133-10862-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+clk_div_table are not supposed to change at runtime. All functions
+working with clk_div_table provided by <linux/clk-provider.h> work
+with const clk_div_table. So mark the non-const structs as const.
 
-On Fri, Jul 21, 2017 at 10:16 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 04/20, Yoshihiro Kaneko wrote:
->> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->>
->> This patch adds the common function to reset the clk rate in order to
->> be able to use it in other cases.
->>
->> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->> This patch is based on the clk-next branch of linux-clk tree.
->
-> Geert?
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+ drivers/clk/imx/clk-imx6sl.c | 6 +++---
+ drivers/clk/imx/clk-imx6sx.c | 6 +++---
+ drivers/clk/imx/clk-imx6ul.c | 6 +++---
+ drivers/clk/imx/clk-imx7d.c  | 4 ++--
+ drivers/clk/imx/clk-vf610.c  | 2 +-
+ 5 files changed, 12 insertions(+), 12 deletions(-)
 
-The CS2000 clock generator is not a Renesas part, so please take it directly.
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 5fd4dda..9642cdf 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -71,7 +71,7 @@
+ static const char *pll6_bypass_sels[]	= { "pll6", "pll6_bypass_src", };
+ static const char *pll7_bypass_sels[]	= { "pll7", "pll7_bypass_src", };
+ 
+-static struct clk_div_table clk_enet_ref_table[] = {
++static const struct clk_div_table clk_enet_ref_table[] = {
+ 	{ .val = 0, .div = 20, },
+ 	{ .val = 1, .div = 10, },
+ 	{ .val = 2, .div = 5, },
+@@ -79,14 +79,14 @@
+ 	{ }
+ };
+ 
+-static struct clk_div_table post_div_table[] = {
++static const struct clk_div_table post_div_table[] = {
+ 	{ .val = 2, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+ 	{ .val = 0, .div = 4, },
+ 	{ }
+ };
+ 
+-static struct clk_div_table video_div_table[] = {
++static const struct clk_div_table video_div_table[] = {
+ 	{ .val = 0, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+ 	{ .val = 2, .div = 1, },
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index b5c96de..e6d389e 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -105,7 +105,7 @@
+ 	IMX6SX_CLK_EPIT2,
+ };
+ 
+-static struct clk_div_table clk_enet_ref_table[] = {
++static const struct clk_div_table clk_enet_ref_table[] = {
+ 	{ .val = 0, .div = 20, },
+ 	{ .val = 1, .div = 10, },
+ 	{ .val = 2, .div = 5, },
+@@ -113,14 +113,14 @@
+ 	{ }
+ };
+ 
+-static struct clk_div_table post_div_table[] = {
++static const struct clk_div_table post_div_table[] = {
+ 	{ .val = 2, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+ 	{ .val = 0, .div = 4, },
+ 	{ }
+ };
+ 
+-static struct clk_div_table video_div_table[] = {
++static const struct clk_div_table video_div_table[] = {
+ 	{ .val = 0, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+ 	{ .val = 2, .div = 1, },
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index b4e0dff..5e8c18a 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -78,7 +78,7 @@
+ 	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
+ };
+ 
+-static struct clk_div_table clk_enet_ref_table[] = {
++static const struct clk_div_table clk_enet_ref_table[] = {
+ 	{ .val = 0, .div = 20, },
+ 	{ .val = 1, .div = 10, },
+ 	{ .val = 2, .div = 5, },
+@@ -86,14 +86,14 @@
+ 	{ }
+ };
+ 
+-static struct clk_div_table post_div_table[] = {
++static const struct clk_div_table post_div_table[] = {
+ 	{ .val = 2, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+ 	{ .val = 0, .div = 4, },
+ 	{ }
+ };
+ 
+-static struct clk_div_table video_div_table[] = {
++static const struct clk_div_table video_div_table[] = {
+ 	{ .val = 0, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+ 	{ .val = 2, .div = 1, },
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 3da1218..2305699 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -27,7 +27,7 @@
+ static u32 share_count_sai3;
+ static u32 share_count_nand;
+ 
+-static struct clk_div_table test_div_table[] = {
++static const struct clk_div_table test_div_table[] = {
+ 	{ .val = 3, .div = 1, },
+ 	{ .val = 2, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+@@ -35,7 +35,7 @@
+ 	{ }
+ };
+ 
+-static struct clk_div_table post_div_table[] = {
++static const struct clk_div_table post_div_table[] = {
+ 	{ .val = 3, .div = 4, },
+ 	{ .val = 2, .div = 1, },
+ 	{ .val = 1, .div = 2, },
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index 59b1863..6dae543 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -102,7 +102,7 @@
+ static const char *ftm_fix_sels[]	= { "sxosc", "ipg_bus", };
+ 
+ 
+-static struct clk_div_table pll4_audio_div_table[] = {
++static const struct clk_div_table pll4_audio_div_table[] = {
+ 	{ .val = 0, .div = 1 },
+ 	{ .val = 1, .div = 2 },
+ 	{ .val = 2, .div = 6 },
+-- 
+1.9.1
