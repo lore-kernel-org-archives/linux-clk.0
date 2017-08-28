@@ -1,34 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170810072346.32299-1-suzuki.katsuhiro@socionext.com>
-References: <20170810072346.32299-1-suzuki.katsuhiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 10 Aug 2017 20:06:47 +0900
-Message-ID: <CAK7LNARt6KFWubQ0WT7mYiZxgN-9q8MMZ5E6NHExBr=YtTdYXA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: uniphier: add audio system clock
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	ulf.hansson@linaro.org,
+	linus.walleij@linaro.org,
+	mturquette@linaro.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/3] constify ux500 clk_ops.
+Date: Mon, 28 Aug 2017 12:32:38 +0530
+Message-Id: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-08-10 16:23 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> Add clock for audio subsystem (AIO) and SoC internal audio codec
-> (EVEA) on UniPhier LD11/LD20 SoCs.
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> ---
+clk_ops are not supposed to change at runtime. All functions
+working with clk_ops provided by <linux/clk-provider.h> work
+with const clk_ops. So mark the non-const clk_ops as const.
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Here, Function "clk_reg_prcc" is used to initialized clk_init_data.
+clk_init_data is working with const clk_ops. So make clk_reg_prcc
+non-const clk_ops argument as const.
 
+Arvind Yadav (3):
+  [PATCH 1/3] clk: ux500: prcmu: constify clk_ops.
+  [PATCH 2/3] clk: ux500: sysctrl: constify clk_ops.
+  [PATCH 3/3] clk: ux500: prcc: constify clk_ops.
 
-
+ drivers/clk/ux500/clk-prcc.c    |  6 +++---
+ drivers/clk/ux500/clk-prcmu.c   | 14 +++++++-------
+ drivers/clk/ux500/clk-sysctrl.c |  8 ++++----
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
