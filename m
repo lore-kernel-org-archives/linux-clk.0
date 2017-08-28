@@ -1,73 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Aug 2017 14:12:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: mturquette@baylibre.com, andy.gross@linaro.org, david.brown@linaro.org,
-	rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 06/12] Clk: qcom: support for dynamic updating the PLL
-Message-ID: <20170801211237.GM2146@codeaurora.org>
-References: <1501153825-5181-1-git-send-email-absahu@codeaurora.org>
- <1501153825-5181-7-git-send-email-absahu@codeaurora.org>
- <20170728183428.GH2146@codeaurora.org>
- <660f193a457e47a290356d377ef30cd2@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <660f193a457e47a290356d377ef30cd2@codeaurora.org>
+Return-Path: <hayashi.kunihiko@socionext.com>
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: yamada.masahiro@socionext.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	masami.hiramatsu@linaro.org,
+	jaswinder.singh@linaro.org,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH] clk: uniphier: add ethernet clock control support
+Date: Mon, 28 Aug 2017 18:57:23 +0900
+Message-Id: <1503914243-24518-1-git-send-email-hayashi.kunihiko@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/30, Abhishek Sahu wrote:
-> On 2017-07-29 00:04, Stephen Boyd wrote:
-> >On 07/27, Abhishek Sahu wrote:
-> >>Some of the Alpha PLL’s support dynamic update in which the
-> >>frequency can be changed dynamically without turning off the PLL.
-> >>
-> >>This dynamic update requires the following sequence
-> >>
-> >>1. Write the desired values to pll_l_val and pll_alpha_val.
-> >>2. Toggle pll_latch_input from low to high.
-> >>3. Wait for pll_ack_latch to transition from low to high.
-> >>   The new L and alpha values have been latched. It make
-> >>   take some time for the PLL to fully settle with these
-> >>   new values.
-> >>4. Pull pll_latch_input low.
-> >>
-> >>Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> >
-> >I think Rajendra has a similar patch that was sent. Is this the
-> >same? Can you please look on the list and find it and compare?
-> 
->  Checked the list. Rajendra has two patches
-> 
->  1. https://www.spinics.net/lists/linux-arm-msm/msg23349.html
-> 
->  Yes my patch does the same thing with minor diffs.
->  My patch checks PLL_UPDATE_BYPASS and handles both
->  the cases. We can merge both the patches. I will check
->  with Rajendra and will work on this merge.
+Add clock control for ethernet controller on Pro4, PXs2, LD11 and LD20.
 
-Ok.
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/clk/uniphier/clk-uniphier-sys.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> 
->  2. Following patch fixes different issue although flag name
->     is common.
-> 
->  https://patchwork.kernel.org/patch/9662917/
-> 
->  Shall I include this patch in my patch series but not
->  sure we can directly turn off the PLL inside the PLL
->  set rate operation since it will turn the PLL off for
->  all its users.
-> 
-
-Hopefully the users of a PLL that doesn't support dynamic rate
-update can accept the fact that the clk will turn off while the
-rate is reprogrammed. At least that seems to be true for Taniya
-in that patch set. If it isn't true for your hardware, then don't
-specify the flag? Or is the problem that you may not have the
-flag set for certain PLLs that you're supporting?
-
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index 6fcf781..01da141 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -57,6 +57,12 @@
+ #define UNIPHIER_PRO4_SYS_CLK_USB3(idx, ch)				\
+ 	UNIPHIER_CLK_GATE("usb3" #ch, (idx), NULL, 0x2104, 16 + (ch))
+ 
++#define UNIPHIER_PRO4_SYS_CLK_ETHER(idx)				\
++	UNIPHIER_CLK_GATE("ether", (idx), NULL, 0x2104, 12)
++
++#define UNIPHIER_LD11_SYS_CLK_ETHER(idx)				\
++	UNIPHIER_CLK_GATE("ether", (idx), NULL, 0x210c, 6)
++
+ const struct uniphier_clk_data uniphier_ld4_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 65, 1),		/* 1597.44 MHz */
+ 	UNIPHIER_CLK_FACTOR("upll", -1, "ref", 6000, 512),	/* 288 MHz */
+@@ -81,6 +87,7 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
+ 	UNIPHIER_LD4_SYS_CLK_NAND(2),
+ 	UNIPHIER_LD4_SYS_CLK_SD,
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
++	UNIPHIER_PRO4_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD4_SYS_CLK_STDMAC(8),			/* HSC, MIO, RLE */
+ 	UNIPHIER_PRO4_SYS_CLK_GIO(12),			/* Ether, SATA, USB3 */
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+@@ -122,6 +129,7 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 48),
+ 	UNIPHIER_PRO5_SYS_CLK_NAND(2),
+ 	UNIPHIER_PRO5_SYS_CLK_SD,
++	UNIPHIER_PRO4_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD4_SYS_CLK_STDMAC(8),				/* HSC, RLE */
+ 	/* GIO is always clock-enabled: no function for 0x2104 bit6 */
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+@@ -142,6 +150,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
+ 	UNIPHIER_LD11_SYS_CLK_NAND(2),
+ 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
+ 	/* Index 5 reserved for eMMC PHY */
++	UNIPHIER_LD11_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
+ 	/* CPU gears */
+@@ -171,6 +180,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
+ 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
+ 	/* Index 5 reserved for eMMC PHY */
+ 	UNIPHIER_LD20_SYS_CLK_SD,
++	UNIPHIER_LD11_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
+ 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
+ 	/*
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
