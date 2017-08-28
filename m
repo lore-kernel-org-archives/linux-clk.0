@@ -1,68 +1,58 @@
-Return-Path: <arvind.yadav.cs@gmail.com>
-Return-Path: <arvind.yadav.cs@gmail.com>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	ulf.hansson@linaro.org,
-	linus.walleij@linaro.org,
-	mturquette@linaro.org
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <romain.perier@collabora.com>
+From: Romain Perier <romain.perier@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/3] clk: ux500: sysctrl: constify clk_ops.
-Date: Mon, 28 Aug 2017 12:32:40 +0530
-Message-Id: <1503903761-21730-3-git-send-email-arvind.yadav.cs@gmail.com>
-In-Reply-To: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
-References: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
+	Heiko Stuebner <heiko@sntech.de>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Romain Perier <romain.perier@collabora.com>
+Subject: [PATCH 4/4] arm64: dts: rockchip: add efuse for RK3368 SoCs
+Date: Mon, 28 Aug 2017 14:16:04 +0200
+Message-Id: <20170828121604.15968-5-romain.perier@collabora.com>
+In-Reply-To: <20170828121604.15968-1-romain.perier@collabora.com>
+References: <20170828121604.15968-1-romain.perier@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_ops are not supposed to change at runtime. All functions
-working with clk_ops provided by <linux/clk-provider.h> work
-with const clk_ops. So mark the non-const clk_ops as const.
+This adds the definition for eFuse that is found on RK3368 SoCs with the
+corresponding data cells.
 
-Here, Function "clk_reg_sysctrl" is used to initialized clk_init_data.
-clk_init_data is working with const clk_ops. So make clk_reg_sysctrl
-non-const clk_ops argument as const.
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Signed-off-by: Romain Perier <romain.perier@collabora.com>
 ---
- drivers/clk/ux500/clk-sysctrl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-index 266ddea..8a4e93c 100644
---- a/drivers/clk/ux500/clk-sysctrl.c
-+++ b/drivers/clk/ux500/clk-sysctrl.c
-@@ -98,18 +98,18 @@ static u8 clk_sysctrl_get_parent(struct clk_hw *hw)
- 	return clk->parent_index;
- }
+diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+index 3039c2da533e..cca2ce1705b3 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+@@ -569,6 +569,20 @@
+ 		};
+ 	};
  
--static struct clk_ops clk_sysctrl_gate_ops = {
-+static const struct clk_ops clk_sysctrl_gate_ops = {
- 	.prepare = clk_sysctrl_prepare,
- 	.unprepare = clk_sysctrl_unprepare,
- };
- 
--static struct clk_ops clk_sysctrl_gate_fixed_rate_ops = {
-+static const struct clk_ops clk_sysctrl_gate_fixed_rate_ops = {
- 	.prepare = clk_sysctrl_prepare,
- 	.unprepare = clk_sysctrl_unprepare,
- 	.recalc_rate = clk_sysctrl_recalc_rate,
- };
- 
--static struct clk_ops clk_sysctrl_set_parent_ops = {
-+static const struct clk_ops clk_sysctrl_set_parent_ops = {
- 	.set_parent = clk_sysctrl_set_parent,
- 	.get_parent = clk_sysctrl_get_parent,
- };
-@@ -124,7 +124,7 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
- 				unsigned long rate,
- 				unsigned long enable_delay_us,
- 				unsigned long flags,
--				struct clk_ops *clk_sysctrl_ops)
-+				const struct clk_ops *clk_sysctrl_ops)
- {
- 	struct clk_sysctrl *clk;
- 	struct clk_init_data clk_sysctrl_init;
++	efuse: efuse@ffb00000 {
++		compatible = "rockchip,rk3368-efuse";
++		reg = <0x0 0xffb00000 0x0 0x20>;
++		clocks = <&cru PCLK_EFUSE_256>;
++		clock-names = "pclk_efuse";
++
++		cpu_leakage: cpu-leakage@17 {
++			reg = <0x17 0x1>;
++		};
++		temp_adjust: temp-adjust@1f {
++			reg = <0x1f 0x1>;
++		};
++	};
++
+ 	tsadc: tsadc@ff280000 {
+ 		compatible = "rockchip,rk3368-tsadc";
+ 		reg = <0x0 0xff280000 0x0 0x100>;
 -- 
-1.9.1
+2.11.0
