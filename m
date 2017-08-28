@@ -1,60 +1,40 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [GIT PULL] Meson clock fixes for 4.13-rc4
-To: Stephen Boyd <sboyd@codeaurora.org>, Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <ce41382f-fd93-1dc9-0dba-1484ac555945@baylibre.com>
- <20170731202031.GK2146@codeaurora.org> <1501537388.2759.7.camel@baylibre.com>
- <20170801013800.GL2146@codeaurora.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <3492f1fe-c4d6-034c-1914-ec7e702f5bcc@baylibre.com>
-Date: Tue, 1 Aug 2017 14:11:38 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170801013800.GL2146@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <romain.perier@collabora.com>
+From: Romain Perier <romain.perier@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Romain Perier <romain.perier@collabora.com>
+Subject: [PATCH 0/4] rockchip: Add efuse support for RK3368 SoCs
+Date: Mon, 28 Aug 2017 14:16:00 +0200
+Message-Id: <20170828121604.15968-1-romain.perier@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/01/2017 03:38 AM, Stephen Boyd wrote:
-> On 07/31, Jerome Brunet wrote:
->> On Mon, 2017-07-31 at 13:20 -0700, Stephen Boyd wrote:
->>> On 07/31, Neil Armstrong wrote:
->>>> Hi Mike, Stephen,
->>>>
->>>> Here is some fixes for Meson GXBB and Meson8 drivers, that could go for
->>>> 4.13-rc4.
->>>>
->>>
->>> Are any of these critical fixes for regressions in the v4.13-rc
->>> series? All the Fixes tags look like they go back to before
->>> v4.13-rc1, so they don't look critical at first glance. If
->>> anything, they're mostly nice to have non-critical fixes? If so,
->>> can we defer these until the next merge window?
->>
->> I agree that these fixes hardly qualify as critical, except maybe for the mpll
->> fix. The clock rate actually applied can be really off compared to what CCF will
->>  except to have set.
-> 
-> Ok. So perhaps just the mpll fix would be appropriate then?
-> 
->>
->> These fixes are quite simple and safe, it would be nice if we could avoid having
->>  the next version tagged with known issues.
->>
-> 
-> I agree they're simple and safe, but they're also not necessary
-> to the release we're working on unless they're causing some
-> problem with code that was introduced this merge window. We try
-> to avoid merging non-critical fixes unless they're really causing
-> someone some sort of problems. If they aren't, we can stick them
-> into linux-next and wait until next release. Of course, they'll
-> be backported to stable trees as well with the Fixes tag, so
-> everything works out in the end.
-> 
+This set of patches exports the right clocks, add required functions
+and data, and definition for enabling and supporting eFuse on RK3368
+SoCs.
 
-OK, I'll resend a v2 PR with only the mpll fix.
+Romain Perier (4):
+  clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
+  clk: rockchip: export clock pclk_efuse_256 for RK3368 SoCs
+  nvmem: rockchip: add support for RK3368
+  arm64: dts: rockchip: add efuse for RK3368 SoCs
 
-The other will be pushed on our next/drivers branch.
+ .../devicetree/bindings/nvmem/rockchip-efuse.txt   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi           | 14 ++++
+ drivers/clk/rockchip/clk-rk3368.c                  |  2 +-
+ drivers/nvmem/rockchip-efuse.c                     | 80 ++++++++++++++++++++++
+ include/dt-bindings/clock/rk3368-cru.h             |  1 +
+ 5 files changed, 97 insertions(+), 1 deletion(-)
 
-Neil
+-- 
+2.11.0
