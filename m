@@ -1,35 +1,36 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
 	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	frank.wang@rock-chips.com,
-	cl@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 0/2] clk: rockchip: rk3228: add SCLK_SDIO_SRC clk id
-Date: Fri, 18 Aug 2017 11:49:23 +0800
-Message-Id: <1503028165-27072-1-git-send-email-zhangqing@rock-chips.com>
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] constify clk clk_div_table
+Date: Mon, 28 Aug 2017 10:58:51 +0530
+Message-Id: <1503898133-10862-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch exports sdio src clock for dts reference.
+clk_div_table are not supposed to change at runtime. All functions
+working with clk_div_table provided by <linux/clk-provider.h> work
+with const clk_div_table. So mark the non-const structs as const.
 
-Elaine Zhang (2):
-  clk: rockchip: add rk3228 sclk_sdio_src ID
-  clk: rockchip: rk3228: add SCLK_SDIO_SRC clk id
+Arvind Yadav (2):
+  [PATCH 1/2] clk: imx: constify clk_div_table
+  [PATCH 2/2] clk: zte: constify clk_div_table
 
- drivers/clk/rockchip/clk-rk3228.c      | 2 +-
- include/dt-bindings/clock/rk3228-cru.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6sl.c   | 6 +++---
+ drivers/clk/imx/clk-imx6sx.c   | 6 +++---
+ drivers/clk/imx/clk-imx6ul.c   | 6 +++---
+ drivers/clk/imx/clk-imx7d.c    | 4 ++--
+ drivers/clk/imx/clk-vf610.c    | 2 +-
+ drivers/clk/zte/clk-zx296718.c | 6 +++---
+ 6 files changed, 15 insertions(+), 15 deletions(-)
 
 -- 
 1.9.1
