@@ -1,62 +1,62 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH 08/13] [NOT FOR REVIEW NOW] drm: bridge: Enable polling hpd
- event in dw_hdmi
-Date: Tue,  1 Aug 2017 21:12:59 +0800
-Message-Id: <20170801131304.7741-9-icenowy@aosc.io>
-In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
-References: <20170801131304.7741-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	ulf.hansson@linaro.org,
+	linus.walleij@linaro.org,
+	mturquette@linaro.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/3] clk: ux500: prcc: constify clk_ops.
+Date: Mon, 28 Aug 2017 12:32:41 +0530
+Message-Id: <1503903761-21730-4-git-send-email-arvind.yadav.cs@gmail.com>
+In-Reply-To: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
+References: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+clk_ops are not supposed to change at runtime. All functions
+working with clk_ops provided by <linux/clk-provider.h> work
+with const clk_ops. So mark the non-const clk_ops as const.
 
-Some custom phys don't support hpd interrupts. Add support for polling
-such events.
+Here, Function "clk_reg_prcc" is used to initialized clk_init_data.
+clk_init_data is working with const clk_ops. So make clk_reg_prcc
+non-const clk_ops argument as const.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/ux500/clk-prcc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 60faf2d2bc6b..6c6466c6297c 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1942,7 +1942,11 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
- 	struct drm_connector *connector = &hdmi->connector;
+diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
+index 0e95076..f505927 100644
+--- a/drivers/clk/ux500/clk-prcc.c
++++ b/drivers/clk/ux500/clk-prcc.c
+@@ -79,13 +79,13 @@ static int clk_prcc_is_enabled(struct clk_hw *hw)
+ 	return clk->is_enabled;
+ }
  
- 	connector->interlace_allowed = 1;
--	connector->polled = DRM_CONNECTOR_POLL_HPD;
-+	if (hdmi->phy.ops->setup_hpd)
-+		connector->polled = DRM_CONNECTOR_POLL_HPD;
-+	else
-+		connector->polled = DRM_CONNECTOR_POLL_CONNECT |
-+				    DRM_CONNECTOR_POLL_DISCONNECT;
+-static struct clk_ops clk_prcc_pclk_ops = {
++static const struct clk_ops clk_prcc_pclk_ops = {
+ 	.enable = clk_prcc_pclk_enable,
+ 	.disable = clk_prcc_pclk_disable,
+ 	.is_enabled = clk_prcc_is_enabled,
+ };
  
- 	drm_connector_helper_add(connector, &dw_hdmi_connector_helper_funcs);
- 
+-static struct clk_ops clk_prcc_kclk_ops = {
++static const struct clk_ops clk_prcc_kclk_ops = {
+ 	.enable = clk_prcc_kclk_enable,
+ 	.disable = clk_prcc_kclk_disable,
+ 	.is_enabled = clk_prcc_is_enabled,
+@@ -96,7 +96,7 @@ static struct clk *clk_reg_prcc(const char *name,
+ 				resource_size_t phy_base,
+ 				u32 cg_sel,
+ 				unsigned long flags,
+-				struct clk_ops *clk_prcc_ops)
++				const struct clk_ops *clk_prcc_ops)
+ {
+ 	struct clk_prcc *clk;
+ 	struct clk_init_data clk_prcc_init;
 -- 
-2.13.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
