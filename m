@@ -1,61 +1,53 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH 10/13] [NOT FOR REVIEW NOW] clk: sunxi: Add
- CLK_SET_RATE_PARENT flag for H3 HDMI clock
-Date: Tue,  1 Aug 2017 21:13:01 +0800
-Message-Id: <20170801131304.7741-11-icenowy@aosc.io>
-In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
-References: <20170801131304.7741-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Dmitry Shmidt <dimitrysh@google.com>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: [PATCH 2/2] arm64: dts: hi6220: enable watchdog
+Date: Tue, 29 Aug 2017 15:58:38 +0800
+Message-Id: <1503993518-24428-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1503993518-24428-1-git-send-email-leo.yan@linaro.org>
+References: <1503993518-24428-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+From: Dmitry Shmidt <dimitrysh@google.com>
 
-When setting the HDMI clock of H3, the PLL_VIDEO clock needs to be set.
+This patch is to add watchdog binding for Hi6220 on Hikey board.
 
-Add CLK_SET_RATE_PARENT flag for H3 HDMI clock.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index b1127e8629d9..2ebb3d865b01 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -474,7 +474,7 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index eacbe0d..77dc28f 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -809,6 +809,14 @@
+ 			pinctrl-1 = <&sdio_pmx_idle &sdio_clk_cfg_idle &sdio_cfg_idle>;
+ 		};
  
- static const char * const hdmi_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
- 		      0x154, BIT(31), 0);
++		watchdog0: watchdog@f8005000 {
++			compatible = "arm,sp805-wdt", "arm,primecell";
++			reg = <0x0 0xf8005000 0x0 0x1000>;
++			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ao_ctrl HI6220_WDT0_PCLK>;
++			clock-names = "apb_pclk";
++		};
++
+ 		tsensor: tsensor@0,f7030700 {
+ 			compatible = "hisilicon,tsensor";
+ 			reg = <0x0 0xf7030700 0x0 0x1000>;
 -- 
-2.13.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
