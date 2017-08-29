@@ -1,41 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35098 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbdHPSeQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Aug 2017 14:34:16 -0400
-Date: Wed, 16 Aug 2017 11:34:12 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Joseph Chen <chenjh@rock-chips.com>
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, lee.jones@linaro.org,
-        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
-        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
-        wdc@rock-chips.com, tony.xie@rock-chips.com,
-        linux-input@vger.kernel.org, mark.rutland@arm.com,
-        w.egorov@phytec.de, linux-clk@vger.kernel.org,
-        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        rtc-linux@googlegroups.com
-Subject: Re: [RESEND v9 09/12] Input: Add power key driver for Rockchip RK805
- PMIC
-Message-ID: <20170816183412.GC25491@dtor-ws>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
- <1502848894-29511-1-git-send-email-chenjh@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1502848894-29511-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhoubb@lemote.com>
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+	"Steven J . Hill" <Steven.Hill@imgtec.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Fuxin Zhang <zhangfx@lemote.com>,
+	Zhangjin Wu <wuzhangjin@gmail.com>,
+	Kelvin Cheung <keguang.zhang@gmail.com>,
+	Yang Ling <gnaygnil@gmail.com>,
+	=?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	Binbin Zhou <zhoubb@lemote.com>,
+	HuaCai Chen <chenhc@lemote.com>
+Subject: [PATCH RESEND v8 1/9] MIPS: Loongson: Merge PRID macro for Loongson-1A/1B/1C
+Date: Tue, 29 Aug 2017 16:38:38 +0800
+Message-Id: <1503995926-17125-2-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1503995926-17125-1-git-send-email-zhoubb@lemote.com>
+References: <1503995926-17125-1-git-send-email-zhoubb@lemote.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 16, 2017 at 10:01:34AM +0800, Joseph Chen wrote:
-> This driver provides a input driver for the power
-> key on the Rockchip RK805 PMIC.
-> 
-> Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
+The Loongson-1 series CPUs(1A/1B/1C) share the same PRID macro.
 
-This driver is in my tree already, no need to resend it again.
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+---
+ arch/mips/include/asm/cpu.h         | 3 +--
+ arch/mips/kernel/cpu-probe.c        | 4 +++-
+ arch/mips/loongson32/common/setup.c | 2 +-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-Thanks.
-
+diff --git a/arch/mips/include/asm/cpu.h b/arch/mips/include/asm/cpu.h
+index 3069359..71c624d 100644
+--- a/arch/mips/include/asm/cpu.h
++++ b/arch/mips/include/asm/cpu.h
+@@ -240,8 +240,7 @@
+ #define PRID_REV_VR4181A	0x0070	/* Same as VR4122 */
+ #define PRID_REV_VR4130		0x0080
+ #define PRID_REV_34K_V1_0_2	0x0022
+-#define PRID_REV_LOONGSON1B	0x0020
+-#define PRID_REV_LOONGSON1C	0x0020	/* Same as Loongson-1B */
++#define PRID_REV_LOONGSON1ABC	0x0020
+ #define PRID_REV_LOONGSON2E	0x0002
+ #define PRID_REV_LOONGSON2F	0x0003
+ #define PRID_REV_LOONGSON3A_R1	0x0005
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index 353ade2..25f729c 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1513,8 +1513,10 @@ static inline void cpu_probe_legacy(struct cpuinfo_mips *c, unsigned int cpu)
+ 		c->cputype = CPU_LOONGSON1;
+ 
+ 		switch (c->processor_id & PRID_REV_MASK) {
+-		case PRID_REV_LOONGSON1B:
++		case PRID_REV_LOONGSON1ABC:
++#ifdef CONFIG_CPU_LOONGSON1B
+ 			__cpu_name[cpu] = "Loongson 1B";
++#endif
+ 			break;
+ 		}
+ 
+diff --git a/arch/mips/loongson32/common/setup.c b/arch/mips/loongson32/common/setup.c
+index 1640744..c8e8b3e 100644
+--- a/arch/mips/loongson32/common/setup.c
++++ b/arch/mips/loongson32/common/setup.c
+@@ -21,7 +21,7 @@ const char *get_system_type(void)
+ 	unsigned int processor_id = (&current_cpu_data)->processor_id;
+ 
+ 	switch (processor_id & PRID_REV_MASK) {
+-	case PRID_REV_LOONGSON1B:
++	case PRID_REV_LOONGSON1ABC:
+ #if defined(CONFIG_LOONGSON1_LS1B)
+ 		return "LOONGSON LS1B";
+ #elif defined(CONFIG_LOONGSON1_LS1C)
 -- 
-Dmitry
+2.9.4
