@@ -1,24 +1,29 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, shawn.lin@rock-chips.com, andy.yan@rock-chips.com
-Subject: Re: [PATCH v3 9/9] clk: rockchip: add some critical clocks for rv1108 SoC
-Date: Tue, 08 Aug 2017 17:37:10 +0200
-Message-ID: <3649046.pOvQWI1C9i@phil>
-In-Reply-To: <1502176773-32415-1-git-send-email-zhangqing@rock-chips.com>
-References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com> <1502176773-32415-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 29 Aug 2017 12:12:02 -0500
+From: Rob Herring <robh@kernel.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>
+Subject: Re: [PATCH 1/2] dt-bindings: aspeed-scu: Add clock and reset
+ properties
+Message-ID: <20170829171202.nnbai4i4vxln6pom@rob-hp-laptop>
+References: <20170823060957.31167-1-joel@jms.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170823060957.31167-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 8. August 2017, 15:19:33 CEST schrieb Elaine Zhang:
-> the bus/periph/nclk_ddrupctl/pclk_ddrmon/pclk_acodecphy/pclk_pmu
-> no driver to handle them,
-> Chip design requirements for these clock to always on.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+On Wed, Aug 23, 2017 at 03:39:56PM +0930, Joel Stanley wrote:
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  Documentation/devicetree/bindings/mfd/aspeed-scu.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-applied for 4.14
-
-Thanks
-Heiko
+Acked-by: Rob Herring <robh@kernel.org>
