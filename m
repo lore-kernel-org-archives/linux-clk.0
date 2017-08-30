@@ -1,31 +1,75 @@
-Return-Path: <david.wu@rock-chips.com>
-Subject: Re: [PATCH v2 1/4] clk: rockchip: add rv1108 ACLK_GAMC and PCLK_GMAC
- ID
-To: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
- sboyd@codeaurora.org, heiko@sntech.de
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
- cl@rock-chips.com, andy.yan@rock-chips.com, wdc@rock-chips.com
-References: <1503303367-17915-1-git-send-email-zhangqing@rock-chips.com>
- <1503303367-17915-2-git-send-email-zhangqing@rock-chips.com>
-From: "David.Wu" <david.wu@rock-chips.com>
-Message-ID: <f51160d5-32cc-a63c-3877-76ea91fb6e8b@rock-chips.com>
-Date: Mon, 21 Aug 2017 18:22:31 +0800
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 30 Aug 2017 14:36:24 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: Provide a default reset hook
+Message-ID: <20170830123624.vurdnh6bojbtrjal@flea.lan>
+References: <20170825094953.3247-1-maxime.ripard@free-electrons.com>
+ <CAPDyKFonXp4Uqi=DLxKf=1ecOx-2E5mUkEXqnqJPE-J57xXQcw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1503303367-17915-2-git-send-email-zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aqzbkk2ndrwasqsp"
+In-Reply-To: <CAPDyKFonXp4Uqi=DLxKf=1ecOx-2E5mUkEXqnqJPE-J57xXQcw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
 
-ÔÚ 2017/8/21 16:16, Elaine Zhang Ð´µÀ:
-> This patch exports gmac aclk and pclk for dts reference.
-> 
-> Signed-off-by: Elaine Zhang<zhangqing@rock-chips.com>
-> ---
->   include/dt-bindings/clock/rv1108-cru.h | 2 ++
->   1 file changed, 2 insertions(+)
+--aqzbkk2ndrwasqsp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: David Wu <david.wu@rock-chips.com>
+Hi Ulf,
+
+On Wed, Aug 30, 2017 at 02:29:24PM +0200, Ulf Hansson wrote:
+> On 25 August 2017 at 11:49, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The reset hook was left implemented. Provide a dumb implementation so t=
+hat
+> > client drivers can depend on it.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> Do you want me to pick this up via my mmc tree? If so, is that okay by
+> the clock maintainers?
+
+I also happen to be the maintainer of that part of the kernel
+(reporting to Mike and Stephen of course). We don't have anything
+touching that file in next, so unless they feel like it should go
+through their tree, it would be easier to keep the two changes
+together and merge them through your tree.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--aqzbkk2ndrwasqsp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZprFIAAoJEBx+YmzsjxAgnbcP/3gwfodfQelm5qubvJ0/q9QH
+FZD2FNwD0qMRYiygrxUUwDRVPVM/utt5avZdqnuW+yJuroZT2nKjan58gliiIWjo
+pgtPtGKMfsE7RJjAmhkJF2c16wuTLjBdEHo5Ft9jqk/W4hhyQGgKhWGjHpUVLHwU
+qttBOdvyCkbyATv8rXTxEB3ZSKdYtcQCf94Hiyw3B19CqVpZixpVKU1+/BpZcvx7
+vMf2DF8zz9DNRlVZLNjSJqXn9qPQbY3HwM35Hkefvb9KE5rx1XCPvHtU9zqvMdBY
+OApTeHfhRmgzBGkLHnaBEWXrD/UO3BNaDClXkiVU53/gtzjAuPGlHd0vK35ksRef
+LDFRkQFZGIz1re0jrT2N2BN7nKv8SuRJJc6yJ9V9ak4HCZAX/lNx0Hy7Q6wOObst
+8lvaN9dJx12HCWfe38ju58MZu+qRC8g1olSzZ7jZOGqyx5VTiqLmTqpowJuT6rtD
+mCU2udv7E989h/GN3CEwsjFHLSbTG4yUJCqWvH1TKqJA5vqPzHy9hyZQfh8uQjqi
+Xm4AV+kyRBPq8qFYnW91fYiwl+1xPfABZrQh/n7DYc66+KPw5P3NQbSCMXV8++MN
+tkgdmWjDmcmPQDCsvJ5CIYtsGdGkPcyzJ96CsUnqJskksR+Y2gCjvFUBeoUlngO8
+9xVLMk3kQa4B92cOyl/e
+=FDbk
+-----END PGP SIGNATURE-----
+
+--aqzbkk2ndrwasqsp--
