@@ -1,164 +1,45 @@
-Return-Path: <quentin.schulz@free-electrons.com>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk,
-	boris.brezillon@free-electrons.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr,
-	thomas.petazzoni@free-electrons.com,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH v5 7/7] ASoC: atmel-classd: remove aclk clock
-Date: Thu, 10 Aug 2017 08:34:07 +0200
-Message-Id: <bc88924f47f1931e4e807e47775e55246474014f.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-In-Reply-To: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
+References: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 30 Aug 2017 13:37:04 +0200
+Message-ID: <CAPDyKFpHH_jU-iYZtgjAPLc9jDvERcPEHcJu-f=7b1P8LvYSqA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] constify ux500 clk_ops.
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Since gclk (generated-clk) is now able to determine the rate of the
-audio_pll, there is no need for classd to have a direct phandle to the
-audio_pll while already having a phandle to gclk.
+On 28 August 2017 at 09:02, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+> clk_ops are not supposed to change at runtime. All functions
+> working with clk_ops provided by <linux/clk-provider.h> work
+> with const clk_ops. So mark the non-const clk_ops as const.
+>
+> Here, Function "clk_reg_prcc" is used to initialized clk_init_data.
+> clk_init_data is working with const clk_ops. So make clk_reg_prcc
+> non-const clk_ops argument as const.
+>
+> Arvind Yadav (3):
+>   [PATCH 1/3] clk: ux500: prcmu: constify clk_ops.
+>   [PATCH 2/3] clk: ux500: sysctrl: constify clk_ops.
+>   [PATCH 3/3] clk: ux500: prcc: constify clk_ops.
+>
+>  drivers/clk/ux500/clk-prcc.c    |  6 +++---
+>  drivers/clk/ux500/clk-prcmu.c   | 14 +++++++-------
+>  drivers/clk/ux500/clk-sysctrl.c |  8 ++++----
+>  3 files changed, 14 insertions(+), 14 deletions(-)
+>
+> --
+> 1.9.1
+>
 
-Thus, remove all mentions to aclk in classd driver and update macros and
-variable names.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- sound/soc/atmel/atmel-classd.c | 47 ++++++++++-------------------------
- 1 file changed, 14 insertions(+), 33 deletions(-)
+Mike, Stephen, can you pick this up?
 
-diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
-index b7ef8c5..be6b775 100644
---- a/sound/soc/atmel/atmel-classd.c
-+++ b/sound/soc/atmel/atmel-classd.c
-@@ -32,7 +32,6 @@ struct atmel_classd {
- 	struct regmap *regmap;
- 	struct clk *pclk;
- 	struct clk *gclk;
--	struct clk *aclk;
- 	int irq;
- 	const struct atmel_classd_pdata *pdata;
- };
-@@ -330,11 +329,6 @@ static int atmel_classd_codec_dai_startup(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
--	int ret;
--
--	ret = clk_prepare_enable(dd->aclk);
--	if (ret)
--		return ret;
- 
- 	return clk_prepare_enable(dd->gclk);
- }
-@@ -357,31 +351,31 @@ static int atmel_classd_codec_dai_digital_mute(struct snd_soc_dai *codec_dai,
- 	return 0;
- }
- 
--#define CLASSD_ACLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
--#define CLASSD_ACLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
-+#define CLASSD_GCLK_RATE_11M2896_MPY_8 (112896 * 100 * 8)
-+#define CLASSD_GCLK_RATE_12M288_MPY_8  (12288 * 1000 * 8)
- 
- static struct {
- 	int rate;
- 	int sample_rate;
- 	int dsp_clk;
--	unsigned long aclk_rate;
-+	unsigned long gclk_rate;
- } const sample_rates[] = {
- 	{ 8000,  CLASSD_INTPMR_FRAME_8K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 16000, CLASSD_INTPMR_FRAME_16K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 32000, CLASSD_INTPMR_FRAME_32K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 48000, CLASSD_INTPMR_FRAME_48K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 96000, CLASSD_INTPMR_FRAME_96K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_ACLK_RATE_12M288_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_12M288, CLASSD_GCLK_RATE_12M288_MPY_8 },
- 	{ 22050, CLASSD_INTPMR_FRAME_22K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- 	{ 44100, CLASSD_INTPMR_FRAME_44K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- 	{ 88200, CLASSD_INTPMR_FRAME_88K,
--	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_ACLK_RATE_11M2896_MPY_8 },
-+	CLASSD_INTPMR_DSP_CLK_FREQ_11M2896, CLASSD_GCLK_RATE_11M2896_MPY_8 },
- };
- 
- static int
-@@ -410,13 +404,12 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	dev_dbg(codec->dev,
--		"Selected SAMPLE_RATE of %dHz, ACLK_RATE of %ldHz\n",
--		sample_rates[best].rate, sample_rates[best].aclk_rate);
-+		"Selected SAMPLE_RATE of %dHz, GCLK_RATE of %ldHz\n",
-+		sample_rates[best].rate, sample_rates[best].gclk_rate);
- 
- 	clk_disable_unprepare(dd->gclk);
--	clk_disable_unprepare(dd->aclk);
- 
--	ret = clk_set_rate(dd->aclk, sample_rates[best].aclk_rate);
-+	ret = clk_set_rate(dd->gclk, sample_rates[best].gclk_rate);
- 	if (ret)
- 		return ret;
- 
-@@ -426,10 +419,6 @@ atmel_classd_codec_dai_hw_params(struct snd_pcm_substream *substream,
- 
- 	snd_soc_update_bits(codec, CLASSD_INTPMR, mask, val);
- 
--	ret = clk_prepare_enable(dd->aclk);
--	if (ret)
--		return ret;
--
- 	return clk_prepare_enable(dd->gclk);
- }
- 
-@@ -441,7 +430,6 @@ atmel_classd_codec_dai_shutdown(struct snd_pcm_substream *substream,
- 	struct atmel_classd *dd = snd_soc_card_get_drvdata(rtd->card);
- 
- 	clk_disable_unprepare(dd->gclk);
--	clk_disable_unprepare(dd->aclk);
- }
- 
- static int atmel_classd_codec_dai_prepare(struct snd_pcm_substream *substream,
-@@ -596,13 +584,6 @@ static int atmel_classd_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	dd->aclk = devm_clk_get(dev, "aclk");
--	if (IS_ERR(dd->aclk)) {
--		ret = PTR_ERR(dd->aclk);
--		dev_err(dev, "failed to get audio clock: %d\n", ret);
--		return ret;
--	}
--
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	io_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(io_base)) {
--- 
-git-series 0.9.1
+Kind regards
+Uffe
