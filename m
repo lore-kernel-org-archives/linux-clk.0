@@ -1,58 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.131]:44023 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752694AbdHPCAv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 22:00:51 -0400
-From: Joseph Chen <chenjh@rock-chips.com>
-To: gnurou@gmail.com, linus.walleij@linaro.org,
-        dmitry.torokhov@gmail.com, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
-        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
-        wdc@rock-chips.com, tony.xie@rock-chips.com,
-        linux-input@vger.kernel.org, mark.rutland@arm.com,
-        w.egorov@phytec.de, linux-clk@vger.kernel.org,
-        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
-Subject: [RESEND v9 05/12] clk: Kconfig: Name RK805 in Kconfig for COMMON_CLK_RK808
-Date: Wed, 16 Aug 2017 10:00:03 +0800
-Message-Id: <1502848803-22954-1-git-send-email-chenjh@rock-chips.com>
-In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170825094953.3247-2-maxime.ripard@free-electrons.com>
+References: <20170825094953.3247-1-maxime.ripard@free-electrons.com> <20170825094953.3247-2-maxime.ripard@free-electrons.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 30 Aug 2017 15:14:11 +0200
+Message-ID: <CAPDyKFqAyhB1C096YjXNz2iAPL0Vrr5-hsyoiL8meho1b0qNPg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: sunxi: Reset the device at probe time
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+On 25 August 2017 at 11:49, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> We might be into some troubles if the bootloader misconfigured the MMC
+> controller.
+>
+> We currently only de-assert the reset line at probe time, which means that
+> if the device was already out of reset, we're going to keep whatever state
+> was set already.
+>
+> Switch to a reset instead of the deassert to have a device in a pristine
+> state when we start operating.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-The RK808 and RK805 PMICs are using a similar register map.
-We can reuse the clk driver for the RK805 PMIC. So let's add
-the RK805 in the Kconfig description.
+Thanks, applied for next!
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
----
- drivers/clk/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 9356ab4..7ca8f02 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -39,10 +39,10 @@ config COMMON_CLK_MAX77686
- 	  clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK808 and RK818 crystal oscillator clock. These
-+	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
- 	  multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
--- 
-1.9.1
-
-
+> ---
+>  drivers/mmc/host/sunxi-mmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+> index da5f46a14497..53c970fe0873 100644
+> --- a/drivers/mmc/host/sunxi-mmc.c
+> +++ b/drivers/mmc/host/sunxi-mmc.c
+> @@ -1242,7 +1242,7 @@ static int sunxi_mmc_resource_request(struct sunxi_mmc_host *host,
+>         }
+>
+>         if (!IS_ERR(host->reset)) {
+> -               ret = reset_control_deassert(host->reset);
+> +               ret = reset_control_reset(host->reset);
+>                 if (ret) {
+>                         dev_err(&pdev->dev, "reset err %d\n", ret);
+>                         goto error_disable_clk_sample;
+> --
+> 2.13.5
+>
