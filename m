@@ -1,32 +1,36 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 3 Aug 2017 13:39:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: uniphier: remove sLD3 SoC support
-Message-ID: <20170803183914.dxus5l2dgscfx6gi@rob-hp-laptop>
-References: <1501040075-24279-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:46768 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbdHaF3e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2017 01:29:34 -0400
+Date: Wed, 30 Aug 2017 22:29:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org, Janos Laube <janos.dev@gmail.com>,
+        Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] clk: gemini: hands off PCI OE bit
+Message-ID: <20170831052921.GY21656@codeaurora.org>
+References: <20170808190818.11740-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1501040075-24279-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20170808190818.11740-1-linus.walleij@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 26, 2017 at 12:34:35PM +0900, Masahiro Yamada wrote:
-> This SoC is too old.  It is difficult to maintain any longer.
+On 08/08, Linus Walleij wrote:
+> This bit is pin control, and needs to be carefully managed by the
+> new pin control driver.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> 
->  .../devicetree/bindings/clock/uniphier-clock.txt   |  5 ---
->  drivers/clk/uniphier/clk-uniphier-core.c           | 16 +++------
->  drivers/clk/uniphier/clk-uniphier-mio.c            |  4 +--
->  drivers/clk/uniphier/clk-uniphier-sys.c            | 42 ++++++++--------------
->  drivers/clk/uniphier/clk-uniphier.h                |  3 +-
->  5 files changed, 20 insertions(+), 50 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
