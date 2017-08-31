@@ -1,30 +1,33 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 30 Aug 2017 22:28:45 -0700
+Date: Thu, 31 Aug 2017 10:56:59 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: mturquette@baylibre.com, ulf.hansson@linaro.org,
-	linus.walleij@linaro.org, mturquette@linaro.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] clk: ux500: prcmu: constify clk_ops.
-Message-ID: <20170831052845.GV21656@codeaurora.org>
-References: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
- <1503903761-21730-2-git-send-email-arvind.yadav.cs@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi: fix uninitialized access
+Message-ID: <20170831175659.GE21656@codeaurora.org>
+References: <20170823143937.2176025-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1503903761-21730-2-git-send-email-arvind.yadav.cs@gmail.com>
+In-Reply-To: <20170823143937.2176025-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/28, Arvind Yadav wrote:
-> clk_ops are not supposed to change at runtime. All functions
-> working with clk_ops provided by <linux/clk-provider.h> work
-> with const clk_ops. So mark the non-const clk_ops as const.
+On 08/23, Arnd Bergmann wrote:
+> gcc-8 reports an uninitialized variable access in a code path
+> that we would see with incorrect DTB input:
 > 
-> Here, Function "clk_reg_prcmu" is used to initialized clk_init_data.
-> clk_init_data is working with const clk_ops. So make clk_reg_prcmu
-> non-const clk_ops argument as const.
+> drivers/clk/sunxi/clk-sun8i-bus-gates.c: In function 'sun8i_h3_bus_gates_init':
+> drivers/clk/sunxi/clk-sun8i-bus-gates.c:85:27: error: 'clk_parent' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> This works around by skipping invalid input and printing a warning
+> instead if it ever happens. The problem was apparently part of the
+> initiali driver submission, but older compilers don't notice it.
+> 
+> Fixes: ab6e23a4e388 ("clk: sunxi: Add H3 clocks support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
 
 Applied to clk-next
