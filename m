@@ -1,197 +1,98 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH 03/13] drm: sun4i: add support for H3's TCON
-Date: Tue,  1 Aug 2017 21:12:54 +0800
-Message-Id: <20170801131304.7741-4-icenowy@aosc.io>
-In-Reply-To: <20170801131304.7741-1-icenowy@aosc.io>
-References: <20170801131304.7741-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 30 Aug 2017 22:26:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
+Message-ID: <20170831052630.GU21656@codeaurora.org>
+References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
+ <20170809173318.GD2146@codeaurora.org>
+ <20170813141851.GD31819@dragon>
+ <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+On 08/30, A.s. Dong wrote:
+> > -----Original Message-----
+> > From: Shawn Guo [mailto:shawnguo@kernel.org]
+> > Sent: Sunday, August 13, 2017 10:19 PM
+> > To: Stephen Boyd
+> > Cc: Michael Turquette; A.s. Dong; linux-clk@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; Shawn Guo
+> > Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
+> > 
+> > Hi Stephen,
+> > 
+> > On Wed, Aug 09, 2017 at 10:33:18AM -0700, Stephen Boyd wrote:
+> > > > diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c index
+> > > > c834f5abfc49..65cee595a67e 100644
+> > > > --- a/drivers/clk/clk-bulk.c
+> > > > +++ b/drivers/clk/clk-bulk.c
+> > > > @@ -39,7 +39,10 @@ int __must_check clk_bulk_get(struct device *dev,
+> > int num_clks,
+> > > >  		clks[i].clk = NULL;
+> > > >
+> > > >  	for (i = 0; i < num_clks; i++) {
+> > > > -		clks[i].clk = clk_get(dev, clks[i].id);
+> > > > +		if (clks[i].id)
+> > > > +			clks[i].clk = clk_get(dev, clks[i].id);
+> > > > +		else if (dev->of_node)
+> > > > +			clks[i].clk = of_clk_get(dev->of_node, i);
+> > >
+> > > This seems a little too magical. The omission of an id in an array of
+> > > clks would mean that only that one clk is acquired through
+> > > of_clk_get(). We could have a mixture of ids and no ids for some
+> > > device, and then do very odd things.
+> > >
+> > > How about we add a flag to clk_bulk_data that indicates we want it to
+> > > use of_clk_get() instead of clk_get() for all of the clks?
+> > > Then the id is ignored for the entire function.
+> > 
+> > I have sent v2 to add a flag to clk_bulk_data to address your comments.
+> > But I just found it might not be what you want exactly, because the
+> > current bulk clk APIs defines clk_bulk_data in a different way from what
+> > you are asking here.
+> > 
+> > It seems that you think clk_bulk_data represents all the clocks that bulk
+> > APIs manage, but actually it only represents one of the multiple clocks.
+> > Callers need to prepare an array of clk_bulk_data to represent multiple
+> > clocks.  That said, the flag we add to clk_bulk_data only affects one
+> > clock instead of all clocks.
+> > 
+> > I feel this is something we can improve.  clk_bulk_data can be used to
+> > represent all clocks, something like below.  In this case, bulk clk APIs
+> > do not need to take num_clks as a separate parameter, and callers do not
+> > need to maintain multiple clk_bulk_data instances.  Since we do not have
+> > any in tree users of bulk clk APIs yet, we can make this semantic change
+> > quickly.  Thoughts?
+> > 
+> 
+> Flags may be better used for extending per clk feature support in the future.
+> 
+> IMHO how about implement a of_clk_bulk_get() to handle this issue as we already
+> have a of_clk_get?
+> e.g.
+> 
+> int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+>                               struct clk_bulk_data *clks)
+> {
+>         for (i = 0; i < num_clks; i++) {
+>                 clks[i].clk = of_clk_get(dev, clks[i].id);
+> ...
+> 
+> }
+> 
+> Then it's less intrusive.
+> 
 
-Allwinner H3 has two special TCONs without channel 0.
+This looks ok too. Go ahead and send this version instead.
 
-Add support for this kind of TCON.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c  |  1 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 43 +++++++++++++++++++++++++++-----------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
- 3 files changed, 33 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index ace59651892f..fd99fe8a4df7 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -188,6 +188,7 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-h3-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
- }
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index d9791292553e..270f09e381a5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -59,6 +59,7 @@ void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
- 
- 	/* Disable the TCON's channel */
- 	if (channel == 0) {
-+		WARN_ON(!tcon->quirks->has_channel_0);
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE, 0);
- 		clk_disable_unprepare(tcon->dclk);
-@@ -78,6 +79,7 @@ void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
- 
- 	/* Enable the TCON's channel */
- 	if (channel == 0) {
-+		WARN_ON(!tcon->quirks->has_channel_0);
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE);
-@@ -157,6 +159,8 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
- 	u8 clk_delay;
- 	u32 val = 0;
- 
-+	WARN_ON(!tcon->quirks->has_channel_0);
-+
- 	/* Configure the dot clock */
- 	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
- 
-@@ -366,10 +370,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
- 	}
- 	clk_prepare_enable(tcon->clk);
- 
--	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
--	if (IS_ERR(tcon->sclk0)) {
--		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
--		return PTR_ERR(tcon->sclk0);
-+	if (tcon->quirks->has_channel_0) {
-+		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
-+		if (IS_ERR(tcon->sclk0)) {
-+			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
-+			return PTR_ERR(tcon->sclk0);
-+		}
- 	}
- 
- 	if (tcon->quirks->has_channel_1) {
-@@ -551,10 +557,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_clocks;
- 	}
- 
--	ret = sun4i_dclk_create(dev, tcon);
--	if (ret) {
--		dev_err(dev, "Couldn't create our TCON dot clock\n");
--		goto err_free_clocks;
-+	if (tcon->quirks->has_channel_0) {
-+		ret = sun4i_dclk_create(dev, tcon);
-+		if (ret) {
-+			dev_err(dev, "Couldn't create our TCON dot clock\n");
-+			goto err_free_clocks;
-+		}
- 	}
- 
- 	ret = sun4i_tcon_init_irq(dev, tcon);
-@@ -579,7 +587,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	return 0;
- 
- err_free_dotclock:
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- err_free_clocks:
- 	sun4i_tcon_free_clocks(tcon);
- err_assert_reset:
-@@ -593,7 +602,9 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
- 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
- 
- 	list_del(&tcon->list);
--	sun4i_dclk_free(tcon);
-+
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- 	sun4i_tcon_free_clocks(tcon);
- }
- 
-@@ -625,23 +636,30 @@ static int sun4i_tcon_remove(struct platform_device *pdev)
- 
- static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
- 	.has_unknown_mux = true,
-+	.has_channel_0	= true,
- 	.has_channel_1	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
-+	.has_channel_0	= true,
- 	.has_channel_1	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
-+	.has_channel_0	= true,
- 	.has_channel_1	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
--	/* nothing is supported */
-+	.has_channel_0	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
--	/* nothing is supported */
-+	.has_channel_0	= true,
-+};
-+
-+static const struct sun4i_tcon_quirks sun8i_h3_quirks = {
-+	.has_channel_1	= true,
- };
- 
- static const struct of_device_id sun4i_tcon_of_table[] = {
-@@ -649,6 +667,7 @@ static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-+	{ .compatible = "allwinner,sun8i-h3-tcon", .data = &sun8i_h3_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ }
- };
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index 552c88ec16be..de035e598129 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -145,6 +145,7 @@
- 
- struct sun4i_tcon_quirks {
- 	bool	has_unknown_mux; /* sun5i has undocumented mux */
-+	bool	has_channel_0;	/* some A83T+ TCONs don't have channel 0*/
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
- };
- 
 -- 
-2.13.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
