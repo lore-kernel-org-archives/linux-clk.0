@@ -1,94 +1,46 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:43794 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750757AbdHLEvS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 12 Aug 2017 00:51:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39792 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751307AbdHaXUf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Aug 2017 19:20:35 -0400
+Date: Thu, 31 Aug 2017 16:20:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joseph Chen <chenjh@rock-chips.com>
+Cc: gnurou@gmail.com, linus.walleij@linaro.org,
+        dmitry.torokhov@gmail.com, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org,
+        lgirdwood@gmail.com, linux-rockchip@lists.infradead.org,
+        wdc@rock-chips.com, tony.xie@rock-chips.com,
+        linux-input@vger.kernel.org, mark.rutland@arm.com,
+        w.egorov@phytec.de, linux-clk@vger.kernel.org,
+        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
+        rtc-linux@googlegroups.com
+Subject: Re: [RESEND v9 05/12] clk: Kconfig: Name RK805 in Kconfig for
+ COMMON_CLK_RK808
+Message-ID: <20170831232032.GI21656@codeaurora.org>
+References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+ <1502848803-22954-1-git-send-email-chenjh@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Sat, 12 Aug 2017 12:51:17 +0800
-From: icenowy@aosc.io
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 08/10] clk: sunxi-ng: support R40 SoC
-In-Reply-To: <CAGb2v66_n-ZDRsCd+wcwUgvVbNw3OBk6JG9yqp8Mb6gXajHk3g@mail.gmail.com>
-References: <20170527102308.1988-1-icenowy@aosc.io>
- <20170527102308.1988-9-icenowy@aosc.io>
- <20170529073428.f5os7g5e666v4xnp@wens.csie.org>
- <e09fedcfd790963729f785cd432206a6@aosc.io>
- <CAGb2v66_n-ZDRsCd+wcwUgvVbNw3OBk6JG9yqp8Mb6gXajHk3g@mail.gmail.com>
-Message-ID: <36d3f8302887937ff18067fd6f6bc38d@aosc.io>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1502848803-22954-1-git-send-email-chenjh@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-08-12 12:04，Chen-Yu Tsai 写道：
-> On Sat, Jul 22, 2017 at 11:00 AM,  <icenowy@aosc.io> wrote:
->> 在 2017-05-29 15:34，Chen-Yu Tsai 写道：
->>> 
->>> Hi,
->>> 
->>> On Sat, May 27, 2017 at 06:23:06PM +0800, Icenowy Zheng wrote:
+On 08/16, Joseph Chen wrote:
+> From: Elaine Zhang <zhangqing@rock-chips.com>
 > 
-> [...]
+> The RK808 and RK805 PMICs are using a similar register map.
+> We can reuse the clk driver for the RK805 PMIC. So let's add
+> the RK805 in the Kconfig description.
 > 
->>>> +
->>>> +/*
->>>> + * For the special bit in gate part, please see the BSP source code 
->>>> at
->>>> + *
->>>> https://github.com/BPI-SINOVOIP/BPI-M2U-bsp/blob/master/linux-sunxi/drivers/clk/sunxi/clk-sun8iw11.c#L665
->>>> + */
->>>> +static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_sata_clk, "pll-sata",
->>>> +                                   "osc24M", 0x034,
->>>> +                                   8, 5,       /* N */
->>>> +                                   4, 2,       /* K */
->>>> +                                   0, 2,       /* M */
->>>> +                                   BIT(31) | BIT(14),  /* gate */
->>>> +                                   BIT(28),    /* lock */
->>>> +                                   0);
->>> 
->>> 
->>> I think this is a somewhat simplified approach. From what I 
->>> understand
->>> of the user manual, the SATA clock path look like:
->>> 
->>> 
->>> [ PLL-PERIPH0-SATA ] -\
->>>                       mux @ 0x34 bit 30 --- gate @ 0x34 bit 14 --- 
->>> ...
->>> [ PLL-SATA ] ---------/
->>> 
->>> ... from above ... ------\
->>>                          mux @ 0xc8 bit 24 --- gate @ 0xc8 bit 31
->>> [ external oscillator ] -/
->>> 
->>> If you choose to simplify the implementation, please include a 
->>> detailed
->>> note as to why you chose to do so, and the validity of the 
->>> simplification.
->> 
->> 
->> I think it can be fully implemented...
->> 
->> But how should I call the internal clock controlled by the mux @ 0x34 
->> bit
->> 30?
-> 
-> sata-pll-mux?
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
+> ---
 
-I choose to call it pll-sata-out, as the mux @ 0x34 bit 30 is called
-"PLL_OUTPUT_SEL".
+Applied to clk-next
 
-> 
-> ChenYu
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
