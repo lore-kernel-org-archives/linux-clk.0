@@ -1,23 +1,27 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com, shawn.lin@rock-chips.com, andy.yan@rock-chips.com
-Subject: Re: [PATCH v3 3/9] clk: rockchip: fix up the indentation stuff for RV1108 SoC
-Date: Tue, 08 Aug 2017 17:35:55 +0200
-Message-ID: <1819366.V7r9kqIBDd@phil>
-In-Reply-To: <1502176547-30817-4-git-send-email-zhangqing@rock-chips.com>
-References: <1502176547-30817-1-git-send-email-zhangqing@rock-chips.com> <1502176547-30817-4-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 30 Aug 2017 22:29:35 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: linux-clk@vger.kernel.org, yamada.masahiro@socionext.com,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, masami.hiramatsu@linaro.org,
+	jaswinder.singh@linaro.org
+Subject: Re: [PATCH] clk: uniphier: add ethernet clock control support
+Message-ID: <20170831052935.GZ21656@codeaurora.org>
+References: <1503914243-24518-1-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1503914243-24518-1-git-send-email-hayashi.kunihiko@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 8. August 2017, 15:15:41 CEST schrieb Elaine Zhang:
-> Make the code look better.
+On 08/28, Kunihiko Hayashi wrote:
+> Add clock control for ethernet controller on Pro4, PXs2, LD11 and LD20.
 > 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
 
-I had already picked the one from v2 before noticing the
-issues in the previous clock-driver changes, so ignored.
+Applied to clk-next
 
-
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
