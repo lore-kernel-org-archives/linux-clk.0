@@ -1,46 +1,43 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	cl@rock-chips.com,
-	andy.yan@rock-chips.com,
-	wdc@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 2/3] clk: rockchip: rv1108: add ACLK_GMAC and PCLK_GMAC clk id
-Date: Mon, 21 Aug 2017 10:30:27 +0800
-Message-Id: <1503282628-23542-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1503282628-23542-1-git-send-email-zhangqing@rock-chips.com>
-References: <1503282628-23542-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 30 Aug 2017 22:38:00 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v4] ARC: clk: introduce HSDK pll driver
+Message-ID: <20170831053800.GC21656@codeaurora.org>
+References: <20170825173914.32121-1-Eugeniy.Paltsev@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170825173914.32121-1-Eugeniy.Paltsev@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rv1108.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 08/25, Eugeniy Paltsev wrote:
+> HSDK board manages its clocks using various PLLs. These PLL have same
+> dividers and corresponding control registers mapped to different addresses.
+> So we add one common driver for such PLLs.
+> 
+> Each PLL on HSDK board consists of three dividers: IDIV, FBDIV and
+> ODIV. Output clock value is managed using these dividers.
+> 
+> We add pre-defined tables with supported rate values and appropriate
+> configurations of IDIV, FBDIV and ODIV for each value.
+> 
+> As of today we add support for PLLs that generate clock for the
+> HSDK arc cpus, system, ddr, AXI tunnel and hdmi.
+> 
+> By this patch we add support for several plls (arc cpus pll and others),
+> so we had to use two different init types: CLK_OF_DECLARE for arc cpus pll
+> and regular probing for others plls.
+> 
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> ---
 
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index d1065dd9f442..0e441ec21e90 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -763,6 +763,8 @@ enum rv1108_plls {
- 	GATE(SCLK_MACPHY_RX, "sclk_macphy_rx", "sclk_macphy", 0, RV1108_CLKGATE_CON(4), 8, GFLAGS),
- 	GATE(SCLK_MAC_REF, "sclk_mac_ref", "sclk_macphy", 0, RV1108_CLKGATE_CON(4), 6, GFLAGS),
- 	GATE(SCLK_MAC_REFOUT, "sclk_mac_refout", "sclk_macphy", 0, RV1108_CLKGATE_CON(4), 7, GFLAGS),
-+	GATE(ACLK_GMAC, "aclk_gmac", "aclk_periph", 0, RV1108_CLKGATE_CON(15), 4, GFLAGS),
-+	GATE(PCLK_GMAC, "pclk_gmac", "pclk_periph", 0, RV1108_CLKGATE_CON(15), 5, GFLAGS),
- 
- 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RV1108_SDMMC_CON0, 1),
- 	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc", RV1108_SDMMC_CON1, 1),
+Applied to clk-next
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
