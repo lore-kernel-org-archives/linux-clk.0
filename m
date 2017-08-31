@@ -1,48 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38497 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752342AbdHDNXQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Aug 2017 09:23:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 0/4] r8a7795: Add Z and Z2 clock support
-Date: Fri,  4 Aug 2017 15:22:56 +0200
-Message-Id: <1501852980-22733-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 31 Aug 2017 11:32:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: cs2000: Add cs2000_set_saved_rate
+Message-ID: <20170831183243.GH21656@codeaurora.org>
+References: <1492624001-3758-11-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1492624001-3758-11-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 04/20, Yoshihiro Kaneko wrote:
+> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> 
+> This patch adds the common function to reset the clk rate in order to
+> be able to use it in other cases.
+> 
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
 
-this patch-set adds Z and Z2 clock support. It is a minor rework of BSP
-patches that have been posted before. The main changes are:
-
-* To divide the parent by an extra factor 2, as per the specification
-* Minor cleanups
-
-These are dependencies for supporting CPUFreq. The remainer of that
-work is being posted separately and can be found at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7795-cpufreq
-
-A description of steps taken to lightly exercise the above can be found here:
-
-http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
-
-This series is based on clk-renesas-for-v4.14
-
-Takeshi Kihara (4):
-  clk: renesas: rcar-gen3: Add Z clock divider support
-  clk: renesas: r8a7795: Add Z clock
-  clk: renesas: rcar-gen3: Add Z2 clock divider support
-  clk: renesas: r8a7795: Add Z2 clock
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c |   2 +
- drivers/clk/renesas/rcar-gen3-cpg.c    | 204 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h    |   2 +
- 3 files changed, 208 insertions(+)
+Applied to clk-next
 
 -- 
-2.1.4
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
