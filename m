@@ -1,90 +1,34 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-To: julia.lawall@lip6.fr,
-	vireshk@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] clk: spear: make clk_ops const
-Date: Tue, 22 Aug 2017 18:44:50 +0530
-Message-Id: <1503407690-13541-1-git-send-email-bhumirks@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 30 Aug 2017 22:28:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: mturquette@baylibre.com, ulf.hansson@linaro.org,
+	linus.walleij@linaro.org, mturquette@linaro.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] clk: ux500: prcc: constify clk_ops.
+Message-ID: <20170831052853.GX21656@codeaurora.org>
+References: <1503903761-21730-1-git-send-email-arvind.yadav.cs@gmail.com>
+ <1503903761-21730-4-git-send-email-arvind.yadav.cs@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1503903761-21730-4-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make these const as they are only stored in the const field of a
-clk_init_data structure.
+On 08/28, Arvind Yadav wrote:
+> clk_ops are not supposed to change at runtime. All functions
+> working with clk_ops provided by <linux/clk-provider.h> work
+> with const clk_ops. So mark the non-const clk_ops as const.
+> 
+> Here, Function "clk_reg_prcc" is used to initialized clk_init_data.
+> clk_init_data is working with const clk_ops. So make clk_reg_prcc
+> non-const clk_ops argument as const.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/clk/spear/clk-aux-synth.c  | 2 +-
- drivers/clk/spear/clk-frac-synth.c | 2 +-
- drivers/clk/spear/clk-gpt-synth.c  | 2 +-
- drivers/clk/spear/clk-vco-pll.c    | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
-index f271c35..3bd00c8 100644
---- a/drivers/clk/spear/clk-aux-synth.c
-+++ b/drivers/clk/spear/clk-aux-synth.c
-@@ -128,7 +128,7 @@ static int clk_aux_set_rate(struct clk_hw *hw, unsigned long drate,
- 	return 0;
- }
- 
--static struct clk_ops clk_aux_ops = {
-+static const struct clk_ops clk_aux_ops = {
- 	.recalc_rate = clk_aux_recalc_rate,
- 	.round_rate = clk_aux_round_rate,
- 	.set_rate = clk_aux_set_rate,
-diff --git a/drivers/clk/spear/clk-frac-synth.c b/drivers/clk/spear/clk-frac-synth.c
-index 58d678b..eaf970b 100644
---- a/drivers/clk/spear/clk-frac-synth.c
-+++ b/drivers/clk/spear/clk-frac-synth.c
-@@ -116,7 +116,7 @@ static int clk_frac_set_rate(struct clk_hw *hw, unsigned long drate,
- 	return 0;
- }
- 
--static struct clk_ops clk_frac_ops = {
-+static const struct clk_ops clk_frac_ops = {
- 	.recalc_rate = clk_frac_recalc_rate,
- 	.round_rate = clk_frac_round_rate,
- 	.set_rate = clk_frac_set_rate,
-diff --git a/drivers/clk/spear/clk-gpt-synth.c b/drivers/clk/spear/clk-gpt-synth.c
-index 1a722e9..3641799 100644
---- a/drivers/clk/spear/clk-gpt-synth.c
-+++ b/drivers/clk/spear/clk-gpt-synth.c
-@@ -105,7 +105,7 @@ static int clk_gpt_set_rate(struct clk_hw *hw, unsigned long drate,
- 	return 0;
- }
- 
--static struct clk_ops clk_gpt_ops = {
-+static const struct clk_ops clk_gpt_ops = {
- 	.recalc_rate = clk_gpt_recalc_rate,
- 	.round_rate = clk_gpt_round_rate,
- 	.set_rate = clk_gpt_set_rate,
-diff --git a/drivers/clk/spear/clk-vco-pll.c b/drivers/clk/spear/clk-vco-pll.c
-index dc21ca4..069b48a 100644
---- a/drivers/clk/spear/clk-vco-pll.c
-+++ b/drivers/clk/spear/clk-vco-pll.c
-@@ -165,7 +165,7 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- 	return 0;
- }
- 
--static struct clk_ops clk_pll_ops = {
-+static const struct clk_ops clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_round_rate,
- 	.set_rate = clk_pll_set_rate,
-@@ -266,7 +266,7 @@ static int clk_vco_set_rate(struct clk_hw *hw, unsigned long drate,
- 	return 0;
- }
- 
--static struct clk_ops clk_vco_ops = {
-+static const struct clk_ops clk_vco_ops = {
- 	.recalc_rate = clk_vco_recalc_rate,
- 	.round_rate = clk_vco_round_rate,
- 	.set_rate = clk_vco_set_rate,
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
