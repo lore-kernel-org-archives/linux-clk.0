@@ -1,51 +1,31 @@
-Return-Path: <laanwj@gmail.com>
-Return-Path: <laanwj@gmail.com>
-Date: Mon, 21 Aug 2017 18:38:24 +0200
-From: "Wladimir J. van der Laan" <laanwj@gmail.com>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Ilia Mirkin <imirkin@alum.mit.edu>, linux-clk@vger.kernel.org,
-	Chris Healy <cphealy@gmail.com>
-Subject: Re: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
-Message-ID: <20170821163824.GC24652@amethyst.visucore.com>
-References: <20170818163058.22252-1-l.stach@pengutronix.de>
- <CAOMZO5BoZNQrmDMXE0CDxLS-v7xVu4z87Ezdma1X1QCV56rPtQ@mail.gmail.com>
- <20170821155412.GA24652@amethyst.visucore.com>
- <4d5dbc0a-56b0-52a3-482d-2b3348c9c53b@cogentembedded.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 31 Aug 2017 10:59:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.14, take 3
+Message-ID: <20170831175901.GF21656@codeaurora.org>
+References: <20170824083620.b5cq4qtyr3cqtpjx@flea.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <4d5dbc0a-56b0-52a3-482d-2b3348c9c53b@cogentembedded.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170824083620.b5cq4qtyr3cqtpjx@flea.lan>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Nikita, Fabio,
-
-On Mon, Aug 21, 2017 at 06:58:19PM +0300, Nikita Yushchenko wrote:
-> > I'm trying to, but getting a non-clock-related problem on the i.mx51 babbage board
-> > with current kernel preventing the display from coming up at all:
-> > 
-> >     [    0.824712] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-> >     [    0.831411] [drm] No driver support for vblank timestamp query.
-> >     [    0.837632] imx-drm display-subsystem: bound imx-ipuv3-crtc.0 (ops ipu_crtc_ops)
-> >     [    0.845214] imx-drm display-subsystem: bound imx-ipuv3-crtc.1 (ops ipu_crtc_ops)
-> >     [    0.852720] imx-drm display-subsystem: failed to bind display@di0 (ops imx_pd_ops): -19
-> >     [    0.860994] imx-drm display-subsystem: master bind failed: -19
+On 08/24, Maxime Ripard wrote:
+> Hi,
 > 
-> I believe this should be fixed by
+> Here is a quite late PR, but this also something we've been waiting
+> for for quite some time already.
 > 
-> commit 799ee2970485dc206c3bf347d6e6827c04d5e4f9
-> Author: Philipp Zabel <p.zabel@pengutronix.de>
-> Date:   Mon Jun 12 17:54:29 2017 +0200
+> These patches convert our last users of the old clock framework to the
+> new one. We still have some marginal users of the old clock drivers,
+> but they shouldn't prevent the fix for the orphans clocks we hold back
+> to work.
 > 
->   drm/imx: parallel-display: Accept drm_of_find_panel_or_bridge failure
 
-Thanks,
-With that patch and Lucas' patch series applied, I can confirm to have working a console on DVI!
+Great. Thanks. Pulled into clk-next.
 
-Regards,
-Wladimir
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
