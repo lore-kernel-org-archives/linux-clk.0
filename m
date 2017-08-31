@@ -1,301 +1,441 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: ALKML <linux-arm-kernel@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	DTML <devicetree@vger.kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Roy Franz <roy.franz@cavium.com>,
-	Harb Abdulhamid <harba@codeaurora.org>,
-	Nishanth Menon <nm@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Loc Ho <lho@apm.com>,
-	Alexey Klimov <alexey.klimov@arm.com>,
-	Ryan Harkin <Ryan.Harkin@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 15/18] clk: add support for clocks provided by SCMI
-Date: Fri,  4 Aug 2017 15:31:41 +0100
-Message-Id: <1501857104-11279-16-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1501857104-11279-1-git-send-email-sudeep.holla@arm.com>
-References: <1501857104-11279-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 31 Aug 2017 12:02:59 +0200
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: Ingo van Lil <inguin@gmx.de>
+Subject: Re: [PATCH] clk: at91: utmi: Support configurable multipliers
+Message-ID: <20170831100259.qj4cisnu2il6mo5y@rfolt0960.corp.atmel.com>
+References: <20170710122409.3017-1-inguin@gmx.de>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="qsoczu47mcxkeksl"
+In-Reply-To: <20170710122409.3017-1-inguin@gmx.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Nicolas Ferre <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On some ARM based systems, a separate Cortex-M based System Control
-Processor(SCP) provides the overall power, clock, reset and system
-control. System Control and Management Interface(SCMI) Message Protocol
-is defined for the communication between the Application Cores(AP)
-and the SCP.
+--qsoczu47mcxkeksl
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-This patch adds support for the clocks provided by SCP using SCMI
-protocol.
+Hi Ingo,
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/clk/Kconfig    |  10 +++
- drivers/clk/Makefile   |   1 +
- drivers/clk/clk-scmi.c | 216 +++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 227 insertions(+)
- create mode 100644 drivers/clk/clk-scmi.c
+I did a similar patch, and I was told that you sent something similar.
+I missed your patch since I have not subscribed to the linux-clk mailing
+list. If it's related to at91, you should send it to linux-arm mailing list
+too.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 68ca2d9fcd73..68b442b2c742 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -55,6 +55,16 @@ config COMMON_CLK_HI655X
- 	  multi-function device has one fixed-rate oscillator, clocked
- 	  at 32KHz.
+On Mon, Jul 10, 2017 at 02:24:09PM +0200, Ingo van Lil wrote:
+> The AT91 UTMI clock is a PLL generating the 480 MHz USB clock.
+> Originally, this PLL always had a fixed x40 multiplier, thus requiring
+> a 12 MHz input clock. Recent SOCs (sama5d2 and sama5d3) have a special
+> function register for configuring this multiplier, allowing to use
+> different main clock frequencies.
+> 
+> Signed-off-by: Ingo van Lil <inguin@gmx.de>
+
+Unfortunately, replacing my patch by yours, it no longer works. More
+precisely, USB stuff is broken: utmi rate is weird.
+
+> ---
+>  drivers/clk/at91/clk-utmi.c  | 105 +++++++++++++++++++++++++++++++++++++++++--
+>  include/soc/at91/atmel-sfr.h |   2 +
+>  2 files changed, 104 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+> index aadabd9..d41c38b 100644
+> --- a/drivers/clk/at91/clk-utmi.c
+> +++ b/drivers/clk/at91/clk-utmi.c
+> @@ -14,14 +14,29 @@
+>  #include <linux/of.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+> +#include <soc/at91/atmel-sfr.h>
+>  
+>  #include "pmc.h"
+>  
+> +/* default multiplier for SOCs that do not allow configuration via SFR */
+>  #define UTMI_FIXED_MUL		40
+>  
+> +/* supported multiplier settings for SOCs that allow configuration via SFR */
+> +struct utmi_multipliers {
+> +	const char *sfr_compatible_name;
+> +	u8 multipliers[4];
+> +};
+> +
+> +static const struct utmi_multipliers utmi_multipliers[] = {
+> +	{ "atmel,sama5d2-sfr", { 40, 30, 20, 40 } },
+> +	{ "atmel,sama5d3-sfr", { 40, 30, 20, 10 } },
+> +};
+> +
+
+I will see if there is no mistake in the datasheet. On my side, I deal
+only with '40, 30, 20, 10' case, I am not sure we have to take care of
+'40, 30, 20, 40' even if it's not a mistake in the datasheet.
+
+>  struct clk_utmi {
+>  	struct clk_hw hw;
+>  	struct regmap *regmap;
+> +	struct regmap *sfr_regmap;
+> +	const u8 *multipliers;
+>  };
+>  
+>  #define to_clk_utmi(hw) container_of(hw, struct clk_utmi, hw)
+> @@ -66,8 +81,67 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
+>  static unsigned long clk_utmi_recalc_rate(struct clk_hw *hw,
+>  					  unsigned long parent_rate)
+>  {
+> -	/* UTMI clk is a fixed clk multiplier */
+> -	return parent_rate * UTMI_FIXED_MUL;
+> +	struct clk_utmi *utmi = to_clk_utmi(hw);
+> +	u8 mul = UTMI_FIXED_MUL;
+> +
+> +	if (utmi->sfr_regmap && utmi->multipliers) {
+> +		u32 regval;
+> +		regmap_read(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM, &regval);
+> +		mul = utmi->multipliers[regval & AT91_UTMICKTRIM_FREQ_MASK];
+> +	}
+> +
+> +	return parent_rate * mul;
+> +}
+> +
+> +static long clk_utmi_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long *parent_rate)
+> +{
+> +	struct clk_utmi *utmi = to_clk_utmi(hw);
+> +	unsigned long bestrate = 0;
+> +	int bestdiff = -1;
+> +	int i;
+> +
+> +	if (!utmi->sfr_regmap || !utmi->multipliers)
+> +		return *parent_rate * UTMI_FIXED_MUL;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
+> +		unsigned long tmprate = *parent_rate * utmi->multipliers[i];
+> +		int tmpdiff;
+> +
+> +		if (tmprate < rate)
+> +			continue;
+> +
+> +		tmpdiff = tmprate - rate;
+> +		if (bestdiff < 0 || bestdiff > tmpdiff) {
+> +			bestrate = tmprate;
+> +			bestdiff = tmpdiff;
+> +		}
+> +
+> +		if (!bestdiff)
+> +			break;
+> +	}
+> +
+> +	return bestrate;
+> +}
+> +
+> +static int clk_utmi_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			     unsigned long parent_rate)
+> +{
+> +	struct clk_utmi *utmi = to_clk_utmi(hw);
+> +	int i;
+> +
+> +	if (!utmi->sfr_regmap || !utmi->multipliers)
+> +		return rate == parent_rate * UTMI_FIXED_MUL ? 0 : -EINVAL;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
+> +		if (rate == parent_rate * utmi->multipliers[i]) {
+> +			regmap_update_bits(utmi->sfr_regmap, AT91_SFR_UTMICKTRIM,
+> +					   AT91_UTMICKTRIM_FREQ_MASK, i);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+>  }
+
+What's the purpose of this addition? Who should set the rate of the utmi
+clock? I mean you have no choice, the rate is 480 MHz.
+
+>  
+>  static const struct clk_ops utmi_ops = {
+> @@ -75,10 +149,13 @@ static const struct clk_ops utmi_ops = {
+>  	.unprepare = clk_utmi_unprepare,
+>  	.is_prepared = clk_utmi_is_prepared,
+>  	.recalc_rate = clk_utmi_recalc_rate,
+> +	.round_rate = clk_utmi_round_rate,
+> +	.set_rate = clk_utmi_set_rate,
+>  };
+>  
+>  static struct clk_hw * __init
+>  at91_clk_register_utmi(struct regmap *regmap,
+> +		       struct regmap *sfr_regmap, const u8 *multipliers,
+>  		       const char *name, const char *parent_name)
+>  {
+>  	struct clk_utmi *utmi;
+> @@ -98,6 +175,8 @@ at91_clk_register_utmi(struct regmap *regmap,
+>  
+>  	utmi->hw.init = &init;
+>  	utmi->regmap = regmap;
+> +	utmi->sfr_regmap = sfr_regmap;
+> +	utmi->multipliers = multipliers;
+>  
+>  	hw = &utmi->hw;
+>  	ret = clk_hw_register(NULL, &utmi->hw);
+> @@ -115,6 +194,9 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
+>  	const char *parent_name;
+>  	const char *name = np->name;
+>  	struct regmap *regmap;
+> +	struct regmap *sfr_regmap;
+> +	const u8 *multipliers = NULL;
+> +	size_t i;
+>  
+>  	parent_name = of_clk_get_parent_name(np, 0);
+>  
+> @@ -124,7 +206,24 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
+>  	if (IS_ERR(regmap))
+>  		return;
+>  
+> -	hw = at91_clk_register_utmi(regmap, name, parent_name);
+> +	for (i = 0; i < ARRAY_SIZE(utmi_multipliers); i++) {
+> +		sfr_regmap = syscon_regmap_lookup_by_compatible(
+> +			utmi_multipliers[i].sfr_compatible_name);
+> +		if (!IS_ERR(sfr_regmap)) {
+> +			pr_debug("clk-utmi: found sfr node: %s\n",
+> +				 utmi_multipliers[i].sfr_compatible_name);
+> +			multipliers = utmi_multipliers[i].multipliers;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (IS_ERR(sfr_regmap)) {
+> +		pr_debug("clk-utmi: failed to find sfr node\n");
+> +		sfr_regmap = NULL;
+> +	}
+> +
+> +	hw = at91_clk_register_utmi(regmap, sfr_regmap, multipliers,
+> +				    name, parent_name);
+>  	if (IS_ERR(hw))
+>  		return;
+>  
+> diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
+> index 506ea8f..763948e 100644
+> --- a/include/soc/at91/atmel-sfr.h
+> +++ b/include/soc/at91/atmel-sfr.h
+> @@ -17,6 +17,7 @@
+>  /* 0x08 ~ 0x0c: Reserved */
+>  #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
+>  #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
+> +#define AT91_SFR_UTMICKTRIM	0x30	/* UTMI Clock Trimming Register */
+>  #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
+>  
+>  /* Field definitions */
+> @@ -28,5 +29,6 @@
+>  					 AT91_OHCIICR_SUSPEND_B | \
+>  					 AT91_OHCIICR_SUSPEND_C)
+>  
+> +#define AT91_UTMICKTRIM_FREQ_MASK	0x03
+
+You can use GENMASK here.
+
+>  
+>  #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
+
+I have attached the patch I did.
+
+Regards
+
+Ludovic
+
+--qsoczu47mcxkeksl
+Content-Type: text/x-diff; charset="us-ascii"
+Content-Disposition: attachment; filename="utmi.patch"
+
+diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+index aadabd9d1e2b..0b88147c4ec6 100644
+--- a/drivers/clk/at91/clk-utmi.c
++++ b/drivers/clk/at91/clk-utmi.c
+@@ -14,14 +14,15 @@
+ #include <linux/of.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
++#include <soc/at91/atmel-sfr.h>
  
-+config COMMON_CLK_SCMI
-+	tristate "Clock driver controlled via SCMI interface"
-+	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-+	  ---help---
-+	  This driver provides support for clocks that are controlled
-+	  by firmware that implements the SCMI interface.
-+
-+	  This driver uses SCMI Message Protocol to interact with the
-+	  firmware providing all the clock controls.
-+
- config COMMON_CLK_SCPI
- 	tristate "Clock driver controlled via SCPI interface"
- 	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index cd376b3fb47a..74a8ae081923 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
- obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
-+obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
- obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-new file mode 100644
-index 000000000000..37f98a6439a0
---- /dev/null
-+++ b/drivers/clk/clk-scmi.c
-@@ -0,0 +1,216 @@
-+/*
-+ * System Control and Power Interface (SCMI) Protocol based clock driver
-+ *
-+ * Copyright (C) 2017 ARM Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/scmi_protocol.h>
-+
-+struct scmi_clk {
-+	u32 id;
-+	struct clk_hw hw;
-+	const struct scmi_clock_info *info;
-+	const struct scmi_handle *handle;
-+};
-+
-+#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
-+
-+static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	int ret;
-+	u64 rate;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	ret = clk->handle->clk_ops->rate_get(clk->handle, clk->id, &rate);
-+	if (ret)
-+		return 0;
-+	return rate;
-+}
-+
-+static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	u64 fmin, fmax, ftmp;
-+	struct scmi_clk *clk = to_scmi_clk(hw);
+ #include "pmc.h"
+ 
+-#define UTMI_FIXED_MUL		40
+-
+ struct clk_utmi {
+ 	struct clk_hw hw;
+-	struct regmap *regmap;
++	unsigned int mul;
++	struct regmap *regmap_pmc;
++	struct regmap *regmap_sfr;
+ };
+ 
+ #define to_clk_utmi(hw) container_of(hw, struct clk_utmi, hw)
+@@ -37,13 +38,54 @@ static inline bool clk_utmi_ready(struct regmap *regmap)
+ 
+ static int clk_utmi_prepare(struct clk_hw *hw)
+ {
++	struct clk_hw *hw_parent;
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 	unsigned int uckr = AT91_PMC_UPLLEN | AT91_PMC_UPLLCOUNT |
+ 			    AT91_PMC_BIASEN;
++	unsigned int utmi_ref_clk_freq;
++	unsigned long parent_rate;
 +
 +	/*
-+	 * We can't figure out what rate it will be, so just return the
-+	 * rate back to the caller. scmi_clk_recalc_rate() will be called
-+	 * after the rate is set and we'll know what rate the clock is
-+	 * running at then.
++	 * If mainck rate is different from 12 MHz, we have to configure the
++	 * FREQ field of the SFR_UTMICKTRIM register to generate properly
++	 * the utmi clock.
 +	 */
-+	if (clk->info->rate_discrete)
-+		return rate;
++	hw_parent = clk_hw_get_parent(hw);
++	parent_rate = clk_hw_get_rate(hw_parent);
 +
-+	fmin = clk->info->range.min_rate;
-+	fmax = clk->info->range.max_rate;
-+	for (ftmp = fmin; ftmp <= fmax; ftmp += clk->info->range.step_size) {
-+		if (ftmp >= rate) {
-+			if (ftmp <= fmax)
-+				fmax = ftmp;
-+			break;
-+		} else if (ftmp >= fmin) {
-+			fmin = ftmp;
-+		}
-+	}
-+	return fmax != clk->info->range.max_rate ? fmax : fmin;
-+}
-+
-+static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, 0, rate);
-+}
-+
-+static int scmi_clk_enable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	return clk->handle->clk_ops->enable(clk->handle, clk->id);
-+}
-+
-+static void scmi_clk_disable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	clk->handle->clk_ops->disable(clk->handle, clk->id);
-+}
-+
-+static const struct clk_ops scmi_clk_ops = {
-+	.recalc_rate = scmi_clk_recalc_rate,
-+	.round_rate = scmi_clk_round_rate,
-+	.set_rate = scmi_clk_set_rate,
-+	/*
-+	 * We can't provide enable/disable callback as we can't perform the same
-+	 * in atomic context. Since the clock framework provides standard API
-+	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
-+	 * context, it should be fine providing prepare/unprepare.
-+	 */
-+	.prepare = scmi_clk_enable,
-+	.unprepare = scmi_clk_disable,
-+};
-+
-+static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
-+{
-+	int ret;
-+	struct clk_init_data init;
-+
-+	init.flags = CLK_GET_RATE_NOCACHE;
-+	init.num_parents = 0;
-+	init.ops = &scmi_clk_ops;
-+	init.name = sclk->info->name;
-+	sclk->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &sclk->hw);
-+	if (!ret)
-+		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
-+				      sclk->info->range.max_rate);
-+	return ret;
-+}
-+
-+static int scmi_clk_add(struct device *dev, struct device_node *np,
-+			const struct scmi_handle *handle)
-+{
-+	int idx, count, err;
-+	struct clk_hw **hws;
-+	struct clk_hw_onecell_data *clk_data;
-+
-+	count = handle->clk_ops->count_get(handle);
-+	if (count < 0) {
-+		dev_err(dev, "%s: invalid clock output count\n", np->name);
++	switch (parent_rate) {
++	case 12000000:
++		utmi_ref_clk_freq = 0;
++		utmi->mul = 40;
++		break;
++	case 16000000:
++		utmi_ref_clk_freq = 1;
++		utmi->mul = 30;
++		break;
++	case 24000000:
++		utmi_ref_clk_freq = 2;
++		utmi->mul = 20;
++		break;
++	case 48000000:
++		utmi_ref_clk_freq = 3;
++		utmi->mul = 10;
++		break;
++	default:
++		pr_err("Unsupported mainck rate to generate the utmi clock\n");
 +		return -EINVAL;
 +	}
 +
-+	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
-+				sizeof(*clk_data->hws) * count, GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = count;
-+	hws = clk_data->hws;
-+
-+	for (idx = 0; idx < count; idx++) {
-+		struct scmi_clk *sclk;
-+
-+		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
-+		if (!sclk)
-+			return -ENOMEM;
-+
-+		sclk->info = handle->clk_ops->info_get(handle, idx);
-+		if (!sclk->info) {
-+			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
-+			continue;
-+		}
-+
-+		sclk->id = idx;
-+		sclk->handle = handle;
-+
-+		err = scmi_clk_ops_init(dev, sclk);
-+		if (err) {
-+			dev_err(dev, "failed to register clock %d\n", idx);
-+			devm_kfree(dev, sclk);
-+			hws[idx] = NULL;
-+		} else {
-+			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
-+			hws[idx] = &sclk->hw;
-+		}
++	if (utmi_ref_clk_freq & !utmi->regmap_sfr) {
++		pr_err("If mainck rate is different from 12 MHz, the sfr node is required to generate the utmi clock\n");
++		return -EINVAL;
 +	}
+ 
+-	regmap_update_bits(utmi->regmap, AT91_CKGR_UCKR, uckr, uckr);
++	regmap_update_bits(utmi->regmap_sfr, AT91_SFR_UTMICKTRIM,
++			   AT91_UTMICKTRIM_FREQ, utmi_ref_clk_freq);
+ 
+-	while (!clk_utmi_ready(utmi->regmap))
++	regmap_update_bits(utmi->regmap_pmc, AT91_CKGR_UCKR, uckr, uckr);
 +
-+	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+}
++	while (!clk_utmi_ready(utmi->regmap_pmc))
+ 		cpu_relax();
+ 
+ 	return 0;
+@@ -53,21 +95,22 @@ static int clk_utmi_is_prepared(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 
+-	return clk_utmi_ready(utmi->regmap);
++	return clk_utmi_ready(utmi->regmap_pmc);
+ }
+ 
+ static void clk_utmi_unprepare(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 
+-	regmap_update_bits(utmi->regmap, AT91_CKGR_UCKR, AT91_PMC_UPLLEN, 0);
++	regmap_update_bits(utmi->regmap_pmc, AT91_CKGR_UCKR, AT91_PMC_UPLLEN, 0);
+ }
+ 
+ static unsigned long clk_utmi_recalc_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+ {
+-	/* UTMI clk is a fixed clk multiplier */
+-	return parent_rate * UTMI_FIXED_MUL;
++	struct clk_utmi *utmi = to_clk_utmi(hw);
 +
-+static int scmi_clocks_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
++	return parent_rate * utmi->mul;
+ }
+ 
+ static const struct clk_ops utmi_ops = {
+@@ -78,7 +121,7 @@ static const struct clk_ops utmi_ops = {
+ };
+ 
+ static struct clk_hw * __init
+-at91_clk_register_utmi(struct regmap *regmap,
++at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
+ 		       const char *name, const char *parent_name)
+ {
+ 	struct clk_utmi *utmi;
+@@ -97,7 +140,8 @@ at91_clk_register_utmi(struct regmap *regmap,
+ 	init.flags = CLK_SET_RATE_GATE;
+ 
+ 	utmi->hw.init = &init;
+-	utmi->regmap = regmap;
++	utmi->regmap_pmc = regmap_pmc;
++	utmi->regmap_sfr = regmap_sfr;
+ 
+ 	hw = &utmi->hw;
+ 	ret = clk_hw_register(NULL, &utmi->hw);
+@@ -114,17 +158,20 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
+ 	struct clk_hw *hw;
+ 	const char *parent_name;
+ 	const char *name = np->name;
+-	struct regmap *regmap;
++	struct regmap *regmap_pmc, *regmap_sfr;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
+-	if (IS_ERR(regmap))
++	regmap_pmc = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap_pmc))
+ 		return;
+ 
+-	hw = at91_clk_register_utmi(regmap, name, parent_name);
++	/* SFR node missing is not necessarily an issue, we'll check it later. */
++	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
 +
-+	of_clk_del_provider(np);
-+	return 0;
-+}
-+
-+static int scmi_clocks_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	const struct scmi_handle *handle = devm_scmi_handle_get(dev);
-+
-+	if (IS_ERR_OR_NULL(handle) || !handle->clk_ops)
-+		return -EPROBE_DEFER;
-+
-+	return scmi_clk_add(dev, np, handle);
-+}
-+
-+static struct platform_driver scmi_clocks_driver = {
-+	.driver	= {
-+		.name = "scmi-clocks",
-+	},
-+	.probe = scmi_clocks_probe,
-+	.remove = scmi_clocks_remove,
-+};
-+module_platform_driver(scmi_clocks_driver);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCMI clock driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
++	hw = at91_clk_register_utmi(regmap_pmc, regmap_sfr, name, parent_name);
+ 	if (IS_ERR(hw))
+ 		return;
+ 
+diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
+index 506ea8ffda19..ad97856f8964 100644
+--- a/include/soc/at91/atmel-sfr.h
++++ b/include/soc/at91/atmel-sfr.h
+@@ -17,6 +17,7 @@
+ /* 0x08 ~ 0x0c: Reserved */
+ #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
+ #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
++#define AT91_SFR_UTMICKTRIM	0x30
+ #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
+ 
+ /* Field definitions */
+@@ -28,5 +29,6 @@
+ 					 AT91_OHCIICR_SUSPEND_B | \
+ 					 AT91_OHCIICR_SUSPEND_C)
+ 
++#define AT91_UTMICKTRIM_FREQ	GENMASK(1,0)
+ 
+ #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
+
+--qsoczu47mcxkeksl
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--qsoczu47mcxkeksl--
