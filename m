@@ -1,77 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35247 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750747AbdISKDt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2017 06:03:49 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] clk: samsung: exynos4: Enable VPLL and EPLL
- clocks for suspend/resume cycle
-Date: Tue, 19 Sep 2017 12:01:08 +0200
-Message-id: <1505815279-19097-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170919100345eucas1p1391a495dab09faecdc2acf9635e4c42d@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Sep 2017 15:55:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lgirdwood@gmail.com, broonie@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+	perex@perex.cz, tiwai@suse.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com
+Subject: Re: [PATCH v5 5/7] clk: at91: clk-generated: make gclk determine
+ audio_pll rate
+Message-ID: <20170901225520.GG21656@codeaurora.org>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+ <600ed1e3623477c8083c6c4fa16299e33f7b76a9.1502346448.git-series.quentin.schulz@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <600ed1e3623477c8083c6c4fa16299e33f7b76a9.1502346448.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
-PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
-VPLL and EPPL clocks were always enabled because the enable bit was never
-touched. Those clocks have to be enabled during suspend/resume cycle,
-because otherwise board fails to enter sleep mode. This patch enables them
-unconditionally before entering system suspend state. System restore
-function will set them to the previous state saved in the register cache
-done before that unconditional enable.
+On 08/10, Quentin Schulz wrote:
+> This allows gclk to determine audio_pll rate and set the parent rate
+> accordingly.
+> 
+> However, there are multiple children clocks that could technically
+> change the rate of audio_pll (via gck). With the rate locking, the first
+> consumer to enable the clock will be the one definitely setting the rate
+> of the clock.
+> 
+> Since audio IPs are most likely to request the same rate, we enforce
+> that the only clks able to modify gck rate are those of audio IPs.
+> 
+> To remain consistent, we deny other clocks to be children of audio_pll.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> ---
 
-Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
-CC: stable@vger.kernel.org # v4.13
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Applied to clk-next
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index e40b77583c47..d8d3cb67b402 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -294,6 +294,18 @@ enum exynos4_plls {
- #define PLL_ENABLED	(1 << 31)
- #define PLL_LOCKED	(1 << 29)
- 
-+static void exynos4_clk_enable_pll(u32 reg)
-+{
-+	u32 pll_con = readl(reg_base + reg);
-+	pll_con |= PLL_ENABLED;
-+	writel(pll_con, reg_base + reg);
-+
-+	while (!(pll_con & PLL_LOCKED)) {
-+		cpu_relax();
-+		pll_con = readl(reg_base + reg);
-+	}
-+}
-+
- static void exynos4_clk_wait_for_pll(u32 reg)
- {
- 	u32 pll_con;
-@@ -315,6 +327,9 @@ static int exynos4_clk_suspend(void)
- 	samsung_clk_save(reg_base, exynos4_save_pll,
- 				ARRAY_SIZE(exynos4_clk_pll_regs));
- 
-+	exynos4_clk_enable_pll(EPLL_CON0);
-+	exynos4_clk_enable_pll(VPLL_CON0);
-+
- 	if (exynos4_soc == EXYNOS4210) {
- 		samsung_clk_save(reg_base, exynos4_save_soc,
- 					ARRAY_SIZE(exynos4210_clk_save));
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
