@@ -1,147 +1,145 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 3/3] clk/mmp: Adjust 12 checks for null pointers
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
-Message-ID: <e07c8432-3698-8db6-8ce2-7b30efc61fb9@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 09:27:40 +0200
-MIME-Version: 1.0
-In-Reply-To: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tirupathi Reddy <tirupath@codeaurora.org>
+Subject: [PATCH 1/2] clk: Add devm_of_clk_add_hw_provider()/del_provider() APIs
+Date: Fri,  1 Sep 2017 16:16:40 -0700
+Message-Id: <20170901231641.19141-2-sboyd@codeaurora.org>
+In-Reply-To: <20170901231641.19141-1-sboyd@codeaurora.org>
+References: <20170901231641.19141-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 09:00:21 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Sometimes we only have one of_clk_del_provider() call in driver
+error and remove paths, because we're missing a
+devm_of_clk_add_hw_provider() API. Introduce the API so we can
+convert drivers to use this and potentially reduce the amount of
+code needed to remove providers in drivers.
 
-The script “checkpatch.pl” pointed information out like the following.
-
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/mmp/clk-mix.c    | 4 ++--
- drivers/clk/mmp/clk-mmp2.c   | 6 +++---
- drivers/clk/mmp/clk-pxa168.c | 6 +++---
- drivers/clk/mmp/clk-pxa910.c | 8 ++++----
- 4 files changed, 12 insertions(+), 12 deletions(-)
+ Documentation/driver-model/devres.txt |  1 +
+ drivers/clk/clk.c                     | 52 +++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h          | 13 +++++++++
+ 3 files changed, 66 insertions(+)
 
-diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
-index b2471fb369f1..90814b2613c0 100644
---- a/drivers/clk/mmp/clk-mix.c
-+++ b/drivers/clk/mmp/clk-mix.c
-@@ -229,7 +229,7 @@ static int mmp_clk_mix_determine_rate(struct clk_hw *hw,
- 			parent_rate = clk_hw_get_rate(parent);
- 			mix_rate = parent_rate / item->divisor;
- 			gap = abs(mix_rate - req->rate);
--			if (parent_best == NULL || gap < gap_best) {
-+			if (!parent_best || gap < gap_best) {
- 				parent_best = parent;
- 				parent_rate_best = parent_rate;
- 				mix_rate_best = mix_rate;
-@@ -247,7 +247,7 @@ static int mmp_clk_mix_determine_rate(struct clk_hw *hw,
- 				div = _get_div(mix, j);
- 				mix_rate = parent_rate / div;
- 				gap = abs(mix_rate - req->rate);
--				if (parent_best == NULL || gap < gap_best) {
-+				if (!parent_best || gap < gap_best) {
- 					parent_best = parent;
- 					parent_rate_best = parent_rate;
- 					mix_rate_best = mix_rate;
-diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-index 038023483b98..7460031714da 100644
---- a/drivers/clk/mmp/clk-mmp2.c
-+++ b/drivers/clk/mmp/clk-mmp2.c
-@@ -83,19 +83,19 @@ void __init mmp2_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
- 	void __iomem *apbc_base;
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index 30e04f7a690d..6b5e5e642b49 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -237,6 +237,7 @@ CLOCK
+   devm_clk_get()
+   devm_clk_put()
+   devm_clk_hw_register()
++  devm_of_clk_add_hw_provider()
  
- 	mpmu_base = ioremap(mpmu_phys, SZ_4K);
--	if (mpmu_base == NULL) {
-+	if (!mpmu_base) {
- 		pr_err("error to ioremap MPMU base\n");
- 		return;
- 	}
+ DMA
+   dmam_alloc_coherent()
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c8d83acda006..d50398a79cbc 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3177,6 +3177,37 @@ int of_clk_add_hw_provider(struct device_node *np,
+ }
+ EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
  
- 	apmu_base = ioremap(apmu_phys, SZ_4K);
--	if (apmu_base == NULL) {
-+	if (!apmu_base) {
- 		pr_err("error to ioremap APMU base\n");
- 		return;
- 	}
++static void devm_of_clk_release_provider(struct device *dev, void *res)
++{
++	of_clk_del_provider(*(struct device_node **)res);
++}
++
++int devm_of_clk_add_hw_provider(struct device *dev,
++			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++					      void *data),
++			void *data)
++{
++	struct device_node **ptr, *np;
++	int ret;
++
++	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
++			   GFP_KERNEL);
++	if (!ptr)
++		return -ENOMEM;
++
++	np = dev->of_node;
++	ret = of_clk_add_hw_provider(np, get, data);
++	if (!ret) {
++		*ptr = np;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return ret;;
++}
++EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
++
+ /**
+  * of_clk_del_provider() - Remove a previously registered clock provider
+  * @np: Device node pointer associated with clock provider
+@@ -3198,6 +3229,27 @@ void of_clk_del_provider(struct device_node *np)
+ }
+ EXPORT_SYMBOL_GPL(of_clk_del_provider);
  
- 	apbc_base = ioremap(apbc_phys, SZ_4K);
--	if (apbc_base == NULL) {
-+	if (!apbc_base) {
- 		pr_err("error to ioremap APBC base\n");
- 		return;
- 	}
-diff --git a/drivers/clk/mmp/clk-pxa168.c b/drivers/clk/mmp/clk-pxa168.c
-index a9ef9209532a..8e2551ab8462 100644
---- a/drivers/clk/mmp/clk-pxa168.c
-+++ b/drivers/clk/mmp/clk-pxa168.c
-@@ -75,19 +75,19 @@ void __init pxa168_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
- 	void __iomem *apbc_base;
- 
- 	mpmu_base = ioremap(mpmu_phys, SZ_4K);
--	if (mpmu_base == NULL) {
-+	if (!mpmu_base) {
- 		pr_err("error to ioremap MPMU base\n");
- 		return;
- 	}
- 
- 	apmu_base = ioremap(apmu_phys, SZ_4K);
--	if (apmu_base == NULL) {
-+	if (!apmu_base) {
- 		pr_err("error to ioremap APMU base\n");
- 		return;
- 	}
- 
- 	apbc_base = ioremap(apbc_phys, SZ_4K);
--	if (apbc_base == NULL) {
-+	if (!apbc_base) {
- 		pr_err("error to ioremap APBC base\n");
- 		return;
- 	}
-diff --git a/drivers/clk/mmp/clk-pxa910.c b/drivers/clk/mmp/clk-pxa910.c
-index a520cf7702a1..7a7965141918 100644
---- a/drivers/clk/mmp/clk-pxa910.c
-+++ b/drivers/clk/mmp/clk-pxa910.c
-@@ -74,25 +74,25 @@ void __init pxa910_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
- 	void __iomem *apbc_base;
- 
- 	mpmu_base = ioremap(mpmu_phys, SZ_4K);
--	if (mpmu_base == NULL) {
-+	if (!mpmu_base) {
- 		pr_err("error to ioremap MPMU base\n");
- 		return;
- 	}
- 
- 	apmu_base = ioremap(apmu_phys, SZ_4K);
--	if (apmu_base == NULL) {
-+	if (!apmu_base) {
- 		pr_err("error to ioremap APMU base\n");
- 		return;
- 	}
- 
- 	apbcp_base = ioremap(apbcp_phys, SZ_4K);
--	if (apbcp_base == NULL) {
-+	if (!apbcp_base) {
- 		pr_err("error to ioremap APBC extension base\n");
- 		return;
- 	}
- 
- 	apbc_base = ioremap(apbc_phys, SZ_4K);
--	if (apbc_base == NULL) {
-+	if (!apbc_base) {
- 		pr_err("error to ioremap APBC base\n");
- 		return;
- 	}
++static int devm_clk_provider_match(struct device *dev, void *res, void *data)
++{
++	struct device_node **np = res;
++
++	if (WARN_ON(!np || !*np))
++		return 0;
++
++	return *np == data;
++}
++
++void devm_of_clk_del_provider(struct device *dev)
++{
++	int ret;
++
++	ret = devres_release(dev, devm_of_clk_release_provider,
++			     devm_clk_provider_match, dev->of_node);
++
++	WARN_ON(ret);
++}
++EXPORT_SYMBOL(devm_of_clk_del_provider);
++
+ static struct clk_hw *
+ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
+ 			      struct of_phandle_args *clkspec)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1fc113fbf955..5a002e64999b 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -814,7 +814,12 @@ int of_clk_add_hw_provider(struct device_node *np,
+ 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 						 void *data),
+ 			   void *data);
++int devm_of_clk_add_hw_provider(struct device *dev,
++			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++						 void *data),
++			   void *data);
+ void of_clk_del_provider(struct device_node *np);
++void devm_of_clk_del_provider(struct device *dev);
+ struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
+ 				  void *data);
+ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
+@@ -846,7 +851,15 @@ static inline int of_clk_add_hw_provider(struct device_node *np,
+ {
+ 	return 0;
+ }
++static inline int devm_of_clk_add_hw_provider(struct device *dev,
++			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++						 void *data),
++			   void *data)
++{
++	return 0;
++}
+ static inline void of_clk_del_provider(struct device_node *np) {}
++static inline void devm_of_clk_del_provider(struct device *dev) {}
+ static inline struct clk *of_clk_src_simple_get(
+ 	struct of_phandle_args *clkspec, void *data)
+ {
 -- 
-2.14.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
