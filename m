@@ -1,75 +1,46 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 30 Aug 2017 14:36:24 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: Provide a default reset hook
-Message-ID: <20170830123624.vurdnh6bojbtrjal@flea.lan>
-References: <20170825094953.3247-1-maxime.ripard@free-electrons.com>
- <CAPDyKFonXp4Uqi=DLxKf=1ecOx-2E5mUkEXqnqJPE-J57xXQcw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aqzbkk2ndrwasqsp"
-In-Reply-To: <CAPDyKFonXp4Uqi=DLxKf=1ecOx-2E5mUkEXqnqJPE-J57xXQcw@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, heiko@sntech.de
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
+        cl@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 1/3] clk: rockchip: rk3128: add pclk_pmu as critical clock
+Date: Fri,  1 Sep 2017 10:01:44 +0800
+Message-Id: <1504231306-4450-2-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1504231306-4450-1-git-send-email-zhangqing@rock-chips.com>
+References: <1504231306-4450-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+pclk_pmu need always on, and no dts node to handle this clk,
+so make it as critical clock
 
---aqzbkk2ndrwasqsp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3128.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Hi Ulf,
-
-On Wed, Aug 30, 2017 at 02:29:24PM +0200, Ulf Hansson wrote:
-> On 25 August 2017 at 11:49, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The reset hook was left implemented. Provide a dumb implementation so t=
-hat
-> > client drivers can depend on it.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->=20
-> Do you want me to pick this up via my mmc tree? If so, is that okay by
-> the clock maintainers?
-
-I also happen to be the maintainer of that part of the kernel
-(reporting to Mike and Stephen of course). We don't have anything
-touching that file in next, so unless they feel like it should go
-through their tree, it would be easier to keep the two changes
-together and merge them through your tree.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---aqzbkk2ndrwasqsp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZprFIAAoJEBx+YmzsjxAgnbcP/3gwfodfQelm5qubvJ0/q9QH
-FZD2FNwD0qMRYiygrxUUwDRVPVM/utt5avZdqnuW+yJuroZT2nKjan58gliiIWjo
-pgtPtGKMfsE7RJjAmhkJF2c16wuTLjBdEHo5Ft9jqk/W4hhyQGgKhWGjHpUVLHwU
-qttBOdvyCkbyATv8rXTxEB3ZSKdYtcQCf94Hiyw3B19CqVpZixpVKU1+/BpZcvx7
-vMf2DF8zz9DNRlVZLNjSJqXn9qPQbY3HwM35Hkefvb9KE5rx1XCPvHtU9zqvMdBY
-OApTeHfhRmgzBGkLHnaBEWXrD/UO3BNaDClXkiVU53/gtzjAuPGlHd0vK35ksRef
-LDFRkQFZGIz1re0jrT2N2BN7nKv8SuRJJc6yJ9V9ak4HCZAX/lNx0Hy7Q6wOObst
-8lvaN9dJx12HCWfe38ju58MZu+qRC8g1olSzZ7jZOGqyx5VTiqLmTqpowJuT6rtD
-mCU2udv7E989h/GN3CEwsjFHLSbTG4yUJCqWvH1TKqJA5vqPzHy9hyZQfh8uQjqi
-Xm4AV+kyRBPq8qFYnW91fYiwl+1xPfABZrQh/n7DYc66+KPw5P3NQbSCMXV8++MN
-tkgdmWjDmcmPQDCsvJ5CIYtsGdGkPcyzJ96CsUnqJskksR+Y2gCjvFUBeoUlngO8
-9xVLMk3kQa4B92cOyl/e
-=FDbk
------END PGP SIGNATURE-----
-
---aqzbkk2ndrwasqsp--
+diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
+index 62d7854e4b87..f15c9b874911 100644
+--- a/drivers/clk/rockchip/clk-rk3128.c
++++ b/drivers/clk/rockchip/clk-rk3128.c
+@@ -541,7 +541,7 @@ enum rk3128_plls {
+ 	GATE(0, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 4, GFLAGS),
+ 	GATE(0, "pclk_mipiphy", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(5), 0, GFLAGS),
+ 
+-	GATE(0, "pclk_pmu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 2, GFLAGS),
++	GATE(0, "pclk_pmu", "pclk_pmu_pre", 0, RK2928_CLKGATE_CON(9), 2, GFLAGS),
+ 	GATE(0, "pclk_pmu_niu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 3, GFLAGS),
+ 
+ 	/* PD_MMC */
+@@ -577,6 +577,7 @@ enum rk3128_plls {
+ 	"aclk_peri",
+ 	"hclk_peri",
+ 	"pclk_peri",
++	"pclk_pmu",
+ };
+ 
+ static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
+-- 
+1.9.1
