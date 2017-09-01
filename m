@@ -1,34 +1,29 @@
-Return-Path: <carlo@endlessm.com>
-MIME-Version: 1.0
-In-Reply-To: <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
-References: <20170714082356.28117-1-carlo@caione.org> <CAOQ7t2beu8CyHM1qR+DDt-BQXmFHoyJe8q_56qhkkYLM_o1upQ@mail.gmail.com>
- <ac99f461-798b-e245-232e-5e76c2de93b0@linux.intel.com> <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
-From: Carlo Caione <carlo@endlessm.com>
-Date: Fri, 8 Sep 2017 10:05:03 +0200
-Message-ID: <CAL9uMOE+gehOJ+QpW0PZC8ZBSWMZsPw0UAZYn=7EhPmYUxAJRQ@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Carlo Caione <carlo@caione.org>, alan@linux.intel.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, Darren Hart <dvhart@infradead.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux Upstreaming Team <linux@endlessm.com>,
-	Enric Balletbo Serra <eballetbo@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tirupathi Reddy <tirupath@codeaurora.org>
+Subject: [PATCH 0/2] Add a devm_of_clk_add_hw_provider() API
+Date: Fri,  1 Sep 2017 16:16:39 -0700
+Message-Id: <20170901231641.19141-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 7, 2017 at 11:51 PM, Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
-> See attached an untested change to show the idea on moving to the clk API
-> and get feedback (I am not a camera guy, just trying to help -
-> compile-tested/checkpatch only).
-> This code *should* enable the same functionality using existing hooks in the
-> kernel (and handle the BYT/CHT clocking difference as a bonus).
-> I am sure Andy will have plenty of comments :-)
+This cleans up some open-coded versions of this API and makes it official.
+It's also another carrot to convert drivers to use the clk hw registration
+APIs instead of the clk registration APIs.
 
-FWIW tested-by: Carlo Caione <carlo@endlessm.com>
+Stephen Boyd (2):
+  clk: Add devm_of_clk_add_hw_provider()/del_provider() APIs
+  clk: qcom: common: Migrate to devm_* APIs for resets and clk providers
 
-Thanks,
+ Documentation/driver-model/devres.txt |  1 +
+ drivers/clk/clk.c                     | 52 +++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/common.c             | 26 ++----------------
+ include/linux/clk-provider.h          | 13 +++++++++
+ 4 files changed, 68 insertions(+), 24 deletions(-)
 
 -- 
-Carlo Caione  |  +39.340.80.30.096  |  Endless
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
