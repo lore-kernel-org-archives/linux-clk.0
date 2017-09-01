@@ -1,31 +1,453 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 31 Aug 2017 10:59:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.14, take 3
-Message-ID: <20170831175901.GF21656@codeaurora.org>
-References: <20170824083620.b5cq4qtyr3cqtpjx@flea.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170824083620.b5cq4qtyr3cqtpjx@flea.lan>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Li Pengcheng <lipengcheng8@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Li Zhong <lizhong11@hisilicon.com>,
+	Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH 2/2] arm64: dts: hi6220: add coresight binding
+Date: Fri,  1 Sep 2017 08:47:15 +0800
+Message-Id: <1504226835-2115-3-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
+References: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/24, Maxime Ripard wrote:
-> Hi,
-> 
-> Here is a quite late PR, but this also something we've been waiting
-> for for quite some time already.
-> 
-> These patches convert our last users of the old clock framework to the
-> new one. We still have some marginal users of the old clock drivers,
-> but they shouldn't prevent the fix for the orphans clocks we hold back
-> to work.
-> 
+From: Li Pengcheng <lipengcheng8@huawei.com>
 
-Great. Thanks. Pulled into clk-next.
+For detailed coresight topology, Hi6220 has 8xCA53 CPUs and each CPU
+has one Embedded Trace Macrocell (ETM); the CPU trace data is output
+to the cluster funnel. Due system has another CPU and one MCU, all of
+them transfer the trace data through trace bus (ATB) to SoC funnel;
+the SoC funnel is connected to Embedded Trace FIFO (ETF) with 8KB
+buffer; an non-configurable replicator is used to output trace data
+for two sinks, one is Embedded Trace Route (ETR) so trace data can be
+saved into DRAM, another is Trace Port Interface Unit (TPIU) for
+capturing trace data by external debugger.
 
+According to the Hi6220 coresight topology, this patch is to add
+coresight dt binding.
+
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Mike Leach <mike.leach@linaro.org>
+Cc: Guodong Xu <guodong.xu@linaro.org>
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Signed-off-by: Li Pengcheng <lipengcheng8@huawei.com>
+Signed-off-by: Li Zhong <lizhong11@hisilicon.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ .../arm64/boot/dts/hisilicon/hi6220-coresight.dtsi | 379 +++++++++++++++++++++
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |   2 +
+ 2 files changed, 381 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+new file mode 100644
+index 0000000..31e4e95
+--- /dev/null
++++ b/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
+@@ -0,0 +1,379 @@
++/*
++ * dtsi file for Hisilicon Hi6220 coresight
++ *
++ * Copyright (C) 2017 Hisilicon Ltd.
++ *
++ * Author: Pengcheng Li <lipengcheng8@huawei.com>
++ *         Leo Yan <leo.yan@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * publishhed by the Free Software Foundation.
++ *
++ */
++
++/ {
++	soc {
++		funnel@f6401000 {
++			compatible = "arm,coresight-funnel", "arm,primecell";
++			reg = <0 0xf6401000 0 0x1000>;
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					soc_funnel_out: endpoint {
++						remote-endpoint =
++							<&etf_in>;
++					};
++				};
++
++				port@1 {
++					reg = <0>;
++					soc_funnel_in: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&acpu_funnel_out>;
++					};
++				};
++			};
++		};
++
++		etf@f6402000 {
++			compatible = "arm,coresight-tmc", "arm,primecell";
++			reg = <0 0xf6402000 0 0x1000>;
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					etf_in: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&soc_funnel_out>;
++					};
++				};
++
++				port@1 {
++					reg = <0>;
++					etf_out: endpoint {
++						remote-endpoint =
++							<&replicator_in>;
++					};
++				};
++			};
++		};
++
++		replicator {
++			compatible = "arm,coresight-replicator";
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					replicator_in: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etf_out>;
++					};
++				};
++
++				port@1 {
++					reg = <0>;
++					replicator_out0: endpoint {
++						remote-endpoint =
++							<&etr_in>;
++					};
++				};
++
++				port@2 {
++					reg = <1>;
++					replicator_out1: endpoint {
++						remote-endpoint =
++							<&tpiu_in>;
++					};
++				};
++			};
++		};
++
++		etr@f6404000 {
++			compatible = "arm,coresight-tmc", "arm,primecell";
++			reg = <0 0xf6404000 0 0x1000>;
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					etr_in: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&replicator_out0>;
++					};
++				};
++			};
++		};
++
++		tpiu@f6405000 {
++			compatible = "arm,coresight-tpiu", "arm,primecell";
++			reg = <0 0xf6405000 0 0x1000>;
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					tpiu_in: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&replicator_out1>;
++					};
++				};
++			};
++		};
++
++		funnel@f6501000 {
++			compatible = "arm,coresight-funnel", "arm,primecell";
++			reg = <0 0xf6501000 0 0x1000>;
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					acpu_funnel_out: endpoint {
++						remote-endpoint =
++							<&soc_funnel_in>;
++					};
++				};
++
++				port@1 {
++					reg = <0>;
++					acpu_funnel_in0: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm0_out>;
++					};
++				};
++
++				port@2 {
++					reg = <1>;
++					acpu_funnel_in1: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm1_out>;
++					};
++				};
++
++				port@3 {
++					reg = <2>;
++					acpu_funnel_in2: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm2_out>;
++					};
++				};
++
++				port@4 {
++					reg = <3>;
++					acpu_funnel_in3: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm3_out>;
++					};
++				};
++
++				port@5 {
++					reg = <4>;
++					acpu_funnel_in4: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm4_out>;
++					};
++				};
++
++				port@6 {
++					reg = <5>;
++					acpu_funnel_in5: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm5_out>;
++					};
++				};
++
++				port@7 {
++					reg = <6>;
++					acpu_funnel_in6: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm6_out>;
++					};
++				};
++
++				port@8 {
++					reg = <7>;
++					acpu_funnel_in7: endpoint {
++						slave-mode;
++						remote-endpoint =
++							<&etm7_out>;
++					};
++				};
++			};
++		};
++
++		etm@f659c000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf659c000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu0>;
++
++			port {
++				etm0_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in0>;
++				};
++			};
++		};
++
++		etm@f659d000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf659d000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu1>;
++
++			port {
++				etm1_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in1>;
++				};
++			};
++		};
++
++		etm@f659e000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf659e000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu2>;
++
++			port {
++				etm2_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in2>;
++				};
++			};
++		};
++
++		etm@f659f000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf659f000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu3>;
++
++			port {
++				etm3_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in3>;
++				};
++			};
++		};
++
++		etm@f65dc000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf65dc000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu4>;
++
++			port {
++				etm4_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in4>;
++				};
++			};
++		};
++
++		etm@f65dd000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf65dd000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu5>;
++
++			port {
++				etm5_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in5>;
++				};
++			};
++		};
++
++		etm@f65de000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf65de000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu6>;
++
++			port {
++				etm6_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in6>;
++				};
++			};
++		};
++
++		etm@f65df000 {
++			compatible = "arm,coresight-etm4x", "arm,primecell";
++			reg = <0 0xf65df000 0 0x1000>;
++
++			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
++			clock-names = "apb_pclk";
++
++			cpu = <&cpu7>;
++
++			port {
++				etm7_out: endpoint {
++					remote-endpoint =
++						<&acpu_funnel_in7>;
++				};
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index 02a3aa4..b3b21d7 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -986,3 +986,5 @@
+ 		};
+ 	};
+ };
++
++#include "hi6220-coresight.dtsi"
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
