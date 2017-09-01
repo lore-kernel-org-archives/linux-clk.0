@@ -1,30 +1,45 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 31 Aug 2017 18:36:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
+	gabriel.fernandez.st@gmail.com,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: [RESEND PATCH v8 2/3] clk: gate: expose clk_gate_ops::is_enabled
+Message-ID: <20170901013642.GQ21656@codeaurora.org>
+References: <1503316742-22145-1-git-send-email-gabriel.fernandez@st.com>
+ <1503316742-22145-3-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20170821163824.GC24652@amethyst.visucore.com>
-References: <20170818163058.22252-1-l.stach@pengutronix.de>
- <CAOMZO5BoZNQrmDMXE0CDxLS-v7xVu4z87Ezdma1X1QCV56rPtQ@mail.gmail.com>
- <20170821155412.GA24652@amethyst.visucore.com> <4d5dbc0a-56b0-52a3-482d-2b3348c9c53b@cogentembedded.com>
- <20170821163824.GC24652@amethyst.visucore.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 21 Aug 2017 13:39:44 -0300
-Message-ID: <CAOMZO5CrG0HCDyfKokPcWaVTNT3ui+6688BAhNzNTd2bdkxa+w@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx51: propagate rate across ipu_di*_sel
-To: "Wladimir J. van der Laan" <laanwj@gmail.com>
-Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Ilia Mirkin <imirkin@alum.mit.edu>, linux-clk@vger.kernel.org,
-	Chris Healy <cphealy@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1503316742-22145-3-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Wladimir,
+On 08/21, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch exposes clk_gate_ops::is_enabled as functions
+> that can be directly called and assigned in places like this so
+> we don't need wrapper functions that do nothing besides forward
+> the call.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-On Mon, Aug 21, 2017 at 1:38 PM, Wladimir J. van der Laan
-<laanwj@gmail.com> wrote:
+Applied to clk-next
 
-> Thanks,
-> With that patch and Lucas' patch series applied, I can confirm to have working a console on DVI!
-
-Excellent! Maybe you could reply with your Tested-by tag then?
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
