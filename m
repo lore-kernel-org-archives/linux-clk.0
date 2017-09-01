@@ -1,89 +1,37 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Sep 2017 15:59:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <sergej@taudac.com>
+Cc: mturquette@baylibre.com, sebastian.hesselbarth@gmail.com,
+	rabeeh@solid-run.com, linux@armlinux.org.uk,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/3] clk: si5351: PLL reset fixes
+Message-ID: <20170901225954.GJ21656@codeaurora.org>
+References: <1502547783-24685-1-git-send-email-sergej@taudac.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 27 Sep 2017 19:51:30 +0800
-From: icenowy@aosc.io
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/3] Simple DVFS support for Allwinner A64 SoC
-In-Reply-To: <20170925102744.qixfwlheeimemhcf@flea.home>
-References: <20170923001531.14285-1-icenowy@aosc.io>
- <20170925101027.lghnnll4h6inreqm@flea.home>
- <27EF78BD-6285-4D8D-AA65-8294D797E2FB@aosc.io>
- <20170925102744.qixfwlheeimemhcf@flea.home>
-Message-ID: <9b3aeb6cb155bb2f9a7cee438de82ccb@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1502547783-24685-1-git-send-email-sergej@taudac.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-09-25 18:27，Maxime Ripard 写道：
-> On Mon, Sep 25, 2017 at 10:12:09AM +0000, Icenowy Zheng wrote:
->> 于 2017年9月25日 GMT+08:00 下午6:10:27, Maxime Ripard 
->> <maxime.ripard@free-electrons.com> 写到:
->> >Hi,
->> >
->> >On Sat, Sep 23, 2017 at 12:15:28AM +0000, Icenowy Zheng wrote:
->> >> This patchset imports simple DVFS support for Allwinner A64 SoC.
->> >>
->> >> As the thermal sensor driver is not yet implemented and some boards
->> >> have still no AXP PMIC support, now only two OPPs are present --
->> >> 648MHz@1.04V and 816MHz@1.1V to prevent overheat or undervoltage.
->> >>
->> >> PATCH 1 is a fix to the CCU driver of A64, and the remaining patches
->> >> set up the device tree bits of the DVFS on Pine64.
->> >
->> >How has this been tested?
->> >
->> >What tasks did you run, with what governor, etc...
->> 
->> I only tested manual frequency switching between 648MHz and
->> 816MHz, and tested the PLL stuck issue by change the OPPs to
->> some random value.
+On 08/12, Sergej Sawazki wrote:
+> The Si5351 clock generator has up to 8 output clocks and 2 PLLs. In order
+> to get a deterministic phase offset relationship between the output clocks,
+> it is necessary to reset the PLLs is certain scenarios.
 > 
-> Ideally, we should test that it's actually reliable. Poorly chosen
-> OPPs might lead to corrupt data that you might not get before a while.
+> This patch-set:
+>  * fixes a regression and adds resetting the PLL before enabling the outputs
+>  * adds a dt-property for enabling/disabling the PLL reset
+>  * adds a debug message for PLL reset (it is helpful during debugging,
+>    probably no longer required?)
 > 
-> Please test using:
-> https://linux-sunxi.org/Hardware_Reliability_Tests#Reliability_of_cpufreq_voltage.2Ffrequency_settings
+> Based on clk-next.
 > 
-> And post the report.
-
-```
-root@p64 [ cpuburn-arm@master ] # ./cpuburn-a53 &
-[1] 2543
-root@p64 [ cpuburn-arm@master ] # ./cpufreq-ljt-stress-test
-Creating './whitenoise-1920x1080.jpg' ... done
-CPU stress test, which is doing JPEG decoding by libjpeg-turbo
-at different cpufreq operating points.
-
-Testing CPU 0
-   816 MHz ............................................................ 
-OK
-   648 MHz ............................................................ 
-OK
-
-Testing CPU 1
-   816 MHz ............................................................ 
-OK
-   648 MHz ............................................................ 
-OK
-
-Testing CPU 2
-   816 MHz ............................................................ 
-OK
-   648 MHz ............................................................ 
-OK
-
-Testing CPU 3
-   816 MHz ............................................................ 
-OK
-   648 MHz ............................................................ 
-OK
-
-Overall result : PASSED
-```
-
 > 
-> Maxime
+
+Please include Russell King on the patches. I'd like Sebastian or
+Russell to review these before merging. For now, I'm going to
+apply the other change from Russell.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
