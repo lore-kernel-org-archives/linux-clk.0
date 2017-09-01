@@ -1,90 +1,46 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 1/9] clk: at91: pmc: Wait for clocks when resuming
-Date: Fri, 15 Sep 2017 16:04:03 +0200
-Message-Id: <20170915140411.31716-2-romain.izard.pro@gmail.com>
-In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Sep 2017 15:55:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lgirdwood@gmail.com, broonie@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
+	perex@perex.cz, tiwai@suse.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com
+Subject: Re: [PATCH v5 2/7] dt-bindings: clk: at91: add audio plls to the
+ compatible list
+Message-ID: <20170901225512.GD21656@codeaurora.org>
+References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
+ <09230b9714c7d8fee053d1b014ef6af43c1bebbc.1502346448.git-series.quentin.schulz@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <09230b9714c7d8fee053d1b014ef6af43c1bebbc.1502346448.git-series.quentin.schulz@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Wait for the syncronization of all clocks when resuming, not only the
-UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-when interrupts are masked, which is the case in here.
+On 08/10, Quentin Schulz wrote:
+> This new clock driver set allows to have a fractional divided clock that
+> would generate a precise clock particularly suitable for audio
+> applications.
+> 
+> The main audio pll clock has two children clocks: one that is connected
+> to the PMC, the other that can directly drive a pad. As these two routes
+> have different enable bits and different dividers and divider formulas,
+> they are handled by two different drivers.
+> 
+> This adds the audio plls (frac, pad and pmc) to the compatible list of
+> at91 clocks in DT binding.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> ---
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 775af473fe11..5c2b26de303e 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -107,10 +107,20 @@ static int pmc_suspend(void)
- 	return 0;
- }
- 
-+static bool pmc_ready(unsigned int mask)
-+{
-+	unsigned int status;
-+
-+	regmap_read(pmcreg, AT91_PMC_SR, &status);
-+
-+	return ((status & mask) == mask) ? 1 : 0;
-+}
-+
- static void pmc_resume(void)
- {
--	int i, ret = 0;
-+	int i;
- 	u32 tmp;
-+	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
- 
- 	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
- 	if (pmc_cache.mckr != tmp)
-@@ -134,13 +144,11 @@ static void pmc_resume(void)
- 			     AT91_PMC_PCR_CMD);
- 	}
- 
--	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
--		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
--					       !(tmp & AT91_PMC_LOCKU),
--					       10, 5000);
--		if (ret)
--			pr_crit("USB PLL didn't lock when resuming\n");
--	}
-+	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-+		mask |= AT91_PMC_LOCKU;
-+
-+	while (!pmc_ready(mask))
-+		cpu_relax();
- }
- 
- static struct syscore_ops pmc_syscore_ops = {
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
