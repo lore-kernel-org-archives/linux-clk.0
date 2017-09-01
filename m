@@ -1,314 +1,566 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v4 6/9] soc: mediatek: extend bus protection API
-Date: Tue, 19 Sep 2017 12:00:27 +0800
-Message-ID: <1505793630-12590-7-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Sep 2017 13:26:06 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tirupathi Reddy <tirupath@codeaurora.org>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	andy.gross@linaro.org, david.brown@linaro.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org
+Subject: Re: [PATCH V2] clk: qcom: Add spmi_pmic clock divider support
+Message-ID: <20170901202606.GX21656@codeaurora.org>
+References: <1504176090-11544-1-git-send-email-tirupath@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1504176090-11544-1-git-send-email-tirupath@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-MT2712 add "set/clear" bus control register to each control register set
-instead of providing only one "enable" control register, we could avoid
-the read-modify-write racing by using extend API with such new design.
-By improving the mtk-infracfg bus protection implementation to
-support set/clear bus protection control method by IC configuration.
+On 08/31, Tirupathi Reddy wrote:
+> diff --git a/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+> new file mode 100644
+> index 0000000..48cb2f7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/clk-spmi-pmic-div.txt
+> @@ -0,0 +1,49 @@
+> +Qualcomm Technologies, Inc. SPMI PMIC clock divider (clkdiv)
+> +
+> +clkdiv configures the clock frequency of a set of outputs on the PMIC.
+> +These clocks are typically wired through alternate functions on
+> +gpio pins.
+> +
+> +=======================
+> +Supported Properties
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/soc/mediatek/mtk-infracfg.c   | 32 ++++++++++----
- drivers/soc/mediatek/mtk-scpsys.c     | 81 +++++++++++++++++++++++++++--------
- include/linux/soc/mediatek/infracfg.h | 12 ++++--
- 3 files changed, 96 insertions(+), 29 deletions(-)
+Just "Properties".
 
-diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
-index dba3055..f55ceaa 100644
---- a/drivers/soc/mediatek/mtk-infracfg.c
-+++ b/drivers/soc/mediatek/mtk-infracfg.c
-@@ -17,30 +17,35 @@
- #include <linux/soc/mediatek/infracfg.h>
- #include <asm/processor.h>
- 
--#define INFRA_TOPAXI_PROTECTEN		0x0220
--#define INFRA_TOPAXI_PROTECTSTA1	0x0228
--
- /**
-  * mtk_infracfg_set_bus_protection - enable bus protection
-  * @regmap: The infracfg regmap
-  * @mask: The mask containing the protection bits to be enabled.
-+ * @reg_set: The register used to enable protection bits.
-+ * @reg_en: The register used to enable protection bits when there doesn't
-+ *          exist reg_set.
-+ * @reg_sta: The register used to check the protection bits are enabled.
-  *
-  * This function enables the bus protection bits for disabled power
-  * domains so that the system does not hang when some unit accesses the
-  * bus while in power down.
-  */
--int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
-+int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
-+		u32 reg_set, u32 reg_en, u32 reg_sta)
- {
- 	unsigned long expired;
- 	u32 val;
- 	int ret;
- 
--	regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, mask);
-+	if (reg_set)
-+		regmap_write(infracfg, reg_set, mask);
-+	else
-+		regmap_update_bits(infracfg, reg_en, mask, mask);
- 
- 	expired = jiffies + HZ;
- 
- 	while (1) {
--		ret = regmap_read(infracfg, INFRA_TOPAXI_PROTECTSTA1, &val);
-+		ret = regmap_read(infracfg, reg_sta, &val);
- 		if (ret)
- 			return ret;
- 
-@@ -59,23 +64,32 @@ int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
-  * mtk_infracfg_clear_bus_protection - disable bus protection
-  * @regmap: The infracfg regmap
-  * @mask: The mask containing the protection bits to be disabled.
-+ * @reg_clr: The register used to disable protection bits.
-+ * @reg_en: The register used to disable protection bits when there doesn't
-+ *          exist reg_clr.
-+ * @reg_sta: The register used to check the protection bits are disabled.
-  *
-  * This function disables the bus protection bits previously enabled with
-  * mtk_infracfg_set_bus_protection.
-  */
--int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
-+
-+int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
-+		u32 reg_clr, u32 reg_en, u32 reg_sta)
- {
- 	unsigned long expired;
- 	int ret;
- 
--	regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
-+	if (reg_clr)
-+		regmap_write(infracfg, reg_clr, mask);
-+	else
-+		regmap_update_bits(infracfg, reg_en, mask, 0);
- 
- 	expired = jiffies + HZ;
- 
- 	while (1) {
- 		u32 val;
- 
--		ret = regmap_read(infracfg, INFRA_TOPAXI_PROTECTSTA1, &val);
-+		ret = regmap_read(infracfg, reg_sta, &val);
- 		if (ret)
- 			return ret;
- 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index e1ce8b1..2569390 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -127,13 +127,25 @@ struct scp_ctrl_reg {
- 	int pwr_sta2nd_offs;
- };
- 
-+struct bus_prot_reg {
-+	u32 set_offs;
-+	u32 clr_offs;
-+	u32 en_offs;
-+	u32 sta_offs;
-+};
-+
-+struct soc_reg {
-+	struct scp_ctrl_reg scp_ctrl;
-+	struct bus_prot_reg bus_prot;
-+};
-+
- struct scp {
- 	struct scp_domain *domains;
- 	struct genpd_onecell_data pd_data;
- 	struct device *dev;
- 	void __iomem *base;
- 	struct regmap *infracfg;
--	struct scp_ctrl_reg ctrl_reg;
-+	struct soc_reg soc_reg;
- };
- 
- struct scp_subdomain {
-@@ -146,16 +158,16 @@ struct scp_soc_data {
- 	int num_domains;
- 	const struct scp_subdomain *subdomains;
- 	int num_subdomains;
--	const struct scp_ctrl_reg regs;
-+	const struct soc_reg regs;
- };
- 
- static int scpsys_domain_is_on(struct scp_domain *scpd)
- {
- 	struct scp *scp = scpd->scp;
- 
--	u32 status = readl(scp->base + scp->ctrl_reg.pwr_sta_offs) &
-+	u32 status = readl(scp->base + scp->soc_reg.scp_ctrl.pwr_sta_offs) &
- 						scpd->data->sta_mask;
--	u32 status2 = readl(scp->base + scp->ctrl_reg.pwr_sta2nd_offs) &
-+	u32 status2 = readl(scp->base + scp->soc_reg.scp_ctrl.pwr_sta2nd_offs) &
- 						scpd->data->sta_mask;
- 
- 	/*
-@@ -254,7 +266,10 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask);
-+				scpd->data->bus_prot_mask,
-+				scp->soc_reg.bus_prot.clr_offs,
-+				scp->soc_reg.bus_prot.en_offs,
-+				scp->soc_reg.bus_prot.sta_offs);
- 		if (ret)
- 			goto err_pwr_ack;
- 	}
-@@ -289,7 +304,10 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask);
-+				scpd->data->bus_prot_mask,
-+				scp->soc_reg.bus_prot.set_offs,
-+				scp->soc_reg.bus_prot.en_offs,
-+				scp->soc_reg.bus_prot.sta_offs);
- 		if (ret)
- 			goto out;
- 	}
-@@ -382,7 +400,7 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
- 
- static struct scp *init_scp(struct platform_device *pdev,
- 			const struct scp_domain_data *scp_domain_data, int num,
--			const struct scp_ctrl_reg *scp_ctrl_reg)
-+			const struct soc_reg *soc_reg)
- {
- 	struct genpd_onecell_data *pd_data;
- 	struct resource *res;
-@@ -394,8 +412,13 @@ static struct scp *init_scp(struct platform_device *pdev,
- 	if (!scp)
- 		return ERR_PTR(-ENOMEM);
- 
--	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
--	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
-+	scp->soc_reg.scp_ctrl.pwr_sta_offs = soc_reg->scp_ctrl.pwr_sta_offs;
-+	scp->soc_reg.scp_ctrl.pwr_sta2nd_offs =
-+			soc_reg->scp_ctrl.pwr_sta2nd_offs;
-+	scp->soc_reg.bus_prot.set_offs = soc_reg->bus_prot.set_offs;
-+	scp->soc_reg.bus_prot.clr_offs = soc_reg->bus_prot.clr_offs;
-+	scp->soc_reg.bus_prot.en_offs = soc_reg->bus_prot.en_offs;
-+	scp->soc_reg.bus_prot.sta_offs = soc_reg->bus_prot.sta_offs;
- 
- 	scp->dev = &pdev->dev;
- 
-@@ -814,8 +837,14 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.domains = scp_domain_data_mt2701,
- 	.num_domains = ARRAY_SIZE(scp_domain_data_mt2701),
- 	.regs = {
--		.pwr_sta_offs = SPM_PWR_STATUS,
--		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		.scp_ctrl = {
-+			.pwr_sta_offs = SPM_PWR_STATUS,
-+			.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		},
-+		.bus_prot = {
-+			.en_offs = INFRA_TOPAXI_PROTECTEN,
-+			.sta_offs = INFRA_TOPAXI_PROTECTSTA1
-+		},
- 	}
- };
- 
-@@ -825,8 +854,14 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.subdomains = scp_subdomain_mt6797,
- 	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt6797),
- 	.regs = {
--		.pwr_sta_offs = SPM_PWR_STATUS_MT6797,
--		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797
-+		.scp_ctrl = {
-+			.pwr_sta_offs = SPM_PWR_STATUS_MT6797,
-+			.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797
-+		},
-+		.bus_prot = {
-+			.en_offs = INFRA_TOPAXI_PROTECTEN,
-+			.sta_offs = INFRA_TOPAXI_PROTECTSTA1
-+		},
- 	}
- };
- 
-@@ -834,8 +869,14 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.domains = scp_domain_data_mt7622,
- 	.num_domains = ARRAY_SIZE(scp_domain_data_mt7622),
- 	.regs = {
--		.pwr_sta_offs = SPM_PWR_STATUS,
--		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		.scp_ctrl = {
-+			.pwr_sta_offs = SPM_PWR_STATUS,
-+			.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		},
-+		.bus_prot = {
-+			.en_offs = INFRA_TOPAXI_PROTECTEN,
-+			.sta_offs = INFRA_TOPAXI_PROTECTSTA1
-+		},
- 	}
- };
- 
-@@ -845,8 +886,14 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.subdomains = scp_subdomain_mt8173,
- 	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt8173),
- 	.regs = {
--		.pwr_sta_offs = SPM_PWR_STATUS,
--		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		.scp_ctrl = {
-+			.pwr_sta_offs = SPM_PWR_STATUS,
-+			.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
-+		},
-+		.bus_prot = {
-+			.en_offs = INFRA_TOPAXI_PROTECTEN,
-+			.sta_offs = INFRA_TOPAXI_PROTECTSTA1
-+		},
- 	}
- };
- 
-diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-index a0182ec..c704af5 100644
---- a/include/linux/soc/mediatek/infracfg.h
-+++ b/include/linux/soc/mediatek/infracfg.h
-@@ -1,6 +1,11 @@
- #ifndef __SOC_MEDIATEK_INFRACFG_H
- #define __SOC_MEDIATEK_INFRACFG_H
- 
-+#define INFRA_TOPAXI_PROTECTEN		0x0220
-+#define INFRA_TOPAXI_PROTECTSTA1	0x0228
-+#define INFRA_TOPAXI_PROTECTEN_SET	0x0260
-+#define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
-+
- #define MT8173_TOP_AXI_PROT_EN_MCI_M2		BIT(0)
- #define MT8173_TOP_AXI_PROT_EN_MM_M0		BIT(1)
- #define MT8173_TOP_AXI_PROT_EN_MM_M1		BIT(2)
-@@ -27,7 +32,8 @@
- #define MT7622_TOP_AXI_PROT_EN_WB		(BIT(2) | BIT(6) | \
- 						 BIT(7) | BIT(8))
- 
--int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
--int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
--
-+int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
-+		u32 reg_set, u32 reg_en, u32 reg_sta);
-+int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
-+		u32 reg_clr, u32 reg_en, u32 reg_sta);
- #endif /* __SOC_MEDIATEK_INFRACFG_H */
+> +=======================
+> +
+> +- compatible
+> +	Usage:      required
+> +	Value type: <string>
+> +	Definition: should be "qcom,spmi-pmic-clkdiv".
+> +
+> +- reg
+> +	Usage:      required
+> +	Value type: <prop-encoded-array>
+> +	Definition: Addresses and sizes for the memory of this CLKDIV
+> +		    peripheral.
+> +
+> +- clocks:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: reference to the xo clock.
+> +
+> +- clock-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "xo".
+> +
+> +=======
+> +Example
+> +=======
+> +
+> +pm8998_clk_divs: qcom,clkdiv@0 {
+
+@5b00
+
+> +	compatible = "qcom,spmi-pmic-clkdiv";
+> +	reg = <0x5b00 0x300>;
+
+Drop the size
+
+> +	#clock-cells = <1>;
+> +	clocks = <&xo_board>;
+> +	clock-names = "xo";
+> +
+> +	assigned-clocks = <&pm8998_clk_divs CLKDIV1>,
+> +			  <&pm8998_clk_divs CLKDIV2>,
+> +			  <&pm8998_clk_divs CLKDIV3>;
+> +	assigned-clock-rates = <9600000>,
+> +			       <9600000>,
+> +			       <9600000>;
+
+Not sure we need this part in the example, but OK.
+
+> +};
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 9f6c278..af5e489 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -196,3 +196,12 @@ config MSM_MMCC_8996
+>  	  Support for the multimedia clock controller on msm8996 devices.
+>  	  Say Y if you want to support multimedia devices such as display,
+>  	  graphics, video encode/decode, camera, etc.
+> +
+> +config CLOCK_SPMI_PMIC_DIV
+
+config SPMI_PMIC_CLKDIV?
+
+> +	tristate "spmi pmic clkdiv driver"
+> +	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+> +	help
+> +	  This driver supports the clkdiv functionality on the Qualcomm
+> +	  Technologies, Inc. SPMI PMIC. It configures the frequency of
+> +	  clkdiv outputs on the PMIC. These clocks are typically wired
+> +	  through alternate functions on gpio pins.
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 3f3aff2..ee8c91c 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -15,6 +15,7 @@ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+>  # Keep alphabetically sorted by config
+>  obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
+>  obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
+> +obj-$(CONFIG_CLOCK_SPMI_PMIC_DIV) += clk-spmi-pmic-div.o
+>  obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
+>  obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
+>  obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
+> diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
+> new file mode 100644
+> index 0000000..24461fb
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
+> @@ -0,0 +1,327 @@
+> +/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/log2.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+
+Needed?
+
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +
+> +#include <dt-bindings/clock/spmi_pmic_clk_div.h>
+> +
+> +#define REG_DIV_CTL1			0x43
+> +#define DIV_CTL1_DIV_FACTOR_MASK	GENMASK(2, 0)
+> +
+> +#define REG_EN_CTL			0x46
+> +#define REG_EN_MASK			BIT(7)
+> +#define REG_EN_SET			BIT(7)
+
+Why do we need this define? Just test if the mask comes out to be
+non-zero instead.
+
+> +
+> +#define ENABLE_DELAY_NS(cxo_ns, div)	((2 + 3 * div) * cxo_ns)
+> +#define DISABLE_DELAY_NS(cxo_ns, div)	((3 * div) * cxo_ns)
+> +
+> +#define CLK_SPMI_PMIC_DIV_OFFSET	1
+> +
+> +#define CLKDIV_XO_DIV_1_0		0
+> +#define CLKDIV_XO_DIV_1			1
+> +#define CLKDIV_XO_DIV_2			2
+> +#define CLKDIV_XO_DIV_4			3
+> +#define CLKDIV_XO_DIV_8			4
+> +#define CLKDIV_XO_DIV_16		5
+> +#define CLKDIV_XO_DIV_32		6
+> +#define CLKDIV_XO_DIV_64		7
+> +#define CLKDIV_MAX_ALLOWED		8
+> +
+> +struct clkdiv {
+> +	struct regmap		*regmap;
+> +	u16			base;
+> +
+> +	/* clock properties */
+> +	struct clk_hw		hw;
+> +	unsigned int		div_factor;
+> +	unsigned int		cxo_period_ns;
+> +};
+> +
+> +struct spmi_pmic_div_clk_cc {
+> +	struct clk_hw	**div_clks;
+
+I don't understand this design. Shouldn't we just allocate an
+array of clkdiv structure?
+
+> +	int		nclks;
+> +};
+> +
+> +static inline struct clkdiv *to_clkdiv(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct clkdiv, hw);
+> +}
+> +
+> +static inline unsigned int div_factor_to_div(unsigned int div_factor)
+> +{
+> +	if (div_factor == CLKDIV_XO_DIV_1_0)
+> +		return 1;
+> +
+> +	return 1 << (div_factor - CLK_SPMI_PMIC_DIV_OFFSET);
+> +}
+> +
+> +static inline unsigned int div_to_div_factor(unsigned int div)
+> +{
+> +	return ilog2(div) + CLK_SPMI_PMIC_DIV_OFFSET;
+
+Maybe we should do the clamp here?
+
+> +}
+> +
+> +static bool is_spmi_pmic_clkdiv_enabled(struct clkdiv *clkdiv)
+> +{
+> +	unsigned int val = 0;
+> +
+> +	regmap_read(clkdiv->regmap, clkdiv->base + REG_EN_CTL,
+> +			 &val);
+> +	return ((val & REG_EN_MASK) == REG_EN_SET) ? true : false;
+> +}
+> +
+> +static int spmi_pmic_clkdiv_set_enable_state(struct clkdiv *clkdiv,
+> +			bool enable_state)
+> +{
+> +	int rc;
+> +
+> +	rc = regmap_update_bits(clkdiv->regmap, clkdiv->base + REG_EN_CTL,
+> +				REG_EN_MASK,
+> +				(enable_state == true) ? REG_EN_SET : 0);
+> +	if (rc)
+> +		return rc;
+> +
+> +	if (enable_state == true)
+> +		ndelay(ENABLE_DELAY_NS(clkdiv->cxo_period_ns,
+> +				div_factor_to_div(clkdiv->div_factor)));
+> +	else
+> +		ndelay(DISABLE_DELAY_NS(clkdiv->cxo_period_ns,
+> +				div_factor_to_div(clkdiv->div_factor)));
+> +
+> +	return rc;
+> +}
+> +
+> +static int spmi_pmic_clkdiv_config_freq_div(struct clkdiv *clkdiv,
+> +			unsigned int div)
+> +{
+> +	unsigned int div_factor;
+> +	bool enabled;
+> +	int rc;
+> +
+> +	div_factor = div_to_div_factor(div);
+> +	if (div_factor <= 0 || div_factor >= CLKDIV_MAX_ALLOWED)
+
+div_factor is unsigned. It can't be less than 0.
+
+> +		return -EINVAL;
+> +
+> +	enabled = is_spmi_pmic_clkdiv_enabled(clkdiv);
+> +	if (enabled) {
+> +		rc = spmi_pmic_clkdiv_set_enable_state(clkdiv, false);
+> +		if (rc)
+> +			return rc;
+
+This races with clk_enable() on the same clk. You'll need some
+sort of local lock to make sure set_rate() and enable don't race
+with each other.
+
+> +	}
+> +
+> +	rc = regmap_update_bits(clkdiv->regmap,
+> +				clkdiv->base + REG_DIV_CTL1,
+> +				DIV_CTL1_DIV_FACTOR_MASK, div_factor);
+> +	if (rc)
+> +		return rc;
+> +
+> +	clkdiv->div_factor = div_factor;
+> +
+> +	if (enabled)
+> +		rc = spmi_pmic_clkdiv_set_enable_state(clkdiv, true);
+> +
+> +	return rc;
+> +}
+> +
+> +static int clk_spmi_pmic_div_enable(struct clk_hw *hw)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +
+> +	return spmi_pmic_clkdiv_set_enable_state(clkdiv, true);
+> +}
+> +
+> +static void clk_spmi_pmic_div_disable(struct clk_hw *hw)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +
+> +	spmi_pmic_clkdiv_set_enable_state(clkdiv, false);
+> +}
+> +
+> +static long clk_spmi_pmic_div_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			unsigned long *parent_rate)
+> +{
+> +	unsigned long new_rate;
+> +	unsigned int div, div_factor;
+> +
+> +	div = DIV_ROUND_UP(*parent_rate, rate);
+> +	div_factor = div_to_div_factor(div);
+> +	if (div_factor >= CLKDIV_MAX_ALLOWED)
+> +		div_factor = CLKDIV_MAX_ALLOWED - 1;
+
+min()?
+
+> +	new_rate = *parent_rate / div_factor_to_div(div_factor);
+> +
+> +	return new_rate;
+> +}
+> +
+> +static unsigned long clk_spmi_pmic_div_recalc_rate(struct clk_hw *hw,
+> +			unsigned long parent_rate)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +	unsigned long rate;
+> +
+> +	rate = parent_rate / div_factor_to_div(clkdiv->div_factor);
+> +
+> +	return rate;
+> +}
+> +
+> +static int clk_spmi_pmic_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			unsigned long parent_rate)
+> +{
+> +	struct clkdiv *clkdiv = to_clkdiv(hw);
+> +	int rc = 0;
+
+Please don't assign variables that are then reassigned right
+after.
+
+> +
+> +	rc = spmi_pmic_clkdiv_config_freq_div(clkdiv, parent_rate / rate);
+> +
+
+And also just return things when you can instead of assigning
+them to local variables to return after.
+
+> +	return rc;
+> +}
+> +
+> +static const struct clk_ops clk_spmi_pmic_div_ops = {
+> +	.enable = clk_spmi_pmic_div_enable,
+> +	.disable = clk_spmi_pmic_div_disable,
+> +	.set_rate = clk_spmi_pmic_div_set_rate,
+> +	.recalc_rate = clk_spmi_pmic_div_recalc_rate,
+> +	.round_rate = clk_spmi_pmic_div_round_rate,
+> +};
+> +
+> +static struct clk_hw *spmi_pmic_div_clk_hw_get(struct of_phandle_args *clkspec,
+> +				      void *data)
+> +{
+> +	struct spmi_pmic_div_clk_cc *clk_cc = data;
+> +	unsigned int idx = clkspec->args[0];
+> +
+> +	if (idx >= clk_cc->nclks) {
+> +		pr_err("%s: invalid index %u\n", __func__, idx);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return clk_cc->div_clks[idx];
+> +}
+> +
+> +#define SPMI_PMIC_DIV_CLK_ADDRESS_RANGE	0x100
+
+SPMI_PMIC_DIV_CLK_SIZE?
+
+> +#define SPMI_PMIC_DIV_CLK_ID_OFFSET	1
+> +
+> +static int spmi_pmic_clkdiv_probe(struct platform_device *pdev)
+> +{
+> +	struct spmi_pmic_div_clk_cc *clk_cc;
+> +	struct clk_init_data init = {0};
+
+Drop the 0 part.
+
+> +	struct clkdiv *clkdiv;
+> +	struct clk *cxo;
+> +	struct regmap *regmap;
+> +	struct device *dev = &pdev->dev;
+> +	const char *parent_name;
+> +	int nclks, i, rc, cxo_hz;
+> +	u32 reg[2], start, size;
+> +
+> +	rc = of_property_read_u32_array(dev->of_node, "reg", reg, 2);
+
+Oh hm... I think I suggested we count the size, but that may not
+work. The SPMI node has #address-cells = 1 and #size-cells = 0.
+So the reg property will only have one cell and it will be the
+offset. We could count the interrupts. Or we could count
+clock-output-names. Or we can match a certain PMIC compatible
+string and then know the size from some hardcoded number in this
+driver.
+
+> +	if (rc < 0) {
+> +		dev_err(dev, "reg property reading failed\n");
+> +		return rc;
+> +	}
+> +	start = reg[0];
+> +	size = reg[1];
+> +
+> +	nclks = size / SPMI_PMIC_DIV_CLK_ADDRESS_RANGE;
+> +	if (nclks == 0) {
+> +		dev_err(dev, "no div clocks assigned\n");
+
+This should never happen?
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap) {
+> +		dev_err(dev, "Couldn't get parent's regmap\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	clkdiv = devm_kcalloc(dev, nclks, sizeof(*clkdiv), GFP_KERNEL);
+> +	if (!clkdiv)
+> +		return -ENOMEM;
+> +
+> +	clk_cc = devm_kzalloc(&pdev->dev, sizeof(*clk_cc), GFP_KERNEL);
+> +	if (!clk_cc)
+> +		return -ENOMEM;
+> +
+> +	clk_cc->div_clks = devm_kcalloc(&pdev->dev, nclks,
+> +					sizeof(*clk_cc->div_clks), GFP_KERNEL);
+> +	if (!clk_cc->div_clks)
+> +		return -ENOMEM;
+> +
+> +	/* Read parent clock rate */
+
+That's obvious.
+
+> +	cxo = of_clk_get(dev->of_node, 0);
+
+Just use clk_get() instead? This is a platform driver after all.
+
+> +	if (IS_ERR(cxo)) {
+> +		rc = PTR_ERR(cxo);
+> +		if (rc != -EPROBE_DEFER)
+> +			dev_err(dev, "failed to get xo clock");
+> +		return rc;
+> +	}
+> +	cxo_hz = clk_get_rate(cxo);
+> +	clk_put(cxo);
+> +
+> +	parent_name = of_clk_get_parent_name(dev->of_node, 0);
+> +	if (!parent_name) {
+> +		dev_err(dev, "missing parent clock\n");
+> +		return -ENODEV;
+> +	}
+> +	dev_dbg(dev, "parent is: %s\n", parent_name);
+
+Remove?
+
+> +
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = parent_name ? 1 : 0;
+> +	init.ops = &clk_spmi_pmic_div_ops;
+> +	init.flags = 0;
+> +
+> +	for (i = 0; i < nclks; i++) {
+> +		clkdiv[i].base = start + i * SPMI_PMIC_DIV_CLK_ADDRESS_RANGE;
+> +		clkdiv[i].regmap = regmap;
+> +		clkdiv[i].cxo_period_ns = NSEC_PER_SEC / cxo_hz;
+> +		init.name = kasprintf(GFP_KERNEL, "div_clk%d",
+> +				     i + SPMI_PMIC_DIV_CLK_ID_OFFSET);
+
+We don't need a define for 1.
+
+> +		clkdiv[i].hw.init = &init;
+> +		rc = devm_clk_hw_register(dev, &clkdiv[i].hw);
+> +		if (rc)
+
+We leak init.name here.
+
+> +			return rc;
+> +
+> +		clk_cc->div_clks[i] = &clkdiv[i].hw;
+> +		kfree(init.name); /* clock framework made a copy of the name */
+> +	}
+> +
+> +	clk_cc->nclks = nclks;
+> +	rc = of_clk_add_hw_provider(pdev->dev.of_node, spmi_pmic_div_clk_hw_get,
+> +				    clk_cc);
+
+Urgh, we really need this devmified. Patch coming tomorrow. For
+now, you need a remove function for driver unbinding to
+unregister the provider.
+
+> +	return rc;
+> +}
+> +
+> +static const struct of_device_id spmi_pmic_clkdiv_match_table[] = {
+> +	{ .compatible = "qcom,spmi-pmic-clkdiv" },
+
+I'm not sure we call it this in other places. How about
+qcom,spmi-clkdiv and then have specific one for the pmic as well
+in case we ever care in the future like qcom,pm8916-clkdiv, etc.
+
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, spmi_pmic_clkdiv_match_table);
+> +
+> +static struct platform_driver spmi_pmic_clkdiv_driver = {
+> +	.driver		= {
+> +		.name	= "qcom,spmi-pmic-clkdiv",
+> +		.of_match_table = spmi_pmic_clkdiv_match_table,
+> +	},
+> +	.probe		= spmi_pmic_clkdiv_probe,
+> +};
+> +module_platform_driver(spmi_pmic_clkdiv_driver);
+> +
+> +MODULE_DESCRIPTION("spmi pmic clkdiv driver");
+
+QCOM SPMI PMIC clkdiv driver?
+
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/dt-bindings/clock/spmi_pmic_clk_div.h b/include/dt-bindings/clock/spmi_pmic_clk_div.h
+> new file mode 100644
+> index 0000000..25d035d
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/spmi_pmic_clk_div.h
+> @@ -0,0 +1,21 @@
+> +/*
+> + * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_SPMI_PMIC_CLK_DIV_H
+> +#define _DT_BINDINGS_SPMI_PMIC_CLK_DIV_H
+> +
+> +#define CLKDIV1		0
+
+1 is 0...
+
+> +#define CLKDIV2		1
+
+2 is 1...
+
+> +#define CLKDIV3		2
+
+How about we offset the index once and then drop the header file?
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
