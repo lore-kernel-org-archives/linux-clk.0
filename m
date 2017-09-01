@@ -1,77 +1,49 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 1 Sep 2017 13:28:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Wei Xu <xuwei5@hisilicon.com>
+Cc: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 11/14] drm/sun4i: hdmi: Add A31 specific DDC register definitions
-Date: Fri, 29 Sep 2017 16:23:03 +0800
-Message-Id: <20170929082306.16193-12-wens@csie.org>
-In-Reply-To: <20170929082306.16193-1-wens@csie.org>
-References: <20170929082306.16193-1-wens@csie.org>
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Dmitry Shmidt <dimitrysh@google.com>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: Re: [PATCH 2/2] arm64: dts: hi6220: enable watchdog
+Message-ID: <20170901202816.GZ21656@codeaurora.org>
+References: <1503993518-24428-1-git-send-email-leo.yan@linaro.org>
+ <1503993518-24428-2-git-send-email-leo.yan@linaro.org>
+ <20170901013233.GL21656@codeaurora.org>
+ <59A937E7.2060303@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <59A937E7.2060303@hisilicon.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DDC block for the HDMI controller is different on the A31.
+On 09/01, Wei Xu wrote:
+> Hi Stephen,
+> 
+> On 2017/9/1 2:32, Stephen Boyd wrote:
+> > On 08/29, Leo Yan wrote:
+> >> From: Dmitry Shmidt <dimitrysh@google.com>
+> >>
+> >> This patch is to add watchdog binding for Hi6220 on Hikey board.
+> >>
+> >> Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
+> >> ---
+> > 
+> > This will go through arm-soc?
+> > 
+> 
+> Can you pick up it for v4.14?
+> Otherwise I am fine to pick up it and queue for v4.15.
 
-This patch adds the register definitions.
+Sounds like it will go for v4.15. Otherwise, you can send it to
+arm-soc with the raw number instead of #define number and then
+fix it up to use the #define later.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index b1124a8f9f05..da4ea9efc6fa 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -153,6 +153,37 @@
- 
- #define SUN4I_HDMI_DDC_FIFO_SIZE	16
- 
-+/* A31 specific */
-+#define SUN6I_HDMI_DDC_CTRL_REG		0x500
-+#define SUN6I_HDMI_DDC_CTRL_RESET		BIT(31)
-+#define SUN6I_HDMI_DDC_CTRL_START_CMD		BIT(27)
-+#define SUN6I_HDMI_DDC_CTRL_SDA_ENABLE		BIT(6)
-+#define SUN6I_HDMI_DDC_CTRL_SCL_ENABLE		BIT(4)
-+#define SUN6I_HDMI_DDC_CTRL_ENABLE		BIT(0)
-+
-+#define SUN6I_HDMI_DDC_CMD_REG		0x508
-+#define SUN6I_HDMI_DDC_CMD_BYTE_COUNT(count)	((count) << 16)
-+/* command types in lower 3 bits are the same as sun4i */
-+
-+#define SUN6I_HDMI_DDC_ADDR_REG		0x50c
-+#define SUN6I_HDMI_DDC_ADDR_SEGMENT(seg)	(((seg) & 0xff) << 24)
-+#define SUN6I_HDMI_DDC_ADDR_EDDC(addr)		(((addr) & 0xff) << 16)
-+#define SUN6I_HDMI_DDC_ADDR_OFFSET(off)		(((off) & 0xff) << 8)
-+#define SUN6I_HDMI_DDC_ADDR_SLAVE(addr)		(((addr) & 0xff) << 1)
-+
-+#define SUN6I_HDMI_DDC_INT_STATUS_REG	0x514
-+#define SUN6I_HDMI_DDC_INT_STATUS_TIMEOUT	BIT(8)
-+/* lower 8 bits are the same as sun4i */
-+
-+#define SUN6I_HDMI_DDC_FIFO_CTRL_REG	0x518
-+#define SUN6I_HDMI_DDC_FIFO_CTRL_CLEAR		BIT(15)
-+/* lower 9 bits are the same as sun4i */
-+
-+#define SUN6I_HDMI_DDC_CLK_REG		0x520
-+/* DDC CLK bit fields are the same, but the formula is not */
-+
-+#define SUN6I_HDMI_DDC_FIFO_DATA_REG	0x580
-+
- enum sun4i_hdmi_pkt_type {
- 	SUN4I_HDMI_PKT_AVI = 2,
- 	SUN4I_HDMI_PKT_END = 15,
 -- 
-2.14.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
