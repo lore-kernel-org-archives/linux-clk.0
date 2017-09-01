@@ -1,99 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58576 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753127AbdHOHRu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Aug 2017 03:17:50 -0400
-Message-ID: <1502781465.19230.35.camel@mtkswgap22>
-Subject: Re: [PATCH v1 0/9] Mediatek MT2712 clock and scpsys support
-From: Sean Wang <sean.wang@mediatek.com>
-To: <weiyi.lu@mediatek.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Fan Chen <fan.chen@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date: Tue, 15 Aug 2017 15:17:45 +0800
-In-Reply-To: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1502779370-30150-1-git-send-email-weiyi.lu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 31 Aug 2017 18:44:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Alex Frid <afrid@nvidia.com>
+Subject: Re: [PATCH] clk: Don't write error code into divider register
+Message-ID: <20170901014404.GV21656@codeaurora.org>
+References: <1500977920-5533-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170726003208.GF2146@codeaurora.org>
+ <20170726082506.GC26726@tbergstrom-lnx.Nvidia.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170726082506.GC26726@tbergstrom-lnx.Nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Hi, Weiyi
-
-for patch 5 to 9, you should re-base to the latest the Matthias tree
-which has some changes around scpsys since Linux v4.13-rc1
-
-	Sean
-
-
-On Tue, 2017-08-15 at 14:42 +0800, weiyi.lu@mediatek.com wrote:
-> This patch set is composed of clock control (PATCH 1-4) and scpsys control (PATCH 5-9)
+On 07/26, Peter De Schrijver wrote:
+> On Tue, Jul 25, 2017 at 05:32:08PM -0700, Stephen Boyd wrote:
+> > On 07/25, Peter De Schrijver wrote:
+> > > From: Alex Frid <afrid@nvidia.com>
+> > > 
+> > > Add a check for error returned by divider value calculation to avoid
+> > > writing error code into hw register.
+> > > 
+> > > Signed-off-by: Alex Frid <afrid@nvidia.com>
+> > > Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > > Reviewed-by: Jon Mayo <jmayo@nvidia.com>
+> > > ---
+> > 
+> > Fixes: bca9690b9426 ("clk: divider: Make generic for usage elsewhere")
+> > 
+> > perhaps?
+> > 
+> > Also, curious how this got triggered? Presumably round_rate would
+> > have failed before a set_rate call with something invalid came
+> > through so that's why nobody has reported anything so far.
+> > 
 > 
-> Weiyi Lu (9):
-> [PATCH v1 1/9] dt-bindings: ARM: Mediatek: Document bindings for MT2712
-> [PATCH v1 2/9] clk: mediatek: Add dt-bindings for MT2712 clocks
-> [PATCH v1 3/9] clk: mediatek: Add MT2712 clock support
-> [PATCH v1 4/9] arm: dts: mt2712: Add clock controller device nodes
-> [PATCH v1 5/9] dt-bindings: soc: add MT2712 power dt-bindings
-> [PATCH v1 6/9] soc: mediatek: add bus protection extend API
-> [PATCH v1 7/9] soc: mediatek: add dependent clock jpgdec/audio for
-> [PATCH v1 8/9] soc: mediatek: add MT2712 scpsys support
-> [PATCH v1 9/9] arm: dts: Add power controller device node of MT2712
+> I don't really know. Aleks do you remember?
 > 
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
->  .../bindings/arm/mediatek/mediatek,bdpsys.txt      |    1 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   |   22 +
->  .../bindings/arm/mediatek/mediatek,mcucfg.txt      |   22 +
->  .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |   22 +
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
->  .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
->  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
->  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    3 +
->  arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |  130 ++
->  drivers/clk/mediatek/Kconfig                       |   50 +
->  drivers/clk/mediatek/Makefile                      |    8 +
->  drivers/clk/mediatek/clk-mt2712-bdp.c              |  102 ++
->  drivers/clk/mediatek/clk-mt2712-img.c              |   80 ++
->  drivers/clk/mediatek/clk-mt2712-jpgdec.c           |   76 ++
->  drivers/clk/mediatek/clk-mt2712-mfg.c              |   75 ++
->  drivers/clk/mediatek/clk-mt2712-mm.c               |  170 +++
->  drivers/clk/mediatek/clk-mt2712-vdec.c             |   94 ++
->  drivers/clk/mediatek/clk-mt2712-venc.c             |   77 ++
->  drivers/clk/mediatek/clk-mt2712.c                  | 1400 ++++++++++++++++++++
->  drivers/clk/mediatek/clk-mtk.h                     |    2 +
->  drivers/clk/mediatek/clk-pll.c                     |   13 +-
->  drivers/soc/mediatek/mtk-infracfg.c                |   90 +-
->  drivers/soc/mediatek/mtk-scpsys.c                  |  160 ++-
->  include/dt-bindings/clock/mt2712-clk.h             |  428 ++++++
->  include/dt-bindings/power/mt2712-power.h           |   26 +
->  include/linux/soc/mediatek/infracfg.h              |   14 +-
->  31 files changed, 3057 insertions(+), 16 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
->  create mode 100644 drivers/clk/mediatek/clk-mt2712-bdp.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2712-img.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2712-jpgdec.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2712-mfg.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2712-mm.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2712-vdec.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2712-venc.c
->  create mode 100644 drivers/clk/mediatek/clk-mt2712.c
->  create mode 100644 include/dt-bindings/clock/mt2712-clk.h
->  create mode 100644 include/dt-bindings/power/mt2712-power.h
+
+Still wondering.
+
+> > 	if ((s32)value < 0)
+> > 
+> > to see if there was an error. Sort of annoying that we've limited
+> > the available space of divider_get_val() by combining the value
+> > with the error code number space. We may want to not do that in
+> > case people have huge dividers.
+> > 
 > 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> Yes. It would have been better to return the divider in a separate variable.
+> There seem to be few users though, only 6.
 
+Patches welcome.
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
