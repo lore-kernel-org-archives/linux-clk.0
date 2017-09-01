@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de
-Cc: linus.walleij@linaro.org, linux-pwm@vger.kernel.org,
-        robh+dt@kernel.org, david.wu@rock-chips.com,
-        shawn.lin@rock-chips.com, linux-i2c@vger.kernel.org,
-        zhangqing@rock-chips.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@codeaurora.org, wsa@the-dreams.de,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-spi@vger.kernel.org,
-        Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 00/23] Support more devices on rockchip rv1108
-Date: Wed,  2 Aug 2017 16:25:03 +0800
-Message-Id: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 1 Sep 2017 08:17:06 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.14, take 3
+Message-ID: <20170901061706.varrjekvcuymqzx2@flea>
+References: <20170824083620.b5cq4qtyr3cqtpjx@flea.lan>
+ <20170831175901.GF21656@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zusvhbl6z3c7gp76"
+In-Reply-To: <20170831175901.GF21656@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
-This series try to support i2c/spi/pwm/saradc/pmic/watchdog and
-the full clk tree on rockchip rv1108 soc.
+--zusvhbl6z3c7gp76
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-- split the rename and intentation fix part from id patch
-- split the new added clks and rename.
-- add compatible string "rockchip,rv1108-pwm"
-- add compatible string "rockchip,rv1108-saradc"
+Hi Stephen,
 
-Andy Yan (14):
-  pinctrl: rockchip: add schmitt input mode support for rv1108
-  dt-bindings: i2c: rk3x: add support for rv1108
-  i2c: rk3x: add support for rv1108
-  ARM: dts: rockchip: add i2c dt node for rv1108
-  spi: rockchip: add compatible string for rv1108 spi
-  ARM: dts: rockchip: add spi dt node for rv1108
-  dt-bindings: pwm: add description for rv1108 pwm
-  ARM: dts: rockchip: add pwm dt node for rv1108
-  ARM: dts: rockchip: add watchdog dt node for rv1108
-  dt-bindings: adc: add description for rv1108 saradc
-  ARM: dts: rockchip: add saradc support for rv1108
-  ARM: dts: rockchip: add pwm backlight for rv1108 evb
-  ARM: dts: rockchip: add pmic rk805 dt node for rv1108 evb
-  ARM: dts: rockchip: add accelerometer bma250e dt node for rv1108 evb
+On Thu, Aug 31, 2017 at 10:59:01AM -0700, Stephen Boyd wrote:
+> On 08/24, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > Here is a quite late PR, but this also something we've been waiting
+> > for for quite some time already.
+> >=20
+> > These patches convert our last users of the old clock framework to the
+> > new one. We still have some marginal users of the old clock drivers,
+> > but they shouldn't prevent the fix for the orphans clocks we hold back
+> > to work.
+> >=20
+>=20
+> Great. Thanks. Pulled into clk-next.
 
-Elaine Zhang (9):
-  clk: rockchip: add more clk ids for rv1108
-  clk: rockchip: rename the clk id for HCLK_I2S1_2CH
-  clk: rockchip: fix up the indentation stuff for RV1108 SoC
-  clk: rockchip: support more rates for cpuclk
-  clk: rockchip: fix up the pll clks error for rv1108 SoC
-  clk: rockchip: support more clks for rv1108
-  clk: rockchip: fix up some clks describe error for rv1108 SoC
-  clk: rockchip: rename some of clks for rv1108 SoC
-  clk: rockchip: add some critical clocks for rv1108 SoC
+Just so you know, since we haven't heard from you about this one, we
+didn't send the DT bits. So the conversion of our DTs will happen in
+4.15.
 
- Documentation/devicetree/bindings/i2c/i2c-rk3x.txt |   1 +
- .../bindings/iio/adc/rockchip-saradc.txt           |   1 +
- .../devicetree/bindings/pwm/pwm-rockchip.txt       |   2 +-
- .../devicetree/bindings/spi/spi-rockchip.txt       |   1 +
- arch/arm/boot/dts/rv1108-evb.dts                   | 158 +++++++
- arch/arm/boot/dts/rv1108.dtsi                      | 249 ++++++++++
- drivers/clk/rockchip/clk-rv1108.c                  | 514 ++++++++++++++++-----
- drivers/i2c/busses/i2c-rk3x.c                      |   9 +
- drivers/pinctrl/pinctrl-rockchip.c                 |  31 ++
- drivers/spi/spi-rockchip.c                         |   1 +
- include/dt-bindings/clock/rv1108-cru.h             | 123 ++++-
- 11 files changed, 964 insertions(+), 126 deletions(-)
+Maxime
 
--- 
-2.7.4
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--zusvhbl6z3c7gp76
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZqPtiAAoJEBx+YmzsjxAgvowQALl82XgA/X+m/nK4aVlzJqAd
+h6sxfRHVuE76WVH3hwzh/FmKvVpFlKfKsAikvh6ANiX3QiQ5MAHaysLWuCbtoCE1
+oPfGpKuIyhVTvHuw3elV6QzwvKgC4h6VkHmBzjHz7PekPNDr6ldeBNbsLFiF0QXN
+0qwAvnqT2dKBkgoxrzgztYD6xaimdYhY34xEG1+xM9CQKXlETTPvkkTe1jVVK6Wd
+gQX0eEuOz5+q4Nv9o0BCUfvCZIPikBnTefMxiRnboyS+xQ0NdjOkJpJuoSeJEELr
+mR9GuerqhGqOyKpTGUrfneb1xrrRcreDuZxPgxMrHbBLTAQrsU18f1W19cUwwY13
+ZYzn8wU+sIBNO3dteD0Ws1izWm5x5IxMopn4U0vbk0Sny66tUX/xfsJJk68p1qFd
+9ojT1PV/Sf10N+GxPcU6XZZl6Hw3i6Lwh/8jAkhF9xP4w1prnCYhGK/6MgAytreY
+DTEBx5U+fRXMyjWjD0VZtepEQ4qQF3BHMUn30xsIPZN0GypqGJVSiT539wVEFoFE
+jpNcUpvwDQTZHd9t+kNTqOXwzhE0Q5iGnxF/IlAqfH4yvVClqt7n5I1FQaHY2gnd
+T8L630lWBRAm//zyn1ssl4lBXk8JyZ8ryEO57H5AihSOKqcqKnMKxeo8JTaCD+4Z
+cVunpBka3slbKvX0siYA
+=lNzN
+-----END PGP SIGNATURE-----
+
+--zusvhbl6z3c7gp76--
