@@ -1,279 +1,270 @@
-Return-Path: <lori.hikichi@broadcom.com>
-Return-Path: <lori.hikichi@broadcom.com>
-From: Lori Hikichi <lori.hikichi@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Lori Hikichi <lhikichi@broadcom.com>,
-	Lori Hikichi <lori.hikichi@broadcom.com>
-Subject: [PATCH v1 4/4] clk: iproc: Minor tidy up of iproc pll data structures
-Date: Mon, 14 Aug 2017 12:00:41 -0700
-Message-Id: <1502737241-2040-5-git-send-email-lori.hikichi@broadcom.com>
-In-Reply-To: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
-References: <1502737241-2040-1-git-send-email-lori.hikichi@broadcom.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 31 Aug 2017 17:19:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: ALKML <linux-arm-kernel@lists.infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	DTML <devicetree@vger.kernel.org>, Roy Franz <roy.franz@cavium.com>,
+	Harb Abdulhamid <harba@codeaurora.org>, Nishanth Menon <nm@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>, Loc Ho <lho@apm.com>,
+	Alexey Klimov <alexey.klimov@arm.com>,
+	Ryan Harkin <Ryan.Harkin@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 15/18] clk: add support for clocks provided by SCMI
+Message-ID: <20170901001901.GJ21656@codeaurora.org>
+References: <1501857104-11279-1-git-send-email-sudeep.holla@arm.com>
+ <1501857104-11279-16-git-send-email-sudeep.holla@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1501857104-11279-16-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lori Hikichi <lhikichi@broadcom.com>
+On 08/04, Sudeep Holla wrote:
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> new file mode 100644
+> index 000000000000..37f98a6439a0
+> --- /dev/null
+> +++ b/drivers/clk/clk-scmi.c
+> @@ -0,0 +1,216 @@
+> +/*
+> + * System Control and Power Interface (SCMI) Protocol based clock driver
+> + *
+> + * Copyright (C) 2017 ARM Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
 
-There were a few fields in the iproc pll data structures that were
-holding information that was not true state information.
-Using stack variables is sufficient and simplifies the structure.
-There are not any functional changes in this commit.
+Is this include used?
 
-Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
----
- drivers/clk/bcm/clk-iproc-pll.c | 83 ++++++++++++++++++-----------------------
- 1 file changed, 36 insertions(+), 47 deletions(-)
+> +#include <linux/platform_device.h>
+> +#include <linux/scmi_protocol.h>
+> +
+> +struct scmi_clk {
+> +	u32 id;
+> +	struct clk_hw hw;
+> +	const struct scmi_clock_info *info;
+> +	const struct scmi_handle *handle;
+> +};
+> +
+> +#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
+> +
+> +static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	int ret;
+> +	u64 rate;
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +
+> +	ret = clk->handle->clk_ops->rate_get(clk->handle, clk->id, &rate);
+> +	if (ret)
+> +		return 0;
+> +	return rate;
+> +}
+> +
+> +static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long *parent_rate)
+> +{
+> +	u64 fmin, fmax, ftmp;
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +
+> +	/*
+> +	 * We can't figure out what rate it will be, so just return the
+> +	 * rate back to the caller. scmi_clk_recalc_rate() will be called
+> +	 * after the rate is set and we'll know what rate the clock is
+> +	 * running at then.
+> +	 */
+> +	if (clk->info->rate_discrete)
+> +		return rate;
+> +
+> +	fmin = clk->info->range.min_rate;
+> +	fmax = clk->info->range.max_rate;
+> +	for (ftmp = fmin; ftmp <= fmax; ftmp += clk->info->range.step_size) {
+> +		if (ftmp >= rate) {
+> +			if (ftmp <= fmax)
+> +				fmax = ftmp;
+> +			break;
+> +		} else if (ftmp >= fmin) {
+> +			fmin = ftmp;
+> +		}
+> +	}
 
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index ab10819..43a58ae 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -69,16 +69,6 @@ enum vco_freq_range {
- 	VCO_MAX       = 4000000000U,
- };
- 
--struct iproc_pll;
--
--struct iproc_clk {
--	struct clk_hw hw;
--	const char *name;
--	struct iproc_pll *pll;
--	unsigned long rate;
--	const struct iproc_clk_ctrl *ctrl;
--};
--
- struct iproc_pll {
- 	void __iomem *status_base;
- 	void __iomem *control_base;
-@@ -88,9 +78,12 @@ struct iproc_pll {
- 	const struct iproc_pll_ctrl *ctrl;
- 	const struct iproc_pll_vco_param *vco_param;
- 	unsigned int num_vco_entries;
-+};
- 
--	struct clk_hw_onecell_data *clk_data;
--	struct iproc_clk *clks;
-+struct iproc_clk {
-+	struct clk_hw hw;
-+	struct iproc_pll *pll;
-+	const struct iproc_clk_ctrl *ctrl;
- };
- 
- #define to_iproc_clk(hw) container_of(hw, struct iproc_clk, hw)
-@@ -329,6 +322,7 @@ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
- 	u32 val;
- 	enum kp_band kp_index;
- 	unsigned long ref_freq;
-+	const char *clk_name = clk_hw_get_name(&clk->hw);
- 
- 	/*
- 	 * reference frequency = parent frequency / PDIV
-@@ -351,19 +345,19 @@ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
- 		kp_index = KP_BAND_HIGH_HIGH;
- 	} else {
- 		pr_err("%s: pll: %s has invalid rate: %lu\n", __func__,
--				clk->name, rate);
-+				clk_name, rate);
- 		return -EINVAL;
- 	}
- 
- 	kp = get_kp(ref_freq, kp_index);
- 	if (kp < 0) {
--		pr_err("%s: pll: %s has invalid kp\n", __func__, clk->name);
-+		pr_err("%s: pll: %s has invalid kp\n", __func__, clk_name);
- 		return kp;
- 	}
- 
- 	ret = __pll_enable(pll);
- 	if (ret) {
--		pr_err("%s: pll: %s fails to enable\n", __func__, clk->name);
-+		pr_err("%s: pll: %s fails to enable\n", __func__, clk_name);
- 		return ret;
- 	}
- 
-@@ -433,7 +427,7 @@ static int pll_set_rate(struct iproc_clk *clk, struct iproc_pll_vco_param *vco,
- 
- 	ret = pll_wait_for_lock(pll);
- 	if (ret < 0) {
--		pr_err("%s: pll: %s failed to lock\n", __func__, clk->name);
-+		pr_err("%s: pll: %s failed to lock\n", __func__, clk_name);
- 		return ret;
- 	}
- 
-@@ -469,16 +463,15 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
- 	u32 val;
- 	u64 ndiv, ndiv_int, ndiv_frac;
- 	unsigned int pdiv;
-+	unsigned long rate;
- 
- 	if (parent_rate == 0)
- 		return 0;
- 
- 	/* PLL needs to be locked */
- 	val = readl(pll->status_base + ctrl->status.offset);
--	if ((val & (1 << ctrl->status.shift)) == 0) {
--		clk->rate = 0;
-+	if ((val & (1 << ctrl->status.shift)) == 0)
- 		return 0;
--	}
- 
- 	/*
- 	 * PLL output frequency =
-@@ -500,14 +493,14 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
- 	val = readl(pll->control_base + ctrl->pdiv.offset);
- 	pdiv = (val >> ctrl->pdiv.shift) & bit_mask(ctrl->pdiv.width);
- 
--	clk->rate = (ndiv * parent_rate) >> 20;
-+	rate = (ndiv * parent_rate) >> 20;
- 
- 	if (pdiv == 0)
--		clk->rate *= 2;
-+		rate *= 2;
- 	else
--		clk->rate /= pdiv;
-+		rate /= pdiv;
- 
--	return clk->rate;
-+	return rate;
- }
- 
- static int iproc_pll_determine_rate(struct clk_hw *hw,
-@@ -632,6 +625,7 @@ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
- 	struct iproc_pll *pll = clk->pll;
- 	u32 val;
- 	unsigned int mdiv;
-+	unsigned long rate;
- 
- 	if (parent_rate == 0)
- 		return 0;
-@@ -642,11 +636,11 @@ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
- 		mdiv = 256;
- 
- 	if (ctrl->flags & IPROC_CLK_MCLK_DIV_BY_2)
--		clk->rate = parent_rate / (mdiv * 2);
-+		rate = parent_rate / (mdiv * 2);
- 	else
--		clk->rate = parent_rate / mdiv;
-+		rate = parent_rate / mdiv;
- 
--	return clk->rate;
-+	return rate;
- }
- 
- static int iproc_clk_determine_rate(struct clk_hw *hw,
-@@ -698,10 +692,6 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		val |= div << ctrl->mdiv.shift;
- 	}
- 	iproc_pll_write(pll, pll->control_base, ctrl->mdiv.offset, val);
--	if (ctrl->flags & IPROC_CLK_MCLK_DIV_BY_2)
--		clk->rate = parent_rate / (div * 2);
--	else
--		clk->rate = parent_rate / div;
- 
- 	return 0;
- }
-@@ -744,6 +734,8 @@ void iproc_pll_clk_setup(struct device_node *node,
- 	struct iproc_clk *iclk;
- 	struct clk_init_data init;
- 	const char *parent_name;
-+	struct iproc_clk *iclk_array;
-+	struct clk_hw_onecell_data *clk_data;
- 
- 	if (WARN_ON(!pll_ctrl) || WARN_ON(!clk_ctrl))
- 		return;
-@@ -752,14 +744,14 @@ void iproc_pll_clk_setup(struct device_node *node,
- 	if (WARN_ON(!pll))
- 		return;
- 
--	pll->clk_data = kzalloc(sizeof(*pll->clk_data->hws) * num_clks +
--				sizeof(*pll->clk_data), GFP_KERNEL);
--	if (WARN_ON(!pll->clk_data))
-+	clk_data = kzalloc(sizeof(*clk_data->hws) * num_clks +
-+				sizeof(*clk_data), GFP_KERNEL);
-+	if (WARN_ON(!clk_data))
- 		goto err_clk_data;
--	pll->clk_data->num = num_clks;
-+	clk_data->num = num_clks;
- 
--	pll->clks = kcalloc(num_clks, sizeof(*pll->clks), GFP_KERNEL);
--	if (WARN_ON(!pll->clks))
-+	iclk_array = kcalloc(num_clks, sizeof(struct iproc_clk), GFP_KERNEL);
-+	if (WARN_ON(!iclk_array))
- 		goto err_clks;
- 
- 	pll->control_base = of_iomap(node, 0);
-@@ -789,9 +781,8 @@ void iproc_pll_clk_setup(struct device_node *node,
- 	/* initialize and register the PLL itself */
- 	pll->ctrl = pll_ctrl;
- 
--	iclk = &pll->clks[0];
-+	iclk = &iclk_array[0];
- 	iclk->pll = pll;
--	iclk->name = node->name;
- 
- 	init.name = node->name;
- 	init.ops = &iproc_pll_ops;
-@@ -812,7 +803,7 @@ void iproc_pll_clk_setup(struct device_node *node,
- 	if (WARN_ON(ret))
- 		goto err_pll_register;
- 
--	pll->clk_data->hws[0] = &iclk->hw;
-+	clk_data->hws[0] = &iclk->hw;
- 
- 	/* now initialize and register all leaf clocks */
- 	for (i = 1; i < num_clks; i++) {
-@@ -826,8 +817,7 @@ void iproc_pll_clk_setup(struct device_node *node,
- 		if (WARN_ON(ret))
- 			goto err_clk_register;
- 
--		iclk = &pll->clks[i];
--		iclk->name = clk_name;
-+		iclk = &iclk_array[i];
- 		iclk->pll = pll;
- 		iclk->ctrl = &clk_ctrl[i];
- 
-@@ -842,11 +832,10 @@ void iproc_pll_clk_setup(struct device_node *node,
- 		if (WARN_ON(ret))
- 			goto err_clk_register;
- 
--		pll->clk_data->hws[i] = &iclk->hw;
-+		clk_data->hws[i] = &iclk->hw;
- 	}
- 
--	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
--				     pll->clk_data);
-+	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
- 	if (WARN_ON(ret))
- 		goto err_clk_register;
- 
-@@ -854,7 +843,7 @@ void iproc_pll_clk_setup(struct device_node *node,
- 
- err_clk_register:
- 	while (--i >= 0)
--		clk_hw_unregister(pll->clk_data->hws[i]);
-+		clk_hw_unregister(clk_data->hws[i]);
- 
- err_pll_register:
- 	if (pll->status_base != pll->control_base)
-@@ -871,10 +860,10 @@ void iproc_pll_clk_setup(struct device_node *node,
- 	iounmap(pll->control_base);
- 
- err_pll_iomap:
--	kfree(pll->clks);
-+	kfree(iclk_array);
- 
- err_clks:
--	kfree(pll->clk_data);
-+	kfree(clk_data);
- 
- err_clk_data:
- 	kfree(pll);
+Are the max_rate and min_rate potentially unaligned with the
+step_size? Do any of these things change at runtime? It seems
+like we could do some simple math instead of this for loop unless
+I missed something.
+
+> +	return fmax != clk->info->range.max_rate ? fmax : fmin;
+> +}
+> +
+> +static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			     unsigned long parent_rate)
+> +{
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +
+> +	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, 0, rate);
+> +}
+> +
+> +static int scmi_clk_enable(struct clk_hw *hw)
+> +{
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +
+> +	return clk->handle->clk_ops->enable(clk->handle, clk->id);
+> +}
+> +
+> +static void scmi_clk_disable(struct clk_hw *hw)
+> +{
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +
+> +	clk->handle->clk_ops->disable(clk->handle, clk->id);
+> +}
+> +
+> +static const struct clk_ops scmi_clk_ops = {
+> +	.recalc_rate = scmi_clk_recalc_rate,
+> +	.round_rate = scmi_clk_round_rate,
+> +	.set_rate = scmi_clk_set_rate,
+> +	/*
+> +	 * We can't provide enable/disable callback as we can't perform the same
+> +	 * in atomic context. Since the clock framework provides standard API
+> +	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
+> +	 * context, it should be fine providing prepare/unprepare.
+> +	 */
+> +	.prepare = scmi_clk_enable,
+> +	.unprepare = scmi_clk_disable,
+> +};
+> +
+> +static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
+> +{
+> +	int ret;
+> +	struct clk_init_data init;
+
+Best to do = { } here in case we add something else to the init
+structure in future.
+
+> +
+> +	init.flags = CLK_GET_RATE_NOCACHE;
+> +	init.num_parents = 0;
+> +	init.ops = &scmi_clk_ops;
+> +	init.name = sclk->info->name;
+> +	sclk->hw.init = &init;
+> +
+> +	ret = devm_clk_hw_register(dev, &sclk->hw);
+> +	if (!ret)
+> +		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
+> +				      sclk->info->range.max_rate);
+> +	return ret;
+> +}
+> +
+> +static int scmi_clk_add(struct device *dev, struct device_node *np,
+> +			const struct scmi_handle *handle)
+> +{
+> +	int idx, count, err;
+> +	struct clk_hw **hws;
+> +	struct clk_hw_onecell_data *clk_data;
+> +
+> +	count = handle->clk_ops->count_get(handle);
+> +	if (count < 0) {
+> +		dev_err(dev, "%s: invalid clock output count\n", np->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
+> +				sizeof(*clk_data->hws) * count, GFP_KERNEL);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	clk_data->num = count;
+> +	hws = clk_data->hws;
+> +
+> +	for (idx = 0; idx < count; idx++) {
+> +		struct scmi_clk *sclk;
+> +
+> +		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
+> +		if (!sclk)
+> +			return -ENOMEM;
+> +
+> +		sclk->info = handle->clk_ops->info_get(handle, idx);
+> +		if (!sclk->info) {
+> +			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
+> +			continue;
+> +		}
+> +
+> +		sclk->id = idx;
+> +		sclk->handle = handle;
+> +
+> +		err = scmi_clk_ops_init(dev, sclk);
+> +		if (err) {
+> +			dev_err(dev, "failed to register clock %d\n", idx);
+> +			devm_kfree(dev, sclk);
+> +			hws[idx] = NULL;
+> +		} else {
+> +			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
+> +			hws[idx] = &sclk->hw;
+> +		}
+> +	}
+> +
+> +	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
+> +}
+> +
+> +static int scmi_clocks_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +
+> +	of_clk_del_provider(np);
+> +	return 0;
+> +}
+> +
+> +static int scmi_clocks_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	const struct scmi_handle *handle = devm_scmi_handle_get(dev);
+> +
+> +	if (IS_ERR_OR_NULL(handle) || !handle->clk_ops)
+> +		return -EPROBE_DEFER;
+> +
+> +	return scmi_clk_add(dev, np, handle);
+
+Why the function? We support more than just platform devices?
+Just fold scmi_clk_add() into this function instead please.
+
+> +}
+> +
+> +static struct platform_driver scmi_clocks_driver = {
+> +	.driver	= {
+> +		.name = "scmi-clocks",
+> +	},
+> +	.probe = scmi_clocks_probe,
+> +	.remove = scmi_clocks_remove,
+> +};
+> +module_platform_driver(scmi_clocks_driver);
+> +
+> +MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
+> +MODULE_DESCRIPTION("ARM SCMI clock driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.7.4
+> 
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
