@@ -1,54 +1,52 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v66bFjcB6CwNM+QDAqUxETqE6XX1UWKwqM_XAt6dOsjhLA@mail.gmail.com>
-References: <20170723102749.17323-1-icenowy@aosc.io>
- <20170723102749.17323-7-icenowy@aosc.io>
- <CAGb2v66bFjcB6CwNM+QDAqUxETqE6XX1UWKwqM_XAt6dOsjhLA@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 4 Aug 2017 12:10:22 +0800
-Message-ID: <CAGb2v65z32ykkn8nw3ez7SrAkxDUofvcpFb+Y18VMZqgGmZ31A@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 06/10] clk: sunxi-ng: allow set parent clock
- (PLL_CPUX) for CPUX clock on H3
-To: Chen-Yu Tsai <wens@csie.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- "open list:THERMAL" <linux-pm@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- linux-sunxi <linux-sunxi@googlegroups.com>, Mark Brown <broonie@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Li Pengcheng <lipengcheng8@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Leo Yan <leo.yan@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: [PATCH 1/2] clk: hi6220: mark clock cs_atb_syspll as critical
+Date: Fri,  1 Sep 2017 08:47:14 +0800
+Message-Id: <1504226835-2115-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
+References: <1504226835-2115-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 24, 2017 at 11:10 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Sun, Jul 23, 2017 at 6:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> The CPUX clock, which is the main clock of the ARM core on Allwinner H3,
->> can be adjusted by changing the frequency of the PLL_CPUX clock.
->>
->> Allowing setting parent clock for the CPUX clock, thus the PLL_CPUX
->> clock can be adjusted when adjusting the CPUX clock.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->
-> Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Clock cs_atb_syspll is pll used for coresight trace bus; when clock
+cs_atb_syspll is disabled and operates its child clock node cs_atb
+results in system hang. So mark clock cs_atb_syspll as critical to
+keep it enabled.
 
-Applied for 4.14 with the Fixes tag and Stephen's ack.
+Cc: Guodong Xu <guodong.xu@linaro.org>
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi6220.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ChenYu
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+index 4181b68..4742e8f 100644
+--- a/drivers/clk/hisilicon/clk-hi6220.c
++++ b/drivers/clk/hisilicon/clk-hi6220.c
+@@ -145,7 +145,7 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
+ 	{ HI6220_BBPPLL_SEL,    "bbppll_sel",    "pll0_bbp_gate",  CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 9,  0, },
+ 	{ HI6220_MEDIA_PLL_SRC, "media_pll_src", "pll_media_gate", CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 10, 0, },
+ 	{ HI6220_MMC2_SEL,      "mmc2_sel",      "mmc2_mux1",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 11, 0, },
+-	{ HI6220_CS_ATB_SYSPLL, "cs_atb_syspll", "syspll",         CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 12, 0, },
++	{ HI6220_CS_ATB_SYSPLL, "cs_atb_syspll", "syspll",         CLK_SET_RATE_PARENT|CLK_IS_CRITICAL,   0x270, 12, 0, },
+ };
+ 
+ static struct hisi_mux_clock hi6220_mux_clks_sys[] __initdata = {
+-- 
+2.7.4
