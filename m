@@ -1,126 +1,49 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH 01/13] dt-bindings: update the binding for Allwinner H3 DE2 support
-Date: Wed, 02 Aug 2017 06:53:56 +0200
-Message-ID: <79034825.lnfmIyYlWl@jernej-laptop>
-In-Reply-To: <20170801131304.7741-2-icenowy@aosc.io>
-References: <20170801131304.7741-1-icenowy@aosc.io> <20170801131304.7741-2-icenowy@aosc.io>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 31 Aug 2017 18:36:39 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com,
+	gabriel.fernandez.st@gmail.com,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: [RESEND PATCH v8 1/3] clk: nxp: clk-lpc32xx: rename
+ clk_gate_is_enabled()
+Message-ID: <20170901013639.GP21656@codeaurora.org>
+References: <1503316742-22145-1-git-send-email-gabriel.fernandez@st.com>
+ <1503316742-22145-2-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1503316742-22145-2-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Icenowy,
-
-Dne torek, 01. avgust 2017 ob 15:12:52 CEST je Icenowy Zheng napisal(a):
-> Allwinner H3 features a "Display Engine 2.0".
+On 08/21, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
-> Add device tree bindings for the following parts:
-> - H3 TCONs
-> - H3 Mixers
-> - H3 Display engine
+> We need to export clk_gate_is_enabled() from clk framework, then
+> to avoid compilation issue we have to rename clk_gate_is_enabled()
+> in NXP LPC32xx clock driver.
+> We changed all gate op with 'lpc32xx_' prefix:
+> lpc32xx_clk_gate_enable(),
+> lpc32xx_clk_gate_disable(),
+> lpc32xx_clk_gate_is_enabled().
 > 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 > ---
->  .../bindings/display/sunxi/sun4i-drm.txt           | 25
-> ++++++++++++++++++---- 1 file changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
-> 2ee6ff0ef98e..92512953943e 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -87,18 +87,17 @@ Required properties:
->     * allwinner,sun6i-a31-tcon
->     * allwinner,sun6i-a31s-tcon
->     * allwinner,sun8i-a33-tcon
-> +   * allwinner,sun8i-h3-tcon
->     * allwinner,sun8i-v3s-tcon
->   - reg: base address and size of memory-mapped region
->   - interrupts: interrupt associated to this IP
->   - clocks: phandles to the clocks feeding the TCON. Three are needed:
->     - 'ahb': the interface clocks
-> -   - 'tcon-ch0': The clock driving the TCON channel 0
->   - resets: phandles to the reset controllers driving the encoder
->     - "lcd": the reset line for the TCON channel 0
-> 
->   - clock-names: the clock names mentioned above
->   - reset-names: the reset names mentioned above
-> - - clock-output-names: Name of the pixel clock created
-> 
->  - ports: A ports node with endpoint definitions as defined in
->    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> @@ -112,7 +111,23 @@ Required properties:
->    channel the endpoint is associated to. If that property is not
->    present, the endpoint number will be used as the channel number.
-> 
-> -On SoCs other than the A33 and V3s, there is one more clock required:
-> +For the following compatibles:
-> +   * allwinner,sun5i-a13-tcon
-> +   * allwinner,sun6i-a31-tcon
-> +   * allwinner,sun6i-a31s-tcon
-> +   * allwinner,sun8i-a33-tcon
-> +   * allwinner,sun8i-v3s-tcon
-> +there is one more clock and one more property required:
-> + - clocks:
-> +   - 'tcon-ch0': The clock driving the TCON channel 0
-> + - clock-output-names: Name of the pixel clock created
-> +
-> +For the following compatibles:
-> +   * allwinner,sun5i-a13-tcon
-> +   * allwinner,sun6i-a31-tcon
-> +   * allwinner,sun6i-a31s-tcon
-> +   * allwinner,sun8i-h3-tcon
-> +there is one more clock required:
->     - 'tcon-ch1': The clock driving the TCON channel 1
-> 
->  DRC
-> @@ -207,6 +222,8 @@ supported.
->  Required properties:
->    - compatible: value must be one of:
->      * allwinner,sun8i-v3s-de2-mixer
-> +    * allwinner,sun8i-h3-de2-mixer0
-> +    * allwinner,sun8i-h3-de2-mixer1
 
-About that, I concur with Maxime here, plane number properties would be 
-better. If we don't do this now, we will never have it.
+Applied to clk-next
 
-Reference:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-June/512902.html
-
-Regards,
-Jernej
-
->    - reg: base address and size of the memory-mapped region.
->    - clocks: phandles to the clocks feeding the mixer
->      * bus: the mixer interface clock
-> @@ -218,7 +235,6 @@ Required properties:
->    Documentation/devicetree/bindings/media/video-interfaces.txt. The
->    first port should be the input endpoints, the second one the output
-> 
-> -
->  Display Engine Pipeline
->  -----------------------
-> 
-> @@ -233,6 +249,7 @@ Required properties:
->      * allwinner,sun6i-a31-display-engine
->      * allwinner,sun6i-a31s-display-engine
->      * allwinner,sun8i-a33-display-engine
-> +    * allwinner,sun8i-h3-display-engine
->      * allwinner,sun8i-v3s-display-engine
-> 
->    - allwinner,pipelines: list of phandle to the display engine
-> --
-> 2.13.0
-> 
-> --
-> You received this message because you are subscribed to the Google Groups
-> "linux-sunxi" group. To unsubscribe from this group and stop receiving
-> emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
