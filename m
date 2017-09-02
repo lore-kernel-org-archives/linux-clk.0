@@ -1,55 +1,97 @@
-Return-Path: <hanetzer@startmail.com>
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-	xuejiancheng@hisilicon.com,
-	leo.yan@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	wenpan@hisilicon.com,
-	robh+dt@kernel.org,
-	linux@armlinux.org.uk,
-	sboyd@codeaurora.org,
-	xuwei5@hisilicon.com,
-	zhangfei.gao@linaro.org,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	"Marty E. Plummer" <hanetzer@startmail.com>
-Subject: [RFC RESEND 0/3] Add support for Hisilicon Hi3521A SoC
-Date: Sun, 17 Sep 2017 03:23:24 -0500
-Message-Id: <20170917082327.10058-1-hanetzer@startmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from s62.goserver.host ([37.17.224.62]:46497 "EHLO s62.goserver.host"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751033AbdIBJ6q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 2 Sep 2017 05:58:46 -0400
+From: Sergej Sawazki <sergej@taudac.com>
+To: sboyd@codeaurora.org, mturquette@baylibre.com,
+        linux@armlinux.org.uk, sebastian.hesselbarth@gmail.com
+Cc: rabeeh@solid-run.com, linux-clk@vger.kernel.org,
+        Sergej Sawazki <sergej@taudac.com>
+Subject: [RESEND PATCH 1/3] clk: si5351: Apply PLL soft reset before enabling the outputs
+Date: Sat,  2 Sep 2017 11:57:24 +0200
+Message-Id: <1504346246-4730-2-git-send-email-sergej@taudac.com>
+In-Reply-To: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+References: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Greetings,
+The "Si5351A/B/C Data Sheet" states to apply a PLL soft reset before
+enabling the output clocks [1]. This is required to get a deterministic
+phase relationship between the output clocks.
 
-I'd like the community's feedback on the following patchset. I've attempted to
-split my changes up in what I believe to be a sensible setup.
+Without resetting the PLL, the phase relationship between the clocks is
+unpredictable. Fix this by resetting the PLL in si5351_clkout_prepare().
 
-The device I'm working against is the 'SamsungSV SDR-B74301' HD CCTV surveillance
-system, which uses a Hisilicon Hi3521A arm SoC as its basis.
+It also fixes a regression introduced in commit 6dc669a22c77 ("clk: si5351:
+Add PLL soft reset") that causes a disruption on platforms where clocks
+derived from different PLLs do different things by resetting only the PLL
+which the output clock is derived from.
 
-Resending due to a typo, s/primcell/primecell/
+References:
+[1] https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf
+    Figure 12 ("I2C Programming Procedure")
 
-Marty E. Plummer (3):
-  clk: hisilicon: add CRG driver Hi3521A SoC
-  arm: hisi: enable Hi3521A SoC
-  arm: dts: add Hi3521A dts
+Fixes: 6dc669a22c77 ("clk: si5351: Add PLL soft reset")
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+---
+ drivers/clk/clk-si5351.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/Makefile                |   2 +
- arch/arm/boot/dts/hi3521a-rs-dm290e.dts   |  52 +++++
- arch/arm/boot/dts/hi3521a.dtsi            | 310 ++++++++++++++++++++++++++++++
- arch/arm/mach-hisi/Kconfig                |   6 +
- drivers/clk/hisilicon/Kconfig             |   7 +
- drivers/clk/hisilicon/Makefile            |   1 +
- drivers/clk/hisilicon/crg-hi3521a.c       | 207 ++++++++++++++++++++
- include/dt-bindings/clock/hi3521a-clock.h |  34 ++++
- 8 files changed, 619 insertions(+)
- create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
- create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
- create mode 100644 drivers/clk/hisilicon/crg-hi3521a.c
- create mode 100644 include/dt-bindings/clock/hi3521a-clock.h
-
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 2492442..46bbc95 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -898,6 +898,21 @@ static int _si5351_clkout_set_disable_state(
+ 	return 0;
+ }
+ 
++void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
++{
++	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
++
++	switch (val & SI5351_CLK_INPUT_MASK) {
++	case SI5351_CLK_INPUT_XTAL:
++	case SI5351_CLK_INPUT_CLKIN:
++		return;  /* PLL not used, no need to reset */
++	}
++
++	si5351_reg_write(drvdata, SI5351_PLL_RESET,
++			 (val & SI5351_CLK_PLL_SELECT) ? SI5351_PLL_RESET_B :
++			 SI5351_PLL_RESET_A);
++}
++
+ static int si5351_clkout_prepare(struct clk_hw *hw)
+ {
+ 	struct si5351_hw_data *hwdata =
+@@ -905,6 +920,14 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
+ 
+ 	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
+ 			SI5351_CLK_POWERDOWN, 0);
++
++	/*
++	 * Reset the PLLs before enabling the outputs to get a deterministic
++	 * phase relationship between the output clocks. Otherwise, the phase
++	 * offset beween the clocks is unpredictable.
++	 */
++	_si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
++
+ 	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
+ 			(1 << hwdata->num), 0);
+ 	return 0;
+@@ -1095,8 +1118,7 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * Do a pll soft reset on both plls, needed in some cases to get
+ 	 * all outputs running.
+ 	 */
+-	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
+-			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
++	_si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
+ 
+ 	dev_dbg(&hwdata->drvdata->client->dev,
+ 		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
 -- 
-2.14.1
+2.7.4
+
