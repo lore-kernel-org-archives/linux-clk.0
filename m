@@ -1,45 +1,51 @@
-Return-Path: <sergej@taudac.com>
-From: Sergej Sawazki <sergej@taudac.com>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	sebastian.hesselbarth@gmail.com
-Cc: linux@armlinux.org.uk,
-	linux-clk@vger.kernel.org,
-	ce3a@gmx.de,
-	Sergej Sawazki <sergej@taudac.com>
-Subject: [PATCH v2 0/2] clk: si5351: PLL reset fixes
-Date: Sat, 16 Sep 2017 13:44:40 +0200
-Message-Id: <1505562282-9111-1-git-send-email-sergej@taudac.com>
+Return-Path: <suzuki.katsuhiro@socionext.com>
+From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+To: "'Stephen Boyd'" <sboyd@codeaurora.org>,
+	=?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?= <suzuki.katsuhiro@socionext.com>
+Cc: "Michael Turquette" <mturquette@baylibre.com>,
+	=?iso-2022-jp?B?WWFtYWRhLCBNYXNhaGlyby8bJEI7M0VEGyhCIBskQj8/OTAbKEI=?= <yamada.masahiro@socionext.com>,
+	<linux-clk@vger.kernel.org>,
+	"Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+	"Jassi Brar" <jaswinder.singh@linaro.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20170810072346.32299-1-suzuki.katsuhiro@socionext.com> <20170810072346.32299-2-suzuki.katsuhiro@socionext.com> <20170901014140.GT21656@codeaurora.org>
+In-Reply-To: <20170901014140.GT21656@codeaurora.org>
+Subject: Re: [PATCH 2/2] clk: uniphier: add video input subsystem clock
+Date: Sat, 2 Sep 2017 17:04:09 +0900
+Message-ID: <001101d323c2$0ed4a1c0$2c7de540$@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-2022-jp"
 List-ID: <linux-clk.vger.kernel.org>
 
-The Si5351 clock generator has up to 8 output clocks and 2 PLLs. In order
-to get a deterministic phase offset relationship between the output clocks,
-it is necessary to reset the PLLs is certain scenarios.
+Hello Stephen,
 
-This patch-set:
- * adds a dt-property for enabling/disabling the PLL reset
- * adds resetting the PLL before enabling the outputs
+> Applied to clk-next with some conflict resolving, please check.
 
-Changes in v2 (thanks to Sebastian Hesselbarth for reviewing v1):
- * removed fix for commit 6dc669a22c77 ("clk: si5351: Add PLL soft reset"),
-   it is already fixed by commit 73c950da6ec5 ("clk: si5351: fix PLL reset")
- * adding the PLL reset dt-property is now the first patch, to avoid changing
-   the driver behavior for current users
- * the debug message is squashed it into the patch adding the PLL reset function
+No problem. Thank you for applying!
 
-Based on clk-next.
+Regards,
+--
+Katsuhiro Suzuki
 
-Best regards,
-Sergej
 
-Sergej Sawazki (2):
-  clk: si5351: Add DT property to enable PLL reset
-  clk: si5351: Apply PLL soft reset before enabling the outputs
-
- .../devicetree/bindings/clock/silabs,si5351.txt    |  1 +
- drivers/clk/clk-si5351.c                           | 32 ++++++++++++++++++++++
- include/linux/platform_data/si5351.h               |  2 ++
- 3 files changed, 35 insertions(+)
-
--- 
-2.7.4
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
+> Sent: Friday, September 1, 2017 10:42 AM
+> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>; Yamada, Masahiro/山田 真弘
+> <yamada.masahiro@socionext.com>; linux-clk@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
+> Jassi Brar <jaswinder.singh@linaro.org>; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/2] clk: uniphier: add video input subsystem clock
+> 
+> On 08/10, Katsuhiro Suzuki wrote:
+> > Add a clock for video input subsystem (EXIV) on UniPhier LD11/LD20
+> > SoCs.
+> >
+> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> > ---
+> 
+> Applied to clk-next with some conflict resolving, please check.
+> 
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
