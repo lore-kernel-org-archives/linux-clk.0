@@ -1,155 +1,94 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v4 6/8] pwm: atmel-tcb: Support backup mode
-Date: Thu, 28 Sep 2017 11:46:25 +0200
-Message-Id: <20170928094627.31017-7-romain.izard.pro@gmail.com>
-In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from s62.goserver.host ([37.17.224.62]:46527 "EHLO s62.goserver.host"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751033AbdIBJ6y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 2 Sep 2017 05:58:54 -0400
+From: Sergej Sawazki <sergej@taudac.com>
+To: sboyd@codeaurora.org, mturquette@baylibre.com,
+        linux@armlinux.org.uk, sebastian.hesselbarth@gmail.com
+Cc: rabeeh@solid-run.com, linux-clk@vger.kernel.org,
+        Sergej Sawazki <sergej@taudac.com>
+Subject: [RESEND PATCH 2/3] clk: si5351: Add DT property to enable PLL reset
+Date: Sat,  2 Sep 2017 11:57:25 +0200
+Message-Id: <1504346246-4730-3-git-send-email-sergej@taudac.com>
+In-Reply-To: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+References: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Save and restore registers for the PWM on suspend and resume, which
-makes hibernation and backup modes possible.
+Add optional output clock DT property to enable PLL reset when a clock
+output is enabled or the clock rate is changed.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Signed-off-by: Sergej Sawazki <sergej@taudac.com>
 ---
- drivers/pwm/pwm-atmel-tcb.c | 63 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 61 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/silabs,si5351.txt |  1 +
+ drivers/clk/clk-si5351.c                                  | 11 ++++++++++-
+ include/linux/platform_data/si5351.h                      |  2 ++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
-index 75db585a2a94..acd3ce8ecf3f 100644
---- a/drivers/pwm/pwm-atmel-tcb.c
-+++ b/drivers/pwm/pwm-atmel-tcb.c
-@@ -37,11 +37,20 @@ struct atmel_tcb_pwm_device {
- 	unsigned period;		/* PWM period expressed in clk cycles */
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+index 28b2830..157ee02 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
++++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+@@ -45,6 +45,7 @@ Optional child node properties:
+ - silabs,multisynth-source: source pll A(0) or B(1) of corresponding multisynth
+   divider.
+ - silabs,pll-master: boolean, multisynth can change pll frequency.
++- silabs,pll-reset: boolean, clock output can reset its pll.
+ - silabs,disable-state : clock output disable state, shall be
+   0 = clock output is driven LOW when disabled
+   1 = clock output is driven HIGH when disabled
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 46bbc95..aa8d8d9 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -900,7 +900,13 @@ static int _si5351_clkout_set_disable_state(
+ 
+ void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
+ {
+-	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
++	struct si5351_platform_data *pdata = drvdata->client->dev.platform_data;
++	u8 val;
++
++	if (!pdata->clkout[num].pll_reset)
++		return;  /* Resetting PLL disabled */
++
++	val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
+ 
+ 	switch (val & SI5351_CLK_INPUT_MASK) {
+ 	case SI5351_CLK_INPUT_XTAL:
+@@ -1321,6 +1327,9 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 
+ 		pdata->clkout[num].pll_master =
+ 			of_property_read_bool(child, "silabs,pll-master");
++
++		pdata->clkout[num].pll_reset =
++			of_property_read_bool(child, "silabs,pll-reset");
+ 	}
+ 	client->dev.platform_data = pdata;
+ 
+diff --git a/include/linux/platform_data/si5351.h b/include/linux/platform_data/si5351.h
+index 533d980..da346f22 100644
+--- a/include/linux/platform_data/si5351.h
++++ b/include/linux/platform_data/si5351.h
+@@ -85,6 +85,7 @@ enum si5351_disable_state {
+  * @multisynth_src: multisynth source clock
+  * @clkout_src: clkout source clock
+  * @pll_master: if true, clkout can also change pll rate
++ * @pll_reset: if true, clkout can reset its pll
+  * @drive: output drive strength
+  * @rate: initial clkout rate, or default if 0
+  */
+@@ -94,6 +95,7 @@ struct si5351_clkout_config {
+ 	enum si5351_drive_strength drive;
+ 	enum si5351_disable_state disable_state;
+ 	bool pll_master;
++	bool pll_reset;
+ 	unsigned long rate;
  };
  
-+struct atmel_tcb_channel {
-+	u32 enabled;
-+	u32 cmr;
-+	u32 ra;
-+	u32 rb;
-+	u32 rc;
-+};
-+
- struct atmel_tcb_pwm_chip {
- 	struct pwm_chip chip;
- 	spinlock_t lock;
- 	struct atmel_tc *tc;
- 	struct atmel_tcb_pwm_device *pwms[NPWM];
-+	struct atmel_tcb_channel bkup[NPWM / 2];
- };
- 
- static inline struct atmel_tcb_pwm_chip *to_tcb_chip(struct pwm_chip *chip)
-@@ -175,12 +184,15 @@ static void atmel_tcb_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	 * Use software trigger to apply the new setting.
- 	 * If both PWM devices in this group are disabled we stop the clock.
- 	 */
--	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC)))
-+	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC))) {
- 		__raw_writel(ATMEL_TC_SWTRG | ATMEL_TC_CLKDIS,
- 			     regs + ATMEL_TC_REG(group, CCR));
--	else
-+		tcbpwmc->bkup[group].enabled = 1;
-+	} else {
- 		__raw_writel(ATMEL_TC_SWTRG, regs +
- 			     ATMEL_TC_REG(group, CCR));
-+		tcbpwmc->bkup[group].enabled = 0;
-+	}
- 
- 	spin_unlock(&tcbpwmc->lock);
- }
-@@ -263,6 +275,7 @@ static int atmel_tcb_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	/* Use software trigger to apply the new setting */
- 	__raw_writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
- 		     regs + ATMEL_TC_REG(group, CCR));
-+	tcbpwmc->bkup[group].enabled = 1;
- 	spin_unlock(&tcbpwmc->lock);
- 	return 0;
- }
-@@ -445,10 +458,56 @@ static const struct of_device_id atmel_tcb_pwm_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int atmel_tcb_pwm_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	void __iomem *base = tcbpwm->tc->regs;
-+	int i;
-+
-+	for (i = 0; i < (NPWM / 2); i++) {
-+		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
-+
-+		chan->cmr = readl(base + ATMEL_TC_REG(i, CMR));
-+		chan->ra = readl(base + ATMEL_TC_REG(i, RA));
-+		chan->rb = readl(base + ATMEL_TC_REG(i, RB));
-+		chan->rc = readl(base + ATMEL_TC_REG(i, RC));
-+	}
-+	return 0;
-+}
-+
-+static int atmel_tcb_pwm_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	void __iomem *base = tcbpwm->tc->regs;
-+	int i;
-+
-+	for (i = 0; i < (NPWM / 2); i++) {
-+		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
-+
-+		writel(chan->cmr, base + ATMEL_TC_REG(i, CMR));
-+		writel(chan->ra, base + ATMEL_TC_REG(i, RA));
-+		writel(chan->rb, base + ATMEL_TC_REG(i, RB));
-+		writel(chan->rc, base + ATMEL_TC_REG(i, RC));
-+		if (chan->enabled) {
-+			writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
-+				base + ATMEL_TC_REG(i, CCR));
-+		}
-+	}
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(atmel_tcb_pwm_pm_ops, atmel_tcb_pwm_suspend,
-+			 atmel_tcb_pwm_resume);
-+
- static struct platform_driver atmel_tcb_pwm_driver = {
- 	.driver = {
- 		.name = "atmel-tcb-pwm",
- 		.of_match_table = atmel_tcb_pwm_dt_ids,
-+		.pm = &atmel_tcb_pwm_pm_ops,
- 	},
- 	.probe = atmel_tcb_pwm_probe,
- 	.remove = atmel_tcb_pwm_remove,
 -- 
-2.11.0
+2.7.4
+
