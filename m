@@ -1,71 +1,48 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 11:56:47 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 05/13] drm/sun4i: hdmi: create a regmap for later use
-Message-ID: <20170926095647.o4p72dd6n3257n5m@flea>
-References: <20170926065919.24446-1-wens@csie.org>
- <20170926065919.24446-6-wens@csie.org>
+Return-Path: <sergej@taudac.com>
+Subject: Re: [PATCH 0/3] clk: si5351: PLL reset fixes
+To: Stephen Boyd <sboyd@codeaurora.org>, sebastian.hesselbarth@gmail.com,
+ linux@armlinux.org.uk, jacob@teenage.engineering
+Cc: mturquette@baylibre.com, rabeeh@solid-run.com, linux-clk@vger.kernel.org
+References: <1502547783-24685-1-git-send-email-sergej@taudac.com>
+ <20170901225954.GJ21656@codeaurora.org>
+From: Sergej Sawazki <sergej@taudac.com>
+Message-ID: <0517b50e-e6f2-5f74-aaf8-ecb5f9954e6a@taudac.com>
+Date: Sat, 2 Sep 2017 12:21:54 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7by3ndkwhayzdm3u"
-In-Reply-To: <20170926065919.24446-6-wens@csie.org>
+In-Reply-To: <20170901225954.GJ21656@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Sebastian, Russell,
 
---7by3ndkwhayzdm3u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I have resent the patches. Could you please share your opinion on these?
 
-On Tue, Sep 26, 2017 at 06:59:11AM +0000, Chen-Yu Tsai wrote:
-> The HDMI driver is written with readl/writel I/O to the registers.
-> However, to support the A31 variant, which has a different layout
-> for the DDC registers, it was recommended to use regfields to have
-> a cleaner implementation. To use regfields, we need to create an
-> underlying regmap.
->=20
-> This patch only adds the regmap. It does not convert the existing
-> driver accesses to use regmap.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Commit 6dc669a22c77ad "clk: si5351: Add PLL soft reset" fixed the phase 
+offset in case the clock rate is changed. But, if the clocks are 
+disabled and re-enabled again, the phase offset is still unpredictable. 
+These patches fix this issue.
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Many thanks for you time and effort.
+Best regards
+Sergej
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---7by3ndkwhayzdm3u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZyiRfAAoJEBx+YmzsjxAgSxcQAJhOedHLqmYnKELB0+Ii54gQ
-bfhO+5OPyN3NGBO8/FwM1ce9/XFCZS4d/hHvvw974nVV1efM8oNAmSuyptz+wSWF
-rLRjxk8xwf5+D/BlkmoLemtc503PZCvFT6WGxFIVQ3gD1cl0Jk4Fne4OHvrhVY3s
-5iI0WV3tvZlq0EU6aUKv05fKJ6ThwEmwAXSkfTAtcot/bLDAP8O+1ApjP9ujxQp9
-foUpJXECV/ll78UAJBesfsgzGketBJc5vtUjHF6O+JbmfWJss/3uReh8djnc8emJ
-eB1XKB5C3/qLddNKPCovai++gpu/liqhK1Wp9EMh9lHOq+3CtuuRVFkdZCYFy4s2
-0paKWa9dMZg36LK8V1TRGoXJYrckd9sMWx1ONhdKAtm7aMrlUgsWWe9X0tgRqxne
-AR8q1zBANaxfg5mYafjqwo19jOZLUgXs+Wotw2Qk4OE8e0cVZVQhVnyyEOju/2cR
-fDGgnE7eoJcoxBEkPEPce/1OM78+5+1V6gXYTU4qTFuJVhOuCtdJ7Zs/F66OUbi9
-HSW87/sXpmL2BATPf9lcOfaMVrhrtXJDBI5qziFkLtfXkO93Sodqd8AmyT/5UF7q
-4k+MyYy3JDW/38ChlZO5GOJwFRPSipYm4O8I4ZQ2XqMnwpJpsFM4Z+eA6q/AiQUZ
-048WJyMLDFfiObKB0jWB
-=xYpk
------END PGP SIGNATURE-----
-
---7by3ndkwhayzdm3u--
+Am 02.09.2017 um 00:59 schrieb Stephen Boyd:
+> On 08/12, Sergej Sawazki wrote:
+>> The Si5351 clock generator has up to 8 output clocks and 2 PLLs. In order
+>> to get a deterministic phase offset relationship between the output clocks,
+>> it is necessary to reset the PLLs is certain scenarios.
+>>
+>> This patch-set:
+>>   * fixes a regression and adds resetting the PLL before enabling the outputs
+>>   * adds a dt-property for enabling/disabling the PLL reset
+>>   * adds a debug message for PLL reset (it is helpful during debugging,
+>>     probably no longer required?)
+>>
+>> Based on clk-next.
+>>
+>>
+> 
+> Please include Russell King on the patches. I'd like Sebastian or
+> Russell to review these before merging. For now, I'm going to
+> apply the other change from Russell.
+> 
