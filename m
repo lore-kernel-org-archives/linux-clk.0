@@ -1,102 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs7.siol.net ([213.250.19.138]:52937 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751228AbdITUBv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Sep 2017 16:01:51 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org
-Cc: Laurent.pinchart@ideasonboard.com, hans.verkuil@cisco.com,
-        narmstrong@baylibre.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        icenowy@aosc.io, linux-sunxi@googlegroups.com,
-        linux-media@vger.kernel.org
-Subject: [RESEND RFC PATCH 6/7] ARM: sun8i: h3: Add DesignWare HDMI controller node
-Date: Wed, 20 Sep 2017 22:01:23 +0200
-Message-Id: <20170920200124.20457-7-jernej.skrabec@siol.net>
-In-Reply-To: <20170920200124.20457-1-jernej.skrabec@siol.net>
-References: <20170920200124.20457-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <romain.perier@collabora.com>
+From: Romain Perier <romain.perier@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: philipp.tomsich@theobroma-systems.com,
+	klaus.goger@theobroma-systems.com,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Romain Perier <romain.perier@collabora.com>
+Subject: [PATCH v2 1/4] clk: rockchip: add clock id for PCLK_EFUSE256 of RK3368 SoCs
+Date: Mon,  4 Sep 2017 10:51:16 +0200
+Message-Id: <20170904085119.25981-2-romain.perier@collabora.com>
+In-Reply-To: <20170904085119.25981-1-romain.perier@collabora.com>
+References: <20170904085119.25981-1-romain.perier@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
-
-The H3 SoC has a DesignWare HDMI controller with some Allwinner-specific
-glue and custom PHY.
-
-Since H3 and H5 have same HDMI controller, add related device node in
-shared dtsi file.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Romain Perier <romain.perier@collabora.com>
 ---
- arch/arm/boot/dts/sun8i-h3.dtsi    |  5 +++++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
+ include/dt-bindings/clock/rk3368-cru.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 75ad7b65a7fc..b01f5ac60059 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -197,6 +197,11 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <1>;
-+
-+					tcon0_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon0>;
-+					};
- 				};
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index d38282b9e5d4..28f4df82300e 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -592,6 +592,42 @@
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
+index aeb83e581a11..a0063ed7284a 100644
+--- a/include/dt-bindings/clock/rk3368-cru.h
++++ b/include/dt-bindings/clock/rk3368-cru.h
+@@ -156,6 +156,7 @@
+ #define PCLK_ISP		366
+ #define PCLK_VIP		367
+ #define PCLK_WDT		368
++#define PCLK_EFUSE256		369
  
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun8i-h3-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>,
-+			      <0x01ef0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI>,
-+				 <&ccu CLK_HDMI_DDC>;
-+			clock-names = "iahb", "isfr", "ddc";
-+			resets = <&ccu RST_BUS_HDMI0>, <&ccu RST_BUS_HDMI1>;
-+			reset-names = "hdmi", "ddc";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					hdmi_in_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		rtc: rtc@01f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
+ /* hclk gates */
+ #define HCLK_SFC		448
 -- 
-2.14.1
-
+2.11.0
