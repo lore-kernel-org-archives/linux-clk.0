@@ -1,46 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 15:55:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
-	linux@armlinux.org.uk, boris.brezillon@free-electrons.com,
-	perex@perex.cz, tiwai@suse.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-	cyrille.pitchen@wedev4u.fr, thomas.petazzoni@free-electrons.com
-Subject: Re: [PATCH v5 2/7] dt-bindings: clk: at91: add audio plls to the
- compatible list
-Message-ID: <20170901225512.GD21656@codeaurora.org>
-References: <cover.ada7bc60e0b3a0f7429afc6ea9e4869131d1b757.1502346448.git-series.quentin.schulz@free-electrons.com>
- <09230b9714c7d8fee053d1b014ef6af43c1bebbc.1502346448.git-series.quentin.schulz@free-electrons.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 4 Sep 2017 14:52:47 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Jeremy Kerr <jk@ozlabs.org>, Rick Altherr <raltherr@google.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>
+Subject: Re: [PATCH 1/2] dt-bindings: aspeed-scu: Add clock and reset
+ properties
+Message-ID: <20170904135247.cekcungzxig2r7tf@dell>
+References: <20170823060957.31167-1-joel@jms.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <09230b9714c7d8fee053d1b014ef6af43c1bebbc.1502346448.git-series.quentin.schulz@free-electrons.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170823060957.31167-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Quentin Schulz wrote:
-> This new clock driver set allows to have a fractional divided clock that
-> would generate a precise clock particularly suitable for audio
-> applications.
-> 
-> The main audio pll clock has two children clocks: one that is connected
-> to the PMC, the other that can directly drive a pad. As these two routes
-> have different enable bits and different dividers and divider formulas,
-> they are handled by two different drivers.
-> 
-> This adds the audio plls (frac, pad and pmc) to the compatible list of
-> at91 clocks in DT binding.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> ---
+On Wed, 23 Aug 2017, Joel Stanley wrote:
 
-Applied to clk-next
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  Documentation/devicetree/bindings/mfd/aspeed-scu.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+
+Applied for v4.15.
+
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+> index 4fc5b83726d6..ce8cf0ec6279 100644
+> --- a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+> @@ -9,10 +9,16 @@ Required properties:
+>  		"aspeed,g5-scu", "syscon", "simple-mfd"
+>  
+>  - reg:		contains the offset and length of the SCU memory region
+> +- #clock-cells: should be set to <1> - the system controller is also a
+> +	clock provider
+> +- #reset-cells: should be set to <1> - the system controller is also a
+> +	reset line provider
+>  
+>  Example:
+>  
+>  syscon: syscon@1e6e2000 {
+>  	compatible = "aspeed,ast2400-scu", "syscon", "simple-mfd";
+>  	reg = <0x1e6e2000 0x1a8>;
+> +	#clock-cells = <1>;
+> +	#reset-cells = <1>;
+>  };
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
