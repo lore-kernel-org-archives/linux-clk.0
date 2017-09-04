@@ -1,62 +1,48 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <romain.perier@collabora.com>
+From: Romain Perier <romain.perier@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v2 04/10] dt-bindings: Document Broadcom Hurricane 2 clocks
-Date: Thu, 28 Sep 2017 16:14:56 -0700
-Message-Id: <20170928231502.27069-5-f.fainelli@gmail.com>
-In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
-References: <20170928231502.27069-1-f.fainelli@gmail.com>
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: philipp.tomsich@theobroma-systems.com,
+	klaus.goger@theobroma-systems.com,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Romain Perier <romain.perier@collabora.com>
+Subject: [PATCH v2 2/4] clk: rockchip: export clock pclk_efuse_256 for RK3368 SoCs
+Date: Mon,  4 Sep 2017 10:51:17 +0200
+Message-Id: <20170904085119.25981-3-romain.perier@collabora.com>
+In-Reply-To: <20170904085119.25981-1-romain.perier@collabora.com>
+References: <20170904085119.25981-1-romain.perier@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Device Tree binding document for the Broadcom Hurricane 2 SoC
-which is an iProc based system.
+This exports the clock for the pclk gate of the eFuse that is part of
+the RK3368 SoCs. So we can use it from the dt-bindings.
 
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Romain Perier <romain.perier@collabora.com>
 ---
- .../devicetree/bindings/clock/brcm,iproc-clocks.txt        | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/rockchip/clk-rk3368.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index f2c5f0e4a363..f8e4a93466cb 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -137,6 +137,20 @@ These clock IDs are defined in:
-     ch1_audio  audiopll         2       BCM_CYGNUS_AUDIOPLL_CH1
-     ch2_audio  audiopll         3       BCM_CYGNUS_AUDIOPLL_CH2
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index fc56565379dd..7c4d242f19c1 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -711,7 +711,7 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ 	GATE(PCLK_SIM, "pclk_sim", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 8, GFLAGS),
+ 	GATE(PCLK_PWM1, "pclk_pwm1", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 6, GFLAGS),
+ 	GATE(PCLK_UART2, "pclk_uart2", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 5, GFLAGS),
+-	GATE(0, "pclk_efuse_256", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 1, GFLAGS),
++	GATE(PCLK_EFUSE256, "pclk_efuse_256", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 1, GFLAGS),
+ 	GATE(0, "pclk_efuse_1024", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 0, GFLAGS),
  
-+Hurricane 2
-+------
-+PLL and leaf clock compatible strings for Hurricane 2 are:
-+ "brcm,hr2-armpll"
-+
-+The following table defines the set of PLL/clock for Hurricane 2:
-+
-+    Clock	Source		Index	ID
-+    ---		-----		-----	---------
-+    crystal	N/A		N/A	N/A
-+
-+    armpll	crystal		N/A	N/A
-+
-+
- Northstar and Northstar Plus
- ------
- PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+ 	/*
 -- 
-2.14.1
+2.11.0
