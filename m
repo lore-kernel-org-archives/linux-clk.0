@@ -1,169 +1,60 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <romain.perier@collabora.com>
+From: Romain Perier <romain.perier@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: philipp.tomsich@theobroma-systems.com,
+	klaus.goger@theobroma-systems.com,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
 	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 5/5] clk: aspeed: Add reset controller
-Date: Thu, 21 Sep 2017 13:56:41 +0930
-Message-Id: <20170921042641.7326-6-joel@jms.id.au>
-In-Reply-To: <20170921042641.7326-1-joel@jms.id.au>
-References: <20170921042641.7326-1-joel@jms.id.au>
+	linux-rockchip@lists.infradead.org,
+	Romain Perier <romain.perier@collabora.com>
+Subject: [PATCH v2 4/4] arm64: dts: rockchip: add efuse for RK3368 SoCs
+Date: Mon,  4 Sep 2017 10:51:19 +0200
+Message-Id: <20170904085119.25981-5-romain.perier@collabora.com>
+In-Reply-To: <20170904085119.25981-1-romain.perier@collabora.com>
+References: <20170904085119.25981-1-romain.perier@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-There are some resets that are not associated with gates. These are
-represented by a reset controller.
+This adds the definition for eFuse that is found on RK3368 SoCs with the
+corresponding data cells.
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Romain Perier <romain.perier@collabora.com>
 ---
- drivers/clk/clk-aspeed.c                 | 82 +++++++++++++++++++++++++++++++-
- include/dt-bindings/clock/aspeed-clock.h |  9 ++++
- 2 files changed, 90 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index dec9db4ec47b..db97c0f9f99e 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -17,6 +17,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
+diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+index 3039c2da533e..cca2ce1705b3 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
+@@ -569,6 +569,20 @@
+ 		};
+ 	};
  
-@@ -256,6 +257,68 @@ static const struct clk_ops aspeed_clk_gate_ops = {
- 	.is_enabled = aspeed_clk_is_enabled,
- };
- 
-+/**
-+ * struct aspeed_reset - Aspeed reset controller
-+ * @map: regmap to access the containing system controller
-+ * @rcdev: reset controller device
-+ */
-+struct aspeed_reset {
-+	struct regmap			*map;
-+	struct reset_controller_dev	rcdev;
-+};
++	efuse: efuse@ffb00000 {
++		compatible = "rockchip,rk3368-efuse";
++		reg = <0x0 0xffb00000 0x0 0x20>;
++		clocks = <&cru PCLK_EFUSE_256>;
++		clock-names = "pclk_efuse";
 +
-+#define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
++		cpu_leakage: cpu-leakage@17 {
++			reg = <0x17 0x1>;
++		};
++		temp_adjust: temp-adjust@1f {
++			reg = <0x1f 0x1>;
++		};
++	};
 +
-+static const u8 aspeed_resets[] = {
-+	25, /* x-dma */
-+	24, /* mctp */
-+	23, /* adc */
-+	22, /* jtag-master */
-+	18, /* mic */
-+	 9, /* pwm */
-+	 8, /* pci-vga */
-+	 2, /* i2c */
-+	 1, /* ahb */
-+};
-+
-+static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 rst = BIT(aspeed_resets[id]);
-+
-+	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
-+}
-+
-+static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 rst = BIT(aspeed_resets[id]);
-+
-+	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
-+}
-+
-+static int aspeed_reset_status(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-+	u32 val, rst = BIT(aspeed_resets[id]);
-+	int ret;
-+
-+	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !!(val & rst);
-+}
-+
-+static const struct reset_control_ops aspeed_reset_ops = {
-+	.assert = aspeed_reset_assert,
-+	.deassert = aspeed_reset_deassert,
-+	.status = aspeed_reset_status,
-+};
-+
- static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
- 		struct regmap *map, u8 clock_idx, u8 reset_idx,
-@@ -299,10 +362,11 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
- 	const struct clk_div_table *mac_div_table;
- 	const struct clk_div_table *div_table;
- 	struct device *dev = &pdev->dev;
-+	struct aspeed_reset *ar;
- 	struct regmap *map;
- 	struct clk_hw *hw;
- 	u32 val, rate;
--	int i;
-+	int i, ret;
- 
- 	map = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(map)) {
-@@ -310,6 +374,22 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(map);
- 	}
- 
-+	ar = devm_kzalloc(dev, sizeof(*ar), GFP_KERNEL);
-+	if (!ar)
-+		return -ENOMEM;
-+
-+	ar->map = map;
-+	ar->rcdev.owner = THIS_MODULE;
-+	ar->rcdev.nr_resets = ARRAY_SIZE(aspeed_resets);
-+	ar->rcdev.ops = &aspeed_reset_ops;
-+	ar->rcdev.of_node = dev->of_node;
-+
-+	ret = devm_reset_controller_register(dev, &ar->rcdev);
-+	if (ret) {
-+		dev_err(dev, "could not register reset controller\n");
-+		return ret;
-+	}
-+
- 	/* SoC generations share common layouts but have different divisors */
- 	soc_data = of_device_get_match_data(&pdev->dev);
- 	div_table = soc_data->div_table;
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index afe06b77562d..a9d552b6bbd2 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -40,4 +40,13 @@
- #define ASPEED_CLK_GATE_SDCLKCLK	(22 + ASPEED_CLK_GATES)
- #define ASPEED_CLK_GATE_LHCCLK		(23 + ASPEED_CLK_GATES)
- 
-+#define ASPEED_RESET_XDMA		0
-+#define ASPEED_RESET_MCTP		1
-+#define ASPEED_RESET_JTAG_MASTER	2
-+#define ASPEED_RESET_MIC		3
-+#define ASPEED_RESET_PWM		4
-+#define ASPEED_RESET_PCIVGA		5
-+#define ASPEED_RESET_I2C		6
-+#define ASPEED_RESET_AHB		7
-+
- #endif
+ 	tsadc: tsadc@ff280000 {
+ 		compatible = "rockchip,rk3368-tsadc";
+ 		reg = <0x0 0xff280000 0x0 0x100>;
 -- 
-2.14.1
+2.11.0
