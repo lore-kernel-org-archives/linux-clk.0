@@ -1,79 +1,63 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 18 Sep 2017 12:00:51 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Romain Izard <romain.izard.pro@gmail.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
- <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David
- Woodhouse <dwmw2@infradead.org>, Brian Norris
- <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille
- Pitchen <cyrille.pitchen@wedev4u.fr>, Thierry Reding
- <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern
- <stern@rowland.harvard.edu>, linux-pwm@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 5/9] mtd: nand: atmel: Report PMECC failures as
- errors
-Message-ID: <20170918120051.298bdabf@bbrezillon>
-In-Reply-To: <20170915140411.31716-6-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-	<20170915140411.31716-6-romain.izard.pro@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <romain.perier@collabora.com>
+From: Romain Perier <romain.perier@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: philipp.tomsich@theobroma-systems.com,
+	klaus.goger@theobroma-systems.com,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Romain Perier <romain.perier@collabora.com>
+Subject: [PATCH v2 3/4] nvmem: rockchip: add support for RK3368
+Date: Mon,  4 Sep 2017 10:51:18 +0200
+Message-Id: <20170904085119.25981-4-romain.perier@collabora.com>
+In-Reply-To: <20170904085119.25981-1-romain.perier@collabora.com>
+References: <20170904085119.25981-1-romain.perier@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Romain,
+This adds the necessary function for handling support on RK3368 SoCs
 
-On Fri, 15 Sep 2017 16:04:07 +0200
-Romain Izard <romain.izard.pro@gmail.com> wrote:
+Signed-off-by: Romain Perier <romain.perier@collabora.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt | 1 +
+ drivers/nvmem/rockchip-efuse.c                             | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-> It is not normal for the PMECC to fail when trying to fix ECC errors.
-> Report these cases as errors.
-
-I'm not sure we want to have ECC error messages at this level. ECC
-errors are rather unusual but not impossible, and sometimes it's even
-not a real error (I'm thinking of bitflips in erased pages for
-example, which are not necessarily detected/fixed in hardware).
-
-If we decide to print error messages when unfixable bitflips are
-detected, it should be done in the nand-controller driver (somewhere
-along those lines [1]).
-
-Regards,
-
-Boris
-
-[1]http://elixir.free-electrons.com/linux/latest/source/drivers/mtd/nand/atmel/nand-controller.c#L827
-
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> ---
->  drivers/mtd/nand/atmel/pmecc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-> index 8d1208f38025..2a23f1ff945f 100644
-> --- a/drivers/mtd/nand/atmel/pmecc.c
-> +++ b/drivers/mtd/nand/atmel/pmecc.c
-> @@ -687,6 +687,8 @@ static int atmel_pmecc_err_location(struct atmel_pmecc_user *user)
->  	 * Number of roots does not match the degree of smu
->  	 * unable to correct error.
->  	 */
-> +	dev_err(pmecc->dev,
-> +		"PMECC: Impossible to calculate error location.\n");
->  	return -EBADMSG;
->  }
->  
-> @@ -729,7 +731,7 @@ int atmel_pmecc_correct_sector(struct atmel_pmecc_user *user, int sector,
->  			ptr = ecc + byte - sectorsize;
->  			area = "ECC";
->  		} else {
-> -			dev_dbg(pmecc->dev,
-> +			dev_err(pmecc->dev,
->  				"Invalid errpos value (%d, max is %d)\n",
->  				errpos, (sectorsize + eccbytes) * 8);
->  			return -EINVAL;
+diff --git a/Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt b/Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt
+index 1ff02afdc55a..60bec4782806 100644
+--- a/Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt
++++ b/Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt
+@@ -6,6 +6,7 @@ Required properties:
+   - "rockchip,rk3188-efuse" - for RK3188 SoCs.
+   - "rockchip,rk3228-efuse" - for RK3228 SoCs.
+   - "rockchip,rk3288-efuse" - for RK3288 SoCs.
++  - "rockchip,rk3368-efuse" - for RK3368 SoCs.
+   - "rockchip,rk3399-efuse" - for RK3399 SoCs.
+ - reg: Should contain the registers location and exact eFuse size
+ - clocks: Should be the clock id of eFuse
+diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
+index 63e3eb55f3ac..eb4c530c2564 100644
+--- a/drivers/nvmem/rockchip-efuse.c
++++ b/drivers/nvmem/rockchip-efuse.c
+@@ -178,6 +178,10 @@ static const struct of_device_id rockchip_efuse_match[] = {
+ 		.data = (void *)&rockchip_rk3288_efuse_read,
+ 	},
+ 	{
++		.compatible = "rockchip,rk3368-efuse",
++		.data = (void *)&rockchip_rk3288_efuse_read,
++	},
++	{
+ 		.compatible = "rockchip,rk3399-efuse",
+ 		.data = (void *)&rockchip_rk3399_efuse_read,
+ 	},
+-- 
+2.11.0
