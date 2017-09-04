@@ -1,74 +1,78 @@
-Return-Path: <jon.mason@broadcom.com>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH v2] clk: mb86s7x: Drop non-building driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Satoru OKAMOTO <okamoto.satoru@socionext.com>,
+ Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+References: <20170824225237.21485-1-afaerber@suse.de>
+ <20170901203201.GB21656@codeaurora.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <8601a2ec-33dc-0024-55ce-963f05faca75@suse.de>
+Date: Mon, 4 Sep 2017 17:46:18 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
-References: <20170926000931.670-1-f.fainelli@gmail.com>
-From: Jon Mason <jon.mason@broadcom.com>
-Date: Tue, 26 Sep 2017 11:00:59 -0400
-Message-ID: <CAC3K-4rioegE+UGmOiTjiw=WqRPr7sYf23kap5gz=TvYKT+z5g@mail.gmail.com>
-Subject: Re: [PATCH 00/10] ARM: bcm: Add support for Broadcom Hurricane 2 SoC
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
-	"maintainer:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20170901203201.GB21656@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 25, 2017 at 8:09 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> Hi all,
->
-> This patch series adds basic (boot to prompt with essential peripherals
-> working) support for Broadcom's Hurricane 2 SoC which is found in switching
-> applications.
->
-> This is also an iProc-family chip with a number of variations, including
-> some in the clock controller that I have not been able to identify yet.
->
-> Florian Fainelli (10):
->   MAINTAINERS: Update Broadcom iProc regexp with Hurricane 2
->   dt-bindings: Add documentation for Broadcom Hurricane 2 SoCs
->   ARM: bcm: Add support for Broadcom Hurricane 2 SoC
->   dt-bindings: Document Broadcom Hurricane 2 clocks
->   clk: bcm: Add Broadcom Hurricane 2 clock support
->   ARM: dts: Add Broadcom Hurricane 2 DTS include file
->   ARM: debug: Add Hurricane 2 UART2 debug addresses
->   dt-bindings: Add Ubiquiti Networks vendor prefix
->   ARM: dts: Hurricane 2: Add basic support for Ubiquiti UniFi Switch 8
->   ARM: multi_v7_defconfig: Enable CONFIG_ARCH_BCM_HR2
->
->  .../devicetree/bindings/arm/bcm/brcm,hr2.txt       |  14 +
->  .../bindings/clock/brcm,iproc-clocks.txt           |  14 +
->  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
->  MAINTAINERS                                        |   1 +
->  arch/arm/Kconfig.debug                             |  10 +-
->  arch/arm/boot/dts/Makefile                         |   2 +
->  arch/arm/boot/dts/bcm-hr2.dtsi                     | 368 +++++++++++++++++++++
->  arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts  |  85 +++++
->  arch/arm/configs/multi_v7_defconfig                |   1 +
->  arch/arm/mach-bcm/Kconfig                          |   9 +
->  arch/arm/mach-bcm/Makefile                         |   3 +
->  arch/arm/mach-bcm/bcm_hr2.c                        |  25 ++
->  drivers/clk/bcm/Kconfig                            |   9 +
->  drivers/clk/bcm/Makefile                           |   1 +
->  drivers/clk/bcm/clk-hr2.c                          |  27 ++
->  15 files changed, 569 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,hr2.txt
->  create mode 100644 arch/arm/boot/dts/bcm-hr2.dtsi
->  create mode 100644 arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts
->  create mode 100644 arch/arm/mach-bcm/bcm_hr2.c
->  create mode 100644 drivers/clk/bcm/clk-hr2.c
+Hi Stephen,
 
-The series looks good to me.  Please feel free to add
-Acked-by: Jon Mason <jon.mason@broadcom.com>
+Am 01.09.2017 um 22:32 schrieb Stephen Boyd:
+> On 08/25, Andreas Färber wrote:
+>> It fails to build once we introduce the ARCH_MB86S7X Kconfig symbol:
+>>
+>>   drivers/clk/clk-mb86s7x.c:27:10: fatal error: soc/mb86s7x/scb_mhu.h: No such file or directory
+>>    #include <soc/mb86s7x/scb_mhu.h>
+>>             ^~~~~~~~~~~~~~~~~~~~~~~
+>>   compilation terminated.
+>>
+>> And when commenting out that line, we get:
+>>
+>>   drivers/clk/clk-mb86s7x.c: In function 'crg_gate_control':
+>>   drivers/clk/clk-mb86s7x.c:72:8: error: implicit declaration of function 'mb86s7x_send_packet' [-Werror=implicit-function-declaration]
+>>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
+>>           ^~~~~~~~~~~~~~~~~~~
+>>   drivers/clk/clk-mb86s7x.c:72:28: error: 'CMD_PERI_CLOCK_GATE_SET_REQ' undeclared (first use in this function)
+>>     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
+>>                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>   drivers/clk/clk-mb86s7x.c:72:28: note: each undeclared identifier is reported only once for each function it appears in
+>>   drivers/clk/clk-mb86s7x.c: In function 'crg_rate_control':
+>>   drivers/clk/clk-mb86s7x.c:116:10: error: 'CMD_PERI_CLOCK_RATE_SET_REQ' undeclared (first use in this function)
+>>      code = CMD_PERI_CLOCK_RATE_SET_REQ;
+>>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>   drivers/clk/clk-mb86s7x.c:121:10: error: 'CMD_PERI_CLOCK_RATE_GET_REQ' undeclared (first use in this function); did you mean 'CMD_PERI_CLOCK_RATE_SET_REQ'?
+>>      code = CMD_PERI_CLOCK_RATE_GET_REQ;
+>>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>             CMD_PERI_CLOCK_RATE_SET_REQ
+>>   drivers/clk/clk-mb86s7x.c: In function 'mhu_cluster_rate':
+>>   drivers/clk/clk-mb86s7x.c:276:10: error: 'CMD_CPU_CLOCK_RATE_GET_REQ' undeclared (first use in this function)
+>>      code = CMD_CPU_CLOCK_RATE_GET_REQ;
+>>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>   drivers/clk/clk-mb86s7x.c:278:10: error: 'CMD_CPU_CLOCK_RATE_SET_REQ' undeclared (first use in this function); did you mean 'CMD_CPU_CLOCK_RATE_GET_REQ'?
+>>      code = CMD_CPU_CLOCK_RATE_SET_REQ;
+>>             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>             CMD_CPU_CLOCK_RATE_GET_REQ
+>>   cc1: some warnings being treated as errors
+>>   scripts/Makefile.build:302: recipe for target
+>>   'drivers/clk/clk-mb86s7x.o' failed
+>>   make[2]: *** [drivers/clk/clk-mb86s7x.o] Error 1
+>>
+>> Remove the driver for now.
+>>
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+>> ---
+> 
+> Applied to clk-next
 
-Thanks,
-Jon
+Thanks. Is this 4.14 or 4.15 material at this point? In particular I
+wonder which release I can proceed to introduce ARCH_MB86S7X in - I'm
+assuming we need to wait for this one to get merged, so 4.15 or 4.16
+respectively?
 
+Regards,
+Andreas
 
-> --
-> 2.14.1
->
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
