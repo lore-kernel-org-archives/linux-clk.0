@@ -1,50 +1,80 @@
-Return-Path: <hanetzer@startmail.com>
-From: "Marty E. Plummer" <hanetzer@startmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: xuejiancheng@hisilicon.com,
-	leo.yan@linaro.org,
-	linux-clk@vger.kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	wenpan@hisilicon.com,
-	robh+dt@kernel.org,
-	linux@armlinux.org.uk,
-	sboyd@codeaurora.org,
-	xuwei5@hisilicon.com,
-	zhangfei.gao@linaro.org,
-	"Marty E. Plummer" <hanetzer@startmail.com>
-Subject: [RFC PATCH 2/3] arm: hisi: enable Hi3521A SoC
-Date: Thu, 14 Sep 2017 22:56:35 -0500
-Message-Id: <20170915035636.9903-3-hanetzer@startmail.com>
-In-Reply-To: <20170915035636.9903-1-hanetzer@startmail.com>
-References: <20170915035636.9903-1-hanetzer@startmail.com>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1504625867.32565.34.camel@synopsys.com>
+References: <1504625867.32565.34.camel@synopsys.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 5 Sep 2017 17:03:51 -0500
+Message-ID: <CAL_JsqJ7c-raBnb0U+hL+hka7zN3XosX0pU1Sswoq16nbRFb+g@mail.gmail.com>
+Subject: Re: Setting CPU clock frequency on early boot
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable Hisilicon Hi3521A/Hi3520DCV300 SoC. This SoC series includes
-hardware mutlimedia codec cores, commonly used in consumer cctv/dvr
-security systems and ipcameras. The arm core is a Cortex A7.
+On Tue, Sep 5, 2017 at 10:37 AM, Alexey Brodkin
+<Alexey.Brodkin@synopsys.com> wrote:
+> Hello,
+>
+> I'd like to get some feedback on our idea as well as check
+> if somebody faces similar situations and if so what would be the best
+> way to implement some generic solution that suits everyone.
+>
+> So that's our problem:
+> 1. On power-on hardware might start clocking CPU with either
+>    too high frequency (such that CPU may get stuck at some point)
+>    or too low frequency.
+>
+>    That all sounds stupid but let me elaborate a bit here.
+>    I'm talking about FPGA-based devboards firmware for which
+>    (here I mean just image loaded in FPGA with CPU implementation
+>    but not some software yet) might not be stable or be even experimental.
+>
+>    For example we may deal with dual-core or quad-core designs.
+>    Former might be OK running @100MHz and latter is only usable
+>    @75MHz and lower. The simplest solution might be to use some safe
+>    value before something like CPUfreq kicks in. But we don't yet have
+>    CPUfreq for ARC (we do plan to get it working sometime soon) which
+>    means simple change of CPU frequency once time-keeping infrastructure
+>    was brought-up is not an option... I.e. we'll end up with the system running
+>    much slower compared what could have been possible.
+>
+> 2. Up until now we used to do dirty hacks in early platform init code.
+>    Namely (see axs103_early_init() in arch/arc/plat-axs10x/axs10x.c):
+>     1) Read CPU's "clock-frequency" from .dtb (remember we're on very early
+>        boot stage still so no expanded DevTree yet exists).
+>     2) Check how many cores we have and which freq is usable
+>     3) Update PLL settings right in place if new freq != existing in PLL.
+>
+>    Even though it is proven to work but with more platforms in the pipeline
+>    we'll need to copy-paste pretty much the same stuff across all affected
+>    plats. Which is not nice.
+>
+>    Moreover back in the day we didn't have a proper clk driver for CPU's PLL.
+>    Thus acting on PLL registers right in place was the only thing we were able
+>    to do. Now with introduction of normal clk driver
+>    (see drivers/clk/axs10x/pll_clock.c in linux-next) we'd like to utilize
+>    it and have a cleaner and more universal solution to the problem.
+>
+>    That's how it could be done - http://patchwork.ozlabs.org/patch/801240/
+>    Basically in architecture's time_init() we check if there's explicitly
+>    specified "clock-frequency" parameter in cpu's node in Device Tree and
+>    if there's one we set it via just instantiated clk driver.
 
-Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
----
- arch/arm/mach-hisi/Kconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+The patch looks generally okay. I'd move all the logic to the clock
+driver unless perhaps how to set the cpu freq is defined by the
+architecture.
 
-diff --git a/arch/arm/mach-hisi/Kconfig b/arch/arm/mach-hisi/Kconfig
-index 65a048fa08ec..26755414f862 100644
---- a/arch/arm/mach-hisi/Kconfig
-+++ b/arch/arm/mach-hisi/Kconfig
-@@ -12,6 +12,12 @@ if ARCH_HISI
- 
- menu "Hisilicon platform type"
- 
-+config ARCH_HI3521A
-+	bool "Hisilicon Hi3521A/Hi3520DCV300 family"
-+	depends on ARCH_MULTI_V7
-+	help
-+	  Support for Hisilicon Hi3521A/Hi3520DCV300 SoC family
-+
- config ARCH_HI3xxx
- 	bool "Hisilicon Hi36xx family"
- 	depends on ARCH_MULTI_V7
--- 
-2.14.1
+> We may indeed proceed with mentioned solution for ARC but if that makes
+> sense for somebody else it might worth getting something similar in generic
+> init code. Any thoughts?
+
+If any ARM platforms are doing something similar, then it's done in
+their clock driver via of_clk_init. Or they just wait for cpufreq to
+kick in and expect the bootloader has initialized things to a
+reasonable frequency.
+
+Rob
