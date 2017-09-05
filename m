@@ -1,169 +1,64 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v1 07/10] iio:adc:at91-sama5d2: Support backup mode
-Date: Fri,  8 Sep 2017 17:36:01 +0200
-Message-Id: <20170908153604.28383-8-romain.izard.pro@gmail.com>
-In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+Return-Path: <Alexey.Brodkin@synopsys.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "linux-snps-arc@lists.infradead.org"
+	<linux-snps-arc@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: Setting CPU clock frequency on early boot
+Date: Tue, 5 Sep 2017 15:37:48 +0000
+Message-ID: <1504625867.32565.34.camel@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Support the backup mode for platform suspend, by restoring the hardware
-registers on resume.
-
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/iio/adc/at91-sama5d2_adc.c | 71 ++++++++++++++++++++++++++++++++------
- 1 file changed, 61 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index e10dca3ed74b..f9718c863363 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -200,6 +200,7 @@ struct at91_adc_state {
- 	u32				conversion_value;
- 	struct at91_adc_soc_info	soc_info;
- 	wait_queue_head_t		wq_data_available;
-+	unsigned int			current_rate;
- 	/*
- 	 * lock to prevent concurrent 'single conversion' requests through
- 	 * sysfs.
-@@ -269,6 +270,8 @@ static void at91_adc_setup_samp_freq(struct at91_adc_state *st, unsigned freq)
- 	mr |= AT91_SAMA5D2_MR_PRESCAL(prescal);
- 	at91_adc_writel(st, AT91_SAMA5D2_MR, mr);
- 
-+	st->current_rate = freq;
-+
- 	dev_dbg(&indio_dev->dev, "freq: %u, startup: %u, prescal: %u\n",
- 		freq, startup, prescal);
- }
-@@ -375,7 +378,9 @@ static int at91_adc_write_raw(struct iio_dev *indio_dev,
- 	    val > st->soc_info.max_sample_rate)
- 		return -EINVAL;
- 
-+	mutex_lock(&st->lock);
- 	at91_adc_setup_samp_freq(st, val);
-+	mutex_unlock(&st->lock);
- 
- 	return 0;
- }
-@@ -386,6 +391,21 @@ static const struct iio_info at91_adc_info = {
- 	.driver_module = THIS_MODULE,
- };
- 
-+static void at91_adc_init_hw(struct at91_adc_state *st, unsigned int freq)
-+{
-+	at91_adc_writel(st, AT91_SAMA5D2_CR, AT91_SAMA5D2_CR_SWRST);
-+	at91_adc_writel(st, AT91_SAMA5D2_IDR, 0xffffffff);
-+	/*
-+	 * Transfer field must be set to 2 according to the datasheet and
-+	 * allows different analog settings for each channel.
-+	 */
-+	at91_adc_writel(st, AT91_SAMA5D2_MR,
-+			AT91_SAMA5D2_MR_TRANSFER(2) | AT91_SAMA5D2_MR_ANACH);
-+
-+	at91_adc_setup_samp_freq(st, freq);
-+
-+}
-+
- static int at91_adc_probe(struct platform_device *pdev)
- {
- 	struct iio_dev *indio_dev;
-@@ -482,16 +502,7 @@ static int at91_adc_probe(struct platform_device *pdev)
- 		goto vref_disable;
- 	}
- 
--	at91_adc_writel(st, AT91_SAMA5D2_CR, AT91_SAMA5D2_CR_SWRST);
--	at91_adc_writel(st, AT91_SAMA5D2_IDR, 0xffffffff);
--	/*
--	 * Transfer field must be set to 2 according to the datasheet and
--	 * allows different analog settings for each channel.
--	 */
--	at91_adc_writel(st, AT91_SAMA5D2_MR,
--			AT91_SAMA5D2_MR_TRANSFER(2) | AT91_SAMA5D2_MR_ANACH);
--
--	at91_adc_setup_samp_freq(st, st->soc_info.min_sample_rate);
-+	at91_adc_init_hw(st, st->soc_info.min_sample_rate);
- 
- 	ret = clk_prepare_enable(st->per_clk);
- 	if (ret)
-@@ -541,12 +552,52 @@ static const struct of_device_id at91_adc_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, at91_adc_dt_match);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int at91_adc_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct at91_adc_state *st = iio_priv(indio_dev);
-+
-+	clk_disable_unprepare(st->per_clk);
-+
-+	regulator_disable(st->vref);
-+	regulator_disable(st->reg);
-+
-+	return 0;
-+}
-+
-+static int at91_adc_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct at91_adc_state *st = iio_priv(indio_dev);
-+	int err;
-+
-+	err = regulator_enable(st->reg);
-+	if (err)
-+		return err;
-+
-+	err = regulator_enable(st->vref);
-+	if (err)
-+		return err;
-+
-+	at91_adc_init_hw(st, st->current_rate);
-+
-+	err = clk_prepare_enable(st->per_clk);
-+	return err;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(at91_adc_pm_ops, at91_adc_suspend, at91_adc_resume);
-+
- static struct platform_driver at91_adc_driver = {
- 	.probe = at91_adc_probe,
- 	.remove = at91_adc_remove,
- 	.driver = {
- 		.name = "at91-sama5d2_adc",
- 		.of_match_table = at91_adc_dt_match,
-+		.pm = &at91_adc_pm_ops,
- 	},
- };
- module_platform_driver(at91_adc_driver)
--- 
-2.11.0
+SGVsbG8sDQoNCkknZCBsaWtlIHRvIGdldCBzb21lIGZlZWRiYWNrIG9uIG91ciBpZGVhIGFzIHdl
+bGwgYXMgY2hlY2sNCmlmIHNvbWVib2R5IGZhY2VzIHNpbWlsYXIgc2l0dWF0aW9ucyBhbmQgaWYg
+c28gd2hhdCB3b3VsZCBiZSB0aGUgYmVzdA0Kd2F5IHRvIGltcGxlbWVudCBzb21lIGdlbmVyaWMg
+c29sdXRpb24gdGhhdCBzdWl0cyBldmVyeW9uZS4NCg0KU28gdGhhdCdzIG91ciBwcm9ibGVtOg0K
+MS4gT24gcG93ZXItb24gaGFyZHdhcmUgbWlnaHQgc3RhcnQgY2xvY2tpbmcgQ1BVIHdpdGggZWl0
+aGVyDQrCoCDCoHRvbyBoaWdoIGZyZXF1ZW5jeSAoc3VjaCB0aGF0IENQVSBtYXkgZ2V0IHN0dWNr
+IGF0IHNvbWUgcG9pbnQpDQrCoCDCoG9yIHRvbyBsb3cgZnJlcXVlbmN5Lg0KDQrCoCDCoFRoYXQg
+YWxsIHNvdW5kcyBzdHVwaWQgYnV0IGxldCBtZSBlbGFib3JhdGUgYSBiaXQgaGVyZS4NCsKgIMKg
+SSdtIHRhbGtpbmcgYWJvdXQgRlBHQS1iYXNlZCBkZXZib2FyZHMgZmlybXdhcmUgZm9yIHdoaWNo
+DQrCoCDCoChoZXJlIEkgbWVhbiBqdXN0IGltYWdlIGxvYWRlZCBpbiBGUEdBIHdpdGggQ1BVIGlt
+cGxlbWVudGF0aW9uDQrCoCDCoGJ1dCBub3Qgc29tZSBzb2Z0d2FyZSB5ZXQpIG1pZ2h0IG5vdCBi
+ZSBzdGFibGUgb3IgYmUgZXZlbiBleHBlcmltZW50YWwuDQoNCsKgIMKgRm9yIGV4YW1wbGUgd2Ug
+bWF5IGRlYWwgd2l0aCBkdWFsLWNvcmUgb3IgcXVhZC1jb3JlIGRlc2lnbnMuDQrCoCDCoEZvcm1l
+ciBtaWdodCBiZSBPSyBydW5uaW5nIEAxMDBNSHogYW5kIGxhdHRlciBpcyBvbmx5IHVzYWJsZQ0K
+wqAgwqBANzVNSHogYW5kIGxvd2VyLiBUaGUgc2ltcGxlc3Qgc29sdXRpb24gbWlnaHQgYmUgdG8g
+dXNlIHNvbWUgc2FmZQ0KwqAgwqB2YWx1ZSBiZWZvcmUgc29tZXRoaW5nIGxpa2UgQ1BVZnJlcSBr
+aWNrcyBpbi4gQnV0IHdlIGRvbid0IHlldCBoYXZlDQrCoCDCoENQVWZyZXEgZm9yIEFSQyAod2Ug
+ZG8gcGxhbiB0byBnZXQgaXQgd29ya2luZyBzb21ldGltZSBzb29uKSB3aGljaA0KwqAgwqBtZWFu
+cyBzaW1wbGUgY2hhbmdlIG9mIENQVSBmcmVxdWVuY3kgb25jZSB0aW1lLWtlZXBpbmcgaW5mcmFz
+dHJ1Y3R1cmUNCsKgIMKgd2FzIGJyb3VnaHQtdXAgaXMgbm90IGFuIG9wdGlvbi4uLiBJLmUuIHdl
+J2xsIGVuZCB1cCB3aXRoIHRoZSBzeXN0ZW0gcnVubmluZw0KwqAgwqBtdWNoIHNsb3dlciBjb21w
+YXJlZCB3aGF0IGNvdWxkIGhhdmUgYmVlbiBwb3NzaWJsZS4NCg0KMi4gVXAgdW50aWwgbm93IHdl
+IHVzZWQgdG8gZG8gZGlydHkgaGFja3MgaW4gZWFybHkgcGxhdGZvcm0gaW5pdCBjb2RlLg0KwqAg
+wqBOYW1lbHkgKHNlZcKgYXhzMTAzX2Vhcmx5X2luaXQoKSBpbsKgYXJjaC9hcmMvcGxhdC1heHMx
+MHgvYXhzMTB4LmMpOg0KwqAgwqAgMSkgUmVhZCBDUFUncyAiY2xvY2stZnJlcXVlbmN5IiBmcm9t
+IC5kdGIgKHJlbWVtYmVyIHdlJ3JlIG9uIHZlcnkgZWFybHkNCsKgIMKgIMKgIMKgYm9vdCBzdGFn
+ZSBzdGlsbCBzbyBubyBleHBhbmRlZCBEZXZUcmVlIHlldCBleGlzdHMpLg0KwqAgwqAgMikgQ2hl
+Y2sgaG93IG1hbnkgY29yZXMgd2UgaGF2ZSBhbmQgd2hpY2ggZnJlcSBpcyB1c2FibGUNCsKgIMKg
+IDMpIFVwZGF0ZSBQTEwgc2V0dGluZ3MgcmlnaHQgaW4gcGxhY2UgaWYgbmV3IGZyZXEgIT0gZXhp
+c3RpbmcgaW4gUExMLg0KDQrCoCDCoEV2ZW4gdGhvdWdoIGl0IGlzIHByb3ZlbiB0byB3b3JrIGJ1
+dCB3aXRoIG1vcmUgcGxhdGZvcm1zIGluIHRoZSBwaXBlbGluZQ0KwqAgwqB3ZSdsbCBuZWVkIHRv
+IGNvcHktcGFzdGUgcHJldHR5IG11Y2ggdGhlIHNhbWUgc3R1ZmYgYWNyb3NzIGFsbCBhZmZlY3Rl
+ZA0KwqAgwqBwbGF0cy4gV2hpY2ggaXMgbm90IG5pY2UuDQoNCsKgIMKgTW9yZW92ZXIgYmFjayBp
+biB0aGUgZGF5IHdlIGRpZG4ndCBoYXZlIGEgcHJvcGVyIGNsayBkcml2ZXIgZm9yIENQVSdzIFBM
+TC4NCsKgIMKgVGh1cyBhY3Rpbmcgb24gUExMIHJlZ2lzdGVycyByaWdodCBpbiBwbGFjZSB3YXMg
+dGhlIG9ubHkgdGhpbmcgd2Ugd2VyZSBhYmxlDQrCoCDCoHRvIGRvLiBOb3cgd2l0aCBpbnRyb2R1
+Y3Rpb24gb2Ygbm9ybWFsIGNsayBkcml2ZXINCsKgIMKgKHNlZcKgZHJpdmVycy9jbGsvYXhzMTB4
+L3BsbF9jbG9jay5jIGluIGxpbnV4LW5leHQpIHdlJ2QgbGlrZSB0byB1dGlsaXplDQrCoCDCoGl0
+IGFuZCBoYXZlIGEgY2xlYW5lciBhbmQgbW9yZSB1bml2ZXJzYWwgc29sdXRpb24gdG8gdGhlIHBy
+b2JsZW0uDQoNCsKgIMKgVGhhdCdzIGhvdyBpdCBjb3VsZCBiZSBkb25lIC3CoGh0dHA6Ly9wYXRj
+aHdvcmsub3psYWJzLm9yZy9wYXRjaC84MDEyNDAvDQrCoCDCoEJhc2ljYWxseSBpbiBhcmNoaXRl
+Y3R1cmUncyB0aW1lX2luaXQoKSB3ZSBjaGVjayBpZiB0aGVyZSdzIGV4cGxpY2l0bHkNCsKgIMKg
+c3BlY2lmaWVkICJjbG9jay1mcmVxdWVuY3kiIHBhcmFtZXRlciBpbiBjcHUncyBub2RlIGluIERl
+dmljZSBUcmVlIGFuZA0KwqAgwqBpZiB0aGVyZSdzIG9uZSB3ZSBzZXQgaXQgdmlhIGp1c3QgaW5z
+dGFudGlhdGVkIGNsayBkcml2ZXIuDQoNCldlIG1heSBpbmRlZWQgcHJvY2VlZCB3aXRoIG1lbnRp
+b25lZCBzb2x1dGlvbiBmb3IgQVJDIGJ1dCBpZiB0aGF0IG1ha2VzDQpzZW5zZSBmb3Igc29tZWJv
+ZHkgZWxzZSBpdCBtaWdodCB3b3J0aCBnZXR0aW5nIHNvbWV0aGluZyBzaW1pbGFyIGluIGdlbmVy
+aWMNCmluaXQgY29kZS4gQW55IHRob3VnaHRzPw0KDQpBbGwgY29tbWVudHMgYW5kIHN1Z2dlc3Rp
+b25zIGFyZSBtb3JlIHRoYW4gd2VsY29tZS4NCg0KLUFsZXhleQ==
