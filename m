@@ -1,101 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:53802 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751801AbdI2IXV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Sep 2017 04:23:21 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 04/14] drm/sun4i: tcon: Add support for demuxing TCON output on A31
-Date: Fri, 29 Sep 2017 16:22:56 +0800
-Message-Id: <20170929082306.16193-5-wens@csie.org>
-In-Reply-To: <20170929082306.16193-1-wens@csie.org>
-References: <20170929082306.16193-1-wens@csie.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Ludovic.Desroches@microchip.com>
+Date: Tue, 5 Sep 2017 08:11:34 +0200
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: Ingo van Lil <inguin@gmx.de>
+CC: Ludovic Desroches <ludovic.desroches@microchip.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<boris.brezillon@free-electrons.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@free-electrons.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: at91: utmi: set the mainck rate
+Message-ID: <20170905061134.f6n6jtvz57ycqd2f@rfolt0960.corp.atmel.com>
+References: <20170904095226.29336-1-ludovic.desroches@microchip.com>
+ <cc938b2c-1cb7-f7ad-1336-dbb01b2aec9c@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <cc938b2c-1cb7-f7ad-1336-dbb01b2aec9c@gmx.de>
+Return-Path: ludovic.desroches@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On systems with 2 TCONs such as the A31, it is possible to demux the
-output of the TCONs to one encoder.
+On Mon, Sep 04, 2017 at 07:53:57PM +0200, Ingo van Lil wrote:
+> On 09/04/2017 11:52 AM, Ludovic Desroches wrote:
+> 
+> > +	/* SFR node missing is not necessarily an issue. */
+> > +	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
+> > +	if (IS_ERR(regmap_sfr))
+> > +		regmap_sfr = NULL;
+> 
+> What about SAMA5D3? That chip has an UTMICKTRIM register, too (SAMA5D4
+> doesn't, though).
 
-Add support for this for the A31.
+Oh Yes. I'll look for atmel,sama5d3-sfr too. Maybe there is a smarter
+solution but I don't have it in mind.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+> 
+> Otherwise the patch looks good and works fine on both my boards (SAMA5D2
+> 16MHz and SAMA5D3 12MHz).
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 7bf51abaee97..c949309d4285 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -112,6 +112,21 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
- }
- EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
- 
-+static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
-+{
-+	struct sun4i_drv *drv = drm->dev_private;
-+	struct sun4i_tcon *tcon;
-+
-+	list_for_each_entry(tcon, &drv->tcon_list, list)
-+		if (tcon->id == 0)
-+			return tcon;
-+
-+	dev_warn(drm->dev,
-+		 "TCON0 not found, display output muxing may not work\n");
-+
-+	return tcon;
-+}
-+
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
- 			struct drm_encoder *encoder)
- {
-@@ -777,6 +792,28 @@ static int sun5i_a13_tcon_set_mux(struct sun4i_tcon *tcon,
- 	return regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, val);
- }
- 
-+static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
-+			      struct drm_encoder *encoder)
-+{
-+	struct sun4i_tcon *tcon0 = sun4i_get_first_tcon(encoder->dev);
-+	u32 shift;
-+
-+	switch (encoder->encoder_type) {
-+	case DRM_MODE_ENCODER_TMDS:
-+		/* HDMI */
-+		shift = 8;
-+		break;
-+	default:
-+		/* TODO A31 has MIPI DSI but A31s does not */
-+		return -EINVAL;
-+	}
-+
-+	regmap_update_bits(tcon0->regs, SUN4I_TCON_MUX_CTRL_REG,
-+			   0x3 << shift, tcon->id << shift);
-+
-+	return 0;
-+}
-+
- static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
- 	.has_unknown_mux	= true,
- 	.has_channel_1		= true,
-@@ -786,6 +823,7 @@ static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
- static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
- 	.has_channel_1		= true,
- 	.needs_de_be_mux	= true,
-+	.set_mux		= sun6i_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
--- 
-2.14.2
+Thanks for testing.
 
+Regards
+
+Ludovic
