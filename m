@@ -1,92 +1,64 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 05/13] drm/sun4i: hdmi: create a regmap for later use
-Date: Tue, 26 Sep 2017 14:59:11 +0800
-Message-Id: <20170926065919.24446-6-wens@csie.org>
-In-Reply-To: <20170926065919.24446-1-wens@csie.org>
-References: <20170926065919.24446-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from www381.your-server.de ([78.46.137.84]:57334 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750782AbdIEJcz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Sep 2017 05:32:55 -0400
+From: Lars-Peter Clausen <lars@metafoo.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH 2/2] clk: axi-clkgen: Round closest in round_rate() and recalc_rate()
+Date: Tue,  5 Sep 2017 11:32:41 +0200
+Message-Id: <20170905093241.18582-2-lars@metafoo.de>
+In-Reply-To: <20170905093241.18582-1-lars@metafoo.de>
+References: <20170905093241.18582-1-lars@metafoo.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The HDMI driver is written with readl/writel I/O to the registers.
-However, to support the A31 variant, which has a different layout
-for the DDC registers, it was recommended to use regfields to have
-a cleaner implementation. To use regfields, we need to create an
-underlying regmap.
+To minimize the rounding error round to the closest integer when
+calculating the result in the recalc_rate() and set_rate() callbacks.
 
-This patch only adds the regmap. It does not convert the existing
-driver accesses to use regmap.
+Also in order to improve precision multiply first and then divide.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi.h     |  1 +
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 15 +++++++++++++++
- 2 files changed, 16 insertions(+)
+ drivers/clk/clk-axi-clkgen.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index 1457750988da..b95512ec8eb6 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -163,6 +163,7 @@ struct sun4i_hdmi {
- 	struct device		*dev;
- 
- 	void __iomem		*base;
-+	struct regmap		*regmap;
- 
- 	/* Parent clocks */
- 	struct clk		*bus_clk;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 3cf1a6932fac..5ab811cda00e 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -22,6 +22,7 @@
- #include <linux/iopoll.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
- 
- #include "sun4i_backend.h"
- #include "sun4i_crtc.h"
-@@ -267,6 +268,13 @@ static const struct cec_pin_ops sun4i_hdmi_cec_pin_ops = {
- };
- #endif
- 
-+static const struct regmap_config sun4i_hdmi_regmap_config = {
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+	.max_register	= 0x580,
-+};
-+
- static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 			   void *data)
+diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+index 95a6e9834392..48d11f2598e8 100644
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -302,13 +302,17 @@ static long axi_clkgen_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long *parent_rate)
  {
-@@ -321,6 +329,13 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 		goto err_disable_mod_clk;
- 	}
+ 	unsigned int d, m, dout;
++	unsigned long long tmp;
  
-+	hdmi->regmap = devm_regmap_init_mmio(dev, hdmi->base,
-+					     &sun4i_hdmi_regmap_config);
-+	if (IS_ERR(hdmi->regmap)) {
-+		dev_err(dev, "Couldn't create HDMI encoder regmap\n");
-+		return PTR_ERR(hdmi->regmap);
-+	}
+ 	axi_clkgen_calc_params(*parent_rate, rate, &d, &m, &dout);
+ 
+ 	if (d == 0 || dout == 0 || m == 0)
+ 		return -EINVAL;
+ 
+-	return *parent_rate / d * m / dout;
++	tmp = (unsigned long long)*parent_rate * m;
++	tmp = DIV_ROUND_CLOSEST_ULL(tmp, dout * d);
 +
- 	ret = sun4i_tmds_create(hdmi);
- 	if (ret) {
- 		dev_err(dev, "Couldn't create the TMDS clock\n");
++	return min_t(unsigned long long, tmp, LONG_MAX);
+ }
+ 
+ static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
+@@ -344,8 +348,8 @@ static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
+ 	if (d == 0 || dout == 0)
+ 		return 0;
+ 
+-	tmp = (unsigned long long)(parent_rate / d) * m;
+-	do_div(tmp, dout);
++	tmp = (unsigned long long)parent_rate * m;
++	tmp = DIV_ROUND_CLOSEST_ULL(tmp, dout * d);
+ 
+ 	return min_t(unsigned long long, tmp, ULONG_MAX);
+ }
 -- 
-2.14.1
+2.11.0
+
