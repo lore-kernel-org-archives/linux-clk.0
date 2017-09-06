@@ -1,389 +1,118 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v4 09/10] clk: add clk_rate_exclusive api
-Date: Sun, 24 Sep 2017 22:00:29 +0200
-Message-Id: <20170924200030.6227-10-jbrunet@baylibre.com>
-In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
-References: <20170924200030.6227-1-jbrunet@baylibre.com>
+Return-Path: <Alexey.Brodkin@synopsys.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "robh@kernel.org" <robh@kernel.org>,
+	Vineet Gupta <Vineet.Gupta1@synopsys.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-snps-arc@lists.infradead.org"
+	<linux-snps-arc@lists.infradead.org>
+Subject: Re: Setting CPU clock frequency on early boot
+Date: Wed, 6 Sep 2017 13:51:22 +0000
+Message-ID: <1504705881.3829.19.camel@synopsys.com>
+References: <1504625867.32565.34.camel@synopsys.com>
+	 <CAL_JsqJ7c-raBnb0U+hL+hka7zN3XosX0pU1Sswoq16nbRFb+g@mail.gmail.com>
+	 <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com>
+In-Reply-To: <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Using clock rate protection, we can now provide a way for clock consumer
-to claim exclusive control over the rate of a producer
-
-So far, rate change operations have been a "last write wins" affair. This
-changes allows drivers to explicitly protect against this behavior, if
-required.
-
-Of course, if exclusivity over a producer is claimed more than once, the
-rate is effectively locked as exclusivity cannot be preempted
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c   | 167 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h |  57 ++++++++++++++++++
- 2 files changed, 224 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f990ef127a83..cbfff541ec8a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -85,6 +85,7 @@ struct clk {
- 	const char *con_id;
- 	unsigned long min_rate;
- 	unsigned long max_rate;
-+	unsigned int exclusive_count;
- 	struct hlist_node clks_node;
- };
- 
-@@ -512,6 +513,45 @@ static int clk_core_rate_nuke_protect(struct clk_core *core)
- 	return ret;
- }
- 
-+/**
-+ * clk_rate_exclusive_put - release exclusivity over clock rate control
-+ * @clk: the clk over which the exclusivity is released
-+ *
-+ * clk_rate_exclusive_put() completes a critical section during which a clock
-+ * consumer cannot tolerate any other consumer making any operation on the
-+ * clock which could result in a rate change or rate glitch. Exclusive clocks
-+ * cannot have their rate changed, either directly or indirectly due to changes
-+ * further up the parent chain of clocks. As a result, clocks up parent chain
-+ * also get under exclusive control of the calling consumer.
-+ *
-+ * If exlusivity is claimed more than once on clock, even by the same consumer,
-+ * the rate effectively gets locked as exclusivity can't be preempted.
-+ *
-+ * Calls to clk_rate_exclusive_put() must be balanced with calls to
-+ * clk_rate_exclusive_get(). Calls to this function may sleep, and do not return
-+ * error status.
-+ */
-+void clk_rate_exclusive_put(struct clk *clk)
-+{
-+	if (!clk)
-+		return;
-+
-+	clk_prepare_lock();
-+
-+	/*
-+	 * if there is something wrong with this consumer protect count, stop
-+	 * here before messing with the provider
-+	 */
-+	if (WARN_ON(clk->exclusive_count <= 0))
-+		goto out;
-+
-+	clk_core_rate_unprotect(clk->core);
-+	clk->exclusive_count--;
-+out:
-+	clk_prepare_unlock();
-+}
-+EXPORT_SYMBOL_GPL(clk_rate_exclusive_put);
-+
- static void clk_core_rate_protect(struct clk_core *core)
- {
- 	lockdep_assert_held(&prepare_lock);
-@@ -539,6 +579,36 @@ static void clk_core_rate_restore_protect(struct clk_core *core, int count)
- 	core->protect_count = count;
- }
- 
-+/**
-+ * clk_rate_exclusive_get - get exclusivity over the clk rate control
-+ * @clk: the clk over which the exclusity of rate control is requested
-+ *
-+ * clk_rate_exlusive_get() begins a critical section during which a clock
-+ * consumer cannot tolerate any other consumer making any operation on the
-+ * clock which could result in a rate change or rate glitch. Exclusive clocks
-+ * cannot have their rate changed, either directly or indirectly due to changes
-+ * further up the parent chain of clocks. As a result, clocks up parent chain
-+ * also get under exclusive control of the calling consumer.
-+ *
-+ * If exlusivity is claimed more than once on clock, even by the same consumer,
-+ * the rate effectively gets locked as exclusivity can't be preempted.
-+ *
-+ * Calls to clk_rate_exclusive_get() should be balanced with calls to
-+ * clk_rate_exclusive_put(). Calls to this function may sleep, and do not
-+ * return error status.
-+ */
-+void clk_rate_exclusive_get(struct clk *clk)
-+{
-+	if (!clk)
-+		return;
-+
-+	clk_prepare_lock();
-+	clk_core_rate_protect(clk->core);
-+	clk->exclusive_count++;
-+	clk_prepare_unlock();
-+}
-+EXPORT_SYMBOL_GPL(clk_rate_exclusive_get);
-+
- static void clk_core_unprepare(struct clk_core *core)
- {
- 	lockdep_assert_held(&prepare_lock);
-@@ -929,6 +999,12 @@ static int clk_core_determine_round_nolock(struct clk_core *core,
- 	if (!core)
- 		return 0;
- 
-+	/*
-+	 * At this point, core protection will be disabled if
-+	 * - if the provider is not protected at all
-+	 * - if the calling consumer is the only one which has exclusivity
-+	 *   over the provider
-+	 */
- 	if (clk_core_rate_is_protected(core)) {
- 		req->rate = core->rate;
- 	} else if (core->ops->determine_rate) {
-@@ -1045,10 +1121,17 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
- 
- 	clk_prepare_lock();
- 
-+	if (clk->exclusive_count)
-+		clk_core_rate_unprotect(clk->core);
-+
- 	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
- 	req.rate = rate;
- 
- 	ret = clk_core_round_rate_nolock(clk->core, &req);
-+
-+	if (clk->exclusive_count)
-+		clk_core_rate_protect(clk->core);
-+
- 	clk_prepare_unlock();
- 
- 	if (ret)
-@@ -1769,8 +1852,14 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
- 	/* prevent racing with updates to the clock topology */
- 	clk_prepare_lock();
- 
-+	if (clk->exclusive_count)
-+		clk_core_rate_unprotect(clk->core);
-+
- 	ret = clk_core_set_rate_nolock(clk->core, rate);
- 
-+	if (clk->exclusive_count)
-+		clk_core_rate_protect(clk->core);
-+
- 	clk_prepare_unlock();
- 
- 	return ret;
-@@ -1778,6 +1867,50 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
- EXPORT_SYMBOL_GPL(clk_set_rate);
- 
- /**
-+ * clk_set_rate_exclusive - specify a new rate get exclusive control
-+ * @clk: the clk whose rate is being changed
-+ * @rate: the new rate for clk
-+ *
-+ * This is a combination of clk_set_rate() and clk_rate_exclusive_get()
-+ * within a critical section
-+ *
-+ * This can be used initially to ensure that at least 1 consumer is
-+ * statisfied when several consumers are competing for exclusivity over the
-+ * same clock provider.
-+ *
-+ * The exclusivity is not applied if setting the rate failed.
-+ *
-+ * Returns 0 on success, -EERROR otherwise.
-+ */
-+int clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
-+{
-+	int ret;
-+
-+	if (!clk)
-+		return 0;
-+
-+	/* prevent racing with updates to the clock topology */
-+	clk_prepare_lock();
-+
-+	/*
-+	 * The temporary protection removal is not here, on purpose
-+	 * This function is meant to be used instead of clk_rate_protect,
-+	 * so before the consumer code path protect the clock provider
-+	 */
-+
-+	ret = clk_core_set_rate_nolock(clk->core, rate);
-+	if (!ret) {
-+		clk_core_rate_protect(clk->core);
-+		clk->exclusive_count++;
-+	}
-+
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
-+
-+/**
-  * clk_set_rate_range - set a rate range for a clock source
-  * @clk: clock source
-  * @min: desired minimum clock rate in Hz, inclusive
-@@ -1801,12 +1934,18 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 
- 	clk_prepare_lock();
- 
-+	if (clk->exclusive_count)
-+		clk_core_rate_unprotect(clk->core);
-+
- 	if (min != clk->min_rate || max != clk->max_rate) {
- 		clk->min_rate = min;
- 		clk->max_rate = max;
- 		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
- 	}
- 
-+	if (clk->exclusive_count)
-+		clk_core_rate_protect(clk->core);
-+
- 	clk_prepare_unlock();
- 
- 	return ret;
-@@ -2010,8 +2149,16 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- 		return 0;
- 
- 	clk_prepare_lock();
-+
-+	if (clk->exclusive_count)
-+		clk_core_rate_unprotect(clk->core);
-+
- 	ret = clk_core_set_parent_nolock(clk->core,
- 					 parent ? parent->core : NULL);
-+
-+	if (clk->exclusive_count)
-+		clk_core_rate_protect(clk->core);
-+
- 	clk_prepare_unlock();
- 
- 	return ret;
-@@ -2073,7 +2220,15 @@ int clk_set_phase(struct clk *clk, int degrees)
- 		degrees += 360;
- 
- 	clk_prepare_lock();
-+
-+	if (clk->exclusive_count)
-+		clk_core_rate_unprotect(clk->core);
-+
- 	ret = clk_core_set_phase_nolock(clk->core, degrees);
-+
-+	if (clk->exclusive_count)
-+		clk_core_rate_protect(clk->core);
-+
- 	clk_prepare_unlock();
- 
- 	return ret;
-@@ -3086,6 +3241,18 @@ void __clk_put(struct clk *clk)
- 
- 	clk_prepare_lock();
- 
-+	/*
-+	 * Before calling clk_put, all calls to clk_rate_exclusive_get() from a
-+	 * given user should be balanced with calls to clk_rate_exclusive_put()
-+	 * and by that same consumer
-+	 */
-+	if (WARN_ON(clk->exclusive_count)) {
-+		/* We voiced our concern, let's sanitize the situation */
-+		clk->core->protect_count -= (clk->exclusive_count - 1);
-+		clk_core_rate_unprotect(clk->core);
-+		clk->exclusive_count = 0;
-+	}
-+
- 	hlist_del(&clk->clks_node);
- 	if (clk->min_rate > clk->core->req_rate ||
- 	    clk->max_rate < clk->core->req_rate)
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 12c96d94d1fa..fdababf80420 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -331,6 +331,36 @@ struct clk *devm_clk_get(struct device *dev, const char *id);
-  */
- struct clk *devm_get_clk_from_child(struct device *dev,
- 				    struct device_node *np, const char *con_id);
-+/**
-+ * clk_rate_exclusive_get - get exclusivity over the rate control of a
-+ *                          producer
-+ * @clk: clock source
-+ *
-+ * This function allows drivers to get exclusive control over the rate of a
-+ * provider. It prevents any other consumer to execute, even indirectly,
-+ * opereation which could alter the rate of the provider or cause glitches
-+ *
-+ * If exlusivity is claimed more than once on clock, even by the same driver,
-+ * the rate effectively gets locked as exclusivity can't be preempted.
-+ *
-+ * Must not be called from within atomic context.
-+ */
-+void clk_rate_exclusive_get(struct clk *clk);
-+
-+/**
-+ * clk_rate_exclusive_put - release exclusivity over the rate control of a
-+ *                          producer
-+ * @clk: clock source
-+ *
-+ * This function allows drivers to release the exclusivity it previously got
-+ * from clk_rate_exclusive_get()
-+ *
-+ * The caller must balance the number of clk_rate_exclusive_get() and
-+ * clk_rate_exclusive_put() calls.
-+ *
-+ * Must not be called from within atomic context.
-+ */
-+void clk_rate_exclusive_put(struct clk *clk);
- 
- /**
-  * clk_enable - inform the system when the clock source should be running.
-@@ -473,6 +503,23 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
- int clk_set_rate(struct clk *clk, unsigned long rate);
- 
- /**
-+ * clk_set_rate_exclusive- set the clock rate and claim exclusivity over
-+ *                         clock source
-+ * @clk: clock source
-+ * @rate: desired clock rate in Hz
-+ *
-+ * This helper function allows drivers to atomically set the rate of a producer
-+ * and claim exclusivity over the rate control of the producer.
-+ *
-+ * It is essentially a combination of clk_set_rate() and
-+ * clk_rate_exclusite_get(). Caller must balance this call with a call to
-+ * clk_rate_exclusive_put()
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+int clk_set_rate_exclusive(struct clk *clk, unsigned long rate);
-+
-+/**
-  * clk_has_parent - check if a clock is a possible parent for another
-  * @clk: clock source
-  * @parent: parent clock source
-@@ -583,6 +630,11 @@ static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
- 
- static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
- 
-+
-+static inline void clk_exclusive_get(struct clk *clk) {}
-+
-+static inline void clk_exclusive_put(struct clk *clk) {}
-+
- static inline int clk_enable(struct clk *clk)
- {
- 	return 0;
-@@ -609,6 +661,11 @@ static inline int clk_set_rate(struct clk *clk, unsigned long rate)
- 	return 0;
- }
- 
-+static inline int clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
-+{
-+	return 0;
-+}
-+
- static inline long clk_round_rate(struct clk *clk, unsigned long rate)
- {
- 	return 0;
--- 
-2.13.5
+SGkgVmluZWV0LCBSb2IsDQoNCk9uIFR1ZSwgMjAxNy0wOS0wNSBhdCAxNjo0MCAtMDcwMCwgVmlu
+ZWV0IEd1cHRhIHdyb3RlOg0KPiBPbiAwOS8wNS8yMDE3IDAzOjA0IFBNLCBSb2IgSGVycmluZyB3
+cm90ZToNCj4gPiANCj4gPiBPbiBUdWUsIFNlcCA1LCAyMDE3IGF0IDEwOjM3IEFNLCBBbGV4ZXkg
+QnJvZGtpbg0KPiA+IDxBbGV4ZXkuQnJvZGtpbkBzeW5vcHN5cy5jb20+IHdyb3RlOg0KPiA+ID4g
+DQo+ID4gPiBIZWxsbywNCj4gPiA+IA0KPiA+ID4gSSdkIGxpa2UgdG8gZ2V0IHNvbWUgZmVlZGJh
+Y2sgb24gb3VyIGlkZWEgYXMgd2VsbCBhcyBjaGVjaw0KPiA+ID4gaWYgc29tZWJvZHkgZmFjZXMg
+c2ltaWxhciBzaXR1YXRpb25zIGFuZCBpZiBzbyB3aGF0IHdvdWxkIGJlIHRoZSBiZXN0DQo+ID4g
+PiB3YXkgdG8gaW1wbGVtZW50IHNvbWUgZ2VuZXJpYyBzb2x1dGlvbiB0aGF0IHN1aXRzIGV2ZXJ5
+b25lLg0KPiA+ID4gDQo+ID4gPiBTbyB0aGF0J3Mgb3VyIHByb2JsZW06DQo+ID4gPiAxLiBPbiBw
+b3dlci1vbiBoYXJkd2FyZSBtaWdodCBzdGFydCBjbG9ja2luZyBDUFUgd2l0aCBlaXRoZXINCj4g
+PiA+IMKgwqDCoMKgdG9vIGhpZ2ggZnJlcXVlbmN5IChzdWNoIHRoYXQgQ1BVIG1heSBnZXQgc3R1
+Y2sgYXQgc29tZSBwb2ludCkNCj4gPiA+IMKgwqDCoMKgb3IgdG9vIGxvdyBmcmVxdWVuY3kuDQo+
+ID4gPiANCj4gPiA+IMKgwqDCoMKgVGhhdCBhbGwgc291bmRzIHN0dXBpZCBidXQgbGV0IG1lIGVs
+YWJvcmF0ZSBhIGJpdCBoZXJlLg0KPiA+ID4gwqDCoMKgwqBJJ20gdGFsa2luZyBhYm91dCBGUEdB
+LWJhc2VkIGRldmJvYXJkcyBmaXJtd2FyZSBmb3Igd2hpY2gNCj4gPiA+IMKgwqDCoMKgKGhlcmUg
+SSBtZWFuIGp1c3QgaW1hZ2UgbG9hZGVkIGluIEZQR0Egd2l0aCBDUFUgaW1wbGVtZW50YXRpb24N
+Cj4gPiA+IMKgwqDCoMKgYnV0IG5vdCBzb21lIHNvZnR3YXJlIHlldCkgbWlnaHQgbm90IGJlIHN0
+YWJsZSBvciBiZSBldmVuIGV4cGVyaW1lbnRhbC4NCj4gPiA+IA0KPiA+ID4gwqDCoMKgwqBGb3Ig
+ZXhhbXBsZSB3ZSBtYXkgZGVhbCB3aXRoIGR1YWwtY29yZSBvciBxdWFkLWNvcmUgZGVzaWducy4N
+Cj4gPiA+IMKgwqDCoMKgRm9ybWVyIG1pZ2h0IGJlIE9LIHJ1bm5pbmcgQDEwME1IeiBhbmQgbGF0
+dGVyIGlzIG9ubHkgdXNhYmxlDQo+ID4gPiDCoMKgwqDCoEA3NU1IeiBhbmQgbG93ZXIuIFRoZSBz
+aW1wbGVzdCBzb2x1dGlvbiBtaWdodCBiZSB0byB1c2Ugc29tZSBzYWZlDQo+ID4gPiDCoMKgwqDC
+oHZhbHVlIGJlZm9yZSBzb21ldGhpbmcgbGlrZSBDUFVmcmVxIGtpY2tzIGluLiBCdXQgd2UgZG9u
+J3QgeWV0IGhhdmUNCj4gPiA+IMKgwqDCoMKgQ1BVZnJlcSBmb3IgQVJDICh3ZSBkbyBwbGFuIHRv
+IGdldCBpdCB3b3JraW5nIHNvbWV0aW1lIHNvb24pDQo+IA0KPiBCdXQgZXZlbiBpZiB3ZSBoYWQg
+Y3B1ZnJlcSBkcml2ZXIgZ29pbmcgLSBJIGRvbid0IHRoaW5rIGl0IHdvdWxkIGJlIHVzYWJsZSBm
+b3LCoA0KPiBkb2luZyBsYXJnZSBmcmVxIHN3aXRjaGVzLCBzaW5jZSBpbiBjdXJyZW50IGltcGxl
+bWVudGF0aW9ucyBvZiBTb0NzIChvciBmcGdhKSwgdGhlwqANCj4gY2xrL3BsbCBldGMgZHJpdmlu
+ZyBjb3JlIChhbmQgYWxsIHRpbWVycyBldGMpIGFyZSBub3QgZml4ZWQgbGlrZSBzYXkgQVJNLiBB
+bmQgYXPCoA0KPiBkaXNjdXNzZWQgYmVmb3JlIChhbmQgcG9pbnRlZCB0byBieSB0Z2x4KSwgdGlt
+ZXIgc3Vic3lzIGNhbid0IHRvbGVyYXRlIChvbsKgDQo+IHB1cnBvc2UpIHN1Y2ggbGFyZ2UgZHJp
+ZnRzLg0KDQpFc3NlbnRpYWxseSBjcHVmcmVxIG9ubHkgbWFrZXMgc2Vuc2UgZm9yICJjb21wYXRp
+YmxlIiBzeXN0ZW1zIGFuZCB1bmZvcnR1bmF0ZWx5DQptb3N0IG9mIG91ciBjdXJyZW50IGJvYXJk
+cyBhcmUgbm90IGNhcGFibGUgZHVlIHRvIG1pc3NpbmcgY29uc3RhbnQgW2RlY291cGxlZCBmcm9t
+DQpDUFUgZnJlcXVlbmN5XSBjbG9jayBzb3VyY2UuIEJ1dCBsb29raW5nIGZvcndhcmQgd2UgYXJl
+IHBsYW5uaW5nIHRvIGltcHJvdmUgb24gdGhhdA0Kc28gdGhhdCBob3BlZnVsbHkgZXZlbiBvdXIg
+RlBHQS1iYXNlZCBib2FyZHMgd2lsbCBiZSB1c2FibGUgd2l0aCBjcHVmcmVxLg0KDQo+ID4gPiB3
+aGljaA0KPiA+ID4gwqDCoMKgwqBtZWFucyBzaW1wbGUgY2hhbmdlIG9mIENQVSBmcmVxdWVuY3kg
+b25jZSB0aW1lLWtlZXBpbmcgaW5mcmFzdHJ1Y3R1cmUNCj4gPiA+IMKgwqDCoMKgd2FzIGJyb3Vn
+aHQtdXAgaXMgbm90IGFuIG9wdGlvbi4uLiBJLmUuIHdlJ2xsIGVuZCB1cCB3aXRoIHRoZSBzeXN0
+ZW0gcnVubmluZw0KPiA+ID4gwqDCoMKgwqBtdWNoIHNsb3dlciBjb21wYXJlZCB3aGF0IGNvdWxk
+IGhhdmUgYmVlbiBwb3NzaWJsZS4NCj4gPiA+IA0KPiA+ID4gMi4gVXAgdW50aWwgbm93IHdlIHVz
+ZWQgdG8gZG8gZGlydHkgaGFja3MgaW4gZWFybHkgcGxhdGZvcm0gaW5pdCBjb2RlLg0KPiA+ID4g
+wqDCoMKgwqBOYW1lbHkgKHNlZSBheHMxMDNfZWFybHlfaW5pdCgpIGluIGFyY2gvYXJjL3BsYXQt
+YXhzMTB4L2F4czEweC5jKToNCj4gPiA+IMKgwqDCoMKgwqAxKSBSZWFkIENQVSdzICJjbG9jay1m
+cmVxdWVuY3kiIGZyb20gLmR0YiAocmVtZW1iZXIgd2UncmUgb24gdmVyeSBlYXJseQ0KPiA+ID4g
+wqDCoMKgwqDCoMKgwqDCoGJvb3Qgc3RhZ2Ugc3RpbGwgc28gbm8gZXhwYW5kZWQgRGV2VHJlZSB5
+ZXQgZXhpc3RzKS4NCj4gPiA+IMKgwqDCoMKgwqAyKSBDaGVjayBob3cgbWFueSBjb3JlcyB3ZSBo
+YXZlIGFuZCB3aGljaCBmcmVxIGlzIHVzYWJsZQ0KPiA+ID4gwqDCoMKgwqDCoDMpIFVwZGF0ZSBQ
+TEwgc2V0dGluZ3MgcmlnaHQgaW4gcGxhY2UgaWYgbmV3IGZyZXEgIT0gZXhpc3RpbmcgaW4gUExM
+Lg0KPiA+ID4gDQo+ID4gPiDCoMKgwqDCoEV2ZW4gdGhvdWdoIGl0IGlzIHByb3ZlbiB0byB3b3Jr
+IGJ1dCB3aXRoIG1vcmUgcGxhdGZvcm1zIGluIHRoZSBwaXBlbGluZQ0KPiA+ID4gwqDCoMKgwqB3
+ZSdsbCBuZWVkIHRvIGNvcHktcGFzdGUgcHJldHR5IG11Y2ggdGhlIHNhbWUgc3R1ZmYgYWNyb3Nz
+IGFsbCBhZmZlY3RlZA0KPiA+ID4gwqDCoMKgwqBwbGF0cy4gV2hpY2ggaXMgbm90IG5pY2UuDQo+
+ID4gPiANCj4gPiA+IMKgwqDCoMKgTW9yZW92ZXIgYmFjayBpbiB0aGUgZGF5IHdlIGRpZG4ndCBo
+YXZlIGEgcHJvcGVyIGNsayBkcml2ZXIgZm9yIENQVSdzIFBMTC4NCj4gPiA+IMKgwqDCoMKgVGh1
+cyBhY3Rpbmcgb24gUExMIHJlZ2lzdGVycyByaWdodCBpbiBwbGFjZSB3YXMgdGhlIG9ubHkgdGhp
+bmcgd2Ugd2VyZSBhYmxlDQo+ID4gPiDCoMKgwqDCoHRvIGRvLiBOb3cgd2l0aCBpbnRyb2R1Y3Rp
+b24gb2Ygbm9ybWFsIGNsayBkcml2ZXINCj4gPiA+IMKgwqDCoMKgKHNlZSBkcml2ZXJzL2Nsay9h
+eHMxMHgvcGxsX2Nsb2NrLmMgaW4gbGludXgtbmV4dCkgd2UnZCBsaWtlIHRvIHV0aWxpemUNCj4g
+PiA+IMKgwqDCoMKgaXQgYW5kIGhhdmUgYSBjbGVhbmVyIGFuZCBtb3JlIHVuaXZlcnNhbCBzb2x1
+dGlvbiB0byB0aGUgcHJvYmxlbS4NCj4gPiA+IA0KPiA+ID4gwqDCoMKgwqBUaGF0J3MgaG93IGl0
+IGNvdWxkIGJlIGRvbmUgLSBodHRwczovL3VybGRlZmVuc2UucHJvb2Zwb2ludC5jb20vdjIvdXJs
+P3U9aHR0cC0zQV9fcGF0Y2h3b3JrLm96bGFicy5vcmdfcGF0Y2hfODAxMjQwXyZkPUR3SUNBZyZj
+PURQTDZfWF82SmtYRg0KPiA+ID4geDdBWFdxQjB0ZyZyPWMxNFlTLWNILQ0KPiA+ID4ga2RoVE9X
+ODlLb3pGaEJ0QkpnczF6WHNjWm9qRVpRMFRIcyZtPXd1VWNjZVk4Q3o1RWhWa2xXTEFnajdSelUz
+cnZwYW51anZRM3FUSkswR3cmcz1ONUlCanFfZUN5T2ZfR1JrWnNrenFHaGN6QlBUYnhMSldfTVVm
+YXVLdnVBJmU9DQo+ID4gPiDCoMKgwqDCoEJhc2ljYWxseSBpbiBhcmNoaXRlY3R1cmUncyB0aW1l
+X2luaXQoKSB3ZSBjaGVjayBpZiB0aGVyZSdzIGV4cGxpY2l0bHkNCj4gPiA+IMKgwqDCoMKgc3Bl
+Y2lmaWVkICJjbG9jay1mcmVxdWVuY3kiIHBhcmFtZXRlciBpbiBjcHUncyBub2RlIGluIERldmlj
+ZSBUcmVlIGFuZA0KPiA+ID4gwqDCoMKgwqBpZiB0aGVyZSdzIG9uZSB3ZSBzZXQgaXQgdmlhIGp1
+c3QgaW5zdGFudGlhdGVkIGNsayBkcml2ZXIuDQo+ID4gVGhlIHBhdGNoIGxvb2tzIGdlbmVyYWxs
+eSBva2F5LiBJJ2QgbW92ZSBhbGwgdGhlIGxvZ2ljIHRvIHRoZSBjbG9jaw0KPiA+IGRyaXZlciB1
+bmxlc3MgcGVyaGFwcyBob3cgdG8gc2V0IHRoZSBjcHUgZnJlcSBpcyBkZWZpbmVkIGJ5IHRoZQ0K
+PiA+IGFyY2hpdGVjdHVyZS4NCg0KWWVhaCwgdGhhdCdzIGFuIGludGVyZXN0aW5nIHF1ZXN0aW9u
+LiBXZSBtYXkgaW5kZWVkIG1vdmUgbW9yZSBzbWFydHMgdG8gdGhlIGNsb2NrIGRyaXZlcg0KYnV0
+Og0KwqAxLiBXZSdsbCBoYXZlIGR1cGxpY2F0ZSBjb2RlIGluIGRpZmZlcmVudCBjbG9jayBkcml2
+ZXJzLiBFdmVuIHRvZGF5IHRoYXQga2luZCBvZiBjbG9jaw0KwqAgwqAgc2V0dXAgaXMgYXBwbGlj
+YWJsZSB0byBBWFMxMHggYW5kIEhTREsgcGxhdGZvcm1zIChhbmQgdGhleSB1c2UgZGlmZmVyZW50
+IGNsb2NrIGRyaXZlcnMpLg0KDQrCoDIuIFByaW50IG91dCBvZiBDUFUgZnJlcXVlbmN5IHdoaWNo
+IGlzIHVzZWQgZHVyaW5nIGJvb3QgcHJvY2VzcyBmb3IgdXMgaXMgaW1wb3J0YW50IGFzIHdlbGwN
+CsKgIMKgIGVzcGVjaWFsbHkgZHVyaW5nIGJyaW5nLXVwIG9mIG5ldyBIVy4NCg0KwqAzLiBJZiB0
+aGVyZSdzIG5vIGRlZGljYXRlZCAiY2xvY2stZnJlcXVlbmN5IiBwYXJhbWV0ZXIgaW4gQ1BVIG5v
+ZGUgd2Ugd29uJ3QNCsKgIMKgIGNoYW5nZSBhbnl0aGluZyBzbyB0aGF0IG5vbi1hZmZlY3RlZCBw
+bGF0Zm9ybXMgd2lsbCBsaXZlIGFzIHRoZXkgdXNlZCB0by4NCg0KVGhhdCBzYWlkIElNSE8gcHJv
+cG9zZWQgaW1wbGVtZW50YXRpb24gaXMgd2hhdCB3ZSB3YW50IHRvIGtlcCBmb3Igbm93Lg0KDQo+
+IEFsc28gbm90ZSB0aGF0IHRoaXMgY29kZSBpcyB1c2luZyBhIG5ldyAvIGFkaG9jIERUIGJpbmRp
+bmcgY3B1LWZyZXEgaW4gY291IG5vZGUgdG/CoA0KPiBkbyB0aGUgb3ZlcnJpZGUgLSBpcyB0aGF0
+IGFjY2VwdGFibGUgPw0KDQpJIHRoaW5rIHdlJ2xsIHN3aXRjaCB0byBtb3JlIGNvbW1vbiAiY2xv
+Y2stZnJlcXVlbmN5IiBpbiB0aGUgbmV4dCByZXNwaW4uDQpJbmRlZWQgImNwdS1mcmVxIiBtaWdo
+dCBiZSBhIGJpdCBtaXNsZWFkaW5nLg0KDQpBbHNvIEZXSVcgb25lIE1JUFMgcGxhdGZvcm0gdXNl
+cyBzb21ldGhpbmcgc2ltaWxhcg0KKGV2ZW4gdGhvdWdoIHRoZWlyIHByb3BlcnR5IG5hbWUgaXMg
+bm90IHN0YW5kYXJkIGJ1dCAibWlwcy1ocHQtZnJlcXVlbmN5IiksDQpzZWXCoGh0dHA6Ly9lbGl4
+aXIuZnJlZS1lbGVjdHJvbnMuY29tL2xpbnV4L2xhdGVzdC9zb3VyY2UvYXJjaC9taXBzL2Jvb3Qv
+ZHRzL2JyY20vYmNtMzM2OC5kdHNpI0wxMA0KaHR0cDovL2VsaXhpci5mcmVlLWVsZWN0cm9ucy5j
+b20vbGludXgvbGF0ZXN0L3NvdXJjZS9hcmNoL21pcHMvYm1pcHMvc2V0dXAuYyNMMTQxLg0KDQot
+QWxleGV5
