@@ -1,102 +1,64 @@
-Return-Path: <romain.izard@mobile-devices.fr>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] clk: ti: dra7xx: Reset the mcasp3_ahclkx_mux clock value
+To: Tero Kristo <t-kristo@ti.com>, <sboyd@codeaurora.org>
+References: <1504694199-32227-1-git-send-email-j-keerthy@ti.com>
+ <26063901-be4f-dbe3-514b-e9a1a8ab3b10@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <tony@atomide.com>
+From: Keerthy <j-keerthy@ti.com>
+Message-ID: <46878cd0-9f7c-dc34-e230-8c4a11bcb096@ti.com>
+Date: Wed, 6 Sep 2017 18:59:46 +0530
 MIME-Version: 1.0
-Sender: romain.izard@mobile-devices.fr
-In-Reply-To: <20170927170811.57830c1f@bbrezillon>
-References: <20170927083555.16580-1-romain.izard.pro@gmail.com>
- <20170927083555.16580-5-romain.izard.pro@gmail.com> <20170927170811.57830c1f@bbrezillon>
-From: Romain Izard <romain.izard.pro@gmail.com>
-Date: Wed, 27 Sep 2017 17:32:10 +0200
-Message-ID: <CAGkQfmOYg6Usyd++KuGqMjDnaWaP77U5jfOL++3nN7PTcAhh9A@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] mtd: nand: atmel: Avoid ECC errors when leaving
- backup mode
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>, Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>, Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-pwm@vger.kernel.org,
-	linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	linux-mtd <linux-mtd@lists.infradead.org>, linux-serial@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <26063901-be4f-dbe3-514b-e9a1a8ab3b10@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-09-27 17:08 GMT+02:00 Boris Brezillon <boris.brezillon@free-electrons.com>:
-> On Wed, 27 Sep 2017 10:35:51 +0200
-> Romain Izard <romain.izard.pro@gmail.com> wrote:
->
->> During backup mode, the contents of all registers will be cleared as the
->> SoC will be completely powered down. For a product that boots on NAND
->> Flash memory, the bootloader will obviously use the related controller
->> to read the Flash and correct any detected error in the memory, before
->> handling back control to the kernel's resuming entry point.
+
+
+On Wednesday 06 September 2017 05:12 PM, Tero Kristo wrote:
+> On 06/09/17 13:36, Keerthy wrote:
+>> Reset the mcasp3_ahclkx_mux to abe_24m_fclk. This is needed
+>> in case of kexec where the reset values might be wiped off.
 >>
->> But it does not clean the NAND controller registers after use and on its
->> side the kernel driver expects the error locator to be powered down and
->> in a clean state. Add a resume hook for the PMECC error locator, and
->> reset its registers.
->>
->> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> 
+> Why not do this in DT with the assigned-clock-xyz properties available?
+
+Works for me. I will send a v2 with your suggested-by.
+
+Thanks,
+Keerthy
+
+> 
+> -Tero
+> 
 >> ---
->> Change in v3:
->> * keep the PMECC disabled when not in use, and use atmel_pmecc_resume to
->>   reset the controller after the bootloader has left it enabled.
+>>   drivers/clk/ti/clk-7xx.c | 9 ++++++++-
+>>   1 file changed, 8 insertions(+), 1 deletion(-)
 >>
->>  drivers/mtd/nand/atmel/nand-controller.c |  3 +++
->>  drivers/mtd/nand/atmel/pmecc.c           | 22 ++++++++++++++--------
->>  drivers/mtd/nand/atmel/pmecc.h           |  1 +
->>  3 files changed, 18 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/mtd/nand/atmel/nand-controller.c b/drivers/mtd/nand/atmel/nand-controller.c
->> index f25eca79f4e5..86c2199380c2 100644
->> --- a/drivers/mtd/nand/atmel/nand-controller.c
->> +++ b/drivers/mtd/nand/atmel/nand-controller.c
->> @@ -2530,6 +2530,9 @@ static __maybe_unused int atmel_nand_controller_resume(struct device *dev)
->>       struct atmel_nand_controller *nc = dev_get_drvdata(dev);
->>       struct atmel_nand *nand;
->>
->> +     if (nand->pmecc)
->> +             atmel_pmecc_resume(nand->pmecc);
+>> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+>> index 9fd6043..2c3a36c 100644
+>> --- a/drivers/clk/ti/clk-7xx.c
+>> +++ b/drivers/clk/ti/clk-7xx.c
+>> @@ -312,7 +312,7 @@
+>>   int __init dra7xx_dt_clk_init(void)
+>>   {
+>>       int rc;
+>> -    struct clk *dpll_ck, *hdcp_ck;
+>> +    struct clk *dpll_ck, *hdcp_ck, *mcasp3_ahclkx_ck, *abe_ck;
+>>         ti_dt_clocks_register(dra7xx_clks);
+>>   @@ -338,5 +338,12 @@ int __init dra7xx_dt_clk_init(void)
+>>       if (rc)
+>>           pr_err("%s: failed to set dss_deshdcp_clk\n", __func__);
+>>   +    mcasp3_ahclkx_ck = clk_get_sys(NULL, "mcasp3_ahclkx_mux");
+>> +    abe_ck = clk_get_sys(NULL, "abe_24m_fclk");
+>> +    rc = clk_set_parent(mcasp3_ahclkx_ck, abe_ck);
+>> +    if (rc)
+>> +        pr_err("%s: failed to set parent for mcasp3_ahclkx_mux\n",
+>> +               __func__);
 >> +
->
-> nand is used uninitialized here, and atmel_pmecc_resume() should be
-> passed a atmel_pmecc object not a atmel_pmecc_user.
->
->         if (nc->pmecc)
->                 atmel_pmecc_resume(nc->pmecc);
->
-And yet I thought I correctly tested this code...
-
-:(
-
->>       list_for_each_entry(nand, &nc->chips, node) {
->>               int i;
+>>       return rc;
+>>   }
 >>
->> diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
->> index 146af8218314..ff09c0f25dd4 100644
->> --- a/drivers/mtd/nand/atmel/pmecc.c
->> +++ b/drivers/mtd/nand/atmel/pmecc.c
->> @@ -765,6 +765,12 @@ void atmel_pmecc_get_generated_eccbytes(struct atmel_pmecc_user *user,
->>  }
->>  EXPORT_SYMBOL_GPL(atmel_pmecc_get_generated_eccbytes);
->>
->> +void atmel_pmecc_reset(struct atmel_pmecc *pmecc)
->> +{
->> +     writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
->> +     writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
->> +}
->
-> It's not used outside of this file, so it should have a static
-> specifier. Anyway, I wonder why you don't expose atmel_pmecc_reset()
-> directly instead of creating this atmel_pmecc_resume() wrapper.
-
-I will fix this...
-
--- 
-Romain Izard
+> 
