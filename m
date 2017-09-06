@@ -1,66 +1,66 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 5/9] mtd: nand: atmel: Report PMECC failures as errors
-Date: Fri, 15 Sep 2017 16:04:07 +0200
-Message-Id: <20170915140411.31716-6-romain.izard.pro@gmail.com>
-In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:45617 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752689AbdIFLm4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2017 07:42:56 -0400
+Subject: Re: [PATCH] clk: ti: dra7xx: Reset the mcasp3_ahclkx_mux clock value
+To: Keerthy <j-keerthy@ti.com>, <sboyd@codeaurora.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <tony@atomide.com>
+References: <1504694199-32227-1-git-send-email-j-keerthy@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <26063901-be4f-dbe3-514b-e9a1a8ab3b10@ti.com>
+Date: Wed, 6 Sep 2017 14:42:31 +0300
+MIME-Version: 1.0
+In-Reply-To: <1504694199-32227-1-git-send-email-j-keerthy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-It is not normal for the PMECC to fail when trying to fix ECC errors.
-Report these cases as errors.
+=EF=BB=BF
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Bu=
+siness ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/mtd/nand/atmel/pmecc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 06/09/17 13:36, Keerthy wrote:
+> Reset the mcasp3_ahclkx_mux to abe_24m_fclk. This is needed
+> in case of kexec where the reset values might be wiped off.
+>=20
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 
-diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-index 8d1208f38025..2a23f1ff945f 100644
---- a/drivers/mtd/nand/atmel/pmecc.c
-+++ b/drivers/mtd/nand/atmel/pmecc.c
-@@ -687,6 +687,8 @@ static int atmel_pmecc_err_location(struct atmel_pmecc_user *user)
- 	 * Number of roots does not match the degree of smu
- 	 * unable to correct error.
- 	 */
-+	dev_err(pmecc->dev,
-+		"PMECC: Impossible to calculate error location.\n");
- 	return -EBADMSG;
- }
- 
-@@ -729,7 +731,7 @@ int atmel_pmecc_correct_sector(struct atmel_pmecc_user *user, int sector,
- 			ptr = ecc + byte - sectorsize;
- 			area = "ECC";
- 		} else {
--			dev_dbg(pmecc->dev,
-+			dev_err(pmecc->dev,
- 				"Invalid errpos value (%d, max is %d)\n",
- 				errpos, (sectorsize + eccbytes) * 8);
- 			return -EINVAL;
--- 
-2.11.0
+Why not do this in DT with the assigned-clock-xyz properties available?
+
+-Tero
+
+> ---
+>   drivers/clk/ti/clk-7xx.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+> index 9fd6043..2c3a36c 100644
+> --- a/drivers/clk/ti/clk-7xx.c
+> +++ b/drivers/clk/ti/clk-7xx.c
+> @@ -312,7 +312,7 @@
+>   int __init dra7xx_dt_clk_init(void)
+>   {
+>   	int rc;
+> -	struct clk *dpll_ck, *hdcp_ck;
+> +	struct clk *dpll_ck, *hdcp_ck, *mcasp3_ahclkx_ck, *abe_ck;
+>  =20
+>   	ti_dt_clocks_register(dra7xx_clks);
+>  =20
+> @@ -338,5 +338,12 @@ int __init dra7xx_dt_clk_init(void)
+>   	if (rc)
+>   		pr_err("%s: failed to set dss_deshdcp_clk\n", __func__);
+>  =20
+> +	mcasp3_ahclkx_ck =3D clk_get_sys(NULL, "mcasp3_ahclkx_mux");
+> +	abe_ck =3D clk_get_sys(NULL, "abe_24m_fclk");
+> +	rc =3D clk_set_parent(mcasp3_ahclkx_ck, abe_ck);
+> +	if (rc)
+> +		pr_err("%s: failed to set parent for mcasp3_ahclkx_mux\n",
+> +		       __func__);
+> +
+>   	return rc;
+>   }
+>=20
+
+
