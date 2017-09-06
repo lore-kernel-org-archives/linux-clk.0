@@ -1,48 +1,55 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs1.siol.net ([213.250.19.134]:43609 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751506AbdITTir (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Sep 2017 15:38:47 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org
-Cc: Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, icenowy@aosc.io,
-        linux-sunxi@googlegroups.com
-Subject: [RFC PATCH 1/7] drm: bridge: Enable polling hpd event in dw_hdmi
-Date: Wed, 20 Sep 2017 21:38:25 +0200
-Message-Id: <20170920193831.20268-2-jernej.skrabec@siol.net>
-In-Reply-To: <20170920193831.20268-1-jernej.skrabec@siol.net>
-References: <20170920193831.20268-1-jernej.skrabec@siol.net>
+Received: from mail-vk0-f44.google.com ([209.85.213.44]:36055 "EHLO
+        mail-vk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752404AbdIFVOz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Sep 2017 17:14:55 -0400
+Received: by mail-vk0-f44.google.com with SMTP id v203so12990865vkv.3
+        for <linux-clk@vger.kernel.org>; Wed, 06 Sep 2017 14:14:55 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+From: Carlo Caione <carlo@endlessm.com>
+Date: Wed, 6 Sep 2017 23:14:54 +0200
+Message-ID: <CAL9uMOGf6vsMfsp4wFX+LNxR_UTiYyWpFWPW7L8nGivLi-0uQg@mail.gmail.com>
+Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the firmware"
+To: Johannes Stezenbach <js@sig21.net>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some custom phys don't support hpd interrupts. Add support for polling
-such events.
+On Wed, Sep 6, 2017 at 10:42 PM, Johannes Stezenbach <js@sig21.net> wrote:
+> Hi,
+>
+> I'm poking around on Asus E200HA, based on Atom x5-Z8300 (Cherrytrail),
+> trying to get S0ix working, atm with gross hacks that are recorded in
+> https://bugzilla.kernel.org/show_bug.cgi?id=193891
+>
+>
+> I found commit d31fd43c0f9a4 "clk: x86: Do not gate clocks enabled by the firmware"
+> prevents S0i3 entry.  Unfortunately the commit message doesn't explain
+> the problem it fixes, nor does it mention the platform.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Just to add on top of Pierre-Louis reply.
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index bf14214fa464..09cb5a3e4c71 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1954,7 +1954,11 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
- 	struct drm_connector *connector = &hdmi->connector;
- 
- 	connector->interlace_allowed = 1;
--	connector->polled = DRM_CONNECTOR_POLL_HPD;
-+	if (hdmi->phy.ops->setup_hpd)
-+		connector->polled = DRM_CONNECTOR_POLL_HPD;
-+	else
-+		connector->polled = DRM_CONNECTOR_POLL_CONNECT |
-+				    DRM_CONNECTOR_POLL_DISCONNECT;
- 
- 	drm_connector_helper_add(connector, &dw_hdmi_connector_helper_funcs);
- 
+The problem it fixes is that one of the PMC clocks enabled by the
+firmware is being gated by the clock framework since no driver is
+claiming it, causing the platform I'm working on to hang at boot. You
+can read the whole discussion about this fix in [0].
+
+Also I will probably send an email tomorrow about this but today
+(coincidentally) I discovered that this fix is not working anymore on
+my platform. This is due to commit a49d25364df ("staging/atomisp: Add
+support for the Intel IPU v2"). I haven't had a chance yet to
+investigated why though.
+
+Cheers,
+
+[0] https://www.spinics.net/lists/platform-driver-x86/msg12092.html
+
 -- 
-2.14.1
-
+Carlo Caione  |  +39.340.80.30.096  |  Endless
