@@ -1,190 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:60947 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751237AbdISEAw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Sep 2017 00:00:52 -0400
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v4 4/9] arm: dts: mt2712: Add clock controller device nodes
-Date: Tue, 19 Sep 2017 12:00:25 +0800
-Message-ID: <1505793630-12590-5-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1505793630-12590-1-git-send-email-weiyi.lu@mediatek.com>
+Return-Path: <Alexey.Brodkin@synopsys.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "robh@kernel.org" <robh@kernel.org>
+CC: "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
+	"Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: Re: Setting CPU clock frequency on early boot
+Date: Wed, 6 Sep 2017 16:22:18 +0000
+Message-ID: <1504714938.3829.40.camel@synopsys.com>
+References: <1504625867.32565.34.camel@synopsys.com>
+	 <CAL_JsqJ7c-raBnb0U+hL+hka7zN3XosX0pU1Sswoq16nbRFb+g@mail.gmail.com>
+	 <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com>
+	 <1504705881.3829.19.camel@synopsys.com>
+	 <CAL_Jsq+B74keQ3N=8x6jx1URkLq8fa9gwsc5JAuiV86Wwczi9Q@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+B74keQ3N=8x6jx1URkLq8fa9gwsc5JAuiV86Wwczi9Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock controller nodes for MT2712, include topckgen, infracfg,
-pericfg, mcucfg and apmixedsys. This patch also add six oscillators that
-provide clocks for MT2712.
-
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 115 ++++++++++++++++++++++++++++++
- 1 file changed, 115 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index 57d0396..d2ee3cd 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -5,6 +5,7 @@
-  * SPDX-License-Identifier: (GPL-2.0 OR MIT)
-  */
- 
-+#include <dt-bindings/clock/mt2712-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-@@ -73,6 +74,48 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	clk32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "clk32k";
-+	};
-+
-+	clkfpc: oscillator@2 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <50000000>;
-+		clock-output-names = "clkfpc";
-+	};
-+
-+	clkaud_ext_i_0: oscillator@3 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <6500000>;
-+		clock-output-names = "clkaud_ext_i_0";
-+	};
-+
-+	clkaud_ext_i_1: oscillator@4 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <196608000>;
-+		clock-output-names = "clkaud_ext_i_1";
-+	};
-+
-+	clkaud_ext_i_2: oscillator@5 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <180633600>;
-+		clock-output-names = "clkaud_ext_i_2";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupt-parent = <&gic>;
-@@ -86,6 +129,24 @@
- 			      (GIC_CPU_MASK_RAW(0x13) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
-+	topckgen: syscon@10000000 {
-+		compatible = "mediatek,mt2712-topckgen", "syscon";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infracfg: syscon@10001000 {
-+		compatible = "mediatek,mt2712-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	pericfg: syscon@10003000 {
-+		compatible = "mediatek,mt2712-pericfg", "syscon";
-+		reg = <0 0x10003000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	uart5: serial@1000f000 {
- 		compatible = "mediatek,mt2712-uart",
- 			     "mediatek,mt6577-uart";
-@@ -96,6 +157,18 @@
- 		status = "disabled";
- 	};
- 
-+	apmixedsys: syscon@10209000 {
-+		compatible = "mediatek,mt2712-apmixedsys", "syscon";
-+		reg = <0 0x10209000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	mcucfg: syscon@10220000 {
-+		compatible = "mediatek,mt2712-mcucfg", "syscon";
-+		reg = <0 0x10220000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	sysirq: interrupt-controller@10220a80 {
- 		compatible = "mediatek,mt2712-sysirq",
- 			     "mediatek,mt6577-sysirq";
-@@ -167,5 +240,47 @@
- 		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
-+
-+	mfgcfg: syscon@13000000 {
-+		compatible = "mediatek,mt2712-mfgcfg", "syscon";
-+		reg = <0 0x13000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	mmsys: syscon@14000000 {
-+		compatible = "mediatek,mt2712-mmsys", "syscon";
-+		reg = <0 0x14000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	imgsys: syscon@15000000 {
-+		compatible = "mediatek,mt2712-imgsys", "syscon";
-+		reg = <0 0x15000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	bdpsys: syscon@15010000 {
-+		compatible = "mediatek,mt2712-bdpsys", "syscon";
-+		reg = <0 0x15010000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vdecsys: syscon@16000000 {
-+		compatible = "mediatek,mt2712-vdecsys", "syscon";
-+		reg = <0 0x16000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vencsys: syscon@18000000 {
-+		compatible = "mediatek,mt2712-vencsys", "syscon";
-+		reg = <0 0x18000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	jpgdecsys: syscon@19000000 {
-+		compatible = "mediatek,mt2712-jpgdecsys", "syscon";
-+		reg = <0 0x19000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
- };
- 
--- 
-1.9.1
-
+SGkgUm9iLA0KDQpPbiBXZWQsIDIwMTctMDktMDYgYXQgMTA6MjUgLTA1MDAsIFJvYiBIZXJyaW5n
+IHdyb3RlOg0KPiBPbiBXZWQsIFNlcCA2LCAyMDE3IGF0IDg6NTEgQU0sIEFsZXhleSBCcm9ka2lu
+DQo+IDxBbGV4ZXkuQnJvZGtpbkBzeW5vcHN5cy5jb20+IHdyb3RlOg0KPiA+IA0KPiA+IEhpIFZp
+bmVldCwgUm9iLA0KPiA+IA0KPiA+IE9uIFR1ZSwgMjAxNy0wOS0wNSBhdCAxNjo0MCAtMDcwMCwg
+VmluZWV0IEd1cHRhIHdyb3RlOg0KPiA+ID4gDQo+ID4gPiBPbiAwOS8wNS8yMDE3IDAzOjA0IFBN
+LCBSb2IgSGVycmluZyB3cm90ZToNCj4gPiA+ID4gDQo+ID4gPiA+IA0KPiA+ID4gPiBPbiBUdWUs
+IFNlcCA1LCAyMDE3IGF0IDEwOjM3IEFNLCBBbGV4ZXkgQnJvZGtpbg0KPiA+ID4gPiA8QWxleGV5
+LkJyb2RraW5Ac3lub3BzeXMuY29tPiB3cm90ZToNCg0KW3NuaXBdDQoNCj4gPiBZZWFoLCB0aGF0
+J3MgYW4gaW50ZXJlc3RpbmcgcXVlc3Rpb24uIFdlIG1heSBpbmRlZWQgbW92ZSBtb3JlIHNtYXJ0
+cyB0byB0aGUgY2xvY2sgZHJpdmVyDQo+ID4gYnV0Og0KPiA+IMKgMS4gV2UnbGwgaGF2ZSBkdXBs
+aWNhdGUgY29kZSBpbiBkaWZmZXJlbnQgY2xvY2sgZHJpdmVycy4gRXZlbiB0b2RheSB0aGF0IGtp
+bmQgb2YgY2xvY2sNCj4gPiDCoMKgwqDCoHNldHVwIGlzIGFwcGxpY2FibGUgdG8gQVhTMTB4IGFu
+ZCBIU0RLIHBsYXRmb3JtcyAoYW5kIHRoZXkgdXNlIGRpZmZlcmVudCBjbG9jayBkcml2ZXJzKS4N
+Cj4gDQo+IE5vLCB5b3UgY291bGQgcHJvdmlkZSBhIGNvbW1vbiwgc2hhcmVkIGZ1bmN0aW9uIHRv
+IGNhbGwuIFRoZW4gZWFjaA0KPiBwbGF0Zm9ybSBjYW4gb3B0LWluLiBJZiB5b3UgY2FuIG1ha2Ug
+c29tZXRoaW5nIHRoYXQgYXBwbGllcyB0byBldmVyeQ0KPiBzaW5nbGUgcGxhdGZvcm0gbm93IG9y
+IGluIHRoZSBmdXR1cmUsIHRoZW4gSSdkIHB1dCBpdCBpbiBhcmNoLiBJZiB5b3UNCj4gaGF2ZSBw
+bGFucyB0byBkZWNvdXBsZSB0aGUgdGltZXIgYW5kIGNwdSBjbG9ja3MsIHRoZW4gc291bmRzIGxp
+a2UgeW91DQo+IGNhbid0Lg0KDQpSaWdodCBzbyB3ZSdsbCBpbXBsZW1lbnQgYSBmdW5jdGlvbiB3
+aGljaCBpcyBjYWxsZWQgYnkgYSBwbGF0Zm9ybSBpZiByZXF1aXJlZC4NClRoYXQgd2F5IHdlIGVz
+Y2FwZSBjb3B5LXBhc3Rpbmcgd2hpbGUga2VlcGluZyBlbm91Z2ggZmxleGliaWxpdHkgZm9yIGN1
+cnJlbnQNCmFuZCBmdXR1cmUgcGxhdGZvcm1zLg0KDQo+IElNTywgaWYgaXQncyBub3QgcGFydCBv
+ZiB0aGUgZGVmaW5lZCBDUFUgYXJjaGl0ZWN0dXJlLCB0aGVuIGRvbid0IHB1dA0KPiBpdCBpbiBh
+cmNoLy4gVGhhdCdzIGhvdyB3ZSBlbmQgdXAgd2l0aCBtdWx0aXBsZSBjb3BpZXMgb2YgdGhlIHNh
+bWUNCj4gdGhpbmcgZG9uZSBhcmJpdHJhcmlseSBkaWZmZXJlbnQgd2F5cyBiZWNhdXNlIGZldyBw
+ZW9wbGUgbG9vayBhY3Jvc3MNCj4gYXJjaGl0ZWN0dXJlcy4NCg0KU28gZG8geW91IHByb3Bvc2Ug
+dG8gaGF2ZSB0aGUgZnVuY3Rpb24gW3RoYXQgcmVhZHMgImNsb2NrLWZyZXF1ZW5jeSIgZnJvbSBz
+YXkNCkNQVSBub2RlIGFuZCBwYXNzZXMgaXRzIHZhbHVlIHRvIENQVSdzIHBhcmVudCBjbG9jayBk
+cml2ZXJdIGluIGdlbmVyaWMNCltpLmUuIGFyY2hpdGVjdHVyZSBhZ25vc3RpY10gY29kZSBzb21l
+d2hlcmUgaW4gImluaXQvbWFpbi5jIj8NCg0KPiA+IA0KPiA+IMKgMi4gUHJpbnQgb3V0IG9mIENQ
+VSBmcmVxdWVuY3kgd2hpY2ggaXMgdXNlZCBkdXJpbmcgYm9vdCBwcm9jZXNzIGZvciB1cyBpcyBp
+bXBvcnRhbnQgYXMgd2VsbA0KPiA+IMKgwqDCoMKgZXNwZWNpYWxseSBkdXJpbmcgYnJpbmctdXAg
+b2YgbmV3IEhXLg0KPiA+IA0KPiA+IMKgMy4gSWYgdGhlcmUncyBubyBkZWRpY2F0ZWQgImNsb2Nr
+LWZyZXF1ZW5jeSIgcGFyYW1ldGVyIGluIENQVSBub2RlIHdlIHdvbid0DQo+ID4gwqDCoMKgwqBj
+aGFuZ2UgYW55dGhpbmcgc28gdGhhdCBub24tYWZmZWN0ZWQgcGxhdGZvcm1zIHdpbGwgbGl2ZSBh
+cyB0aGV5IHVzZWQgdG8uDQo+ID4gDQo+ID4gVGhhdCBzYWlkIElNSE8gcHJvcG9zZWQgaW1wbGVt
+ZW50YXRpb24gaXMgd2hhdCB3ZSB3YW50IHRvIGtlcCBmb3Igbm93Lg0KPiA+IA0KPiA+ID4gDQo+
+ID4gPiBBbHNvIG5vdGUgdGhhdCB0aGlzIGNvZGUgaXMgdXNpbmcgYSBuZXcgLyBhZGhvYyBEVCBi
+aW5kaW5nIGNwdS1mcmVxIGluIGNvdSBub2RlIHRvDQo+ID4gPiBkbyB0aGUgb3ZlcnJpZGUgLSBp
+cyB0aGF0IGFjY2VwdGFibGUgPw0KPiANCj4gTm8sIEkgbWVhbnQgdG8gcG9pbnQgdGhhdCBvdXQu
+DQoNClNvcnJ5LCBidXQgZm9yIG1lIGl0J3Mgbm90IGNsZWFyIHdoYXQgZGlkIHlvdSBtZWFuIGhl
+cmUuDQpDYXJlIHRvIGVsYWJvcmF0ZSBhIGJpdCBtb3JlPw0KDQo+ID4gSSB0aGluayB3ZSdsbCBz
+d2l0Y2ggdG8gbW9yZSBjb21tb24gImNsb2NrLWZyZXF1ZW5jeSIgaW4gdGhlIG5leHQgcmVzcGlu
+Lg0KPiA+IEluZGVlZCAiY3B1LWZyZXEiIG1pZ2h0IGJlIGEgYml0IG1pc2xlYWRpbmcuDQo+IA0K
+PiBJZGVhbGx5LCB5b3UnZCB1c2UgdGhlIGNsb2NrIGJpbmRpbmcgZXZlbnR1YWxseS4NCg0KQWdh
+aW4gSSdtIHByb2JhYmx5IG1pc3Npbmcgc29tZXRoaW5nIDopDQoNCkkgbWVhbnQgd2Ugd2lsbCBo
+YXZlIGJvdGggY2xvY2sgcGhhbmRsZSBhbmQgImNsb2NrLWZyZXF1ZW5jeSIgYXQgdGhlIHNhbWUg
+dGltZS4NClNvbWV0aGluZyBsaWtlIHRoaXM6DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoJY3B1cyB7DQoJCSNhZGRyZXNzLWNl
+bGxzID0gPDE+Ow0KCQkjc2l6ZS1jZWxscyA9IDwwPjsNCg0KCQljcHVAMCB7DQoJCQlkZXZpY2Vf
+dHlwZSA9ICJjcHUiOw0KCQkJY29tcGF0aWJsZSA9ICJzbnBzLGFyY2hzMzgiOw0KCQkJcmVnID0g
+PDA+Ow0KCQkJY2xvY2tzID0gPCZjb3JlX2Nsaz47DQoJCQljbG9jay1mcmVxdWVuY3kgPSA8MTAw
+MDAwMDAwPjsgwqA8LS0gVGhhdCdzIHdoZXJlIHdlIHdhbnQgdG8gc2V0IGRlc2lyZWQgdmFsdWUN
+CgkJfTsNCgkuLi4NCgl9DQoNCgljb3JlX2NsazogY29yZS1jbGtAODAgew0KCQljb21wYXRpYmxl
+ID0gInNucHMsYXhzMTB4LWFyYy1wbGwtY2xvY2siOw0KCQlyZWcgPSA8MHg4MCAweDEwPiwgPDB4
+MTAwIDB4MTA+Ow0KCQkjY2xvY2stY2VsbHMgPSA8MD47DQoJCWNsb2NrcyA9IDwmaW5wdXRfY2xr
+PjsNCgl9Ow0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQ0KDQpPciBhbHRlcm5hdGl2ZWx5IHdlIG1heSBtb3ZlICJjbG9jay1mcmVx
+dWVuY3kiIHJpZ2h0IHRvIHRoZSBjbG9jaydzIG5vZGUgYW5kIGhhdmUNCml0IGxpa2UgdGhhdDoN
+Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0NCgljb3JlX2NsazrCoGNvcmUtY2xrQDgwwqB7DQoJCWNvbXBhdGlibGUgPSAic25wcyxh
+eHMxMHgtYXJjLXBsbC1jbG9jayI7DQoJCXJlZyA9IDwweDgwIDB4MTA+LCA8MHgxMDAgMHgxMD47
+DQoJCQ0KI2Nsb2NrLWNlbGxzID0gPDA+Ow0KCQljbG9ja3MgPSA8JmlucHV0X2Nsaz47DQoJCWNs
+b2NrLWZyZXF1ZW5jeSA9IDwxMDAwMDAwMDA+OyDCoDwtLSBUaGF0J3Mgd2hlcmUgd2Ugd2FudCB0
+byBzZXQgZGVzaXJlZCB2YWx1ZQ0KCQ0KfTsNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KLUFsZXhleQ==
