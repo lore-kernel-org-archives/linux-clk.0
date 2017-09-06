@@ -1,216 +1,142 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <1506340924.30138.26.camel@aj.id.au>
-References: <20170921042641.7326-1-joel@jms.id.au> <20170921042641.7326-3-joel@jms.id.au>
- <1506340924.30138.26.camel@aj.id.au>
-From: Joel Stanley <joel@jms.id.au>
-Date: Wed, 27 Sep 2017 16:13:07 +1000
-Message-ID: <CACPK8XcmwypP9HfjKKKYk55589Z0GGSa8mc=Uswzu6Dg01KwLA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: aspeed: Register core clocks
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
+In-Reply-To: <1504714938.3829.40.camel@synopsys.com>
+References: <1504625867.32565.34.camel@synopsys.com> <CAL_JsqJ7c-raBnb0U+hL+hka7zN3XosX0pU1Sswoq16nbRFb+g@mail.gmail.com>
+ <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com> <1504705881.3829.19.camel@synopsys.com>
+ <CAL_Jsq+B74keQ3N=8x6jx1URkLq8fa9gwsc5JAuiV86Wwczi9Q@mail.gmail.com> <1504714938.3829.40.camel@synopsys.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 6 Sep 2017 14:20:04 -0500
+Message-ID: <CAL_Jsq+oBVeZ9FrvCZsVWyQjTiFw=mujf-p64oLEEo4XYkdmVQ@mail.gmail.com>
+Subject: Re: Setting CPU clock frequency on early boot
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
+	"Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 25, 2017 at 10:02 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
-
->> +static const struct clk_div_table ast2400_div_table[] = {
->> +     { 0x0, 2 },
->> +     { 0x1, 4 },
->> +     { 0x2, 6 },
->> +     { 0x3, 8 },
->> +     { 0x4, 10 },
->> +     { 0x5, 12 },
->> +     { 0x6, 14 },
->> +     { 0x7, 16 },
->> +     { 0 }
->> +};
->> +
->> +static const struct clk_div_table ast2500_div_table[] = {
->> +     { 0x0, 4 },
->> +     { 0x1, 8 },
->> +     { 0x2, 12 },
->> +     { 0x3, 16 },
->> +     { 0x4, 20 },
->> +     { 0x5, 24 },
->> +     { 0x6, 28 },
->> +     { 0x7, 32 },
->> +     { 0 }
->> +};
+On Wed, Sep 6, 2017 at 11:22 AM, Alexey Brodkin
+<Alexey.Brodkin@synopsys.com> wrote:
+> Hi Rob,
 >
-> ast2500_div_table is unused?
-
-In this patch, yeah. It gets used in the next one. I defined it next
-to the ast2400_div_table so that it is clear why we need the separate
-ones.
-
->> +static void __init aspeed_ast2400_cc(struct regmap *map)
->> +{
->> +     struct clk_hw *hw;
->> +     u32 val, div, mult;
->> +
->> +     /*
->> +      * High-speed PLL clock derived from the crystal. This the CPU clock,
->> +      * and we assume that it is enabled
->> +      */
->> +     regmap_read(map, ASPEED_HPLL_PARAM, &val);
->> +     WARN(val & BIT(18), "clock is strapped not configured");
+> On Wed, 2017-09-06 at 10:25 -0500, Rob Herring wrote:
+>> On Wed, Sep 6, 2017 at 8:51 AM, Alexey Brodkin
+>> <Alexey.Brodkin@synopsys.com> wrote:
+>> >
+>> > Hi Vineet, Rob,
+>> >
+>> > On Tue, 2017-09-05 at 16:40 -0700, Vineet Gupta wrote:
+>> > >
+>> > > On 09/05/2017 03:04 PM, Rob Herring wrote:
+>> > > >
+>> > > >
+>> > > > On Tue, Sep 5, 2017 at 10:37 AM, Alexey Brodkin
+>> > > > <Alexey.Brodkin@synopsys.com> wrote:
 >
-> I don't quite understand the intent of the warning - are we just trying to say
-> that the defaults have been assumed and they may not match reality? It's
-> probably not a great idea to not strap the board properly, but you could get
-> away with it for a given configuration (Numerator = 20, H-PLL Output Divider
-> set, H-PLL denominator = 1)
-
-The vlaue of the PLL can be configured in two different ways; one is
-via the strapping registers and the other is configured via the
-ASPEED_HPLL_PARAM.
-
-I added this warning as the driver does not support reading the value
-of hpll from the strapping.
-
+> [snip]
 >
->> +     if (val & BIT(17)) {
->> +             /* Pass through mode */
->> +             mult = div = 1;
->> +     } else {
->> +             /* F = 24Mhz * (2-OD) * [(N + 2) / (D + 1)] */
->> +             u32 n = (val >> 5) & 0x3f;
->> +             u32 od = (val >> 4) & 0x1;
->> +             u32 d = val & 0xf;
->> +
->> +             mult = (2 - od) * (n + 2);
->> +             div = d + 1;
->> +     }
->> +     hw = clk_hw_register_fixed_factor(NULL, "hpll", "clkin", 0, mult, div);
->> +     aspeed_clk_data->hws[ASPEED_CLK_HPLL] = hw;
->> +
->> +     /*
->> +      * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
->> +      *   00: Select CPU:AHB = 1:1
->> +      *   01: Select CPU:AHB = 2:1
->> +      *   10: Select CPU:AHB = 4:1
->> +      *   11: Select CPU:AHB = 3:1
->> +      */
->> +     regmap_read(map, ASPEED_STRAP, &val);
->> +     val = (val >> 10) & 0x3;
->
-> How do the calculations below line up with the comment above? I can't see the
-> connection and I feel like I've missed something.
->
-
-The code should read like this:
-
-if (div == 3)
-  div = 4;
-else if (div == 3)
-  div = 4;
-
-Fixed in v3.
-
->
->> +     hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
->> +     aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
->> +
->> +     /* APB clock clock selection register SCU08 (aka PCLK) */
->> +     hw = clk_hw_register_divider_table(NULL, "apb", "hpll", 0,
->> +                     scu_base + ASPEED_CLK_SELECTION, 23, 3, 0,
->> +                     ast2400_div_table,
->> +                     &aspeed_clk_lock);
->> +     aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
->> +}
->> +
->> +static void __init aspeed_ast2500_cc(struct regmap *map)
->> +{
->> +     struct clk_hw *hw;
->> +     u32 val, div;
->> +
->> +     /*
->> +      * High-speed PLL clock derived from the crystal. This the CPU clock,
->> +      * and we assume that it is enabled
->> +      */
->> +     regmap_read(map, ASPEED_HPLL_PARAM, &val);
->> +     aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_calc_pll("hpll", val);
->
-> Why did you extract the aspeed_calc_pll() implementation for the ast2500 but
-> not the ast2400?
-
-It was used more than once for the ast2500, but only once for the
-ast2400. That's changed it v3 so I broke it out again.
-
->> +
->> +     /* Strap bits 11:9 define the AXI/AHB clock frequency ratio (aka HCLK)*/
->> +     regmap_read(map, ASPEED_STRAP, &val);
->> +     val = (val >> 9) & 0x7;
->> +     WARN_ON(val == 0);
->
-> Maybe WARN() would be better here to explain what's going wrong (zero is an
-> undefined value)?
-
-Done.
-
->
->> +     div = 2 * (val + 1);
->> +     hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, div);
->> +     aspeed_clk_data->hws[ASPEED_CLK_AHB] = hw;
->> +
->> +     /* APB clock clock selection register SCU08 (aka PCLK) */
->> +     /* TODO: this is wrong! */
->
-> Why is this wrong?
-
-I think I must have been looking at the ast2400 data sheet and gotten
-confused. It looks good to me. I removed the comment in v3.
-
->
->> +     regmap_read(map, ASPEED_CLK_SELECTION, &val);
->> +     val = (val >> 23) & 0x7;
->> +     div = 4 * (val + 1);
->> +     hw = clk_hw_register_fixed_factor(NULL, "apb", "hpll", 0, 1, div);
->> +     aspeed_clk_data->hws[ASPEED_CLK_APB] = hw;
->> +};
->> +
->> +
->>  static void __init aspeed_cc_init(struct device_node *np)
->>  {
->>       struct regmap *map;
->> +     unsigned long freq;
->> +     struct clk_hw *hw;
->>       u32 val;
->>       int ret;
->>       int i;
->> @@ -153,6 +284,21 @@ static void __init aspeed_cc_init(struct device_node *np)
->>               return;
->>       }
+>> > Yeah, that's an interesting question. We may indeed move more smarts to the clock driver
+>> > but:
+>> >  1. We'll have duplicate code in different clock drivers. Even today that kind of clock
+>> >     setup is applicable to AXS10x and HSDK platforms (and they use different clock drivers).
 >>
->> +     /* CLKIN is the crystal oscillator, 24 or 25MHz selected by strapping */
->> +     if (val & BIT(23))
->> +             freq = 25000000;
->> +     else
->> +             freq = 24000000;
+>> No, you could provide a common, shared function to call. Then each
+>> platform can opt-in. If you can make something that applies to every
+>> single platform now or in the future, then I'd put it in arch. If you
+>> have plans to decouple the timer and cpu clocks, then sounds like you
+>> can't.
 >
-> This isn't true on the AST2400, where CLKIN could be 24 OR 48MHz when BIT(23) is
-> clear. You need to test BIT(18) as well on the AST2400 to disambiguate.
+> Right so we'll implement a function which is called by a platform if required.
+> That way we escape copy-pasting while keeping enough flexibility for current
+> and future platforms.
+>
+>> IMO, if it's not part of the defined CPU architecture, then don't put
+>> it in arch/. That's how we end up with multiple copies of the same
+>> thing done arbitrarily different ways because few people look across
+>> architectures.
+>
+> So do you propose to have the function [that reads "clock-frequency" from say
+> CPU node and passes its value to CPU's parent clock driver] in generic
+> [i.e. architecture agnostic] code somewhere in "init/main.c"?
 
-Fixed. I moved the clkin calcs into the soc specific functions.
+No, just like you said above and have the platform's clock driver
+initialize frequencies.
 
+I haven't seen anyone else want such a thing as generally the
+bootloader should initialize things to something reasonable.
+
+>> >  2. Print out of CPU frequency which is used during boot process for us is important as well
+>> >     especially during bring-up of new HW.
+>> >
+>> >  3. If there's no dedicated "clock-frequency" parameter in CPU node we won't
+>> >     change anything so that non-affected platforms will live as they used to.
+>> >
+>> > That said IMHO proposed implementation is what we want to kep for now.
+>> >
+>> > >
+>> > > Also note that this code is using a new / adhoc DT binding cpu-freq in cou node to
+>> > > do the override - is that acceptable ?
+>>
+>> No, I meant to point that out.
 >
->> +     hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
->> +     pr_debug("clkin @%lu MHz\n", freq / 1000000);
->> +
->> +     if (of_device_is_compatible(np, "aspeed,ast2400-scu"))
->> +             aspeed_ast2400_cc(map);
->> +     else if (of_device_is_compatible(np, "aspeed,ast2500-scu"))
->> +             aspeed_ast2500_cc(map);
->> +     else
->> +             pr_err("unknown platform, failed to add clocks\n");
+> Sorry, but for me it's not clear what did you mean here.
+> Care to elaborate a bit more?
+
+I noticed the same thing and meant to highlight that in my first
+reply. Use clock-frequency, don't invent something new.
+
+>> > I think we'll switch to more common "clock-frequency" in the next respin.
+>> > Indeed "cpu-freq" might be a bit misleading.
+>>
+>> Ideally, you'd use the clock binding eventually.
 >
-> I'm not confident that "borrowing" the SCU compatible like this is entirely in
-> the spirit of its MFD nature, but maybe others can chime in.
+> Again I'm probably missing something :)
+
+"clock-frequency" property and the clock bindings (i.e. clocks =
+<&phandle>) are generally mutually exclusive at least within clock
+consumer side. There's the assigned-clocks binding which provides the
+ability to set both parent clocks and frequency.
+
+> I meant we will have both clock phandle and "clock-frequency" at the same time.
+> Something like this:
+> -------------------------------->8---------------------------
+>         cpus {
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+>
+>                 cpu@0 {
+>                         device_type = "cpu";
+>                         compatible = "snps,archs38";
+>                         reg = <0>;
+>                         clocks = <&core_clk>;
+>                         clock-frequency = <100000000>;  <-- That's where we want to set desired value
+>                 };
+>         ...
+>         }
+>
+>         core_clk: core-clk@80 {
+>                 compatible = "snps,axs10x-arc-pll-clock";
+>                 reg = <0x80 0x10>, <0x100 0x10>;
+>                 #clock-cells = <0>;
+>                 clocks = <&input_clk>;
+>         };
+> -------------------------------->8---------------------------
+>
+> Or alternatively we may move "clock-frequency" right to the clock's node and have
+> it like that:
+> -------------------------------->8---------------------------
+>         core_clk: core-clk@80 {
+>                 compatible = "snps,axs10x-arc-pll-clock";
+>                 reg = <0x80 0x10>, <0x100 0x10>;
+>
+> #clock-cells = <0>;
+>                 clocks = <&input_clk>;
+>                 clock-frequency = <100000000>;  <-- That's where we want to set desired value
+
+I think this is how it should be done if you use clock-frequency prop.
+This is inline with how fixed-clock binding is done.
+
+Rob
