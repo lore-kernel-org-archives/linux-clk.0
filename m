@@ -1,146 +1,236 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 00/13] drm/sun4i: hdmi: Support HDMI controller on A31
-Date: Tue, 26 Sep 2017 14:59:06 +0800
-Message-Id: <20170926065919.24446-1-wens@csie.org>
+Return-Path: <Ludovic.Desroches@microchip.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: <boris.brezillon@free-electrons.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@free-electrons.com>, <inguin@gmx.de>,
+	<linux-kernel@vger.kernel.org>, Ludovic Desroches
+	<ludovic.desroches@microchip.com>
+Subject: [PATCH v3] clk: at91: utmi: set the mainck rate
+Date: Wed, 6 Sep 2017 11:51:59 +0200
+Message-ID: <20170906095159.13295-1-ludovic.desroches@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: ludovic.desroches@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+By default, it is assumed that the UTMI clock is generated from a 12 MHz
+reference clock (MAINCK). If it's not the case, the FREQ field of the
+SFR_UTMICKTRIM has to be updated to generate the UTMI clock in the
+proper way.
 
-This is v2 of my A31 HDMI support series. As it's been some time
-since the first version and I've rebased my series a couple times
-to merge newer changes done by others, the changelog might not be
-complete.
+The UTMI clock has a fixed rate of 480 MHz. In fact, there is no
+multiplier we can configure. The multiplier is managed internally,
+depending on the reference clock frequency, to achieve the target of
+480 MHz.
 
-Changes since v1:
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
 
-    - Core changes to sun4i-drm to support two display pipelines
-      have been merged into drm-misc and thus dropped from this
-      version
+Hi,
 
-    - Reworked DDC variant support onto new exposed I2C interface bits.
+As suggested by Ingo, I also look for atmel,sama5d3-sfr. I keep it simple by
+looking for atmel,sama5d3-sfr first, and if it fails  then atmel,sama5d2-sfr.
 
-    - Reworked DDC variant support to use regmap_fields.
+If in the future, we would have to look for additional compatible strings,
+adding new compatible strings for the utmi-clk should be a better solution.
 
-    - Patches to add variant support to various (TMDS, DDC, HDMI
-      controller) sub-blocks have been merged into one patch.
+Changes:
+- v3: look also for atmel,sama5d3-sfr
+- v2: move SFR configuration to prepare function
 
-This series adds support for the HDMI controller found on Allwinner
-A31/A31s SoCs. It builds upon Maxime's work that added support for
-the HDMI controller on the Allwinner A10s SoC.
+ drivers/clk/at91/clk-utmi.c  | 95 +++++++++++++++++++++++++++++++++++++-------
+ include/soc/at91/atmel-sfr.h |  2 +
+ 2 files changed, 83 insertions(+), 14 deletions(-)
 
-The HDMI controllers in the older generation Allwinner SoCs is very
-similar. The A10/A10s/A20 all have the same hardware block, with the
-A10 having slightly different initial configuration values. The A31's
-variant splits out the DDC parent clock, has different formulas for
-the DDC and TMDS clocks, and a different register layout for the DDC
-block. Also, it does not expose the CEC pins outside of the SoC, which
-is unfortunate.
-
-Patch 1 exports the 2x outputs of the two video PLLs. These feed the
-TMDS clock directly.
-
-Patch 2 renames the A31 CCU's DDC clock, so that it doesn't conflict
-with the DDC clock in the HDMI block.
-
-Patch 3 adds support for the TCON demuxing feature on the A31. This is
-needed if the user wants to output through HDMI from the second display
-pipeline.
-
-Patch 4 adds proper error path cleanup to the HDMI driver.
-
-Patch 5 adds a regmap for the HDMI driver, to be used in a subsequent
-patch.
-
-Patch 6 allows the HDMI TMDS clock to use the second PLL as its parent,
-in case the first PLL is driving an incompatible dot clock.
-
-Patch 7 adds the A31 HDMI controller variant to the device tree binding.
-
-Patch 8 adds an iopoll-like polling macro for regmap_field. This is used
-in the next patch within the DDC part to poll for reset and I/O
-completion.
-
-Patch 9 adds support for different variants of the HDMI controller
-hardware, with the differences mentioned in the beginning of this
-letter.
-
-Patch 10 adds defines for the A31 specific DDC register offsets.
-
-Patch 11 adds support for the A31's HDMI controller variant.
-
-Patch 12 adds a device node for the HDMI controller on the A31.
-
-Patch 13 enable HDMI video output on three boards that I have.
-
-
-I also had simultaneous output on both display pipelines on the SinA31s,
-one with an LCD panel and the other using HDMI. After boot, both screens
-showed a proper console. The HDMI screen had higher resolution, so the
-console was limited to the upper left corner.
-
-Note that this series does not deal with conflicting pixel clocks.
-
-Assuming everyone is happy with the patches, I propose the following:
-
-    1. We sunxi maintainers will take the clk and dts patches through
-       our tree with minimal but proper cross references.
-
-    2. Mark can either take the regmap patch on an immutable branch,
-       which we then merge into drm-misc before applying the drm/sun4i
-       patches, or give his Ack for us to merge that patch through
-       drm-misc.
-
-
-Regards
-ChenYu
-
-Chen-Yu Tsai (13):
-  clk: sunxi-ng: sun6i: Export video PLLs
-  clk: sunxi-ng: sun6i: Rename HDMI DDC clock to avoid name collision
-  drm/sun4i: tcon: Add support for demuxing TCON output on A31
-  drm/sun4i: hdmi: Disable clks in bind function error path and unbind
-    function
-  drm/sun4i: hdmi: create a regmap for later use
-  drm/sun4i: hdmi: Allow using second PLL as TMDS clk parent
-  dt-bindings: display: sun4i: Add binding for A31 HDMI controller
-  regmap: add iopoll-like polling macro for regmap_field
-  drm/sun4i: hdmi: Add support for controller hardware variants
-  drm/sun4i: hdmi: Add A31 specific DDC register definitions
-  drm/sun4i: hdmi: Add support for A31's HDMI controller
-  ARM: dts: sun6i: Add device node for HDMI controller
-  ARM: dts: sun6i: Enable HDMI support on some A31/A31s devices
-
- .../bindings/display/sunxi/sun4i-drm.txt           |   3 +
- arch/arm/boot/dts/sun6i-a31-hummingbird.dts        |  21 ++
- arch/arm/boot/dts/sun6i-a31.dtsi                   |  55 +++++
- arch/arm/boot/dts/sun6i-a31s-primo81.dts           |  25 +++
- arch/arm/boot/dts/sun6i-a31s-sina31s.dts           |  25 +++
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c               |   3 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.h               |   8 +-
- drivers/gpu/drm/sun4i/sun4i_hdmi.h                 | 107 ++++++++++
- drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c         |  38 +++-
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c             | 204 +++++++++++++++---
- drivers/gpu/drm/sun4i/sun4i_hdmi_i2c.c             | 227 +++++++++++++++------
- drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c        |  68 +++---
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  61 ++++++
- include/dt-bindings/clock/sun6i-a31-ccu.h          |   4 +
- include/linux/regmap.h                             |  39 ++++
- 15 files changed, 760 insertions(+), 128 deletions(-)
-
+diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+index aadabd9d1e2b..cd8d689138ff 100644
+--- a/drivers/clk/at91/clk-utmi.c
++++ b/drivers/clk/at91/clk-utmi.c
+@@ -14,14 +14,20 @@
+ #include <linux/of.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
++#include <soc/at91/atmel-sfr.h>
+ 
+ #include "pmc.h"
+ 
+-#define UTMI_FIXED_MUL		40
++/*
++ * The purpose of this clock is to generate a 480 MHz signal. A different
++ * rate can't be configured.
++ */
++#define UTMI_RATE	480000000
+ 
+ struct clk_utmi {
+ 	struct clk_hw hw;
+-	struct regmap *regmap;
++	struct regmap *regmap_pmc;
++	struct regmap *regmap_sfr;
+ };
+ 
+ #define to_clk_utmi(hw) container_of(hw, struct clk_utmi, hw)
+@@ -37,13 +43,54 @@ static inline bool clk_utmi_ready(struct regmap *regmap)
+ 
+ static int clk_utmi_prepare(struct clk_hw *hw)
+ {
++	struct clk_hw *hw_parent;
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 	unsigned int uckr = AT91_PMC_UPLLEN | AT91_PMC_UPLLCOUNT |
+ 			    AT91_PMC_BIASEN;
++	unsigned int utmi_ref_clk_freq;
++	unsigned long parent_rate;
++
++	/*
++	 * If mainck rate is different from 12 MHz, we have to configure the
++	 * FREQ field of the SFR_UTMICKTRIM register to generate properly
++	 * the utmi clock.
++	 */
++	hw_parent = clk_hw_get_parent(hw);
++	parent_rate = clk_hw_get_rate(hw_parent);
++
++	switch (parent_rate) {
++	case 12000000:
++		utmi_ref_clk_freq = 0;
++		break;
++	case 16000000:
++		utmi_ref_clk_freq = 1;
++		break;
++	case 24000000:
++		utmi_ref_clk_freq = 2;
++		break;
++	/*
++	 * Not supported on SAMA5D2 but it's not an issue since MAINCK
++	 * maximum value is 24 MHz.
++	 */
++	case 48000000:
++		utmi_ref_clk_freq = 3;
++		break;
++	default:
++		pr_err("UTMICK: unsupported mainck rate\n");
++		return -EINVAL;
++	}
+ 
+-	regmap_update_bits(utmi->regmap, AT91_CKGR_UCKR, uckr, uckr);
++	if (utmi->regmap_sfr) {
++		regmap_update_bits(utmi->regmap_sfr, AT91_SFR_UTMICKTRIM,
++				   AT91_UTMICKTRIM_FREQ, utmi_ref_clk_freq);
++	} else if (utmi_ref_clk_freq) {
++		pr_err("UTMICK: sfr node required\n");
++		return -EINVAL;
++	}
+ 
+-	while (!clk_utmi_ready(utmi->regmap))
++	regmap_update_bits(utmi->regmap_pmc, AT91_CKGR_UCKR, uckr, uckr);
++
++	while (!clk_utmi_ready(utmi->regmap_pmc))
+ 		cpu_relax();
+ 
+ 	return 0;
+@@ -53,21 +100,22 @@ static int clk_utmi_is_prepared(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 
+-	return clk_utmi_ready(utmi->regmap);
++	return clk_utmi_ready(utmi->regmap_pmc);
+ }
+ 
+ static void clk_utmi_unprepare(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 
+-	regmap_update_bits(utmi->regmap, AT91_CKGR_UCKR, AT91_PMC_UPLLEN, 0);
++	regmap_update_bits(utmi->regmap_pmc, AT91_CKGR_UCKR,
++			   AT91_PMC_UPLLEN, 0);
+ }
+ 
+ static unsigned long clk_utmi_recalc_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+ {
+-	/* UTMI clk is a fixed clk multiplier */
+-	return parent_rate * UTMI_FIXED_MUL;
++	/* UTMI clk rate is fixed. */
++	return UTMI_RATE;
+ }
+ 
+ static const struct clk_ops utmi_ops = {
+@@ -78,7 +126,7 @@ static const struct clk_ops utmi_ops = {
+ };
+ 
+ static struct clk_hw * __init
+-at91_clk_register_utmi(struct regmap *regmap,
++at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
+ 		       const char *name, const char *parent_name)
+ {
+ 	struct clk_utmi *utmi;
+@@ -97,7 +145,8 @@ at91_clk_register_utmi(struct regmap *regmap,
+ 	init.flags = CLK_SET_RATE_GATE;
+ 
+ 	utmi->hw.init = &init;
+-	utmi->regmap = regmap;
++	utmi->regmap_pmc = regmap_pmc;
++	utmi->regmap_sfr = regmap_sfr;
+ 
+ 	hw = &utmi->hw;
+ 	ret = clk_hw_register(NULL, &utmi->hw);
+@@ -114,17 +163,35 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
+ 	struct clk_hw *hw;
+ 	const char *parent_name;
+ 	const char *name = np->name;
+-	struct regmap *regmap;
++	struct regmap *regmap_pmc, *regmap_sfr;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
+-	if (IS_ERR(regmap))
++	regmap_pmc = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap_pmc))
+ 		return;
+ 
+-	hw = at91_clk_register_utmi(regmap, name, parent_name);
++	/*
++	 * If the device supports different mainck rates, this value has to be
++	 * set in the UTMI Clock Trimming register.
++	 * - 9x5: mainck supports several rates but it is indicated that a
++	 *   12 MHz is needed in case of USB.
++	 * - sama5d3 and sama5d2: mainck supports several rates. Configuring
++	 *   the FREQ field of the UTMI Clock Trimming register is mandatory.
++	 * - sama5d4: mainck is at 12 MHz.
++	 *
++	 * We only need to retrieve sama5d3 or sama5d2 sfr regmap.
++	 */
++	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d3-sfr");
++	if (IS_ERR(regmap_sfr)) {
++		regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
++		if (IS_ERR(regmap_sfr))
++			regmap_sfr = NULL;
++	}
++
++	hw = at91_clk_register_utmi(regmap_pmc, regmap_sfr, name, parent_name);
+ 	if (IS_ERR(hw))
+ 		return;
+ 
+diff --git a/include/soc/at91/atmel-sfr.h b/include/soc/at91/atmel-sfr.h
+index 506ea8ffda19..482337af06b8 100644
+--- a/include/soc/at91/atmel-sfr.h
++++ b/include/soc/at91/atmel-sfr.h
+@@ -17,6 +17,7 @@
+ /* 0x08 ~ 0x0c: Reserved */
+ #define AT91_SFR_OHCIICR	0x10	/* OHCI INT Configuration Register */
+ #define AT91_SFR_OHCIISR	0x14	/* OHCI INT Status Register */
++#define AT91_SFR_UTMICKTRIM	0x30	/* UTMI Clock Trimming Register */
+ #define AT91_SFR_I2SCLKSEL	0x90	/* I2SC Register */
+ 
+ /* Field definitions */
+@@ -28,5 +29,6 @@
+ 					 AT91_OHCIICR_SUSPEND_B | \
+ 					 AT91_OHCIICR_SUSPEND_C)
+ 
++#define AT91_UTMICKTRIM_FREQ	GENMASK(1, 0)
+ 
+ #endif /* _LINUX_MFD_SYSCON_ATMEL_SFR_H */
 -- 
-2.14.1
+2.12.2
