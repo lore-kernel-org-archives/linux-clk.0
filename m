@@ -1,37 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 15:59:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sergej Sawazki <sergej@taudac.com>
-Cc: mturquette@baylibre.com, sebastian.hesselbarth@gmail.com,
-	rabeeh@solid-run.com, linux@armlinux.org.uk,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/3] clk: si5351: PLL reset fixes
-Message-ID: <20170901225954.GJ21656@codeaurora.org>
-References: <1502547783-24685-1-git-send-email-sergej@taudac.com>
+Return-Path: <inguin@gmx.de>
+Subject: Re: [PATCH v3] clk: at91: utmi: set the mainck rate
+To: Ludovic Desroches <ludovic.desroches@microchip.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: boris.brezillon@free-electrons.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org
+References: <20170906095159.13295-1-ludovic.desroches@microchip.com>
+From: Ingo van Lil <inguin@gmx.de>
+Message-ID: <54f5a2d5-0dd3-e272-12e5-edc91fb2111e@gmx.de>
+Date: Wed, 6 Sep 2017 12:25:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1502547783-24685-1-git-send-email-sergej@taudac.com>
+In-Reply-To: <20170906095159.13295-1-ludovic.desroches@microchip.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/12, Sergej Sawazki wrote:
-> The Si5351 clock generator has up to 8 output clocks and 2 PLLs. In order
-> to get a deterministic phase offset relationship between the output clocks,
-> it is necessary to reset the PLLs is certain scenarios.
-> 
-> This patch-set:
->  * fixes a regression and adds resetting the PLL before enabling the outputs
->  * adds a dt-property for enabling/disabling the PLL reset
->  * adds a debug message for PLL reset (it is helpful during debugging,
->    probably no longer required?)
-> 
-> Based on clk-next.
-> 
-> 
+On 09/06/2017 11:51 AM, Ludovic Desroches wrote:
 
-Please include Russell King on the patches. I'd like Sebastian or
-Russell to review these before merging. For now, I'm going to
-apply the other change from Russell.
+> By default, it is assumed that the UTMI clock is generated from a 12 MHz
+> reference clock (MAINCK). If it's not the case, the FREQ field of the
+> SFR_UTMICKTRIM has to be updated to generate the UTMI clock in the
+> proper way.
+> 
+> The UTMI clock has a fixed rate of 480 MHz. In fact, there is no
+> multiplier we can configure. The multiplier is managed internally,
+> depending on the reference clock frequency, to achieve the target of
+> 480 MHz.
+> 
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Works fine with all my boards. Thanks!
+
+Acked-by: Ingo van Lil <inguin@gmx.de>
+
+Regards,
+Ingo
