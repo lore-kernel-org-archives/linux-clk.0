@@ -1,46 +1,101 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:38782 "EHLO mga03.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:3086 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752163AbdIFVCN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Sep 2017 17:02:13 -0400
-Subject: Re: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
- firmware"
-To: Johannes Stezenbach <js@sig21.net>, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc: Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-References: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+        id S932559AbdIGWT2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Sep 2017 18:19:28 -0400
+Subject: Re: [alsa-devel] [PATCH 6/6] ASoC: Intel: kbl: Enable mclk and ssp
+ sclk early
+To: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+        alsa-devel@alsa-project.org
+Cc: harshapriya.n@intel.com, tiwai@suse.de, mturquette@baylibre.com,
+        sboyd@codeaurora.org, lgirdwood@gmail.com,
+        Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
+        patches.audio@intel.com, broonie@kernel.org,
+        linux-clk@vger.kernel.org
+References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
+ <1504794565-19168-7-git-send-email-subhransu.s.prusty@intel.com>
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <5bb7e3ca-38fc-1184-3bca-f666275c6180@linux.intel.com>
-Date: Wed, 6 Sep 2017 16:02:10 -0500
+Message-ID: <f1f70b1f-7b83-876a-f0ce-0db6d3542f18@linux.intel.com>
+Date: Thu, 7 Sep 2017 17:19:25 -0500
 MIME-Version: 1.0
-In-Reply-To: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+In-Reply-To: <1504794565-19168-7-git-send-email-subhransu.s.prusty@intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 9/6/17 3:42 PM, Johannes Stezenbach wrote:
-> Hi,
-> 
-> I'm poking around on Asus E200HA, based on Atom x5-Z8300 (Cherrytrail),
-> trying to get S0ix working, atm with gross hacks that are recorded in
-> https://bugzilla.kernel.org/show_bug.cgi?id=193891
-> 
-> 
-> I found commit d31fd43c0f9a4 "clk: x86: Do not gate clocks enabled by the firmware"
-> prevents S0i3 entry.  Unfortunately the commit message doesn't explain
-> the problem it fixes, nor does it mention the platform.
-> 
-> How can we fix d31fd43c0f9a4 to not break S0i3?
 
-In the existing audio machine drivers, I only use the clock framework 
-for Baytrail. on Cherrytrail, the pmc_platform_clk3 used for the audio 
-MCLK is actually managed by the BIOS (look for CLK3 in the DSDT) so 
-there is no activity in the drivers, the audio don't even 
-get/prepare/enable the pmc_platform_clk3 so I would guess there is an 
-issue with a non-audio driver or the BIOS. Put differently, it may be so 
-that by allowing the drivers to gate an unused clock we allowed you to 
-enter S0i3 even if the bios didn't enable this mode. I would remove all 
-pmc-clock related stuff and see what happens.
+> +static int platform_clock_control(struct snd_soc_dapm_widget *w,
+> +			struct snd_kcontrol *k, int  event)
+> +{
+> +	struct snd_soc_dapm_context *dapm = w->dapm;
+> +	struct snd_soc_card *card = dapm->card;
+> +	struct kbl_rt5663_private *priv = snd_soc_card_get_drvdata(card);
+> +
+> +	clk_disable_unprepare(priv->mclk);
+> +	clk_disable_unprepare(priv->sclk);
+> +
+> +	return 0;
+> +}
+> +
+>   static const struct snd_soc_dapm_widget kabylake_widgets[] = {
+>   	SND_SOC_DAPM_HP("Headphone Jack", NULL),
+>   	SND_SOC_DAPM_MIC("Headset Mic", NULL),
+> @@ -77,7 +95,8 @@ enum {
+>   	SND_SOC_DAPM_SPK("HDMI1", NULL),
+>   	SND_SOC_DAPM_SPK("HDMI2", NULL),
+>   	SND_SOC_DAPM_SPK("HDMI3", NULL),
+> -
+> +	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
+> +			platform_clock_control, SND_SOC_DAPM_POST_PMD),
+[snip]
+> +static int kabylake_enable_ssp_clks(struct snd_soc_card *card)
+> +{
+> +
+> +	struct kbl_rt5663_private *priv = snd_soc_card_get_drvdata(card);
+> +	int ret;
+> +
+> +	/* Enable MCLK */
+> +	ret = clk_set_rate(priv->mclk, 24000000);
+> +	if (ret < 0) {
+> +		dev_err(card->dev, "Can't set rate for mclk, err: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(priv->mclk);
+> +	if (ret < 0) {
+> +		dev_err(card->dev, "Can't enable mclk, err: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Enable SCLK */
+> +	ret = clk_set_rate(priv->sclk, 3072000);
+> +	if (ret < 0) {
+> +		dev_err(card->dev, "Can't set rate for sclk, err: %d\n", ret);
+> +		clk_disable_unprepare(priv->mclk);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(priv->sclk);
+> +	if (ret < 0) {
+> +		dev_err(card->dev, "Can't enable sclk, err: %d\n", ret);
+> +		clk_disable_unprepare(priv->mclk);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>   static int kabylake_rt5663_hw_params(struct snd_pcm_substream *substream,
+>   	struct snd_pcm_hw_params *params)
+>   {
+>   	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>   	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+> +	struct snd_soc_card *card = rtd->card;
+>   	int ret;
+>   
+> +	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
+> +		ret = kabylake_enable_ssp_clks(card);
+
+Is there a reason why the clocks need to be enabled in the hw_params() 
+instead of platform_clock_control()?
+The code is not symmetrical between enable/disable, is this intended? I 
+remember seeing this in a different context (dialog codec?).
