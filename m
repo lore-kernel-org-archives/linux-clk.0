@@ -1,76 +1,104 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 10/13] drm/sun4i: hdmi: Add A31 specific DDC register definitions
-Date: Tue, 26 Sep 2017 14:59:16 +0800
-Message-Id: <20170926065919.24446-11-wens@csie.org>
-In-Reply-To: <20170926065919.24446-1-wens@csie.org>
-References: <20170926065919.24446-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:25585 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755300AbdIGOrE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Sep 2017 10:47:04 -0400
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+To: alsa-devel@alsa-project.org
+Cc: tiwai@suse.de, broonie@kernel.org, lgirdwood@gmail.com,
+        patches.audio@intel.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux-clk@vger.kernel.org,
+        harshapriya.n@intel.com,
+        Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
+        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+Subject: [PATCH 1/6] ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
+Date: Thu,  7 Sep 2017 19:59:20 +0530
+Message-Id: <1504794565-19168-2-git-send-email-subhransu.s.prusty@intel.com>
+In-Reply-To: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
+References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The DDC block for the HDMI controller is different on the A31.
+From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
 
-This patch adds the register definitions.
+Set dma control ipc can be used to set the M/N divider, enable the clks. It
+takes different payload for different configuration. So modify the
+skl_dsp_set_dma_control API to take the size and node_id as argument.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ sound/soc/intel/skylake/skl-messages.c | 23 ++++++++++++++---------
+ sound/soc/intel/skylake/skl-topology.h |  4 ++--
+ 2 files changed, 16 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index b1124a8f9f05..da4ea9efc6fa 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -153,6 +153,37 @@
+diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
+index 89f70133c8e4..f637829833e6 100644
+--- a/sound/soc/intel/skylake/skl-messages.c
++++ b/sound/soc/intel/skylake/skl-messages.c
+@@ -613,8 +613,10 @@ static void skl_setup_cpr_gateway_cfg(struct skl_sst *ctx,
+ }
  
- #define SUN4I_HDMI_DDC_FIFO_SIZE	16
+ #define DMA_CONTROL_ID 5
++#define DMA_I2S_BLOB_SIZE 21
  
-+/* A31 specific */
-+#define SUN6I_HDMI_DDC_CTRL_REG		0x500
-+#define SUN6I_HDMI_DDC_CTRL_RESET		BIT(31)
-+#define SUN6I_HDMI_DDC_CTRL_START_CMD		BIT(27)
-+#define SUN6I_HDMI_DDC_CTRL_SDA_ENABLE		BIT(6)
-+#define SUN6I_HDMI_DDC_CTRL_SCL_ENABLE		BIT(4)
-+#define SUN6I_HDMI_DDC_CTRL_ENABLE		BIT(0)
-+
-+#define SUN6I_HDMI_DDC_CMD_REG		0x508
-+#define SUN6I_HDMI_DDC_CMD_BYTE_COUNT(count)	((count) << 16)
-+/* command types in lower 3 bits are the same as sun4i */
-+
-+#define SUN6I_HDMI_DDC_ADDR_REG		0x50c
-+#define SUN6I_HDMI_DDC_ADDR_SEGMENT(seg)	(((seg) & 0xff) << 24)
-+#define SUN6I_HDMI_DDC_ADDR_EDDC(addr)		(((addr) & 0xff) << 16)
-+#define SUN6I_HDMI_DDC_ADDR_OFFSET(off)		(((off) & 0xff) << 8)
-+#define SUN6I_HDMI_DDC_ADDR_SLAVE(addr)		(((addr) & 0xff) << 1)
-+
-+#define SUN6I_HDMI_DDC_INT_STATUS_REG	0x514
-+#define SUN6I_HDMI_DDC_INT_STATUS_TIMEOUT	BIT(8)
-+/* lower 8 bits are the same as sun4i */
-+
-+#define SUN6I_HDMI_DDC_FIFO_CTRL_REG	0x518
-+#define SUN6I_HDMI_DDC_FIFO_CTRL_CLEAR		BIT(15)
-+/* lower 9 bits are the same as sun4i */
-+
-+#define SUN6I_HDMI_DDC_CLK_REG		0x520
-+/* DDC CLK bit fields are the same, but the formula is not */
-+
-+#define SUN6I_HDMI_DDC_FIFO_DATA_REG	0x580
-+
- enum sun4i_hdmi_pkt_type {
- 	SUN4I_HDMI_PKT_AVI = 2,
- 	SUN4I_HDMI_PKT_END = 15,
+-int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
++int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
++				u32 caps_size, u32 node_id)
+ {
+ 	struct skl_dma_control *dma_ctrl;
+ 	struct skl_ipc_large_config_msg msg = {0};
+@@ -624,24 +626,27 @@ int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
+ 	/*
+ 	 * if blob size zero, then return
+ 	 */
+-	if (mconfig->formats_config.caps_size == 0)
++	if (caps_size == 0)
+ 		return 0;
+ 
+ 	msg.large_param_id = DMA_CONTROL_ID;
+-	msg.param_data_size = sizeof(struct skl_dma_control) +
+-				mconfig->formats_config.caps_size;
++	msg.param_data_size = sizeof(struct skl_dma_control) + caps_size;
+ 
+ 	dma_ctrl = kzalloc(msg.param_data_size, GFP_KERNEL);
+ 	if (dma_ctrl == NULL)
+ 		return -ENOMEM;
+ 
+-	dma_ctrl->node_id = skl_get_node_id(ctx, mconfig);
++	dma_ctrl->node_id = node_id;
+ 
+-	/* size in dwords */
+-	dma_ctrl->config_length = mconfig->formats_config.caps_size / 4;
++	/*
++	 * NHLT blob may contain additional configs along with i2s blob.
++	 * firmware expects only the i2s blob size as the config_length.
++	 * So fix to i2s blob size.
++	 * size in dwords.
++	 */
++	dma_ctrl->config_length = DMA_I2S_BLOB_SIZE;
+ 
+-	memcpy(dma_ctrl->config_data, mconfig->formats_config.caps,
+-				mconfig->formats_config.caps_size);
++	memcpy(dma_ctrl->config_data, caps, caps_size);
+ 
+ 	err = skl_ipc_set_large_config(&ctx->ipc, &msg, (u32 *)dma_ctrl);
+ 
+diff --git a/sound/soc/intel/skylake/skl-topology.h b/sound/soc/intel/skylake/skl-topology.h
+index 2717db92036b..e11cc1fc0e43 100644
+--- a/sound/soc/intel/skylake/skl-topology.h
++++ b/sound/soc/intel/skylake/skl-topology.h
+@@ -455,8 +455,8 @@ static inline struct skl *get_skl_ctx(struct device *dev)
+ 
+ int skl_tplg_be_update_params(struct snd_soc_dai *dai,
+ 	struct skl_pipe_params *params);
+-int skl_dsp_set_dma_control(struct skl_sst *ctx,
+-		struct skl_module_cfg *mconfig);
++int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
++			u32 caps_size, u32 node_id);
+ void skl_tplg_set_be_dmic_config(struct snd_soc_dai *dai,
+ 	struct skl_pipe_params *params, int stream);
+ int skl_tplg_init(struct snd_soc_platform *platform,
 -- 
-2.14.1
+1.9.1
+
