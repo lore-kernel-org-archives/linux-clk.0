@@ -1,49 +1,70 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: Delete an error message for a failed
- memory allocation in exynos_register_cpu_clock()
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo
-	Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <cffa4c0c-8b69-bac7-7845-a7a7fee6d898@samsung.com>
-Date: Wed, 27 Sep 2017 16:59:13 +0200
-MIME-version: 1.0
-In-reply-to: <19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20170927135526epcas1p37af4b72a90b97a4b88f9995a26bd0a32@epcas1p3.samsung.com>
-	<19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:25585 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754005AbdIGOrB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Sep 2017 10:47:01 -0400
+From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+To: alsa-devel@alsa-project.org
+Cc: tiwai@suse.de, broonie@kernel.org, lgirdwood@gmail.com,
+        patches.audio@intel.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux-clk@vger.kernel.org,
+        harshapriya.n@intel.com,
+        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+Subject: [PATCH 0/6] ASoC: Intel: Skylake: Add a clk driver to enable ssp clks early
+Date: Thu,  7 Sep 2017 19:59:19 +0530
+Message-Id: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27/2017 03:55 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 27 Sep 2017 15:46:53 +0200
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+For certain platforms we require to start the clocks (mclk/sclk/fs) before
+the stream start. Example: for few systems, codec needs the mclk/sclk/fs to
+be enabled early for a successful clock synchronization and for some
+others, clock need to be enabled at boot and should be ON always.
 
-Applied with summary line shortened to 
-"clk: samsung: Delete a memory allocation error message in clk-cpu.c",
-thanks.
+By sending set_dma_control IPC (with the i2s blobs queried from NHLT),
+these clocks can be enabled early after the firmware is downloaded.
 
-> ---
->  drivers/clk/samsung/clk-cpu.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-> index 6686e8ba61f9..d2c99d8916b8 100644
-> --- a/drivers/clk/samsung/clk-cpu.c
-> +++ b/drivers/clk/samsung/clk-cpu.c
-> @@ -457,8 +457,6 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->  
->  	cpuclk->cfg = kmemdup(cfg, sizeof(*cfg) * num_cfgs, GFP_KERNEL);
->  	if (!cpuclk->cfg) {
-> -		pr_err("%s: could not allocate memory for cpuclk data\n",
-> -				__func__);
->  		ret = -ENOMEM;
->  		goto unregister_clk_nb;
->  	}
+With this series, a virtual clock driver is created which provides
+interface to send the required IPCs from machine driver to enable the
+clocks. NHLT is parsed during probe and the clock information is populated.
+The pointer to blob is cached and sent along with the set_dma_control IPC
+structure during the clk prepare/unprepare callback. Clocks are created for
+a ssp if the nhlt table has endpoint configuration for that particular ssp.
+Skylake driver creates a platform driver with the clock information and
+register the clk ops callback.
+
+kabylake machine driver uses the clock interface to enable the clocks early
+as it is required by the rt5663 driver for clock synchronization.
+
+set_dma_control API can be used with different payload configuration.
+Modify the arguments to take configurable parameters.
+
+Harsha Priya (1):
+  ASoC: Intel: kbl: Enable mclk and ssp sclk early
+
+Jaikrishna Nemallapudi (5):
+  ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
+  ASoC: Intel: Skylake: Parse nhlt to populate clock information
+  ASoC: Intel: Skylake: Prepare DMA control IPC to enable/disable clock
+  ASoC: Intel: Skylake: Register clock device and ops
+  ASoC: Intel: Skylake: Add ssp clock driver
+
+ sound/soc/intel/Kconfig                      |   8 +
+ sound/soc/intel/boards/kbl_rt5663_max98927.c |  94 ++++++++-
+ sound/soc/intel/skylake/Makefile             |   5 +
+ sound/soc/intel/skylake/skl-i2s.h            |  56 ++++++
+ sound/soc/intel/skylake/skl-messages.c       | 109 +++++++++-
+ sound/soc/intel/skylake/skl-nhlt.c           | 148 ++++++++++++++
+ sound/soc/intel/skylake/skl-ssp-clk.c        | 287 +++++++++++++++++++++++++++
+ sound/soc/intel/skylake/skl-ssp-clk.h        | 124 ++++++++++++
+ sound/soc/intel/skylake/skl-topology.h       |   4 +-
+ sound/soc/intel/skylake/skl.c                | 235 ++++++++++++++++++++++
+ sound/soc/intel/skylake/skl.h                |  12 ++
+ 11 files changed, 1070 insertions(+), 12 deletions(-)
+ create mode 100644 sound/soc/intel/skylake/skl-i2s.h
+ create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.c
+ create mode 100644 sound/soc/intel/skylake/skl-ssp-clk.h
+
+-- 
+1.9.1
+
