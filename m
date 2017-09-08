@@ -1,45 +1,153 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170908213758.670316956@cogentembedded.com>
-References: <20170908213758.670316956@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Sep 2017 16:03:16 +0200
-Message-ID: <CAMuHMdVgir5ZriM+tcL6cHPCGcDg_oGtGaygdzGa3zLcO1aFvw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v1 08/10] pwm: atmel-tcb: Support backup mode
+Date: Fri,  8 Sep 2017 17:36:02 +0200
+Message-Id: <20170908153604.28383-9-romain.izard.pro@gmail.com>
+In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add macros usable by the device tree sources to reference the R8A77970
-> CPG core clocks by index. The data come from the table 8.2c of R-Car
-> Series, 3rd Generation User's Manual: Hardware (Rev. 0.55, Jun. 30, 2017).
->
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Save and restore registers for the PWM on suspend and resume, which
+makes hibernation and backup modes possible.
 
-Thank you, will queue in clk-renesas-for-v4.15.
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+---
+ drivers/pwm/pwm-atmel-tcb.c | 63 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 61 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
+index 75db585a2a94..acd3ce8ecf3f 100644
+--- a/drivers/pwm/pwm-atmel-tcb.c
++++ b/drivers/pwm/pwm-atmel-tcb.c
+@@ -37,11 +37,20 @@ struct atmel_tcb_pwm_device {
+ 	unsigned period;		/* PWM period expressed in clk cycles */
+ };
+ 
++struct atmel_tcb_channel {
++	u32 enabled;
++	u32 cmr;
++	u32 ra;
++	u32 rb;
++	u32 rc;
++};
++
+ struct atmel_tcb_pwm_chip {
+ 	struct pwm_chip chip;
+ 	spinlock_t lock;
+ 	struct atmel_tc *tc;
+ 	struct atmel_tcb_pwm_device *pwms[NPWM];
++	struct atmel_tcb_channel bkup[NPWM / 2];
+ };
+ 
+ static inline struct atmel_tcb_pwm_chip *to_tcb_chip(struct pwm_chip *chip)
+@@ -175,12 +184,15 @@ static void atmel_tcb_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	 * Use software trigger to apply the new setting.
+ 	 * If both PWM devices in this group are disabled we stop the clock.
+ 	 */
+-	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC)))
++	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC))) {
+ 		__raw_writel(ATMEL_TC_SWTRG | ATMEL_TC_CLKDIS,
+ 			     regs + ATMEL_TC_REG(group, CCR));
+-	else
++		tcbpwmc->bkup[group].enabled = 1;
++	} else {
+ 		__raw_writel(ATMEL_TC_SWTRG, regs +
+ 			     ATMEL_TC_REG(group, CCR));
++		tcbpwmc->bkup[group].enabled = 0;
++	}
+ 
+ 	spin_unlock(&tcbpwmc->lock);
+ }
+@@ -263,6 +275,7 @@ static int atmel_tcb_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	/* Use software trigger to apply the new setting */
+ 	__raw_writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
+ 		     regs + ATMEL_TC_REG(group, CCR));
++	tcbpwmc->bkup[group].enabled = 1;
+ 	spin_unlock(&tcbpwmc->lock);
+ 	return 0;
+ }
+@@ -445,10 +458,56 @@ static const struct of_device_id atmel_tcb_pwm_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
+ 
++#ifdef CONFIG_PM_SLEEP
++static int atmel_tcb_pwm_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
++	void __iomem *base = tcbpwm->tc->regs;
++	int i;
++
++	for (i = 0; i < (NPWM / 2); i++) {
++		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
++
++		chan->cmr = readl(base + ATMEL_TC_REG(i, CMR));
++		chan->ra = readl(base + ATMEL_TC_REG(i, RA));
++		chan->rb = readl(base + ATMEL_TC_REG(i, RB));
++		chan->rc = readl(base + ATMEL_TC_REG(i, RC));
++	}
++	return 0;
++}
++
++static int atmel_tcb_pwm_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
++	void __iomem *base = tcbpwm->tc->regs;
++	int i;
++
++	for (i = 0; i < (NPWM / 2); i++) {
++		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
++
++		writel(chan->cmr, base + ATMEL_TC_REG(i, CMR));
++		writel(chan->ra, base + ATMEL_TC_REG(i, RA));
++		writel(chan->rb, base + ATMEL_TC_REG(i, RB));
++		writel(chan->rc, base + ATMEL_TC_REG(i, RC));
++		if (chan->enabled) {
++			writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
++				base + ATMEL_TC_REG(i, CCR));
++		}
++	}
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(atmel_tcb_pwm_pm_ops, atmel_tcb_pwm_suspend,
++			 atmel_tcb_pwm_resume);
++
+ static struct platform_driver atmel_tcb_pwm_driver = {
+ 	.driver = {
+ 		.name = "atmel-tcb-pwm",
+ 		.of_match_table = atmel_tcb_pwm_dt_ids,
++		.pm = &atmel_tcb_pwm_pm_ops,
+ 	},
+ 	.probe = atmel_tcb_pwm_probe,
+ 	.remove = atmel_tcb_pwm_remove,
+-- 
+2.11.0
