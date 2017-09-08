@@ -1,97 +1,34 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+Return-Path: <carlo@endlessm.com>
+MIME-Version: 1.0
+In-Reply-To: <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
+References: <20170714082356.28117-1-carlo@caione.org> <CAOQ7t2beu8CyHM1qR+DDt-BQXmFHoyJe8q_56qhkkYLM_o1upQ@mail.gmail.com>
+ <ac99f461-798b-e245-232e-5e76c2de93b0@linux.intel.com> <58ef7321-a16d-8974-6a37-db473b6bf48e@linux.intel.com>
+From: Carlo Caione <carlo@endlessm.com>
+Date: Fri, 8 Sep 2017 10:05:03 +0200
+Message-ID: <CAL9uMOE+gehOJ+QpW0PZC8ZBSWMZsPw0UAZYn=7EhPmYUxAJRQ@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: x86: Do not gate clocks enabled by the firmware
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Carlo Caione <carlo@caione.org>, alan@linux.intel.com,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v1 04/10] mtd: nand: atmel: Avoid ECC errors when leaving backup mode
-Date: Fri,  8 Sep 2017 17:35:58 +0200
-Message-Id: <20170908153604.28383-5-romain.izard.pro@gmail.com>
-In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, Darren Hart <dvhart@infradead.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux Upstreaming Team <linux@endlessm.com>,
+	Enric Balletbo Serra <eballetbo@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-During backup mode, the contents of all registers will be cleared as the
-SoC will be completely powered down. For a product that boots on NAND
-Flash memory, the bootloader will obviously use the related controller
-to read the Flash and correct any detected error in the memory, before
-handling back control to the kernel's resuming entry point.
+On Thu, Sep 7, 2017 at 11:51 PM, Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+>
+> See attached an untested change to show the idea on moving to the clk API
+> and get feedback (I am not a camera guy, just trying to help -
+> compile-tested/checkpatch only).
+> This code *should* enable the same functionality using existing hooks in the
+> kernel (and handle the BYT/CHT clocking difference as a bonus).
+> I am sure Andy will have plenty of comments :-)
 
-In normal devices, it is up to the driver's suspend/resume code to
-restore the registers in a valid state. But the PMECC is not a regular
-device in the driver model when used with the legacy device tree binding
-for the Atmel NAND controller, and suspend/resume code is not called.
+FWIW tested-by: Carlo Caione <carlo@endlessm.com>
 
-As in my case the bootloader leaves the PMECC controller in a programmed
-state, and the controller is only reset at boot or after a NAND access,
-the first NAND Flash access with the Atmel controller will report
-uncorrectable ECC errors.
+Thanks,
 
-To avoid this, systematically reset the PMECC controller before using
-it.
-
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/mtd/nand/atmel/pmecc.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
-index 8c210a5776bc..8d1208f38025 100644
---- a/drivers/mtd/nand/atmel/pmecc.c
-+++ b/drivers/mtd/nand/atmel/pmecc.c
-@@ -777,6 +777,9 @@ int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op)
- 
- 	mutex_lock(&user->pmecc->lock);
- 
-+	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
-+
- 	cfg = user->cache.cfg;
- 	if (op == NAND_ECC_WRITE)
- 		cfg |= PMECC_CFG_WRITE_OP;
-@@ -797,10 +800,6 @@ EXPORT_SYMBOL_GPL(atmel_pmecc_enable);
- 
- void atmel_pmecc_disable(struct atmel_pmecc_user *user)
- {
--	struct atmel_pmecc *pmecc = user->pmecc;
--
--	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
--	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
- 	mutex_unlock(&user->pmecc->lock);
- }
- EXPORT_SYMBOL_GPL(atmel_pmecc_disable);
-@@ -856,10 +855,6 @@ static struct atmel_pmecc *atmel_pmecc_create(struct platform_device *pdev,
- 	/* Disable all interrupts before registering the PMECC handler. */
- 	writel(0xffffffff, pmecc->regs.base + ATMEL_PMECC_IDR);
- 
--	/* Reset the ECC engine */
--	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
--	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
--
- 	return pmecc;
- }
- 
 -- 
-2.11.0
+Carlo Caione  |  +39.340.80.30.096  |  Endless
