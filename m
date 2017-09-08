@@ -1,202 +1,222 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v3 4/5] clk: aspeed: Register gated clocks
-Date: Wed, 27 Sep 2017 15:57:01 +0930
-Message-Id: <20170927062702.11350-5-joel@jms.id.au>
-In-Reply-To: <20170927062702.11350-1-joel@jms.id.au>
-References: <20170927062702.11350-1-joel@jms.id.au>
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH 4/6] ASoC: Intel: Skylake: Register clock
+ device and ops
+To: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+ alsa-devel@alsa-project.org
+Cc: harshapriya.n@intel.com, tiwai@suse.de, mturquette@baylibre.com,
+ sboyd@codeaurora.org, lgirdwood@gmail.com,
+ Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
+ patches.audio@intel.com, broonie@kernel.org, linux-clk@vger.kernel.org
+References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
+ <1504794565-19168-5-git-send-email-subhransu.s.prusty@intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <6e21a038-96d4-b58d-b1c7-ba5a5f32e7a8@linux.intel.com>
+Date: Thu, 7 Sep 2017 20:48:38 -0500
+MIME-Version: 1.0
+In-Reply-To: <1504794565-19168-5-git-send-email-subhransu.s.prusty@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The majority of the clocks in the system are gates paired with a reset
-controller that holds the IP in reset.
 
-This borrows from clk_hw_register_gate, but registers two 'gates', one
-to control the clock enable register and the other to control the reset
-IP. This allows us to enforce the ordering:
 
- 1. Place IP in reset
- 2. Enable clock
- 3. Delay
- 4. Release reset
+On 09/07/2017 09:29 AM, Subhransu S. Prusty wrote:
+> From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+>
+> Create a platform device and register the clock ops. Clock
+> prepare/unprepare are used to enable/disable the clock as the IPC will be
+> sent in non-atomic context. The clk set_dma_control IPC structures are
+> populated during the set_rate callback and IPC is sent to enable the clock
+> during prepare callback.
+>
+[snip]
+> +
+> +static int skl_clk_prepare(void *pvt_data, u32 id, unsigned long rate)
+> +{
+> +	struct skl *skl = pvt_data;
+> +	struct skl_clk_rate_cfg_table *rcfg;
+> +	int vbus_id, clk_type, ret;
+> +
+> +	clk_type = skl_get_clk_type(id);
+> +	if (clk_type < 0)
+> +		return -EINVAL;
+> +
+> +	ret = skl_get_vbus_id(id, clk_type);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	vbus_id = ret;
+> +
+> +	rcfg = skl_get_rate_cfg(skl_ssp_clks[id].rate_cfg, rate);
+> +	if (!rcfg)
+> +		return -EINVAL;
+> +
+> +	ret = skl_send_clk_dma_control(skl, rcfg, vbus_id, clk_type, true);
+> +
+> +	return ret;
+> +}
+In this patchset, the clocks are configured from the machine driver, and 
+the enable/disable conveniently placed in platform_clock_control() or 
+hw_params(), where the DSP is most likely active.
+If you expose a clock, codec driver implementers may want to use them 
+directly instead of relying on a machine driver. A number of existing 
+codecs do use the clk API, so there could be a case where a codec driver 
+calls devm_clk_get and clk_prepare_enable(), without any ability to know 
+what state the DSP is in.
+What happens then if the DSP is in suspend? Does this force it back to 
+D0? Does the virtual clock driver return an error? Or are you using the 
+clk API with some restrictions on when the clock can be configured?
 
-There are some gates that do not have an associated reset; these are
-handled by using -1 as the index for the reset.
+Note that I am not against this idea, it's fine, but I'd like more 
+clarity on the assumptions. Thanks!
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-
----
-V3:
- - Remove gates offset as gates are now at the start of the list
----
- drivers/clk/clk-aspeed.c | 128 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 128 insertions(+)
-
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index e43016ea82cd..42a69839d86e 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -207,6 +207,108 @@ static const struct aspeed_clk_soc_data ast2400_data = {
- 	.calc_pll = aspeed_ast2400_calc_pll,
- };
- 
-+static int aspeed_clk_enable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 rst = BIT(gate->reset_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Put IP in reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
-+
-+		/* Delay 100us */
-+		udelay(100);
-+	}
-+
-+	/* Enable clock */
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, 0);
-+
-+	if (gate->reset_idx >= 0) {
-+		/* Delay 10ms */
-+		/* TODO: can we sleep here? */
-+		msleep(10);
-+
-+		/* Take IP out of reset */
-+		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, 0);
-+	}
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void aspeed_clk_disable(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	unsigned long flags;
-+	u32 clk = BIT(gate->clock_idx);
-+
-+	spin_lock_irqsave(gate->lock, flags);
-+
-+	/* Disable clock */
-+	regmap_update_bits(gate->map, ASPEED_CLK_STOP_CTRL, clk, clk);
-+
-+	spin_unlock_irqrestore(gate->lock, flags);
-+}
-+
-+static int aspeed_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 reg;
-+
-+	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-+
-+	return (reg & clk) ? 0 : 1;
-+}
-+
-+static const struct clk_ops aspeed_clk_gate_ops = {
-+	.enable = aspeed_clk_enable,
-+	.disable = aspeed_clk_disable,
-+	.is_enabled = aspeed_clk_is_enabled,
-+};
-+
-+static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
-+		const char *name, const char *parent_name, unsigned long flags,
-+		struct regmap *map, u8 clock_idx, u8 reset_idx,
-+		u8 clk_gate_flags, spinlock_t *lock)
-+{
-+	struct aspeed_clk_gate *gate;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &aspeed_clk_gate_ops;
-+	init.flags = flags | CLK_IS_BASIC;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	gate->map = map;
-+	gate->clock_idx = clock_idx;
-+	gate->reset_idx = reset_idx;
-+	gate->flags = clk_gate_flags;
-+	gate->lock = lock;
-+	gate->hw.init = &init;
-+
-+	hw = &gate->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(gate);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
- static int __init aspeed_clk_probe(struct platform_device *pdev)
- {
- 	const struct aspeed_clk_soc_data *soc_data;
-@@ -214,6 +316,7 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
- 	struct regmap *map;
- 	struct clk_hw *hw;
- 	u32 val, rate;
-+	int i;
- 
- 	map = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(map)) {
-@@ -281,6 +384,31 @@ static int __init aspeed_clk_probe(struct platform_device *pdev)
- 			&aspeed_clk_lock);
- 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
- 
-+	/* There are a number of clocks that not included in this driver as
-+	 * more information is required:
-+	 *   D2-PLL
-+	 *   D-PLL
-+	 *   YCLK
-+	 *   RGMII
-+	 *   RMII
-+	 *   UART[1..5] clock source mux
-+	 */
-+
-+	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
-+		const struct aspeed_gate_data *gd;
-+
-+		gd = &aspeed_gates[i];
-+		aspeed_clk_data->hws[i] = aspeed_clk_hw_register_gate(NULL,
-+				gd->name,
-+				gd->parent_name,
-+				gd->flags,
-+				map,
-+				gd->clock_idx,
-+				gd->reset_idx,
-+				CLK_GATE_SET_TO_DISABLE,
-+				&aspeed_clk_lock);
-+	}
-+
- 	return 0;
- };
- 
--- 
-2.14.1
+> +
+> +static int skl_clk_unprepare(void *pvt_data, u32 id, unsigned long rate)
+> +{
+> +	struct skl *skl = pvt_data;
+> +	struct skl_clk_rate_cfg_table *rcfg;
+> +	int vbus_id, ret;
+> +	u8 clk_type;
+> +
+> +	clk_type = skl_get_clk_type(id);
+> +	ret = skl_get_vbus_id(id, clk_type);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	vbus_id = ret;
+> +
+> +	rcfg = skl_get_rate_cfg(skl_ssp_clks[id].rate_cfg, rate);
+> +	if (!rcfg)
+> +		return -EINVAL;
+> +
+> +	return skl_send_clk_dma_control(skl, rcfg, vbus_id, clk_type, false);
+> +}
+> +
+> +static int skl_clk_set_rate(u32 id, unsigned long rate)
+> +{
+> +	struct skl_clk_rate_cfg_table *rcfg;
+> +	u8 clk_type;
+> +
+> +	if (!rate)
+> +		return -EINVAL;
+> +
+> +	clk_type = skl_get_clk_type(id);
+> +	rcfg = skl_get_rate_cfg(skl_ssp_clks[id].rate_cfg, rate);
+> +	if (!rcfg)
+> +		return -EINVAL;
+> +
+> +	skl_fill_clk_ipc(rcfg, clk_type);
+> +
+> +	return 0;
+> +}
+> +
+> +unsigned long skl_clk_recalc_rate(u32 id, unsigned long parent_rate)
+> +{
+> +	struct skl_clk_rate_cfg_table *rcfg;
+> +	u8 clk_type;
+> +
+> +	clk_type = skl_get_clk_type(id);
+> +	rcfg = skl_get_rate_cfg(skl_ssp_clks[id].rate_cfg, parent_rate);
+> +	if (!rcfg)
+> +		return 0;
+> +
+> +	skl_fill_clk_ipc(rcfg, clk_type);
+> +
+> +	return rcfg->rate;
+> +}
+> +
+>   static int skl_machine_device_register(struct skl *skl, void *driver_data)
+>   {
+>   	struct hdac_bus *bus = ebus_to_hbus(&skl->ebus);
+> @@ -555,10 +682,21 @@ void init_skl_xtal_rate(int pci_id)
+>   	}
+>   }
+>   
+> +/*
+> + * prepare/unprepare are used instead of enable/disable as IPC will be sent
+> + * in non-atomic context.
+> + */
+> +static struct skl_clk_ops clk_ops = {
+> +	.prepare = skl_clk_prepare,
+> +	.unprepare = skl_clk_unprepare,
+> +	.set_rate = skl_clk_set_rate,
+> +	.recalc_rate = skl_clk_recalc_rate,
+> +};
+> +
+>   static int skl_clock_device_register(struct skl *skl)
+>   {
+>   	struct skl_clk_pdata *clk_pdata;
+> -
+> +	struct platform_device_info pdevinfo = {NULL};
+>   
+>   	clk_pdata = devm_kzalloc(&skl->pci->dev, sizeof(*clk_pdata),
+>   							GFP_KERNEL);
+> @@ -573,10 +711,28 @@ static int skl_clock_device_register(struct skl *skl)
+>   
+>   	/* Query NHLT to fill the rates and parent */
+>   	skl_get_clks(skl, clk_pdata->ssp_clks);
+> +	clk_pdata->ops = &clk_ops;
+> +	clk_pdata->pvt_data = skl;
+> +
+> +	/* Register Platform device */
+> +	pdevinfo.parent = &skl->pci->dev;
+> +	pdevinfo.id = -1;
+> +	pdevinfo.name = "skl-ssp-clk";
+> +	pdevinfo.data = clk_pdata;
+> +	pdevinfo.size_data = sizeof(*clk_pdata);
+> +	skl->clk_dev = platform_device_register_full(&pdevinfo);
+> +	if (IS_ERR(skl->clk_dev))
+> +		return PTR_ERR(skl->clk_dev);
+>   
+>   	return 0;
+>   }
+>   
+> +static void skl_clock_device_unregister(struct skl *skl)
+> +{
+> +	if (skl->clk_dev)
+> +		platform_device_unregister(skl->clk_dev);
+> +}
+> +
+>   /*
+>    * Probe the given codec address
+>    */
+> @@ -859,6 +1015,11 @@ static int skl_probe(struct pci_dev *pci,
+>   
+>   	/* check if dsp is there */
+>   	if (bus->ppcap) {
+> +		/* create device for dsp clk */
+> +		err = skl_clock_device_register(skl);
+> +		if (err < 0)
+> +			goto out_clk_free;
+> +
+>   		err = skl_machine_device_register(skl,
+>   				  (void *)pci_id->driver_data);
+>   		if (err < 0)
+> @@ -890,6 +1051,8 @@ static int skl_probe(struct pci_dev *pci,
+>   	skl_free_dsp(skl);
+>   out_mach_free:
+>   	skl_machine_device_unregister(skl);
+> +out_clk_free:
+> +	skl_clock_device_unregister(skl);
+>   out_nhlt_free:
+>   	skl_nhlt_free(skl->nhlt);
+>   out_free:
+> @@ -940,6 +1103,7 @@ static void skl_remove(struct pci_dev *pci)
+>   	skl_free_dsp(skl);
+>   	skl_machine_device_unregister(skl);
+>   	skl_dmic_device_unregister(skl);
+> +	skl_clock_device_unregister(skl);
+>   	skl_nhlt_remove_sysfs(skl);
+>   	skl_nhlt_free(skl->nhlt);
+>   	skl_free(ebus);
+> diff --git a/sound/soc/intel/skylake/skl.h b/sound/soc/intel/skylake/skl.h
+> index f06e98962a0b..df0fcf1bfe40 100644
+> --- a/sound/soc/intel/skylake/skl.h
+> +++ b/sound/soc/intel/skylake/skl.h
+> @@ -57,6 +57,7 @@ struct skl {
+>   	unsigned int init_done:1; /* delayed init status */
+>   	struct platform_device *dmic_dev;
+>   	struct platform_device *i2s_dev;
+> +	struct platform_device *clk_dev;
+>   	struct snd_soc_platform *platform;
+>   
+>   	struct nhlt_acpi_table *nhlt; /* nhlt ptr */
