@@ -1,102 +1,169 @@
-Return-Path: <subhransu.s.prusty@intel.com>
-From: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-To: alsa-devel@alsa-project.org
-Cc: tiwai@suse.de,
-	broonie@kernel.org,
-	lgirdwood@gmail.com,
-	patches.audio@intel.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	harshapriya.n@intel.com,
-	Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
-	"Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
-Subject: [PATCH v2 1/7] ASoC: Intel: Skylake: Modify skl_dsp_set_dma_control API arguments
-Date: Mon, 18 Sep 2017 10:26:44 +0530
-Message-Id: <1505710610-17952-2-git-send-email-subhransu.s.prusty@intel.com>
-In-Reply-To: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
-References: <1505710610-17952-1-git-send-email-subhransu.s.prusty@intel.com>
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v1 07/10] iio:adc:at91-sama5d2: Support backup mode
+Date: Fri,  8 Sep 2017 17:36:01 +0200
+Message-Id: <20170908153604.28383-8-romain.izard.pro@gmail.com>
+In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+Support the backup mode for platform suspend, by restoring the hardware
+registers on resume.
 
-Set dma control ipc can be used to set the M/N divider, enable the clks. It
-takes different payload for different configuration. So modify the
-skl_dsp_set_dma_control API to take the size and node_id as argument.
-
-Signed-off-by: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
-Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 ---
- sound/soc/intel/skylake/skl-messages.c | 23 ++++++++++++++---------
- sound/soc/intel/skylake/skl-topology.h |  4 ++--
- 2 files changed, 16 insertions(+), 11 deletions(-)
+ drivers/iio/adc/at91-sama5d2_adc.c | 71 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 61 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
-index 89f70133c8e4..f637829833e6 100644
---- a/sound/soc/intel/skylake/skl-messages.c
-+++ b/sound/soc/intel/skylake/skl-messages.c
-@@ -613,8 +613,10 @@ static void skl_setup_cpr_gateway_cfg(struct skl_sst *ctx,
- }
- 
- #define DMA_CONTROL_ID 5
-+#define DMA_I2S_BLOB_SIZE 21
- 
--int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
-+int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
-+				u32 caps_size, u32 node_id)
- {
- 	struct skl_dma_control *dma_ctrl;
- 	struct skl_ipc_large_config_msg msg = {0};
-@@ -624,24 +626,27 @@ int skl_dsp_set_dma_control(struct skl_sst *ctx, struct skl_module_cfg *mconfig)
+diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+index e10dca3ed74b..f9718c863363 100644
+--- a/drivers/iio/adc/at91-sama5d2_adc.c
++++ b/drivers/iio/adc/at91-sama5d2_adc.c
+@@ -200,6 +200,7 @@ struct at91_adc_state {
+ 	u32				conversion_value;
+ 	struct at91_adc_soc_info	soc_info;
+ 	wait_queue_head_t		wq_data_available;
++	unsigned int			current_rate;
  	/*
- 	 * if blob size zero, then return
- 	 */
--	if (mconfig->formats_config.caps_size == 0)
-+	if (caps_size == 0)
- 		return 0;
+ 	 * lock to prevent concurrent 'single conversion' requests through
+ 	 * sysfs.
+@@ -269,6 +270,8 @@ static void at91_adc_setup_samp_freq(struct at91_adc_state *st, unsigned freq)
+ 	mr |= AT91_SAMA5D2_MR_PRESCAL(prescal);
+ 	at91_adc_writel(st, AT91_SAMA5D2_MR, mr);
  
- 	msg.large_param_id = DMA_CONTROL_ID;
--	msg.param_data_size = sizeof(struct skl_dma_control) +
--				mconfig->formats_config.caps_size;
-+	msg.param_data_size = sizeof(struct skl_dma_control) + caps_size;
++	st->current_rate = freq;
++
+ 	dev_dbg(&indio_dev->dev, "freq: %u, startup: %u, prescal: %u\n",
+ 		freq, startup, prescal);
+ }
+@@ -375,7 +378,9 @@ static int at91_adc_write_raw(struct iio_dev *indio_dev,
+ 	    val > st->soc_info.max_sample_rate)
+ 		return -EINVAL;
  
- 	dma_ctrl = kzalloc(msg.param_data_size, GFP_KERNEL);
- 	if (dma_ctrl == NULL)
- 		return -ENOMEM;
++	mutex_lock(&st->lock);
+ 	at91_adc_setup_samp_freq(st, val);
++	mutex_unlock(&st->lock);
  
--	dma_ctrl->node_id = skl_get_node_id(ctx, mconfig);
-+	dma_ctrl->node_id = node_id;
+ 	return 0;
+ }
+@@ -386,6 +391,21 @@ static const struct iio_info at91_adc_info = {
+ 	.driver_module = THIS_MODULE,
+ };
  
--	/* size in dwords */
--	dma_ctrl->config_length = mconfig->formats_config.caps_size / 4;
++static void at91_adc_init_hw(struct at91_adc_state *st, unsigned int freq)
++{
++	at91_adc_writel(st, AT91_SAMA5D2_CR, AT91_SAMA5D2_CR_SWRST);
++	at91_adc_writel(st, AT91_SAMA5D2_IDR, 0xffffffff);
 +	/*
-+	 * NHLT blob may contain additional configs along with i2s blob.
-+	 * firmware expects only the i2s blob size as the config_length.
-+	 * So fix to i2s blob size.
-+	 * size in dwords.
++	 * Transfer field must be set to 2 according to the datasheet and
++	 * allows different analog settings for each channel.
 +	 */
-+	dma_ctrl->config_length = DMA_I2S_BLOB_SIZE;
++	at91_adc_writel(st, AT91_SAMA5D2_MR,
++			AT91_SAMA5D2_MR_TRANSFER(2) | AT91_SAMA5D2_MR_ANACH);
++
++	at91_adc_setup_samp_freq(st, freq);
++
++}
++
+ static int at91_adc_probe(struct platform_device *pdev)
+ {
+ 	struct iio_dev *indio_dev;
+@@ -482,16 +502,7 @@ static int at91_adc_probe(struct platform_device *pdev)
+ 		goto vref_disable;
+ 	}
  
--	memcpy(dma_ctrl->config_data, mconfig->formats_config.caps,
--				mconfig->formats_config.caps_size);
-+	memcpy(dma_ctrl->config_data, caps, caps_size);
+-	at91_adc_writel(st, AT91_SAMA5D2_CR, AT91_SAMA5D2_CR_SWRST);
+-	at91_adc_writel(st, AT91_SAMA5D2_IDR, 0xffffffff);
+-	/*
+-	 * Transfer field must be set to 2 according to the datasheet and
+-	 * allows different analog settings for each channel.
+-	 */
+-	at91_adc_writel(st, AT91_SAMA5D2_MR,
+-			AT91_SAMA5D2_MR_TRANSFER(2) | AT91_SAMA5D2_MR_ANACH);
+-
+-	at91_adc_setup_samp_freq(st, st->soc_info.min_sample_rate);
++	at91_adc_init_hw(st, st->soc_info.min_sample_rate);
  
- 	err = skl_ipc_set_large_config(&ctx->ipc, &msg, (u32 *)dma_ctrl);
+ 	ret = clk_prepare_enable(st->per_clk);
+ 	if (ret)
+@@ -541,12 +552,52 @@ static const struct of_device_id at91_adc_dt_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, at91_adc_dt_match);
  
-diff --git a/sound/soc/intel/skylake/skl-topology.h b/sound/soc/intel/skylake/skl-topology.h
-index 2717db92036b..e11cc1fc0e43 100644
---- a/sound/soc/intel/skylake/skl-topology.h
-+++ b/sound/soc/intel/skylake/skl-topology.h
-@@ -455,8 +455,8 @@ static inline struct skl *get_skl_ctx(struct device *dev)
- 
- int skl_tplg_be_update_params(struct snd_soc_dai *dai,
- 	struct skl_pipe_params *params);
--int skl_dsp_set_dma_control(struct skl_sst *ctx,
--		struct skl_module_cfg *mconfig);
-+int skl_dsp_set_dma_control(struct skl_sst *ctx, u32 *caps,
-+			u32 caps_size, u32 node_id);
- void skl_tplg_set_be_dmic_config(struct snd_soc_dai *dai,
- 	struct skl_pipe_params *params, int stream);
- int skl_tplg_init(struct snd_soc_platform *platform,
++#ifdef CONFIG_PM_SLEEP
++static int at91_adc_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct at91_adc_state *st = iio_priv(indio_dev);
++
++	clk_disable_unprepare(st->per_clk);
++
++	regulator_disable(st->vref);
++	regulator_disable(st->reg);
++
++	return 0;
++}
++
++static int at91_adc_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct at91_adc_state *st = iio_priv(indio_dev);
++	int err;
++
++	err = regulator_enable(st->reg);
++	if (err)
++		return err;
++
++	err = regulator_enable(st->vref);
++	if (err)
++		return err;
++
++	at91_adc_init_hw(st, st->current_rate);
++
++	err = clk_prepare_enable(st->per_clk);
++	return err;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(at91_adc_pm_ops, at91_adc_suspend, at91_adc_resume);
++
+ static struct platform_driver at91_adc_driver = {
+ 	.probe = at91_adc_probe,
+ 	.remove = at91_adc_remove,
+ 	.driver = {
+ 		.name = "at91-sama5d2_adc",
+ 		.of_match_table = at91_adc_dt_match,
++		.pm = &at91_adc_pm_ops,
+ 	},
+ };
+ module_platform_driver(at91_adc_driver)
 -- 
-1.9.1
+2.11.0
