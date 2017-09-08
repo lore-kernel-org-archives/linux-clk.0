@@ -1,54 +1,97 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Thu, 28 Sep 2017 21:51:25 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/5] dmaengine: Add driver for NVIDIA Tegra AHB DMA
- controller
-Message-ID: <20170928162125.GE30097@localhost>
-References: <cover.1506380746.git.digetx@gmail.com>
- <0a45e058baba72124b91c663ce1d908d275f4044.1506380746.git.digetx@gmail.com>
- <20170928092949.GB30097@localhost>
- <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <b601b829-d87f-99e0-dcf9-ad3f9a7195df@gmail.com>
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v1 04/10] mtd: nand: atmel: Avoid ECC errors when leaving backup mode
+Date: Fri,  8 Sep 2017 17:35:58 +0200
+Message-Id: <20170908153604.28383-5-romain.izard.pro@gmail.com>
+In-Reply-To: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 28, 2017 at 05:06:03PM +0300, Dmitry Osipenko wrote:
-> On 28.09.2017 12:29, Vinod Koul wrote:
-> >> +	default:
-> >> +		return -EINVAL;
-> >> +	}
-> >> +
-> >> +	ahb_seq  = burst << TEGRA_AHBDMA_CHANNEL_AHB_BURST_SHIFT;
-> >> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_ADDR_WRAP;
-> >> +	ahb_seq |= TEGRA_AHBDMA_CHANNEL_INTR_ENB;
-> >> +
-> >> +	writel_relaxed(ahb_seq,
-> >> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_SEQ);
-> >> +
-> >> +	writel_relaxed(ahb_addr,
-> >> +		       ahbdma_chan->regs + TEGRA_AHBDMA_CHANNEL_AHB_PTR);
-> > 
-> > oh no, you don't write to HW here. This can be called anytime when you have
-> > txn running! You should save these and use them in prep_ calls.
-> > 
-> 
-> BTW, some of the DMA drivers have exactly the same problem. I now see that it is
-> actually documented explicitly in provider.txt, but that's inconsistent across
-> the actual drivers.
+During backup mode, the contents of all registers will be cleared as the
+SoC will be completely powered down. For a product that boots on NAND
+Flash memory, the bootloader will obviously use the related controller
+to read the Flash and correct any detected error in the memory, before
+handling back control to the kernel's resuming entry point.
 
-yeah they need to be fixed!
+In normal devices, it is up to the driver's suspend/resume code to
+restore the registers in a valid state. But the PMECC is not a regular
+device in the driver model when used with the legacy device tree binding
+for the Atmel NAND controller, and suspend/resume code is not called.
 
+As in my case the bootloader leaves the PMECC controller in a programmed
+state, and the controller is only reset at boot or after a NAND access,
+the first NAND Flash access with the Atmel controller will report
+uncorrectable ECC errors.
+
+To avoid this, systematically reset the PMECC controller before using
+it.
+
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+---
+ drivers/mtd/nand/atmel/pmecc.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mtd/nand/atmel/pmecc.c b/drivers/mtd/nand/atmel/pmecc.c
+index 8c210a5776bc..8d1208f38025 100644
+--- a/drivers/mtd/nand/atmel/pmecc.c
++++ b/drivers/mtd/nand/atmel/pmecc.c
+@@ -777,6 +777,9 @@ int atmel_pmecc_enable(struct atmel_pmecc_user *user, int op)
+ 
+ 	mutex_lock(&user->pmecc->lock);
+ 
++	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
++	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
++
+ 	cfg = user->cache.cfg;
+ 	if (op == NAND_ECC_WRITE)
+ 		cfg |= PMECC_CFG_WRITE_OP;
+@@ -797,10 +800,6 @@ EXPORT_SYMBOL_GPL(atmel_pmecc_enable);
+ 
+ void atmel_pmecc_disable(struct atmel_pmecc_user *user)
+ {
+-	struct atmel_pmecc *pmecc = user->pmecc;
+-
+-	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+-	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
+ 	mutex_unlock(&user->pmecc->lock);
+ }
+ EXPORT_SYMBOL_GPL(atmel_pmecc_disable);
+@@ -856,10 +855,6 @@ static struct atmel_pmecc *atmel_pmecc_create(struct platform_device *pdev,
+ 	/* Disable all interrupts before registering the PMECC handler. */
+ 	writel(0xffffffff, pmecc->regs.base + ATMEL_PMECC_IDR);
+ 
+-	/* Reset the ECC engine */
+-	writel(PMECC_CTRL_RST, pmecc->regs.base + ATMEL_PMECC_CTRL);
+-	writel(PMECC_CTRL_DISABLE, pmecc->regs.base + ATMEL_PMECC_CTRL);
+-
+ 	return pmecc;
+ }
+ 
 -- 
-~Vinod
+2.11.0
