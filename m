@@ -1,89 +1,68 @@
-Return-Path: <Alexey.Brodkin@synopsys.com>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "robh@kernel.org" <robh@kernel.org>
-CC: "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
-	"Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Re: Setting CPU clock frequency on early boot
-Date: Wed, 6 Sep 2017 16:22:18 +0000
-Message-ID: <1504714938.3829.40.camel@synopsys.com>
-References: <1504625867.32565.34.camel@synopsys.com>
-	 <CAL_JsqJ7c-raBnb0U+hL+hka7zN3XosX0pU1Sswoq16nbRFb+g@mail.gmail.com>
-	 <b8f7f407-303a-2f3c-1a16-bfb385204930@synopsys.com>
-	 <1504705881.3829.19.camel@synopsys.com>
-	 <CAL_Jsq+B74keQ3N=8x6jx1URkLq8fa9gwsc5JAuiV86Wwczi9Q@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+B74keQ3N=8x6jx1URkLq8fa9gwsc5JAuiV86Wwczi9Q@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v1 00/10] Various patches for SAMA5D2 backup mode
+Date: Fri,  8 Sep 2017 17:35:54 +0200
+Message-Id: <20170908153604.28383-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgUm9iLA0KDQpPbiBXZWQsIDIwMTctMDktMDYgYXQgMTA6MjUgLTA1MDAsIFJvYiBIZXJyaW5n
-IHdyb3RlOg0KPiBPbiBXZWQsIFNlcCA2LCAyMDE3IGF0IDg6NTEgQU0sIEFsZXhleSBCcm9ka2lu
-DQo+IDxBbGV4ZXkuQnJvZGtpbkBzeW5vcHN5cy5jb20+IHdyb3RlOg0KPiA+IA0KPiA+IEhpIFZp
-bmVldCwgUm9iLA0KPiA+IA0KPiA+IE9uIFR1ZSwgMjAxNy0wOS0wNSBhdCAxNjo0MCAtMDcwMCwg
-VmluZWV0IEd1cHRhIHdyb3RlOg0KPiA+ID4gDQo+ID4gPiBPbiAwOS8wNS8yMDE3IDAzOjA0IFBN
-LCBSb2IgSGVycmluZyB3cm90ZToNCj4gPiA+ID4gDQo+ID4gPiA+IA0KPiA+ID4gPiBPbiBUdWUs
-IFNlcCA1LCAyMDE3IGF0IDEwOjM3IEFNLCBBbGV4ZXkgQnJvZGtpbg0KPiA+ID4gPiA8QWxleGV5
-LkJyb2RraW5Ac3lub3BzeXMuY29tPiB3cm90ZToNCg0KW3NuaXBdDQoNCj4gPiBZZWFoLCB0aGF0
-J3MgYW4gaW50ZXJlc3RpbmcgcXVlc3Rpb24uIFdlIG1heSBpbmRlZWQgbW92ZSBtb3JlIHNtYXJ0
-cyB0byB0aGUgY2xvY2sgZHJpdmVyDQo+ID4gYnV0Og0KPiA+IMKgMS4gV2UnbGwgaGF2ZSBkdXBs
-aWNhdGUgY29kZSBpbiBkaWZmZXJlbnQgY2xvY2sgZHJpdmVycy4gRXZlbiB0b2RheSB0aGF0IGtp
-bmQgb2YgY2xvY2sNCj4gPiDCoMKgwqDCoHNldHVwIGlzIGFwcGxpY2FibGUgdG8gQVhTMTB4IGFu
-ZCBIU0RLIHBsYXRmb3JtcyAoYW5kIHRoZXkgdXNlIGRpZmZlcmVudCBjbG9jayBkcml2ZXJzKS4N
-Cj4gDQo+IE5vLCB5b3UgY291bGQgcHJvdmlkZSBhIGNvbW1vbiwgc2hhcmVkIGZ1bmN0aW9uIHRv
-IGNhbGwuIFRoZW4gZWFjaA0KPiBwbGF0Zm9ybSBjYW4gb3B0LWluLiBJZiB5b3UgY2FuIG1ha2Ug
-c29tZXRoaW5nIHRoYXQgYXBwbGllcyB0byBldmVyeQ0KPiBzaW5nbGUgcGxhdGZvcm0gbm93IG9y
-IGluIHRoZSBmdXR1cmUsIHRoZW4gSSdkIHB1dCBpdCBpbiBhcmNoLiBJZiB5b3UNCj4gaGF2ZSBw
-bGFucyB0byBkZWNvdXBsZSB0aGUgdGltZXIgYW5kIGNwdSBjbG9ja3MsIHRoZW4gc291bmRzIGxp
-a2UgeW91DQo+IGNhbid0Lg0KDQpSaWdodCBzbyB3ZSdsbCBpbXBsZW1lbnQgYSBmdW5jdGlvbiB3
-aGljaCBpcyBjYWxsZWQgYnkgYSBwbGF0Zm9ybSBpZiByZXF1aXJlZC4NClRoYXQgd2F5IHdlIGVz
-Y2FwZSBjb3B5LXBhc3Rpbmcgd2hpbGUga2VlcGluZyBlbm91Z2ggZmxleGliaWxpdHkgZm9yIGN1
-cnJlbnQNCmFuZCBmdXR1cmUgcGxhdGZvcm1zLg0KDQo+IElNTywgaWYgaXQncyBub3QgcGFydCBv
-ZiB0aGUgZGVmaW5lZCBDUFUgYXJjaGl0ZWN0dXJlLCB0aGVuIGRvbid0IHB1dA0KPiBpdCBpbiBh
-cmNoLy4gVGhhdCdzIGhvdyB3ZSBlbmQgdXAgd2l0aCBtdWx0aXBsZSBjb3BpZXMgb2YgdGhlIHNh
-bWUNCj4gdGhpbmcgZG9uZSBhcmJpdHJhcmlseSBkaWZmZXJlbnQgd2F5cyBiZWNhdXNlIGZldyBw
-ZW9wbGUgbG9vayBhY3Jvc3MNCj4gYXJjaGl0ZWN0dXJlcy4NCg0KU28gZG8geW91IHByb3Bvc2Ug
-dG8gaGF2ZSB0aGUgZnVuY3Rpb24gW3RoYXQgcmVhZHMgImNsb2NrLWZyZXF1ZW5jeSIgZnJvbSBz
-YXkNCkNQVSBub2RlIGFuZCBwYXNzZXMgaXRzIHZhbHVlIHRvIENQVSdzIHBhcmVudCBjbG9jayBk
-cml2ZXJdIGluIGdlbmVyaWMNCltpLmUuIGFyY2hpdGVjdHVyZSBhZ25vc3RpY10gY29kZSBzb21l
-d2hlcmUgaW4gImluaXQvbWFpbi5jIj8NCg0KPiA+IA0KPiA+IMKgMi4gUHJpbnQgb3V0IG9mIENQ
-VSBmcmVxdWVuY3kgd2hpY2ggaXMgdXNlZCBkdXJpbmcgYm9vdCBwcm9jZXNzIGZvciB1cyBpcyBp
-bXBvcnRhbnQgYXMgd2VsbA0KPiA+IMKgwqDCoMKgZXNwZWNpYWxseSBkdXJpbmcgYnJpbmctdXAg
-b2YgbmV3IEhXLg0KPiA+IA0KPiA+IMKgMy4gSWYgdGhlcmUncyBubyBkZWRpY2F0ZWQgImNsb2Nr
-LWZyZXF1ZW5jeSIgcGFyYW1ldGVyIGluIENQVSBub2RlIHdlIHdvbid0DQo+ID4gwqDCoMKgwqBj
-aGFuZ2UgYW55dGhpbmcgc28gdGhhdCBub24tYWZmZWN0ZWQgcGxhdGZvcm1zIHdpbGwgbGl2ZSBh
-cyB0aGV5IHVzZWQgdG8uDQo+ID4gDQo+ID4gVGhhdCBzYWlkIElNSE8gcHJvcG9zZWQgaW1wbGVt
-ZW50YXRpb24gaXMgd2hhdCB3ZSB3YW50IHRvIGtlcCBmb3Igbm93Lg0KPiA+IA0KPiA+ID4gDQo+
-ID4gPiBBbHNvIG5vdGUgdGhhdCB0aGlzIGNvZGUgaXMgdXNpbmcgYSBuZXcgLyBhZGhvYyBEVCBi
-aW5kaW5nIGNwdS1mcmVxIGluIGNvdSBub2RlIHRvDQo+ID4gPiBkbyB0aGUgb3ZlcnJpZGUgLSBp
-cyB0aGF0IGFjY2VwdGFibGUgPw0KPiANCj4gTm8sIEkgbWVhbnQgdG8gcG9pbnQgdGhhdCBvdXQu
-DQoNClNvcnJ5LCBidXQgZm9yIG1lIGl0J3Mgbm90IGNsZWFyIHdoYXQgZGlkIHlvdSBtZWFuIGhl
-cmUuDQpDYXJlIHRvIGVsYWJvcmF0ZSBhIGJpdCBtb3JlPw0KDQo+ID4gSSB0aGluayB3ZSdsbCBz
-d2l0Y2ggdG8gbW9yZSBjb21tb24gImNsb2NrLWZyZXF1ZW5jeSIgaW4gdGhlIG5leHQgcmVzcGlu
-Lg0KPiA+IEluZGVlZCAiY3B1LWZyZXEiIG1pZ2h0IGJlIGEgYml0IG1pc2xlYWRpbmcuDQo+IA0K
-PiBJZGVhbGx5LCB5b3UnZCB1c2UgdGhlIGNsb2NrIGJpbmRpbmcgZXZlbnR1YWxseS4NCg0KQWdh
-aW4gSSdtIHByb2JhYmx5IG1pc3Npbmcgc29tZXRoaW5nIDopDQoNCkkgbWVhbnQgd2Ugd2lsbCBo
-YXZlIGJvdGggY2xvY2sgcGhhbmRsZSBhbmQgImNsb2NrLWZyZXF1ZW5jeSIgYXQgdGhlIHNhbWUg
-dGltZS4NClNvbWV0aGluZyBsaWtlIHRoaXM6DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoJY3B1cyB7DQoJCSNhZGRyZXNzLWNl
-bGxzID0gPDE+Ow0KCQkjc2l6ZS1jZWxscyA9IDwwPjsNCg0KCQljcHVAMCB7DQoJCQlkZXZpY2Vf
-dHlwZSA9ICJjcHUiOw0KCQkJY29tcGF0aWJsZSA9ICJzbnBzLGFyY2hzMzgiOw0KCQkJcmVnID0g
-PDA+Ow0KCQkJY2xvY2tzID0gPCZjb3JlX2Nsaz47DQoJCQljbG9jay1mcmVxdWVuY3kgPSA8MTAw
-MDAwMDAwPjsgwqA8LS0gVGhhdCdzIHdoZXJlIHdlIHdhbnQgdG8gc2V0IGRlc2lyZWQgdmFsdWUN
-CgkJfTsNCgkuLi4NCgl9DQoNCgljb3JlX2NsazogY29yZS1jbGtAODAgew0KCQljb21wYXRpYmxl
-ID0gInNucHMsYXhzMTB4LWFyYy1wbGwtY2xvY2siOw0KCQlyZWcgPSA8MHg4MCAweDEwPiwgPDB4
-MTAwIDB4MTA+Ow0KCQkjY2xvY2stY2VsbHMgPSA8MD47DQoJCWNsb2NrcyA9IDwmaW5wdXRfY2xr
-PjsNCgl9Ow0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLQ0KDQpPciBhbHRlcm5hdGl2ZWx5IHdlIG1heSBtb3ZlICJjbG9jay1mcmVx
-dWVuY3kiIHJpZ2h0IHRvIHRoZSBjbG9jaydzIG5vZGUgYW5kIGhhdmUNCml0IGxpa2UgdGhhdDoN
-Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0NCgljb3JlX2NsazrCoGNvcmUtY2xrQDgwwqB7DQoJCWNvbXBhdGlibGUgPSAic25wcyxh
-eHMxMHgtYXJjLXBsbC1jbG9jayI7DQoJCXJlZyA9IDwweDgwIDB4MTA+LCA8MHgxMDAgMHgxMD47
-DQoJCQ0KI2Nsb2NrLWNlbGxzID0gPDA+Ow0KCQljbG9ja3MgPSA8JmlucHV0X2Nsaz47DQoJCWNs
-b2NrLWZyZXF1ZW5jeSA9IDwxMDAwMDAwMDA+OyDCoDwtLSBUaGF0J3Mgd2hlcmUgd2Ugd2FudCB0
-byBzZXQgZGVzaXJlZCB2YWx1ZQ0KCQ0KfTsNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KLUFsZXhleQ==
+While the core of the backup mode for SAMA5D2 has been integrated in
+v4.13, it is far from complete. Individual controllers in the chip have
+drivers that do not support the reset of the registers during suspend,
+and they need to be adapted to handle it.
+
+The first patch uses the clock wakeup code from the prototype backup
+mode instead of the version integrated in the mainline, as the mainline
+version is not stable. During a test loop with two-second backup
+suspend, the mainline version will hang in less than one day, whereas
+the prototype version has been running the same test for more than a
+week without hanging.
+
+Romain Izard (10):
+  clk: at91: pmc: Wait for clocks when resuming
+  clk: at91: pmc: Save SCSR during suspend
+  clk: at91: pmc: Support backup for programmable clocks
+  mtd: nand: atmel: Avoid ECC errors when leaving backup mode
+  mtd: nand: atmel: Report PMECC failures as errors
+  ehci-atmel: Power down during suspend is normal
+  iio:adc:at91-sama5d2: Support backup mode
+  pwm: atmel-tcb: Support backup mode
+  atmel_flexcom: Support backup mode
+  tty/serial: atmel: Prevent a warning on suspend
+
+ drivers/clk/at91/pmc.c             | 33 ++++++++++++------
+ drivers/iio/adc/at91-sama5d2_adc.c | 71 ++++++++++++++++++++++++++++++++------
+ drivers/mfd/atmel-flexcom.c        | 65 ++++++++++++++++++++++++++--------
+ drivers/mtd/nand/atmel/pmecc.c     | 15 ++++----
+ drivers/pwm/pwm-atmel-tcb.c        | 63 +++++++++++++++++++++++++++++++--
+ drivers/tty/serial/atmel_serial.c  | 13 +++++++
+ drivers/usb/host/ehci-atmel.c      |  3 +-
+ 7 files changed, 216 insertions(+), 47 deletions(-)
+
+-- 
+2.11.0
