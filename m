@@ -1,109 +1,53 @@
 Return-Path: <wens@wens.csie.org>
 From: Chen-Yu Tsai <wens@csie.org>
-To: Mark Brown <broonie@kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Airlie <airlied@linux.ie>,
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
+	Stephen Boyd <sboyd@codeaurora.org>
 Cc: Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 05/14] drm/sun4i: hdmi: Disable clks in bind function error path and unbind function
-Date: Fri, 29 Sep 2017 16:22:57 +0800
-Message-Id: <20170929082306.16193-6-wens@csie.org>
-In-Reply-To: <20170929082306.16193-1-wens@csie.org>
-References: <20170929082306.16193-1-wens@csie.org>
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: sunxi-ng: Implement reset control status readback
+Date: Fri,  8 Sep 2017 12:39:54 +0800
+Message-Id: <20170908043954.13019-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The HDMI driver enables the bus and mod clocks in the bind function, but
-does not disable them if it then bails our due to any errors. Neither
-does it disable the clocks in the unbind function.
+Until now we were not providing a way to read back the status of our
+reset controls. Consumers had no real way to be certain whether a
+peripheral was held in reset or not.
 
-Fix this by adding a proper error path to the bind function, and
-clk_disable_unprepare calls to the unbind function.
+Implement the status callback to complete the API support.
 
-Also rename the err_cleanup_connector label to err_cleanup_encoder,
-since it is the encoder that gets cleaned up.
-
-Fixes: 9c5681011a0c ("drm/sun4i: Add HDMI support")
+Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/clk/sunxi-ng/ccu_reset.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 9ea6cd5a1370..3cf1a6932fac 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -302,26 +302,29 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 	hdmi->mod_clk = devm_clk_get(dev, "mod");
- 	if (IS_ERR(hdmi->mod_clk)) {
- 		dev_err(dev, "Couldn't get the HDMI mod clock\n");
--		return PTR_ERR(hdmi->mod_clk);
-+		ret = PTR_ERR(hdmi->mod_clk);
-+		goto err_disable_bus_clk;
- 	}
- 	clk_prepare_enable(hdmi->mod_clk);
- 
- 	hdmi->pll0_clk = devm_clk_get(dev, "pll-0");
- 	if (IS_ERR(hdmi->pll0_clk)) {
- 		dev_err(dev, "Couldn't get the HDMI PLL 0 clock\n");
--		return PTR_ERR(hdmi->pll0_clk);
-+		ret = PTR_ERR(hdmi->pll0_clk);
-+		goto err_disable_mod_clk;
- 	}
- 
- 	hdmi->pll1_clk = devm_clk_get(dev, "pll-1");
- 	if (IS_ERR(hdmi->pll1_clk)) {
- 		dev_err(dev, "Couldn't get the HDMI PLL 1 clock\n");
--		return PTR_ERR(hdmi->pll1_clk);
-+		ret = PTR_ERR(hdmi->pll1_clk);
-+		goto err_disable_mod_clk;
- 	}
- 
- 	ret = sun4i_tmds_create(hdmi);
- 	if (ret) {
- 		dev_err(dev, "Couldn't create the TMDS clock\n");
--		return ret;
-+		goto err_disable_mod_clk;
- 	}
- 
- 	writel(SUN4I_HDMI_CTRL_ENABLE, hdmi->base + SUN4I_HDMI_CTRL_REG);
-@@ -362,7 +365,7 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 	ret = sun4i_hdmi_i2c_create(dev, hdmi);
- 	if (ret) {
- 		dev_err(dev, "Couldn't create the HDMI I2C adapter\n");
--		return ret;
-+		goto err_disable_mod_clk;
- 	}
- 
- 	drm_encoder_helper_add(&hdmi->encoder,
-@@ -422,6 +425,10 @@ static int sun4i_hdmi_bind(struct device *dev, struct device *master,
- 	drm_encoder_cleanup(&hdmi->encoder);
- err_del_i2c_adapter:
- 	i2c_del_adapter(hdmi->i2c);
-+err_disable_mod_clk:
-+	clk_disable_unprepare(hdmi->mod_clk);
-+err_disable_bus_clk:
-+	clk_disable_unprepare(hdmi->bus_clk);
- 	return ret;
+diff --git a/drivers/clk/sunxi-ng/ccu_reset.c b/drivers/clk/sunxi-ng/ccu_reset.c
+index 1dc4e98ea802..b67149143554 100644
+--- a/drivers/clk/sunxi-ng/ccu_reset.c
++++ b/drivers/clk/sunxi-ng/ccu_reset.c
+@@ -60,8 +60,22 @@ static int ccu_reset_reset(struct reset_controller_dev *rcdev,
+ 	return 0;
  }
  
-@@ -434,6 +441,8 @@ static void sun4i_hdmi_unbind(struct device *dev, struct device *master,
- 	drm_connector_cleanup(&hdmi->connector);
- 	drm_encoder_cleanup(&hdmi->encoder);
- 	i2c_del_adapter(hdmi->i2c);
-+	clk_disable_unprepare(hdmi->mod_clk);
-+	clk_disable_unprepare(hdmi->bus_clk);
- }
- 
- static const struct component_ops sun4i_hdmi_ops = {
++static int ccu_reset_status(struct reset_controller_dev *rcdev,
++			    unsigned long id)
++{
++	struct ccu_reset *ccu = rcdev_to_ccu_reset(rcdev);
++	const struct ccu_reset_map *map = &ccu->reset_map[id];
++
++	/*
++	 * The reset control API expects 0 if reset is not asserted,
++	 * which is the opposite of what our hardware uses.
++	 */
++	return !(map->bit & readl(ccu->base + map->reg));
++}
++
+ const struct reset_control_ops ccu_reset_ops = {
+ 	.assert		= ccu_reset_assert,
+ 	.deassert	= ccu_reset_deassert,
+ 	.reset		= ccu_reset_reset,
++	.status		= ccu_reset_status,
+ };
 -- 
-2.14.2
+2.14.1
