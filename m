@@ -1,83 +1,222 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 29 Sep 2017 12:20:06 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Brown <broonie@kernel.org>, David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 04/14] drm/sun4i: tcon: Add support for demuxing TCON
- output on A31
-Message-ID: <20170929102006.2wz7wrkpplxwynoh@flea>
-References: <20170929082306.16193-1-wens@csie.org>
- <20170929082306.16193-5-wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4aqpdm4bouj2waid"
-In-Reply-To: <20170929082306.16193-5-wens@csie.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+Cc: "Marek Szyprowski" <m.szyprowski@samsung.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>, "Inki Dae" <inki.dae@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+References: <CGME20170821080538eucas1p1e273ef22920493ee406ef546bcc230e5@eucas1p1.samsung.com>
+ <1503302703-13801-1-git-send-email-m.szyprowski@samsung.com>
+Message-ID: <150483237153.48525.1363518996437790191@resonance>
+Subject: Re: [PATCH v9 0/5] Add runtime PM support for clocks (on Exynos SoC example)
+Date: Thu, 07 Sep 2017 17:59:31 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Marek,
 
---4aqpdm4bouj2waid
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Marek Szyprowski (2017-08-21 01:04:58)
+> Dear All,
+> =
 
-On Fri, Sep 29, 2017 at 08:22:56AM +0000, Chen-Yu Tsai wrote:
-> On systems with 2 TCONs such as the A31, it is possible to demux the
-> output of the TCONs to one encoder.
->=20
-> Add support for this for the A31.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 38 ++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 38 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
-un4i_tcon.c
-> index 7bf51abaee97..c949309d4285 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -112,6 +112,21 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tco=
-n, bool enable)
->  }
->  EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
-> =20
-> +static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
+> This patchset adds runtime PM support to common clock framework. This is =
+an
+> attempt to implement support for clock controllers, which belongs to a po=
+wer
+> domain. This approach works surprisingly well on Exynos 5433 SoC, what al=
+lowed
+> us to solve various freeze/crash issues related to power management.
+> =
 
-Would that make sense to make it a bit more generic, and pass the id
-to look for as an argument?
+> The main idea behind this patchset is to keep clock's controller power do=
+main
+> enabled every time when at least one of its clock is enabled or access to=
+ its
+> registers is being made. Clock controller driver (clock provider) can
+> supply a struct device pointer, which is the used by clock core for track=
+ing and
+> managing clock's controller runtime pm state. Each clk_prepare() operatio=
+n will
+> first call pm_runtime_get_sync() on the supplied device, while clk_unprep=
+are()
+> will do pm_runtime_put() at the end.
+> =
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> This runtime PM feature has been tested with Exynos4412 (not included in =
+this
+> patchset) and Exynos5433 clocks drivers. Both have some clocks, which bel=
+ongs to
+> respective power domains and need special handling during power on/off
+> procedures. Till now it wasn't handled at all, what caused various proble=
+ms.
+> =
 
---4aqpdm4bouj2waid
-Content-Type: application/pgp-signature; name="signature.asc"
+> Patches for clocks drivers change the way the clock provider is initializ=
+ed.
+> Instead of CLK_OF_DECLARE based initialization, a complete platform devic=
+e driver
+> infrastructure is being used. This is needed to let driver to use runtime=
+ PM
+> feature and integrate with generic power domains. The side-effect of this=
+ change
+> is a delay in clock provider registeration during system boot, so early
+> initialized drivers might get EPROBEDEFER error when requesting their clo=
+cks.
+> This was an issue for IOMMU drivers, but IOMMU deferred probe support has=
+ been
+> finally merged to v4.13-rc1 and now it is handled correctly.
+> =
 
------BEGIN PGP SIGNATURE-----
+> Patches are based and tested on v4.13-rc5, but applies fine also on v4.13=
+-rc1.
 
-iQIcBAEBAgAGBQJZzh5WAAoJEBx+YmzsjxAgLJ0QAMBRHHiy8jOUQGPgKU+JinBs
-u2rxDfuS/XBFHB2FjH+ya/blQkirAgW1o2R7YbD8hUh/I410qKDJ19qFsqIRvVcr
-F1miAL8p/mCHH4KscvRLDXJzVc20Y3EmI9ApE8ymzVkNtPJ06vTNhRm4KjGvVMOX
-ociqYb4s6Bov4yJZwEqy5B+FoUrcYKSUuVZ0V1B9qCqcDypMpsRfUlwh6oMbKP4h
-DY2niH/rBxn70E3VjMaL8MQp4fmynJ3jEiSrWx6S9gQzhPWBo7QpMnsLatfNaeVc
-ive2NVaXDHxGoaKKmfdn2BUuTwuiCP3Y8oJek5dQRtbNRL1kjR/gRfevNYrFyghG
-qBalx4u3UicezKArb7bCb9ihg1UrxY+7EUcpmn96hhgb227Pzb1lYZc7qAUmPBxa
-zjnZxCGJgq1NX+5ITSL4X7jQYm+ulSDbGDVDnvMo/30vyU0iZ2h/7mSnNdtEnboW
-j20hceoFwBAw/Zi7rKs/21h9WnquqMRwOipNmqKhOnGq0XtZIVx/6ezj3Iouw1DY
-ZHVzn5t+CRiGfuO6k0Z0Glu9Mbfw8KcjU9QF3yLr5lwkIDd7RlrPn1Zm3CRK9MpE
-NxeZDlzqo2tukQQ3owhZvb4KmGwGlgK4YtVvNdMb79ZIaBBFNND8fDdkSGToSgEu
-trapbhPgNPidIJFYqANl
-=/1Is
------END PGP SIGNATURE-----
+Patches look good to me. It's too late for the v4.14 PR, but I'll merge
+this to clk-next after -rc1 drops.
 
---4aqpdm4bouj2waid--
+Best regards,
+Mike
+
+> =
+
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> =
+
+> =
+
+> Changelog:
+> =
+
+> v9:
+> - moved pm_runtime_get() call from clk_register() to __clk_core_init() as
+>   requested by Michael Turquette
+> - added remaining 'Reviewed-by' tags
+> =
+
+> v8: https://www.spinics.net/lists/arm-kernel/msg599494.html
+> - fixed minor issues pointed by Krzysztof Kozlowski and added his 'Review=
+ed-by'
+>   tags
+> - added 'Reviewed-by' and 'Tested-by' tags from Chanwoo Choi
+> - moved trivial changes in Exynos AudioSS driver to separate patch
+> - added pm_runtime_get_noresume/pm_runtime_put_sync calls also to exynos-=
+audss
+>   driver (like it is already done for exynos5433 clocks driver)
+> - still waiting for any comments from clk maintainers
+> =
+
+> v7: https://www.spinics.net/lists/arm-kernel/msg598408.html
+> - rebased onto v4.13-rc3
+> - still waiting for any comments from clk maintainers
+> =
+
+> v6: https://patches.linaro.org/cover/95713/
+> - addressed comments from Ulf Hanson and added his 'Reviewed-by' tags
+> - simplified exynos 5433 clock driver code a bit
+> - fixes issues pointed by kbuild test robot
+> =
+
+> v5: https://www.spinics.net/lists/linux-samsung-soc/msg57718.html
+> - rebased onto next-20170125 kernel release
+> - added two more calls to runtime PM in clock's core:
+>         1. clk_recalc() should ensure active runtime pm state, because it=
+ might
+>            read registers (in case of dividers) to calculate the rate
+>         2. clk_register() also needs to ensure active runtime pm state to=
+ read
+>            initial rate and status of the clocks
+> - more fixes in Exynos5433 clocks drivers:
+>         1. PLL in DISP CMU must be enabled for suspend
+>         2. guard clocks registration with pm_runtime_get_sync/pm_runtime_=
+put to
+>            avoid turning the power domain on and off many times for no go=
+od
+>            reason (registering each clock will call pm_runtime_get_sync()=
+, then
+>            pm_runtime_put, what in turn might disable power domain)
+> - still waiting for a review...
+> =
+
+> v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
+> - Removed patch for Exynos4412 clocks from the patchset. DT bindings for =
+power
+>   domain for ISP sub-controller needs more discussion. It will be handled
+>   separately when the runtime PM for clocks feature gets merged.
+> - Added patch with runtime PM support for Exynos AudioSS clock controller=
+ driver
+>   (needed to enable audio power domain on Exynos5 series).
+> - Fixes in Exynos5433 driver:
+>         1. added missing clock for Audio CMU
+>         2. added support for FSYS CMU
+>         3. improved support for DISP CMU (thanks to Andrzej Hajda for
+>            investigating that).
+> - Rebased onto v4.10-rc1
+> - Waiting for a review...
+> =
+
+> v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
+> - Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is en=
+abled
+>   for the provided device during clock registration as suggested by Ulf
+> - Simplified code for exynos4412 isp clock driver registration
+> - Resolved some other minor issues pointed by Ulf clk core code
+> - Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
+> =
+
+> v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
+> - Simplified clk_pm_runtime_get/put functions, removed workaround for dev=
+ices
+>   with disabled runtime pm. Such workaround is no longer needed since com=
+mit
+>   4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime =
+PM
+>   during system PM phases").
+> - Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core shou=
+ld
+>   call runtime pm functions. This solves problem with clocks, for which s=
+truct
+>   device is already registered, but no runtime pm is enabled.
+> - Extended commit messages according to Ulf suggestions.
+> - Fixed some style issues pointed by Barlomiej.
+> =
+
+> v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
+> - initial version
+> =
+
+> =
+
+> Patch summary:
+> =
+
+> Marek Szyprowski (5):
+>   clk: Add support for runtime PM
+>   clk: samsung: Add support for runtime PM
+>   clk: samsung: exynos5433: Add support for runtime PM
+>   clk: samsung: exynos-audss: Use local variable for controller's device
+>   clk: samsung: exynos-audss: Add support for runtime PM
+> =
+
+>  .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
+>  .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
+>  drivers/clk/clk.c                                  | 126 ++++++-
+>  drivers/clk/samsung/clk-exynos-audss.c             |  76 ++--
+>  drivers/clk/samsung/clk-exynos5433.c               | 409 +++++++++++++++=
++-----
+>  drivers/clk/samsung/clk-pll.c                      |   2 +-
+>  drivers/clk/samsung/clk.c                          |  12 +-
+>  drivers/clk/samsung/clk.h                          |   7 +
+>  8 files changed, 519 insertions(+), 135 deletions(-)
+> =
+
+> -- =
+
+> 1.9.1
