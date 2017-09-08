@@ -1,94 +1,90 @@
-Return-Path: <Ludovic.Desroches@microchip.com>
-Date: Fri, 22 Sep 2017 14:05:32 +0200
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-To: Romain Izard <romain.izard.pro@gmail.com>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@free-electrons.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ludovic
- Desroches <ludovic.desroches@microchip.com>, Wenyou Yang
-	<wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, David Woodhouse
-	<dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek
- Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud
-	<richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/9] clk: at91: pmc: Wait for clocks when resuming
-Message-ID: <20170922120532.jddabnd57yt3iowe@rfolt0960.corp.atmel.com>
-References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
- <20170915140411.31716-2-romain.izard.pro@gmail.com>
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH 4/6] ASoC: Intel: Skylake: Register clock
+ device and ops
+To: "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+Cc: alsa-devel@alsa-project.org, harshapriya.n@intel.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, lgirdwood@gmail.com,
+ Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
+ patches.audio@intel.com, tiwai@suse.de, broonie@kernel.org,
+ linux-clk@vger.kernel.org
+References: <1504794565-19168-1-git-send-email-subhransu.s.prusty@intel.com>
+ <1504794565-19168-5-git-send-email-subhransu.s.prusty@intel.com>
+ <6e21a038-96d4-b58d-b1c7-ba5a5f32e7a8@linux.intel.com>
+ <20170908033135.GB19877@subhransu-desktop>
+ <20170908050120.GC19877@subhransu-desktop>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <77992acc-bf07-0c59-1429-74c5162dbd0e@linux.intel.com>
+Date: Fri, 8 Sep 2017 08:41:54 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20170915140411.31716-2-romain.izard.pro@gmail.com>
-Return-Path: ludovic.desroches@microchip.com
+In-Reply-To: <20170908050120.GC19877@subhransu-desktop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 15, 2017 at 04:04:03PM +0200, Romain Izard wrote:
-> Wait for the syncronization of all clocks when resuming, not only the
-> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-> when interrupts are masked, which is the case in here.
+On 9/8/17 12:01 AM, Subhransu S. Prusty wrote:
+> On Fri, Sep 08, 2017 at 09:01:36AM +0530, Subhransu S. Prusty wrote:
+>> On Thu, Sep 07, 2017 at 08:48:38PM -0500, Pierre-Louis Bossart wrote:
+>>>
+>>>
+>>> On 09/07/2017 09:29 AM, Subhransu S. Prusty wrote:
+>>>> From: Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>
+>>>>
+>>>> Create a platform device and register the clock ops. Clock
+>>>> prepare/unprepare are used to enable/disable the clock as the IPC will be
+>>>> sent in non-atomic context. The clk set_dma_control IPC structures are
+>>>> populated during the set_rate callback and IPC is sent to enable the clock
+>>>> during prepare callback.
+>>>>
+>>> [snip]
+>>>> +
+>>>> +static int skl_clk_prepare(void *pvt_data, u32 id, unsigned long rate)
+>>>> +{
+>>>> +	struct skl *skl = pvt_data;
+>>>> +	struct skl_clk_rate_cfg_table *rcfg;
+>>>> +	int vbus_id, clk_type, ret;
+>>>> +
+>>>> +	clk_type = skl_get_clk_type(id);
+>>>> +	if (clk_type < 0)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	ret = skl_get_vbus_id(id, clk_type);
+>>>> +	if (ret < 0)
+>>>> +		return ret;
+>>>> +
+>>>> +	vbus_id = ret;
+>>>> +
+>>>> +	rcfg = skl_get_rate_cfg(skl_ssp_clks[id].rate_cfg, rate);
+>>>> +	if (!rcfg)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	ret = skl_send_clk_dma_control(skl, rcfg, vbus_id, clk_type, true);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>> In this patchset, the clocks are configured from the machine driver,
+>>> and the enable/disable conveniently placed in
+>>> platform_clock_control() or hw_params(), where the DSP is most
+>>> likely active.
+>>> If you expose a clock, codec driver implementers may want to use
+>>> them directly instead of relying on a machine driver. A number of
+>>> existing codecs do use the clk API, so there could be a case where a
+>>> codec driver calls devm_clk_get and clk_prepare_enable(), without
+>>> any ability to know what state the DSP is in.
+>>> What happens then if the DSP is in suspend? Does this force it back
+>>> to D0? Does the virtual clock driver return an error? Or are you
+>>> using the clk API with some restrictions on when the clock can be
+>>> configured?
+>>
+>> No, clk enable will not force the DSP to D0. So if the DSP is not active,
+>> the IPC will timeout and error will be propagated to the caller.
 > 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Or may be it makes sense to enable the runtime pm for clk driver so that it
+> can activate the DSP. I will check this.
 
-I faced the same issue because of the use of regmap_read_poll_timeout
-when timekeeping is not ready.
-
-
-Ludovic
-
-> ---
->  drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
->  1 file changed, 16 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 775af473fe11..5c2b26de303e 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -107,10 +107,20 @@ static int pmc_suspend(void)
->  	return 0;
->  }
->  
-> +static bool pmc_ready(unsigned int mask)
-> +{
-> +	unsigned int status;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_SR, &status);
-> +
-> +	return ((status & mask) == mask) ? 1 : 0;
-> +}
-> +
->  static void pmc_resume(void)
->  {
-> -	int i, ret = 0;
-> +	int i;
->  	u32 tmp;
-> +	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
->  
->  	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
->  	if (pmc_cache.mckr != tmp)
-> @@ -134,13 +144,11 @@ static void pmc_resume(void)
->  			     AT91_PMC_PCR_CMD);
->  	}
->  
-> -	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
-> -		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
-> -					       !(tmp & AT91_PMC_LOCKU),
-> -					       10, 5000);
-> -		if (ret)
-> -			pr_crit("USB PLL didn't lock when resuming\n");
-> -	}
-> +	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-> +		mask |= AT91_PMC_LOCKU;
-> +
-> +	while (!pmc_ready(mask))
-> +		cpu_relax();
->  }
->  
->  static struct syscore_ops pmc_syscore_ops = {
-> -- 
-> 2.11.0
-> 
+I was thinking of another case: we should not make the assumption that 
+there is always a platform clock control and a hw_params callback, e.g. 
+when an external component seen as a dummy codec needs the mclk/bitclock 
+at all times to drive a second-level set of audio devices. In those 
+cases the machine driver will get/enable the clock at startup and it 
+needs to remain on no matter what the DSP state is. That's probably 
+another case for disabling runtime-pm for as long as the machine driver 
+wants the clock.
