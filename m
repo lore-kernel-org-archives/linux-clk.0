@@ -1,50 +1,43 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>
-Cc: linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/5] NVIDIA Tegra AHB DMA controller driver
-Date: Tue, 26 Sep 2017 02:22:01 +0300
-Message-Id: <cover.1506380746.git.digetx@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 2/2] clk: sunxi-ng: add CLK_SET_RATE_PARENT flag to H3 GPU clock
+Date: Sun, 10 Sep 2017 20:40:06 +0800
+Message-Id: <20170910124006.60250-3-icenowy@aosc.io>
+In-Reply-To: <20170910124006.60250-1-icenowy@aosc.io>
+References: <20170910124006.60250-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-NVIDIA Tegra20/30 SoC's have AHB DMA controller. It has 4 DMA channels,
-supports AHB <-> Memory and Memory <-> Memory transfers, slave / master
-modes. This driver is primarily supposed to be used by gpu/host1x in a
-master mode, performing 3D HW context stores.
+The GPU clock on H3 has only one parent, PLL-GPU, and the PLL is only
+the parent of the GPU clock. The GPU clock can be tweaked by tweaking
+the PLL-GPU clock.
 
-Dmitry Osipenko (5):
-  clk: tegra: Add AHB DMA clock entry
-  clk: tegra: Bump SCLK clock rate to 216MHz on Tegra20
-  dt-bindings: Add DT bindings for NVIDIA Tegra AHB DMA controller
-  dmaengine: Add driver for NVIDIA Tegra AHB DMA controller
-  ARM: dts: tegra: Add AHB DMA controller nodes
+Add CLK_SET_RATE_PARENT flag to allow tweaking the GPU clock via
+tweaking PLL-CPU.
 
- .../bindings/dma/nvidia,tegra20-ahbdma.txt         |  23 +
- arch/arm/boot/dts/tegra20.dtsi                     |   9 +
- arch/arm/boot/dts/tegra30.dtsi                     |   9 +
- drivers/clk/tegra/clk-id.h                         |   1 +
- drivers/clk/tegra/clk-tegra-periph.c               |   1 +
- drivers/clk/tegra/clk-tegra20.c                    |   8 +-
- drivers/clk/tegra/clk-tegra30.c                    |   2 +
- drivers/dma/Kconfig                                |   9 +
- drivers/dma/Makefile                               |   1 +
- drivers/dma/tegra20-ahb-dma.c                      | 679 +++++++++++++++++++++
- 10 files changed, 741 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-ahbdma.txt
- create mode 100644 drivers/dma/tegra20-ahb-dma.c
+Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 7a81c4885836..543c46d0e045 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -484,7 +484,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents,
+ 				 0x15c, 0, 3, 24, 2, BIT(31), CLK_IS_CRITICAL);
+ 
+ static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
+-			     0x1a0, 0, 3, BIT(31), 0);
++			     0x1a0, 0, 3, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static struct ccu_common *sun8i_h3_ccu_clks[] = {
+ 	&pll_cpux_clk.common,
 -- 
-2.14.1
+2.13.5
