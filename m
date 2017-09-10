@@ -1,94 +1,119 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v4 1/8] clk: at91: pmc: Wait for clocks when resuming
-Date: Thu, 28 Sep 2017 11:46:20 +0200
-Message-Id: <20170928094627.31017-2-romain.izard.pro@gmail.com>
-In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:38247 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751661AbdIJMkg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 10 Sep 2017 08:40:36 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 1/2] clk: sunxi-ng: add CLK_SET_RATE_UNGATE to all H3 PLLs
+Date: Sun, 10 Sep 2017 20:40:05 +0800
+Message-Id: <20170910124006.60250-2-icenowy@aosc.io>
+In-Reply-To: <20170910124006.60250-1-icenowy@aosc.io>
+References: <20170910124006.60250-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Wait for the syncronization of all clocks when resuming, not only the
-UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-when interrupts are masked, which is the case in here.
+The PLLs on H3 have a lock bit, which will only be set to 1 when the PLL
+is really working.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Add CLK_SET_RATE_UNGATE to the PLLs, otherwise it will timeout when
+trying to set PLL clock frequency without enabling it.
+
+Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 775af473fe11..5c2b26de303e 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -107,10 +107,20 @@ static int pmc_suspend(void)
- 	return 0;
- }
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 1729ff6a5aae..7a81c4885836 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -37,7 +37,7 @@ static SUNXI_CCU_NKMP_WITH_GATE_LOCK(pll_cpux_clk, "pll-cpux",
+ 				     16, 2,	/* P */
+ 				     BIT(31),	/* gate */
+ 				     BIT(28),	/* lock */
+-				     0);
++				     CLK_SET_RATE_UNGATE);
  
-+static bool pmc_ready(unsigned int mask)
-+{
-+	unsigned int status;
-+
-+	regmap_read(pmcreg, AT91_PMC_SR, &status);
-+
-+	return ((status & mask) == mask) ? 1 : 0;
-+}
-+
- static void pmc_resume(void)
- {
--	int i, ret = 0;
-+	int i;
- 	u32 tmp;
-+	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
+ /*
+  * The Audio PLL is supposed to have 4 outputs: 3 fixed factors from
+@@ -55,7 +55,7 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				   0, 5,	/* M */
+ 				   BIT(31),	/* gate */
+ 				   BIT(28),	/* lock */
+-				   0);
++				   CLK_SET_RATE_UNGATE);
  
- 	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
- 	if (pmc_cache.mckr != tmp)
-@@ -134,13 +144,11 @@ static void pmc_resume(void)
- 			     AT91_PMC_PCR_CMD);
- 	}
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
+ 					"osc24M", 0x0010,
+@@ -67,7 +67,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
  
--	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
--		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
--					       !(tmp & AT91_PMC_LOCKU),
--					       10, 5000);
--		if (ret)
--			pr_crit("USB PLL didn't lock when resuming\n");
--	}
-+	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-+		mask |= AT91_PMC_LOCKU;
-+
-+	while (!pmc_ready(mask))
-+		cpu_relax();
- }
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					"osc24M", 0x0018,
+@@ -79,7 +79,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
  
- static struct syscore_ops pmc_syscore_ops = {
+ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
+ 				    "osc24M", 0x020,
+@@ -88,7 +88,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_ddr_clk, "pll-ddr",
+ 				    0, 2,	/* M */
+ 				    BIT(31),	/* gate */
+ 				    BIT(28),	/* lock */
+-				    0);
++				    CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph0_clk, "pll-periph0",
+ 					   "osc24M", 0x028,
+@@ -97,7 +97,7 @@ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph0_clk, "pll-periph0",
+ 					   BIT(31),	/* gate */
+ 					   BIT(28),	/* lock */
+ 					   2,		/* post-div */
+-					   0);
++					   CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ 					"osc24M", 0x0038,
+@@ -109,7 +109,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph1_clk, "pll-periph1",
+ 					   "osc24M", 0x044,
+@@ -118,7 +118,7 @@ static SUNXI_CCU_NK_WITH_GATE_LOCK_POSTDIV(pll_periph1_clk, "pll-periph1",
+ 					   BIT(31),	/* gate */
+ 					   BIT(28),	/* lock */
+ 					   2,		/* post-div */
+-					   0);
++					   CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
+ 					"osc24M", 0x0048,
+@@ -130,7 +130,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
+ 					297000000,	/* frac rate 1 */
+ 					BIT(31),	/* gate */
+ 					BIT(28),	/* lock */
+-					0);
++					CLK_SET_RATE_UNGATE);
+ 
+ static const char * const cpux_parents[] = { "osc32k", "osc24M",
+ 					     "pll-cpux" , "pll-cpux" };
 -- 
-2.11.0
+2.13.5
+
