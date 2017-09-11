@@ -1,65 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 1 Sep 2017 13:32:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Satoru OKAMOTO <okamoto.satoru@socionext.com>
-Subject: Re: [PATCH v2] clk: mb86s7x: Drop non-building driver
-Message-ID: <20170901203201.GB21656@codeaurora.org>
-References: <20170824225237.21485-1-afaerber@suse.de>
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 11 Sep 2017 13:57:46 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
+Message-ID: <20170911055745.GF3787@dragon>
+References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
+ <20170809173318.GD2146@codeaurora.org>
+ <20170813141851.GD31819@dragon>
+ <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
+ <20170831052630.GU21656@codeaurora.org>
+ <AM3PR04MB3065706564AA81D56E03E4580680@AM3PR04MB306.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20170824225237.21485-1-afaerber@suse.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <AM3PR04MB3065706564AA81D56E03E4580680@AM3PR04MB306.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25, Andreas Färber wrote:
-> It fails to build once we introduce the ARCH_MB86S7X Kconfig symbol:
+On Mon, Sep 11, 2017 at 04:51:28AM +0000, A.s. Dong wrote:
+> Hi Shawn,
 > 
->   drivers/clk/clk-mb86s7x.c:27:10: fatal error: soc/mb86s7x/scb_mhu.h: No such file or directory
->    #include <soc/mb86s7x/scb_mhu.h>
->             ^~~~~~~~~~~~~~~~~~~~~~~
->   compilation terminated.
+> > -----Original Message-----
+> > From: Stephen Boyd [mailto:sboyd@codeaurora.org]
+> > Sent: Thursday, August 31, 2017 1:27 PM
+> > To: A.s. Dong
+> > Cc: Shawn Guo; Michael Turquette; linux-clk@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; Shawn Guo
+> > Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
+> > 
+> > On 08/30, A.s. Dong wrote:
 > 
-> And when commenting out that line, we get:
+> [...]
 > 
->   drivers/clk/clk-mb86s7x.c: In function 'crg_gate_control':
->   drivers/clk/clk-mb86s7x.c:72:8: error: implicit declaration of function 'mb86s7x_send_packet' [-Werror=implicit-function-declaration]
->     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
->           ^~~~~~~~~~~~~~~~~~~
->   drivers/clk/clk-mb86s7x.c:72:28: error: 'CMD_PERI_CLOCK_GATE_SET_REQ' undeclared (first use in this function)
->     ret = mb86s7x_send_packet(CMD_PERI_CLOCK_GATE_SET_REQ,
->                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->   drivers/clk/clk-mb86s7x.c:72:28: note: each undeclared identifier is reported only once for each function it appears in
->   drivers/clk/clk-mb86s7x.c: In function 'crg_rate_control':
->   drivers/clk/clk-mb86s7x.c:116:10: error: 'CMD_PERI_CLOCK_RATE_SET_REQ' undeclared (first use in this function)
->      code = CMD_PERI_CLOCK_RATE_SET_REQ;
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->   drivers/clk/clk-mb86s7x.c:121:10: error: 'CMD_PERI_CLOCK_RATE_GET_REQ' undeclared (first use in this function); did you mean 'CMD_PERI_CLOCK_RATE_SET_REQ'?
->      code = CMD_PERI_CLOCK_RATE_GET_REQ;
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->             CMD_PERI_CLOCK_RATE_SET_REQ
->   drivers/clk/clk-mb86s7x.c: In function 'mhu_cluster_rate':
->   drivers/clk/clk-mb86s7x.c:276:10: error: 'CMD_CPU_CLOCK_RATE_GET_REQ' undeclared (first use in this function)
->      code = CMD_CPU_CLOCK_RATE_GET_REQ;
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~
->   drivers/clk/clk-mb86s7x.c:278:10: error: 'CMD_CPU_CLOCK_RATE_SET_REQ' undeclared (first use in this function); did you mean 'CMD_CPU_CLOCK_RATE_GET_REQ'?
->      code = CMD_CPU_CLOCK_RATE_SET_REQ;
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~
->             CMD_CPU_CLOCK_RATE_GET_REQ
->   cc1: some warnings being treated as errors
->   scripts/Makefile.build:302: recipe for target
->   'drivers/clk/clk-mb86s7x.o' failed
->   make[2]: *** [drivers/clk/clk-mb86s7x.o] Error 1
+> > > Flags may be better used for extending per clk feature support in the
+> > future.
+> > >
+> > > IMHO how about implement a of_clk_bulk_get() to handle this issue as
+> > > we already have a of_clk_get?
+> > > e.g.
+> > >
+> > > int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+> > >                               struct clk_bulk_data *clks) {
+> > >         for (i = 0; i < num_clks; i++) {
+> > >                 clks[i].clk = of_clk_get(dev, clks[i].id); ...
+> > >
+> > > }
+> > >
+> > > Then it's less intrusive.
+> > >
+> > 
+> > This looks ok too. Go ahead and send this version instead.
+> > 
 > 
-> Remove the driver for now.
-> 
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-> ---
+> I did not see you send a update version.
+> If you will not do it, would you mind me to help send it with a Reported-by: tag from you?
 
-Applied to clk-next
+Sure, go ahead.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Shawn
