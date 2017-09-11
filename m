@@ -1,172 +1,94 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v4 04/10] clk: rework calls to round and determine rate callbacks
-Date: Sun, 24 Sep 2017 22:00:24 +0200
-Message-Id: <20170924200030.6227-5-jbrunet@baylibre.com>
-In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
-References: <20170924200030.6227-1-jbrunet@baylibre.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH 1/1] clk: bulk: add of_clk_bulk_get()
+Date: Mon, 11 Sep 2017 15:36:53 +0800
+Message-ID: <1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework the way the callbacks round_rate() and determine_rate() are called.
-The goal is to do this at a single point and make it easier to add
-conditions before calling them.
+'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
+here to handle this for DT users without 'clock-names' specified.
 
-Because of this factorization, rate returned by determine_rate() is also
-checked against the min and max rate values
-
-This rework is done to ease the integration of "protected" clock
-functionality.
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Reported-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/clk.c | 82 +++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 52 insertions(+), 30 deletions(-)
+ drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
+ include/linux/clk.h    |  8 ++++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0913688dacb0..0905139a1893 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -833,10 +833,9 @@ static int clk_disable_unused(void)
- }
- late_initcall_sync(clk_disable_unused);
- 
--static int clk_core_round_rate_nolock(struct clk_core *core,
--				      struct clk_rate_request *req)
-+static int clk_core_determine_round_nolock(struct clk_core *core,
-+					   struct clk_rate_request *req)
- {
--	struct clk_core *parent;
- 	long rate;
- 
- 	lockdep_assert_held(&prepare_lock);
-@@ -844,15 +843,6 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 	if (!core)
- 		return 0;
- 
--	parent = core->parent;
--	if (parent) {
--		req->best_parent_hw = parent->hw;
--		req->best_parent_rate = parent->rate;
--	} else {
--		req->best_parent_hw = NULL;
--		req->best_parent_rate = 0;
--	}
--
- 	if (core->ops->determine_rate) {
- 		return core->ops->determine_rate(core->hw, req);
- 	} else if (core->ops->round_rate) {
-@@ -862,15 +852,58 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- 			return rate;
- 
- 		req->rate = rate;
--	} else if (core->flags & CLK_SET_RATE_PARENT) {
--		return clk_core_round_rate_nolock(parent, req);
- 	} else {
--		req->rate = core->rate;
-+		return -EINVAL;
- 	}
- 
- 	return 0;
- }
- 
-+static void clk_core_init_rate_req(struct clk_core * const core,
-+				   struct clk_rate_request *req)
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index c834f5a..3179f28 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -19,6 +19,37 @@
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
++#include <linux/of.h>
++
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++				 struct clk_bulk_data *clks)
 +{
-+	struct clk_core *parent;
++	int ret;
++	int i;
 +
-+	if (WARN_ON(!core || !req))
-+		return;
++	for (i = 0; i < num_clks; i++)
++		clks[i].clk = NULL;
 +
-+	parent = core->parent;
-+	if (parent) {
-+		req->best_parent_hw = parent->hw;
-+		req->best_parent_rate = parent->rate;
-+	} else {
-+		req->best_parent_hw = NULL;
-+		req->best_parent_rate = 0;
++	for (i = 0; i < num_clks; i++) {
++		clks[i].clk = of_clk_get(np, i);
++		if (IS_ERR(clks[i].clk)) {
++			ret = PTR_ERR(clks[i].clk);
++			pr_err("%s: Failed to get clk index: %d ret: %d\n",
++			       np->full_name, i, ret);
++			clks[i].clk = NULL;
++			goto err;
++		}
 +	}
-+}
 +
-+static bool clk_core_can_round(struct clk_core * const core)
-+{
-+	if (core->ops->determine_rate || core->ops->round_rate)
-+		return true;
-+
-+	return false;
-+}
-+
-+static int clk_core_round_rate_nolock(struct clk_core *core,
-+				      struct clk_rate_request *req)
-+{
-+	lockdep_assert_held(&prepare_lock);
-+
-+	if (!core)
-+		return 0;
-+
-+	clk_core_init_rate_req(core, req);
-+
-+	if (clk_core_can_round(core))
-+		return clk_core_determine_round_nolock(core, req);
-+	else if (core->flags & CLK_SET_RATE_PARENT)
-+		return clk_core_round_rate_nolock(core->parent, req);
-+
-+	req->rate = core->rate;
 +	return 0;
++
++err:
++	clk_bulk_put(i, clks);
++
++	return ret;
++}
++#endif
+ 
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+ {
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 91bd464..c5281b3 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -658,10 +658,18 @@ static inline void clk_disable_unprepare(struct clk *clk)
+ }
+ 
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++				 struct clk_bulk_data *clks);
+ struct clk *of_clk_get(struct device_node *np, int index);
+ struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+ #else
++static int of_clk_bulk_get(struct device_node *np, int num_clks,
++			   struct clk_bulk_data *clks)
++{
++	return ERR_PTR(-ENOENT);
 +}
 +
- /**
-  * __clk_determine_rate - get the closest rate actually supported by a clock
-  * @hw: determine the rate of this clock
-@@ -1356,34 +1389,23 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 	clk_core_get_boundaries(core, &min_rate, &max_rate);
- 
- 	/* find the closest rate and parent clk/rate */
--	if (core->ops->determine_rate) {
-+	if (clk_core_can_round(core)) {
- 		struct clk_rate_request req;
- 
- 		req.rate = rate;
- 		req.min_rate = min_rate;
- 		req.max_rate = max_rate;
--		if (parent) {
--			req.best_parent_hw = parent->hw;
--			req.best_parent_rate = parent->rate;
--		} else {
--			req.best_parent_hw = NULL;
--			req.best_parent_rate = 0;
--		}
- 
--		ret = core->ops->determine_rate(core->hw, &req);
-+		clk_core_init_rate_req(core, &req);
-+
-+		ret = clk_core_determine_round_nolock(core, &req);
- 		if (ret < 0)
- 			return NULL;
- 
- 		best_parent_rate = req.best_parent_rate;
- 		new_rate = req.rate;
- 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
--	} else if (core->ops->round_rate) {
--		ret = core->ops->round_rate(core->hw, rate,
--					    &best_parent_rate);
--		if (ret < 0)
--			return NULL;
- 
--		new_rate = ret;
- 		if (new_rate < min_rate || new_rate > max_rate)
- 			return NULL;
- 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
+ static inline struct clk *of_clk_get(struct device_node *np, int index)
+ {
+ 	return ERR_PTR(-ENOENT);
 -- 
-2.13.5
+2.7.4
