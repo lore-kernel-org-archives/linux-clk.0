@@ -1,81 +1,45 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/1] clk: bulk: add of_clk_bulk_get()
-To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com, shawnguo@kernel.org, Russell
-	King <linux@arm.linux.org.uk>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <f9b6af8e-6d1b-702d-40e0-944f5ecedf8a@samsung.com>
-Date: Mon, 11 Sep 2017 10:58:19 +0200
-MIME-version: 1.0
-In-reply-to: <1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20170911074100epcas2p15480963b2119f8954784f9b37ed8d26d@epcas2p1.samsung.com>
-	<1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170908213758.670316956@cogentembedded.com>
+References: <20170908213758.670316956@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Sep 2017 16:03:16 +0200
+Message-ID: <CAMuHMdVgir5ZriM+tcL6cHPCGcDg_oGtGaygdzGa3zLcO1aFvw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/11/2017 09:36 AM, Dong Aisheng wrote:
-> 'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
-> here to handle this for DT users without 'clock-names' specified.
-> 
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Reported-by: Shawn Guo <shawnguo@kernel.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->   drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
->   include/linux/clk.h    |  8 ++++++++
->   2 files changed, 39 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> index c834f5a..3179f28 100644
-> --- a/drivers/clk/clk-bulk.c
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -19,6 +19,37 @@
->   #include <linux/clk.h>
->   #include <linux/device.h>
->   #include <linux/export.h>
-> +#include <linux/of.h>
-> +
-> +#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-> +int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> +				 struct clk_bulk_data *clks)
-> +{
-> +	int ret;
-> +	int i;
-> +
-> +	for (i = 0; i < num_clks; i++)
-> +		clks[i].clk = NULL;
-> +
-> +	for (i = 0; i < num_clks; i++) {
-> +		clks[i].clk = of_clk_get(np, i);
-> +		if (IS_ERR(clks[i].clk)) {
-> +			ret = PTR_ERR(clks[i].clk);
+On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by the device tree sources to reference the R8A77970
+> CPG core clocks by index. The data come from the table 8.2c of R-Car
+> Series, 3rd Generation User's Manual: Hardware (Rev. 0.55, Jun. 30, 2017).
+>
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +			pr_err("%s: Failed to get clk index: %d ret: %d\n",
-> +			       np->full_name, i, ret);
+Thank you, will queue in clk-renesas-for-v4.15.
 
-AFAIU full_node is not supposed now to be dereferenced directly,
-since storing of the full path string for each node is going to be
-removed. %pOF needs to be used instead, e.g.
+Gr{oetje,eeting}s,
 
-	pr_err("%pOF: failed to get clk %d: %d\n", np, i , ret);
+                        Geert
 
-> +			clks[i].clk = NULL;
-> +			goto err;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	clk_bulk_put(i, clks);
-> +
-> +	return ret;
-> +}
-> +#endif
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-Regards,
-Sylwester
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
