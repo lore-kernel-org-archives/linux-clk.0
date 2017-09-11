@@ -1,44 +1,97 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] clk: samsung: Delete an error message for a failed memory
- allocation in exynos_register_cpu_clock()
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Message-ID: <19c81633-7110-260a-70c6-c55fad5607d6@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 15:55:17 +0200
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Mon, 11 Sep 2017 17:13:58 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com, shawnguo@kernel.org,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 1/1] clk: bulk: add of_clk_bulk_get()
+Message-ID: <20170911091358.GC19297@b29396-OptiPlex-7040>
+References: <CGME20170911074100epcas2p15480963b2119f8954784f9b37ed8d26d@epcas2p1.samsung.com>
+ <1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
+ <f9b6af8e-6d1b-702d-40e0-944f5ecedf8a@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <f9b6af8e-6d1b-702d-40e0-944f5ecedf8a@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 15:46:53 +0200
+On Mon, Sep 11, 2017 at 10:58:19AM +0200, Sylwester Nawrocki wrote:
+> On 09/11/2017 09:36 AM, Dong Aisheng wrote:
+> >'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
+> >here to handle this for DT users without 'clock-names' specified.
+> >
+> >Cc: Stephen Boyd <sboyd@codeaurora.org>
+> >Cc: Michael Turquette <mturquette@baylibre.com>
+> >Cc: Russell King <linux@arm.linux.org.uk>
+> >Reported-by: Shawn Guo <shawnguo@kernel.org>
+> >Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> >---
+> >  drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
+> >  include/linux/clk.h    |  8 ++++++++
+> >  2 files changed, 39 insertions(+)
+> >
+> >diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+> >index c834f5a..3179f28 100644
+> >--- a/drivers/clk/clk-bulk.c
+> >+++ b/drivers/clk/clk-bulk.c
+> >@@ -19,6 +19,37 @@
+> >  #include <linux/clk.h>
+> >  #include <linux/device.h>
+> >  #include <linux/export.h>
+> >+#include <linux/of.h>
+> >+
+> >+#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+> >+int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+> >+				 struct clk_bulk_data *clks)
+> >+{
+> >+	int ret;
+> >+	int i;
+> >+
+> >+	for (i = 0; i < num_clks; i++)
+> >+		clks[i].clk = NULL;
+> >+
+> >+	for (i = 0; i < num_clks; i++) {
+> >+		clks[i].clk = of_clk_get(np, i);
+> >+		if (IS_ERR(clks[i].clk)) {
+> >+			ret = PTR_ERR(clks[i].clk);
+> 
+> >+			pr_err("%s: Failed to get clk index: %d ret: %d\n",
+> >+			       np->full_name, i, ret);
+> 
+> AFAIU full_node is not supposed now to be dereferenced directly,
+> since storing of the full path string for each node is going to be
+> removed. %pOF needs to be used instead, e.g.
+> 
+> 	pr_err("%pOF: failed to get clk %d: %d\n", np, i , ret);
+> 
 
-Omit an extra message for a memory allocation failure in this function.
+Thanks for telling this.
+Just see Rob sent patches to clean up it some days ago.
+Will update the patch.
 
-This issue was detected by using the Coccinelle software.
+Regards
+Dong Aisheng
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/samsung/clk-cpu.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 6686e8ba61f9..d2c99d8916b8 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -457,8 +457,6 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- 
- 	cpuclk->cfg = kmemdup(cfg, sizeof(*cfg) * num_cfgs, GFP_KERNEL);
- 	if (!cpuclk->cfg) {
--		pr_err("%s: could not allocate memory for cpuclk data\n",
--				__func__);
- 		ret = -ENOMEM;
- 		goto unregister_clk_nb;
- 	}
--- 
-2.14.1
+> >+			clks[i].clk = NULL;
+> >+			goto err;
+> >+		}
+> >+	}
+> >+
+> >+	return 0;
+> >+
+> >+err:
+> >+	clk_bulk_put(i, clks);
+> >+
+> >+	return ret;
+> >+}
+> >+#endif
+> 
+> -- 
+> Regards,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
