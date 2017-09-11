@@ -1,97 +1,57 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Mon, 11 Sep 2017 17:13:58 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com, shawnguo@kernel.org,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/1] clk: bulk: add of_clk_bulk_get()
-Message-ID: <20170911091358.GC19297@b29396-OptiPlex-7040>
-References: <CGME20170911074100epcas2p15480963b2119f8954784f9b37ed8d26d@epcas2p1.samsung.com>
- <1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
- <f9b6af8e-6d1b-702d-40e0-944f5ecedf8a@samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f9b6af8e-6d1b-702d-40e0-944f5ecedf8a@samsung.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170908213418.823028011@cogentembedded.com>
+References: <20170908213418.823028011@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Sep 2017 16:38:43 +0200
+Message-ID: <CAMuHMdUy_UGZsa87e-=SuYutt5sXd4ZTiZKLfLGfD2css3RPcw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Renesas R8A77970 CPG/MSSR clock support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 11, 2017 at 10:58:19AM +0200, Sylwester Nawrocki wrote:
-> On 09/11/2017 09:36 AM, Dong Aisheng wrote:
-> >'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
-> >here to handle this for DT users without 'clock-names' specified.
-> >
-> >Cc: Stephen Boyd <sboyd@codeaurora.org>
-> >Cc: Michael Turquette <mturquette@baylibre.com>
-> >Cc: Russell King <linux@arm.linux.org.uk>
-> >Reported-by: Shawn Guo <shawnguo@kernel.org>
-> >Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> >---
-> >  drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
-> >  include/linux/clk.h    |  8 ++++++++
-> >  2 files changed, 39 insertions(+)
-> >
-> >diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> >index c834f5a..3179f28 100644
-> >--- a/drivers/clk/clk-bulk.c
-> >+++ b/drivers/clk/clk-bulk.c
-> >@@ -19,6 +19,37 @@
-> >  #include <linux/clk.h>
-> >  #include <linux/device.h>
-> >  #include <linux/export.h>
-> >+#include <linux/of.h>
-> >+
-> >+#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-> >+int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> >+				 struct clk_bulk_data *clks)
-> >+{
-> >+	int ret;
-> >+	int i;
-> >+
-> >+	for (i = 0; i < num_clks; i++)
-> >+		clks[i].clk = NULL;
-> >+
-> >+	for (i = 0; i < num_clks; i++) {
-> >+		clks[i].clk = of_clk_get(np, i);
-> >+		if (IS_ERR(clks[i].clk)) {
-> >+			ret = PTR_ERR(clks[i].clk);
-> 
-> >+			pr_err("%s: Failed to get clk index: %d ret: %d\n",
-> >+			       np->full_name, i, ret);
-> 
-> AFAIU full_node is not supposed now to be dereferenced directly,
-> since storing of the full path string for each node is going to be
-> removed. %pOF needs to be used instead, e.g.
-> 
-> 	pr_err("%pOF: failed to get clk %d: %d\n", np, i , ret);
-> 
+Hi Sergei,
 
-Thanks for telling this.
-Just see Rob sent patches to clean up it some days ago.
-Will update the patch.
+On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+>    Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+> 'linux.git' repo.
 
-Regards
-Dong Aisheng
+Thank you, looks good!
 
-> >+			clks[i].clk = NULL;
-> >+			goto err;
-> >+		}
-> >+	}
-> >+
-> >+	return 0;
-> >+
-> >+err:
-> >+	clk_bulk_put(i, clks);
-> >+
-> >+	return ret;
-> >+}
-> >+#endif
-> 
-> -- 
-> Regards,
-> Sylwester
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> As the DT patches in the R8A77970/Eagle board support series
+> depend on the patch #1 of this series, it might make sense to merge this patch
+> to the 'renesas.git' repo as well...
+>
+> [1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
+
+The modern way to avoid this dependency is to use hardcoded numbers in
+the initial submission of the DTS, cfr.
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/commit/?h=arm64-dt-for-v4.15&id=d917e0b24811eadeba419ba7318b967ee15933b3
+
+After the definitions have hit upstream, you can replace the hardcoded
+numbers by symbols, cfr.
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=d3f6987db28a4657bf3304eeeb8e2cd8dd510ad0
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=81426223583d5575767c77684be28c40034785bd
+
+So I don't think Simon will merge the core clock definitions patch, unless
+you plan to submit a full DTS describing the whole SoC in the initial
+submissiong.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
