@@ -1,35 +1,99 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        Alexandre TORGUE
-	<alexandre.torgue@st.com>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Subject: Re: linux-4.14-rc1/drivers/clk/clk-stm32h7.c: 2 * possible typo ?
-Date: Tue, 19 Sep 2017 09:22:08 +0000
-Message-ID: <73cadb19-a75e-4938-265f-890cc5a4d3b4@st.com>
-References: <12ce6ec0-d351-4ffe-a5a0-cdc09f6aee39@st.com>
-In-Reply-To: <12ce6ec0-d351-4ffe-a5a0-cdc09f6aee39@st.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<s.nawrocki@samsung.com>, Dong Aisheng <aisheng.dong@nxp.com>, Russell King
+	<linux@arm.linux.org.uk>
+Subject: [PATCH V2 1/1] clk: bulk: add of_clk_bulk_get()
+Date: Mon, 11 Sep 2017 17:25:08 +0800
+Message-ID: <1505121908-5782-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgRGF2aWQsDQoNCkkgY29uZmlybSBpdCdzIHR5cG8gaXNzdWUuIEkgJ20gcmVhZHkgdG8gc2Vu
-ZCBhIGZpeCBmb3IgdGhhdC4NCg0KTWFueSBUaGFuaydzDQoNCkdhYnJpZWwNCg0KPiBIZWxsbyB0
-aGVyZSwNCj4NCj4gMS4NCj4NCj4gbGludXgtNC4xNC1yYzEvZHJpdmVycy9jbGsvY2xrLXN0bTMy
-aDcuYzozODddOiAoc3R5bGUpIFNhbWUgZXhwcmVzc2lvbg0KPiBvbiBib3RoIHNpZGVzIG9mICcm
-JicuDQo+DQo+IFNvdXJjZSBjb2RlIGlzDQo+DQo+ICAgwqDCoMKgIGlmIChnY2ZnLT5tdXggJiYg
-Z2NmZy0+bXV4KSB7DQo+DQo+IDIuDQo+DQo+IFtsaW51eC00LjE0LXJjMS9kcml2ZXJzL2Nsay9j
-bGstc3RtMzJoNy5jOjQxM106IChzdHlsZSkgU2FtZSBleHByZXNzaW9uDQo+IG9uIGJvdGggc2lk
-ZXMgb2YgJyYmJy4NCj4NCj4gRHVwbGljYXRlLg0KPg0KPiBSZWdhcmRzDQo+DQo+IERhdmlkIEJp
-bmRlcm1hbg0K
+'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
+here to handle this for DT users without 'clock-names' specified.
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Reported-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+---
+Changes since v1:
+ * using %pOF instead of full_name
+---
+ drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
+ include/linux/clk.h    |  8 ++++++++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index c834f5a..896aa3b 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -19,6 +19,37 @@
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
++#include <linux/of.h>
++
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++				 struct clk_bulk_data *clks)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < num_clks; i++)
++		clks[i].clk = NULL;
++
++	for (i = 0; i < num_clks; i++) {
++		clks[i].clk = of_clk_get(np, i);
++		if (IS_ERR(clks[i].clk)) {
++			ret = PTR_ERR(clks[i].clk);
++			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
++			       np, i, ret);
++			clks[i].clk = NULL;
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	clk_bulk_put(i, clks);
++
++	return ret;
++}
++#endif
+ 
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+ {
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 91bd464..c5281b3 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -658,10 +658,18 @@ static inline void clk_disable_unprepare(struct clk *clk)
+ }
+ 
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++				 struct clk_bulk_data *clks);
+ struct clk *of_clk_get(struct device_node *np, int index);
+ struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+ #else
++static int of_clk_bulk_get(struct device_node *np, int num_clks,
++			   struct clk_bulk_data *clks)
++{
++	return ERR_PTR(-ENOENT);
++}
++
+ static inline struct clk *of_clk_get(struct device_node *np, int index)
+ {
+ 	return ERR_PTR(-ENOENT);
+-- 
+2.7.4
