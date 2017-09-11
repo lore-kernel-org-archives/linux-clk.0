@@ -1,105 +1,93 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v2 03/10] ARM: bcm: Add support for Broadcom Hurricane 2 SoC
-Date: Thu, 28 Sep 2017 16:14:55 -0700
-Message-Id: <20170928231502.27069-4-f.fainelli@gmail.com>
-In-Reply-To: <20170928231502.27069-1-f.fainelli@gmail.com>
-References: <20170928231502.27069-1-f.fainelli@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Mon, 11 Sep 2017 15:25:39 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
+	ping.bai@nxp.com
+Subject: Re: [PATCH V2 00/10] clk: add imx7ulp clk support
+Message-ID: <20170911072539.GA19297@b29396-OptiPlex-7040>
+References: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1499946435-7177-1-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Kconfig entry point and basic machine board code for the Broadcom
-Hurricane 2 SoCs used in switching products.
+Hi Stephen,
 
-Acked-by: Jon Mason <jon.mason@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- arch/arm/mach-bcm/Kconfig   |  9 +++++++++
- arch/arm/mach-bcm/Makefile  |  3 +++
- arch/arm/mach-bcm/bcm_hr2.c | 25 +++++++++++++++++++++++++
- 3 files changed, 37 insertions(+)
- create mode 100644 arch/arm/mach-bcm/bcm_hr2.c
+On Thu, Jul 13, 2017 at 07:47:05PM +0800, Dong Aisheng wrote:
+> This patch series intends to add imx7ulp clk support.
+> 
+> i.MX7ULP Clock functions are under joint control of the System
+> Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+> modules, and Core Mode Controller (CMC)1 blocks
+> 
+> The clocking scheme provides clear separation between M4 domain
+> and A7 domain. Except for a few clock sources shared between two
+> domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+> and and the Fast IRC clock (FIRCLK), clock sources and clock
+> management are separated and contained within each domain.
+> 
+> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+> 
+> Note: this series only adds A7 clock domain support as M4 clock
+> domain will be handled by M4 seperately.
+> 
+> Change Log:
+> v1->v2:
+>  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+>  * use clk_hw apis to register clocks
+>  * use of_clk_add_hw_provider
+>  * split the clocks register process into two parts: early part for possible
+>    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+>    the left normal peripheral clocks registered by a platform driver.
 
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index 73be3d578851..76807581f9f3 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -36,6 +36,15 @@ config ARCH_BCM_CYGNUS
- 	  BCM11300, BCM11320, BCM11350, BCM11360,
- 	  BCM58300, BCM58302, BCM58303, BCM58305.
- 
-+config ARCH_BCM_HR2
-+	bool "Broadcom Hurricane 2 SoC support"
-+	depends on ARCH_MULTI_V7
-+	select ARCH_BCM_IPROC
-+	help
-+	  Enable support for the Hurricane 2 family,
-+	  which includes the following variants:
-+	  BCM53342, BCM53343, BCM53344, BCM53346.
-+
- config ARCH_BCM_NSP
- 	bool "Broadcom Northstar Plus SoC Support"
- 	depends on ARCH_MULTI_V7
-diff --git a/arch/arm/mach-bcm/Makefile b/arch/arm/mach-bcm/Makefile
-index 980f5850097c..ec93c849a100 100644
---- a/arch/arm/mach-bcm/Makefile
-+++ b/arch/arm/mach-bcm/Makefile
-@@ -13,6 +13,9 @@
- # Cygnus
- obj-$(CONFIG_ARCH_BCM_CYGNUS) +=  bcm_cygnus.o
- 
-+# Hurricane 2
-+obj-$(CONFIG_ARCH_BCM_HR2)	+= bcm_hr2.o
-+
- # Northstar Plus
- obj-$(CONFIG_ARCH_BCM_NSP)	+= bcm_nsp.o
- 
-diff --git a/arch/arm/mach-bcm/bcm_hr2.c b/arch/arm/mach-bcm/bcm_hr2.c
-new file mode 100644
-index 000000000000..c104f28995d7
---- /dev/null
-+++ b/arch/arm/mach-bcm/bcm_hr2.c
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2017 Broadcom
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <asm/mach/arch.h>
-+
-+static const char * const bcm_hr2_dt_compat[] __initconst = {
-+	"brcm,hr2",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(BCM_HR2_DT, "Broadcom Hurricane 2 SoC")
-+	.l2c_aux_val	= 0,
-+	.l2c_aux_mask	= ~0,
-+	.dt_compat = bcm_hr2_dt_compat,
-+MACHINE_END
--- 
-2.14.1
+Would you please help review this new series when you're free?
+
+This has been pending for a long time.
+
+Regards
+Dong Aisheng
+
+> 
+> Dong Aisheng (10):
+>   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+>   clk: reparent orphans after critical clocks enabled
+>   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+>   clk: imx: add pllv4 support
+>   clk: imx: add pfdv2 support
+>   clk: imx: add composite clk support
+>   dt-bindings: clock: add imx7ulp clock binding doc
+>   clk: imx: make mux parent strings const
+>   clk: imx: implement new clk_hw based APIs
+>   clk: imx: add imx7ulp clk driver
+> 
+>  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
+>  drivers/clk/clk-divider.c                          | 100 ++++++++-
+>  drivers/clk/clk-fractional-divider.c               |  10 +
+>  drivers/clk/clk.c                                  |  39 ++--
+>  drivers/clk/imx/Makefile                           |   6 +-
+>  drivers/clk/imx/clk-busy.c                         |   2 +-
+>  drivers/clk/imx/clk-composite.c                    |  90 ++++++++
+>  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+>  drivers/clk/imx/clk-imx7ulp.c                      | 245 +++++++++++++++++++++
+>  drivers/clk/imx/clk-pfdv2.c                        | 207 +++++++++++++++++
+>  drivers/clk/imx/clk-pllv4.c                        | 188 ++++++++++++++++
+>  drivers/clk/imx/clk.c                              |  22 ++
+>  drivers/clk/imx/clk.h                              |  92 +++++++-
+>  include/dt-bindings/clock/imx7ulp-clock.h          | 108 +++++++++
+>  include/linux/clk-provider.h                       |  17 ++
+>  15 files changed, 1159 insertions(+), 31 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+>  create mode 100644 drivers/clk/imx/clk-composite.c
+>  create mode 100644 drivers/clk/imx/clk-imx7ulp.c
+>  create mode 100644 drivers/clk/imx/clk-pfdv2.c
+>  create mode 100644 drivers/clk/imx/clk-pllv4.c
+>  create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
+> 
+> -- 
+> 2.7.4
+> 
