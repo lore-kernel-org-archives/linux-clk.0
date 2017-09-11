@@ -1,137 +1,63 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v4 02/10] clk: take the prepare lock out of clk_core_set_parent
-Date: Sun, 24 Sep 2017 22:00:22 +0200
-Message-Id: <20170924200030.6227-3-jbrunet@baylibre.com>
-In-Reply-To: <20170924200030.6227-1-jbrunet@baylibre.com>
-References: <20170924200030.6227-1-jbrunet@baylibre.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: RE: [PATCH] clk: bulk: call of_clk_get() when id is NULL
+Date: Mon, 11 Sep 2017 04:51:28 +0000
+Message-ID: <AM3PR04MB3065706564AA81D56E03E4580680@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1502243442-28055-1-git-send-email-shawnguo@kernel.org>
+ <20170809173318.GD2146@codeaurora.org> <20170813141851.GD31819@dragon>
+ <AM3PR04MB3064504A935B4AA0CBEE962809C0@AM3PR04MB306.eurprd04.prod.outlook.com>
+ <20170831052630.GU21656@codeaurora.org>
+In-Reply-To: <20170831052630.GU21656@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework set_parent core function so it can be called when the prepare lock
-is already held by the caller.
+Hi Shawn,
 
-This rework is done to ease the integration of the "protected" clock
-functionality.
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@codeaurora.org]
+> Sent: Thursday, August 31, 2017 1:27 PM
+> To: A.s. Dong
+> Cc: Shawn Guo; Michael Turquette; linux-clk@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; Shawn Guo
+> Subject: Re: [PATCH] clk: bulk: call of_clk_get() when id is NULL
+>=20
+> On 08/30, A.s. Dong wrote:
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 41 ++++++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 21 deletions(-)
+[...]
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b31e56b09e25..3518f251cfd5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1787,32 +1787,28 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_has_parent);
- 
--static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
-+static int clk_core_set_parent_nolock(struct clk_core *core,
-+				      struct clk_core *parent)
- {
- 	int ret = 0;
- 	int p_index = 0;
- 	unsigned long p_rate = 0;
- 
-+	lockdep_assert_held(&prepare_lock);
-+
- 	if (!core)
- 		return 0;
- 
--	/* prevent racing with updates to the clock topology */
--	clk_prepare_lock();
--
- 	if (core->parent == parent)
--		goto out;
-+		return 0;
- 
- 	/* verify ops for for multi-parent clks */
--	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
--		ret = -EPERM;
--		goto out;
--	}
-+	if (core->num_parents > 1 && !core->ops->set_parent)
-+		return -EPERM;
- 
- 	/* check that we are allowed to re-parent if the clock is in use */
--	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
--		ret = -EBUSY;
--		goto out;
--	}
-+	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
-+		return -EBUSY;
- 
- 	/* try finding the new parent index */
- 	if (parent) {
-@@ -1820,8 +1816,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		if (p_index < 0) {
- 			pr_debug("%s: clk %s can not be parent of clk %s\n",
- 					__func__, parent->name, core->name);
--			ret = p_index;
--			goto out;
-+			return p_index;
- 		}
- 		p_rate = parent->rate;
- 	}
-@@ -1831,7 +1826,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto out;
-+		return ret;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -1844,9 +1839,6 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		__clk_recalc_accuracies(core);
- 	}
- 
--out:
--	clk_prepare_unlock();
--
- 	return ret;
- }
- 
-@@ -1869,10 +1861,17 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
-  */
- int clk_set_parent(struct clk *clk, struct clk *parent)
- {
-+	int ret;
-+
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
-+	clk_prepare_lock();
-+	ret = clk_core_set_parent_nolock(clk->core,
-+					 parent ? parent->core : NULL);
-+	clk_prepare_unlock();
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
- 
-@@ -2753,7 +2752,7 @@ void clk_unregister(struct clk *clk)
- 		/* Reparent all children to the orphan list. */
- 		hlist_for_each_entry_safe(child, t, &clk->core->children,
- 					  child_node)
--			clk_core_set_parent(child, NULL);
-+			clk_core_set_parent_nolock(child, NULL);
- 	}
- 
- 	hlist_del_init(&clk->core->child_node);
--- 
-2.13.5
+> > Flags may be better used for extending per clk feature support in the
+> future.
+> >
+> > IMHO how about implement a of_clk_bulk_get() to handle this issue as
+> > we already have a of_clk_get?
+> > e.g.
+> >
+> > int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+> >                               struct clk_bulk_data *clks) {
+> >         for (i =3D 0; i < num_clks; i++) {
+> >                 clks[i].clk =3D of_clk_get(dev, clks[i].id); ...
+> >
+> > }
+> >
+> > Then it's less intrusive.
+> >
+>=20
+> This looks ok too. Go ahead and send this version instead.
+>=20
+
+I did not see you send a update version.
+If you will not do it, would you mind me to help send it with a Reported-by=
+: tag from you?
+
+Regards
+Dong Aisheng
+
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
