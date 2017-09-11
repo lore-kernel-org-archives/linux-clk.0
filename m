@@ -1,222 +1,81 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org
-Subject: [RFC PATCH 4/7] dt-bindings: Document Allwinner DWC HDMI TX node
-Date: Wed, 20 Sep 2017 21:38:28 +0200
-Message-Id: <20170920193831.20268-5-jernej.skrabec@siol.net>
-In-Reply-To: <20170920193831.20268-1-jernej.skrabec@siol.net>
-References: <20170920193831.20268-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, narmstrong@baylibre.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, Laurent.pinchart@ideasonboard.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- icenowy@aosc.io
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/1] clk: bulk: add of_clk_bulk_get()
+To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com, shawnguo@kernel.org, Russell
+	King <linux@arm.linux.org.uk>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <f9b6af8e-6d1b-702d-40e0-944f5ecedf8a@samsung.com>
+Date: Mon, 11 Sep 2017 10:58:19 +0200
+MIME-version: 1.0
+In-reply-to: <1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <CGME20170911074100epcas2p15480963b2119f8954784f9b37ed8d26d@epcas2p1.samsung.com>
+	<1505115413-25483-1-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentation about Allwinner DWC HDMI TX node, found in H3 SoC.
+On 09/11/2017 09:36 AM, Dong Aisheng wrote:
+> 'clock-names' property is optinal in DT, so of_clk_bulk_get() is introduced
+> here to handle this for DT users without 'clock-names' specified.
+> 
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Reported-by: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>   drivers/clk/clk-bulk.c | 31 +++++++++++++++++++++++++++++++
+>   include/linux/clk.h    |  8 ++++++++
+>   2 files changed, 39 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+> index c834f5a..3179f28 100644
+> --- a/drivers/clk/clk-bulk.c
+> +++ b/drivers/clk/clk-bulk.c
+> @@ -19,6 +19,37 @@
+>   #include <linux/clk.h>
+>   #include <linux/device.h>
+>   #include <linux/export.h>
+> +#include <linux/of.h>
+> +
+> +#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+> +int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+> +				 struct clk_bulk_data *clks)
+> +{
+> +	int ret;
+> +	int i;
+> +
+> +	for (i = 0; i < num_clks; i++)
+> +		clks[i].clk = NULL;
+> +
+> +	for (i = 0; i < num_clks; i++) {
+> +		clks[i].clk = of_clk_get(np, i);
+> +		if (IS_ERR(clks[i].clk)) {
+> +			ret = PTR_ERR(clks[i].clk);
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- .../bindings/display/sunxi/sun4i-drm.txt           | 158 ++++++++++++++++++++-
- 1 file changed, 157 insertions(+), 1 deletion(-)
+> +			pr_err("%s: Failed to get clk index: %d ret: %d\n",
+> +			       np->full_name, i, ret);
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 92512953943e..cb6aee5c486f 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -60,6 +60,40 @@ Required properties:
-     first port should be the input endpoint. The second should be the
-     output, usually to an HDMI connector.
- 
-+DWC HDMI TX Encoder
-+-----------------------------
-+
-+The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
-+with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
-+
-+These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
-+Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
-+following device-specific properties.
-+
-+Required properties:
-+
-+  - compatible: value must be one of:
-+    * "allwinner,sun8i-h3-dw-hdmi"
-+  - reg: two pairs of base address and size of memory-mapped region, first
-+    for controller and second for PHY
-+    registers.
-+  - reg-io-width: See dw_hdmi.txt. Shall be 1.
-+  - interrupts: HDMI interrupt number
-+  - clocks: phandles to the clocks feeding the HDMI encoder
-+    * iahb: the HDMI interface clock
-+    * isfr: the HDMI module clock
-+    * ddc: the HDMI ddc clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset controllers driving the encoder
-+    * hdmi: the reset line for the HDMI
-+    * ddc: the reset line for the DDC
-+  - reset-names: the reset names mentioned above
-+
-+  - ports: A ports node with endpoint definitions as defined in
-+    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+    first port should be the input endpoint. The second should be the
-+    output, usually to an HDMI connector.
-+
- TV Encoder
- ----------
- 
-@@ -255,7 +289,7 @@ Required properties:
-   - allwinner,pipelines: list of phandle to the display engine
-     frontends (DE 1.0) or mixers (DE 2.0) available.
- 
--Example:
-+Example 1:
- 
- panel: panel {
- 	compatible = "olimex,lcd-olinuxino-43-ts";
-@@ -455,3 +489,125 @@ display-engine {
- 	compatible = "allwinner,sun5i-a13-display-engine";
- 	allwinner,pipelines = <&fe0>;
- };
-+
-+Example 2:
-+
-+connector {
-+	compatible = "hdmi-connector";
-+	type = "a";
-+
-+	port {
-+		hdmi_con_in: endpoint {
-+			remote-endpoint = <&hdmi_out_con>;
-+		};
-+	};
-+};
-+
-+de: display-engine {
-+	compatible = "allwinner,sun8i-h3-display-engine";
-+	allwinner,pipelines = <&mixer0>;
-+};
-+
-+hdmi: hdmi@1ee0000 {
-+	compatible = "allwinner,h3-dw-hdmi";
-+	reg = <0x01ee0000 0x10000>,
-+	      <0x01ef0000 0x10000>;
-+	reg-io-width = <1>;
-+	interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI>,
-+		 <&ccu CLK_HDMI_DDC>;
-+	clock-names = "iahb", "isfr", "ddc";
-+	resets = <&ccu RST_BUS_HDMI0>, <&ccu RST_BUS_HDMI1>;
-+	reset-names = "hdmi", "ddc";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		hdmi_in: port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			hdmi_in_tcon0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_hdmi>;
-+			};
-+		};
-+
-+		hdmi_out: port@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			hdmi_out_con: endpoint {
-+				remote-endpoint = <&hdmi_con_in>;
-+			};
-+		};
-+	};
-+};
-+
-+mixer0: mixer@1100000 {
-+	compatible = "allwinner,sun8i-h3-de2-mixer0";
-+	reg = <0x01100000 0x100000>;
-+	clocks = <&display_clocks CLK_BUS_MIXER0>,
-+		 <&display_clocks CLK_MIXER0>;
-+	clock-names = "bus",
-+		      "mod";
-+	resets = <&display_clocks RST_MIXER0>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		mixer0_out: port@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			mixer0_out_tcon0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_in_mixer0>;
-+			};
-+		};
-+	};
-+};
-+
-+tcon0: lcd-controller@1c0c000 {
-+	compatible = "allwinner,sun8i-h3-tcon";
-+	reg = <0x01c0c000 0x1000>;
-+	interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&ccu CLK_BUS_TCON0>,
-+		 <&ccu CLK_TCON0>;
-+	clock-names = "ahb",
-+		      "tcon-ch1";
-+	resets = <&ccu RST_BUS_TCON0>;
-+	reset-names = "lcd";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		tcon0_in: port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			tcon0_in_mixer0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&mixer0_out_tcon0>;
-+			};
-+		};
-+
-+		tcon0_out: port@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			tcon0_out_hdmi: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint = <&hdmi_in_tcon0>;
-+			};
-+		};
-+	};
-+};
+AFAIU full_node is not supposed now to be dereferenced directly,
+since storing of the full path string for each node is going to be
+removed. %pOF needs to be used instead, e.g.
+
+	pr_err("%pOF: failed to get clk %d: %d\n", np, i , ret);
+
+> +			clks[i].clk = NULL;
+> +			goto err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> +err:
+> +	clk_bulk_put(i, clks);
+> +
+> +	return ret;
+> +}
+> +#endif
+
 -- 
-2.14.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards,
+Sylwester
