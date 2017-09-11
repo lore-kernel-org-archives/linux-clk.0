@@ -1,27 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 5 Sep 2017 11:46:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Satoru OKAMOTO <okamoto.satoru@socionext.com>,
-	Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] clk: mb86s7x: Drop non-building driver
-Message-ID: <20170905184655.GK21656@codeaurora.org>
-References: <20170824225237.21485-1-afaerber@suse.de>
- <20170901203201.GB21656@codeaurora.org>
- <8601a2ec-33dc-0024-55ce-963f05faca75@suse.de>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <8601a2ec-33dc-0024-55ce-963f05faca75@suse.de>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170908213802.086308649@cogentembedded.com>
+References: <20170908213802.086308649@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Sep 2017 16:30:40 +0200
+Message-ID: <CAMuHMdWyahPE4mWPt5MTTj-qdtUTZFjZum0LnOR-8miif5vMdw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: add R8A7797 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/04, Andreas Färber wrote:
-> Thanks. Is this 4.14 or 4.15 material at this point? In particular I
+On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add R-Car V3M (R8A77970) Clock Pulse Generator / Module Standby and
+> Software Reset support,  using the CPG/MSSR driver core and the common
+> R-Car Gen3 code.
+>
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-4.14 or whatever the next kernel version will be.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.15.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
