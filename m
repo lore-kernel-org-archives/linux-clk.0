@@ -1,567 +1,2349 @@
-Return-Path: <jeremy.linton@arm.com>
-Subject: Re: [PATCH v2 1/6] ACPI/PPTT: Add Processor Properties Topology Table
- parsing
-To: Xiongfeng Wang <wangxiongfeng2@huawei.com>, linux-acpi@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
- hanjun.guo@linaro.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net,
- will.deacon@arm.com, catalin.marinas@arm.com, gregkh@linuxfoundation.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, viresh.kumar@linaro.org,
- mark.rutland@arm.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, jhugo@codeaurora.org,
- Jonathan.Zhang@cavium.com, ahs3@redhat.com
-References: <20170919184751.25110-1-jeremy.linton@arm.com>
- <20170919184751.25110-2-jeremy.linton@arm.com>
- <4c9cfa18-507b-01c4-7464-ff2b149fbb68@huawei.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <03912538-f7bf-f235-c87f-3ba275502db0@arm.com>
-Date: Thu, 21 Sep 2017 13:48:51 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:64878 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751243AbdILHWK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2017 03:22:10 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v3 3/9] clk: mediatek: Add MT2712 clock support
+Date: Tue, 12 Sep 2017 15:21:43 +0800
+Message-ID: <1505200909-23552-4-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <4c9cfa18-507b-01c4-7464-ff2b149fbb68@huawei.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Add MT2712 clock support, include topckgen, apmixedsys,
+infracfg, pericfg, mcucfg and subsystem clocks.
 
-On 09/20/2017 02:15 AM, Xiongfeng Wang wrote:
-> Hi Jeremy,
-> 
-> On 2017/9/20 2:47, Jeremy Linton wrote:
->> ACPI 6.2 adds a new table, which describes how processing units
->> are related to each other in tree like fashion. Caches are
->> also sprinkled throughout the tree and describe the properties
->> of the caches in relation to other caches and processing units.
->>
->> Add the code to parse the cache hierarchy and report the total
->> number of levels of cache for a given core using
->> acpi_find_last_cache_level() as well as fill out the individual
->> cores cache information with cache_setup_acpi() once the
->> cpu_cacheinfo structure has been populated by the arch specific
->> code.
->>
->> Further, report peers in the topology using setup_acpi_cpu_topology()
->> to report a unique ID for each processing unit at a given level
->> in the tree. These unique id's can then be used to match related
->> processing units which exist as threads, COD (clusters
->> on die), within a given package, etc.
->>
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>   drivers/acpi/pptt.c | 458 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 458 insertions(+)
->>   create mode 100644 drivers/acpi/pptt.c
->>
->> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->> new file mode 100644
->> index 000000000000..f7694fa1e0bd
->> --- /dev/null
->> +++ b/drivers/acpi/pptt.c
->> @@ -0,0 +1,458 @@
->> +/*
->> + * Copyright (C) 2017, ARM
->> + *
->> + * This program is free software; you can redistribute it and/or modify it
->> + * under the terms and conditions of the GNU General Public License,
->> + * version 2, as published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope it will be useful, but WITHOUT
->> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->> + * more details.
->> + *
->> + * This file implements parsing of Processor Properties Topology Table (PPTT)
->> + * which is optionally used to describe the processor and cache topology.
->> + * Due to the relative pointers used throughout the table, this doesn't
->> + * leverage the existing subtable parsing in the kernel.
->> + */
->> +#define pr_fmt(fmt) "ACPI PPTT: " fmt
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/cacheinfo.h>
->> +#include <acpi/processor.h>
->> +
->> +/*
->> + * Given the PPTT table, find and verify that the subtable entry
->> + * is located within the table
->> + */
->> +static struct acpi_subtable_header *fetch_pptt_subtable(
->> +	struct acpi_table_header *table_hdr, u32 pptt_ref)
->> +{
->> +	struct acpi_subtable_header *entry;
->> +
->> +	/* there isn't a subtable at reference 0 */
->> +	if (!pptt_ref)
->> +		return NULL;
->> +
->> +	if (pptt_ref + sizeof(struct acpi_subtable_header) > table_hdr->length)
->> +		return NULL;
->> +
->> +	entry = (struct acpi_subtable_header *)((u8 *)table_hdr + pptt_ref);
->> +
->> +	if (pptt_ref + entry->length > table_hdr->length)
->> +		return NULL;
->> +
->> +	return entry;
->> +}
->> +
->> +static struct acpi_pptt_processor *fetch_pptt_node(
->> +	struct acpi_table_header *table_hdr, u32 pptt_ref)
->> +{
->> +	return (struct acpi_pptt_processor *)fetch_pptt_subtable(table_hdr, pptt_ref);
->> +}
->> +
->> +static struct acpi_pptt_cache *fetch_pptt_cache(
->> +	struct acpi_table_header *table_hdr, u32 pptt_ref)
->> +{
->> +	return (struct acpi_pptt_cache *)fetch_pptt_subtable(table_hdr, pptt_ref);
->> +}
->> +
->> +static struct acpi_subtable_header *acpi_get_pptt_resource(
->> +	struct acpi_table_header *table_hdr,
->> +	struct acpi_pptt_processor *node, int resource)
->> +{
->> +	u32 ref;
->> +
->> +	if (resource >= node->number_of_priv_resources)
->> +		return NULL;
->> +
->> +	ref = *(u32 *)((u8 *)node + sizeof(struct acpi_pptt_processor) +
->> +		      sizeof(u32) * resource);
->> +
->> +	return fetch_pptt_subtable(table_hdr, ref);
->> +}
->> +
->> +/*
->> + * given a pptt resource, verify that it is a cache node, then walk
->> + * down each level of caches, counting how many levels are found
->> + * as well as checking the cache type (icache, dcache, unified). If a
->> + * level & type match, then we set found, and continue the search.
->> + * Once the entire cache branch has been walked return its max
->> + * depth.
->> + */
->> +static int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
->> +				int local_level,
->> +				struct acpi_subtable_header *res,
->> +				struct acpi_pptt_cache **found,
->> +				int level, int type)
->> +{
->> +	struct acpi_pptt_cache *cache;
->> +
->> +	if (res->type != ACPI_PPTT_TYPE_CACHE)
->> +		return 0;
->> +
->> +	cache = (struct acpi_pptt_cache *) res;
->> +	while (cache) {
->> +		local_level++;
->> +
->> +		if ((local_level == level) &&
->> +		    (cache->flags & ACPI_PPTT_CACHE_TYPE_VALID) &&
->> +		    ((cache->attributes & ACPI_PPTT_MASK_CACHE_TYPE) == type)) {
->> +			if (*found != NULL)
->> +				pr_err("Found duplicate cache level/type unable to determine uniqueness\n");
->> +
->> +			pr_debug("Found cache @ level %d\n", level);
->> +			*found = cache;
->> +			/*
->> +			 * continue looking at this node's resource list
->> +			 * to verify that we don't find a duplicate
->> +			 * cache node.
->> +			 */
->> +		}
->> +		cache = fetch_pptt_cache(table_hdr, cache->next_level_of_cache);
->> +	}
->> +	return local_level;
->> +}
->> +
->> +/*
->> + * Given a CPU node look for cache levels that exist at this level, and then
->> + * for each cache node, count how many levels exist below (logically above) it.
->> + * If a level and type are specified, and we find that level/type, abort
->> + * processing and return the acpi_pptt_cache structure.
->> + */
->> +static struct acpi_pptt_cache *acpi_find_cache_level(
->> +	struct acpi_table_header *table_hdr,
->> +	struct acpi_pptt_processor *cpu_node,
->> +	int *starting_level, int level, int type)
->> +{
->> +	struct acpi_subtable_header *res;
->> +	int number_of_levels = *starting_level;
->> +	int resource = 0;
->> +	struct acpi_pptt_cache *ret = NULL;
->> +	int local_level;
->> +
->> +	/* walk down from processor node */
->> +	while ((res = acpi_get_pptt_resource(table_hdr, cpu_node, resource))) {
->> +		resource++;
->> +
->> +		local_level = acpi_pptt_walk_cache(table_hdr, *starting_level,
->> +						   res, &ret, level, type);
->> +		/*
->> +		 * we are looking for the max depth. Since its potentially
->> +		 * possible for a given node to have resources with differing
->> +		 * depths verify that the depth we have found is the largest.
->> +		 */
->> +		if (number_of_levels < local_level)
->> +			number_of_levels = local_level;
->> +	}
->> +	if (number_of_levels > *starting_level)
->> +		*starting_level = number_of_levels;
->> +
->> +	return ret;
->> +}
->> +
->> +/*
->> + * given a processor node containing a processing unit, walk into it and count
->> + * how many levels exist solely for it, and then walk up each level until we hit
->> + * the root node (ignore the package level because it may be possible to have
->> + * caches that exist across packages). Count the number of cache levels that
->> + * exist at each level on the way up.
->> + */
->> +static int acpi_process_node(struct acpi_table_header *table_hdr,
->> +			     struct acpi_pptt_processor *cpu_node)
->> +{
->> +	int total_levels = 0;
->> +
->> +	do {
->> +		acpi_find_cache_level(table_hdr, cpu_node, &total_levels, 0, 0);
->> +		cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
->> +	} while (cpu_node);
->> +
->> +	return total_levels;
->> +}
->> +
->> +/*
->> + * Find the subtable entry describing the provided processor
->> + */
->> +static struct acpi_pptt_processor *acpi_find_processor_node(
->> +	struct acpi_table_header *table_hdr,
->> +	u32 acpi_cpu_id)
->> +{
->> +	struct acpi_subtable_header *entry;
->> +	unsigned long table_end;
->> +	struct acpi_pptt_processor *cpu_node;
->> +
->> +	table_end = (unsigned long)table_hdr + table_hdr->length;
->> +	entry = (struct acpi_subtable_header *)((u8 *)table_hdr +
->> +						sizeof(struct acpi_table_pptt));
->> +
->> +	/* find the processor structure associated with this cpuid */
->> +	while (((unsigned long)entry) + sizeof(struct acpi_subtable_header) < table_end) {
->> +		cpu_node = (struct acpi_pptt_processor *)entry;
->> +
->> +		if ((entry->type == ACPI_PPTT_TYPE_PROCESSOR) &&
->> +		    (cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID)) {
->> +			pr_debug("checking phy_cpu_id %d against acpi id %d\n",
->> +				 acpi_cpu_id, cpu_node->acpi_processor_id);
->> +			if (acpi_cpu_id == cpu_node->acpi_processor_id) {
->> +				/* found the correct entry */
->> +				pr_debug("match found!\n");
->> +				return (struct acpi_pptt_processor *)entry;
->> +			}
->> +		}
->> +
->> +		if (entry->length == 0) {
->> +			pr_err("Invalid zero length subtable\n");
->> +			break;
->> +		}
->> +		entry = (struct acpi_subtable_header *)
->> +			((u8 *)entry + entry->length);
->> +	}
->> +
->> +	return NULL;
->> +}
->> +
->> +/*
->> + * Given a acpi_pptt_processor node, walk up until we identify the
->> + * package that the node is associated with or we run out of levels
->> + * to request.
->> + */
->> +static struct acpi_pptt_processor *acpi_find_processor_package_id(
->> +	struct acpi_table_header *table_hdr,
->> +	struct acpi_pptt_processor *cpu,
->> +	int level)
->> +{
->> +	struct acpi_pptt_processor *prev_node;
->> +
->> +	while (cpu && level && !(cpu->flags & ACPI_PPTT_PHYSICAL_PACKAGE)) {
->> +		pr_debug("level %d\n", level);
->> +		prev_node = fetch_pptt_node(table_hdr, cpu->parent);
->> +		if (prev_node == NULL)
->> +			break;
->> +		cpu = prev_node;
->> +		level--;
->> +	}
->> +	return cpu;
->> +}
->> +
->> +static int acpi_parse_pptt(struct acpi_table_header *table_hdr, u32 acpi_cpu_id)
->> +{
->> +	int number_of_levels = 0;
->> +	struct acpi_pptt_processor *cpu;
->> +
->> +	cpu = acpi_find_processor_node(table_hdr, acpi_cpu_id);
->> +	if (cpu)
->> +		number_of_levels = acpi_process_node(table_hdr, cpu);
->> +
->> +	return number_of_levels;
->> +}
->> +
->> +#define ACPI_6_2_CACHE_TYPE_DATA		      (0x0)
->> +#define ACPI_6_2_CACHE_TYPE_INSTR		      (1<<2)
->> +#define ACPI_6_2_CACHE_TYPE_UNIFIED		      (1<<3)
->> +#define ACPI_6_2_CACHE_POLICY_WB		      (0x0)
->> +#define ACPI_6_2_CACHE_POLICY_WT		      (1<<4)
->> +#define ACPI_6_2_CACHE_READ_ALLOCATE		      (0x0)
->> +#define ACPI_6_2_CACHE_WRITE_ALLOCATE		      (0x01)
->> +#define ACPI_6_2_CACHE_RW_ALLOCATE		      (0x02)
->> +
->> +static u8 acpi_cache_type(enum cache_type type)
->> +{
->> +	switch (type) {
->> +	case CACHE_TYPE_DATA:
->> +		pr_debug("Looking for data cache\n");
->> +		return ACPI_6_2_CACHE_TYPE_DATA;
->> +	case CACHE_TYPE_INST:
->> +		pr_debug("Looking for instruction cache\n");
->> +		return ACPI_6_2_CACHE_TYPE_INSTR;
->> +	default:
->> +		pr_debug("Unknown cache type, assume unified\n");
->> +	case CACHE_TYPE_UNIFIED:
->> +		pr_debug("Looking for unified cache\n");
->> +		return ACPI_6_2_CACHE_TYPE_UNIFIED;
->> +	}
->> +}
->> +
->> +/* find the ACPI node describing the cache type/level for the given CPU */
->> +static struct acpi_pptt_cache *acpi_find_cache_node(
->> +	struct acpi_table_header *table_hdr, u32 acpi_cpu_id,
->> +	enum cache_type type, unsigned int level,
->> +	struct acpi_pptt_processor **node)
->> +{
->> +	int total_levels = 0;
->> +	struct acpi_pptt_cache *found = NULL;
->> +	struct acpi_pptt_processor *cpu_node;
->> +	u8 acpi_type = acpi_cache_type(type);
->> +
->> +	pr_debug("Looking for CPU %d's level %d cache type %d\n",
->> +		 acpi_cpu_id, level, acpi_type);
->> +
->> +	cpu_node = acpi_find_processor_node(table_hdr, acpi_cpu_id);
->> +	if (!cpu_node)
->> +		return NULL;
->> +
->> +	do {
->> +		found = acpi_find_cache_level(table_hdr, cpu_node, &total_levels, level, acpi_type);
->> +		*node = cpu_node;
->> +		cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
->> +	} while ((cpu_node) && (!found));
->> +
->> +	return found;
->> +}
->> +
->> +int acpi_find_last_cache_level(unsigned int cpu)
->> +{
->> +	u32 acpi_cpu_id;
->> +	struct acpi_table_header *table;
->> +	int number_of_levels = 0;
->> +	acpi_status status;
->> +
->> +	pr_debug("Cache Setup find last level cpu=%d\n", cpu);
->> +
->> +	acpi_cpu_id = acpi_cpu_get_madt_gicc(cpu)->uid;
->> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
->> +	if (ACPI_FAILURE(status)) {
->> +		pr_err_once("No PPTT table found, cache topology may be inaccurate\n");
->> +	} else {
->> +		number_of_levels = acpi_parse_pptt(table, acpi_cpu_id);
->> +		acpi_put_table(table);
->> +	}
->> +	pr_debug("Cache Setup find last level level=%d\n", number_of_levels);
->> +
->> +	return number_of_levels;
->> +}
->> +
->> +/*
->> + * The ACPI spec implies that the fields in the cache structures are used to
->> + * extend and correct the information probed from the hardware. In the case
->> + * of arm64 the CCSIDR probing has been removed because it might be incorrect.
->> + */
->> +static void update_cache_properties(struct cacheinfo *this_leaf,
->> +				    struct acpi_pptt_cache *found_cache,
->> +				    struct acpi_pptt_processor *cpu_node)
->> +{
->> +	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
->> +		this_leaf->size = found_cache->size;
->> +	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
->> +		this_leaf->coherency_line_size = found_cache->line_size;
->> +	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
->> +		this_leaf->number_of_sets = found_cache->number_of_sets;
->> +	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
->> +		this_leaf->ways_of_associativity = found_cache->associativity;
->> +	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID)
->> +		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
->> +		case ACPI_6_2_CACHE_POLICY_WT:
->> +			this_leaf->attributes = CACHE_WRITE_THROUGH;
->> +			break;
->> +		case ACPI_6_2_CACHE_POLICY_WB:
->> +			this_leaf->attributes = CACHE_WRITE_BACK;
->> +			break;
->> +		default:
->> +			pr_err("Unknown ACPI cache policy %d\n",
->> +			      found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY);
->> +		}
->> +	if (found_cache->flags & ACPI_PPTT_ALLOCATION_TYPE_VALID)
->> +		switch (found_cache->attributes & ACPI_PPTT_MASK_ALLOCATION_TYPE) {
->> +		case ACPI_6_2_CACHE_READ_ALLOCATE:
->> +			this_leaf->attributes |= CACHE_READ_ALLOCATE;
->> +			break;
->> +		case ACPI_6_2_CACHE_WRITE_ALLOCATE:
->> +			this_leaf->attributes |= CACHE_WRITE_ALLOCATE;
->> +			break;
->> +		case ACPI_6_2_CACHE_RW_ALLOCATE:
->> +			this_leaf->attributes |=
->> +				CACHE_READ_ALLOCATE|CACHE_WRITE_ALLOCATE;
->> +			break;
->> +		default:
->> +			pr_err("Unknown ACPI cache allocation policy %d\n",
->> +			   found_cache->attributes & ACPI_PPTT_MASK_ALLOCATION_TYPE);
->> +		}
->> +}
->> +
->> +static void cache_setup_acpi_cpu(struct acpi_table_header *table,
->> +				 unsigned int cpu)
->> +{
->> +	struct acpi_pptt_cache *found_cache;
->> +	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
->> +	u32 acpi_cpu_id = acpi_cpu_get_madt_gicc(cpu)->uid;
->> +	struct cacheinfo *this_leaf;
->> +	unsigned int index = 0;
->> +	struct acpi_pptt_processor *cpu_node = NULL;
->> +
->> +	while (index < get_cpu_cacheinfo(cpu)->num_leaves) {
->> +		this_leaf = this_cpu_ci->info_list + index;
->> +		found_cache = acpi_find_cache_node(table, acpi_cpu_id,
->> +						   this_leaf->type,
->> +						   this_leaf->level,
->> +						   &cpu_node);
->> +		pr_debug("found = %p %p\n", found_cache, cpu_node);
->> +		if (found_cache)
->> +			update_cache_properties(this_leaf,
->> +						found_cache,
->> +						cpu_node);
->> +
->> +		index++;
->> +	}
->> +}
->> +
->> +static int topology_setup_acpi_cpu(struct acpi_table_header *table,
->> +				    unsigned int cpu, int level)
->> +{
->> +	struct acpi_pptt_processor *cpu_node;
->> +	u32 acpi_cpu_id = acpi_cpu_get_madt_gicc(cpu)->uid;
->> +
->> +	cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
->> +	if (cpu_node) {
->> +		cpu_node = acpi_find_processor_package_id(table, cpu_node, level);
->> +		return (int)((u8 *)cpu_node - (u8 *)table);
->> +	}
->> +	pr_err_once("PPTT table found, but unable to locate core for %d\n",
->> +		    cpu);
->> +	return -ENOENT;
-> 
-> Can we return -1 when PPTT doesn't exist? So that we can still get topo info from MPIDR.
-> 'store_cpu_topology()' determine whether cpu topology has been populated by checking
-> whether cluster_id is -1. If cluster_id is not -1, it won't read cpu topo info from MPIDR.
-> Or maybe we can change 'store_cpu_topology()' as well. If cluster_id is less than zero,
-> we read cpu topo info from MPIDR.
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/clk/mediatek/Kconfig             |   50 ++
+ drivers/clk/mediatek/Makefile            |    8 +
+ drivers/clk/mediatek/clk-mt2712-bdp.c    |  102 +++
+ drivers/clk/mediatek/clk-mt2712-img.c    |   80 ++
+ drivers/clk/mediatek/clk-mt2712-jpgdec.c |   76 ++
+ drivers/clk/mediatek/clk-mt2712-mfg.c    |   75 ++
+ drivers/clk/mediatek/clk-mt2712-mm.c     |  170 ++++
+ drivers/clk/mediatek/clk-mt2712-vdec.c   |   94 ++
+ drivers/clk/mediatek/clk-mt2712-venc.c   |   77 ++
+ drivers/clk/mediatek/clk-mt2712.c        | 1435 ++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h           |    2 +
+ drivers/clk/mediatek/clk-pll.c           |   13 +-
+ 12 files changed, 2180 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-bdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-jpgdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt2712.c
 
-? I will retest this, but any negative return from setup_acpi_topology() 
-for the initial node (subsequent requests should minimally duplicate the 
-cpu node rather than failing) request, should result in a call to 
-reset_cpu_topology(), and the information being sourced from the MPIDR 
-in store_cpu_topology(). There are various ways the tree could be 
-"damaged" but if all the system cpus have matching valid acpi_id/cpu 
-nodes, then that reflects a valid topology and there really isn't enough 
-information to decide if its damaged. The one case where this isn't 
-accurate is missing socket identifiers, but the code actually handles 
-this as well as the lack of missing cluster/thread ids (which don't 
-exist in the standard).
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 28739a9..300dbb5 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -50,6 +50,56 @@ config COMMON_CLK_MT2701_BDPSYS
+ 	---help---
+ 	  This driver supports Mediatek MT2701 bdpsys clocks.
+ 
++config COMMON_CLK_MT2712
++	bool "Clock driver for Mediatek MT2712"
++	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK && ARM64
++	---help---
++	  This driver supports Mediatek MT2712 basic clocks.
++
++config COMMON_CLK_MT2712_BDPSYS
++	bool "Clock driver for Mediatek MT2712 bdpsys"
++	depends on COMMON_CLK_MT2712
++	---help---
++	  This driver supports Mediatek MT2712 bdpsys clocks.
++
++config COMMON_CLK_MT2712_IMGSYS
++	bool "Clock driver for Mediatek MT2712 imgsys"
++	depends on COMMON_CLK_MT2712
++	---help---
++	  This driver supports Mediatek MT2712 imgsys clocks.
++
++config COMMON_CLK_MT2712_JPGDECSYS
++	bool "Clock driver for Mediatek MT2712 jpgdecsys"
++	depends on COMMON_CLK_MT2712
++	---help---
++	  This driver supports Mediatek MT2712 jpgdecsys clocks.
++
++config COMMON_CLK_MT2712_MFGCFG
++	bool "Clock driver for Mediatek MT2712 mfgcfg"
++	depends on COMMON_CLK_MT2712
++	---help---
++	  This driver supports Mediatek MT2712 mfgcfg clocks.
++
++config COMMON_CLK_MT2712_MMSYS
++	bool "Clock driver for Mediatek MT2712 mmsys"
++	depends on COMMON_CLK_MT2712
++	---help---
++	  This driver supports Mediatek MT2712 mmsys clocks.
++
++config COMMON_CLK_MT2712_VDECSYS
++	bool "Clock driver for Mediatek MT2712 vdecsys"
++	depends on COMMON_CLK_MT2712
++	---help---
++	  This driver supports Mediatek MT2712 vdecsys clocks.
++
++config COMMON_CLK_MT2712_VENCSYS
++	bool "Clock driver for Mediatek MT2712 vencsys"
++	depends on COMMON_CLK_MT2712
++	---help---
++	  This driver supports Mediatek MT2712 vencsys clocks.
++
+ config COMMON_CLK_MT6797
+        bool "Clock driver for Mediatek MT6797"
+        depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 2a755b5..a4e5c47 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -12,5 +12,13 @@ obj-$(CONFIG_COMMON_CLK_MT2701_HIFSYS) += clk-mt2701-hif.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_IMGSYS) += clk-mt2701-img.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_MMSYS) += clk-mt2701-mm.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_VDECSYS) += clk-mt2701-vdec.o
++obj-$(CONFIG_COMMON_CLK_MT2712) += clk-mt2712.o
++obj-$(CONFIG_COMMON_CLK_MT2712_BDPSYS) += clk-mt2712-bdp.o
++obj-$(CONFIG_COMMON_CLK_MT2712_IMGSYS) += clk-mt2712-img.o
++obj-$(CONFIG_COMMON_CLK_MT2712_JPGDECSYS) += clk-mt2712-jpgdec.o
++obj-$(CONFIG_COMMON_CLK_MT2712_MFGCFG) += clk-mt2712-mfg.o
++obj-$(CONFIG_COMMON_CLK_MT2712_MMSYS) += clk-mt2712-mm.o
++obj-$(CONFIG_COMMON_CLK_MT2712_VDECSYS) += clk-mt2712-vdec.o
++obj-$(CONFIG_COMMON_CLK_MT2712_VENCSYS) += clk-mt2712-venc.o
+ obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
+ obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+diff --git a/drivers/clk/mediatek/clk-mt2712-bdp.c b/drivers/clk/mediatek/clk-mt2712-bdp.c
+new file mode 100644
+index 0000000..5fe4728
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712-bdp.c
+@@ -0,0 +1,102 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static const struct mtk_gate_regs bdp_cg_regs = {
++	.set_ofs = 0x100,
++	.clr_ofs = 0x100,
++	.sta_ofs = 0x100,
++};
++
++#define GATE_BDP(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &bdp_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
++	}
++
++static const struct mtk_gate bdp_clks[] = {
++	GATE_BDP(CLK_BDP_BRIDGE_B, "bdp_bridge_b", "mm_sel", 0),
++	GATE_BDP(CLK_BDP_BRIDGE_DRAM, "bdp_bridge_d", "mm_sel", 1),
++	GATE_BDP(CLK_BDP_LARB_DRAM, "bdp_larb_d", "mm_sel", 2),
++	GATE_BDP(CLK_BDP_WR_CHANNEL_VDI_PXL, "bdp_vdi_pxl", "tvd_sel", 3),
++	GATE_BDP(CLK_BDP_WR_CHANNEL_VDI_DRAM, "bdp_vdi_d", "mm_sel", 4),
++	GATE_BDP(CLK_BDP_WR_CHANNEL_VDI_B, "bdp_vdi_b", "mm_sel", 5),
++	GATE_BDP(CLK_BDP_MT_B, "bdp_fmt_b", "mm_sel", 9),
++	GATE_BDP(CLK_BDP_DISPFMT_27M, "bdp_27m", "di_sel", 10),
++	GATE_BDP(CLK_BDP_DISPFMT_27M_VDOUT, "bdp_27m_vdout", "di_sel", 11),
++	GATE_BDP(CLK_BDP_DISPFMT_27_74_74, "bdp_27_74_74", "di_sel", 12),
++	GATE_BDP(CLK_BDP_DISPFMT_2FS, "bdp_2fs", "di_sel", 13),
++	GATE_BDP(CLK_BDP_DISPFMT_2FS_2FS74_148, "bdp_2fs74_148", "di_sel", 14),
++	GATE_BDP(CLK_BDP_DISPFMT_B, "bdp_b", "mm_sel", 15),
++	GATE_BDP(CLK_BDP_VDO_DRAM, "bdp_vdo_d", "mm_sel", 16),
++	GATE_BDP(CLK_BDP_VDO_2FS, "bdp_vdo_2fs", "di_sel", 17),
++	GATE_BDP(CLK_BDP_VDO_B, "bdp_vdo_b", "mm_sel", 18),
++	GATE_BDP(CLK_BDP_WR_CHANNEL_DI_PXL, "bdp_di_pxl", "di_sel", 19),
++	GATE_BDP(CLK_BDP_WR_CHANNEL_DI_DRAM, "bdp_di_d", "mm_sel", 20),
++	GATE_BDP(CLK_BDP_WR_CHANNEL_DI_B, "bdp_di_b", "mm_sel", 21),
++	GATE_BDP(CLK_BDP_NR_AGENT, "bdp_nr_agent", "nr_sel", 22),
++	GATE_BDP(CLK_BDP_NR_DRAM, "bdp_nr_d", "mm_sel", 23),
++	GATE_BDP(CLK_BDP_NR_B, "bdp_nr_b", "mm_sel", 24),
++	GATE_BDP(CLK_BDP_BRIDGE_RT_B, "bdp_bridge_rt_b", "mm_sel", 25),
++	GATE_BDP(CLK_BDP_BRIDGE_RT_DRAM, "bdp_bridge_rt_d", "mm_sel", 26),
++	GATE_BDP(CLK_BDP_LARB_RT_DRAM, "bdp_larb_rt_d", "mm_sel", 27),
++	GATE_BDP(CLK_BDP_TVD_TDC, "bdp_tvd_tdc", "mm_sel", 28),
++	GATE_BDP(CLK_BDP_TVD_54, "bdp_tvd_clk_54", "tvd_sel", 29),
++	GATE_BDP(CLK_BDP_TVD_CBUS, "bdp_tvd_cbus", "mm_sel", 30),
++};
++
++static int clk_mt2712_bdp_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_BDP_NR_CLK);
++
++	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712_bdp[] = {
++	{ .compatible = "mediatek,mt2712-bdpsys", },
++	{}
++};
++
++static struct platform_driver clk_mt2712_bdp_drv = {
++	.probe = clk_mt2712_bdp_probe,
++	.driver = {
++		.name = "clk-mt2712-bdp",
++		.of_match_table = of_match_clk_mt2712_bdp,
++	},
++};
++
++builtin_platform_driver(clk_mt2712_bdp_drv);
+diff --git a/drivers/clk/mediatek/clk-mt2712-img.c b/drivers/clk/mediatek/clk-mt2712-img.c
+new file mode 100644
+index 0000000..139ff55
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712-img.c
+@@ -0,0 +1,80 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static const struct mtk_gate_regs img_cg_regs = {
++	.set_ofs = 0x0,
++	.clr_ofs = 0x0,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_IMG(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &img_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
++	}
++
++static const struct mtk_gate img_clks[] = {
++	GATE_IMG(CLK_IMG_SMI_LARB2, "img_smi_larb2", "mm_sel", 0),
++	GATE_IMG(CLK_IMG_SENINF_SCAM_EN, "img_scam_en", "csi0", 3),
++	GATE_IMG(CLK_IMG_SENINF_CAM_EN, "img_cam_en", "mm_sel", 8),
++	GATE_IMG(CLK_IMG_CAM_SV_EN, "img_cam_sv_en", "mm_sel", 9),
++	GATE_IMG(CLK_IMG_CAM_SV1_EN, "img_cam_sv1_en", "mm_sel", 10),
++	GATE_IMG(CLK_IMG_CAM_SV2_EN, "img_cam_sv2_en", "mm_sel", 11),
++};
++
++static int clk_mt2712_img_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_IMG_NR_CLK);
++
++	mtk_clk_register_gates(node, img_clks, ARRAY_SIZE(img_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712_img[] = {
++	{ .compatible = "mediatek,mt2712-imgsys", },
++	{}
++};
++
++static struct platform_driver clk_mt2712_img_drv = {
++	.probe = clk_mt2712_img_probe,
++	.driver = {
++		.name = "clk-mt2712-img",
++		.of_match_table = of_match_clk_mt2712_img,
++	},
++};
++
++builtin_platform_driver(clk_mt2712_img_drv);
+diff --git a/drivers/clk/mediatek/clk-mt2712-jpgdec.c b/drivers/clk/mediatek/clk-mt2712-jpgdec.c
+new file mode 100644
+index 0000000..c7d4aad
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712-jpgdec.c
+@@ -0,0 +1,76 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static const struct mtk_gate_regs jpgdec_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_JPGDEC(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &jpgdec_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr_inv,	\
++	}
++
++static const struct mtk_gate jpgdec_clks[] = {
++	GATE_JPGDEC(CLK_JPGDEC_JPGDEC1, "jpgdec_jpgdec1", "jpgdec_sel", 0),
++	GATE_JPGDEC(CLK_JPGDEC_JPGDEC, "jpgdec_jpgdec", "jpgdec_sel", 4),
++};
++
++static int clk_mt2712_jpgdec_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_JPGDEC_NR_CLK);
++
++	mtk_clk_register_gates(node, jpgdec_clks, ARRAY_SIZE(jpgdec_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712_jpgdec[] = {
++	{ .compatible = "mediatek,mt2712-jpgdecsys", },
++	{}
++};
++
++static struct platform_driver clk_mt2712_jpgdec_drv = {
++	.probe = clk_mt2712_jpgdec_probe,
++	.driver = {
++		.name = "clk-mt2712-jpgdec",
++		.of_match_table = of_match_clk_mt2712_jpgdec,
++	},
++};
++
++builtin_platform_driver(clk_mt2712_jpgdec_drv);
+diff --git a/drivers/clk/mediatek/clk-mt2712-mfg.c b/drivers/clk/mediatek/clk-mt2712-mfg.c
+new file mode 100644
+index 0000000..570f72d
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712-mfg.c
+@@ -0,0 +1,75 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static const struct mtk_gate_regs mfg_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_MFG(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &mfg_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++static const struct mtk_gate mfg_clks[] = {
++	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_sel", 0),
++};
++
++static int clk_mt2712_mfg_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_MFG_NR_CLK);
++
++	mtk_clk_register_gates(node, mfg_clks, ARRAY_SIZE(mfg_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712_mfg[] = {
++	{ .compatible = "mediatek,mt2712-mfgcfg", },
++	{}
++};
++
++static struct platform_driver clk_mt2712_mfg_drv = {
++	.probe = clk_mt2712_mfg_probe,
++	.driver = {
++		.name = "clk-mt2712-mfg",
++		.of_match_table = of_match_clk_mt2712_mfg,
++	},
++};
++
++builtin_platform_driver(clk_mt2712_mfg_drv);
+diff --git a/drivers/clk/mediatek/clk-mt2712-mm.c b/drivers/clk/mediatek/clk-mt2712-mm.c
+new file mode 100644
+index 0000000..a8b4b6d
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712-mm.c
+@@ -0,0 +1,170 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static const struct mtk_gate_regs mm0_cg_regs = {
++	.set_ofs = 0x104,
++	.clr_ofs = 0x108,
++	.sta_ofs = 0x100,
++};
++
++static const struct mtk_gate_regs mm1_cg_regs = {
++	.set_ofs = 0x114,
++	.clr_ofs = 0x118,
++	.sta_ofs = 0x110,
++};
++
++static const struct mtk_gate_regs mm2_cg_regs = {
++	.set_ofs = 0x224,
++	.clr_ofs = 0x228,
++	.sta_ofs = 0x220,
++};
++
++#define GATE_MM0(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &mm0_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++#define GATE_MM1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &mm1_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++#define GATE_MM2(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &mm2_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++static const struct mtk_gate mm_clks[] = {
++	/* MM0 */
++	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_sel", 0),
++	GATE_MM0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
++	GATE_MM0(CLK_MM_CAM_MDP, "mm_cam_mdp", "mm_sel", 2),
++	GATE_MM0(CLK_MM_MDP_RDMA0, "mm_mdp_rdma0", "mm_sel", 3),
++	GATE_MM0(CLK_MM_MDP_RDMA1, "mm_mdp_rdma1", "mm_sel", 4),
++	GATE_MM0(CLK_MM_MDP_RSZ0, "mm_mdp_rsz0", "mm_sel", 5),
++	GATE_MM0(CLK_MM_MDP_RSZ1, "mm_mdp_rsz1", "mm_sel", 6),
++	GATE_MM0(CLK_MM_MDP_RSZ2, "mm_mdp_rsz2", "mm_sel", 7),
++	GATE_MM0(CLK_MM_MDP_TDSHP0, "mm_mdp_tdshp0", "mm_sel", 8),
++	GATE_MM0(CLK_MM_MDP_TDSHP1, "mm_mdp_tdshp1", "mm_sel", 9),
++	GATE_MM0(CLK_MM_MDP_CROP, "mm_mdp_crop", "mm_sel", 10),
++	GATE_MM0(CLK_MM_MDP_WDMA, "mm_mdp_wdma", "mm_sel", 11),
++	GATE_MM0(CLK_MM_MDP_WROT0, "mm_mdp_wrot0", "mm_sel", 12),
++	GATE_MM0(CLK_MM_MDP_WROT1, "mm_mdp_wrot1", "mm_sel", 13),
++	GATE_MM0(CLK_MM_FAKE_ENG, "mm_fake_eng", "mm_sel", 14),
++	GATE_MM0(CLK_MM_MUTEX_32K, "mm_mutex_32k", "clk32k", 15),
++	GATE_MM0(CLK_MM_DISP_OVL0, "mm_disp_ovl0", "mm_sel", 16),
++	GATE_MM0(CLK_MM_DISP_OVL1, "mm_disp_ovl1", "mm_sel", 17),
++	GATE_MM0(CLK_MM_DISP_RDMA0, "mm_disp_rdma0", "mm_sel", 18),
++	GATE_MM0(CLK_MM_DISP_RDMA1, "mm_disp_rdma1", "mm_sel", 19),
++	GATE_MM0(CLK_MM_DISP_RDMA2, "mm_disp_rdma2", "mm_sel", 20),
++	GATE_MM0(CLK_MM_DISP_WDMA0, "mm_disp_wdma0", "mm_sel", 21),
++	GATE_MM0(CLK_MM_DISP_WDMA1, "mm_disp_wdma1", "mm_sel", 22),
++	GATE_MM0(CLK_MM_DISP_COLOR0, "mm_disp_color0", "mm_sel", 23),
++	GATE_MM0(CLK_MM_DISP_COLOR1, "mm_disp_color1", "mm_sel", 24),
++	GATE_MM0(CLK_MM_DISP_AAL, "mm_disp_aal", "mm_sel", 25),
++	GATE_MM0(CLK_MM_DISP_GAMMA, "mm_disp_gamma", "mm_sel", 26),
++	GATE_MM0(CLK_MM_DISP_UFOE, "mm_disp_ufoe", "mm_sel", 27),
++	GATE_MM0(CLK_MM_DISP_SPLIT0, "mm_disp_split0", "mm_sel", 28),
++	GATE_MM0(CLK_MM_DISP_OD, "mm_disp_od", "mm_sel", 31),
++	/* MM1 */
++	GATE_MM1(CLK_MM_DISP_PWM0_MM, "mm_pwm0_mm", "mm_sel", 0),
++	GATE_MM1(CLK_MM_DISP_PWM0_26M, "mm_pwm0_26m", "pwm_sel", 1),
++	GATE_MM1(CLK_MM_DISP_PWM1_MM, "mm_pwm1_mm", "mm_sel", 2),
++	GATE_MM1(CLK_MM_DISP_PWM1_26M, "mm_pwm1_26m", "pwm_sel", 3),
++	GATE_MM1(CLK_MM_DSI0_ENGINE, "mm_dsi0_engine", "mm_sel", 4),
++	GATE_MM1(CLK_MM_DSI0_DIGITAL, "mm_dsi0_digital", "dsi0_lntc", 5),
++	GATE_MM1(CLK_MM_DSI1_ENGINE, "mm_dsi1_engine", "mm_sel", 6),
++	GATE_MM1(CLK_MM_DSI1_DIGITAL, "mm_dsi1_digital", "dsi1_lntc", 7),
++	GATE_MM1(CLK_MM_DPI_PIXEL, "mm_dpi_pixel", "vpll_dpix", 8),
++	GATE_MM1(CLK_MM_DPI_ENGINE, "mm_dpi_engine", "mm_sel", 9),
++	GATE_MM1(CLK_MM_DPI1_PIXEL, "mm_dpi1_pixel", "vpll3_dpix", 10),
++	GATE_MM1(CLK_MM_DPI1_ENGINE, "mm_dpi1_engine", "mm_sel", 11),
++	GATE_MM1(CLK_MM_LVDS_PIXEL, "mm_lvds_pixel", "vpll_dpix", 16),
++	GATE_MM1(CLK_MM_LVDS_CTS, "mm_lvds_cts", "lvdstx", 17),
++	GATE_MM1(CLK_MM_SMI_LARB4, "mm_smi_larb4", "mm_sel", 18),
++	GATE_MM1(CLK_MM_SMI_COMMON1, "mm_smi_common1", "mm_sel", 21),
++	GATE_MM1(CLK_MM_SMI_LARB5, "mm_smi_larb5", "mm_sel", 22),
++	GATE_MM1(CLK_MM_MDP_RDMA2, "mm_mdp_rdma2", "mm_sel", 23),
++	GATE_MM1(CLK_MM_MDP_TDSHP2, "mm_mdp_tdshp2", "mm_sel", 24),
++	GATE_MM1(CLK_MM_DISP_OVL2, "mm_disp_ovl2", "mm_sel", 25),
++	GATE_MM1(CLK_MM_DISP_WDMA2, "mm_disp_wdma2", "mm_sel", 26),
++	GATE_MM1(CLK_MM_DISP_COLOR2, "mm_disp_color2", "mm_sel", 27),
++	GATE_MM1(CLK_MM_DISP_AAL1, "mm_disp_aal1", "mm_sel", 28),
++	GATE_MM1(CLK_MM_DISP_OD1, "mm_disp_od1", "mm_sel", 29),
++	GATE_MM1(CLK_MM_LVDS1_PIXEL, "mm_lvds1_pixel", "vpll3_dpix", 30),
++	GATE_MM1(CLK_MM_LVDS1_CTS, "mm_lvds1_cts", "lvdstx3", 31),
++	/* MM2 */
++	GATE_MM2(CLK_MM_SMI_LARB7, "mm_smi_larb7", "mm_sel", 0),
++	GATE_MM2(CLK_MM_MDP_RDMA3, "mm_mdp_rdma3", "mm_sel", 1),
++	GATE_MM2(CLK_MM_MDP_WROT2, "mm_mdp_wrot2", "mm_sel", 2),
++	GATE_MM2(CLK_MM_DSI2, "mm_dsi2", "mm_sel", 3),
++	GATE_MM2(CLK_MM_DSI2_DIGITAL, "mm_dsi2_digital", "dsi0_lntc", 4),
++	GATE_MM2(CLK_MM_DSI3, "mm_dsi3", "mm_sel", 5),
++	GATE_MM2(CLK_MM_DSI3_DIGITAL, "mm_dsi3_digital", "dsi1_lntc", 6),
++};
++
++static int clk_mt2712_mm_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
++
++	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712_mm[] = {
++	{ .compatible = "mediatek,mt2712-mmsys", },
++	{}
++};
++
++static struct platform_driver clk_mt2712_mm_drv = {
++	.probe = clk_mt2712_mm_probe,
++	.driver = {
++		.name = "clk-mt2712-mm",
++		.of_match_table = of_match_clk_mt2712_mm,
++	},
++};
++
++builtin_platform_driver(clk_mt2712_mm_drv);
+diff --git a/drivers/clk/mediatek/clk-mt2712-vdec.c b/drivers/clk/mediatek/clk-mt2712-vdec.c
+new file mode 100644
+index 0000000..55c64ee
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712-vdec.c
+@@ -0,0 +1,94 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static const struct mtk_gate_regs vdec0_cg_regs = {
++	.set_ofs = 0x0,
++	.clr_ofs = 0x4,
++	.sta_ofs = 0x0,
++};
++
++static const struct mtk_gate_regs vdec1_cg_regs = {
++	.set_ofs = 0x8,
++	.clr_ofs = 0xc,
++	.sta_ofs = 0x8,
++};
++
++#define GATE_VDEC0(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &vdec0_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr_inv,	\
++	}
++
++#define GATE_VDEC1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &vdec1_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr_inv,	\
++	}
++
++static const struct mtk_gate vdec_clks[] = {
++	/* VDEC0 */
++	GATE_VDEC0(CLK_VDEC_CKEN, "vdec_cken", "vdec_sel", 0),
++	/* VDEC1 */
++	GATE_VDEC1(CLK_VDEC_LARB1_CKEN, "vdec_larb1_cken", "vdec_sel", 0),
++	GATE_VDEC1(CLK_VDEC_IMGRZ_CKEN, "vdec_imgrz_cken", "vdec_sel", 1),
++};
++
++static int clk_mt2712_vdec_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_VDEC_NR_CLK);
++
++	mtk_clk_register_gates(node, vdec_clks, ARRAY_SIZE(vdec_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712_vdec[] = {
++	{ .compatible = "mediatek,mt2712-vdecsys", },
++	{}
++};
++
++static struct platform_driver clk_mt2712_vdec_drv = {
++	.probe = clk_mt2712_vdec_probe,
++	.driver = {
++		.name = "clk-mt2712-vdec",
++		.of_match_table = of_match_clk_mt2712_vdec,
++	},
++};
++
++builtin_platform_driver(clk_mt2712_vdec_drv);
+diff --git a/drivers/clk/mediatek/clk-mt2712-venc.c b/drivers/clk/mediatek/clk-mt2712-venc.c
+new file mode 100644
+index 0000000..ccbfe98
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712-venc.c
+@@ -0,0 +1,77 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static const struct mtk_gate_regs venc_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_VENC(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &venc_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr_inv,	\
++	}
++
++static const struct mtk_gate venc_clks[] = {
++	GATE_VENC(CLK_VENC_SMI_COMMON_CON, "venc_smi", "mm_sel", 0),
++	GATE_VENC(CLK_VENC_VENC, "venc_venc", "venc_sel", 4),
++	GATE_VENC(CLK_VENC_SMI_LARB6, "venc_smi_larb6", "jpgdec_sel", 12),
++};
++
++static int clk_mt2712_venc_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_VENC_NR_CLK);
++
++	mtk_clk_register_gates(node, venc_clks, ARRAY_SIZE(venc_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712_venc[] = {
++	{ .compatible = "mediatek,mt2712-vencsys", },
++	{}
++};
++
++static struct platform_driver clk_mt2712_venc_drv = {
++	.probe = clk_mt2712_venc_probe,
++	.driver = {
++		.name = "clk-mt2712-venc",
++		.of_match_table = of_match_clk_mt2712_venc,
++	},
++};
++
++builtin_platform_driver(clk_mt2712_venc_drv);
+diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
+new file mode 100644
+index 0000000..fb56379
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2712.c
+@@ -0,0 +1,1435 @@
++/*
++ * Copyright (c) 2017 MediaTek Inc.
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2712-clk.h>
++
++static DEFINE_SPINLOCK(mt2712_clk_lock);
++
++static const struct mtk_fixed_clk top_fixed_clks[] = {
++	FIXED_CLK(CLK_TOP_VPLL3_DPIX, "vpll3_dpix", NULL, 200000000),
++	FIXED_CLK(CLK_TOP_VPLL_DPIX, "vpll_dpix", NULL, 200000000),
++	FIXED_CLK(CLK_TOP_LTEPLL_FS26M, "ltepll_fs26m", NULL, 26000000),
++	FIXED_CLK(CLK_TOP_DMPLL, "dmpll_ck", NULL, 350000000),
++	FIXED_CLK(CLK_TOP_DSI0_LNTC, "dsi0_lntc", NULL, 143000000),
++	FIXED_CLK(CLK_TOP_DSI1_LNTC, "dsi1_lntc", NULL, 143000000),
++	FIXED_CLK(CLK_TOP_LVDSTX3_CLKDIG_CTS, "lvdstx3", NULL, 140000000),
++	FIXED_CLK(CLK_TOP_LVDSTX_CLKDIG_CTS, "lvdstx", NULL, 140000000),
++	FIXED_CLK(CLK_TOP_CLKRTC_EXT, "clkrtc_ext", NULL, 32768),
++	FIXED_CLK(CLK_TOP_CLKRTC_INT, "clkrtc_int", NULL, 32747),
++	FIXED_CLK(CLK_TOP_CSI0, "csi0", NULL, 26000000),
++	FIXED_CLK(CLK_TOP_CVBSPLL, "cvbspll", NULL, 108000000),
++};
++
++static const struct mtk_fixed_factor top_early_divs[] = {
++	FACTOR(CLK_TOP_SYS_26M, "sys_26m", "clk26m", 1,
++		1),
++	FACTOR(CLK_TOP_CLK26M_D2, "clk26m_d2", "sys_26m", 1,
++		2),
++};
++
++static const struct mtk_fixed_factor top_divs[] = {
++	FACTOR(CLK_TOP_ARMCA35PLL, "armca35pll_ck", "armca35pll", 1,
++		1),
++	FACTOR(CLK_TOP_ARMCA35PLL_600M, "armca35pll_600m", "armca35pll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_ARMCA35PLL_400M, "armca35pll_400m", "armca35pll_ck", 1,
++		3),
++	FACTOR(CLK_TOP_ARMCA72PLL, "armca72pll_ck", "armca72pll", 1,
++		1),
++	FACTOR(CLK_TOP_SYSPLL, "syspll_ck", "mainpll", 1,
++		1),
++	FACTOR(CLK_TOP_SYSPLL_D2, "syspll_d2", "syspll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_SYSPLL1_D2, "syspll1_d2", "syspll_d2", 1,
++		2),
++	FACTOR(CLK_TOP_SYSPLL1_D4, "syspll1_d4", "syspll_d2", 1,
++		4),
++	FACTOR(CLK_TOP_SYSPLL1_D8, "syspll1_d8", "syspll_d2", 1,
++		8),
++	FACTOR(CLK_TOP_SYSPLL1_D16, "syspll1_d16", "syspll_d2", 1,
++		16),
++	FACTOR(CLK_TOP_SYSPLL_D3, "syspll_d3", "syspll_ck", 1,
++		3),
++	FACTOR(CLK_TOP_SYSPLL2_D2, "syspll2_d2", "syspll_d3", 1,
++		2),
++	FACTOR(CLK_TOP_SYSPLL2_D4, "syspll2_d4", "syspll_d3", 1,
++		4),
++	FACTOR(CLK_TOP_SYSPLL_D5, "syspll_d5", "syspll_ck", 1,
++		5),
++	FACTOR(CLK_TOP_SYSPLL3_D2, "syspll3_d2", "syspll_d5", 1,
++		2),
++	FACTOR(CLK_TOP_SYSPLL3_D4, "syspll3_d4", "syspll_d5", 1,
++		4),
++	FACTOR(CLK_TOP_SYSPLL_D7, "syspll_d7", "syspll_ck", 1,
++		7),
++	FACTOR(CLK_TOP_SYSPLL4_D2, "syspll4_d2", "syspll_d7", 1,
++		2),
++	FACTOR(CLK_TOP_SYSPLL4_D4, "syspll4_d4", "syspll_d7", 1,
++		4),
++	FACTOR(CLK_TOP_UNIVPLL, "univpll_ck", "univpll", 1,
++		1),
++	FACTOR(CLK_TOP_UNIVPLL_D7, "univpll_d7", "univpll_ck", 1,
++		7),
++	FACTOR(CLK_TOP_UNIVPLL_D26, "univpll_d26", "univpll_ck", 1,
++		26),
++	FACTOR(CLK_TOP_UNIVPLL_D52, "univpll_d52", "univpll_ck", 1,
++		52),
++	FACTOR(CLK_TOP_UNIVPLL_D104, "univpll_d104", "univpll_ck", 1,
++		104),
++	FACTOR(CLK_TOP_UNIVPLL_D208, "univpll_d208", "univpll_ck", 1,
++		208),
++	FACTOR(CLK_TOP_UNIVPLL_D2, "univpll_d2", "univpll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_UNIVPLL1_D2, "univpll1_d2", "univpll_d2", 1,
++		2),
++	FACTOR(CLK_TOP_UNIVPLL1_D4, "univpll1_d4", "univpll_d2", 1,
++		4),
++	FACTOR(CLK_TOP_UNIVPLL1_D8, "univpll1_d8", "univpll_d2", 1,
++		8),
++	FACTOR(CLK_TOP_UNIVPLL_D3, "univpll_d3", "univpll_ck", 1,
++		3),
++	FACTOR(CLK_TOP_UNIVPLL2_D2, "univpll2_d2", "univpll_d3", 1,
++		2),
++	FACTOR(CLK_TOP_UNIVPLL2_D4, "univpll2_d4", "univpll_d3", 1,
++		4),
++	FACTOR(CLK_TOP_UNIVPLL2_D8, "univpll2_d8", "univpll_d3", 1,
++		8),
++	FACTOR(CLK_TOP_UNIVPLL_D5, "univpll_d5", "univpll_ck", 1,
++		5),
++	FACTOR(CLK_TOP_UNIVPLL3_D2, "univpll3_d2", "univpll_d5", 1,
++		2),
++	FACTOR(CLK_TOP_UNIVPLL3_D4, "univpll3_d4", "univpll_d5", 1,
++		4),
++	FACTOR(CLK_TOP_UNIVPLL3_D8, "univpll3_d8", "univpll_d5", 1,
++		8),
++	FACTOR(CLK_TOP_F_MP0_PLL1, "f_mp0_pll1_ck", "univpll_d2", 1,
++		1),
++	FACTOR(CLK_TOP_F_MP0_PLL2, "f_mp0_pll2_ck", "univpll1_d2", 1,
++		1),
++	FACTOR(CLK_TOP_F_BIG_PLL1, "f_big_pll1_ck", "univpll_d2", 1,
++		1),
++	FACTOR(CLK_TOP_F_BIG_PLL2, "f_big_pll2_ck", "univpll1_d2", 1,
++		1),
++	FACTOR(CLK_TOP_F_BUS_PLL1, "f_bus_pll1_ck", "univpll_d2", 1,
++		1),
++	FACTOR(CLK_TOP_F_BUS_PLL2, "f_bus_pll2_ck", "univpll1_d2", 1,
++		1),
++	FACTOR(CLK_TOP_APLL1, "apll1_ck", "apll1", 1,
++		1),
++	FACTOR(CLK_TOP_APLL1_D2, "apll1_d2", "apll1_ck", 1,
++		2),
++	FACTOR(CLK_TOP_APLL1_D4, "apll1_d4", "apll1_ck", 1,
++		4),
++	FACTOR(CLK_TOP_APLL1_D8, "apll1_d8", "apll1_ck", 1,
++		8),
++	FACTOR(CLK_TOP_APLL1_D16, "apll1_d16", "apll1_ck", 1,
++		16),
++	FACTOR(CLK_TOP_APLL2, "apll2_ck", "apll2", 1,
++		1),
++	FACTOR(CLK_TOP_APLL2_D2, "apll2_d2", "apll2_ck", 1,
++		2),
++	FACTOR(CLK_TOP_APLL2_D4, "apll2_d4", "apll2_ck", 1,
++		4),
++	FACTOR(CLK_TOP_APLL2_D8, "apll2_d8", "apll2_ck", 1,
++		8),
++	FACTOR(CLK_TOP_APLL2_D16, "apll2_d16", "apll2_ck", 1,
++		16),
++	FACTOR(CLK_TOP_LVDSPLL, "lvdspll_ck", "lvdspll", 1,
++		1),
++	FACTOR(CLK_TOP_LVDSPLL_D2, "lvdspll_d2", "lvdspll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_LVDSPLL_D4, "lvdspll_d4", "lvdspll_ck", 1,
++		4),
++	FACTOR(CLK_TOP_LVDSPLL_D8, "lvdspll_d8", "lvdspll_ck", 1,
++		8),
++	FACTOR(CLK_TOP_LVDSPLL2, "lvdspll2_ck", "lvdspll2", 1,
++		1),
++	FACTOR(CLK_TOP_LVDSPLL2_D2, "lvdspll2_d2", "lvdspll2_ck", 1,
++		2),
++	FACTOR(CLK_TOP_LVDSPLL2_D4, "lvdspll2_d4", "lvdspll2_ck", 1,
++		4),
++	FACTOR(CLK_TOP_LVDSPLL2_D8, "lvdspll2_d8", "lvdspll2_ck", 1,
++		8),
++	FACTOR(CLK_TOP_ETHERPLL_125M, "etherpll_125m", "etherpll", 1,
++		1),
++	FACTOR(CLK_TOP_ETHERPLL_50M, "etherpll_50m", "etherpll", 1,
++		1),
++	FACTOR(CLK_TOP_CVBS, "cvbs", "cvbspll", 1,
++		1),
++	FACTOR(CLK_TOP_CVBS_D2, "cvbs_d2", "cvbs", 1,
++		2),
++	FACTOR(CLK_TOP_MMPLL, "mmpll_ck", "mmpll", 1,
++		1),
++	FACTOR(CLK_TOP_MMPLL_D2, "mmpll_d2", "mmpll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_VENCPLL, "vencpll_ck", "vencpll", 1,
++		1),
++	FACTOR(CLK_TOP_VENCPLL_D2, "vencpll_d2", "vencpll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_VCODECPLL, "vcodecpll_ck", "vcodecpll", 1,
++		1),
++	FACTOR(CLK_TOP_VCODECPLL_D2, "vcodecpll_d2", "vcodecpll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_TVDPLL, "tvdpll_ck", "tvdpll", 1,
++		1),
++	FACTOR(CLK_TOP_TVDPLL_D2, "tvdpll_d2", "tvdpll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_TVDPLL_D4, "tvdpll_d4", "tvdpll_ck", 1,
++		4),
++	FACTOR(CLK_TOP_TVDPLL_D8, "tvdpll_d8", "tvdpll_ck", 1,
++		8),
++	FACTOR(CLK_TOP_TVDPLL_429M, "tvdpll_429m", "tvdpll", 1,
++		1),
++	FACTOR(CLK_TOP_TVDPLL_429M_D2, "tvdpll_429m_d2", "tvdpll_429m", 1,
++		2),
++	FACTOR(CLK_TOP_TVDPLL_429M_D4, "tvdpll_429m_d4", "tvdpll_429m", 1,
++		4),
++	FACTOR(CLK_TOP_MSDCPLL, "msdcpll_ck", "msdcpll", 1,
++		1),
++	FACTOR(CLK_TOP_MSDCPLL_D2, "msdcpll_d2", "msdcpll_ck", 1,
++		2),
++	FACTOR(CLK_TOP_MSDCPLL_D4, "msdcpll_d4", "msdcpll_ck", 1,
++		4),
++	FACTOR(CLK_TOP_MSDCPLL2, "msdcpll2_ck", "msdcpll2", 1,
++		1),
++	FACTOR(CLK_TOP_MSDCPLL2_D2, "msdcpll2_d2", "msdcpll2_ck", 1,
++		2),
++	FACTOR(CLK_TOP_MSDCPLL2_D4, "msdcpll2_d4", "msdcpll2_ck", 1,
++		4),
++	FACTOR(CLK_TOP_D2A_ULCLK_6P5M, "d2a_ulclk_6p5m", "clk26m", 1,
++		4),
++};
++
++static const char * const axi_parents[] = {
++	"clk26m",
++	"syspll1_d2",
++	"syspll_d5",
++	"syspll1_d4",
++	"univpll_d5",
++	"univpll2_d2",
++	"msdcpll2_ck"
++};
++
++static const char * const mem_parents[] = {
++	"clk26m",
++	"dmpll_ck"
++};
++
++static const char * const mm_parents[] = {
++	"clk26m",
++	"vencpll_ck",
++	"syspll_d3",
++	"syspll1_d2",
++	"syspll_d5",
++	"syspll1_d4",
++	"univpll1_d2",
++	"univpll2_d2"
++};
++
++static const char * const pwm_parents[] = {
++	"clk26m",
++	"univpll2_d4",
++	"univpll3_d2",
++	"univpll1_d4"
++};
++
++static const char * const vdec_parents[] = {
++	"clk26m",
++	"vcodecpll_ck",
++	"tvdpll_429m",
++	"univpll_d3",
++	"vencpll_ck",
++	"syspll_d3",
++	"univpll1_d2",
++	"mmpll_d2",
++	"syspll3_d2",
++	"tvdpll_ck"
++};
++
++static const char * const venc_parents[] = {
++	"clk26m",
++	"univpll1_d2",
++	"mmpll_d2",
++	"tvdpll_d2",
++	"syspll1_d2",
++	"univpll_d5",
++	"vcodecpll_d2",
++	"univpll2_d2",
++	"syspll3_d2"
++};
++
++static const char * const mfg_parents[] = {
++	"clk26m",
++	"mmpll_ck",
++	"univpll_d3",
++	"clk26m",
++	"clk26m",
++	"clk26m",
++	"clk26m",
++	"clk26m",
++	"clk26m",
++	"syspll_d3",
++	"syspll1_d2",
++	"syspll_d5",
++	"univpll_d3",
++	"univpll1_d2",
++	"univpll_d5",
++	"univpll2_d2"
++};
++
++static const char * const camtg_parents[] = {
++	"clk26m",
++	"univpll_d52",
++	"univpll_d208",
++	"univpll_d104",
++	"clk26m_d2",
++	"univpll_d26",
++	"univpll2_d8",
++	"syspll3_d4",
++	"syspll3_d2",
++	"univpll1_d4",
++	"univpll2_d2"
++};
++
++static const char * const uart_parents[] = {
++	"clk26m",
++	"univpll2_d8"
++};
++
++static const char * const spi_parents[] = {
++	"clk26m",
++	"univpll2_d4",
++	"univpll1_d4",
++	"univpll2_d2",
++	"univpll3_d2",
++	"univpll1_d8"
++};
++
++static const char * const usb20_parents[] = {
++	"clk26m",
++	"univpll1_d8",
++	"univpll3_d4"
++};
++
++static const char * const usb30_parents[] = {
++	"clk26m",
++	"univpll3_d2",
++	"univpll3_d4",
++	"univpll2_d4"
++};
++
++static const char * const msdc50_0_h_parents[] = {
++	"clk26m",
++	"syspll1_d2",
++	"syspll2_d2",
++	"syspll4_d2",
++	"univpll_d5",
++	"univpll1_d4"
++};
++
++static const char * const msdc50_0_parents[] = {
++	"clk26m",
++	"msdcpll_ck",
++	"msdcpll_d2",
++	"univpll1_d4",
++	"syspll2_d2",
++	"msdcpll_d4",
++	"vencpll_d2",
++	"univpll1_d2",
++	"msdcpll2_ck",
++	"msdcpll2_d2",
++	"msdcpll2_d4"
++};
++
++static const char * const msdc30_1_parents[] = {
++	"clk26m",
++	"univpll2_d2",
++	"msdcpll_d2",
++	"univpll1_d4",
++	"syspll2_d2",
++	"univpll_d7",
++	"vencpll_d2"
++};
++
++static const char * const msdc30_3_parents[] = {
++	"clk26m",
++	"msdcpll2_ck",
++	"msdcpll2_d2",
++	"univpll2_d2",
++	"msdcpll2_d4",
++	"univpll1_d4",
++	"syspll2_d2",
++	"syspll_d7",
++	"univpll_d7",
++	"vencpll_d2",
++	"msdcpll_ck",
++	"msdcpll_d2",
++	"msdcpll_d4"
++};
++
++static const char * const audio_parents[] = {
++	"clk26m",
++	"syspll3_d4",
++	"syspll4_d4",
++	"syspll1_d16"
++};
++
++static const char * const aud_intbus_parents[] = {
++	"clk26m",
++	"syspll1_d4",
++	"syspll4_d2",
++	"univpll3_d2",
++	"univpll2_d8",
++	"syspll3_d2",
++	"syspll3_d4"
++};
++
++static const char * const pmicspi_parents[] = {
++	"clk26m",
++	"syspll1_d8",
++	"syspll3_d4",
++	"syspll1_d16",
++	"univpll3_d4",
++	"univpll_d26",
++	"syspll3_d4"
++};
++
++static const char * const dpilvds1_parents[] = {
++	"clk26m",
++	"lvdspll2_ck",
++	"lvdspll2_d2",
++	"lvdspll2_d4",
++	"lvdspll2_d8",
++	"clkfpc"
++};
++
++static const char * const atb_parents[] = {
++	"clk26m",
++	"syspll1_d2",
++	"univpll_d5",
++	"syspll_d5"
++};
++
++static const char * const nr_parents[] = {
++	"clk26m",
++	"univpll1_d4",
++	"syspll2_d2",
++	"syspll1_d4",
++	"univpll1_d8",
++	"univpll3_d2",
++	"univpll2_d2",
++	"syspll_d5"
++};
++
++static const char * const nfi2x_parents[] = {
++	"clk26m",
++	"syspll4_d4",
++	"univpll3_d4",
++	"univpll1_d8",
++	"syspll2_d4",
++	"univpll3_d2",
++	"syspll_d7",
++	"syspll2_d2",
++	"univpll2_d2",
++	"syspll_d5",
++	"syspll1_d2"
++};
++
++static const char * const irda_parents[] = {
++	"clk26m",
++	"univpll2_d4",
++	"syspll2_d4",
++	"univpll2_d8"
++};
++
++static const char * const cci400_parents[] = {
++	"clk26m",
++	"vencpll_ck",
++	"armca35pll_600m",
++	"armca35pll_400m",
++	"univpll_d2",
++	"syspll_d2",
++	"msdcpll_ck",
++	"univpll_d3"
++};
++
++static const char * const aud_1_parents[] = {
++	"clk26m",
++	"apll1_ck",
++	"univpll2_d4",
++	"univpll2_d8"
++};
++
++static const char * const aud_2_parents[] = {
++	"clk26m",
++	"apll2_ck",
++	"univpll2_d4",
++	"univpll2_d8"
++};
++
++static const char * const mem_mfg_parents[] = {
++	"clk26m",
++	"mmpll_ck",
++	"univpll_d3"
++};
++
++static const char * const axi_mfg_parents[] = {
++	"clk26m",
++	"axi_sel",
++	"univpll_d5"
++};
++
++static const char * const scam_parents[] = {
++	"clk26m",
++	"syspll3_d2",
++	"univpll2_d4",
++	"syspll2_d4"
++};
++
++static const char * const nfiecc_parents[] = {
++	"clk26m",
++	"nfi2x_sel",
++	"syspll_d7",
++	"syspll2_d2",
++	"univpll2_d2",
++	"univpll_d5",
++	"syspll1_d2"
++};
++
++static const char * const pe2_mac_p0_parents[] = {
++	"clk26m",
++	"syspll1_d8",
++	"syspll4_d2",
++	"syspll2_d4",
++	"univpll2_d4",
++	"syspll3_d2"
++};
++
++static const char * const dpilvds_parents[] = {
++	"clk26m",
++	"lvdspll_ck",
++	"lvdspll_d2",
++	"lvdspll_d4",
++	"lvdspll_d8",
++	"clkfpc"
++};
++
++static const char * const hdcp_parents[] = {
++	"clk26m",
++	"syspll4_d2",
++	"syspll3_d4",
++	"univpll2_d4"
++};
++
++static const char * const hdcp_24m_parents[] = {
++	"clk26m",
++	"univpll_d26",
++	"univpll_d52",
++	"univpll2_d8"
++};
++
++static const char * const rtc_parents[] = {
++	"clkrtc_int",
++	"clkrtc_ext",
++	"clk26m",
++	"univpll3_d8"
++};
++
++static const char * const spinor_parents[] = {
++	"clk26m",
++	"clk26m_d2",
++	"syspll4_d4",
++	"univpll2_d8",
++	"univpll3_d4",
++	"syspll4_d2",
++	"syspll2_d4",
++	"univpll2_d4",
++	"etherpll_125m",
++	"syspll1_d4"
++};
++
++static const char * const apll_parents[] = {
++	"clk26m",
++	"apll1_ck",
++	"apll1_d2",
++	"apll1_d4",
++	"apll1_d8",
++	"apll1_d16",
++	"apll2_ck",
++	"apll2_d2",
++	"apll2_d4",
++	"apll2_d8",
++	"apll2_d16",
++	"clk26m",
++	"clk26m"
++};
++
++static const char * const a1sys_hp_parents[] = {
++	"clk26m",
++	"apll1_ck",
++	"apll1_d2",
++	"apll1_d4",
++	"apll1_d8"
++};
++
++static const char * const a2sys_hp_parents[] = {
++	"clk26m",
++	"apll2_ck",
++	"apll2_d2",
++	"apll2_d4",
++	"apll2_d8"
++};
++
++static const char * const asm_l_parents[] = {
++	"clk26m",
++	"univpll2_d4",
++	"univpll2_d2",
++	"syspll_d5"
++};
++
++static const char * const i2so1_parents[] = {
++	"clk26m",
++	"apll1_ck",
++	"apll2_ck"
++};
++
++static const char * const ether_125m_parents[] = {
++	"clk26m",
++	"etherpll_125m",
++	"univpll3_d2"
++};
++
++static const char * const ether_50m_parents[] = {
++	"clk26m",
++	"etherpll_50m",
++	"univpll_d26",
++	"univpll3_d4"
++};
++
++static const char * const jpgdec_parents[] = {
++	"clk26m",
++	"univpll_d3",
++	"tvdpll_429m",
++	"vencpll_ck",
++	"syspll_d3",
++	"vcodecpll_ck",
++	"univpll1_d2",
++	"armca35pll_400m",
++	"tvdpll_429m_d2",
++	"tvdpll_429m_d4"
++};
++
++static const char * const spislv_parents[] = {
++	"clk26m",
++	"univpll2_d4",
++	"univpll1_d4",
++	"univpll2_d2",
++	"univpll3_d2",
++	"univpll1_d8",
++	"univpll1_d2",
++	"univpll_d5"
++};
++
++static const char * const ether_parents[] = {
++	"clk26m",
++	"etherpll_50m",
++	"univpll_d26"
++};
++
++static const char * const di_parents[] = {
++	"clk26m",
++	"tvdpll_d2",
++	"tvdpll_d4",
++	"tvdpll_d8",
++	"vencpll_ck",
++	"vencpll_d2",
++	"cvbs",
++	"cvbs_d2"
++};
++
++static const char * const tvd_parents[] = {
++	"clk26m",
++	"cvbs_d2",
++	"univpll2_d8"
++};
++
++static const char * const i2c_parents[] = {
++	"clk26m",
++	"univpll_d26",
++	"univpll2_d4",
++	"univpll3_d2",
++	"univpll1_d4"
++};
++
++static const char * const msdc0p_aes_parents[] = {
++	"clk26m",
++	"msdcpll_ck",
++	"univpll_d3",
++	"vcodecpll_ck"
++};
++
++static const char * const cmsys_parents[] = {
++	"clk26m",
++	"univpll_d3",
++	"syspll_d3",
++	"syspll1_d2",
++	"syspll2_d2"
++};
++
++static const char * const gcpu_parents[] = {
++	"clk26m",
++	"syspll_d3",
++	"syspll1_d2",
++	"univpll1_d2",
++	"univpll_d5",
++	"univpll3_d2",
++	"univpll_d3"
++};
++
++static const char * const aud_apll1_parents[] = {
++	"apll1",
++	"clkaud_ext_i_1"
++};
++
++static const char * const aud_apll2_parents[] = {
++	"apll2",
++	"clkaud_ext_i_2"
++};
++
++static const char * const audull_vtx_parents[] = {
++	"d2a_ulclk_6p5m",
++	"clkaud_ext_i_0"
++};
++
++static struct mtk_composite top_muxes[] = {
++	/* CLK_CFG_0 */
++	MUX_GATE_FLAGS(CLK_TOP_AXI_SEL, "axi_sel", axi_parents, 0x040, 0, 3,
++		7, CLK_IS_CRITICAL),
++	MUX_GATE_FLAGS(CLK_TOP_MEM_SEL, "mem_sel", mem_parents, 0x040, 8, 1,
++		15, CLK_IS_CRITICAL),
++	MUX_GATE(CLK_TOP_MM_SEL, "mm_sel",
++		mm_parents, 0x040, 24, 3, 31),
++	/* CLK_CFG_1 */
++	MUX_GATE(CLK_TOP_PWM_SEL, "pwm_sel",
++		pwm_parents, 0x050, 0, 2, 7),
++	MUX_GATE(CLK_TOP_VDEC_SEL, "vdec_sel",
++		vdec_parents, 0x050, 8, 4, 15),
++	MUX_GATE(CLK_TOP_VENC_SEL, "venc_sel",
++		venc_parents, 0x050, 16, 4, 23),
++	MUX_GATE(CLK_TOP_MFG_SEL, "mfg_sel",
++		mfg_parents, 0x050, 24, 4, 31),
++	/* CLK_CFG_2 */
++	MUX_GATE(CLK_TOP_CAMTG_SEL, "camtg_sel",
++		camtg_parents, 0x060, 0, 4, 7),
++	MUX_GATE(CLK_TOP_UART_SEL, "uart_sel",
++		uart_parents, 0x060, 8, 1, 15),
++	MUX_GATE(CLK_TOP_SPI_SEL, "spi_sel",
++		spi_parents, 0x060, 16, 3, 23),
++	MUX_GATE(CLK_TOP_USB20_SEL, "usb20_sel",
++		usb20_parents, 0x060, 24, 2, 31),
++	/* CLK_CFG_3 */
++	MUX_GATE(CLK_TOP_USB30_SEL, "usb30_sel",
++		usb30_parents, 0x070, 0, 2, 7),
++	MUX_GATE(CLK_TOP_MSDC50_0_HCLK_SEL, "msdc50_0_h_sel",
++		msdc50_0_h_parents, 0x070, 8, 3, 15),
++	MUX_GATE(CLK_TOP_MSDC50_0_SEL, "msdc50_0_sel",
++		msdc50_0_parents, 0x070, 16, 4, 23),
++	MUX_GATE(CLK_TOP_MSDC30_1_SEL, "msdc30_1_sel",
++		msdc30_1_parents, 0x070, 24, 3, 31),
++	/* CLK_CFG_4 */
++	MUX_GATE(CLK_TOP_MSDC30_2_SEL, "msdc30_2_sel",
++		msdc30_1_parents, 0x080, 0, 3, 7),
++	MUX_GATE(CLK_TOP_MSDC30_3_SEL, "msdc30_3_sel",
++		msdc30_3_parents, 0x080, 8, 4, 15),
++	MUX_GATE(CLK_TOP_AUDIO_SEL, "audio_sel",
++		audio_parents, 0x080, 16, 2, 23),
++	MUX_GATE(CLK_TOP_AUD_INTBUS_SEL, "aud_intbus_sel",
++		aud_intbus_parents, 0x080, 24, 3, 31),
++	/* CLK_CFG_5 */
++	MUX_GATE(CLK_TOP_PMICSPI_SEL, "pmicspi_sel",
++		pmicspi_parents, 0x090, 0, 3, 7),
++	MUX_GATE(CLK_TOP_DPILVDS1_SEL, "dpilvds1_sel",
++		dpilvds1_parents, 0x090, 8, 3, 15),
++	MUX_GATE(CLK_TOP_ATB_SEL, "atb_sel",
++		atb_parents, 0x090, 16, 2, 23),
++	MUX_GATE(CLK_TOP_NR_SEL, "nr_sel",
++		nr_parents, 0x090, 24, 3, 31),
++	/* CLK_CFG_6 */
++	MUX_GATE(CLK_TOP_NFI2X_SEL, "nfi2x_sel",
++		nfi2x_parents, 0x0a0, 0, 4, 7),
++	MUX_GATE(CLK_TOP_IRDA_SEL, "irda_sel",
++		irda_parents, 0x0a0, 8, 2, 15),
++	MUX_GATE(CLK_TOP_CCI400_SEL, "cci400_sel",
++		cci400_parents, 0x0a0, 16, 3, 23),
++	MUX_GATE(CLK_TOP_AUD_1_SEL, "aud_1_sel",
++		aud_1_parents, 0x0a0, 24, 2, 31),
++	/* CLK_CFG_7 */
++	MUX_GATE(CLK_TOP_AUD_2_SEL, "aud_2_sel",
++		aud_2_parents, 0x0b0, 0, 2, 7),
++	MUX_GATE(CLK_TOP_MEM_MFG_IN_AS_SEL, "mem_mfg_sel",
++		mem_mfg_parents, 0x0b0, 8, 2, 15),
++	MUX_GATE(CLK_TOP_AXI_MFG_IN_AS_SEL, "axi_mfg_sel",
++		axi_mfg_parents, 0x0b0, 16, 2, 23),
++	MUX_GATE(CLK_TOP_SCAM_SEL, "scam_sel",
++		scam_parents, 0x0b0, 24, 2, 31),
++	/* CLK_CFG_8 */
++	MUX_GATE(CLK_TOP_NFIECC_SEL, "nfiecc_sel",
++		nfiecc_parents, 0x0c0, 0, 3, 7),
++	MUX_GATE(CLK_TOP_PE2_MAC_P0_SEL, "pe2_mac_p0_sel",
++		pe2_mac_p0_parents, 0x0c0, 8, 3, 15),
++	MUX_GATE(CLK_TOP_PE2_MAC_P1_SEL, "pe2_mac_p1_sel",
++		pe2_mac_p0_parents, 0x0c0, 16, 3, 23),
++	MUX_GATE(CLK_TOP_DPILVDS_SEL, "dpilvds_sel",
++		dpilvds_parents, 0x0c0, 24, 3, 31),
++	/* CLK_CFG_9 */
++	MUX_GATE(CLK_TOP_MSDC50_3_HCLK_SEL, "msdc50_3_h_sel",
++		msdc50_0_h_parents, 0x0d0, 0, 3, 7),
++	MUX_GATE(CLK_TOP_HDCP_SEL, "hdcp_sel",
++		hdcp_parents, 0x0d0, 8, 2, 15),
++	MUX_GATE(CLK_TOP_HDCP_24M_SEL, "hdcp_24m_sel",
++		hdcp_24m_parents, 0x0d0, 16, 2, 23),
++	MUX_GATE_FLAGS(CLK_TOP_RTC_SEL, "rtc_sel", rtc_parents, 0x0d0, 24, 2,
++		31, CLK_IS_CRITICAL),
++	/* CLK_CFG_10 */
++	MUX_GATE(CLK_TOP_SPINOR_SEL, "spinor_sel",
++		spinor_parents, 0x500, 0, 4, 7),
++	MUX_GATE(CLK_TOP_APLL_SEL, "apll_sel",
++		apll_parents, 0x500, 8, 4, 15),
++	MUX_GATE(CLK_TOP_APLL2_SEL, "apll2_sel",
++		apll_parents, 0x500, 16, 4, 23),
++	MUX_GATE(CLK_TOP_A1SYS_HP_SEL, "a1sys_hp_sel",
++		a1sys_hp_parents, 0x500, 24, 3, 31),
++	/* CLK_CFG_11 */
++	MUX_GATE(CLK_TOP_A2SYS_HP_SEL, "a2sys_hp_sel",
++		a2sys_hp_parents, 0x510, 0, 3, 7),
++	MUX_GATE(CLK_TOP_ASM_L_SEL, "asm_l_sel",
++		asm_l_parents, 0x510, 8, 2, 15),
++	MUX_GATE(CLK_TOP_ASM_M_SEL, "asm_m_sel",
++		asm_l_parents, 0x510, 16, 2, 23),
++	MUX_GATE(CLK_TOP_ASM_H_SEL, "asm_h_sel",
++		asm_l_parents, 0x510, 24, 2, 31),
++	/* CLK_CFG_12 */
++	MUX_GATE(CLK_TOP_I2SO1_SEL, "i2so1_sel",
++		i2so1_parents, 0x520, 0, 2, 7),
++	MUX_GATE(CLK_TOP_I2SO2_SEL, "i2so2_sel",
++		i2so1_parents, 0x520, 8, 2, 15),
++	MUX_GATE(CLK_TOP_I2SO3_SEL, "i2so3_sel",
++		i2so1_parents, 0x520, 16, 2, 23),
++	MUX_GATE(CLK_TOP_TDMO0_SEL, "tdmo0_sel",
++		i2so1_parents, 0x520, 24, 2, 31),
++	/* CLK_CFG_13 */
++	MUX_GATE(CLK_TOP_TDMO1_SEL, "tdmo1_sel",
++		i2so1_parents, 0x530, 0, 2, 7),
++	MUX_GATE(CLK_TOP_I2SI1_SEL, "i2si1_sel",
++		i2so1_parents, 0x530, 8, 2, 15),
++	MUX_GATE(CLK_TOP_I2SI2_SEL, "i2si2_sel",
++		i2so1_parents, 0x530, 16, 2, 23),
++	MUX_GATE(CLK_TOP_I2SI3_SEL, "i2si3_sel",
++		i2so1_parents, 0x530, 24, 2, 31),
++	/* CLK_CFG_14 */
++	MUX_GATE(CLK_TOP_ETHER_125M_SEL, "ether_125m_sel",
++		ether_125m_parents, 0x540, 0, 2, 7),
++	MUX_GATE(CLK_TOP_ETHER_50M_SEL, "ether_50m_sel",
++		ether_50m_parents, 0x540, 8, 2, 15),
++	MUX_GATE(CLK_TOP_JPGDEC_SEL, "jpgdec_sel",
++		jpgdec_parents, 0x540, 16, 4, 23),
++	MUX_GATE(CLK_TOP_SPISLV_SEL, "spislv_sel",
++		spislv_parents, 0x540, 24, 3, 31),
++	/* CLK_CFG_15 */
++	MUX_GATE(CLK_TOP_ETHER_50M_RMII_SEL, "ether_sel",
++		ether_parents, 0x550, 0, 2, 7),
++	MUX_GATE(CLK_TOP_CAM2TG_SEL, "cam2tg_sel",
++		camtg_parents, 0x550, 8, 4, 15),
++	MUX_GATE(CLK_TOP_DI_SEL, "di_sel",
++		di_parents, 0x550, 16, 3, 23),
++	MUX_GATE(CLK_TOP_TVD_SEL, "tvd_sel",
++		tvd_parents, 0x550, 24, 2, 31),
++	/* CLK_CFG_16 */
++	MUX_GATE(CLK_TOP_I2C_SEL, "i2c_sel",
++		i2c_parents, 0x560, 0, 3, 7),
++	MUX_GATE(CLK_TOP_PWM_INFRA_SEL, "pwm_infra_sel",
++		pwm_parents, 0x560, 8, 2, 15),
++	MUX_GATE(CLK_TOP_MSDC0P_AES_SEL, "msdc0p_aes_sel",
++		msdc0p_aes_parents, 0x560, 16, 2, 23),
++	MUX_GATE(CLK_TOP_CMSYS_SEL, "cmsys_sel",
++		cmsys_parents, 0x560, 24, 3, 31),
++	/* CLK_CFG_17 */
++	MUX_GATE(CLK_TOP_GCPU_SEL, "gcpu_sel",
++		gcpu_parents, 0x570, 0, 3, 7),
++	/* CLK_AUDDIV_4 */
++	MUX(CLK_TOP_AUD_APLL1_SEL, "aud_apll1_sel",
++		aud_apll1_parents, 0x134, 0, 1),
++	MUX(CLK_TOP_AUD_APLL2_SEL, "aud_apll2_sel",
++		aud_apll2_parents, 0x134, 1, 1),
++	MUX(CLK_TOP_DA_AUDULL_VTX_6P5M_SEL, "audull_vtx_sel",
++		audull_vtx_parents, 0x134, 31, 1),
++};
++
++static const char * const mcu_mp0_parents[] = {
++	"clk26m",
++	"armca35pll_ck",
++	"f_mp0_pll1_ck",
++	"f_mp0_pll2_ck"
++};
++
++static const char * const mcu_mp2_parents[] = {
++	"clk26m",
++	"armca72pll_ck",
++	"f_big_pll1_ck",
++	"f_big_pll2_ck"
++};
++
++static const char * const mcu_bus_parents[] = {
++	"clk26m",
++	"cci400_sel",
++	"f_bus_pll1_ck",
++	"f_bus_pll2_ck"
++};
++
++static struct mtk_composite mcu_muxes[] = {
++	/* mp0_pll_divider_cfg */
++	MUX_GATE_FLAGS(CLK_MCU_MP0_SEL, "mcu_mp0_sel", mcu_mp0_parents, 0x7A0,
++		9, 2, -1, CLK_IS_CRITICAL),
++	/* mp2_pll_divider_cfg */
++	MUX_GATE_FLAGS(CLK_MCU_MP2_SEL, "mcu_mp2_sel", mcu_mp2_parents, 0x7A8,
++		9, 2, -1, CLK_IS_CRITICAL),
++	/* bus_pll_divider_cfg */
++	MUX_GATE_FLAGS(CLK_MCU_BUS_SEL, "mcu_bus_sel", mcu_bus_parents, 0x7C0,
++		9, 2, -1, CLK_IS_CRITICAL),
++};
++
++static const struct mtk_clk_divider top_adj_divs[] = {
++	DIV_ADJ(CLK_TOP_APLL_DIV0, "apll_div0", "i2so1_sel", 0x124, 0, 8),
++	DIV_ADJ(CLK_TOP_APLL_DIV1, "apll_div1", "i2so2_sel", 0x124, 8, 8),
++	DIV_ADJ(CLK_TOP_APLL_DIV2, "apll_div2", "i2so3_sel", 0x124, 16, 8),
++	DIV_ADJ(CLK_TOP_APLL_DIV3, "apll_div3", "tdmo0_sel", 0x124, 24, 8),
++	DIV_ADJ(CLK_TOP_APLL_DIV4, "apll_div4", "tdmo1_sel", 0x128, 0, 8),
++	DIV_ADJ(CLK_TOP_APLL_DIV5, "apll_div5", "i2si1_sel", 0x128, 8, 8),
++	DIV_ADJ(CLK_TOP_APLL_DIV6, "apll_div6", "i2si2_sel", 0x128, 16, 8),
++	DIV_ADJ(CLK_TOP_APLL_DIV7, "apll_div7", "i2si3_sel", 0x128, 24, 8),
++};
++
++static const struct mtk_gate_regs top_cg_regs = {
++	.set_ofs = 0x120,
++	.clr_ofs = 0x120,
++	.sta_ofs = 0x120,
++};
++
++#define GATE_TOP(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &top_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
++	}
++
++static const struct mtk_gate top_clks[] = {
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN0, "apll_div_pdn0", "i2so1_sel", 0),
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN1, "apll_div_pdn1", "i2so2_sel", 1),
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN2, "apll_div_pdn2", "i2so3_sel", 2),
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN3, "apll_div_pdn3", "tdmo0_sel", 3),
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN4, "apll_div_pdn4", "tdmo1_sel", 4),
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN5, "apll_div_pdn5", "i2si1_sel", 5),
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN6, "apll_div_pdn6", "i2si2_sel", 6),
++	GATE_TOP(CLK_TOP_APLL_DIV_PDN7, "apll_div_pdn7", "i2si3_sel", 7),
++};
++
++static const struct mtk_gate_regs infra_cg_regs = {
++	.set_ofs = 0x40,
++	.clr_ofs = 0x44,
++	.sta_ofs = 0x40,
++};
++
++#define GATE_INFRA(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &infra_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++static const struct mtk_gate infra_clks[] = {
++	GATE_INFRA(CLK_INFRA_DBGCLK, "infra_dbgclk", "axi_sel", 0),
++	GATE_INFRA(CLK_INFRA_GCE, "infra_gce", "axi_sel", 6),
++	GATE_INFRA(CLK_INFRA_M4U, "infra_m4u", "mem_sel", 8),
++	GATE_INFRA(CLK_INFRA_KP, "infra_kp", "axi_sel", 16),
++	GATE_INFRA(CLK_INFRA_AO_SPI0, "infra_ao_spi0", "spi_sel", 24),
++	GATE_INFRA(CLK_INFRA_AO_SPI1, "infra_ao_spi1", "spislv_sel", 25),
++	GATE_INFRA(CLK_INFRA_AO_UART5, "infra_ao_uart5", "axi_sel", 26),
++};
++
++static const struct mtk_gate_regs peri0_cg_regs = {
++	.set_ofs = 0x8,
++	.clr_ofs = 0x10,
++	.sta_ofs = 0x18,
++};
++
++static const struct mtk_gate_regs peri1_cg_regs = {
++	.set_ofs = 0xc,
++	.clr_ofs = 0x14,
++	.sta_ofs = 0x1c,
++};
++
++static const struct mtk_gate_regs peri2_cg_regs = {
++	.set_ofs = 0x42c,
++	.clr_ofs = 0x42c,
++	.sta_ofs = 0x42c,
++};
++
++#define GATE_PERI0(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &peri0_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++#define GATE_PERI1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &peri1_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++#define GATE_PERI2(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &peri2_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
++	}
++
++static const struct mtk_gate peri_clks[] = {
++	/* PERI0 */
++	GATE_PERI0(CLK_PERI_NFI, "per_nfi",
++		"axi_sel", 0),
++	GATE_PERI0(CLK_PERI_THERM, "per_therm",
++		"axi_sel", 1),
++	GATE_PERI0(CLK_PERI_PWM0, "per_pwm0",
++		"pwm_sel", 2),
++	GATE_PERI0(CLK_PERI_PWM1, "per_pwm1",
++		"pwm_sel", 3),
++	GATE_PERI0(CLK_PERI_PWM2, "per_pwm2",
++		"pwm_sel", 4),
++	GATE_PERI0(CLK_PERI_PWM3, "per_pwm3",
++		"pwm_sel", 5),
++	GATE_PERI0(CLK_PERI_PWM4, "per_pwm4",
++		"pwm_sel", 6),
++	GATE_PERI0(CLK_PERI_PWM5, "per_pwm5",
++		"pwm_sel", 7),
++	GATE_PERI0(CLK_PERI_PWM6, "per_pwm6",
++		"pwm_sel", 8),
++	GATE_PERI0(CLK_PERI_PWM7, "per_pwm7",
++		"pwm_sel", 9),
++	GATE_PERI0(CLK_PERI_PWM, "per_pwm",
++		"pwm_sel", 10),
++	GATE_PERI0(CLK_PERI_AP_DMA, "per_ap_dma",
++		"axi_sel", 13),
++	GATE_PERI0(CLK_PERI_MSDC30_0, "per_msdc30_0",
++		"msdc50_0_sel", 14),
++	GATE_PERI0(CLK_PERI_MSDC30_1, "per_msdc30_1",
++		"msdc30_1_sel", 15),
++	GATE_PERI0(CLK_PERI_MSDC30_2, "per_msdc30_2",
++		"msdc30_2_sel", 16),
++	GATE_PERI0(CLK_PERI_MSDC30_3, "per_msdc30_3",
++		"msdc30_3_sel", 17),
++	GATE_PERI0(CLK_PERI_UART0, "per_uart0",
++		"uart_sel", 20),
++	GATE_PERI0(CLK_PERI_UART1, "per_uart1",
++		"uart_sel", 21),
++	GATE_PERI0(CLK_PERI_UART2, "per_uart2",
++		"uart_sel", 22),
++	GATE_PERI0(CLK_PERI_UART3, "per_uart3",
++		"uart_sel", 23),
++	GATE_PERI0(CLK_PERI_I2C0, "per_i2c0",
++		"axi_sel", 24),
++	GATE_PERI0(CLK_PERI_I2C1, "per_i2c1",
++		"axi_sel", 25),
++	GATE_PERI0(CLK_PERI_I2C2, "per_i2c2",
++		"axi_sel", 26),
++	GATE_PERI0(CLK_PERI_I2C3, "per_i2c3",
++		"axi_sel", 27),
++	GATE_PERI0(CLK_PERI_I2C4, "per_i2c4",
++		"axi_sel", 28),
++	GATE_PERI0(CLK_PERI_AUXADC, "per_auxadc",
++		"ltepll_fs26m", 29),
++	GATE_PERI0(CLK_PERI_SPI0, "per_spi0",
++		"spi_sel", 30),
++	/* PERI1 */
++	GATE_PERI1(CLK_PERI_SPI, "per_spi",
++		"spinor_sel", 1),
++	GATE_PERI1(CLK_PERI_I2C5, "per_i2c5",
++		"axi_sel", 3),
++	GATE_PERI1(CLK_PERI_SPI2, "per_spi2",
++		"spi_sel", 5),
++	GATE_PERI1(CLK_PERI_SPI3, "per_spi3",
++		"spi_sel", 6),
++	GATE_PERI1(CLK_PERI_SPI5, "per_spi5",
++		"spi_sel", 8),
++	GATE_PERI1(CLK_PERI_UART4, "per_uart4",
++		"uart_sel", 9),
++	GATE_PERI1(CLK_PERI_SFLASH, "per_sflash",
++		"uart_sel", 11),
++	GATE_PERI1(CLK_PERI_GMAC, "per_gmac",
++		"uart_sel", 12),
++	GATE_PERI1(CLK_PERI_PCIE0, "per_pcie0",
++		"uart_sel", 14),
++	GATE_PERI1(CLK_PERI_PCIE1, "per_pcie1",
++		"uart_sel", 15),
++	GATE_PERI1(CLK_PERI_GMAC_PCLK, "per_gmac_pclk",
++		"uart_sel", 16),
++	/* PERI2 */
++	GATE_PERI2(CLK_PERI_MSDC50_0_EN, "per_msdc50_0_en",
++		"msdc50_0_sel", 0),
++	GATE_PERI2(CLK_PERI_MSDC30_1_EN, "per_msdc30_1_en",
++		"msdc30_1_sel", 1),
++	GATE_PERI2(CLK_PERI_MSDC30_2_EN, "per_msdc30_2_en",
++		"msdc30_2_sel", 2),
++	GATE_PERI2(CLK_PERI_MSDC30_3_EN, "per_msdc30_3_en",
++		"msdc30_3_sel", 3),
++	GATE_PERI2(CLK_PERI_MSDC50_0_HCLK_EN, "per_msdc50_0_h",
++		"msdc50_0_h_sel", 4),
++	GATE_PERI2(CLK_PERI_MSDC50_3_HCLK_EN, "per_msdc50_3_h",
++		"msdc50_3_h_sel", 5),
++};
++
++#define MT2712_PLL_FMAX		(3000UL * MHZ)
++
++#define CON0_MT2712_RST_BAR	BIT(24)
++
++#define PLL_B(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,	\
++			_pd_reg, _pd_shift, _tuner_reg, _tuner_en_reg,	\
++			_tuner_en_bit, _pcw_reg, _pcw_shift,		\
++			_div_table) {					\
++		.id = _id,						\
++		.name = _name,						\
++		.reg = _reg,						\
++		.pwr_reg = _pwr_reg,					\
++		.en_mask = _en_mask,					\
++		.flags = _flags,					\
++		.rst_bar_mask = CON0_MT2712_RST_BAR,			\
++		.fmax = MT2712_PLL_FMAX,				\
++		.pcwbits = _pcwbits,					\
++		.pd_reg = _pd_reg,					\
++		.pd_shift = _pd_shift,					\
++		.tuner_reg = _tuner_reg,				\
++		.tuner_en_reg = _tuner_en_reg,				\
++		.tuner_en_bit = _tuner_en_bit,				\
++		.pcw_reg = _pcw_reg,					\
++		.pcw_shift = _pcw_shift,				\
++		.div_table = _div_table,				\
++	}
++
++#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,	\
++			_pd_reg, _pd_shift, _tuner_reg, _tuner_en_reg,	\
++			_tuner_en_bit, _pcw_reg, _pcw_shift)		\
++		PLL_B(_id, _name, _reg, _pwr_reg, _en_mask, _flags,	\
++			_pcwbits, _pd_reg, _pd_shift, _tuner_reg,	\
++			_tuner_en_reg, _tuner_en_bit, _pcw_reg,		\
++			_pcw_shift, NULL)
++
++static const struct mtk_pll_div_table armca35pll_div_table[] = {
++	{ .div = 0, .freq = MT2712_PLL_FMAX },
++	{ .div = 1, .freq = 1202500000 },
++	{ .div = 2, .freq = 500500000 },
++	{ .div = 3, .freq = 315250000 },
++	{ .div = 4, .freq = 157625000 },
++	{ } /* sentinel */
++};
++
++static const struct mtk_pll_div_table armca72pll_div_table[] = {
++	{ .div = 0, .freq = MT2712_PLL_FMAX },
++	{ .div = 1, .freq = 994500000 },
++	{ .div = 2, .freq = 520000000 },
++	{ .div = 3, .freq = 315250000 },
++	{ .div = 4, .freq = 157625000 },
++	{ } /* sentinel */
++};
++
++static const struct mtk_pll_div_table mmpll_div_table[] = {
++	{ .div = 0, .freq = MT2712_PLL_FMAX },
++	{ .div = 1, .freq = 1001000000 },
++	{ .div = 2, .freq = 601250000 },
++	{ .div = 3, .freq = 250250000 },
++	{ .div = 4, .freq = 125125000 },
++	{ } /* sentinel */
++};
++
++static const struct mtk_pll_data plls[] = {
++	PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x0230, 0x023C, 0xf0000101,
++		HAVE_RST_BAR, 31, 0x0230, 4, 0, 0, 0, 0x0234, 0),
++	PLL(CLK_APMIXED_UNIVPLL, "univpll", 0x0240, 0x024C, 0xfe000101,
++		HAVE_RST_BAR, 31, 0x0240, 4, 0, 0, 0, 0x0244, 0),
++	PLL(CLK_APMIXED_VCODECPLL, "vcodecpll", 0x0320, 0x032C, 0xc0000101,
++		0, 31, 0x0320, 4, 0, 0, 0, 0x0324, 0),
++	PLL(CLK_APMIXED_VENCPLL, "vencpll", 0x0280, 0x028C, 0x00000101,
++		0, 31, 0x0280, 4, 0, 0, 0, 0x0284, 0),
++	PLL(CLK_APMIXED_APLL1, "apll1", 0x0330, 0x0340, 0x00000101,
++		0, 31, 0x0330, 4, 0x0338, 0x0014, 0, 0x0334, 0),
++	PLL(CLK_APMIXED_APLL2, "apll2", 0x0350, 0x0360, 0x00000101,
++		0, 31, 0x0350, 4, 0x0358, 0x0014, 1, 0x0354, 0),
++	PLL(CLK_APMIXED_LVDSPLL, "lvdspll", 0x0370, 0x037c, 0x00000101,
++		0, 31, 0x0370, 4, 0, 0, 0, 0x0374, 0),
++	PLL(CLK_APMIXED_LVDSPLL2, "lvdspll2", 0x0390, 0x039C, 0x00000101,
++		0, 31, 0x0390, 4, 0, 0, 0, 0x0394, 0),
++	PLL(CLK_APMIXED_MSDCPLL, "msdcpll", 0x0270, 0x027C, 0x00000101,
++		0, 31, 0x0270, 4, 0, 0, 0, 0x0274, 0),
++	PLL(CLK_APMIXED_MSDCPLL2, "msdcpll2", 0x0410, 0x041C, 0x00000101,
++		0, 31, 0x0410, 4, 0, 0, 0, 0x0414, 0),
++	PLL(CLK_APMIXED_TVDPLL, "tvdpll", 0x0290, 0x029C, 0xc0000101,
++		0, 31, 0x0290, 4, 0, 0, 0, 0x0294, 0),
++	PLL_B(CLK_APMIXED_MMPLL, "mmpll", 0x0250, 0x0260, 0x00000101,
++		0, 31, 0x0250, 4, 0, 0, 0, 0x0254, 0,
++		mmpll_div_table),
++	PLL_B(CLK_APMIXED_ARMCA35PLL, "armca35pll", 0x0100, 0x0110, 0xf0000101,
++		HAVE_RST_BAR, 31, 0x0100, 4, 0, 0, 0, 0x0104, 0,
++		armca35pll_div_table),
++	PLL_B(CLK_APMIXED_ARMCA72PLL, "armca72pll", 0x0210, 0x0220, 0x00000101,
++		0, 31, 0x0210, 4, 0, 0, 0, 0x0214, 0,
++		armca72pll_div_table),
++	PLL(CLK_APMIXED_ETHERPLL, "etherpll", 0x0300, 0x030C, 0xc0000101,
++		0, 31, 0x0300, 4, 0, 0, 0, 0x0304, 0),
++};
++
++static int clk_mt2712_apmixed_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
++
++	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++struct clk_onecell_data *top_clk_data;
++
++static void clk_mt2712_top_init_early(struct device_node *node)
++{
++	int r, i;
++
++	if (!top_clk_data) {
++		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++
++		for (i = 0; i < CLK_TOP_NR_CLK; i++)
++			top_clk_data->clks[i] = ERR_PTR(-EPROBE_DEFER);
++	}
++
++	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
++			top_clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++}
++
++CLK_OF_DECLARE_DRIVER(mt2712_topckgen, "mediatek,mt2712-topckgen",
++			clk_mt2712_top_init_early);
++
++static int clk_mt2712_top_probe(struct platform_device *pdev)
++{
++	int r, i;
++	struct device_node *node = pdev->dev.of_node;
++	void __iomem *base;
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base)) {
++		pr_err("%s(): ioremap failed\n", __func__);
++		return PTR_ERR(base);
++	}
++
++	if (!top_clk_data) {
++		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++	} else {
++		for (i = 0; i < CLK_TOP_NR_CLK; i++) {
++			if (top_clk_data->clks[i] == ERR_PTR(-EPROBE_DEFER))
++				top_clk_data->clks[i] = ERR_PTR(-ENOENT);
++		}
++	}
++
++	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
++			top_clk_data);
++	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
++			top_clk_data);
++	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
++	mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes), base,
++			&mt2712_clk_lock, top_clk_data);
++	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs), base,
++			&mt2712_clk_lock, top_clk_data);
++	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
++			top_clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static int clk_mt2712_infra_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
++
++	mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x30);
++
++	return r;
++}
++
++static int clk_mt2712_peri_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
++
++	mtk_clk_register_gates(node, peri_clks, ARRAY_SIZE(peri_clks),
++			clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0);
++
++	return r;
++}
++
++static int clk_mt2712_mcu_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++	void __iomem *base;
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base)) {
++		pr_err("%s(): ioremap failed\n", __func__);
++		return PTR_ERR(base);
++	}
++
++	clk_data = mtk_alloc_clk_data(CLK_MCU_NR_CLK);
++
++	mtk_clk_register_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), base,
++			&mt2712_clk_lock, clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r != 0)
++		pr_err("%s(): could not register clock provider: %d\n",
++			__func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2712[] = {
++	{
++		.compatible = "mediatek,mt2712-apmixedsys",
++		.data = clk_mt2712_apmixed_probe,
++	}, {
++		.compatible = "mediatek,mt2712-topckgen",
++		.data = clk_mt2712_top_probe,
++	}, {
++		.compatible = "mediatek,mt2712-infracfg",
++		.data = clk_mt2712_infra_probe,
++	}, {
++		.compatible = "mediatek,mt2712-pericfg",
++		.data = clk_mt2712_peri_probe,
++	}, {
++		.compatible = "mediatek,mt2712-mcucfg",
++		.data = clk_mt2712_mcu_probe,
++	}, {
++		/* sentinel */
++	}
++};
++
++static int clk_mt2712_probe(struct platform_device *pdev)
++{
++	int (*clk_probe)(struct platform_device *);
++	int r;
++
++	clk_probe = of_device_get_match_data(&pdev->dev);
++	if (!clk_probe)
++		return -EINVAL;
++
++	r = clk_probe(pdev);
++	if (r != 0)
++		dev_err(&pdev->dev,
++			"could not register clock provider: %s: %d\n",
++			pdev->name, r);
++
++	return r;
++}
++
++static struct platform_driver clk_mt2712_drv = {
++	.probe = clk_mt2712_probe,
++	.driver = {
++		.name = "clk-mt2712",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_clk_mt2712,
++	},
++};
++
++static int __init clk_mt2712_init(void)
++{
++	return platform_driver_register(&clk_mt2712_drv);
++}
++
++arch_initcall(clk_mt2712_init);
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index f5d6b70..f48df75 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -207,6 +207,8 @@ struct mtk_pll_data {
+ 	uint32_t en_mask;
+ 	uint32_t pd_reg;
+ 	uint32_t tuner_reg;
++	uint32_t tuner_en_reg;
++	uint8_t tuner_en_bit;
+ 	int pd_shift;
+ 	unsigned int flags;
+ 	const struct clk_ops *ops;
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index a409142..3c546ba 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -47,6 +47,7 @@ struct mtk_clk_pll {
+ 	void __iomem	*pd_addr;
+ 	void __iomem	*pwr_addr;
+ 	void __iomem	*tuner_addr;
++	void __iomem	*tuner_en_addr;
+ 	void __iomem	*pcw_addr;
+ 	const struct mtk_pll_data *data;
+ };
+@@ -227,7 +228,10 @@ static int mtk_pll_prepare(struct clk_hw *hw)
+ 	r |= pll->data->en_mask;
+ 	writel(r, pll->base_addr + REG_CON0);
+ 
+-	if (pll->tuner_addr) {
++	if (pll->tuner_en_addr) {
++		r = readl(pll->tuner_en_addr) | BIT(pll->data->tuner_en_bit);
++		writel(r, pll->tuner_en_addr);
++	} else if (pll->tuner_addr) {
+ 		r = readl(pll->tuner_addr) | AUDPLL_TUNER_EN;
+ 		writel(r, pll->tuner_addr);
+ 	}
+@@ -254,7 +258,10 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
+ 		writel(r, pll->base_addr + REG_CON0);
+ 	}
+ 
+-	if (pll->tuner_addr) {
++	if (pll->tuner_en_addr) {
++		r = readl(pll->tuner_en_addr) & ~BIT(pll->data->tuner_en_bit);
++		writel(r, pll->tuner_en_addr);
++	} else if (pll->tuner_addr) {
+ 		r = readl(pll->tuner_addr) & ~AUDPLL_TUNER_EN;
+ 		writel(r, pll->tuner_addr);
+ 	}
+@@ -297,6 +304,8 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
+ 	pll->pcw_addr = base + data->pcw_reg;
+ 	if (data->tuner_reg)
+ 		pll->tuner_addr = base + data->tuner_reg;
++	if (data->tuner_en_reg)
++		pll->tuner_en_addr = base + data->tuner_en_reg;
+ 	pll->hw.init = &init;
+ 	pll->data = data;
+ 
+-- 
+1.9.1
 
-> 
->> +}
->> +
->> +/*
->> + * simply assign a ACPI cache entry to each known CPU cache entry
->> + * determining which entries are shared is done later.
->> + */
->> +int cache_setup_acpi(unsigned int cpu)
->> +{
->> +	struct acpi_table_header *table;
->> +	acpi_status status;
->> +
->> +	pr_debug("Cache Setup ACPI cpu %d\n", cpu);
->> +
->> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
->> +	if (ACPI_FAILURE(status)) {
->> +		pr_err_once("No PPTT table found, cache topology may be inaccurate\n");
->> +		return -ENOENT;
->> +	}
->> +
->> +	cache_setup_acpi_cpu(table, cpu);
->> +	acpi_put_table(table);
->> +
->> +	return status;
->> +}
->> +
->> +/*
->> + * Determine a topology unique ID for each thread/core/cluster/socket/etc.
->> + * This ID can then be used to group peers.
->> + */
->> +int setup_acpi_cpu_topology(unsigned int cpu, int level)
->> +{
->> +	struct acpi_table_header *table;
->> +	acpi_status status;
->> +	int retval;
-> 
-> Can we add a static int array to record already assigned id for each level?
-> So that we can count the id starting from zero. And also the id can be successive.
-
-I don't like the idea of a node<->generated_id array/map in this module, 
-although I've considered a number of ways to create more normalized 
-values. Particularly, the one area that might be useful is utilizing the 
-acpi id for the cores, which is problematic in the MT case. One of my 
-other alternative ideas was to plug a unique node id into a reserved 
-field in the table as the node is traversed. That idea is a little evil, 
-and really should be part of the ACPI standard so the firmware is 
-providing the ID's rather than dependent on the traversal order of the 
-tree.
-
-If it turns out that these ID's need to be zero based, or some other 
-limitation I would prefer just renumbering them in 
-update_siblings_mask() or parse_acpi_topology(). I hacked together a 
-patch to renumber the package_id yesterday, but i'm pretty sure I've 
-seen (non arm) machines with odd package/core ids in the past, and I 
-don't really see anything in the ABI the dictating this. Let me clean it 
-up a bit and I can post it as an additional patch on top of the PPTT 
-patches.
-
-So, is this an actual use case/problem, or its just an "appearance" type 
-of thing?
-
-
-
-> 
->> +
->> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
->> +	if (ACPI_FAILURE(status)) {
->> +		pr_err_once("No PPTT table found, cpu topology may be inaccurate\n");
->> +		return -ENOENT;
->> +	}
->> +	retval = topology_setup_acpi_cpu(table, cpu, level);
->> +	pr_debug("Topology Setup ACPI cpu %d, level %d ret = %d\n",
->> +		 cpu, level, retval);
->> +	acpi_put_table(table);
->> +
->> +	return retval;
->> +}
->>
-> 
