@@ -1,159 +1,244 @@
-Return-Path: <romain.izard.pro@gmail.com>
-Return-Path: <romain.izard.pro@gmail.com>
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>,
-	Josh Wu <rainyfeeling@outlook.com>,
-	Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v4 7/8] atmel_flexcom: Support backup mode
-Date: Thu, 28 Sep 2017 11:46:26 +0200
-Message-Id: <20170928094627.31017-8-romain.izard.pro@gmail.com>
-In-Reply-To: <20170928094627.31017-1-romain.izard.pro@gmail.com>
-References: <20170928094627.31017-1-romain.izard.pro@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3691 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751195AbdILHWJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2017 03:22:09 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v3 1/9] dt-bindings: ARM: Mediatek: Document bindings for MT2712
+Date: Tue, 12 Sep 2017 15:21:41 +0800
+Message-ID: <1505200909-23552-2-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The controller used by a flexcom module is configured at boot, and left
-alone after this. As the configuration will be lost after backup mode,
-restore the state of the flexcom driver on resume.
+This patch adds the binding documentation for apmixedsys, bdpsys,
+imgsys, imgsys, infracfg, mcucfg, mfgcfg, mmsys, pericfg, topckgen,
+vdecsys and vencsys for Mediatek MT2712.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Tested-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/mfd/atmel-flexcom.c | 65 ++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 50 insertions(+), 15 deletions(-)
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
+ .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,mcucfg.txt      | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |  1 +
+ 12 files changed, 75 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
 
-diff --git a/drivers/mfd/atmel-flexcom.c b/drivers/mfd/atmel-flexcom.c
-index 064bde9cff5a..ef1235c4a179 100644
---- a/drivers/mfd/atmel-flexcom.c
-+++ b/drivers/mfd/atmel-flexcom.c
-@@ -39,34 +39,44 @@
- #define FLEX_MR_OPMODE(opmode)	(((opmode) << FLEX_MR_OPMODE_OFFSET) &	\
- 				 FLEX_MR_OPMODE_MASK)
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index cd977db..19fc116 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
  
-+struct atmel_flexcom {
-+	void __iomem *base;
-+	u32 opmode;
-+	struct clk *clk;
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-apmixedsys"
++	- "mediatek,mt2712-apmixedsys", "syscon"
+ 	- "mediatek,mt6797-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+ 	- "mediatek,mt8173-apmixedsys"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+index 4137196..4010e37 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be:
+ 	- "mediatek,mt2701-bdpsys", "syscon"
++	- "mediatek,mt2712-bdpsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The bdpsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index 047b11a..868bd51 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-imgsys", "syscon"
++	- "mediatek,mt2712-imgsys", "syscon"
+ 	- "mediatek,mt6797-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index 58d58e2..a3430cd 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-infracfg", "syscon"
++	- "mediatek,mt2712-infracfg", "syscon"
+ 	- "mediatek,mt6797-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
+new file mode 100644
+index 0000000..2df799c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,jpgdecsys.txt
+@@ -0,0 +1,22 @@
++Mediatek jpgdecsys controller
++============================
++
++The Mediatek jpgdecsys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2712-jpgdecsys", "syscon"
++- #clock-cells: Must be 1
++
++The jpgdecsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++jpgdecsys: syscon@19000000 {
++	compatible = "mediatek,mt2712-jpgdecsys", "syscon";
++	reg = <0 0x19000000 0 0x1000>;
++	#clock-cells = <1>;
 +};
- 
- static int atmel_flexcom_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct clk *clk;
- 	struct resource *res;
--	void __iomem *base;
--	u32 opmode;
-+	struct atmel_flexcom *afc;
- 	int err;
-+	u32 val;
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+new file mode 100644
+index 0000000..b8fb03f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
+@@ -0,0 +1,22 @@
++Mediatek mcucfg controller
++============================
 +
-+	afc = devm_kzalloc(&pdev->dev, sizeof(*afc), GFP_KERNEL);
-+	if (!afc)
-+		return -ENOMEM;
- 
--	err = of_property_read_u32(np, "atmel,flexcom-mode", &opmode);
-+	platform_set_drvdata(pdev, afc);
++The Mediatek mcucfg controller provides various clocks to the system.
 +
-+	err = of_property_read_u32(np, "atmel,flexcom-mode", &afc->opmode);
- 	if (err)
- 		return err;
- 
--	if (opmode < ATMEL_FLEXCOM_MODE_USART ||
--	    opmode > ATMEL_FLEXCOM_MODE_TWI)
-+	if (afc->opmode < ATMEL_FLEXCOM_MODE_USART ||
-+	    afc->opmode > ATMEL_FLEXCOM_MODE_TWI)
- 		return -EINVAL;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	afc->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(afc->base))
-+		return PTR_ERR(afc->base);
- 
--	clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	afc->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(afc->clk))
-+		return PTR_ERR(afc->clk);
- 
--	err = clk_prepare_enable(clk);
-+	err = clk_prepare_enable(afc->clk);
- 	if (err)
- 		return err;
- 
-@@ -76,9 +86,10 @@ static int atmel_flexcom_probe(struct platform_device *pdev)
- 	 * inaccessible and are read as zero. Also the external I/O lines of the
- 	 * Flexcom are muxed to reach the selected device.
- 	 */
--	writel(FLEX_MR_OPMODE(opmode), base + FLEX_MR);
-+	val = FLEX_MR_OPMODE(afc->opmode);
-+	writel(val, afc->base + FLEX_MR);
- 
--	clk_disable_unprepare(clk);
-+	clk_disable_unprepare(afc->clk);
- 
- 	return devm_of_platform_populate(&pdev->dev);
- }
-@@ -89,10 +100,34 @@ static const struct of_device_id atmel_flexcom_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, atmel_flexcom_of_match);
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int atmel_flexcom_resume(struct device *dev)
-+{
-+	struct atmel_flexcom *afc = dev_get_drvdata(dev);
-+	int err;
-+	u32 val;
++Required Properties:
 +
-+	err = clk_prepare_enable(afc->clk);
-+	if (err)
-+		return err;
++- compatible: Should be one of:
++	- "mediatek,mt2712-mcucfg", "syscon"
++- #clock-cells: Must be 1
 +
-+	val = FLEX_MR_OPMODE(afc->opmode),
-+	writel(val, afc->base + FLEX_MR);
++The mcucfg controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
 +
-+	clk_disable_unprepare(afc->clk);
++Example:
 +
-+	return 0;
-+}
-+#endif
++mcucfg: syscon@10220000 {
++	compatible = "mediatek,mt2712-mcucfg", "syscon";
++	reg = <0 0x10220000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+new file mode 100644
+index 0000000..859e67b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+@@ -0,0 +1,22 @@
++Mediatek mfgcfg controller
++============================
 +
-+static SIMPLE_DEV_PM_OPS(atmel_flexcom_pm_ops, NULL,
-+			 atmel_flexcom_resume);
++The Mediatek mfgcfg controller provides various clocks to the system.
 +
- static struct platform_driver atmel_flexcom_driver = {
- 	.probe	= atmel_flexcom_probe,
- 	.driver	= {
- 		.name		= "atmel_flexcom",
-+		.pm		= &atmel_flexcom_pm_ops,
- 		.of_match_table	= atmel_flexcom_of_match,
- 	},
- };
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt2712-mfgcfg", "syscon"
++- #clock-cells: Must be 1
++
++The mfgcfg controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++mfgcfg: syscon@13000000 {
++	compatible = "mediatek,mt2712-mfgcfg", "syscon";
++	reg = <0 0x13000000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 70529e0..4eb8bbe 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-mmsys", "syscon"
++	- "mediatek,mt2712-mmsys", "syscon"
+ 	- "mediatek,mt6797-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+index e494366..d9f092e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-pericfg", "syscon"
++	- "mediatek,mt2712-pericfg", "syscon"
+ 	- "mediatek,mt8135-pericfg", "syscon"
+ 	- "mediatek,mt8173-pericfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index ec93ecb..2024fc9 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-topckgen"
++	- "mediatek,mt2712-topckgen", "syscon"
+ 	- "mediatek,mt6797-topckgen"
+ 	- "mediatek,mt8135-topckgen"
+ 	- "mediatek,mt8173-topckgen"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+index d150104..ea40d05 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-vdecsys", "syscon"
++	- "mediatek,mt2712-vdecsys", "syscon"
+ 	- "mediatek,mt6797-vdecsys", "syscon"
+ 	- "mediatek,mt8173-vdecsys", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+index 8a93be6..8515453 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+@@ -6,6 +6,7 @@ The Mediatek vencsys controller provides various clocks to the system.
+ Required Properties:
+ 
+ - compatible: Should be one of:
++	- "mediatek,mt2712-vencsys", "syscon"
+ 	- "mediatek,mt6797-vencsys", "syscon"
+ 	- "mediatek,mt8173-vencsys", "syscon"
+ - #clock-cells: Must be 1
 -- 
-2.11.0
+1.9.1
+
