@@ -1,143 +1,63 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM ARCHITECTURE),
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH 09/10] ARM: dts: Hurricane 2: Add basic support for Ubiquiti UniFi Switch 8
-Date: Mon, 25 Sep 2017 17:09:30 -0700
-Message-Id: <20170926000931.670-10-f.fainelli@gmail.com>
-In-Reply-To: <20170926000931.670-1-f.fainelli@gmail.com>
-References: <20170926000931.670-1-f.fainelli@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:23783 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751028AbdILHWH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Sep 2017 03:22:07 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v3 7/9] soc: mediatek: add dependent clock jpgdec/audio for scpsys
+Date: Tue, 12 Sep 2017 15:21:47 +0800
+Message-ID: <1505200909-23552-8-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1505200909-23552-1-git-send-email-weiyi.lu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add basic board support for the Ubiquiti UniFi Switch 8 port model. This
-is a small home and office use managed switch based on the BCM53342
-switching control SoC.
+There are dependent clock jpgdec/audio in scpsys on MT2712,
+and will exist three dependent clocks on MT2712 VDEC.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- arch/arm/boot/dts/Makefile                        |  2 +
- arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts | 85 +++++++++++++++++++++++
- 2 files changed, 87 insertions(+)
- create mode 100644 arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts
+ drivers/soc/mediatek/mtk-scpsys.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index faf46abaa4a2..6942c48d0d88 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -117,6 +117,8 @@ dtb-$(CONFIG_ARCH_BCM_CYGNUS) += \
- 	bcm911360k.dtb \
- 	bcm958300k.dtb \
- 	bcm958305k.dtb
-+dtb-$(CONFIG_ARCH_BCM_HR2) += \
-+	bcm53340-ubnt-unifi-switch8.dtb
- dtb-$(CONFIG_ARCH_BCM_MOBILE) += \
- 	bcm28155-ap.dtb \
- 	bcm21664-garnet.dtb \
-diff --git a/arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts b/arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts
-new file mode 100644
-index 000000000000..f8ac37022ebf
---- /dev/null
-+++ b/arch/arm/boot/dts/bcm53340-ubnt-unifi-switch8.dts
-@@ -0,0 +1,85 @@
-+/*
-+ * DTS for Unifi Switch 8 port
-+ *
-+ * Copyright (C) 2017 Florian Fainelli <f.fainelli@gmail.com>
-+ *
-+ * Licensed under the GNU/GPL. See COPYING for details.
-+ */
-+
-+/dts-v1/;
-+
-+#include "bcm-hr2.dtsi"
-+
-+/ {
-+	compatible = "ubnt,unifi-switch8", "brcm,bcm53342", "brcm,hr2";
-+	model = "Ubiquiti UniFi Switch 8 (BCM53342)";
-+
-+	/* Hurricane 2 designs use the second UART */
-+	chosen {
-+		bootargs = "console=ttyS1,115200 earlyprintk";
-+	};
-+
-+	memory {
-+		reg = <0x00000000 0x08000000>,
-+		      <0x68000000 0x08000000>;
-+	};
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&qspi {
-+	status = "okay";
-+	bspi-sel = <0>;
-+
-+	flash: m25p80@0 {
-+		compatible = "m25p80";
-+		reg = <0>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		spi-max-frequency = <12500000>;
-+		spi-cpol;
-+		spi-cpha;
-+
-+		partition@0 {
-+			label = "u-boot";
-+			reg = <0x0 0xc0000>;
-+		};
-+
-+		partition@c0000 {
-+			label = "u-boot-env";
-+			reg = <0xc0000 0x10000>;
-+		};
-+
-+		partition@d0000 {
-+			label = "shmoo";
-+			reg = <0xd0000 0x10000>;
-+		};
-+
-+		partition@e0000 {
-+			label = "kernel0";
-+			reg = <0xe0000 0xf00000>;
-+		};
-+
-+		partition@fe0000 {
-+			label = "kernel1";
-+			reg = <0xfe0000 0xf10000>;
-+		};
-+
-+		partition@1ef0000 {
-+			label = "cfg";
-+			reg = <0x1ef0000 0x100000>;
-+		};
-+
-+		partition@1ff0000 {
-+			label = "EEPROM";
-+			reg = <0x1ff0000 0x10000>;
-+		};
-+	};
-+};
-+
-+&pcie0 {
-+	/* Attaches to the internal switch */
-+	status = "okay";
-+};
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 2569390..28c6e6a 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -84,6 +84,8 @@ enum clk_id {
+ 	CLK_ETHIF,
+ 	CLK_VDEC,
+ 	CLK_HIFSEL,
++	CLK_JPGDEC,
++	CLK_AUDIO,
+ 	CLK_MAX,
+ };
+ 
+@@ -96,10 +98,12 @@ enum clk_id {
+ 	"ethif",
+ 	"vdec",
+ 	"hif_sel",
++	"jpgdec",
++	"audio",
+ 	NULL,
+ };
+ 
+-#define MAX_CLKS	2
++#define MAX_CLKS	3
+ 
+ struct scp_domain_data {
+ 	const char *name;
 -- 
-2.14.1
+1.9.1
+
