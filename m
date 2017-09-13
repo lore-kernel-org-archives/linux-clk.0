@@ -1,78 +1,59 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 RESEND] clk: samsung: exynos4: Enable VPLL and EPLL
- clocks for suspend/resume cycle
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, stable@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <bb559caa-4b3a-6bff-e8e6-2921f372d272@samsung.com>
-Date: Tue, 19 Sep 2017 12:28:25 +0200
-MIME-version: 1.0
-In-reply-to: <1505815279-19097-1-git-send-email-m.szyprowski@samsung.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20170919100345eucas1p1391a495dab09faecdc2acf9635e4c42d@eucas1p1.samsung.com>
-	<1505815279-19097-1-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51661 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbdIMH2d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Sep 2017 03:28:33 -0400
+Date: Wed, 13 Sep 2017 09:28:29 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] Renesas R8A77970 CPG/MSSR clock support
+Message-ID: <20170913072829.GB6756@verge.net.au>
+References: <20170908213418.823028011@cogentembedded.com>
+ <CAMuHMdUy_UGZsa87e-=SuYutt5sXd4ZTiZKLfLGfD2css3RPcw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdUy_UGZsa87e-=SuYutt5sXd4ZTiZKLfLGfD2css3RPcw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/19/2017 12:01 PM, Marek Szyprowski wrote:
-> Commit 6edfa11cb396 ("clk: samsung: Add enable/disable operation for
-> PLL36XX clocks") added enable/disable operations to PLL clocks. Prior that
-> VPLL and EPPL clocks were always enabled because the enable bit was never
-> touched. Those clocks have to be enabled during suspend/resume cycle,
-> because otherwise board fails to enter sleep mode. This patch enables them
-> unconditionally before entering system suspend state. System restore
-> function will set them to the previous state saved in the register cache
-> done before that unconditional enable.
+On Mon, Sep 11, 2017 at 04:38:43PM +0200, Geert Uytterhoeven wrote:
+> Hi Sergei,
 > 
-> Fixes: 6edfa11cb396 ("clk: samsung: Add enable/disable operation for PLL36XX clocks")
-> CC: stable@vger.kernel.org # v4.13
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-Stephen, Mike, could you please apply this patch directly?
-
-Thanks,
-Sylwester
-
-> ---
->   drivers/clk/samsung/clk-exynos4.c | 15 +++++++++++++++
->   1 file changed, 15 insertions(+)
+> On Fri, Sep 8, 2017 at 11:34 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> >    Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+> > 'linux.git' repo.
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index e40b77583c47..d8d3cb67b402 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -294,6 +294,18 @@ enum exynos4_plls {
->   #define PLL_ENABLED	(1 << 31)
->   #define PLL_LOCKED	(1 << 29)
->   
-> +static void exynos4_clk_enable_pll(u32 reg)
-> +{
-> +	u32 pll_con = readl(reg_base + reg);
-> +	pll_con |= PLL_ENABLED;
-> +	writel(pll_con, reg_base + reg);
-> +
-> +	while (!(pll_con & PLL_LOCKED)) {
-> +		cpu_relax();
-> +		pll_con = readl(reg_base + reg);
-> +	}
-> +}
-> +
->   static void exynos4_clk_wait_for_pll(u32 reg)
->   {
->   	u32 pll_con;
-> @@ -315,6 +327,9 @@ static int exynos4_clk_suspend(void)
->   	samsung_clk_save(reg_base, exynos4_save_pll,
->   				ARRAY_SIZE(exynos4_clk_pll_regs));
->   
-> +	exynos4_clk_enable_pll(EPLL_CON0);
-> +	exynos4_clk_enable_pll(VPLL_CON0);
-> +
->   	if (exynos4_soc == EXYNOS4210) {
->   		samsung_clk_save(reg_base, exynos4_save_soc,
->   					ARRAY_SIZE(exynos4210_clk_save));
+> Thank you, looks good!
+> 
+> > As the DT patches in the R8A77970/Eagle board support series
+> > depend on the patch #1 of this series, it might make sense to merge this patch
+> > to the 'renesas.git' repo as well...
+> >
+> > [1/2] dt-bindings: clock: add R8A77970 CPG core clock definitions
+> 
+> The modern way to avoid this dependency is to use hardcoded numbers in
+> the initial submission of the DTS, cfr.
+> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/commit/?h=arm64-dt-for-v4.15&id=d917e0b24811eadeba419ba7318b967ee15933b3
+> 
+> After the definitions have hit upstream, you can replace the hardcoded
+> numbers by symbols, cfr.
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=d3f6987db28a4657bf3304eeeb8e2cd8dd510ad0
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/r8a77995-integration&id=81426223583d5575767c77684be28c40034785bd
+> 
+> So I don't think Simon will merge the core clock definitions patch, unless
+> you plan to submit a full DTS describing the whole SoC in the initial
+> submissiong.
+
+Thanks, I would prefer if the DT patches followed the scheme described by
+Geert such that they do not depend on any part of this series. I expect
+that will allow the smoothest path for acceptance of those patches.
