@@ -1,30 +1,32 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/4] U300 clock: Adjustments for three function
- implementations
-Message-ID: <a81e53f2-53ee-cf2d-1a0a-f1e3e24a5b9d@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 20:20:30 +0200
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 13 Sep 2017 12:15:33 -0700
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bhumika Goyal <bhumirks@gmail.com>
+Cc: julia.lawall@lip6.fr, vireshk@kernel.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: spear: make clk_ops const
+Message-ID: <20170913191533.GA11836@ubuntu>
+References: <1503407690-13541-1-git-send-email-bhumirks@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1503407690-13541-1-git-send-email-bhumirks@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 20:15:30 +0200
+On 22-08-17, 18:44, Bhumika Goyal wrote:
+> Make these const as they are only stored in the const field of a
+> clk_init_data structure.
+> 
+> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> ---
+>  drivers/clk/spear/clk-aux-synth.c  | 2 +-
+>  drivers/clk/spear/clk-frac-synth.c | 2 +-
+>  drivers/clk/spear/clk-gpt-synth.c  | 2 +-
+>  drivers/clk/spear/clk-vco-pll.c    | 4 ++--
+>  4 files changed, 5 insertions(+), 5 deletions(-)
 
-A few update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (4):
-  Delete an error message for a failed memory allocation in two functions
-  Improve a size determination in two functions
-  Add some spaces for better code readability
-  Fix a typo in two comment lines
-
- drivers/clk/clk-u300.c | 84 ++++++++++++++++++++++++--------------------------
- 1 file changed, 40 insertions(+), 44 deletions(-)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-2.14.1
+viresh
