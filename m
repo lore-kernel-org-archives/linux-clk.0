@@ -1,62 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Sep 2017 11:13:17 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] clk: sunxi-ng: Implement reset control status readback
-Message-ID: <20170926091317.2lgdssq3kifxcsle@flea>
-References: <20170926023620.22284-1-wens@csie.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jepa6dc2uytqcbei"
-In-Reply-To: <20170926023620.22284-1-wens@csie.org>
+In-Reply-To: <20170914120519.2006-1-alex@asyring.de>
+References: <20170914120519.2006-1-alex@asyring.de>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 14 Sep 2017 20:14:10 +0800
+Message-ID: <CAGb2v677Ed4-iX6fkYEYZ1N9ZLKXfQQF2hhdbcbBCaB0-g174A@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: Fix missing CLK_SET_RATE_PARENT in ccu-sun4i-a10.c
+To: Alexander Syring <alex@asyring.de>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Sep 14, 2017 at 8:05 PM, Alexander Syring <alex@asyring.de> wrote:
+> When using cpufreq-dt with default govenor other than "performance"
+> system freezes while booting.
+> Adding CLK_SET_RATE_PARENT | CLK_IS_CRITICAL to clk_cpu fixes the
+> problem.
+>
+> Tested on Cubietruck (A20).
+>
+> Fixes: c84f5683f6E ("clk: sunxi-ng: Add sun4i/sun7i CCU driver")
+>
+> Reported-by: Alexander Syring <alex@asyring.de>
 
---jepa6dc2uytqcbei
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You typically don't need this if you yourself are the reporter.
 
-On Tue, Sep 26, 2017 at 02:36:20AM +0000, Chen-Yu Tsai wrote:
-> Until now we were not providing a way to read back the status of our
-> reset controls. Consumers had no real way to be certain whether a
-> peripheral was held in reset or not.
->=20
-> Implement the status callback to complete the API support.
->=20
-> Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Alexander Syring <alex@asyring.de>
 
-Applied, thanks!
-Maxime
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---jepa6dc2uytqcbei
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZyhosAAoJEBx+YmzsjxAg8oMP/0WNQ+nzimjh3NzYY8EEVX2U
-MQJ1OKUv7qJBo4OYzAPWTFEOYRX+PjxVlMthvVAeK6SBqBLLwwo+aYlW5parHALH
-xRc5uZJWfawmBqKEPJ/cpApWuWKUVtvyGeJJsM4L0OvsnJ3N6UcB6lO2+WT7jWxb
-Te6Vcj9Khs6KFJm5MzKnV+neJAJvU5iIb6DbKaAW4Klvk9V71zrSZaaTriOQNrzQ
-mhp+rYd54WFWNFB3LUUB0oN7KijRasu/UIJJVaDsqjbIjAgdpLiJwz248eu7LLJg
-RNpYwwI8F0EymkllbA8FjAhppVDsKZN6Jtb9wkDa2Q52wv66FSJmFo3aHDis+2BQ
-TdUIsbk1yKpHViV0xfsM+IARba+ukRt/dfJua51UmbaMs3MteYmER6ptZbfX7JNu
-y+zsAozGNFr1n9P6jyRMpcgO3rwARJmkvPR4I2Iab54/nLhyAolZvKKmDw/KhVzl
-/sbMynGJuQShJ4I3Wc11h0UUkb3nQAwp+SAomuwRzNLE9En4KSLgkmAYaY0Ec0/p
-8nlofVQ2S+rZV5ikvDROXU7LKTh005sRBjSOs/5WTaho1LndOwfdwJG1MaKXXlGI
-/0UWNrRDHzMdbxjckHm7QxgBR9udzcBlA81+1zI1gc8+9MUY3i6iiytMBX0rlzwA
-jx420EtsN6HzUlHBjVIw
-=SCUx
------END PGP SIGNATURE-----
-
---jepa6dc2uytqcbei--
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun4i-a10.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> index 286b0049b7b6..a48fde191c0a 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+> @@ -223,7 +223,7 @@ static struct ccu_mux cpu_clk = {
+>                 .hw.init        = CLK_HW_INIT_PARENTS("cpu",
+>                                                       cpu_parents,
+>                                                       &ccu_mux_ops,
+> -                                                     CLK_IS_CRITICAL),
+> +                                                     CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
+>         }
+>  };
+>
+> --
+> 2.11.0
+>
