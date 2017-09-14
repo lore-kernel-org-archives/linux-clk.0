@@ -1,62 +1,68 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Chen Zhong <chen.zhong@mediatek.com>, "Sean
- Wang" <sean.wang@mediatek.com>
-Subject: [PATCH 2/4] clk: mediatek: add the option for determining PLL source clock
-Date: Wed, 20 Sep 2017 17:49:26 +0800
-Message-ID: <474d7e90b0aca98b00060ab1d422ed33174b0879.1505890481.git.sean.wang@mediatek.com>
-In-Reply-To: <cover.1505890481.git.sean.wang@mediatek.com>
-References: <cover.1505890481.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
+Return-Path: <romain.izard@mobile-devices.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170913170310.grfv7j5xvh7chjdo@piout.net>
+References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
+ <20170908153604.28383-4-romain.izard.pro@gmail.com> <b0c7e816-4a7c-609d-2bc7-281fc6ca751d@microchip.com>
+ <20170913170310.grfv7j5xvh7chjdo@piout.net>
+From: romain izard <romain.izard@mobile-devices.fr>
+Date: Thu, 14 Sep 2017 09:41:36 +0200
+Message-ID: <CAGkQfmOZBi4tzUSEAD7J+w_v+pZ_yFgPRBaYaLnW-ptFZO0rvg@mail.gmail.com>
+Subject: Re: [PATCH v1 03/10] clk: at91: pmc: Support backup for programmable clocks
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>, Jonathan Cameron <jic23@kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>,
+	linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-iio@vger.kernel.org, linux-mtd <linux-mtd@lists.infradead.org>,
+	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Chen Zhong <chen.zhong@mediatek.com>
+2017-09-13 19:03 GMT+02:00 Alexandre Belloni
+<alexandre.belloni@free-electrons.com>:
+> On 13/09/2017 at 14:29:35 +0200, Nicolas Ferre wrote:
+>> On 08/09/2017 at 17:35, Romain Izard wrote:
+>> > From: Romain Izard <romain.izard@mobile-devices.fr>
+>> >
+>> > Save and restore the System Clock and Programmable Clock register for
+>> > the backup use case.
+>>
+>> "System Clock" seems to be handled in another patch.
+>>
+>> > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+>> > ---
+>> >  drivers/clk/at91/pmc.c | 5 +++++
+>> >  1 file changed, 5 insertions(+)
+>> >
+>> > diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+>> > index 07dc2861ad3f..5421b03553ec 100644
+>> > --- a/drivers/clk/at91/pmc.c
+>> > +++ b/drivers/clk/at91/pmc.c
+>> > @@ -66,6 +66,7 @@ static struct
+>> >     u32 pcr[PMC_MAX_IDS];
+>> >     u32 audio_pll0;
+>> >     u32 audio_pll1;
+>> > +   u32 pckr[3];
+>>
+>> Some products have different numbers of PCK (only 2 on at91sam9x5 for
+>> instance)...
+>>
+>
+> My opinion is that it will be time to change that when multiple SoCs will
+> need to save their registers.
+>
+For the next version, I'll add a #define. But as this code requires a
+device tree node with the compatible string "atmel,sama5d2-pmc", I believe
+that we can ignore other chips for now.
 
-Since the previous setup always sets the PLL using crystal 26MHz, this
-doesn't always happen in every MediaTek platform. So the patch added
-flexibility for assigning extra member for determining the PLL source
-clock.
 
-Signed-off-by: Chen Zhong <chen.zhong@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/clk/mediatek/clk-mtk.h | 1 +
- drivers/clk/mediatek/clk-pll.c | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index f5d6b70..210ce8e8 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -216,6 +216,7 @@ struct mtk_pll_data {
- 	uint32_t pcw_reg;
- 	int pcw_shift;
- 	const struct mtk_pll_div_table *div_table;
-+	const char *parent_name;
- };
- 
- void mtk_clk_register_plls(struct device_node *node,
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index a409142..7598477 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -303,7 +303,10 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 	init.name = data->name;
- 	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
- 	init.ops = &mtk_pll_ops;
--	init.parent_names = &parent_name;
-+	if (data->parent_name)
-+		init.parent_names = &data->parent_name;
-+	else
-+		init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
- 	clk = clk_register(NULL, &pll->hw);
 -- 
-2.7.4
+Romain Izard
