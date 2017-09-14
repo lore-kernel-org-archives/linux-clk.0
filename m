@@ -1,99 +1,99 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 1/3] clk/mmp: Delete an error message for a failed memory
- allocation in three functions
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Chao Xie <chao.xie@marvell.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
-Message-ID: <5a3e0b55-1eda-87a4-c4e3-d142d64830a5@users.sourceforge.net>
-Date: Wed, 27 Sep 2017 09:25:03 +0200
-MIME-Version: 1.0
-In-Reply-To: <051d7ba6-e3cc-8354-8315-93fe039dd2ce@users.sourceforge.net>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [RESEND PATCH 2/3] clk: si5351: Add DT property to enable PLL
+ reset
+To: Sergej Sawazki <sergej@taudac.com>, sboyd@codeaurora.org,
+ mturquette@baylibre.com, linux@armlinux.org.uk
+Cc: rabeeh@solid-run.com, linux-clk@vger.kernel.org
+References: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+ <1504346246-4730-3-git-send-email-sergej@taudac.com>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <c591ad31-699c-2993-026e-53523e96d944@gmail.com>
+Date: Thu, 14 Sep 2017 08:46:37 +0200
+In-Reply-To: <1504346246-4730-3-git-send-email-sergej@taudac.com>
 Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 26 Sep 2017 22:25:38 +0200
+On 02.09.2017 11:57, Sergej Sawazki wrote:
+> Add optional output clock DT property to enable PLL reset when a clock
+> output is enabled or the clock rate is changed.
 
-Omit extra messages for a memory allocation failure in these functions.
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-This issue was detected by using the Coccinelle software.
+But please move it to the first patch applied, then parse the property
+in the driver and finally add the conditional reset protected by the
+parsed property.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/mmp/clk-frac.c | 4 +---
- drivers/clk/mmp/clk-gate.c | 4 +---
- drivers/clk/mmp/clk-mix.c  | 9 +--------
- 3 files changed, 3 insertions(+), 14 deletions(-)
+Sebastian
 
-diff --git a/drivers/clk/mmp/clk-frac.c b/drivers/clk/mmp/clk-frac.c
-index 584a9927993b..98dfb9568d4f 100644
---- a/drivers/clk/mmp/clk-frac.c
-+++ b/drivers/clk/mmp/clk-frac.c
-@@ -172,10 +172,8 @@ struct clk *mmp_clk_register_factor(const char *name, const char *parent_name,
- 	}
- 
- 	factor = kzalloc(sizeof(*factor), GFP_KERNEL);
--	if (!factor) {
--		pr_err("%s: could not allocate factor  clk\n", __func__);
-+	if (!factor)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	/* struct clk_aux assignments */
- 	factor->base = base;
-diff --git a/drivers/clk/mmp/clk-gate.c b/drivers/clk/mmp/clk-gate.c
-index d20cd3431ac2..7355595c42e2 100644
---- a/drivers/clk/mmp/clk-gate.c
-+++ b/drivers/clk/mmp/clk-gate.c
-@@ -103,10 +103,8 @@ struct clk *mmp_clk_register_gate(struct device *dev, const char *name,
- 
- 	/* allocate the gate */
- 	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
--	if (!gate) {
--		pr_err("%s:%s could not allocate gate clk\n", __func__, name);
-+	if (!gate)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &mmp_clk_gate_ops;
-diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
-index c554833cffc5..1ae532df20f7 100644
---- a/drivers/clk/mmp/clk-mix.c
-+++ b/drivers/clk/mmp/clk-mix.c
-@@ -451,11 +451,8 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 	size_t table_bytes;
- 
- 	mix = kzalloc(sizeof(*mix), GFP_KERNEL);
--	if (!mix) {
--		pr_err("%s:%s: could not allocate mmp mix clk\n",
--			__func__, name);
-+	if (!mix)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.flags = flags | CLK_GET_RATE_NOCACHE;
-@@ -468,8 +465,6 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 		table_bytes = sizeof(*config->table) * config->table_size;
- 		mix->table = kmemdup(config->table, table_bytes, GFP_KERNEL);
- 		if (!mix->table) {
--			pr_err("%s:%s: could not allocate mmp mix table\n",
--				__func__, name);
- 			kfree(mix);
- 			return ERR_PTR(-ENOMEM);
- 		}
-@@ -481,8 +476,6 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 		mix->mux_table = kmemdup(config->mux_table, table_bytes,
- 					 GFP_KERNEL);
- 		if (!mix->mux_table) {
--			pr_err("%s:%s: could not allocate mmp mix mux-table\n",
--				__func__, name);
- 			kfree(mix->table);
- 			kfree(mix);
- 			return ERR_PTR(-ENOMEM);
--- 
-2.14.1
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+> ---
+>  Documentation/devicetree/bindings/clock/silabs,si5351.txt |  1 +
+>  drivers/clk/clk-si5351.c                                  | 11 ++++++++++-
+>  include/linux/platform_data/si5351.h                      |  2 ++
+>  3 files changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> index 28b2830..157ee02 100644
+> --- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> +++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> @@ -45,6 +45,7 @@ Optional child node properties:
+>  - silabs,multisynth-source: source pll A(0) or B(1) of corresponding multisynth
+>    divider.
+>  - silabs,pll-master: boolean, multisynth can change pll frequency.
+> +- silabs,pll-reset: boolean, clock output can reset its pll.
+>  - silabs,disable-state : clock output disable state, shall be
+>    0 = clock output is driven LOW when disabled
+>    1 = clock output is driven HIGH when disabled
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index 46bbc95..aa8d8d9 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -900,7 +900,13 @@ static int _si5351_clkout_set_disable_state(
+>  
+>  void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
+>  {
+> -	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
+> +	struct si5351_platform_data *pdata = drvdata->client->dev.platform_data;
+> +	u8 val;
+> +
+> +	if (!pdata->clkout[num].pll_reset)
+> +		return;  /* Resetting PLL disabled */
+> +
+> +	val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
+>  
+>  	switch (val & SI5351_CLK_INPUT_MASK) {
+>  	case SI5351_CLK_INPUT_XTAL:
+> @@ -1321,6 +1327,9 @@ static int si5351_dt_parse(struct i2c_client *client,
+>  
+>  		pdata->clkout[num].pll_master =
+>  			of_property_read_bool(child, "silabs,pll-master");
+> +
+> +		pdata->clkout[num].pll_reset =
+> +			of_property_read_bool(child, "silabs,pll-reset");
+>  	}
+>  	client->dev.platform_data = pdata;
+>  
+> diff --git a/include/linux/platform_data/si5351.h b/include/linux/platform_data/si5351.h
+> index 533d980..da346f22 100644
+> --- a/include/linux/platform_data/si5351.h
+> +++ b/include/linux/platform_data/si5351.h
+> @@ -85,6 +85,7 @@ enum si5351_disable_state {
+>   * @multisynth_src: multisynth source clock
+>   * @clkout_src: clkout source clock
+>   * @pll_master: if true, clkout can also change pll rate
+> + * @pll_reset: if true, clkout can reset its pll
+>   * @drive: output drive strength
+>   * @rate: initial clkout rate, or default if 0
+>   */
+> @@ -94,6 +95,7 @@ struct si5351_clkout_config {
+>  	enum si5351_drive_strength drive;
+>  	enum si5351_disable_state disable_state;
+>  	bool pll_master;
+> +	bool pll_reset;
+>  	unsigned long rate;
+>  };
+>  
+> 
