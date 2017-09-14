@@ -1,59 +1,47 @@
-Return-Path: <joel.stan@gmail.com>
-MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <1505446920.4080.13.camel@aj.id.au>
-References: <20170823060957.31167-1-joel@jms.id.au> <20170823060957.31167-2-joel@jms.id.au>
- <1505446920.4080.13.camel@aj.id.au>
-From: Joel Stanley <joel@jms.id.au>
-Date: Mon, 18 Sep 2017 22:49:44 +0930
-Message-ID: <CACPK8XeYWj_bx3qysjCQXJgdR6xWONAg09peJc-=ajX8UtFO_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: Add Aspeed G5 clock driver
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>,
-	Rick Altherr <raltherr@google.com>, Ryan Chen <ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [RESEND PATCH 3/3] clk: si5351: Add a debug message for PLL reset
+To: Sergej Sawazki <sergej@taudac.com>, sboyd@codeaurora.org,
+ mturquette@baylibre.com, linux@armlinux.org.uk
+Cc: rabeeh@solid-run.com, linux-clk@vger.kernel.org
+References: <1504346246-4730-1-git-send-email-sergej@taudac.com>
+ <1504346246-4730-4-git-send-email-sergej@taudac.com>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <60cbc3ee-541c-10cd-5fb3-810607252109@gmail.com>
+Date: Thu, 14 Sep 2017 08:47:40 +0200
+In-Reply-To: <1504346246-4730-4-git-send-email-sergej@taudac.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 15, 2017 at 1:12 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
-> On Wed, 2017-08-23 at 15:39 +0930, Joel Stanley wrote:
->> This driver supports the ast2500 and derivative BMC SoCs from Aspeed.
->>
->> All of the important clocks are supported, with most non-essential ones
->> also implemented where information is available. I am working with
->> Aspeed to clear up some of the missing information, including the
->> missing parent-sibling relationships.
->>
->> We need to know the rate of the apb clock in order to correctly program
->> the clocksource driver, so the apb and it's parents are created in the
->> CLK_OF_DECLARE_DRIVER callback.
->>
->> The rest of the clocks are created at normal driver probe time. I
->> followed the Gemini driver's lead with using the regmap where I could,
->> but also having a pointer to the base address for use with the common
->> clock callbacks.
->>
->> > Signed-off-by: Joel Stanley <joel@jms.id.au>
->> ---
->>  drivers/clk/Kconfig                      |  12 +
->>  drivers/clk/Makefile                     |   1 +
->>  drivers/clk/clk-aspeed.c                 | 547 +++++++++++++++++++++++++++++++
->
-> The patch subject suggests the implementation is specific to the G5
-> series SoC, but the name of the driver is generic. How similar are the
-> G4 and G5 clock devices? Is the intent to expand the implementation to
-> also cover the G4 series, or should this be renamed to something more
-> specific?
+On 02.09.2017 11:57, Sergej Sawazki wrote:
+> Print a debug message when resetting a PLL. It is useful to figure out
+> what PLL is resetted and when.
 
-The intent is to cover the G4 platforms with the same driver. I sent
-this version along early to get feedback on the structure.
+I am fine with the debug message but please squash it into the patch
+adding _si5351_clkout_reset_pll.
 
-As it turns out, it was simple to get the G4 going with the same code.
-I'll send a v2 in the next day or so.
+Sebastian
 
-Cheers,
-
-Joel
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+> Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+> ---
+>  drivers/clk/clk-si5351.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index aa8d8d9..7a122c7 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -917,6 +917,10 @@ void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
+>  	si5351_reg_write(drvdata, SI5351_PLL_RESET,
+>  			 (val & SI5351_CLK_PLL_SELECT) ? SI5351_PLL_RESET_B :
+>  			 SI5351_PLL_RESET_A);
+> +
+> +	dev_dbg(&drvdata->client->dev, "%s - %s: pll = %d\n",
+> +		__func__, clk_hw_get_name(&drvdata->clkout[num].hw),
+> +		(val & SI5351_CLK_PLL_SELECT) ? 1 : 0);
+>  }
+>  
+>  static int si5351_clkout_prepare(struct clk_hw *hw)
+> 
