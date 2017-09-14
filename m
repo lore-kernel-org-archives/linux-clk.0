@@ -1,54 +1,57 @@
-Return-Path: <wens@csie.org>
+Return-Path: <alexander.levin@verizon.com>
+From: "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>
+Cc: Jose Abreu <Jose.Abreu@synopsys.com>, Jose Abreu <joabreu@synopsys.com>,
+	Carlos Palminha <palminha@synopsys.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "Levin, Alexander (Sasha Levin)"
+	<alexander.levin@verizon.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH for 4.9 22/59] clk/axs10x: Clear init field in driver probe
+Date: Thu, 14 Sep 2017 15:51:12 +0000
+Message-ID: <20170914155051.8289-22-alexander.levin@verizon.com>
+References: <20170914155051.8289-1-alexander.levin@verizon.com>
+In-Reply-To: <20170914155051.8289-1-alexander.levin@verizon.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-In-Reply-To: <20170914120519.2006-1-alex@asyring.de>
-References: <20170914120519.2006-1-alex@asyring.de>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 14 Sep 2017 20:14:10 +0800
-Message-ID: <CAGb2v677Ed4-iX6fkYEYZ1N9ZLKXfQQF2hhdbcbBCaB0-g174A@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: Fix missing CLK_SET_RATE_PARENT in ccu-sun4i-a10.c
-To: Alexander Syring <alex@asyring.de>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: alexander.levin@one.verizon.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 14, 2017 at 8:05 PM, Alexander Syring <alex@asyring.de> wrote:
-> When using cpufreq-dt with default govenor other than "performance"
-> system freezes while booting.
-> Adding CLK_SET_RATE_PARENT | CLK_IS_CRITICAL to clk_cpu fixes the
-> problem.
->
-> Tested on Cubietruck (A20).
->
-> Fixes: c84f5683f6E ("clk: sunxi-ng: Add sun4i/sun7i CCU driver")
->
-> Reported-by: Alexander Syring <alex@asyring.de>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-You typically don't need this if you yourself are the reporter.
+[ Upstream commit 6205406cf6f282d622f31de25036e6d1ab3a2ff5 ]
 
-> Signed-off-by: Alexander Syring <alex@asyring.de>
+Init field must be cleared in driver probe as this structure is not
+dinamically allocated. If not, wrong flags can be passed to core.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Cc: Carlos Palminha <palminha@synopsys.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Fixes: 923587aafc2c ("clk/axs10x: Add I2S PLL clock driver")
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+Link: lkml.kernel.org/r/040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717=
+.git.joabreu@synopsys.com
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+---
+ drivers/clk/axs10x/i2s_pll_clock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
->  drivers/clk/sunxi-ng/ccu-sun4i-a10.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> index 286b0049b7b6..a48fde191c0a 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> @@ -223,7 +223,7 @@ static struct ccu_mux cpu_clk = {
->                 .hw.init        = CLK_HW_INIT_PARENTS("cpu",
->                                                       cpu_parents,
->                                                       &ccu_mux_ops,
-> -                                                     CLK_IS_CRITICAL),
-> +                                                     CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
->         }
->  };
->
-> --
-> 2.11.0
->
+diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pl=
+l_clock.c
+index 411310d29581..02d3bcd6216c 100644
+--- a/drivers/clk/axs10x/i2s_pll_clock.c
++++ b/drivers/clk/axs10x/i2s_pll_clock.c
+@@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct platform_device *pd=
+ev)
+ 	if (IS_ERR(pll_clk->base))
+ 		return PTR_ERR(pll_clk->base);
+=20
++	memset(&init, 0, sizeof(init));
+ 	clk_name =3D node->name;
+ 	init.name =3D clk_name;
+ 	init.ops =3D &i2s_pll_ops;
+--=20
+2.11.0
