@@ -1,88 +1,90 @@
-Return-Path: <julian.calaby@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v66epS9OLAQthYOrn7B48E80jsfy9dhyLPHyo4NmAOTCbg@mail.gmail.com>
-References: <20170929082306.16193-1-wens@csie.org> <20170929082306.16193-5-wens@csie.org>
- <20170929102006.2wz7wrkpplxwynoh@flea> <CAGb2v65VhtEckRCXi4X5AjmC-5CSHavATu8fKyEHOivmYqZkww@mail.gmail.com>
- <CAGRGNgUmo6ZztajhG=uZrXGsC9pxySswxLd4P-gk6xdknLX-NQ@mail.gmail.com> <CAGb2v66epS9OLAQthYOrn7B48E80jsfy9dhyLPHyo4NmAOTCbg@mail.gmail.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Sat, 30 Sep 2017 16:26:32 +1000
-Message-ID: <CAGRGNgUFAmoBH4OFi+DUW6JU0tOPAZbS_9Dq7tKA+m8UT7vhnw@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 04/14] drm/sun4i: tcon: Add support
- for demuxing TCON output on A31
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Brown <broonie@kernel.org>,
-	David Airlie <airlied@linux.ie>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v2 1/9] clk: at91: pmc: Wait for clocks when resuming
+Date: Fri, 15 Sep 2017 16:04:03 +0200
+Message-Id: <20170915140411.31716-2-romain.izard.pro@gmail.com>
+In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
+Wait for the syncronization of all clocks when resuming, not only the
+UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
+when interrupts are masked, which is the case in here.
 
-On Sat, Sep 30, 2017 at 3:58 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Sat, Sep 30, 2017 at 1:35 PM, Julian Calaby <julian.calaby@gmail.com> wrote:
->> Hi Chen-Yu,
->>
->> On Fri, Sep 29, 2017 at 8:22 PM, Chen-Yu Tsai <wens@csie.org> wrote:
->>> On Fri, Sep 29, 2017 at 6:20 PM, Maxime Ripard
->>> <maxime.ripard@free-electrons.com> wrote:
->>>> On Fri, Sep 29, 2017 at 08:22:56AM +0000, Chen-Yu Tsai wrote:
->>>>> On systems with 2 TCONs such as the A31, it is possible to demux the
->>>>> output of the TCONs to one encoder.
->>>>>
->>>>> Add support for this for the A31.
->>>>>
->>>>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>>>> ---
->>>>>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 38 ++++++++++++++++++++++++++++++++++++++
->>>>>  1 file changed, 38 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>>> index 7bf51abaee97..c949309d4285 100644
->>>>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>>> @@ -112,6 +112,21 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
->>>>>  }
->>>>>  EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
->>>>>
->>>>> +static struct sun4i_tcon *sun4i_get_first_tcon(struct drm_device *drm)
->>>>
->>>> Would that make sense to make it a bit more generic, and pass the id
->>>> to look for as an argument?
->>>
->>> The reason to look for TCON0 explicitly is to access the muxing registers, which
->>> are only available in TCON0. Other than that, there's nothing else
->>> shared between
->>> the two TCONs. So there's no particular reason to look for TCON1 explicitly.
->>
->> In that case: in the bizarre case where we're trying to use this mux
->> type and there is no TCON0, shouldn't we fail?
->
-> It gives out a big warning, indicating something is wrong. If TCON0 is not found
-> it is most likely your device tree is broken. There's nothing more the
-> driver can do.
-> Are you suggesting to return NULL in this case, and also do error
-> handling in the
-> callers?
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+---
+ drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-You're already returning -EINVAL for other failure cases, so a lack of
-TCON0 might as well do the same.
-
->> (Also, the code doesn't make sense if we have some TCON1 and TCON2 in
->> that order as it'll return TCON2)
->
-> I'm guessing you want it to return NULL.
-
-I'm just pointing out the mismatch between getting the "first" TCON
-and the actual behaviour.
-
-Thanks,
-
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 775af473fe11..5c2b26de303e 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -107,10 +107,20 @@ static int pmc_suspend(void)
+ 	return 0;
+ }
+ 
++static bool pmc_ready(unsigned int mask)
++{
++	unsigned int status;
++
++	regmap_read(pmcreg, AT91_PMC_SR, &status);
++
++	return ((status & mask) == mask) ? 1 : 0;
++}
++
+ static void pmc_resume(void)
+ {
+-	int i, ret = 0;
++	int i;
+ 	u32 tmp;
++	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
+ 
+ 	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
+ 	if (pmc_cache.mckr != tmp)
+@@ -134,13 +144,11 @@ static void pmc_resume(void)
+ 			     AT91_PMC_PCR_CMD);
+ 	}
+ 
+-	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
+-		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
+-					       !(tmp & AT91_PMC_LOCKU),
+-					       10, 5000);
+-		if (ret)
+-			pr_crit("USB PLL didn't lock when resuming\n");
+-	}
++	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
++		mask |= AT91_PMC_LOCKU;
++
++	while (!pmc_ready(mask))
++		cpu_relax();
+ }
+ 
+ static struct syscore_ops pmc_syscore_ops = {
 -- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+2.11.0
