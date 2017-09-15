@@ -1,110 +1,152 @@
-Return-Path: <romain.izard@mobile-devices.fr>
-MIME-Version: 1.0
-Sender: romain.izard@mobile-devices.fr
-In-Reply-To: <14fb5261-bb03-a6bd-6653-2a2c655b04ee@microchip.com>
-References: <20170908153604.28383-1-romain.izard.pro@gmail.com>
- <20170908153604.28383-2-romain.izard.pro@gmail.com> <14fb5261-bb03-a6bd-6653-2a2c655b04ee@microchip.com>
+Return-Path: <romain.izard.pro@gmail.com>
+Return-Path: <romain.izard.pro@gmail.com>
 From: Romain Izard <romain.izard.pro@gmail.com>
-Date: Thu, 14 Sep 2017 18:15:56 +0200
-Message-ID: <CAGkQfmPB8b38=hJrtuKJ-Hiqdfx9dt5SQ5R7EBL9cJV5_eRmXQ@mail.gmail.com>
-Subject: Re: [PATCH v1 01/10] clk: at91: pmc: Wait for clocks when resuming
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>, Jonathan Cameron <jic23@kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>,
-	David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Thierry Reding <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>,
-	linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	linux-iio@vger.kernel.org, linux-mtd <linux-mtd@lists.infradead.org>,
-	linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Wenyou Yang <wenyou.yang@atmel.com>,
+	Josh Wu <rainyfeeling@outlook.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
 	linux-usb@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+	linux-arm-kernel@lists.infradead.org,
+	Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v2 7/9] pwm: atmel-tcb: Support backup mode
+Date: Fri, 15 Sep 2017 16:04:09 +0200
+Message-Id: <20170915140411.31716-8-romain.izard.pro@gmail.com>
+In-Reply-To: <20170915140411.31716-1-romain.izard.pro@gmail.com>
+References: <20170915140411.31716-1-romain.izard.pro@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-09-13 14:15 GMT+02:00 Nicolas Ferre <nicolas.ferre@microchip.com>:
-> On 08/09/2017 at 17:35, Romain Izard wrote:
->> Wait for the syncronization of all clocks when resuming, not only the
->> UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
->> when interrupts are masked, which is the case in here.
->>
->> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
->> ---
->>  drivers/clk/at91/pmc.c | 24 ++++++++++++++++--------
->>  1 file changed, 16 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
->> index 775af473fe11..5c2b26de303e 100644
->> --- a/drivers/clk/at91/pmc.c
->> +++ b/drivers/clk/at91/pmc.c
->> @@ -107,10 +107,20 @@ static int pmc_suspend(void)
->>       return 0;
->>  }
->>
->> +static bool pmc_ready(unsigned int mask)
->> +{
->> +     unsigned int status;
->> +
->> +     regmap_read(pmcreg, AT91_PMC_SR, &status);
->> +
->> +     return ((status & mask) == mask) ? 1 : 0;
->> +}
->> +
->>  static void pmc_resume(void)
->>  {
->> -     int i, ret = 0;
->> +     int i;
->>       u32 tmp;
->> +     u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
->>
->>       regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
->>       if (pmc_cache.mckr != tmp)
->> @@ -134,13 +144,11 @@ static void pmc_resume(void)
->>                            AT91_PMC_PCR_CMD);
->>       }
->>
->> -     if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
->> -             ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
->> -                                            !(tmp & AT91_PMC_LOCKU),
->> -                                            10, 5000);
->> -             if (ret)
->> -                     pr_crit("USB PLL didn't lock when resuming\n");
->> -     }
->> +     if (pmc_cache.uckr & AT91_PMC_UPLLEN)
->> +             mask |= AT91_PMC_LOCKU;
->> +
->> +     while (!pmc_ready(mask))
->> +             cpu_relax();
->
-> Okay, but I would prefer to keep the timeout property in it. So we may
-> need to re-implement a timeout way-out here.
->
+Save and restore registers for the PWM on suspend and resume, which
+makes hibernation and backup modes possible.
 
-We need to have a reference clock to measure the timeout delay. If we use
-the kernel's timekeeping, it relies on the clocks that we are configuring in
-this code. Moreover, my experience with the mainline code is that when
-something goes wrong, nothing will work. No oops or panic will be reported,
-the device will just stop working.
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+---
+ drivers/pwm/pwm-atmel-tcb.c | 63 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 61 insertions(+), 2 deletions(-)
 
-In my case, I had obvious failures (it just stopped working unless I removed
-USB wakeup or activated the console during suspend) but also very rare
-failures, that occurred in the bootloader. Those issues were detected when
-testing repeated suspend cycles for a night: the memory controller would
-never enter the self-refresh mode during the resume sequence.
-
-This led me to question the bootloader's code first, and I set up 4 boards
-with the backup prototype code on v4.9 to verify that it was stable on
-suspend. I've reached 1.5 million sleep cycles over 3 weeks without
-failure, so this hinted towards the difference between the prototype and the
-backup code provided for v4.12 (which contained the patch that got in
-v4.13). Once I integrated this patch, I've run the v4.12 code for 2 weeks
-without issue as well.
-
-In the end, I don't want to touch this code if I do not have to, as checking
-that it does not regress is really cumbersome.
-
+diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
+index 75db585a2a94..acd3ce8ecf3f 100644
+--- a/drivers/pwm/pwm-atmel-tcb.c
++++ b/drivers/pwm/pwm-atmel-tcb.c
+@@ -37,11 +37,20 @@ struct atmel_tcb_pwm_device {
+ 	unsigned period;		/* PWM period expressed in clk cycles */
+ };
+ 
++struct atmel_tcb_channel {
++	u32 enabled;
++	u32 cmr;
++	u32 ra;
++	u32 rb;
++	u32 rc;
++};
++
+ struct atmel_tcb_pwm_chip {
+ 	struct pwm_chip chip;
+ 	spinlock_t lock;
+ 	struct atmel_tc *tc;
+ 	struct atmel_tcb_pwm_device *pwms[NPWM];
++	struct atmel_tcb_channel bkup[NPWM / 2];
+ };
+ 
+ static inline struct atmel_tcb_pwm_chip *to_tcb_chip(struct pwm_chip *chip)
+@@ -175,12 +184,15 @@ static void atmel_tcb_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	 * Use software trigger to apply the new setting.
+ 	 * If both PWM devices in this group are disabled we stop the clock.
+ 	 */
+-	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC)))
++	if (!(cmr & (ATMEL_TC_ACPC | ATMEL_TC_BCPC))) {
+ 		__raw_writel(ATMEL_TC_SWTRG | ATMEL_TC_CLKDIS,
+ 			     regs + ATMEL_TC_REG(group, CCR));
+-	else
++		tcbpwmc->bkup[group].enabled = 1;
++	} else {
+ 		__raw_writel(ATMEL_TC_SWTRG, regs +
+ 			     ATMEL_TC_REG(group, CCR));
++		tcbpwmc->bkup[group].enabled = 0;
++	}
+ 
+ 	spin_unlock(&tcbpwmc->lock);
+ }
+@@ -263,6 +275,7 @@ static int atmel_tcb_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	/* Use software trigger to apply the new setting */
+ 	__raw_writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
+ 		     regs + ATMEL_TC_REG(group, CCR));
++	tcbpwmc->bkup[group].enabled = 1;
+ 	spin_unlock(&tcbpwmc->lock);
+ 	return 0;
+ }
+@@ -445,10 +458,56 @@ static const struct of_device_id atmel_tcb_pwm_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
+ 
++#ifdef CONFIG_PM_SLEEP
++static int atmel_tcb_pwm_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
++	void __iomem *base = tcbpwm->tc->regs;
++	int i;
++
++	for (i = 0; i < (NPWM / 2); i++) {
++		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
++
++		chan->cmr = readl(base + ATMEL_TC_REG(i, CMR));
++		chan->ra = readl(base + ATMEL_TC_REG(i, RA));
++		chan->rb = readl(base + ATMEL_TC_REG(i, RB));
++		chan->rc = readl(base + ATMEL_TC_REG(i, RC));
++	}
++	return 0;
++}
++
++static int atmel_tcb_pwm_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
++	void __iomem *base = tcbpwm->tc->regs;
++	int i;
++
++	for (i = 0; i < (NPWM / 2); i++) {
++		struct atmel_tcb_channel *chan = &tcbpwm->bkup[i];
++
++		writel(chan->cmr, base + ATMEL_TC_REG(i, CMR));
++		writel(chan->ra, base + ATMEL_TC_REG(i, RA));
++		writel(chan->rb, base + ATMEL_TC_REG(i, RB));
++		writel(chan->rc, base + ATMEL_TC_REG(i, RC));
++		if (chan->enabled) {
++			writel(ATMEL_TC_CLKEN | ATMEL_TC_SWTRG,
++				base + ATMEL_TC_REG(i, CCR));
++		}
++	}
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(atmel_tcb_pwm_pm_ops, atmel_tcb_pwm_suspend,
++			 atmel_tcb_pwm_resume);
++
+ static struct platform_driver atmel_tcb_pwm_driver = {
+ 	.driver = {
+ 		.name = "atmel-tcb-pwm",
+ 		.of_match_table = atmel_tcb_pwm_dt_ids,
++		.pm = &atmel_tcb_pwm_pm_ops,
+ 	},
+ 	.probe = atmel_tcb_pwm_probe,
+ 	.remove = atmel_tcb_pwm_remove,
 -- 
-Romain Izard
+2.11.0
