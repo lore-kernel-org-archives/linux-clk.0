@@ -1,39 +1,54 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 27 Sep 2017 16:32:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/5] dt-bindings: Add DT bindings for NVIDIA Tegra AHB
- DMA controller
-Message-ID: <20170927233240.GI457@codeaurora.org>
-References: <cover.1506380746.git.digetx@gmail.com>
- <604d92036e0936443290e68a2226f935fb348113.1506380746.git.digetx@gmail.com>
- <bee2a524-0891-01e1-4e03-f6cf6a89e6b1@nvidia.com>
- <96bfdacb-3d2d-66b6-70f7-a87664b1afc7@gmail.com>
- <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <0fd316e9-3584-e9bd-2a8b-e73eaa6a9a48@nvidia.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+To: pdeschrijver@nvidia.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	jonathanh@nvidia.com,
+	thierry.reding@gmail.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	pgaikwad@nvidia.com
+Subject: [PATCH] clk: tegra: Use readl_relaxed_poll_timeout_atomic in tegra210_clock_init
+Date: Thu, 14 Sep 2017 18:36:14 -0700
+Message-Id: <1505439374-8666-1-git-send-email-nicoleotsuka@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/27, Jon Hunter wrote:
-> 
-> 
-> Well, the REQ_SEL should definitely be in the binding.
-> 
-> Laxman, Stephen, what are your thoughts on the TRIG_SEL field? Looks
+Below is the call trace of tegra210_init_pllu() function:
+  start_kernel()
+  -> time_init()
+  --> of_clk_init()
+  ---> tegra210_clock_init()
+  ----> tegra210_pll_init()
+  -----> tegra210_init_pllu()
 
-Wrong Stephen?
+Because the preemtion is disabled in the start_kernel before calling
+time_init, tegra210_init_pllu is actually in an atomic context while
+it includes a readl_relaxed_poll_timeout that might sleep.
 
+So this patch just changes this readl_relaxed_poll_timeout() to its
+atomic version.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 0b9789a..ea695c4 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2587,8 +2587,8 @@ static int tegra210_enable_pllu(void)
+ 	reg |= PLL_ENABLE;
+ 	writel(reg, clk_base + PLLU_BASE);
+ 
+-	readl_relaxed_poll_timeout(clk_base + PLLU_BASE, reg,
+-				   reg & PLL_BASE_LOCK, 2, 1000);
++	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
++					  reg & PLL_BASE_LOCK, 2, 1000);
+ 	if (!(reg & PLL_BASE_LOCK)) {
+ 		pr_err("Timed out waiting for PLL_U to lock\n");
+ 		return -ETIMEDOUT;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
