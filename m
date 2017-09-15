@@ -1,39 +1,53 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 21 Sep 2017 17:51:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, jassisinghbrar@gmail.com,
-	bjorn.andersson@linaro.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 4/7] clk: qcom: Add A53 PLL support
-Message-ID: <20170921225125.f4dhxsodfgq5rrdt@rob-hp-laptop>
-References: <20170921164940.20343-1-georgi.djakov@linaro.org>
- <20170921164940.20343-5-georgi.djakov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170921164940.20343-5-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:56622 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751812AbdIOCtM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Sep 2017 22:49:12 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <59BB3FA7.3070000@samsung.com>
+Date: Fri, 15 Sep 2017 11:49:11 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Properly propagate flags in __PLL macro
+In-reply-to: <1505399897-4840-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170914143824eucas1p1e811c6c4c32a2253aebad9a27d4182d5@eucas1p1.samsung.com>
+        <1505399897-4840-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 21, 2017 at 07:49:37PM +0300, Georgi Djakov wrote:
-> The CPUs on Qualcomm MSM8916-based platforms are clocked by two PLLs,
-> a primary (A53) CPU PLL and a secondary fixed-rate GPLL0. These sources
-> are connected to a mux and half-integer divider, which is feeding the
-> CPU cores.
+On 2017년 09월 14일 23:38, Marek Szyprowski wrote:
+> All users of __PLL macro already provide flags parameter, so don't
+> overwrite it unconditionally with CLK_GET_RATE_NOCACHE.
 > 
-> This patch adds support for the primary CPU PLL which generates the
-> higher range of frequencies above 1GHz.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 +++++
+>  drivers/clk/samsung/clk.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index b8ca0dd3a38b..d5f0d3f818b6 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -305,7 +305,7 @@ struct samsung_pll_clock {
+>  		.dev_name	= _dname,				\
+>  		.name		= _name,				\
+>  		.parent_name	= _pname,				\
+> -		.flags		= CLK_GET_RATE_NOCACHE,			\
+> +		.flags		= _flags,				\
+>  		.con_offset	= _con,					\
+>  		.lock_offset	= _lock,				\
+>  		.rate_table	= _rtable,				\
+> 
 
-Please add acks when posting new versions.
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
->  drivers/clk/qcom/Kconfig                           |  10 ++
->  drivers/clk/qcom/Makefile                          |   1 +
->  drivers/clk/qcom/a53-pll.c                         | 107 +++++++++++++++++++++
->  4 files changed, 140 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->  create mode 100644 drivers/clk/qcom/a53-pll.c
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
