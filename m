@@ -1,32 +1,61 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Wed, 6 Sep 2017 22:42:37 +0200
-From: Johannes Stezenbach <js@sig21.net>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: S0ix failure due to "clk: x86: Do not gate clocks enabled by the
- firmware"
-Message-ID: <20170906204237.24x6fzlfmq7jmuce@sig21.net>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Fri, 15 Sep 2017 12:31:45 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <jonathanh@nvidia.com>,
+	<thierry.reding@gmail.com>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <pgaikwad@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Use readl_relaxed_poll_timeout_atomic in
+ tegra210_clock_init
+Message-ID: <20170915093145.GD6290@tbergstrom-lnx.Nvidia.com>
+References: <1505439374-8666-1-git-send-email-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1505439374-8666-1-git-send-email-nicoleotsuka@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Apart from the typo in the commit message (preemption rather than preemtion):
 
-I'm poking around on Asus E200HA, based on Atom x5-Z8300 (Cherrytrail),
-trying to get S0ix working, atm with gross hacks that are recorded in
-https://bugzilla.kernel.org/show_bug.cgi?id=193891
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-
-I found commit d31fd43c0f9a4 "clk: x86: Do not gate clocks enabled by the firmware"
-prevents S0i3 entry.  Unfortunately the commit message doesn't explain
-the problem it fixes, nor does it mention the platform.
-
-How can we fix d31fd43c0f9a4 to not break S0i3?
-
-
-Johannes
+On Thu, Sep 14, 2017 at 06:36:14PM -0700, Nicolin Chen wrote:
+> Below is the call trace of tegra210_init_pllu() function:
+>   start_kernel()
+>   -> time_init()
+>   --> of_clk_init()
+>   ---> tegra210_clock_init()
+>   ----> tegra210_pll_init()
+>   -----> tegra210_init_pllu()
+> 
+> Because the preemtion is disabled in the start_kernel before calling
+> time_init, tegra210_init_pllu is actually in an atomic context while
+> it includes a readl_relaxed_poll_timeout that might sleep.
+> 
+> So this patch just changes this readl_relaxed_poll_timeout() to its
+> atomic version.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 0b9789a..ea695c4 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2587,8 +2587,8 @@ static int tegra210_enable_pllu(void)
+>  	reg |= PLL_ENABLE;
+>  	writel(reg, clk_base + PLLU_BASE);
+>  
+> -	readl_relaxed_poll_timeout(clk_base + PLLU_BASE, reg,
+> -				   reg & PLL_BASE_LOCK, 2, 1000);
+> +	readl_relaxed_poll_timeout_atomic(clk_base + PLLU_BASE, reg,
+> +					  reg & PLL_BASE_LOCK, 2, 1000);
+>  	if (!(reg & PLL_BASE_LOCK)) {
+>  		pr_err("Timed out waiting for PLL_U to lock\n");
+>  		return -ETIMEDOUT;
+> -- 
+> 2.1.4
+> 
